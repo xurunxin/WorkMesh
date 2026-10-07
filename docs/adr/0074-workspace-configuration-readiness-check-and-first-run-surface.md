@@ -98,12 +98,11 @@ must not render as a failure.
 
 ### The gate is advisory in the domain and binding in the interface
 
-A `blocked` projection changes no command's authorization. An operator with a
-runner and a model can still create a Work Item, and the domain still refuses a
-delegation that lacks a runner exactly as it does today. The projection makes the
-dependency legible; it is not a second authorization path, and it never becomes a
-run permit. `CONTEXT.md`'s View Model rule already says a projection is not a
-source of domain authority, and this is that rule applied.
+`blocked` 投影不改变任何命令的授权，也不新增「必须有在线 Runner 才能委派」的前置。
+当前代码没有可证明空闲 Runner 在线的事实；`unknown` 不能推导为停机或授权拒绝。
+创建工作项、委派和激活分别由既有服务端命令校验身份、会话、授权、能力、范围、
+Approval、Stop、revision 和适用的租约。配置查询不产生会话、回执、事件或 outbox。
+投影说明配置缺口，不能成为运行许可；`CONTEXT.md` 的 View Model 非授权来源规则保持。
 
 The interface treats it as binding: unmet checks render as an ordered list in the
 workbench conversation area, one row per check, each row a link to the page that

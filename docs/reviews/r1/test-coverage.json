@@ -1,0 +1,4355 @@
+{
+  "nineCategories": [
+    "happy path",
+    "unauthorized actor",
+    "invalid state transition",
+    "duplicate idempotency key",
+    "stale revision",
+    "transaction failure",
+    "webhook/job replay",
+    "concurrent request",
+    "server restart/outbox recovery"
+  ],
+  "rule": "新增功能用例均未运行，文件存在不表示新增断言已存在；本轮运行的是未改产品代码的回归检查。",
+  "features": [
+    {
+      "seqNum": 1,
+      "id": "reEr9xXt9JXN26e5SbC7Z",
+      "owner": "历史任务 owner",
+      "originalTests": [
+        {
+          "id": "todo-1-T1",
+          "text": "agents 实际回读可见并与上述角色分工一致。",
+          "originalChecked": true,
+          "target": 1,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 原验收1：agents 实际回读可见并与上述角色分工一致。",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-1-T2",
+          "text": "未授予的重权限保持关闭；不做未经授权推送试验。",
+          "originalChecked": true,
+          "target": 1,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 原验收2：未授予的重权限保持关闭；不做未经授权推送试验。",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-1-T3",
+          "text": "Codex 模型/档位与供给经 agents 和 machines 回读；DarkFlame 在线，Codex 可用。",
+          "originalChecked": true,
+          "target": 1,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 原验收3：Codex 模型/档位与供给经 agents 和 machines 回读；DarkFlame 在线，Codex 可用。",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-1-T4",
+          "text": "授权从下一轮生效的限制已说明；只核对开关，未声称运行中回合即时获得新权限。",
+          "originalChecked": true,
+          "target": 1,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 原验收4：授权从下一轮生效的限制已说明；只核对开关，未声称运行中回合即时获得新权限。",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## 行政验收清单与 DoD\n- [x] agents 实际回读可见并与上述角色分工一致。\n- [x] 未授予的重权限保持关闭；不做未经授权推送试验。\n- [x] Codex 模型/档位与供给经 agents 和 machines 回读；DarkFlame 在线，Codex 可用。\n- [x] 授权从下一轮生效的限制已说明；只核对开关，未声称运行中回合即时获得新权限。\n本条授权行政检查已完成；它不替代 G1 输入、P1 事实、R1 规格及 D0 视觉门禁。后续任何新增权限需求按实际任务单独请用户批准。",
+          "sha256": "93b2cd47abeb4cacf0613287a21e1801edf0afd43b9421420fd2918e4ec1eb60",
+          "target": 1
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#1 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 2,
+      "id": "qJKk_SAxN29AdBHERBl7u",
+      "owner": "历史任务 owner",
+      "originalTests": [
+        {
+          "id": "todo-2-T1",
+          "text": "16 条断言逐条有结论",
+          "originalChecked": false,
+          "target": 2,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 原验收1：16 条断言逐条有结论",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-2-T2",
+          "text": "每条被推翻的断言都有替代证据",
+          "originalChecked": false,
+          "target": 2,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 原验收2：每条被推翻的断言都有替代证据",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-2-T3",
+          "text": "检索零命中时写明检索词与排除项（吸取「国内关键词」那次教训）",
+          "originalChecked": false,
+          "target": 2,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 原验收3：检索零命中时写明检索词与排除项（吸取「国内关键词」那次教训）",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-2-T4",
+          "text": "结论已同步到计划与 ADR，交叉引用可解析",
+          "originalChecked": false,
+          "target": 2,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 原验收4：结论已同步到计划与 ADR，交叉引用可解析",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n16 条全部有结论且计划与 ADR 的证据表已更新；P1 完成后 B/A/D/C 链方可开工。\n\n",
+          "sha256": "a4ca2439701ba8346f4242b0b07a562b5dca91cb72f5d927ebc7627e4152d09b",
+          "target": 2
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#2 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 3,
+      "id": "q_1zKPuGsG-2ZRUwOwQx4",
+      "owner": "R1 独立规格审查者",
+      "originalTests": [
+        {
+          "id": "todo-3-T1",
+          "text": "ADR 0074–0078 全覆盖；每条 finding 有实际 file:line 证据。",
+          "originalChecked": false,
+          "target": 3,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 原验收1：ADR 0074–0078 全覆盖；每条 finding 有实际 file:line 证据。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-3-T2",
+          "text": "与既有 Accepted 决策，尤其 0028/0052/0064 的冲突逐条列出。",
+          "originalChecked": false,
+          "target": 3,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 原验收2：与既有 Accepted 决策，尤其 0028/0052/0064 的冲突逐条列出。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-3-T3",
+          "text": "AGENTS.md 九类测试覆盖矩阵按 feature 的适用性核对，不用全绿口号代替覆盖。",
+          "originalChecked": false,
+          "target": 3,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 原验收3：AGENTS.md 九类测试覆盖矩阵按 feature 的适用性核对，不用全绿口号代替覆盖。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-3-T4",
+          "text": "领域不变量逐条核对：租约不授权、停机服务端强制、状态+事件+outbox 同事务、View Model 非授权来源。",
+          "originalChecked": false,
+          "target": 3,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 原验收4：领域不变量逐条核对：租约不授权、停机服务端强制、状态+事件+outbox 同事务、View Model 非授权来源。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-3-T5",
+          "text": "blocking 与 high 全部有 owner/处置，并在修订后复核；真实新设计分歧交总管向用户裁决。",
+          "originalChecked": false,
+          "target": 3,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 原验收5：blocking 与 high 全部有 owner/处置，并在修订后复核；真实新设计分歧交总管向用户裁决。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-3-T6",
+          "text": "原测试清单与 DoD 分配到相应合并/拆分任务，不遗漏，不留互相矛盾的旧要求。",
+          "originalChecked": false,
+          "target": 3,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 原验收6：原测试清单与 DoD 分配到相应合并/拆分任务，不遗漏，不留互相矛盾的旧要求。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-3-T7",
+          "text": "source/版本/引用与 P1 冻结事实一致；本地计划与 Todos 可逐项对齐。",
+          "originalChecked": false,
+          "target": 3,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 原验收7：source/版本/引用与 P1 冻结事实一致；本地计划与 Todos 可逐项对齐。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD 与依赖\n审查意见和处置/复核证据落盘，blocking/high 解决，完整规格具备可执行性；经总管按用户委托确认及合并后，才放行相关 B/A/D/C 实现。S1 为可选流程资产，R1 不靠其门禁间接推进。\nwithPlan 必须为 true。独立审查无需 push/merge 授权；本任务报告由构建平台正常交付，合并仍经获批流程。依赖：P1；最终 G1 settled 且主线证明后才确认完整规格修订执行与合入。本次规划已独审通过；最终G1已done并主线核实，现允许完整规格修订执行，不能借此放行产品实现。blocks 受影响的 B/A/D/C 实现和 S1 的规范定稿；F链审查/计划修订纳入，功能实现授权不自动扩大。\n\n",
+          "sha256": "2fd880bbc768f44d6f2255e8dcaef26d7c6dfe75e40d35ed620c53bb7af328f7",
+          "target": 3
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 happy path：输入来源、历史记录和处置校验",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 unauthorized actor：输入来源、历史记录和处置校验",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 invalid state transition：输入来源、历史记录和处置校验",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 duplicate idempotency key：输入来源、历史记录和处置校验",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 stale revision：输入来源、历史记录和处置校验",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 transaction failure：输入来源、历史记录和处置校验",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 webhook/job replay：输入来源、历史记录和处置校验",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 concurrent request：输入来源、历史记录和处置校验",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#3 server restart/outbox recovery：输入来源、历史记录和处置校验",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 4,
+      "id": "FX01PP879WjRSp0LVcoM2",
+      "owner": "S1 执行者",
+      "originalTests": [
+        {
+          "id": "todo-4-T1",
+          "text": "技能可被新 agent 加载并实际改变其行为（有可观察差异）",
+          "originalChecked": false,
+          "target": 4,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 原验收1：技能可被新 agent 加载并实际改变其行为（有可观察差异）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-4-T2",
+          "text": "技能内容中无会漂移的硬编码编号清单",
+          "originalChecked": false,
+          "target": 4,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 原验收2：技能内容中无会漂移的硬编码编号清单",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-4-T3",
+          "text": "未开启「创建技能」授权时，流程正确降级为「记录待管理员代建」而非静默失败",
+          "originalChecked": false,
+          "target": 4,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 原验收3：未开启「创建技能」授权时，流程正确降级为「记录待管理员代建」而非静默失败",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n技能入库且被至少一个 agent 加载；后续 ADR 与 plan 任务可直接引用该技能。\n\n",
+          "sha256": "d2d5a485e999ace934b4c16d70b8e6f6410059cab2e8c5a4e5607265580ca0a8",
+          "target": 4
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "流程映射静态核验。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 happy path：技能流程示例包含规格全文/DoD/blocks；例外不冒称 WorkMesh Project/WorkItem 已同步；必要裁决与证据可追溯。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#4 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 5,
+      "id": "ti53hOGbvnBNrvjXXveGO",
+      "owner": "B1/B2 执行者",
+      "originalTests": [
+        {
+          "id": "todo-5-T1",
+          "text": "发送前崩溃、发送后崩溃及服务端/客户端重启后，同 pending 身份在有效窗口可拿到同一凭据。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收1：发送前崩溃、发送后崩溃及服务端/客户端重启后，同 pending 身份在有效窗口可拿到同一凭据。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-5-T2",
+          "text": "同 key 改 body 冲突；新 key 仍按既有规则拒绝；另一 claimant 仅持原配对码与公开 connection id 不得取令牌。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收2：同 key 改 body 冲突；新 key 仍按既有规则拒绝；另一 claimant 仅持原配对码与公开 connection id 不得取令牌。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-5-T3",
+          "text": "窗口外/过期密文擦除后拒绝；并发启动只产生同一 pending 身份；崩溃不留半份记录。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收3：窗口外/过期密文擦除后拒绝；并发启动只产生同一 pending 身份；崩溃不留半份记录。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-5-T4",
+          "text": "既有 stage5-agent-connections.integration.test.ts 的重放同体断言不回归。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收4：既有 stage5-agent-connections.integration.test.ts 的重放同体断言不回归。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-5-T5",
+          "text": "黄金路径完整端到端，两步流程可用且协议校验一步不减。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收5：黄金路径完整端到端，两步流程可用且协议校验一步不减。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-5-T6",
+          "text": "指纹不符、签名错、Skill 字节篡改、错误 Team/principal/profile/capabilities/authenticated_credential、误用 overlap 凭据均拒绝且不写配置。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收6：指纹不符、签名错、Skill 字节篡改、错误 Team/principal/profile/capabilities/authenticated_credential、误用 overlap 凭据均拒绝且不写配置。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-5-T7",
+          "text": "已撤销/过期凭据的当前身份验证拒绝，绝不写入新配置。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收7：已撤销/过期凭据的当前身份验证拒绝，绝不写入新配置。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-5-T8",
+          "text": "配置替换中途被杀或秘密存储/配置写入失败，既有配置及秘密引用完好。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收8：配置替换中途被杀或秘密存储/配置写入失败，既有配置及秘密引用完好。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-5-T9",
+          "text": "明文令牌仅落秘密存储；配对码仅落受保护 pending；stdout/stderr/普通配置/工件无秘密；POSIX 权限和 Windows 实际 ACL 验证。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收9：明文令牌仅落秘密存储；配对码仅落受保护 pending；stdout/stderr/普通配置/工件无秘密；POSIX 权限和 Windows 实际 ACL 验证。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-5-T10",
+          "text": "同配对码再次运行复用 pending，合法重放幂等；直接输入/扫码不削弱熵。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收10：同配对码再次运行复用 pending，合法重放幂等；直接输入/扫码不削弱熵。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD 与依赖\n上述断言全绿、零 schema 变更、pnpm lint/typecheck/test/test:integration/test:e2e 全绿，ADR 0043/0046 实质要求未削弱；规范、测试映射与证据提交仓库。原 B1/B2 的可执行收益在同一命令中验收。\n依赖：P0、G1、P1、R1；blocks #7 B3，进而 [#20](todo:JfGwKk3prfIie6X2u2J51)。\n\n",
+          "sha256": "40dfcd20570d1c1ed45854da9e813d57f732b3480bb825674902d652bd7da3c6",
+          "target": 5
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 happy path：断网/丢响应/发送前后崩溃与两进程竞争均同 key/body/context；同 key 异体拒绝；陌生 claimant 无令牌；窗口外/密文擦除拒绝；服务端/客户端重启同响应；错误 Team/principal/profile/Skill/能力/过期/撤权/overlap 零正式写入；提交阶段崩溃和秘密写入/rename 失败补偿；stdout/stderr/config 无明文令牌，pending 允许配对码但 ACL 正确。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 unauthorized actor：断网/丢响应/发送前后崩溃与两进程竞争均同 key/body/context；同 key 异体拒绝；陌生 claimant 无令牌；窗口外/密文擦除拒绝；服务端/客户端重启同响应；错误 Team/principal/profile/Skill/能力/过期/撤权/overlap 零正式写入；提交阶段崩溃和秘密写入/rename 失败补偿；stdout/stderr/config 无明文令牌，pending 允许配对码但 ACL 正确。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 invalid state transition：断网/丢响应/发送前后崩溃与两进程竞争均同 key/body/context；同 key 异体拒绝；陌生 claimant 无令牌；窗口外/密文擦除拒绝；服务端/客户端重启同响应；错误 Team/principal/profile/Skill/能力/过期/撤权/overlap 零正式写入；提交阶段崩溃和秘密写入/rename 失败补偿；stdout/stderr/config 无明文令牌，pending 允许配对码但 ACL 正确。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 duplicate idempotency key：断网/丢响应/发送前后崩溃与两进程竞争均同 key/body/context；同 key 异体拒绝；陌生 claimant 无令牌；窗口外/密文擦除拒绝；服务端/客户端重启同响应；错误 Team/principal/profile/Skill/能力/过期/撤权/overlap 零正式写入；提交阶段崩溃和秘密写入/rename 失败补偿；stdout/stderr/config 无明文令牌，pending 允许配对码但 ACL 正确。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 stale revision：断网/丢响应/发送前后崩溃与两进程竞争均同 key/body/context；同 key 异体拒绝；陌生 claimant 无令牌；窗口外/密文擦除拒绝；服务端/客户端重启同响应；错误 Team/principal/profile/Skill/能力/过期/撤权/overlap 零正式写入；提交阶段崩溃和秘密写入/rename 失败补偿；stdout/stderr/config 无明文令牌，pending 允许配对码但 ACL 正确。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 transaction failure：断网/丢响应/发送前后崩溃与两进程竞争均同 key/body/context；同 key 异体拒绝；陌生 claimant 无令牌；窗口外/密文擦除拒绝；服务端/客户端重启同响应；错误 Team/principal/profile/Skill/能力/过期/撤权/overlap 零正式写入；提交阶段崩溃和秘密写入/rename 失败补偿；stdout/stderr/config 无明文令牌，pending 允许配对码但 ACL 正确。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 webhook/job replay：断网/丢响应/发送前后崩溃与两进程竞争均同 key/body/context；同 key 异体拒绝；陌生 claimant 无令牌；窗口外/密文擦除拒绝；服务端/客户端重启同响应；错误 Team/principal/profile/Skill/能力/过期/撤权/overlap 零正式写入；提交阶段崩溃和秘密写入/rename 失败补偿；stdout/stderr/config 无明文令牌，pending 允许配对码但 ACL 正确。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 concurrent request：断网/丢响应/发送前后崩溃与两进程竞争均同 key/body/context；同 key 异体拒绝；陌生 claimant 无令牌；窗口外/密文擦除拒绝；服务端/客户端重启同响应；错误 Team/principal/profile/Skill/能力/过期/撤权/overlap 零正式写入；提交阶段崩溃和秘密写入/rename 失败补偿；stdout/stderr/config 无明文令牌，pending 允许配对码但 ACL 正确。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 server restart/outbox recovery：断网/丢响应/发送前后崩溃与两进程竞争均同 key/body/context；同 key 异体拒绝；陌生 claimant 无令牌；窗口外/密文擦除拒绝；服务端/客户端重启同响应；错误 Team/principal/profile/Skill/能力/过期/撤权/overlap 零正式写入；提交阶段崩溃和秘密写入/rename 失败补偿；stdout/stderr/config 无明文令牌，pending 允许配对码但 ACL 正确。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 6,
+      "id": "xym1i0KcnxOLi0T-hxd1j",
+      "owner": "历史任务 owner",
+      "originalTests": [],
+      "originalDoD": [],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#6 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#6 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#6 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#6 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#6 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#6 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#6 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#6 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#6 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 7,
+      "id": "6EzX6xCA-_m72aQU1BEHX",
+      "owner": "B3 执行者",
+      "originalTests": [
+        {
+          "id": "todo-7-T1",
+          "text": "表驱动：每条错误码都有可执行的 `next_action`",
+          "originalChecked": false,
+          "target": 7,
+          "testFile": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 原验收1：表驱动：每条错误码都有可执行的 `next_action`",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-7-T2",
+          "text": "耗尽 endpoint/subject-client 桶或触发失败退避不影响另一个 operation，按 P1 冻结事实断言。",
+          "originalChecked": false,
+          "target": 7,
+          "testFile": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 原验收2：耗尽 endpoint/subject-client 桶或触发失败退避不影响另一个 operation，按 P1 冻结事实断言。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-7-T3",
+          "text": "耗尽共享 IP 桶**确实同时影响**两者（这才是真正共用的）",
+          "originalChecked": false,
+          "target": 7,
+          "testFile": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 原验收3：耗尽共享 IP 桶**确实同时影响**两者（这才是真正共用的）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-7-T4",
+          "text": "错误码 / wrong slug / wrong 已知类型 / 未知枚举 四种输入分别断言",
+          "originalChecked": false,
+          "target": 7,
+          "testFile": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 原验收4：错误码 / wrong slug / wrong 已知类型 / 未知枚举 四种输入分别断言",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-7-T5",
+          "text": "429 尊重 Retry-After；store 故障 fail closed",
+          "originalChecked": false,
+          "target": 7,
+          "testFile": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 原验收5：429 尊重 Retry-After；store 故障 fail closed",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n错误形状统一 + 限流语义有测试固定 + 全量检查全绿。\n\n",
+          "sha256": "903593c118d9f6e937243df23eb75bfb137c66e4184aaf95235ed96af2836087",
+          "target": 7
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 happy path：wrong code/wrong slug/known wrong type/invalid enum 分别断言 attempts；固定时钟验证两操作桶隔离、IP/socket 共享、429 Retry-After/store fail closed，指令可执行且无秘密。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 unauthorized actor：wrong code/wrong slug/known wrong type/invalid enum 分别断言 attempts；固定时钟验证两操作桶隔离、IP/socket 共享、429 Retry-After/store fail closed，指令可执行且无秘密。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 invalid state transition：wrong code/wrong slug/known wrong type/invalid enum 分别断言 attempts；固定时钟验证两操作桶隔离、IP/socket 共享、429 Retry-After/store fail closed，指令可执行且无秘密。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 duplicate idempotency key：wrong code/wrong slug/known wrong type/invalid enum 分别断言 attempts；固定时钟验证两操作桶隔离、IP/socket 共享、429 Retry-After/store fail closed，指令可执行且无秘密。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 stale revision：wrong code/wrong slug/known wrong type/invalid enum 分别断言 attempts；固定时钟验证两操作桶隔离、IP/socket 共享、429 Retry-After/store fail closed，指令可执行且无秘密。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 transaction failure：wrong code/wrong slug/known wrong type/invalid enum 分别断言 attempts；固定时钟验证两操作桶隔离、IP/socket 共享、429 Retry-After/store fail closed，指令可执行且无秘密。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 webhook/job replay：wrong code/wrong slug/known wrong type/invalid enum 分别断言 attempts；固定时钟验证两操作桶隔离、IP/socket 共享、429 Retry-After/store fail closed，指令可执行且无秘密。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 concurrent request：wrong code/wrong slug/known wrong type/invalid enum 分别断言 attempts；固定时钟验证两操作桶隔离、IP/socket 共享、429 Retry-After/store fail closed，指令可执行且无秘密。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+          "caseName": "#7 server restart/outbox recovery：wrong code/wrong slug/known wrong type/invalid enum 分别断言 attempts；固定时钟验证两操作桶隔离、IP/socket 共享、429 Retry-After/store fail closed，指令可执行且无秘密。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 8,
+      "id": "Hxr1xIdh4poZp3F5laGrT",
+      "owner": "A1 执行者",
+      "originalTests": [
+        {
+          "id": "todo-8-T1",
+          "text": "四项检查各自的 happy path",
+          "originalChecked": false,
+          "target": 8,
+          "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 原验收1：四项检查各自的 happy path",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-8-T2",
+          "text": "跨 Team 与他人个人模型**不泄露存在性**",
+          "originalChecked": false,
+          "target": 8,
+          "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 原验收2：跨 Team 与他人个人模型**不泄露存在性**",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-8-T3",
+          "text": "**无 assignment 的空闲 Runner 不得被报成离线**（`unknown`）",
+          "originalChecked": false,
+          "target": 8,
+          "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 原验收3：**无 assignment 的空闲 Runner 不得被报成离线**（`unknown`）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-8-T4",
+          "text": "模型 disabled → `blocked`；模型属于他人 → 对该调用者 `blocked` 且不泄露",
+          "originalChecked": false,
+          "target": 8,
+          "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 原验收4：模型 disabled → `blocked`；模型属于他人 → 对该调用者 `blocked` 且不泄露",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-8-T5",
+          "text": "非仓库工作 → `not_applicable` 而非 `blocked`",
+          "originalChecked": false,
+          "target": 8,
+          "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 原验收5：非仓库工作 → `not_applicable` 而非 `blocked`",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-8-T6",
+          "text": "断言**无状态/事件/outbox/receipt 写入**（不是「事务计数为 0」）",
+          "originalChecked": false,
+          "target": 8,
+          "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 原验收6：断言**无状态/事件/outbox/receipt 写入**（不是「事务计数为 0」）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-8-T7",
+          "text": "路由策略矩阵用生成器重生成，不手改",
+          "originalChecked": false,
+          "target": 8,
+          "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 原验收7：路由策略矩阵用生成器重生成，不手改",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n投影可用 + 全部作用域与三态断言通过 + 零 schema 变更 + 全量检查全绿。\n\n",
+          "sha256": "cda60aaba32650575b09b070ac08ad84a03c1cfe128d57693e754808532fa9b6",
+          "target": 8
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 happy path：personal/Team/跨workspace 隔离、撤权实时变化；empty/active/disabled 组合；非仓库项 not_applicable；unknown 不误判 blocked；重复GET与失败GET零写入。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 unauthorized actor：personal/Team/跨workspace 隔离、撤权实时变化；empty/active/disabled 组合；非仓库项 not_applicable；unknown 不误判 blocked；重复GET与失败GET零写入。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 不适用：A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 不适用：A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 不适用：A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 不适用：A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 不适用：A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 concurrent request：personal/Team/跨workspace 隔离、撤权实时变化；empty/active/disabled 组合；非仓库项 not_applicable；unknown 不误判 blocked；重复GET与失败GET零写入。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+          "caseName": "#8 不适用：A1仅GET，无状态转移、幂等键、revision、事务写入、job/outbox；用零写入负向断言验证。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 9,
+      "id": "0BkezbmWV6k8vwrlSNuF_",
+      "owner": "A2 执行者",
+      "originalTests": [
+        {
+          "id": "todo-9-T1",
+          "text": "列表顺序 = 依赖深度",
+          "originalChecked": false,
+          "target": 9,
+          "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 原验收1：列表顺序 = 依赖深度",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-9-T2",
+          "text": "点击深链后返回会重算",
+          "originalChecked": false,
+          "target": 9,
+          "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 原验收2：点击深链后返回会重算",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-9-T3",
+          "text": "全部满足时横幅不渲染",
+          "originalChecked": false,
+          "target": 9,
+          "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 原验收3：全部满足时横幅不渲染",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-9-T4",
+          "text": "非 unmet 的空状态不长横幅",
+          "originalChecked": false,
+          "target": 9,
+          "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 原验收4：非 unmet 的空状态不长横幅",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-9-T5",
+          "text": "路由回退 / 键盘 / 窄屏 / i18n 回归",
+          "originalChecked": false,
+          "target": 9,
+          "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 原验收5：路由回退 / 键盘 / 窄屏 / i18n 回归",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-9-T6",
+          "text": "e2e：装完 Lite → 看到缺配置 → 逐项补齐 → 横幅消失",
+          "originalChecked": false,
+          "target": 9,
+          "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 原验收6：e2e：装完 Lite → 看到缺配置 → 逐项补齐 → 横幅消失",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n未满足项列表可用 + 全部交互断言通过 + 既有 IA 与导航无回归。\n\n",
+          "sha256": "875c810a8387fdf1e330bbe48b4b741b7720d0162bfe830103354f1275cf2db9",
+          "target": 9
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 happy path：空白/已配置/部分撤权/非仓库 Team、canonical 返回与焦点、窄屏列表可达；仅对应缺口有主动作；配置成功不自动激活；Lite 安装兼容待验证不得伪称已交付。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 unauthorized actor：空白/已配置/部分撤权/非仓库 Team、canonical 返回与焦点、窄屏列表可达；仅对应缺口有主动作；配置成功不自动激活；Lite 安装兼容待验证不得伪称已交付。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 invalid state transition：空白/已配置/部分撤权/非仓库 Team、canonical 返回与焦点、窄屏列表可达；仅对应缺口有主动作；配置成功不自动激活；Lite 安装兼容待验证不得伪称已交付。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 concurrent request：空白/已配置/部分撤权/非仓库 Team、canonical 返回与焦点、窄屏列表可达；仅对应缺口有主动作；配置成功不自动激活；Lite 安装兼容待验证不得伪称已交付。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "#9 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 10,
+      "id": "MPhtZiff23B33m9i2equq",
+      "owner": "历史任务 owner",
+      "originalTests": [
+        {
+          "id": "todo-10-T1",
+          "text": "覆盖全部受影响界面",
+          "originalChecked": false,
+          "target": 10,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 原验收1：覆盖全部受影响界面",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-10-T2",
+          "text": "同一视口两次采集可重复",
+          "originalChecked": false,
+          "target": 10,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 原验收2：同一视口两次采集可重复",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-10-T3",
+          "text": "基线可被 D1 的视觉 diff 直接消费",
+          "originalChecked": false,
+          "target": 10,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 原验收3：基线可被 D1 的视觉 diff 直接消费",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n基线产出并可重放；D1 开工前以此为门禁。\n\n",
+          "sha256": "1c3db7fb16c2d251582ff5f176883a26227973d3c4b47d5373835078c7943640",
+          "target": 10
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#10 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 11,
+      "id": "IJQA_DfxU0hF5e8L5Xb3v",
+      "owner": "D1a 执行者",
+      "originalTests": [
+        {
+          "id": "todo-11-T1",
+          "text": "旧 token 与消费方仍可用，有消费方时禁止删除的静态保护成立。",
+          "originalChecked": false,
+          "target": 11,
+          "testFile": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 原验收1：旧 token 与消费方仍可用，有消费方时禁止删除的静态保护成立。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-11-T2",
+          "text": "新增槽和映射带原始测量来源，状态色保持语义 token。",
+          "originalChecked": false,
+          "target": 11,
+          "testFile": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 原验收2：新增槽和映射带原始测量来源，状态色保持语义 token。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-11-T3",
+          "text": "没有根值替换/界面迁移，现有视觉基线无意外变化。",
+          "originalChecked": false,
+          "target": 11,
+          "testFile": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 原验收3：没有根值替换/界面迁移，现有视觉基线无意外变化。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-11-T4",
+          "text": "theme-unification.spec.ts 与必需检查通过。",
+          "originalChecked": false,
+          "target": 11,
+          "testFile": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 原验收4：theme-unification.spec.ts 与必需检查通过。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-11-T5",
+          "text": "映射与任何色彩位移的依据写入相应 ADR；真实视觉取舍向用户裁决。",
+          "originalChecked": false,
+          "target": 11,
+          "testFile": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 原验收5：映射与任何色彩位移的依据写入相应 ADR；真实视觉取舍向用户裁决。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD 与依赖\n并存槽与映射可被 D1b 消费、既有界面/旧槽未受破坏、证据入库；本条完成不冒充原 D1 最终全部迁移完成。\n依赖：G1、P1、R1、D0；blocks [#21](todo:2j2sxT5wJ-l001efH_meJ)，再到 D2。\n\n",
+          "sha256": "0dcba972201a1fae3eb97b6a7548249ad3704ece3e43ac2bb3b5a1dc32dbb088",
+          "target": 11
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 happy path：新增槽不改变旧computed值；light/dark 继承解析、theme.test.tsx 与 theme-unification.spec.ts 回归；旧值仍消费禁止清理；D0 亮色基线保持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 unauthorized actor：新增槽不改变旧computed值；light/dark 继承解析、theme.test.tsx 与 theme-unification.spec.ts 回归；旧值仍消费禁止清理；D0 亮色基线保持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 invalid state transition：新增槽不改变旧computed值；light/dark 继承解析、theme.test.tsx 与 theme-unification.spec.ts 回归；旧值仍消费禁止清理；D0 亮色基线保持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 concurrent request：新增槽不改变旧computed值；light/dark 继承解析、theme.test.tsx 与 theme-unification.spec.ts 回归；旧值仍消费禁止清理；D0 亮色基线保持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/features/navigation/theme.test.tsx",
+          "caseName": "#11 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 12,
+      "id": "MRdRKNdufZ2cFEv3hwaf7",
+      "owner": "D2/D3 执行者",
+      "originalTests": [
+        {
+          "id": "todo-12-T1",
+          "text": "三区存在且顺序固定；超长标题截断2行且卡片高度不变。",
+          "originalChecked": false,
+          "target": 12,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 原验收1：三区存在且顺序固定；超长标题截断2行且卡片高度不变。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-12-T2",
+          "text": "计算样式 box-shadow:none；列背景为 inset 槽而非页面背景。",
+          "originalChecked": false,
+          "target": 12,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 原验收2：计算样式 box-shadow:none；列背景为 inset 槽而非页面背景。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-12-T3",
+          "text": "遍历实际工作项类别、会话枚举、多个会话/无会话，验证其与 Attention 分开展示。",
+          "originalChecked": false,
+          "target": 12,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 原验收3：遍历实际工作项类别、会话枚举、多个会话/无会话，验证其与 Attention 分开展示。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-12-T4",
+          "text": "open/expired/decided Attention 及来源关口正确呈现；其他人的 Attention 对当前调用者不可见。",
+          "originalChecked": false,
+          "target": 12,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 原验收4：open/expired/decided Attention 及来源关口正确呈现；其他人的 Attention 对当前调用者不可见。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-12-T5",
+          "text": "attention 仅由授权投影决定，不用状态名前缀；blocked 不撞 attention。",
+          "originalChecked": false,
+          "target": 12,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 原验收5：attention 仅由授权投影决定，不用状态名前缀；blocked 不撞 attention。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-12-T6",
+          "text": "原色值距离阈值在计划中给出依据和待调起始值，不把未指定数字当用户验收标准。",
+          "originalChecked": false,
+          "target": 12,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 原验收6：原色值距离阈值在计划中给出依据和待调起始值，不把未指定数字当用户验收标准。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-12-T7",
+          "text": "theme-unification.spec.ts 与适用必需检查无回归。",
+          "originalChecked": false,
+          "target": 12,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 原验收7：theme-unification.spec.ts 与适用必需检查无回归。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD 与依赖\n结构契约、零阴影、实际状态/授权 attention 与单暖色不变量均有断言及证据；无虚构枚举假验收；报告提交仓库。\n依赖：G1、P1、R1、D1a、[#21](todo:2j2sxT5wJ-l001efH_meJ)；blocks D4。\n\n",
+          "sha256": "94e70b7b059df3a9fdd72c867a9282cd228fd6c9b147d1f8ed1882890e40b0d8",
+          "target": 12
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 happy path：真实 workflow categories backlog/planned/started/completed/canceled 和全部真实 Session 枚举；自定义状态；当前人/其他人/已决定/过期 Attention；超长标题、三区顺序、computed shadow none、blocked 槽不同于attention，明暗均成立。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 unauthorized actor：真实 workflow categories backlog/planned/started/completed/canceled 和全部真实 Session 枚举；自定义状态；当前人/其他人/已决定/过期 Attention；超长标题、三区顺序、computed shadow none、blocked 槽不同于attention，明暗均成立。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 invalid state transition：真实 workflow categories backlog/planned/started/completed/canceled 和全部真实 Session 枚举；自定义状态；当前人/其他人/已决定/过期 Attention；超长标题、三区顺序、computed shadow none、blocked 槽不同于attention，明暗均成立。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 concurrent request：真实 workflow categories backlog/planned/started/completed/canceled 和全部真实 Session 枚举；自定义状态；当前人/其他人/已决定/过期 Attention；超长标题、三区顺序、computed shadow none、blocked 槽不同于attention，明暗均成立。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#12 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 13,
+      "id": "O2iz8mb_26RoIlnpfXwxV",
+      "owner": "D4 执行者",
+      "originalTests": [
+        {
+          "id": "todo-13-T1",
+          "text": "分隔线拖动不改变路由与焦点",
+          "originalChecked": false,
+          "target": 13,
+          "testFile": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 原验收1：分隔线拖动不改变路由与焦点",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-13-T2",
+          "text": "隐藏 / 最大化状态跨会话保持",
+          "originalChecked": false,
+          "target": 13,
+          "testFile": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 原验收2：隐藏 / 最大化状态跨会话保持",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-13-T3",
+          "text": "窄屏回退行为正确",
+          "originalChecked": false,
+          "target": 13,
+          "testFile": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 原验收3：窄屏回退行为正确",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-13-T4",
+          "text": "键盘可达",
+          "originalChecked": false,
+          "target": 13,
+          "testFile": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 原验收4：键盘可达",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-13-T5",
+          "text": "A2 的就绪列表在窄屏下仍可达（不因布局丢失）",
+          "originalChecked": false,
+          "target": 13,
+          "testFile": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 原验收5：A2 的就绪列表在窄屏下仍可达（不因布局丢失）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n布局可用 + 状态持久 + 导航与 IA 无回归 + 窄屏与键盘断言通过。\n\n",
+          "sha256": "23525814930e6c3eba223478743104dcce5391b358789fbfd2fba39f3c6e81ad",
+          "target": 13
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 happy path：键盘、窄屏、焦点、Back/Forward、状态记忆；A2列表布局整合验收由本 owner 承担；无任命/feature off 不显示可用总管。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 unauthorized actor：键盘、窄屏、焦点、Back/Forward、状态记忆；A2列表布局整合验收由本 owner 承担；无任命/feature off 不显示可用总管。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 invalid state transition：键盘、窄屏、焦点、Back/Forward、状态记忆；A2列表布局整合验收由本 owner 承担；无任命/feature off 不显示可用总管。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 concurrent request：键盘、窄屏、焦点、Back/Forward、状态记忆；A2列表布局整合验收由本 owner 承担；无任命/feature off 不显示可用总管。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "#13 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 14,
+      "id": "YLnrl8RaxiZjEjsVQ80B2",
+      "owner": "D5a 执行者",
+      "originalTests": [
+        {
+          "id": "todo-14-T1",
+          "text": "主动作与菜单每个动作的 happy path 和展示/命令/revision/确认面映射。",
+          "originalChecked": false,
+          "target": 14,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 原验收1：主动作与菜单每个动作的 happy path 和展示/命令/revision/确认面映射。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-14-T2",
+          "text": "领域写入未授权 actor 被拒、陈旧 revision 被拒、重复幂等键无第二次变更。",
+          "originalChecked": false,
+          "target": 14,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 原验收2：领域写入未授权 actor 被拒、陈旧 revision 被拒、重复幂等键无第二次变更。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-14-T3",
+          "text": "破坏性转换必须确认；无确认重置不存在。",
+          "originalChecked": false,
+          "target": 14,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 原验收3：破坏性转换必须确认；无确认重置不存在。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-14-T4",
+          "text": "纯本地操作零领域写入，不错误要求 mutation 身份参数。",
+          "originalChecked": false,
+          "target": 14,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 原验收4：纯本地操作零领域写入，不错误要求 mutation 身份参数。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-14-T5",
+          "text": "原 D5 拖拽/多选/草稿测试已完整交接给 D5b，不遗漏。",
+          "originalChecked": false,
+          "target": 14,
+          "testFile": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 原验收5：原 D5 拖拽/多选/草稿测试已完整交接给 D5b，不遗漏。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD 与依赖\n本项主动作/菜单遵守既有 Command 纪律与纯本地操作边界，负向断言成立，必需检查通过，无领域不变量被绕过；映射和证据提交仓库。\n依赖：G1、P1、R1、D4；blocks [#22](todo:gY4n2fZhVLa9FcazFC_bY)；不阻塞无实际依赖的 C1/C2/C3。\n\n",
+          "sha256": "783025cf616fb17be6912ac306257bfbd37d09a1f170c1eccd2d1df4ec0781f7",
+          "target": 14
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 happy path：每项主动作/菜单正向、unauthorized/stale/replay 保持既有命令行为；本地复制/导航零mutation；破坏性确认可取消且零写入；清空计划/会话路径不存在。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 unauthorized actor：每项主动作/菜单正向、unauthorized/stale/replay 保持既有命令行为；本地复制/导航零mutation；破坏性确认可取消且零写入；清空计划/会话路径不存在。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 invalid state transition：每项主动作/菜单正向、unauthorized/stale/replay 保持既有命令行为；本地复制/导航零mutation；破坏性确认可取消且零写入；清空计划/会话路径不存在。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 duplicate idempotency key：每项主动作/菜单正向、unauthorized/stale/replay 保持既有命令行为；本地复制/导航零mutation；破坏性确认可取消且零写入；清空计划/会话路径不存在。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 stale revision：每项主动作/菜单正向、unauthorized/stale/replay 保持既有命令行为；本地复制/导航零mutation；破坏性确认可取消且零写入；清空计划/会话路径不存在。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 transaction failure：每项主动作/菜单正向、unauthorized/stale/replay 保持既有命令行为；本地复制/导航零mutation；破坏性确认可取消且零写入；清空计划/会话路径不存在。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 webhook/job replay：每项主动作/菜单正向、unauthorized/stale/replay 保持既有命令行为；本地复制/导航零mutation；破坏性确认可取消且零写入；清空计划/会话路径不存在。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 concurrent request：每项主动作/菜单正向、unauthorized/stale/replay 保持既有命令行为；本地复制/导航零mutation；破坏性确认可取消且零写入；清空计划/会话路径不存在。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "#14 server restart/outbox recovery：每项主动作/菜单正向、unauthorized/stale/replay 保持既有命令行为；本地复制/导航零mutation；破坏性确认可取消且零写入；清空计划/会话路径不存在。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 15,
+      "id": "kkG9VeT3_uTzREhjnX2ve",
+      "owner": "C1 执行者",
+      "originalTests": [
+        {
+          "id": "todo-15-T1",
+          "text": "源事件目标选择、每目标幂等去重；target 管理入口的授权/revision/幂等/脱敏与禁用抑制。",
+          "originalChecked": false,
+          "target": 15,
+          "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 原验收1：源事件目标选择、每目标幂等去重；target 管理入口的授权/revision/幂等/脱敏与禁用抑制。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-15-T2",
+          "text": "两 worker 竞争只允许有效 fence 处理，一个逻辑 attempt，旧 fence ack 被拒。",
+          "originalChecked": false,
+          "target": 15,
+          "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 原验收2：两 worker 竞争只允许有效 fence 处理，一个逻辑 attempt，旧 fence ack 被拒。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-15-T3",
+          "text": "单渠道故障不导致其他目标正常投递重投；外发未知按至少一次与对账路径记录。",
+          "originalChecked": false,
+          "target": 15,
+          "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 原验收3：单渠道故障不导致其他目标正常投递重投；外发未知按至少一次与对账路径记录。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-15-T4",
+          "text": "撤权/停用后抑制，断言零外发；Query 零投递写入。",
+          "originalChecked": false,
+          "target": 15,
+          "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 原验收4：撤权/停用后抑制，断言零外发；Query 零投递写入。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-15-T5",
+          "text": "每个提交/发送边界崩溃、checkpoint 保存前后崩溃均有恢复证据。",
+          "originalChecked": false,
+          "target": 15,
+          "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 原验收5：每个提交/发送边界崩溃、checkpoint 保存前后崩溃均有恢复证据。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-15-T6",
+          "text": "source-event、fan-out、job、ack 的同体去重/异体冲突与重放恢复。",
+          "originalChecked": false,
+          "target": 15,
+          "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 原验收6：source-event、fan-out、job、ack 的同体去重/异体冲突与重放恢复。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-15-T7",
+          "text": "源 revision 陈旧不形成决策写入；本批不测试或实现未来并发相反审批/决策回调。",
+          "originalChecked": false,
+          "target": 15,
+          "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 原验收7：源 revision 陈旧不形成决策写入；本批不测试或实现未来并发相反审批/决策回调。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-15-T8",
+          "text": "无 Redis 档位明确不支持，既有路径不受影响。",
+          "originalChecked": false,
+          "target": 15,
+          "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 原验收8：无 Redis 档位明确不支持，既有路径不受影响。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD 与依赖\n契约落地、崩溃/并发/撤权/配置断言通过，无适配器时既有路径不受影响；迁移如确有需要遵循 AGENTS.md 新迁移+SCHEMA.sql+升级/空库双测，必需检查通过。复用映射、测试与证据提交仓库。\n依赖：P0、G1、P1、R1；blocks C2。移除无实际依赖的 D5→C1 串行门禁。\n\n",
+          "sha256": "cee08d660f571cb4b862055c144d530a57f148976a6368873886a36a40a78ac2",
+          "target": 15
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 happy path：两worker竞争/旧fence拒绝、单目标失败隔离、同体/异体、未知外发对账、各提交/发送/checkpoint边界崩溃、撤权/禁用零外发、Query零投递写入；目标管理脱敏/授权/陈旧revision；noRedis明确不支持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 unauthorized actor：两worker竞争/旧fence拒绝、单目标失败隔离、同体/异体、未知外发对账、各提交/发送/checkpoint边界崩溃、撤权/禁用零外发、Query零投递写入；目标管理脱敏/授权/陈旧revision；noRedis明确不支持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 invalid state transition：两worker竞争/旧fence拒绝、单目标失败隔离、同体/异体、未知外发对账、各提交/发送/checkpoint边界崩溃、撤权/禁用零外发、Query零投递写入；目标管理脱敏/授权/陈旧revision；noRedis明确不支持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 duplicate idempotency key：两worker竞争/旧fence拒绝、单目标失败隔离、同体/异体、未知外发对账、各提交/发送/checkpoint边界崩溃、撤权/禁用零外发、Query零投递写入；目标管理脱敏/授权/陈旧revision；noRedis明确不支持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 stale revision：两worker竞争/旧fence拒绝、单目标失败隔离、同体/异体、未知外发对账、各提交/发送/checkpoint边界崩溃、撤权/禁用零外发、Query零投递写入；目标管理脱敏/授权/陈旧revision；noRedis明确不支持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 transaction failure：两worker竞争/旧fence拒绝、单目标失败隔离、同体/异体、未知外发对账、各提交/发送/checkpoint边界崩溃、撤权/禁用零外发、Query零投递写入；目标管理脱敏/授权/陈旧revision；noRedis明确不支持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 webhook/job replay：两worker竞争/旧fence拒绝、单目标失败隔离、同体/异体、未知外发对账、各提交/发送/checkpoint边界崩溃、撤权/禁用零外发、Query零投递写入；目标管理脱敏/授权/陈旧revision；noRedis明确不支持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 concurrent request：两worker竞争/旧fence拒绝、单目标失败隔离、同体/异体、未知外发对账、各提交/发送/checkpoint边界崩溃、撤权/禁用零外发、Query零投递写入；目标管理脱敏/授权/陈旧revision；noRedis明确不支持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "caseName": "#15 server restart/outbox recovery：两worker竞争/旧fence拒绝、单目标失败隔离、同体/异体、未知外发对账、各提交/发送/checkpoint边界崩溃、撤权/禁用零外发、Query零投递写入；目标管理脱敏/授权/陈旧revision；noRedis明确不支持。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 16,
+      "id": "kjOs4t_DtMyrkHTBFmpQ5",
+      "owner": "C2 执行者",
+      "originalTests": [
+        {
+          "id": "todo-16-T1",
+          "text": "出站协议/载荷上限/错误映射/限流/超时与失败恢复。",
+          "originalChecked": false,
+          "target": 16,
+          "testFile": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 原验收1：出站协议/载荷上限/错误映射/限流/超时与失败恢复。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-16-T2",
+          "text": "深链 canonical 路由、返回/焦点行为；登录后按当前 Human 鉴权。",
+          "originalChecked": false,
+          "target": 16,
+          "testFile": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 原验收2：深链 canonical 路由、返回/焦点行为；登录后按当前 Human 鉴权。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-16-T3",
+          "text": "目标撤销、停用、离队后抑制；转发后仅当前登录者有权内容可见。",
+          "originalChecked": false,
+          "target": 16,
+          "testFile": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 原验收3：目标撤销、停用、离队后抑制；转发后仅当前登录者有权内容可见。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-16-T4",
+          "text": "渠道侧零决策写入、零决策 outbox 行，不以不存在的绑定系统做假测试。",
+          "originalChecked": false,
+          "target": 16,
+          "testFile": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 原验收4：渠道侧零决策写入、零决策 outbox 行，不以不存在的绑定系统做假测试。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-16-T5",
+          "text": "渠道故障时网页仍可见；C1 管理入口复用，无重复 CRUD。",
+          "originalChecked": false,
+          "target": 16,
+          "testFile": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 原验收5：渠道故障时网页仍可见；C1 管理入口复用，无重复 CRUD。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-16-T6",
+          "text": "若经裁决真实存在非决策回调，才增加相应官方签名/重放测试；仅出站时记录不适用依据。",
+          "originalChecked": false,
+          "target": 16,
+          "testFile": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 原验收6：若经裁决真实存在非决策回调，才增加相应官方签名/重放测试；仅出站时记录不适用依据。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD 与依赖\n单渠道可用、上述适用断言/必需检查通过、渠道不成为正确性关键路径；协议来源/日期、配置说明与证据提交仓库，聊天只总结。\n依赖：G1、P1、R1、C1；不 blocks C3，模型目录为独立链。\n\n",
+          "sha256": "86314657479adffbac36380fa5844b9ac377eb80f3d93f78c5d282157559bc22",
+          "target": 16
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 happy path：fake provider 测试载荷字节上限、错误/频控/timeout/未知发送及C1恢复；转发后当前登录Human鉴权，停用/撤权零外发；网页仍可见，零决策事件/outbox；仅出站所以回调签名/绑定解绑不适用。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 unauthorized actor：fake provider 测试载荷字节上限、错误/频控/timeout/未知发送及C1恢复；转发后当前登录Human鉴权，停用/撤权零外发；网页仍可见，零决策事件/outbox；仅出站所以回调签名/绑定解绑不适用。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 invalid state transition：fake provider 测试载荷字节上限、错误/频控/timeout/未知发送及C1恢复；转发后当前登录Human鉴权，停用/撤权零外发；网页仍可见，零决策事件/outbox；仅出站所以回调签名/绑定解绑不适用。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 duplicate idempotency key：fake provider 测试载荷字节上限、错误/频控/timeout/未知发送及C1恢复；转发后当前登录Human鉴权，停用/撤权零外发；网页仍可见，零决策事件/outbox；仅出站所以回调签名/绑定解绑不适用。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 stale revision：fake provider 测试载荷字节上限、错误/频控/timeout/未知发送及C1恢复；转发后当前登录Human鉴权，停用/撤权零外发；网页仍可见，零决策事件/outbox；仅出站所以回调签名/绑定解绑不适用。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 transaction failure：fake provider 测试载荷字节上限、错误/频控/timeout/未知发送及C1恢复；转发后当前登录Human鉴权，停用/撤权零外发；网页仍可见，零决策事件/outbox；仅出站所以回调签名/绑定解绑不适用。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 webhook/job replay：fake provider 测试载荷字节上限、错误/频控/timeout/未知发送及C1恢复；转发后当前登录Human鉴权，停用/撤权零外发；网页仍可见，零决策事件/outbox；仅出站所以回调签名/绑定解绑不适用。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 concurrent request：fake provider 测试载荷字节上限、错误/频控/timeout/未知发送及C1恢复；转发后当前登录Human鉴权，停用/撤权零外发；网页仍可见，零决策事件/outbox；仅出站所以回调签名/绑定解绑不适用。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "caseName": "#16 server restart/outbox recovery：fake provider 测试载荷字节上限、错误/频控/timeout/未知发送及C1恢复；转发后当前登录Human鉴权，停用/撤权零外发；网页仍可见，零决策事件/outbox；仅出站所以回调签名/绑定解绑不适用。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 17,
+      "id": "4DlyrPrDMMtK5JTmFm1t_",
+      "owner": "C3 执行者",
+      "originalTests": [
+        {
+          "id": "todo-17-T1",
+          "text": "目录版本可读；选中预置只填充配置",
+          "originalChecked": false,
+          "target": 17,
+          "testFile": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 原验收1：目录版本可读；选中预置只填充配置",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-17-T2",
+          "text": "目录替换 / 覆盖 / 禁用规则有测试",
+          "originalChecked": false,
+          "target": 17,
+          "testFile": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 原验收2：目录替换 / 覆盖 / 禁用规则有测试",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-17-T3",
+          "text": "**保存连接不产生任何出站请求**（断言零外部调用）",
+          "originalChecked": false,
+          "target": 17,
+          "testFile": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 原验收3：**保存连接不产生任何出站请求**（断言零外部调用）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-17-T4",
+          "text": "每条预置带来源 URL 与核对日期，缺一即失败",
+          "originalChecked": false,
+          "target": 17,
+          "testFile": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 原验收4：每条预置带来源 URL 与核对日期，缺一即失败",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n目录可用 + 上述断言全绿 + 文档明确「预置不验证凭据」。\n\n",
+          "sha256": "e0a09ed6e8203a465320404f8ab4c52bc5f5e3c6201204e1fdf220049e78134f",
+          "target": 17
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 happy path：目录版本与每条来源必填；替换/禁用规则；选中不自动保存；normalizeLlmBaseUrl安全验证仍执行；保存零外部请求；每个提供方资料官方复核，不探测付费服务。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 unauthorized actor：目录版本与每条来源必填；替换/禁用规则；选中不自动保存；normalizeLlmBaseUrl安全验证仍执行；保存零外部请求；每个提供方资料官方复核，不探测付费服务。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 invalid state transition：目录版本与每条来源必填；替换/禁用规则；选中不自动保存；normalizeLlmBaseUrl安全验证仍执行；保存零外部请求；每个提供方资料官方复核，不探测付费服务。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 duplicate idempotency key：目录版本与每条来源必填；替换/禁用规则；选中不自动保存；normalizeLlmBaseUrl安全验证仍执行；保存零外部请求；每个提供方资料官方复核，不探测付费服务。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 stale revision：目录版本与每条来源必填；替换/禁用规则；选中不自动保存；normalizeLlmBaseUrl安全验证仍执行；保存零外部请求；每个提供方资料官方复核，不探测付费服务。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 transaction failure：目录版本与每条来源必填；替换/禁用规则；选中不自动保存；normalizeLlmBaseUrl安全验证仍执行；保存零外部请求；每个提供方资料官方复核，不探测付费服务。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 webhook/job replay：目录版本与每条来源必填；替换/禁用规则；选中不自动保存；normalizeLlmBaseUrl安全验证仍执行；保存零外部请求；每个提供方资料官方复核，不探测付费服务。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 concurrent request：目录版本与每条来源必填；替换/禁用规则；选中不自动保存；normalizeLlmBaseUrl安全验证仍执行；保存零外部请求；每个提供方资料官方复核，不探测付费服务。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/app/lib/model-presets.test.ts",
+          "caseName": "#17 server restart/outbox recovery：目录版本与每条来源必填；替换/禁用规则；选中不自动保存；normalizeLlmBaseUrl安全验证仍执行；保存零外部请求；每个提供方资料官方复核，不探测付费服务。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 18,
+      "id": "Tws50k02Pi52R-RJEXP_N",
+      "owner": "历史任务 owner",
+      "originalTests": [
+        {
+          "id": "todo-18-T1",
+          "text": "真实 build 中读到四份 ADR 的正文。",
+          "originalChecked": false,
+          "target": 18,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 原验收1：真实 build 中读到四份 ADR 的正文。",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-18-T2",
+          "text": "主计划、16 条断言表和必要设计 token/交互资料可读，原件来源明确。",
+          "originalChecked": false,
+          "target": 18,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 原验收2：主计划、16 条断言表和必要设计 token/交互资料可读，原件来源明确。",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-18-T3",
+          "text": "文件哈希、base commit 与记录一致。",
+          "originalChecked": false,
+          "target": 18,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 原验收3：文件哈希、base commit 与记录一致。",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-18-T4",
+          "text": "执行资料引用不再依赖不可达的绝对路径。",
+          "originalChecked": false,
+          "target": 18,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 原验收4：执行资料引用不再依赖不可达的绝对路径。",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-18-T5",
+          "text": "本批控制面例外已按用户批准明确记录，并同步本地计划与 Todos。",
+          "originalChecked": false,
+          "target": 18,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 原验收5：本批控制面例外已按用户批准明确记录，并同步本地计划与 Todos。",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-18-T6",
+          "text": "至少一次真实 build 验证通过且证据落盘；依赖任务实际使用的 base 中已有输入。",
+          "originalChecked": false,
+          "target": 18,
+          "testFile": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 原验收6：至少一次真实 build 验证通过且证据落盘；依赖任务实际使用的 base 中已有输入。",
+          "status": "历史证据，非本轮实现通过",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## 验证清单与 DoD\n\n- [ ] 真实 build 中读到四份 ADR 的正文。\n- [ ] 主计划、16 条断言表和必要设计 token/交互资料可读，原件来源明确。\n- [ ] 文件哈希、base commit 与记录一致。\n- [ ] 执行资料引用不再依赖不可达的绝对路径。\n- [ ] 本批控制面例外已按用户批准明确记录，并同步本地计划与 Todos。\n- [ ] 至少一次真实 build 验证通过且证据落盘；依赖任务实际使用的 base 中已有输入。\n\n未验证前 #5–#17 中相应依赖输入的实现不得放行；D0 可继续独立采集，但不据此解开 G1 门禁。\n\n",
+          "sha256": "363c64273b27b47d42273db89fe01f443ee9bd370acbf2607db6f1ce41500b91",
+          "target": 18
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "已完成/吸收任务只保存历史输入，不重新实现。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#18 不适用：已完成/吸收任务只保存历史输入，不重新实现。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 19,
+      "id": "cPwwV-W_Lkm9DtiQWifXP",
+      "owner": "Chief",
+      "originalTests": [],
+      "originalDoD": [],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "流程映射静态核验。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#19 happy path：每个原编号有处置/转移/撤回理由；新finding由独立审查核验，源报告只读。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#19 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#19 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#19 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#19 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#19 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#19 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#19 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "仅流程/审查文件，不新增领域写入、revision或job。",
+          "file": "docs/reviews/r1/verify-specs.mjs",
+          "caseName": "#19 不适用：仅流程/审查文件，不新增领域写入、revision或job。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 20,
+      "id": "JfGwKk3prfIie6X2u2J51",
+      "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+      "originalTests": [
+        {
+          "id": "todo-20-T1",
+          "text": "带版本分发产物在不含仓库源码的目标 Lite 环境中可安装和启动。",
+          "originalChecked": false,
+          "target": 20,
+          "testFile": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 原验收1：带版本分发产物在不含仓库源码的目标 Lite 环境中可安装和启动。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-20-T2",
+          "text": "用安装后的命令完成连接器既定黄金路径，完整校验一步不减。",
+          "originalChecked": false,
+          "target": 20,
+          "testFile": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 原验收2：用安装后的命令完成连接器既定黄金路径，完整校验一步不减。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-20-T3",
+          "text": "既有错误/恢复机制与秘密边界在安装场景中成立；文档可直接指导恢复。",
+          "originalChecked": false,
+          "target": 20,
+          "testFile": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 原验收3：既有错误/恢复机制与秘密边界在安装场景中成立；文档可直接指导恢复。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-20-T4",
+          "text": "版本、设备环境、安装命令与实际结果均有仓库内证据；未完成对外发布时明确区分已验证产物与已发布版本。",
+          "originalChecked": false,
+          "target": 20,
+          "testFile": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 原验收4：版本、设备环境、安装命令与实际结果均有仓库内证据；未完成对外发布时明确区分已验证产物与已发布版本。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-20-T5",
+          "text": "所有适用仓库必需检查与已裁定验收通过，blocking/high 已解决。",
+          "originalChecked": false,
+          "target": 20,
+          "testFile": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 原验收5：所有适用仓库必需检查与已裁定验收通过，blocking/high 已解决。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## 验证清单与 DoD\n- [ ] 带版本分发产物在不含仓库源码的目标 Lite 环境中可安装和启动。\n- [ ] 用安装后的命令完成连接器既定黄金路径，完整校验一步不减。\n- [ ] 既有错误/恢复机制与秘密边界在安装场景中成立；文档可直接指导恢复。\n- [ ] 版本、设备环境、安装命令与实际结果均有仓库内证据；未完成对外发布时明确区分已验证产物与已发布版本。\n- [ ] 所有适用仓库必需检查与已裁定验收通过，blocking/high 已解决。\n\n依赖：G1、P1、R1、合并后的 B1/B2、B3；本任务吸收 B4 文档节点，无独立悬空 B4。\n\n",
+          "sha256": "e47bb41e1f33ce1b172c48b81f526ddaf34a7362a55db8b388b620c3edbfd957",
+          "target": 20
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 happy path：干净无源码目标设备安装/启动、完整连接黄金路径、全部错误与秘密保护、版本和命令证据；docs/agent-integration.md/AGENT_PROTOCOL.md/AGENTS.md 中命令dry-run参数核实；未外发不写成已发布。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 unauthorized actor：干净无源码目标设备安装/启动、完整连接黄金路径、全部错误与秘密保护、版本和命令证据；docs/agent-integration.md/AGENT_PROTOCOL.md/AGENTS.md 中命令dry-run参数核实；未外发不写成已发布。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 invalid state transition：干净无源码目标设备安装/启动、完整连接黄金路径、全部错误与秘密保护、版本和命令证据；docs/agent-integration.md/AGENT_PROTOCOL.md/AGENTS.md 中命令dry-run参数核实；未外发不写成已发布。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 duplicate idempotency key：干净无源码目标设备安装/启动、完整连接黄金路径、全部错误与秘密保护、版本和命令证据；docs/agent-integration.md/AGENT_PROTOCOL.md/AGENTS.md 中命令dry-run参数核实；未外发不写成已发布。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 stale revision：干净无源码目标设备安装/启动、完整连接黄金路径、全部错误与秘密保护、版本和命令证据；docs/agent-integration.md/AGENT_PROTOCOL.md/AGENTS.md 中命令dry-run参数核实；未外发不写成已发布。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 transaction failure：干净无源码目标设备安装/启动、完整连接黄金路径、全部错误与秘密保护、版本和命令证据；docs/agent-integration.md/AGENT_PROTOCOL.md/AGENTS.md 中命令dry-run参数核实；未外发不写成已发布。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 webhook/job replay：干净无源码目标设备安装/启动、完整连接黄金路径、全部错误与秘密保护、版本和命令证据；docs/agent-integration.md/AGENT_PROTOCOL.md/AGENTS.md 中命令dry-run参数核实；未外发不写成已发布。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 concurrent request：干净无源码目标设备安装/启动、完整连接黄金路径、全部错误与秘密保护、版本和命令证据；docs/agent-integration.md/AGENT_PROTOCOL.md/AGENTS.md 中命令dry-run参数核实；未外发不写成已发布。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 server restart/outbox recovery：干净无源码目标设备安装/启动、完整连接黄金路径、全部错误与秘密保护、版本和命令证据；docs/agent-integration.md/AGENT_PROTOCOL.md/AGENTS.md 中命令dry-run参数核实；未外发不写成已发布。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 21,
+      "id": "2j2sxT5wJ-l001efH_meJ",
+      "owner": "D1b 执行者",
+      "originalTests": [
+        {
+          "id": "todo-21-T1",
+          "text": "旧 token 仍有消费方时禁止删除，静态断言守住。",
+          "originalChecked": false,
+          "target": 21,
+          "testFile": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 原验收1：旧 token 仍有消费方时禁止删除，静态断言守住。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-21-T2",
+          "text": "每个面迁移后与 D0 基线做 diff 并评审，保留变更前后证据。",
+          "originalChecked": false,
+          "target": 21,
+          "testFile": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 原验收2：每个面迁移后与 D0 基线做 diff 并评审，保留变更前后证据。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-21-T3",
+          "text": "既有 theme-unification.spec.ts 全绿。",
+          "originalChecked": false,
+          "target": 21,
+          "testFile": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 原验收3：既有 theme-unification.spec.ts 全绿。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-21-T4",
+          "text": "色彩位移在 ADR 中有可辩护且可追溯的理由。",
+          "originalChecked": false,
+          "target": 21,
+          "testFile": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 原验收4：色彩位移在 ADR 中有可辩护且可追溯的理由。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-21-T5",
+          "text": "旧值删除后无残留消费方，必需回归检查通过。",
+          "originalChecked": false,
+          "target": 21,
+          "testFile": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 原验收5：旧值删除后无残留消费方，必需回归检查通过。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD 与依赖\n原 D1 的最终 DoD 保留：全部界面迁移完成、旧值已删且无残留消费方、回归全绿；token 映射、视觉 diff 与验证证据提交仓库。D1a 的完成不能替代本项最终验收。\n依赖：G1、P1、R1、D0、D1a；blocks D2。\n\n",
+          "sha256": "b83080e40c46f27ffc937400083ef2c50ae20b729a26317450fdd36ddf31f04e",
+          "target": 21
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 happy path：各面 computed style/视觉diff/焦点与导航；dark/light 全面回归；静态扫描零旧消费才允许清理；D0 固定比较参数不放宽，不把比较器通过冒作用户颜色验收。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 unauthorized actor：各面 computed style/视觉diff/焦点与导航；dark/light 全面回归；静态扫描零旧消费才允许清理；D0 固定比较参数不放宽，不把比较器通过冒作用户颜色验收。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 invalid state transition：各面 computed style/视觉diff/焦点与导航；dark/light 全面回归；静态扫描零旧消费才允许清理；D0 固定比较参数不放宽，不把比较器通过冒作用户颜色验收。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 concurrent request：各面 computed style/视觉diff/焦点与导航；dark/light 全面回归；静态扫描零旧消费才允许清理；D0 固定比较参数不放宽，不把比较器通过冒作用户颜色验收。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "file": "apps/web/e2e/theme-unification.spec.ts",
+          "caseName": "#21 不适用：只读投影/本地布局或样式不增加领域mutation；复用已有命令，重复渲染/断线重读验证幂等显示。",
+          "fileState": "现有文件，所列新增断言待实现",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 22,
+      "id": "gY4n2fZhVLa9FcazFC_bY",
+      "owner": "D5b 执行者",
+      "originalTests": [
+        {
+          "id": "todo-22-T1",
+          "text": "拖拽、多选逐项提交、拖卡插入引用各自 happy path。",
+          "originalChecked": false,
+          "target": 22,
+          "testFile": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 原验收1：拖拽、多选逐项提交、拖卡插入引用各自 happy path。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-22-T2",
+          "text": "领域写入中未授权 actor 被拒；陈旧 revision 被拒；重复幂等键不产生第二次变更。",
+          "originalChecked": false,
+          "target": 22,
+          "testFile": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 原验收2：领域写入中未授权 actor 被拒；陈旧 revision 被拒；重复幂等键不产生第二次变更。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-22-T3",
+          "text": "无确认的破坏性拖拽重置不存在。",
+          "originalChecked": false,
+          "target": 22,
+          "testFile": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 原验收3：无确认的破坏性拖拽重置不存在。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-22-T4",
+          "text": "多选跨列操作展示逐项结果；部分失败可恢复，成功项不假回滚。",
+          "originalChecked": false,
+          "target": 22,
+          "testFile": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 原验收4：多选跨列操作展示逐项结果；部分失败可恢复，成功项不假回滚。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-22-T5",
+          "text": "网络结果未知重放原请求，409 后需人确认最新数据。",
+          "originalChecked": false,
+          "target": 22,
+          "testFile": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 原验收5：网络结果未知重放原请求，409 后需人确认最新数据。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-22-T6",
+          "text": "拖卡仅插入草稿、不自动提交；纯本地操作无领域写入。",
+          "originalChecked": false,
+          "target": 22,
+          "testFile": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 原验收6：拖卡仅插入草稿、不自动提交；纯本地操作无领域写入。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD 与依赖\n全部本项交互满足既有 Command 纪律及已批准的本地操作豁免；原 D5 相关负向断言成立，必需检查通过，无领域不变量绕过。报告与测试证据提交仓库，聊天只总结。\n依赖：G1、P1、R1、D4、D5a；不作为 C1/C2/C3 的无关硬前置。\n\n",
+          "sha256": "c9ddb004ae0d7727042f5ccf9c5222b333f8d6b509c7dc41ddb31a709019bc1e",
+          "target": 22
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 happy path：Ctrl/Meta选择、跨列逐项成功/失败、未知响应重放同key、409恢复不覆盖新状态、服务端失败后无虚构全批回滚；草稿插入不产生message/session/outbox。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 unauthorized actor：Ctrl/Meta选择、跨列逐项成功/失败、未知响应重放同key、409恢复不覆盖新状态、服务端失败后无虚构全批回滚；草稿插入不产生message/session/outbox。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 invalid state transition：Ctrl/Meta选择、跨列逐项成功/失败、未知响应重放同key、409恢复不覆盖新状态、服务端失败后无虚构全批回滚；草稿插入不产生message/session/outbox。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 duplicate idempotency key：Ctrl/Meta选择、跨列逐项成功/失败、未知响应重放同key、409恢复不覆盖新状态、服务端失败后无虚构全批回滚；草稿插入不产生message/session/outbox。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 stale revision：Ctrl/Meta选择、跨列逐项成功/失败、未知响应重放同key、409恢复不覆盖新状态、服务端失败后无虚构全批回滚；草稿插入不产生message/session/outbox。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 transaction failure：Ctrl/Meta选择、跨列逐项成功/失败、未知响应重放同key、409恢复不覆盖新状态、服务端失败后无虚构全批回滚；草稿插入不产生message/session/outbox。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 webhook/job replay：Ctrl/Meta选择、跨列逐项成功/失败、未知响应重放同key、409恢复不覆盖新状态、服务端失败后无虚构全批回滚；草稿插入不产生message/session/outbox。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 concurrent request：Ctrl/Meta选择、跨列逐项成功/失败、未知响应重放同key、409恢复不覆盖新状态、服务端失败后无虚构全批回滚；草稿插入不产生message/session/outbox。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/web/e2e/work-item-card-interactions.spec.ts",
+          "caseName": "#22 server restart/outbox recovery：Ctrl/Meta选择、跨列逐项成功/失败、未知响应重放同key、409恢复不覆盖新状态、服务端失败后无虚构全批回滚；草稿插入不产生message/session/outbox。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 23,
+      "id": "hHvBuVEpXQRQhVB12wRgu",
+      "owner": "F0 执行者",
+      "originalTests": [
+        {
+          "id": "todo-23-T1",
+          "text": "四种 subject 的 DB / API 成功路径",
+          "originalChecked": false,
+          "target": 23,
+          "testFile": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 原验收1：四种 subject 的 DB / API 成功路径",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-23-T2",
+          "text": "跨 workspace 与跨 Team 拒绝",
+          "originalChecked": false,
+          "target": 23,
+          "testFile": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 原验收2：跨 workspace 与跨 Team 拒绝",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-23-T3",
+          "text": "三种既有 subject 零回归",
+          "originalChecked": false,
+          "target": 23,
+          "testFile": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 原验收3：三种既有 subject 零回归",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-23-T4",
+          "text": "**普通执行 Session 不能借 Team 房间读到兄弟 Session 的私信**",
+          "originalChecked": false,
+          "target": 23,
+          "testFile": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 原验收4：**普通执行 Session 不能借 Team 房间读到兄弟 Session 的私信**",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-23-T5",
+          "text": "撤权后房间 / 收件箱 / 事件 / 上下文同时收敛",
+          "originalChecked": false,
+          "target": 23,
+          "testFile": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 原验收5：撤权后房间 / 收件箱 / 事件 / 上下文同时收敛",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-23-T6",
+          "text": "每个 entry 提交前后故障注入与重跑",
+          "originalChecked": false,
+          "target": 23,
+          "testFile": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 原验收6：每个 entry 提交前后故障注入与重跑",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n\n上述断言全绿 + enum 扩展与其被引用分属两个 entry + 旧 checksum 未变 + `pnpm lint/typecheck/test/test:integration/test:e2e` 全绿。\n\n",
+          "sha256": "a88c31bd36e95f6df378055dbd4ef96531d23d241dcb80975bb040428cc5843d",
+          "target": 23
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 happy path：4 subject DB/API、跨workspace/Team、room可见不等于exact消息可见、撤权同时影响房/inbox/events/context、各entry两侧故障/重跑、升级和空库、旧checksum/rows不变。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 unauthorized actor：4 subject DB/API、跨workspace/Team、room可见不等于exact消息可见、撤权同时影响房/inbox/events/context、各entry两侧故障/重跑、升级和空库、旧checksum/rows不变。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 invalid state transition：4 subject DB/API、跨workspace/Team、room可见不等于exact消息可见、撤权同时影响房/inbox/events/context、各entry两侧故障/重跑、升级和空库、旧checksum/rows不变。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 duplicate idempotency key：4 subject DB/API、跨workspace/Team、room可见不等于exact消息可见、撤权同时影响房/inbox/events/context、各entry两侧故障/重跑、升级和空库、旧checksum/rows不变。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 stale revision：4 subject DB/API、跨workspace/Team、room可见不等于exact消息可见、撤权同时影响房/inbox/events/context、各entry两侧故障/重跑、升级和空库、旧checksum/rows不变。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 transaction failure：4 subject DB/API、跨workspace/Team、room可见不等于exact消息可见、撤权同时影响房/inbox/events/context、各entry两侧故障/重跑、升级和空库、旧checksum/rows不变。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 webhook/job replay：4 subject DB/API、跨workspace/Team、room可见不等于exact消息可见、撤权同时影响房/inbox/events/context、各entry两侧故障/重跑、升级和空库、旧checksum/rows不变。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 concurrent request：4 subject DB/API、跨workspace/Team、room可见不等于exact消息可见、撤权同时影响房/inbox/events/context、各entry两侧故障/重跑、升级和空库、旧checksum/rows不变。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/db/integration/chief-room-migration.integration.test.ts",
+          "caseName": "#23 server restart/outbox recovery：4 subject DB/API、跨workspace/Team、room可见不等于exact消息可见、撤权同时影响房/inbox/events/context、各entry两侧故障/重跑、升级和空库、旧checksum/rows不变。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 24,
+      "id": "UQPSqKNzHK_mRc_1wOxBA",
+      "owner": "F1 执行者",
+      "originalTests": [
+        {
+          "id": "todo-24-T1",
+          "text": "conformance 对 `capabilitySchema` 做全量分区，**漏一项即失败**",
+          "originalChecked": false,
+          "target": 24,
+          "testFile": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 原验收1：conformance 对 `capabilitySchema` 做全量分区，**漏一项即失败**",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-24-T2",
+          "text": "任命一个已持 `repo:merge` 的 agent 后：其普通会话权限不变，总管会话不含 `repo:merge`",
+          "originalChecked": false,
+          "target": 24,
+          "testFile": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 原验收2：任命一个已持 `repo:merge` 的 agent 后：其普通会话权限不变，总管会话不含 `repo:merge`",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-24-T3",
+          "text": "显式放宽产生独立审计事实，且不改动 agent 原有委派",
+          "originalChecked": false,
+          "target": 24,
+          "testFile": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 原验收3：显式放宽产生独立审计事实，且不改动 agent 原有委派",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-24-T4",
+          "text": "换届原子性；并发任命只有一个成功",
+          "originalChecked": false,
+          "target": 24,
+          "testFile": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 原验收4：换届原子性；并发任命只有一个成功",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-24-T5",
+          "text": "结束任命后旧会话无法再产生分派效果",
+          "originalChecked": false,
+          "target": 24,
+          "testFile": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 原验收5：结束任命后旧会话无法再产生分派效果",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n\n上述断言全绿 + 三类委派的能力交集行为符合上表 + 全部 required checks 全绿。\n\n",
+          "sha256": "a3b1fb7a14dbcc6e7447758cbf047f38419b3731e9e6805ed3d9750e474a3409",
+          "target": 24
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 happy path：17能力漏项/交叠即失败；普通repo:merge保留而总管会话不含；显式放宽另行事实；并发任命、换届/结束事务失败、房间幂等；无任命查询不建房。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 unauthorized actor：17能力漏项/交叠即失败；普通repo:merge保留而总管会话不含；显式放宽另行事实；并发任命、换届/结束事务失败、房间幂等；无任命查询不建房。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 invalid state transition：17能力漏项/交叠即失败；普通repo:merge保留而总管会话不含；显式放宽另行事实；并发任命、换届/结束事务失败、房间幂等；无任命查询不建房。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 duplicate idempotency key：17能力漏项/交叠即失败；普通repo:merge保留而总管会话不含；显式放宽另行事实；并发任命、换届/结束事务失败、房间幂等；无任命查询不建房。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 stale revision：17能力漏项/交叠即失败；普通repo:merge保留而总管会话不含；显式放宽另行事实；并发任命、换届/结束事务失败、房间幂等；无任命查询不建房。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 transaction failure：17能力漏项/交叠即失败；普通repo:merge保留而总管会话不含；显式放宽另行事实；并发任命、换届/结束事务失败、房间幂等；无任命查询不建房。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 webhook/job replay：17能力漏项/交叠即失败；普通repo:merge保留而总管会话不含；显式放宽另行事实；并发任命、换届/结束事务失败、房间幂等；无任命查询不建房。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 concurrent request：17能力漏项/交叠即失败；普通repo:merge保留而总管会话不含；显式放宽另行事实；并发任命、换届/结束事务失败、房间幂等；无任命查询不建房。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-appointments.integration.test.ts",
+          "caseName": "#24 server restart/outbox recovery：17能力漏项/交叠即失败；普通repo:merge保留而总管会话不含；显式放宽另行事实；并发任命、换届/结束事务失败、房间幂等；无任命查询不建房。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 25,
+      "id": "edIZ0ybOGMRBI6aupNUhU",
+      "owner": "F2 执行者",
+      "originalTests": [
+        {
+          "id": "todo-25-T1",
+          "text": "普通人类自由文本**不产生授权**（可作为输入，但无法凭它分派）",
+          "originalChecked": false,
+          "target": 25,
+          "testFile": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 原验收1：普通人类自由文本**不产生授权**（可作为输入，但无法凭它分派）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-25-T2",
+          "text": "**委派范围内的分派无需逐次批准且成功** ← 本条的核心行为",
+          "originalChecked": false,
+          "target": 25,
+          "testFile": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 原验收2：**委派范围内的分派无需逐次批准且成功** ← 本条的核心行为",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-25-T3",
+          "text": "委派范围外的分派被拒",
+          "originalChecked": false,
+          "target": 25,
+          "testFile": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 原验收3：委派范围外的分派被拒",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-25-T4",
+          "text": "缩小范围 / 过期 / 撤销后**立即**拒绝",
+          "originalChecked": false,
+          "target": 25,
+          "testFile": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 原验收4：缩小范围 / 过期 / 撤销后**立即**拒绝",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-25-T5",
+          "text": "同一幂等键重放不产生第二次效果",
+          "originalChecked": false,
+          "target": 25,
+          "testFile": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 原验收5：同一幂等键重放不产生第二次效果",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-25-T6",
+          "text": "校验与 session / event / outbox 任一点失败共同回滚",
+          "originalChecked": false,
+          "target": 25,
+          "testFile": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 原验收6：校验与 session / event / outbox 任一点失败共同回滚",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-25-T7",
+          "text": "Stop / 撤权 / 换届后旧会话不得再分派",
+          "originalChecked": false,
+          "target": 25,
+          "testFile": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 原验收7：Stop / 撤权 / 换届后旧会话不得再分派",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-25-T8",
+          "text": "五个执行入口行为一致（共享 guard，不是只查一处）",
+          "originalChecked": false,
+          "target": 25,
+          "testFile": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 原验收8：五个执行入口行为一致（共享 guard，不是只查一处）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n\n上述断言全绿 + 「委派内自主分派、无需逐次批准」这一条有正向测试（不只是反向拒绝）\n+ `pnpm lint/typecheck/test/test:integration/test:e2e` 全绿。\n\n",
+          "sha256": "aa524be90a7b85e719ced9898eeefddad46a091558329d89e740b046d4b2d550",
+          "target": 25
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 happy path：范围内自主正向、自由文本不授权、policy不能扩权/委派不能省Approval；5入口一致、2上限独立、principal等式；排队/运行/子会话/retry/外部进程撤权和换届；余量并发耗尽、异体冲突、预留/启动崩溃恢复、新retry计数、plan/head变更失效，事务全部回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 unauthorized actor：范围内自主正向、自由文本不授权、policy不能扩权/委派不能省Approval；5入口一致、2上限独立、principal等式；排队/运行/子会话/retry/外部进程撤权和换届；余量并发耗尽、异体冲突、预留/启动崩溃恢复、新retry计数、plan/head变更失效，事务全部回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 invalid state transition：范围内自主正向、自由文本不授权、policy不能扩权/委派不能省Approval；5入口一致、2上限独立、principal等式；排队/运行/子会话/retry/外部进程撤权和换届；余量并发耗尽、异体冲突、预留/启动崩溃恢复、新retry计数、plan/head变更失效，事务全部回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 duplicate idempotency key：范围内自主正向、自由文本不授权、policy不能扩权/委派不能省Approval；5入口一致、2上限独立、principal等式；排队/运行/子会话/retry/外部进程撤权和换届；余量并发耗尽、异体冲突、预留/启动崩溃恢复、新retry计数、plan/head变更失效，事务全部回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 stale revision：范围内自主正向、自由文本不授权、policy不能扩权/委派不能省Approval；5入口一致、2上限独立、principal等式；排队/运行/子会话/retry/外部进程撤权和换届；余量并发耗尽、异体冲突、预留/启动崩溃恢复、新retry计数、plan/head变更失效，事务全部回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 transaction failure：范围内自主正向、自由文本不授权、policy不能扩权/委派不能省Approval；5入口一致、2上限独立、principal等式；排队/运行/子会话/retry/外部进程撤权和换届；余量并发耗尽、异体冲突、预留/启动崩溃恢复、新retry计数、plan/head变更失效，事务全部回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 webhook/job replay：范围内自主正向、自由文本不授权、policy不能扩权/委派不能省Approval；5入口一致、2上限独立、principal等式；排队/运行/子会话/retry/外部进程撤权和换届；余量并发耗尽、异体冲突、预留/启动崩溃恢复、新retry计数、plan/head变更失效，事务全部回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 concurrent request：范围内自主正向、自由文本不授权、policy不能扩权/委派不能省Approval；5入口一致、2上限独立、principal等式；排队/运行/子会话/retry/外部进程撤权和换届；余量并发耗尽、异体冲突、预留/启动崩溃恢复、新retry计数、plan/head变更失效，事务全部回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-dispatch.integration.test.ts",
+          "caseName": "#25 server restart/outbox recovery：范围内自主正向、自由文本不授权、policy不能扩权/委派不能省Approval；5入口一致、2上限独立、principal等式；排队/运行/子会话/retry/外部进程撤权和换届；余量并发耗尽、异体冲突、预留/启动崩溃恢复、新retry计数、plan/head变更失效，事务全部回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 26,
+      "id": "GKJOdaKtOjiTwP637pyM-",
+      "owner": "F3 执行者",
+      "originalTests": [
+        {
+          "id": "todo-26-T1",
+          "text": "同源重复去重；两个消费者竞争",
+          "originalChecked": false,
+          "target": 26,
+          "testFile": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 原验收1：同源重复去重；两个消费者竞争",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-26-T2",
+          "text": "admission / session / prompt / event / outbox 各边界崩溃",
+          "originalChecked": false,
+          "target": 26,
+          "testFile": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 原验收2：admission / session / prompt / event / outbox 各边界崩溃",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-26-T3",
+          "text": "**无 runner**（对应 ADR 0074 的 `unknown`）",
+          "originalChecked": false,
+          "target": 26,
+          "testFile": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 原验收3：**无 runner**（对应 ADR 0074 的 `unknown`）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-26-T4",
+          "text": "主负责人不匹配时退回",
+          "originalChecked": false,
+          "target": 26,
+          "testFile": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 原验收4：主负责人不匹配时退回",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-26-T5",
+          "text": "旧任命 / 被撤权 / Stopped",
+          "originalChecked": false,
+          "target": 26,
+          "testFile": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 原验收5：旧任命 / 被撤权 / Stopped",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-26-T6",
+          "text": "**事件自环**（总管自己的事件不得唤醒自己）",
+          "originalChecked": false,
+          "target": 26,
+          "testFile": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 原验收6：**事件自环**（总管自己的事件不得唤醒自己）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-26-T7",
+          "text": "累计预算耗尽",
+          "originalChecked": false,
+          "target": 26,
+          "testFile": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 原验收7：累计预算耗尽",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n\n上述断言全绿 + 三种激活源在记录里可区分 + 预算与 Stop 不可被自激活绕过。\n\n",
+          "sha256": "aeb68e5ef03c437f90491aea7cebf49093a6506c292711545f9f51c023d9649c",
+          "target": 26
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 happy path：3源可区分、双消费者去重、selfevent无自环、admission/session/prompt/event/outbox崩溃、跨激活预算/队列限制、无runner、不匹配principal退回、旧代次/revoke/Stop拒绝；恢复根换id仍被抑制。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 unauthorized actor：3源可区分、双消费者去重、selfevent无自环、admission/session/prompt/event/outbox崩溃、跨激活预算/队列限制、无runner、不匹配principal退回、旧代次/revoke/Stop拒绝；恢复根换id仍被抑制。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 invalid state transition：3源可区分、双消费者去重、selfevent无自环、admission/session/prompt/event/outbox崩溃、跨激活预算/队列限制、无runner、不匹配principal退回、旧代次/revoke/Stop拒绝；恢复根换id仍被抑制。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 duplicate idempotency key：3源可区分、双消费者去重、selfevent无自环、admission/session/prompt/event/outbox崩溃、跨激活预算/队列限制、无runner、不匹配principal退回、旧代次/revoke/Stop拒绝；恢复根换id仍被抑制。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 stale revision：3源可区分、双消费者去重、selfevent无自环、admission/session/prompt/event/outbox崩溃、跨激活预算/队列限制、无runner、不匹配principal退回、旧代次/revoke/Stop拒绝；恢复根换id仍被抑制。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 transaction failure：3源可区分、双消费者去重、selfevent无自环、admission/session/prompt/event/outbox崩溃、跨激活预算/队列限制、无runner、不匹配principal退回、旧代次/revoke/Stop拒绝；恢复根换id仍被抑制。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 webhook/job replay：3源可区分、双消费者去重、selfevent无自环、admission/session/prompt/event/outbox崩溃、跨激活预算/队列限制、无runner、不匹配principal退回、旧代次/revoke/Stop拒绝；恢复根换id仍被抑制。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 concurrent request：3源可区分、双消费者去重、selfevent无自环、admission/session/prompt/event/outbox崩溃、跨激活预算/队列限制、无runner、不匹配principal退回、旧代次/revoke/Stop拒绝；恢复根换id仍被抑制。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-activation.integration.test.ts",
+          "caseName": "#26 server restart/outbox recovery：3源可区分、双消费者去重、selfevent无自环、admission/session/prompt/event/outbox崩溃、跨激活预算/队列限制、无runner、不匹配principal退回、旧代次/revoke/Stop拒绝；恢复根换id仍被抑制。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 27,
+      "id": "89f9yFnmIg4nszXIBCByh",
+      "owner": "F4 执行者",
+      "originalTests": [
+        {
+          "id": "todo-27-T1",
+          "text": "checkpoint 保存前后崩溃、重放",
+          "originalChecked": false,
+          "target": 27,
+          "testFile": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 原验收1：checkpoint 保存前后崩溃、重放",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-27-T2",
+          "text": "长时间离线后游标过期 → 重建",
+          "originalChecked": false,
+          "target": 27,
+          "testFile": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 原验收2：长时间离线后游标过期 → 重建",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-27-T3",
+          "text": "baseline 构建期间有写入",
+          "originalChecked": false,
+          "target": 27,
+          "testFile": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 原验收3：baseline 构建期间有写入",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-27-T4",
+          "text": "删除 / 撤权 / 新获授权（旧对象变得可见）",
+          "originalChecked": false,
+          "target": 27,
+          "testFile": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 原验收4：删除 / 撤权 / 新获授权（旧对象变得可见）",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-27-T5",
+          "text": "跨 Session / 跨 Team 隔离",
+          "originalChecked": false,
+          "target": 27,
+          "testFile": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 原验收5：跨 Session / 跨 Team 隔离",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-27-T6",
+          "text": "**给定固定 Team / Agent / 事件规模，断言 token、查询数、延迟预算**",
+          "originalChecked": false,
+          "target": 27,
+          "testFile": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 原验收6：**给定固定 Team / Agent / 事件规模，断言 token、查询数、延迟预算**",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n\n上述断言全绿 + 存在量化的容量预算数字（实测，不是估计）+ 全部 required checks 全绿。\n\n",
+          "sha256": "2a8f14bae7a3d32ef05eadb380171f975fccfcf362482153a5cd3efe0b4b6f8a",
+          "target": 27
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 happy path：baseline期间并发写、checkpoint前后崩溃重放、CURSOR_EXPIRED、删除/撤权/扩大授权、跨Session/Team/任命隔离；固定fixture记录规模/tokenizer/query计数/p50p95与资源配置，按获批预算回归；摘要不成为授权。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 unauthorized actor：baseline期间并发写、checkpoint前后崩溃重放、CURSOR_EXPIRED、删除/撤权/扩大授权、跨Session/Team/任命隔离；固定fixture记录规模/tokenizer/query计数/p50p95与资源配置，按获批预算回归；摘要不成为授权。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 invalid state transition：baseline期间并发写、checkpoint前后崩溃重放、CURSOR_EXPIRED、删除/撤权/扩大授权、跨Session/Team/任命隔离；固定fixture记录规模/tokenizer/query计数/p50p95与资源配置，按获批预算回归；摘要不成为授权。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 duplicate idempotency key：baseline期间并发写、checkpoint前后崩溃重放、CURSOR_EXPIRED、删除/撤权/扩大授权、跨Session/Team/任命隔离；固定fixture记录规模/tokenizer/query计数/p50p95与资源配置，按获批预算回归；摘要不成为授权。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 stale revision：baseline期间并发写、checkpoint前后崩溃重放、CURSOR_EXPIRED、删除/撤权/扩大授权、跨Session/Team/任命隔离；固定fixture记录规模/tokenizer/query计数/p50p95与资源配置，按获批预算回归；摘要不成为授权。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 transaction failure：baseline期间并发写、checkpoint前后崩溃重放、CURSOR_EXPIRED、删除/撤权/扩大授权、跨Session/Team/任命隔离；固定fixture记录规模/tokenizer/query计数/p50p95与资源配置，按获批预算回归；摘要不成为授权。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 webhook/job replay：baseline期间并发写、checkpoint前后崩溃重放、CURSOR_EXPIRED、删除/撤权/扩大授权、跨Session/Team/任命隔离；固定fixture记录规模/tokenizer/query计数/p50p95与资源配置，按获批预算回归；摘要不成为授权。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 concurrent request：baseline期间并发写、checkpoint前后崩溃重放、CURSOR_EXPIRED、删除/撤权/扩大授权、跨Session/Team/任命隔离；固定fixture记录规模/tokenizer/query计数/p50p95与资源配置，按获批预算回归；摘要不成为授权。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/chief-consumption.integration.test.ts",
+          "caseName": "#27 server restart/outbox recovery：baseline期间并发写、checkpoint前后崩溃重放、CURSOR_EXPIRED、删除/撤权/扩大授权、跨Session/Team/任命隔离；固定fixture记录规模/tokenizer/query计数/p50p95与资源配置，按获批预算回归；摘要不成为授权。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 28,
+      "id": "YtFHUCHv8l4JZcYd1qHAU",
+      "owner": "F5 执行者",
+      "originalTests": [
+        {
+          "id": "todo-28-T1",
+          "text": "claim 后崩溃 / 被 Stop",
+          "originalChecked": false,
+          "target": 28,
+          "testFile": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 原验收1：claim 后崩溃 / 被 Stop",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-28-T2",
+          "text": "同 actor 两个 Session",
+          "originalChecked": false,
+          "target": 28,
+          "testFile": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 原验收2：同 actor 两个 Session",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-28-T3",
+          "text": "错误 recipient",
+          "originalChecked": false,
+          "target": 28,
+          "testFile": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 原验收3：错误 recipient",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-28-T4",
+          "text": "已 ACK 尚未回复",
+          "originalChecked": false,
+          "target": 28,
+          "testFile": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 原验收4：已 ACK 尚未回复",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-28-T5",
+          "text": "重复 report / reply，且**回执不伪造**",
+          "originalChecked": false,
+          "target": 28,
+          "testFile": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 原验收5：重复 report / reply，且**回执不伪造**",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-28-T6",
+          "text": "前半段：已选重新投递决定写进 ADR 0078，并显式记录对 ADR 0037 的修订",
+          "originalChecked": true,
+          "target": 28,
+          "testFile": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 原验收6：前半段：已选重新投递决定写进 ADR 0078，并显式记录对 ADR 0037 的修订",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-28-T7",
+          "text": "后半段：测试清单断言全绿 —— **实现尚未开工**",
+          "originalChecked": false,
+          "target": 28,
+          "testFile": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 原验收7：后半段：测试清单断言全绿 —— **实现尚未开工**",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n\n已选重新投递决定**写进 ADR 0078，并显式记录对 ADR 0037 的修订**（不是只写在代码注释里）+ 上述断言全绿。\n\n",
+          "sha256": "60ba9d61130d6f2f2293d2f1eccadea9900ac4ce9dadbf1263bc15846f11d37c",
+          "target": 28
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 happy path：claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 unauthorized actor：claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 invalid state transition：claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 duplicate idempotency key：claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 stale revision：claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 transaction failure：claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 webhook/job replay：claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 concurrent request：claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "#28 server restart/outbox recovery：claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    },
+    {
+      "seqNum": 29,
+      "id": "RTVGtGBgj-BvazLLjiXKu",
+      "owner": "F6 执行者（最终联合验收）",
+      "originalTests": [
+        {
+          "id": "todo-29-T1",
+          "text": "四种路由失败各返回指定错误码",
+          "originalChecked": false,
+          "target": 29,
+          "testFile": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 原验收1：四种路由失败各返回指定错误码",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-29-T2",
+          "text": "换届后重放不重复投递给新人",
+          "originalChecked": false,
+          "target": 29,
+          "testFile": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 原验收2：换届后重放不重复投递给新人",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-29-T3",
+          "text": "`get` 与 `post` 之间换届被事务重验拦住",
+          "originalChecked": false,
+          "target": 29,
+          "testFile": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 原验收3：`get` 与 `post` 之间换届被事务重验拦住",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        },
+        {
+          "id": "todo-29-T4",
+          "text": "工具适配器在 unsupported / feature-disabled / revoked / Stopped / 重试 / 载荷超限下行为正确",
+          "originalChecked": false,
+          "target": 29,
+          "testFile": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 原验收4：工具适配器在 unsupported / feature-disabled / revoked / Stopped / 重试 / 载荷超限下行为正确",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD\n\n两条路径（REST 与 MCP）全绿 + 工具适配器到位 + 四个错误码在 OpenAPI 可见。\n\n",
+          "sha256": "72a5a2bd7d649d86beac88aed9f6f2eedf43d706e5b46f38a471a3913e36b54d",
+          "target": 29
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 happy path：NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人；unsupported/disabled/revoked/Stopped/retry/超限；联合恢复提交与checkpoint前后崩溃、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届/重放，GET零receipt/event/outbox；REST/MCP及manifest/adapter/conformance两路径。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 unauthorized actor：NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人；unsupported/disabled/revoked/Stopped/retry/超限；联合恢复提交与checkpoint前后崩溃、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届/重放，GET零receipt/event/outbox；REST/MCP及manifest/adapter/conformance两路径。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 invalid state transition：NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人；unsupported/disabled/revoked/Stopped/retry/超限；联合恢复提交与checkpoint前后崩溃、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届/重放，GET零receipt/event/outbox；REST/MCP及manifest/adapter/conformance两路径。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 duplicate idempotency key：NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人；unsupported/disabled/revoked/Stopped/retry/超限；联合恢复提交与checkpoint前后崩溃、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届/重放，GET零receipt/event/outbox；REST/MCP及manifest/adapter/conformance两路径。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 stale revision：NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人；unsupported/disabled/revoked/Stopped/retry/超限；联合恢复提交与checkpoint前后崩溃、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届/重放，GET零receipt/event/outbox；REST/MCP及manifest/adapter/conformance两路径。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 transaction failure：NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人；unsupported/disabled/revoked/Stopped/retry/超限；联合恢复提交与checkpoint前后崩溃、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届/重放，GET零receipt/event/outbox；REST/MCP及manifest/adapter/conformance两路径。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 webhook/job replay：NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人；unsupported/disabled/revoked/Stopped/retry/超限；联合恢复提交与checkpoint前后崩溃、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届/重放，GET零receipt/event/outbox；REST/MCP及manifest/adapter/conformance两路径。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 concurrent request：NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人；unsupported/disabled/revoked/Stopped/retry/超限；联合恢复提交与checkpoint前后崩溃、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届/重放，GET零receipt/event/outbox；REST/MCP及manifest/adapter/conformance两路径。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按本任务完整定向断言执行，不使用全部绿口号。",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "#29 server restart/outbox recovery：NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人；unsupported/disabled/revoked/Stopped/retry/超限；联合恢复提交与checkpoint前后崩溃、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届/重放，GET零receipt/event/outbox；REST/MCP及manifest/adapter/conformance两路径。",
+          "fileState": "待创建",
+          "result": "未运行新增功能用例"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,396 @@
+
+> workmesh@ test:integration C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749
+> pnpm test:integration:db && pnpm test:integration:api && pnpm test:integration:worker && pnpm test:integration:recovery
+
+
+> workmesh@ test:integration:db C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/db test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/db@ test:integration C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\db
+> vitest run --config ../../vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/db
+
+ ✓ integration/stage2-migration.integration.test.ts (2 tests) 3243ms
+   ✓ Stage 2 migration chain and PostgreSQL constraints > upgrades an applied 0032 receipt trigger through 0035 with actor-, Session-, and source-bound replies  1684ms
+   ✓ Stage 2 migration chain and PostgreSQL constraints > upgrades real 0026 Inbox rows through 0030, accepts legacy producers, and enforces collaboration constraints  1558ms
+ ✓ integration/stage0.integration.test.ts (9 tests) 12269ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > upgrades 0005 data with workspace-scoped context hashes and retry links  1661ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > upgrades representative 0001 data to workspace-scoped records and normalized mentions  604ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > rejects cross-workspace references, agent mentions, and cross-channel comment threads  1220ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > allows only one concurrent installation and records bootstrap with the service actor  1659ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > creates an admin, event, and outbox atomically and rejects a duplicate without an extra event  1895ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > enforces Stage 1 team scope, the active executor boundary, and immutable execution facts  1856ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > enforces one-time token exchange and webhook replay deduplication  1817ms
+ ✓ integration/realtime-migration.integration.test.ts (6 tests) 1482ms
+ ✓ integration/stage4-migration.integration.test.ts (7 tests) 1804ms
+ ✓ integration/durable-archive-upload-intents-migration.integration.test.ts (4 tests) 3343ms
+ ✓ integration/migration-baseline.integration.test.ts (19 tests) 25246ms
+   ✓ atomic checksummed v1 migration baseline > installs the v1 baseline and ordered subsequent migrations restart-idempotently  1724ms
+   ✓ atomic checksummed v1 migration baseline > upgrades an already-deployed v1 database through 0007 without baseline checksum drift  1642ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0002 legacy endpoint without data loss  1797ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0006 legacy endpoint without data loss  4297ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0007 legacy endpoint without data loss  1195ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0014 legacy endpoint without data loss  1170ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0021 legacy endpoint without data loss  1568ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0035 legacy endpoint without data loss  1451ms
+   ✓ atomic checksummed v1 migration baseline > adopts a database already at the final pre-v1 migration  920ms
+   ✓ atomic checksummed v1 migration baseline > serializes two concurrent runners with one baseline registration  1687ms
+   ✓ atomic checksummed v1 migration baseline > rejects an applied checksum mismatch with an actionable error  1335ms
+   ✓ atomic checksummed v1 migration baseline > rolls back a supported legacy upgrade crash and preserves its original ledger and rows  1346ms
+   ✓ atomic checksummed v1 migration baseline > rolls back a simulated before_sql crash and restarts safely  694ms
+   ✓ atomic checksummed v1 migration baseline > rolls back a simulated after_sql crash and restarts safely  1342ms
+   ✓ atomic checksummed v1 migration baseline > rolls back a simulated after_registration crash and restarts safely  1946ms
+   ✓ atomic checksummed v1 migration baseline > treats an after-commit crash as complete and restarts without replay  717ms
+ ✓ integration/agent-session-external-urls-migration.integration.test.ts (4 tests) 9838ms
+   ✓ 0031 Agent Session external URL shape migration > fails closed on a scalar without rewriting it  310ms
+ ✓ integration/planning-domain-parity-migration.integration.test.ts (8 tests) 1989ms
+ ✓ integration/retention-migration.integration.test.ts (4 tests) 2030ms
+ ✓ integration/active-executor-projection.integration.test.ts (1 test) 1521ms
+ ✓ integration/decision-session-provenance-migration.integration.test.ts (2 tests) 3004ms
+   ✓ Decision Session provenance migration > upgrades the previous 0029 constraint without rewriting existing Decisions  1602ms
+   ✓ Decision Session provenance migration > installs the same Decision subject constraint on a clean database  1401ms
+ ✓ integration/stage3-migration.integration.test.ts (2 tests) 1455ms
+ ✓ integration/worker-identity-migration.integration.test.ts (2 tests) 2125ms
+ ✓ integration/exact-archive-membership-migration.integration.test.ts (2 tests) 1694ms
+ ✓ integration/pagination-migration.integration.test.ts (2 tests) 2628ms
+   ✓ cursor pagination indexes > uses the team keyset index and traverses more than 100 bounded pages  1024ms
+ ✓ integration/auth-idempotency-migration.integration.test.ts (1 test) 1324ms
+   ✓ 0023 auth idempotency migration > upgrades through 0023 with fingerprint, envelope, expiry, and session revocation columns  1323ms
+ ✓ integration/route-policy-migration.integration.test.ts (2 tests) 1403ms
+
+ Test Files  17 passed (17)
+      Tests  77 passed (77)
+   Start at  03:26:47
+   Duration  88.44s (transform 286ms, setup 0ms, collect 7.10s, tests 76.40s, environment 2ms, prepare 1.93s)
+
+
+> workmesh@ test:integration:api C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/api test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/api@ test:integration C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\api
+> vitest run --config ../../vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/apps/api
+
+ ✓ integration/auth-idempotency.integration.test.ts (13 tests) 2001ms
+   ✓ secret-aware authentication idempotency > reclaims only after 24 hours and replays logout after the session is revoked  735ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 21 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/agent-lock-order.integration.test.ts [ integration/agent-lock-order.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/agent-lock-order.integration.test.ts:14:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/21]⎯
+
+ FAIL  integration/auth-rate-limit.integration.test.ts [ integration/auth-rate-limit.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ integration/auth-rate-limit.integration.test.ts:18:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/21]⎯
+
+ FAIL  integration/autonomous-control-plane.integration.test.ts [ integration/autonomous-control-plane.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/autonomous-control-plane.integration.test.ts:17:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/21]⎯
+
+ FAIL  integration/bootstrap-install.integration.test.ts [ integration/bootstrap-install.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/bootstrap-install.integration.test.ts:33:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/21]⎯
+
+ FAIL  integration/collaboration-queue-counts.integration.test.ts [ integration/collaboration-queue-counts.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/collaboration-queue-counts.integration.test.ts:4:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/21]⎯
+
+ FAIL  integration/documents.integration.test.ts [ integration/documents.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/documents.integration.test.ts:5:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/21]⎯
+
+ FAIL  integration/guidance.integration.test.ts [ integration/guidance.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/guidance.integration.test.ts:5:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/21]⎯
+
+ FAIL  integration/human-attention.integration.test.ts [ integration/human-attention.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/human-attention.integration.test.ts:12:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/21]⎯
+
+ FAIL  integration/reviewer-fixes.integration.test.ts [ integration/reviewer-fixes.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/reviewer-fixes.integration.test.ts:5:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/21]⎯
+
+ FAIL  integration/route-policy-authorization.integration.test.ts [ integration/route-policy-authorization.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/route-policy-authorization.integration.test.ts:14:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/21]⎯
+
+ FAIL  integration/stage0.integration.test.ts [ integration/stage0.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/stage0.integration.test.ts:9:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/21]⎯
+
+ FAIL  integration/stage1.integration.test.ts [ integration/stage1.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/stage1.integration.test.ts:7:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/21]⎯
+
+ FAIL  integration/stage2-collaboration.integration.test.ts [ integration/stage2-collaboration.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/stage2-collaboration.integration.test.ts:4:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/21]⎯
+
+ FAIL  integration/stage3-delivery.integration.test.ts [ integration/stage3-delivery.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/stage3-delivery.integration.test.ts:6:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/21]⎯
+
+ FAIL  integration/stage4-operations.integration.test.ts [ integration/stage4-operations.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/stage4-operations.integration.test.ts:11:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/21]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts [ integration/stage5-agent-connections.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/stage5-agent-connections.integration.test.ts:7:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/21]⎯
+
+ FAIL  integration/workbench-controls.integration.test.ts [ integration/workbench-controls.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/workbench-controls.integration.test.ts:9:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/21]⎯
+
+ FAIL  integration/workbench-conversations.integration.test.ts [ integration/workbench-conversations.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/workbench-conversations.integration.test.ts:4:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/21]⎯
+
+ FAIL  integration/workbench-llm-connections.integration.test.ts [ integration/workbench-llm-connections.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/workbench-llm-connections.integration.test.ts:4:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/21]⎯
+
+ FAIL  integration/workbench-recovery.integration.test.ts [ integration/workbench-recovery.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/workbench-recovery.integration.test.ts:11:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/21]⎯
+
+ FAIL  integration/workbench-runner.integration.test.ts [ integration/workbench-runner.integration.test.ts ]
+Error: WORKMESH_BOOTSTRAP_TOKEN must be canonical unpadded base64url encoding of 32 to 256 random bytes
+ ❯ loadConfig ../../packages/config/src/index.ts:331:29
+    329|     ? bootstrapTokenIssue(value.WORKMESH_BOOTSTRAP_TOKEN, bootstrapMat…
+    330|     : undefined
+    331|   if (bootstrapIssue) throw new Error(bootstrapIssue)
+       |                             ^
+    332| 
+    333|   const allowLoopback = value.WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK === 't…
+ ❯ src/server.ts:131:16
+ ❯ integration/workbench-runner.integration.test.ts:8:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/21]⎯
+
+
+ Test Files  21 failed | 1 passed (22)
+      Tests  13 passed (13)
+   Start at  03:28:20
+   Duration  33.22s (transform 1.09s, setup 0ms, collect 1.27s, tests 2.00s, environment 2ms, prepare 2.47s)
+
+C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/api@ test:integration: `vitest run --config ../../vitest.integration.config.ts`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.
+ ELIFECYCLE  Command failed with exit code 1.

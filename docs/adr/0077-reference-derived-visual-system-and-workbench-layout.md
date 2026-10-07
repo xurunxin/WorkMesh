@@ -9,15 +9,22 @@ M1-M5 staging, ADR 0045 (Proposed) single-token theme unification, ADR 0052
 (Accepted) information architecture, ADR 0064 (Accepted) unified shell, ADR 0073
 (Proposed) column position, ADR 0074 (Proposed) configuration readiness.
 
+与 Accepted ADR 0064 的实际冲突限定在视觉基线：0064 曾把当时的产品 token/密度作为权威，
+并拒绝复制第三方视觉语言；本批用户已批准采用参考实测亮色值、卡片结构和三栏布局，
+因此在这个范围修订该基线，不能宣称视觉完全未变。单一 authenticated shell、canonical
+URL、授权 read model、焦点和页面责任仍遵循 0064；0028 的模块/依赖边界和 0052 的 IA
+不重新决定。0077 保持 Proposed，不把本次方案审查冒写成全部 ADR 已 Accepted。
+
 Context
 
 WorkMesh's frontend direction is already decided and mostly written down. ADR 0028
 sets the architecture and the M1-M5 staging, and makes an explicit choice that
 matters here: **CSS variables and authored CSS are the M1 baseline, Tailwind is
 deferred, and shadcn/ui, MUI and Chakra are rejected.** ADR 0045 then converges the
-palette onto a single `--wm-*` token set, deletes a legacy dark theme and an
-"operations" theme, and scopes itself to **light only**, stating that dark mode is
-out of scope and that a future ADR may add `[data-theme="dark"]`.
+palette onto a single `--wm-*` token set. ADR 0045 是 Proposed，其历史亮色范围不能描述
+当前产品状态：`packages/ui/src/tokens.css` 已有 `[data-wm-theme='dark']`，D0
+`apps/web/e2e/baselines/d0/README.md` 已记录产品支持且默认暗色。这里迁移参考亮色值，
+保留既有暗色能力、切换与 token 消费，不用旧提案删除已存在的行为。
 
 参考产品的完整测量原件保存在[`docs/references/todos-analysis/`](../references/todos-analysis/)，
 包括 `design-tokens.md`、`kanban-cards.md`、五份引用的测量 JSON、截图索引和 28 张原始截图。
@@ -32,12 +39,11 @@ Copying the class strings would smuggle in a framework decision that ADR 0028
 rejected, and would couple WorkMesh's markup to a class-name vocabulary that a
 token rename would then have to rip out of every card.
 
-**The reference is light and dark; WorkMesh's current scope is light only.** The
+**参考值同时包含明暗两套，本批仅迁移其亮色值；WorkMesh 已支持暗色。** The
 reference's values are worth having — a warm off-white light surface
 (`#faf7f2`) against a neutral near-black dark surface (`#18181b`) is a more
 deliberate pairing than the current slate/blue legacy palettes — but taking the
-dark half would be a dark-mode decision, and that decision belongs to the ADR
-0045 scope line, not to a card redesign.
+dark half 会改变既有暗色值，需要另行评审；现有暗色值及解析必须继续成立。
 
 **The reference has no semantic status tokens at all.** Its board status colours
 are hardcoded utilities: gray-400 for pending, blue-500 for running, amber-500 for
@@ -57,9 +63,8 @@ state remembered.
 And one pattern is a genuine design rule rather than a taste preference: **only
 the state that requires a human is rendered in the attention hue.** In the
 reference, pending is gray, running is blue, done is green, and only *needs you* is
-amber. A human scanning a board is therefore drawn to exactly one thing. WorkMesh
-has two such states — `awaiting_review` and `awaiting_approval` — and both are
-currently competing with the rest of the status vocabulary for attention.
+amber. 人需要处理与否来自当前调用者可响应的 Human Attention，不来自虚构的工作流
+`awaiting_review`：工作流 category、Agent Session execution state 和 Attention 分开保留。
 
 Decision
 
@@ -89,9 +94,9 @@ are recorded as the reason WorkMesh must not import its mechanism: a status colo
 that lives in a classname cannot be themed, and WorkMesh already has the tokens
 that make it themeable.
 
-The reference's dark values are **captured in this ADR as a prepared target** and
-otherwise untouched. ADR 0045's light-only scope stands; the follow-up dark-mode
-ADR inherits a ready-made value table rather than starting from nothing.
+参考暗色值只作为待另行评审的测量资料，不替换产品现有暗色值。#11 新增并存槽时定义
+暗色映射到既有暗色语义值，#21 逐面迁移与清理时验证明暗切换、继承和 computed token。
+D0 固定亮色取样不是删除暗色的许可。
 
 ### The card becomes a structural contract
 
@@ -115,11 +120,11 @@ adding a hover shadow for polish.
 This becomes an explicit, testable invariant for the board and any status
 vocabulary:
 
-> The attention hue (`--wm-warning`, `#f59e0b`) is used for **exactly one class
-> of state**: work that cannot proceed without a Human. `awaiting_review` and
-> `awaiting_approval` qualify. Pending is neutral, running and queued are
-> informational, done and closed are success, blocked is a distinct neutral-warm
-> that must not reuse the attention hue.
+> attention 色仅表达当前调用者具有响应权限的未决 Human Attention；投影不授予权限。
+> `statusId/statusCategory` 保留自定义工作流，`activeAgentState` 保留真实执行枚举。
+> 两者都不能按 `awaiting_*` 前缀推导暖色。其他人的 Attention、已决定/过期 Attention、
+> 未授权内容及单独 blocked 执行态均不得渲染为可操作 Attention。中性、信息、完成色
+> 按相应维度映射，未知工作流回退中性；blocked 与 attention 使用不同语义槽，不发明色距阈值。
 
 The invariant is testable as a rendered assertion over every status the board can
 display, which is the point: a design rule that cannot be asserted is a preference.
@@ -151,10 +156,11 @@ Adopted, because each is an improvement over a detail page round-trip:
 - **dragging a card into the conversation composer**, which inserts it as a task
   reference so a Human can brief the Chief without leaving the board.
 
-Every one of these is a normal `Command` with the existing discipline: identity,
-`Idempotency-Key`, `If-Match` revision, optimistic concurrency, and the same
-authorization checks. The board is a faster path to the same governed mutation,
-never a second mutation API.
+领域写入复用既有命令、授权、`Idempotency-Key`、适用的 `If-Match` 与乐观并发。
+导航、复制链接、选择与拖卡插入草稿仅为本地操作，断言零 mutation，不要求领域 revision。
+#14 承接主动作和菜单；#22 承接拖拽、多选逐项结果与恢复、草稿引用。批量移动复用单项
+适配器，逐项提交并展示部分失败；未知网络结果重用原 key 查询/重放，409 重新读取并由用户
+确认。没有批次原子回滚；拖卡只插入引用，不自动发消息或激活总管。
 
 **One reference behaviour is explicitly not adopted.** Dragging a started card
 back to a pending column resets the task, interrupts the build, and clears the
@@ -173,9 +179,7 @@ that makes a safe transition expressible.
 - **Take the reference's status colours as hardcoded utilities.** Rejected: it
   re-creates ADR 0045's problem in a new place, and WorkMesh already has the
   tokens that make status colour themeable.
-- **Add dark mode now because the reference has it.** Rejected: that is ADR 0045's
-  deferred scope. This ADR captures the values so the follow-up is cheap, and does
-  not add `[data-theme="dark"]`.
+- **迁入参考暗色值。** 延后，保留测量资料；现有暗色能力必须保留并回归。
 - **Replace WorkMesh's information architecture and navigation with the
   reference's.** Rejected: ADR 0052 and ADR 0064 are Accepted and answer questions
   the reference does not ask — what is at risk, what was verified, who is
@@ -200,9 +204,7 @@ future card must satisfy, which constrains later work on the board. And the
 palette visibly shifts from slate/blue toward warm neutral, which some will read
 as a downgrade; the values are defensible, the shift is not optional once made.
 
-Dark mode remains out of scope by ADR 0045's own decision, so WorkMesh will look
-unlike the reference in one respect for now. That is a named, prepared follow-up
-rather than an omission.
+参考暗色值迁移延后；现有暗色支持仍是本批回归范围，不能宣称产品仅有亮色。
 
 ## Migration
 

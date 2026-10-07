@@ -101,6 +101,12 @@ Session is later stopped or revoked, authority checks strand the item rather
 than transferring it to a sibling Session. There is no reclaim or release
 command; adding one requires a separate protocol and audit decision.
 
+该历史阶段限制保持原文。ADR 0078 已裁定 actor-targeted 的有审计重新投递：仅创建关联
+successor，不转移原 claim，不新增 reclaim/release；exact-session 不允许转为 actor 寻址。
+其共同契约区分逻辑根与直接前驱，保留根消息引用和每条不可变回执；真正完成根来源时，
+Inbox reply、Work Room answer、Human resolve 统一原子收敛全链 status 投影，创建 successor
+本身不 resolve、claim 或 ACK。非消息来源依旧由原领域命令完成；授权、Stop 与换届必须重验。
+
 Inbox message, actor and exact-Session recipient, receipt, and response-
 resolution rows are excluded from generic retention cleanup. Their
 `room.message.*` and `inbox.item.*` events are excluded from the ordinary

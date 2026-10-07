@@ -1,181 +1,20 @@
-<!-- WM-ACTIVATE-20261007:ROADMAP -->
-# 工作台就绪面、可证明的接入恢复、一个通知渠道与国内模型预置
+# 工作台就绪面、接入恢复、渠道与模型目录、视觉迁移和总管契约
 
-状态：Proposed；D0 视觉基线门禁已完成；G1 在真实初始 base `419a1d7`、历史整合点 `4b287b4` / `36c7709` 的 44 项输入读取已通过，最终门禁待当前交付分支独立复核、最新 required CI 全通过及证据合入。通用 mocked-dev 失败仍待独立处置，D1 门禁待 G1/P1/R1 验收。P1 十六行事实台账已冻结，参考材料位于 `docs/references/todos-analysis/`。**F 链**：总管 / agent graph（ADR 0078），F2 的自主分派方向已定（委派内自主分派 + 人可修订）；其授权契约需按第二轮审查补齐
-（撤权传播、与 0062 的合取规则、两层能力上限、用量台账）**并在 F0 实施前冻结**；
-**实现**顺序以 F0 → F1/F2 → F3 为准。**F5 的收件恢复已定为有审计的重新投递**（ADR 0078，合并提交 `dde2a1a`），不再是待决门禁；R1 全批规格同步仍须独立验收。共六条链（A/B/C/D/F），其余门禁独立验收。本稿经 gpt-6-astra / high 多轮对抗式审查，
+Status: Proposed。产品链共五条：A/B/C/D/F；P0/P1/G1/D0为各自前置，R1为规格裁决，R2为审查索引，S1为可选流程资产。完整任务正文、测试与DoD在[规格索引](activation-task-specs/index.json)按真实todoId映射；本文件与各规格同属仓库权威，不能只同步摘要。
 
-第一版的结论与被撤回的主张记录在
-`docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md`。
+## 本批执行记录例外与当前门禁
 
-**source of truth**：`docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md`、
-`docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md`、
-`docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md`、
-`docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md`、
-`docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md`（F 链 总管 / agent graph）。
+用户已批准仅本批以 Todos 编排和记录执行进度、仓库保存规格及证据，替代AGENTS.md的真实WorkMesh Project/WorkItem双轨记录。没有创建或同步真实WorkMesh记录，其余领域、安全、测试与独审要求保持。所有实现task withPlan=true。必要新需求/设计分歧由Chief交用户裁定，权限、凭证及仓库以外发布不自动授权。
 
-对照物：todos.dev 的任务输入原件保存在 `docs/references/todos-analysis/`，包括 `ui-inventory.md`、`design-tokens.md`、
-`kanban-cards.md`、引用的测量 JSON、截图索引和 28 张原始截图；来源与哈希见该目录的 `SOURCE-MANIFEST.json`。
+G1已done：最终审查head c7a1af7d7b2e125368b29975867b4d392690fc38在main 72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2，head/main tree diff为空。最终MD/JSON/ZIP/index可读，CI376/run37669698793十job成功为G1的历史证据。最新实际main 5743f027ec86e8726d2cfdd38e0e038bdebeae49追加PR202的7个CI/配置文件，未改G1历史门禁；不把G1成功冒作R1检查。原G1计划段完整存于[历史摘录](../reviews/r1/historical-plan-excerpts.json)，原证据文件不改写。
 
-> 注：ADR 0074/0075/0076 的文件名已按审查结论改过（去掉与实际内容不符的
-> "activation gate"、"recoverable"、"identity" 等承诺性词）。旧文件名不再使用。
+P1已冻结，D0已完成亮色基线，不代表产品仅亮色。R1本轮已获完整规格修订授权，当前修订不启动产品实现；须最终独审、blocking/high闭合、最新PR必需CI成功并正常合入后，Chief才逐项同步看板和放行对应实现。每次下游开工复读最新main及29卡，核对updatedAt/状态/哈希并归因差异；版本推进不是错误，不再要求与旧dcf正文相等。
 
-## 本批执行记录例外
+## 输入、范围与复用边界
 
-> 跟进目前看板中的工作事项，逐步推进，完成这批workmesh的迭代任务
+原规划与snapshot保留，执行输入及差异见[29卡全文](../reviews/r1/execution-inputs.json)、[输入差异](../reviews/r1/input-deltas.json)和[主线输入](../reviews/r1/execution-main-inputs.json)。原外部审查、F两轮报告为输入，owner已裁定F2委派内自主分派与F5有审计重新投递，不重新当待选问题。复用authIdempotentTransaction、buildAgentConnectionInstruction、createAutomationWorker.claimNotifications/deliverNotification、registerInboxRoutes/loadAgentItemForUpdate/insertReceipt、toWorkSurfaceItem/单项移动适配器和createEventReader，构件存在不等于新原子/授权组合已实现。
 
-用户已选择「本批使用 Todos＋仓库」「采用并独立复核」「按条件持续推进」。
-经用户于 2026-10-07 18:38（Asia/Shanghai）明确批准，本批仅以 Todos 编排、以仓库保存
-规格和执行证据，替代本仓库 `AGENTS.md` 对 WorkMesh Project/WorkItem 双轨记录的要求。
-此决定覆盖此前「Todos 编排 + WorkMesh 追踪」的答复；不声称已创建或同步 WorkMesh 记录，
-也不改变 WorkMesh 产品自身的领域控制面。其他领域、安全、测试、审批和交付约束继续有效。
-总管已按 G1 交接映射同步 #5–#17 与 #20–#22 的完整 spec（包括已关闭的 #6）；本地证据记录
-逐项核验结果。本例外只适用于本批 Todo #18 及其映射的批次任务。
-本批不等待真实 WorkMesh MCP 接入；后续任务仍按各自批准的控制面要求执行。
-
-用户已委托总管在门禁和必需检查通过、blocking/high 问题解决后继续派工、独立审查、确认计划并合并仓库改动。
-真实新设计分歧、新需求、团队权限变更、凭证授权及仓库以外发布仍需用户单独批准。
-
-## G1 输入可达性门禁
-
-历史 base `32789cec4d50db0b85a63d91049cc425d9e917a2` 含四份 ADR、主计划和旧 `.review.md`，但不含原件输入包及 P1 台账。
-G1 原件和验证脚本已随本次取得的 `main` 提交 `419a1d7af90c09cb9364819977f32ec59cf86f87` 纳入本分支，
-来源及字节哈希见 `SOURCE-MANIFEST.json`；材料入库不等于 G1 独立 build 门禁通过。
-P1 的 16 条事实台账由 `c98ec5f538b3acd9ac052c4ef100e1d111232518`
-引入，已随 `735578d8d0733e04cae5640cedfaf0c6181391c7` 合入 PR #192 merge commit
-`660c74a6247544ffac64e7ef8f968d1025b2a668`。#2 已 done，第二轮独立审查批准合并；PR CI check 344 / run
-`37614969993` 的 8 个 job 全部成功。P1 台账现已冻结为后续输入；#3 是冻结后的独立规格裁决，不是 P1 合并前置。
-
-P1 冻结与 G1 材料合入不代表 G1 最终门禁通过。真实隔离 build 已在材料合并后的实际 base
-`419a1d7af90c09cb9364819977f32ec59cf86f87` 中逐份读取输入正文：44/44 文件、16/16 P1 台账，
-验证器退出码 0；Git blob、提交字节 SHA-256 和工作树字节 SHA-256 见
-`docs/evidence/build-input-reachability.final.json`。该结果是初始 base 的有效读取证明，不能改写成后续 main。
-
-D0 经 PR #195 合入 main 后，Chief 于 2026-10-07 21:09 核实 main 快照为
-`4b287b4e9892bfb4545dbbff94d04f45633c3a64`（包含 D0 提交
-`768bbd82fcc52a873168b39a8382d2f14c928abc` 与 G1 材料 main `419a1d7…`）。原 PR #196 当时实际整合的
-`origin/main` 为 `36c7709a8bd49c640b8dbfa04a09cfb777f943c8`；在该提交的精确 detached worktree
-重跑输入验证，44/44 文件、P1 16/16、0 errors。计划状态行的合并冲突已解决，保留 D0 计划/清单增量、
-P1 冻结、D1a/D1b 拆分和 main 新增的 ADR 0078/F 链；最终合并计划和根清单的哈希见最终证据。
-D0 独审及 CI #352（run `37623264959`，8/8）通过，历史 main push CI #353（run `37626312217`，8/8）通过。
-此整合不会改写 `419a1d7` 初始 build 证明。
-
-原 PR #196 的本地必需检查已完成（历史命令、退出码和结果见 `docs/evidence/build-input-reachability.final.md`）；
-本分支 merge 提交后的 PR/CI 与用户指定的独立复核仍待完成。完成前依赖输入的任务保持“待验证”，
-不放行 #3 或相关实现。D0 视觉基线门禁完成不解除 G1 最终/R1 门禁。
-
-当前交付分支为 `tds/conv-01a116f7-1027-7c75-90df-32ebc5488752`，保留原证据 head
-`af583f71f310e68ade588f9922694dfd8aba7a65`、前次 main
-`dcf355735341bc6daac4101b8c7d0efbaabbe764`、`dde2a1a6926040c35e9d85d89fed6238572f0f25`
-及最新 main `3cdfb9ea02496261a3f68369167165b76d953afa` 的历史。PR #197 的四文件文档增量完整保留，
-不沿用旧“仅六文件差异”的交付条件。最新 main 的精确 detached 读取 checkpoint、另读的
-ADR 0078 / `0078-review-round2.md` / `docs/CI.md` 和本轮检查另记于最终证据的当前交付段，
-不覆盖 `419a1d7`、`4b287b4`、`36c7709` 历史 JSON 记录。原 PR #196 已由用户合入 main（`3cdfb9e`），本任务未关闭或改动该 PR；
-原独审及 CI #357 不代替当前分支独审或最新 PR 的 required CI。当前 G1 最终门禁仍关闭。
-
-本轮按用户允许 rebase 最新 CI 主线的授权对齐精确 `f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9`（PR #199）。
-标准工具没有安全重写已推送分支的 rebase/lease 接口，正常无冲突整合该 main，保留原 `6dbcf33` 及全部合并历史。
-最新 CI 的实际范围、选中任务、输入 checkpoint 与检查版本另记最终证据的 `ciAlignment`；
-原始日志和失败上下文尾随空白可能阻止 `changes` 硬门禁，按原字节保留并记录，不改 CI 规则或豁免。
-旧 run `37656693023` 仅对应 `6dbcf33`；本轮回 review 定向独审后才恢复当前 PR #200 门禁，G1/R1 不提前放行。
-
-当前producer修订已正常整合PR201精确main `70199df743da754068831d709a1ae8c428bd2bb0`。
-按本轮明确授权实施方案A的ZIP/双字节索引和安全读取器；历史日志与checkpoint保持，原件不格式化。
-根集成首败现场不可恢复，带现场采集的标准根命令用于进一步诊断；未复现不当作失败分类。
-PR201新版E2E、正式selection/最新headCI和定向独审仍需完成；本轮不merge，G1/R1门禁保持关闭。
-
-F5 决策来源：用户在 [R1 #3](todo:q_1zKPuGsG-2ZRUwOwQx4) 原问题卡
-于 2026-10-07 23:29:53（Asia/Shanghai）选择“有审计的重新投递”（来源：本次 G1 修订 spec）。
-决定已交 R1，ADR 0078 已随 PR #198 记录；ADR 0037 与全批计划的规格同步仍由 R1 单独验收。
-PR #198 仅改 ADR 0078，本次无冲突整合其原文并新增最新 main 读取 checkpoint；
-本任务按本轮独审要求选择性吸收用户提交 `08ce81a6738407c90cf2629fbb70088a4a899841`
-中的 F5 计划修订：正文、依赖图、风险表及规格分歧均采用已决的有审计重新投递契约。
-保留当前 G1 门禁与完整交付历史；不在 G1 修改 ADR 0037 或实现恢复协议。
-
-交接原件及其引用的测量 JSON、截图索引和 28 张截图保存在 `docs/references/todos-analysis/`；#19 完整审查原件位于
-`docs/references/todos-analysis/reviews/todos-review.md`。来源相对路径、字节数和 SHA-256 见 `SOURCE-MANIFEST.json`。
-通用分析 README 和其他采集工具不属于本批依赖输入闭包。
-
-本次局部同步 [D0](todo:MPhtZiff23B33m9i2equq) 的基线证据与已批准的 D1 拆分引用；全批规格修订和 blocking/high 处置由 [R1](todo:q_1zKPuGsG-2ZRUwOwQx4) 独立复核。[G1](todo:Tws50k02Pi52R-RJEXP_N)、P1、R1 与 D0 各自验收，D0 完成不表示其他链已就绪。D0 视觉基线门禁已完成；D0 的通用 mocked-dev 失败仍按其独立计划记录和处置，不作为本轮 G1 输入读取结论。本轮不重跑 fresh build；后续如整合后受控输入正文发生变化，须单独记录该整合版本实际读取结果，不得复用 `419a1d7` 的旧哈希。
-
-## 审查撤回的四个前提（写在这里以免再犯）
-
-1. **「安装令牌只存在于响应里」是错的。** 服务端已用 AES-256-GCM 把整个兑换响应
-   加密写入 `auth_idempotency_records.replay_ciphertext`
-   （`apps/api/src/auth-idempotency.ts:128-144,218,319-339`），并有 worker 到期
-   擦除（`apps/worker/src/session-lifecycle.ts:672-690`）。**真正**的缺口是
-   **客户端没有可重放的稳定请求身份**。因此 v1 不新增 pairing 密文列、不改服务端
-   凭据生命周期。
-2. **「两个兑换端点共用同一限流预算」是错的。** 两者虽同为
-   `{endpointClass: pairing, subject: pairing}`，但桶按 `operationId` 分
-   （`apps/api/src/auth-rate-limit/limiter.ts:129-145,154-159`），而两个
-   operationId 不同；共用的是 socket / client-IP 桶。失败退避键也包含
-   operationId（`apps/api/src/auth-rate-limit/limiter.ts:122-125`），因此同样隔离。数据库
-   `attempts` 只在**已知的**身份不匹配（slug 或已知 clientType 对不上信封）时
-   递增，随机错误 code 不会消耗合法 pairing 的预算
-   （`apps/api/src/agent-connections.ts:521-525,561-562`）。**不做**
-   `endpointClass` 拆分。
-3. **「保存模型连接前服务端会真实请求验证密钥」是错的。** create/update 只做
-   格式与策略校验并发**不出站请求**，ADR 0065 明写此点。预置目录因此不声称任何
-   兼容性，真实 probe 单列为独立任务。
-4. **「国内生态零覆盖」需要收窄。** 准确说法是：**没有**企业微信/钉钉/飞书/
-   小程序适配器。平台并非没有通知面——ADR 0062 已有人工 Web Push，schema 自
-   `0016_stage4_usage_notifications.sql:6,85-103` 起就有 notification
-   channel/delivery 表。缺的是**渠道（channel）**面。
-
-另有两处我原判断错误、经核实后自我纠正：配对码并非短码，而是 32 随机字节的
-43 字符载荷（`packages/db/src/index.ts:41`）；十分钟只约束**首次**兑换
-（`agent-connections.ts:358-365,523`），与 15 分钟重放、轮换 overlap 是三个独立
-计时器。
-
-### 第二轮撤回：ADR 0078 的组合性质错误（F 链专属）
-
-`docs/adr/0078-review.md` 查出**2 blocking + 6 high + 3 medium**，其中最要紧的一条
-不是事实错误，而是推理错误：
-
-> **把「构件存在」直接升级成「组合性质已经成立」。** 表和事件确实存在，但缺的
-> 连接恰好负责权限、原子性和崩溃恢复；这些不是接线细节。
-
-具体被推翻的推断（这是我本会话第三次犯同一类错的更隐蔽版本——前两次是编造
-事实，这次是从零件的存在推出了组合的性质）：
-
-| ADR 0078 初稿的推断 | 实际 |
-|---|---|
-| 「短会话 + snapshot/delta/cursor = 跨会话只取新增」 | 三个构件分属不同域（ADR 0033），**没有一个是消费 checkpoint**；且新会话无历史模型上下文，只给增量等于假设它知道未变的名单 |
-| 「enum 加一个值就有 Team 房间了」 | `0001_v1_baseline.sql:599-614` 的 CHECK 只有三个分支，`enforce_room_subject()` 会把 team 走进 session 分支并抛 `WORK_ROOM_SUBJECT_NOT_FOUND` |
-| 「房间沿用现成的创建与归档命令」 | `work_room_channels` **没有归档字段**，也没有通用归档命令 |
-| 「prompt 作者即激活来源」 | `authorActorId` 只记作者，无激活来源/任命版本/授权绑定；且现有 `prompt()` **只接受 Human**（`agent/commands.ts:2843-2853`） |
-| 「Inbox 只有两态所以不能用」 | `inbox_item_receipts` 已有 claimed/read/acknowledged/replied；ACK 不等于 resolve |
-| 「capabilitySchema 16 项」 | **17 项**，初稿的分组只覆盖 15 项，漏了 `repo:read` 与 `artifact:write` |
-
-**留给后续 ADR 的规矩**：凡是写成「A 加 B 已经给出 C」的句子，必须指出**负责
-原子性/权限/崩溃恢复的那个组件**现在在哪。指不出来，就说明 C 是待建工作，不是
-既有性质。
-
-## 目标与非目标
-
-**目标**：
-
-- 新装的 WorkMesh 在第一次打开时就说清"还差什么、点哪里补"，并且在平台**确实
-  不知道**时明说不知道（`unknown`），不装作知道。
-- Agent 接入从七步仪式变成一条命令，并消除"丢响应即永久死路"——修法在客户端，
-  不改服务端凭据语义。
-- 投一个通知渠道出去，配一张**不带决策权**的卡片，把决策留在已登录的网页里。
-- 国内模型预置成只读、带出处的版本化目录，让常见场景不用手敲 base URL。
-- **D 链**：把参考产品（todos.dev）实测出的视觉体系、卡片结构与工作台三栏布局
-  搬进 WorkMesh 已定的机制（0028 的 CSS 变量基线 / 0045 的单套 token），
-  并把"只有人工关口是暖色"变成可断言的不变量。
-
-**非目标**（全部来自审查的"建议砍"清单）：
-
-- 不做工作区可编辑的起始提示语（无写入契约，退回固定 i18n 文案）。
-- 不做四渠道同时上线；v1 只做企业微信，钉钉/飞书/SMTP 各自独立后续。
-- 不做卡片内直接决策（需先有一份身份绑定 ADR）。
-- 不做小程序完整客户端（先做只读 + 认证兼容 spike）。
-- 不做目录 OAuth 创建首管理员（会静默改写 ADR 0031 的安全政策）。
-- 不做新的短码协议；沿用现有 43 字符信封。
-- 不做"保存前真实探测密钥"，单列为 probe 任务。
-- 不新增部署拓扑；ADR 0071 / 0072 仍为 **Proposed，未实现**。
+本轮改规格、审查及证据，不改产品代码、OpenAPI/Schema执行契约、数据库迁移，不新增渠道身份桥接、归档、长期记忆、runner活性注册或真实服务探测。后续任务先改contracts/OpenAPI、再按现有policy生成工具链；新migration/SCHEMA和空库升级责任分配给相应实现任务。
 
 ## P1：16 条代码事实断言核实台账（2026-10-07）
 
@@ -236,189 +75,65 @@ PR #198 仅改 ADR 0078，本次无冲突整合其原文并新增最新 main 读
 
 **DoD**：16 条断言全部有核实结论；每条被推翻的断言都有替代 `file:line` 证据；检索零命中项写明检索词、范围及排除项；结论已同步到计划与受影响 ADR 且相对引用可解析；五项仓库必需检查的命令、结果及失败/跳过原因均已记录并通过。满足 DoD 后仍须完成独立复核及冻结，之后 B1、A1、D1、C1 才可开工（本项 `blocks：B1, A1, D1, C1`）。
 
-## 现状与证据（已核实，含被撤回项）
 
-| 事实 | 证据 | 对计划的影响 |
-|---|---|---|
-| 兑换响应已有加密重放 + 到期擦除 | `auth-idempotency.ts:128-144,218,319-339`；`session-lifecycle.ts:672-690` | B1 改为纯客户端改动，**零迁移** |
-| 重放需同 key + 同 subject/op/规范化 body/客户端上下文 | `auth-idempotency.ts:205-216,285-304,343-352` | 缺口=客户端丢请求身份 |
-| 丢失原请求身份后，不能用新 key 再兑已消费 code | `agent-connections.ts:522` `PAIRING_CONSUMED`；原 key/body/context 在有效重放窗内仍可重放 | 缺口限定为客户端遗失原请求身份且无法精确重放 |
-| 接入指令确为 7 步 | `mcp-onboarding.ts:141-147` | 压到 2 步 |
-| 其中 4 步是完整性校验，不得删除 | ADR 0043（指纹）、ADR 0046（Skill 原始字节/哈希/签名） | 由 connector **执行**，不由 agent 手工做 |
-| 两个兑换端点预算**已**按 operationId 隔离 | `limiter.ts:129-145,154-159` | 不拆 endpointClass |
-| DB attempts 只在已知身份不匹配时递增 | `agent-connections.ts:521-525,561-562` | 锁的语义要写清，不是 code 暴力破解预算 |
-| enrollment 是 ADR 0062 定的默认，pairing 是恢复通道 | ADR 0062 | v1 明确选 pairing 纵向路径，不静默反转 |
-| enrollment 输入更大且不写 pairing | `contracts/src/index.ts:2918-2930`；`agent-connections.ts:919-971` | enrollment 恢复是独立任务 |
-| `POST /agent-connections` 目前也能建 Agent | `agent-connections.ts:443-469` | 不靠改文档假装它只绑定已有 Agent |
-| 无空闲 Runner 在线事实 | `run-session.ts:332-357`；`workbench-runner.ts:88-109`；`schema.ts:321-324` | 就绪面 Runner 项 v1 只能 `unknown` |
-| 模型条件是 active + enabled | `workbench-conversations.ts:150-166` | 判据收紧到这条 |
-| 项目不是所有工作的前提 | ADR 0004、ADR 0024、`AGENT_PROTOCOL.md:1746-1756` | 仓库项可 `not_applicable` |
-| 保存模型连接不出站 | ADR 0065；`workbench-llm-connections.ts:49-69` | 预置不声称兼容性 |
-| Human Attention 是派生查询，无表/无 outbox/无调度 | ADR 0050 | 投递意图必须新设计（F10） |
-| Redis sink 只是 wake hint 且有 MAXLEN 裁剪 | `worker/src/index.ts:249-258`；ADR 0033 | 不能当渠道队列 |
-| 已有 Web Push 与 notification 表 | ADR 0062；`0016_stage4_usage_notifications.sql:6,85-103` | 渠道面是扩展不是从零 |
-| 限流默认仍构建 Redis store | `auth-rate-limit/plugin.ts:53-59` | ADR 0072 未实现，兼容性是后续门槛 |
-| 锁清单 pin 的是 statementId（owner + 规范 SQL 哈希）与 rankSequence | `agent-lock-order-inventory.test.ts:141-167,373-392` | **不是**只许行号位移 |
-| 路由策略矩阵由脚本生成 | `scripts/generate-route-policy-artifacts.mts`；`pnpm generate:route-policy` | 用生成器，不手改 |
-| ADR 0071/0072 Status 均为 Proposed | 两条 ADR 首行 | 事实表区分"文件存在/提案/已实现/已验收"四态 |
-| 本次检索范围内未发现企业微信/钉钉/飞书/小程序渠道适配器 | 检索词、目录范围与排除项见 P1 台账第 15 项 | 仅说明未找到适配器，不推断国内模型或全部文档不存在 |
+## 完整任务与无环依赖
 
-## 任务链与依赖
+| 卡 | 完整spec | 源状态 | 实现requires | 额外最终验收requires |
+| --- | --- | --- | --- | --- |
+| [#1](todo:reEr9xXt9JXN26e5SbC7Z) | [[P0] 前置：授予 agent 团队最小必要工具权限（需管理员执行）](activation-task-specs/01.md) | done | — | — |
+| [#2](todo:qJKk_SAxN29AdBHERBl7u) | [[P1] 核实 16 条代码事实断言（file:line 逐条核对）](activation-task-specs/02.md) | done | — | — |
+| [#3](todo:q_1zKPuGsG-2ZRUwOwQx4) | [[R1] 独立规格审查：ADR 0074–0078 与当前任务依赖、验收闭环](activation-task-specs/03.md) | building | #2、#18 | — |
+| [#4](todo:FX01PP879WjRSp0LVcoM2) | [[S1] 编写团队 Skill：WorkMesh ADR 与双轨流程](activation-task-specs/04.md) | todo | #3 | — |
+| [#5](todo:ti53hOGbvnBNrvjXXveGO) | [[B1/B2] 可恢复连接器：稳定请求身份与完整协议验证（零迁移）](activation-task-specs/05.md) | todo | #1、#2、#18、#3 | — |
+| [#6](todo:xym1i0KcnxOLi0T-hxd1j) | [[B2] 连接器：七步到两步，且一步校验不减](activation-task-specs/06.md) | closed | — | — |
+| [#7](todo:6EzX6xCA-_m72aQU1BEHX) | [[B3] 接入错误分类与恢复指令（不改限流架构）](activation-task-specs/07.md) | todo | #1、#2、#18、#3、#5 | — |
+| [#8](todo:Hxr1xIdh4poZp3F5laGrT) | [[A1] 就绪投影：三态查询，零迁移（Runner 只能 unknown）](activation-task-specs/08.md) | todo | #1、#2、#18、#3 | — |
+| [#9](todo:0BkezbmWV6k8vwrlSNuF_) | [[A2] 工作台未满足项列表与空状态主动作（不做向导）](activation-task-specs/09.md) | todo | #1、#2、#18、#3、#8 | — |
+| [#10](todo:MPhtZiff23B33m9i2equq) | [[D0] 视觉基线采集（硬门禁，不写实现）](activation-task-specs/10.md) | done | — | — |
+| [#11](todo:IJQA_DfxU0hF5e8L5Xb3v) | [[D1a] 新增并存语义 token 与参考实测映射](activation-task-specs/11.md) | todo | #1、#2、#18、#3、#10 | — |
+| [#12](todo:MRdRKNdufZ2cFEv3hwaf7) | [[D2] 卡片结构契约 + 单暖色不变量（两条合并，同一组件层）](activation-task-specs/12.md) | todo | #1、#2、#18、#3、#21 | — |
+| [#13](todo:O2iz8mb_26RoIlnpfXwxV) | [[D4] 三栏工作台布局：对话与看板并排，状态被记忆](activation-task-specs/13.md) | todo | #1、#2、#18、#3、#12 | — |
+| [#14](todo:YLnrl8RaxiZjEjsVQ80B2) | [[D5a] 状态化主动作与菜单：仅领域写入走受治理命令](activation-task-specs/14.md) | todo | #1、#2、#18、#3、#13 | — |
+| [#15](todo:kkG9VeT3_uTzREhjnX2ve) | [[C1] 渠道投递契约：投递意图 + 每目标 attempt + fenced ack](activation-task-specs/15.md) | todo | #1、#2、#18、#3 | — |
+| [#16](todo:kjOs4t_DtMyrkHTBFmpQ5) | [[C2] 企业微信适配器：只提醒 + 深链，卡片不承载决策](activation-task-specs/16.md) | todo | #2、#18、#3、#15 | — |
+| [#17](todo:4DlyrPrDMMtK5JTmFm1t_) | [[C3] 国内模型预置目录：只读、带出处、不声称兼容性](activation-task-specs/17.md) | todo | #2、#18、#3 | — |
+| [#18](todo:Tws50k02Pi52R-RJEXP_N) | [[G1] 输入可达性：让隔离构建真的读得到 ADR 与计划（执行前硬前置）](activation-task-specs/18.md) | done | — | — |
+| [#19](todo:cPwwV-W_Lkm9DtiQWifXP) | [[R2] gpt-6-astra / high 对抗式审查结论（2026-10-07）](activation-task-specs/19.md) | todo | #3 | — |
+| [#20](todo:JfGwKk3prfIie6X2u2J51) | [[B-ship] 连接器版本化分发、B4 文档与无源码安装验收](activation-task-specs/20.md) | todo | #2、#18、#3、#5、#7 | — |
+| [#21](todo:2j2sxT5wJ-l001efH_meJ) | [[D1b] 按界面迁移 token 消费方，验证后清理旧值](activation-task-specs/21.md) | todo | #1、#2、#18、#3、#10、#11 | — |
+| [#22](todo:gY4n2fZhVLa9FcazFC_bY) | [[D5b] 拖拽、多选逐项结果与恢复、拖卡插入草稿](activation-task-specs/22.md) | todo | #1、#2、#18、#3、#13、#14 | — |
+| [#23](todo:hHvBuVEpXQRQhVB12wRgu) | [[F0] 团队房间的完整扩展（blocking，必须最先）](activation-task-specs/23.md) | todo | #2、#18、#3 | — |
+| [#24](todo:UQPSqKNzHK_mRc_1wOxBA) | [[F1] 总管任命与能力派生（17 项完整分区）](activation-task-specs/24.md) | todo | #2、#18、#3、#23 | — |
+| [#25](todo:edIZ0ybOGMRBI6aupNUhU) | [[F2] 总管委派：一次授权、目标内自主执行、人可修订](activation-task-specs/25.md) | todo | #2、#18、#3、#23、#24 | — |
+| [#26](todo:GKJOdaKtOjiTwP637pyM-) | [[F3] 激活与准入命令（三源统一）](activation-task-specs/26.md) | todo | #2、#18、#3、#23、#24、#25 | — |
+| [#27](todo:89f9yFnmIg4nszXIBCByh) | [[F4] 消费协议（本链最重的一块）](activation-task-specs/27.md) | todo | #2、#18、#3、#23、#24、#26 | — |
+| [#28](todo:YtFHUCHv8l4JZcYd1qHAU) | [[F5] 收件箱跨短会话恢复：有审计的 successor / re-delivery](activation-task-specs/28.md) | todo | #2、#18、#3、#23、#24、#26 | — |
+| [#29](todo:RTVGtGBgj-BvazLLjiXKu) | [[F6] 两个薄工具与完整交付链](activation-task-specs/29.md) | todo | #2、#18、#3、#23、#24、#25、#26、#28 | #27 |
 
+产品前置R1/P1/G1/P0按每卡索引核对；已完成前置不重开。#5吸收#6，#20吸收B4及无源码安装；#11/#21拆槽/消费迁移，#12合并D2/D3，#14/#22拆主动作/菜单与拖拽/逐项恢复/草稿。C3独立，C1→C2保留，S1不阻塞实现，悬空C4删除。
+
+```mermaid
+graph LR
+ R1 --> B5["#5 B1/B2"] --> B7["#7 B3"] --> B20["#20 B-ship/B4"]
+ R1 --> A8["#8 A1"] --> A9["#9 A2"]
+ R1 --> C15["#15 C1"] --> C16["#16 C2"]
+ R1 --> C17["#17 C3"]
+ D0["#10 D0"] --> D11["#11 D1a"] --> D21["#21 D1b"] --> D12["#12 D2/D3"] --> D13["#13 D4"] --> D14["#14 D5a"] --> D22["#22 D5b"]
+ R1 --> D11
+ R1 --> F23["#23 F0"] --> F24["#24 F1"] --> F25["#25 F2"] --> F26["#26 F3"]
+ F26 --> F27["#27 F4"]
+ F26 --> F28["#28 F5"] --> F29["#29 F6"]
+ F27 --> J["#29 最终联合验收"]
+ F29 --> J
 ```
-B1 客户端请求身份 ──▶ B2 connector ──▶ B3 错误分类 ──▶ B4 文档
-   （零迁移，可独立先发；不依赖 A、C、D）
 
-A1 就绪投影 ──▶ A2 首跑面
-   （零迁移，可与 B 并行；不被 C 阻塞）
+## F链共同契约与阶段责任
 
-C1 投递契约 ──▶ C2 企业微信适配器
-C3 预置目录（只读，不依赖 A）
+R1冻结恢复身份/资格/幂等/提交协议及F2授权计量；F3 owner交付三源激活与持久结果引用，F4 owner验收baseline/checkpoint与结果同事务接口，F5 owner在既有Inbox fixtures实现恢复底层且不依赖F6。F6实现requires F1/F2/F3/F5；最终联合验收另外消费已验收F4，无反向边。#29 owner对恢复、checkpoint、三条根完成路径、Stop/撤权/换届/重放和REST/SDK/MCP/manifest/adapter/conformance端到端负责。各执行角色由Chief派发前落实，不冒称已任命agent。
 
-D0 视觉基线 ──▶ D1a 新增并存槽/映射 ──▶ D1b 逐面迁移/清理 ──▶ D2 卡片结构契约 ──▶ D3 单暖色不变量
-              ──▶ D4 三栏工作台布局 ──▶ D5 卡片交互集（全部走受治理 Command）
+F0先枚举entry提交再引用，F1任命事务建Team房间；房间可见不等于exact-recipient私信可见。F2 standing delegation与0062 action Approval合取，不逐次人批；上下游能力两道上限、旧revision全部派生失效、logicaldispatch次数与预算原子记账。F3新输入id不清除同逻辑来源Stop抑制。F5原claim/归因不可变，直接前驱链接与根资源分开；root message resolution在Inbox reply/Work Room answer/Human resolve三条完成路径原子收敛整链。完整共同契约见ADR0078及[任务接口](../reviews/r1/task-contracts.json)，ADR0037旧Consequences逐字保留并限定修订。
 
-F0 团队房间扩展（blocking，最先）──▶ F1 任命与能力派生
-                              ├─▶ F2 总管委派 ──▶ F3 激活与准入
-                              ├─▶ F4 消费协议（最重）
-                              ├─▶ F5 收件恢复（已定为有审计的重新投递）──▶ F6 两个薄工具与交付链
-F-memory 长期记忆（延后，不阻塞上述任何一条）
-
-延后：C-identity（目录首管理员）、C-card（卡片决策）、C-mp（小程序）、
-      C-probe（真实模型探测）、C-dingtalk/C-feishu/C-smtp、
-      D-dark（暗色，值已预取，见 ADR 0074/0077）
-```
-
-审查特别指出：审查前那版把 B 链汇入 A2、又把 C 的投递强行依赖 A 的就绪投影，
-自相矛盾且拖慢可独立发布的工作。上图的依赖是修正后的。
-
-**D 链的独立性与前置**：D 链**不依赖** A/B/C 任一条，它只依赖已定的 0028
-（前端架构与 M1–M5 分期，Accepted）、0045（单套 token，Proposed）、0052
-（IA，Accepted）、0064（统一 shell，Accepted）、0073（列内位置，Proposed）。
-D0 是硬门禁：**没有基线就不许改 token 值**，否则视觉回归无从评审。D 链**不触碰**
-领域与端点，纯表现层。
-
-## A 链 — 工作台就绪面（ADR 0074）
-
-### A1 — 就绪投影（只读，零迁移）
-
-- **交付**：`GET /api/v1/readiness`；每项检查三态 `ready` / `blocked` /
-  `unknown`，仓库项另有 `not_applicable`；`CONTEXT.md` 加
-  **Configuration readiness** 词条。
-- **约束**：无任何写入端点；按调用者与 Team 作用域化（个人模型对队友不可见）；
-  Runner 项 v1 恒为 `unknown`；模型判据为 `active` + `enabled`。
-- **测试**：四个 happy path（配置齐全 → `ready`）；每项单独缺失；跨 Team 与
-  他人个人模型**不泄露存在性**；**无 assignment 的空闲 runner 不得被报成离线**
-  （`unknown`）；模型 disabled → `blocked`；模型属于他人 → 对该调用者
-  `blocked` 且不泄露；非仓库工作 → `not_applicable` 而非 `blocked`；心跳过期
-  不影响结论（v1 无 Runner 事实）；断言**无状态/事件/outbox/receipt 写入**
-  （不是"事务计数为 0"——只读事务不违反 Query）。
-- **DoD**：`pnpm generate:route-policy` 重生成矩阵；lint/typecheck/test/
-  integration/e2e 全绿；`validate-ci.mjs` 无豁免。
-
-### A2 — 首跑面
-
-- **交付**：工作台会话区上方的未满足项列表（有序、行内深链、计数）；空状态
-  仅在对应项 unmet 时长主动作；起始提示使用**现有 i18n bundle 的固定文案**。
-- **测试**：列表顺序=依赖深度；点击深链返回后重算；全满足时不渲染；非 unmet
-  空状态不长横幅；e2e"装完 Lite → 看到缺配置 → 逐项补齐 → 横幅消失"；
-  路由回退/键盘/窄屏/i18n 回归。
-
-## B 链 — 可证明的接入恢复（ADR 0075）· 优先级最高
-
-### B1 — 客户端请求身份（零迁移，可独立先发）
-
-- **交付**：`apps/connector` 的持久化层：首次发送**前**原子写入
-  `0600` 文件，含 `Idempotency-Key`、精确规范化 body、origin、user-agent；
-  之后每次运行若存在 pending 记录则**原样重放**。
-- **约束**：服务端不改、不加列、不改凭据生命周期；窗口关闭时 connector 明确
-  告知并给出人的下一步。
-- **测试**：进程在发送前崩溃 → 恢复后同一凭据；发送后崩溃 → 同一凭据；改 body
-  继续冲突；**另一 claimant 只持原 code 与公开 connection id 不得取回令牌**；
-  窗口外拒绝；过期密文擦除后拒绝；服务端重启后仍可重放；客户端重启后仍可重放。
-- **可独立发布的判据**：以上断言全绿 + 现有集成测试仍绿（重放相同 body 的
-  `stage5-agent-connections.integration.test.ts:333-335` 不回归）。
-
-### B2 — 一步式 connector（七步 → 两步，且**不删**任何校验）
-
-- **交付**：`pnpm --filter @workmesh/connector connect --code <43 字符> --client
-  <type> --origin <url>`；QR 编码该 code；输出可直接粘贴的客户端配置。
-- **约束**：指纹前缀比对、Skill **原始字节/哈希/签名**校验、discovery 校验、
-  `verify_connection` 比对全部由 connector **执行**（ADR 0043/0046 的实质要求
-  保留）；配置**先写暂存文件**、4 与 6 都通过后才原子 rename；失败不覆盖既有
-  配置。禁止 pnpm-workspace 内部安装方式——Lite 设备无源码，必须走发布的
-  带版本二进制，这条是独立工作项。
-- **测试**：黄金路径；指纹不符/签名错/Skill 字节被篡改/错误 Team/错误
-  principal/旧 overlap 凭据误用 → 全部拒绝且不写配置；配置写一半被杀 → 既有
-  配置完好；stdout/stderr/恢复文件/配置**均无明文令牌**；同 code 连跑两次幂等。
-
-### B3 — 错误分类（不改限流架构）
-
-- **交付**：所有接入错误带 `next_action` + `human_action`；类型不匹配返回部署
-  支持的 clientType 列表，并写明这只修正**猜错类型**、不修复 slug 绑定不一致。
-- **明确不做**：不拆 `endpointClass`；不改 ADR 0030 的共享来源预算。
-- **测试**：表驱动，每条错误码都有可执行 next_action；**耗尽 endpoint/subject
-  桶不影响另一个 operation**；**耗尽共享 IP 桶确实同时影响两者**（这才是真正
-  共用的）；错误 code / wrong slug / wrong 已知 type / 未知 enum 四种输入分别
-  断言；429 尊重 Retry-After；store 故障 fail closed。固定时钟 + 低阈值。
-
-### B4 — 词汇收敛与文档
-
-- **交付**：`docs/agent-integration.md` 改为两步流程；`AGENT_PROTOCOL.md` 写明
-  重放保证是"重放**同一**请求身份"，**新 key 不是恢复路径**；`AGENTS.md` 补
-  connector 安装与命令（含 Lite 二进制路径）。
-- **不宣称**：`POST /agent-connections` 仍可建 Agent 这一事实**不被文档悄悄
-  改写**；收窄它是破坏性变更，另立 ADR。
-- **测试**：文档里每条命令在 CI 以 `--dry-run` 校验存在且参数名正确。
-
-## C 链 — 一个渠道 + 预置目录（ADR 0076）
-
-### C1 — 投递契约（先于任何渠道适配器）
-
-- **交付**：delivery intent / attempt 表；fan-out worker；fenced ack；退避、
-  超时 reclaim、DLQ；持久 checkpoint。
-- **约束**：投递意图只由业务事务或带持久 cursor 的 worker 产生，**绝不**在
-  `GET` 注意力投影时产生；外发**只在提交后**；发送前按目标 Human 重新授权并
-  重建最小内容；卡片绑定源 revision，陈旧卡片只能深链不能批准新内容；每个目标
-  独立重试，互不影响；承诺**至少一次**并给出不确定结果对账路径，不谎称恰好
-  一次。
-- **测试**：一个源事件→精确目标投递；每目标幂等去重；两 worker 竞争→每目标
-  仅一次；单渠道故障不致其他渠道重投；撤权后抑制；进程在每个提交/发送边界崩溃；
-  checkpoint 保存前后崩溃；陈旧 revision 拒绝；并发相反审批正确冲突；重复
-  callback 同体去重、异体冲突；无 Redis 档位**明确标记为不支持**而非静默降级。
-
-### C2 — 企业微信适配器（v1 唯一渠道，只提醒 + 深链）
-
-- **交付**：低敏通知 + 指向已登录网页的深链。**卡片不渲染决策控件。**
-- **约束**：签名校验失败必拒；回调时窗校验；内容最小化；配置秘密脱敏；
-  payload 上限。卡片被转发时必须无害。
-- **测试**：签名失败/过期/重放拒绝；深链指向 canonical 路由并保留
-  Back/Forward；未绑定/转发/解绑/离队/停用/错误 recipient 全拒绝；**渠道侧
-  不产生任何决策写入**（断言零 outbox 决策行）。
-
-### C3 — 国内模型预置目录（只读，不依赖 A）
-
-- **交付**：版本化只读目录，含 provider/region/apiType/baseUrl/modelId/来源
-  URL/核对日期/确认方式。
-- **约束**：无 API CRUD、无请求内修改、不建表；不声称任何兼容性（因为当前栈
-  不验证）；ADR 0062 的 Web Push 与既有 notification 表作为先例被扩展而非重建。
-- **测试**：目录版本可读；选中预置只填充可编辑配置；目录替换/覆盖/禁用规则
-  有测试；**保存连接不产生任何出站请求**（断言零外部调用）。
-
-## D 链 — 参考产品视觉体系与工作台重构（ADR 0077）
-
-参照物：`docs/references/todos-analysis/`（`design-tokens.md` 实测 token、
-`kanban-cards.md` 卡片结构与 9 类交互、28 张截图）。
-
-**采纳什么、不采纳什么**（这是本链最容易做错的地方）：
-
-| 采纳 | 不采纳 |
-|---|---|
-| 实测**值**（表面/边框/文字色阶、6/8/12px 圆角、间距刻度、状态色值） | Tailwind 工具类与其 classname 字符串（0028 已延后 Tailwind，0045 已否决） |
-| 卡片**结构**（三区结构、2 行截断、零阴影、内凹列底） | 状态色硬编码在工具类里的**机制**（0045 的 token 正是为了消灭这个） |
-| 三栏工作台 + 可拖分隔线 + 隐藏/最大化 + 状态记忆 | 替换 0052 的 IA 与 0064 的 canonical 导航（两者均 Accepted） |
-| 卡片状态化主动作、右键菜单、拖拽、Ctrl 多选、拖卡进对话 | **破坏性拖拽重置**（无确认地中断构建并清空对话/方案/diff） |
-| "只有人工关口是暖色"作为可断言不变量 | 顺带引入暗色（0045 明确只做亮色，暗色值已预取为后续 ADR） |
+## D链基线、主题与旧链交界
 
 ### D0 — 视觉基线（硬门禁，不写实现）
 
@@ -458,320 +173,19 @@ D0 是硬门禁：**没有基线就不许改 token 值**，否则视觉回归无
   已记录现行文档集合与修正陈旧引用的方案。该输入一致性修正由 G1 处理，D0 不重造 PRD、
   不改产品规范，也不把陈旧引用冒称采集/检查阻塞；原始来源核验见上述基线报告。
 
-### D1 — token 值迁移（沿用 0045 的命名空间）
 
-已批准拆为 [D1a](todo:IJQA_DfxU0hF5e8L5Xb3v)（仅新增并存语义槽与来源映射，保留根值及消费方）和
-[D1b](todo:2j2sxT5wJ-l001efH_meJ)（逐面迁移、视觉 diff 及人工评审后清理旧值）。D1a 的前置为
-G1、P1、R1、D0；D1b 在 D1a 后执行。下列原 D1 清单是两阶段的总范围，不能将 D1a 完成等同全部迁移完成。
-本批不新增暗色值，也不因迁移删除已有明暗切换；真实视觉取舍另行由用户裁决。
+D1a只并存新增，D1b逐面评审迁移后最终清理；产品已有且默认暗色，既有暗色token与切换回归分别归#11/#21。参考暗色值迁移延后，不能用D0亮色采样删除暗色。D2/D3以当前人canRespond Attention表示需响应，workflow/execution分维，不捏造awaiting_review。D5本地复制和草稿零mutation，移动逐项独立提交与部分恢复，不承诺全批原子性。
 
-- **交付**：`packages/ui/src/tokens.css` 新增参考实测值作为**并存**的语义槽；
-  一份"0045 语义槽 → 参考实测值"映射表。
-- **约束**：顺序不可颠倒——**先新增、后按面迁移、最后才删旧值**。先改根值或先删
-  旧 token 是本任务要防的唯一失败模式。**不引入 Tailwind，不引入暗色**。
-- **测试**：每迁移一个面，用 D0 基线做视觉 diff 评审；`theme-unification.spec.ts`
-  全绿；**旧值仍有消费方时禁止删除**（用一条静态断言守住）。
+A ready/unknown仅配置查询，不激活授权；D4无任命/feature关闭明确不可用，布局不把整个F链设成旧链前置。A2与D4各自先验收，D4负责整合后的窄屏/焦点/列表组合回归。C渠道ack是提供方发送确认，不是F的Inbox resolve、Approval或授权。
 
-### D2 — 卡片结构契约
+## 验收、处置与待裁定阶段
 
-- **交付**：卡片三区结构（meta / title / footer）成为共享契约；8px 圆角、
-  1px 边框、10px 12px 内边距、6px 纵向间距、**零阴影**、标题 14px/500 +
-  `line-clamp: 2`；列 12px 圆角 + **内凹**表面 + 12px 列间距。
-- **约束**：零阴影是承重项——阴影预算只留给浮层，否则满屏卡片糊成一片；这条
-  防止日后有人为"手感"加 hover 阴影。
-- **测试**：卡片结构断言（三区存在且顺序固定）；标题**最多 2 行**（超长标题被
-  截断而非撑高卡片）；卡片计算样式 `box-shadow: none`；列背景为 inset 槽而非
-  页面背景。
+[九类覆盖矩阵](../reviews/r1/test-coverage.json)按feature标适用/理由、具体文件/用例和原测试DoD去向；待创建测试明确标记，未执行不写通过。原合并前清单完整保留在[旧要求映射](../reviews/r1/legacy-requirements.json)，包括#6/B2、B4、D1/D2/D3/D5；错误的无秘密pending、逐次批准、未来暗色、虚构枚举、全批原子移动、决策回调逐条撤回/替换，不保留相互矛盾的活动要求。
 
-### D3 — 单暖色不变量
+[审查报告](../reviews/r1-spec-review.md)及finding台账记录代码事实、owner/处置/复核；没有证据的疑问标待验证，不将风险接受当用户批准。[decisions.md](../reviews/r1/decisions.md)提交#20设备矩阵与#16协议部署的可审建议，受影响阶段保持裁定关口；#27先实测容量再冻结预算，不发明数字。无Redis/Lite能力按0071/0072的实际Proposed与兼容待验收状态记录，不替代现有标准配置黄金路径。
 
-- **交付**：`--wm-warning` 只用于"必须等人"的类状态；`awaiting_review` /
-  `awaiting_approval` 属于此类；pending 中性、running/queued 信息色、
-  done/closed 成功色、blocked 用**不与 attention 撞色**的中性暖。
-- **约束**：这条要写成**可断言的渲染测试**，覆盖看板能显示的每一个状态。写不成
-  断言的设计规则只是偏好。
-- **测试**：遍历全部状态 → 断言只有 awaiting_* 渲染为 attention 色；blocked
-  的色值与 attention 色的距离超过阈值；明暗（如未来）两态各自成立。
+复用verify-build-input-reachability已核验原44文件/P1/原始ZIP，再扩查ADR0078/两轮报告/latestmain及冻结片段。R1 JSON/校验脚本是CI unknown路径，按实际ci-policy选择full，不借文档身份跳过必需检查。本轮结果另见[检查记录](../reviews/r1/execution-checks.md)；不沿用G1/P1/D0成功替代本轮，不修改旧失败证据。当前改动另一个agent定向复核后，最新PR CI/准确提交复核与正常合入仍由Chief执行，Todos同步后读回逐项全文。
 
-### D4 — 三栏工作台布局
+## 演示与完成定义
 
-- **交付**：导航 / 总管对话 / 看板三栏；可拖分隔线；看板可隐藏（`Ctrl Alt B` 类）
-  与最大化（`Ctrl Shift Enter` 类）；布局状态被记忆。
-- **约束**：两栏是**同一批授权 read model 的两个视图**，不产生第二权威源；
-  分隔线**不改变 URL 所有权**，0064 的 canonical 导航规则原样保留。
-- **测试**：分隔线拖动不改变路由与焦点；隐藏/最大化状态跨会话保持；窄屏回退
-  行为；键盘可达；**A2 的就绪列表在窄屏下仍可达**（不因布局而丢失）。
-
-### D5 — 卡片交互集（全部走受治理 Command）
-
-- **交付**：状态化主动作（随状态变文案）；右键菜单（下一步排第一，其后编辑/
-  复制/复制链接/关闭/删除/重开）；列间拖拽；`Ctrl/⌘` 点选多选批量移动；
-  **拖卡进对话输入框**插入任务引用。
-- **约束**：每一个都是普通 `Command`，带 `Idempotency-Key`、`If-Match` revision
-  与乐观并发，走既有授权检查。**看板是更快到达同一个受治理变更的路，不是第二套
-  变更 API**。**不实现破坏性拖拽重置**；任何破坏性转换必须有显式确认面。
-- **测试**：每个动作 happy path；未授权 actor 在卡片上同样被拒；陈旧 revision
-  拒绝（`If-Match`）；重复幂等键不产生第二次变更；**破坏性路径必须出现确认面**
-  （反向断言：不实现无确认的拖拽重置）；`Ctrl` 多选跨列移动原子性；拖卡进对话
-  只插入引用、不自动提交（符合 `CONTEXT.md` 的 Draft 规则）。
-
-## F 链 — 总管 / agent graph（ADR 0078）
-
-**前提是「先证明能协调，再谈长期记忆」。** 0078 与 ADR 0062 是**并行**关系而非收窄：
-总管委派和自主策略都是「常设、有界、可撤销」的授权。**收件箱恢复已由 owner 决定为
-有审计的 successor/re-delivery**（ADR 0078，`dde2a1a`）；ADR 0037 的原约束逐字保留，
-其指向说明仍由 R1 单独同步与验收，不再把恢复方案交给实现者二选一。
-
-**分派模型的最终口径（owner 决定，2026-10-07）**：**总管在委派范围内自主分派**，
-人通过**修订**（改范围、停任务、改任务本身、撤换任命）介入，**不是逐项批准**。
-任务交给总管即等于按目标放权。自由文本消息仍然不构成授权。
-
-**它也是唯一跨到 WorkMesh 之外那台机器的链**：`clientType` 就是 harness 身份，
-而 WorkMesh **没有内建 runtime**（`harness`/`builtin`/`pi_agent` 全库 0 命中，
-唯一的 `runtime` 字段是 `usage_records.runtimeMs`）。没有 agent 持有效连接时
-**谁也跑不了，包括总管**——这和 A1 里 Runner 只能报 `unknown` 是同一件事的两面。
-
-### F0 — 团队房间的完整扩展（blocking，必须最先做）
-
-- **交付**：两阶段迁移。entry 1 只 `ADD VALUE 'team'` **且不使用它**；entry 2 替换
-  `0001_v1_baseline.sql:599-614` 的 `CHECK` 与 `enforce_room_subject()`，新增
-  `team` 分支（同 workspace、`subject_id = team_id`、其余三列为空）。
-- **约束**：旧 baseline / legacy 迁移与其 checksum **一字不动**，不为加枚举值
-  重生成已发布 baseline；文件内不写 `BEGIN`/`COMMIT`（runner 托管事务）。
-- **测试**：四种 subject 的 DB/API 成功路径；跨 workspace 与跨 Team 拒绝；三种旧
-  subject 无回归；**普通执行 Session 不能借 Team 房间读到兄弟 Session 的私信**；
-  撤权后房间/收件箱/事件/上下文同时收敛；每个 entry 提交前后故障与重跑。
-
-### F1 — 总管任命与能力派生
-
-- **交付**：`chief_appointments` 表 + `(teamId) WHERE status='active'` 部分唯一索引；
-  任命/换届/结束三个 Human 命令（带 revision 与幂等键）；总管委派 =
-  **该 agent 现有授权 ∩ 协调默认集**。
-- **约束**：任命**既不扩权也不缩权**（agent 原有委派不动）；显式放宽是独立的、
-  有审计的人工作为；17 项能力必须被完整、互斥、穷尽地分组。
-- **测试**：conformance 测试对 `capabilitySchema` 做全量分区，**漏一项即失败**；
-  任命一个已持 `repo:merge` 的 agent 后，其普通会话权限不变而总管会话不含
-  `repo:merge`；换届原子性；并发任命只有一个成功。
-
-### F2 — 总管委派：一次授权、目标内自主执行、人可修订
-
-> **owner 口径（2026-10-07）**：总管在委派范围内**自主分派**；人通过**修订**介入
-> （改范围 / 停任务 / 改任务本身 / 撤换任命），**不是逐项批准**。任务交给总管即等于
-> 按目标放权。审查 H3 曾推荐「逐次人类决定」，**该建议被否决**——那会让总管退化成
-> 事事请示的下属。
-
-- **交付**：**总管委派**（不是逐次决定），绑定 workspace/Team/appointmentId+revision/
-  principal/所覆盖的目标或 scope/能力/资源范围/预算/有效期/最大使用次数。
-  每一条分派**引用**该委派的 id + revision，因此可归因、可审计、**可撤销**。
-  执行命令在状态变更事务内**校验**委派仍然有效。
-- **约束**：
-  - **自由文本仍然不是授权**：房间中**显式确认**必要字段的操作可创建/扩展委派；
-    自由文本须先成为结构化提案，被确认后才成为委派
-  - 执行命令保留**真实 agent 作者**并引用委派，**绝不写成 Human 作者**
-  - **总管不得自行扩权**；扩权是 Human 命令
-  - 与 ADR 0062 **并行**（两者都是常设、有界、可撤销的授权），**不收窄 0062**
-  - 人的杠杆是**修订**不是逐项批准；两个执行关口（确认方案 / 审核改动）不受影响
-  - 五个执行入口 `delegate_work_item` / `claim_work_item` / `create_child_session` /
-    retry / automation **共用同一 guard**（只查 `report_to_chief` 或某个 MCP 包装层可被绕过）
-  - 执行会话**持久标记**为携带总管执行上下文，使越过任命期限或委派被撤的旧会话
-    无法静默降级为普通 agent
-  - 不得把任意 `decisions.status='final'` 或 `room_message.intent='decide'` 当作委派
-- **测试**：普通人类自由文本**不产生授权**（可作为输入，但无法凭它分派）；委派范围内
-  分派**无需逐次批准**且成功；委派外分派拒绝；缩范围/过期/撤销后立即拒绝；
-  同 key 重放无第二次效果；校验与 session/event/outbox 任一点失败共同回滚；
-  Stop / 撤权 / 换届后旧会话不得再分派；五个入口行为一致。
-
-### F3 — 激活与准入命令
-
-- **交付**：显式 activation 命令（三源统一），记录真实 source kind/id、发起 actor
-  （若有）、执行 service actor、任命 revision、规则版本与 resulting sessionId；
-  复用 ADR 0023/0024 的 occurrence、admission、budget reservation、fencing。
-- **约束**：**计时器不得伪装成人类指令**；跨 Work Item 分派需要 coordination session
-  + 有效连接 + **principal 等于目标 Work Item 的 Responsible Human**
-  （`agent/commands.ts:826-886`），团队多负责人时保留该等式，不匹配则退回该人。
-- **测试**：同源重复去重；两个消费者竞争；admission/session/prompt/event/outbox 各边界
-  崩溃；**无 runner**；主负责人不匹配；旧任命/被撤权/Stop；**事件自环**；累计预算耗尽
-  （单会话预算挡不住自激活）。
-
-### F4 — 消费协议（本链最重的一块）
-
-- **交付**：checkpoint 键含 workspace/Team/**任命代次**/消费者版本；server cursor 为
-  十进制字符串且不与列表游标混用；baseline 版本与水位冻结；快照—事件衔接协议
-  （不是两个 GET 拼起来）；按事件 id 幂等合并并处理删除与撤权；「已处理至 C」与
-  该批已提交的提案/激活结果**原子关联**。
-- **约束**：**增量读是带量化预算的容量验收要求，不是正确性前提**；首次、游标过期、
-  消费者版本变更、授权变化与修复都允许**有界全量重建**；授权收缩先移除不可见数据。
-- **测试**：checkpoint 保存前后崩溃、重放、长时间离线过期、baseline 构建期间写入、
-  删除/撤权/新获授权、跨 Session/Team 隔离；给定固定 Team/Agent/事件规模断言 token、
-  查询数与延迟预算。**不得再出现「几名 agent 就不可用」这类未实测断言。**
-
-### F5 — 收件箱跨短会话恢复（决定已作出，按契约实现）
-
-- **交付（已决定并落盘）**：**有审计的重新投递**，写进 ADR 0078
-  （合并提交 `dde2a1a`）。框架：*claim 不可转移 ≠ claim 不可接续*。ADR 0037 按**修订**
-  处理——其「claim 一次性不可变」「无 reclaim/release 命令」逐字保留，只补一条指向
-  ADR 0078 的说明；被否的「复用同一非终态 Session」记入 ADR 0078 的 Alternatives。
-- **约束**：claim **不可转移**；**禁止原地改写 `claimedBySessionId`**（数据库已有
-  `prevent_inbox_claim_rebind()` 抛 `INBOX_CLAIM_IMMUTABLE`，非仅 ADR 约束）；旧 claim
-  与其全部 receipt 保留在原 Session，新输入与之相联且是**新条目**；继任条目复用原
-  `kind`，取 `source_type='inbox_redelivery'` + `source_id=原条目 id`，因此
-  **不需要 `ALTER TYPE`**（`source_type` 是 `text`），且由既有
-  `inbox_items_actor_target_unique` 保证**重投不重复**。
-- **新增禁止项**：**exact-session 条目禁止重新投递**（`inbox_items_exact_claim_check`）。
-  对其重投会把精确寻址降级为 actor 寻址；该类工作由 Human 恢复，不由继任者。
-- **成本**：这**确实是第二条队列**，继任条目需自己的列表、claim、receipt 历史与对
-  Human 可见的继任链接。不宣称「不需要第二个队列」。
-- **测试**：claim 后崩溃/Stop；同 actor 两个 Session；错误 recipient；已 ACK 未回复；
-  重复 report/reply 且**回执不伪造**；重投幂等（同一条目重复投递只产生一个继任）；
-  exact-session 条目被拒绝重投。
-- **未验证**：未做「复用 vs 重投」的规模成本实测；被否方案是按设计理由否的，不是按
-  benchmark。
-
-### F6 — 两个薄工具与完整交付链
-
-- **交付**：`get_chief`（**纯 Query**，返回 active Chief、appointmentId/revision、
-  房间 id）与 `report_to_chief`（**Command**，投递 + 落回执 + 返回引用）。
-- **约束**：交付链是 REST → contracts/SDK → route-policy/feature registry → MCP
-  bindings → derived manifest（ADR 0042）→ 工具适配（ADR 0067）→ conformance；
-  **只加 API 工具不算交付完成**。复用已有 `request_approval`，不新增同义工具。
-  `report_to_chief` **只保证消息已提交**，返回当时的响应状态，**不代总管写 ACK，
-  也不等模型完成**。
-- **测试**：四种路由失败（无任命 / 越权 Team / 任命已变 / 幂等重放）各返回指定错误码；
-  换届后重放不重复投递给新人；`get` 与 `post` 之间换届被事务重验拦住；工具适配器在
-  unsupported / feature-disabled / revoked / Stopped / 重试 / 载荷超限下行为正确。
-
-### 延后：F-memory（长期记忆）
-
-跨会话注入面，需要自己的权限、来源与脱敏设计。**不是证明协调价值的前提**——先用
-现有不可变上下文与受限派生摘要证明协调有用。详见 ADR 0078 的
-「Memory is deferred out of the first version」。
-
-## 延后项（保留任务边界，不进 v1）
-
-| 项 | 前置 |
-| --- | --- |
-| C-identity 目录首管理员 | 必须先显式修订 ADR 0031：预授权 tenant+subject、OAuth state/回调约束、两入口进同一 singleton 锁与同一原子安装事务、安装后永久关闭、账号后续登录/解绑/应急恢复、审计保留真实 auth method |
-| C-card 卡片内直接决策 | 必须先有身份绑定 ADR：`(provider, tenant, app, subject)` 复合键绑定已验证 Human；绑定/解绑只由活跃 Human 会话发起；每次回调重查绑定/活跃/workspace/Team/精确 recipient/源 revision/Session Stop；持久 delivery id + 请求摘要防重放 |
-| C-mp 小程序 | 先只读 + 认证兼容 spike（ADR 0005 的 cookie/CSRF 路径能否在该客户端成立需先证明），不预先承诺"零新端点"；恢复时只对**已确认提交、同一 Human/workspace、body/revision 不变且结果未知**的操作复用原 key；未提交草稿或 stale preview 必须重新显示并由人确认（`CONTEXT.md` Draft 与 ADR 0055） |
-| C-probe 真实模型探测 | 独立设计：受控 runner/worker、在任何数据库事务之外、绑定精确 connection+model revision、走既有出站策略、定义超时/费用上限/秘密脱敏/verified-failed-unknown |
-| C-dingtalk / C-feishu / C-smtp | 各自独立 adapter 与验收，不得用 C2 冒充四渠道覆盖 |
-| D-dark 暗色主题 | 0045 明确只做亮色；参考实测的暗色值已在 ADR 0077 预取，后续 ADR 直接继承，无需重新测量 |
-| F-memory 长期记忆 | 跨会话注入面，需独立权限/来源/脱敏设计；先用现有不可变上下文与受限派生摘要证明协调价值（ADR 0078） |
-| F-parallel 按 Team 切分协调 | 单任命是单写者点但**不串行推理**；扩容优先靠提交期去重，不要求用户拆业务 Team（ADR 0078 的 Alternatives） |
-
-## 最小验收矩阵（逐项需填测试文件与用例名后方可开工）
-
-| 类别 | A：查询/首跑 | B：凭据恢复/客户端 | C：投递与预置 |
-|---|---|---|---|
-| happy path | 对当前 Human/Team 返回可验证配置项；**无 assignment 不伪称离线** | 响应丢失/崩溃后恢复同一凭据 | 一个源事件→精确目标投递；动作复用既有源命令；预置仅填配置 |
-| 未授权 actor | 跨 Team、他人 personal model，**不泄露存在性** | 只持 code + 公开 connection id 的另一 claimant 不得恢复；撤销后不返 secret | 错 tenant/subject、转发、解绑、离队、停用、错误 recipient 全拒 |
-| 非法状态 | Query 无状态迁移；feature 关闭/模型 disabled/`unknown` 显式 | consumed/expired/revoked/rotating 各按冻结表处理，不新发 token | 已决定、过期卡片、已 Stop/终态 Session 全拒 |
-| 重复幂等键 | 不适用（纯 GET） | 同 key 同体同 body；同 key 异体冲突；**新 key 仍被拒** | callback delivery id 同体去重、异体冲突；源命令 key 重放不重复决策/事件 |
-| 陈旧 revision | freshness/ETag 明确；Query 的 revision 不当授权 | rotate/revoke 管理命令 stale revision；secret replay 绑定 generation，**不只比公开 connection id** | 旧卡 If-Match 拒；更新 preview 需人再确认；预置目录版本 stale 拒 |
-| 事务失败 | 无业务写入，允许只读事务 | 凭据插入/consume/event/outbox/replay 各阶段注入失败，状态一致回滚 | target 配置、投递意图、决策中途失败无半记录；外发只在提交后 |
-| webhook/job 重放 | invalidation 重放不增副作用 | 擦除/轮换 job 重放安全；**replay 不再次发 token/event/outbox** | source event / delivery / callback 分别验证；源命令与传输去重分层 |
-| 并发 | 资源切换/撤权后重读不串 Team | 双 claim 恰好一代 credential；与 rotate/revoke/清理交错 | 两 worker 同投递、一成一败的渠道、两次相反审批 |
-| 重启/outbox 恢复 | 新请求重建当前事实 | 服务端与客户端分别重启；原 key 仍有效；过期擦除后可恢复 | 提交前/后、外发成功未确认、checkpoint 前后崩溃；明确至少一次 |
-
-**D 链（表现层，无领域/端点变更）的验收补充**：
-
-| 类别 | 断言 |
-|---|---|
-| 基线门禁 | 未产出 D0 基线时，D1 不得开始（用 CI 或 checklist 强制） |
-| 迁移顺序 | 旧 token 仍有消费方时禁止删除；先新增 → 再按面迁移 → 最后删除，顺序错即失败 |
-| 视觉回归 | 每个面迁移后与 D0 基线做 diff 并人工评审；`theme-unification.spec.ts` 全绿 |
-| 卡片结构 | 三区顺序固定；标题 `line-clamp: 2` 截断且卡片高度不变；`box-shadow: none` |
-| 语义颜色 | 遍历全部看板状态，**只有** `awaiting_*` 渲染为 attention 色；blocked 色与 attention 色距离超阈值 |
-| 布局 | 分隔线拖动不改 URL/焦点；隐藏与最大化状态跨会话保持；窄屏回退且就绪列表仍可达 |
-| 交互 | 每个动作带 `Idempotency-Key` 与 `If-Match`；陈旧 revision 被拒；未授权 actor 在卡片上同样被拒；重复幂等键不产生第二次变更 |
-| 反向断言 | **无确认的破坏性拖拽重置不存在**；拖卡进对话只插入引用、不自动提交 |
-
-**F 链（总管 / agent graph）的验收补充**：
-
-| 类别 | 断言 |
-|---|---|
-| 房间扩展 | 四种 subject 成功路径 + 跨 workspace/Team 拒绝；三种旧 subject 零回归；**普通执行 Session 不能借 Team 房间读兄弟 Session 私信**；撤权后房间/收件箱/事件/上下文同时收敛 |
-| 迁移边界 | enum 扩展与其被引用**分属两个 entry**；旧 baseline/legacy 文件与 checksum 逐字节不变；每 entry 提交前后故障可重跑 |
-| 能力完整性 | conformance 对 `capabilitySchema` 全量分区，**漏一项即失败**；任命不改 agent 原有授权；放宽是独立有审计的人工作为 |
-| 与 0062 合取 | 无委派 + YOLO → 拒；委派越界 + policy approved → 拒；合法委派 + `human_required` 的普通自主分派 → 成功；受保护动作仍走对应关口 |
-| 不被策略兑换成授权 | 即时自动批准与 pending reconciliation **均不得**创建或扩展委派；`source=workspace_policy` 不被改写为 human；记录里的 Human actor id 不构成本次人类确认的证据 |
-| 两层能力上限 | 默认 Chief + 已持 `repo:merge`/deploy/secrets 的目标 agent：目标无分派上限 → 拒；有明确常设上限 → 允许调度，但目标动作自身的 Approval/Stop 仍生效 |
-| 授权单位 | 自由文本**不产生授权**（只能作为输入）；委派范围内分派**无需逐次批准**且成功；委派外分派拒绝 |
-| 修订传播 | 撤权与新分派锁同一 revision：先提交的撤权使随后提交的分派拒绝；排队未启动的在最终 admission 复查后取消且不消费预算；运行中/子会话按持久化的来源关系失效 |
-| 用量台账 | 同一逻辑分派跨多入口只计一次；同 key 重放不重扣；余量校验+预留+session/event/outbox 同事务；失败预留释放预算；修订委派不清零已用量 |
-| 入口覆盖 | `delegate_work_item` / `claim_work_item` / `create_child_session` / retry / automation **五个入口全部**经共享 guard |
-| 激活 | 同源去重、消费者竞争、各边界崩溃、无 runner、主负责人不匹配、**事件自环**、累计预算耗尽 |
-| 消费协议 | checkpoint 保存前后崩溃、重放、离线过期、baseline 构建期间写入、删除/撤权/新获授权、跨 Session/Team 隔离；固定规模下断言 token/查询数/延迟预算 |
-| 路由 | 四种失败各返回指定错误码；换届后重放不投递给新人；`get`/`post` 之间换届被事务重验拦住 |
-| 工具语义 | `get_chief` 无副作用；`report_to_chief` 不代总管写 ACK、不等模型完成；工具适配器在 unsupported/feature-off/revoked/Stopped/超限时行为正确 |
-| 收件恢复 | claim 后崩溃/Stop 有确定结果；同 actor 双 Session 行为确定；回执不伪造 |
-
-全量 `pnpm lint` / `typecheck` / `test` / `test:integration` / `test:e2e` 是最终
-回归门槛，**不能代替**上表的新增断言。锁清单用 `UPDATE_AGENT_LOCK_MANIFEST=1`
-重生成后**逐条审查**新增/变更 statement 的 owner、rankSequence 与 canonical lock
-order，**不接受"只许行号位移"**，也不手改伪造匹配。迁移走
-`packages/db/migrations/v1/NNNN_*.sql`，更新 ADR 0038 的 v1 checksum manifest
-与 `SCHEMA.sql`，保留全部已应用迁移，测前一生产版本升级、空库、失败注入与旧
-密文不回填。
-
-## 风险与已知限制
-
-| 风险 | 影响 | 缓解 |
-|---|---|---|
-| connector 是新包且要能装到无源码的 Lite 设备 | 多一个发布面 | 薄、复用 contracts、用 API 同一套夹具断言；**发布二进制本身是独立工作项** |
-| 错误分类变更使既有断言需扩展 | 测试面大改 | 预期内 churn：恢复指令就是功能 |
-| v1 只服务一个渠道 | 三个生态未覆盖 | 显式可见而非隐藏；抽象刻意窄 |
-| 至少一次投递会产生重复通知 | 运维噪音 | 明说而非掩盖，给出对账路径；不谎称恰好一次 |
-| 预置目录靠人保持正确 | base URL 可能过期 | 每条带来源 URL 与核对日期字段；不声称兼容性 |
-| Runner 在线状态仍然 `unknown` | 用户拿不到该项结论 | 这是当前代码的事实；做成 ADR 0074 里点名的后续任务（需要独立心跳协议 + 迁移） |
-| Lite 2 GB 足迹未实测 | ADR 0071 容量结论未验收 | 与本计划无关；但渠道 fan-out 在低档位的表现需纳入 `docs/operations/lite-footprint.md` 测量项。**该文件尚未创建**（ADR 0071 指定的验收门），`deploy/lite/` 目前只有 `README.md`，尚无其描述的 `backup.sh` / `restore.sh` / `measure.sh` |
-| ADR 0072 未实现 | 无 Redis 档位下渠道不可用 | C1 测试里显式断言"不支持"，不静默降级 |
-| **改 token 值 = 全站可见变化** | 视觉回归无从评审；有人会把色彩位移读成"变差" | **D0 基线是硬门禁**；先新增后迁移最后删；位移理由（暖中性 vs slate/蓝）在 ADR 0077 里可辩护 |
-| **D 链最易被做歪** | 有人会照抄参考产品的 Tailwind classname，绕过 0028/0045 | ADR 0077 有"采纳/不采纳"对照表；code review 以此表为验收清单 |
-| 卡片零阴影日后可能被"加手感"破坏 | 满屏卡片糊成一片 | D2 写成计算样式断言，而非注释 |
-| **F 链与 0062 是合取而非并行替代** | 实现者可能把「策略已批准」当作创建委派的凭证，或把「已有委派」当作跳过动作 Approval 的理由 | 0078 写明合取规则：有效委派 **且** 其他检查全过 **且** 需要 Approval 时有绑定该动作的有效 Approval；任一拒绝即拒绝，二者非 OR 也非 fallback |
-| **撤权只覆盖下一次分派** | 「委派可撤销」若不向派生会话传播，就只是措辞 | 0078 新增撤权传播状态表：排队/运行中/子会话/外部进程四类分别定规则；来源关系持久化 |
-| **两层能力上限混淆** | 用户高估本次目标委派的限制，或默认总管无法调度正常代码工作 | 0078 分写「Chief 直接能力」与「每目标分派上限」两张默认表，互不派生 |
-| **可复用委派缺用量台账** | 两个不同 key 的并发分派可各自看到剩余一次 | 0078 按逻辑分派身份记账，余量校验+预留+写入同事务，重放不重扣 |
-| **F 链修订 ADR 0037** | 收件恢复若原地改 claim，会抹掉原 Session 的归属 | **已处置**：决定为有审计的重新投递（`dde2a1a`），原 claim 与 receipt 永久留在原 Session；`prevent_inbox_claim_rebind()` 从数据库层拒绝原地改写。代价是第二条队列，已在 ADR 0078 写明 |
-| **F 链没有内建 runtime** | 没有 agent 持有效连接时总管无法启动 | 与 A1 的 Runner `unknown` 同源；A2/D4 必须在无任命或 feature 关闭时显示明确不可用态，不得让布局暗示"总管可用" |
-| **F 链成本易被低估** | 「基本都有了」会让人把最重的消费协议当成接线 | 0078 的 Correction 段把六条被推翻的推断逐条列出；F4 单列为本链最重一块并给量化预算 |
-| 单任命是单写者点 | 协调判断串行 | 只约束**身份**不约束推理；并行提案 + 提交期去重是扩容路径，不要求用户拆业务 Team |
-
-## 演示步骤
-
-1. `docker compose -f docker-compose.lite.yml up -d`，打开工作台 → 看到缺配置
-   列表，**且 Runner 项显示为"无法判断"而不是"未就绪"**（旧行为无横幅）。
-2. 只补模型 → 列表项减少；仓库项在非仓库工作台上显示"不适用"。
-3. 造一个 Agent，令其在**拿到令牌前**崩溃 → 重跑同一条命令 → 拿到同一枚令牌
-   （旧行为：`PAIRING_CONSUMED` 永久死路）。
-4. 猜错 `--client` 类型 → 错误带可用类型枚举、可重试、且不计入锁定。
-5. 配企业微信渠道，让一条待办出现在卡片上 → 点卡片**只跳转网页**，不在卡片上
-   决策；把卡片转发给同事 → 同事点开只到自己有权看的页面，无任何决策写入。
-6. 看板：把一张 `awaiting_review` 卡与其他状态的卡并排 → 只有前者是琥珀色；
-   把已开始的卡拖回待开始列 → **出现确认面**（不静默清空记录）。
-7. 卡片标题写超过两行 → 卡片高度不变，标题被截断；给卡片加 hover → **没有
-   阴影**（D2 的承重约束生效）。
-8. 拖动分隔线改变两栏比例 → URL 与焦点不变；最大化看板 → 退出后布局状态仍在。
-
-## 规格分歧
-
-- 本计划**不修改**任何既有领域不变量。0074 是 Query；0075 只改"谁做校验"与
-  "客户端如何恢复"，不改服务端凭据语义（ADR 0043/0046/0031 实质保留）；
-  0076 是新增传输面且 v1 无决策端点。
-- 与 ADR 0062 的分歧：0062 把 enrollment 定为默认、pairing 为恢复通道。本计划
-  v1 明确选 pairing 纵向路径并**写明这是本次范围选择**，不改 0062；enrollment
-  恢复作为独立任务。
-- 与 ADR 0031 的分歧：**没有**。目录首管理员已从 v1 移除，因此 0031 未被改写。
-  未来若要做，必须先写一份显式修订 0031 的 ADR。
-- 闸门在领域内是**咨询性**、在界面上是**强制的**。若 A1 的 `ready` 被误当作运行
-  许可，是实现缺陷而非本设计意图；`CONTEXT.md` 的 View Model 规则是依据。
-- **F 链与 ADR 0062 是并行而非分歧**：总管委派与 0062 的自主策略同为「常设、有界、可撤销」
-  授权，两者互不冲突，也都不允许 agent 自行扩权。0078 初稿曾把总管分派写成 0062 的
-  「显式例外」，该框架**已撤回**——逐次人类批准会让总管退化成事事请示的下属。
-  **owner 已定口径**：委派内自主分派，人通过修订介入。
-- **F 链修订 ADR 0037** 的收件箱恢复语义。**已由 owner 决定并落盘**：选有审计的
-  successor/re-delivery（ADR 0078，合并提交 `dde2a1a`），ADR 0037 逐字保留原约束并补
-  指向说明。实现者按该契约施工，**不再需要猜**；仍禁止原地改写 `claimedBySessionId`。
-- F 链**不新增**人类本已有的权限，只是重组由谁行使；且把重组变成可审计的。
-  任命本身不授予任何能力。
+先运行node docs/reviews/r1/verify-specs.mjs，打开29卡规格索引和矩阵，沿DAG查看每个阶段输入/owner/验收，再逐finding对照实际ADR与代码证据。可从原规划到执行snapshot差异追溯来源；原P1/G1/D0可重算不变段。报告文件可在本次改动审核中预览。R1完整spec修订可评审不等于产品新功能已实现；未裁定/未运行/待同步/待PR检查都保留实际状态。
