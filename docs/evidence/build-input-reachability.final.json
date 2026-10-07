@@ -2932,7 +2932,7 @@
     "gate": "关闭；本轮五项必需命令最新结果均为0，待定向独审、最新PR required CI及实际合入"
   },
   "latestIntegration": {
-    "recordedAt": "2026-10-07T16:25:35.336Z",
+    "recordedAt": "2026-10-07T16:27:28.156Z",
     "branch": "tds/conv-01a116f7-1027-7c75-90df-32ebc5488752",
     "originalEvidenceHead": "af583f71f310e68ade588f9922694dfd8aba7a65",
     "previousIntegration": "76689f838bd2ab9177d80c6b9210e0c57acc807d",
@@ -2949,7 +2949,7 @@
     "historyInclusion": {
       "previousIntegration": "76689f838bd2ab9177d80c6b9210e0c57acc807d",
       "latestMain": "dde2a1a6926040c35e9d85d89fed6238572f0f25",
-      "verifiedHead": "afe57fda6a2e869d52660df64d4cd359dc013885",
+      "verifiedHead": "ab456263aab218c66123898732cd3c8c5d0d4db5",
       "parents": [
         "76689f838bd2ab9177d80c6b9210e0c57acc807d",
         "dde2a1a6926040c35e9d85d89fed6238572f0f25"
@@ -3898,7 +3898,7 @@
       "command": "git diff --cached --check",
       "exitCode": 2,
       "outputLines": 576,
-      "scope": "只涉及本轮原始日志中的尾随空白；保留测试命令原始输出，不改输入或代码；非AGENTS五项必需命令"
+      "scope": "只涉及本轮原始日志及原始失败上下文中的尾随空白；保留测试命令原始输出，不改输入或代码；非AGENTS五项必需命令"
     },
     "gate": "关闭；待新整合定向独审、当前PR最新required CI与实际合入",
     "originalPullRequestObservation": {

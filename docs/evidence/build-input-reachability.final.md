@@ -37,7 +37,7 @@ node ../../scripts/verify-build-input-reachability.mjs dde2a1a6926040c35e9d85d89
 
 新整合首轮E2E再次为73 passed、1 failed（documents.spec.ts:3，Discussion点击90000ms超时、元素从DOM移除），失败[上下文](build-input-reachability.current/failed-e2e-3/error-context.md)与[原始PNG](build-input-reachability.current/failed-e2e-3/test-failed-1.png)逐字节保留，哈希在JSON的 `latestIntegration.e2eFailure`。两次失败都在与integration并行的窗口发生，先前两次独立重放均74/74；这只是相关性，根因未确认。新整合版本在integration结束后单独执行根E2E，实际结果见表；没有修改产品、selector或timeout。最新集成仍为310 passed、2 skipped（live供应商及retention upgrade独立开关未启用），recovery明确启用且1/1通过。
 
-附加空白检查 `git diff --cached --check` 退出2，576行仅指出本轮原始日志尾随空白；保留测试输出，不格式化它们。正文/JSON本身空白检查通过；此项与AGENTS五项必需命令逐项分列，未隐藏诊断。
+附加空白检查 `git diff --cached --check` 退出2，576行指出本轮原始日志及原始失败上下文尾随空白（后者5处）；保留测试输出，不格式化它们。最终证据Markdown/JSON本身空白检查通过；此项与AGENTS五项必需命令逐项分列，未隐藏诊断。
 
 收尾只读观察：原PR #196仍OPEN，但其head已前进到 `08ce81a6738407c90cf2629fbb70088a4a899841`（文档整合）。本轮仍只导入用户明确批准的固定 `af583f71f310e68ade588f9922694dfd8aba7a65`，未引入新08ce81a，也未关闭或改动原PR；CI #357仅对应af583f7，不覆盖来源PR的新head。总管定向审查应同时知悉这一并发变化，本构建交付对象仍是当前会话分支的最终head。
 
