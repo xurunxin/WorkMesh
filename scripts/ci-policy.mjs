@@ -2,6 +2,7 @@ import { appendFileSync, readFileSync, readdirSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { testConsumers } from './ci-test-inputs.mjs'
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration', 'agent-smoke']
@@ -58,7 +59,8 @@ export function classifyChanges(paths, workspaces, { forceFull = false, mainPush
     'recovery-integration': full || ['recovery', 'db', 'artifact-storage', 'config', 'api', 'worker'].some(has),
     'agent-smoke': full || ['agent-sdk', 'mcp', 'fake-agent', 'conformance'].some(has),
   }
-  return { mode: full ? 'full' : runtime.length ? 'affected' : 'docs', packages: [...affected].sort(), checks }
+  const testPackages = new Set([...affected, ...testConsumers(runtime)])
+  return { mode: full ? 'full' : runtime.length ? 'affected' : 'docs', packages: [...affected].sort(), testPackages: [...testPackages].sort(), checks }
 }
 
 export function evaluateResults(plan, needs) {
@@ -110,7 +112,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   } else {
     const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
     const plan = planForEvent(process.env.GITHUB_EVENT_NAME, event, readWorkspaces())
-    const outputs = { mode: plan.mode, packages: JSON.stringify(plan.packages), plan: JSON.stringify(plan), ...plan.checks }
+    const outputs = { mode: plan.mode, packages: JSON.stringify(plan.packages), 'test-packages': JSON.stringify(plan.testPackages), plan: JSON.stringify(plan), ...plan.checks }
     if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, Object.entries(outputs).map(([key, value]) => `${key}=${value}\n`).join(''))
     console.log(JSON.stringify(plan, null, 2))
   }

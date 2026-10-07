@@ -18,7 +18,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { createAgentSession, ModelRuntime, SessionManager } from '@earendil-works/pi-coding-agent'
+import { createAgentSession, ModelRuntime, SessionManager, SettingsManager } from '@earendil-works/pi-coding-agent'
 import { Type } from 'typebox'
 import { configuredModels } from './configured-model.js'
 
@@ -125,6 +125,7 @@ const runTurn = async (
     const { session } = await createAgentSession({
       cwd: workDir, agentDir, model, modelRuntime: runtime,
       sessionManager: SessionManager.inMemory(), noTools: 'builtin',
+      settingsManager: SettingsManager.inMemory({ retry: { enabled: true, maxRetries: 3, baseDelayMs: 1 } }),
       customTools: options.customTools === false ? [] : [tool],
     })
     try {

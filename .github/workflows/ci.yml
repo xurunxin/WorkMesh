@@ -29,6 +29,7 @@ jobs:
     outputs:
       plan: ${{ steps.scope.outputs.plan }}
       packages: ${{ steps.scope.outputs.packages }}
+      test-packages: ${{ steps.scope.outputs.test-packages }}
       source-gates: ${{ steps.scope.outputs.source-gates }}
       db-integration: ${{ steps.scope.outputs.db-integration }}
       api-integration: ${{ steps.scope.outputs.api-integration }}
@@ -73,6 +74,7 @@ jobs:
     timeout-minutes: 45
     env:
       CI_PACKAGES: ${{ needs.changes.outputs.packages }}
+      CI_TEST_PACKAGES: ${{ needs.changes.outputs.test-packages }}
     steps:
       - name: Check out source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -100,6 +102,15 @@ jobs:
           mkdir -p ci-logs
           set -o pipefail
           pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
+      - name: Restore trusted static and compiler caches
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809
+        with:
+          path: |
+            .turbo/typecheck
+            apps/web/.next/cache
+          key: source-v2-${{ runner.os }}-node22-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            source-v2-${{ runner.os }}-node22-${{ hashFiles('pnpm-lock.yaml') }}-
       - name: Validate CI policy
         run: |
           set -o pipefail
@@ -139,6 +150,14 @@ jobs:
             git diff --cached --exit-code
             git status --short --untracked-files=no
           } 2>&1 | tee ci-logs/clean-tree.log
+      - name: Save trusted static and compiler caches
+        if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809
+        with:
+          path: |
+            .turbo/typecheck
+            apps/web/.next/cache
+          key: source-v2-${{ runner.os }}-node22-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
       - name: Upload raw source logs
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -432,9 +451,13 @@ jobs:
           retention-days: 14
 
   e2e:
-    name: Browser acceptance
+    name: Browser acceptance (${{ matrix.shard }}/2)
     needs: changes
     if: ${{ needs.changes.outputs.e2e == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:
@@ -505,7 +528,8 @@ jobs:
       - name: Run browser acceptance
         run: |
           set -o pipefail
-          pnpm test:e2e 2>&1 | tee ci-logs/e2e.log
+          pnpm --filter @workmesh/web exec node ../../scripts/check-e2e-shards.mjs 2>&1 | tee ci-logs/shard-coverage.log
+          pnpm test:e2e -- --shard=${{ matrix.shard }}/2 2>&1 | tee ci-logs/e2e.log
       - name: Capture service logs
         if: ${{ failure() }}
         run: |
@@ -518,7 +542,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: e2e-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          name: e2e-raw-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ci-logs
           if-no-files-found: error
           retention-days: 14
@@ -526,7 +550,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: e2e-playwright-${{ github.run_id }}-${{ github.run_attempt }}
+          name: e2e-playwright-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             apps/web/playwright-report
             apps/web/test-results

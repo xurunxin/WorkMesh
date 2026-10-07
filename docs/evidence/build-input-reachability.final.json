@@ -8073,5 +8073,1063 @@
       "observedAt": "2026-10-07T17:31:23Z"
     },
     "gate": "关闭；changes空白门禁诊断原样保留，本轮producer回review后才恢复PR200最新head门禁，不直接合入或确认R1执行"
+  },
+  "reviewResponse": {
+    "reviewedHead": "37857eef5a67555564097ace07871ac44ed24195",
+    "latestMain": "f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9",
+    "recordedAt": "2026-10-07T18:10:10.050Z",
+    "priorEvidenceSnapshot": {
+      "commit": "37857eef5a67555564097ace07871ac44ed24195",
+      "blobId": "3b5a00b1c98cdfd6e1d90fb1cdd0e092757046c5",
+      "priorFieldsUnchanged": true,
+      "interpretation": "之前ciAlignment与其artifact hash对应37857eef生成时的文件版本；兼容方案已修订，当前artifact hash另记本字段，不拿新正文匹配旧snapshot哈希"
+    },
+    "rangeCheckpoint": {
+      "file": "docs/evidence/build-input-reachability.current/raw-evidence-compatibility.37857eef.json",
+      "bytes": 155100,
+      "sha256": "e5e5ba48e203ce82ba00b1a3a57ad4a444eff7cfec554de912d49111dbfe368e"
+    },
+    "rangeSummary": {
+      "paths": 51,
+      "errorFiles": 22,
+      "diagnostics": 1144,
+      "packagingCandidates": 34,
+      "byteMembers": 39
+    },
+    "ciObservation": {
+      "runId": 37662532290,
+      "number": 369,
+      "head": "37857eef5a67555564097ace07871ac44ed24195",
+      "result": "failure",
+      "changesJobId": 112933407807,
+      "changesResult": "failure",
+      "failedStep": "Select required jobs",
+      "requiredCiJobId": 112933509157,
+      "requiredCiResult": "failure",
+      "otherSevenChecks": "skipped；无正式plan，非批准skip",
+      "source": "本轮workflow_runs只读核实",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/37662532290"
+    },
+    "currentContract": {
+      "file": "docs/evidence/build-input-reachability.current/raw-evidence-compatibility.md",
+      "bytes": 17042,
+      "sha256": "60ce6e2ffc1511d2fded5572272e0ea23ed810fbe074edacc9bf9077ef0eac60"
+    },
+    "failureClassification": {
+      "file": "docs/evidence/build-input-reachability.current/worker-failure-classification.review.md",
+      "bytes": 3291,
+      "sha256": "8b551c22934a0d15525db202d808b60af067e636d6f3d383805c41d479243ec8"
+    },
+    "checks": [
+      {
+        "name": "integration-retention-diagnostic",
+        "attempt": 1,
+        "command": "pnpm -C apps/worker exec vitest run integration/retention.integration.test.ts --config C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-worker-diagnostic.config.ts",
+        "head": "37857eef5a67555564097ace07871ac44ed24195",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:04:21.343Z",
+        "completedAt": "2026-10-07T18:04:27.388Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/integration-retention-diagnostic.1.log",
+        "summary": "Test Files  1 passed (1)；      Tests  36 passed (36)",
+        "logBytes": 2284,
+        "logSha256": "e5ab60bcf9776e0ada22700e89ce9607cf9071b29ddafa21c2d0a7c1abe1aa1d"
+      },
+      {
+        "name": "integration-worker-scene",
+        "attempt": 1,
+        "command": "pnpm -C apps/worker exec vitest run --config C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-worker-diagnostic.config.ts --maxWorkers=1",
+        "head": "37857eef5a67555564097ace07871ac44ed24195",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:05:57.584Z",
+        "completedAt": "2026-10-07T18:06:28.217Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/integration-worker-scene.1.log",
+        "summary": "↓ integration/retention-upgrade-barrier.integration.test.ts (1 test | 1 skipped)； Test Files  8 passed | 1 skipped (9)；      Tests  78 passed | 1 skipped (79)",
+        "logBytes": 5841,
+        "logSha256": "7f4f260eaef8ea9cb7f3a30b5637985d278b2a0ea7ba5584d3b32481d0d85590"
+      }
+    ],
+    "scenes": [
+      {
+        "logPath": "docs/evidence/build-input-reachability.current/integration-retention-diagnostic.1.log",
+        "workerMode": "archive_only",
+        "workerSeenAt": "2026-10-07T18:04:26.755Z",
+        "observedAt": "2026-10-07T18:04:26.763Z",
+        "ageMs": 8,
+        "maximumAgeMs": 120000,
+        "wrongMode": false,
+        "missingSeenAt": false,
+        "negativeAge": false,
+        "staleAge": false,
+        "identityMatches": true,
+        "conflictCount": "0",
+        "result": "通过"
+      },
+      {
+        "logPath": "docs/evidence/build-input-reachability.current/integration-retention-diagnostic.1.log",
+        "workerMode": "archive_only",
+        "workerSeenAt": "2026-10-07T18:04:26.770Z",
+        "observedAt": "2026-10-07T18:04:26.777Z",
+        "ageMs": 7,
+        "maximumAgeMs": 120000,
+        "wrongMode": false,
+        "missingSeenAt": false,
+        "negativeAge": false,
+        "staleAge": false,
+        "identityMatches": false,
+        "conflictCount": "1",
+        "result": "RETENTION_SOAK_WORKER_IDENTITY_MISMATCH"
+      },
+      {
+        "logPath": "docs/evidence/build-input-reachability.current/integration-retention-diagnostic.1.log",
+        "workerMode": "archive_only",
+        "workerSeenAt": "2026-10-07T18:04:26.777Z",
+        "observedAt": "2026-10-07T18:04:26.784Z",
+        "ageMs": 7,
+        "maximumAgeMs": 120000,
+        "wrongMode": false,
+        "missingSeenAt": false,
+        "negativeAge": false,
+        "staleAge": false,
+        "identityMatches": true,
+        "conflictCount": "2",
+        "expectedConflictCount": "0",
+        "result": "RETENTION_SOAK_WORKER_IDENTITY_CONFLICT_DETECTED"
+      },
+      {
+        "logPath": "docs/evidence/build-input-reachability.current/integration-worker-scene.1.log",
+        "workerMode": "archive_only",
+        "workerSeenAt": "2026-10-07T18:06:15.484Z",
+        "observedAt": "2026-10-07T18:06:15.490Z",
+        "ageMs": 6,
+        "maximumAgeMs": 120000,
+        "wrongMode": false,
+        "missingSeenAt": false,
+        "negativeAge": false,
+        "staleAge": false,
+        "identityMatches": true,
+        "conflictCount": "0",
+        "result": "通过"
+      },
+      {
+        "logPath": "docs/evidence/build-input-reachability.current/integration-worker-scene.1.log",
+        "workerMode": "archive_only",
+        "workerSeenAt": "2026-10-07T18:06:15.499Z",
+        "observedAt": "2026-10-07T18:06:15.505Z",
+        "ageMs": 6,
+        "maximumAgeMs": 120000,
+        "wrongMode": false,
+        "missingSeenAt": false,
+        "negativeAge": false,
+        "staleAge": false,
+        "identityMatches": false,
+        "conflictCount": "1",
+        "result": "RETENTION_SOAK_WORKER_IDENTITY_MISMATCH"
+      },
+      {
+        "logPath": "docs/evidence/build-input-reachability.current/integration-worker-scene.1.log",
+        "workerMode": "archive_only",
+        "workerSeenAt": "2026-10-07T18:06:15.505Z",
+        "observedAt": "2026-10-07T18:06:15.512Z",
+        "ageMs": 7,
+        "maximumAgeMs": 120000,
+        "wrongMode": false,
+        "missingSeenAt": false,
+        "negativeAge": false,
+        "staleAge": false,
+        "identityMatches": true,
+        "conflictCount": "2",
+        "expectedConflictCount": "0",
+        "result": "RETENTION_SOAK_WORKER_IDENTITY_CONFLICT_DETECTED"
+      }
+    ],
+    "failureClassificationStatus": "未分类；两个有现场参数的诊断未复现首败，不能认定为产品或基础设施问题",
+    "standardRootCommand": {
+      "repeated": false,
+      "successfulExitObtained": false,
+      "reason": "docs/CI.md要求先失败分类；历史首败现场不可恢复，当前诊断未复现具体拒绝条件，不凭局部成功强行分类"
+    },
+    "archiveContract": {
+      "selfContained": true,
+      "worktreeAndCommittedByteKindsStored": true,
+      "currentZipExists": false,
+      "currentIndexExists": false,
+      "implementation": "方案A属于G1交付包装，无需新增用户裁决；待Chief更新完整spec后在同一构建实施",
+      "negativeChecks": [
+        "规范化路径越界/重复",
+        "链接/非普通文件",
+        "缺项/多项",
+        "字节/SHA不符",
+        "浅克隆缺历史对象"
+      ],
+      "acceptance": "独立解包逐字节一致，Git实际二进制，真实范围diff --check退出0，正式full/七job及最新Required CI成功"
+    },
+    "gate": "关闭；第1/2项补交付范围和契约，尚未实施或通过正式CI；第3项首败分类及标准根命令退出0仍blocking，无merge"
+  },
+  "archiveClosure": {
+    "latestMain": "70199df743da754068831d709a1ae8c428bd2bb0",
+    "previousHead": "37857eef5a67555564097ace07871ac44ed24195",
+    "testedHead": null,
+    "recordedAt": "2026-10-07T18:21:25.100Z",
+    "integration": {
+      "strategy": "同一会话分支正常无冲突merge PR201；不改写合并历史",
+      "mainIncrementFiles": 15
+    },
+    "checkpoint": {
+      "report": {
+        "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+        "sourceManifest": "docs/references/todos-analysis/SOURCE-MANIFEST.json",
+        "checkedFiles": 44,
+        "p1Assertions": 16,
+        "errors": [],
+        "results": [
+          {
+            "file": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+            "blobId": "2453d156e3609ff5fccb83111ac1cc0826483ec3",
+            "committedBytes": 12420,
+            "committedSha256": "1552ede369a26d3f57e8976fd4b5074ac246db8a0ca5e9b316330114ea72ec1c",
+            "worktreeGitBlobId": "2453d156e3609ff5fccb83111ac1cc0826483ec3",
+            "worktreeBytes": 12639,
+            "worktreeSha256": "5467b00c2047b616f557defeeb5eda607c18223ffdc178fd4d6d1d2d8763aa0a",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+            "blobId": "67450ac4675f0374e7cb191e4c446943679bacd8",
+            "committedBytes": 16275,
+            "committedSha256": "796ddbb99b81e8330b54d9fcd17f147aa68df1873b1e8c3fed9c3e9ec467108d",
+            "worktreeGitBlobId": "67450ac4675f0374e7cb191e4c446943679bacd8",
+            "worktreeBytes": 16523,
+            "worktreeSha256": "ddf24ece241d40997adec9297229aa34b2abb91edc71426b47febdf19fb8350f",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+            "blobId": "e72dc4f37c67d83adbc27c23d6b2f25eb6b8fa09",
+            "committedBytes": 15576,
+            "committedSha256": "977644f9a9979702ece38198796e2f3e79df8903fa641cd288a57c955fc7cb5e",
+            "worktreeGitBlobId": "e72dc4f37c67d83adbc27c23d6b2f25eb6b8fa09",
+            "worktreeBytes": 15831,
+            "worktreeSha256": "4a1f7dda076c7d2e0f9bdef71cd9a5ad754563fe337d22bf138ec6c84810b39c",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+            "blobId": "353cc589f6ad0cc6a98f8c68c0786a8c4bdc229f",
+            "committedBytes": 13822,
+            "committedSha256": "e59978475562b6a1320c050b12589a436890290b8a0fcadcaef4b4800ed49876",
+            "worktreeGitBlobId": "353cc589f6ad0cc6a98f8c68c0786a8c4bdc229f",
+            "worktreeBytes": 14065,
+            "worktreeSha256": "a6719cadd221f426f79717946915566128bf9e749c995ed731f7e22c2a29935a",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+            "blobId": "051a98f1bf118fb2af3d36b967173b3bddbd9165",
+            "committedBytes": 70077,
+            "committedSha256": "97404029745fe5b410b5bf991afbae0735765453d3cfb520d38aa5555eaf5bfe",
+            "worktreeGitBlobId": "051a98f1bf118fb2af3d36b967173b3bddbd9165",
+            "worktreeBytes": 70823,
+            "worktreeSha256": "bbdb4da8c060e97f992b5a24400e2a37a0add4d770bb74ed8045045065846ed0",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/SOURCE-MANIFEST.json",
+            "blobId": "b5c9bec0892d526d02cd36a14b2ad6c2e17d3e68",
+            "committedBytes": 10338,
+            "committedSha256": "e49b4c29207521117257cfff788f763392e7a493b50cde9daaed994ad1c38ccd",
+            "worktreeGitBlobId": "b5c9bec0892d526d02cd36a14b2ad6c2e17d3e68",
+            "worktreeBytes": 10338,
+            "worktreeSha256": "e49b4c29207521117257cfff788f763392e7a493b50cde9daaed994ad1c38ccd",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/board-guide-observations.json",
+            "blobId": "7f465e6fb8350490edad97744c0aa87d34dc6d8a",
+            "committedBytes": 9960,
+            "committedSha256": "6f02180b7289d13c52248ef1f1716c6c3118bec31d987c7c177d40b2725bcc2d",
+            "worktreeGitBlobId": "7f465e6fb8350490edad97744c0aa87d34dc6d8a",
+            "worktreeBytes": 9960,
+            "worktreeSha256": "6f02180b7289d13c52248ef1f1716c6c3118bec31d987c7c177d40b2725bcc2d",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/component-observations.json",
+            "blobId": "56c8702e6ca6b2428c49689b723ece9b0f25fc10",
+            "committedBytes": 34304,
+            "committedSha256": "63224bc6db496fb514f7407717fb17a8b19c446806e9f9bdae0d54823a8def54",
+            "worktreeGitBlobId": "56c8702e6ca6b2428c49689b723ece9b0f25fc10",
+            "worktreeBytes": 34304,
+            "worktreeSha256": "63224bc6db496fb514f7407717fb17a8b19c446806e9f9bdae0d54823a8def54",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/css-evidence.json",
+            "blobId": "b8b53e9dc54c7013912baa4c3c5e310fb4e13de9",
+            "committedBytes": 334624,
+            "committedSha256": "eee8b725d4b48f12cb89f72b050700e3d6c4ee2905e96e875e45376830b7e199",
+            "worktreeGitBlobId": "b8b53e9dc54c7013912baa4c3c5e310fb4e13de9",
+            "worktreeBytes": 334624,
+            "worktreeSha256": "eee8b725d4b48f12cb89f72b050700e3d6c4ee2905e96e875e45376830b7e199",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/design-observations.json",
+            "blobId": "f70a0f62022db197334739b1512b4a98c3c4d7b5",
+            "committedBytes": 1533975,
+            "committedSha256": "cdb7b2479d9a863bc17080f7e3ad4a8226bbcb380c09f9bd58535b971eca8888",
+            "worktreeGitBlobId": "f70a0f62022db197334739b1512b4a98c3c4d7b5",
+            "worktreeBytes": 1533975,
+            "worktreeSha256": "cdb7b2479d9a863bc17080f7e3ad4a8226bbcb380c09f9bd58535b971eca8888",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/design-tokens.md",
+            "blobId": "c66a054c2679bd6ca39a555fc9594d41ad1e6dc4",
+            "committedBytes": 13406,
+            "committedSha256": "4861fdbb3babde65a64f3de55936fdd53b1ba63498e4ca90c87471404c9e8c9b",
+            "worktreeGitBlobId": "c66a054c2679bd6ca39a555fc9594d41ad1e6dc4",
+            "worktreeBytes": 13406,
+            "worktreeSha256": "4861fdbb3babde65a64f3de55936fdd53b1ba63498e4ca90c87471404c9e8c9b",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/kanban-cards.md",
+            "blobId": "43036264d68c964026de6b5842ba3f9855786569",
+            "committedBytes": 9172,
+            "committedSha256": "5ce7748e421b28c69c5322d3117a71154832bf8a435040a2d302130b22368d93",
+            "worktreeGitBlobId": "43036264d68c964026de6b5842ba3f9855786569",
+            "worktreeBytes": 9172,
+            "worktreeSha256": "5ce7748e421b28c69c5322d3117a71154832bf8a435040a2d302130b22368d93",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/observations.json",
+            "blobId": "f6ac8454eac59197ab216acdadcc71e4d2911107",
+            "committedBytes": 110530,
+            "committedSha256": "6186c63d98f9bbeee576fa247196e95abb45b1c583679ec4cf9d767e2ec21bdf",
+            "worktreeGitBlobId": "f6ac8454eac59197ab216acdadcc71e4d2911107",
+            "worktreeBytes": 110530,
+            "worktreeSha256": "6186c63d98f9bbeee576fa247196e95abb45b1c583679ec4cf9d767e2ec21bdf",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/reviews/todos-review.md",
+            "blobId": "56adba83ceb95ca4dfd90fdf4d71ae05cb101283",
+            "committedBytes": 56573,
+            "committedSha256": "c4fabf4571c35f41bf11cc022d7260b84b467766875b6e988f96d3afbedae5f8",
+            "worktreeGitBlobId": "56adba83ceb95ca4dfd90fdf4d71ae05cb101283",
+            "worktreeBytes": 56573,
+            "worktreeSha256": "c4fabf4571c35f41bf11cc022d7260b84b467766875b6e988f96d3afbedae5f8",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/00-create-agent-modal.png",
+            "blobId": "cc1cbbc7bf93a2f6d9f662ae3cf46b5d86909acd",
+            "committedBytes": 77550,
+            "committedSha256": "6a2869600635247326f5acdb7966daab7805c56f6895d59f1a596935ebbb6c0d",
+            "worktreeGitBlobId": "cc1cbbc7bf93a2f6d9f662ae3cf46b5d86909acd",
+            "worktreeBytes": 77550,
+            "worktreeSha256": "6a2869600635247326f5acdb7966daab7805c56f6895d59f1a596935ebbb6c0d",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/01-workbench-board-dark.png",
+            "blobId": "b78528bc7be66707b93386f12a70b66144740c7d",
+            "committedBytes": 77549,
+            "committedSha256": "4bfb11ede2caed38ca174cc0237be4c47acbae4d4a7a0cf82769a2bdc23b5770",
+            "worktreeGitBlobId": "b78528bc7be66707b93386f12a70b66144740c7d",
+            "worktreeBytes": 77549,
+            "worktreeSha256": "4bfb11ede2caed38ca174cc0237be4c47acbae4d4a7a0cf82769a2bdc23b5770",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/02-schedules.png",
+            "blobId": "5f3b9de7c4698d174b992c8d5a3427cf527e0e56",
+            "committedBytes": 64404,
+            "committedSha256": "dd385ebbdf6166cab1fe9034700bee34f345092799197f7f5f9424f089ccd2d7",
+            "worktreeGitBlobId": "5f3b9de7c4698d174b992c8d5a3427cf527e0e56",
+            "worktreeBytes": 64404,
+            "worktreeSha256": "dd385ebbdf6166cab1fe9034700bee34f345092799197f7f5f9424f089ccd2d7",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/03-connections.png",
+            "blobId": "75c694e46fbb74a6019a9ec0e7195455c7fd93ce",
+            "committedBytes": 197290,
+            "committedSha256": "e974dbedd94654d60b7cc61df152c49c0a922a5a1c4d9bf90cfc6e1ca799a3b0",
+            "worktreeGitBlobId": "75c694e46fbb74a6019a9ec0e7195455c7fd93ce",
+            "worktreeBytes": 197290,
+            "worktreeSha256": "e974dbedd94654d60b7cc61df152c49c0a922a5a1c4d9bf90cfc6e1ca799a3b0",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/04-skills.png",
+            "blobId": "4b051c73139f1747539acbf21eda0dfd756fcf70",
+            "committedBytes": 63580,
+            "committedSha256": "cb3cea7cec9f7d73f5bbda1a7827f4355711ff9715c208b4b4e7487273953bf2",
+            "worktreeGitBlobId": "4b051c73139f1747539acbf21eda0dfd756fcf70",
+            "worktreeBytes": 63580,
+            "worktreeSha256": "cb3cea7cec9f7d73f5bbda1a7827f4355711ff9715c208b4b4e7487273953bf2",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/05-usage-tokens.png",
+            "blobId": "12cf4ad176f4963d2f77058b7e04ab8cc5b686d8",
+            "committedBytes": 63744,
+            "committedSha256": "900ce4b69b2ef9402c74fdb9be6d393583ad37c0a6ad6ce369e97d84cca0062f",
+            "worktreeGitBlobId": "12cf4ad176f4963d2f77058b7e04ab8cc5b686d8",
+            "worktreeBytes": 63744,
+            "worktreeSha256": "900ce4b69b2ef9402c74fdb9be6d393583ad37c0a6ad6ce369e97d84cca0062f",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/06-usage-subscription.png",
+            "blobId": "284a3b6104730be3f30d7c45ab49e2d08f53a6f7",
+            "committedBytes": 57316,
+            "committedSha256": "24cb645db35e8d79ccc01605ff507684d634ab7e7b6683c17c8839c108efcb0c",
+            "worktreeGitBlobId": "284a3b6104730be3f30d7c45ab49e2d08f53a6f7",
+            "worktreeBytes": 57316,
+            "worktreeSha256": "24cb645db35e8d79ccc01605ff507684d634ab7e7b6683c17c8839c108efcb0c",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/07-machines.png",
+            "blobId": "29783db4ee123641b0d5d15039328c4f6dad2c8e",
+            "committedBytes": 52577,
+            "committedSha256": "cb57e1d3b6c93bf0e517f0985c92a5bf1fe5a3fbd85ed834dcdc8406953fb350",
+            "worktreeGitBlobId": "29783db4ee123641b0d5d15039328c4f6dad2c8e",
+            "worktreeBytes": 52577,
+            "worktreeSha256": "cb57e1d3b6c93bf0e517f0985c92a5bf1fe5a3fbd85ed834dcdc8406953fb350",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/08-machine-detail.png",
+            "blobId": "f72d12345ae0057c43bbbb4517d1870862c72d55",
+            "committedBytes": 61077,
+            "committedSha256": "faf239165cf44eccf1e696a01de2a8b0426f77001e3ccb5d47d9086268790d4e",
+            "worktreeGitBlobId": "f72d12345ae0057c43bbbb4517d1870862c72d55",
+            "worktreeBytes": 61077,
+            "worktreeSha256": "faf239165cf44eccf1e696a01de2a8b0426f77001e3ccb5d47d9086268790d4e",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/09-model-providers.png",
+            "blobId": "d13dbc426c6de71b0ee7c1304665ad55c14acce1",
+            "committedBytes": 67683,
+            "committedSha256": "1fd43063f342921efb3b4d026dec9159d16a5cdefc5bfe33ca985655360e006f",
+            "worktreeGitBlobId": "d13dbc426c6de71b0ee7c1304665ad55c14acce1",
+            "worktreeBytes": 67683,
+            "worktreeSha256": "1fd43063f342921efb3b4d026dec9159d16a5cdefc5bfe33ca985655360e006f",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/10-secrets.png",
+            "blobId": "5455c34097850f4141d9c02d8660b6df64a73cd1",
+            "committedBytes": 60921,
+            "committedSha256": "3e039346e90c3ee471dd41cc27b8b133f9f878e23bc1a3b079bd7505eb253961",
+            "worktreeGitBlobId": "5455c34097850f4141d9c02d8660b6df64a73cd1",
+            "worktreeBytes": 60921,
+            "worktreeSha256": "3e039346e90c3ee471dd41cc27b8b133f9f878e23bc1a3b079bd7505eb253961",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/11-install-app.png",
+            "blobId": "a3312eea5e0d7103de9923d9c55ae78796cfd1ef",
+            "committedBytes": 132754,
+            "committedSha256": "9f744072420e540df6075fb599290d7729445c6bfaa96a302609141a1e108a91",
+            "worktreeGitBlobId": "a3312eea5e0d7103de9923d9c55ae78796cfd1ef",
+            "worktreeBytes": 132754,
+            "worktreeSha256": "9f744072420e540df6075fb599290d7729445c6bfaa96a302609141a1e108a91",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/12-new-task-entry.png",
+            "blobId": "11136f45c15cbca6a2ef159da2e8be5964e4c6cc",
+            "committedBytes": 78314,
+            "committedSha256": "1ea27de4edc721a40b783559e5e9a0c11589bec67ef50af4bcaa42974ed901f5",
+            "worktreeGitBlobId": "11136f45c15cbca6a2ef159da2e8be5964e4c6cc",
+            "worktreeBytes": 78314,
+            "worktreeSha256": "1ea27de4edc721a40b783559e5e9a0c11589bec67ef50af4bcaa42974ed901f5",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/13-search-panel.png",
+            "blobId": "75df262b44ee5177d2ca58e012fd7a1ca3e7e517",
+            "committedBytes": 90066,
+            "committedSha256": "34b04a1728cf4918a49cb409d1031c5c9d26decfe31d85c50e34339d25c56811",
+            "worktreeGitBlobId": "75df262b44ee5177d2ca58e012fd7a1ca3e7e517",
+            "worktreeBytes": 90066,
+            "worktreeSha256": "34b04a1728cf4918a49cb409d1031c5c9d26decfe31d85c50e34339d25c56811",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/14-user-menu.png",
+            "blobId": "48d8957fe6030c434807139a9c4a0f644931b3db",
+            "committedBytes": 89415,
+            "committedSha256": "59c87dc81ca04833644b5d85144ffb60d70b51729b9cffd8c821fe0b151c4afb",
+            "worktreeGitBlobId": "48d8957fe6030c434807139a9c4a0f644931b3db",
+            "worktreeBytes": 89415,
+            "worktreeSha256": "59c87dc81ca04833644b5d85144ffb60d70b51729b9cffd8c821fe0b151c4afb",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/15-workbench-light.png",
+            "blobId": "e436b6864174a63c23ac249138cc1219ec5b9509",
+            "committedBytes": 77910,
+            "committedSha256": "bd946966c3965d8898a3201ef583d0cb036fe472d9f3f8ca8722e5913892d54c",
+            "worktreeGitBlobId": "e436b6864174a63c23ac249138cc1219ec5b9509",
+            "worktreeBytes": 77910,
+            "worktreeSha256": "bd946966c3965d8898a3201ef583d0cb036fe472d9f3f8ca8722e5913892d54c",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/16-board-full-light.png",
+            "blobId": "258a889f73fecb40e44f4bbc145b1c02c99a9b96",
+            "committedBytes": 69181,
+            "committedSha256": "9afb2847a20c9a55d0f8606e2f76f2742add1f149f221373410a3d7b64ac2164",
+            "worktreeGitBlobId": "258a889f73fecb40e44f4bbc145b1c02c99a9b96",
+            "worktreeBytes": 69181,
+            "worktreeSha256": "9afb2847a20c9a55d0f8606e2f76f2742add1f149f221373410a3d7b64ac2164",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/17-connections-light.png",
+            "blobId": "e4e1357bf65551dab65705e8cc3e28b5a5d4b547",
+            "committedBytes": 213752,
+            "committedSha256": "3e5f17205320af5c4240bc56cd788f2f5ffca95abe2adb1500e511e72d618e2f",
+            "worktreeGitBlobId": "e4e1357bf65551dab65705e8cc3e28b5a5d4b547",
+            "worktreeBytes": 213752,
+            "worktreeSha256": "3e5f17205320af5c4240bc56cd788f2f5ffca95abe2adb1500e511e72d618e2f",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/18-board-full-dark.png",
+            "blobId": "30fb1c0ae82d69350c5824e8e9fb22541b39b89c",
+            "committedBytes": 52478,
+            "committedSha256": "d74756c65127a2fa4281193ce23277bc55bb672982744f6c3bc19a01f1615494",
+            "worktreeGitBlobId": "30fb1c0ae82d69350c5824e8e9fb22541b39b89c",
+            "worktreeBytes": 52478,
+            "worktreeSha256": "d74756c65127a2fa4281193ce23277bc55bb672982744f6c3bc19a01f1615494",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/19-chief-chat.png",
+            "blobId": "66fa7ad44ff71b04a26bc3807a2df7895dd0acc4",
+            "committedBytes": 67094,
+            "committedSha256": "e33da6866eaeaafccf002d0068a99eac990bf1f46692e1b1a0e920fb6da15cf7",
+            "worktreeGitBlobId": "66fa7ad44ff71b04a26bc3807a2df7895dd0acc4",
+            "worktreeBytes": 67094,
+            "worktreeSha256": "e33da6866eaeaafccf002d0068a99eac990bf1f46692e1b1a0e920fb6da15cf7",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/20-setup-panel.png",
+            "blobId": "7593d486798f345bfa1ad5860379fa1449d1c337",
+            "committedBytes": 95095,
+            "committedSha256": "e72a2865cfac9e64acb1d79781663c6ed98ef250773f0fe2aaec17d77a984bcf",
+            "worktreeGitBlobId": "7593d486798f345bfa1ad5860379fa1449d1c337",
+            "worktreeBytes": 95095,
+            "worktreeSha256": "e72a2865cfac9e64acb1d79781663c6ed98ef250773f0fe2aaec17d77a984bcf",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/21-team-agents.png",
+            "blobId": "96204bfb41b75829c98415f4bbca465b4dbab323",
+            "committedBytes": 51829,
+            "committedSha256": "ba39cfa5ce0e93fc881e270bb93fd21b40fbee2f8a9c8c4e5145e264cdaea8f1",
+            "worktreeGitBlobId": "96204bfb41b75829c98415f4bbca465b4dbab323",
+            "worktreeBytes": 51829,
+            "worktreeSha256": "ba39cfa5ce0e93fc881e270bb93fd21b40fbee2f8a9c8c4e5145e264cdaea8f1",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/22-agent-detail.png",
+            "blobId": "9f19f9e262b0a60cd4fece0acdc96b9112f9e327",
+            "committedBytes": 80745,
+            "committedSha256": "7dbf41a3a04eac56595e5fab10b8bcdfd9d2c2e96c0ac5127792be3d59106dbd",
+            "worktreeGitBlobId": "9f19f9e262b0a60cd4fece0acdc96b9112f9e327",
+            "worktreeBytes": 80745,
+            "worktreeSha256": "7dbf41a3a04eac56595e5fab10b8bcdfd9d2c2e96c0ac5127792be3d59106dbd",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/23-board-guide.png",
+            "blobId": "afb7a758f939348e33d9f89cc931bff6651f7b0a",
+            "committedBytes": 97069,
+            "committedSha256": "2850e37c7cdf32596561d956bc4eb4cd2feffe6debed59f8ae251fde244d12eb",
+            "worktreeGitBlobId": "afb7a758f939348e33d9f89cc931bff6651f7b0a",
+            "worktreeBytes": 97069,
+            "worktreeSha256": "2850e37c7cdf32596561d956bc4eb4cd2feffe6debed59f8ae251fde244d12eb",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/24-board-guide-states.png",
+            "blobId": "35f2ae8eab5450a63cbd81d6a2cfcb11ad534069",
+            "committedBytes": 136693,
+            "committedSha256": "50c1afbc3555772d6c524ed2d8bbc37a9d934c83b0d1fcd4e1fddc554c06d805",
+            "worktreeGitBlobId": "35f2ae8eab5450a63cbd81d6a2cfcb11ad534069",
+            "worktreeBytes": 136693,
+            "worktreeSha256": "50c1afbc3555772d6c524ed2d8bbc37a9d934c83b0d1fcd4e1fddc554c06d805",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/25-board-filters.png",
+            "blobId": "389a1b5127a108b14263ad49c4bf916fe4e44d45",
+            "committedBytes": 86923,
+            "committedSha256": "946b001b935a2acff5d490be706586df9fa489532a406f6e6008a5084fb5afa5",
+            "worktreeGitBlobId": "389a1b5127a108b14263ad49c4bf916fe4e44d45",
+            "worktreeBytes": 86923,
+            "worktreeSha256": "946b001b935a2acff5d490be706586df9fa489532a406f6e6008a5084fb5afa5",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/26-workbench-restored.png",
+            "blobId": "b1ffa7b3efb4800dd6cf798bb0d9a7e71b92bc03",
+            "committedBytes": 79567,
+            "committedSha256": "ea4370f169b49454e457ed6e8411ae753cd24a4f00cf012dc1244a687fc63624",
+            "worktreeGitBlobId": "b1ffa7b3efb4800dd6cf798bb0d9a7e71b92bc03",
+            "worktreeBytes": 79567,
+            "worktreeSha256": "ea4370f169b49454e457ed6e8411ae753cd24a4f00cf012dc1244a687fc63624",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/30-demo-board-cards.png",
+            "blobId": "c3de205990f3ec6e8459b09ce5626708b122d114",
+            "committedBytes": 182527,
+            "committedSha256": "da34fbb246cf91a422a893998e301fef2ede7e826a80f957bb1a8f7fa397e142",
+            "worktreeGitBlobId": "c3de205990f3ec6e8459b09ce5626708b122d114",
+            "worktreeBytes": 182527,
+            "worktreeSha256": "da34fbb246cf91a422a893998e301fef2ede7e826a80f957bb1a8f7fa397e142",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/screenshots/INDEX.md",
+            "blobId": "6b0aadcd41649088b2a5049a0007be09ac265248",
+            "committedBytes": 7284,
+            "committedSha256": "71af93d645c9326ddaef222b02f38ef5c5b6db8c0fe4b5ca3bfd2e412f3761f1",
+            "worktreeGitBlobId": "6b0aadcd41649088b2a5049a0007be09ac265248",
+            "worktreeBytes": 7284,
+            "worktreeSha256": "71af93d645c9326ddaef222b02f38ef5c5b6db8c0fe4b5ca3bfd2e412f3761f1",
+            "committedReadable": true,
+            "worktreeReadable": true
+          },
+          {
+            "file": "docs/references/todos-analysis/ui-inventory.md",
+            "blobId": "dc8fc6d933264a805fc054bd49b77b8266b2a6fd",
+            "committedBytes": 13730,
+            "committedSha256": "8ff1cfab8c473651454976849f2d713f4e7203ff4f8e2377dc4338562bc21bfd",
+            "worktreeGitBlobId": "dc8fc6d933264a805fc054bd49b77b8266b2a6fd",
+            "worktreeBytes": 13730,
+            "worktreeSha256": "8ff1cfab8c473651454976849f2d713f4e7203ff4f8e2377dc4338562bc21bfd",
+            "committedReadable": true,
+            "worktreeReadable": true
+          }
+        ],
+        "archiveInputs": [],
+        "archiveVerification": null
+      },
+      "mainIncrement": [
+        {
+          "file": ".github/workflows/ci.yml",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "8dad41bfc24433eee168ba50a5d534d357d65e95",
+          "committedBytes": 32295,
+          "committedSha256": "eb580246422245d1f750d2be32fe04fba6c47db723cdb0101ac2db0fd242616f",
+          "worktreeBytes": 33085,
+          "worktreeSha256": "4322796c9d264dce8fa4d366811293ff7ac73211ab9b2b4f409ff10f61a981b1",
+          "readable": true
+        },
+        {
+          "file": "apps/agent-runner/src/model-errors.test.ts",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "869b966309bd35c2da11472a8d7c26ed88c05b62",
+          "committedBytes": 7797,
+          "committedSha256": "bd7095a9e22d77ee030c09b09d12260ebd569dae054b392dde0125bfe7d55100",
+          "worktreeBytes": 7950,
+          "worktreeSha256": "6a5c76d6002e34fe86b982878c977ecc41f7655307e672fa86dc5d8a442d8960",
+          "readable": true
+        },
+        {
+          "file": "apps/agent-runner/src/model-wire.test.ts",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "4f20b0144001564f88dc75b707e9b5203752044f",
+          "committedBytes": 14417,
+          "committedSha256": "2d53297d13d4597cad6ebfd7f456f2d90a9ddbcc14d17b783bc69a022ead7250",
+          "worktreeBytes": 14680,
+          "worktreeSha256": "a8ed77d7b8134d58ce819a1e66b941441f84fb8821c3a6c86307c0a53ee1894b",
+          "readable": true
+        },
+        {
+          "file": "apps/web/e2e/documents.spec.ts",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "7e97ab485ddb124d37ea2ba1af938fc301295ebe",
+          "committedBytes": 4273,
+          "committedSha256": "26fa3f434f15010600ae48a5788f4004ab1193aa2426121283fbd0ccce7db0d9",
+          "worktreeBytes": 4336,
+          "worktreeSha256": "5c0c7b4d9dd0140a56d90d7d575b2441fdfeeb9baf3adbe6434f7eabe07c791e",
+          "readable": true
+        },
+        {
+          "file": "apps/web/e2e/workbench-accessibility.spec.ts",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "fded60293489debcc6921e914dad56153118afad",
+          "committedBytes": 7897,
+          "committedSha256": "f1d9bfb7a5b7dc53460213f93a9d418bb6b5003adf130fbc157eed899f6a49b0",
+          "worktreeBytes": 8049,
+          "worktreeSha256": "12a7c4641d9046db04b3d2cf4b050411e723eacc370c3d699399f96a96633a8b",
+          "readable": true
+        },
+        {
+          "file": "docs/CI.md",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "851019e2d5103605d0015378cbc7f7bccb359723",
+          "committedBytes": 13295,
+          "committedSha256": "c3f8fce11ad5fc4fbd965150632408b8dbd5c2bdc19bfa75dd0de61aadf8952f",
+          "worktreeBytes": 13539,
+          "worktreeSha256": "361473cedb1ddd1bfb12395d546cc9394fb5d79e5c132a3398a9c0b26d82da6f",
+          "readable": true
+        },
+        {
+          "file": "docs/plan/2026-10-08-ci-critical-path.md",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "c5b3c16797ebe86378c00a7b849de1141e8b036d",
+          "committedBytes": 2706,
+          "committedSha256": "6ec41375093f6271e2ef6a8f0b19fd408d84dd44ca2c0f1532b5aef6e10e2600",
+          "worktreeBytes": 2756,
+          "worktreeSha256": "a20a553cf9c22dd7aa5b941d1a4ec79e22a93671cc6b0ad963b4d3b327982c35",
+          "readable": true
+        },
+        {
+          "file": "package.json",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "03cd4fb3d2fd1ee843595370a27f40af5bf27604",
+          "committedBytes": 4503,
+          "committedSha256": "4afe45b96d90dc0eb4c6f8ce065c5b9d917e83b994250a0ca7c804f47ccb4ff7",
+          "worktreeBytes": 4574,
+          "worktreeSha256": "9bdb7735dc0ac564315c1715de40f7918f3674b2d77a3139c088ca9f4864bb0d",
+          "readable": true
+        },
+        {
+          "file": "scripts/check-e2e-shards.mjs",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "40b95d08824fa10c2279527c2af86c5ee2c9a03d",
+          "committedBytes": 1625,
+          "committedSha256": "9be5b1c9cecb9f7badcdfd04665f7aefb1bd19a1c79f163e38a1c8f413707736",
+          "worktreeBytes": 1657,
+          "worktreeSha256": "d1caa6c58b0a2da27762b943280ca85cb20905873f9b614d53f3045bfb99c32d",
+          "readable": true
+        },
+        {
+          "file": "scripts/ci-policy.mjs",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "a7ee0da8f1cca82e7fdbedd884d7cbd5261a869c",
+          "committedBytes": 7063,
+          "committedSha256": "e8dec6c099c802e0df19c07a13750fea6f84580d0b5c3ef191f78c68799c410d",
+          "worktreeBytes": 7182,
+          "worktreeSha256": "9c572496cb48bb16a4f7f7adfb89cf0c9d27c98cf331027f45de744f6df4943c",
+          "readable": true
+        },
+        {
+          "file": "scripts/ci-policy.test.mjs",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "3ee8c64283a8491b1df12ace922cdb0261b94ab3",
+          "committedBytes": 7455,
+          "committedSha256": "6e09e12d38d86ffbb249c94f818be48179344d81fcea4ae14f246d2c87cc226b",
+          "worktreeBytes": 7591,
+          "worktreeSha256": "b5866a271014e625b326b4bc70997557be503a883e1c01944c986f4ba9c4c39b",
+          "readable": true
+        },
+        {
+          "file": "scripts/ci-test-inputs.mjs",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "3b01380021da61b6b9dcc4e2ee6ba44e315de3b0",
+          "committedBytes": 738,
+          "committedSha256": "543795d8f76c1aa3276fac554889280934699e2274dd5de11e5663579c7c516d",
+          "worktreeBytes": 751,
+          "worktreeSha256": "1d24c2c2a14119ac4fc27caefe9b0978c394d12322c4bc4fe752c5b99ec9dcd9",
+          "readable": true
+        },
+        {
+          "file": "scripts/run-ci-source.mjs",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "9684ea57c401ff77da13bb23dfb4902ada97c3e9",
+          "committedBytes": 3038,
+          "committedSha256": "c87035df5268a7e808511a652a6d871986b567fc31225ab9f58b6e034298058e",
+          "worktreeBytes": 3090,
+          "worktreeSha256": "d452aeb0032b2106acf6e488b0db046c9a6e80ef87b5f3a0f410ef3e704b6157",
+          "readable": true
+        },
+        {
+          "file": "scripts/validate-ci.mjs",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "8a8e24a9f7f14556cea34a31810c8230f3eed6f3",
+          "committedBytes": 30747,
+          "committedSha256": "9afaecf9e8e55a88e015f871fc46df0195ad70cdb1cd290c2e8a3fa4140df09a",
+          "worktreeBytes": 31286,
+          "worktreeSha256": "f56f61998746d262828c6c6cfd99c1689c10a0c0a92b3a9242e9987787484b01",
+          "readable": true
+        },
+        {
+          "file": "turbo.json",
+          "commit": "70199df743da754068831d709a1ae8c428bd2bb0",
+          "blobId": "158d6e6d45286a76cc8223cd21c0251e2d4e211a",
+          "committedBytes": 8540,
+          "committedSha256": "4ea9acc6f6bcd819136d95f22cf4d203ff3d89782d7223ae57d0c2c348aa3fe6",
+          "worktreeBytes": 8824,
+          "worktreeSha256": "b367cd9d88c30c060de70d43583bbbfd66df1f7da9cab77833813a26fddb73ff",
+          "readable": true
+        }
+      ],
+      "scope": "70199df detached读取，旧初始base保持历史"
+    },
+    "archive": {
+      "snapshot": "g1-archive-2026-10-08",
+      "logicalPaths": 38,
+      "tuples": 212,
+      "members": 44,
+      "totalUncompressedBytes": 17351244,
+      "zip": {
+        "file": "docs/evidence/build-input-reachability.current/raw-evidence.zip",
+        "bytes": 1880856,
+        "sha256": "f089e08efe703b4c8eb90bff81ff310a9f06244f6cd0d8c654d274c165f83501"
+      },
+      "index": {
+        "file": "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
+        "bytes": 108511,
+        "sha256": "f9d15f096dad1d156c576604a3ebda5f95dc2356c1c26afcd51571fe6030e05e"
+      },
+      "selfContained": true,
+      "sourceByteKinds": [
+        "worktree",
+        "git-blob"
+      ],
+      "archiveImplemented": true
+    },
+    "manifest": {
+      "hashPolicy": "MANIFEST 中的 bytes 与 SHA-256 对应本次生成时的工作树原始字节；提交 blob 字节由 G1 可达性脚本另行核验。",
+      "files": [
+        {
+          "name": "README.md",
+          "bytes": 14705,
+          "sha256": "12025b24b04e0d31d90fb8ab1d037a5f7b41e5edecee2cf06c234d4607ce2771"
+        },
+        {
+          "name": "AGENTS.md",
+          "bytes": 9306,
+          "sha256": "a3eb6f9d3e9ebe6db6887f561f400db76207645d3478a84d83ae4332af20cf96"
+        },
+        {
+          "name": "CONTEXT.md",
+          "bytes": 4173,
+          "sha256": "cc6be739e37ba59e711d1bbaa84624fd78ff127c7dbe2bebe9f6811589fb9f7f"
+        },
+        {
+          "name": "AGENT_PROTOCOL.md",
+          "bytes": 70190,
+          "sha256": "7c4427ce03ad19b37ec0e3d6c3474af4b7afb42425eba75e62824ed2db0eb2a3"
+        },
+        {
+          "name": "OPENAPI.yaml",
+          "bytes": 495916,
+          "sha256": "b98891984df512c409a1bc4c6198311eac72cdfc41d9a4fc47ac58cd3c90869b"
+        },
+        {
+          "name": "SCHEMA.sql",
+          "bytes": 1360,
+          "sha256": "776d6d24f0a66ac9d45c1901fe9c25b9d2a7c2ecf78fcc5c8f5fcb4bf03bf141"
+        },
+        {
+          "name": "VALIDATION.json",
+          "bytes": 1098,
+          "sha256": "3a08b9b7d7ceceb18cac9698be3f0f04602a8253d36fa946ad47dff918d270a9"
+        },
+        {
+          "name": "docs/adr/README.md",
+          "bytes": 16185,
+          "sha256": "abee02e6eb97298a8ba8fe44a28a18a3a6b0d5f8b2e8f81737bd70df6f4e79c8"
+        },
+        {
+          "name": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+          "bytes": 12639,
+          "sha256": "5467b00c2047b616f557defeeb5eda607c18223ffdc178fd4d6d1d2d8763aa0a"
+        },
+        {
+          "name": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+          "bytes": 16523,
+          "sha256": "ddf24ece241d40997adec9297229aa34b2abb91edc71426b47febdf19fb8350f"
+        },
+        {
+          "name": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+          "bytes": 15831,
+          "sha256": "4a1f7dda076c7d2e0f9bdef71cd9a5ad754563fe337d22bf138ec6c84810b39c"
+        },
+        {
+          "name": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+          "bytes": 14065,
+          "sha256": "a6719cadd221f426f79717946915566128bf9e749c995ed731f7e22c2a29935a"
+        },
+        {
+          "name": "docs/plan/2026-08-22-agent-connection-runtime-reliability.md",
+          "bytes": 9090,
+          "sha256": "9bbf77485b23c75b8576868e2cbfb8515d7ea5811a2282263e5eab4c4eb87299"
+        },
+        {
+          "name": "docs/plan/2026-09-24-prototype-pi-agent-workbench.baseline.md",
+          "bytes": 12800,
+          "sha256": "e873a7f1cf55a75eb7db5cf93e07a2ec863f5fb01f09871d85bf31f01a2d7ec4"
+        },
+        {
+          "name": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+          "bytes": 73811,
+          "sha256": "cd1eccdb553ab584fc555e3e37ab09b4a7e8fa80b8bb80de5b2ffd12da01e3b3"
+        },
+        {
+          "name": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md",
+          "bytes": 44295,
+          "sha256": "f2047c0df73fc47e04a6f174058acf7d1e744988a35690945f28461012c09661"
+        },
+        {
+          "name": "docs/references/todos-analysis/SOURCE-MANIFEST.json",
+          "bytes": 10338,
+          "sha256": "e49b4c29207521117257cfff788f763392e7a493b50cde9daaed994ad1c38ccd"
+        },
+        {
+          "name": "docs/evidence/build-input-reachability.md",
+          "bytes": 15957,
+          "sha256": "998d64a84d992d36b816badb9a3403f4306333e5e5c730d9d05e4658d395fa94"
+        },
+        {
+          "name": "scripts/verify-build-input-reachability.mjs",
+          "bytes": 8155,
+          "sha256": "e57c33d288f69f5c16c304d97e2643896147b674f48e6072a10c1beeebfe58cf"
+        },
+        {
+          "name": "docs/references/todos-analysis/reviews/todos-review.md",
+          "bytes": 56573,
+          "sha256": "c4fabf4571c35f41bf11cc022d7260b84b467766875b6e988f96d3afbedae5f8"
+        },
+        {
+          "name": "scripts/verify-build-input-reachability.test.mjs",
+          "bytes": 1524,
+          "sha256": "44cb9932fb4213269450ee5626aebd10bcc2360fb869ec9dd035a772d52ef993"
+        },
+        {
+          "name": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+          "bytes": 49643,
+          "sha256": "c74135dbed77e918b18b8a15b8e554a4f8dd9bdac548e1bd20eec7928eec7f2a"
+        },
+        {
+          "name": "docs/adr/0078-review-round2.md",
+          "bytes": 24657,
+          "sha256": "8d1f0fd90a005b6f2aa0fd3ae7bcafaadc873a5cb75cb8507a9c83699c48f660"
+        },
+        {
+          "name": "docs/CI.md",
+          "bytes": 13539,
+          "sha256": "361473cedb1ddd1bfb12395d546cc9394fb5d79e5c132a3398a9c0b26d82da6f"
+        },
+        {
+          "name": "docs/plan/2026-10-08-ci-and-test-efficiency.md",
+          "bytes": 7524,
+          "sha256": "3b6ae0279157d699cbec756d69468ca68a576a07b512949e48d219a0e3a278c7"
+        },
+        {
+          "name": "docs/plan/2026-10-08-ci-critical-path.md",
+          "bytes": 2756,
+          "sha256": "a20a553cf9c22dd7aa5b941d1a4ec79e22a93671cc6b0ad963b4d3b327982c35"
+        },
+        {
+          "name": "docs/evidence/build-input-reachability.current/raw-evidence.zip",
+          "bytes": 1880856,
+          "sha256": "f089e08efe703b4c8eb90bff81ff310a9f06244f6cd0d8c654d274c165f83501"
+        },
+        {
+          "name": "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
+          "bytes": 108511,
+          "sha256": "f9d15f096dad1d156c576604a3ebda5f95dc2356c1c26afcd51571fe6030e05e"
+        },
+        {
+          "name": "docs/evidence/build-input-reachability.current/raw-evidence-reading.md",
+          "bytes": 1743,
+          "sha256": "92372f2609ea3240977d92539c1b9bf4e726c9b64d3ee0994aefc7d22e74b545"
+        },
+        {
+          "name": "scripts/verify-raw-evidence-archive.mjs",
+          "bytes": 9390,
+          "sha256": "e6b75940cd9b2f018472969122b1d705e97975ff27918ddf9ec2e2837d7bb4b6"
+        },
+        {
+          "name": "scripts/verify-raw-evidence-archive.test.mjs",
+          "bytes": 4533,
+          "sha256": "c109a79ca615e6eb21c3693a573bd8149f19edc40add36d8b83788f83424e798"
+        }
+      ],
+      "checkedEntries": 31
+    },
+    "checks": [],
+    "localRequiredCommandStatus": {
+      "lint": "尚未完成",
+      "typecheck": "尚未完成",
+      "test": "尚未完成",
+      "integration": "尚未完成",
+      "e2e": "尚未完成"
+    },
+    "readPolicy": "当前ZIP/索引/读取器为唯一归档输入，历史JSON logPath+head+byteKind通过索引解析，不需要旧Git对象；历史字段hash对应其原snapshot，当前正文不匹配旧hash",
+    "integrationFailure": "d0806bc首败现场不可恢复，仍未分类；用户本轮明确允许带现场采集的标准根命令作进一步诊断，不把未复现归为时钟/基础设施问题",
+    "validation": {
+      "readAt": "2026-10-07T18:21:08.106101+00:00",
+      "independentReader": "Python 3.13.15 zipfile",
+      "members": 44,
+      "allFrozenBytesEqual": true,
+      "archiveSha256": "f089e08efe703b4c8eb90bff81ff310a9f06244f6cd0d8c654d274c165f83501",
+      "indexSha256": "f9d15f096dad1d156c576604a3ebda5f95dc2356c1c26afcd51571fe6030e05e",
+      "errors": []
+    },
+    "actualPolicy": null,
+    "gate": "关闭；等待本轮必要检查、正式selection与新headCI及定向独审；本轮不merge、不放行R1"
   }
 }

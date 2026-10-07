@@ -1,5 +1,24 @@
 # 最终隔离构建输入可达性验证
 
+## 当前修订：PR201与方案A自包含交付
+
+用户最新授权允许同一分支整合精确main `70199df743da754068831d709a1ae8c428bd2bb0` 并实施A，无需另等用户裁决。正常无冲突merge保留37857eef/6dbcf33/af583f7与所有合并历史；没有采用B或弱化CI。main的detached checkpoint **44/44、P1 16/16、0 errors**，另逐项完整读取15文件增量，原419a1d7初始base不改。
+
+方案A现已落地：归档 **38个逻辑原件、44种独立字节、212个精确映射**。明文运输副本在原始字节冻结、归档双写与reader逐字节验证后归档；历史JSON所有原字段不改。当前索引自包含worktree与git-blob，两种不同字节单独member，相同字节可共用；当前清单31项已刷新，双字节来源仍分开记录。新日志在检查结束后纳入同一归档，不残留空白报错的新增明文副本。
+
+[原始证据读取](build-input-reachability.current/raw-evidence-reading.md)说明精确旧路径/执行版本/字节类型映射；深浅克隆或无Git对象环境均不依赖旧blob。安全reader先规范化路径，拒绝链接/非普通文件、重复、缺项/多项和错误hash，内存校验后才允许调用方读取字节。独立Python解包与冻结原件逐字节相等。`pnpm ci:validate` 只向既有source gate添加归档14项安全负例与完整性校验，没有改变selection/空白/Required CI决策规则。
+
+本轮测试版本为待提交布局，标准检查尚未记录，Node24.20.0/pnpm9.15.4，线上Node仍22.19.0。标准根命令和PR201新版E2E需实测，旧67/74与历史CI不替代；d0806bc根集成首败保持，现场不可恢复就如实记录，未复现不等于分类。当前五命令状态：{"lint":"尚未完成","typecheck":"尚未完成","test":"尚未完成","integration":"尚未完成","e2e":"尚未完成"}。
+
+| 命令 | 退出码 | 实际结果 |
+|---|---:|---|
+| 待精确布局提交 | — | 不复用旧head结果 |
+
+正式范围/selection见JSON `archiveClosure.actualPolicy`；ZIP的Git实际二进制、真实PR `diff --check`、正式full/七job、最新head Required CI均要实际验证。**G1/R1继续关闭**，本轮回review定向独审，不直接合入。下文37857eef中的“尚未实施A”等仅为历史阶段，当前方案A已实施但最终门禁未通过。
+
+## 前次37857eef证据（历史原文）
+
+
 ## 当前producer修订：对齐PR #199的CI主线
 
 用户最新授权是“目前主线更新提高了ci效率，可以rebase这个版本”。本轮精确main为 `f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9`；可用标准工具没有安全更新已推送历史的rebase/lease接口，普通rebase还会丢弃合并提交，保留合并的rebase仍会改写已推送SHA而需要禁止的强推。因此在同一会话分支**正常无冲突merge**该main，保留 `6dbcf336ab09bbdbd42ebe6a7652c66fefad243b`、原af583f7及所有整合历史，不新开构建或分支。
