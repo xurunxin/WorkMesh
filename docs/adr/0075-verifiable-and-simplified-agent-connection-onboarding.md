@@ -153,6 +153,14 @@ behaviour, because doing so is a breaking change that deserves its own
 migration. It is recorded as an ambiguity to resolve before the endpoint is
 narrowed, not silently reinterpreted here.
 
+The redemption input is a strict object containing `pairingCode`, `agentSlug`,
+and `client`, with no separate claim identifier
+(`packages/contracts/src/index.ts:2711-2723`). Pairing codes are prefixed
+32-byte random opaque tokens, yielding a 43-character base64url payload
+(`packages/db/src/index.ts:41`; `apps/api/src/agent-connections.ts:32-35,358-365`).
+The full claim/replay, rate-limit, and attempts findings are tracked in the
+[activation plan's P1 evidence ledger](../plan/2026-10-07-activation-onboarding-and-china-ecosystem.md).
+
 ### Failures name their recovery, and guessing is not abuse
 
 Every onboarding error gains `next_action` (what the client may do) and

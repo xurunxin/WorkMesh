@@ -70,13 +70,53 @@
 - 不做"保存前真实探测密钥"，单列为 probe 任务。
 - 不新增部署拓扑；ADR 0071 / 0072 仍为 **Proposed，未实现**。
 
+## P1：16 条代码事实断言核实台账（2026-10-07）
+
+以下结论以当前工作区代码和文档为准，覆盖原草稿中的错误前提及本计划依赖的
+关键代码事实。行号按本次核查时工作树记录；“错误”列出可替代证据，不以关键词
+零命中推导全局不存在。
+
+| # | 断言 | 核实结果 | 修正后的表述与证据 |
+|---:|---|---|---|
+| 1 | 安装令牌只存在于兑换响应，服务端不能恢复响应 | **错误** | 安装令牌明文在兑换响应中生成并返回（`apps/api/src/agent-connections.ts:529-539,553-557`）；完整响应另以 AES-256-GCM 加密存入通用认证幂等表（`apps/api/src/auth-idempotency.ts:128-144,319-339`），不是“只存在于响应”。 |
+| 2 | 加密重放没有到期擦除 | **错误** | worker 按 `replay_expires_at` 清空密文、IV、tag 和重放密钥元数据（`apps/worker/src/session-lifecycle.ts:672-690`）。 |
+| 3 | 精确重放只检查 caller 的幂等 key | **不完整** | 重放还绑定 subject、operation、规范化 request body、client context，且受重放窗口与已完成状态约束（`apps/api/src/auth-idempotency.ts:210-216,285-304`）。 |
+| 4 | 兑换入参带有 claim 标识，可用它恢复凭据 | **错误** | `agentConnectionRedeemInputSchema` 严格只接受 `pairingCode`、`agentSlug`、`client`，无 claim 标识字段（`packages/contracts/src/index.ts:2711-2723`）；当前恢复身份来自原幂等请求身份。 |
+| 5 | `POST /api/v1/agent-connections` 只绑定已有 Agent | **错误** | 路由查无定义时会插入 Agent actor 与 `agent_definitions`（`apps/api/src/agent-connections.ts:429-469`）；不可通过文档把现有创建能力描述成不存在。 |
+| 6 | 配对码是短码，或不是 32 随机字节载荷 | **错误** | `opaqueToken()` 生成 32 随机字节并编码为无填充 base64url 的 43 字符；配对前缀 `wmp_` 由连接 token 拼接（`packages/db/src/index.ts:41`、`apps/api/src/agent-connections.ts:32-35,358-360`），完整值再加前缀。 |
+| 7 | 两个兑换端点共用同一 endpoint/subject 限流预算 | **错误** | endpoint 桶按 `operationId`，subject-client 桶也包含 `operationId`；兑换与 enrollment operation ID 不同（`apps/api/src/auth-rate-limit/limiter.ts:129-145,154-159`、`apps/api/src/auth-rate-limit/inventory.ts:36-37`）。 |
+| 8 | 两个兑换端点完全没有共享限流预算 | **错误** | socket peer 与 client IP 维度不含 operation ID，仍由两个入口共享（`apps/api/src/auth-rate-limit/limiter.ts:129-145`）。准确表述是 operation/subject 预算隔离，IP/socket 预算共享。 |
+| 9 | pairing 的 attempts 是错误 code 暴力破解计数 | **错误** | 随机错误 code 在查 pairing 行时失败；仅已知 pairing 的 slug/type mismatch 进入外部 catch 并递增 attempts，达到阈值时拒绝（`apps/api/src/agent-connections.ts:518-525,560-562`）。 |
+| 10 | 配对码十分钟有效期覆盖完整七步安装流程 | **错误** | 十分钟 `expiresAt` 创建于 pairing，redeem 时校验；成功兑换后后续本地配置/Skill 校验不再使用该 code（`apps/api/src/agent-connections.ts:358-365,518-523,546-557`）。15 分钟重放窗口独立定义于 `auth-idempotency.ts:248-249`。 |
+| 11 | 保存模型连接会向供应商真实请求验证密钥 | **错误** | API 对 URL 做格式/策略规范化（`apps/api/src/workbench-llm-connections.ts:49-69`），ADR 0065 明确当前 API 不向配置目标发请求（`docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md:48-50`）。 |
+| 12 | 模型只要存在就可用于模型支持命令 | **错误** | 授权查询要求 connection `active` 且 model `enabled=true`（`apps/api/src/workbench-conversations.ts:150-166`）。 |
+| 13 | Runner 有独立的在线/空闲心跳事实 | **未发现；结论限于已读实现** | runner 在获得 Session assignment 并进入执行流程后才发送 Session heartbeat（`apps/agent-runner/src/run-session.ts:331-357`）；assignment 查询关联 Session/Delegation/grant，而不是 runner 注册（`apps/api/src/workbench-runner.ts:88-109`）；heartbeat 字段属于 `agent_sessions`（`packages/db/src/schema.ts:316-324`）。因此当前就绪项应为 `unknown`，不声称未来不存在此能力。 |
+| 14 | 平台完全没有通知投递能力 | **错误** | ADR 0062 已记录人工 Web Push（`docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md:30-32`），schema 有 notification、delivery 与 browser push subscription（`packages/db/src/schema.ts:523-543`）。缺口应限定为目标生态渠道适配器。 |
+| 15 | 企业微信、钉钉、飞书、小程序适配器已存在，或可据“零命中”断定所有生态代码不存在 | **未发现适配器；检索结论有边界** | 本次对 `apps/`、`packages/`、`docs/adr/`、`docs/plan/` 与 `docs/agent-integration.md` 显式纳入检索，命令使用 `rg -n -uu -i`，检索词为 `企业微信|wecom|wechat work|wework|钉钉|dingtalk|飞书|feishu|lark|小程序|mini.?program`；排除 `node_modules/`、`.git/`、`dist/`、`.next/`、`coverage/`。命中仅为计划/ADR规划文字，未找到实现证据；结论只写“未发现渠道适配器”，不外推为国内模型/全部文档不存在。 |
+| 16 | Human Attention / Redis wake sink 可直接作为持久通知队列 | **错误** | ADR 0050 将 Attention 定义为派生查询；worker Redis sink 写 cursor/workspace wake hint 并按 `MAXLEN` 裁剪，PostgreSQL outbox 才负责 claim/delivery（`apps/worker/src/index.ts:249-258,291-325`；ADR 0033）。新渠道投递仍需持久契约。 |
+
+本任务是静态事实核查与文档维护，不新增或运行测试。对应测试文件/用例名：**不适用**；
+核查依据为表中逐项代码/文档定位及第 15 项明确列出的搜索词、目录范围和排除项。
+没有发现推翻 ADR 0074–0076 当前决策前提的新证据；本次只补精确事实依据与检索边界，
+不改设计决策。交叉引用：[`ADR 0074`](../adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md)、
+[`ADR 0075`](../adr/0075-verifiable-and-simplified-agent-connection-onboarding.md)、
+[`ADR 0076`](../adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md)。
+
+核查任务清单：
+
+- [x] 16 条断言逐条有结论；
+- [x] 每条被推翻的断言都有替代证据；
+- [x] 搜索未发现项记录检索词、纳入范围和排除项；
+- [x] 结论同步到计划及相关 ADR，计划中的相对链接目标可解析；
+- [x] 测试文件/用例名：不适用（本任务不实现功能，未新增或运行测试）。
+
 ## 现状与证据（已核实，含被撤回项）
 
 | 事实 | 证据 | 对计划的影响 |
 |---|---|---|
 | 兑换响应已有加密重放 + 到期擦除 | `auth-idempotency.ts:128-144,218,319-339`；`session-lifecycle.ts:672-690` | B1 改为纯客户端改动，**零迁移** |
 | 重放需同 key + 同 subject/op/规范化 body/客户端上下文 | `auth-idempotency.ts:205-216,285-304,343-352` | 缺口=客户端丢请求身份 |
-| 丢身份后不可恢复 | `agent-connections.ts:522` `PAIRING_CONSUMED` | 这就是要修的那一个失败 |
+| 丢失原请求身份后，不能用新 key 再兑已消费 code | `agent-connections.ts:522` `PAIRING_CONSUMED`；原 key/body/context 在有效重放窗内仍可重放 | 缺口限定为客户端遗失原请求身份且无法精确重放 |
 | 接入指令确为 7 步 | `mcp-onboarding.ts:141-147` | 压到 2 步 |
 | 其中 4 步是完整性校验，不得删除 | ADR 0043（指纹）、ADR 0046（Skill 原始字节/哈希/签名） | 由 connector **执行**，不由 agent 手工做 |
 | 两个兑换端点预算**已**按 operationId 隔离 | `limiter.ts:129-145,154-159` | 不拆 endpointClass |
@@ -95,7 +135,7 @@
 | 锁清单 pin 的是 statementId（owner + 规范 SQL 哈希）与 rankSequence | `agent-lock-order-inventory.test.ts:141-167,373-392` | **不是**只许行号位移 |
 | 路由策略矩阵由脚本生成 | `scripts/generate-route-policy-artifacts.mts`；`pnpm generate:route-policy` | 用生成器，不手改 |
 | ADR 0071/0072 Status 均为 Proposed | 两条 ADR 首行 | 事实表区分"文件存在/提案/已实现/已验收"四态 |
-| 无企业微信/钉钉/飞书/小程序适配器 | 显式纳入 `docs` 后检索 | 渠道面是空白面 |
+| 本次检索范围内未发现企业微信/钉钉/飞书/小程序渠道适配器 | 检索词、目录范围与排除项见 P1 台账第 15 项 | 仅说明未找到适配器，不推断国内模型或全部文档不存在 |
 
 ## 任务链与依赖
 
