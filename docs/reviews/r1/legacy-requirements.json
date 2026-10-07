@@ -19,7 +19,17 @@
           "targets": [
             5
           ],
-          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。"
+          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "撤回可独立先发声明，全部验收合入#5纵向。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-B1-2",
@@ -29,7 +39,17 @@
           "targets": [
             5
           ],
-          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。"
+          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "撤回可独立先发声明，全部验收合入#5纵向。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-B1-3",
@@ -39,7 +59,17 @@
           "targets": [
             5
           ],
-          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。"
+          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "撤回可独立先发声明，全部验收合入#5纵向。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-B1-4",
@@ -49,7 +79,17 @@
           "targets": [
             5
           ],
-          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。"
+          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "撤回可独立先发声明，全部验收合入#5纵向。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -71,7 +111,25 @@
             5,
             20
           ],
-          "disposition": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。"
+          "disposition": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 20,
+              "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+              "spec": "docs/plan/activation-task-specs/20.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-B2-2",
@@ -82,7 +140,25 @@
             5,
             20
           ],
-          "disposition": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。"
+          "disposition": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 20,
+              "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+              "spec": "docs/plan/activation-task-specs/20.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-B2-3",
@@ -93,7 +169,25 @@
             5,
             20
           ],
-          "disposition": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。"
+          "disposition": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 20,
+              "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+              "spec": "docs/plan/activation-task-specs/20.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -113,7 +207,17 @@
           "targets": [
             7
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 7,
+              "owner": "B3 执行者",
+              "spec": "docs/plan/activation-task-specs/07.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-B3-2",
@@ -123,7 +227,17 @@
           "targets": [
             7
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 7,
+              "owner": "B3 执行者",
+              "spec": "docs/plan/activation-task-specs/07.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -143,7 +257,17 @@
           "targets": [
             20
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 20,
+              "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+              "spec": "docs/plan/activation-task-specs/20.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-B4-2",
@@ -153,7 +277,17 @@
           "targets": [
             20
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 20,
+              "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+              "spec": "docs/plan/activation-task-specs/20.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -173,7 +307,17 @@
           "targets": [
             15
           ],
-          "disposition": "源rev旧卡只深链；相反审批/决策回调撤回为延期身份桥接范围；其余投递要求归#15。"
+          "disposition": "源rev旧卡只深链；相反审批/决策回调撤回为延期身份桥接范围；其余投递要求归#15。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 15,
+              "owner": "C1 执行者",
+              "spec": "docs/plan/activation-task-specs/15.md",
+              "scope": "源rev旧卡只深链；相反审批/决策回调撤回为延期身份桥接范围；其余投递要求归#15。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-C1-2",
@@ -183,7 +327,17 @@
           "targets": [
             15
           ],
-          "disposition": "源rev旧卡只深链；相反审批/决策回调撤回为延期身份桥接范围；其余投递要求归#15。"
+          "disposition": "源rev旧卡只深链；相反审批/决策回调撤回为延期身份桥接范围；其余投递要求归#15。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 15,
+              "owner": "C1 执行者",
+              "spec": "docs/plan/activation-task-specs/15.md",
+              "scope": "源rev旧卡只深链；相反审批/决策回调撤回为延期身份桥接范围；其余投递要求归#15。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-C1-3",
@@ -193,7 +347,17 @@
           "targets": [
             15
           ],
-          "disposition": "源rev旧卡只深链；相反审批/决策回调撤回为延期身份桥接范围；其余投递要求归#15。"
+          "disposition": "源rev旧卡只深链；相反审批/决策回调撤回为延期身份桥接范围；其余投递要求归#15。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 15,
+              "owner": "C1 执行者",
+              "spec": "docs/plan/activation-task-specs/15.md",
+              "scope": "源rev旧卡只深链；相反审批/决策回调撤回为延期身份桥接范围；其余投递要求归#15。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -213,7 +377,17 @@
           "targets": [
             16
           ],
-          "disposition": "出站协议：延期身份桥接/回调签名，替换为fake提供方/网页当前授权验收；不把原要求无声删除。"
+          "disposition": "出站协议：延期身份桥接/回调签名，替换为fake提供方/网页当前授权验收；不把原要求无声删除。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 16,
+              "owner": "C2 执行者",
+              "spec": "docs/plan/activation-task-specs/16.md",
+              "scope": "出站协议：延期身份桥接/回调签名，替换为fake提供方/网页当前授权验收；不把原要求无声删除。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-C2-2",
@@ -223,7 +397,17 @@
           "targets": [
             16
           ],
-          "disposition": "出站协议：延期身份桥接/回调签名，替换为fake提供方/网页当前授权验收；不把原要求无声删除。"
+          "disposition": "出站协议：延期身份桥接/回调签名，替换为fake提供方/网页当前授权验收；不把原要求无声删除。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 16,
+              "owner": "C2 执行者",
+              "spec": "docs/plan/activation-task-specs/16.md",
+              "scope": "出站协议：延期身份桥接/回调签名，替换为fake提供方/网页当前授权验收；不把原要求无声删除。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-C2-3",
@@ -233,7 +417,17 @@
           "targets": [
             16
           ],
-          "disposition": "出站协议：延期身份桥接/回调签名，替换为fake提供方/网页当前授权验收；不把原要求无声删除。"
+          "disposition": "出站协议：延期身份桥接/回调签名，替换为fake提供方/网页当前授权验收；不把原要求无声删除。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 16,
+              "owner": "C2 执行者",
+              "spec": "docs/plan/activation-task-specs/16.md",
+              "scope": "出站协议：延期身份桥接/回调签名，替换为fake提供方/网页当前授权验收；不把原要求无声删除。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -253,7 +447,17 @@
           "targets": [
             17
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 17,
+              "owner": "C3 执行者",
+              "spec": "docs/plan/activation-task-specs/17.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-C3-2",
@@ -263,7 +467,17 @@
           "targets": [
             17
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 17,
+              "owner": "C3 执行者",
+              "spec": "docs/plan/activation-task-specs/17.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-C3-3",
@@ -273,7 +487,17 @@
           "targets": [
             17
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 17,
+              "owner": "C3 执行者",
+              "spec": "docs/plan/activation-task-specs/17.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -295,7 +519,25 @@
             11,
             21
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 11,
+              "owner": "D1a 执行者",
+              "spec": "docs/plan/activation-task-specs/11.md",
+              "scope": "并存新增槽/值映射、明暗继承与旧值保留",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 21,
+              "owner": "D1b 执行者",
+              "spec": "docs/plan/activation-task-specs/21.md",
+              "scope": "逐面消费/视觉与明暗回归、最终清理",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-D1-2",
@@ -306,7 +548,25 @@
             11,
             21
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 11,
+              "owner": "D1a 执行者",
+              "spec": "docs/plan/activation-task-specs/11.md",
+              "scope": "并存新增槽/值映射、明暗继承与旧值保留",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 21,
+              "owner": "D1b 执行者",
+              "spec": "docs/plan/activation-task-specs/21.md",
+              "scope": "逐面消费/视觉与明暗回归、最终清理",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-D1-3",
@@ -317,7 +577,25 @@
             11,
             21
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 11,
+              "owner": "D1a 执行者",
+              "spec": "docs/plan/activation-task-specs/11.md",
+              "scope": "并存新增槽/值映射、明暗继承与旧值保留",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 21,
+              "owner": "D1b 执行者",
+              "spec": "docs/plan/activation-task-specs/21.md",
+              "scope": "逐面消费/视觉与明暗回归、最终清理",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -337,7 +615,17 @@
           "targets": [
             12
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 12,
+              "owner": "D2/D3 执行者",
+              "spec": "docs/plan/activation-task-specs/12.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-D2-2",
@@ -347,7 +635,17 @@
           "targets": [
             12
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 12,
+              "owner": "D2/D3 执行者",
+              "spec": "docs/plan/activation-task-specs/12.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-D2-3",
@@ -357,7 +655,17 @@
           "targets": [
             12
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 12,
+              "owner": "D2/D3 执行者",
+              "spec": "docs/plan/activation-task-specs/12.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -377,7 +685,17 @@
           "targets": [
             12
           ],
-          "disposition": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。"
+          "disposition": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 12,
+              "owner": "D2/D3 执行者",
+              "spec": "docs/plan/activation-task-specs/12.md",
+              "scope": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-D3-2",
@@ -387,7 +705,17 @@
           "targets": [
             12
           ],
-          "disposition": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。"
+          "disposition": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 12,
+              "owner": "D2/D3 执行者",
+              "spec": "docs/plan/activation-task-specs/12.md",
+              "scope": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-D3-3",
@@ -397,7 +725,17 @@
           "targets": [
             12
           ],
-          "disposition": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。"
+          "disposition": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 12,
+              "owner": "D2/D3 执行者",
+              "spec": "docs/plan/activation-task-specs/12.md",
+              "scope": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -417,7 +755,17 @@
           "targets": [
             13
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 13,
+              "owner": "D4 执行者",
+              "spec": "docs/plan/activation-task-specs/13.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-D4-2",
@@ -427,7 +775,17 @@
           "targets": [
             13
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 13,
+              "owner": "D4 执行者",
+              "spec": "docs/plan/activation-task-specs/13.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-D4-3",
@@ -437,7 +795,17 @@
           "targets": [
             13
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。"
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 13,
+              "owner": "D4 执行者",
+              "spec": "docs/plan/activation-task-specs/13.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     },
@@ -459,7 +827,25 @@
             14,
             22
           ],
-          "disposition": "写入#14/#22；撤回全批原子移动，改逐项结果恢复，本地草稿零mutation。"
+          "disposition": "写入#14/#22；撤回全批原子移动，改逐项结果恢复，本地草稿零mutation。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 14,
+              "owner": "D5a 执行者",
+              "spec": "docs/plan/activation-task-specs/14.md",
+              "scope": "主动作/菜单沿用领域Command，授权/revision/幂等与本地动作边界",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 22,
+              "owner": "D5b 执行者",
+              "spec": "docs/plan/activation-task-specs/22.md",
+              "scope": "拖拽/多选逐项状态与部分恢复、草稿引用不提交",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-D5-2",
@@ -470,7 +856,25 @@
             14,
             22
           ],
-          "disposition": "写入#14/#22；撤回全批原子移动，改逐项结果恢复，本地草稿零mutation。"
+          "disposition": "写入#14/#22；撤回全批原子移动，改逐项结果恢复，本地草稿零mutation。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 14,
+              "owner": "D5a 执行者",
+              "spec": "docs/plan/activation-task-specs/14.md",
+              "scope": "主动作/菜单沿用领域Command，授权/revision/幂等与本地动作边界",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 22,
+              "owner": "D5b 执行者",
+              "spec": "docs/plan/activation-task-specs/22.md",
+              "scope": "拖拽/多选逐项状态与部分恢复、草稿引用不提交",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         },
         {
           "id": "legacy-D5-3",
@@ -481,7 +885,25 @@
             14,
             22
           ],
-          "disposition": "写入#14/#22；撤回全批原子移动，改逐项结果恢复，本地草稿零mutation。"
+          "disposition": "写入#14/#22；撤回全批原子移动，改逐项结果恢复，本地草稿零mutation。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 14,
+              "owner": "D5a 执行者",
+              "spec": "docs/plan/activation-task-specs/14.md",
+              "scope": "主动作/菜单沿用领域Command，授权/revision/幂等与本地动作边界",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 22,
+              "owner": "D5b 执行者",
+              "spec": "docs/plan/activation-task-specs/22.md",
+              "scope": "拖拽/多选逐项状态与部分恢复、草稿引用不提交",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
         }
       ]
     }

@@ -1,0 +1,187 @@
+
+> workmesh@ ci:source C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749
+> node scripts/run-ci-source.mjs "build"
+
+CI build: @workmesh/agent-runner, @workmesh/api, @workmesh/fake-agent, @workmesh/mcp, @workmesh/web, @workmesh/worker, @workmesh/a2a-adapter, @workmesh/agent-sdk, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/git-provider, @workmesh/observability, @workmesh/recovery, @workmesh/ui
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running build in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/contracts:build: cache hit, replaying logs 62fda4b2edb4de3d
+@workmesh/contracts:build:
+@workmesh/artifact-storage:build: cache hit, replaying logs ee80429c7e855528
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build:
+@workmesh/artifact-storage:build:
+@workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\artifact-storage
+@workmesh/artifact-storage:build: > tsc -p tsconfig.json
+@workmesh/artifact-storage:build:
+@workmesh/observability:build: cache hit, replaying logs 5f619a6918afc057
+@workmesh/agent-runner:build: cache miss, executing 52a88685d712d8ef
+@workmesh/observability:build:
+@workmesh/observability:build: > @workmesh/observability@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\observability
+@workmesh/observability:build: > tsc -p tsconfig.json
+@workmesh/observability:build:
+@workmesh/git-provider:build: cache hit, replaying logs 9a18c1b90965e505
+@workmesh/git-provider:build:
+@workmesh/git-provider:build: > @workmesh/git-provider@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\git-provider
+@workmesh/git-provider:build: > tsc -p tsconfig.json
+@workmesh/git-provider:build:
+@workmesh/config:build: cache hit, replaying logs 8e3ad6c45ecb43a1
+@workmesh/config:build:
+@workmesh/config:build: > @workmesh/config@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\config
+@workmesh/config:build: > tsc -p tsconfig.json
+@workmesh/config:build:
+@workmesh/agent-sdk:build: cache hit, replaying logs 805b3b4b8f4e7058
+@workmesh/agent-sdk:build:
+@workmesh/agent-sdk:build: > @workmesh/agent-sdk@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\agent-sdk
+@workmesh/agent-sdk:build: > tsc -p tsconfig.json
+@workmesh/agent-sdk:build:
+@workmesh/a2a-adapter:build: cache hit, replaying logs 442627c19d0df9d5
+@workmesh/a2a-adapter:build:
+@workmesh/a2a-adapter:build: > @workmesh/a2a-adapter@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\a2a-adapter
+@workmesh/a2a-adapter:build: > tsc -p tsconfig.json
+@workmesh/a2a-adapter:build:
+@workmesh/fake-agent:build: cache miss, executing fd22c1c14f73cba2
+@workmesh/mcp:build: cache miss, executing a08235464b09e768
+@workmesh/conformance:build: cache miss, executing 883f25cf7162ab18
+@workmesh/domain:build: cache hit, replaying logs c72fbd354b25c7fc
+@workmesh/domain:build:
+@workmesh/domain:build: > @workmesh/domain@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\domain
+@workmesh/domain:build: > tsc -p tsconfig.json
+@workmesh/domain:build:
+@workmesh/ui:build: cache hit, replaying logs dd8f60a22d299360
+@workmesh/ui:build:
+@workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\ui
+@workmesh/ui:build: > tsc -p tsconfig.json
+@workmesh/ui:build:
+@workmesh/web:build: cache miss, executing c2f5cd97eabf69c0
+@workmesh/db:build: cache hit, replaying logs e33bfcb609b33358
+@workmesh/db:build:
+@workmesh/db:build: > @workmesh/db@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\db
+@workmesh/db:build: > tsc -p tsconfig.json
+@workmesh/db:build:
+@workmesh/worker:build: cache miss, executing 131e8f19f4c23002
+@workmesh/recovery:build: cache hit, replaying logs 4d6b18d57cc5b9c5
+@workmesh/recovery:build:
+@workmesh/recovery:build: > @workmesh/recovery@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\recovery
+@workmesh/recovery:build: > tsc -p tsconfig.build.json
+@workmesh/recovery:build:
+@workmesh/api:build: cache miss, executing 6cdc493114e44513
+@workmesh/agent-runner:build:
+@workmesh/agent-runner:build: > @workmesh/agent-runner@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\agent-runner
+@workmesh/agent-runner:build: > tsc -p tsconfig.json
+@workmesh/agent-runner:build:
+@workmesh/mcp:build:
+@workmesh/mcp:build: > @workmesh/mcp@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\mcp
+@workmesh/mcp:build: > tsc -p tsconfig.build.json
+@workmesh/mcp:build:
+@workmesh/web:build:
+@workmesh/web:build: > @workmesh/web@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\web
+@workmesh/web:build: > next build
+@workmesh/web:build:
+@workmesh/api:build:
+@workmesh/api:build: > @workmesh/api@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\api
+@workmesh/api:build: > tsc -p tsconfig.build.json
+@workmesh/api:build:
+@workmesh/worker:build:
+@workmesh/worker:build: > @workmesh/worker@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\worker
+@workmesh/worker:build: > tsc -p tsconfig.build.json
+@workmesh/worker:build:
+@workmesh/fake-agent:build:
+@workmesh/fake-agent:build: > @workmesh/fake-agent@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\fake-agent
+@workmesh/fake-agent:build: > tsc -p tsconfig.json
+@workmesh/fake-agent:build:
+@workmesh/conformance:build:
+@workmesh/conformance:build: > @workmesh/conformance@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\conformance
+@workmesh/conformance:build: > tsc -p tsconfig.json
+@workmesh/conformance:build:
+@workmesh/web:build:    ▲ Next.js 15.5.22
+@workmesh/web:build:
+@workmesh/web:build:    Creating an optimized production build ...
+@workmesh/web:build: <w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\web\app\styles.css': No serializer registered for Warning
+@workmesh/web:build: <w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 4 items } -> webpack/lib/ModuleWarning -> Warning
+@workmesh/web:build:  ⚠ Compiled with warnings in 31.0s
+@workmesh/web:build:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: Warning
+@workmesh/web:build:
+@workmesh/web:build: (1567:47) autoprefixer: end value has mixed support, consider using flex-end instead
+@workmesh/web:build:
+@workmesh/web:build: Import trace for requested module:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: ./app/styles.css
+@workmesh/web:build:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: Warning
+@workmesh/web:build:
+@workmesh/web:build: (1760:57) autoprefixer: end value has mixed support, consider using flex-end instead
+@workmesh/web:build:
+@workmesh/web:build: Import trace for requested module:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: ./app/styles.css
+@workmesh/web:build:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: Warning
+@workmesh/web:build:
+@workmesh/web:build: (1849:36) autoprefixer: end value has mixed support, consider using flex-end instead
+@workmesh/web:build:
+@workmesh/web:build: Import trace for requested module:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: ./app/styles.css
+@workmesh/web:build:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: Warning
+@workmesh/web:build:
+@workmesh/web:build: (1860:87) autoprefixer: start value has mixed support, consider using flex-start instead
+@workmesh/web:build:
+@workmesh/web:build: Import trace for requested module:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: ./app/styles.css
+@workmesh/web:build:
+@workmesh/web:build:    Linting and checking validity of types ...
+@workmesh/web:build:
+@workmesh/web:build:  ⚠ The Next.js plugin was not detected in your ESLint configuration. See https://nextjs.org/docs/app/api-reference/config/eslint#migrating-existing-config
+@workmesh/web:build:    Collecting page data ...
+@workmesh/web:build:    Generating static pages (0/16) ...
+@workmesh/web:build:    Generating static pages (4/16)
+@workmesh/web:build:    Generating static pages (8/16)
+@workmesh/web:build:    Generating static pages (12/16)
+@workmesh/web:build:  ✓ Generating static pages (16/16)
+@workmesh/web:build:    Finalizing page optimization ...
+@workmesh/web:build:    Collecting build traces ...
+@workmesh/web:build:
+@workmesh/web:build: Route (app)                                 Size  First Load JS
+@workmesh/web:build: ┌ ○ /                                      76 kB         363 kB
+@workmesh/web:build: ├ ○ /_not-found                            131 B         103 kB
+@workmesh/web:build: ├ ƒ /agent-sessions/[id]                   991 B         279 kB
+@workmesh/web:build: ├ ○ /agents                              27.3 kB         239 kB
+@workmesh/web:build: ├ ƒ /agents/[id]                         6.04 kB         285 kB
+@workmesh/web:build: ├ ○ /apple-icon.png                          0 B            0 B
+@workmesh/web:build: ├ ○ /connect                             13.1 kB         190 kB
+@workmesh/web:build: ├ ○ /icon.png                                0 B            0 B
+@workmesh/web:build: ├ ○ /install                             6.21 kB         183 kB
+@workmesh/web:build: ├ ƒ /livez                                 131 B         103 kB
+@workmesh/web:build: ├ ○ /login                               5.99 kB         183 kB
+@workmesh/web:build: ├ ○ /operations                          9.95 kB         201 kB
+@workmesh/web:build: ├ ƒ /readyz                                131 B         103 kB
+@workmesh/web:build: ├ ○ /settings                              13 kB         195 kB
+@workmesh/web:build: ├ ○ /settings/agent-workbench             9.3 kB         186 kB
+@workmesh/web:build: ├ ○ /ui-catalog                          3.09 kB         180 kB
+@workmesh/web:build: └ ○ /workbench                           9.68 kB         254 kB
+@workmesh/web:build: + First Load JS shared by all             103 kB
+@workmesh/web:build:   ├ chunks/202-579a6ac7273e6498.js       46.5 kB
+@workmesh/web:build:   ├ chunks/a1e4b416-8dc067520d41ca1a.js  54.2 kB
+@workmesh/web:build:   └ other shared chunks (total)          2.02 kB
+@workmesh/web:build:
+@workmesh/web:build:
+@workmesh/web:build: ○  (Static)   prerendered as static content
+@workmesh/web:build: ƒ  (Dynamic)  server-rendered on demand
+@workmesh/web:build:
+
+ Tasks:    18 successful, 18 total
+Cached:    11 cached, 18 total
+  Time:    1m34.583s

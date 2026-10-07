@@ -4,7 +4,8 @@ Status
 
 Proposed
 
-Reads with, and does not re-decide: ADR 0028 (Accepted) frontend architecture and
+Reads with, retaining these boundaries except the bounded ADR 0064 visual baseline
+amendment below: ADR 0028 (Accepted) frontend architecture and
 M1-M5 staging, ADR 0045 (Proposed) single-token theme unification, ADR 0052
 (Accepted) information architecture, ADR 0064 (Accepted) unified shell, ADR 0073
 (Proposed) column position, ADR 0074 (Proposed) configuration readiness.

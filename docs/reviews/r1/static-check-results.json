@@ -1,0 +1,56 @@
+{
+  "base": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+  "checkedAt": "2026-10-07T20:39:12.762Z",
+  "results": [
+    {
+      "name": "specs",
+      "command": "node docs/reviews/r1/verify-specs.mjs",
+      "startedAt": "2026-10-07T20:39:11.680Z",
+      "endedAt": "2026-10-07T20:39:12.151Z",
+      "exitCode": 0,
+      "stdout": "{\n  \"cards\": \"29/29\",\n  \"categories\": \"261/261\",\n  \"applicableAssertions\": 139,\n  \"originalChecklistItems\": 154,\n  \"dependencies\": \"实现及验收无环\",\n  \"historicalSource\": \"保留；#6合并前卡片全文缺口见source-gaps.md\",\n  \"result\": \"静态检查通过；非独审/产品新功能通过\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "historical-handoff",
+      "command": "node docs/reviews/r1/verify-handoff.mjs",
+      "startedAt": "2026-10-07T20:39:12.151Z",
+      "endedAt": "2026-10-07T20:39:12.231Z",
+      "exitCode": 0,
+      "stdout": "已采集工件的字节、哈希、计划副本一致性和卡片元数据校验通过；正文覆盖 29/29。\n历史源包完整；其中 1 卡由总管补交源文。三项 blocking 仍待原复核者，执行前须复读最新 main 与 29 卡。\n",
+      "stderr": ""
+    },
+    {
+      "name": "archive",
+      "command": "node docs/reviews/r1/archive-checks.mjs",
+      "startedAt": "2026-10-07T20:39:12.231Z",
+      "endedAt": "2026-10-07T20:39:12.494Z",
+      "exitCode": 0,
+      "stdout": "现有检查归档核验通过：38 个独立原件，未覆盖\n",
+      "stderr": ""
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'MANIFEST.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/reviews/r1-spec-review.md', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    {
+      "command": "git diff --check 5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'MANIFEST.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/reviews/r1-spec-review.md', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    {
+      "command": "检查待提交新文件行尾/EOF空白（git diff --check不含untracked）",
+      "exitCode": 0,
+      "findings": []
+    }
+  ],
+  "toolingCorrection": {
+    "firstArchiveValidation": "RAW_EVIDENCE_INVALID: 旧路径/版本/字节类型无精确映射",
+    "cause": "空日志无ZIP member，但展示校验仍尝试解析；明确空文件清单和零字节校验后修正",
+    "scope": "本轮工件制作校验问题，非产品/G1失败；未丢原字节"
+  },
+  "cleanup": "全部检查helper已结束；仅停止上轮中断遗留r1b三个测试容器，未改真实workmesh服务"
+}

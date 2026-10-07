@@ -529,15 +529,15 @@ actor may cause a successor item to be created:
 - It **reuses the original `kind`**, so the Chief's existing dispatch surface and
   every client that already renders a kind are unchanged, and no `inbox_item_kind`
   value is added.
-- It sets `source_type = 'inbox_redelivery'` and `source_id` to the **original
-  item's id（直接前驱，首次恢复就是原件）**. `source_type` is `text`, not an enum
+- It sets `source_type = 'inbox_redelivery'` and `source_id` to the **direct
+  predecessor item's id（首次恢复的前驱就是原件）**. `source_type` is `text`, not an enum
   (`packages/db/migrations/0005_stage1_tokens_webhooks_events.sql:35`), so this
   needs no `ALTER TYPE` — unlike the Team room subject, which does.
 - That pair is also what makes re-delivery **idempotent by the existing
   constraint**: `inbox_items_actor_target_unique` covers
   `(workspace_id, recipient_actor_id, kind, source_type, source_id)` for
   actor-targeted rows (`0032:92-94`), so a retry collides on exactly one row per
-  original item. A duplicate cannot be created by re-running the command, and the
+  predecessor item. A duplicate cannot be created by re-running the command, and the
   collision returns the existing successor instead of inserting a second one.
 
 **What re-delivery is forbidden from doing.**
@@ -593,12 +593,27 @@ Inbox fixtures，不依赖 F6；F6 使用已验收的 F3/F4/F5，不倒置上游
   recipient/kind，服务端验证并禁止环；不能把所有来源硬当 room message。
 - 同一前驱的一次恢复意图由既有 actor-target unique 键规范化，重复调用返回同一
   successor；后继将来另一次被终止后，才能以该后继作为前驱创建下一输入。调用者请求
-  摘要仍受命令幂等绑定，同 key 异体冲突。锁根来源，再锁前驱/当前授权与任命，统一锁序；
-  唯一键不是授权，也不能代替根已解决、recipient、Stop、撤权和换届检查。
+  摘要仍受命令幂等绑定，同 key 异体冲突。业务根锁不是全局首锁：恢复和三条完成路径先用
+  无锁 locator 收集相关 Session、连接/凭据、任命/委派和资源身份；无锁读取不授予权限。
+  沿 `lockReplyParticipantsBeforeReservation` 的去重排序 Session advisory 锁及连接生命周期
+  前缀，构造完整 authority plan，复用 `lockAgentAuthorityPlan` 的全局 rank 与 rank 内排序。
+  当前 rank 为 definition → Team grant → delegation → Session → Session token → installation
+  token → work item → project。携带 Chief 上下文时，连接生命周期前缀之后、现有 rank
+  之前只锁 appointment（按稳定 id 排序）；包括 Chief 委派的所有 delegation 实体仍由
+  完整 plan 在既有 delegation rank 按稳定 id 取得，不把同一委派行提前移到前缀。不携带
+  Chief 上下文的路径跳过 appointment 前缀，不能从业务根反向补取它。F1/F2 的换届、
+  修订/撤权与 F5 恢复共用顺序；影响 Chief 的普通 definition/Team grant/delegation 撤权
+  也先收集完整 locator/锁集，不在 rank 之后追加 appointment，不能把前缀当扩权依据。
+  锁定后重新验证身份、recipient、当前授权、任命、Stop、根状态和恢复资格，才按 root →
+  直接前驱 → 后继稳定 id 排序取业务锁；业务锁后再读绑定并使用 post-lock guard，禁止反向
+  获取低 rank 锁。locator/锁集变化时回滚整事务，以同幂等身份重新定位/重试，不持根锁补
+  authority。Human 完成路径也不得先锁 Inbox 再追加相同 Session/authority 资源；F5 必须
+  一并调整三条路径并更新符号/statement 锁清单。唯一键不是授权，不能替代重验。
 - 根非终态、前驱当前获胜 Session 终止、actor-targeted 且请求者当前有权才可恢复；
   exact-session 禁止。恢复创建不 claim、不 ACK、不创建 Session、不主动解除 Stop。
-  F3 按根来源与任命代次保留 Stop 抑制，新后继 ID 不能清除同一输入的禁止激活；只有
-  有权 Human 的新操作或新获授权任命下重新评估的准入，才可能形成新的合法激活。
+  F3 按逻辑根保留 Stop 抑制，并记录触发时的任命代次；新后继 ID 或单纯换届不能清除
+  同一输入的禁止激活。有权 Human 另行发起的新操作须形成独立、可审计关联的逻辑输入，
+  再通过当前准入；不能靠换任命或重投递重新激活被 Stop 的原根。
 - 有 `source_room_message_id` 的链复用唯一 message resolution。Inbox reply、Work Room
   answer、Human resolve 三条完成路径竞争同一个根的最终 resolution，并同事务收敛原件
   和全部后继的 actionable status、事件和 outbox。根已解决后禁止创建/claim/再次回复
@@ -607,7 +622,9 @@ Inbox fixtures，不依赖 F6；F6 使用已验收的 F3/F4/F5，不倒置上游
 - F4 的已处理至 C 与本批已提交激活/恢复结果引用同事务关联；分派有独立逻辑身份去重。
   F6 report 仅返回已提交 message/inbox/activation 引用及当时已知状态，不等模型、不
   伪造回执。联合测试覆盖根/前驱并发恢复、三种完成路径并发回复、恢复及 checkpoint
-  提交前后崩溃、Stop、撤权、换届、exact-session 拒绝和重放。
+  提交前后崩溃、Stop、撤权、换届、exact-session 拒绝和重放；还须覆盖恢复与 reply/
+  answer/resolve/撤权/换届交叉并发、锁集变化重试与死锁验收。新 SQL 锁语句在实现任务
+  使用 `UPDATE_AGENT_LOCK_MANIFEST=1` 更新并独审；本轮只冻结要求，不伪造已新增语句清单。
 
 ### Memory is deferred out of the first version
 
@@ -755,15 +772,22 @@ to one.
 2. F0 的后续 entry 仅替换 `CHECK` 和 `enforce_room_subject()` 的 Team 分支；F1 在
    F0 之后以独立增量迁移创建 `chief_appointments` 及部分唯一索引。任命事务负责建房、
    任命状态、事件和 outbox 原子提交，不把 F1 的交付塞回 F0 验收。
-3. Further entries add the Chief delegation, its dispatch records and usage
-   ledger, and **no** storage change for the Inbox claim: re-delivery reuses
-   `inbox_items` as it stands, with `source_type = 'inbox_redelivery'` and
-   `source_id` set to the original item id. `inbox_claim_immutable`,
+3. Further entries add the Chief delegation, independent logical dispatch records,
+   command idempotency identities and usage ledger. Delegation id/revision is an
+   authorization source, never the logical dispatch dedupe key; multiple dispatches
+   under one standing revision remain distinct. F4 checkpoints reference committed
+   dispatch/activation result ids atomically; replay never creates a second use.
+   F5 adds a durable logical root association and nullable root room-message reference
+   using new migration entries with old-row backfill. It preserves the Inbox claim
+   storage semantics: `source_type = 'inbox_redelivery'` and `source_id` references
+   the direct predecessor. `inbox_claim_immutable`,
    `inbox_items_exact_claim_check`, `inbox_items_claim_pair_check`,
    `inbox_items_recipient_kind_shape_check` and `enforce_inbox_receipt_scope()`
    are **left exactly as they are**, and `inbox_item_kind` gains no value. The
-   only index the design leans on is the existing
-   `inbox_items_actor_target_unique`, which is what makes retry idempotent.
+   existing `inbox_items_actor_target_unique` dedupes successors per predecessor;
+   it does not supply root authorization, Stop suppression or final resolution.
+   F5 records the new root constraints/indexes and lock statements separately,
+   tests both empty and upgraded databases, and does not edit applied migrations.
 4. The v1 manifest records only the **new** entries and `SCHEMA.sql` is updated
   to match. Applied baselines, legacy entries and their checksums are left
   exactly as they are; the published baseline is not regenerated in order to add
@@ -815,4 +839,3 @@ reviewed per statement, not diffed for line numbers.
 - `docs/plan/` gains the staged plan. The Inbox recovery choice is **no longer a
   gate** — it is decided above — so the gate that remains on the first Chief
   projection is the consumption protocol.
-

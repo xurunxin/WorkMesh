@@ -1,0 +1,1147 @@
+{
+  "baseCommit": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+  "draftHead": "f137787faa0979b59dd70668001b09bb5e132421",
+  "branch": "tds/conv-01a116f8-8172-7082-8d61-867bd9f0b749",
+  "capturedAt": "2026-10-07T20:39:18.791Z",
+  "finalHead": "由平台回合结束自动提交生成；不使用draftHead冒作最终head",
+  "manifestSelfExcluded": true,
+  "hashPolicy": "工作树原字节与预期Git提交LF字节分别记录；zip/png -text；expectedBlobId实际通过Git过滤器计算，未写对象或声称已有提交",
+  "files": [
+    {
+      "path": "MANIFEST.json",
+      "worktreeBytes": 6212,
+      "worktreeSha256": "ecc116a86d3900d719f23e515971eee062dd8fedae09e2f56d6d476ae76e6a31",
+      "expectedCommitBytes": 6212,
+      "expectedCommitSha256": "ecc116a86d3900d719f23e515971eee062dd8fedae09e2f56d6d476ae76e6a31",
+      "expectedBlobId": "d2e7690fd24afec098c9be889662ad1e44c224a6"
+    },
+    {
+      "path": "docs/adr/0028-declarative-route-policy-and-event-audience.md",
+      "worktreeBytes": 4751,
+      "worktreeSha256": "5ef48f79774654d882a11c4044371419975ef4c3ea95802cdf0c757b34880871",
+      "expectedCommitBytes": 4661,
+      "expectedCommitSha256": "c45e1c3474a101c933fc2b888a8804859a4a871acd6c58236076fcacbcb4dd64",
+      "expectedBlobId": "250f6580b7a536196c8560d7d98899484a91696e"
+    },
+    {
+      "path": "docs/adr/0028-kaneo-frontend-architecture-and-dependency-policy.md",
+      "worktreeBytes": 8116,
+      "worktreeSha256": "261fe3bdc7a5c71351074123646355e1c071273e4be75830ddf4d8e271bf840e",
+      "expectedCommitBytes": 8037,
+      "expectedCommitSha256": "0d3f856506fe32cfe26cd88b9ad07acb4aab7e1a8e0d8ddffb13718fbfa731b3",
+      "expectedBlobId": "62b990aac7d68e0737a7ca4f23b6d5c2939ea7e8"
+    },
+    {
+      "path": "docs/adr/0031-authenticated-single-use-bootstrap.md",
+      "worktreeBytes": 4455,
+      "worktreeSha256": "9f51a206b4e7e732207d5edce60dd1fe851238621d4a41593e880008d95e6766",
+      "expectedCommitBytes": 4364,
+      "expectedCommitSha256": "9da8f901f0c5242383e8c5dd45d5eb42a29816ebe1c88adb55c87af095cd04e5",
+      "expectedBlobId": "76f322c61dc1f833c5ba9f59d5d11f2efa3de920"
+    },
+    {
+      "path": "docs/adr/0037-agent-inbox-recipients-claims-and-receipts.md",
+      "worktreeBytes": 8460,
+      "worktreeSha256": "975de13ab0c43cba1d2394d6ed31231ecfa15019efd9ccf3641d3a6f913e41c0",
+      "expectedCommitBytes": 8320,
+      "expectedCommitSha256": "9f08b6f7dac5c96769d585ad87e309f4ac1530100d70d30fd2003969902a8817",
+      "expectedBlobId": "bc5e363348525c1adadc616590f5ce96c60982c3"
+    },
+    {
+      "path": "docs/adr/0043-agent-connection-and-coordination-mcp.md",
+      "worktreeBytes": 24440,
+      "worktreeSha256": "7f4ebf52f4a07b414468e9caa5f136d8c6bf291f40d2a08e8a49474b0ac3ab73",
+      "expectedCommitBytes": 23937,
+      "expectedCommitSha256": "b15dd4f6068b27520afbe55909c1323da0b5038d9e3cda4b038f834ff2cca938",
+      "expectedBlobId": "c57ff2216307a7c21940dd9fc0278954489f30cf"
+    },
+    {
+      "path": "docs/adr/0045-webui-redesign-i18n-theme-unification.md",
+      "worktreeBytes": 16673,
+      "worktreeSha256": "fb4c0007af69e3a7477ff3c160e051eb7b12fa1776d9972b45a774d493605669",
+      "expectedCommitBytes": 16377,
+      "expectedCommitSha256": "2dccd62b2d913f2df1329b7f862a1107026bf1d0410ec8994f08401be74fbb77",
+      "expectedBlobId": "68abe4588d1257ad0ece6b7807e06a0ec5d15d0b"
+    },
+    {
+      "path": "docs/adr/0046-agent-connection-recovery-and-execution-capacity.md",
+      "worktreeBytes": 7702,
+      "worktreeSha256": "db6a991b6562f41ca59846fb109a416d7cca90ee33bb5f92566c95f30005e7e4",
+      "expectedCommitBytes": 7620,
+      "expectedCommitSha256": "85594be22b5deb306b36ab061af7767b549ea4f126a7f79a8f7f10e2be8fce14",
+      "expectedBlobId": "81f20d769bc2040f8d7de986bc91a5bc0f12d8e5"
+    },
+    {
+      "path": "docs/adr/0050-human-attention-authorized-projection.md",
+      "worktreeBytes": 5276,
+      "worktreeSha256": "a6489055edefc856d6f8ec0f2aef08480914f40c7fff4e9e27ca172f2419214e",
+      "expectedCommitBytes": 5182,
+      "expectedCommitSha256": "387f0a781f3b394cf0f0a6446441cec1feb2ff5fe12aba9766264495676b492e",
+      "expectedBlobId": "7ddad5687de2d8cd02aece2a1242ee85307997ed"
+    },
+    {
+      "path": "docs/adr/0052-human-control-plane-information-architecture.md",
+      "worktreeBytes": 4837,
+      "worktreeSha256": "586b2c3b6e5e9de023c025c8861ac7f2e21f26060fb7f6d3f978f87eb8d2a389",
+      "expectedCommitBytes": 4739,
+      "expectedCommitSha256": "debe5a00cdd57beeb523453b5299d69ad60840fcbf5af766119b553e5bc013a4",
+      "expectedBlobId": "cecf4709f229b60bdc171a82a13ad5add21198b3"
+    },
+    {
+      "path": "docs/adr/0053-human-attention-governed-responses.md",
+      "worktreeBytes": 3649,
+      "worktreeSha256": "c4c15c4d83dc7a2b6139520cb685735c9063f13f0729a27ef42b1722a53563c8",
+      "expectedCommitBytes": 3571,
+      "expectedCommitSha256": "bea8776ae07b2b4cb2f3984b4d9e50cca235acbde42665c8641227c0da31b74a",
+      "expectedBlobId": "6459e59f1b94c1df069bc6b435fc20fd4720c538"
+    },
+    {
+      "path": "docs/adr/0055-governed-agent-session-controls.md",
+      "worktreeBytes": 2848,
+      "worktreeSha256": "44bf143070c7b4030198c918c484a6bc0e87afa2559beefa79f2055ddae3b6ed",
+      "expectedCommitBytes": 2789,
+      "expectedCommitSha256": "f90bd2c48c33a09c4d5d8a3b7569eecff785e21d1e7cc93ccae84f490bb3bcb7",
+      "expectedBlobId": "08834e00284b492769c1a475c604155dda7f8547"
+    },
+    {
+      "path": "docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md",
+      "worktreeBytes": 4078,
+      "worktreeSha256": "ede95acd8464dc70e6540e03ed25c566a8c1cb68df1922c648d1f5f92c8ced00",
+      "expectedCommitBytes": 4005,
+      "expectedCommitSha256": "fdf589485a3e046ac0c9954193c9e2c26b783b6b8c24245f669511ad9e917c50",
+      "expectedBlobId": "c014760b7d8d03d1ca30b81b662e371d13370ec4"
+    },
+    {
+      "path": "docs/adr/0064-unified-human-control-plane-web-experience.md",
+      "worktreeBytes": 4976,
+      "worktreeSha256": "fa88f734564ed3e8d5286474eb66223cac487c2d6c928a2dea8b42edbc3bdbea",
+      "expectedCommitBytes": 4877,
+      "expectedCommitSha256": "35af6982572c2dd13537de1ed84a079480504b48b8a58e50d8d9eec48322e070",
+      "expectedBlobId": "de55fdb6653a9a223bd991be5ae8348957a09a15"
+    },
+    {
+      "path": "docs/adr/0071-lite-single-node-self-hosted-deployment.md",
+      "worktreeBytes": 17257,
+      "worktreeSha256": "7b45fe73dc7d4a0ea27c668c076165273d8ab8b538b5d3c5dadcd2ca70384ef9",
+      "expectedCommitBytes": 16940,
+      "expectedCommitSha256": "bf5e4e81da36a4f9cc7bf615c3776c66620be50db768c99ff8c5a8f0484fdadc",
+      "expectedBlobId": "5309c6e3e4f78cdbe5846bac859e34cd9ff6ac6a"
+    },
+    {
+      "path": "docs/adr/0072-redis-free-and-object-store-free-runtime-profiles.md",
+      "worktreeBytes": 17257,
+      "worktreeSha256": "8d7b9a013b1fe99f6dc40040b93808f318017a46c107360242ac286a2f1bcd44",
+      "expectedCommitBytes": 16948,
+      "expectedCommitSha256": "5c9db399db9abf65d95b93e99f6e2d091de15c17ce922f160c2868445ba3f22e",
+      "expectedBlobId": "fbfb4c866a00d6541c51b17228fe5de715d934d5"
+    },
+    {
+      "path": "docs/adr/0073-human-ordered-position-within-a-status-column.md",
+      "worktreeBytes": 7474,
+      "worktreeSha256": "a138eaffd80ffd79e4dffa24f6bb7c3ee4efd5284554653d615483061b6ba4d3",
+      "expectedCommitBytes": 7330,
+      "expectedCommitSha256": "e9c84def5c80357ff53c702b86b99ad9af93eb7469088d5f7c9de2ade3a29417",
+      "expectedBlobId": "a1dba01400d405b269d107d94e38ceb88779114b"
+    },
+    {
+      "path": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+      "worktreeBytes": 12733,
+      "worktreeSha256": "37e3126275cbba72ba95c21234568e5eba4a1af79ca586de498bf4ada84e9034",
+      "expectedCommitBytes": 12520,
+      "expectedCommitSha256": "40e4fbda894db4bc915d3daf9e1c1a9248b7bf0c2706e20b748d35ee22905dea",
+      "expectedBlobId": "2862bbd93eaa9da285aa65f7a64ae98860dd0c42"
+    },
+    {
+      "path": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+      "worktreeBytes": 17234,
+      "worktreeSha256": "d8106075a3d72a4752e57e2fb4291f9658ec850b96c1d62c6837ff3fa2acc1c8",
+      "expectedCommitBytes": 17002,
+      "expectedCommitSha256": "f978c11ce175c7a34b0b177ef4155cd4713d1d6cf19959ececf82f29314616ae",
+      "expectedBlobId": "b0bc283a676fbd80eea302bf0b0600102db309a0"
+    },
+    {
+      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "worktreeBytes": 16259,
+      "worktreeSha256": "41684ab39309bd9cc0716fce3c2b8a87e41b56cbc9603bc2af4af861ee51c36d",
+      "expectedCommitBytes": 16009,
+      "expectedCommitSha256": "0f4cf7a79b750d55a44923d5fead103e7c5f879933888734056199df3cc11ba2",
+      "expectedBlobId": "b80e3ba4c2687f8ef0b7fbbf7b22530a71dba09e"
+    },
+    {
+      "path": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+      "worktreeBytes": 15180,
+      "worktreeSha256": "6a349576ac278081163500886d115938b6e22f34a302db979131947056441b70",
+      "expectedCommitBytes": 14966,
+      "expectedCommitSha256": "a97c87f1c63a5159e91e9c564e72f76add5332e08a688712e0fcde8ca72062f9",
+      "expectedBlobId": "9e488753852cd8c786a6d0a4680423d632138c2d"
+    },
+    {
+      "path": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+      "worktreeBytes": 55155,
+      "worktreeSha256": "c141d1a9dceba893ea59537626ad4dd1b3021c348389d70ef05cdfbea6e38f99",
+      "expectedCommitBytes": 55155,
+      "expectedCommitSha256": "c141d1a9dceba893ea59537626ad4dd1b3021c348389d70ef05cdfbea6e38f99",
+      "expectedBlobId": "2fa6fcfc3862fd89bf72ea262fbddd038272c84b"
+    },
+    {
+      "path": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+      "worktreeBytes": 28422,
+      "worktreeSha256": "b8120c76da0c12be29393a45d8ce3ee89d0394a7f690be08b06101a7a44c761b",
+      "expectedCommitBytes": 28422,
+      "expectedCommitSha256": "b8120c76da0c12be29393a45d8ce3ee89d0394a7f690be08b06101a7a44c761b",
+      "expectedBlobId": "6a95d096af306f51f92d81f40832e1af099de3c8"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/.gitattributes",
+      "worktreeBytes": 14,
+      "worktreeSha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+      "expectedCommitBytes": 14,
+      "expectedCommitSha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+      "expectedBlobId": "fcadb2cf97913f58a2523f535336e725c6b59d1f"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/01.md",
+      "worktreeBytes": 3027,
+      "worktreeSha256": "08a92224a0343eebae55bb010ee81071d2afa0f7d32a789c14e6c3ec21e47995",
+      "expectedCommitBytes": 3027,
+      "expectedCommitSha256": "08a92224a0343eebae55bb010ee81071d2afa0f7d32a789c14e6c3ec21e47995",
+      "expectedBlobId": "e1817ccceee491e0fafabce15b88227756084c7b"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/02.md",
+      "worktreeBytes": 4243,
+      "worktreeSha256": "378f45f2a1abc1cb3c72073f86af1f5d91515baaabcb1453addac4986470699a",
+      "expectedCommitBytes": 4243,
+      "expectedCommitSha256": "378f45f2a1abc1cb3c72073f86af1f5d91515baaabcb1453addac4986470699a",
+      "expectedBlobId": "e56b89fe6b432561129b2b434e18c2a5e58b1ae6"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/03.md",
+      "worktreeBytes": 14459,
+      "worktreeSha256": "e3ee6ccd5c215df0dfce906405d67093bde0d79c59dfbaed6e471413573f184e",
+      "expectedCommitBytes": 14459,
+      "expectedCommitSha256": "e3ee6ccd5c215df0dfce906405d67093bde0d79c59dfbaed6e471413573f184e",
+      "expectedBlobId": "3abefdcb43e899be6582359cc48698a1b7a6d272"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/04.md",
+      "worktreeBytes": 3368,
+      "worktreeSha256": "65c9495b41c4efbcd302ffc6ae0f14e1b0550e7f9435ba522db6ae25a15be2a9",
+      "expectedCommitBytes": 3368,
+      "expectedCommitSha256": "65c9495b41c4efbcd302ffc6ae0f14e1b0550e7f9435ba522db6ae25a15be2a9",
+      "expectedBlobId": "7eb6a5550d74975b5bba225fdfcbe8fa59812fcb"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/05.md",
+      "worktreeBytes": 6215,
+      "worktreeSha256": "45a03091c6a80df7d73229c33af6e15d40432bb882123db91225a9f354e24698",
+      "expectedCommitBytes": 6215,
+      "expectedCommitSha256": "45a03091c6a80df7d73229c33af6e15d40432bb882123db91225a9f354e24698",
+      "expectedBlobId": "38883b7a58f32b23b75477f195d855cadc14d6fa"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/06.md",
+      "worktreeBytes": 2647,
+      "worktreeSha256": "6368cbd1b6fc77c8967c6986fc7ee00f94fc57f7a423cc4d4a02d3f3f08855a5",
+      "expectedCommitBytes": 2647,
+      "expectedCommitSha256": "6368cbd1b6fc77c8967c6986fc7ee00f94fc57f7a423cc4d4a02d3f3f08855a5",
+      "expectedBlobId": "71125658d9fed02fa4421c76a61ec468fe9beb8f"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/07.md",
+      "worktreeBytes": 3990,
+      "worktreeSha256": "ad6264cdfa1c7002b55d2add07d53038173dae63e04e912d512a80d2bed7a49a",
+      "expectedCommitBytes": 3990,
+      "expectedCommitSha256": "ad6264cdfa1c7002b55d2add07d53038173dae63e04e912d512a80d2bed7a49a",
+      "expectedBlobId": "5ee4908819473e2300d92d4556984d713c38e19a"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/08.md",
+      "worktreeBytes": 4274,
+      "worktreeSha256": "de2516805359ce3bef38dda2c5b97f066f6d0abe3fe1197b70666bb482c103c2",
+      "expectedCommitBytes": 4274,
+      "expectedCommitSha256": "de2516805359ce3bef38dda2c5b97f066f6d0abe3fe1197b70666bb482c103c2",
+      "expectedBlobId": "b0778c30a7c4b7aa34c0f1145077ea6758bb69ca"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/09.md",
+      "worktreeBytes": 3550,
+      "worktreeSha256": "1c465a4b3d79b3537bf1cea709a9c064384b6d57e74d95e11c3a4b2238b31d09",
+      "expectedCommitBytes": 3550,
+      "expectedCommitSha256": "1c465a4b3d79b3537bf1cea709a9c064384b6d57e74d95e11c3a4b2238b31d09",
+      "expectedBlobId": "738ee48fda0f79f183c71611160a1b4ada955ebb"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/10.md",
+      "worktreeBytes": 4872,
+      "worktreeSha256": "19b7d819056874d244ed009a4426bb92487390dbf2c037859fe140b5e1f4447f",
+      "expectedCommitBytes": 4872,
+      "expectedCommitSha256": "19b7d819056874d244ed009a4426bb92487390dbf2c037859fe140b5e1f4447f",
+      "expectedBlobId": "cbe195d66a3d602dbc69ed424d1b4f73e6f532d4"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/11.md",
+      "worktreeBytes": 3705,
+      "worktreeSha256": "b495ed2261782cc00dff29b28f344dee00bbe17002b0f1fe35773fa4feeebc5d",
+      "expectedCommitBytes": 3705,
+      "expectedCommitSha256": "b495ed2261782cc00dff29b28f344dee00bbe17002b0f1fe35773fa4feeebc5d",
+      "expectedBlobId": "96a2f9bb7901c911211566982b56216a53ab3b2a"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/12.md",
+      "worktreeBytes": 4434,
+      "worktreeSha256": "ed6063baa7cd280ea0c6b4fd9e3dd0b0fd388f09adda95a12319c851e03bf43a",
+      "expectedCommitBytes": 4434,
+      "expectedCommitSha256": "ed6063baa7cd280ea0c6b4fd9e3dd0b0fd388f09adda95a12319c851e03bf43a",
+      "expectedBlobId": "6a3f3dde81b9e5f947b4ed866e37097d49d4f266"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/13.md",
+      "worktreeBytes": 3148,
+      "worktreeSha256": "98afe6fbc905872b1edac24a27b7b580fade682bd2e470b20ef0413e0ddf9ffd",
+      "expectedCommitBytes": 3148,
+      "expectedCommitSha256": "98afe6fbc905872b1edac24a27b7b580fade682bd2e470b20ef0413e0ddf9ffd",
+      "expectedBlobId": "1cba6444d392f1e3b3ae5f7bddee76453e068d7d"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/14.md",
+      "worktreeBytes": 3603,
+      "worktreeSha256": "2d3d765a959d13d064aca3c418c12d6a85e7f6fed7ea76194a89618f96e80dfc",
+      "expectedCommitBytes": 3603,
+      "expectedCommitSha256": "2d3d765a959d13d064aca3c418c12d6a85e7f6fed7ea76194a89618f96e80dfc",
+      "expectedBlobId": "59ab5f4af0fb79bac86622f6d4a8a094f9c1996b"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/15.md",
+      "worktreeBytes": 4969,
+      "worktreeSha256": "16fa58c1916caa477b395b01370369a02d8a0dd5cd398e9257ce41d4ef1272c9",
+      "expectedCommitBytes": 4969,
+      "expectedCommitSha256": "16fa58c1916caa477b395b01370369a02d8a0dd5cd398e9257ce41d4ef1272c9",
+      "expectedBlobId": "c89f403a1eaba14eed9e247b0d705a8210d4fabe"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/16.md",
+      "worktreeBytes": 4311,
+      "worktreeSha256": "144e1ea0b336bf5b9fe210e45ddc2eff9b2a9f3f175d6519884578f1b246af5c",
+      "expectedCommitBytes": 4311,
+      "expectedCommitSha256": "144e1ea0b336bf5b9fe210e45ddc2eff9b2a9f3f175d6519884578f1b246af5c",
+      "expectedBlobId": "4758d61c14013143f09bca0180bc8017d397d59e"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/17.md",
+      "worktreeBytes": 3963,
+      "worktreeSha256": "79148333e809055eed78a6a5980dcdc535feb03d9173705a3f7b669fbc7a1a3e",
+      "expectedCommitBytes": 3963,
+      "expectedCommitSha256": "79148333e809055eed78a6a5980dcdc535feb03d9173705a3f7b669fbc7a1a3e",
+      "expectedBlobId": "5b78278bfe3c9abe375daccbcae4e9368219e53d"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/18.md",
+      "worktreeBytes": 14323,
+      "worktreeSha256": "390d1c36c2dbecfd56ac1243926555b60bef6a7b6f50ba23c5e26b9f73189076",
+      "expectedCommitBytes": 14323,
+      "expectedCommitSha256": "390d1c36c2dbecfd56ac1243926555b60bef6a7b6f50ba23c5e26b9f73189076",
+      "expectedBlobId": "01daaaa5bea58cd5e904a9ff5ae8ff762b4d22c8"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/19.md",
+      "worktreeBytes": 7509,
+      "worktreeSha256": "3be9147e26404fa11a37edd6f2468392b9aa1830f7b46743590c8bbed6641db7",
+      "expectedCommitBytes": 7509,
+      "expectedCommitSha256": "3be9147e26404fa11a37edd6f2468392b9aa1830f7b46743590c8bbed6641db7",
+      "expectedBlobId": "913111708fb51f8497471713d7d9e208be98dbca"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/20.md",
+      "worktreeBytes": 4719,
+      "worktreeSha256": "7ac34c1000f770144afce016b2f6738224cb93b41b9332262566f7aa377825cc",
+      "expectedCommitBytes": 4719,
+      "expectedCommitSha256": "7ac34c1000f770144afce016b2f6738224cb93b41b9332262566f7aa377825cc",
+      "expectedBlobId": "d0caa7a87c866168a6cbde78fe93972984f45dc1"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/21.md",
+      "worktreeBytes": 3672,
+      "worktreeSha256": "41119bbe9b16048419c25ec44720e56123e548820c5ea930e3c6b2d482eca2d8",
+      "expectedCommitBytes": 3672,
+      "expectedCommitSha256": "41119bbe9b16048419c25ec44720e56123e548820c5ea930e3c6b2d482eca2d8",
+      "expectedBlobId": "984ae01a92e97d8cafaab64e91cc871a3da09a8e"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/22.md",
+      "worktreeBytes": 3977,
+      "worktreeSha256": "bd0be290a01f9eafb87ca75137c7a8fffbac43e7ff055cf14f5c530d141a1a23",
+      "expectedCommitBytes": 3977,
+      "expectedCommitSha256": "bd0be290a01f9eafb87ca75137c7a8fffbac43e7ff055cf14f5c530d141a1a23",
+      "expectedBlobId": "2c4a30d0c5993e9faf010d93efbe397d3f56fe41"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/23.md",
+      "worktreeBytes": 4490,
+      "worktreeSha256": "84e51f9065bcf56b7e147ca411cb9a7bcbf9cc2000cc242bd38da2c5831cd07b",
+      "expectedCommitBytes": 4490,
+      "expectedCommitSha256": "84e51f9065bcf56b7e147ca411cb9a7bcbf9cc2000cc242bd38da2c5831cd07b",
+      "expectedBlobId": "f438cebc1e533d800eeeea5b02b56ccbd345aeee"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/24.md",
+      "worktreeBytes": 4503,
+      "worktreeSha256": "6753f92560f3e23fd5bf0c074563e82bfd36798b42e945f6e828e561c3fc709e",
+      "expectedCommitBytes": 4503,
+      "expectedCommitSha256": "6753f92560f3e23fd5bf0c074563e82bfd36798b42e945f6e828e561c3fc709e",
+      "expectedBlobId": "26d878842ec212c78d83a6bfe1869f47d9ce9a1b"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/25.md",
+      "worktreeBytes": 5514,
+      "worktreeSha256": "e02b0ca096785e962f8d0d59c1f4344a8fc773b3d79019b5d75cbb281c8c3bf7",
+      "expectedCommitBytes": 5514,
+      "expectedCommitSha256": "e02b0ca096785e962f8d0d59c1f4344a8fc773b3d79019b5d75cbb281c8c3bf7",
+      "expectedBlobId": "41281a1b68a3ef60e21865e0f8ca8f81b77cb1f0"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/26.md",
+      "worktreeBytes": 4499,
+      "worktreeSha256": "6ea92cf479ab413a559799ca908e7e3a9dc8962a8146358778422e9756351531",
+      "expectedCommitBytes": 4499,
+      "expectedCommitSha256": "6ea92cf479ab413a559799ca908e7e3a9dc8962a8146358778422e9756351531",
+      "expectedBlobId": "97be21d85d37c21e7629835ba2a6b2a966630cce"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/27.md",
+      "worktreeBytes": 5081,
+      "worktreeSha256": "05bd5c511d2e487a8480a28ded81b8899a8d4e1ac4a26cf456f7bd9e8f72bc46",
+      "expectedCommitBytes": 5081,
+      "expectedCommitSha256": "05bd5c511d2e487a8480a28ded81b8899a8d4e1ac4a26cf456f7bd9e8f72bc46",
+      "expectedBlobId": "6180628825d285792f11a2f21678749315fac717"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/28.md",
+      "worktreeBytes": 4627,
+      "worktreeSha256": "e45a527b2bd6de271847ddd6096b2df93f4993483952bb6d3d6110359279f079",
+      "expectedCommitBytes": 4627,
+      "expectedCommitSha256": "e45a527b2bd6de271847ddd6096b2df93f4993483952bb6d3d6110359279f079",
+      "expectedBlobId": "c5c84a55507457b2db1deef08fd11ac843cd92e1"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/29.md",
+      "worktreeBytes": 4881,
+      "worktreeSha256": "6ecc0cbf66e6ccf318dc6017b1b0092937d2e3dccb9f447878dc4d03530828c4",
+      "expectedCommitBytes": 4881,
+      "expectedCommitSha256": "6ecc0cbf66e6ccf318dc6017b1b0092937d2e3dccb9f447878dc4d03530828c4",
+      "expectedBlobId": "32064deeb82202df70fc09a24d4afa1951314694"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/index.json",
+      "worktreeBytes": 90588,
+      "worktreeSha256": "0bf86e8da1e0a9f97f49bf5fd5ba2b8b3f6413d3cd0d5f8e70113099e1168203",
+      "expectedCommitBytes": 90588,
+      "expectedCommitSha256": "0bf86e8da1e0a9f97f49bf5fd5ba2b8b3f6413d3cd0d5f8e70113099e1168203",
+      "expectedBlobId": "d643dcfdf87f53df624a682a3ee1a9bdcf67cb3c"
+    },
+    {
+      "path": "docs/reviews/r1-spec-review.md",
+      "worktreeBytes": 23103,
+      "worktreeSha256": "16eccb24a74a2c034f3578b1ad5dfa7bf76521cf30d24cded72101637e109a0b",
+      "expectedCommitBytes": 23103,
+      "expectedCommitSha256": "16eccb24a74a2c034f3578b1ad5dfa7bf76521cf30d24cded72101637e109a0b",
+      "expectedBlobId": "b147e2cdebaa830d09e6e9b69ce1c4da64112622"
+    },
+    {
+      "path": "docs/reviews/r1/.gitattributes",
+      "worktreeBytes": 98,
+      "worktreeSha256": "10ad81e8030884fae753ad5fd437721344dae9c2d831e15af942cbd329d8f548",
+      "expectedCommitBytes": 98,
+      "expectedCommitSha256": "10ad81e8030884fae753ad5fd437721344dae9c2d831e15af942cbd329d8f548",
+      "expectedBlobId": "8ccdfc2e5d406fc73b17207b6065ddfa36f88546"
+    },
+    {
+      "path": "docs/reviews/r1/adr-states.json",
+      "worktreeBytes": 8941,
+      "worktreeSha256": "0ad96dd2c4537eec5a304bfe4dff3dc636375de26b64a3c8796d8e55b3d591b6",
+      "expectedCommitBytes": 8941,
+      "expectedCommitSha256": "0ad96dd2c4537eec5a304bfe4dff3dc636375de26b64a3c8796d8e55b3d591b6",
+      "expectedBlobId": "347934f93d0c40f24ffe06a24ab8d92517c3f6f3"
+    },
+    {
+      "path": "docs/reviews/r1/archive-checks.mjs",
+      "worktreeBytes": 3583,
+      "worktreeSha256": "a0f521dc22065654a825c759383744acf9a37100b94531863c667c3ba6e82150",
+      "expectedCommitBytes": 3583,
+      "expectedCommitSha256": "a0f521dc22065654a825c759383744acf9a37100b94531863c667c3ba6e82150",
+      "expectedBlobId": "1d223af778c6ae5e020883d34dc3b13f2fe7de52"
+    },
+    {
+      "path": "docs/reviews/r1/checks.md",
+      "worktreeBytes": 5483,
+      "worktreeSha256": "b574c6ba5b55f8359becb1abaafa93f3e843ccc4892b34b0d75f7aea7d65105b",
+      "expectedCommitBytes": 5483,
+      "expectedCommitSha256": "b574c6ba5b55f8359becb1abaafa93f3e843ccc4892b34b0d75f7aea7d65105b",
+      "expectedBlobId": "758d5e0f3555b876ae7daa2e5a11624121e397a1"
+    },
+    {
+      "path": "docs/reviews/r1/ci-selection.json",
+      "worktreeBytes": 8386,
+      "worktreeSha256": "69a136186cad599a269c3a2176e19269318a1724cd86c7609cc6bfd15d99524d",
+      "expectedCommitBytes": 8386,
+      "expectedCommitSha256": "69a136186cad599a269c3a2176e19269318a1724cd86c7609cc6bfd15d99524d",
+      "expectedBlobId": "ce45ab0ee02f600e6030291698f23a2462c9a2f5"
+    },
+    {
+      "path": "docs/reviews/r1/completion.md",
+      "worktreeBytes": 1561,
+      "worktreeSha256": "e6e19a8098cd1ce3c307f3bea05f6956e2c2c83a1a749a42c78fbe89c1c064ce",
+      "expectedCommitBytes": 1561,
+      "expectedCommitSha256": "e6e19a8098cd1ce3c307f3bea05f6956e2c2c83a1a749a42c78fbe89c1c064ce",
+      "expectedBlobId": "929760be1015d546cca038bf3368b80903a9e143"
+    },
+    {
+      "path": "docs/reviews/r1/decisions.md",
+      "worktreeBytes": 3668,
+      "worktreeSha256": "0428735d4012ad9fb58c1ea426e790e0d873e125f85e1866da87ed947c6fe4ea",
+      "expectedCommitBytes": 3668,
+      "expectedCommitSha256": "0428735d4012ad9fb58c1ea426e790e0d873e125f85e1866da87ed947c6fe4ea",
+      "expectedBlobId": "fd62504364cd7ee2fea4e310dc2c845fb9679659"
+    },
+    {
+      "path": "docs/reviews/r1/execution-check-results.json",
+      "worktreeBytes": 4965,
+      "worktreeSha256": "06b6c88796ba9421ff86f9efdcb2997410f4a1ec22b62d1f293ee584dbbc9221",
+      "expectedCommitBytes": 4965,
+      "expectedCommitSha256": "06b6c88796ba9421ff86f9efdcb2997410f4a1ec22b62d1f293ee584dbbc9221",
+      "expectedBlobId": "b928db9ffef1daddecf03919ed51187c49d9c2b8"
+    },
+    {
+      "path": "docs/reviews/r1/execution-checks.md",
+      "worktreeBytes": 5279,
+      "worktreeSha256": "74da9493825e2a56af0ab83d223a9ed4f7d6ba647463d0143488d305a27b157d",
+      "expectedCommitBytes": 5279,
+      "expectedCommitSha256": "74da9493825e2a56af0ab83d223a9ed4f7d6ba647463d0143488d305a27b157d",
+      "expectedBlobId": "77e2a777abb291036edffb8a7ce420b2800a8c38"
+    },
+    {
+      "path": "docs/reviews/r1/execution-environment.json",
+      "worktreeBytes": 928,
+      "worktreeSha256": "d3768fdd6ed005f31caf056192313cbb3d4b9334d939f65c0dbfc15d8130273f",
+      "expectedCommitBytes": 928,
+      "expectedCommitSha256": "d3768fdd6ed005f31caf056192313cbb3d4b9334d939f65c0dbfc15d8130273f",
+      "expectedBlobId": "b3e7b2811b715b22015b6a7dfb3eb1e3a639f61c"
+    },
+    {
+      "path": "docs/reviews/r1/execution-inputs.json",
+      "worktreeBytes": 328288,
+      "worktreeSha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c",
+      "expectedCommitBytes": 328288,
+      "expectedCommitSha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c",
+      "expectedBlobId": "2ce665d39931c383c22dc1605ac15580c468107f"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/.gitattributes",
+      "worktreeBytes": 24,
+      "worktreeSha256": "fa26b2c82d0cbc4cc59fbf4e4b23e3156f08f4a284d3888e7f64e73ec0640615",
+      "expectedCommitBytes": 24,
+      "expectedCommitSha256": "fa26b2c82d0cbc4cc59fbf4e4b23e3156f08f4a284d3888e7f64e73ec0640615",
+      "expectedBlobId": "fc65e32bf07d55b408454a64b86c060f54cc34ad"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/README.md",
+      "worktreeBytes": 1652,
+      "worktreeSha256": "ce60105caebbc806f4a77f14278a1b623f6e7f81a981c26586b46d0746389a9e",
+      "expectedCommitBytes": 1652,
+      "expectedCommitSha256": "ce60105caebbc806f4a77f14278a1b623f6e7f81a981c26586b46d0746389a9e",
+      "expectedBlobId": "4886f7aa5b209b7c9a7c20fe399c6bc0c6a8d8bd"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/ci-policy-tests.log",
+      "worktreeBytes": 1406,
+      "worktreeSha256": "4863aabc0e21dc361567a1cc6b58c980bb0bcc7b1c029b110d2f7df3516645fb",
+      "expectedCommitBytes": 1406,
+      "expectedCommitSha256": "4863aabc0e21dc361567a1cc6b58c980bb0bcc7b1c029b110d2f7df3516645fb",
+      "expectedBlobId": "1a2553443c174c959e1cde48d6cb4448728e5bbe"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/ci-results.json",
+      "worktreeBytes": 48,
+      "worktreeSha256": "5d43d17fb6f9af6de1d8b87191db5b117aef755eebcabb0a19eaa5899ed597bb",
+      "expectedCommitBytes": 44,
+      "expectedCommitSha256": "150081f1634211b9fc7be06ceba5a1f01a04d5e19d3ec38ce6477ce22bf13935",
+      "expectedBlobId": "61c7ada614ab1402d970a678b480a14b0c866bd5"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/ci-validate.log",
+      "worktreeBytes": 1483,
+      "worktreeSha256": "0237fead396b3b59997a0bade6d4e0d5d4f61a35b900f750e45a504ad86eb395",
+      "expectedCommitBytes": 1483,
+      "expectedCommitSha256": "0237fead396b3b59997a0bade6d4e0d5d4f61a35b900f750e45a504ad86eb395",
+      "expectedBlobId": "f40683b37b64224511c0d93531ce307848ec75ec"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/e2e-reset.log",
+      "worktreeBytes": 135,
+      "worktreeSha256": "1321fb7035546571bd6a29a683366d38480af70d850e5ba7ea43cf4593127104",
+      "expectedCommitBytes": 135,
+      "expectedCommitSha256": "1321fb7035546571bd6a29a683366d38480af70d850e5ba7ea43cf4593127104",
+      "expectedBlobId": "9f8ed206822564c3a0d7077cb86cb2e2b8821ec5"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/e2e.log",
+      "worktreeBytes": 4058,
+      "worktreeSha256": "09bd1b243e96babca8a8d19db0933bb95b36e970e495d2fa36440247554bfa00",
+      "expectedCommitBytes": 4058,
+      "expectedCommitSha256": "09bd1b243e96babca8a8d19db0933bb95b36e970e495d2fa36440247554bfa00",
+      "expectedBlobId": "31fe2c32d8d121e9b970ab81e87ea2e89332929b"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/check-route-policy.log",
+      "worktreeBytes": 185,
+      "worktreeSha256": "668d00d584c1b7fac28e6f3a6a871b421fd8790bda17026f33da8fab9acae4aa",
+      "expectedCommitBytes": 185,
+      "expectedCommitSha256": "668d00d584c1b7fac28e6f3a6a871b421fd8790bda17026f33da8fab9acae4aa",
+      "expectedBlobId": "b2f03c67cb68e9c039196baaec7cf67f40850148"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/check-runner-skill.log",
+      "worktreeBytes": 239,
+      "worktreeSha256": "5a93a9d81152fa82c66f6923c25bc8a65a8424ed2f2c6a2e184c90179d29d4a9",
+      "expectedCommitBytes": 239,
+      "expectedCommitSha256": "5a93a9d81152fa82c66f6923c25bc8a65a8424ed2f2c6a2e184c90179d29d4a9",
+      "expectedBlobId": "8f57408b844cc7d11748f1f220fe394466dc12de"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/check-workmesh-skill.log",
+      "worktreeBytes": 243,
+      "worktreeSha256": "caaf2e5975f1c08f64946cfb47fbf7a522bf9e748cd5bf66a556b90648164ab1",
+      "expectedCommitBytes": 243,
+      "expectedCommitSha256": "caaf2e5975f1c08f64946cfb47fbf7a522bf9e748cd5bf66a556b90648164ab1",
+      "expectedBlobId": "82b9c4568432f81f2db3d34844fa6462c383f4e3"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/ci-source-build.log",
+      "worktreeBytes": 16249,
+      "worktreeSha256": "6cc32d908a49ac080da5091ed72adc3b2d413e9086ee6229da884fc1e0591986",
+      "expectedCommitBytes": 16249,
+      "expectedCommitSha256": "6cc32d908a49ac080da5091ed72adc3b2d413e9086ee6229da884fc1e0591986",
+      "expectedBlobId": "28d4e12cbdafaf096547dd290478b46e3cc0bd5d"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/compose-configured.log",
+      "worktreeBytes": 0,
+      "worktreeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expectedCommitBytes": 0,
+      "expectedCommitSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expectedBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/compose.log",
+      "worktreeBytes": 588,
+      "worktreeSha256": "78acb551c48b0f429915e9fdb11d0dcdd785f786ea520680c489beb180df84bf",
+      "expectedCommitBytes": 588,
+      "expectedCommitSha256": "78acb551c48b0f429915e9fdb11d0dcdd785f786ea520680c489beb180df84bf",
+      "expectedBlobId": "d2f0c0f2e2101f7774d2fb29fe08c041e552bf87"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/conformance/junit.xml",
+      "worktreeBytes": 10451,
+      "worktreeSha256": "328c6d2bf74e83e40a9a6134c07d8378d09da5ef640e97dd8e5196a0bc66f372",
+      "expectedCommitBytes": 10451,
+      "expectedCommitSha256": "328c6d2bf74e83e40a9a6134c07d8378d09da5ef640e97dd8e5196a0bc66f372",
+      "expectedBlobId": "177647e29b50cff58c933062aa88aafd3d2f709c"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/conformance/report.json",
+      "worktreeBytes": 38936,
+      "worktreeSha256": "216e0de2f69056d5e69e9573c24cdcfc610c9c8f48dee1bcda0cedb1c97e0a1c",
+      "expectedCommitBytes": 38936,
+      "expectedCommitSha256": "216e0de2f69056d5e69e9573c24cdcfc610c9c8f48dee1bcda0cedb1c97e0a1c",
+      "expectedBlobId": "c1cc0001d463d0ccd3fb0a4203ad0b9b420e8947"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/conformance/transcript.md",
+      "worktreeBytes": 13755,
+      "worktreeSha256": "a7fc7d1d595defbf651024547a809a606fa7a46e05433f18ef82b91b51092e06",
+      "expectedCommitBytes": 13755,
+      "expectedCommitSha256": "a7fc7d1d595defbf651024547a809a606fa7a46e05433f18ef82b91b51092e06",
+      "expectedBlobId": "38caf52f9fd3fa5dc1b321b3a3937d12255c3fa8"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/lint.log",
+      "worktreeBytes": 5885,
+      "worktreeSha256": "10e88f3dee9762f5c16778a33684a9e000b1a29a6de18206deac4bd831d3d65a",
+      "expectedCommitBytes": 5885,
+      "expectedCommitSha256": "10e88f3dee9762f5c16778a33684a9e000b1a29a6de18206deac4bd831d3d65a",
+      "expectedBlobId": "9e6335128179ad8f0af40e845f4d5caea6ece88c"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/results.json",
+      "worktreeBytes": 1373,
+      "worktreeSha256": "b325e9cc7fd28027f6b148259152bdc2728149a570720f072f5582354b7023b6",
+      "expectedCommitBytes": 1373,
+      "expectedCommitSha256": "b325e9cc7fd28027f6b148259152bdc2728149a570720f072f5582354b7023b6",
+      "expectedBlobId": "adf04f2125e2b4e9ae49e0a8ab5005c8648bb26a"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/smoke-agents-ci.log",
+      "worktreeBytes": 538,
+      "worktreeSha256": "8ef4df178c74a1b96c4fced26974aebd1af7fc1e4aa092c87da16e9731474732",
+      "expectedCommitBytes": 538,
+      "expectedCommitSha256": "8ef4df178c74a1b96c4fced26974aebd1af7fc1e4aa092c87da16e9731474732",
+      "expectedBlobId": "d2847b0a5d4e7a68caa4f16ba68d397679408de6"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/test-conformance.log",
+      "worktreeBytes": 472,
+      "worktreeSha256": "466af39b15f3fdca6daaffd8d9b50bdf069c868245f43d8a6bd00f0c6300eef5",
+      "expectedCommitBytes": 472,
+      "expectedCommitSha256": "466af39b15f3fdca6daaffd8d9b50bdf069c868245f43d8a6bd00f0c6300eef5",
+      "expectedBlobId": "45ac9cb88dcd7d3d8c6f028e854e05350fea09b9"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/test.log",
+      "worktreeBytes": 59752,
+      "worktreeSha256": "c8726443c3e0bb4ea1aa4a6e67cfe2326b88928f96dd34182cef9ab354d95a32",
+      "expectedCommitBytes": 59752,
+      "expectedCommitSha256": "c8726443c3e0bb4ea1aa4a6e67cfe2326b88928f96dd34182cef9ab354d95a32",
+      "expectedBlobId": "e025fbfbe0d8993d87ec02c5729679c1ac9e2247"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/final-source/typecheck.log",
+      "worktreeBytes": 6440,
+      "worktreeSha256": "5fb08f166ac780254ef96177dd437be853bfcaec5be036b5ecf8aa8ef3cf03ae",
+      "expectedCommitBytes": 6440,
+      "expectedCommitSha256": "5fb08f166ac780254ef96177dd437be853bfcaec5be036b5ecf8aa8ef3cf03ae",
+      "expectedBlobId": "4c0633f0a5babb7febc2358a1cf4050a2c2243ec"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/integration.log",
+      "worktreeBytes": 23405,
+      "worktreeSha256": "0bac94ad83d8d7ad1f85651412addd0c9db3431dc1517f841e88f45b93058b15",
+      "expectedCommitBytes": 23405,
+      "expectedCommitSha256": "0bac94ad83d8d7ad1f85651412addd0c9db3431dc1517f841e88f45b93058b15",
+      "expectedBlobId": "664aff093937235a80fa8db1021085c889ee5cbe"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/lint.log",
+      "worktreeBytes": 5971,
+      "worktreeSha256": "9881a1965df3c0c15135052fa7690fc80a2ef1258ba55570042601242a7fb279",
+      "expectedCommitBytes": 5971,
+      "expectedCommitSha256": "9881a1965df3c0c15135052fa7690fc80a2ef1258ba55570042601242a7fb279",
+      "expectedBlobId": "0723157dfb22f0aac119c9b554e2f05e517ab89b"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/raw-checks-index.json",
+      "worktreeBytes": 32725,
+      "worktreeSha256": "5b31b3d7f4140b975fcd7b47852d2a87905f98a26e989a430d551616809bc036",
+      "expectedCommitBytes": 32725,
+      "expectedCommitSha256": "5b31b3d7f4140b975fcd7b47852d2a87905f98a26e989a430d551616809bc036",
+      "expectedBlobId": "be1eddd01e2a54b73900b9d22fe831a0374e6906"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/raw-checks.zip",
+      "worktreeBytes": 830869,
+      "worktreeSha256": "940b71a698531b15308a3a9dbc8b8365181a2aadf9e544de7d3dd84743b08014",
+      "expectedCommitBytes": 830869,
+      "expectedCommitSha256": "940b71a698531b15308a3a9dbc8b8365181a2aadf9e544de7d3dd84743b08014",
+      "expectedBlobId": "bc9841f03638a32ec32ecfeb0aa69286eee0872e"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/reachability-latest-main.log",
+      "worktreeBytes": 25427,
+      "worktreeSha256": "f3a7473f2a6ba0cb04f7cca5b2c7edf36a5d940b36e9ae408d16ac1c9128f9d4",
+      "expectedCommitBytes": 25427,
+      "expectedCommitSha256": "f3a7473f2a6ba0cb04f7cca5b2c7edf36a5d940b36e9ae408d16ac1c9128f9d4",
+      "expectedBlobId": "9cbce370f60b2b222351708380752ac2093cb1bb"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/reachability-worktree.log",
+      "worktreeBytes": 26040,
+      "worktreeSha256": "fea4b930fc18a097a0f2242d7692229dd84229fc02ee4541db1f63978a389cdc",
+      "expectedCommitBytes": 26040,
+      "expectedCommitSha256": "fea4b930fc18a097a0f2242d7692229dd84229fc02ee4541db1f63978a389cdc",
+      "expectedBlobId": "c39f10117377634ab59742820c8c70a68be4c5ca"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run2/integration.log",
+      "worktreeBytes": 162552,
+      "worktreeSha256": "1a0b80fcaa173fb32b94b4e23f0cf26d1317babb81d1217aac4ebf52c60c38c0",
+      "expectedCommitBytes": 162552,
+      "expectedCommitSha256": "1a0b80fcaa173fb32b94b4e23f0cf26d1317babb81d1217aac4ebf52c60c38c0",
+      "expectedBlobId": "b8507a76460f6b72a00af8767194103b67889cef"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run3/infrastructure-error.log",
+      "worktreeBytes": 198,
+      "worktreeSha256": "2743e860cfbcf9e1db51daa08b2debfaba8b60250841901f2218382199a53196",
+      "expectedCommitBytes": 198,
+      "expectedCommitSha256": "2743e860cfbcf9e1db51daa08b2debfaba8b60250841901f2218382199a53196",
+      "expectedBlobId": "64bede07354b22e8d7c210b711a7a15d4cdccc9c"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run4/browser-failure/error-context.md",
+      "worktreeBytes": 23128,
+      "worktreeSha256": "4f41065ca6ec7be4ad89915e970e16c85c7b3fc6f9790a78e767cdcab2f34886",
+      "expectedCommitBytes": 23128,
+      "expectedCommitSha256": "4f41065ca6ec7be4ad89915e970e16c85c7b3fc6f9790a78e767cdcab2f34886",
+      "expectedBlobId": "22f88e30dafae623a4355ce50cae9575072a6811"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run4/browser-failure/test-failed-1.png",
+      "worktreeBytes": 112748,
+      "worktreeSha256": "18c53aca70dfe21bec25c6eb915a27564e7702fa5f9e14a6439857054ef4f804",
+      "expectedCommitBytes": 112748,
+      "expectedCommitSha256": "18c53aca70dfe21bec25c6eb915a27564e7702fa5f9e14a6439857054ef4f804",
+      "expectedBlobId": "ee8c132bb97364bc88fb8fc644cf45fe6bed0e15"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run4/bucket-preflight.json",
+      "worktreeBytes": 244,
+      "worktreeSha256": "1b53f0d057e3bc7ebda050c0b63ea9483dae708101de2464cb9c24ae9bc7387e",
+      "expectedCommitBytes": 244,
+      "expectedCommitSha256": "1b53f0d057e3bc7ebda050c0b63ea9483dae708101de2464cb9c24ae9bc7387e",
+      "expectedBlobId": "7522231ca083fc33ad0e481f854f37cb55388665"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run4/e2e-reset.log",
+      "worktreeBytes": 135,
+      "worktreeSha256": "1321fb7035546571bd6a29a683366d38480af70d850e5ba7ea43cf4593127104",
+      "expectedCommitBytes": 135,
+      "expectedCommitSha256": "1321fb7035546571bd6a29a683366d38480af70d850e5ba7ea43cf4593127104",
+      "expectedBlobId": "9f8ed206822564c3a0d7077cb86cb2e2b8821ec5"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run4/e2e.log",
+      "worktreeBytes": 1481481,
+      "worktreeSha256": "a823c38b296adec6660da9720ccde4092f0a841cc517b45873db7992a9f5dc64",
+      "expectedCommitBytes": 1481481,
+      "expectedCommitSha256": "a823c38b296adec6660da9720ccde4092f0a841cc517b45873db7992a9f5dc64",
+      "expectedBlobId": "f090fd1aca465e1dd1af9a6a3942f0785ced6288"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run4/integration.log",
+      "worktreeBytes": 1024220,
+      "worktreeSha256": "1bf1544d825ceb60486e134a46103091ab00246eb417f0e7db307bb5a484552d",
+      "expectedCommitBytes": 1024220,
+      "expectedCommitSha256": "1bf1544d825ceb60486e134a46103091ab00246eb417f0e7db307bb5a484552d",
+      "expectedBlobId": "4b189735023d066e25d0e38e83e12ec7be112426"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run4/service-results.json",
+      "worktreeBytes": 476,
+      "worktreeSha256": "2564bfab7547092635106bf66ea0769e60327e32946a98731ac69a537f59dc66",
+      "expectedCommitBytes": 476,
+      "expectedCommitSha256": "2564bfab7547092635106bf66ea0769e60327e32946a98731ac69a537f59dc66",
+      "expectedBlobId": "fdf440ad83950501e6dced13b838f91ff0258cb0"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run5/integration.log",
+      "worktreeBytes": 1032095,
+      "worktreeSha256": "51ebc8338806b8cfe20a221edff19fb4dcf031fcfb198a35e9357b0d3b0317d6",
+      "expectedCommitBytes": 1032095,
+      "expectedCommitSha256": "51ebc8338806b8cfe20a221edff19fb4dcf031fcfb198a35e9357b0d3b0317d6",
+      "expectedBlobId": "697fcf6062fcf9e7312cf5ed257aa5bf46efaabf"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run5/service-results.json",
+      "worktreeBytes": 158,
+      "worktreeSha256": "b9774e42800941af7b5de6f9a8a6862e13875802b03381f4b2d250eeaff0bb38",
+      "expectedCommitBytes": 158,
+      "expectedCommitSha256": "b9774e42800941af7b5de6f9a8a6862e13875802b03381f4b2d250eeaff0bb38",
+      "expectedBlobId": "d8415296c984e13bb590b7c3b69a82d6f6871c35"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run6/integration.log",
+      "worktreeBytes": 1032465,
+      "worktreeSha256": "3f963c45fd5eb8b54ca2308761a2e336bdbab5e5d2c9c3fc51a1c2b1dcf361fa",
+      "expectedCommitBytes": 1032465,
+      "expectedCommitSha256": "3f963c45fd5eb8b54ca2308761a2e336bdbab5e5d2c9c3fc51a1c2b1dcf361fa",
+      "expectedBlobId": "4f906190a7dd28d9b02db2f9e12f051038b47158"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run6/service-results.json",
+      "worktreeBytes": 158,
+      "worktreeSha256": "aa5c4f6716a0d0e5d136ccaba5d4ecb4783dc132704138f1109162a87a748572",
+      "expectedCommitBytes": 158,
+      "expectedCommitSha256": "aa5c4f6716a0d0e5d136ccaba5d4ecb4783dc132704138f1109162a87a748572",
+      "expectedBlobId": "b53cf668a945def09b97230c2b635e546296269e"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run7/e2e-project-diagnostic.log",
+      "worktreeBytes": 3358,
+      "worktreeSha256": "d93ff8fdc4ec534bc4cff51e2744fa831c2b4892c33494789ae7485c72290c4e",
+      "expectedCommitBytes": 3358,
+      "expectedCommitSha256": "d93ff8fdc4ec534bc4cff51e2744fa831c2b4892c33494789ae7485c72290c4e",
+      "expectedBlobId": "ab9dccd7dffd56109cf4db54616d4aeb46d69f4b"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run7/service-results.json",
+      "worktreeBytes": 244,
+      "worktreeSha256": "36f555765405223bd36dc7977c67bdaeeae561df67fb90a0586fa41813f4139e",
+      "expectedCommitBytes": 244,
+      "expectedCommitSha256": "36f555765405223bd36dc7977c67bdaeeae561df67fb90a0586fa41813f4139e",
+      "expectedBlobId": "4868f99afbaa2e60377cd4081fa613966fabce1e"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run8/e2e-project-diagnostic.log",
+      "worktreeBytes": 313014,
+      "worktreeSha256": "74b1c8da5c5625ddc248896071b3653f99a92389660c0cb2038afb8d195d4d6f",
+      "expectedCommitBytes": 313014,
+      "expectedCommitSha256": "74b1c8da5c5625ddc248896071b3653f99a92389660c0cb2038afb8d195d4d6f",
+      "expectedBlobId": "ed2c0161d830d7884880d7f65e782ce273667089"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run8/service-results.json",
+      "worktreeBytes": 196,
+      "worktreeSha256": "be1140aea9167cb4b17bc3a16aa5ea807b80b531b0c16e19ff884c8426758043",
+      "expectedCommitBytes": 196,
+      "expectedCommitSha256": "be1140aea9167cb4b17bc3a16aa5ea807b80b531b0c16e19ff884c8426758043",
+      "expectedBlobId": "6113fead81519181d44a188de38ad680e6273809"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run9/e2e.log",
+      "worktreeBytes": 1709337,
+      "worktreeSha256": "558dc52238b691cd5b3c54cfa9e90712b339556b58f11f283c6abcce8aa9c9a0",
+      "expectedCommitBytes": 1709337,
+      "expectedCommitSha256": "558dc52238b691cd5b3c54cfa9e90712b339556b58f11f283c6abcce8aa9c9a0",
+      "expectedBlobId": "cc699f4346b0c6e8b96b795984c57b4b21c34958"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run9/service-results.json",
+      "worktreeBytes": 150,
+      "worktreeSha256": "43fedb08e64d90f67cc3562a5556d2ab17c2af1c1dbbe09a5e7bed5c43624a2b",
+      "expectedCommitBytes": 150,
+      "expectedCommitSha256": "43fedb08e64d90f67cc3562a5556d2ab17c2af1c1dbbe09a5e7bed5c43624a2b",
+      "expectedBlobId": "8beaba5a2ce07b0db8207e6614e09efa1782932b"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/service-results.json",
+      "worktreeBytes": 476,
+      "worktreeSha256": "a8ec930ee231f9bacbd468c76bc1c0fdc6a4a7a865a65fa1e9c6be0110724423",
+      "expectedCommitBytes": 476,
+      "expectedCommitSha256": "a8ec930ee231f9bacbd468c76bc1c0fdc6a4a7a865a65fa1e9c6be0110724423",
+      "expectedBlobId": "04e50459a157bf4ea7d27aec11a6c763fbf42345"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/source-results.json",
+      "worktreeBytes": 52,
+      "worktreeSha256": "97662f6714990506ec75cd000ccb4191625e3e449a9802ff9965d4d4cbd1c1d8",
+      "expectedCommitBytes": 47,
+      "expectedCommitSha256": "3335988c648252b1c95803d32b7755d085494f8c9b0ddb55df1a554a8af9383c",
+      "expectedBlobId": "28119a1db777318040817afaa228b3aab97d1876"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/typecheck.log",
+      "worktreeBytes": 6526,
+      "worktreeSha256": "aba0cc1d6077954662cd1ae57dabacb25cd2da388421beec36312372a90f7af2",
+      "expectedCommitBytes": 6526,
+      "expectedCommitSha256": "aba0cc1d6077954662cd1ae57dabacb25cd2da388421beec36312372a90f7af2",
+      "expectedBlobId": "43d3c009d6656188d78c83ab3c48e42446455342"
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/unit.log",
+      "worktreeBytes": 58386,
+      "worktreeSha256": "f1f2c974c20d6b5ecc4cba03b4ef53630b25bef2bb1004507b51b111169d6f1d",
+      "expectedCommitBytes": 58386,
+      "expectedCommitSha256": "f1f2c974c20d6b5ecc4cba03b4ef53630b25bef2bb1004507b51b111169d6f1d",
+      "expectedBlobId": "cd9fdef0e352a947e09f8c5e77200ac5215158c2"
+    },
+    {
+      "path": "docs/reviews/r1/execution-main-inputs.json",
+      "worktreeBytes": 1150066,
+      "worktreeSha256": "161f5e6ee5ffb8d18164517d025085ab432c41fa47fb3d7399a8f666c5e7b71d",
+      "expectedCommitBytes": 1150066,
+      "expectedCommitSha256": "161f5e6ee5ffb8d18164517d025085ab432c41fa47fb3d7399a8f666c5e7b71d",
+      "expectedBlobId": "c80924e200bc23b25ff73e27c7502121b9637b0a"
+    },
+    {
+      "path": "docs/reviews/r1/execution-review.md",
+      "worktreeBytes": 1821,
+      "worktreeSha256": "959333cbef46b6182388a53a58a1ec0fa999228c115c1f2ec2da03ebb266c4ee",
+      "expectedCommitBytes": 1821,
+      "expectedCommitSha256": "959333cbef46b6182388a53a58a1ec0fa999228c115c1f2ec2da03ebb266c4ee",
+      "expectedBlobId": "2667419c852eea1b154f8cce96abf7d0db0b48bd"
+    },
+    {
+      "path": "docs/reviews/r1/execution-spec-deltas.json",
+      "worktreeBytes": 24815,
+      "worktreeSha256": "d9761036286039a1b94adbde3a6bd9751ab61f7105ace67ea7a87b1535e25a03",
+      "expectedCommitBytes": 24815,
+      "expectedCommitSha256": "d9761036286039a1b94adbde3a6bd9751ab61f7105ace67ea7a87b1535e25a03",
+      "expectedBlobId": "18c1d839d62aad75fed1e619756a82b8d0d7e7df"
+    },
+    {
+      "path": "docs/reviews/r1/findings.json",
+      "worktreeBytes": 19173,
+      "worktreeSha256": "09183e3c754f494d4aed541c050088534cc38b3f301c09645559e0b4a4edfdc6",
+      "expectedCommitBytes": 19173,
+      "expectedCommitSha256": "09183e3c754f494d4aed541c050088534cc38b3f301c09645559e0b4a4edfdc6",
+      "expectedBlobId": "ce2fd901dfe9ceca78ce3fb08691453e27ea909d"
+    },
+    {
+      "path": "docs/reviews/r1/handoff-manifest.json",
+      "worktreeBytes": 3722,
+      "worktreeSha256": "5a06f16744f96560222ba0235f3f23ab1afcf4c60a44f52bce142136f50982e6",
+      "expectedCommitBytes": 3722,
+      "expectedCommitSha256": "5a06f16744f96560222ba0235f3f23ab1afcf4c60a44f52bce142136f50982e6",
+      "expectedBlobId": "aa5b1b99daf606871f6fef07bbaa9e5674fbea1f"
+    },
+    {
+      "path": "docs/reviews/r1/historical-plan-excerpts.json",
+      "worktreeBytes": 21582,
+      "worktreeSha256": "448372029a7d815507b0cda5a1492b522583be5104a0aea35cdd2baae439cd8f",
+      "expectedCommitBytes": 21582,
+      "expectedCommitSha256": "448372029a7d815507b0cda5a1492b522583be5104a0aea35cdd2baae439cd8f",
+      "expectedBlobId": "73a97b30327b8fbc615c7f4fe870709685a15282"
+    },
+    {
+      "path": "docs/reviews/r1/input-deltas.json",
+      "worktreeBytes": 15157,
+      "worktreeSha256": "3d54f1bb4f84501812cacf47cf4931d8c09ce05d806e84061fa7969b9d2cff4e",
+      "expectedCommitBytes": 15157,
+      "expectedCommitSha256": "3d54f1bb4f84501812cacf47cf4931d8c09ce05d806e84061fa7969b9d2cff4e",
+      "expectedBlobId": "8d3e34a72ca030453bad94d2a46d65c65c3a218a"
+    },
+    {
+      "path": "docs/reviews/r1/legacy-requirements.json",
+      "worktreeBytes": 52850,
+      "worktreeSha256": "456a719dac63bff423faf555621f6b50c53f5cdf47521c2abc68fabade9d7269",
+      "expectedCommitBytes": 52850,
+      "expectedCommitSha256": "456a719dac63bff423faf555621f6b50c53f5cdf47521c2abc68fabade9d7269",
+      "expectedBlobId": "5ff6d3f26a8c27f8ee4af3cef989944c0717831f"
+    },
+    {
+      "path": "docs/reviews/r1/lock-contract.md",
+      "worktreeBytes": 3711,
+      "worktreeSha256": "9b181d1f9f2716427a1bf47e9d119af28bea40b102472ec1b7087e6430e6f5fd",
+      "expectedCommitBytes": 3711,
+      "expectedCommitSha256": "9b181d1f9f2716427a1bf47e9d119af28bea40b102472ec1b7087e6430e6f5fd",
+      "expectedBlobId": "eab657eb72609b809ca3d468f95e1f3eeee8d66f"
+    },
+    {
+      "path": "docs/reviews/r1/main-inputs.json",
+      "worktreeBytes": 222660,
+      "worktreeSha256": "74455e9b09f6bd8958e28852f89533f3721afed90db51cb90736dbdc4eb1a1e9",
+      "expectedCommitBytes": 222660,
+      "expectedCommitSha256": "74455e9b09f6bd8958e28852f89533f3721afed90db51cb90736dbdc4eb1a1e9",
+      "expectedBlobId": "14a2e46cb8784965389a943678857565773dbb53"
+    },
+    {
+      "path": "docs/reviews/r1/plan-review-response.md",
+      "worktreeBytes": 11766,
+      "worktreeSha256": "6f61de15ec5348e94523182684a84f30b3a1b8e6df3fa2f46a898ad46ab55808",
+      "expectedCommitBytes": 11766,
+      "expectedCommitSha256": "6f61de15ec5348e94523182684a84f30b3a1b8e6df3fa2f46a898ad46ab55808",
+      "expectedBlobId": "0b12c0afbadbb05e61adf514ac154fd9d0d11809"
+    },
+    {
+      "path": "docs/reviews/r1/plan.md",
+      "worktreeBytes": 9369,
+      "worktreeSha256": "a3f636f1d30383519e984f7cce4f29d1d837f70c9f3694d1ced8ff8e061dfaed",
+      "expectedCommitBytes": 9369,
+      "expectedCommitSha256": "a3f636f1d30383519e984f7cce4f29d1d837f70c9f3694d1ced8ff8e061dfaed",
+      "expectedBlobId": "bb7f2d55217f6f10a4f51ccc37d701b9bcc5148e"
+    },
+    {
+      "path": "docs/reviews/r1/pre-review-deltas.json",
+      "worktreeBytes": 15605,
+      "worktreeSha256": "d3f94aa64de64b42988770c17ee76f73ebc541892ceec8d801027e6612852ba4",
+      "expectedCommitBytes": 15605,
+      "expectedCommitSha256": "d3f94aa64de64b42988770c17ee76f73ebc541892ceec8d801027e6612852ba4",
+      "expectedBlobId": "733d7a1c5dfc84ab07096076c53570add76af902"
+    },
+    {
+      "path": "docs/reviews/r1/pre-review-inputs.json",
+      "worktreeBytes": 328239,
+      "worktreeSha256": "fd9007e8365e7e9b6944a3b844a16140a1bf81da67bfed2726dfd625d3063fb5",
+      "expectedCommitBytes": 328239,
+      "expectedCommitSha256": "fd9007e8365e7e9b6944a3b844a16140a1bf81da67bfed2726dfd625d3063fb5",
+      "expectedBlobId": "5d22699d28014f5c5da8a0c5259132b201e584c4"
+    },
+    {
+      "path": "docs/reviews/r1/producer-review-response.md",
+      "worktreeBytes": 3845,
+      "worktreeSha256": "0bda292beeb053ee51d1fa45f40be78d892045890bc9b76aedfa905d230f629d",
+      "expectedCommitBytes": 3845,
+      "expectedCommitSha256": "0bda292beeb053ee51d1fa45f40be78d892045890bc9b76aedfa905d230f629d",
+      "expectedBlobId": "8900d206c5a9265c58ecc54da3412eda06c281ea"
+    },
+    {
+      "path": "docs/reviews/r1/r1-spec-source.json",
+      "worktreeBytes": 1573,
+      "worktreeSha256": "794f165d1b581918c60f59c717fa43a8490c491696247d4c90700f468c661cbf",
+      "expectedCommitBytes": 1573,
+      "expectedCommitSha256": "794f165d1b581918c60f59c717fa43a8490c491696247d4c90700f468c661cbf",
+      "expectedBlobId": "f5e45510140ca09b69a71a53211e743801e31df1"
+    },
+    {
+      "path": "docs/reviews/r1/r1-spec-source.md",
+      "worktreeBytes": 15420,
+      "worktreeSha256": "b6f0d424fc89565ba76d41b6c05acad0797925acac06548c5d76c035c416dccb",
+      "expectedCommitBytes": 15420,
+      "expectedCommitSha256": "b6f0d424fc89565ba76d41b6c05acad0797925acac06548c5d76c035c416dccb",
+      "expectedBlobId": "7f064dcc93d574dccbf8c78735411c3bd1547e95"
+    },
+    {
+      "path": "docs/reviews/r1/source-gaps.md",
+      "worktreeBytes": 1487,
+      "worktreeSha256": "87bc0360e06d112736094d73c447cc0233385003ed3f28f03a1ae08685afd2bd",
+      "expectedCommitBytes": 1487,
+      "expectedCommitSha256": "87bc0360e06d112736094d73c447cc0233385003ed3f28f03a1ae08685afd2bd",
+      "expectedBlobId": "2da3be1d07fb104de8bbc258524e8c00ff301b38"
+    },
+    {
+      "path": "docs/reviews/r1/static-check-results.json",
+      "worktreeBytes": 3834,
+      "worktreeSha256": "efaee7b12a849a20e7903869beb2907746f11eed196d84db0bca5fd98e884891",
+      "expectedCommitBytes": 3834,
+      "expectedCommitSha256": "efaee7b12a849a20e7903869beb2907746f11eed196d84db0bca5fd98e884891",
+      "expectedBlobId": "e1b6d4b6f37894d0a388aa62d4dda9e92c080de6"
+    },
+    {
+      "path": "docs/reviews/r1/task-contracts.json",
+      "worktreeBytes": 19465,
+      "worktreeSha256": "478481e51097efdaf8c191785abcc65570afe84bdcc4b45ca4951af6fdd055b4",
+      "expectedCommitBytes": 19465,
+      "expectedCommitSha256": "478481e51097efdaf8c191785abcc65570afe84bdcc4b45ca4951af6fdd055b4",
+      "expectedBlobId": "54c14753eac5de070872029e387e2d87b2ec2a66"
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.json",
+      "worktreeBytes": 318375,
+      "worktreeSha256": "e7151c12f2db6aa2ad08006b46fec79841c90c6ccaaf72a0988a409f8fd0c508",
+      "expectedCommitBytes": 318375,
+      "expectedCommitSha256": "e7151c12f2db6aa2ad08006b46fec79841c90c6ccaaf72a0988a409f8fd0c508",
+      "expectedBlobId": "af22ea2cf06c400fca9b69a671321435272b872a"
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.md",
+      "worktreeBytes": 52890,
+      "worktreeSha256": "e9d924dda1ec2ace3f923ea005bc2b6dc436000ca5c3bd51dda143727dae6005",
+      "expectedCommitBytes": 52890,
+      "expectedCommitSha256": "e9d924dda1ec2ace3f923ea005bc2b6dc436000ca5c3bd51dda143727dae6005",
+      "expectedBlobId": "2ba93b8d1c72a5f413113e87bf584415b6cb42a2"
+    },
+    {
+      "path": "docs/reviews/r1/todo-inputs.json",
+      "worktreeBytes": 343283,
+      "worktreeSha256": "19db2cfc4d910379d0e3eec255d8563e6f704ccc35cf71a761691640cf37f52c",
+      "expectedCommitBytes": 343283,
+      "expectedCommitSha256": "19db2cfc4d910379d0e3eec255d8563e6f704ccc35cf71a761691640cf37f52c",
+      "expectedBlobId": "2192aa2db92c7440a957ebf1eda8c9142f1e7b0b"
+    },
+    {
+      "path": "docs/reviews/r1/verify-handoff.mjs",
+      "worktreeBytes": 6131,
+      "worktreeSha256": "82bc549148d9ceefce08bbfb9c17ad8a0c6970de773fb17f4e9c736152b001b3",
+      "expectedCommitBytes": 6131,
+      "expectedCommitSha256": "82bc549148d9ceefce08bbfb9c17ad8a0c6970de773fb17f4e9c736152b001b3",
+      "expectedBlobId": "107b895812ecfa2eaede7ca15b6f0b6f3603af9e"
+    },
+    {
+      "path": "docs/reviews/r1/verify-specs.mjs",
+      "worktreeBytes": 9236,
+      "worktreeSha256": "62625f7ee825ca9609705d9529e5a898279cdde9b0fe81efa430547f3771f613",
+      "expectedCommitBytes": 9236,
+      "expectedCommitSha256": "62625f7ee825ca9609705d9529e5a898279cdde9b0fe81efa430547f3771f613",
+      "expectedBlobId": "e02b4e4ee474ac4ba9d871aca90a2d4a3e57cc67"
+    }
+  ]
+}

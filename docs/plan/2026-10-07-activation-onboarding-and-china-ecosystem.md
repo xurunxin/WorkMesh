@@ -129,6 +129,10 @@ graph LR
 
 ## F链共同契约与阶段责任
 
+共同锁序见[锁协议与并发验收](../reviews/r1/lock-contract.md)：无锁定位不授权，先参与者 Session 排序 advisory，再连接生命周期及有 Chief 上下文时的 appointment前缀和既有完整authority rank（Chief委派在delegation rank）；guard 重验后才 root→前驱→后继业务锁。持业务锁不得补低 rank，锁集变化整事务回滚重试；#24/#25 的换届/撤权与 #28 三种根完成路径共用此顺序，#28 更新逐语句锁清单，#29 做交叉并发联合验收。
+
+F4 的消费/结果提交以独立 logical dispatch 记录及幂等身份去重，委派 id/revision 仅表示授权来源。同一 standing revision 下多次合法分派不能合并成一次；同请求重放不重复结果或扣量，显式新 Session retry 是新的分派和用量。#25 交付分派记录/台账，#27 的 checkpoint 引用已提交结果并同事务推进，新增迁移归对应执行者，不修改旧 migration/checksum。
+
 R1冻结恢复身份/资格/幂等/提交协议及F2授权计量；F3 owner交付三源激活与持久结果引用，F4 owner验收baseline/checkpoint与结果同事务接口，F5 owner在既有Inbox fixtures实现恢复底层且不依赖F6。F6实现requires F1/F2/F3/F5；最终联合验收另外消费已验收F4，无反向边。#29 owner对恢复、checkpoint、三条根完成路径、Stop/撤权/换届/重放和REST/SDK/MCP/manifest/adapter/conformance端到端负责。各执行角色由Chief派发前落实，不冒称已任命agent。
 
 F0先枚举entry提交再引用，F1任命事务建Team房间；房间可见不等于exact-recipient私信可见。F2 standing delegation与0062 action Approval合取，不逐次人批；上下游能力两道上限、旧revision全部派生失效、logicaldispatch次数与预算原子记账。F3新输入id不清除同逻辑来源Stop抑制。F5原claim/归因不可变，直接前驱链接与根资源分开；root message resolution在Inbox reply/Work Room answer/Human resolve三条完成路径原子收敛整链。完整共同契约见ADR0078及[任务接口](../reviews/r1/task-contracts.json)，ADR0037旧Consequences逐字保留并限定修订。

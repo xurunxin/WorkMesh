@@ -1,0 +1,636 @@
+{
+  "schemaVersion": 1,
+  "purpose": "R1检查原件；复用既有安全ZIP读取器，独立于G1归档，不修改G1历史",
+  "capturedAt": "2026-10-07T20:11:24.292Z",
+  "archive": {
+    "path": "raw-checks.zip",
+    "bytes": 830869,
+    "sha256": "940b71a698531b15308a3a9dbc8b8365181a2aadf9e544de7d3dd84743b08014"
+  },
+  "entries": [
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/ci-policy-tests.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "df3c1da09b0bf0fdd90e837cfd436c83141d658e",
+      "bytes": 1430,
+      "sha256": "4762ae4d632e331d89e147ad35a75a446d464809b6a75ebe8ba5ffc520b836af",
+      "member": "bytes/4762ae4d632e331d89e147ad35a75a446d464809b6a75ebe8ba5ffc520b836af"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/ci-validate.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "f4f048cd35dcd4d4c301fdd450479164083b338e",
+      "bytes": 1514,
+      "sha256": "11211914e2a6ceaae05766fa12d07dbf3af87a5f5d705b36eedff6b39a0301e8",
+      "member": "bytes/11211914e2a6ceaae05766fa12d07dbf3af87a5f5d705b36eedff6b39a0301e8"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/e2e-reset.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "24036d2680c6e68d7507d888ead7513c595f848c",
+      "bytes": 136,
+      "sha256": "ffde923bcfc4c88a6754c64e41378bcfae46ae414d7ec3d63bbee1796af6f2af",
+      "member": "bytes/ffde923bcfc4c88a6754c64e41378bcfae46ae414d7ec3d63bbee1796af6f2af"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/e2e-reset.log",
+      "version": "f137787faa0979b59dd70668001b09bb5e132421",
+      "byteKind": "git-blob",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "sourceBlobId": "24036d2680c6e68d7507d888ead7513c595f848c",
+      "bytes": 136,
+      "sha256": "ffde923bcfc4c88a6754c64e41378bcfae46ae414d7ec3d63bbee1796af6f2af",
+      "member": "bytes/ffde923bcfc4c88a6754c64e41378bcfae46ae414d7ec3d63bbee1796af6f2af"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/e2e.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "c62cb90aa7401e3ebd53dee9be43851f3581a17a",
+      "bytes": 4082,
+      "sha256": "1646486dc416edf914313f857800c982b81b67027c9a6cb65b7be05f216d5753",
+      "member": "bytes/1646486dc416edf914313f857800c982b81b67027c9a6cb65b7be05f216d5753"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/e2e.log",
+      "version": "f137787faa0979b59dd70668001b09bb5e132421",
+      "byteKind": "git-blob",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "sourceBlobId": "e47ac04874a4fdf188003dc92594944dcf0343db",
+      "bytes": 4068,
+      "sha256": "536a3925a8419f7018fe8d305f9f79655ba5a0d3478e995a98dc0b843818b088",
+      "member": "bytes/536a3925a8419f7018fe8d305f9f79655ba5a0d3478e995a98dc0b843818b088"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/check-route-policy.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "abb8b42264fc7085c318076e22b0400a9f7b2713",
+      "bytes": 186,
+      "sha256": "a83a4e240e005ff165d40fd9b2e87d141043212e99003b56bad0f7743a3bff27",
+      "member": "bytes/a83a4e240e005ff165d40fd9b2e87d141043212e99003b56bad0f7743a3bff27"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/check-runner-skill.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "8f57408b844cc7d11748f1f220fe394466dc12de",
+      "bytes": 239,
+      "sha256": "5a93a9d81152fa82c66f6923c25bc8a65a8424ed2f2c6a2e184c90179d29d4a9",
+      "member": "bytes/5a93a9d81152fa82c66f6923c25bc8a65a8424ed2f2c6a2e184c90179d29d4a9"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/check-workmesh-skill.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "82b9c4568432f81f2db3d34844fa6462c383f4e3",
+      "bytes": 243,
+      "sha256": "caaf2e5975f1c08f64946cfb47fbf7a522bf9e748cd5bf66a556b90648164ab1",
+      "member": "bytes/caaf2e5975f1c08f64946cfb47fbf7a522bf9e748cd5bf66a556b90648164ab1"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/ci-source-build.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "3d8b50773d9f963865f0f2aa2173e1267ccdc458",
+      "bytes": 16312,
+      "sha256": "8c3bfe32cbdc614b2e0e3674404748e8e2b587c2eba3eee84d4086e4dea78621",
+      "member": "bytes/8c3bfe32cbdc614b2e0e3674404748e8e2b587c2eba3eee84d4086e4dea78621"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/compose.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "d2f0c0f2e2101f7774d2fb29fe08c041e552bf87",
+      "bytes": 588,
+      "sha256": "78acb551c48b0f429915e9fdb11d0dcdd785f786ea520680c489beb180df84bf",
+      "member": "bytes/78acb551c48b0f429915e9fdb11d0dcdd785f786ea520680c489beb180df84bf"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/conformance/junit.xml",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "177647e29b50cff58c933062aa88aafd3d2f709c",
+      "bytes": 10451,
+      "sha256": "328c6d2bf74e83e40a9a6134c07d8378d09da5ef640e97dd8e5196a0bc66f372",
+      "member": "bytes/328c6d2bf74e83e40a9a6134c07d8378d09da5ef640e97dd8e5196a0bc66f372"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/conformance/transcript.md",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "38caf52f9fd3fa5dc1b321b3a3937d12255c3fa8",
+      "bytes": 13755,
+      "sha256": "a7fc7d1d595defbf651024547a809a606fa7a46e05433f18ef82b91b51092e06",
+      "member": "bytes/a7fc7d1d595defbf651024547a809a606fa7a46e05433f18ef82b91b51092e06"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/lint.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "cc22be69fbeeea2be3aab821cfaea0cda57ce332",
+      "bytes": 5923,
+      "sha256": "1eb77bfb700f100434ed853aa2109e915f4537239e391c5a5b44fd3e9683e614",
+      "member": "bytes/1eb77bfb700f100434ed853aa2109e915f4537239e391c5a5b44fd3e9683e614"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/smoke-agents-ci.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "d2847b0a5d4e7a68caa4f16ba68d397679408de6",
+      "bytes": 538,
+      "sha256": "8ef4df178c74a1b96c4fced26974aebd1af7fc1e4aa092c87da16e9731474732",
+      "member": "bytes/8ef4df178c74a1b96c4fced26974aebd1af7fc1e4aa092c87da16e9731474732"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/test-conformance.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "45ac9cb88dcd7d3d8c6f028e854e05350fea09b9",
+      "bytes": 472,
+      "sha256": "466af39b15f3fdca6daaffd8d9b50bdf069c868245f43d8a6bd00f0c6300eef5",
+      "member": "bytes/466af39b15f3fdca6daaffd8d9b50bdf069c868245f43d8a6bd00f0c6300eef5"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/test.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "19c6a9d97a80b83982cb7e682f67dadfaa867515",
+      "bytes": 59892,
+      "sha256": "ac06d50171950510de20374f14014b211810b1446983d320c1de8726c17cd623",
+      "member": "bytes/ac06d50171950510de20374f14014b211810b1446983d320c1de8726c17cd623"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/typecheck.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "6544155ec16333d3c27aa29cd60f0f0d079f72c1",
+      "bytes": 6478,
+      "sha256": "d3a0a7180bf07bfeed1e158e8172c8a6157f9cfc8c232804da45af4194b003cd",
+      "member": "bytes/d3a0a7180bf07bfeed1e158e8172c8a6157f9cfc8c232804da45af4194b003cd"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/integration.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "1cd5b46a775f373591fa389e6cc4919381415d10",
+      "bytes": 23427,
+      "sha256": "5a15786aca29623876fdd91d97cc56a96cfaba054c9ddee3f2b35951d71393e3",
+      "member": "bytes/5a15786aca29623876fdd91d97cc56a96cfaba054c9ddee3f2b35951d71393e3"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/integration.log",
+      "version": "f137787faa0979b59dd70668001b09bb5e132421",
+      "byteKind": "git-blob",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "sourceBlobId": "c7590ca6e3e7aafca70ad2a2b827f6c81c44a9d8",
+      "bytes": 23426,
+      "sha256": "9a6aa12eea42411818c0fec917a12bee389d456a70fe946416ce9e75d05cb57e",
+      "member": "bytes/9a6aa12eea42411818c0fec917a12bee389d456a70fe946416ce9e75d05cb57e"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/lint.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "5097da52c014ebc14fed5a0a881cd4520e889687",
+      "bytes": 6113,
+      "sha256": "41c1ecc51bd6a10173cb25b3b94c1a77b3d814056a24dad0b5ddb5e0228d249f",
+      "member": "bytes/41c1ecc51bd6a10173cb25b3b94c1a77b3d814056a24dad0b5ddb5e0228d249f"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/lint.log",
+      "version": "f137787faa0979b59dd70668001b09bb5e132421",
+      "byteKind": "git-blob",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "sourceBlobId": "757b9dd93ea2fd4fffe99609e81030333ecf0463",
+      "bytes": 6008,
+      "sha256": "31a2aae8acd37bc3d40c8f950d2d849726ba8fb8f8382a573af17335cf298f0f",
+      "member": "bytes/31a2aae8acd37bc3d40c8f950d2d849726ba8fb8f8382a573af17335cf298f0f"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/reachability-latest-main.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "9cbce370f60b2b222351708380752ac2093cb1bb",
+      "bytes": 25427,
+      "sha256": "f3a7473f2a6ba0cb04f7cca5b2c7edf36a5d940b36e9ae408d16ac1c9128f9d4",
+      "member": "bytes/f3a7473f2a6ba0cb04f7cca5b2c7edf36a5d940b36e9ae408d16ac1c9128f9d4"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/reachability-worktree.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "6b8f8f0812491e18dc8f568d173c86087237c15b",
+      "bytes": 26580,
+      "sha256": "7c108befd0fee52e2a9b2983478aeae0cbee56b4e32ae49d5cdc613d44bf0826",
+      "member": "bytes/7c108befd0fee52e2a9b2983478aeae0cbee56b4e32ae49d5cdc613d44bf0826"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/reachability-worktree.log",
+      "version": "f137787faa0979b59dd70668001b09bb5e132421",
+      "byteKind": "git-blob",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "sourceBlobId": "c39f10117377634ab59742820c8c70a68be4c5ca",
+      "bytes": 26040,
+      "sha256": "fea4b930fc18a097a0f2242d7692229dd84229fc02ee4541db1f63978a389cdc",
+      "member": "bytes/fea4b930fc18a097a0f2242d7692229dd84229fc02ee4541db1f63978a389cdc"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run2/integration.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "b8507a76460f6b72a00af8767194103b67889cef",
+      "bytes": 162552,
+      "sha256": "1a0b80fcaa173fb32b94b4e23f0cf26d1317babb81d1217aac4ebf52c60c38c0",
+      "member": "bytes/1a0b80fcaa173fb32b94b4e23f0cf26d1317babb81d1217aac4ebf52c60c38c0"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run2/integration.log",
+      "version": "f137787faa0979b59dd70668001b09bb5e132421",
+      "byteKind": "git-blob",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "sourceBlobId": "b8507a76460f6b72a00af8767194103b67889cef",
+      "bytes": 162552,
+      "sha256": "1a0b80fcaa173fb32b94b4e23f0cf26d1317babb81d1217aac4ebf52c60c38c0",
+      "member": "bytes/1a0b80fcaa173fb32b94b4e23f0cf26d1317babb81d1217aac4ebf52c60c38c0"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run3/infrastructure-error.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "397d7735decd4af425969db23c6a1543a2df0317",
+      "bytes": 199,
+      "sha256": "a51ef614aac94fbac6c7db3e3d72505cdc3bfb1dd441fbeb87c6e0dafdca4d36",
+      "member": "bytes/a51ef614aac94fbac6c7db3e3d72505cdc3bfb1dd441fbeb87c6e0dafdca4d36"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run4/browser-failure/error-context.md",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "4f39566b8664ea1f3c3221cf8d94d5b1a588920f",
+      "bytes": 23263,
+      "sha256": "38659ab34c6c7a23c61c2dd90a838f8d2e9ed583c40cb455eff0356c433b31ec",
+      "member": "bytes/38659ab34c6c7a23c61c2dd90a838f8d2e9ed583c40cb455eff0356c433b31ec"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run4/e2e-reset.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "24036d2680c6e68d7507d888ead7513c595f848c",
+      "bytes": 136,
+      "sha256": "ffde923bcfc4c88a6754c64e41378bcfae46ae414d7ec3d63bbee1796af6f2af",
+      "member": "bytes/ffde923bcfc4c88a6754c64e41378bcfae46ae414d7ec3d63bbee1796af6f2af"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run4/e2e.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "1ed061ebb9c737d0932bbf04d07a7ba5e4e7f3fd",
+      "bytes": 1481528,
+      "sha256": "e812d9c75fd4e7db9fdb559173f4b2ffaba616c64f002863664f433eb11656b0",
+      "member": "bytes/e812d9c75fd4e7db9fdb559173f4b2ffaba616c64f002863664f433eb11656b0"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run4/integration.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "1e2638607a27191972199c21b9bfc646f2e54631",
+      "bytes": 1024221,
+      "sha256": "8dc3c288f411a1c5b8efd76a6f00d119619b5acb7a7879c7fb4618c7b3cffad8",
+      "member": "bytes/8dc3c288f411a1c5b8efd76a6f00d119619b5acb7a7879c7fb4618c7b3cffad8"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run5/integration.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "14e99740ec5a41642648361f30cac563de89c99b",
+      "bytes": 1032096,
+      "sha256": "3cf729cf934ef4d5aca98e877e1fc411f23d360e67e776beb16a8f663b2f59e0",
+      "member": "bytes/3cf729cf934ef4d5aca98e877e1fc411f23d360e67e776beb16a8f663b2f59e0"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run6/integration.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "5bceffe53125819489cdafc4ba8b25ab5c4f4d22",
+      "bytes": 1032466,
+      "sha256": "49438aa49709820ec81a3418e6a581068146cbba24d169f93cb33505a12682ed",
+      "member": "bytes/49438aa49709820ec81a3418e6a581068146cbba24d169f93cb33505a12682ed"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run7/e2e-project-diagnostic.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "959ace9930447cf7a06f319d540e9e3cc7e646cd",
+      "bytes": 3360,
+      "sha256": "4d5dec3b9a671dc38ca600e0066198bcdd945152716c2a1a5cd01de60f5a6d5a",
+      "member": "bytes/4d5dec3b9a671dc38ca600e0066198bcdd945152716c2a1a5cd01de60f5a6d5a"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run8/e2e-project-diagnostic.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "3b3a594450c88d6b2285a9120b1a700cba0283f2",
+      "bytes": 313015,
+      "sha256": "544ba9bdca768c72588b3b3e6242438bf52748ac252ea42d1ab1ad271c142154",
+      "member": "bytes/544ba9bdca768c72588b3b3e6242438bf52748ac252ea42d1ab1ad271c142154"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run9/e2e.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "769b20211a24281c329cd1e43b98802d0e74cbac",
+      "bytes": 1709349,
+      "sha256": "d69371f96d4f51bb9862f1189ca2bf5361572fb84d2e73ae92dcf9f2d888a178",
+      "member": "bytes/d69371f96d4f51bb9862f1189ca2bf5361572fb84d2e73ae92dcf9f2d888a178"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/typecheck.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "ea6d7bd8a7379690e11e31a76cc34cb7f83af22e",
+      "bytes": 6668,
+      "sha256": "d67dcb2d59bee8a248071eee45f020be681efe6c719485ac61e24392ab9df795",
+      "member": "bytes/d67dcb2d59bee8a248071eee45f020be681efe6c719485ac61e24392ab9df795"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/typecheck.log",
+      "version": "f137787faa0979b59dd70668001b09bb5e132421",
+      "byteKind": "git-blob",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "sourceBlobId": "c400996bc6aa8c53a23922bd868da8b60dfdadc2",
+      "bytes": 6563,
+      "sha256": "feebeb0cee2c536e0499b07622fe23ced3ecd713dc81b2a9a140f0cf84b54bb5",
+      "member": "bytes/feebeb0cee2c536e0499b07622fe23ced3ecd713dc81b2a9a140f0cf84b54bb5"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/unit.log",
+      "version": "captured-before-display",
+      "byteKind": "worktree",
+      "sourceCommit": null,
+      "sourceBlobId": "7f4730610a2cbeb84ce476fce155ae2fe1027218",
+      "bytes": 59244,
+      "sha256": "60b2c641eb7559ec11ad2422451a4dd7d8d07ac29857a5ba275f51631840a4c4",
+      "member": "bytes/60b2c641eb7559ec11ad2422451a4dd7d8d07ac29857a5ba275f51631840a4c4"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/unit.log",
+      "version": "f137787faa0979b59dd70668001b09bb5e132421",
+      "byteKind": "git-blob",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "sourceBlobId": "ac15e83f1dcd0ebfd731681a5d12f599aff84a02",
+      "bytes": 58526,
+      "sha256": "5050f5e685d39e8ae73abb195dd11454b0eae7c1c1aa83ad66fb78930f810c48",
+      "member": "bytes/5050f5e685d39e8ae73abb195dd11454b0eae7c1c1aa83ad66fb78930f810c48"
+    }
+  ],
+  "emptyFiles": [
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/compose-configured.log",
+      "version": "captured-before-display",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "displays": [
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/ci-policy-tests.log",
+      "rawSha256": "4762ae4d632e331d89e147ad35a75a446d464809b6a75ebe8ba5ffc520b836af",
+      "displaySha256": "4863aabc0e21dc361567a1cc6b58c980bb0bcc7b1c029b110d2f7df3516645fb",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/ci-validate.log",
+      "rawSha256": "11211914e2a6ceaae05766fa12d07dbf3af87a5f5d705b36eedff6b39a0301e8",
+      "displaySha256": "0237fead396b3b59997a0bade6d4e0d5d4f61a35b900f750e45a504ad86eb395",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/e2e-reset.log",
+      "rawSha256": "ffde923bcfc4c88a6754c64e41378bcfae46ae414d7ec3d63bbee1796af6f2af",
+      "displaySha256": "1321fb7035546571bd6a29a683366d38480af70d850e5ba7ea43cf4593127104",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/e2e.log",
+      "rawSha256": "1646486dc416edf914313f857800c982b81b67027c9a6cb65b7be05f216d5753",
+      "displaySha256": "09bd1b243e96babca8a8d19db0933bb95b36e970e495d2fa36440247554bfa00",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/check-route-policy.log",
+      "rawSha256": "a83a4e240e005ff165d40fd9b2e87d141043212e99003b56bad0f7743a3bff27",
+      "displaySha256": "668d00d584c1b7fac28e6f3a6a871b421fd8790bda17026f33da8fab9acae4aa",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/check-runner-skill.log",
+      "rawSha256": "5a93a9d81152fa82c66f6923c25bc8a65a8424ed2f2c6a2e184c90179d29d4a9",
+      "displaySha256": "5a93a9d81152fa82c66f6923c25bc8a65a8424ed2f2c6a2e184c90179d29d4a9",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/check-workmesh-skill.log",
+      "rawSha256": "caaf2e5975f1c08f64946cfb47fbf7a522bf9e748cd5bf66a556b90648164ab1",
+      "displaySha256": "caaf2e5975f1c08f64946cfb47fbf7a522bf9e748cd5bf66a556b90648164ab1",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/ci-source-build.log",
+      "rawSha256": "8c3bfe32cbdc614b2e0e3674404748e8e2b587c2eba3eee84d4086e4dea78621",
+      "displaySha256": "6cc32d908a49ac080da5091ed72adc3b2d413e9086ee6229da884fc1e0591986",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/compose-configured.log",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "displaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/compose.log",
+      "rawSha256": "78acb551c48b0f429915e9fdb11d0dcdd785f786ea520680c489beb180df84bf",
+      "displaySha256": "78acb551c48b0f429915e9fdb11d0dcdd785f786ea520680c489beb180df84bf",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/conformance/junit.xml",
+      "rawSha256": "328c6d2bf74e83e40a9a6134c07d8378d09da5ef640e97dd8e5196a0bc66f372",
+      "displaySha256": "328c6d2bf74e83e40a9a6134c07d8378d09da5ef640e97dd8e5196a0bc66f372",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/conformance/transcript.md",
+      "rawSha256": "a7fc7d1d595defbf651024547a809a606fa7a46e05433f18ef82b91b51092e06",
+      "displaySha256": "a7fc7d1d595defbf651024547a809a606fa7a46e05433f18ef82b91b51092e06",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/lint.log",
+      "rawSha256": "1eb77bfb700f100434ed853aa2109e915f4537239e391c5a5b44fd3e9683e614",
+      "displaySha256": "10e88f3dee9762f5c16778a33684a9e000b1a29a6de18206deac4bd831d3d65a",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/smoke-agents-ci.log",
+      "rawSha256": "8ef4df178c74a1b96c4fced26974aebd1af7fc1e4aa092c87da16e9731474732",
+      "displaySha256": "8ef4df178c74a1b96c4fced26974aebd1af7fc1e4aa092c87da16e9731474732",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/test-conformance.log",
+      "rawSha256": "466af39b15f3fdca6daaffd8d9b50bdf069c868245f43d8a6bd00f0c6300eef5",
+      "displaySha256": "466af39b15f3fdca6daaffd8d9b50bdf069c868245f43d8a6bd00f0c6300eef5",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/test.log",
+      "rawSha256": "ac06d50171950510de20374f14014b211810b1446983d320c1de8726c17cd623",
+      "displaySha256": "c8726443c3e0bb4ea1aa4a6e67cfe2326b88928f96dd34182cef9ab354d95a32",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/final-source/typecheck.log",
+      "rawSha256": "d3a0a7180bf07bfeed1e158e8172c8a6157f9cfc8c232804da45af4194b003cd",
+      "displaySha256": "5fb08f166ac780254ef96177dd437be853bfcaec5be036b5ecf8aa8ef3cf03ae",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/integration.log",
+      "rawSha256": "5a15786aca29623876fdd91d97cc56a96cfaba054c9ddee3f2b35951d71393e3",
+      "displaySha256": "0bac94ad83d8d7ad1f85651412addd0c9db3431dc1517f841e88f45b93058b15",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/lint.log",
+      "rawSha256": "41c1ecc51bd6a10173cb25b3b94c1a77b3d814056a24dad0b5ddb5e0228d249f",
+      "displaySha256": "9881a1965df3c0c15135052fa7690fc80a2ef1258ba55570042601242a7fb279",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/reachability-latest-main.log",
+      "rawSha256": "f3a7473f2a6ba0cb04f7cca5b2c7edf36a5d940b36e9ae408d16ac1c9128f9d4",
+      "displaySha256": "f3a7473f2a6ba0cb04f7cca5b2c7edf36a5d940b36e9ae408d16ac1c9128f9d4",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/reachability-worktree.log",
+      "rawSha256": "7c108befd0fee52e2a9b2983478aeae0cbee56b4e32ae49d5cdc613d44bf0826",
+      "displaySha256": "fea4b930fc18a097a0f2242d7692229dd84229fc02ee4541db1f63978a389cdc",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run2/integration.log",
+      "rawSha256": "1a0b80fcaa173fb32b94b4e23f0cf26d1317babb81d1217aac4ebf52c60c38c0",
+      "displaySha256": "1a0b80fcaa173fb32b94b4e23f0cf26d1317babb81d1217aac4ebf52c60c38c0",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run3/infrastructure-error.log",
+      "rawSha256": "a51ef614aac94fbac6c7db3e3d72505cdc3bfb1dd441fbeb87c6e0dafdca4d36",
+      "displaySha256": "2743e860cfbcf9e1db51daa08b2debfaba8b60250841901f2218382199a53196",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run4/browser-failure/error-context.md",
+      "rawSha256": "38659ab34c6c7a23c61c2dd90a838f8d2e9ed583c40cb455eff0356c433b31ec",
+      "displaySha256": "4f41065ca6ec7be4ad89915e970e16c85c7b3fc6f9790a78e767cdcab2f34886",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run4/e2e-reset.log",
+      "rawSha256": "ffde923bcfc4c88a6754c64e41378bcfae46ae414d7ec3d63bbee1796af6f2af",
+      "displaySha256": "1321fb7035546571bd6a29a683366d38480af70d850e5ba7ea43cf4593127104",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run4/e2e.log",
+      "rawSha256": "e812d9c75fd4e7db9fdb559173f4b2ffaba616c64f002863664f433eb11656b0",
+      "displaySha256": "a823c38b296adec6660da9720ccde4092f0a841cc517b45873db7992a9f5dc64",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run4/integration.log",
+      "rawSha256": "8dc3c288f411a1c5b8efd76a6f00d119619b5acb7a7879c7fb4618c7b3cffad8",
+      "displaySha256": "1bf1544d825ceb60486e134a46103091ab00246eb417f0e7db307bb5a484552d",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run5/integration.log",
+      "rawSha256": "3cf729cf934ef4d5aca98e877e1fc411f23d360e67e776beb16a8f663b2f59e0",
+      "displaySha256": "51ebc8338806b8cfe20a221edff19fb4dcf031fcfb198a35e9357b0d3b0317d6",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run6/integration.log",
+      "rawSha256": "49438aa49709820ec81a3418e6a581068146cbba24d169f93cb33505a12682ed",
+      "displaySha256": "3f963c45fd5eb8b54ca2308761a2e336bdbab5e5d2c9c3fc51a1c2b1dcf361fa",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run7/e2e-project-diagnostic.log",
+      "rawSha256": "4d5dec3b9a671dc38ca600e0066198bcdd945152716c2a1a5cd01de60f5a6d5a",
+      "displaySha256": "d93ff8fdc4ec534bc4cff51e2744fa831c2b4892c33494789ae7485c72290c4e",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run8/e2e-project-diagnostic.log",
+      "rawSha256": "544ba9bdca768c72588b3b3e6242438bf52748ac252ea42d1ab1ad271c142154",
+      "displaySha256": "74b1c8da5c5625ddc248896071b3653f99a92389660c0cb2038afb8d195d4d6f",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/run9/e2e.log",
+      "rawSha256": "d69371f96d4f51bb9862f1189ca2bf5361572fb84d2e73ae92dcf9f2d888a178",
+      "displaySha256": "558dc52238b691cd5b3c54cfa9e90712b339556b58f11f283c6abcce8aa9c9a0",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/typecheck.log",
+      "rawSha256": "d67dcb2d59bee8a248071eee45f020be681efe6c719485ac61e24392ab9df795",
+      "displaySha256": "aba0cc1d6077954662cd1ae57dabacb25cd2da388421beec36312372a90f7af2",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    },
+    {
+      "logicalPath": "docs/reviews/r1/execution-logs/unit.log",
+      "rawSha256": "60b2c641eb7559ec11ad2422451a4dd7d8d07ac29857a5ba275f51631840a4c4",
+      "displaySha256": "f1f2c974c20d6b5ecc4cba03b4ef53630b25bef2bb1004507b51b111169d6f1d",
+      "policy": "仅展示副本统一LF、移除行尾空白与多余EOF空行；归档保留处理前原字节"
+    }
+  ]
+}
