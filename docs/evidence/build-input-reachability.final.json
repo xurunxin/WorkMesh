@@ -2932,7 +2932,7 @@
     "gate": "关闭；本轮五项必需命令最新结果均为0，待定向独审、最新PR required CI及实际合入"
   },
   "latestIntegration": {
-    "recordedAt": "2026-10-07T16:08:02.937Z",
+    "recordedAt": "2026-10-07T16:25:35.336Z",
     "branch": "tds/conv-01a116f7-1027-7c75-90df-32ebc5488752",
     "originalEvidenceHead": "af583f71f310e68ade588f9922694dfd8aba7a65",
     "previousIntegration": "76689f838bd2ab9177d80c6b9210e0c57acc807d",
@@ -2945,7 +2945,16 @@
       "codeChanged": false,
       "conflicts": []
     },
-    "testedIntegrationHead": null,
+    "testedIntegrationHead": "afe57fda6a2e869d52660df64d4cd359dc013885",
+    "historyInclusion": {
+      "previousIntegration": "76689f838bd2ab9177d80c6b9210e0c57acc807d",
+      "latestMain": "dde2a1a6926040c35e9d85d89fed6238572f0f25",
+      "verifiedHead": "afe57fda6a2e869d52660df64d4cd359dc013885",
+      "parents": [
+        "76689f838bd2ab9177d80c6b9210e0c57acc807d",
+        "dde2a1a6926040c35e9d85d89fed6238572f0f25"
+      ]
+    },
     "checkpointCommand": "node ../../scripts/verify-build-input-reachability.mjs dde2a1a6926040c35e9d85d89fed6238572f0f25 --json-out ../g1-latest-main-checkpoint.json",
     "checkpointWorkingDirectory": ".tmp/g1-main-dde2a1a（精确detached工作树）",
     "checkpointExitCode": 0,
@@ -3562,7 +3571,7 @@
           "blobId": "651bfd1848cea6ab0790870ad776c62e08d72937",
           "committedBytes": 14557,
           "committedSha256": "17678a8e20c7a3f13eb6b77f130b50076d3f96c8efb03431f82222884e41a450",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "AGENTS.md",
@@ -3571,7 +3580,7 @@
           "blobId": "fe9114d161ce694a5fa3d0b4ba0efbf2c8ab1642",
           "committedBytes": 9050,
           "committedSha256": "25a0c33887733812dd1fc7f488cea57ef2e38a6436c788b5814562f22a88bb25",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "CONTEXT.md",
@@ -3580,7 +3589,7 @@
           "blobId": "a6fb11c386e837eed2b8e95b35f41a667c87a201",
           "committedBytes": 4080,
           "committedSha256": "3398da2c42aa004d61e0e1202f7dccb0847859ce8b8f859217d6c17fc6d8839e",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "AGENT_PROTOCOL.md",
@@ -3589,7 +3598,7 @@
           "blobId": "5a1336db65c7f39fb603c39e3e6a311c6c740f95",
           "committedBytes": 68415,
           "committedSha256": "809f309cb179d62b06d3b26ad569aaad0d1cbf794d4061ea829c5777dcfa96e9",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "OPENAPI.yaml",
@@ -3598,7 +3607,7 @@
           "blobId": "91a12aedee454d8d89a7c31c4993664c78972849",
           "committedBytes": 489123,
           "committedSha256": "18e6ce9f67d9cfbb90931be74f4593725296d9e98e2070085d99d486a44f7968",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "SCHEMA.sql",
@@ -3607,7 +3616,7 @@
           "blobId": "7d1aed0714dd7d3b74e81ae2493baab7d13a4d0f",
           "committedBytes": 1334,
           "committedSha256": "9575ee2ad4619ccc316c57d1003b940d9d16f3999b77ae440009478ca3ef7007",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "VALIDATION.json",
@@ -3616,7 +3625,7 @@
           "blobId": "82f9976ba5b1faf3fdcb6b42a56696300a4f2085",
           "committedBytes": 1062,
           "committedSha256": "c7127daee91f1c864341c4463d31773eb515d804af26b2007f06cb8fb7d72486",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/adr/README.md",
@@ -3625,7 +3634,7 @@
           "blobId": "9b98ee70c3fd5f521dc7fe060c5f0ea92a597363",
           "committedBytes": 16064,
           "committedSha256": "4d30c7b6febddb9d00bbf51be8a4b69a247fe35ef872560f3ded734baef3326e",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
@@ -3634,7 +3643,7 @@
           "blobId": "2453d156e3609ff5fccb83111ac1cc0826483ec3",
           "committedBytes": 12420,
           "committedSha256": "1552ede369a26d3f57e8976fd4b5074ac246db8a0ca5e9b316330114ea72ec1c",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
@@ -3643,7 +3652,7 @@
           "blobId": "67450ac4675f0374e7cb191e4c446943679bacd8",
           "committedBytes": 16275,
           "committedSha256": "796ddbb99b81e8330b54d9fcd17f147aa68df1873b1e8c3fed9c3e9ec467108d",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
@@ -3652,7 +3661,7 @@
           "blobId": "e72dc4f37c67d83adbc27c23d6b2f25eb6b8fa09",
           "committedBytes": 15576,
           "committedSha256": "977644f9a9979702ece38198796e2f3e79df8903fa641cd288a57c955fc7cb5e",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
@@ -3661,7 +3670,7 @@
           "blobId": "353cc589f6ad0cc6a98f8c68c0786a8c4bdc229f",
           "committedBytes": 13822,
           "committedSha256": "e59978475562b6a1320c050b12589a436890290b8a0fcadcaef4b4800ed49876",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/plan/2026-08-22-agent-connection-runtime-reliability.md",
@@ -3670,7 +3679,7 @@
           "blobId": "c0b5b95dd7ff94c46d834deb42f1f13460dbbb0a",
           "committedBytes": 8924,
           "committedSha256": "1beff46dd056b03a6e90d6ae40765fb3190b34495ca8a5db5b74405b54193a57",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/plan/2026-09-24-prototype-pi-agent-workbench.baseline.md",
@@ -3679,7 +3688,7 @@
           "blobId": "d8777257793354ac50856e1812f420f435455f29",
           "committedBytes": 12684,
           "committedSha256": "0529101b628c3d337a4e1cb52c97a0c355a31a6de25d873b48edee4a4fd8b1ea",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
@@ -3688,7 +3697,7 @@
           "blobId": "264b52de5df81b50ab1e3eb8aae56b13d8992cad",
           "committedBytes": 69978,
           "committedSha256": "389136aeaf918d2b1a46623e190845fc8289395bec71ad5402b47da25f5f84bf",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md",
@@ -3697,7 +3706,7 @@
           "blobId": "764608c4ad529b2fa80fab87e526a014a98b7872",
           "committedBytes": 44071,
           "committedSha256": "7226285a697cb7189e35863f6e5988b702a38bbdf72da9bce138a14a7b3d33bd",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/references/todos-analysis/SOURCE-MANIFEST.json",
@@ -3706,7 +3715,7 @@
           "blobId": "b5c9bec0892d526d02cd36a14b2ad6c2e17d3e68",
           "committedBytes": 10338,
           "committedSha256": "e49b4c29207521117257cfff788f763392e7a493b50cde9daaed994ad1c38ccd",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/evidence/build-input-reachability.md",
@@ -3715,7 +3724,7 @@
           "blobId": "b5a4c33e05031e46e7925927f4a302ebdf17a622",
           "committedBytes": 15870,
           "committedSha256": "2018697be288eeea0c81ce9b9459ea2a9544b5a6e518b62f00a533301008f781",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "scripts/verify-build-input-reachability.mjs",
@@ -3724,7 +3733,7 @@
           "blobId": "a0966d9fbd72a5ef24e01074cc59a3f759322212",
           "committedBytes": 6697,
           "committedSha256": "3ee7bca8280afb0b46d4fe77994c0ffdd7757318dd5fa223c454a794b101476d",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/references/todos-analysis/reviews/todos-review.md",
@@ -3733,7 +3742,7 @@
           "blobId": "56adba83ceb95ca4dfd90fdf4d71ae05cb101283",
           "committedBytes": 56573,
           "committedSha256": "c4fabf4571c35f41bf11cc022d7260b84b467766875b6e988f96d3afbedae5f8",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "scripts/verify-build-input-reachability.test.mjs",
@@ -3742,7 +3751,7 @@
           "blobId": "4d1d6502c6e73b0d8542708eb620bb90ec3b57e9",
           "committedBytes": 1482,
           "committedSha256": "8cdc9f84155de402dff2791bd6101da5db7348e54143e60a153aff6bd7029e78",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
@@ -3751,7 +3760,7 @@
           "blobId": "b1781583b75e2ab28d42c1a1cf2265ae326c37b1",
           "committedBytes": 48859,
           "committedSha256": "d3ac15e76fa544189bdcf20033553fb2d1a3e1631f7e4b2cd54a4b8e83ca6546",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/adr/0078-review-round2.md",
@@ -3760,7 +3769,7 @@
           "blobId": "058c70e617e1020c521d4cad2b9973789efa4ba0",
           "committedBytes": 24468,
           "committedSha256": "0f9ec7b53d8ba7dd9e8c11e247c1116fc6dadf932432c77b8cc5b391aca728e9",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         },
         {
           "name": "docs/CI.md",
@@ -3769,14 +3778,136 @@
           "blobId": "dab2ac90bb010ec04eff94aabf8053f77d201ec1",
           "committedBytes": 8212,
           "committedSha256": "670a5de26ac3f549c9b425e83453166a427052acd53ac9a2737401c51348c437",
-          "version": "本轮最新整合工作树，待提交"
+          "version": "afe57fda6a2e869d52660df64d4cd359dc013885"
         }
       ],
       "errors": []
     },
-    "checks": [],
-    "latestRequiredCommandsPassed": 0,
+    "checks": [
+      {
+        "name": "lint",
+        "attempt": 2,
+        "command": "pnpm lint",
+        "head": "afe57fda6a2e869d52660df64d4cd359dc013885",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T16:08:25.459Z",
+        "completedAt": "2026-10-07T16:08:26.781Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/lint.2.log",
+        "summary": "Tasks:    18 successful, 18 total",
+        "logBytes": 6145,
+        "logSha256": "a9672a94db75c48a9694610df14fbe186fe5d37ab62480d2214f47caadafc63e"
+      },
+      {
+        "name": "typecheck",
+        "attempt": 2,
+        "command": "pnpm typecheck",
+        "head": "afe57fda6a2e869d52660df64d4cd359dc013885",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T16:08:26.920Z",
+        "completedAt": "2026-10-07T16:08:28.146Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/typecheck.2.log",
+        "summary": "Tasks:    18 successful, 18 total",
+        "logBytes": 6705,
+        "logSha256": "67b05fe1b73c8ff10487360a7d6a8f6497227c40f629eddfb31cc5ddeaa90fe0"
+      },
+      {
+        "name": "test",
+        "attempt": 2,
+        "command": "pnpm test",
+        "head": "afe57fda6a2e869d52660df64d4cd359dc013885",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T16:08:28.329Z",
+        "completedAt": "2026-10-07T16:08:29.911Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/test.2.log",
+        "summary": "@workmesh/conformance:test:       Tests  1 passed (1)；@workmesh/db:test:  Test Files  8 passed (8)；@workmesh/db:test:       Tests  28 passed (28)；@workmesh/recovery:test:  Test Files  1 passed (1)；@workmesh/recovery:test:       Tests  7 passed (7)；@workmesh/worker:test:  Test Files  23 passed (23)；@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)；@workmesh/api:test:  Test Files  33 passed (33)；@workmesh/api:test:       Tests  174 passed (174)； Tasks:    29 successful, 29 total",
+        "logBytes": 49834,
+        "logSha256": "d66e5626e7889dcb6529d391d0fb13befae127913800c5e51d860f751727800d"
+      },
+      {
+        "name": "integration",
+        "attempt": 2,
+        "command": "pnpm test:integration",
+        "head": "afe57fda6a2e869d52660df64d4cd359dc013885",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T16:08:31.027Z",
+        "completedAt": "2026-10-07T16:13:59.343Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/integration.2.log",
+        "summary": "Test Files  17 passed (17)；      Tests  77 passed (77)； Test Files  22 passed (22)；      Tests  154 passed | 1 skipped (155)； Test Files  8 passed | 1 skipped (9)；      Tests  78 passed | 1 skipped (79)； Test Files  1 passed (1)；      Tests  1 passed (1)",
+        "logBytes": 1031619,
+        "logSha256": "bb394f4104582ac162acac1b3735ca4a48e1f2b79bc9387590ae2c0b4809d097"
+      },
+      {
+        "name": "e2e",
+        "attempt": 3,
+        "command": "pnpm test:e2e",
+        "head": "afe57fda6a2e869d52660df64d4cd359dc013885",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T16:08:31.010Z",
+        "completedAt": "2026-10-07T16:14:56.160Z",
+        "exitCode": 1,
+        "logPath": "docs/evidence/build-input-reachability.current/e2e.3.log",
+        "summary": "@workmesh/web:test:e2e:   73 passed (6.3m)； Tasks:    11 successful, 12 total",
+        "logBytes": 1707824,
+        "logSha256": "5e1b2e143fdbf0a6d6c44927f69f678e4304b5369f985d67656a72bce8224d1a"
+      },
+      {
+        "name": "e2e",
+        "attempt": 4,
+        "command": "pnpm test:e2e",
+        "head": "afe57fda6a2e869d52660df64d4cd359dc013885",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T16:15:39.096Z",
+        "completedAt": "2026-10-07T16:20:33.144Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/e2e.4.log",
+        "summary": "@workmesh/web:test:e2e:   74 passed (4.8m)； Tasks:    12 successful, 12 total",
+        "logBytes": 1656654,
+        "logSha256": "ef82d9daa4f6ead3abbf5fc92248f06ac067776452632866ff3c9d04193166e7"
+      }
+    ],
+    "latestRequiredCommandsPassed": 5,
     "unchangedTestScope": "相对76689f8及原af583f7，apps、packages、scripts、lockfile、来源38项及D0字节未变；仍实际运行新整合head的五项必需命令，旧检查不冒作新版本",
-    "gate": "关闭；待新整合定向独审、当前PR最新required CI与实际合入"
+    "e2eFailure": {
+      "attempt": 3,
+      "test": "documents.spec.ts:3",
+      "timeoutMs": 90000,
+      "observed": "Discussion定位器元素从DOM移除；与integration并行时间窗相关，但根因未确认",
+      "artifacts": [
+        {
+          "file": "docs/evidence/build-input-reachability.current/failed-e2e-3/error-context.md",
+          "source": ".tmp/g1-playwright-latest/root-mixed/output/documents-Project-and-Issu-75fb3-hrough-the-real-Web-and-API-authenticated/error-context.md",
+          "bytes": 17952,
+          "sha256": "234d7565719138dfed73f4878285ce4344b0eb27250f54e731b909f9eac79024",
+          "preservedExactly": true
+        },
+        {
+          "file": "docs/evidence/build-input-reachability.current/failed-e2e-3/test-failed-1.png",
+          "source": ".tmp/g1-playwright-latest/root-mixed/output/documents-Project-and-Issu-75fb3-hrough-the-real-Web-and-API-authenticated/test-failed-1.png",
+          "bytes": 104627,
+          "sha256": "d18a4fb4f297df74ede501d2ce1955ada5775eaa7b0c4f4cff574a59953b1b89",
+          "preservedExactly": true
+        }
+      ],
+      "rerunCondition": "integration完整结束后独立执行根pnpm test:e2e，源码/selector/timeout不变"
+    },
+    "optionalWhitespaceCheck": {
+      "command": "git diff --cached --check",
+      "exitCode": 2,
+      "outputLines": 576,
+      "scope": "只涉及本轮原始日志中的尾随空白；保留测试命令原始输出，不改输入或代码；非AGENTS五项必需命令"
+    },
+    "gate": "关闭；待新整合定向独审、当前PR最新required CI与实际合入",
+    "originalPullRequestObservation": {
+      "number": 196,
+      "state": "open",
+      "observedHead": "08ce81a6738407c90cf2629fbb70088a4a899841",
+      "observedBase": "dde2a1a6926040c35e9d85d89fed6238572f0f25",
+      "importedAndApprovedSource": "af583f71f310e68ade588f9922694dfd8aba7a65",
+      "handling": "执行期间来源分支前进；只读核查新提交为文档整合，未纳入未经本轮授权的新head；保留本构建原af583f7历史，不关闭或改动PR196；CI357仅覆盖af583f7"
+    }
   }
 }

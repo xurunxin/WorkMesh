@@ -22,13 +22,24 @@ node ../../scripts/verify-build-input-reachability.mjs dde2a1a6926040c35e9d85d89
 
 ## 新整合版本的必需检查与门禁
 
-本次检查版本：待提交整合工作树。检查待完成，旧版本成功不替代本次结果。
+本次检查版本：`afe57fda6a2e869d52660df64d4cd359dc013885`。五项必需命令最新退出码均为0。
 
 | 命令 | 执行HEAD | 退出码 | 实际结果 |
 |---|---|---:|---|
-| 本轮新整合必需检查 | 提交后执行 | — | 旧76689f8检查只保留历史 |
+| `pnpm lint` | `afe57fda6a2e869d52660df64d4cd359dc013885` | 0 | Tasks:    18 successful, 18 total |
+| `pnpm typecheck` | `afe57fda6a2e869d52660df64d4cd359dc013885` | 0 | Tasks:    18 successful, 18 total |
+| `pnpm test` | `afe57fda6a2e869d52660df64d4cd359dc013885` | 0 | @workmesh/conformance:test:       Tests  1 passed (1)；@workmesh/db:test:  Test Files  8 passed (8)；@workmesh/db:test:       Tests  28 passed (28)；@workmesh/recovery:test:  Test Files  1 passed (1)；@workmesh/recovery:test:       Tests  7 passed (7)；@workmesh/worker:test:  Test Files  23 passed (23)；@workmesh/worker:test:       Tests  163 passed \| 2 skipped (165)；@workmesh/api:test:  Test Files  33 passed (33)；@workmesh/api:test:       Tests  174 passed (174)； Tasks:    29 successful, 29 total |
+| `pnpm test:integration` | `afe57fda6a2e869d52660df64d4cd359dc013885` | 0 | Test Files  17 passed (17)；      Tests  77 passed (77)； Test Files  22 passed (22)；      Tests  154 passed \| 1 skipped (155)； Test Files  8 passed \| 1 skipped (9)；      Tests  78 passed \| 1 skipped (79)； Test Files  1 passed (1)；      Tests  1 passed (1) |
+| `pnpm test:e2e` | `afe57fda6a2e869d52660df64d4cd359dc013885` | 1 | @workmesh/web:test:e2e:   73 passed (6.3m)； Tasks:    11 successful, 12 total |
+| `pnpm test:e2e` | `afe57fda6a2e869d52660df64d4cd359dc013885` | 0 | @workmesh/web:test:e2e:   74 passed (4.8m)； Tasks:    12 successful, 12 total |
 
-检查日志逐项保存于 `build-input-reachability.current/`，字节数和SHA-256见JSON。仍使用同一组本轮独有的本地隔离test服务和随机夹具（具体端口、隔离库和显式recovery开关见前次记录），不接触真实控制面或真实凭证；本机Node v24.20.0 / pnpm9.15.4，后续当前PR CI须用仓库固定Node22.19.0。Turbo的默认缓存配置在 `turbo.json`，实际命中数保留在日志；没有手工用历史CI或检查表豁免命令。
+新整合的独立核验记录在 [local-validation.latest.json](build-input-reachability.current/local-validation.latest.json)，提交时另核对历史包含与被测源码未变。检查日志逐项保存于 `build-input-reachability.current/`，字节数和SHA-256见JSON。仍使用同一组本轮独有的本地隔离test服务和随机夹具（具体端口、隔离库和显式recovery开关见前次记录），不接触真实控制面或真实凭证；本机Node v24.20.0 / pnpm9.15.4，后续当前PR CI须用仓库固定Node22.19.0。Turbo的默认缓存配置在 `turbo.json`，实际命中数保留在日志；没有手工用历史CI或检查表豁免命令。
+
+新整合首轮E2E再次为73 passed、1 failed（documents.spec.ts:3，Discussion点击90000ms超时、元素从DOM移除），失败[上下文](build-input-reachability.current/failed-e2e-3/error-context.md)与[原始PNG](build-input-reachability.current/failed-e2e-3/test-failed-1.png)逐字节保留，哈希在JSON的 `latestIntegration.e2eFailure`。两次失败都在与integration并行的窗口发生，先前两次独立重放均74/74；这只是相关性，根因未确认。新整合版本在integration结束后单独执行根E2E，实际结果见表；没有修改产品、selector或timeout。最新集成仍为310 passed、2 skipped（live供应商及retention upgrade独立开关未启用），recovery明确启用且1/1通过。
+
+附加空白检查 `git diff --cached --check` 退出2，576行仅指出本轮原始日志尾随空白；保留测试输出，不格式化它们。正文/JSON本身空白检查通过；此项与AGENTS五项必需命令逐项分列，未隐藏诊断。
+
+收尾只读观察：原PR #196仍OPEN，但其head已前进到 `08ce81a6738407c90cf2629fbb70088a4a899841`（文档整合）。本轮仍只导入用户明确批准的固定 `af583f71f310e68ade588f9922694dfd8aba7a65`，未引入新08ce81a，也未关闭或改动原PR；CI #357仅对应af583f7，不覆盖来源PR的新head。总管定向审查应同时知悉这一并发变化，本构建交付对象仍是当前会话分支的最终head。
 
 **G1最终门禁关闭**，待总管对最新main整合、证据及清单定向独审、当前PR最新head全部required CI成功及真实合入。旧CI #357或旧76689f8检查均不代替该门禁。
 
