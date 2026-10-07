@@ -522,8 +522,13 @@ jobs:
           set -o pipefail
           pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
       - name: Install Playwright Chromium
+        timeout-minutes: 8
         run: |
           set -o pipefail
+          # Azure's default APT mirror stalled repeatedly on hosted runners.
+          # Use the image's official HTTPS fallbacks with bounded connections.
+          printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          printf 'Acquire::Retries "2";\nAcquire::http::Timeout "15";\nAcquire::https::Timeout "15";\n' | sudo tee /etc/apt/apt.conf.d/99-workmesh-ci-network >/dev/null
           pnpm exec playwright install --with-deps chromium 2>&1 | tee ci-logs/playwright-install.log
       - name: Run browser acceptance
         run: |

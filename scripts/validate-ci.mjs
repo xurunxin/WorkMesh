@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseDocument } from 'yaml'
-import { externalTestInputs } from './ci-test-inputs.mjs'
+import { externalTestInputs, externalTypecheckInputs } from './ci-test-inputs.mjs'
 import { readWorkspaces } from './ci-policy.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -239,6 +239,12 @@ requireCondition(
 requireCondition(!/(?:node_modules|\.next|dist\/\*\*)\s*$/m.test(workflow), 'build or install outputs must not be cached or uploaded')
 
 const source = jobSections.get('source-gates') ?? ''
+const browserInstall = parsedWorkflow.jobs.e2e.steps.find(step => step.name === 'Install Playwright Chromium')
+requireCondition(browserInstall?.['timeout-minutes'] === 8, 'browser installation must have an eight-minute bound')
+for (const input of ['https://archive.ubuntu.com/ubuntu/', 'https://security.ubuntu.com/ubuntu/', 'Acquire::Retries "2";', 'Acquire::http::Timeout "15";', 'Acquire::https::Timeout "15";']) {
+  requireCondition(browserInstall?.run?.includes(input), `browser preparation must retain official mirrors and bounded downloads: ${input}`)
+}
+requireCondition(browserInstall?.run?.includes('playwright install --with-deps chromium'), 'browser preparation must retain required OS dependencies')
 const cacheSteps = Object.entries(parsedWorkflow.jobs).flatMap(([jobId, job]) =>
   (job.steps ?? []).filter(step => step.uses?.startsWith('actions/cache/')).map(step => ({ jobId, ...step })))
 requireCondition(cacheSteps.length === 2, 'only one compiler/static cache restore and save pair is allowed')
@@ -251,6 +257,13 @@ for (const step of cacheSteps) {
   }
 }
 requireCondition(!turboJson.globalEnv, 'runtime credentials must not invalidate pure static tasks globally')
+const sourceRunner = readFileSync(resolve(root, 'scripts/run-ci-source.mjs'), 'utf8')
+requireCondition(sourceRunner.includes("if (task === 'lint') args.push('--only')") && !/if\s*\([^\n]*typecheck[^\n]*\)[^\n]*args\.push\('--only'\)/.test(sourceRunner), 'cached typechecks must retain Turbo upstream dependency hashes')
+for (const input of ['scripts/**', 'playwright*.ts']) requireCondition(turboJson.globalDependencies?.includes(input), `static caches must hash imported root input ${input}`)
+for (const [name, inputs] of Object.entries(externalTypecheckInputs)) {
+  requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#typecheck`]?.inputs) === JSON.stringify(['$TURBO_DEFAULT$', ...inputs.map(input => `$TURBO_ROOT$/${input}`)]), `${name} typecheck must hash directly imported fixture source outside runtime dependencies`)
+  requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#typecheck`]?.dependsOn) === JSON.stringify(turboJson.tasks.typecheck.dependsOn), `${name} typecheck must retain upstream typechecks`)
+}
 for (const [name, inputs] of Object.entries(externalTestInputs)) {
   requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#test`]?.inputs) === JSON.stringify(['$TURBO_DEFAULT$', ...inputs.map(input => `$TURBO_ROOT$/${input}`)]), `${name} tests must hash their complete declared external inputs`)
   requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#test`]?.env) === JSON.stringify(turboJson.tasks.test.env), `${name} tests must retain runtime environment hashing`)
