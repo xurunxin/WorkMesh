@@ -49,7 +49,6 @@ export default defineConfig({
       env: {
         ...process.env,
         NEXT_PUBLIC_API_URL: apiUrl,
-        NEXT_DEV_API_UPSTREAM: apiUrl,
       },
     },
   ],

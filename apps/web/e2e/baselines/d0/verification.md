@@ -1,6 +1,6 @@
 # D0 基线与验证记录
 
-**当前 D0 与 D1 门禁关闭。** 已修订 D0 的套件归属及看板覆盖，并通过详情页渲染条件对照定位不稳定来源；通用 mocked-dev 的实际失败仍须逐项处理或由总管裁决，不因一个旧失败对照而豁免其余失败。最终结果见 [manifest.json](manifest.json)、[stabilized-verification.json](evidence/stabilized-verification.json)。
+**当前 D0 与 D1 门禁关闭。** 已修订 D0 的套件归属及看板覆盖，并通过详情页渲染条件对照定位不稳定来源；最新审查要求的通用 upstream 覆盖已撤回。通用 mocked-dev 的实际失败仍须逐项处理或由总管裁决，不因一个旧失败对照而豁免其余失败。最新结果见 [manifest.json](manifest.json)、[upstream-scope-verification.json](evidence/upstream-scope-verification.json)；[stabilized-verification.json](evidence/stabilized-verification.json)冻结保存上一修订轮。
 
 [修订前报告](evidence/pre-review-verification.md)、[旧清单](evidence/pre-review-manifest.json)、[此前反馈核验](evidence/feedback-verification.json)属于历史版本，其通过结论不代替当前验收。历史报告相对链接按原基线目录解释；历史路径标识与当前保留的原始 PNG 对应关系已逐项核对，见 [historical-assets.json](evidence/historical-assets.json)。
 
@@ -10,7 +10,7 @@
 
 此次 G1 交接把参考设计资料地址同步为 **`docs/references/todos-analysis/`**。`git ls-tree HEAD -- docs/references/todos-analysis/` 未发现该目录；输入包尚在 G1 审查分支，未假称已进入本基点。此次只同步地址，不导入资料或迁入测量值，不改产品规范、不放行 G1；原外部路径仅作历史来源。
 
-产品基点为 `32789cec4d50db0b85a63d91049cc425d9e917a2`；本轮验证基点为 `0e9968dd24748f864370819a239093b42c80ba61`。本轮只改采集、夹具、套件归属验证、PNG 与记录；无产品/token、数据库迁移、API 或事件变更。输入 SHA-256 在 manifest 保存。
+产品基点为 `32789cec4d50db0b85a63d91049cc425d9e917a2`；上一修订轮验证基点为 `0e9968dd24748f864370819a239093b42c80ba61`，最新 upstream 范围修订基点为 `d8dcbbcd151011f5696200e6a99ce99fcaf3a93d`。最新仅删除通用配置的一行、增加配置契约断言及验证记录；14 张 PNG、D0 配置、夹具、比较参数均未改变，无产品/token、数据库迁移、API 或事件变更。当前来源 SHA-256 在 manifest 保存，历史证据保持原来源版本。
 
 G1、P1、R1、D0 独立验收。D1a 新增并存槽与映射；D1b 才逐面迁移、视觉评审与清理。本交付不放行这些任务。
 
@@ -36,7 +36,7 @@ G1、P1、R1、D0 独立验收。D1a 新增并存槽与映射；D1b 才逐面迁
 
 ## 审查问题修订
 
-通用 `playwright.mocked.config.ts` 用 `testIgnore` 排除 D0；专用配置用 `testMatch` 只收集 D0，并以 `testIgnore: []` 解除继承排除。显式 viewport 检查继续保留，只由固定视口的专用入口执行。通用 mocked-dev 将 Next upstream 显式指向隔离夹具 `3201`，不改产品代理。
+通用 `playwright.mocked.config.ts` 用 `testIgnore` 排除 D0；专用配置用 `testMatch` 只收集 D0，并以 `testIgnore: []` 解除继承排除。显式 viewport 检查继续保留，只由固定视口的专用入口执行。按最新审查撤回通用入口新增的 `NEXT_DEV_API_UPSTREAM: apiUrl`，恢复继承调用环境；仅 D0 专用配置保留隔离夹具 `3201` 覆盖，不改产品代理。新增契约断言以不同 upstream 输入验证这两个入口的边界。
 
 套件归属校验、配置与 runner 契约已同步：[发现记录](evidence/review-suite-scope.json)中 root 74 项/27 文件、mocked-dev 139 项/16 文件、D0 14 项/1 文件、production 50 项/2 文件全部通过。发现通过不等于实际执行通过。应用配置契约 2 项，脚本归属与 runner 契约 17 项通过。
 
@@ -64,11 +64,11 @@ Windows 11 `10.0.26300`、Node `24.20.0`、pnpm `9.15.4`、Playwright `1.61.1`�
 
 **两次原始 PNG 哈希一致**、**使用容差比较器的重启重放通过**、**四次采集均与落盘基线哈希一致**是独立判断，当前清单分别记录。哈希证据在断言前落盘，失败也保留；完整通过才写 `*-replay.json`。
 
-## 五项必需检查与通用入口
+## 上一修订轮的五项必需检查与通用入口
 
-本轮实际命令、退出码、摘要、完整原始日志 SHA-256 见[最终运行证据](evidence/stabilized-verification.json)。配置及采集修订后重跑 lint/typecheck/test；集成及正式 E2E 本轮已实际执行。后续参数仅由 D0 消费，没有重跑无关检查或冒称缓存包全部重新执行。
+上一修订轮实际命令、退出码、摘要、完整原始日志 SHA-256 见[栅格修订运行证据](evidence/stabilized-verification.json)。该轮配置及采集修订后重跑 lint/typecheck/test，集成及正式 E2E 也已实际执行；这些历史结果不冒称最新 upstream 范围修订后重新执行。最新执行与沿用边界另列下文。
 
-| 检查 | 本轮实际结果 | 条件范围 |
+| 检查 | 上一修订轮实际结果 | 条件范围 |
 | --- | --- | --- |
 | `pnpm lint` | 18/18 Turbo 任务成功 | 无 |
 | `pnpm typecheck` | 18/18 成功 | 无 |
@@ -82,10 +82,32 @@ Windows 11 `10.0.26300`、Node `24.20.0`、pnpm `9.15.4`、Playwright `1.61.1`�
 
 历史环境保护、缺 S3 上传 500、reducedMotion 位置错误、定位器/DTO/样式注入及截图失败保留于 [attempts.md](evidence/attempts.md)、[checks.json](evidence/checks.json)、本轮 review/stabilized 记录。前一服务未退出造成的本轮端口冲突另列启动顺序错误，用例未执行，不算产品失败或成功重放。
 
+## 最新 upstream 范围修订与验证
+
+按审查选择最小修复：通用 Next server 的 `env` 只显式设置 `NEXT_PUBLIC_API_URL: apiUrl`，继续展开 `...process.env`；删除新增 upstream 默认覆盖。D0 专用配置仍明确设置 `NEXT_DEV_API_UPSTREAM: 'http://127.0.0.1:3201'`，有效代理目标不变。契约测试注入 `http://127.0.0.1:1/fixture-upstream`，分别断言通用入口原样继承、D0 覆盖为自己的夹具。没有通过全局环境强制同一个值来替代边界验证。
+
+本轮实际结果与完整日志 SHA-256、两份修改来源的新旧 SHA-256、逐项原始附件绑定见 [upstream-scope-verification.json](evidence/upstream-scope-verification.json)。日志原文保存在 [upstream-logs/](evidence/upstream-logs/)。
+
+[本轮最终证据核验](evidence/upstream-evidence-audit.json)确认 14 个当前来源、14 张基线、28 次新附件绑定、56 个历史采集哈希、28 张历史原图、六份未改写的历史证据及六份新日志哈希一致。
+
+| 本轮命令 | 实际结果与范围 |
+| --- | --- |
+| 配置契约 `vitest run e2e/playwright-config-contract.test.ts` | 2/2 通过，包含 upstream 继承/覆盖断言 |
+| `verify-playwright-suite-scope.mts` | 四入口发现通过：root 74、mocked-dev 139、D0 14、production 50；不代表实际全套执行 |
+| `pnpm lint` / `pnpm typecheck` | 各 18/18 成功，其中各 17 项缓存 |
+| `pnpm test` | 29/29 成功；web 实际执行 776/776，其余 28 个任务缓存，未把缓存输出记作重新执行 |
+| D0 `--update-snapshots=none` | 独立启动重放 14/14 通过；两次上下文共 28 个原始 PNG 附件逐字节及 SHA-256 与已有基线一致 |
+| `pnpm test:integration` / `pnpm test:e2e` | 本轮未重跑；沿用上一修订轮结果，三项条件跳过的边界不变 |
+| 通用 mocked-dev | 本轮未执行 139 全套，也未重跑 12 项专项；历史实际失败和 115 项未执行原样保留 |
+
+原始字节核验不使用容差；视觉重放仍使用 `threshold=0.005,maxDiffPixels=0`。此前两轮的 **56 次**采集、来源与日志冻结在上一修订轮证据中；本轮新增 **28 次**单独记录，不能冒称旧两轮在新来源版本下重跑。HTML 报告会对相同 PNG 去重，核验按每用例的 `capture-1`、`capture-2` 两个命名附件逐项读取原始字节；首次归档脚本错误要求两个独立文件而停止，修正核验方式后通过，未把它误判为产品或视觉失败。
+
+本轮未改变产品/领域、D0 有效 upstream 或采集条件，因此没有为此次撤回重复集成及正式 E2E。撤回新增默认变更解决本次 blocking；旧的 12 项强制同值对照仍只证明各项错误，不证明其余 115 项结果。剩余旧失败继续按 [mocked-failures.md](evidence/mocked-failures.md) 的逐项下一步处置；涉及产品行为或验收边界时交总管裁决。门禁保持关闭，不以此次修复宣称 D0 完成，也不放行 G1/P1/R1。
+
 ## 真实剩余原因与定向复核
 
 已核对 `dae4620366f33136d65e533d85823db49b9a3fe1` 主动删除 `WORKMESH_PRD.md`，为本基点祖先。2026-08-22 计划第 34 行改用 Issues、`AGENT_PROTOCOL.md`、`OPENAPI.yaml`、`SCHEMA.sql`、Accepted ADR；2026-09-24 工作台基线第 62 行要求修陈旧引用、不重造 PRD。引用修订属 G1，不等重传、不编造 PRD，不作为真实采集/检查阻塞。
 
 目前不缺用户资料或凭据重传。定向复核需先核对归属、看板 viewport 断言、栅格 A/B、旧 PNG 和最终原始哈希，再逐项处理通用 mocked-dev 的实际失败。需无关产品修复或改变验收边界时由总管裁决；D0 不自行豁免或扩大实现范围。
 
-在变更评审点本 Markdown 的预览按钮即可查看。重放命令见 [README.md](README.md)；正式与 mock Next 共享 `apps/web/.next`，必须顺序启动并等待退出。所有数据库/Redis/S3 为隔离本地测试资源，不是真实控制面。本任务三个隔离容器及临时卷已移除，3100/3101/3200/3201 无遗留监听；当前原图、历史原图、来源和容差依据的最后核对见 [final-evidence-audit.json](evidence/final-evidence-audit.json)。
+在变更评审点本 Markdown 的预览按钮即可查看。重放命令见 [README.md](README.md)；正式与 mock Next 共享 `apps/web/.next`，必须顺序启动并等待退出。所有数据库/Redis/S3 为隔离本地测试资源，不是真实控制面。上一轮三个隔离容器及临时卷已移除；[final-evidence-audit.json](evidence/final-evidence-audit.json)保存上一修订轮的原图、历史原图、来源和容差依据核对。最新来源与原始采集核对见上述 upstream 范围修订证据，不改写旧审计版本。

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "workmesh.d0.visual-baseline",
-  "generatedAt": "2026-10-07T11:54:49.431Z",
+  "generatedAt": "2026-10-07T12:27:15.953Z",
   "sourceCommit": "32789cec4d50db0b85a63d91049cc425d9e917a2",
   "sourcePlan": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
   "sourceAdr": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
@@ -17,7 +17,7 @@
   },
   "visualStatus": "passed",
   "d1Gate": "closed",
-  "gateReason": "当前 D0 视觉清单两轮各 14 通过、56 次原始 PNG 与基线严格一致，五项必需检查成功退出；通用 mocked-dev 实际失败尚未处置，不宣称 D0 完成，不改变验收边界。G1/P1/R1 独立验收。",
+  "gateReason": "此前两轮各 14 通过、56 次原始 PNG 与基线严格一致；撤回通用 upstream 默认覆盖后本轮另有 14/14 重放及 28 次原始字节核验，lint/typecheck/test 重跑成功，集成/正式 E2E 为历史结果。通用 mocked-dev 旧失败未处置且 115 项未执行，不宣称 D0 完成。G1/P1/R1 独立验收。",
   "screenshotCount": 14,
   "independentCaptureCount": 56,
   "browserLaunchArguments": [
@@ -74,11 +74,11 @@
     },
     {
       "path": "apps/web/playwright.mocked.config.ts",
-      "sha256": "a5ca61e65b2a486c8cb4fbbfe1d2116d4b3459b38c99d78024b19ebd053c6599"
+      "sha256": "ec5a997c7f86358d80593fd4571f252d554e5b94272610bb03ec3cea67b8b85d"
     },
     {
       "path": "apps/web/e2e/playwright-config-contract.test.ts",
-      "sha256": "49d5f4db081c9c14e3006dfe991045814ae1de67e255150de688cd310f5eeca7"
+      "sha256": "8f5858b7d84afbed852780788af25934dcea5226b18598a06697d931cd004acc"
     },
     {
       "path": "scripts/verify-playwright-suite-scope.mts",
@@ -1061,8 +1061,18 @@
   },
   "requiredChecks": {
     "succeeded": true,
-    "evidence": "evidence/checks.json",
-    "remainingConditionalSkips": 3
+    "evidence": "evidence/stabilized-verification.json",
+    "remainingConditionalSkips": 3,
+    "latestScopeVerification": "evidence/upstream-scope-verification.json",
+    "latestRerun": [
+      "pnpm lint",
+      "pnpm typecheck",
+      "pnpm test"
+    ],
+    "historicalOnly": [
+      "pnpm test:integration",
+      "pnpm test:e2e"
+    ]
   },
   "batchExecution": {
     "controlPlane": "todos-and-repository",
@@ -1091,21 +1101,31 @@
   },
   "feedbackVerification": "evidence/feedback-verification.json",
   "validationBaseCommit": "0e9968dd24748f864370819a239093b42c80ba61",
-  "captureCountScope": "当前两个完整全量验证轮各 14 项、每项两个独立上下文，共 56 次，原始附件及 SHA-256 已核对；不由比较器通过推导",
+  "captureCountScope": "上一栅格修订两个完整全量验证轮各 14 项、每项两个独立上下文，共 56 次；对应来源与日志冻结在 stabilized-verification.json。本轮另有 28 次，见 latestReplay，不混记为旧轮重跑。",
   "historicalEvidence": {
     "manifest": "evidence/pre-review-manifest.json",
     "verification": "evidence/pre-review-verification.md",
     "feedback": "evidence/feedback-verification.json",
     "statusScope": "修订前历史版本，不能代替当前验收",
     "preStabilization": "evidence/pre-stabilization-manifest.json",
-    "reviewFailureEvidence": "evidence/review-fix-verification.json"
+    "reviewFailureEvidence": "evidence/review-fix-verification.json",
+    "stabilizedVerification": "evidence/stabilized-verification.json"
   },
-  "currentEvidence": "evidence/stabilized-verification.json",
+  "currentEvidence": "evidence/upstream-scope-verification.json",
   "referenceInput": {
     "path": "docs/references/todos-analysis/",
     "addressSynchronized": true,
     "includedInValidationBase": false,
     "reason": "用户最新 G1 交接仅同步地址；输入包尚在 G1 审查分支，git ls-tree HEAD 未发现该目录；不导入、不提前放行 G1"
   },
-  "rasterDiagnosis": "evidence/raster-diagnosis.json"
+  "rasterDiagnosis": "evidence/raster-diagnosis.json",
+  "latestSourceValidationBaseCommit": "d8dcbbcd151011f5696200e6a99ce99fcaf3a93d",
+  "latestReplay": {
+    "evidence": "evidence/upstream-scope-verification.json",
+    "passed": 14,
+    "originalCaptureCount": 28,
+    "allMatchBaselineBytes": true,
+    "sourceVersion": "d8dcbbcd151011f5696200e6a99ce99fcaf3a93d"
+  },
+  "latestEvidenceAudit": "evidence/upstream-evidence-audit.json"
 }
