@@ -13,8 +13,10 @@ ADR 0053 (human attention and governed responses), ADR 0062 (autonomous control
 plane and agent lifecycle), ADR 0067 (governed platform tools), ADR 0071 and
 ADR 0072 (deployment classes), `CONTEXT.md`.
 
-This ADR **narrows** ADR 0062 for one action type, and **amends** ADR 0037's
-inbox recovery semantics. Both are stated explicitly below rather than assumed.
+This ADR is **parallel** to ADR 0062 rather than a narrowing of it: a Chief
+delegation and an autonomy policy are both standing, bounded, revocable grants.
+It **amends** ADR 0037's inbox recovery semantics, which is stated below and
+recorded in the plan as a choice to make before coding.
 
 ## Correction (2026-10-07, after adversarial review)
 
@@ -39,6 +41,20 @@ The general lesson is recorded because it is the failure mode, not the
 corrections: **the presence of parts is not the presence of the property they
 compose into.** Every "X plus Y already gives Z" claim below now names the
 component that does not yet exist.
+
+A second correction came from the owner after the review, and it is recorded
+here because the review got it only half right. Review finding H3 said the draft
+had to choose between per-dispatch human decisions and ADR 0062's policy-based
+autonomy, and it recommended the per-dispatch option. **That recommendation was
+wrong for this product.** The owner settled it: the Chief has autonomous
+dispatch authority, a Human revises rather than approves item by item, and once a
+goal is handed to the Chief that is a delegation to execute. Per-dispatch human
+approval would have produced an officer who asks permission on every errand,
+which is the opposite of a coordinator. The draft's "exception to ADR 0062"
+framing is therefore **withdrawn**: a Chief delegation is the same kind of thing
+as an autonomy policy — standing, bounded, revocable — so the two are parallel
+rather than competing. Review finding B1 survives unchanged: a free-text message
+is still not a grant.
 
 ## Context
 
@@ -231,51 +247,170 @@ atomically related, so the failure cases are specified rather than assumed:
 
 An idempotency key that spans a Chief change must not deliver twice.
 
-### Dispatch authorisation is a consumable binding, and a human message is not one
+### Dispatch authority is a standing delegation, and a human message is not one
 
-This is the load-bearing correction. A human's message is **input and provenance
-evidence**; it is not execution permission. Presenting it as permission would
-break the actor model's attribution rule, and enforcing "no human decision"
-naively would block the Chief from even drafting a task for review.
+This is the load-bearing correction, and it is two-sided. A human's message is
+**input and provenance evidence**; it is not execution permission. Presenting it
+as permission would break the actor model's attribution rule. But the opposite
+error is just as damaging: requiring a fresh human decision **per dispatch** turns
+the Chief into an officer who asks for permission on every errand, which is not
+coordination.
 
-Both dispatch channels therefore use **one structured dispatch authorisation**,
-which a Human confirms through a governed command:
+The unit of authority is therefore **one Chief delegation**, not one decision per
+dispatch. A Human hands the Chief a goal through a governed command; that creates
+or draws on a structured delegation, and inside its bounds the Chief dispatches
+autonomously. Each individual dispatch **references** that delegation's id and
+revision — so every dispatch is attributable, auditable and revocable, without a
+human being in the loop each time.
 
-- A room operation that explicitly confirms the required fields may create the
-  authorisation directly. **Free text may not.** Free text first becomes a
-  structured proposal, and the proposal becomes an authorisation only once
-  confirmed.
-- The binding records workspace, Team, `appointmentId` and revision, principal
-  Human, target Work Item or plan version, target agent, capabilities and scope,
-  budget, a canonical action digest, an expiry, and a maximum use count.
-- Execution commands keep the **real** agent as author and reference the real
-  human decision. An agent-authored command is never written as a Human author.
-- A Chief may create a Work Item or plan that **does not start execution**.
-  Starting, claiming, spawning a child session, retrying, or any other action
-  with execution effect must verify and consume a matching authorisation inside
-  the state-change transaction. Capability, Delegation, scope, Stop, lease,
-  revision and idempotency checks all still run.
-- Missing, expired, digest-mismatched, exhausted and revoked-authorisation cases
-  each return a specific domain error.
+- **Free text is still not a grant.** A room operation that explicitly confirms
+  the required fields may create or extend the delegation. Free text first
+  becomes a structured proposal, and only a confirmed proposal becomes a
+  delegation.
+- The delegation records workspace, Team, `appointmentId` and revision, principal
+  Human, the goal or scope it covers, capabilities, resource scope, budget, an
+  expiry, and a maximum use count. It is the same shape as any other Delegation
+  in `CONTEXT.md`: revocable, bounded, and never implied.
+- **Every dispatch carries the delegation reference.** Starting, claiming,
+  spawning a child session, retrying, or any other action with execution effect
+  verifies in the state-change transaction that a live delegation covers it.
+  Capability, Delegation, scope, Stop, lease, revision and idempotency checks all
+  still run.
+- Execution commands keep the **real** agent as author and cite the delegation.
+  An agent-authored command is never written as a Human author.
+- Missing, expired, scope-mismatched, exhausted and revoked cases each return a
+  specific domain error.
+- The Chief **may not widen its own delegation**. Widening is a Human command.
+
+**The Human's levers are revision, not per-item approval.** They are deliberately
+not "approve every dispatch":
+
+| Lever | Effect |
+| --- | --- |
+| Hand the Chief a goal | creates or draws on the delegation; the Chief then executes autonomously against that goal |
+| Revise the delegation | narrow capabilities, shrink scope, shorten the window; later dispatches are refused |
+| Stop a session or work item | server-enforced; the Chief cannot resume it |
+| Revise the work item | correct the Chief's own output |
+| Revoke or replace the appointment | the Chief loses the ability to dispatch entirely |
+| The two human gates | unchanged: a plan still needs confirmation and a diff still needs review |
 
 A single shared guard covers `delegate_work_item`, `claim_work_item`,
 `create_child_session`, retry and automation admission, so a check placed only in
 `report_to_chief` or in an MCP wrapper can be bypassed through creation, child,
 claim and automation entry points. The executing session is **persisted** as
 carrying a Chief execution context, so a Chief session that outlives its
-appointment cannot silently degrade into an ordinary agent. The existing
-Approval hash-and-consume construction is reused, with a dispatch-specific
-binding: neither an arbitrary `decisions.status = 'final'` nor a
-`room_message.intent = 'decide'` is treated as universal authorisation.
+appointment or whose delegation was revoked cannot silently degrade into an
+ordinary agent. Neither an arbitrary `decisions.status = 'final'` nor a
+`room_message.intent = 'decide'` is treated as a delegation.
 
-**Relation to ADR 0062.** ADR 0062 allows a policy-authored decision to satisfy an
-Approval at any risk level, and the YOLO path records
-`approval_decisions.source = 'workspace_policy'`. Chief dispatch is an
-**explicit exception**: only a decision whose source is a human satisfies it.
-`requestApproval` auto-approval and the pending-approval reconciliation path must
-not auto-approve this action type, and a policy-sourced record keeps its own
-source rather than being rewritten as human. Every other action keeps ADR 0062's
-existing semantics.
+**Relation to ADR 0062 is a conjunction, not an isomorphism.** A Chief
+delegation and an autonomy policy are two different authorisation layers, and
+the earlier draft's claim that they are "the same kind of thing" was wrong.
+
+> A **Chief delegation** decides who may initiate dispatch, against which goals,
+> resources, capabilities and window. An **Approval autonomy policy** decides only
+> whether a specific action that *still requires an Approval* may be approved by
+> policy. Execution requires a valid delegation **and** every other identity,
+> capability, scope, Stop, revision and lease check passing, **and** — when the
+> action needs an Approval — a valid Approval bound to that action. Any one
+> refusing refuses. The two are neither an OR nor a fallback.
+
+ADR 0062 is explicit that a policy-authored decision satisfies an Approval only
+*after* normal authorisation checks pass, and it cannot bypass delegation,
+capability, scope or Stop. The consequence for implementers is the one that
+matters: **a policy-approved record is never a credential for creating or
+extending a delegation, and an existing delegation is never a reason to skip an
+action's Approval.**
+
+Creating or extending a Chief delegation goes through **one dedicated governed
+command that requires a capable Human**. `requestApproval` may carry the request
+and the notification, but it does not modify the grant. `source` preserves
+provenance: a Human actor id appearing in a record is not evidence of a
+human confirmation *for this dispatch*.
+
+### The two execution gates are specified, not assumed
+
+The two gates are protected state transitions with concrete bindings, not
+"ask a human" in prose:
+
+| | Confirm gate | Review gate |
+| --- | --- | --- |
+| Transition | plan version → implementation admitted | diff/head → work item accepted |
+| Binding | the exact plan version presented | the exact diff or head hash |
+| Decidable by | a Human, or a policy if ADR 0062 permits for this action | same |
+| Invalidated by | any plan revision, delegation revision change, or scope change | any new head, new base, or new revision |
+| Enforced | in the state-change transaction on the server | same |
+
+If these gates are satisfied through ADR 0062-governed Approvals, they are
+interpreted under that policy rather than asserted to be unconditionally human.
+Where a deployment requires a real person even under YOLO, that is written as a
+policy difference scoped to these two gates — not as a general claim that this
+ADR changes nothing.
+
+### Two ceilings, not one
+
+The Chief's own authority and the authority it may hand to others are different
+things, and conflating them would let a user overestimate the restraint of a
+delegated goal.
+
+| Ceiling | Contents | Default |
+| --- | --- | --- |
+| **Chief's direct capabilities** | what the Chief may do with its own hands | the six coordination capabilities; `repo:write_branch`, `repo:merge`, `artifact:write`, `repo:read`, `ci:run`, `deploy:*`, `secrets:use`, `automation:manage`, `admin:*` require separate approval |
+| **Per-goal dispatch ceiling** | which roles, capabilities and resources the Chief may assign **within this goal** | confirmed once, by the Human, when the goal delegation is created |
+
+Every autonomous dispatch computes:
+
+```
+effective = target agent's live grants
+            ∩ this goal's dispatch ceiling
+            ∩ this delegation's revision
+```
+
+A target that already holds `repo:merge` does not let a default Chief's
+delegation borrow it. The tension is real and is resolved by writing both
+defaults explicitly: a Chief that may not touch a repository itself would also
+be unable to schedule ordinary code work if the downstream ceiling were always a
+subset of its own, so **the two default tables are stated separately and are not
+derived from one another**. Widening either ceiling is a separate audited Human
+command. A free-text goal statement and the model's own judgement are never
+grounds for widening it.
+
+### Revocation has to reach derived work, not only the next dispatch
+
+> Refusing later dispatches is not revocation. A standing delegation spans many
+> commits, several executors and several asynchronous queues, so "the delegation
+> is revocable" only means something once every derived permission inherits its
+> live boundary.
+
+| Situation | Rule |
+| --- | --- |
+| Revocation vs a concurrent new dispatch | both lock the same delegation revision; a committed revocation must make any **subsequently committed** dispatch fail. Expiry is judged at the final authorisation checkpoint against current time |
+| Submitted, not yet started | re-check appointment, delegation and target revision at final admission; if unsatisfied, cancel the start and do not consume budget |
+| Running executor, child session, retry | the relationship to the source delegation and appointment generation is **persisted**; on invalidation these lose ordinary writes and platform-managed external actions. Whether *all* derived sessions stop, or only those the narrowing touched, is stated per capability class and is not left to the reader |
+| Already inside an external process | only a cancel request is sent and the result recorded. WorkMesh does not claim retroactive withdrawal, and platform Stop does not by itself kill a harness command — that limit already stated here stands |
+| After narrowing | the old revision must be re-read; work still inside the new range may resubmit autonomously without per-item approval |
+
+If the product ever intends dispatched work to **survive independently**, that is
+named as independent surviving authority, the interface must not describe it as
+revoked, and it gets its own stop entry. Editing a Work Item description is never
+read as widening the delegation, and never lets an in-flight old target continue.
+
+### Usage is accounted per dispatch, not consumed per grant
+
+A reusable delegation keeps a maximum use count and a budget, so it needs an
+explicit accounting contract; the first draft deleted the counting rules along
+with the per-dispatch grant and that was wrong.
+
+- Every dispatch has a stable **logical dispatch identity** — its own record, not
+  the delegation id. The delegation id and revision are the *authority source*;
+  the dispatch identity is the *unit of accounting*.
+- Remaining-count check, budget reservation or deduction, and the
+  session/event/outbox rows all commit in **one transaction**.
+- A replay under the same idempotency key does **not** deduct again.
+- One dispatch reaching several entry points is counted once.
+- Whether a new execution retry counts as a new use is stated explicitly, and a
+  failed reservation releases its budget.
+- Revising a delegation never silently zeroes usage already recorded.
 
 ### Activation: a real command, because the obvious one is Human-only
 
@@ -333,8 +468,10 @@ The consumption contract is therefore specified:
   revocation; when a payload is insufficient the resource is re-read under
   current authorisation.
 - "Processed through C" is linked atomically to that batch's committed proposal
-  and activation results; dispatch effects remain independently de-duplicated by
-  the authorisation binding.
+  and activation results. A dispatch has its own stable **dispatch record**; its
+  effects are de-duplicated by that record and its idempotency key, never by the
+  delegation id - the delegation is the authority source, not the dispatch's
+  identity.
 - A session's input is a versioned, size-bounded derived summary plus the delta,
   traceable to its sources and never authoritative.
 - `CURSOR_EXPIRED`, a consumer-version change, or an authorisation **expansion**
@@ -401,10 +538,11 @@ summaries.
 | Action | Mechanism | Bound |
 | --- | --- | --- |
 | See status across the Team | a read model over sessions, executor projections and activities, read through the consumption contract | authorised by Team scope only |
-| Publish a task | `work:write` command with revision and `Idempotency-Key` | ordinary Work Item invariants apply unchanged |
-| Propose a correction | a `propose` message plus a decision record | it may **not** reassign a Work Item's Responsible Human; a Chief proposes, a Human decides |
-| Request authority it lacks | `requestApproval`, which already exists in the MCP, SDK and tool surface | only a Human can grant; the Chief cannot self-grant |
-| Re-order or re-route | authorisation first, then a lease, then routing records | a Lease is a coordination claim and grants nothing (ADR 0013); force-release stays Human with a reason |
+| Publish and dispatch a task | `work:write` command citing the live Chief delegation | **autonomous inside the delegation** — no per-item human decision; every dispatch is attributable and revocable by that delegation |
+| Correct its own earlier output | `work:write` with revision | it may **not** reassign a Work Item's Responsible Human; that stays a Human-only act |
+| Change the goal it was handed | a Human revises the delegation or the work item | the Chief cannot reinterpret a goal into a wider one; scope changes are Human commands |
+| Request authority it lacks | `requestApproval`, which already exists in the MCP, SDK and tool surface | only a Human can grant; the Chief cannot self-widen its delegation |
+| Re-order or re-route | the delegation first, then a lease, then routing records | a Lease is a coordination claim and grants nothing (ADR 0013); force-release stays Human with a reason |
 
 Handoff follows the existing offer and accept flow (ADR 0014); this ADR grants the
 Chief no accept authority.
@@ -471,8 +609,8 @@ that a Chief is available.
 A Team gains one discoverable coordinator and a real position from which to
 author and route work, built almost entirely from components the database already
 holds. The additions are narrow in name and substantial in substance: a subject
-extension, an appointment table, two tools, one authorisation binding, one
-admission path and one consumption protocol.
+extension, an appointment table, two tools, a Chief delegation with its dispatch
+records and usage ledger, one admission path, and one consumption protocol.
 
 The costs are accepted deliberately. The Chief is the most expensive reader in
 the system, so the consumption protocol is the largest single piece of work and
@@ -483,9 +621,10 @@ business to scale. Inbox recovery across short sessions is a genuine open choice
 that must be made before coding rather than discovered while coding.
 
 This ADR adds no authority a Human does not already hold. It reorganises who
-exercises it, and it makes one deliberate narrowing of ADR 0062 for a single
-action type, which is a real change to an Accepted decision and is therefore
-stated here rather than assumed.
+exercises it — one Human grants a goal-scoped delegation instead of approving
+each errand — and it makes that grant as auditable and revocable as any other
+Delegation. It is parallel to ADR 0062's autonomy policies rather than a change
+to one.
 
 ## Migration
 
@@ -501,8 +640,8 @@ fixed in advance — the consumption and authorisation contracts determine it.
 2. A later entry replaces the `CHECK` and `enforce_room_subject()` per the Team
    branch above, and creates `chief_appointments` with the partial unique index
    and its events and outbox rows.
-3. Further entries add the authorisation binding, its consumption, and any
-   storage the Inbox recovery choice requires.
+3. Further entries add the Chief delegation, its dispatch records and usage
+   ledger, and any storage the Inbox recovery choice requires.
 4. The v1 manifest records only the **new** entries and `SCHEMA.sql` is updated
   to match. Applied baselines, legacy entries and their checksums are left
   exactly as they are; the published baseline is not regenerated in order to add
@@ -528,17 +667,21 @@ reviewed per statement, not diffed for line numbers.
 
 - `CONTEXT.md` gains **Chief** (a designated coordinating agent that authors and
   routes work and holds no capability by designation), **Chief appointment** (a
-  revocable Human act, one per Team, granting nothing), **Dispatch
-  authorisation** (a consumable binding that a human message is not), and **Agent
-  memory** (provenance-bearing, non-authoritative, filtered by the reading
-  session's permissions, deferred from the first version).
-- `OPENAPI.yaml` declares the appointment commands, the authorisation binding and
-  its consumption errors, `get_chief` as a Query, and `report_to_chief` as a
-  Command, together with the four routing failure codes.
+  revocable Human act, one per Team, granting nothing), **Chief delegation**
+  (a standing, bounded, revocable grant that a human message is not), **Dispatch
+  record** (the per-dispatch accounting and effect-de-duplication identity),
+  and **Agent memory** (provenance-bearing, non-authoritative, filtered by the
+  reading session's permissions, deferred from the first version).
+- `OPENAPI.yaml` declares the appointment and delegation commands, dispatch
+  records with their usage and exhaustion errors, `get_chief` as a Query, and
+  `report_to_chief` as a Command, together with the four routing failure codes.
+  It declares no per-dispatch authorisation binding, because none exists.
 - `AGENTS.md` states that a Team has at most one Chief, that the appointment
-  grants no capability, that Chief dispatch is an exception to ADR 0062 requiring
-  a human-sourced decision, and that a Chief may not replace a Responsible Human.
-- `AGENT_PROTOCOL.md` gains the two-channel dispatch rule, the authority-layer
+  grants no capability, that a Chief dispatches autonomously **inside a
+  revocable delegation** rather than per approved decision, that the Human's
+  levers are revision and revocation, and that a Chief may not replace a
+  Responsible Human.
+- `AGENT_PROTOCOL.md` gains the delegation-scoped dispatch rule, the authority-layer
   ordering between the harness and the platform, and the statement that a memory
   is not a standing instruction and is never written from tool output
   automatically.

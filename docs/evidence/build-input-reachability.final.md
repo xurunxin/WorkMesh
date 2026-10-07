@@ -1,5 +1,59 @@
 # 最终隔离构建输入可达性验证
 
+## 当前交付整合与门禁
+
+本轮在 `tds/conv-01a116f7-1027-7c75-90df-32ebc5488752` 整合原证据 head `af583f71f310e68ade588f9922694dfd8aba7a65` 与最新 main `dcf355735341bc6daac4101b8c7d0efbaabbe764`，保留两条提交历史。原 PR #196 的独审和 CI #357 是历史来源；当前交付仍需总管定向独审、当前 PR 最新 head 的全部 required CI 及实际合入，**G1 最终门禁保持关闭**。
+
+主计划只有状态行冲突；保留已核实 G1/P1/D0 状态及 main 的 F2 委派内自主分派、第二轮授权契约。PR #197 修改的四个文档完整吸收：主计划、ADR 0078、新增 round2 审查、CI 本机前置。除主计划事实状态及交接引用外，不修订产品设计。
+
+F5 来源：本轮修订 spec 引用 #3 原问题卡，用户于 2026-10-07 23:29:53（Asia/Shanghai）选择“有审计的重新投递”，已交 R1。当前仅记录来源和待 R1 规格修订；PR #197 的“待决定”属于历史提案，不能据此称用户尚未选择。
+
+## 最新 main 独立 checkpoint
+
+精确 detached worktree HEAD 为 `dcf355735341bc6daac4101b8c7d0efbaabbe764`。在该目录运行当前仓库 verifier：
+
+```text
+node ../../scripts/verify-build-input-reachability.mjs dcf355735341bc6daac4101b8c7d0efbaabbe764 --json-out ../g1-main-checkpoint.json
+exit code: 0
+checkedFiles: 44
+p1Assertions: 16
+errors: 0
+```
+
+逐文件结果追加在 JSON 的 `handoff.buildVerification`，不覆盖顶层 `419a1d7`、`integration.buildVerification` 的 `4b287b4` 或 `integration.pullRequestBaseVerification` 的 `36c7709`。此项是最新 main 定向读取，不能冒称旧初始 build 换成了本轮分支。
+
+另外完整读取 ADR 0078、`0078-review-round2.md` 和 `docs/CI.md` 的提交正文及 detached 工作树字节，3/3 可读；Git 规范化 blob 全部匹配，逐项哈希和正文标题见 `handoff.additionalInputs`。这三项**另计**，不以旧44项数量冒称覆盖。正文确认包括授权合取、两层能力、撤权传播、用量台账；round2 的问题清单是历史审查输入，不冒称其发现已运行验证；CI 本机前置包括隔离 test 数据库、可达 Redis、限流夹具及显式 bootstrap/master key。
+
+主计划完整P1十六条表与原证据 head 逐段比对一致；原38项来源包、SOURCE-MANIFEST及D0基线未变。18:38控制面例外、限流退避事实、精确重放/检索边界和交接路径保留。
+
+## 当前整合输入与根清单
+
+下表对应本轮整合工作树的受控正文；提交后按本轮交付 head 定位。提交/规范化 blob 字节与Windows工作树字节分列。历史 hash 表留在下方原 PR 记录，不能拿历史计划 hash 匹配本轮正文。
+
+| 路径 | Git blob | 提交字节 / SHA-256 | 工作树字节 / SHA-256 |
+|---|---|---|---|
+| `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md` | `7756fc61227bb2c818b0d30a7d0337b28e382a87` | 69705 / `1a092f69739cf054fdc8c211e395cf3541089f6ec4db3f110143b4ca03b966ab` | 70453 / `e9630d145e38f4ccbd4b510c2ea1ca2b3f1fbfb72b292508bf14d387b47d9c04` |
+| `docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md` | `79f067e5dc0a51e5709364a2bab9213a92904517` | 42595 / `843fe92ce41a326aec7719ea45cb1407509f89f5f109ee9fd98f2eec952a8483` | 43285 / `1f5fb6beade2259f60dba15df94763dda8b7840da6eb4b7743ca31e0cdbdedae` |
+| `docs/adr/0078-review-round2.md` | `058c70e617e1020c521d4cad2b9973789efa4ba0` | 24468 / `0f9ec7b53d8ba7dd9e8c11e247c1116fc6dadf932432c77b8cc5b391aca728e9` | 24657 / `8d1f0fd90a005b6f2aa0fd3ae7bcafaadc873a5cb75cb8507a9c83699c48f660` |
+| `docs/CI.md` | `dab2ac90bb010ec04eff94aabf8053f77d201ec1` | 8212 / `670a5de26ac3f549c9b425e83453166a427052acd53ac9a2737401c51348c437` | 8385 / `47fe8a1f641aeb6815576cd48fad6f149c6c8c152191df469d277d44a375db5a` |
+
+根 `MANIFEST.json` 按其既有工作树字节口径逐项核对 24 项，0 mismatch，新增上述3项输入的清单行。全部当前行及哈希在 `handoff.manifestVerification`。来源38项清单不修改；最终证据 Markdown/JSON 与根清单均不包含自身 hash，避免循环。
+
+## 本轮必需检查
+
+依赖安装：`pnpm install --frozen-lockfile` 退出码0，609 packages；lockfile未变。下表仅记录本轮实际执行，历史结果不代替本轮检查。每条记录保留执行 HEAD、命令、退出码及日志路径；若执行后仅变更证据/清单，须在交付中明确说明。
+
+| 命令 | 执行HEAD | 退出码 | 结果 |
+|---|---|---:|---|
+| 本轮必需检查 | 尚待提交整合版本后执行 | — | 不复用历史检查作为本轮结果 |
+
+检查使用本轮独有本地 test 服务与显式随机测试夹具，不访问真实WorkMesh控制面，不输出凭证。未修改迁移、API、事件、token值或ADR决策。原 PR #196 保留来源，未关闭；本轮正常交付review，独审与最新PR CI不由历史CI替代。
+
+## 原证据 PR #196 历史记录（af583f7）
+
+以下正文完整保留原证据提交中的记录；其中“本轮”“当前”“待CI/独审”等词均指原构建当时状态，实际原head的独审/CI结果来源于任务交接。上方当前交付段才描述本次整合。原初始base、branch与44项读取事实不改写。
+
+
 ## 结论与门禁
 
 真实隔离构建已在材料合并后的实际 base 中读到四份 ADR、完整主计划、设计测量原件和完整 R2 审查报告；输入校验退出码为 0，44/44 文件可读，P1 台账为 16/16 条，错误数为 0。完整逐文件记录在 [`build-input-reachability.final.json`](build-input-reachability.final.json)。

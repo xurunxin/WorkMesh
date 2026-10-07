@@ -104,6 +104,55 @@ databases plus a versioned object-store test bucket. The hosted
 `recovery-integration` job also builds and starts the restored API, Worker, and
 Web and performs a durable Agent Session heartbeat.
 
+### Local integration prerequisites
+
+CI supplies these variables in `.github/workflows/ci.yml`. Running the same
+suites on a workstation needs the same shape, plus two details that are not
+obvious from the Compose file:
+
+- `docker-compose.yml` publishes PostgreSQL and object storage to the host but
+  **not Redis**. `redis://127.0.0.1:6379` is refused, and the container bridge
+  address is not routable from the Docker Desktop host. Publish a Redis on
+  `127.0.0.1:6379` before running the suites.
+- The authentication rate limiter falls back to low development defaults
+  (`30/60/40/8/5`). The Agent Connection pairing route exceeds the endpoint
+  burst within a single suite run and returns `429 AUTH_RATE_LIMITED`, which
+  then cascades into unrelated fixture failures.
+
+```text
+RUN_INTEGRATION=1
+DATABASE_URL=postgres://workmesh:<password>@127.0.0.1:5432/workmesh_api_integration_test
+REDIS_URL=redis://127.0.0.1:6379
+SESSION_SECRET=<at least 32 characters>
+WORKMESH_BOOTSTRAP_TOKEN=<explicit test fixture>
+WORKMESH_MASTER_KEY=<64 hex characters>
+AUTH_RATE_LIMIT_ENDPOINT_BURST=10000
+AUTH_RATE_LIMIT_SOCKET_BURST=10000
+AUTH_RATE_LIMIT_CLIENT_IP_BURST=10000
+AUTH_RATE_LIMIT_SUBJECT_BURST=1000
+AUTH_RATE_LIMIT_INSTALL_BURST=100
+S3_ENDPOINT=<url>
+S3_BUCKET=<bucket>
+S3_REGION=<region>
+S3_ACCESS_KEY_ID=<key>
+S3_SECRET_ACCESS_KEY=<secret>
+S3_FORCE_PATH_STYLE=true
+```
+
+`WORKMESH_MASTER_KEY` is required even though `loadConfig` does not declare it:
+the auth idempotency envelope derives its AES-256-GCM replay key from it, and a
+missing value surfaces as `409 IDEMPOTENCY_REPLAY_UNAVAILABLE` on the first
+authentication mutation rather than as a configuration error.
+
+`PAGINATION_CURSOR_KEYS` and `PAGINATION_CURSOR_ACTIVE_KID` stay unset outside
+production; the loader then falls back to an ephemeral development key.
+
+Every database name must contain a standalone `test` segment.
+`scripts/require-integration-env.mjs` enforces that before any destructive
+reset, so keep `workmesh_db_integration_test`, `workmesh_api_integration_test`,
+`workmesh_worker_integration_test`, and the recovery source/target databases
+separate from any development database.
+
 ## Release enforcement
 
 `.github/workflows/release-candidate.yml` accepts only a tag matching
