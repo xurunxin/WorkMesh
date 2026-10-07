@@ -9,7 +9,12 @@ import { applyTheme, currentTheme, defaultTheme, isThemeChoice, ThemeToggle, the
 type TokenBaseline = {
   baseCommit: string
   declarations: Array<{ selector: string; token: string; value: string }>
-  consumers: Array<{ file: string; token: string; count: number }>
+  consumers: Array<{
+    file: string
+    token: string
+    count: number
+    references: Array<{ line: number; occurrence: number; text: string }>
+  }>
 }
 
 const tokenBaseline = JSON.parse(readFileSync(resolve(process.cwd(), 'features/navigation/theme-token-baseline.json'), 'utf8')) as TokenBaseline
@@ -96,15 +101,24 @@ describe('coexisting reference token contract', () => {
     expect(tokenBaseline.baseCommit).toBe('9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7')
     const css = readFileSync(tokenCssPath, 'utf8')
     const currentDeclarations = parseTokenDeclarations(css)
-    for (const declaration of tokenBaseline.declarations) {
-      expect(currentDeclarations).toContainEqual(declaration)
-    }
+    const legacyDeclarations = currentDeclarations.filter(declaration => !declaration.token.startsWith('--wm-ref-'))
+    expect(legacyDeclarations).toEqual(tokenBaseline.declarations)
 
     for (const consumer of tokenBaseline.consumers) {
       const sourcePath = resolve(process.cwd(), '../../', consumer.file)
-      const source = sourceWithoutComments(readFileSync(sourcePath, 'utf8'))
-      const tokenPattern = new RegExp(`var\\(\\s*${consumer.token}\\s*(?=[,)])`)
-      expect(source.split(/\r?\n/).filter(line => tokenPattern.test(line))).toHaveLength(consumer.count)
+      const originalSource = readFileSync(sourcePath, 'utf8')
+      const sourceLines = sourceWithoutComments(originalSource).split(/\r?\n/)
+      const originalLines = originalSource.split(/\r?\n/)
+      const tokenPattern = new RegExp(`var\\(\\s*${consumer.token}\\s*(?=[,)])`, 'g')
+      const actualReferences = sourceLines.flatMap((line, lineIndex) =>
+        [...line.matchAll(tokenPattern)].map((_, occurrenceIndex) => ({
+          line: lineIndex + 1,
+          occurrence: occurrenceIndex + 1,
+          text: originalLines[lineIndex]!.trim(),
+        })),
+      )
+      expect(actualReferences).toEqual(consumer.references)
+      expect(actualReferences).toHaveLength(consumer.count)
       if (!currentDeclarations.some(declaration => declaration.token === consumer.token)) {
         const definitions = runtimeTokenDefinitions[consumer.token] ?? []
         expect(definitions.length, `missing definition source for ${consumer.token}`).toBeGreaterThan(0)

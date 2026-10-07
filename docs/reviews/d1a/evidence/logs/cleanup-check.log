@@ -1,0 +1,4 @@
+command: docker ps -a --filter name=wm-d1a-* --format names/status
+result: no task-owned test containers remain
+process environment restoration: runtime.txt records processEnvironment=restored
+exitCode: 0

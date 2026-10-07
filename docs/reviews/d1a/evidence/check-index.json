@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "sourceHeadBeforeReviewFix": "ff61a697e59174c041d19c437e1ee7ce07e65265",
+  "baseCommit": "9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7",
+  "results": [
+    {
+      "id": "theme-unit",
+      "command": "pnpm --filter @workmesh/web exec vitest run features/navigation/theme.test.tsx",
+      "exitCode": 0,
+      "log": "logs/theme-unit.log",
+      "sha256": "99a325062b1b23064c1c89d1ac5788fb88568c4e4f35e7b1fdcf6820dbbcb252",
+      "bytes": 348
+    },
+    {
+      "id": "lint",
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "log": "logs/lint.log",
+      "sha256": "01b5229c8d61ea7277b8f167792a0fd1b1f294290b707a7a49428eb71208724c",
+      "bytes": 6113
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "logs/typecheck.log",
+      "sha256": "b4e3b07f27dcfc6af085a20d9a694124d3d046142bc68551e8444f6b3521356e",
+      "bytes": 6668
+    },
+    {
+      "id": "unit-suite",
+      "command": "pnpm test",
+      "exitCode": 0,
+      "log": "logs/unit-suite.log",
+      "sha256": "2e3575dbcfbd82f676d0750d8f53b952236e260bf9ee670dbb2de29c769b6e55",
+      "bytes": 60187
+    },
+    {
+      "id": "theme-e2e-focused",
+      "command": "pnpm --filter @workmesh/web test:e2e e2e/theme-unification.spec.ts",
+      "exitCode": 0,
+      "log": "logs/theme-e2e-focused.log",
+      "sha256": "b1623f66c51fdcb072129be7706cadb71eb0d4100434dec55052dc3155877af1",
+      "bytes": 232386
+    },
+    {
+      "id": "integration-suite",
+      "command": "pnpm test:integration",
+      "exitCode": 0,
+      "log": "logs/integration-suite.log",
+      "sha256": "2d709767fac2a28aa8e911703a117f6fff2545fe2afe45b1b538d18372317eff",
+      "bytes": 1036944
+    },
+    {
+      "id": "e2e-suite",
+      "command": "pnpm test:e2e",
+      "exitCode": 0,
+      "log": "logs/e2e-suite.log",
+      "sha256": "a5b0cc53ea546479f9819fe00fa7f4256665681c6de40270a79854b1459d8e3f",
+      "bytes": 1710849
+    },
+    {
+      "id": "d0-baseline",
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --update-snapshots=none",
+      "exitCode": 0,
+      "log": "logs/d0-baseline.log",
+      "sha256": "a4a5561ca33e94365a380f72196ebd34ba791e688ca09dc5094f1e9bddf4a184",
+      "bytes": 7053
+    },
+    {
+      "id": "diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "log": "logs/diff-check.log",
+      "sha256": "d30e60140df9a4745ad2661f798c66087ffb4f75d4134e8ed663028d37eb5158",
+      "bytes": 424
+    },
+    {
+      "id": "runtime-probe",
+      "command": "Playwright browser version probe through @playwright/test",
+      "exitCode": 0,
+      "log": "logs/runtime-probe.log",
+      "sha256": "509f0853e3e88a101b6f36a88d51d17eac210ece514b75b4b29f29c3f4e4f1a7",
+      "bytes": 449
+    },
+    {
+      "id": "cleanup-check",
+      "command": "docker ps -a for wm-d1a task-owned containers",
+      "exitCode": 0,
+      "log": "logs/cleanup-check.log",
+      "sha256": "8c2eaac08da742ac5e03b101f8dc55504ab4148a1fe8710c24e225abcf987205",
+      "bytes": 209
+    }
+  ],
+  "runtime": "runtime.txt",
+  "summary": {
+    "focusedThemeUnit": "10 passed",
+    "focusedThemeE2E": "10 passed",
+    "lint": "18/18 tasks passed",
+    "typecheck": "18/18 tasks passed",
+    "unitSuite": "29/29 tasks passed",
+    "integration": "311 passed, 1 skipped",
+    "fullE2E": "67 passed, 0 skipped",
+    "d0": "14 passed, 0 snapshots updated",
+    "skips": [
+      "unit suite: 2 Linux-only lock tests skipped on Windows",
+      "integration: exact-session MiniMax live provider skipped because RUN_WORKBENCH_LIVE and MINIMAX_CN_API_KEY were not configured"
+    ]
+  },
+  "resultLogSha256": "ef78764392887f5661a30a44d0c11e8c012b7dfe0ef9344eb7cdd211621f66dc"
+}
