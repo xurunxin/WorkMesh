@@ -1,5 +1,30 @@
 # 最终隔离构建输入可达性验证
 
+## 当前交付：补回用户F5计划修订
+
+本轮修复独审high/blocking：从用户精确提交 `08ce81a6738407c90cf2629fbb70088a4a899841` 选择性吸收F5正文、依赖图、风险表、规格分歧及状态口径。**F5收件恢复已定为有审计的重新投递，不再二选一或等待用户决定。** 用户正文包含不可变claim及receipt、数据库 `INBOX_CLAIM_IMMUTABLE`、既有唯一约束重投幂等、exact-session拒绝重投、第二队列成本和未做规模成本benchmark声明；相关测试要求完整补回。G1只同步已批准输入，不改ADR0037或产品实现。
+
+最新main是 `3cdfb9ea02496261a3f68369167165b76d953afa`，原PR #196已由用户合入；本会话正常整合该历史。四个文件出现冲突：主计划保留本分支G1状态并吸收用户F5修订，MANIFEST按整合后字节校准，最终证据保留本分支更完整的历史并仅新增当前修订段；没有整文件替换为旧PR证据。
+
+精确main的detached checkpoint退出0：**44/44文件、P1 16/16、0 errors**；另完整读取ADR0078、round2和CI文档3/3，记录在JSON的 `reviewRevision.checkpoint`。原419a1d7、4b287b4、36c7709、dcf3557、dde2a1a及原检查日志保持历史原样。
+
+当前24项清单双字节口径在 `reviewRevision.manifestVerification`：主计划blob `8f750e94de3899cf96410da26b32b5a5cc862e42`，提交 71897 字节/SHA-256 `f3e3f86e78a4d8a32b2b9104df5ff5810fba960853a77490b70b0ebcebdf20e3`；工作树 72663 字节/SHA-256 `b281674517f63f34fcdbbc59cf8e4947d4d7aa05178f452283d2f3109962323a`。记录不包含证据自身hash；旧 `latestIntegration`、`handoff` 的hash及“当前”等措辞只指各自历史版本。
+
+本轮必需检查版本：待提交整合版本，已成功0/5项。
+
+| 命令 | 退出码 | 实际结果 |
+|---|---:|---|
+| 待提交后执行本轮五项必需命令 | — | 历史通过不代替本轮门禁 |
+
+本轮核验记录见 [review-validation.json](build-input-reachability.current/review-validation.json)；本机Node v24.20.0 / pnpm9.15.4，当前PR CI仍须使用仓库固定版本。
+
+**G1最终门禁保持关闭**：原PR #196合入及其CI不自动验收本构建的新证据；待总管定向复核本轮修复、当前PR最新head全部required CI通过及实际合入。
+
+## 前次90386ae交付的历史记录
+
+下文关于“下文二选一为历史提案”及“未引入08ce81a”的判断已被本轮独审修正；仅保留其发生记录，不再用于排除用户F5修订或作为当前计划。
+
+
 ## 当前交付：PR #198 并发增量整合
 
 收尾时 main 从 `dcf3557` 前进到 `dde2a1a6926040c35e9d85d89fed6238572f0f25`。PR #198 **仅修改 ADR 0078**（117行新增、23行删除），无代码变更；在当前会话分支保留原 `af583f71f310e68ade588f9922694dfd8aba7a65` 和前次整合 `76689f838bd2ab9177d80c6b9210e0c57acc807d` 历史，正常无冲突合入该主线提交。原 PR #196 保留来源，不擅自关闭。
