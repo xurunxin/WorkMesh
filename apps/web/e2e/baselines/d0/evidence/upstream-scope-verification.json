@@ -1,0 +1,1242 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-07T12:27:15.953Z",
+  "baseCommit": "d8dcbbcd151011f5696200e6a99ce99fcaf3a93d",
+  "scope": "删除通用 mocked-dev 新增的 upstream 默认覆盖；仅 D0 专用配置保留隔离夹具覆盖，未改产品/token/PNG/比较参数",
+  "sourceChanges": [
+    {
+      "path": "apps/web/playwright.mocked.config.ts",
+      "previousSha256": "a5ca61e65b2a486c8cb4fbbfe1d2116d4b3459b38c99d78024b19ebd053c6599",
+      "sha256": "ec5a997c7f86358d80593fd4571f252d554e5b94272610bb03ec3cea67b8b85d"
+    },
+    {
+      "path": "apps/web/e2e/playwright-config-contract.test.ts",
+      "previousSha256": "49d5f4db081c9c14e3006dfe991045814ae1de67e255150de688cd310f5eeca7",
+      "sha256": "8f5858b7d84afbed852780788af25934dcea5226b18598a06697d931cd004acc"
+    }
+  ],
+  "sources": [
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "ed92a40f6dca083b5fe725c28a2b52571f2e695092b282936f65404f85d0429b"
+    },
+    {
+      "path": "packages/ui/src/tokens.css",
+      "sha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d"
+    },
+    {
+      "path": "apps/web/app/styles.css",
+      "sha256": "a653c821f08c154f9877123e5858e08daa4a2ff3e20558eedb13a962092ba910"
+    },
+    {
+      "path": "apps/web/features/navigation/theme.tsx",
+      "sha256": "05daf2cf407b8899b4d839450cb8d96f427c6f03181688ffcedef88a2ae0e32b"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.module.css",
+      "sha256": "26318e154f3e3209df8ec886599acc536c6cbbe77fb54a5d95896d80ae1aeac6"
+    },
+    {
+      "path": "apps/web/e2e/project-work-preview-server.mjs",
+      "sha256": "f92f5b068eca0c21a6d3752df7f0268607734ac498babf9f34d8f9a6790ca9c3"
+    },
+    {
+      "path": "apps/web/playwright.d0.config.ts",
+      "sha256": "f880637a042b1974a1b8c2b6aca72f7a0d6e8f084bc5b6b49a519a4181308bea"
+    },
+    {
+      "path": "apps/web/e2e/mocked/d0-visual-baseline.mocked.spec.ts",
+      "sha256": "a4b784986c56c3c7d8ad2084d50f6fddcc313b15b3a66465209191b3199252c2"
+    },
+    {
+      "path": "apps/web/e2e/mocked/d0-screenshot.css",
+      "sha256": "d58e03cdd879ae52358a06dc67efed1e07d381fdb8f9ab3c8e5d207dc731ba2b"
+    },
+    {
+      "path": "apps/web/playwright.mocked.config.ts",
+      "sha256": "ec5a997c7f86358d80593fd4571f252d554e5b94272610bb03ec3cea67b8b85d"
+    },
+    {
+      "path": "apps/web/e2e/playwright-config-contract.test.ts",
+      "sha256": "8f5858b7d84afbed852780788af25934dcea5226b18598a06697d931cd004acc"
+    },
+    {
+      "path": "scripts/verify-playwright-suite-scope.mts",
+      "sha256": "1ea51992f492477ed8a5e9eaf9032c66eebfd67d696b45ea6ce4a5addc4fa0a6"
+    },
+    {
+      "path": "scripts/verify-web-ui-final-verification.test.ts",
+      "sha256": "53a95c4ed9f5de0dcdf146156e8fcbbd3cbb91904d9b4ebef894c3d8d9729e65"
+    },
+    {
+      "path": "apps/web/e2e/baselines/d0/evidence/diagnose-raster.mjs",
+      "sha256": "5235543208853b25628b374437189fe57d6b68e88ab7485aa160a07c10c4f8b7"
+    }
+  ],
+  "upstreamContract": {
+    "inheritedInput": "http://127.0.0.1:1/fixture-upstream",
+    "mockedNextUpstream": "http://127.0.0.1:1/fixture-upstream",
+    "d0NextUpstream": "http://127.0.0.1:3201",
+    "d0EffectiveUpstreamUnchanged": true,
+    "genericDefaultOverrideRemoved": true
+  },
+  "run": {
+    "kind": "restartReplayAfterUpstreamScopeFix",
+    "updateSnapshots": "none",
+    "exitCode": 0,
+    "passed": 14,
+    "failed": 0,
+    "recordCount": 14,
+    "captureCount": 28,
+    "entries": [
+      {
+        "surface": "Agent 详情",
+        "route": "/agents/agent%2F1",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/desktop-1440x1000/agent-detail.png",
+        "captureSha256": [
+          "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+          "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+        "originalPngFiles": [
+          "win32/desktop-1440x1000/agent-detail.png",
+          "win32/desktop-1440x1000/agent-detail.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "agent-detail-capture-1",
+            "contentType": "image/png",
+            "path": "data/c0c6e808514368caa3ee712d7cb51b9f854682a4.png",
+            "sha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "agent-detail-capture-2",
+            "contentType": "image/png",
+            "path": "data/c0c6e808514368caa3ee712d7cb51b9f854682a4.png",
+            "sha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "看板",
+        "route": "/?view=projects&project=project-1&tab=board",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/desktop-1440x1000/board.png",
+        "captureSha256": [
+          "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+          "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+        ],
+        "scrollPositions": [
+          {
+            "window": {
+              "x": 0,
+              "y": 0
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 87
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 676,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 592.1875,
+              "y": 642.09375,
+              "width": 295.625,
+              "height": 274.34375,
+              "top": 642.09375,
+              "right": 887.8125,
+              "bottom": 916.4375,
+              "left": 592.1875
+            },
+            "columnHeaderBounds": {
+              "x": 581,
+              "y": 596.90625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 596.90625,
+              "right": 899,
+              "bottom": 642.09375,
+              "left": 581
+            }
+          },
+          {
+            "window": {
+              "x": 0,
+              "y": 0
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 87
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 676,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 592.1875,
+              "y": 642.09375,
+              "width": 295.625,
+              "height": 274.34375,
+              "top": 642.09375,
+              "right": 887.8125,
+              "bottom": 916.4375,
+              "left": 592.1875
+            },
+            "columnHeaderBounds": {
+              "x": 581,
+              "y": 596.90625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 596.90625,
+              "right": 899,
+              "bottom": 642.09375,
+              "left": 581
+            }
+          }
+        ],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+        "originalPngFiles": [
+          "win32/desktop-1440x1000/board.png",
+          "win32/desktop-1440x1000/board.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "board-capture-1",
+            "contentType": "image/png",
+            "path": "data/e4bb7a5cedb6d9c2a098480a69a7f55211f312bf.png",
+            "sha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "board-capture-2",
+            "contentType": "image/png",
+            "path": "data/e4bb7a5cedb6d9c2a098480a69a7f55211f312bf.png",
+            "sha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "工作项详情",
+        "route": "/?view=my-work&workItem=work-101",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/desktop-1440x1000/issue-detail.png",
+        "captureSha256": [
+          "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+          "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+        "originalPngFiles": [
+          "win32/desktop-1440x1000/issue-detail.png",
+          "win32/desktop-1440x1000/issue-detail.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "issue-detail-capture-1",
+            "contentType": "image/png",
+            "path": "data/fb7127efc41fe9b955861ad5d935147cc3bb00c7.png",
+            "sha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "issue-detail-capture-2",
+            "contentType": "image/png",
+            "path": "data/fb7127efc41fe9b955861ad5d935147cc3bb00c7.png",
+            "sha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "工作项列表",
+        "route": "/?view=my-work",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/desktop-1440x1000/issues-list.png",
+        "captureSha256": [
+          "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+          "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+        "originalPngFiles": [
+          "win32/desktop-1440x1000/issues-list.png",
+          "win32/desktop-1440x1000/issues-list.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "issues-list-capture-1",
+            "contentType": "image/png",
+            "path": "data/427d9ec8ef5ce8c440bfb5838ec48774d2410cfd.png",
+            "sha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "issues-list-capture-2",
+            "contentType": "image/png",
+            "path": "data/427d9ec8ef5ce8c440bfb5838ec48774d2410cfd.png",
+            "sha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "项目总览",
+        "route": "/?view=projects&project=project-1",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/desktop-1440x1000/project.png",
+        "captureSha256": [
+          "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+          "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+        "originalPngFiles": [
+          "win32/desktop-1440x1000/project.png",
+          "win32/desktop-1440x1000/project.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "project-capture-1",
+            "contentType": "image/png",
+            "path": "data/463cdb51421c99ad7045962ceb87b938c5148d22.png",
+            "sha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "project-capture-2",
+            "contentType": "image/png",
+            "path": "data/463cdb51421c99ad7045962ceb87b938c5148d22.png",
+            "sha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "设置",
+        "route": "/settings?team=team-page-2",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/desktop-1440x1000/settings.png",
+        "captureSha256": [
+          "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+          "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+        "originalPngFiles": [
+          "win32/desktop-1440x1000/settings.png",
+          "win32/desktop-1440x1000/settings.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "settings-capture-1",
+            "contentType": "image/png",
+            "path": "data/440bea3ab715a82173b137aa2e1b65264b2df6b2.png",
+            "sha256": "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "settings-capture-2",
+            "contentType": "image/png",
+            "path": "data/440bea3ab715a82173b137aa2e1b65264b2df6b2.png",
+            "sha256": "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "工作台",
+        "route": "/workbench",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/desktop-1440x1000/workbench.png",
+        "captureSha256": [
+          "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+          "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+        "originalPngFiles": [
+          "win32/desktop-1440x1000/workbench.png",
+          "win32/desktop-1440x1000/workbench.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "workbench-capture-1",
+            "contentType": "image/png",
+            "path": "data/e9a787fce86c665898d9886c590514326b2eb2e8.png",
+            "sha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "workbench-capture-2",
+            "contentType": "image/png",
+            "path": "data/e9a787fce86c665898d9886c590514326b2eb2e8.png",
+            "sha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "Agent 详情",
+        "route": "/agents/agent%2F1",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/mobile-390x844/agent-detail.png",
+        "captureSha256": [
+          "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+          "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+        "originalPngFiles": [
+          "win32/mobile-390x844/agent-detail.png",
+          "win32/mobile-390x844/agent-detail.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "agent-detail-capture-1",
+            "contentType": "image/png",
+            "path": "data/e574db547fe8729a2c4018bd22c766292d997b7f.png",
+            "sha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "agent-detail-capture-2",
+            "contentType": "image/png",
+            "path": "data/e574db547fe8729a2c4018bd22c766292d997b7f.png",
+            "sha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "看板",
+        "route": "/?view=projects&project=project-1&tab=board",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/mobile-390x844/board.png",
+        "captureSha256": [
+          "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+          "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+        ],
+        "scrollPositions": [
+          {
+            "window": {
+              "x": 0,
+              "y": 53
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 16,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 672,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 12.1875,
+              "y": 430.578125,
+              "width": 295.625,
+              "height": 292.75,
+              "top": 430.578125,
+              "right": 307.8125,
+              "bottom": 723.328125,
+              "left": 12.1875
+            },
+            "columnHeaderBounds": {
+              "x": 1,
+              "y": 385.390625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 385.390625,
+              "right": 319,
+              "bottom": 430.578125,
+              "left": 1
+            }
+          },
+          {
+            "window": {
+              "x": 0,
+              "y": 53
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 16,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 672,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 12.1875,
+              "y": 430.578125,
+              "width": 295.625,
+              "height": 292.75,
+              "top": 430.578125,
+              "right": 307.8125,
+              "bottom": 723.328125,
+              "left": 12.1875
+            },
+            "columnHeaderBounds": {
+              "x": 1,
+              "y": 385.390625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 385.390625,
+              "right": 319,
+              "bottom": 430.578125,
+              "left": 1
+            }
+          }
+        ],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+        "originalPngFiles": [
+          "win32/mobile-390x844/board.png",
+          "win32/mobile-390x844/board.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "board-capture-1",
+            "contentType": "image/png",
+            "path": "data/7aa62b5bc8494ecbc73b03fae3c73ac9d47333ee.png",
+            "sha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "board-capture-2",
+            "contentType": "image/png",
+            "path": "data/7aa62b5bc8494ecbc73b03fae3c73ac9d47333ee.png",
+            "sha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "工作项详情",
+        "route": "/?view=my-work&workItem=work-101",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/mobile-390x844/issue-detail.png",
+        "captureSha256": [
+          "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+          "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+        "originalPngFiles": [
+          "win32/mobile-390x844/issue-detail.png",
+          "win32/mobile-390x844/issue-detail.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "issue-detail-capture-1",
+            "contentType": "image/png",
+            "path": "data/9ef1ec6abbe0d9619984f60b4c294599df646cfc.png",
+            "sha256": "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "issue-detail-capture-2",
+            "contentType": "image/png",
+            "path": "data/9ef1ec6abbe0d9619984f60b4c294599df646cfc.png",
+            "sha256": "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "工作项列表",
+        "route": "/?view=my-work",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/mobile-390x844/issues-list.png",
+        "captureSha256": [
+          "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+          "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+        "originalPngFiles": [
+          "win32/mobile-390x844/issues-list.png",
+          "win32/mobile-390x844/issues-list.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "issues-list-capture-1",
+            "contentType": "image/png",
+            "path": "data/2d5b71994ca44ebb257f67b5342c11fbaed22748.png",
+            "sha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "issues-list-capture-2",
+            "contentType": "image/png",
+            "path": "data/2d5b71994ca44ebb257f67b5342c11fbaed22748.png",
+            "sha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "项目总览",
+        "route": "/?view=projects&project=project-1",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/mobile-390x844/project.png",
+        "captureSha256": [
+          "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+          "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+        "originalPngFiles": [
+          "win32/mobile-390x844/project.png",
+          "win32/mobile-390x844/project.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "project-capture-1",
+            "contentType": "image/png",
+            "path": "data/ab2b1f29745076ba92b8d07e3bc7d41bacdccc05.png",
+            "sha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "project-capture-2",
+            "contentType": "image/png",
+            "path": "data/ab2b1f29745076ba92b8d07e3bc7d41bacdccc05.png",
+            "sha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "设置",
+        "route": "/settings?team=team-page-2",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/mobile-390x844/settings.png",
+        "captureSha256": [
+          "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+          "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+        "originalPngFiles": [
+          "win32/mobile-390x844/settings.png",
+          "win32/mobile-390x844/settings.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "settings-capture-1",
+            "contentType": "image/png",
+            "path": "data/8196cc40dcd3a68b4345e3c0400484f56b037aef.png",
+            "sha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "settings-capture-2",
+            "contentType": "image/png",
+            "path": "data/8196cc40dcd3a68b4345e3c0400484f56b037aef.png",
+            "sha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      },
+      {
+        "surface": "工作台",
+        "route": "/workbench",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "locale": "zh-CN",
+        "colorScheme": "light",
+        "timezoneId": "UTC",
+        "deviceScaleFactor": 1,
+        "fixedTime": "2026-08-22T09:30:00.000Z",
+        "browserVersion": "149.0.7827.55",
+        "platform": "win32",
+        "browserLaunchArguments": [
+          "--disable-gpu",
+          "--disable-skia-runtime-opts",
+          "--force-color-profile=srgb",
+          "--disable-partial-raster"
+        ],
+        "snapshot": "win32/mobile-390x844/workbench.png",
+        "captureSha256": [
+          "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+          "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+        ],
+        "scrollPositions": [],
+        "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+        "baselineSha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+        "originalPngFiles": [
+          "win32/mobile-390x844/workbench.png",
+          "win32/mobile-390x844/workbench.png"
+        ],
+        "sourceAttachments": [
+          {
+            "name": "workbench-capture-1",
+            "contentType": "image/png",
+            "path": "data/93164d5c8c06ca751f4b51df9c34c490bc990584.png",
+            "sha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+            "matchesBaselineBytes": true
+          },
+          {
+            "name": "workbench-capture-2",
+            "contentType": "image/png",
+            "path": "data/93164d5c8c06ca751f4b51df9c34c490bc990584.png",
+            "sha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+            "matchesBaselineBytes": true
+          }
+        ],
+        "originalAttachmentCountVerified": 2,
+        "originalAttachmentsMatchBaselineBytes": true,
+        "pairSha256Equal": true,
+        "visualComparisonPassed": true
+      }
+    ]
+  },
+  "rawCaptureEqualityUsesTolerance": false,
+  "attachmentStorage": "HTML 报告对相同内容去重；按每项 capture-1/capture-2 两个命名附件引用核验原始字节，不以独立文件数量推断采集次数",
+  "evidenceAuditAttempt": "首次归档脚本错误要求同内容存在两个独立 PNG 文件，因 Playwright 报告去重而停止；未判为产品或用例失败，改为逐项核对两次命名附件引用后完成核验",
+  "newRawPngCapturesMatchBaselineBytes": 28,
+  "currentBaselinesVerified": 14,
+  "comparator": {
+    "maxDiffPixels": 0,
+    "threshold": 0.005,
+    "captureEquality": "每轮两个独立上下文的 PNG SHA-256 必须相同",
+    "pairCaptureEvaluation": "仅比较原始 PNG SHA-256，不使用视觉容差",
+    "restartReplayEvaluation": "Playwright toHaveScreenshot 使用 threshold=0.005、maxDiffPixels=0；通过不蕴含哈希相同",
+    "thresholdBasis": "零颜色阈值时移动详情原始 13 个圆角边缘像素每通道最多差 1，比较器报告 1 个差异像素；保留失败证据后选择微小颜色感知容差，也可能容许其他微小颜色差异",
+    "productVisualApproval": false
+  },
+  "previousOriginalCaptureCount": 56,
+  "previousCaptureScope": "此前两次独立启动轮，不作为本轮新执行；历史来源哈希保持原版本",
+  "checks": [
+    {
+      "command": "pnpm --dir apps/web exec vitest run e2e/playwright-config-contract.test.ts",
+      "exitCode": 0,
+      "result": {
+        "passed": 2
+      },
+      "log": "evidence/upstream-logs/contract.txt",
+      "rawLogSha256": "008289ddcc69defc08632422bfa8cb2d80ae38654fd793fa9a1152c54f8dd5b8",
+      "excerpt": [
+        " Test Files  1 passed (1)",
+        "      Tests  2 passed (2)"
+      ]
+    },
+    {
+      "command": "pnpm exec tsx scripts/verify-playwright-suite-scope.mts --output .tmp/d0-upstream-suite-scope.json",
+      "exitCode": 0,
+      "result": {
+        "topologiesPassed": 4
+      },
+      "log": "evidence/upstream-logs/suite-scope.txt",
+      "rawLogSha256": "b8393aeece02f312cbc601811fc0878405b7423f261f17e80e256c5a73811611",
+      "excerpt": [
+        "Playwright suite scope pass; result written to C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-upstream-suite-scope.json"
+      ]
+    },
+    {
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "result": {
+        "turboTasksPassed": 18,
+        "turboTasksTotal": 18,
+        "cached": 17
+      },
+      "log": "evidence/upstream-logs/lint.txt",
+      "rawLogSha256": "e6c93165f3c4146a27813c2f6209305a2b2a7786ef81663be315fd6e7e213751",
+      "excerpt": [
+        " Tasks:    18 successful, 18 total",
+        "Cached:    17 cached, 18 total",
+        "  Time:    5.902s "
+      ]
+    },
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "result": {
+        "turboTasksPassed": 18,
+        "turboTasksTotal": 18,
+        "cached": 17
+      },
+      "log": "evidence/upstream-logs/typecheck.txt",
+      "rawLogSha256": "1983bb6665495ab0d25319f76f4ef0fe4300f6b54b4395a7c4c5b88cad37a059",
+      "excerpt": [
+        " Tasks:    18 successful, 18 total",
+        "Cached:    17 cached, 18 total",
+        "  Time:    5.976s "
+      ]
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "result": {
+        "turboTasksPassed": 29,
+        "turboTasksTotal": 29,
+        "cached": 28,
+        "webPassed": 776
+      },
+      "log": "evidence/upstream-logs/test.txt",
+      "rawLogSha256": "a0599ef79d09575e103e5ebca320af38f5bd816c7cf37a73784dbd9fa787f5fd",
+      "excerpt": [
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/contracts:test:  Test Files  23 passed (23)",
+        "@workmesh/contracts:test:       Tests  180 passed (180)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  33 passed (33)",
+        "@workmesh/agent-sdk:test:  Test Files  1 passed (1)",
+        "@workmesh/agent-sdk:test:       Tests  33 passed (33)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/agent-runner:test:  Test Files  9 passed (9)",
+        "@workmesh/agent-runner:test:       Tests  48 passed (48)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/mcp:test:  Test Files  2 passed (2)",
+        "@workmesh/mcp:test:       Tests  38 passed (38)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/worker:test:  Test Files  23 passed (23)",
+        "@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)",
+        "@workmesh/api:test:  Test Files  33 passed (33)",
+        "@workmesh/api:test:       Tests  174 passed (174)",
+        "@workmesh/web:test:  Test Files  113 passed (113)",
+        "@workmesh/web:test:       Tests  776 passed (776)",
+        " Tasks:    29 successful, 29 total",
+        "Cached:    28 cached, 29 total",
+        "  Time:    1m53.582s "
+      ]
+    },
+    {
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --update-snapshots=none",
+      "exitCode": 0,
+      "result": {
+        "passed": 14,
+        "failed": 0,
+        "rawCaptureCount": 28
+      },
+      "log": "evidence/upstream-logs/replay.txt",
+      "rawLogSha256": "be343b02475631f71370d54261b2b8c316a2932db85e468589942b6c0a755345",
+      "excerpt": [
+        "  14 passed (2.1m)"
+      ]
+    }
+  ],
+  "requiredChecks": {
+    "rerun": [
+      "pnpm lint",
+      "pnpm typecheck",
+      "pnpm test"
+    ],
+    "historicalOnly": [
+      "pnpm test:integration",
+      "pnpm test:e2e"
+    ],
+    "historicalEvidence": "evidence/stabilized-verification.json",
+    "reason": "本轮仅撤回通用配置默认覆盖和增加配置契约；D0 有效 upstream、浏览器、夹具及产品/领域均未改变；集成及正式 E2E 沿用上一修订轮记录，未冒称重跑",
+    "remainingConditionalSkips": 3
+  },
+  "suiteScope": "evidence/upstream-suite-scope.json",
+  "mockedDev": {
+    "rerun": false,
+    "fullSuitePassed": false,
+    "previousFirstAttempt": {
+      "collected": 139,
+      "passed": 12,
+      "failed": 12,
+      "notExecuted": 115,
+      "interrupted": true
+    },
+    "selectedControlEvidence": "evidence/mocked-failures.json",
+    "controlBoundary": "此前 12 项旧/新配置均强制注入同一 upstream，不证明默认行为变更无影响，不豁免剩余 115 项；本轮撤回该默认变更",
+    "pendingDecision": "旧失败逐项修复或由总管裁决产品行为/验收边界；本轮不扩大范围，不放行门禁"
+  },
+  "historicalEvidence": [
+    {
+      "path": "evidence/stabilized-verification.json",
+      "sha256": "460539688c5ab59d1484827fea87b5bcc8c23f3fc8499254e9c09a3037997501",
+      "frozen": true
+    },
+    {
+      "path": "evidence/final-evidence-audit.json",
+      "sha256": "183b4cb3cc5c7edf6ae48ef29f37d239000a4988c36dda188976f2d45b166331",
+      "frozen": true
+    },
+    {
+      "path": "evidence/review-fix-verification.json",
+      "sha256": "ae988446bd9ed09c63d61f772fd905538869a187ad2ba0d467a443db5da087f1",
+      "frozen": true
+    },
+    {
+      "path": "evidence/mocked-failures.json",
+      "sha256": "61bf899f4ebc0de52e40d766a2cdbb5fa5cd6b07d8520e12aaf6ce2845e13646",
+      "frozen": true
+    },
+    {
+      "path": "evidence/historical-assets.json",
+      "sha256": "6a04c344e38e478deaf3ac13db1c842bbee955beec18b0e121aec7ddd5cd73d3",
+      "frozen": true
+    },
+    {
+      "path": "evidence/raster-diagnosis.json",
+      "sha256": "55071dec27d9412aa3262c221c3a6f405085bf9b96e56f993c5fe2beec15513a",
+      "frozen": true
+    }
+  ],
+  "referenceInput": {
+    "path": "docs/references/todos-analysis/",
+    "addressSynchronized": true,
+    "includedInValidationBase": false,
+    "reason": "用户最新 G1 交接仅同步地址；输入包尚在 G1 审查分支，git ls-tree HEAD 未发现该目录；不导入、不提前放行 G1"
+  },
+  "visualStatus": "passed",
+  "d0Status": "blocked",
+  "d1Gate": "closed"
+}

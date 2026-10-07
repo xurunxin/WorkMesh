@@ -49,14 +49,14 @@ P1 冻结与 G1 材料合入不代表 G1 最终门禁通过。真实隔离 build
 
 D0 经 PR #195 合入 main 后，Chief 于 2026-10-07 21:09 核实最新 main 为
 `4b287b4e9892bfb4545dbbff94d04f45633c3a64`（包含 D0 提交
-`768bbd82fcc52a873168b39a8382d2f14c928abc` 与 G1 材料 main `419a1d7…`）。本计划已吸收该 main
-的 D0 证据/清单增量及 P1 冻结、D1a/D1b 拆分，保留原 D0 清单、状态和证据正文；D0 独审及 CI #352
-（run `37623264959`，8/8）通过。`4b287b4` 是本计划的后续整合版本，不是本轮真实 build base；
-最终证据将同时记载两者，并分别记录整合后计划及根 `MANIFEST.json` 的新哈希。
+`768bbd82fcc52a873168b39a8382d2f14c928abc` 与 G1 材料 main `419a1d7…`）。本分支现以 Git merge
+实际包含该 main 历史及 D0 证据文件，保留 D0 计划/清单增量与 P1 冻结、D1a/D1b 拆分；
+主计划和根清单的整合后哈希见最终证据。D0 独审及 CI #352（run `37623264959`，8/8）通过，
+main push CI #353（run `37626312217`，8/8）通过。此整合不会改写 `419a1d7` 初始 build 证明。
 
-本轮必需本地检查已完成（记录见 `docs/evidence/build-input-reachability.final.md`）；当前 G1
-证据变更仍待本分支提交 CI 与用户指定的独立复核。完成前依赖输入的任务保持“待验证”，不放行 #3
-或相关实现。D0 视觉基线门禁完成不解除 G1 最终/R1 门禁。
+本轮必需本地检查已完成（命令、退出码和结果见 `docs/evidence/build-input-reachability.final.md`）；
+本分支 merge 提交后的 PR/CI 与用户指定的独立复核仍待完成。完成前依赖输入的任务保持“待验证”，
+不放行 #3 或相关实现。D0 视觉基线门禁完成不解除 G1 最终/R1 门禁。
 
 交接原件及其引用的测量 JSON、截图索引和 28 张截图保存在 `docs/references/todos-analysis/`；#19 完整审查原件位于
 `docs/references/todos-analysis/reviews/todos-review.md`。来源相对路径、字节数和 SHA-256 见 `SOURCE-MANIFEST.json`。

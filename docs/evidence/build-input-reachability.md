@@ -4,7 +4,8 @@
 
 - 历史主线 `660c74a6247544ffac64e7ef8f968d1025b2a668`（PR #192 merge）冻结 P1 16 条台账；材料和 D0 后续分别进入 main。Chief 于 2026-10-07 21:09 核实最新 `origin/main=4b287b4e9892bfb4545dbbff94d04f45633c3a64`，父提交包含 G1 材料 main `419a1d7af90c09cb9364819977f32ec59cf86f87` 和 D0 `768bbd82fcc52a873168b39a8382d2f14c928abc`。
 - 本任务真实隔离 build 的**初始实际 base 仍为 `419a1d7af90c09cb9364819977f32ec59cf86f87`**；44/44 文件可读、0 errors、P1 16/16。它是有效初始读取证明，未改写为后来 `4b287b4`。D0 合入后本分支计划吸收了 D0 计划/清单与 D1 拆分增量；计划和根 `MANIFEST.json` 的当前工作树哈希在最终报告中单独列出。
-- 最终门禁状态：**输入读取和本地必需检查通过；待本分支 CI 和用户独立复核**。逐文件初始 base 结果见 [`build-input-reachability.final.json`](build-input-reachability.final.json)，本轮命令、退出码、依赖安装、首轮失败与重跑记录见 [`build-input-reachability.final.md`](build-input-reachability.final.md)。材料 PR #194 CI #348、`main@419a1d7` push CI #351、D0 PR #195 CI #352，以及 `main@4b287b4` push CI #353 均 8/8 成功。本分支变更尚未提交，CI 尚未触发，故 G1 最终门禁仍关闭。
+- 已通过 `git merge --no-commit --no-ff 4b287b4e9892bfb4545dbbff94d04f45633c3a64` 将最新 main 的历史和完整 D0 文件集整合进本分支；计划引用的 D0 `verification.md`、`manifest.json` 和 `evidence/upstream-scope-verification.json` 均存在。针对精确提交 `4b287b4` 的独立输入读取验证为 44/44、P1 16/16、0 errors；结果在 final JSON 的 `integration.buildVerification`，初始 base `419a1d7` 结果保持原样。
+- 最终门禁状态：**输入读取和本地必需检查通过；待本分支 PR/CI 和用户独立复核**。逐文件初始 base 结果见 [`build-input-reachability.final.json`](build-input-reachability.final.json)，本轮命令、受测版本、退出码、依赖安装、首轮失败与重跑记录见 [`build-input-reachability.final.md`](build-input-reachability.final.md)。材料 PR #194 CI #348、`main@419a1d7` push CI #351、D0 PR #195 CI #352，以及 `main@4b287b4` push CI #353 均 8/8 成功。前序证据提交 `70a94f2` 已提交；本轮 merge commit 由平台 checkpoint 收束，其 PR/CI 待触发，故 G1 最终门禁仍关闭。
 - 批次控制面：用户于 2026-10-07 18:38（Asia/Shanghai）批准本批使用 Todos 编排、仓库保存规格和证据。此例外只适用于本批，不创建、不声称存在 WorkMesh Project/WorkItem，也不改 WorkMesh 产品领域控制面；仅替代 `AGENTS.md` 的双轨记录要求，其他约束有效。
 
 ## 基点、正文和哈希
