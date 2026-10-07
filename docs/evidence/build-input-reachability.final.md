@@ -1,5 +1,42 @@
 # 最终隔离构建输入可达性验证
 
+## 当前交付：PR #198 并发增量整合
+
+收尾时 main 从 `dcf3557` 前进到 `dde2a1a6926040c35e9d85d89fed6238572f0f25`。PR #198 **仅修改 ADR 0078**（117行新增、23行删除），无代码变更；在当前会话分支保留原 `af583f71f310e68ade588f9922694dfd8aba7a65` 和前次整合 `76689f838bd2ab9177d80c6b9210e0c57acc807d` 历史，正常无冲突合入该主线提交。原 PR #196 保留来源，不擅自关闭。
+
+F5 用户选择的来源仍是#3原问题卡2026-10-07 23:29:53（Asia/Shanghai）；上游已将“有审计的重新投递”写入ADR0078。G1只保留main原文并记录该落地事实，**不自行修订ADR0037、不实现恢复协议**；主计划下文旧二选一仍是历史提案，全批规格同步与验收归R1。最新ADR正文包含原claim与receipt不可改写、actor-target successor新事实、现有唯一约束去重、exact-session排除及第二队列成本；它仍是Proposed文档，不冒称产品已实现或运行验收通过。
+
+## 最新 main 独立读取与当前清单
+
+在 `dde2a1a6926040c35e9d85d89fed6238572f0f25` 的精确detached工作树读取原44项：**44/44、P1 16/16、0 errors，退出0**。
+
+```text
+node ../../scripts/verify-build-input-reachability.mjs dde2a1a6926040c35e9d85d89fed6238572f0f25 --json-out ../g1-latest-main-checkpoint.json
+```
+
+正文/字节记录在JSON的 `latestIntegration.buildVerification`。新增输入仍单独计3项：ADR0078、round2审查、CI前置文档，完整正文读取与规范化blob比较均通过，见 `latestIntegration.additionalInputs`。
+
+当前ADR0078提交blob为 `b1781583b75e2ab28d42c1a1cf2265ae326c37b1`，提交字节 48859 / SHA-256 `d3ac15e76fa544189bdcf20033553fb2d1a3e1631f7e4b2cd54a4b8e83ca6546`；工作树字节 49643 / SHA-256 `c74135dbed77e918b18b8a15b8e554a4f8dd9bdac548e1bd20eec7928eec7f2a`。整合主计划blob为 `264b52de5df81b50ab1e3eb8aae56b13d8992cad`，提交字节 69978 / SHA-256 `389136aeaf918d2b1a46623e190845fc8289395bec71ad5402b47da25f5f84bf`；工作树字节 70729 / SHA-256 `e71571fafd79f73ebc700a4b48dab7013ba629c5a2359ffa403ff825a1b21cf4`。全部24项当前清单、准确版本及双字节口径见 `latestIntegration.manifestVerification`，0 mismatch。最终证据与清单不包含自身hash。
+
+初始 `419a1d7`、`4b287b4`、`36c7709`、第一次整合的 `dcf3557` checkpoint全部保持历史原样；JSON的原字段与 `handoff` 不改，新增 `latestIntegration`。P1冻结16条、来源38项、D0基线未变。
+
+## 新整合版本的必需检查与门禁
+
+本次检查版本：待提交整合工作树。检查待完成，旧版本成功不替代本次结果。
+
+| 命令 | 执行HEAD | 退出码 | 实际结果 |
+|---|---|---:|---|
+| 本轮新整合必需检查 | 提交后执行 | — | 旧76689f8检查只保留历史 |
+
+检查日志逐项保存于 `build-input-reachability.current/`，字节数和SHA-256见JSON。仍使用同一组本轮独有的本地隔离test服务和随机夹具（具体端口、隔离库和显式recovery开关见前次记录），不接触真实控制面或真实凭证；本机Node v24.20.0 / pnpm9.15.4，后续当前PR CI须用仓库固定Node22.19.0。Turbo的默认缓存配置在 `turbo.json`，实际命中数保留在日志；没有手工用历史CI或检查表豁免命令。
+
+**G1最终门禁关闭**，待总管对最新main整合、证据及清单定向独审、当前PR最新head全部required CI成功及真实合入。旧CI #357或旧76689f8检查均不代替该门禁。
+
+## 前次整合76689f8与原PR196的历史记录
+
+以下“当前/本轮”等词均限定为前次整合或原构建当时状态；最新版本以本页上方及JSON `latestIntegration` 为准。前次首轮E2E失败、上下文/原始PNG及后续两次74/74通过均保留，不改写为当前新版本的结果。
+
+
 ## 当前交付整合与门禁
 
 本轮在 `tds/conv-01a116f7-1027-7c75-90df-32ebc5488752` 整合原证据 head `af583f71f310e68ade588f9922694dfd8aba7a65` 与最新 main `dcf355735341bc6daac4101b8c7d0efbaabbe764`，保留两条提交历史。原 PR #196 的独审和 CI #357 是历史来源；当前交付仍需总管定向独审、当前 PR 最新 head 的全部 required CI 及实际合入，**G1 最终门禁保持关闭**。
@@ -45,9 +82,23 @@ errors: 0
 
 | 命令 | 执行HEAD | 退出码 | 结果 |
 |---|---|---:|---|
-| 本轮必需检查 | 尚待提交整合版本后执行 | — | 不复用历史检查作为本轮结果 |
+| `pnpm lint` | `76689f838bd2ab9177d80c6b9210e0c57acc807d` | 0 | Tasks:    18 successful, 18 total |
+| `pnpm typecheck` | `76689f838bd2ab9177d80c6b9210e0c57acc807d` | 0 | Tasks:    18 successful, 18 total |
+| `pnpm test` | `76689f838bd2ab9177d80c6b9210e0c57acc807d` | 0 | @workmesh/db:test:       Tests  28 passed (28)；@workmesh/recovery:test:  Test Files  1 passed (1)；@workmesh/recovery:test:       Tests  7 passed (7)；@workmesh/worker:test:  Test Files  23 passed (23)；@workmesh/worker:test:       Tests  163 passed \| 2 skipped (165)；@workmesh/api:test:  Test Files  33 passed (33)；@workmesh/api:test:       Tests  174 passed (174)；@workmesh/web:test:  Test Files  113 passed (113)；@workmesh/web:test:       Tests  776 passed (776)； Tasks:    29 successful, 29 total |
+| `pnpm test:integration` | `76689f838bd2ab9177d80c6b9210e0c57acc807d` | 0 | Test Files  17 passed (17)；      Tests  77 passed (77)； Test Files  22 passed (22)；      Tests  154 passed \| 1 skipped (155)； Test Files  8 passed \| 1 skipped (9)；      Tests  78 passed \| 1 skipped (79)； Test Files  1 passed (1)；      Tests  1 passed (1) |
+| `pnpm test:e2e` | `76689f838bd2ab9177d80c6b9210e0c57acc807d` | 1 | @workmesh/web:test:e2e:   73 passed (6.2m)； Tasks:    11 successful, 12 total |
+| `pnpm --filter @workmesh/web test:e2e -- e2e/documents.spec.ts` | `76689f838bd2ab9177d80c6b9210e0c57acc807d` | 0 | 74 passed (4.5m) |
+| `pnpm test:e2e` | `76689f838bd2ab9177d80c6b9210e0c57acc807d` | 0 | @workmesh/web:test:e2e:   74 passed (4.5m)； Tasks:    12 successful, 12 total |
 
-检查使用本轮独有本地 test 服务与显式随机测试夹具，不访问真实WorkMesh控制面，不输出凭证。未修改迁移、API、事件、token值或ADR决策。原 PR #196 保留来源，未关闭；本轮正常交付review，独审与最新PR CI不由历史CI替代。
+五项必需检查的执行版本均为 `76689f838bd2ab9177d80c6b9210e0c57acc807d`；此后的当前记录仅补充证据与日志，不修改被测源码、verifier或计划正文。原始命令输出经本地随机夹具脱敏后保存在 `build-input-reachability.current/`，JSON逐项记录日志字节数及SHA-256。lint/typecheck各18/18 tasks；单元29/29 tasks（部分Turbo缓存复用在日志中明列）。集成310 passed、2 skipped：API的真实供应商live用例未启用；Worker的retention upgrade独立开关未启用，均不能计为通过。恢复已显式启用且1/1通过。
+
+附加verifier测试 `node --test scripts/verify-build-input-reachability.test.mjs` 退出0、3/3通过，在整合工作树提交前执行；脚本及测试Git blob均与上述被测提交一致。最新main输入读取、来源38项保真、P1冻结表和根清单的局部核验另见前文及JSON。
+
+首轮全量E2E退出1：73 passed、1 failed，`documents.spec.ts:3` 的Discussion标签点击在90000ms超时，定位器报告元素不稳定及DOM移除。失败[上下文](build-input-reachability.current/failed-e2e-1/error-context.md)和[原始PNG](build-input-reachability.current/failed-e2e-1/test-failed-1.png)已逐字节保留，哈希见JSON的 `handoff.e2eFirstFailure`；认证trace不纳入仓库。未改源码、selector或timeout。随后命令 `pnpm --filter @workmesh/web test:e2e -- e2e/documents.spec.ts` 实际执行74项全量Web验收并全部通过，不能当作仅目标测试；首轮失败未复现，根因尚未确认。根脚本全量重跑另列于表中，其结果决定本轮E2E必需检查状态。
+
+本机Node为v24.20.0、pnpm9.15.4；当前PR CI仍须按仓库固定Node22.19.0运行，不能用本机结果替代。测试服务设置曾在初始化临时Postgres服务器重启、psql默认数据库不存在两处前置失败；改为最终TCP就绪探测并显式连接postgres后成功，均未进入测试用例，不隐藏为产品测试失败。
+
+检查使用本轮独有本地 test 服务与显式随机测试夹具（Postgres15453、Redis16393、RustFS19013），不访问真实WorkMesh控制面，不输出凭证。未修改迁移、API、事件、token值或ADR决策。原 PR #196 保留来源，未关闭；本轮正常交付review，独审与最新PR CI不由历史CI替代。
 
 ## 原证据 PR #196 历史记录（af583f7）
 

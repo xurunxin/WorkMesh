@@ -15,8 +15,10 @@ ADR 0072 (deployment classes), `CONTEXT.md`.
 
 This ADR is **parallel** to ADR 0062 rather than a narrowing of it: a Chief
 delegation and an autonomy policy are both standing, bounded, revocable grants.
-It **amends** ADR 0037's inbox recovery semantics, which is stated below and
-recorded in the plan as a choice to make before coding.
+It **amends** ADR 0037's inbox recovery semantics: the claim stays non-transferable
+and becomes **non-continuable-by-inheritance**, and recovery is by **audited
+re-delivery** rather than by reuse. The choice is recorded below, was settled by
+the owner on 2026-10-07, and is not deferred to implementation.
 
 ## Correction (2026-10-07, after adversarial review)
 
@@ -55,6 +57,15 @@ framing is therefore **withdrawn**: a Chief delegation is the same kind of thing
 as an autonomy policy — standing, bounded, revocable — so the two are parallel
 rather than competing. Review finding B1 survives unchanged: a free-text message
 is still not a grant.
+
+A third ruling came from the owner on 2026-10-07 and is recorded for the same
+reason: the draft left Inbox recovery as a two-way choice to be made before
+coding, and the owner chose **audited re-delivery**. The reasoning that makes the
+choice legible is one line — *a claim is not transferable ≠ a claim is not
+continuable* — and it is stated in full in the section below. The rejected option
+(session reuse) is kept in Alternatives so the decision can be re-opened on
+evidence rather than on recollection.
+
 
 ## Context
 
@@ -483,23 +494,86 @@ correctness precondition, and bounded full rebuilds are permitted** for first ru
 cursor expiry, authorisation change and repair. Any claim about how many agents
 make this unusable is unverified and is not made.
 
-### Inbox recovery across short sessions is a choice, and the obvious one is not free
+### Inbox recovery across short sessions is audited re-delivery, not reuse
 
-`inbox_item_claims` are non-transferable, and an item whose claiming session is
-Stopped or revoked is stranded with no reclaim. A Chief that gets a fresh session
-per activation would therefore never see the unfinished item it claimed last time.
+`inbox_items.claimed_by_session_id` is not merely documented as immutable: the
+database refuses to change it. `prevent_inbox_claim_rebind()` raises
+`INBOX_CLAIM_IMMUTABLE` whenever a claimed row's `claimed_by_session_id` or
+`claimed_at` differs from its previous value
+(`packages/db/migrations/0032_agent_inbox_receipts.sql:177-190`). ADR 0037 stated
+the same intent as policy
+(`docs/adr/0037-agent-inbox-recipients-claims-and-receipts.md:99-102`: "adding one
+requires a separate protocol and audit decision"). So the in-place transfer that
+would have been the cheap option is not cheap, and dropping a shipped trigger to
+enable it is not an implementation detail.
 
-v1 must pick one, explicitly:
+v1 therefore takes the second option: **audited re-delivery**, which **amends
+ADR 0037**.
 
-- **Reuse one non-terminal Chief session** until the item reaches a terminal
-  state; or
-- **Amend ADR 0037** to introduce an audited successor or re-delivery, keeping
-  the original claim attributed to the original session and creating a linked
-  new input. Mutating `claimedBySessionId` in place is forbidden.
+**The frame: a claim is not transferable ≠ a claim is not continuable.** A transfer
+would make one row carry two attributions — the original Session's claim would read
+as the successor's. Re-delivery keeps two rows. The original item, its claim, its
+`claimed_at` and every receipt stay bound to the original Session forever, and the
+new item is a **new durable fact** whose creation is itself auditable. Nothing
+rewrites history; the audit can answer "who held this, and when" for both.
 
-Which one is chosen is an implementation decision recorded before coding, and the
-cost of a new consumption protocol is acknowledged rather than described as
-needing no second queue.
+**What re-delivery does, concretely.** When an **actor-targeted** item is still
+non-terminal and its claiming Session is terminally suppressed (Stopped, revoked,
+or its claim's delegation withdrawn), a new eligible Session of the same Agent
+actor may cause a successor item to be created:
+
+- It **reuses the original `kind`**, so the Chief's existing dispatch surface and
+  every client that already renders a kind are unchanged, and no `inbox_item_kind`
+  value is added.
+- It sets `source_type = 'inbox_redelivery'` and `source_id` to the **original
+  item's id**. `source_type` is `text`, not an enum
+  (`packages/db/migrations/0005_stage1_tokens_webhooks_events.sql:35`), so this
+  needs no `ALTER TYPE` — unlike the Team room subject, which does.
+- That pair is also what makes re-delivery **idempotent by the existing
+  constraint**: `inbox_items_actor_target_unique` covers
+  `(workspace_id, recipient_actor_id, kind, source_type, source_id)` for
+  actor-targeted rows (`0032:92-94`), so a retry collides on exactly one row per
+  original item. A duplicate cannot be created by re-running the command, and the
+  collision returns the existing successor instead of inserting a second one.
+
+**What re-delivery is forbidden from doing.**
+
+- It may not write, move or delete the original item, its claim, or its receipts.
+- It may not transfer authority. The successor is claimable only under the same
+  authority rules as any other item, and a re-delivery grants nothing: if the new
+  Session lacks the scope, the item is created for the actor and simply not
+  actionable by that Session.
+- It may not carry receipts across. `enforce_inbox_receipt_scope()` only accepts a
+  receipt from the item's exact recipient Session or its current claiming Session
+  (`0032:192-220`), so a new Session's `claimed` receipt lands on the new item and
+  the old one keeps its own.
+- It is **not available for exact-session items.** `inbox_items_exact_claim_check`
+  (`0032:83-84`) confines an exact-session item to that Session, and ADR 0037
+  treats that confinement as deliberate. Re-delivering one would silently convert
+  an exact address into an actor target, which is the back door this design must
+  not open. Exact-session work is recovered by the Human, not by a successor.
+
+**The cost, stated rather than waved away.** This **is** a second queue. A
+successor item needs its own listing, its own claim, its own receipt history and a
+way for a Human to see that it is a successor rather than duplicate work — the link
+is visible to authorized Humans precisely so the board does not show the same task
+twice with no explanation. It is also the reason a successor is a *new* item rather
+than a status change on the old one: `inbox_item_status` is `('open','resolved')`
+(`0005:5`) with `CHECK((status='resolved') = (resolved_at IS NOT NULL))`, and
+resolving the original would erase the very "still unfinished" fact the successor
+exists to record.
+
+Not claimed: no reuse path is forbidden in principle, and no measurement of which
+choice is cheaper at scale has been made. The reuse option is rejected below on
+design grounds, not on a benchmark.
+
+This amends ADR 0037's stated position that stranded items stay stranded with "no
+reclaim or release command"
+(`docs/adr/0037-agent-inbox-recipients-claims-and-receipts.md:99-102`). The amendment
+is narrow: the claim remains a one-time, immutable, non-authorizing binding, and no
+reclaim or release command is added. What is added is a separate, audited act of
+**continuing the work as a new input**, which ADR 0037 explicitly required to be
+preceded by a protocol and audit decision — this section is that decision.
 
 ### Memory is deferred out of the first version
 
@@ -587,6 +661,13 @@ that a Chief is available.
 - **Reject the Inbox because its status has two states.** Rejected on evidence:
   receipts already carry the intermediate states. The Inbox is used alongside the
   room.
+- **Recover a stranded item by reusing one non-terminal Chief session until the
+  item is done.** Rejected: it makes the session's lifetime a function of the
+  slowest outstanding task, and it re-introduces exactly the situation stop and
+  revocation exist to prevent — a live-looking session holding work that no
+  current authorisation covers. A long-lived session also makes "stale" and "idle
+  but still legitimate" indistinguishable. Re-delivery keeps each attempt inside a
+  session whose authorisation is checked at the moment it acts.
 - **One long-lived Chief conversation, compacted by hand.** Rejected: continuity
   belongs to snapshots, deltas and guidance, and a transcript only survives by
   re-reading itself.
@@ -641,7 +722,14 @@ fixed in advance — the consumption and authorisation contracts determine it.
    branch above, and creates `chief_appointments` with the partial unique index
    and its events and outbox rows.
 3. Further entries add the Chief delegation, its dispatch records and usage
-   ledger, and any storage the Inbox recovery choice requires.
+   ledger, and **no** storage change for the Inbox claim: re-delivery reuses
+   `inbox_items` as it stands, with `source_type = 'inbox_redelivery'` and
+   `source_id` set to the original item id. `inbox_claim_immutable`,
+   `inbox_items_exact_claim_check`, `inbox_items_claim_pair_check`,
+   `inbox_items_recipient_kind_shape_check` and `enforce_inbox_receipt_scope()`
+   are **left exactly as they are**, and `inbox_item_kind` gains no value. The
+   only index the design leans on is the existing
+   `inbox_items_actor_target_unique`, which is what makes retry idempotent.
 4. The v1 manifest records only the **new** entries and `SCHEMA.sql` is updated
   to match. Applied baselines, legacy entries and their checksums are left
   exactly as they are; the published baseline is not regenerated in order to add
@@ -685,6 +773,12 @@ reviewed per statement, not diffed for line numbers.
   ordering between the harness and the platform, and the statement that a memory
   is not a standing instruction and is never written from tool output
   automatically.
-- `docs/plan/` gains the staged plan, with the consumption protocol and the Inbox
-  recovery choice as gates on the first Chief projection rather than later
-  refinements.
+- `ADR 0037` is amended rather than rewritten: its Consequences section keeps
+  "the one-time claim is intentionally immutable" and "there is no reclaim or
+  release command" **verbatim**, and gains a short amendment note pointing here
+  for the audited re-delivery that allows a successor item. No claim column,
+  trigger or check is described as changed.
+- `docs/plan/` gains the staged plan. The Inbox recovery choice is **no longer a
+  gate** — it is decided above — so the gate that remains on the first Chief
+  projection is the consumption protocol.
+
