@@ -1,0 +1,1542 @@
+{
+  "baseCommit": "9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7",
+  "declarations": [
+    {
+      "selector": ":root",
+      "token": "--wm-canvas",
+      "value": "#F7F7F5"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-canvas-subtle",
+      "value": "#FAFAF8"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-surface",
+      "value": "#FFFFFF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-surface-raised",
+      "value": "#FFFFFF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-surface-subtle",
+      "value": "#F2F2EF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-surface-hover",
+      "value": "#ECECE8"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-surface-active",
+      "value": "#E4E4DF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-surface-inset",
+      "value": "#F2F2EF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-surface-overlay",
+      "value": "#FFFFFF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text",
+      "value": "#252522"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-strong",
+      "value": "#111110"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-muted",
+      "value": "#73736F"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-subtle",
+      "value": "#8E8E89"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-inverse",
+      "value": "#FFFFFF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-link",
+      "value": "#2563EB"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-muted",
+      "value": "var(--wm-text-muted)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-border",
+      "value": "#E3E3DF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-border-strong",
+      "value": "#C9C9C3"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-border-subtle",
+      "value": "#EDEDEA"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-focus",
+      "value": "#2563EB"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-accent",
+      "value": "#2563EB"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-accent-hover",
+      "value": "#1D4ED8"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-accent-active",
+      "value": "#1E40AF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-accent-fg",
+      "value": "#FFFFFF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-accent-bg",
+      "value": "#EFF6FF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-accent-border",
+      "value": "#BFDBFE"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-info",
+      "value": "#175CD3"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-info-bg",
+      "value": "#EFF8FF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-info-border",
+      "value": "#B2DDFF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-success",
+      "value": "#087443"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-success-bg",
+      "value": "#ECFDF3"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-success-border",
+      "value": "#ABEFC6"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-warning",
+      "value": "#8A5A00"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-warning-bg",
+      "value": "#FFFAEB"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-warning-border",
+      "value": "#FEDF89"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-danger",
+      "value": "#9C2A1C"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-danger-bg",
+      "value": "#FFF1F0"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-danger-border",
+      "value": "#F6C1BB"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-danger-fg",
+      "value": "#FFFFFF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-violet",
+      "value": "#7839EE"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-violet-bg",
+      "value": "#F5F3FF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-violet-border",
+      "value": "#D9D6FE"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-neutral",
+      "value": "#475467"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-neutral-bg",
+      "value": "#F9FAFB"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-neutral-border",
+      "value": "#D0D5DD"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-scrim",
+      "value": "#11111166"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-skeleton-base",
+      "value": "#F2F2EF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-skeleton-sheen",
+      "value": "#ECECE8"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-tooltip-bg",
+      "value": "#111110"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-tooltip-fg",
+      "value": "#FFFFFF"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-shadow-sm",
+      "value": "0 1px 2px rgba(17, 17, 17, .05), 0 2px 8px rgba(17, 17, 17, .04)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-shadow-md",
+      "value": "0 4px 14px rgba(17, 17, 17, .06), 0 16px 40px rgba(17, 17, 17, .10)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-shadow-lg",
+      "value": "0 8px 28px rgba(17, 17, 17, .08), 0 32px 80px rgba(17, 17, 17, .14)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-shadow-card",
+      "value": "0 1px 2px rgba(17, 17, 17, .04), 0 1px 3px rgba(17, 17, 17, .03)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-shadow-card-hover",
+      "value": "0 2px 6px rgba(17, 17, 17, .06), 0 8px 20px rgba(17, 17, 17, .07)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-shadow-panel",
+      "value": "0 1px 2px rgba(17, 17, 17, .03)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-focus-ring",
+      "value": "0 0 0 3px color-mix(in srgb, var(--wm-focus) 32%, transparent)"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-canvas",
+      "value": "#0B0C0E"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-canvas-subtle",
+      "value": "#0F1113"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-surface",
+      "value": "#141619"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-surface-raised",
+      "value": "#1A1D21"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-surface-subtle",
+      "value": "#1F2226"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-surface-hover",
+      "value": "#262A2F"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-surface-active",
+      "value": "#2D3238"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-surface-inset",
+      "value": "#0E1012"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-surface-overlay",
+      "value": "#1A1D21"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-text",
+      "value": "#E6E8EB"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-text-strong",
+      "value": "#F5F6F7"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-text-muted",
+      "value": "#9BA1A9"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-text-subtle",
+      "value": "#6B7178"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-text-inverse",
+      "value": "#141619"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-text-link",
+      "value": "#7BA8F0"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-border",
+      "value": "#24282D"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-border-strong",
+      "value": "#343A41"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-border-subtle",
+      "value": "#1B1E22"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-focus",
+      "value": "#5B8DEF"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-accent",
+      "value": "#4C8DFF"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-accent-hover",
+      "value": "#6BA0FF"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-accent-active",
+      "value": "#3C7CE8"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-accent-fg",
+      "value": "#0B0C0E"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-accent-bg",
+      "value": "#16233A"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-accent-border",
+      "value": "#2B4A7D"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-info",
+      "value": "#6BA0FF"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-info-bg",
+      "value": "#16233A"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-info-border",
+      "value": "#2B4A7D"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-success",
+      "value": "#3FB950"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-success-bg",
+      "value": "#10231A"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-success-border",
+      "value": "#1F4A32"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-warning",
+      "value": "#E3B341"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-warning-bg",
+      "value": "#2A2110"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-warning-border",
+      "value": "#57431A"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-danger",
+      "value": "#FF6B63"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-danger-bg",
+      "value": "#2E1617"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-danger-border",
+      "value": "#5C2A2B"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-danger-fg",
+      "value": "#2E1617"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-violet",
+      "value": "#A78BFA"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-violet-bg",
+      "value": "#241B3A"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-violet-border",
+      "value": "#463576"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-neutral",
+      "value": "#9BA1A9"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-neutral-bg",
+      "value": "#1F2226"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-neutral-border",
+      "value": "#343A41"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-scrim",
+      "value": "#00000099"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-skeleton-base",
+      "value": "#1F2226"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-skeleton-sheen",
+      "value": "#262A2F"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-tooltip-bg",
+      "value": "#F5F6F7"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-tooltip-fg",
+      "value": "#141619"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-shadow-sm",
+      "value": "0 1px 2px rgba(0, 0, 0, .40), 0 2px 8px rgba(0, 0, 0, .22)"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-shadow-md",
+      "value": "0 4px 14px rgba(0, 0, 0, .28), 0 16px 40px rgba(0, 0, 0, .32)"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-shadow-lg",
+      "value": "0 8px 28px rgba(0, 0, 0, .32), 0 32px 80px rgba(0, 0, 0, .42)"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-shadow-card",
+      "value": "0 1px 2px rgba(0, 0, 0, .32)"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-shadow-card-hover",
+      "value": "0 2px 8px rgba(0, 0, 0, .44)"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-shadow-panel",
+      "value": "0 1px 2px rgba(0, 0, 0, .24)"
+    },
+    {
+      "selector": "[data-wm-theme='dark']",
+      "token": "--wm-focus-ring",
+      "value": "0 0 0 3px color-mix(in srgb, var(--wm-focus) 40%, transparent)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-font-sans",
+      "value": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-font-mono",
+      "value": "\"SF Mono\", \"Cascadia Code\", ui-monospace, Consolas, \"Liberation Mono\", monospace"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-2xs",
+      "value": ".6875rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-xs",
+      "value": ".75rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-sm",
+      "value": ".875rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-md",
+      "value": "1rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-lg",
+      "value": "1.25rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-xl",
+      "value": "1.5rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-text-2xl",
+      "value": "1.875rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-leading-2xs",
+      "value": "1rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-leading-xs",
+      "value": "1rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-leading-sm",
+      "value": "1.25rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-leading-md",
+      "value": "1.5rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-leading-lg",
+      "value": "1.75rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-leading-xl",
+      "value": "2rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-leading-2xl",
+      "value": "2.375rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-1",
+      "value": ".25rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-2",
+      "value": ".5rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-3",
+      "value": ".75rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-4",
+      "value": "1rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-5",
+      "value": "1.25rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-6",
+      "value": "1.5rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-7",
+      "value": "2rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-8",
+      "value": "2.5rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-9",
+      "value": "3rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-10",
+      "value": "4rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-11",
+      "value": "5rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-space-12",
+      "value": "6rem"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-radius-sm",
+      "value": "9px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-radius-md",
+      "value": "14px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-radius-lg",
+      "value": "18px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-radius-xl",
+      "value": "26px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-radius-2xl",
+      "value": "34px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-radius-pill",
+      "value": "999px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-radius-card",
+      "value": "16px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-radius-panel",
+      "value": "22px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-surface-panel",
+      "value": "color-mix(in srgb, var(--wm-surface-subtle) 92%, var(--wm-canvas))"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-border-panel",
+      "value": "color-mix(in srgb, var(--wm-border) 70%, transparent)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-sidebar-collapsed-w",
+      "value": "56px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-control-h-xs",
+      "value": "24px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-control-h-sm",
+      "value": "26px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-control-h-md",
+      "value": "32px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-control-h-lg",
+      "value": "40px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-control-h-xl",
+      "value": "52px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-control-h-input",
+      "value": "38px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-sidebar-w",
+      "value": "240px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-header-h",
+      "value": "52px"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-z-sticky",
+      "value": "9"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-overlay-z",
+      "value": "40"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-z-popover",
+      "value": "140"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-z-toast",
+      "value": "200"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-motion-fast",
+      "value": "120ms"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-motion-normal",
+      "value": "180ms"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-motion-slow",
+      "value": "280ms"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-ease-standard",
+      "value": "cubic-bezier(.2, 0, 0, 1)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-ease-out",
+      "value": "cubic-bezier(.22, 1, .36, 1)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-ease-spring",
+      "value": "cubic-bezier(.34, 1.56, .64, 1)"
+    },
+    {
+      "selector": ":root",
+      "token": "--wm-grad-accent",
+      "value": "linear-gradient(135deg, var(--wm-accent), var(--wm-violet))"
+    },
+    {
+      "selector": "[data-wm-density='compact']",
+      "token": "--wm-control-h-sm",
+      "value": "22px"
+    },
+    {
+      "selector": "[data-wm-density='compact']",
+      "token": "--wm-control-h-md",
+      "value": "26px"
+    },
+    {
+      "selector": "[data-wm-density='compact']",
+      "token": "--wm-control-h-lg",
+      "value": "32px"
+    },
+    {
+      "selector": "[data-wm-density='compact']",
+      "token": "--wm-control-h-input",
+      "value": "32px"
+    }
+  ],
+  "consumers": [
+    {
+      "file": "apps/web/app/agent-session-detail.test.tsx",
+      "token": "--wm-border",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/agent-session-detail.test.tsx",
+      "token": "--wm-surface-subtle",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/lib/toast-viewport.test.tsx",
+      "token": "--wm-overlay-z",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-accent",
+      "count": 16
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-accent-active",
+      "count": 9
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-accent-bg",
+      "count": 5
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-accent-border",
+      "count": 5
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-accent-fg",
+      "count": 3
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-border",
+      "count": 213
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-border-panel",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-border-strong",
+      "count": 21
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-border-subtle",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-canvas",
+      "count": 8
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-danger",
+      "count": 41
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-danger-bg",
+      "count": 16
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-danger-border",
+      "count": 14
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-danger-fg",
+      "count": 3
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-dismissal-depth",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-ease-out",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-ease-standard",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-focus",
+      "count": 35
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-focus-ring",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-font-mono",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-info",
+      "count": 7
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-info-bg",
+      "count": 2
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-info-border",
+      "count": 2
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-motion-fast",
+      "count": 2
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-muted",
+      "count": 210
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-neutral",
+      "count": 4
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-neutral-bg",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-neutral-border",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-overlay-z",
+      "count": 2
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-radius-card",
+      "count": 4
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-radius-lg",
+      "count": 16
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-radius-md",
+      "count": 30
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-radius-panel",
+      "count": 4
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-radius-pill",
+      "count": 10
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-radius-sm",
+      "count": 15
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-scrim",
+      "count": 2
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-shadow-card",
+      "count": 4
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-shadow-card-hover",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-shadow-lg",
+      "count": 8
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-shadow-md",
+      "count": 4
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-shadow-panel",
+      "count": 3
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-shadow-sm",
+      "count": 14
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-space-1",
+      "count": 3
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-space-2",
+      "count": 6
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-space-3",
+      "count": 5
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-space-4",
+      "count": 2
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-space-5",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-status-color",
+      "count": 3
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-success",
+      "count": 33
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-success-bg",
+      "count": 18
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-success-border",
+      "count": 15
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-surface",
+      "count": 105
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-surface-active",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-surface-hover",
+      "count": 15
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-surface-panel",
+      "count": 3
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-surface-subtle",
+      "count": 93
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-text",
+      "count": 80
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-text-inverse",
+      "count": 3
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-text-md",
+      "count": 2
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-text-muted",
+      "count": 15
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-text-sm",
+      "count": 6
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-text-strong",
+      "count": 3
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-text-subtle",
+      "count": 6
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-text-xs",
+      "count": 18
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-violet",
+      "count": 7
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-violet-bg",
+      "count": 4
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-violet-border",
+      "count": 3
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-warning",
+      "count": 40
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-warning-bg",
+      "count": 21
+    },
+    {
+      "file": "apps/web/app/styles.css",
+      "token": "--wm-warning-border",
+      "count": 20
+    },
+    {
+      "file": "apps/web/app/ui-catalog/page.tsx",
+      "token": "--wm-border",
+      "count": 2
+    },
+    {
+      "file": "apps/web/app/ui-catalog/page.tsx",
+      "token": "--wm-radius-panel",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/ui-catalog/page.tsx",
+      "token": "--wm-text-md",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/ui-catalog/page.tsx",
+      "token": "--wm-text-muted",
+      "count": 1
+    },
+    {
+      "file": "apps/web/app/ui-catalog/page.tsx",
+      "token": "--wm-text-sm",
+      "count": 1
+    },
+    {
+      "file": "apps/web/e2e/mocked/accessibility-keyboard.mocked.spec.ts",
+      "token": "--wm-focus",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-border",
+      "count": 6
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-border-strong",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-focus",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-focus-ring",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-font-mono",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-font-sans",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-muted",
+      "count": 3
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-radius-md",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-radius-sm",
+      "count": 3
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-surface",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-surface-hover",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-surface-subtle",
+      "count": 3
+    },
+    {
+      "file": "apps/web/features/rich-content/markdown.module.css",
+      "token": "--wm-text",
+      "count": 4
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-accent",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-accent-bg",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-accent-border",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-accent-fg",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-border",
+      "count": 16
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-border-strong",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-canvas",
+      "count": 3
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-danger",
+      "count": 3
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-danger-bg",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-danger-border",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-focus-ring",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-font-mono",
+      "count": 3
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-neutral",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-radius-lg",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-radius-md",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-radius-pill",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-radius-sm",
+      "count": 8
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-success",
+      "count": 4
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-success-bg",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-success-border",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-surface",
+      "count": 3
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-surface-active",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-surface-hover",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-surface-raised",
+      "count": 3
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-surface-subtle",
+      "count": 4
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-text",
+      "count": 5
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-text-muted",
+      "count": 13
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-text-strong",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-text-subtle",
+      "count": 7
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-warning",
+      "count": 2
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-warning-bg",
+      "count": 1
+    },
+    {
+      "file": "apps/web/features/workbench/conversation-workbench.module.css",
+      "token": "--wm-warning-border",
+      "count": 1
+    },
+    {
+      "file": "packages/ui/src/domain/work-item.tsx",
+      "token": "--wm-muted",
+      "count": 1
+    },
+    {
+      "file": "packages/ui/src/primitives/catalog.tsx",
+      "token": "--wm-border",
+      "count": 1
+    },
+    {
+      "file": "packages/ui/src/primitives/catalog.tsx",
+      "token": "--wm-canvas",
+      "count": 1
+    },
+    {
+      "file": "packages/ui/src/primitives/catalog.tsx",
+      "token": "--wm-radius-lg",
+      "count": 1
+    },
+    {
+      "file": "packages/ui/src/primitives/catalog.tsx",
+      "token": "--wm-text",
+      "count": 1
+    },
+    {
+      "file": "packages/ui/src/primitives/catalog.tsx",
+      "token": "--wm-text-lg",
+      "count": 1
+    },
+    {
+      "file": "packages/ui/src/primitives/catalog.tsx",
+      "token": "--wm-text-md",
+      "count": 1
+    },
+    {
+      "file": "packages/ui/src/primitives/catalog.tsx",
+      "token": "--wm-text-muted",
+      "count": 1
+    }
+  ]
+}
