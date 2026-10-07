@@ -1,0 +1,519 @@
+{
+  "sourceBase": "72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2",
+  "independentDraftReview": "独立审查者已读原主线和代码，最终修订稿尚须定向复核；处置完成不等于独立闭合。",
+  "findings": [
+    {
+      "id": "R1-H01",
+      "severity": "high",
+      "location": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md:119",
+      "evidence": "apps/api/src/auth-idempotency.ts:285；apps/web/app/lib/mcp-onboarding.ts:131",
+      "fact": "重放直接解密返回；当前 onboarding 要执行全部 Skill 与身份校验，而 ADR 在 verify_connection 前提交配置。pending 精确 body 包含 pairingCode。",
+      "impact": "可能持久提交错误/撤销凭据；Windows mode不能证明配对码受到保护。",
+      "action": "统一完整身份/当前凭据验证先于秘密与正式配置，敏感pending并发/ACL验证和失败补偿；撤回无秘密pending与重放重验撤权假定。",
+      "owner": "R1；#5 执行者",
+      "tasks": [
+        5,
+        7,
+        20
+      ],
+      "disposition": "修改",
+      "reviewStatus": "待最终定向复核",
+      "sourceCommit": "72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json"
+      ],
+      "producerStatus": "生产者已修订；独立闭合待Chief定向成果审查"
+    },
+    {
+      "id": "R1-H02",
+      "severity": "high",
+      "location": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:528",
+      "evidence": "apps/api/src/inbox/routes.ts:1125；apps/api/src/inbox/routes.ts:1149；apps/api/src/collaboration/routes.ts:1003；apps/api/src/collaboration/routes.ts:1061；packages/db/migrations/0032_agent_inbox_receipts.sql:92",
+      "fact": "当前 reply/answer/resolve 按根消息唯一resolution完成，但投影更新仅筛 room_message。每recipient/source唯一仅保证每前驱生成幂等，不定义恢复链收敛。",
+      "impact": "多次恢复可能被当新业务输入绕过去重/Stop，完成后仍留open后继，或发生并发最终回复。",
+      "action": "冻结直接前驱、持久根及可空根消息引用、每前驱恢复资格/幂等/统一根锁、三完成路径全链原子收敛与Stop/撤权/换届约束；F3/F4/F5接口和F6联合验收明确owner。",
+      "owner": "R1 冻结；#26/#27/#28 分面；#29 联合验收",
+      "tasks": [
+        26,
+        27,
+        28,
+        29
+      ],
+      "disposition": "修改",
+      "reviewStatus": "待最终定向复核",
+      "sourceCommit": "72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json"
+      ],
+      "producerStatus": "生产者已修订；独立闭合待Chief定向成果审查"
+    },
+    {
+      "id": "R1-H03",
+      "severity": "high",
+      "location": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md:118",
+      "evidence": "apps/web/features/work-items/view-model.ts:46；apps/web/features/work-items/detail/work-item-execution-workspace.tsx:104；packages/db/src/schema.ts:18",
+      "fact": "workflow category与activeAgentState分开；详情按audience.canRespond选择Attention。没有awaiting_review执行枚举。",
+      "impact": "虚构状态映射使暖色暗示错误权限，误将执行态回写工作流。",
+      "action": "按当前授权未决Attention判暖色，保留两维/自定义工作流，使用真实枚举；领域mutation与本地复制/草稿分开，多选逐项结果恢复。",
+      "owner": "R1；#12/#14/#22 执行者",
+      "tasks": [
+        12,
+        14,
+        22
+      ],
+      "disposition": "修改",
+      "reviewStatus": "待最终定向复核",
+      "sourceCommit": "72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json"
+      ],
+      "producerStatus": "生产者已修订；独立闭合待Chief定向成果审查"
+    },
+    {
+      "id": "R1-H04",
+      "severity": "high",
+      "location": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:400",
+      "evidence": "apps/api/src/agent/commands.ts:826；docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md:1",
+      "fact": "PR197已给撤权与用量框架，但派生失效范围和新execution retry计数仍留给实现者。现有命令保留principal等式。",
+      "impact": "旧revision子会话静默保留权限或新执行不计成本；错误把policy批准当委派。",
+      "action": "全体旧revision派生会话失效；新Session retry新logicaldispatch/新use，重放不重扣；预留/启动/取消台账与状态事件outbox原子；0062合取及两层上限分配#25。",
+      "owner": "R1；#25 执行者",
+      "tasks": [
+        24,
+        25,
+        26,
+        29
+      ],
+      "disposition": "修改",
+      "reviewStatus": "待最终定向复核",
+      "sourceCommit": "72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json"
+      ],
+      "producerStatus": "生产者已修订；独立闭合待Chief定向成果审查"
+    },
+    {
+      "id": "R1-M01",
+      "severity": "medium",
+      "location": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md:227",
+      "evidence": "apps/worker/src/automation.ts:677；apps/worker/src/automation.ts:718；packages/contracts/src/index.ts:2167",
+      "fact": "既有notification delivery已有claim/reclaim/fence；ADR同时称preset表和零迁移文件目录。",
+      "impact": "实现者可能重复建队列或加入不需要的preset聚合。",
+      "action": "目录仅文件；复用delivery行作attempt，新增intent/cursor/source关联；C1负责target管理、C2消费，不恢复延期回调。",
+      "owner": "R1；#15/#17 执行者",
+      "tasks": [
+        15,
+        16,
+        17
+      ],
+      "disposition": "修改",
+      "reviewStatus": "待最终定向复核",
+      "sourceCommit": "72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json"
+      ]
+    },
+    {
+      "id": "R1-M02",
+      "severity": "medium",
+      "location": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md:35",
+      "evidence": "packages/ui/src/tokens.css:94；apps/web/e2e/baselines/d0/README.md:27",
+      "fact": "产品已有且默认暗色，D0仅固定亮色取样。",
+      "impact": "陈旧只亮色前提可能允许迁移删除现有暗色。",
+      "action": "撤换陈旧正文；#11定义暗色继承映射、#21逐面消费及清理回归；参考暗色值迁移延后。",
+      "owner": "R1；#11/#21 执行者",
+      "tasks": [
+        11,
+        21,
+        12
+      ],
+      "disposition": "修改",
+      "reviewStatus": "待最终定向复核",
+      "sourceCommit": "72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json"
+      ]
+    },
+    {
+      "id": "R1-M03",
+      "severity": "medium",
+      "location": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md:98",
+      "evidence": "apps/api/src/workbench-runner.ts:88；packages/db/src/schema.ts:321",
+      "fact": "没有空闲Runner活性事实，原ADR却称既有域拒绝缺Runner的委派。",
+      "impact": "unknown可能被解释成授权门禁。",
+      "action": "删除无依据的现有拒绝断言，不改变服务端授权，GET零写入。",
+      "owner": "R1；#8/#9 执行者",
+      "tasks": [
+        8,
+        9,
+        26
+      ],
+      "disposition": "修改",
+      "reviewStatus": "待最终定向复核",
+      "sourceCommit": "72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json"
+      ]
+    },
+    {
+      "id": "R1-M04",
+      "severity": "medium",
+      "location": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:6",
+      "evidence": "docs/reviews/r1/execution-inputs.json:1；docs/evidence/build-input-reachability.md:1",
+      "fact": "五条产品链被称六条，卡仍带旧dcf精确相等/最终G1未合门禁；F5/F6互锁仍在源卡。",
+      "impact": "阻塞授权执行或按过时规格实现；#6原验收可能遗漏。",
+      "action": "正文替换当前门禁，无环任务/验收阶段图，全部卡完整映射；保留历史源/旧测试逐条处置。",
+      "owner": "R1；Chief 同步",
+      "tasks": [
+        3,
+        5,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "disposition": "修改",
+      "reviewStatus": "待最终定向复核",
+      "sourceCommit": "72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json"
+      ]
+    },
+    {
+      "id": "R1-M05",
+      "severity": "medium",
+      "location": "docs/reviews/r1/execution-inputs.json:1",
+      "evidence": "docs/adr/0071-lite-single-node-self-hosted-deployment.md:1；deploy/lite/README.md:1",
+      "fact": "#20没有获批设备矩阵，#16官方出站协议部署条件未核实，#27容量数字未测。",
+      "impact": "把建议当批准会擅扩范围或编造验收阈值。",
+      "action": "形成decisions.md具体建议；#20/#16阶段一交Chief裁定，#27先实测再冻结预算；受影响阶段保持关闭。",
+      "owner": "Chief；#20/#16/#27 执行者",
+      "tasks": [
+        20,
+        16,
+        27
+      ],
+      "disposition": "交总管裁定／测量门禁",
+      "reviewStatus": "待决，不冒称用户批准",
+      "sourceCommit": "72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json"
+      ]
+    },
+    {
+      "id": "R1-H05",
+      "severity": "high",
+      "location": "docs/reviews/r1/execution-inputs.json:546",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "evidence": "docs/reviews/r1/execution-inputs.json；apps/api/src/agent/commands.ts:826；docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md: Migration",
+      "fact": "源#27把效果去重绑定授权；同一standing revision可以有多次合法logical dispatch。初稿只修源句仍缺迁移/台账一致性。",
+      "impact": "可能吞掉后续分派或checkpoint重放重复扣量。",
+      "action": "#25逻辑分派记录/幂等键与用量，#27结果/checkpoint原子引用；委派id/revision仅授权来源，同步ADR Migration/main/index/全部活动正文。",
+      "owner": "R1；#25/#27 执行者",
+      "tasks": [
+        25,
+        27,
+        29
+      ],
+      "disposition": "修改",
+      "reviewStatus": "生产者已修订，待Chief安排最终独立复核",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json",
+        "docs/plan/activation-task-specs/27.md:11",
+        "docs/plan/activation-task-specs/27.md:41",
+        "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:415",
+        "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:775",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:140",
+        "docs/plan/activation-task-specs/25.md:11",
+        "docs/reviews/r1/execution-spec-deltas.json",
+        "docs/reviews/r1/producer-review-response.md"
+      ],
+      "producerStatus": "生产者已修订；独立闭合待Chief定向成果审查",
+      "producerEvidence": [
+        "docs/plan/activation-task-specs/27.md:11",
+        "docs/plan/activation-task-specs/27.md:41",
+        "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:415",
+        "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:775",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:140",
+        "docs/plan/activation-task-specs/25.md:11",
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/execution-spec-deltas.json"
+      ]
+    },
+    {
+      "id": "R1-H06",
+      "severity": "high",
+      "location": "docs/reviews/r1/test-coverage.json:1551",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "evidence": "AGENTS.md: Tests；packages/ui/src/tokens.css:94；apps/api/integration/stage1-lifecycle.integration.test.ts:1",
+      "fact": "初稿九类重复整段任务测试并把纯主题/只读面标全适用；文件存在不证明断言覆盖。",
+      "impact": "虚假覆盖掩盖并发/事务边界，强迫UI新增领域状态。",
+      "action": "29 feature逐类独立具体断言、实际文件或待建owner，不适用按该面边界解释；原测试/DoD全文与哈希、target id和用例映射保留。",
+      "owner": "R1；各feature执行者",
+      "tasks": [
+        5,
+        8,
+        9,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "disposition": "修改",
+      "reviewStatus": "生产者已修订，待Chief安排最终独立复核",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/test-coverage.json",
+        "docs/reviews/r1/test-coverage.md:145",
+        "docs/reviews/r1/legacy-requirements.json",
+        "docs/reviews/r1/verify-specs.mjs:68",
+        "docs/reviews/r1/static-check-results.json",
+        "docs/reviews/r1/source-gaps.md",
+        "docs/reviews/r1/producer-review-response.md"
+      ],
+      "producerStatus": "生产者已修订；独立闭合待Chief定向成果审查",
+      "producerEvidence": [
+        "docs/reviews/r1/test-coverage.json",
+        "docs/reviews/r1/test-coverage.md:145",
+        "docs/reviews/r1/legacy-requirements.json",
+        "docs/reviews/r1/verify-specs.mjs:68",
+        "docs/reviews/r1/static-check-results.json",
+        "docs/reviews/r1/source-gaps.md"
+      ]
+    },
+    {
+      "id": "R1-H07",
+      "severity": "high",
+      "location": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:596",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "evidence": "apps/api/src/inbox/routes.ts:309；apps/api/src/inbox/routes.ts:1266；packages/db/src/agent-locks.ts:66；packages/db/src/agent-lock-order-manifest.ts:1；apps/api/src/agent/guard.ts:207",
+      "fact": "初稿根锁排序没有统一现有Session advisory/authority rank；持root再获取Session会形成逆序。",
+      "impact": "恢复与reply/resolve/Stop/换届并发可能死锁，锁后绑定变化漏重验。",
+      "action": "冻结locator→排序Session advisory→生命周期/appointment前缀→完整authority rank（Chief委派保留delegation rank）→guard重验→root/前驱/后继；变化整事务回滚重试；三完成路径共用，#28逐语句清单与交叉并发，#29联合验收。",
+      "owner": "R1；#24/#25/#28执行者；#29联合",
+      "tasks": [
+        24,
+        25,
+        26,
+        28,
+        29
+      ],
+      "disposition": "修改",
+      "reviewStatus": "生产者已修订，待Chief安排最终独立复核",
+      "revisionEvidence": [
+        "docs/reviews/r1/lock-contract.md",
+        "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+        "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:596",
+        "docs/reviews/r1/lock-contract.md:14",
+        "docs/reviews/r1/lock-contract.md:22",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:138",
+        "docs/plan/activation-task-specs/24.md:11",
+        "docs/plan/activation-task-specs/25.md:11",
+        "docs/plan/activation-task-specs/28.md:11",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/producer-review-response.md"
+      ],
+      "producerStatus": "生产者已修订；独立闭合待Chief定向成果审查",
+      "producerEvidence": [
+        "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:596",
+        "docs/reviews/r1/lock-contract.md:14",
+        "docs/reviews/r1/lock-contract.md:22",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:138",
+        "docs/plan/activation-task-specs/24.md:11",
+        "docs/plan/activation-task-specs/25.md:11",
+        "docs/plan/activation-task-specs/28.md:11",
+        "docs/reviews/r1/task-contracts.json"
+      ]
+    },
+    {
+      "id": "R1-M06",
+      "severity": "medium",
+      "location": "docs/reviews/r1/execution-inputs.json:126",
+      "sourceCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+      "evidence": "docs/reviews/r1/legacy-requirements.json；docs/references/todos-analysis/reviews/todos-review.md:11",
+      "fact": "#6当前卡为关闭记录，没有合并前全文历史接口；受控B2主计划与外部审查已追回。",
+      "impact": "无法独立排除原卡另有未纳入受控材料的测试/DoD。",
+      "action": "已知原条目逐项分配#5/#20；缺口和追回方法落source-gaps.md，Chief在R1完成/同步前提供历史全文或核验来源范围，不能宣称全部额外条目已追回。",
+      "owner": "Chief 来源交接；R1 映射复核",
+      "tasks": [
+        3,
+        5,
+        20
+      ],
+      "disposition": "已形成具体追溯交付；历史来源缺口待核验",
+      "reviewStatus": "未闭合；不冒称全文齐全"
+    },
+    {
+      "id": "R1-H08",
+      "severity": "high",
+      "blocking": true,
+      "sourceCommit": "18027999536ac9ea34961c06ddba8b6bcf60b37d",
+      "location": "docs/plan/activation-task-specs/12.md:34",
+      "evidence": "apps/api/src/human-attention/projection.ts:195；docs/reviews/r1/review-feedback-source.json",
+      "fact": "relationship与canRespond分别计算。完整spec和ADR仍按是否属于别人排除合法Attention，另残留禁止暗色断言与色距起始值要求。",
+      "impact": "隐藏当前人合法可读/可响应内容，暗色回归和单暖色验收矛盾。",
+      "action": "活动正文以读取授权判可见、audience.canRespond加未决判暖色；他人负责但有权响应仍可见并暖色。移除禁止暗色断言/色距起始值，历史原文只留追踪；明暗/暗色token回归保留。",
+      "owner": "R1 修订；#12执行者验收",
+      "tasks": [
+        12,
+        11,
+        21
+      ],
+      "disposition": "修改活动正文/ADR/矩阵；原测试条目逐项标撤换",
+      "producerEvidence": [
+        "docs/plan/activation-task-specs/12.md:34",
+        "docs/plan/activation-task-specs/12.md:28",
+        "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md:124",
+        "docs/reviews/r1/test-coverage.json",
+        "docs/reviews/r1/legacy-requirements.json"
+      ],
+      "reviewStatus": "生产者已修订，待Chief安排精确新head的最终独立复核",
+      "producerStatus": "具体修订及静态证据已落盘；不代替独立闭合",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/12.md:34",
+        "docs/plan/activation-task-specs/12.md:28",
+        "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md:124",
+        "docs/reviews/r1/test-coverage.json",
+        "docs/reviews/r1/legacy-requirements.json",
+        "docs/reviews/r1/review-feedback-response.md",
+        "docs/reviews/r1/review-feedback-checks.json"
+      ]
+    },
+    {
+      "id": "R1-H09",
+      "severity": "high",
+      "blocking": true,
+      "sourceCommit": "18027999536ac9ea34961c06ddba8b6bcf60b37d",
+      "location": "docs/reviews/r1/test-coverage.json:1800；docs/reviews/r1/test-coverage.json:6024",
+      "evidence": "docs/plan/activation-task-specs/index.json（来源提交的#13 acceptanceRequires=[]）；docs/reviews/r1/review-feedback-source.json",
+      "fact": "A2阶段仍要求D4组合验收，F5仍要求F4 checkpoint联合重放，未体现下游组合阶段输入。",
+      "impact": "上游不能独立验收，依赖图未表达实际验收前置。",
+      "action": "A2+D4归#13-integration并声明acceptanceRequires=[9]；#9自身验收不等D4。#28只验收底层创建/完成恢复，checkpoint组合归#29-integration，已验收输入#27/#28。同步全文/矩阵/索引/主计划图与原条目去向。",
+      "owner": "R1 修订；#13/#29联合验收；#9/#28独立交付",
+      "tasks": [
+        9,
+        13,
+        28,
+        29
+      ],
+      "disposition": "分开实现/组合阶段，保留测试责任和单向验收依赖",
+      "producerEvidence": [
+        "docs/plan/activation-task-specs/13.md:50",
+        "docs/plan/activation-task-specs/28.md:15",
+        "docs/plan/activation-task-specs/29.md:15",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:134",
+        "docs/reviews/r1/test-coverage.json",
+        "docs/plan/activation-task-specs/index.json"
+      ],
+      "reviewStatus": "生产者已修订，待Chief安排精确新head的最终独立复核",
+      "producerStatus": "具体修订及静态证据已落盘；不代替独立闭合",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/13.md:50",
+        "docs/plan/activation-task-specs/28.md:15",
+        "docs/plan/activation-task-specs/29.md:15",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:134",
+        "docs/reviews/r1/test-coverage.json",
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/review-feedback-response.md",
+        "docs/reviews/r1/review-feedback-checks.json"
+      ]
+    },
+    {
+      "id": "R1-H10",
+      "severity": "high",
+      "blocking": true,
+      "sourceCommit": "18027999536ac9ea34961c06ddba8b6bcf60b37d",
+      "location": "docs/plan/activation-task-specs/index.json:1567",
+      "evidence": "本会话已批准完整spec：F产品功能实现范围仍须另行确认；docs/reviews/r1/review-feedback-source.json",
+      "fact": "#23–#29各卡仅按依赖/审查门禁，独立同步后无法保留#3全文中的F实现授权限制。",
+      "impact": "R1合入可能被误当F产品实现范围已授权。",
+      "action": "七张F卡头部与执行放行段、索引/阶段gate及主计划均明确由Chief取得并记录用户对本卡实现范围的确认后才派发；结构化授权状态待确认。保留F2/F5既有设计决定，不重问。",
+      "owner": "R1 写入；Chief取得并记录范围确认；#23–#29执行者开工核验",
+      "tasks": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "disposition": "修改各卡可独立同步的门禁，范围确认仍待取得",
+      "producerEvidence": [
+        "docs/plan/activation-task-specs/23.md:7",
+        "docs/plan/activation-task-specs/29.md:7",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:13",
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json"
+      ],
+      "reviewStatus": "生产者已修订，待Chief安排精确新head的最终独立复核",
+      "producerStatus": "具体修订及静态证据已落盘；不代替独立闭合",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/23.md:7",
+        "docs/plan/activation-task-specs/29.md:7",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:13",
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/review-feedback-response.md",
+        "docs/reviews/r1/review-feedback-checks.json"
+      ]
+    }
+  ],
+  "actualBase": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+  "currentDraft": "f137787faa0979b59dd70668001b09bb5e132421",
+  "producerDisposition": {
+    "unaddressedBlocking": [],
+    "unaddressedHigh": [],
+    "basis": "本次反馈三项blocking high已形成具体修订与定向静态检查；没有生产者未处置项，但独立闭合与实现授权门禁保持。",
+    "pending": [
+      "全部high最终定向独立复核",
+      "R1-M06：#6历史源全文范围核验",
+      "R1-M05：设备/渠道阶段决定及F4实测预算",
+      "既有UI超时未知根因与稳定性核验",
+      "最终提交最新PR/head Required CI",
+      "R1-H08/H09/H10按精确新head独立复核",
+      "F各卡实现范围由Chief取得并记录用户确认"
+    ]
+  },
+  "reviewedProducerCommit": "18027999536ac9ea34961c06ddba8b6bcf60b37d"
+}

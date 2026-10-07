@@ -1,0 +1,19 @@
+{
+  "capturedAt": "2026-10-07T20:17:38.998Z",
+  "platform": "win32",
+  "node": "v24.20.0",
+  "pinnedCiNode": "22.19.0",
+  "pnpm": "9.15.4",
+  "docker": "Docker version 29.8.0, build 88096ef",
+  "baseCommit": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+  "draftCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+  "fullCiScopeReason": "JSON/.mjs/.gitattributes属于当前policy的unknown paths，不能按纯Markdown豁免，最终选中job见ci-selection.json",
+  "isolatedServices": {
+    "postgres": "postgres:16-alpine",
+    "redis": "redis:7-alpine",
+    "objectStorage": "rustfs/rustfs:1.0.0",
+    "integration": "run6 / r1f-* / 15435,16382,19003",
+    "e2e": "run9 / r1i-* / 15438,16385,19006; API3101/Web3100; 仅fake服务"
+  },
+  "limitations": "本地Node24.20.0，CI精确Node22.19.0；本地通过不代替Ubuntu分片/镜像恢复/最新head Required CI，不改机器全局Node、不伪称运行了CI runner"
+}

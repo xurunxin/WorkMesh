@@ -1,0 +1,44 @@
+[WebServer] (node:28264) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:30984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:2576) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] {"level":30,"time":1791403057049,"pid":2576,"hostname":"DarkFlame","msg":"Server listening at http://127.0.0.1:3101"}
+[WebServer] {"level":30,"time":1791403057052,"pid":2576,"hostname":"DarkFlame","msg":"Server listening at http://100.77.217.65:3101"}
+[WebServer] {"level":30,"time":1791403057052,"pid":2576,"hostname":"DarkFlame","msg":"Server listening at http://192.168.31.186:3101"}
+[WebServer] {"level":30,"time":1791403057052,"pid":2576,"hostname":"DarkFlame","msg":"Server listening at http://10.173.185.137:3101"}
+[WebServer] {"level":30,"time":1791403057052,"pid":2576,"hostname":"DarkFlame","msg":"Server listening at http://172.24.64.1:3101"}
+[WebServer] {"level":30,"time":1791403057693,"pid":2576,"hostname":"DarkFlame","reqId":"5f29389f-0e6b-46a3-8e45-c2eb8fcba816","req":{"method":"GET","url":"/health","host":"127.0.0.1:3101","remoteAddress":"127.0.0.1","remotePort":55799},"msg":"incoming request"}
+[WebServer] {"level":30,"time":1791403057716,"pid":2576,"hostname":"DarkFlame","reqId":"5f29389f-0e6b-46a3-8e45-c2eb8fcba816","res":{"statusCode":200},"responseTime":22.712400000000343,"msg":"request completed"}
+[WebServer] (node:10168) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:20608) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:43796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]    ▲ Next.js 15.5.22
+[WebServer]    - Local:        http://localhost:3100
+[WebServer]    - Network:      http://100.77.217.65:3100
+[WebServer]
+[WebServer]  ✓ Starting...
+[WebServer]  ✓ Ready in 4.3s
+[WebServer]  ○ Compiling / ...
+[WebServer]  ✓ Compiled / in 9.2s (10513 modules)
+Error: pnpm did not expose npm_execpath to Playwright global setup
+
+   at global-setup.ts:9
+
+   7 |   const pnpmCli = process.env.npm_execpath;
+   8 |   if (!pnpmCli) {
+>  9 |     throw new Error("pnpm did not expose npm_execpath to Playwright global setup");
+     |           ^
+  10 |   }
+  11 |   const pnpmScript = /\.(?:cjs|mjs|js)$/i.test(pnpmCli);
+  12 |   await execFileAsync(
+    at resetAcceptanceDatabase (C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\web\e2e\global-setup.ts:9:11)
+[WebServer]  GET / 200 in 10091ms
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test --config ../../playwright.config.ts project-editor.spec.ts

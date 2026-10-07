@@ -4,11 +4,8 @@ Status
 
 Proposed
 
-Supersedes, in part: the recovery half of ADR 0043 §2 (same pairing code with a
-different `Idempotency-Key` is rejected today) and the manual-verification steps
-of ADR 0046 §. The security decisions in ADR 0043 and ADR 0046 remain in force;
-this ADR changes **who performs** the verification and **how a client recovers**,
-not what is verified. See "Relationship to existing decisions".
+仅替换 ADR 0046 的人工操作流程，不撤销 ADR 0043 的新 key 拒绝规则。
+客户端恢复仍须重放同一请求身份；这里改变执行校验的工具，不减少校验或放宽凭据重放。
 
 Context
 
@@ -89,10 +86,11 @@ code and public fields would make the code a replayable bearer for the window �
 precisely the property the single-use design avoids.
 
 Instead, `apps/connector` makes the request identity recoverable by
-construction. Before the first request it atomically persists, to a
-`0600` file in the client's own config directory: the `Idempotency-Key`, the
-exact canonical request body, and the client context (origin, user-agent) it is
-about to send. It sends from that record. On any subsequent run — including
+construction. 首次网络请求前，原子保存 `Idempotency-Key`、包含完整 `wmp_` pairingCode
+的精确规范化请求 body 和客户端上下文（origin、user-agent）。这是敏感 pending 文件，
+不是无秘密的恢复文件；POSIX 使用并验证 `0600`，Windows 设置并验证当前用户专用 ACL。
+独占创建/锁定后再暂存并 rename；并发启动复用同一 pending 身份，不生成竞态新 key。
+其中不得保存兑换后的 install token，不打印配对码、令牌或完整请求。On any subsequent run — including
 after a crash, a process kill, or a reboot — if a pending record exists it
 replays that record verbatim, and the existing encrypted replay returns the same
 token.
@@ -113,13 +111,13 @@ The reduction is about **who does the work**, not about **what gets checked**.
 
 | Step | Before | After |
 | --- | --- | --- |
-| 1 | human reads a connect URL, agent parses a fragment | human reads the 43-character code (or scans a QR encoding it) and gives it to the agent; the code is a first-class input, not a URL to be parsed |
+| 1 | human reads a connect URL, agent parses a fragment | 输入完整带前缀配对码（43 字符指随机 payload，不是完整 token 长度）；QR 保留完整 token |
 | 2 | agent fetches discovery and checks the advertised facts | connector fetches discovery and checks them |
 | 3 | agent POSTs with a fresh key, hoping to remember it | connector persists the request identity, then POSTs |
-| 4 | agent computes `SHA-256(token).slice(0,12)` and compares by hand | connector computes and compares it before storing anything |
-| 5 | agent edits client configuration by hand | connector writes the configuration atomically, into a staging file that is renamed into place only after step 4 and step 6 both pass |
+| 4 | agent computes `SHA-256(token).slice(0,12)` and compares by hand | connector 在持久保存兑换令牌前比对指纹；敏感 pending 已在请求前保存 |
+| 5 | agent edits client configuration by hand | 只在全部 discovery、Skill、身份、能力及当前凭据验证通过后写秘密存储，再原子替换正式引用配置 |
 | 6 | agent installs the Skill and verifies its raw bytes, hash, and signature | connector does exactly this, unchanged in substance |
-| 7 | agent reloads and asserts Team, principal, profile, Skill, capabilities | connector calls `verify_connection`, compares against what the claim returned, and prints the result |
+| 7 | agent reloads and asserts Team, principal, profile, Skill, capabilities | 在内存中执行 `initialize → verify_connection → get_workmesh_context`，逐项比对 Team、principal、profile、Skill、capabilities 和 authenticated_credential，验证当前凭据而非旧 overlap；完成后才能提交第 5 步 |
 
 Steps 4 and 6 remain **client-side verifications of real bytes**, because ADR
 0046 § requires verifying the Skill's actual downloaded content rather than
@@ -131,6 +129,11 @@ a failure leaves the existing configuration untouched rather than half-written.
 The server keeps verifying everything it verifies today: client type, policy
 status, capability ceiling, delegation privilege, expiry, and revocation. The
 simplification is in the ceremony, not in the gate.
+
+重放命中可能返回旧加密响应，不能声称它重新检查撤权。取回令牌后必须完成当前身份验证；
+撤权/过期/旧 overlap 凭据均不得写入新配置。秘密存储与文件系统不是跨系统事务：提交前保留
+既有秘密引用与配置，秘密写入或 rename 失败恢复旧引用并清除本次新增秘密；崩溃恢复依据
+受保护的提交阶段记录完成补偿，不能删除他人已有凭据。只有完整提交后才清理 pending。
 
 ### v1 is the pairing path, and it says so
 

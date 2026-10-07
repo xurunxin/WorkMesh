@@ -1,0 +1,272 @@
+{
+  "producerHead": "24a63f347202cdb2f116d2a8f885752b66a50577",
+  "actualMain": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+  "scope": "本轮仅恢复二进制提交字节及清单/校验器；已审规格和产品源未修改",
+  "candidateVerification": {
+    "mode": "候选 Git 对象读取（未提交）",
+    "ref": null,
+    "producerHead": "24a63f347202cdb2f116d2a8f885752b66a50577",
+    "indexedFiles": 29,
+    "manifestFiles": 176,
+    "binaryFiles": [
+      {
+        "path": "ci-failure.png",
+        "blob": "ea6ef90d0a254107c0af5615d45709d629fe3db4",
+        "bytes": 108598,
+        "sha256": "01c47565f8bda315a8b8a66d89feab35224da5617ee6219efec032183cb9b37b",
+        "pngDecode": {
+          "width": 1280,
+          "height": 720,
+          "pixelSha256": "5a23b32c4866420b465d7b90ea735222aa347dba5c9a5944ba041a330323dbb7",
+          "chunkCrc": "全部通过"
+        }
+      },
+      {
+        "path": "control2/failure.png",
+        "blob": "c7a875eadfc76fc54e3c87a4eb1b7d9fe11541eb",
+        "bytes": 128289,
+        "sha256": "4f66709a5c88c3e28349a8791dfc2b56f576b45f401a22ba94ae30aea1ca14a5",
+        "pngDecode": {
+          "width": 1280,
+          "height": 720,
+          "pixelSha256": "088ab1e2e52d70492d1940c891b02dc68c0f4ca7a64d5f0e56f434c895e76a70",
+          "chunkCrc": "全部通过"
+        }
+      },
+      {
+        "path": "raw.redacted.zip",
+        "blob": "afaa81b36d5cbca00761d6580b5b16cfc6d5d4f8",
+        "bytes": 115459,
+        "sha256": "6bf01128f0f1f1518ee59c375e23786b18a376f2e543e399acfe039fd5a2fbec",
+        "zipCrc": "全部通过",
+        "members": 6
+      },
+      {
+        "path": "readable-source.redacted.zip",
+        "blob": "cb7b392be92b67da5b2f607fa803853e47c3ea07",
+        "bytes": 447871,
+        "sha256": "595115b274cd6cab32d979a2e456bd40b4075d9416ff3dcd46f101862ac39c75",
+        "zipCrc": "全部通过",
+        "members": 9
+      },
+      {
+        "path": "trace.redacted.zip",
+        "blob": "ec1ae355d3fa0dea0779bc8c9d4bb54b37bf85e1",
+        "bytes": 3860132,
+        "sha256": "55ceab6ff77f25b4cd843bb8f0b979e524ca92a71f1c6d3983c99fc7eb1f0c93",
+        "zipCrc": "全部通过",
+        "members": 123
+      }
+    ],
+    "traceRedaction": {
+      "storageState": 1,
+      "cookies": 136,
+      "sensitiveHeaders": 68
+    },
+    "knownSourceSecretScan": "原值比对通过",
+    "result": "工件检查通过；不代表独审或最新 Required CI"
+  },
+  "damagedCommittedBlobs": [
+    {
+      "path": "docs/reviews/r1/ci381/ci-failure.png",
+      "indexedBytes": 108598,
+      "indexedSha256": "01c47565f8bda315a8b8a66d89feab35224da5617ee6219efec032183cb9b37b",
+      "worktreeBytes": 108598,
+      "worktreeSha256": "01c47565f8bda315a8b8a66d89feab35224da5617ee6219efec032183cb9b37b",
+      "worktreeMatchesIntactIndex": true,
+      "committedBytes": 108595,
+      "committedSha256": "2bf7d293622fe479432d4acf0efa4bf096144be7426bb89a0bd2fd004e9fb301",
+      "committedBlob": "7b3ba14922f2bf7cfc05bf61ab317eb4f69ae144",
+      "worktreePngSignature": true,
+      "committedPngSignature": false
+    },
+    {
+      "path": "docs/reviews/r1/ci381/control2/failure.png",
+      "indexedBytes": 128289,
+      "indexedSha256": "4f66709a5c88c3e28349a8791dfc2b56f576b45f401a22ba94ae30aea1ca14a5",
+      "worktreeBytes": 128289,
+      "worktreeSha256": "4f66709a5c88c3e28349a8791dfc2b56f576b45f401a22ba94ae30aea1ca14a5",
+      "worktreeMatchesIntactIndex": true,
+      "committedBytes": 128287,
+      "committedSha256": "b4950e3c86c5d172d96ef388e10ccedbd946305c99bcaa007076425e1eeff042",
+      "committedBlob": "7d52bef56e68c019bdae5414e2af6b4f8c691425",
+      "worktreePngSignature": true,
+      "committedPngSignature": false
+    },
+    {
+      "path": "docs/reviews/r1/ci381/raw.redacted.zip",
+      "indexedBytes": 115459,
+      "indexedSha256": "6bf01128f0f1f1518ee59c375e23786b18a376f2e543e399acfe039fd5a2fbec",
+      "worktreeBytes": 115459,
+      "worktreeSha256": "6bf01128f0f1f1518ee59c375e23786b18a376f2e543e399acfe039fd5a2fbec",
+      "worktreeMatchesIntactIndex": true,
+      "committedBytes": 115458,
+      "committedSha256": "789c0f07df3d02971a585ce673293143e0e6adacefb121f4c6a8858ffdf6db29",
+      "committedBlob": "7c807762a877bf2ddd1d814dc717687c35d97cf8",
+      "worktreeCrc": "all-valid",
+      "committedCrc": "ValueError: negative seek value -1"
+    },
+    {
+      "path": "docs/reviews/r1/ci381/readable-source.redacted.zip",
+      "indexedBytes": 447871,
+      "indexedSha256": "595115b274cd6cab32d979a2e456bd40b4075d9416ff3dcd46f101862ac39c75",
+      "worktreeBytes": 447871,
+      "worktreeSha256": "595115b274cd6cab32d979a2e456bd40b4075d9416ff3dcd46f101862ac39c75",
+      "worktreeMatchesIntactIndex": true,
+      "committedBytes": 447867,
+      "committedSha256": "7c4b2740ecee28f6637eb8177a8c7b1dc8d4725ab3cdd28c56241c6049168ea3",
+      "committedBlob": "74f1d2a71351cc7d0b82450dc540397eb7e95e29",
+      "worktreeCrc": "all-valid",
+      "committedCrc": "ValueError: negative seek value -4"
+    },
+    {
+      "path": "docs/reviews/r1/ci381/trace.redacted.zip",
+      "indexedBytes": 3860132,
+      "indexedSha256": "55ceab6ff77f25b4cd843bb8f0b979e524ca92a71f1c6d3983c99fc7eb1f0c93",
+      "worktreeBytes": 3860132,
+      "worktreeSha256": "55ceab6ff77f25b4cd843bb8f0b979e524ca92a71f1c6d3983c99fc7eb1f0c93",
+      "worktreeMatchesIntactIndex": true,
+      "committedBytes": 3860101,
+      "committedSha256": "1fc86692209a21bf97c77aa6e7be9429cf721f8cff75d8e6eab954a71a3a31a7",
+      "committedBlob": "c6c9a07759bfc2e2b09e492015a7af4d8593c526",
+      "worktreeCrc": "all-valid",
+      "committedCrc": "ValueError: negative seek value -31"
+    }
+  ],
+  "sourceIntegrity": [
+    {
+      "source": "仓库外GitHub原artifact，未提交",
+      "artifactId": 11511514752,
+      "bytes": 11299823,
+      "sha256": "ac4971b21fde6867329039919ce17c27ecff3c5a5f43aaa8c165f1d6bfbb4809",
+      "result": "与GitHub原digest一致"
+    },
+    {
+      "source": "仓库外GitHub原artifact，未提交",
+      "artifactId": 11512208027,
+      "bytes": 112716,
+      "sha256": "d2dd58da103dba221e4ba13222310c269b134c98ab7254f852acac915fadd8df",
+      "result": "与GitHub原digest一致"
+    },
+    {
+      "path": "ci-failure.png",
+      "source": "仓库外原截图，未重编码",
+      "sha256": "01c47565f8bda315a8b8a66d89feab35224da5617ee6219efec032183cb9b37b",
+      "result": "字节一致；已实际打开，fake acceptance项目，无凭证显示"
+    },
+    {
+      "path": "control2/failure.png",
+      "source": "仓库外原截图，未重编码",
+      "sha256": "4f66709a5c88c3e28349a8791dfc2b56f576b45f401a22ba94ae30aea1ca14a5",
+      "result": "字节一致；已实际打开，fake acceptance项目，无凭证显示"
+    }
+  ],
+  "checks": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "docs/reviews/r1/ci381/verify-binary-evidence.py",
+        "--secret-source",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\r1-ci381"
+      ],
+      "startedAt": "2026-10-07T22:02:23.898445+00:00",
+      "finishedAt": "2026-10-07T22:02:41.857472+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "{\r\n  \"mode\": \"候选 Git 对象读取（未提交）\",\r\n  \"ref\": null,\r\n  \"producerHead\": \"24a63f347202cdb2f116d2a8f885752b66a50577\",\r\n  \"indexedFiles\": 29,\r\n  \"manifestFiles\": 176,\r\n  \"binaryFiles\": [\r\n    {\r\n      \"path\": \"ci-failure.png\",\r\n      \"blob\": \"ea6ef90d0a254107c0af5615d45709d629fe3db4\",\r\n      \"bytes\": 108598,\r\n      \"sha256\": \"01c47565f8bda315a8b8a66d89feab35224da5617ee6219efec032183cb9b37b\",\r\n      \"pngDecode\": {\r\n        \"width\": 1280,\r\n        \"height\": 720,\r\n        \"pixelSha256\": \"5a23b32c4866420b465d7b90ea735222aa347dba5c9a5944ba041a330323dbb7\",\r\n        \"chunkCrc\": \"全部通过\"\r\n      }\r\n    },\r\n    {\r\n      \"path\": \"control2/failure.png\",\r\n      \"blob\": \"c7a875eadfc76fc54e3c87a4eb1b7d9fe11541eb\",\r\n      \"bytes\": 128289,\r\n      \"sha256\": \"4f66709a5c88c3e28349a8791dfc2b56f576b45f401a22ba94ae30aea1ca14a5\",\r\n      \"pngDecode\": {\r\n        \"width\": 1280,\r\n        \"height\": 720,\r\n        \"pixelSha256\": \"088ab1e2e52d70492d1940c891b02dc68c0f4ca7a64d5f0e56f434c895e76a70\",\r\n        \"chunkCrc\": \"全部通过\"\r\n      }\r\n    },\r\n    {\r\n      \"path\": \"raw.redacted.zip\",\r\n      \"blob\": \"afaa81b36d5cbca00761d6580b5b16cfc6d5d4f8\",\r\n      \"bytes\": 115459,\r\n      \"sha256\": \"6bf01128f0f1f1518ee59c375e23786b18a376f2e543e399acfe039fd5a2fbec\",\r\n      \"zipCrc\": \"全部通过\",\r\n      \"members\": 6\r\n    },\r\n    {\r\n      \"path\": \"readable-source.redacted.zip\",\r\n      \"blob\": \"cb7b392be92b67da5b2f607fa803853e47c3ea07\",\r\n      \"bytes\": 447871,\r\n      \"sha256\": \"595115b274cd6cab32d979a2e456bd40b4075d9416ff3dcd46f101862ac39c75\",\r\n      \"zipCrc\": \"全部通过\",\r\n      \"members\": 9\r\n    },\r\n    {\r\n      \"path\": \"trace.redacted.zip\",\r\n      \"blob\": \"ec1ae355d3fa0dea0779bc8c9d4bb54b37bf85e1\",\r\n      \"bytes\": 3860132,\r\n      \"sha256\": \"55ceab6ff77f25b4cd843bb8f0b979e524ca92a71f1c6d3983c99fc7eb1f0c93\",\r\n      \"zipCrc\": \"全部通过\",\r\n      \"members\": 123\r\n    }\r\n  ],\r\n  \"traceRedaction\": {\r\n    \"storageState\": 1,\r\n    \"cookies\": 136,\r\n    \"sensitiveHeaders\": 68\r\n  },\r\n  \"knownSourceSecretScan\": \"原值比对通过\",\r\n  \"result\": \"工件检查通过；不代表独审或最新 Required CI\"\r\n}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "docs/reviews/r1/ci381/verify-binary-evidence.py",
+        "--ref",
+        "24a63f347202cdb2f116d2a8f885752b66a50577"
+      ],
+      "startedAt": "2026-10-07T22:02:41.857515+00:00",
+      "finishedAt": "2026-10-07T22:02:42.140379+00:00",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "stdout": "",
+      "stderr": "CI381 Git blob 工件校验失败：ci-failure.png 的实际 Git blob 字节/哈希与索引不符\r\n"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "docs/reviews/r1/verify-specs.mjs"
+      ],
+      "startedAt": "2026-10-07T22:02:42.140397+00:00",
+      "finishedAt": "2026-10-07T22:02:42.208305+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "docs/reviews/r1/verify-specs.mjs"
+      ],
+      "startedAt": "2026-10-07T22:02:42.208339+00:00",
+      "finishedAt": "2026-10-07T22:02:45.599367+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "{\n  \"cards\": \"29/29\",\n  \"categories\": \"261/261\",\n  \"applicableAssertions\": 139,\n  \"originalChecklistItems\": 154,\n  \"dependencies\": \"实现及验收无环\",\n  \"historicalSource\": \"保留；#6合并前卡片全文缺口见source-gaps.md\",\n  \"result\": \"静态检查通过；非独审/产品新功能通过\"\n}\n",
+      "stderr": "warning: in the working copy of 'docs/reviews/r1/ci381/binary-validation.json', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'docs/reviews/r1/ci381/report-summary.json', CRLF will be replaced by LF the next time Git touches it\n"
+    },
+    {
+      "command": [
+        "node",
+        "docs/reviews/r1/verify-handoff.mjs"
+      ],
+      "startedAt": "2026-10-07T22:02:45.599465+00:00",
+      "finishedAt": "2026-10-07T22:02:45.727305+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "已采集工件的字节、哈希、计划副本一致性和卡片元数据校验通过；正文覆盖 29/29。\n历史源包完整；其中 1 卡由总管补交源文。三项 blocking 仍待原复核者，执行前须复读最新 main 与 29 卡。\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "cmd",
+        "/d",
+        "/c",
+        "pnpm",
+        "ci:validate"
+      ],
+      "startedAt": "2026-10-07T22:02:45.727395+00:00",
+      "finishedAt": "2026-10-07T22:02:47.614282+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "\n> workmesh@ ci:validate C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\n> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs\n\n[ci:validate] OK: 9 jobs, 37 immutable action references, Node 22.19.0, pnpm@9.15.4\nRelease workflow validation passed.\nLite compose validation passed (8 services; 4 roles from one image; 51 documented variables; published: minio, web)\n✔ 无Git/网络依赖读取双字节，精确旧路径/版本映射 (2.4687ms)\n✔ 相同字节共用member，所有逻辑版本保留 (0.5572ms)\n✔ 拒绝规范化后重复逻辑元组 (0.3589ms)\n✔ 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符 (0.1742ms)\n✔ 拒绝规范化后重复ZIP member (0.1814ms)\n✔ 拒绝索引缺项/多项 (0.5853ms)\n✔ 拒绝索引重复元组 (0.2347ms)\n✔ 拒绝归档hash不符 (0.207ms)\n✔ 拒绝伪造来源blob ID (0.3315ms)\n✔ 拒绝member bytes/hash不符 (0.3792ms)\n✔ 拒绝软链接 (0.5759ms)\n✔ 拒绝目录 (0.2427ms)\n✔ 拒绝设备 (0.3459ms)\n✔ 拒绝extra元数据/硬链接信息与加密flags (0.2826ms)\n✔ 拒绝本地路径不一致、重叠与解压超额 (0.3482ms)\nℹ tests 15\nℹ suites 0\nℹ pass 15\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 103.2679\n{\"entries\":280,\"members\":61,\"bytes\":21268498,\"errors\":[]}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "startedAt": "2026-10-07T22:02:47.614302+00:00",
+      "finishedAt": "2026-10-07T22:02:47.712003+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'docs/reviews/r1/ci381/evidence-index.json', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'docs/reviews/r1/execution-manifest.json', CRLF will be replaced by LF the next time Git touches it\n"
+    }
+  ],
+  "ci382Readback": {
+    "runId": 37691965265,
+    "head": "24a63f347202cdb2f116d2a8f885752b66a50577",
+    "jobs": "10/10 completed/success",
+    "requiredCiJobId": 113036434129,
+    "source": "本轮平台workflow_runs实读",
+    "scope": "旧版本，非本轮新HEAD门禁"
+  },
+  "independentReview": "本项生产者已修订，待另一agent核验精确新HEAD，不代审查者宣告blocking闭合",
+  "newHeadRequiredCi": "新HEAD由平台回合末生成；须实读该版本Required CI成功，当前不预填",
+  "notRepeated": "产品lint/typecheck/单元/集成/完整E2E此前及CI382已成功；本轮仅证据归档/校验器变动，不无理由全量重跑；新PR CI仍遵守实际选中策略"
+}

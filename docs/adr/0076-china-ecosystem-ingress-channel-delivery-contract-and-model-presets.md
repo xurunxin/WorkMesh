@@ -224,11 +224,14 @@ Channels and presets are additions behind their own feature flags, and a
 deployment with all of them disabled behaves exactly as it does today. Nothing
 in this ADR alters the bootstrap path it defers.
 
-New tables — channel targets, delivery intents, delivery attempts, and preset
-records — are added as `packages/db/migrations/v1/NNNN_*.sql` with the ADR 0038
-v1 checksum manifest and `SCHEMA.sql` updated to match. Presets are catalogue
-data with no migration beyond the file. Nothing here adds an endpoint for a
-mini program, because a mini program is deferred.
+渠道目标配置归 C1，C2 不重建管理入口。扩展既有 `notification_channels` /
+`notification_deliveries` 和 `createAutomationWorker` 的 `claimNotifications`、
+`deliverNotification`：保留 claim/reclaim、claim_fence、逐目标退避及 effectKey；新增
+intent/cursor 与 source-event → Human → target 的持久关联，既有 delivery 行承担每目标
+逻辑 attempt，不另建平行 attempt 队列。旧 fence 不可确认；每次外发前重新鉴权并重建最小
+内容，外发未知单列对账状态。新增关联/目标存储遵循新编号迁移、manifest、SCHEMA.sql、
+升级与空库验收；不预设无依据的表数量。preset records 表要求撤回：只读部署目录不建表、
+不提供 CRUD，不产生 migration。小程序保持延期。
 
 `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:integration` and
 `pnpm test:e2e` must stay green. The route-policy matrix is regenerated with

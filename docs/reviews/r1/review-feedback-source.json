@@ -1,0 +1,593 @@
+{
+  "source": "用户交接的主力开发成果独审反馈；以下是生产者逐处读取指定提交的原文，不冒称平台doc另行读取。",
+  "reviewedHead": "18027999536ac9ea34961c06ddba8b6bcf60b37d",
+  "actualMain": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+  "capturedAt": "2026-10-07T20:53:39.403Z",
+  "rawExcerpts": [
+    {
+      "path": "docs/plan/activation-task-specs/12.md",
+      "startLine": 25,
+      "endLine": 37,
+      "text": "## 交付物与约束\n共享卡片三区（元信息/标题/页脚）契约；两行标题截断；卡片零阴影（阴影预算保留给浮层）；列使用 inset 槽。\n工作项工作流、Agent 执行状态与当前调用者可见 Human Attention 分开展示。attention 色由已授权投影判定「当前需 Human 响应」，不按 awaiting_* 前缀，不把会话状态写回工作流列。真实工作项类别为 backlog/planned/started/completed/canceled；会话实际枚举由 P1/R1 和实现读取，不添加不存在的 awaiting_review。\n若 v1 仅突出两个人工关口，必须显式列出来源类型/状态，其他澄清/恢复另列，不把两关口冒称全部 Human Attention。blocked 不复用 attention 色。不新增暗色值/断言，不删除现有主题能力。\n\n## 完整测试清单\n- [ ] 三区存在且顺序固定；超长标题截断2行且卡片高度不变。\n- [ ] 计算样式 box-shadow:none；列背景为 inset 槽而非页面背景。\n- [ ] 遍历实际工作项类别、会话枚举、多个会话/无会话，验证其与 Attention 分开展示。\n- [ ] open/expired/decided Attention 及来源关口正确呈现；其他人的 Attention 对当前调用者不可见。\n- [ ] attention 仅由授权投影决定，不用状态名前缀；blocked 不撞 attention。\n- [ ] 原色值距离阈值在计划中给出依据和待调起始值，不把未指定数字当用户验收标准。\n- [ ] theme-unification.spec.ts 与适用必需检查无回归。",
+      "utf8Sha256": "78df9953579de264f02001bc7e0f93a9d967be566a00c93ab735e552d830f47c"
+    },
+    {
+      "path": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+      "startLine": 124,
+      "endLine": 128,
+      "text": "> attention 色仅表达当前调用者具有响应权限的未决 Human Attention；投影不授予权限。\n> `statusId/statusCategory` 保留自定义工作流，`activeAgentState` 保留真实执行枚举。\n> 两者都不能按 `awaiting_*` 前缀推导暖色。其他人的 Attention、已决定/过期 Attention、\n> 未授权内容及单独 blocked 执行态均不得渲染为可操作 Attention。中性、信息、完成色\n> 按相应维度映射，未知工作流回退中性；blocked 与 attention 使用不同语义槽，不发明色距阈值。",
+      "utf8Sha256": "d5cb97ca3cea2a8cc744391a6b93e56aa67bde03f91e3fa3eaa1ba3c1e9dea98"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/13.md",
+      "startLine": 43,
+      "endLine": 54,
+      "text": "- [ ] A2 的就绪列表在窄屏下仍可达（不因布局丢失）\n\n## DoD\n布局可用 + 状态持久 + 导航与 IA 无回归 + 窄屏与键盘断言通过。\n\n## 执行依赖与放行\n\nrequires：#1、#2、#18、#3、#12；最终验收 additionally requires：无。\n\n无新增需求裁定，依赖及审查门禁保持。\n\nDoD：上面完整源DoD与定向断言全部满足，适用必需检查成功，证据落盘、独立复核及Chief确认；不得以接口存在或历史CI冒称新组合已验收。阶段owner由Chief派发前落实到实际执行者，角色不冒称已任命某agent。",
+      "utf8Sha256": "1c553224b4577977573563c48888f5cfe39b31301e56aff4a80dbaaa8a9651fb"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/23.md",
+      "startLine": 5,
+      "endLine": 9,
+      "text": "withPlan: true；owner：F0 执行者；源状态：todo；同步：待Chief读回核验。\n\n本批仅用 Todos 编排与仓库保存规格及证据，替代真实WorkMesh双轨记录；其余领域/安全/测试规则不变。当前G1已done，最新主线含最终证据；每次开工仍核验最新main与输入差异。R1完成独审、必需检查及合入后才由Chief放行受影响实现，不能以本文件存在当成功。\n\n## 冻结接口与阶段",
+      "utf8Sha256": "1ee085436ebaa827d13d9b62cb7da09d759c917272bff59e960418a871ed4120"
+    }
+  ],
+  "originalMatrix": [
+    {
+      "seqNum": 9,
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确",
+          "owner": "A2 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "当前用户不可见配置不渲染为可操作项；失权重读清除旧行",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "R1-9-2 当前用户不可见配置不渲染为可操作项；失权重读清除旧行",
+          "owner": "A2 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "只读投影和导航，没有领域状态转换。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "A2 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "A2 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "A2 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "固定文案/导航不创建配置或seen事务。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "A2 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "A2 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "A2与D4整合时窄屏/焦点/返回列表不丢失，异步Team切换不落旧投影",
+          "file": "apps/web/e2e/configuration-readiness.spec.ts",
+          "caseName": "R1-9-8 A2与D4整合时窄屏/焦点/返回列表不丢失，异步Team切换不落旧投影",
+          "owner": "A2 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "不创建outbox；重载列表仍由当前授权查询。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "A2 执行者",
+          "fileState": null,
+          "result": "不适用"
+        }
+      ]
+    },
+    {
+      "seqNum": 12,
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "三区顺序、2行截断、zero shadow、inset列，真实工作流/执行枚举维度分离",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "R1-12-1 三区顺序、2行截断、zero shadow、inset列，真实工作流/执行枚举维度分离",
+          "owner": "D2/D3 执行者",
+          "fileState": "现有文件，待本feature扩展具体用例",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "别人的/expired/decided Attention和无canRespond调用者不渲染为可响应暖色",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "R1-12-2 别人的/expired/decided Attention和无canRespond调用者不渲染为可响应暖色",
+          "owner": "D2/D3 执行者",
+          "fileState": "现有文件，待本feature扩展具体用例",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "卡片显示状态而不改变状态；不写虚构awaiting_review。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D2/D3 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D2/D3 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D2/D3 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "纯投影与计算样式不发领域写入。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D2/D3 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D2/D3 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "旧请求晚到后不可把旧权限Attention提交到新Team的卡片投影",
+          "file": "apps/web/features/work-items/work-item-card.test.tsx",
+          "caseName": "R1-12-8 旧请求晚到后不可把旧权限Attention提交到新Team的卡片投影",
+          "owner": "D2/D3 执行者",
+          "fileState": "现有文件，待本feature扩展具体用例",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "投影没有outbox；重连使用当前授权读模型。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D2/D3 执行者",
+          "fileState": null,
+          "result": "不适用"
+        }
+      ]
+    },
+    {
+      "seqNum": 13,
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "splitter/hide/maximize状态记忆、键盘和窄屏行为符合既有shell与canonicalURL",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "R1-13-1 splitter/hide/maximize状态记忆、键盘和窄屏行为符合既有shell与canonicalURL",
+          "owner": "D4 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "无active任命或feature off明确不可用，不伪造总管/泄露其他Team对话",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "R1-13-2 无active任命或feature off明确不可用，不伪造总管/泄露其他Team对话",
+          "owner": "D4 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "布局本地状态不是领域状态机。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D4 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D4 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D4 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "布局持久化不变更领域资源。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D4 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D4 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "Team切换/迟到请求保留URL归属与焦点，A2+D4窄屏组合列表仍可达",
+          "file": "apps/web/e2e/workbench-layout.spec.ts",
+          "caseName": "R1-13-8 Team切换/迟到请求保留URL归属与焦点，A2+D4窄屏组合列表仍可达",
+          "owner": "D4 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "不新增outbox；布局重载/记忆作为happy path。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "D4 执行者",
+          "fileState": null,
+          "result": "不适用"
+        }
+      ]
+    },
+    {
+      "seqNum": 28,
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "合法actor-targeted前驱产生关联successor，root/前驱/根消息引用完整",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "R1-28-1 合法actor-targeted前驱产生关联successor，root/前驱/根消息引用完整",
+          "owner": "F5 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "错误recipient/当前失权/跨workspace/exact-session拒绝，不能由新输入授权",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "R1-28-2 错误recipient/当前失权/跨workspace/exact-session拒绝，不能由新输入授权",
+          "owner": "F5 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "根resolved/前驱会话未终止/Stop抑制不能恢复或claim后继",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "R1-28-3 根resolved/前驱会话未终止/Stop抑制不能恢复或claim后继",
+          "owner": "F5 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "同前驱恢复重复返回同successor，同key异体冲突，后继再次终止才下一条",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "R1-28-4 同前驱恢复重复返回同successor，同key异体冲突，后继再次终止才下一条",
+          "owner": "F5 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "锁后重验claim/session/任命/委派状态及revision，变更锁集回滚重定位",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "R1-28-5 锁后重验claim/session/任命/委派状态及revision，变更锁集回滚重定位",
+          "owner": "F5 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "创建不改原claim/receipt/status；三完成路径全链status/event/outbox共同提交回滚",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "R1-28-6 创建不改原claim/receipt/status；三完成路径全链status/event/outbox共同提交回滚",
+          "owner": "F5 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "重复report/reply/恢复不伪ACK；ACK仍不resolve，非消息kind用既有源命令",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "R1-28-7 重复report/reply/恢复不伪ACK；ACK仍不resolve，非消息kind用既有源命令",
+          "owner": "F5 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "恢复×reply/answer/Human resolve/撤权/换届交叉并发无逆rank死锁；同根只有最终resolution",
+          "file": "apps/api/integration/agent-lock-order.integration.test.ts",
+          "caseName": "R1-28-8 恢复×reply/answer/Human resolve/撤权/换届交叉并发无逆rank死锁；同根只有最终resolution",
+          "owner": "F5 执行者",
+          "fileState": "现有文件，待本feature扩展具体用例",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "创建与完成提交前后崩溃及checkpoint联合重放保留原归因和当前资格",
+          "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+          "caseName": "R1-28-9 创建与完成提交前后崩溃及checkpoint联合重放保留原归因和当前资格",
+          "owner": "F5 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        }
+      ]
+    },
+    {
+      "seqNum": 29,
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "REST与MCP get/report贯通SDK/policy/feature/manifest/adapter/conformance及联合F4接口",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "R1-29-1 REST与MCP get/report贯通SDK/policy/feature/manifest/adapter/conformance及联合F4接口",
+          "owner": "F6 执行者（最终联合验收）",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "无Team权限NOT_FOUND，unsupported/disabled/revoked/Stopped均拒绝",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "R1-29-2 无Team权限NOT_FOUND，unsupported/disabled/revoked/Stopped均拒绝",
+          "owner": "F6 执行者（最终联合验收）",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "无active Chief返回null/CHIEF_NOT_APPOINTED，旧代次不得继续投递",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "R1-29-3 无active Chief返回null/CHIEF_NOT_APPOINTED，旧代次不得继续投递",
+          "owner": "F6 执行者（最终联合验收）",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "已提交同key返回原message/recipient不向新人发，同key异体幂等冲突",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "R1-29-4 已提交同key返回原message/recipient不向新人发，同key异体幂等冲突",
+          "owner": "F6 执行者（最终联合验收）",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "stale revision",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "get→post间换届CHIEF_APPOINTMENT_CHANGED，事务重验预期appointment/revision/room",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "R1-29-5 get→post间换届CHIEF_APPOINTMENT_CHANGED，事务重验预期appointment/revision/room",
+          "owner": "F6 执行者（最终联合验收）",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "report消息/inbox/activation引用/event/outbox原子，GET零receipt/event/outbox",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "R1-29-6 report消息/inbox/activation引用/event/outbox原子，GET零receipt/event/outbox",
+          "owner": "F6 执行者（最终联合验收）",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "工具重试/平台job重放不伪ACK/等待模型，旧任命结果不重新路由",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "R1-29-7 工具重试/平台job重放不伪ACK/等待模型，旧任命结果不重新路由",
+          "owner": "F6 执行者（最终联合验收）",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "F3/F4/F5联合恢复/三完成路径并发、Stop/撤权/换届按锁序收敛",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "R1-29-8 F3/F4/F5联合恢复/三完成路径并发、Stop/撤权/换届按锁序收敛",
+          "owner": "F6 执行者（最终联合验收）",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "恢复提交和checkpoint前后崩溃联合验收，REST/MCP重连结果可追溯",
+          "file": "packages/conformance/src/chief.conformance.test.ts",
+          "caseName": "R1-29-9 恢复提交和checkpoint前后崩溃联合验收，REST/MCP重连结果可追溯",
+          "owner": "F6 执行者（最终联合验收）",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        }
+      ]
+    }
+  ],
+  "originalGates": [
+    {
+      "seqNum": 23,
+      "gate": "按依赖与审查门禁"
+    },
+    {
+      "seqNum": 24,
+      "gate": "按依赖与审查门禁"
+    },
+    {
+      "seqNum": 25,
+      "gate": "按依赖与审查门禁"
+    },
+    {
+      "seqNum": 26,
+      "gate": "按依赖与审查门禁"
+    },
+    {
+      "seqNum": 27,
+      "gate": "按依赖与审查门禁"
+    },
+    {
+      "seqNum": 28,
+      "gate": "按依赖与审查门禁"
+    },
+    {
+      "seqNum": 29,
+      "gate": "按依赖与审查门禁"
+    }
+  ],
+  "mainReadback": {
+    "commit": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+    "source": "mcp__tds__git fetch origin main → rev-parse FETCH_HEAD",
+    "verifiedAt": "2026-10-07T20:49:21.852Z"
+  }
+}

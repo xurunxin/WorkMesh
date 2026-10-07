@@ -397,7 +397,7 @@ grounds for widening it.
 | --- | --- |
 | Revocation vs a concurrent new dispatch | both lock the same delegation revision; a committed revocation must make any **subsequently committed** dispatch fail. Expiry is judged at the final authorisation checkpoint against current time |
 | Submitted, not yet started | re-check appointment, delegation and target revision at final admission; if unsatisfied, cancel the start and do not consume budget |
-| Running executor, child session, retry | the relationship to the source delegation and appointment generation is **persisted**; on invalidation these lose ordinary writes and platform-managed external actions. Whether *all* derived sessions stop, or only those the narrowing touched, is stated per capability class and is not left to the reader |
+| Running executor, child session, retry | 持久保存来源委派 id/revision、任命代次和逻辑分派。任命结束/换届、撤销/到期或任一委派修订使旧 revision 的全部派生会话失去普通写入和平台管理外发资格，包括只读协调类和另批能力类；不自动降级、不把旧会话改挂新 revision。范围仍满足者可在新 revision 下重新准入 |
 | Already inside an external process | only a cancel request is sent and the result recorded. WorkMesh does not claim retroactive withdrawal, and platform Stop does not by itself kill a harness command — that limit already stated here stands |
 | After narrowing | the old revision must be re-read; work still inside the new range may resubmit autonomously without per-item approval |
 
@@ -419,8 +419,12 @@ with the per-dispatch grant and that was wrong.
   session/event/outbox rows all commit in **one transaction**.
 - A replay under the same idempotency key does **not** deduct again.
 - One dispatch reaching several entry points is counted once.
-- Whether a new execution retry counts as a new use is stated explicitly, and a
-  failed reservation releases its budget.
+- 幂等重放、同一次逻辑分派的多个入口和外发 job 重放不重扣。显式 retry 若新建执行
+  Session，必须建立新的逻辑分派，引用前次分派并重新检查当前授权，计一次新使用；不能借
+  复用旧分派 id 隐藏新执行成本。建立排队 Session 时同事务预留次数和预算，余量扣除已
+  使用及未释放的预留；真正启动时同事务转为已使用。启动前撤权/换届取消准入并释放未
+  使用预留，记录取消事实；已开始的真实用量不退回。事务失败没有残留预留；进程重启按
+  持久台账和 admission 状态对账，不按计时器盲目释放可能已启动的执行。
 - Revising a delegation never silently zeroes usage already recorded.
 
 ### Activation: a real command, because the obvious one is Human-only
@@ -525,20 +529,22 @@ actor may cause a successor item to be created:
 - It **reuses the original `kind`**, so the Chief's existing dispatch surface and
   every client that already renders a kind are unchanged, and no `inbox_item_kind`
   value is added.
-- It sets `source_type = 'inbox_redelivery'` and `source_id` to the **original
-  item's id**. `source_type` is `text`, not an enum
+- It sets `source_type = 'inbox_redelivery'` and `source_id` to the **direct
+  predecessor item's id（首次恢复的前驱就是原件）**. `source_type` is `text`, not an enum
   (`packages/db/migrations/0005_stage1_tokens_webhooks_events.sql:35`), so this
   needs no `ALTER TYPE` — unlike the Team room subject, which does.
 - That pair is also what makes re-delivery **idempotent by the existing
   constraint**: `inbox_items_actor_target_unique` covers
   `(workspace_id, recipient_actor_id, kind, source_type, source_id)` for
   actor-targeted rows (`0032:92-94`), so a retry collides on exactly one row per
-  original item. A duplicate cannot be created by re-running the command, and the
+  predecessor item. A duplicate cannot be created by re-running the command, and the
   collision returns the existing successor instead of inserting a second one.
 
 **What re-delivery is forbidden from doing.**
 
-- It may not write, move or delete the original item, its claim, or its receipts.
+- 重新投递创建命令不得改写、移动或删除前驱、claim 或回执。后续真正完成根来源时，
+  既有完成命令可同事务更新整条链的 status/resolved_at/revision 投影；不改变 claim、
+  claimed_at 或任何历史回执。这不把重新投递创建本身伪装成 resolve。
 - It may not transfer authority. The successor is claimable only under the same
   authority rules as any other item, and a re-delivery grants nothing: if the new
   Session lacks the scope, the item is created for the actor and simply not
@@ -574,6 +580,51 @@ is narrow: the claim remains a one-time, immutable, non-authorizing binding, and
 reclaim or release command is added. What is added is a separate, audited act of
 **continuing the work as a new input**, which ADR 0037 explicitly required to be
 preceded by a protocol and audit decision — this section is that decision.
+
+#### 恢复链身份、资格与提交协议（F3/F4/F5/F6 共用）
+
+R1 冻结契约，#26 F3 负责激活输入/结果接口，#27 F4 负责 checkpoint 原子提交接口，
+#28 F5 负责 Inbox 底层恢复及完成收敛，#29 F6 负责最终联合验收。F5 的底层验收使用现有
+Inbox fixtures，不依赖 F6；F6 使用已验收的 F3/F4/F5，不倒置上游依赖。
+
+- 逻辑根为持久 Inbox/source 关联：沿 `source_type='inbox_redelivery'` 的 `source_id`
+  追溯直接前驱到首条输入。创建后继时必须保留根来源资源、原收件 actor 和可空的
+  `source_room_message_id`；不可把新 input ID 当成新业务请求。链必须同 workspace/
+  recipient/kind，服务端验证并禁止环；不能把所有来源硬当 room message。
+- 同一前驱的一次恢复意图由既有 actor-target unique 键规范化，重复调用返回同一
+  successor；后继将来另一次被终止后，才能以该后继作为前驱创建下一输入。调用者请求
+  摘要仍受命令幂等绑定，同 key 异体冲突。业务根锁不是全局首锁：恢复和三条完成路径先用
+  无锁 locator 收集相关 Session、连接/凭据、任命/委派和资源身份；无锁读取不授予权限。
+  沿 `lockReplyParticipantsBeforeReservation` 的去重排序 Session advisory 锁及连接生命周期
+  前缀，构造完整 authority plan，复用 `lockAgentAuthorityPlan` 的全局 rank 与 rank 内排序。
+  当前 rank 为 definition → Team grant → delegation → Session → Session token → installation
+  token → work item → project。携带 Chief 上下文时，连接生命周期前缀之后、现有 rank
+  之前只锁 appointment（按稳定 id 排序）；包括 Chief 委派的所有 delegation 实体仍由
+  完整 plan 在既有 delegation rank 按稳定 id 取得，不把同一委派行提前移到前缀。不携带
+  Chief 上下文的路径跳过 appointment 前缀，不能从业务根反向补取它。F1/F2 的换届、
+  修订/撤权与 F5 恢复共用顺序；影响 Chief 的普通 definition/Team grant/delegation 撤权
+  也先收集完整 locator/锁集，不在 rank 之后追加 appointment，不能把前缀当扩权依据。
+  锁定后重新验证身份、recipient、当前授权、任命、Stop、根状态和恢复资格，才按 root →
+  直接前驱 → 后继稳定 id 排序取业务锁；业务锁后再读绑定并使用 post-lock guard，禁止反向
+  获取低 rank 锁。locator/锁集变化时回滚整事务，以同幂等身份重新定位/重试，不持根锁补
+  authority。Human 完成路径也不得先锁 Inbox 再追加相同 Session/authority 资源；F5 必须
+  一并调整三条路径并更新符号/statement 锁清单。唯一键不是授权，不能替代重验。
+- 根非终态、前驱当前获胜 Session 终止、actor-targeted 且请求者当前有权才可恢复；
+  exact-session 禁止。恢复创建不 claim、不 ACK、不创建 Session、不主动解除 Stop。
+  F3 按逻辑根保留 Stop 抑制，并记录触发时的任命代次；新后继 ID 或单纯换届不能清除
+  同一输入的禁止激活。有权 Human 另行发起的新操作须形成独立、可审计关联的逻辑输入，
+  再通过当前准入；不能靠换任命或重投递重新激活被 Stop 的原根。
+- 有 `source_room_message_id` 的链复用唯一 message resolution。Inbox reply、Work Room
+  answer、Human resolve 三条完成路径竞争同一个根的最终 resolution，并同事务收敛原件
+  和全部后继的 actionable status、事件和 outbox。根已解决后禁止创建/claim/再次回复
+  后继；重复完成返回既有结果或明确冲突，不产生两个最终响应。其他 kind 仍由各自既有
+  Approval/Handoff/Lease 等源命令完成；ACK 不替代它们，不添加新的决定入口。
+- F4 的已处理至 C 与本批已提交激活/恢复结果引用同事务关联；分派有独立逻辑身份去重。
+  F6 report 仅返回已提交 message/inbox/activation 引用及当时已知状态，不等模型、不
+  伪造回执。联合测试覆盖根/前驱并发恢复、三种完成路径并发回复、恢复及 checkpoint
+  提交前后崩溃、Stop、撤权、换届、exact-session 拒绝和重放；还须覆盖恢复与 reply/
+  answer/resolve/撤权/换届交叉并发、锁集变化重试与死锁验收。新 SQL 锁语句在实现任务
+  使用 `UPDATE_AGENT_LOCK_MANIFEST=1` 更新并独审；本轮只冻结要求，不伪造已新增语句清单。
 
 ### Memory is deferred out of the first version
 
@@ -698,8 +749,8 @@ the system, so the consumption protocol is the largest single piece of work and
 is quantified rather than assumed. A single active appointment is a
 single-writer point for judgement; it does not serialise reasoning, and
 coordination work may be split by Team without forcing a user to split their
-business to scale. Inbox recovery across short sessions is a genuine open choice
-that must be made before coding rather than discovered while coding.
+business to scale. 收件恢复已裁定为有审计的重新投递；剩余工作是按上述共同契约实现和
+验收，不再把已回答的选择列为开工前二选一。
 
 This ADR adds no authority a Human does not already hold. It reorganises who
 exercises it — one Human grants a goal-scoped delegation instead of approving
@@ -709,8 +760,8 @@ to one.
 
 ## Migration
 
-Four additive changes, none touching an applied migration, and the count is not
-fixed in advance — the consumption and authorisation contracts determine it.
+以下增量迁移责任不改已应用 migration；最终 entry 数量由消费、授权和持久关联的契约确定，
+不把四类责任硬写成四个 entry。F4 checkpoint 存储与结果原子关联由 F4 自己的增量迁移承担。
 
 1. A new v1 migration entry adds the enum value and does not use it. PostgreSQL
    permits `ADD VALUE` inside a transaction but the value is unusable until that
@@ -718,18 +769,25 @@ fixed in advance — the consumption and authorisation contracts determine it.
    `'team'::room_subject_kind` live in **separate** entries. Each entry is
    transaction-managed by the runner; no `BEGIN` or `COMMIT` is written in the
    file.
-2. A later entry replaces the `CHECK` and `enforce_room_subject()` per the Team
-   branch above, and creates `chief_appointments` with the partial unique index
-   and its events and outbox rows.
-3. Further entries add the Chief delegation, its dispatch records and usage
-   ledger, and **no** storage change for the Inbox claim: re-delivery reuses
-   `inbox_items` as it stands, with `source_type = 'inbox_redelivery'` and
-   `source_id` set to the original item id. `inbox_claim_immutable`,
+2. F0 的后续 entry 仅替换 `CHECK` 和 `enforce_room_subject()` 的 Team 分支；F1 在
+   F0 之后以独立增量迁移创建 `chief_appointments` 及部分唯一索引。任命事务负责建房、
+   任命状态、事件和 outbox 原子提交，不把 F1 的交付塞回 F0 验收。
+3. Further entries add the Chief delegation, independent logical dispatch records,
+   command idempotency identities and usage ledger. Delegation id/revision is an
+   authorization source, never the logical dispatch dedupe key; multiple dispatches
+   under one standing revision remain distinct. F4 checkpoints reference committed
+   dispatch/activation result ids atomically; replay never creates a second use.
+   F5 adds a durable logical root association and nullable root room-message reference
+   using new migration entries with old-row backfill. It preserves the Inbox claim
+   storage semantics: `source_type = 'inbox_redelivery'` and `source_id` references
+   the direct predecessor. `inbox_claim_immutable`,
    `inbox_items_exact_claim_check`, `inbox_items_claim_pair_check`,
    `inbox_items_recipient_kind_shape_check` and `enforce_inbox_receipt_scope()`
    are **left exactly as they are**, and `inbox_item_kind` gains no value. The
-   only index the design leans on is the existing
-   `inbox_items_actor_target_unique`, which is what makes retry idempotent.
+   existing `inbox_items_actor_target_unique` dedupes successors per predecessor;
+   it does not supply root authorization, Stop suppression or final resolution.
+   F5 records the new root constraints/indexes and lock statements separately,
+   tests both empty and upgraded databases, and does not edit applied migrations.
 4. The v1 manifest records only the **new** entries and `SCHEMA.sql` is updated
   to match. Applied baselines, legacy entries and their checksums are left
   exactly as they are; the published baseline is not regenerated in order to add
@@ -781,4 +839,3 @@ reviewed per statement, not diffed for line numbers.
 - `docs/plan/` gains the staged plan. The Inbox recovery choice is **no longer a
   gate** — it is decided above — so the gate that remains on the first Chief
   projection is the consumption protocol.
-

@@ -1,0 +1,20 @@
+[
+  {
+    "command": "pnpm test:integration",
+    "startedAt": "2026-10-07T19:26:43.315Z",
+    "endedAt": "2026-10-07T19:28:54.233Z",
+    "exitCode": 1
+  },
+  {
+    "command": "pnpm --filter @workmesh/db test:reset",
+    "startedAt": "2026-10-07T19:28:54.234Z",
+    "endedAt": "2026-10-07T19:28:56.354Z",
+    "exitCode": 0
+  },
+  {
+    "command": "pnpm test:e2e",
+    "startedAt": "2026-10-07T19:28:56.355Z",
+    "endedAt": "2026-10-07T19:29:03.792Z",
+    "exitCode": 1
+  }
+]

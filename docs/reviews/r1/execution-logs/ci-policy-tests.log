@@ -1,0 +1,24 @@
+
+> workmesh@ ci:test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749
+> node --test scripts/ci-policy.test.mjs
+
+✔ known prose on PR and main avoids every install/service/test job (1.3132ms)
+✔ UI changes test web consumers and E2E, but skip unrelated backend/protocol/recovery jobs (0.2259ms)
+✔ direct web tests, assets and package-local skills are runtime changes (0.138ms)
+✔ API and worker changes retain destructive recovery and real browser integration (0.1241ms)
+✔ cross-workspace lock audits are selected without inventing runtime dependency cycles (0.1688ms)
+✔ upstream contracts/domain/db/config changes include transitive consumers (0.1507ms)
+✔ protocol changes retain SDK consumers, conformance and direct E2E imports (0.1122ms)
+✔ root config, unknown/deleted workspaces and executable-looking docs fail closed to full (0.7848ms)
+✔ main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full (0.2437ms)
+✔ PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full (0.5402ms)
+✔ aggregate rejects failure, cancellation and accidental skips for every required job (0.218ms)
+✔ aggregate only accepts planned skips and rejects incomplete/malformed decisions (0.1415ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 110.378

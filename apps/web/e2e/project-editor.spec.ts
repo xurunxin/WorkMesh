@@ -46,7 +46,12 @@ test('Project creation and revisioned edit keep Markdown and the selected URL af
   })
   await expect(issue).toBeHidden()
   expect(issueCreateRequests).toBe(1)
+  const selectedProjectId = new URL(page.url()).searchParams.get('project')
   await page.getByTestId('project-control-view-work').click()
+  // The list renders before the App Router applies its URL. Complete that
+  // navigation before opening a sheet that route restoration would clear.
+  await expect(page).toHaveURL(url => url.searchParams.get('view') === 'projects'
+    && url.searchParams.get('project') === selectedProjectId && url.searchParams.get('tab') === 'list')
   const firstIssue = page.locator('.project-detail-pane').getByRole('button', { name: issueTitle, exact: true })
   await expect(firstIssue).toBeVisible()
   await firstIssue.click()

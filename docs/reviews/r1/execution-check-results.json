@@ -1,0 +1,133 @@
+{
+  "baseCommit": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+  "draftCommit": "f137787faa0979b59dd70668001b09bb5e132421",
+  "phase": "完整规格修订，未合入/未同步/未放行",
+  "requiredChecks": [
+    {
+      "command": "pnpm lint",
+      "startedAt": "2026-10-07T19:50:27.327Z",
+      "endedAt": "2026-10-07T19:50:58.418Z",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm typecheck",
+      "startedAt": "2026-10-07T19:50:58.419Z",
+      "endedAt": "2026-10-07T19:51:29.605Z",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test",
+      "startedAt": "2026-10-07T19:51:29.606Z",
+      "endedAt": "2026-10-07T19:54:50.610Z",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test:integration",
+      "startedAt": "2026-10-07T19:50:03.497Z",
+      "endedAt": "2026-10-07T19:56:27.151Z",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test:e2e",
+      "startedAt": "2026-10-07T20:00:43.605Z",
+      "endedAt": "2026-10-07T20:04:17.659Z",
+      "exitCode": 0
+    }
+  ],
+  "additionalChecks": [
+    {
+      "command": "pnpm ci:source build",
+      "startedAt": "2026-10-07T19:54:50.611Z",
+      "endedAt": "2026-10-07T19:56:30.370Z",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm check:route-policy",
+      "startedAt": "2026-10-07T19:56:30.372Z",
+      "endedAt": "2026-10-07T19:56:32.041Z",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm check:workmesh-skill",
+      "startedAt": "2026-10-07T19:56:32.042Z",
+      "endedAt": "2026-10-07T19:56:32.596Z",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm check:runner-skill",
+      "startedAt": "2026-10-07T19:56:32.597Z",
+      "endedAt": "2026-10-07T19:56:33.172Z",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm smoke:agents:ci",
+      "startedAt": "2026-10-07T19:56:33.173Z",
+      "endedAt": "2026-10-07T19:56:35.681Z",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test:conformance",
+      "startedAt": "2026-10-07T19:56:35.682Z",
+      "endedAt": "2026-10-07T19:56:37.110Z",
+      "exitCode": 0
+    }
+  ],
+  "ciPolicyTestsExit": 0,
+  "ciValidateExit": 0,
+  "composeConfiguredExit": 0,
+  "latestMainReachability": {
+    "exitCode": 0,
+    "checkedFiles": 44,
+    "p1Assertions": 16,
+    "archiveEntries": 280,
+    "scope": "最新main受控输入读取证明，非G1历史CI新运行"
+  },
+  "finalIndependentReview": "待Chief安排精确head",
+  "latestPrCi": "待本回合平台提交后最新PR/head结果；当前无可据之宣称成功的run",
+  "earlierFailures": [
+    {
+      "directory": "execution-logs/",
+      "cause": "bootstrap生成仅24字节，不满足配置32–256；根集成/E2E退出1",
+      "disposition": "纠正为32随机字节canonical base64url，秘密不落盘；失败保留"
+    },
+    {
+      "directory": "execution-logs/run2/",
+      "cause": "前回合中断，无终止退出码",
+      "disposition": "未记成功；本回合确认无该检查存活进程"
+    },
+    {
+      "directory": "execution-logs/run3/",
+      "cause": "PostgreSQL socket未ready",
+      "disposition": "TCP readiness后再创建DB，记录启动失败"
+    },
+    {
+      "directory": "execution-logs/run4/",
+      "cause": "API artifact 404，独立bucket尚未创建；E2E Project详情超时1失败/64通过",
+      "disposition": "按最新CI显式初始化ObjectLock/versioned bucket；UI超时根因未定，保留截图/上下文，单项和标准整套复测分别通过，不以重跑证明原因已修"
+    },
+    {
+      "directory": "execution-logs/run5/",
+      "cause": "Worker拒私网用例受helper全局ALLOW_PRIVATE_AGENT_WEBHOOKS=true影响",
+      "disposition": "集成恢复默认false；E2E自己的API fixture显式true，根集成run6全链成功"
+    },
+    {
+      "directory": "execution-logs/run7/",
+      "cause": "诊断直接pnpm exec缺npm_execpath，setup失败",
+      "disposition": "使用原package script，run8定向2/2通过"
+    },
+    {
+      "directory": "execution-logs/final-source/compose.log",
+      "cause": "Compose未提供必须的bootstrap/cursor环境值",
+      "disposition": "仅传临时随机测试值给config --quiet，compose-configured.log退出0"
+    }
+  ],
+  "sourceGap": "已知B2与原报告全部迁移，#6原卡历史全文缺口见source-gaps.md",
+  "checkedVersionScope": {
+    "actualMain": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+    "startingDraft": "f137787faa0979b59dd70668001b09bb5e132421",
+    "scope": "上述main及本轮产品/CI原件未变的工作树；必需检查的实际时间分别见requiredChecks，未冒作未来最终head或PR run。",
+    "afterRequiredChecks": "仅文档、证据索引/覆盖映射和空白收尾；最后静态核验与可重算提交字节见static-check-results.json、execution-manifest.json。",
+    "finalHead": "待平台本回合提交生成；Chief按精确head安排成果独审和最新CI。",
+    "g1Proof": "72dbd5e门禁历史验证不改写为5743或本R1检查。"
+  }
+}

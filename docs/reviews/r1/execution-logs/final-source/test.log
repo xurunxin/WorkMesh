@@ -1,0 +1,732 @@
+
+> workmesh@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749
+> turbo run test --concurrency=2
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running test in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/ui:test: cache miss, executing 106370197a137f28
+@workmesh/contracts:test: cache miss, executing e15ce779ccb1a522
+@workmesh/ui:test:
+@workmesh/ui:test: > @workmesh/ui@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\ui
+@workmesh/ui:test: > vitest run
+@workmesh/ui:test:
+@workmesh/contracts:test:
+@workmesh/contracts:test: > @workmesh/contracts@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\contracts
+@workmesh/contracts:test: > vitest run
+@workmesh/contracts:test:
+@workmesh/ui:test:
+@workmesh/ui:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/ui
+@workmesh/ui:test:
+@workmesh/contracts:test:
+@workmesh/contracts:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/contracts
+@workmesh/contracts:test:
+@workmesh/ui:test:  ✓ src/domain/control-plane.test.tsx (5 tests) 5ms
+@workmesh/contracts:test:  ✓ src/autonomous-control-contracts.test.ts (3 tests) 7ms
+@workmesh/contracts:test:  ✓ src/release-contract.test.ts (1 test) 13ms
+@workmesh/contracts:test:  ✓ src/human-attention-contract.test.ts (3 tests) 8ms
+@workmesh/contracts:test:  ✓ src/client-profile-contract.test.ts (3 tests) 28ms
+@workmesh/contracts:test:  ✓ src/pi-workbench-contracts.test.ts (27 tests) 20ms
+@workmesh/contracts:test:  ✓ src/stage2-contracts.test.ts (4 tests) 8ms
+@workmesh/contracts:test:  ✓ src/active-executor-contract.test.ts (2 tests) 6ms
+@workmesh/contracts:test:  ✓ src/control-plane-contracts.test.ts (5 tests) 37ms
+@workmesh/contracts:test:  ✓ src/stage3-contracts.test.ts (8 tests) 24ms
+@workmesh/contracts:test:  ✓ src/stage4-contracts.test.ts (8 tests) 30ms
+@workmesh/ui:test:  ✓ src/primitives/controls.test.tsx (20 tests) 112ms
+@workmesh/ui:test:  ✓ src/primitives/controls-ssr.test.tsx (6 tests) 50ms
+@workmesh/contracts:test:  ✓ src/stage1-contracts.test.ts (10 tests) 86ms
+@workmesh/contracts:test:  ✓ src/recovery-contract.test.ts (2 tests) 787ms
+@workmesh/contracts:test:    ✓ Recovery Center public contract > publishes list/detail operations and resolvable Recovery schemas  776ms
+@workmesh/contracts:test:  ✓ src/release-manifest.test.ts (2 tests) 218ms
+@workmesh/contracts:test:  ✓ src/planning-domain-parity-contract.test.ts (5 tests) 826ms
+@workmesh/contracts:test:    ✓ planning domain parity public contract > keeps the OpenAPI schemas and complete REST surface aligned with Zod  804ms
+@workmesh/ui:test:  ✓ src/index.test.ts (19 tests) 32ms
+@workmesh/ui:test:
+@workmesh/ui:test:  Test Files  4 passed (4)
+@workmesh/ui:test:       Tests  50 passed (50)
+@workmesh/ui:test:    Start at  03:51:31
+@workmesh/ui:test:    Duration  4.86s (transform 1.97s, setup 0ms, collect 6.38s, tests 199ms, environment 1ms, prepare 5.45s)
+@workmesh/ui:test:
+@workmesh/contracts:test:  ✓ src/pagination-contract.test.ts (2 tests) 1349ms
+@workmesh/contracts:test:    ✓ pagination OpenAPI contract > declares the common cursor and limit on every paged collection  771ms
+@workmesh/contracts:test:    ✓ pagination OpenAPI contract > keeps durable event cursors separate and documents generic cursor failures  577ms
+@workmesh/contracts:test:  ✓ src/runtime-reliability-openapi.test.ts (2 tests) 1352ms
+@workmesh/contracts:test:    ✓ runtime reliability OpenAPI contract > keeps the new response models in schemas and every local reference resolvable  827ms
+@workmesh/contracts:test:    ✓ runtime reliability OpenAPI contract > documents the dedicated identity credential and every execution-capacity conflict  524ms
+@workmesh/contracts:test:  ✓ src/stage0-route-manifest.test.ts (6 tests) 1312ms
+@workmesh/contracts:test:    ✓ Stage 0 transport contract manifest > keeps parsed OpenAPI cursor boundaries in parity with runtime  768ms
+@workmesh/contracts:test:    ✓ Stage 0 transport contract manifest > documents and validates the backward-compatible Run Explanation keyset cursor  454ms
+@workmesh/contracts:test:  ✓ src/stage5-contracts.test.ts (66 tests) 1386ms
+@workmesh/contracts:test:    ✓ Stage 5 (v1.1) Agent Connection & Coordination MCP contracts > keeps the subset-block generator in sync with the canonical capability list  818ms
+@workmesh/contracts:test:    ✓ Stage 5 (v1.1) Agent Connection & Coordination MCP contracts > SemVer 2.0.0 regex is byte-identical in Zod, the generator, and the OpenAPI (closes the v5 S3 Duplicated Code smell)  342ms
+@workmesh/contracts:test:  ✓ src/auth-idempotency.test.ts (2 tests) 4ms
+@workmesh/contracts:test:  ✓ src/guidance-contract.test.ts (2 tests) 5ms
+@workmesh/contracts:test:  ✓ src/agent-response-contract.test.ts (1 test) 8ms
+@workmesh/contracts:test:  ✓ src/approval-contract.test.ts (4 tests) 6ms
+@workmesh/contracts:build: cache miss, executing 62fda4b2edb4de3d
+@workmesh/contracts:test:  ✓ src/route-policy.test.ts (12 tests) 2041ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > parses OPENAPI.yaml as valid YAML before checking generated extensions  796ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > matches OpenAPI operation IDs and feature tiers  465ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > documents bootstrap authentication failures as a structured 401 response  360ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > keeps deployment feature discovery authenticated for humans and agents  361ms
+@workmesh/contracts:test:
+@workmesh/contracts:test:  Test Files  23 passed (23)
+@workmesh/contracts:test:       Tests  180 passed (180)
+@workmesh/contracts:test:    Start at  03:51:31
+@workmesh/contracts:test:    Duration  5.70s (transform 1.82s, setup 0ms, collect 12.98s, tests 9.56s, environment 3ms, prepare 23.70s)
+@workmesh/contracts:test:
+@workmesh/contracts:build:
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build:
+@workmesh/ui:build: cache miss, executing dd8f60a22d299360
+@workmesh/ui:build:
+@workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\ui
+@workmesh/ui:build: > tsc -p tsconfig.json
+@workmesh/ui:build:
+@workmesh/artifact-storage:build: cache miss, executing ee80429c7e855528
+@workmesh/artifact-storage:test: cache miss, executing 07540f53b6583162
+@workmesh/artifact-storage:build:
+@workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\artifact-storage
+@workmesh/artifact-storage:build: > tsc -p tsconfig.json
+@workmesh/artifact-storage:build:
+@workmesh/artifact-storage:test:
+@workmesh/artifact-storage:test: > @workmesh/artifact-storage@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\artifact-storage
+@workmesh/artifact-storage:test: > vitest run
+@workmesh/artifact-storage:test:
+@workmesh/artifact-storage:test:
+@workmesh/artifact-storage:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/artifact-storage
+@workmesh/artifact-storage:test:
+@workmesh/git-provider:test: cache miss, executing a6b4c541936828e3
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: > @workmesh/git-provider@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\git-provider
+@workmesh/git-provider:test: > vitest run
+@workmesh/git-provider:test:
+@workmesh/artifact-storage:test:  ✓ src/retention-upgrade.test.ts (3 tests) 4ms
+@workmesh/artifact-storage:test:  ✓ src/index.test.ts (19 tests) 29ms
+@workmesh/artifact-storage:test:
+@workmesh/artifact-storage:test:  Test Files  2 passed (2)
+@workmesh/artifact-storage:test:       Tests  22 passed (22)
+@workmesh/artifact-storage:test:    Start at  03:51:41
+@workmesh/artifact-storage:test:    Duration  1.50s (transform 83ms, setup 0ms, collect 458ms, tests 33ms, environment 0ms, prepare 864ms)
+@workmesh/artifact-storage:test:
+@workmesh/observability:build: cache miss, executing 5f619a6918afc057
+@workmesh/git-provider:test:
+@workmesh/git-provider:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/git-provider
+@workmesh/git-provider:test:
+@workmesh/observability:build:
+@workmesh/observability:build: > @workmesh/observability@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\observability
+@workmesh/observability:build: > tsc -p tsconfig.json
+@workmesh/observability:build:
+@workmesh/git-provider:test:  ✓ src/gitea.test.ts (1 test) 2ms
+@workmesh/git-provider:test:  ✓ src/index.test.ts (12 tests) 50ms
+@workmesh/git-provider:test:
+@workmesh/git-provider:test:  Test Files  2 passed (2)
+@workmesh/git-provider:test:       Tests  13 passed (13)
+@workmesh/git-provider:test:    Start at  03:51:43
+@workmesh/git-provider:test:    Duration  1.37s (transform 69ms, setup 0ms, collect 139ms, tests 52ms, environment 0ms, prepare 843ms)
+@workmesh/git-provider:test:
+@workmesh/git-provider:build: cache miss, executing 9a18c1b90965e505
+@workmesh/observability:test: cache miss, executing 2e9a5844b65c4235
+@workmesh/git-provider:build:
+@workmesh/git-provider:build: > @workmesh/git-provider@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\git-provider
+@workmesh/git-provider:build: > tsc -p tsconfig.json
+@workmesh/git-provider:build:
+@workmesh/observability:test:
+@workmesh/observability:test: > @workmesh/observability@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\observability
+@workmesh/observability:test: > vitest run
+@workmesh/observability:test:
+@workmesh/observability:test:
+@workmesh/observability:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/observability
+@workmesh/observability:test:
+@workmesh/config:test: cache miss, executing 60e95d6a4317c3c5
+@workmesh/config:test:
+@workmesh/config:test: > @workmesh/config@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\config
+@workmesh/config:test: > vitest run
+@workmesh/config:test:
+@workmesh/observability:test:  ✓ src/index.test.ts (3 tests) 4ms
+@workmesh/observability:test:  ✓ src/workbench-slo.test.ts (13 tests) 5ms
+@workmesh/observability:test:
+@workmesh/observability:test:  Test Files  2 passed (2)
+@workmesh/observability:test:       Tests  16 passed (16)
+@workmesh/observability:test:    Start at  03:51:46
+@workmesh/observability:test:    Duration  1.36s (transform 63ms, setup 0ms, collect 109ms, tests 10ms, environment 0ms, prepare 915ms)
+@workmesh/observability:test:
+@workmesh/agent-sdk:build: cache miss, executing 805b3b4b8f4e7058
+@workmesh/config:test:
+@workmesh/config:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/config
+@workmesh/config:test:
+@workmesh/agent-sdk:build:
+@workmesh/agent-sdk:build: > @workmesh/agent-sdk@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\agent-sdk
+@workmesh/agent-sdk:build: > tsc -p tsconfig.json
+@workmesh/agent-sdk:build:
+@workmesh/config:test:  ✓ src/service-command.test.ts (13 tests) 5ms
+@workmesh/config:test:  ✓ src/index.test.ts (20 tests) 15ms
+@workmesh/config:test:
+@workmesh/config:test:  Test Files  2 passed (2)
+@workmesh/config:test:       Tests  33 passed (33)
+@workmesh/config:test:    Start at  03:51:48
+@workmesh/config:test:    Duration  1.51s (transform 184ms, setup 0ms, collect 337ms, tests 20ms, environment 0ms, prepare 838ms)
+@workmesh/config:test:
+@workmesh/config:build: cache miss, executing 8e3ad6c45ecb43a1
+@workmesh/config:build:
+@workmesh/config:build: > @workmesh/config@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\config
+@workmesh/config:build: > tsc -p tsconfig.json
+@workmesh/config:build:
+@workmesh/agent-runner:test: cache miss, executing d29be76cf8b0dbee
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: > @workmesh/agent-runner@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\agent-runner
+@workmesh/agent-runner:test: > vitest run
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/apps/agent-runner
+@workmesh/agent-runner:test:
+@workmesh/domain:build: cache miss, executing c72fbd354b25c7fc
+@workmesh/domain:build:
+@workmesh/domain:build: > @workmesh/domain@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\domain
+@workmesh/domain:build: > tsc -p tsconfig.json
+@workmesh/domain:build:
+@workmesh/agent-runner:test:  ✓ src/model-config.test.ts (2 tests) 3ms
+@workmesh/agent-runner:test:  ✓ src/configured-model.test.ts (1 test) 2ms
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > validates the document base and refuses a stale or malformed write before any API mutation
+@workmesh/agent-runner:test: {"tool":"workmesh_update_document","stage":"input_validation","paths":["baseContentHash"]}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  ✓ src/permission-matrix.test.ts (6 tests) 89ms
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > releases only a versioned lease through the exact Session API authority
+@workmesh/agent-runner:test: {"tool":"workmesh_release_lease","stage":"input_validation","paths":["ifMatch"]}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  ✓ src/workmesh-tools.test.ts (10 tests) 96ms
+@workmesh/domain:test: cache miss, executing 51dd6f4cdb0d1e24
+@workmesh/domain:test:
+@workmesh/domain:test: > @workmesh/domain@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\domain
+@workmesh/domain:test: > vitest run
+@workmesh/domain:test:
+@workmesh/domain:test:
+@workmesh/domain:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/domain
+@workmesh/domain:test:
+@workmesh/agent-runner:test:  ✓ src/workbench-skill.test.ts (2 tests) 35ms
+@workmesh/domain:test:  ✓ src/session-budget.test.ts (10 tests) 10ms
+@workmesh/domain:test:  ✓ src/stage3-delivery.test.ts (3 tests) 11ms
+@workmesh/domain:test:  ✓ src/stage2-collaboration.test.ts (3 tests) 13ms
+@workmesh/domain:test:  ✓ src/stage1-agent.test.ts (8 tests) 6ms
+@workmesh/agent-runner:test:  ✓ src/egress-policy.test.ts (6 tests) 4ms
+@workmesh/domain:test:  ✓ src/approval.test.ts (19 tests) 3ms
+@workmesh/domain:test:  ✓ src/planning-domain-parity.test.ts (2 tests) 3ms
+@workmesh/agent-runner:test:  ✓ src/isolation.test.ts (9 tests) 31ms
+@workmesh/domain:test:  ✓ src/stage4.test.ts (9 tests) 20ms
+@workmesh/domain:test:  ✓ src/index.test.ts (6 tests) 5ms
+@workmesh/domain:test:  ✓ src/authorization.test.ts (5 tests) 3ms
+@workmesh/domain:test:
+@workmesh/domain:test:  Test Files  9 passed (9)
+@workmesh/domain:test:       Tests  65 passed (65)
+@workmesh/domain:test:    Start at  03:51:59
+@workmesh/domain:test:    Duration  2.71s (transform 571ms, setup 0ms, collect 2.28s, tests 74ms, environment 1ms, prepare 8.02s)
+@workmesh/domain:test:
+@workmesh/a2a-adapter:test: cache miss, executing a9ffa74260ae1087
+@workmesh/agent-runner:test: stderr | src/model-errors.test.ts > W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns invalidJson
+@workmesh/agent-runner:test: Could not parse message into JSON: {not json at all
+@workmesh/agent-runner:test: From chunk: [ 'data: {not json at all' ]
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  ✓ src/model-wire.test.ts (6 tests) 1456ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > reassembles a tool call whose arguments arrive in arbitrary fragments  848ms
+@workmesh/agent-runner:test:  ✓ src/model-errors.test.ts (6 tests) 1348ms
+@workmesh/agent-runner:test:    ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns status500  790ms
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  Test Files  9 passed (9)
+@workmesh/agent-runner:test:       Tests  48 passed (48)
+@workmesh/agent-runner:test:    Start at  03:51:53
+@workmesh/agent-runner:test:    Duration  9.64s (transform 627ms, setup 0ms, collect 37.72s, tests 3.06s, environment 1ms, prepare 6.76s)
+@workmesh/agent-runner:test:
+@workmesh/a2a-adapter:test:
+@workmesh/a2a-adapter:test: > @workmesh/a2a-adapter@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\a2a-adapter
+@workmesh/a2a-adapter:test: > vitest run
+@workmesh/a2a-adapter:test:
+@workmesh/a2a-adapter:build: cache miss, executing 442627c19d0df9d5
+@workmesh/a2a-adapter:build:
+@workmesh/a2a-adapter:build: > @workmesh/a2a-adapter@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\a2a-adapter
+@workmesh/a2a-adapter:build: > tsc -p tsconfig.json
+@workmesh/a2a-adapter:build:
+@workmesh/a2a-adapter:test:
+@workmesh/a2a-adapter:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/a2a-adapter
+@workmesh/a2a-adapter:test:
+@workmesh/a2a-adapter:test:  ✓ src/index.test.ts (4 tests) 7ms
+@workmesh/a2a-adapter:test:
+@workmesh/a2a-adapter:test:  Test Files  1 passed (1)
+@workmesh/a2a-adapter:test:       Tests  4 passed (4)
+@workmesh/a2a-adapter:test:    Start at  03:52:03
+@workmesh/a2a-adapter:test:    Duration  1.21s (transform 37ms, setup 0ms, collect 48ms, tests 7ms, environment 0ms, prepare 355ms)
+@workmesh/a2a-adapter:test:
+@workmesh/agent-sdk:test: cache miss, executing c2d4513b27cdbf20
+@workmesh/web:test: cache miss, executing 3d27d61c94a8be20
+@workmesh/agent-sdk:test:
+@workmesh/agent-sdk:test: > @workmesh/agent-sdk@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\agent-sdk
+@workmesh/agent-sdk:test: > vitest run
+@workmesh/agent-sdk:test:
+@workmesh/web:test:
+@workmesh/web:test: > @workmesh/web@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\web
+@workmesh/web:test: > vitest run
+@workmesh/web:test:
+@workmesh/agent-sdk:test:
+@workmesh/agent-sdk:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/agent-sdk
+@workmesh/agent-sdk:test:
+@workmesh/web:test:
+@workmesh/web:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/apps/web
+@workmesh/web:test:
+@workmesh/agent-sdk:test:  ✓ src/index.test.ts (33 tests) 54ms
+@workmesh/agent-sdk:test:
+@workmesh/agent-sdk:test:  Test Files  1 passed (1)
+@workmesh/agent-sdk:test:       Tests  33 passed (33)
+@workmesh/agent-sdk:test:    Start at  03:52:06
+@workmesh/agent-sdk:test:    Duration  2.72s (transform 476ms, setup 0ms, collect 795ms, tests 54ms, environment 0ms, prepare 935ms)
+@workmesh/agent-sdk:test:
+@workmesh/fake-agent:test: cache miss, executing 7d3814183bb3fc52
+@workmesh/fake-agent:test:
+@workmesh/fake-agent:test: > @workmesh/fake-agent@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\fake-agent
+@workmesh/fake-agent:test: > vitest run
+@workmesh/fake-agent:test:
+@workmesh/fake-agent:test:
+@workmesh/fake-agent:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/apps/fake-agent
+@workmesh/fake-agent:test:
+@workmesh/fake-agent:test:  ✓ src/index.test.ts (4 tests) 15ms
+@workmesh/fake-agent:test:
+@workmesh/fake-agent:test:  Test Files  1 passed (1)
+@workmesh/fake-agent:test:       Tests  4 passed (4)
+@workmesh/fake-agent:test:    Start at  03:52:13
+@workmesh/fake-agent:test:    Duration  3.01s (transform 854ms, setup 0ms, collect 1.18s, tests 15ms, environment 0ms, prepare 726ms)
+@workmesh/fake-agent:test:
+@workmesh/mcp:test: cache miss, executing d288e9f2397367d4
+@workmesh/mcp:test:
+@workmesh/mcp:test: > @workmesh/mcp@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\mcp
+@workmesh/mcp:test: > vitest run
+@workmesh/mcp:test:
+@workmesh/mcp:test:
+@workmesh/mcp:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/apps/mcp
+@workmesh/mcp:test:
+@workmesh/mcp:test:  ✓ src/index.test.ts (29 tests) 212ms
+@workmesh/mcp:test:  ✓ src/http.test.ts (9 tests) 120ms
+@workmesh/mcp:test:
+@workmesh/mcp:test:  Test Files  2 passed (2)
+@workmesh/mcp:test:       Tests  38 passed (38)
+@workmesh/mcp:test:    Start at  03:52:20
+@workmesh/mcp:test:    Duration  3.63s (transform 1.17s, setup 0ms, collect 3.33s, tests 332ms, environment 0ms, prepare 1.51s)
+@workmesh/mcp:test:
+@workmesh/conformance:test: cache miss, executing 15c7469602e9bb8a
+@workmesh/web:test:  ✓ app/lib/i18n.test.ts (3 tests) 74ms
+@workmesh/conformance:test:
+@workmesh/conformance:test: > @workmesh/conformance@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\conformance
+@workmesh/conformance:test: > vitest run
+@workmesh/conformance:test:
+@workmesh/web:test:  ✓ features/work-items/work-item-card.test.tsx (32 tests) 247ms
+@workmesh/conformance:test:
+@workmesh/conformance:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/conformance
+@workmesh/conformance:test:
+@workmesh/web:test: stderr | features/work-items/work-item-adaptive.test.tsx > WorkItemAdaptiveCollection persistent DOM > keeps the exact 300 card and five column nodes across list-board-list while preserving boundary focus
+@workmesh/web:test: Each child in a list should have a unique "key" prop.
+@workmesh/web:test:
+@workmesh/web:test: Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+@workmesh/web:test:
+@workmesh/web:test:  ✓ app/ui-overlay-contract.test.tsx (21 tests) 2302ms
+@workmesh/web:test:    ✓ shared modal stack > focuses close first, supports an explicit initial target, and wraps only eligible controls  378ms
+@workmesh/web:test:  ✓ features/work-items/work-item-adaptive.test.tsx (7 tests) 2312ms
+@workmesh/web:test:    ✓ WorkItemAdaptiveCollection persistent DOM > keeps the exact 300 card and five column nodes across list-board-list while preserving boundary focus  1982ms
+@workmesh/conformance:test:  ✓ src/index.test.ts (1 test) 110ms
+@workmesh/conformance:test:
+@workmesh/conformance:test:  Test Files  1 passed (1)
+@workmesh/conformance:test:       Tests  1 passed (1)
+@workmesh/conformance:test:    Start at  03:52:26
+@workmesh/conformance:test:    Duration  3.77s (transform 1.11s, setup 0ms, collect 1.53s, tests 110ms, environment 0ms, prepare 812ms)
+@workmesh/conformance:test:
+@workmesh/db:test: cache miss, executing 5bf06b18d4cca294
+@workmesh/db:test:
+@workmesh/db:test: > @workmesh/db@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\db
+@workmesh/db:test: > vitest run
+@workmesh/db:test:
+@workmesh/web:test:  ✓ app/operations-content.test.tsx (43 tests) 5928ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > keeps the page header stable while feature authority resolves without exposing dependent anchors  684ms
+@workmesh/db:test:
+@workmesh/db:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/db
+@workmesh/db:test:
+@workmesh/db:test:  ✓ src/agent-concurrency-inventory.test.ts (3 tests) 35ms
+@workmesh/db:test:  ✓ src/event-resources.test.ts (4 tests) 2ms
+@workmesh/db:test:  ✓ src/migrations.test.ts (3 tests) 327ms
+@workmesh/db:test:  ✓ src/agent-concurrency.test.ts (3 tests) 4ms
+@workmesh/web:test:  ✓ app/lib/use-toast.test.ts (9 tests) 567ms
+@workmesh/web:test:    ✓ toastStore > replaces an explicit dedupe key, resets its timer, and adopts the latest valid focus origin  304ms
+@workmesh/web:test:  ✓ features/workbench/conversation-workbench.test.tsx (6 tests) 2360ms
+@workmesh/web:test:    ✓ ConversationWorkbench > states the recorded tools for a settled turn and does not imply a count it does not have  336ms
+@workmesh/web:test:    ✓ ConversationWorkbench > sends a Markdown turn with the current conversation revision and keeps the bound session on the server  867ms
+@workmesh/web:test:    ✓ ConversationWorkbench > uses the service and model selected for this turn in the actual request  344ms
+@workmesh/web:test:    ✓ ConversationWorkbench > keeps the newly selected conversation draft when the previous send returns late  515ms
+@workmesh/db:test:  ✓ src/index.test.ts (1 test) 1ms
+@workmesh/db:test:  ✓ scripts/seed.test.ts (3 tests) 2ms
+@workmesh/db:test:  ✓ src/event-writer-inventory.test.ts (3 tests) 4771ms
+@workmesh/db:test:    ✓ durable domain-event writer inventory > rejects production SQL writes outside the central persistence module  1742ms
+@workmesh/db:test:    ✓ durable domain-event writer inventory > requires every production aggregate literal to have a resolver  2959ms
+@workmesh/db:test:  ✓ src/agent-lock-order-inventory.test.ts (8 tests) 9200ms
+@workmesh/db:test:    ✓ Agent authority lock-order inventory > manifests every production file with ranked locking or writes  3139ms
+@workmesh/db:test:    ✓ Agent authority lock-order inventory > manifests every ranked SQL statement with its transaction owner and rank sequence  2443ms
+@workmesh/db:test:    ✓ Agent authority lock-order inventory > rejects unsafe production ordering and proves the negative fixtures  3354ms
+@workmesh/db:test:
+@workmesh/db:test:  Test Files  8 passed (8)
+@workmesh/db:test:       Tests  28 passed (28)
+@workmesh/db:test:    Start at  03:52:33
+@workmesh/db:test:    Duration  13.49s (transform 3.81s, setup 0ms, collect 15.92s, tests 14.34s, environment 1ms, prepare 9.50s)
+@workmesh/db:test:
+@workmesh/db:build: cache miss, executing e33bfcb609b33358
+@workmesh/db:build:
+@workmesh/db:build: > @workmesh/db@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\db
+@workmesh/db:build: > tsc -p tsconfig.json
+@workmesh/db:build:
+@workmesh/web:test:  ✓ app/operations/usage-metrics.test.tsx (24 tests) 1988ms
+@workmesh/web:test:    ✓ UsageMetrics > fails a null root payload closed as unavailable  611ms
+@workmesh/web:test:    ✓ UsageMetrics > formats supported minor-unit currencies exactly and keeps unsupported and case-distinct buckets raw  306ms
+@workmesh/worker:test: cache miss, executing 51937ade731f5ea7
+@workmesh/worker:test:
+@workmesh/worker:test: > @workmesh/worker@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\worker
+@workmesh/worker:test: > vitest run
+@workmesh/worker:test:
+@workmesh/worker:test:
+@workmesh/worker:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/apps/worker
+@workmesh/worker:test:
+@workmesh/web:test:  ✓ app/landing-screen.test.tsx (5 tests) 1647ms
+@workmesh/web:test:    ✓ LandingScreen > reads three independent sources, each capped, and links the attention section to its own surface  1321ms
+@workmesh/worker:test:  ✓ src/retention-soak-lock.test.ts (10 tests | 1 skipped) 13ms
+@workmesh/worker:test:  ✓ src/retention-upgrade-barrier.test.ts (9 tests) 13ms
+@workmesh/worker:test:  ✓ src/dockerfile.test.ts (1 test) 9ms
+@workmesh/worker:test:  ✓ src/retention-soak-formal-launch.test.ts (2 tests | 1 skipped) 2ms
+@workmesh/worker:test:  ✓ src/retention-soak-heartbeat.test.ts (7 tests) 147ms
+@workmesh/worker:test:  ✓ src/retention-restart-archive-proof.test.ts (3 tests) 5ms
+@workmesh/worker:test:  ✓ src/retention-scheduler.test.ts (4 tests) 8ms
+@workmesh/worker:test:  ✓ src/runtime.test.ts (2 tests) 224ms
+@workmesh/worker:test:  ✓ src/worker-runtime-identity.test.ts (8 tests) 595ms
+@workmesh/worker:test:  ✓ src/retention-error.test.ts (4 tests) 3ms
+@workmesh/worker:test:  ✓ src/retention-acceptance-secrets.test.ts (1 test) 2ms
+@workmesh/worker:test:  ✓ src/retention-compose-json.test.ts (2 tests) 2ms
+@workmesh/worker:test:  ✓ src/retention-soak-provenance.test.ts (11 tests) 18ms
+@workmesh/worker:test:  ✓ src/retention-soak.test.ts (16 tests) 12ms
+@workmesh/worker:test:  ✓ src/retention-production-upgrade.test.ts (34 tests) 78ms
+@workmesh/worker:test:  ✓ src/retention-soak-credential.test.ts (13 tests) 120ms
+@workmesh/worker:test:  ✓ src/retention-soak-provision.test.ts (8 tests) 1265ms
+@workmesh/worker:test:    ✓ retention soak provisioning > resumes without duplicates after refreshToken response loss  320ms
+@workmesh/worker:test:  ✓ src/session-lifecycle.test.ts (7 tests) 4ms
+@workmesh/worker:test:  ✓ src/agent-webhook.test.ts (6 tests) 25ms
+@workmesh/worker:test:  ✓ src/provider-actions.test.ts (1 test) 2ms
+@workmesh/worker:test:  ✓ src/automation.test.ts (4 tests) 65ms
+@workmesh/worker:test:  ✓ src/realtime-redis.test.ts (10 tests) 229ms
+@workmesh/worker:test:  ✓ src/retention-inbox.test.ts (2 tests) 25ms
+@workmesh/worker:test:
+@workmesh/worker:test:  Test Files  23 passed (23)
+@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)
+@workmesh/worker:test:    Start at  03:53:06
+@workmesh/worker:test:    Duration  17.70s (transform 26.15s, setup 0ms, collect 108.97s, tests 2.86s, environment 3ms, prepare 33.41s)
+@workmesh/worker:test:
+@workmesh/recovery:test: cache miss, executing 401449bf46f71c86
+@workmesh/recovery:test:
+@workmesh/recovery:test: > @workmesh/recovery@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\recovery
+@workmesh/recovery:test: > vitest run
+@workmesh/recovery:test:
+@workmesh/web:test:  ✓ app/settings/delete-team-dialog.test.tsx (7 tests) 1076ms
+@workmesh/web:test:    ✓ DeleteTeamDialog > cancels without confirmation and confirms the frozen Team snapshot once  555ms
+@workmesh/recovery:test:
+@workmesh/recovery:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/packages/recovery
+@workmesh/recovery:test:
+@workmesh/recovery:test:  ✓ src/recovery.test.ts (7 tests) 72ms
+@workmesh/recovery:test:
+@workmesh/recovery:test:  Test Files  1 passed (1)
+@workmesh/recovery:test:       Tests  7 passed (7)
+@workmesh/recovery:test:    Start at  03:53:27
+@workmesh/recovery:test:    Duration  2.48s (transform 89ms, setup 0ms, collect 421ms, tests 72ms, environment 0ms, prepare 843ms)
+@workmesh/recovery:test:
+@workmesh/recovery:build: cache miss, executing 4d6b18d57cc5b9c5
+@workmesh/web:test:  ✓ app/lib/pagination.test.tsx (14 tests) 1258ms
+@workmesh/recovery:build:
+@workmesh/recovery:build: > @workmesh/recovery@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\recovery
+@workmesh/recovery:build: > tsc -p tsconfig.build.json
+@workmesh/recovery:build:
+@workmesh/web:test:  ✓ app/agents/team-access-drawer.test.tsx (8 tests) 1396ms
+@workmesh/web:test:    ✓ TeamAccessDrawer > renders the Sheet with the team access list when an agent is selected and open is true  552ms
+@workmesh/web:test: stderr | features/work-items/work-surfaces-pagination.test.tsx > WorkSurfaces pagination ownership > does not install an observer or load another page while pagination is loading
+@workmesh/web:test: Each child in a list should have a unique "key" prop.
+@workmesh/web:test:
+@workmesh/web:test: Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+@workmesh/web:test:
+@workmesh/web:test:  ✓ app/agent-work-panel.test.tsx (10 tests) 1191ms
+@workmesh/web:test:    ✓ useAgentDelegationController > does not offer an Agent missing either required execution capability  493ms
+@workmesh/web:test:  ✓ app/agents/approvals-table.test.tsx (18 tests) 2710ms
+@workmesh/web:test:    ✓ ApprovalsTable > shows direct decisions on every actionable row before any bulk selection  698ms
+@workmesh/web:test:  ✓ app/attention-center-bulk.test.tsx (5 tests) 1821ms
+@workmesh/web:test:    ✓ Human Attention bulk approval recovery > uses stable default reason and retains a retryable error per item  1078ms
+@workmesh/web:test:    ✓ Human Attention bulk approval recovery > does not expose retry for forbidden decisions and asks for reconfirmation after a conflict  313ms
+@workmesh/web:test:  ✓ app/agent-connections-panel.test.tsx (11 tests) 2746ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > uses the active locale for the Agent name placeholder  863ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > keeps a committed rotation result when its post-commit refresh fails  309ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > keeps a just-created result after refresh failure, then rebuilds detail without its one-time URL in a new authority scope  444ms
+@workmesh/api:test: cache miss, executing f20c2f6cc63c4629
+@workmesh/web:test:  ✓ features/rich-content/rich-content.test.ts (28 tests) 1291ms
+@workmesh/web:test:    ✓ rich-content safety boundary > collapses only oversized compact content and exposes an accessible toggle  353ms
+@workmesh/api:test:
+@workmesh/api:test: > @workmesh/api@ test C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\api
+@workmesh/api:test: > vitest run --fileParallelism=false
+@workmesh/api:test:
+@workmesh/api:test:
+@workmesh/api:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749/apps/api
+@workmesh/api:test:
+@workmesh/web:test:  ✓ features/work-items/detail/work-item-detail-focus.test.tsx (10 tests) 2047ms
+@workmesh/web:test:    ✓ WorkItemDetail focus on revision conflict > moves focus to the Save button when a revision conflict is reported  792ms
+@workmesh/web:test:  ✓ app/agent-session-detail.test.tsx (4 tests) 1372ms
+@workmesh/web:test:    ✓ agent-session-detail approval inbox > restores the per-approval card surface styles removed by 868478f  347ms
+@workmesh/api:test:  ✓ src/live-read-authorization.test.ts (9 tests) 377ms
+@workmesh/api:test:    ✓ live paged-read authorization > audits all 25 Agent-readable routes derived from the 28-route pagination inventory  349ms
+@workmesh/web:test:  ✓ app/agents/approval-history-table.test.tsx (8 tests) 828ms
+@workmesh/web:test:    ✓ ApprovalHistoryTable > renders only the selected terminal status and links to the source Session  584ms
+@workmesh/api:test:  ✓ src/auth-idempotency-inventory.test.ts (4 tests) 157ms
+@workmesh/web:test:  ✓ app/project-control-center.test.tsx (7 tests) 2889ms
+@workmesh/web:test:    ✓ Project Control Center > keeps a long Project description available without overwhelming the overview  637ms
+@workmesh/web:test:    ✓ Project Control Center > loads one bounded projection and renders the complete Run digest  405ms
+@workmesh/web:test:    ✓ Project Control Center > paginates a collection independently and restores focus after closing detail  679ms
+@workmesh/web:test:    ✓ Project Control Center > keeps an unapplied filter draft when the projection refreshes with new data  560ms
+@workmesh/web:test:    ✓ Project Control Center > owns server-side filters in the URL and projection request  382ms
+@workmesh/api:test:  ✓ src/work-item-executors.test.ts (5 tests) 9ms
+@workmesh/web:test:  ✓ app/page.test.tsx (9 tests) 3714ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > updates the Work Surface layout URL without a duplicate HomePage render and reuses the latest layout on the next query render  790ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > restores the latest presentation layout from popstate and saved views  422ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > localizes the release build and schema labels  355ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > uses the Guidance copy contract for editor and preview chrome  569ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > exposes a named project rail with ordinary project activation  399ms
+@workmesh/web:test:    ✓ Home full-page WorkItem semantics > exposes only the active detail h1 and removes the obscured page content from semantics  304ms
+@workmesh/web:test:    ✓ Home full-page WorkItem semantics > keeps Agent executions selected when the automatic agent projection refreshes  411ms
+@workmesh/web:test:  ✓ features/work-items/work-surfaces-pagination.test.tsx (9 tests) 12510ms
+@workmesh/web:test:    ✓ WorkSurfaces pagination ownership > does not install an observer or load another page while pagination is loading  318ms
+@workmesh/web:test:    ✓ WorkSurfaces pagination ownership > reuses one normalized item projection for layout-only changes  657ms
+@workmesh/web:test:    ✓ WorkSurfaces pagination ownership > keeps all 300 card renders stable when a layout callback rerenders the parent with new inline handlers  11165ms
+@workmesh/web:test:  ✓ app/lib/toast-viewport.test.tsx (4 tests) 697ms
+@workmesh/web:test:    ✓ ToastViewport > renders no viewport while empty and one atomic live role per toast with unique localized close names  399ms
+@workmesh/api:test:  ✓ src/pagination.test.ts (9 tests) 40ms
+@workmesh/web:test:  ✓ app/page-outcomes.test.tsx (13 tests) 5390ms
+@workmesh/web:test:    ✓ Home mutation outcomes > retries a URL-owned Project after authority invalidates the in-flight request  623ms
+@workmesh/web:test:    ✓ Home mutation outcomes > synchronously retires actor-owned dialog state when authenticated authority changes  974ms
+@workmesh/web:test:    ✓ Home mutation outcomes > keeps the exact open detail and focus when auth refresh returns a new actor object for the same authority  730ms
+@workmesh/web:test:    ✓ Home mutation outcomes > ignores a completed A-authority create after switching to B without toast, refresh, URL, or focus side effects  623ms
+@workmesh/web:test:    ✓ Home mutation outcomes > emits exactly one localized success toast while the authorized page remains rendered  499ms
+@workmesh/web:test:    ✓ Home mutation outcomes > keeps a structured conflict in the top modal, preserves the form, emits no toast, and clears it on reopen  616ms
+@workmesh/web:test:  ✓ app/collaboration-queues.test.tsx (3 tests) 1134ms
+@workmesh/web:test:    ✓ ActionableCollaborationQueues > separates governed responses from informational messages and restores selection in the URL  640ms
+@workmesh/web:test:    ✓ ActionableCollaborationQueues > preserves the reply draft when optimistic concurrency reports a conflict  313ms
+@workmesh/web:test:  ✓ app/settings/page.test.tsx (27 tests) 12200ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > synchronously retires actor-owned destructive state when authenticated authority changes  1152ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > ignores an A-authority Team create that resolves after switching to B  489ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains the exact Settings action and focus during authenticated actor refresh  353ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > gives workflow States an independent initialized authority and retains exact rows and focus on ordinary refresh failure  456ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains initialized empty Team authority through refresh and ordinary failure, then revokes it on 403  348ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains a resolved Team and exact selector on ordinary refresh failure but revokes it on 403  414ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains the exact states scope and focused Team control while refreshing, then corrects a removed Team after success  327ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > refreshes the authorized Team collection before routing to a newly created Team  397ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > keeps create validation and update revision failures contextual without duplicating a toast  668ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > posts only the selected stable preset color and reports success even when refresh has no new row  687ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > renders and focuses the native custom color control only for Custom, preserving it after failure  658ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > resets Custom to its UI-only initial color after a successful create  593ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > keeps every idle dialog dismissal path mutation-free and restores trigger focus  870ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > guards rapid confirmation and sends the exact encoded snapshot mutation without a body  569ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > maps destructive conflicts locally, keeps the snapshot, and performs no refresh on failure  845ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > commits the close before one independent refresh and never relabels a refresh failure  500ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > waits for post-delete Team resolution before moving focus once  527ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains one post-delete focus intent across refresh failure until Team retry reconciliation completes  503ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > preserves a newer Team route and never resumes deleted-Team states after an in-flight delete  539ms
+@workmesh/web:test:  ✓ app/agents/page-outcomes.test.tsx (24 tests) 12849ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > owns all Agent surface aria labels in the active locale  447ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > synchronously clears actor-owned approval selection when authenticated authority changes  485ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > revokes every A-authority Agent projection and open surface before B collections resolve  1277ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > ignores an A-authority bulk decision that settles after switching to B  477ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > retains the exact AppShell action and focus during an authenticated actor refresh  358ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps 300 stable Agent cards out of Peek and four-keystroke filter rerenders  4078ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > closes a filtered Peek and transfers orphaned roving focus to the first visible Agent link  480ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > counts and renders only server-projected Human Attention items  441ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > submits a direct approval without bulk selection and reports success on that row  428ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > shows a safe per-row revision conflict and refreshes instead of replaying the decision  477ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps a quorum-pending decision visible as waiting for other reviewers  464ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > emits one localized success toast only after every selected decision succeeds  405ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps network-only partial aggregate detail contextual, retains only failed selection, and emits no toast  497ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps mixed conflict and network aggregate detail contextual, retains only failed selection, and emits no toast  454ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps all failed rows selected with safe contextual copy and no raw or toast output  470ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > does not relabel a committed success when the post-commit refresh fails  407ms
+@workmesh/api:test:  ✓ src/agent/commands.test.ts (9 tests) 17ms
+@workmesh/web:test:  ✓ app/connect/page.test.tsx (4 tests) 1035ms
+@workmesh/web:test:    ✓ ConnectPage MCP client state > atomically selects the first normalized advertised client without ever mounting a Codex guide  563ms
+@workmesh/web:test:    ✓ ConnectPage MCP client state > keeps Config and Link copied states distinct while client switches stay local  379ms
+@workmesh/web:test:  ✓ app/attention-center-approval.test.tsx (4 tests) 1523ms
+@workmesh/web:test:    ✓ Human Attention inline approval > offers direct decisions without a required text field  738ms
+@workmesh/web:test:    ✓ Human Attention inline approval > sends approve-with-requirements as the immutable approval reason  333ms
+@workmesh/web:test:  ✓ features/rich-content/artifacts.test.tsx (4 tests) 525ms
+@workmesh/web:test:    ✓ WorkItemArtifacts localized copy > renders its complete empty-state and input labels from copy  313ms
+@workmesh/web:test:  ✓ app/lib/use-authenticated-actor.test.ts (5 tests) 15ms
+@workmesh/api:test:  ✓ src/agent/guard.test.ts (9 tests) 31ms
+@workmesh/api:test:  ✓ load/sse.test.ts (10 tests) 184ms
+@workmesh/web:test:  ✓ app/agents/filters.test.ts (9 tests) 3ms
+@workmesh/api:test:  ✓ src/bootstrap-auth.test.ts (14 tests) 749ms
+@workmesh/api:test:    ✓ bootstrap request authentication > accepts only the exact explicit bootstrap header and returns an irreversible stable binding  529ms
+@workmesh/web:test:  ✓ app/agent-control-dialog.test.tsx (2 tests) 1238ms
+@workmesh/web:test:    ✓ AgentControlDialog > binds the Human reason and selected stop mode to the preview revision  922ms
+@workmesh/web:test:    ✓ AgentControlDialog > preserves the draft and reloads consequences after a stale revision  315ms
+@workmesh/api:test:  ✓ src/authz/event-audience.test.ts (6 tests) 3ms
+@workmesh/web:test: stderr | features/work-items/work-surfaces-loading.test.tsx > WorkSurfaces authenticated collection loading > retains exact row DOM and focus through refresh and ordinary failure, then revokes on 403
+@workmesh/web:test: Each child in a list should have a unique "key" prop.
+@workmesh/web:test:
+@workmesh/web:test: Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+@workmesh/web:test:
+@workmesh/web:test:  ✓ features/work-items/work-surfaces-loading.test.tsx (5 tests) 952ms
+@workmesh/web:test:    ✓ WorkSurfaces authenticated collection loading > gives initial loading exactly one named busy owner and decorative cells  467ms
+@workmesh/web:test:  ✓ app/lib/use-hotkeys.test.ts (5 tests) 430ms
+@workmesh/web:test:  ✓ app/lib/use-board-column-widths.test.tsx (12 tests) 16ms
+@workmesh/web:test:  ✓ app/agents/approval-route-state.test.ts (9 tests) 77ms
+@workmesh/web:test:  ✓ features/work-items/detail/work-item-execution-workspace.test.tsx (3 tests) 760ms
+@workmesh/web:test:    ✓ WorkItemExecutionWorkspace > renders responsibility, live execution, Human attention, and verified evidence from server projections  664ms
+@workmesh/web:test:  ✓ app/lib/use-current-team.test.ts (6 tests) 43ms
+@workmesh/web:test:  ✓ app/operations/page.test.tsx (4 tests) 498ms
+@workmesh/web:test:  ✓ app/operations/runs-table.test.tsx (4 tests) 535ms
+@workmesh/web:test:    ✓ RunsTable > renders a captioned six-column table and associates a historical error detail with its run  476ms
+@workmesh/web:test:  ✓ features/navigation/theme.test.tsx (8 tests) 192ms
+@workmesh/web:test:  ✓ app/settings/workbench-llm-settings.test.tsx (2 tests) 952ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > keeps shared connections read-only for members and never renders the stored credential  610ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > lets a manager disable a model with the current connection revision and preserves its capabilities  341ms
+@workmesh/web:test:  ✓ features/work-items/work-item-filters.test.tsx (9 tests) 768ms
+@workmesh/web:test:    ✓ WorkItemFilters compact mode > renders the More filters toggle when compact is true  336ms
+@workmesh/web:test:  ✓ app/agents/[id]/page.test.tsx (4 tests) 1318ms
+@workmesh/web:test:    ✓ Agent detail route > renders validated definition facts and the authoritative empty Team Access projection  927ms
+@workmesh/web:test:  ✓ app/ui-layout-contract.test.ts (14 tests) 42ms
+@workmesh/web:test:  ✓ app/lib/agents.test.ts (23 tests) 69ms
+@workmesh/web:test:  ✓ app/app-shell-anatomy.test.tsx (6 tests) 194ms
+@workmesh/web:test:  ✓ app/lib/api.test.ts (16 tests) 22ms
+@workmesh/web:test:  ✓ app/lib/realtime.test.ts (10 tests) 17ms
+@workmesh/web:test:  ✓ app/lib/list-interactions.test.ts (3 tests) 14ms
+@workmesh/web:test:  ✓ app/lib/mcp-onboarding.test.ts (8 tests) 3ms
+@workmesh/api:test:  ✓ src/auth-rate-limit/server-rate-limit.test.ts (4 tests) 9588ms
+@workmesh/api:test:    ✓ credential-route selective fail-closed behavior > keeps a committed successful response intact when Redis cleanup fails  473ms
+@workmesh/web:test:  ✓ app/evidence-drawer.test.tsx (2 tests) 725ms
+@workmesh/web:test:    ✓ EvidenceDrawer > renders rich provenance, canonical relationships, exact-head drift, and technical IDs  664ms
+@workmesh/web:test:  ✓ app/agents/agent-detail-panel.test.tsx (3 tests) 195ms
+@workmesh/web:test:  ✓ app/realtime-refresh.test.ts (4 tests) 2ms
+@workmesh/web:test:  ✓ app/lib/use-media-query.test.ts (3 tests) 12ms
+@workmesh/api:test:  ✓ src/realtime/routes.test.ts (7 tests) 41ms
+@workmesh/web:test:  ✓ app/workbench/page.test.tsx (2 tests) 595ms
+@workmesh/web:test:    ✓ WorkbenchPage > keeps the shell footer contract and theme control  476ms
+@workmesh/web:test:  ✓ app/connect/client-picker.test.tsx (2 tests) 479ms
+@workmesh/web:test:    ✓ ClientPicker > renders only the normalized advertised subset in server order  410ms
+@workmesh/api:test:  ✓ src/human-attention/projection.test.ts (9 tests) 13ms
+@workmesh/web:test:  ✓ app/agents/agent-workspace.test.tsx (2 tests) 163ms
+@workmesh/web:test:  ✓ app/ui-foundation.test.ts (8 tests) 17ms
+@workmesh/web:test:  ✓ e2e/mocked/final-tour-server-contract.test.ts (5 tests) 4ms
+@workmesh/web:test:  ✓ app/lib/page-header.test.tsx (2 tests) 331ms
+@workmesh/web:test:  ✓ e2e/playwright-config-contract.test.ts (2 tests) 934ms
+@workmesh/web:test:    ✓ Playwright topology configs > preserves the mocked local list reporter when no run root is set  725ms
+@workmesh/api:test:  ✓ src/authz/authorize.test.ts (4 tests) 15ms
+@workmesh/web:test:  ✓ app/agents/agent-peek.test.tsx (1 test) 391ms
+@workmesh/web:test:    ✓ AgentPeek > uses the shared Sheet, loaded list projection, and restores trigger focus on close  388ms
+@workmesh/web:test:  ✓ app/settings/team-resolution.test.ts (6 tests) 3ms
+@workmesh/web:test:  ✓ features/command-center/integration.test.ts (6 tests) 38ms
+@workmesh/web:test:  ✓ app/lib/skeleton-list.test.tsx (1 test) 199ms
+@workmesh/web:test:  ✓ features/work-items/detail/detail.test.ts (4 tests) 7ms
+@workmesh/web:test:  ✓ app/lib/connection-diagnostics.test.ts (3 tests) 2ms
+@workmesh/web:test:  ✓ features/collaboration/view-model.test.ts (3 tests) 13ms
+@workmesh/web:test:  ✓ app/lib/product-telemetry.test.ts (3 tests) 4ms
+@workmesh/web:test:  ✓ e2e/human-control-plane-acceptance.test.ts (3 tests) 10ms
+@workmesh/web:test:  ✓ app/agents/agent-detail-return.test.ts (4 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/canonical-route.test.ts (4 tests) 3ms
+@workmesh/web:test:  ✓ e2e/playwright-run-directory.test.ts (5 tests) 4ms
+@workmesh/web:test:  ✓ app/attention-route-state.test.ts (2 tests) 4ms
+@workmesh/web:test:  ✓ app/lib/workspace-navigation.test.ts (4 tests) 4ms
+@workmesh/web:test:  ✓ app/lib/human-control-plane-navigation.test.ts (4 tests) 3ms
+@workmesh/web:test:  ✓ app/operations/filter.test.ts (5 tests) 2ms
+@workmesh/web:test:  ✓ features/work-items/view-model.test.ts (4 tests) 3ms
+@workmesh/web:test:  ✓ app/brand-assets.test.ts (3 tests) 9ms
+@workmesh/web:test:  ✓ app/ui-unification-contract.test.ts (2 tests) 285ms
+@workmesh/web:test:  ✓ app/operations/sections.test.ts (7 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/optional-integration-boundary.test.ts (2 tests) 7ms
+@workmesh/web:test:  ✓ app/lib/project-work.test.ts (4 tests) 3ms
+@workmesh/web:test:  ✓ app/work-item-conflict-placement.test.ts (1 test) 6ms
+@workmesh/web:test:  ✓ app/run-timeline-route-state.test.ts (2 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/project-work-preview-query.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/lib/room.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/collaboration-queue-route.test.ts (2 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/navigation.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/lib/shortcut-scope.test.ts (20 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/workflow-state-patch.test.ts (2 tests) 10ms
+@workmesh/web:test:  ✓ app/recovery-route.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/lib/latest-request.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/settings/workflow-color-presets.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/settings/route-state.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/lib/collection-authority.test.ts (7 tests) 2ms
+@workmesh/web:test:  ✓ app/health-routes.test.ts (1 test) 4ms
+@workmesh/web:test:  ✓ app/lib/document-title.test.ts (2 tests) 2ms
+@workmesh/api:test:  ✓ src/authz/route-policy.test.ts (8 tests) 10118ms
+@workmesh/api:test:    ✓ Fastify route policy inventory > registers the complete production route surface  10076ms
+@workmesh/web:test:  ✓ app/lib/settings-permissions.test.ts (1 test) 1ms
+@workmesh/web:test:  ✓ app/lib/actor.test.ts (1 test) 1ms
+@workmesh/api:test:  ✓ src/realtime/coordinator.test.ts (4 tests) 314ms
+@workmesh/api:test:  ✓ src/commands-lock-order.test.ts (3 tests) 5ms
+@workmesh/api:test:  ✓ src/auth-rate-limit/auth-rate-limit.test.ts (4 tests) 8ms
+@workmesh/web:test:  ✓ features/command-center/registry.test.ts (10 tests) 201ms
+@workmesh/web:test:  ✓ app/agents/agent-registry-card.test.tsx (7 tests) 356ms
+@workmesh/api:test:  ✓ src/origin-routing.test.ts (5 tests) 3483ms
+@workmesh/web:test:  ✓ features/command-center/keyboard.test.tsx (5 tests) 523ms
+@workmesh/web:test:    ✓ GlobalCommandCenter keyboard ownership > opens once for slash and Ctrl/Meta+K while preserving interactive contexts  398ms
+@workmesh/web:test:  ✓ app/recovery-center.test.tsx (2 tests) 367ms
+@workmesh/api:test:  ✓ src/agent/approval-projection.test.ts (4 tests) 9ms
+@workmesh/api:test:  ✓ load/worker-evidence.test.ts (5 tests) 3ms
+@workmesh/api:test:  ✓ load/evidence-continuation.test.ts (6 tests) 4ms
+@workmesh/api:test:  ✓ src/pagination-inventory.test.ts (3 tests) 12ms
+@workmesh/api:test:  ✓ load/readiness.test.ts (3 tests) 5ms
+@workmesh/api:test:  ✓ src/realtime/event-reader.test.ts (3 tests) 4ms
+@workmesh/web:test:  ✓ app/page-hotkeys.test.tsx (8 tests) 225ms
+@workmesh/api:test:  ✓ src/auth-rate-limit/trusted-proxy.test.ts (5 tests) 351ms
+@workmesh/api:test:    ✓ trusted proxy address derivation > ignores spoofed forwarding headers when the socket peer is not trusted  340ms
+@workmesh/web:test:  ✓ features/work-items/work-items.test.ts (15 tests) 8ms
+@workmesh/api:test:  ✓ src/workbench-llm-connections.test.ts (3 tests) 6ms
+@workmesh/web:test:  ✓ features/work-items/work-surfaces-filters.test.tsx (5 tests) 5ms
+@workmesh/web:test:  ✓ app/attention-center.test.ts (3 tests) 9ms
+@workmesh/web:test:  ✓ features/command-center/queries.test.ts (4 tests) 16ms
+@workmesh/api:test:  ✓ src/health.test.ts (2 tests) 2106ms
+@workmesh/api:test:  ✓ src/human-attention/routes.test.ts (2 tests) 2ms
+@workmesh/api:test:  ✓ src/recovery/projection.test.ts (1 test) 1ms
+@workmesh/api:test:  ✓ src/authz/request-metadata.test.ts (5 tests) 2ms
+@workmesh/api:test:  ✓ src/auth-idempotency.test.ts (1 test) 2ms
+@workmesh/web:test:  ✓ app/work-room.test.ts (1 test) 2ms
+@workmesh/web:test:
+@workmesh/web:test:  Test Files  113 passed (113)
+@workmesh/web:test:       Tests  776 passed (776)
+@workmesh/web:test:    Start at  03:52:06
+@workmesh/web:test:    Duration  162.98s (transform 25.69s, setup 230.66s, collect 1772.29s, tests 104.01s, environment 541.20s, prepare 75.48s)
+@workmesh/web:test:
+@workmesh/api:test:  ✓ src/realtime/cursor.test.ts (7 tests) 3ms
+@workmesh/api:test:  ✓ src/comment-event-semantics.test.ts (1 test) 2ms
+@workmesh/api:test:
+@workmesh/api:test:  Test Files  33 passed (33)
+@workmesh/api:test:       Tests  174 passed (174)
+@workmesh/api:test:    Start at  03:53:41
+@workmesh/api:test:    Duration  68.36s (transform 4.87s, setup 0ms, collect 15.70s, tests 27.66s, environment 4ms, prepare 11.66s)
+@workmesh/api:test:
+
+ Tasks:    29 successful, 29 total
+Cached:    0 cached, 29 total
+  Time:    3m20.339s
+
+ WARNING  no output files found for task @workmesh/a2a-adapter#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/agent-runner#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/agent-sdk#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/api#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/artifact-storage#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/config#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/conformance#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/contracts#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/db#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/domain#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/fake-agent#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/git-provider#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/mcp#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/observability#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/recovery#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/ui#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/web#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/worker#test. Please check your `outputs` key in `turbo.json`

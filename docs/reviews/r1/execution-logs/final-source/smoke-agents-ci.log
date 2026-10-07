@@ -1,0 +1,14 @@
+
+> workmesh@ smoke:agents:ci C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749
+> pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke
+
+
+> @workmesh/mcp@ smoke C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\mcp
+> tsx src/smoke.ts
+
+MCP smoke: server constructed in read-only mode
+
+> @workmesh/fake-agent@ smoke C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\fake-agent
+> tsx src/smoke.ts
+
+Fake Agent smoke: signed delivery and deduplication passed
