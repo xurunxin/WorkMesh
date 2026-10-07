@@ -20,7 +20,14 @@ while (expanded) {
 }
 const task = process.argv[2]
 if (!['lint', 'typecheck', 'build', 'test'].includes(task)) throw new Error('Unknown CI source task')
-let names = task === 'test' ? selected : [...requested]
+const selectedTests = JSON.parse(process.env.CI_TEST_PACKAGES ?? JSON.stringify(selected))
+if (!Array.isArray(selectedTests) || !selectedTests.length || selectedTests.some(name => !workspaces.some(workspace => workspace.name === name))) {
+  throw new Error('CI_TEST_PACKAGES must contain known workspace names')
+}
+let names = task === 'test' ? selectedTests : [...requested]
+if (task === 'typecheck' && names.some(name => workspaces.find(workspace => workspace.name === name).scripts.typecheck !== 'tsc --noEmit')) {
+  throw new Error('Persistent static cache requires pure tsc --noEmit tasks; review new typecheck commands before caching them')
+}
 if (task === 'lint') names = names.filter(name => {
   const { scripts } = workspaces.find(workspace => workspace.name === name)
   return scripts.lint && scripts.lint !== scripts.typecheck
@@ -30,6 +37,7 @@ if (!names.length) {
 } else {
   const args = ['exec', 'turbo', 'run', task, ...names.map(name => `--filter=${name}`)]
   if (task === 'lint' || task === 'typecheck') args.push('--only')
+  if (task === 'typecheck') args.push('--cache-dir=.turbo/typecheck')
   if (task === 'test') args.push('--concurrency=2')
   console.log(`CI ${task}: ${names.join(', ')}`)
   if (process.argv.includes('--dry-run')) args.push('--dry-run=json')

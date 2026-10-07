@@ -16,7 +16,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { createAgentSession, ModelRuntime, SessionManager } from '@earendil-works/pi-coding-agent'
+import { createAgentSession, ModelRuntime, SessionManager, SettingsManager } from '@earendil-works/pi-coding-agent'
 import { configuredModels } from './configured-model.js'
 
 const cleanup: Array<() => Promise<void>> = []
@@ -99,6 +99,8 @@ const runFailingTurn = async (upstream: Awaited<ReturnType<typeof startUpstream>
     const { session } = await createAgentSession({
       cwd: workDir, agentDir, model, modelRuntime: runtime,
       sessionManager: SessionManager.inMemory(), noTools: 'builtin', customTools: [],
+      // Exercise all real SDK retries without spending 14s on fixture backoff.
+      settingsManager: SettingsManager.inMemory({ retry: { enabled: true, maxRetries: 3, baseDelayMs: 1 } }),
     })
     try {
       let rejection: Error | null = null

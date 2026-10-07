@@ -41,6 +41,18 @@ test('API and worker changes retain destructive recovery and real browser integr
   }
 })
 
+test('cross-workspace lock audits are selected without inventing runtime dependency cycles', () => {
+  for (const name of ['api', 'worker']) {
+    const plan = classify([`apps/${name}/src/agent/commands.ts`])
+    assert.deepEqual(plan.packages, [`@workmesh/${name}`])
+    assert.deepEqual(plan.testPackages, [`@workmesh/${name}`, '@workmesh/db'].sort())
+    assert.equal(plan.checks['db-integration'], false)
+    assert.equal(plan.checks['worker-integration'], name === 'worker')
+  }
+  assert.deepEqual(classify(['apps/web/app/page.tsx']).testPackages, ['@workmesh/web'])
+  assert.deepEqual(classify(['README.md']).testPackages, [])
+})
+
 test('upstream contracts/domain/db/config changes include transitive consumers', () => {
   for (const name of ['contracts', 'domain', 'db', 'config']) {
     const plan = classify([`packages/${name}/src/index.ts`])

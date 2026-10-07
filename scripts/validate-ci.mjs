@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseDocument } from 'yaml'
+import { externalTestInputs } from './ci-test-inputs.mjs'
+import { readWorkspaces } from './ci-policy.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8')
@@ -65,6 +67,8 @@ const expectedActions = new Map([
   ['actions/checkout', '11d5960a326750d5838078e36cf38b85af677262'],
   ['actions/setup-node', '49933ea5288caeca8642d1e84afbd3f7d6820020'],
   ['actions/upload-artifact', 'ea165f8d65b6e75b540449e92b4886f43607fa02'],
+  ['actions/cache/restore', '0400d5f644dc74513175e3cd8d07132dd4860809'],
+  ['actions/cache/save', '0400d5f644dc74513175e3cd8d07132dd4860809'],
 ])
 const uses = [...workflow.matchAll(/^\s*uses:\s*([^@\s]+)@([^\s]+)\s*$/gm)]
 requireCondition(uses.length > 0, 'workflow must use pinned actions')
@@ -140,7 +144,7 @@ const rawArtifacts = new Map([
   ['db-integration', 'db-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['api-integration', 'api-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['worker-integration', 'worker-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
-  ['e2e', 'e2e-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
+  ['e2e', 'e2e-raw-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['recovery-integration', 'recovery-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['agent-smoke', 'agent-smoke-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['required-ci', 'required-ci-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
@@ -177,7 +181,7 @@ for (const jobId of requiredJobs) {
   }
 }
 
-const playwrightArtifact = 'e2e-playwright-${{ github.run_id }}-${{ github.run_attempt }}'
+const playwrightArtifact = 'e2e-playwright-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}'
 const playwrightUploads = (uploadStepsByJob.get('e2e') ?? [])
   .filter(step => step.artifact === playwrightArtifact)
 requireCondition(
@@ -225,7 +229,7 @@ for (const jobId of executableJobs) {
   )
   requireCondition(section.includes('persist-credentials: false'), `${jobId} must disable persisted credentials`)
   requireCondition(section.includes('node-version-file: .node-version'), `${jobId} must use .node-version`)
-  requireCondition(section.includes('cache: pnpm'), `${jobId} must cache only the pnpm store`)
+  requireCondition(section.includes('cache: pnpm'), `${jobId} must cache the pnpm store`)
   requireCondition(section.includes('pnpm install --frozen-lockfile'), `${jobId} must use the frozen lockfile`)
 }
 requireCondition(
@@ -235,6 +239,34 @@ requireCondition(
 requireCondition(!/(?:node_modules|\.next|dist\/\*\*)\s*$/m.test(workflow), 'build or install outputs must not be cached or uploaded')
 
 const source = jobSections.get('source-gates') ?? ''
+const cacheSteps = Object.entries(parsedWorkflow.jobs).flatMap(([jobId, job]) =>
+  (job.steps ?? []).filter(step => step.uses?.startsWith('actions/cache/')).map(step => ({ jobId, ...step })))
+requireCondition(cacheSteps.length === 2, 'only one compiler/static cache restore and save pair is allowed')
+for (const step of cacheSteps) {
+  requireCondition(step.jobId === 'source-gates', 'compiler/static caches belong only to source-gates')
+  requireCondition(step.with?.path === '.turbo/typecheck\napps/web/.next/cache\n', 'cross-run cache paths must be exactly pure typechecks and Next compiler intermediates')
+  requireCondition(step.with?.key === "source-v2-${{ runner.os }}-node22-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}", 'cache key must bind platform, toolchain, lockfile and commit')
+  if (step.uses?.startsWith('actions/cache/save@')) {
+    requireCondition(step.if === "${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}", 'only successful main pushes may publish compiler/static caches')
+  }
+}
+requireCondition(!turboJson.globalEnv, 'runtime credentials must not invalidate pure static tasks globally')
+for (const [name, inputs] of Object.entries(externalTestInputs)) {
+  requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#test`]?.inputs) === JSON.stringify(['$TURBO_DEFAULT$', ...inputs.map(input => `$TURBO_ROOT$/${input}`)]), `${name} tests must hash their complete declared external inputs`)
+  requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#test`]?.env) === JSON.stringify(turboJson.tasks.test.env), `${name} tests must retain runtime environment hashing`)
+  requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#test`]?.dependsOn) === JSON.stringify(turboJson.tasks.test.dependsOn), `${name} tests must retain prerequisite builds`)
+}
+for (const task of ['build', 'test', 'test:integration', 'test:e2e']) {
+  requireCondition(JSON.stringify(turboJson.tasks?.[task]?.env) === JSON.stringify(turboJson.globalPassThroughEnv), `${task} must retain runtime environment hashing`)
+}
+for (const task of ['test:integration', 'test:e2e']) requireCondition(turboJson.tasks?.[task]?.cache === false, `${task} results must never be cached`)
+requireCondition(parsedWorkflow.jobs.changes.outputs['test-packages'] === '${{ steps.scope.outputs.test-packages }}', 'changes must expose external test consumers')
+requireCondition(parsedWorkflow.jobs['source-gates'].env.CI_TEST_PACKAGES === '${{ needs.changes.outputs.test-packages }}', 'source tests must consume the separate audit selection')
+requireCondition(packageJson.scripts['test:e2e'] === 'turbo run test:e2e --filter=@workmesh/web', 'browser acceptance must avoid synthetic E2E builds in unrelated packages')
+requireCondition(JSON.stringify(readWorkspaces().filter(workspace => workspace.scripts['test:e2e']).map(workspace => workspace.name)) === JSON.stringify(['@workmesh/web']), 'review the E2E scope when another workspace gains an executable acceptance suite')
+requireCondition(JSON.stringify(parsedWorkflow.jobs.e2e.strategy) === JSON.stringify({ 'fail-fast': false, matrix: { shard: [1, 2] } }), 'browser acceptance must run both isolated shards without cancelling evidence')
+requireCondition((jobSections.get('e2e') ?? '').includes('pnpm test:e2e -- --shard=${{ matrix.shard }}/2'), 'E2E must execute the matrix shard')
+requireCondition((jobSections.get('e2e') ?? '').includes('node ../../scripts/check-e2e-shards.mjs'), 'E2E must prove complete and disjoint shard collection before execution')
 for (const command of [
   'pnpm ci:validate',
   'pnpm ci:source lint',
@@ -314,8 +346,8 @@ for (const name of requiredE2eEnvironment) {
     `E2E must declare ${name}`,
   )
   requireCondition(
-    Array.isArray(turboJson.globalEnv) && turboJson.globalEnv.includes(name),
-    `Turbo globalEnv must forward E2E environment ${name}`,
+    Array.isArray(turboJson.tasks['test:e2e'].env) && turboJson.tasks['test:e2e'].env.includes(name),
+    `Turbo E2E env must forward and hash ${name}`,
   )
 }
 const expectedBootstrapInvocations = [
@@ -386,8 +418,8 @@ requireCondition(
   'CI steps must not print or inspect the runtime-generated bootstrap credential',
 )
 requireCondition(
-  Array.isArray(turboJson.globalEnv) && turboJson.globalEnv.includes('WORKMESH_BOOTSTRAP_TOKEN'),
-  'Turbo globalEnv must forward the runtime-generated bootstrap credential',
+  Array.isArray(turboJson.globalPassThroughEnv) && turboJson.globalPassThroughEnv.includes('WORKMESH_BOOTSTRAP_TOKEN'),
+  'Turbo must forward the runtime-generated bootstrap credential',
 )
 for (const name of ['PAGINATION_CURSOR_KEYS', 'PAGINATION_CURSOR_ACTIVE_KID']) {
   requireCondition(
@@ -395,8 +427,8 @@ for (const name of ['PAGINATION_CURSOR_KEYS', 'PAGINATION_CURSOR_ACTIVE_KID']) {
     `CI credential helper must derive ${name} without logging it`,
   )
   requireCondition(
-    Array.isArray(turboJson.globalEnv) && turboJson.globalEnv.includes(name),
-    `Turbo globalEnv must forward ${name}`,
+    Array.isArray(turboJson.globalPassThroughEnv) && turboJson.globalPassThroughEnv.includes(name),
+    `Turbo must forward ${name}`,
   )
 }
 requireCondition(
