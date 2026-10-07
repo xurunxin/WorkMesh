@@ -48,7 +48,11 @@ dependencies. It produces a JSON plan and one explicit boolean per job.
 their workspace. An API/worker source PR therefore adds DB unit audits without
 inventing a reverse runtime dependency or selecting DB integration. The same
 inventory is validated against Turbo test inputs. Shared TypeScript/Vitest
-configuration participates in global inputs. Runtime environment variables are
+configuration participates in global inputs.
+Root scripts and Playwright configs are also global inputs because tests import
+them during typechecking. API/Web typecheck inputs cover their direct imports of
+worker, MCP, fake-agent and package source from integration/E2E fixtures.
+Runtime environment variables are
 passed through globally but hashed by build/test tasks; changing a bootstrap
 credential does not invalidate pure `tsc --noEmit` checks.
 
