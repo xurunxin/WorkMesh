@@ -1,10 +1,9 @@
 <!-- WM-ACTIVATE-20261007:ROADMAP -->
 # 工作台就绪面、可证明的接入恢复、一个通知渠道与国内模型预置
 
-状态：Proposed；**已落地**：D0 视觉基线（`apps/web/e2e/baselines/d0/`；通用 mocked-dev 失败尚待处置，D0/D1 门禁关闭）、G1 输入可达性（`scripts/verify-build-input-reachability.mjs`；P1 十六行证据台账已冻结）、参考材料入库（`docs/references/todos-analysis/`）。**F 链**：总管 / agent graph（ADR 0078），F2 的自主分派方向已定（委派内自主分派 + 人可修订）；其授权契约需按第二轮审查补齐
+状态：Proposed；**已落地**：D0 视觉基线（`apps/web/e2e/baselines/d0/`；视觉基线门禁已由 PR #195、独审及 CI #352 通过并合入 main，通用 mocked-dev 失败仍待独立处置）、G1 输入可达性（`scripts/verify-build-input-reachability.mjs`；P1 十六行证据台账已冻结，真实隔离 build 已在 base `419a1d7…` 完成 44/44 文件、16/16 台账、退出码 0，最终门禁待独立复核）、参考材料入库（`docs/references/todos-analysis/`）。**F 链**：总管 / agent graph（ADR 0078），F2 的自主分派方向已定（委派内自主分派 + 人可修订）；其授权契约需按第二轮审查补齐
 （撤权传播、与 0062 的合取规则、两层能力上限、用量台账）**并在 F0 实施前冻结**；
-**实现**顺序以 F0 → F1/F2 → F3 为准。F5 的收件恢复二选一仍待决定。共六条链（A/B/C/D/F），其余门禁独立验收。本稿经 gpt-6-astra / high 多轮对抗式审查，
-
+**实现**顺序以 F0 → F1/F2 → F3 为准。**F5 的收件恢复已定为有审计的重新投递**（ADR 0078，合并提交 `dde2a1a`），不再是待决门禁。共六条链（A/B/C/D/F），其余门禁独立验收。本稿经 gpt-6-astra / high 多轮对抗式审查，
 第一版的结论与被撤回的主张记录在
 `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md`。
 
@@ -46,16 +45,27 @@ P1 的 16 条事实台账由 `c98ec5f538b3acd9ac052c4ef100e1d111232518`
 `660c74a6247544ffac64e7ef8f968d1025b2a668`。#2 已 done，第二轮独立审查批准合并；PR CI check 344 / run
 `37614969993` 的 8 个 job 全部成功。P1 台账现已冻结为后续输入；#3 是冻结后的独立规格裁决，不是 P1 合并前置。
 
-P1 冻结与 G1 材料合入不代表 G1 最终门禁通过。材料合入后，由总管在同一 Todo #18
-启动 fresh 隔离 build，以 build 内 `git rev-parse HEAD` 为唯一实际验证 base，逐份读取输入正文并核对 Git blob、提交字节 SHA-256
-及工作树 SHA-256，再由独立复核者确认并将结果写入仓库证据。此真实 build 尚未完成；通过前依赖这些输入的任务保持“待验证”。
-#10 D0 可独立采集当前视觉基线，但不能解除其他任务门禁。
+P1 冻结与 G1 材料合入不代表 G1 最终门禁通过。真实隔离 build 已在材料合并后的实际 base
+`419a1d7af90c09cb9364819977f32ec59cf86f87` 中逐份读取输入正文：44/44 文件、16/16 P1 台账，
+验证器退出码 0；Git blob、提交字节 SHA-256 和工作树字节 SHA-256 见
+`docs/evidence/build-input-reachability.final.json`。该结果是初始 base 的有效读取证明，不能改写成后续 main。
+
+D0 经 PR #195 合入 main 后，Chief 于 2026-10-07 21:09 核实最新 main 为
+`4b287b4e9892bfb4545dbbff94d04f45633c3a64`（包含 D0 提交
+`768bbd82fcc52a873168b39a8382d2f14c928abc` 与 G1 材料 main `419a1d7…`）。本分支现以 Git merge
+实际包含该 main 历史及 D0 证据文件，保留 D0 计划/清单增量与 P1 冻结、D1a/D1b 拆分；
+主计划和根清单的整合后哈希见最终证据。D0 独审及 CI #352（run `37623264959`，8/8）通过，
+main push CI #353（run `37626312217`，8/8）通过。此整合不会改写 `419a1d7` 初始 build 证明。
+
+本轮必需本地检查已完成（命令、退出码和结果见 `docs/evidence/build-input-reachability.final.md`）；
+本分支 merge 提交后的 PR/CI 与用户指定的独立复核仍待完成。完成前依赖输入的任务保持“待验证”，
+不放行 #3 或相关实现。D0 视觉基线门禁完成不解除 G1 最终/R1 门禁。
 
 交接原件及其引用的测量 JSON、截图索引和 28 张截图保存在 `docs/references/todos-analysis/`；#19 完整审查原件位于
 `docs/references/todos-analysis/reviews/todos-review.md`。来源相对路径、字节数和 SHA-256 见 `SOURCE-MANIFEST.json`。
 通用分析 README 和其他采集工具不属于本批依赖输入闭包。
 
-本次局部同步 [D0](todo:MPhtZiff23B33m9i2equq) 的基线证据与已批准的 D1 拆分引用；全批规格修订和 blocking/high 处置由 [R1](todo:q_1zKPuGsG-2ZRUwOwQx4) 独立复核。[G1](todo:Tws50k02Pi52R-RJEXP_N)、P1、R1 与 D0 各自验收，D0 完成不表示其他链已就绪。D0 可继续独立采集；该采集不解除上述实现门禁。
+本次局部同步 [D0](todo:MPhtZiff23B33m9i2equq) 的基线证据与已批准的 D1 拆分引用；全批规格修订和 blocking/high 处置由 [R1](todo:q_1zKPuGsG-2ZRUwOwQx4) 独立复核。[G1](todo:Tws50k02Pi52R-RJEXP_N)、P1、R1 与 D0 各自验收，D0 完成不表示其他链已就绪。D0 视觉基线门禁已完成；D0 的通用 mocked-dev 失败仍按其独立计划记录和处置，不作为本轮 G1 输入读取结论。本轮不重跑 fresh build；后续如整合后受控输入正文发生变化，须单独记录该整合版本实际读取结果，不得复用 `419a1d7` 的旧哈希。
 
 ## 审查撤回的四个前提（写在这里以免再犯）
 
@@ -240,7 +250,7 @@ D0 视觉基线 ──▶ D1a 新增并存槽/映射 ──▶ D1b 逐面迁移/
 F0 团队房间扩展（blocking，最先）──▶ F1 任命与能力派生
                               ├─▶ F2 总管委派 ──▶ F3 激活与准入
                               ├─▶ F4 消费协议（最重）
-                              ├─▶ F5 收件恢复选择 ──▶ F6 两个薄工具与交付链
+                              ├─▶ F5 收件恢复（已定为有审计的重新投递）──▶ F6 两个薄工具与交付链
 F-memory 长期记忆（延后，不阻塞上述任何一条）
 
 延后：C-identity（目录首管理员）、C-card（卡片决策）、C-mp（小程序）、
@@ -407,9 +417,10 @@ D0 是硬门禁：**没有基线就不许改 token 值**，否则视觉回归无
   14/14 禁止更新基线重放及 28 次原始字节核验。lint/typecheck/test 本轮重跑成功，
   集成/正式 E2E 沿用历史结果；通用入口 12 项旧失败与 115 项未执行不豁免，不宣称全套通过。
   前两轮各 13 通过/1 失败、旧原始 PNG、全部对照与每项通用 mocked-dev 失败原样保留，不能用比较器通过代替哈希一致。
-- **依赖与状态**：[D0](todo:MPhtZiff23B33m9i2equq) 视觉清单已通过，但通用 mocked-dev 实际失败尚待逐项处置或总管裁决，
-  **D0 尚未宣称完成，D0/D1 门禁继续关闭**；blocks [D1a](todo:IJQA_DfxU0hF5e8L5Xb3v)，
-  并为 [D1b](todo:2j2sxT5wJ-l001efH_meJ) 提供同一份改动前基线。
+- **依赖与状态**：[D0](todo:MPhtZiff23B33m9i2equq) 的视觉基线门禁已完成（PR #195、独审及 CI #352 通过）；
+  通用 mocked-dev 实际失败仍待逐项处置或总管裁决，不改变已完成的视觉基线结论。blocks
+  [D1a](todo:IJQA_DfxU0hF5e8L5Xb3v)，并为 [D1b](todo:2j2sxT5wJ-l001efH_meJ) 提供同一份改动前基线；
+  D1a 仍须通过 G1、P1、R1 前置。
   不再因缺真实 WorkMesh 连接阻塞 D0；G1/P1/R1 未验证通过时仍不得放行相应实现。
 - **文档引用复核**：提交 `dae4620366f33136d65e533d85823db49b9a3fe1` 已删除过时的
   `WORKMESH_PRD.md`；2026-08-22 运行可靠性计划第 34 行及 2026-09-24 工作台基线第 62 行
@@ -563,14 +574,27 @@ successor/re-delivery）。
   删除/撤权/新获授权、跨 Session/Team 隔离；给定固定 Team/Agent/事件规模断言 token、
   查询数与延迟预算。**不得再出现「几名 agent 就不可用」这类未实测断言。**
 
-### F5 — 收件箱跨短会话恢复（先决定，再实现）
+### F5 — 收件箱跨短会话恢复（决定已作出，按契约实现）
 
-- **交付**：二选一并写进 ADR：**复用同一非终态 Session 直到终态**，或**显式修订
-  ADR 0037** 引入有审计的 successor/re-delivery。
-- **约束**：claim **不可转移**；**禁止原地改写 `claimedBySessionId`**；旧 claim 保留在
-  原 Session，新输入与之相联。
+- **交付（已决定并落盘）**：**有审计的重新投递**，写进 ADR 0078
+  （合并提交 `dde2a1a`）。框架：*claim 不可转移 ≠ claim 不可接续*。ADR 0037 按**修订**
+  处理——其「claim 一次性不可变」「无 reclaim/release 命令」逐字保留，只补一条指向
+  ADR 0078 的说明；被否的「复用同一非终态 Session」记入 ADR 0078 的 Alternatives。
+- **约束**：claim **不可转移**；**禁止原地改写 `claimedBySessionId`**（数据库已有
+  `prevent_inbox_claim_rebind()` 抛 `INBOX_CLAIM_IMMUTABLE`，非仅 ADR 约束）；旧 claim
+  与其全部 receipt 保留在原 Session，新输入与之相联且是**新条目**；继任条目复用原
+  `kind`，取 `source_type='inbox_redelivery'` + `source_id=原条目 id`，因此
+  **不需要 `ALTER TYPE`**（`source_type` 是 `text`），且由既有
+  `inbox_items_actor_target_unique` 保证**重投不重复**。
+- **新增禁止项**：**exact-session 条目禁止重新投递**（`inbox_items_exact_claim_check`）。
+  对其重投会把精确寻址降级为 actor 寻址；该类工作由 Human 恢复，不由继任者。
+- **成本**：这**确实是第二条队列**，继任条目需自己的列表、claim、receipt 历史与对
+  Human 可见的继任链接。不宣称「不需要第二个队列」。
 - **测试**：claim 后崩溃/Stop；同 actor 两个 Session；错误 recipient；已 ACK 未回复；
-  重复 report/reply 且**回执不伪造**。
+  重复 report/reply 且**回执不伪造**；重投幂等（同一条目重复投递只产生一个继任）；
+  exact-session 条目被拒绝重投。
+- **未验证**：未做「复用 vs 重投」的规模成本实测；被否方案是按设计理由否的，不是按
+  benchmark。
 
 ### F6 — 两个薄工具与完整交付链
 
@@ -678,7 +702,7 @@ order，**不接受"只许行号位移"**，也不手改伪造匹配。迁移走
 | **撤权只覆盖下一次分派** | 「委派可撤销」若不向派生会话传播，就只是措辞 | 0078 新增撤权传播状态表：排队/运行中/子会话/外部进程四类分别定规则；来源关系持久化 |
 | **两层能力上限混淆** | 用户高估本次目标委派的限制，或默认总管无法调度正常代码工作 | 0078 分写「Chief 直接能力」与「每目标分派上限」两张默认表，互不派生 |
 | **可复用委派缺用量台账** | 两个不同 key 的并发分派可各自看到剩余一次 | 0078 按逻辑分派身份记账，余量校验+预留+写入同事务，重放不重扣 |
-| **F 链可能修订 ADR 0037** | 收件恢复要么复用非终态会话、要么改既有 ADR | F5 **先决定再实现**，写进 ADR；禁止原地改写 `claimedBySessionId` |
+| **F 链修订 ADR 0037** | 收件恢复若原地改 claim，会抹掉原 Session 的归属 | **已处置**：决定为有审计的重新投递（`dde2a1a`），原 claim 与 receipt 永久留在原 Session；`prevent_inbox_claim_rebind()` 从数据库层拒绝原地改写。代价是第二条队列，已在 ADR 0078 写明 |
 | **F 链没有内建 runtime** | 没有 agent 持有效连接时总管无法启动 | 与 A1 的 Runner `unknown` 同源；A2/D4 必须在无任命或 feature 关闭时显示明确不可用态，不得让布局暗示"总管可用" |
 | **F 链成本易被低估** | 「基本都有了」会让人把最重的消费协议当成接线 | 0078 的 Correction 段把六条被推翻的推断逐条列出；F4 单列为本链最重一块并给量化预算 |
 | 单任命是单写者点 | 协调判断串行 | 只约束**身份**不约束推理；并行提案 + 提交期去重是扩容路径，不要求用户拆业务 Team |
@@ -715,7 +739,8 @@ order，**不接受"只许行号位移"**，也不手改伪造匹配。迁移走
   授权，两者互不冲突，也都不允许 agent 自行扩权。0078 初稿曾把总管分派写成 0062 的
   「显式例外」，该框架**已撤回**——逐次人类批准会让总管退化成事事请示的下属。
   **owner 已定口径**：委派内自主分派，人通过修订介入。
-- **F 链可能修订 ADR 0037** 的收件箱恢复语义（复用非终态会话 vs. 审计过的
-  successor/re-delivery）。**这一处需在 F5 开工前由人决定**，不得留给实现者猜。
+- **F 链修订 ADR 0037** 的收件箱恢复语义。**已由 owner 决定并落盘**：选有审计的
+  successor/re-delivery（ADR 0078，合并提交 `dde2a1a`），ADR 0037 逐字保留原约束并补
+  指向说明。实现者按该契约施工，**不再需要猜**；仍禁止原地改写 `claimedBySessionId`。
 - F 链**不新增**人类本已有的权限，只是重组由谁行使；且把重组变成可审计的。
   任命本身不授予任何能力。
