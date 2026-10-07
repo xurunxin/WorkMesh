@@ -53,15 +53,17 @@ describe('Playwright topology configs', () => {
     vi.stubEnv('WORKMESH_PLAYWRIGHT_RUN_DIR', isolatedRunRoot)
     vi.resetModules()
 
-    const [rootModule, mockedModule, productionModule] =
+    const [rootModule, mockedModule, productionModule, d0Module] =
       await Promise.all([
         import('../../../playwright.config.js'),
         import('../playwright.mocked.config.js'),
         import('../playwright.production.config.js'),
+        import('../playwright.d0.config.js'),
       ])
     const root = rootModule.default as unknown as ConfigContract
     const mocked = mockedModule.default as unknown as ConfigContract
     const production = productionModule.default as unknown as ConfigContract
+    const d0 = d0Module.default as unknown as ConfigContract
 
     expect(root.outputDir).toBe(
       path.join(isolatedRunRoot, 'root-mixed', 'output'),
@@ -78,6 +80,9 @@ describe('Playwright topology configs', () => {
       String(/[\\/]mocked[\\/].*\.mocked\.spec\.ts$/),
       String(/human-reflow\.spec\.ts$/),
     ])
+    expect(String(mocked.testIgnore)).toBe(String(/[\\/]mocked[\\/]d0-visual-baseline\.mocked\.spec\.ts$/))
+    expect(patternStrings(d0.testMatch)).toEqual([String(/[\\/]mocked[\\/]d0-visual-baseline\.mocked\.spec\.ts$/)])
+    expect(d0.testIgnore).toEqual([])
 
     expect(production.outputDir).toBe(
       path.join(

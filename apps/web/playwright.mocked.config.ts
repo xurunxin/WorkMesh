@@ -12,6 +12,8 @@ const runPaths = resolvePlaywrightRunPaths('mocked-dev')
 export default defineConfig({
   testDir: './e2e',
   testMatch: [mockedSpecPattern, portableHumanReflowPattern],
+  // D0 只由专用配置采集，避免继承通用入口的视口和快照规则。
+  testIgnore: /[\\/]mocked[\\/]d0-visual-baseline\.mocked\.spec\.ts$/,
   fullyParallel: false,
   workers: 1,
   timeout: 30_000,
@@ -47,6 +49,7 @@ export default defineConfig({
       env: {
         ...process.env,
         NEXT_PUBLIC_API_URL: apiUrl,
+        NEXT_DEV_API_UPSTREAM: apiUrl,
       },
     },
   ],

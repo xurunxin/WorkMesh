@@ -1,0 +1,3334 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-07T11:31:23.255Z",
+  "baseCommit": "0e9968dd24748f864370819a239093b42c80ba61",
+  "scope": "本轮仅修订测试采集、配置归属、基线资产及验证记录；未改产品实现或 token",
+  "d0Status": "blocked",
+  "d1Gate": "closed",
+  "requiredChecksSucceeded": true,
+  "remainingConditionalSkips": 3,
+  "referenceInput": {
+    "path": "docs/references/todos-analysis/",
+    "addressSynchronized": true,
+    "includedInValidationBase": false,
+    "reason": "用户最新 G1 交接仅同步地址；输入包尚在 G1 审查分支，git ls-tree HEAD 未发现该目录；不导入、不提前放行 G1"
+  },
+  "historicalEvidence": {
+    "manifest": "evidence/pre-review-manifest.json",
+    "verification": "evidence/pre-review-verification.md",
+    "feedback": "evidence/feedback-verification.json",
+    "statusScope": "修订前历史版本，不能代替当前验收"
+  },
+  "runs": [
+    {
+      "kind": "capture",
+      "runDirectory": "d0-review-capture-final",
+      "exitCode": 1,
+      "passed": 13,
+      "failed": 1,
+      "entries": [
+        {
+          "surface": "Agent 详情",
+          "route": "/agents/agent%2F1",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/agent-detail.png",
+          "captureSha256": [
+            "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+            "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/agent-detail.png",
+            "win32/desktop-1440x1000/agent-detail.png"
+          ]
+        },
+        {
+          "surface": "看板",
+          "route": "/?view=projects&project=project-1&tab=board",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/board.png",
+          "captureSha256": [
+            "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+            "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+          ],
+          "scrollPositions": [
+            {
+              "window": {
+                "x": 0,
+                "y": 0
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 87
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 676,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 592.1875,
+                "y": 642.09375,
+                "width": 295.625,
+                "height": 274.34375,
+                "top": 642.09375,
+                "right": 887.8125,
+                "bottom": 916.4375,
+                "left": 592.1875
+              },
+              "columnHeaderBounds": {
+                "x": 581,
+                "y": 596.90625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 596.90625,
+                "right": 899,
+                "bottom": 642.09375,
+                "left": 581
+              }
+            },
+            {
+              "window": {
+                "x": 0,
+                "y": 0
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 87
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 676,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 592.1875,
+                "y": 642.09375,
+                "width": 295.625,
+                "height": 274.34375,
+                "top": 642.09375,
+                "right": 887.8125,
+                "bottom": 916.4375,
+                "left": 592.1875
+              },
+              "columnHeaderBounds": {
+                "x": 581,
+                "y": 596.90625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 596.90625,
+                "right": 899,
+                "bottom": 642.09375,
+                "left": 581
+              }
+            }
+          ],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/board.png",
+            "win32/desktop-1440x1000/board.png"
+          ]
+        },
+        {
+          "surface": "工作项列表",
+          "route": "/?view=my-work",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/issues-list.png",
+          "captureSha256": [
+            "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+            "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/issues-list.png",
+            "win32/desktop-1440x1000/issues-list.png"
+          ]
+        },
+        {
+          "surface": "项目总览",
+          "route": "/?view=projects&project=project-1",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/project.png",
+          "captureSha256": [
+            "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
+            "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/project.png",
+            "win32/desktop-1440x1000/project.png"
+          ]
+        },
+        {
+          "surface": "设置",
+          "route": "/settings?team=team-page-2",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/settings.png",
+          "captureSha256": [
+            "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
+            "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/settings.png",
+            "win32/desktop-1440x1000/settings.png"
+          ]
+        },
+        {
+          "surface": "工作台",
+          "route": "/workbench",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/workbench.png",
+          "captureSha256": [
+            "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+            "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/workbench.png",
+            "win32/desktop-1440x1000/workbench.png"
+          ]
+        },
+        {
+          "surface": "Agent 详情",
+          "route": "/agents/agent%2F1",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/agent-detail.png",
+          "captureSha256": [
+            "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+            "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/agent-detail.png",
+            "win32/mobile-390x844/agent-detail.png"
+          ]
+        },
+        {
+          "surface": "看板",
+          "route": "/?view=projects&project=project-1&tab=board",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/board.png",
+          "captureSha256": [
+            "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+            "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+          ],
+          "scrollPositions": [
+            {
+              "window": {
+                "x": 0,
+                "y": 53
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 16,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 672,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 12.1875,
+                "y": 430.578125,
+                "width": 295.625,
+                "height": 292.75,
+                "top": 430.578125,
+                "right": 307.8125,
+                "bottom": 723.328125,
+                "left": 12.1875
+              },
+              "columnHeaderBounds": {
+                "x": 1,
+                "y": 385.390625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 385.390625,
+                "right": 319,
+                "bottom": 430.578125,
+                "left": 1
+              }
+            },
+            {
+              "window": {
+                "x": 0,
+                "y": 53
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 16,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 672,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 12.1875,
+                "y": 430.578125,
+                "width": 295.625,
+                "height": 292.75,
+                "top": 430.578125,
+                "right": 307.8125,
+                "bottom": 723.328125,
+                "left": 12.1875
+              },
+              "columnHeaderBounds": {
+                "x": 1,
+                "y": 385.390625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 385.390625,
+                "right": 319,
+                "bottom": 430.578125,
+                "left": 1
+              }
+            }
+          ],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/board.png",
+            "win32/mobile-390x844/board.png"
+          ]
+        },
+        {
+          "surface": "工作项详情",
+          "route": "/?view=my-work&workItem=work-101",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/issue-detail.png",
+          "captureSha256": [
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "surface": "工作项列表",
+          "route": "/?view=my-work",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/issues-list.png",
+          "captureSha256": [
+            "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+            "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/issues-list.png",
+            "win32/mobile-390x844/issues-list.png"
+          ]
+        },
+        {
+          "surface": "项目总览",
+          "route": "/?view=projects&project=project-1",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/project.png",
+          "captureSha256": [
+            "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+            "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/project.png",
+            "win32/mobile-390x844/project.png"
+          ]
+        },
+        {
+          "surface": "设置",
+          "route": "/settings?team=team-page-2",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/settings.png",
+          "captureSha256": [
+            "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+            "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/settings.png",
+            "win32/mobile-390x844/settings.png"
+          ]
+        },
+        {
+          "surface": "工作台",
+          "route": "/workbench",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/workbench.png",
+          "captureSha256": [
+            "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+            "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/workbench.png",
+            "win32/mobile-390x844/workbench.png"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "restartReplay",
+      "runDirectory": "d0-review-replay-final",
+      "exitCode": 1,
+      "passed": 13,
+      "failed": 1,
+      "entries": [
+        {
+          "surface": "Agent 详情",
+          "route": "/agents/agent%2F1",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/agent-detail.png",
+          "captureSha256": [
+            "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+            "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/agent-detail.png",
+            "win32/desktop-1440x1000/agent-detail.png"
+          ]
+        },
+        {
+          "surface": "看板",
+          "route": "/?view=projects&project=project-1&tab=board",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/board.png",
+          "captureSha256": [
+            "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+            "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+          ],
+          "scrollPositions": [
+            {
+              "window": {
+                "x": 0,
+                "y": 0
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 87
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 676,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 592.1875,
+                "y": 642.09375,
+                "width": 295.625,
+                "height": 274.34375,
+                "top": 642.09375,
+                "right": 887.8125,
+                "bottom": 916.4375,
+                "left": 592.1875
+              },
+              "columnHeaderBounds": {
+                "x": 581,
+                "y": 596.90625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 596.90625,
+                "right": 899,
+                "bottom": 642.09375,
+                "left": 581
+              }
+            },
+            {
+              "window": {
+                "x": 0,
+                "y": 0
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 87
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 676,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 592.1875,
+                "y": 642.09375,
+                "width": 295.625,
+                "height": 274.34375,
+                "top": 642.09375,
+                "right": 887.8125,
+                "bottom": 916.4375,
+                "left": 592.1875
+              },
+              "columnHeaderBounds": {
+                "x": 581,
+                "y": 596.90625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 596.90625,
+                "right": 899,
+                "bottom": 642.09375,
+                "left": 581
+              }
+            }
+          ],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/board.png",
+            "win32/desktop-1440x1000/board.png"
+          ]
+        },
+        {
+          "surface": "工作项详情",
+          "route": "/?view=my-work&workItem=work-101",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/issue-detail.png",
+          "captureSha256": [
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/issue-detail.png",
+            "win32/desktop-1440x1000/issue-detail.png"
+          ]
+        },
+        {
+          "surface": "工作项列表",
+          "route": "/?view=my-work",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/issues-list.png",
+          "captureSha256": [
+            "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+            "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/issues-list.png",
+            "win32/desktop-1440x1000/issues-list.png"
+          ]
+        },
+        {
+          "surface": "项目总览",
+          "route": "/?view=projects&project=project-1",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/project.png",
+          "captureSha256": [
+            "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
+            "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/project.png",
+            "win32/desktop-1440x1000/project.png"
+          ]
+        },
+        {
+          "surface": "设置",
+          "route": "/settings?team=team-page-2",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/settings.png",
+          "captureSha256": [
+            "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
+            "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/settings.png",
+            "win32/desktop-1440x1000/settings.png"
+          ]
+        },
+        {
+          "surface": "工作台",
+          "route": "/workbench",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/desktop-1440x1000/workbench.png",
+          "captureSha256": [
+            "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+            "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/workbench.png",
+            "win32/desktop-1440x1000/workbench.png"
+          ]
+        },
+        {
+          "surface": "Agent 详情",
+          "route": "/agents/agent%2F1",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/agent-detail.png",
+          "captureSha256": [
+            "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+            "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/agent-detail.png",
+            "win32/mobile-390x844/agent-detail.png"
+          ]
+        },
+        {
+          "surface": "看板",
+          "route": "/?view=projects&project=project-1&tab=board",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/board.png",
+          "captureSha256": [
+            "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+            "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+          ],
+          "scrollPositions": [
+            {
+              "window": {
+                "x": 0,
+                "y": 53
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 16,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 672,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 12.1875,
+                "y": 430.578125,
+                "width": 295.625,
+                "height": 292.75,
+                "top": 430.578125,
+                "right": 307.8125,
+                "bottom": 723.328125,
+                "left": 12.1875
+              },
+              "columnHeaderBounds": {
+                "x": 1,
+                "y": 385.390625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 385.390625,
+                "right": 319,
+                "bottom": 430.578125,
+                "left": 1
+              }
+            },
+            {
+              "window": {
+                "x": 0,
+                "y": 53
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 16,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 672,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 12.1875,
+                "y": 430.578125,
+                "width": 295.625,
+                "height": 292.75,
+                "top": 430.578125,
+                "right": 307.8125,
+                "bottom": 723.328125,
+                "left": 12.1875
+              },
+              "columnHeaderBounds": {
+                "x": 1,
+                "y": 385.390625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 385.390625,
+                "right": 319,
+                "bottom": 430.578125,
+                "left": 1
+              }
+            }
+          ],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/board.png",
+            "win32/mobile-390x844/board.png"
+          ]
+        },
+        {
+          "surface": "工作项列表",
+          "route": "/?view=my-work",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/issues-list.png",
+          "captureSha256": [
+            "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+            "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/issues-list.png",
+            "win32/mobile-390x844/issues-list.png"
+          ]
+        },
+        {
+          "surface": "项目总览",
+          "route": "/?view=projects&project=project-1",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/project.png",
+          "captureSha256": [
+            "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+            "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/project.png",
+            "win32/mobile-390x844/project.png"
+          ]
+        },
+        {
+          "surface": "设置",
+          "route": "/settings?team=team-page-2",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/settings.png",
+          "captureSha256": [
+            "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+            "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/settings.png",
+            "win32/mobile-390x844/settings.png"
+          ]
+        },
+        {
+          "surface": "工作台",
+          "route": "/workbench",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "snapshot": "win32/mobile-390x844/workbench.png",
+          "captureSha256": [
+            "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+            "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/workbench.png",
+            "win32/mobile-390x844/workbench.png"
+          ]
+        }
+      ]
+    }
+  ],
+  "verifiedSuccessfulPairCaptureCount": 52,
+  "incompleteCases": [
+    {
+      "run": "capture",
+      "snapshot": "win32/desktop-1440x1000/issue-detail.png",
+      "visualComparisonPassed": false,
+      "comparatorReportedDifferentPixels": 3,
+      "pairSha256Equal": null,
+      "reason": "第二上下文的 toHaveScreenshot 失败，未到原始哈希断言"
+    },
+    {
+      "run": "restartReplay",
+      "snapshot": "win32/mobile-390x844/issue-detail.png",
+      "visualComparisonPassed": true,
+      "pairSha256Equal": false,
+      "captureSha256": [
+        "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002",
+        "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+      ],
+      "originalPngFiles": [
+        "failures/review-mobile-issue-detail-capture-1.png",
+        "failures/review-mobile-issue-detail-capture-2.png"
+      ]
+    }
+  ],
+  "pixelDifferences": [
+    {
+      "expected": "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+      "actual": "failures/review-desktop-issue-detail-actual.png",
+      "expectedSha256": "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+      "actualSha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+      "width": 1440,
+      "height": 1000,
+      "differingPixels": 134,
+      "maxChannelDifference": 2,
+      "pixels": [
+        {
+          "x": 131,
+          "y": 184,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 132,
+          "y": 184,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 184,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 184,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 185,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 185,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 186,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 186,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 186,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 186,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 187,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 187,
+          "deltaRgba": [
+            0,
+            0,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 187,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 187,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 188,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 188,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 188,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 189,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 189,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 189,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 189,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 190,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 190,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 257,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 258,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 258,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 259,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 260,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 260,
+          "deltaRgba": [
+            -2,
+            -2,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 261,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 261,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 262,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 263,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 381,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 381,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 382,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 383,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 383,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 384,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 384,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 385,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 386,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 386,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 387,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 432,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 433,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 433,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 434,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 435,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 435,
+          "deltaRgba": [
+            -2,
+            -2,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 436,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 436,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 437,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 438,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 477,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 477,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 478,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 479,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 479,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 480,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 480,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 481,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 482,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 482,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 483,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 570,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 570,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 571,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 571,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 571,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 571,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 572,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 572,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 573,
+          "deltaRgba": [
+            -1,
+            -1,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 573,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 573,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 573,
+          "deltaRgba": [
+            -2,
+            -2,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 574,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 574,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 574,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 575,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 575,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 576,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 615,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 132,
+          "y": 615,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 615,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 615,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 616,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 616,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 617,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 617,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 617,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 617,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 618,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 618,
+          "deltaRgba": [
+            0,
+            0,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 618,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 618,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 619,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 619,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 619,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 620,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 620,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 620,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 620,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 621,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 621,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 855,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 856,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 856,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 857,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 858,
+          "deltaRgba": [
+            -1,
+            -1,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 858,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 859,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 860,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 900,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 132,
+          "y": 900,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 901,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 902,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 902,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 903,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 903,
+          "deltaRgba": [
+            0,
+            0,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 904,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 904,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 905,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 905,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 906,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 981,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 982,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 982,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 983,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 984,
+          "deltaRgba": [
+            -1,
+            -1,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 984,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 985,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 986,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        }
+      ],
+      "configuredComparatorPassed": false,
+      "configuredComparatorError": "3 pixels (ratio 0.01 of all image pixels) are different.",
+      "historicalExpected": "win32/desktop-1440x1000/issue-detail.png"
+    },
+    {
+      "expected": "failures/pre-stabilization/mobile-390x844/issue-detail.png",
+      "actual": "failures/review-mobile-issue-detail-actual.png",
+      "expectedSha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+      "actualSha256": "d83caf59926913cfad490a7aef75b8e1631892c51a27e481275a95495a5f2b07",
+      "width": 390,
+      "height": 844,
+      "differingPixels": 13,
+      "maxChannelDifference": 2,
+      "pixels": [
+        {
+          "x": 376,
+          "y": 796,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 797,
+          "deltaRgba": [
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 797,
+          "deltaRgba": [
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 798,
+          "deltaRgba": [
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 799,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 799,
+          "deltaRgba": [
+            2,
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 800,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 800,
+          "deltaRgba": [
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 801,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 375,
+          "y": 802,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 375,
+          "y": 841,
+          "deltaRgba": [
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 841,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 842,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        }
+      ],
+      "configuredComparatorPassed": false,
+      "configuredComparatorError": "1 pixels (ratio 0.01 of all image pixels) are different.",
+      "historicalExpected": "win32/mobile-390x844/issue-detail.png"
+    },
+    {
+      "expected": "failures/review-mobile-issue-detail-capture-1.png",
+      "actual": "failures/review-mobile-issue-detail-capture-2.png",
+      "expectedSha256": "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002",
+      "actualSha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+      "width": 390,
+      "height": 844,
+      "differingPixels": 13,
+      "maxChannelDifference": 1,
+      "pixels": [
+        {
+          "x": 375,
+          "y": 211,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 375,
+          "y": 212,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 213,
+          "deltaRgba": [
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 213,
+          "deltaRgba": [
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 214,
+          "deltaRgba": [
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 215,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 215,
+          "deltaRgba": [
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 246,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 246,
+          "deltaRgba": [
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 247,
+          "deltaRgba": [
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 248,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 375,
+          "y": 249,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 249,
+          "deltaRgba": [
+            1,
+            1,
+            1,
+            0
+          ]
+        }
+      ],
+      "configuredComparatorPassed": true,
+      "configuredComparatorError": null
+    }
+  ],
+  "failureAssets": [
+    {
+      "path": "failures/mocked-agent-registry-current.png",
+      "sha256": "8bf0d341e8a6afbe15903069d43069561e33b827097befb541d2602658a40d7f"
+    },
+    {
+      "path": "failures/mocked-agent-registry-original.png",
+      "sha256": "8bf0d341e8a6afbe15903069d43069561e33b827097befb541d2602658a40d7f"
+    },
+    {
+      "path": "failures/pre-review-desktop-board.png",
+      "sha256": "480d5a27d9f4f9c634596e6df66ded96a3bff995a9a2d385a604a9a33416252c"
+    },
+    {
+      "path": "failures/pre-review-mobile-board.png",
+      "sha256": "b28e57a008a634beba2efe006e6b4f7571eb7e4c513030f7b407fc4fb1227d51"
+    },
+    {
+      "path": "failures/review-desktop-issue-detail-actual.png",
+      "sha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+    },
+    {
+      "path": "failures/review-desktop-issue-detail-diff.png",
+      "sha256": "14467f6cf62748eb61dc25ccb6a17fe5d8b4807fedd372f6138ec4c9e561d422"
+    },
+    {
+      "path": "failures/review-mobile-issue-detail-actual.png",
+      "sha256": "d83caf59926913cfad490a7aef75b8e1631892c51a27e481275a95495a5f2b07"
+    },
+    {
+      "path": "failures/review-mobile-issue-detail-capture-1.png",
+      "sha256": "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002"
+    },
+    {
+      "path": "failures/review-mobile-issue-detail-capture-2.png",
+      "sha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+    },
+    {
+      "path": "failures/review-mobile-issue-detail-diff.png",
+      "sha256": "fb9022d10440776dc58b7862f615b051340d58018c91c11bf7f8f65e63506974"
+    },
+    {
+      "path": "failures/strict-mobile-issue-detail-actual.png",
+      "sha256": "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002"
+    },
+    {
+      "path": "failures/strict-mobile-issue-detail-diff.png",
+      "sha256": "6bdc27c1c966d2f30c3cd0fda1e3213a3dedce316653a5f0f025cdf874ea7963"
+    }
+  ],
+  "mockFailures": [
+    {
+      "name": "mocked\\agents-responsive.mocked.spec.ts >> responsive product surfaces at 760x900",
+      "location": "e2e\\mocked\\agents-responsive.mocked.spec.ts:180:3",
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText('Responsive Agent', { exact: true }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 10000ms\n  - waiting for getByText('Responsive Agent', { exact: true }).first()",
+      "rawContextSha256": "21a5c0e649405a852ed18d5629e3669c46e8e86e4bfbaa21cc309fc7aa309a17",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\agents-responsive.mocked.spec.ts >> responsive product surfaces at 761x900",
+      "location": "e2e\\mocked\\agents-responsive.mocked.spec.ts:180:3",
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText('Responsive Agent', { exact: true }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 10000ms\n  - waiting for getByText('Responsive Agent', { exact: true }).first()",
+      "rawContextSha256": "7b9d73e17007d0a45705645afa9a8c67f29dacaf0a650907d17b68344ec1d23a",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\agents-responsive.mocked.spec.ts >> responsive product surfaces at 390x844",
+      "location": "e2e\\mocked\\agents-responsive.mocked.spec.ts:180:3",
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText('Responsive Agent', { exact: true }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 10000ms\n  - waiting for getByText('Responsive Agent', { exact: true }).first()",
+      "rawContextSha256": "e7cb44aeaf8aaaec82a031b2db4380fce4d290b8d47d01c4eb374a64378eabec",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\agents-responsive.mocked.spec.ts >> responsive product surfaces at 375x812",
+      "location": "e2e\\mocked\\agents-responsive.mocked.spec.ts:180:3",
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText('Responsive Agent', { exact: true }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 10000ms\n  - waiting for getByText('Responsive Agent', { exact: true }).first()",
+      "rawContextSha256": "48f809ca30b3cce29cb4d8fbbb038c5caa7059a51149bd2b3091691655329ef7",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\agents-responsive.mocked.spec.ts >> responsive product surfaces at 320x800",
+      "location": "e2e\\mocked\\agents-responsive.mocked.spec.ts:180:3",
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText('Responsive Agent', { exact: true }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 10000ms\n  - waiting for getByText('Responsive Agent', { exact: true }).first()",
+      "rawContextSha256": "9968b81c2a78aebe0786e7ddf865eb12c054e8f4e71166cd01adb52a18ae531b",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\agents-interactions.mocked.spec.ts >> restores approval URL state, keeps History read-only, and retries one bulk decision idempotently",
+      "location": "e2e\\mocked\\agents-interactions.mocked.spec.ts:25:1",
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText('Approved 1 request')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 10000ms\n  - waiting for getByText('Approved 1 request')",
+      "rawContextSha256": "1321140d61974b7513e16b5bb925a9a983ed31f3f3548c70c44e14968b37bb1a",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\agents-interactions.mocked.spec.ts >> rejects malformed approval decisions before mutating the fixture",
+      "location": "e2e\\mocked\\agents-interactions.mocked.spec.ts:154:1",
+      "error": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 200\nReceived: 404",
+      "rawContextSha256": "2247c106d0ed6da24b7e4bd7bda8aebff9de3b8bc32ac21e8e754fb66bf05132",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\agents-interactions.mocked.spec.ts >> keeps Peek, Team Access, selection, URL, and stable Agent navigation independent",
+      "location": "e2e\\mocked\\agents-interactions.mocked.spec.ts:70:1",
+      "error": "Test timeout of 30000ms exceeded.",
+      "rawContextSha256": "395e087c5a88eaf4ebf30393b26adb76317306abfa1a1aa37414d8353c840971",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\accessibility-keyboard.mocked.spec.ts >> Agent and Session deep-link semantic smoke at 390px zh-CN",
+      "location": "e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:623:3",
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('.agent-detail-panel')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 10000ms\n  - waiting for locator('.agent-detail-panel')",
+      "rawContextSha256": "e29fbe3d9dee6e95e5f9db20aa8f244ab0f8f8251b60a8ac33d78b4a15b83730",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\accessibility-keyboard.mocked.spec.ts >> Agent and Session deep-link semantic smoke at 1920px en",
+      "location": "e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:623:3",
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('.agent-detail-panel')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 10000ms\n  - waiting for locator('.agent-detail-panel')",
+      "rawContextSha256": "58884ec7bf4e9b068893647b863d7f1141e3b5d811b7deb247379e0b17a8904a",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\accessibility-keyboard.mocked.spec.ts >> Task 6.6 phone Chinese keyboard and semantic journey >> covers compact selectors, mobile navigation, local table scrolling, top layers, and containment",
+      "location": "e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:511:3",
+      "error": "Error: expect(locator).toHaveCount(expected) failed\n\nLocator:  locator('.agent-registry-card')\nExpected: 2\nReceived: 0\nTimeout:  10000ms\n\nCall log:\n  - Expect \"toHaveCount\" with timeout 10000ms\n  - waiting for locator('.agent-registry-card')\n    23 × locator resolved to 0 elements\n       - unexpected value \"0\"",
+      "rawContextSha256": "182f6a0e09a319cb6f365a6d23f9e529e5eb44bef73012615c4cd89df4f06f81",
+      "conclusion": "本次实际失败，未做旧基点对照，原因未归属"
+    },
+    {
+      "name": "mocked\\accessibility-keyboard.mocked.spec.ts >> Task 6.6 desktop English keyboard and semantic journey >> covers Home detail, Agents, Settings, Operations, tabs, tables, layers, and focus restore",
+      "location": "e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:368:3",
+      "error": "Error: expect(locator).toHaveCount(expected) failed\n\nLocator:  locator('.agent-registry-card')\nExpected: 2\nReceived: 0\nTimeout:  10000ms\n\nCall log:\n  - Expect \"toHaveCount\" with timeout 10000ms\n  - waiting for locator('.agent-registry-card')\n    23 × locator resolved to 0 elements\n       - unexpected value \"0\"",
+      "rawContextSha256": "a535c7c684f53851457efa2c2ab739ffa273df023e6981368ac24e22f33ec5a9",
+      "conclusion": "仅此用例在旧基点配置对照也失败；不推广到其他失败"
+    }
+  ],
+  "checks": [
+    {
+      "command": "pnpm lint",
+      "log": "d0-review-lint-final.log",
+      "exitCode": 0,
+      "result": {
+        "turboTasksPassed": 18,
+        "turboTasksTotal": 18
+      },
+      "rawLogSha256": "47fa833ffb158bbf81fd2e30682ceb582fd282e4a6b98a59b14ce450321aeb91",
+      "excerpt": [
+        " Tasks:    18 successful, 18 total",
+        "Cached:    17 cached, 18 total",
+        "  Time:    5.066s "
+      ]
+    },
+    {
+      "command": "pnpm typecheck",
+      "log": "d0-review-typecheck-final.log",
+      "exitCode": 0,
+      "result": {
+        "turboTasksPassed": 18,
+        "turboTasksTotal": 18
+      },
+      "rawLogSha256": "f5e875212520a9ca8c9f0990df4e6b597ceb9a978c049b67e1aa9511642b7abb",
+      "excerpt": [
+        " Tasks:    18 successful, 18 total",
+        "Cached:    17 cached, 18 total",
+        "  Time:    4.643s "
+      ]
+    },
+    {
+      "command": "pnpm test",
+      "log": "d0-review-test-final.log",
+      "exitCode": 0,
+      "result": {
+        "turboTasksPassed": 29,
+        "turboTasksTotal": 29,
+        "passed": 1655,
+        "skipped": 2,
+        "webPassed": 776
+      },
+      "rawLogSha256": "54658b28c73922328912d8c1d9edc330e30c6899b4181960d0c0cb221d9036dd",
+      "excerpt": [
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/contracts:test:  Test Files  23 passed (23)",
+        "@workmesh/contracts:test:       Tests  180 passed (180)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  33 passed (33)",
+        "@workmesh/agent-sdk:test:  Test Files  1 passed (1)",
+        "@workmesh/agent-sdk:test:       Tests  33 passed (33)",
+        "@workmesh/agent-runner:test:  Test Files  9 passed (9)",
+        "@workmesh/agent-runner:test:       Tests  48 passed (48)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/mcp:test:  Test Files  2 passed (2)",
+        "@workmesh/mcp:test:       Tests  38 passed (38)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/worker:test:  Test Files  23 passed (23)",
+        "@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)",
+        "@workmesh/api:test:  Test Files  33 passed (33)",
+        "@workmesh/api:test:       Tests  174 passed (174)",
+        "@workmesh/web:test:  Test Files  113 passed (113)",
+        "@workmesh/web:test:       Tests  776 passed (776)",
+        " Tasks:    29 successful, 29 total",
+        "Cached:    28 cached, 29 total",
+        "  Time:    1m41.976s "
+      ]
+    },
+    {
+      "command": "pnpm test:integration",
+      "log": "d0-review-integration.log",
+      "exitCode": 0,
+      "result": {
+        "dbPassed": 77,
+        "apiPassed": 154,
+        "workerPassed": 78,
+        "skipped": 3
+      },
+      "rawLogSha256": "2e1bea16f95f2f6bf424b6bbd0ca854506df00b1dfe01d04ef3ee80ef7103d4e",
+      "excerpt": [
+        " Test Files  17 passed (17)",
+        "      Tests  77 passed (77)",
+        " Test Files  22 passed (22)",
+        "      Tests  154 passed | 1 skipped (155)",
+        " Test Files  8 passed | 1 skipped (9)",
+        "      Tests  78 passed | 1 skipped (79)",
+        " Test Files  1 skipped (1)",
+        "      Tests  1 skipped (1)"
+      ]
+    },
+    {
+      "command": "pnpm test:e2e",
+      "log": "d0-review-e2e.log",
+      "exitCode": 0,
+      "result": {
+        "passed": 74,
+        "turboTasksPassed": 12,
+        "turboTasksTotal": 12,
+        "mockedAndD0Included": false
+      },
+      "rawLogSha256": "ea77863fdfc24806e2c67b434df6de031d29b64f7ead4c4dac49a90f5395d21b",
+      "excerpt": [
+        " Tasks:    12 successful, 12 total",
+        "Cached:    0 cached, 12 total",
+        "  Time:    3m29.841s "
+      ]
+    },
+    {
+      "command": "pnpm test:integration:recovery",
+      "log": "d0-review-recovery.log",
+      "exitCode": 0,
+      "result": {
+        "passed": 1
+      },
+      "rawLogSha256": "9f82580fa1a5ffdf1f1246d0d9d12959f010cf3ee910bd0f9cb0979a2dabc7d2",
+      "excerpt": [
+        " Test Files  1 passed (1)",
+        "      Tests  1 passed (1)"
+      ]
+    },
+    {
+      "command": "pnpm --filter @workmesh/worker test:integration -- integration/retention-upgrade-barrier.integration.test.ts",
+      "log": "d0-review-retention-upgrade.log",
+      "exitCode": 0,
+      "result": {
+        "passed": 1,
+        "enabled": "RUN_RETENTION_UPGRADE_INTEGRATION=1"
+      },
+      "rawLogSha256": "1af1d523f1dcacb9acbd0bf8e7bfeec0a478551208ee6edf71fad088acd168bd",
+      "excerpt": [
+        " Test Files  1 passed (1)",
+        "      Tests  1 passed (1)"
+      ]
+    },
+    {
+      "command": "pnpm --dir apps/web exec vitest run e2e/playwright-config-contract.test.ts",
+      "log": "d0-review-contracts.log",
+      "exitCode": 0,
+      "result": {
+        "files": 1,
+        "passed": 2
+      },
+      "rawLogSha256": "f1e2081d255faf1c0feae4c6310eb032cb862e3b0ce3580d536d94df9e2fd429",
+      "excerpt": [
+        " Test Files  1 passed (1)",
+        "      Tests  2 passed (2)"
+      ]
+    },
+    {
+      "command": "pnpm exec vitest run scripts/verify-web-ui-final-verification.test.ts scripts/run-web-ui-final-playwright.test.ts",
+      "log": "d0-review-scope-contracts.log",
+      "exitCode": 0,
+      "result": {
+        "files": 2,
+        "passed": 17
+      },
+      "rawLogSha256": "c7ccceba96a8e8fbeb812f80bdf1b20f364e8a8fb6e75bc08a88cf9d78d25c66",
+      "excerpt": [
+        " Test Files  2 passed (2)",
+        "      Tests  17 passed (17)"
+      ]
+    },
+    {
+      "command": "pnpm exec tsx scripts/verify-playwright-suite-scope.mts --output .tmp/d0-review-suite-scope.json",
+      "exitCode": 0,
+      "result": {
+        "topologies": 4,
+        "evidence": "review-suite-scope.json"
+      }
+    },
+    {
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --grep 看板 --update-snapshots=all",
+      "log": "d0-review-board-update-2.log",
+      "exitCode": 0,
+      "result": {
+        "passed": 2
+      },
+      "rawLogSha256": "dccfc8b7fdc9c5d43adffc67bcc2ad51d61df927b7333e60af84d1022719152f",
+      "excerpt": [
+        "  ok 1 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (4.8s)",
+        "  ok 2 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (4.4s)",
+        "  2 passed (23.7s)"
+      ]
+    },
+    {
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --update-snapshots=none",
+      "log": "d0-review-capture-final.log",
+      "exitCode": 1,
+      "result": {
+        "passed": 13,
+        "failed": 1
+      },
+      "rawLogSha256": "adcb041bae1f031f0385c5018d0f3d1a6121d355a001ce8e995602206741afdf",
+      "excerpt": [
+        "  ok  1 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 (11.4s)",
+        "  ok  2 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (9.5s)",
+        "  ok  3 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 项目总览：覆盖、两次采集一致、D1 可直接比对 (5.6s)",
+        "  ok  4 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › Agent 详情：覆盖、两次采集一致、D1 可直接比对 (7.3s)",
+        "  ok  5 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项列表：覆盖、两次采集一致、D1 可直接比对 (5.6s)",
+        "  x   6 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (4.7s)",
+        "  ok  7 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 设置：覆盖、两次采集一致、D1 可直接比对 (5.8s)",
+        "  ok  8 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 (4.3s)",
+        "  ok  9 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (4.5s)",
+        "  ok 10 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 项目总览：覆盖、两次采集一致、D1 可直接比对 (4.4s)",
+        "  ok 11 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › Agent 详情：覆盖、两次采集一致、D1 可直接比对 (4.4s)",
+        "  ok 12 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项列表：覆盖、两次采集一致、D1 可直接比对 (4.9s)",
+        "  ok 13 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (4.6s)",
+        "  ok 14 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 设置：覆盖、两次采集一致、D1 可直接比对 (4.1s)",
+        "    Error: expect(page).toHaveScreenshot(expected) failed",
+        "      3 pixels (ratio 0.01 of all image pixels) are different.",
+        "      - 3 pixels (ratio 0.01 of all image pixels) are different.",
+        "      - 3 pixels (ratio 0.01 of all image pixels) are different.",
+        "    Expected: e2e\\baselines\\d0\\win32\\desktop-1440x1000\\issue-detail.png",
+        "    Received: ..\\..\\.tmp\\d0-review-capture-final\\mocked-dev\\output\\mocked-d0-visual-baseline.-ec6d8-基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\\issue-detail-1-actual.png",
+        "  1 failed",
+        "  13 passed (1.9m)"
+      ]
+    },
+    {
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --update-snapshots=none",
+      "log": "d0-review-replay-final.log",
+      "exitCode": 1,
+      "result": {
+        "passed": 13,
+        "failed": 1
+      },
+      "rawLogSha256": "7cd3dab68a5f7783f39235d2eaebe012a37960253be0fde0ec17798e7ff46a7a",
+      "excerpt": [
+        "  ok  1 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 (6.7s)",
+        "  ok  2 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (4.9s)",
+        "  ok  3 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 项目总览：覆盖、两次采集一致、D1 可直接比对 (4.5s)",
+        "  ok  4 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › Agent 详情：覆盖、两次采集一致、D1 可直接比对 (5.7s)",
+        "  ok  5 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项列表：覆盖、两次采集一致、D1 可直接比对 (4.3s)",
+        "  ok  6 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (4.9s)",
+        "  ok  7 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 设置：覆盖、两次采集一致、D1 可直接比对 (5.3s)",
+        "  ok  8 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 (4.1s)",
+        "  ok  9 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (5.0s)",
+        "  ok 10 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 项目总览：覆盖、两次采集一致、D1 可直接比对 (4.2s)",
+        "  ok 11 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › Agent 详情：覆盖、两次采集一致、D1 可直接比对 (4.6s)",
+        "  ok 12 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项列表：覆盖、两次采集一致、D1 可直接比对 (4.7s)",
+        "  x  13 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (3.2s)",
+        "  ok 14 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 设置：覆盖、两次采集一致、D1 可直接比对 (4.4s)",
+        "    Error: 两个独立上下文的 PNG 必须逐字节一致",
+        "    Expected: \"c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002\"",
+        "    Received: \"f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a\"",
+        "  1 failed",
+        "  13 passed (1.4m)"
+      ]
+    },
+    {
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.mocked.config.ts",
+      "log": "d0-review-mocked.log",
+      "exitCode": 1,
+      "result": {
+        "passed": 12,
+        "failed": 12,
+        "notExecuted": 115,
+        "collected": 139,
+        "interrupted": true,
+        "reason": "已出现多项失败后主动 Ctrl-C 中止，不声称完整执行成功"
+      },
+      "rawLogSha256": "259985d4122619f56bdcddd3a5db9918a3bbd47df4658dcd7fdde8d05c8ef1cd",
+      "excerpt": [
+        "  ok   1 e2e\\human-reflow.spec.ts:135:3 › project rail and shell reflow at 320x800 (1.7s)",
+        "  ok   2 e2e\\human-reflow.spec.ts:135:3 › project rail and shell reflow at 375x812 (1.5s)",
+        "  ok   3 e2e\\human-reflow.spec.ts:135:3 › project rail and shell reflow at 390x844 (1.5s)",
+        "  ok   4 e2e\\human-reflow.spec.ts:135:3 › project rail and shell reflow at 760x900 (1.6s)",
+        "  ok   5 e2e\\human-reflow.spec.ts:135:3 › project rail and shell reflow at 761x900 (1.7s)",
+        "  ok   6 e2e\\human-reflow.spec.ts:135:3 › project rail and shell reflow at 768x1024 (1.8s)",
+        "  ok   7 e2e\\human-reflow.spec.ts:135:3 › project rail and shell reflow at 1440x900 (1.8s)",
+        "  ok   8 e2e\\human-reflow.spec.ts:135:3 › project rail and shell reflow at 1440x1000 (1.6s)",
+        "  ok   9 e2e\\human-reflow.spec.ts:135:3 › project rail and shell reflow at 1920x1080 (1.7s)",
+        "  x   10 e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:368:3 › Task 6.6 desktop English keyboard and semantic journey › covers Home detail, Agents, Settings, Operations, tabs, tables, layers, and focus restore (16.9s)",
+        "  x   11 e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:511:3 › Task 6.6 phone Chinese keyboard and semantic journey › covers compact selectors, mobile navigation, local table scrolling, top layers, and containment (15.1s)",
+        "  x   12 e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:623:3 › Agent and Session deep-link semantic smoke at 1920px en (18.1s)",
+        "  x   13 e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:623:3 › Agent and Session deep-link semantic smoke at 390px zh-CN (12.7s)",
+        "  ok  14 e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:658:3 › Login Install and Connect public semantic boundary at 1920px en (19.0s)",
+        "  ok  15 e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:658:3 › Login Install and Connect public semantic boundary at 390px zh-CN (4.7s)",
+        "  x   16 e2e\\mocked\\agents-interactions.mocked.spec.ts:25:1 › restores approval URL state, keeps History read-only, and retries one bulk decision idempotently (12.5s)",
+        "  x   17 e2e\\mocked\\agents-interactions.mocked.spec.ts:70:1 › keeps Peek, Team Access, selection, URL, and stable Agent navigation independent (30.1s)",
+        "  ok  18 e2e\\mocked\\agents-interactions.mocked.spec.ts:119:1 › replays an equivalent direct decision once and rejects a conflicting body without a second commit (139ms)",
+        "  x   19 e2e\\mocked\\agents-interactions.mocked.spec.ts:154:1 › rejects malformed approval decisions before mutating the fixture (56ms)",
+        "  x   20 e2e\\mocked\\agents-responsive.mocked.spec.ts:180:3 › responsive product surfaces at 320x800 (11.6s)",
+        "  x   21 e2e\\mocked\\agents-responsive.mocked.spec.ts:180:3 › responsive product surfaces at 375x812 (11.4s)",
+        "  x   22 e2e\\mocked\\agents-responsive.mocked.spec.ts:180:3 › responsive product surfaces at 390x844 (11.6s)",
+        "  x   23 e2e\\mocked\\agents-responsive.mocked.spec.ts:180:3 › responsive product surfaces at 760x900 (11.6s)",
+        "  x   24 e2e\\mocked\\agents-responsive.mocked.spec.ts:180:3 › responsive product surfaces at 761x900 (11.6s)"
+      ]
+    },
+    {
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.mocked.config.ts e2e/mocked/accessibility-keyboard.mocked.spec.ts --grep \"covers Home detail\" --max-failures=1",
+      "log": "d0-review-current-mocked.log",
+      "exitCode": 1,
+      "result": {
+        "failed": 1
+      },
+      "rawLogSha256": "9744e870b07c10b9debf4cf037dcbfb77df9a8f3db220d4b13b827946ed8dffb",
+      "excerpt": [
+        "  x  1 e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:368:3 › Task 6.6 desktop English keyboard and semantic journey › covers Home detail, Agents, Settings, Operations, tabs, tables, layers, and focus restore (18.9s)",
+        "Testing stopped early after 1 maximum allowed failures.",
+        "    Error: expect(locator).toHaveCount(expected) failed",
+        "    Locator:  locator('.agent-registry-card')",
+        "    Expected: 2",
+        "    Received: 0",
+        "  1 failed"
+      ]
+    },
+    {
+      "command": "pnpm --dir apps/web exec playwright test --config ../../.tmp/d0-review-original.config.ts e2e/mocked/accessibility-keyboard.mocked.spec.ts --grep \"covers Home detail\" --max-failures=1",
+      "log": "d0-review-original-mocked.log",
+      "exitCode": 1,
+      "result": {
+        "failed": 1
+      },
+      "rawLogSha256": "60de75bb1643185605976d683cc5a8a74901944ddd28ce8b7fdaa4060238a165",
+      "excerpt": [
+        "  x  1 e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:368:3 › Task 6.6 desktop English keyboard and semantic journey › covers Home detail, Agents, Settings, Operations, tabs, tables, layers, and focus restore (17.3s)",
+        "Testing stopped early after 1 maximum allowed failures.",
+        "    Error: expect(locator).toHaveCount(expected) failed",
+        "    Locator:  locator('.agent-registry-card')",
+        "    Expected: 2",
+        "    Received: 0",
+        "  1 failed"
+      ]
+    }
+  ],
+  "intermediateAttempts": [
+    {
+      "log": "d0-review-board-update.log",
+      "rawLogSha256": "23154338c69f358f780e177c104eeb9751668b9805a241fa2e7a944e2aa0dc1b",
+      "excerpt": [
+        "  1 passed (17.9s)"
+      ],
+      "finalAcceptance": false
+    },
+    {
+      "log": "d0-review-capture.log",
+      "rawLogSha256": "e358c649e5a8e4c43ec91b4899f19bd5098fa94c1ffe6147eff6cb90f17bcf35",
+      "excerpt": [
+        "  x   2 [desktop-1440x1000] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:92:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (17.5s)",
+        "  x  13 [mobile-390x844] › e2e\\mocked\\d0-visual-baseline.mocked.spec.ts:92:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (4.9s)",
+        "    Error: expect(locator).toBeInViewport() failed",
+        "    Locator:  locator('[data-testid=\"board\"] [data-work-item-id=\"work-101\"]')",
+        "    Expected: in viewport",
+        "    Received: viewport ratio 0.46701276302337646",
+        "    Error: expect(page).toHaveScreenshot(expected) failed",
+        "    Expected: e2e\\baselines\\d0\\win32\\mobile-390x844\\issue-detail.png",
+        "    Received: ..\\..\\.tmp\\d0-review-capture\\mocked-dev\\output\\mocked-d0-visual-baseline.-ec6d8-基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\\issue-detail-1-actual.png",
+        "  2 failed",
+        "  12 passed (1.6m)"
+      ],
+      "finalAcceptance": false
+    },
+    {
+      "log": "d0-review-lint.log",
+      "rawLogSha256": "eb63dbd5775dabf7d8fd073508a37b9790a19d0ad6e776eaeab479890344bb56",
+      "excerpt": [
+        " Tasks:    18 successful, 18 total"
+      ],
+      "finalAcceptance": false
+    },
+    {
+      "log": "d0-review-test.log",
+      "rawLogSha256": "070d33793242b02b0d6bf4560dad917fc35ade316cf959f56bc6c2044e126c93",
+      "excerpt": [
+        " Tasks:    29 successful, 29 total"
+      ],
+      "finalAcceptance": false
+    },
+    {
+      "log": "d0-review-typecheck.log",
+      "rawLogSha256": "eb9d370b5e4fc73e1efb876816b91aaa62b89f7a07821cfd3626d138d2450a34",
+      "excerpt": [
+        " Tasks:    18 successful, 18 total"
+      ],
+      "finalAcceptance": false
+    }
+  ],
+  "oldBaseComparison": {
+    "baseCommit": "0e9968dd24748f864370819a239093b42c80ba61",
+    "selectedTest": "accessibility-keyboard.mocked.spec.ts:368 covers Home detail",
+    "originalConfigSource": "git show HEAD:apps/web/playwright.mocked.config.ts",
+    "adaptations": [
+      "临时文件 import 路径",
+      "testDir 与 webServer.cwd 改为相同工作区的绝对路径"
+    ],
+    "commonEnvironment": {
+      "NEXT_DEV_API_UPSTREAM": "http://127.0.0.1:3201"
+    },
+    "originalExitCode": 1,
+    "currentExitCode": 1,
+    "sameFailure": ".agent-registry-card Expected: 2 Received: 0 at line 410",
+    "limitations": "只对照一个用例与旧配置，测试及产品来自同一未改产品的工作区；两边固定同一 upstream，不能据此验证 upstream 配置变更对全部套件无影响，也不能推断其余 11 项均与本轮无关"
+  },
+  "comparator": {
+    "maxDiffPixels": 0,
+    "threshold": 0.005,
+    "captureEquality": "每轮两个独立上下文的 PNG SHA-256 必须相同",
+    "pairCaptureEvaluation": "仅比较原始 PNG SHA-256，不使用视觉容差",
+    "restartReplayEvaluation": "Playwright toHaveScreenshot 使用 threshold=0.005、maxDiffPixels=0；通过不蕴含哈希相同",
+    "thresholdBasis": "零颜色阈值时移动详情原始 13 个圆角边缘像素每通道最多差 1，比较器报告 1 个差异像素；保留失败证据后选择微小颜色感知容差，也可能容许其他微小颜色差异",
+    "productVisualApproval": false
+  },
+  "resourcePointerNote": "当前基线采集条件修订后，将旧比较 expected 指向已保留历史原图；原始 PNG/哈希/差异指标/失败结论均未改变"
+}

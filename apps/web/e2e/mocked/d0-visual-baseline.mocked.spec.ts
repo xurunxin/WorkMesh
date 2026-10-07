@@ -65,6 +65,15 @@ async function readyPage(page: Page, surface: typeof surfaces[number]): Promise<
   await page.goto(surface.route, { waitUntil: 'networkidle' })
   await expect(page.locator(surface.ready)).toBeVisible()
   await expect(page.locator(surface.ready)).toContainText(surface.text)
+  if (surface.slug === 'board') {
+    const card = page.locator(surface.ready)
+    // 固定滚动到目标列顶部；移动端项目头部不能替代看板内容基线。
+    await card.locator('xpath=ancestor::*[@data-workflow-state-id]').evaluate(column => {
+      column.scrollIntoView({ block: 'start', inline: 'start', behavior: 'instant' })
+    })
+    await expect(card).toBeInViewport({ ratio: 1 })
+    await expect(card.locator('xpath=ancestor::*[@data-workflow-state-id]').locator('header')).toBeInViewport({ ratio: 1 })
+  }
   await expect(page.locator('main [role="alert"]:visible')).toHaveCount(0)
   await expect(page.locator('.wm-skeleton:visible, [data-testid="loading"]:visible, [aria-busy="true"]:visible')).toHaveCount(0)
   await page.evaluate(() => document.fonts.ready)
@@ -80,6 +89,7 @@ test.describe('D0 亮色视觉基线', () => {
   for (const surface of surfaces) {
     test(`${surface.name}：覆盖、两次采集一致、D1 可直接比对`, async ({ browser, request }, testInfo) => {
       const captures: Buffer[] = []
+      const scrollPositions: unknown[] = []
       const viewport = testInfo.project.use.viewport
       if (!viewport) throw new Error('必须显式固定视口')
       for (const capture of [1, 2]) {
@@ -129,6 +139,14 @@ test.describe('D0 亮色视觉基线', () => {
           await page.addStyleTag({ path: screenshotStylePath })
           await expect(page).toHaveScreenshot(`${surface.slug}.png`, screenshotOptions)
           const bytes = await page.screenshot(screenshotOptions)
+          if (surface.slug === 'board') scrollPositions.push(await page.evaluate(() => ({
+            window: { x: scrollX, y: scrollY },
+            containers: Array.from(document.querySelectorAll('.app-content, .content, .project-detail-pane, .wm-work-item-board-scroll')).map(element => ({
+              selector: element.className, left: element.scrollLeft, top: element.scrollTop,
+            })),
+            cardBounds: document.querySelector('[data-work-item-id="work-101"]')?.getBoundingClientRect().toJSON(),
+            columnHeaderBounds: document.querySelector('[data-work-item-id="work-101"]')?.closest('[data-workflow-state-id]')?.querySelector('header')?.getBoundingClientRect().toJSON(),
+          })))
           captures.push(bytes)
           expect(failures, '不得把错误界面登记为基线').toEqual([])
           await testInfo.attach(`${surface.slug}-capture-${capture}`, { body: bytes, contentType: 'image/png' })
@@ -136,14 +154,25 @@ test.describe('D0 亮色视觉基线', () => {
           await context.close()
         }
       }
+      // 先落盘原始哈希，断言失败时仍保留两次采集证据；通过记录另由 replay.json 表示。
+      const captureEvidencePath = testInfo.outputPath(`${surface.slug}-captures.json`)
+      await writeFile(captureEvidencePath, JSON.stringify({
+        viewport, captureSha256: captures.map(sha256),
+        pairSha256Equal: sha256(captures[0]!) === sha256(captures[1]!),
+        browserLaunchArguments: testInfo.project.use.launchOptions?.args,
+      }, null, 2))
+      await testInfo.attach(`${surface.slug}-captures`, { contentType: 'application/json', path: captureEvidencePath })
       expect(sha256(captures[1]!), '两个独立上下文的 PNG 必须逐字节一致').toBe(sha256(captures[0]!))
+      if (surface.slug === 'board') expect(scrollPositions[1], '两个独立上下文的采集滚动位置必须相同').toEqual(scrollPositions[0])
       const replayPath = testInfo.outputPath(`${surface.slug}-replay.json`)
       await writeFile(replayPath, JSON.stringify({
         surface: surface.name, route: surface.route, viewport, locale: 'zh-CN',
         colorScheme: 'light', timezoneId: 'UTC', deviceScaleFactor: 1, fixedTime,
         browserVersion: browser.version(), platform: process.platform,
+        browserLaunchArguments: testInfo.project.use.launchOptions?.args,
         snapshot: testInfo.snapshotPath(`${surface.slug}.png`),
         captureSha256: captures.map(sha256),
+        scrollPositions,
         tokenSha256: sha256(await readFile(new URL('../../../../packages/ui/src/tokens.css', import.meta.url))),
       }, null, 2))
       await testInfo.attach(`${surface.slug}-replay`, { contentType: 'application/json', path: replayPath })

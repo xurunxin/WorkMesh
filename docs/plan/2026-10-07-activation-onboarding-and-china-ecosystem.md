@@ -1,7 +1,7 @@
 <!-- WM-ACTIVATE-20261007:ROADMAP -->
 # 工作台就绪面、可证明的接入恢复、一个通知渠道与国内模型预置
 
-状态：Proposed；D0 改动前基线已采集并验证，其余任务的门禁与验收分别记录。本稿是 gpt-6-astra / high 对抗式审查后的**第二版**，
+状态：Proposed；D0 视觉基线已修订并重放，通用 mocked-dev 失败尚待处置，D0/D1 门禁关闭；其余门禁独立验收。本稿是 gpt-6-astra / high 对抗式审查后的**第二版**，
 第一版的结论与被撤回的主张记录在
 `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md`。
 
@@ -10,7 +10,8 @@
 `docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md`、
 `docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md`（D 链 UI 重构）。
 
-对照物：todos.dev 的引入过程实测记录在 `G:\Projects\MetronX\todos-dev-analysis\`
+对照物：todos.dev 的引入过程实测记录地址已由 G1 同步为 `docs/references/todos-analysis/`。
+输入包尚在 G1 审查分支，未假称已进入本基点；原 `G:\Projects\MetronX\todos-dev-analysis\` 仅作历史来源。
 （`README.md`、`ui-inventory.md`、`kanban-cards.md`、28 张截图）。
 
 > 注：ADR 0074/0075/0076 的文件名已按审查结论改过（去掉与实际内容不符的
@@ -245,7 +246,7 @@ D0 是硬门禁：**没有基线就不许改 token 值**，否则视觉回归无
 
 ## D 链 — 参考产品视觉体系与工作台重构（ADR 0077）
 
-参照物：`G:\Projects\MetronX\todos-dev-analysis\`（`design-tokens.md` 实测 token、
+参照物：`docs/references/todos-analysis/`（地址已同步，输入包尚未进入本验证基点；`design-tokens.md` 实测 token、
 `kanban-cards.md` 卡片结构与 9 类交互、28 张截图）。
 
 **采纳什么、不采纳什么**（这是本链最容易做错的地方）：
@@ -271,18 +272,19 @@ D0 是硬门禁：**没有基线就不许改 token 值**，否则视觉回归无
   `Agent 详情：覆盖、两次采集一致、D1 可直接比对`、`工作项列表：覆盖、两次采集一致、D1 可直接比对`、
   `工作项详情：覆盖、两次采集一致、D1 可直接比对`、`设置：覆盖、两次采集一致、D1 可直接比对`。
   以下三项共用这些用例，在 `desktop-1440x1000` 与 `mobile-390x844` 两项目执行：
-  - [x] 覆盖全部受影响界面。
-  - [x] 同一视口两次采集可重复：两个独立上下文的原始 PNG SHA-256 相同。
+  - [x] 覆盖全部受影响界面；看板固定滚动，目标列头及卡片完整进入视口。
+  - [x] 同一视口两次采集可重复：固定部分栅格条件后，两个独立上下文的原始 PNG SHA-256 相同；重启后再核对原始哈希。
   - [x] 基线可被 D1 的视觉 diff 直接消费：重启后使用 `--update-snapshots=none`、
-    `threshold=0.005`、`maxDiffPixels=0` 直接比较已有 PNG，14 项通过。
+    `threshold=0.005`、`maxDiffPixels=0` 直接比较已有 PNG，两轮各 14 项通过；本轮未放宽参数。
 - **DoD**：基线产出并可重放；D1 开工前以此为门禁。
 - **实际证据**：[基线验证报告](../../apps/web/e2e/baselines/d0/verification.md) 与
   [逐项清单](../../apps/web/e2e/baselines/d0/manifest.json)。14 张基线覆盖 7 个面与 2 个视口；
   两轮各两个上下文的哈希校验，与采用容差比较器的重启重放是分别验证的事实。
   容差依据和历史失败保留在证据中，比较器通过不表示用户已验收产品色彩变化。
-  五项必需检查均成功退出，3 个条件跳过用例及原因如实保留；本次只修订记录，复用未变更测试输入的已有结果。
-- **依赖与状态**：[D0](todo:MPhtZiff23B33m9i2equq) 的仓库交付满足上述测试清单与 DoD，
-  按本批批准约定交付 Todos 审核；blocks [D1a](todo:IJQA_DfxU0hF5e8L5Xb3v)，
+  五项必需检查本轮均成功退出，3 个条件跳过及原因保留；新增入口隔离、看板 viewport 断言及详情栅格 A/B 证据。
+  前两轮各 13 通过/1 失败、旧原始 PNG、全部对照与每项通用 mocked-dev 失败原样保留，不能用比较器通过代替哈希一致。
+- **依赖与状态**：[D0](todo:MPhtZiff23B33m9i2equq) 视觉清单已通过，但通用 mocked-dev 实际失败尚待逐项处置或总管裁决，
+  **D0 尚未宣称完成，D0/D1 门禁继续关闭**；blocks [D1a](todo:IJQA_DfxU0hF5e8L5Xb3v)，
   并为 [D1b](todo:2j2sxT5wJ-l001efH_meJ) 提供同一份改动前基线。
   不再因缺真实 WorkMesh 连接阻塞 D0；G1/P1/R1 未验证通过时仍不得放行相应实现。
 - **文档引用复核**：提交 `dae4620366f33136d65e533d85823db49b9a3fe1` 已删除过时的

@@ -1,5 +1,5 @@
 {
-  "expected": "../win32/mobile-390x844/issue-detail.png",
+  "expected": "pre-stabilization/mobile-390x844/issue-detail.png",
   "actual": "strict-mobile-issue-detail-actual.png",
   "width": 390,
   "height": 844,
@@ -138,5 +138,7 @@
         0
       ]
     }
-  ]
+  ],
+  "historicalExpected": "../win32/mobile-390x844/issue-detail.png",
+  "resourcePointerNote": "当前基线采集条件修订后，将旧比较 expected 指向已保留历史原图；原始 PNG/哈希/差异指标/失败结论均未改变"
 }

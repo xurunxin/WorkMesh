@@ -72,6 +72,7 @@ Total: 3 tests in 2 files
 
   it('keeps root, mocked development, and production ownership disjoint', () => {
     const declared = [
+      'mocked/d0-visual-baseline.mocked.spec.ts',
       'mocked/final-visual-tour.mocked.spec.ts',
       'mocked/large-list-pagination.mocked.spec.ts',
       'mocked/owner.mocked.spec.ts',
@@ -86,9 +87,12 @@ Total: 3 tests in 2 files
     const mocked = evaluateSuiteAssertions('mocked-dev', {
       tests: 4,
       files: 4,
-      specs: [...declared, 'human-reflow.spec.ts'],
+      specs: [...declared.filter(spec => !spec.includes('d0-visual-baseline')), 'human-reflow.spec.ts'],
     }, declared)
     expect(mocked[0]?.status).toBe('pass')
+    expect(evaluateSuiteAssertions('mocked-dev', { tests: 5, files: 5, specs: [...declared, 'human-reflow.spec.ts'] }, declared)[0]?.status).toBe('blocked')
+    expect(evaluateSuiteAssertions('d0-visual-baseline', { tests: 14, files: 1, specs: ['mocked/d0-visual-baseline.mocked.spec.ts'] }, declared)[0]?.status).toBe('pass')
+    expect(evaluateSuiteAssertions('d0-visual-baseline', { tests: 7, files: 1, specs: ['mocked/d0-visual-baseline.mocked.spec.ts'] }, declared)[0]?.status).toBe('blocked')
 
     const production = evaluateSuiteAssertions('production-web-plus-mocked-api', {
       tests: 2,

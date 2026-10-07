@@ -4,6 +4,8 @@ import mockedConfig from './playwright.mocked.config'
 export default defineConfig({
   ...mockedConfig,
   testMatch: /[\\/]mocked[\\/]d0-visual-baseline\.mocked\.spec\.ts$/,
+  // 显式解除通用 mocked-dev 入口对 D0 的排除。
+  testIgnore: [],
   timeout: 120_000,
   retries: 0,
   snapshotPathTemplate: '{testDir}/baselines/d0/{platform}/{projectName}/{arg}{ext}',
@@ -12,7 +14,8 @@ export default defineConfig({
   use: {
     ...mockedConfig.use,
     browserName: 'chromium',
-    launchOptions: { args: ['--disable-gpu', '--disable-skia-runtime-opts', '--force-color-profile=srgb'] },
+    // 禁用部分栅格复用；详情圆角在相同布局下出现过上下文间 RGB 取整差异，证据见 D0 诊断记录。
+    launchOptions: { args: ['--disable-gpu', '--disable-skia-runtime-opts', '--force-color-profile=srgb', '--disable-partial-raster'] },
     colorScheme: 'light',
     locale: 'zh-CN',
     timezoneId: 'UTC',

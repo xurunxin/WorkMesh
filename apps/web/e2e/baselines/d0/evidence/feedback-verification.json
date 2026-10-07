@@ -215,7 +215,7 @@
   },
   "toleranceEvidence": {
     "evaluator": "Playwright 1.61.1 自带的 image/png 比较器，默认 pixelmatch 与抗锯齿处理",
-    "expected": "win32/mobile-390x844/issue-detail.png",
+    "expected": "failures/pre-stabilization/mobile-390x844/issue-detail.png",
     "actual": "failures/strict-mobile-issue-detail-actual.png",
     "expectedSha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
     "actualSha256": "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002",
@@ -231,7 +231,8 @@
       "maxDiffPixels": 0,
       "passed": true
     },
-    "productVisualApproval": false
+    "productVisualApproval": false,
+    "historicalExpected": "win32/mobile-390x844/issue-detail.png"
   },
   "originalCheckLogsVerified": [
     {
@@ -307,5 +308,6 @@
     "independentReview": "awaiting_review",
     "d1a": "closed",
     "reason": "D0 基线清单、DoD 与必需检查已满足；D1a 还依赖 G1/P1/R1，未由本交付验收，不放行其他前置。PRD 陈旧引用不是 D0 采集/检查阻塞。"
-  }
+  },
+  "resourcePointerNote": "当前基线采集条件修订后，将旧比较 expected 指向已保留历史原图；原始 PNG/哈希/差异指标/失败结论均未改变"
 }

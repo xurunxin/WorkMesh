@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "workmesh.d0.visual-baseline",
-  "generatedAt": "2026-10-07T11:54:49.431Z",
+  "generatedAt": "2026-10-07T11:31:20.838Z",
   "sourceCommit": "32789cec4d50db0b85a63d91049cc425d9e917a2",
   "sourcePlan": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
   "sourceAdr": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
@@ -15,16 +15,15 @@
     "synchronized": false,
     "reason": "本批已获用户批准使用 Todos＋仓库替代双轨记录；未创建或同步真实 WorkMesh 记录，不再等待其连接。"
   },
-  "visualStatus": "passed",
+  "visualStatus": "failed",
   "d1Gate": "closed",
-  "gateReason": "当前 D0 视觉清单两轮各 14 通过、56 次原始 PNG 与基线严格一致，五项必需检查成功退出；通用 mocked-dev 实际失败尚未处置，不宣称 D0 完成，不改变验收边界。G1/P1/R1 独立验收。",
+  "gateReason": "当前两轮 D0 各 13 通过、1 失败：桌面详情视觉比较失败；移动详情原始 PNG 对哈希不一致。通用 mocked-dev 未通过。五项必需检查成功退出不覆盖这些失败；G1/P1/R1 独立验收。",
   "screenshotCount": 14,
-  "independentCaptureCount": 56,
+  "independentCaptureCount": 52,
   "browserLaunchArguments": [
     "--disable-gpu",
     "--disable-skia-runtime-opts",
-    "--force-color-profile=srgb",
-    "--disable-partial-raster"
+    "--force-color-profile=srgb"
   ],
   "comparator": {
     "maxDiffPixels": 0,
@@ -62,11 +61,11 @@
     },
     {
       "path": "apps/web/playwright.d0.config.ts",
-      "sha256": "f880637a042b1974a1b8c2b6aca72f7a0d6e8f084bc5b6b49a519a4181308bea"
+      "sha256": "61e429c2838dd4a9b4000acc431118606cf6fa865a9910e4eca337687726c0d7"
     },
     {
       "path": "apps/web/e2e/mocked/d0-visual-baseline.mocked.spec.ts",
-      "sha256": "a4b784986c56c3c7d8ad2084d50f6fddcc313b15b3a66465209191b3199252c2"
+      "sha256": "b1a2b87deefcd06dc8a2516f13e0c401dfdd3a91b0a91ac0faae64156b8a60a5"
     },
     {
       "path": "apps/web/e2e/mocked/d0-screenshot.css",
@@ -87,10 +86,6 @@
     {
       "path": "scripts/verify-web-ui-final-verification.test.ts",
       "sha256": "53a95c4ed9f5de0dcdf146156e8fcbbd3cbb91904d9b4ebef894c3d8d9729e65"
-    },
-    {
-      "path": "apps/web/e2e/baselines/d0/evidence/diagnose-raster.mjs",
-      "sha256": "5235543208853b25628b374437189fe57d6b68e88ab7485aa160a07c10c4f8b7"
     }
   ],
   "entries": [
@@ -172,204 +167,6 @@
         "restartReplay": "passed",
         "capturePairSha256Equal": true,
         "replayPairSha256Equal": true
-      },
-      "scrollPositions": {
-        "capture": [
-          {
-            "window": {
-              "x": 0,
-              "y": 0
-            },
-            "containers": [
-              {
-                "selector": "app-content",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "content projects-page",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "project-detail-pane",
-                "left": 0,
-                "top": 87
-              },
-              {
-                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
-                "left": 676,
-                "top": 0
-              }
-            ],
-            "cardBounds": {
-              "x": 592.1875,
-              "y": 642.09375,
-              "width": 295.625,
-              "height": 274.34375,
-              "top": 642.09375,
-              "right": 887.8125,
-              "bottom": 916.4375,
-              "left": 592.1875
-            },
-            "columnHeaderBounds": {
-              "x": 581,
-              "y": 596.90625,
-              "width": 318,
-              "height": 45.1875,
-              "top": 596.90625,
-              "right": 899,
-              "bottom": 642.09375,
-              "left": 581
-            }
-          },
-          {
-            "window": {
-              "x": 0,
-              "y": 0
-            },
-            "containers": [
-              {
-                "selector": "app-content",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "content projects-page",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "project-detail-pane",
-                "left": 0,
-                "top": 87
-              },
-              {
-                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
-                "left": 676,
-                "top": 0
-              }
-            ],
-            "cardBounds": {
-              "x": 592.1875,
-              "y": 642.09375,
-              "width": 295.625,
-              "height": 274.34375,
-              "top": 642.09375,
-              "right": 887.8125,
-              "bottom": 916.4375,
-              "left": 592.1875
-            },
-            "columnHeaderBounds": {
-              "x": 581,
-              "y": 596.90625,
-              "width": 318,
-              "height": 45.1875,
-              "top": 596.90625,
-              "right": 899,
-              "bottom": 642.09375,
-              "left": 581
-            }
-          }
-        ],
-        "restartReplay": [
-          {
-            "window": {
-              "x": 0,
-              "y": 0
-            },
-            "containers": [
-              {
-                "selector": "app-content",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "content projects-page",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "project-detail-pane",
-                "left": 0,
-                "top": 87
-              },
-              {
-                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
-                "left": 676,
-                "top": 0
-              }
-            ],
-            "cardBounds": {
-              "x": 592.1875,
-              "y": 642.09375,
-              "width": 295.625,
-              "height": 274.34375,
-              "top": 642.09375,
-              "right": 887.8125,
-              "bottom": 916.4375,
-              "left": 592.1875
-            },
-            "columnHeaderBounds": {
-              "x": 581,
-              "y": 596.90625,
-              "width": 318,
-              "height": 45.1875,
-              "top": 596.90625,
-              "right": 899,
-              "bottom": 642.09375,
-              "left": 581
-            }
-          },
-          {
-            "window": {
-              "x": 0,
-              "y": 0
-            },
-            "containers": [
-              {
-                "selector": "app-content",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "content projects-page",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "project-detail-pane",
-                "left": 0,
-                "top": 87
-              },
-              {
-                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
-                "left": 676,
-                "top": 0
-              }
-            ],
-            "cardBounds": {
-              "x": 592.1875,
-              "y": 642.09375,
-              "width": 295.625,
-              "height": 274.34375,
-              "top": 642.09375,
-              "right": 887.8125,
-              "bottom": 916.4375,
-              "left": 592.1875
-            },
-            "columnHeaderBounds": {
-              "x": 581,
-              "y": 596.90625,
-              "width": 318,
-              "height": 45.1875,
-              "top": 596.90625,
-              "right": 899,
-              "bottom": 642.09375,
-              "left": 581
-            }
-          }
-        ]
       }
     },
     {
@@ -387,28 +184,25 @@
       "browserVersion": "149.0.7827.55",
       "platform": "win32",
       "snapshot": "win32/desktop-1440x1000/issue-detail.png",
-      "captureSha256": [
-        "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
-        "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
-      ],
+      "captureSha256": null,
       "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
-      "baselineSha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+      "baselineSha256": "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
       "imageSize": {
         "width": 1440,
         "height": 1000
       },
       "replaySha256": [
-        "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
-        "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+        "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+        "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
       ],
-      "identicalAcrossFourCaptures": true,
+      "identicalAcrossFourCaptures": null,
       "replayVisualComparisonPassed": true,
-      "fourCapturesMatchBaselineBytes": true,
-      "captureVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": null,
+      "captureVisualComparisonPassed": false,
       "currentValidation": {
-        "capture": "passed",
+        "capture": "failed-visual-comparison",
         "restartReplay": "passed",
-        "capturePairSha256Equal": true,
+        "capturePairSha256Equal": null,
         "replayPairSha256Equal": true
       }
     },
@@ -468,18 +262,18 @@
       "platform": "win32",
       "snapshot": "win32/desktop-1440x1000/project.png",
       "captureSha256": [
-        "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
-        "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+        "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
+        "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46"
       ],
       "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
-      "baselineSha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+      "baselineSha256": "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
       "imageSize": {
         "width": 1440,
         "height": 1000
       },
       "replaySha256": [
-        "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
-        "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+        "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
+        "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46"
       ],
       "identicalAcrossFourCaptures": true,
       "replayVisualComparisonPassed": true,
@@ -508,18 +302,18 @@
       "platform": "win32",
       "snapshot": "win32/desktop-1440x1000/settings.png",
       "captureSha256": [
-        "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
-        "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974"
+        "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
+        "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd"
       ],
       "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
-      "baselineSha256": "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+      "baselineSha256": "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
       "imageSize": {
         "width": 1440,
         "height": 1000
       },
       "replaySha256": [
-        "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
-        "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974"
+        "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
+        "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd"
       ],
       "identicalAcrossFourCaptures": true,
       "replayVisualComparisonPassed": true,
@@ -650,204 +444,6 @@
         "restartReplay": "passed",
         "capturePairSha256Equal": true,
         "replayPairSha256Equal": true
-      },
-      "scrollPositions": {
-        "capture": [
-          {
-            "window": {
-              "x": 0,
-              "y": 53
-            },
-            "containers": [
-              {
-                "selector": "app-content",
-                "left": 16,
-                "top": 0
-              },
-              {
-                "selector": "content projects-page",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "project-detail-pane",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
-                "left": 672,
-                "top": 0
-              }
-            ],
-            "cardBounds": {
-              "x": 12.1875,
-              "y": 430.578125,
-              "width": 295.625,
-              "height": 292.75,
-              "top": 430.578125,
-              "right": 307.8125,
-              "bottom": 723.328125,
-              "left": 12.1875
-            },
-            "columnHeaderBounds": {
-              "x": 1,
-              "y": 385.390625,
-              "width": 318,
-              "height": 45.1875,
-              "top": 385.390625,
-              "right": 319,
-              "bottom": 430.578125,
-              "left": 1
-            }
-          },
-          {
-            "window": {
-              "x": 0,
-              "y": 53
-            },
-            "containers": [
-              {
-                "selector": "app-content",
-                "left": 16,
-                "top": 0
-              },
-              {
-                "selector": "content projects-page",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "project-detail-pane",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
-                "left": 672,
-                "top": 0
-              }
-            ],
-            "cardBounds": {
-              "x": 12.1875,
-              "y": 430.578125,
-              "width": 295.625,
-              "height": 292.75,
-              "top": 430.578125,
-              "right": 307.8125,
-              "bottom": 723.328125,
-              "left": 12.1875
-            },
-            "columnHeaderBounds": {
-              "x": 1,
-              "y": 385.390625,
-              "width": 318,
-              "height": 45.1875,
-              "top": 385.390625,
-              "right": 319,
-              "bottom": 430.578125,
-              "left": 1
-            }
-          }
-        ],
-        "restartReplay": [
-          {
-            "window": {
-              "x": 0,
-              "y": 53
-            },
-            "containers": [
-              {
-                "selector": "app-content",
-                "left": 16,
-                "top": 0
-              },
-              {
-                "selector": "content projects-page",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "project-detail-pane",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
-                "left": 672,
-                "top": 0
-              }
-            ],
-            "cardBounds": {
-              "x": 12.1875,
-              "y": 430.578125,
-              "width": 295.625,
-              "height": 292.75,
-              "top": 430.578125,
-              "right": 307.8125,
-              "bottom": 723.328125,
-              "left": 12.1875
-            },
-            "columnHeaderBounds": {
-              "x": 1,
-              "y": 385.390625,
-              "width": 318,
-              "height": 45.1875,
-              "top": 385.390625,
-              "right": 319,
-              "bottom": 430.578125,
-              "left": 1
-            }
-          },
-          {
-            "window": {
-              "x": 0,
-              "y": 53
-            },
-            "containers": [
-              {
-                "selector": "app-content",
-                "left": 16,
-                "top": 0
-              },
-              {
-                "selector": "content projects-page",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "project-detail-pane",
-                "left": 0,
-                "top": 0
-              },
-              {
-                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
-                "left": 672,
-                "top": 0
-              }
-            ],
-            "cardBounds": {
-              "x": 12.1875,
-              "y": 430.578125,
-              "width": 295.625,
-              "height": 292.75,
-              "top": 430.578125,
-              "right": 307.8125,
-              "bottom": 723.328125,
-              "left": 12.1875
-            },
-            "columnHeaderBounds": {
-              "x": 1,
-              "y": 385.390625,
-              "width": 318,
-              "height": 45.1875,
-              "top": 385.390625,
-              "right": 319,
-              "bottom": 430.578125,
-              "left": 1
-            }
-          }
-        ]
       }
     },
     {
@@ -866,28 +462,25 @@
       "platform": "win32",
       "snapshot": "win32/mobile-390x844/issue-detail.png",
       "captureSha256": [
-        "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
-        "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+        "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+        "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
       ],
       "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
-      "baselineSha256": "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+      "baselineSha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
       "imageSize": {
         "width": 390,
         "height": 844
       },
-      "replaySha256": [
-        "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
-        "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
-      ],
-      "identicalAcrossFourCaptures": true,
+      "replaySha256": null,
+      "identicalAcrossFourCaptures": null,
       "replayVisualComparisonPassed": true,
-      "fourCapturesMatchBaselineBytes": true,
+      "fourCapturesMatchBaselineBytes": null,
       "captureVisualComparisonPassed": true,
       "currentValidation": {
         "capture": "passed",
-        "restartReplay": "passed",
+        "restartReplay": "failed-raw-png-pair-equality",
         "capturePairSha256Equal": true,
-        "replayPairSha256Equal": true
+        "replayPairSha256Equal": false
       }
     },
     {
@@ -1077,7 +670,7 @@
     "realWorkmeshSynchronizationRequiredForThisBatch": false
   },
   "d0Status": "blocked",
-  "reviewStatus": "blocked-mocked-dev-failures",
+  "reviewStatus": "blocked",
   "downstream": {
     "d1a": "IJQA_DfxU0hF5e8L5Xb3v",
     "d1b": "2j2sxT5wJ-l001efH_meJ",
@@ -1091,21 +684,18 @@
   },
   "feedbackVerification": "evidence/feedback-verification.json",
   "validationBaseCommit": "0e9968dd24748f864370819a239093b42c80ba61",
-  "captureCountScope": "当前两个完整全量验证轮各 14 项、每项两个独立上下文，共 56 次，原始附件及 SHA-256 已核对；不由比较器通过推导",
+  "captureCountScope": "仅当前两轮 26 个完整成功记录的 52 次原始采集；失败用例附件另列证据，不声称完整 56 次一致",
   "historicalEvidence": {
     "manifest": "evidence/pre-review-manifest.json",
     "verification": "evidence/pre-review-verification.md",
     "feedback": "evidence/feedback-verification.json",
-    "statusScope": "修订前历史版本，不能代替当前验收",
-    "preStabilization": "evidence/pre-stabilization-manifest.json",
-    "reviewFailureEvidence": "evidence/review-fix-verification.json"
+    "statusScope": "修订前历史版本，不能代替当前验收"
   },
-  "currentEvidence": "evidence/stabilized-verification.json",
+  "currentEvidence": "evidence/review-fix-verification.json",
   "referenceInput": {
     "path": "docs/references/todos-analysis/",
     "addressSynchronized": true,
     "includedInValidationBase": false,
     "reason": "用户最新 G1 交接仅同步地址；输入包尚在 G1 审查分支，git ls-tree HEAD 未发现该目录；不导入、不提前放行 G1"
-  },
-  "rasterDiagnosis": "evidence/raster-diagnosis.json"
+  }
 }
