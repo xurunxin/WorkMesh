@@ -1,0 +1,73 @@
+{
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "todoId": "q_1zKPuGsG-2ZRUwOwQx4",
+  "branch": "tds/conv-01a116f8-8172-7082-8d61-867bd9f0b749",
+  "artifactScope": "仅规划交接；不执行权威规格修订或产品实现",
+  "plan": {
+    "path": "docs/reviews/r1/plan.md",
+    "platformDocId": "rZ-zANJldiqLoLjgvdqvm",
+    "platformDocVersion": null,
+    "versionAvailability": "工具未返回可读取的平台版本编号；不得虚构。以全文 SHA-256 和交付 Git commit 标识本次工件。",
+    "capturedAt": "2026-10-07 16:04:15 UTC",
+    "captureSource": "当前用户消息明确给出的平台保存副本，顺序应用本轮成功的 mcp__tds__edit_plan 回执；未直接读取平台 doc。",
+    "platformDocReadback": false,
+    "exactComparedWithSavedCopy": true,
+    "sha256": "a3f636f1d30383519e984f7cce4f29d1d837f70c9f3694d1ced8ff8e061dfaed"
+  },
+  "worktreeBase": "36c7709a8bd49c640b8dbfa04a09cfb777f943c8",
+  "fetchedMainCommit": "dcf355735341bc6daac4101b8c7d0efbaabbe764",
+  "gates": {
+    "g1Final": "未确认；本轮 #18 快照 phase=building，最终 settled/主线合入仍为执行前置。",
+    "independentReview": "三项 blocking 均待原复核 agent 按准确提交定向核验，生产者没有独立闭合。",
+    "specRevisionExecution": "未放行。",
+    "todoSync": "本轮只读卡片；未更新 Todos 或创建真实 WorkMesh 记录。"
+  },
+  "inputCompleteness": {
+    "cardMetadata": "29/29",
+    "cardSpecs": "28/29",
+    "missingFullSpec": [
+      "q_1zKPuGsG-2ZRUwOwQx4"
+    ],
+    "historicalClosedCardTestMapping": "仅保存当前 #6 全文；旧正文的测试/DoD 迁移仍待历史受控材料核实。",
+    "originalReferencedPlanDoc": "doc:BVfhr56cxlVUURaZjatX_ 未直接读取，待总管可追溯原文交接。"
+  },
+  "files": [
+    {
+      "path": "docs/reviews/r1/.gitattributes",
+      "bytes": 98,
+      "sha256": "10ad81e8030884fae753ad5fd437721344dae9c2d831e15af942cbd329d8f548"
+    },
+    {
+      "path": "docs/reviews/r1/checks.md",
+      "bytes": 3540,
+      "sha256": "09fbbf1fc64b9b61b3ab00ee422a3045252c565bf87fe970e3066443bbb956fb"
+    },
+    {
+      "path": "docs/reviews/r1/main-inputs.json",
+      "bytes": 222660,
+      "sha256": "74455e9b09f6bd8958e28852f89533f3721afed90db51cb90736dbdc4eb1a1e9"
+    },
+    {
+      "path": "docs/reviews/r1/plan-review-response.md",
+      "bytes": 11143,
+      "sha256": "8b7c878b30772d1d1770d07a9f683de07fac63c91689549d23c92f05a9f05dd4"
+    },
+    {
+      "path": "docs/reviews/r1/plan.md",
+      "bytes": 9369,
+      "sha256": "a3f636f1d30383519e984f7cce4f29d1d837f70c9f3694d1ced8ff8e061dfaed"
+    },
+    {
+      "path": "docs/reviews/r1/todo-inputs.json",
+      "bytes": 326764,
+      "sha256": "24b8de52bc203cef5b74bf817f43a8f43f9c58bd290eddd57b7b0faad7b4e1a9"
+    },
+    {
+      "path": "docs/reviews/r1/verify-handoff.mjs",
+      "bytes": 4272,
+      "sha256": "24bc8a08cdc92637f741ebd04ecfa9e0b0c030eac98a513bf49b2cf6641e74a0"
+    }
+  ],
+  "manifestSelfExcluded": true,
+  "manifestSelfVerification": "交付 commit 中的 Git blob 是本清单自身完整性依据，避免自引用哈希。"
+}
