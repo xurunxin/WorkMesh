@@ -1,6 +1,12 @@
 # D0 基线与验证记录
 
-2026-10-07：仓库内基线已产出并通过重放，五项必需检查均成功退出。**D0 尚未关闭，D1 硬门禁保持关闭**：团队确无 WorkMesh MCP 连接，控制面归属等待用户裁决，AGENTS.md 要求的真实 WorkMesh 活动记录尚未同步。平台 Todos 仅提供任务引用，不视作 WorkMesh Project、WorkItem 或 Agent Session。
+2026-10-07：仓库内基线已产出并通过重放，五项必需检查均成功退出。用户已批准仅本批采用 Todos＋仓库，批准已写入[源计划](../../../../../docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md)。**D0 仓库交付满足测试清单与 DoD，交付 Todos 审核；D1a 的其他门禁仍独立关闭。** 本轮不再等待真实 WorkMesh MCP，也不声称已创建或同步真实 WorkMesh Project、WorkItem 或 Agent Session。
+
+## 本批批准与后续门禁
+
+批准时间：2026-10-07 18:38（Asia/Shanghai）。用户选择「本批使用 Todos＋仓库」「采用并独立复核」「按条件持续推进」：本批以 Todos 编排和记录执行进度，仓库保存规格及证据，替代 AGENTS.md 的真实 WorkMesh 双轨记录要求；其余领域、安全、测试约束保持。总管可在门禁与必需检查通过、blocking/high 已解决后继续派工、独立审查、确认计划及合并仓库改动。真实新设计分歧、新需求、团队权限变更、凭证授权和仓库以外发布仍需用户单独批准。
+
+已读取当前 [D1a](todo:IJQA_DfxU0hF5e8L5Xb3v) 规格：只新增并存语义槽与映射，保留根值和消费方；[D1b](todo:2j2sxT5wJ-l001efH_meJ) 再逐面迁移、视觉 diff 与人工评审后清理。两者沿用本目录原始基线。D1a 的前置是 G1、P1、R1、D0；本报告只证明 D0 的仓库交付，不证明 [G1](todo:Tws50k02Pi52R-RJEXP_N)、[P1](todo:qJKk_SAxN29AdBHERBl7u)、[R1](todo:q_1zKPuGsG-2ZRUwOwQx4) 已通过，不能据此开工 D1a 或放行其他链。Todos 审核、合并及后续派工由获授权流程处理。
 
 ## 范围、文件与来源
 
@@ -18,10 +24,10 @@
 测试文件：`apps/web/e2e/mocked/d0-visual-baseline.mocked.spec.ts`。组名：`D0 亮色视觉基线`。七个实际用例名均为下表“界面”后接 `：覆盖、两次采集一致、D1 可直接比对`，在 `desktop-1440x1000` 和 `mobile-390x844` 两个项目执行。三个清单项在开工前已映射到该文件与这些用例，结果如下：
 
 - [x] 覆盖全部受影响界面：七个页面、两个视口，共 14 张基线。
-- [x] 同一视口两次采集可重复：每个用例重置固定数据并新建两次浏览器上下文，PNG SHA-256 必须相同；服务重启后再执行完整 14 项。最终 56 次采集均与对应基线哈希相同。
+- [x] 同一视口两次采集可重复：每个用例重置固定数据并新建两次浏览器上下文，原始 PNG SHA-256 必须相同；此断言不使用容差。两轮各 14 项均通过，另行核对到当次 56 次采集均与对应基线哈希相同。
 - [x] 基线可被 D1 的视觉 diff 直接消费：重放使用 `--update-snapshots=none`，全部 `toHaveScreenshot` 直接读取已落盘 PNG；不生成替代基线。
 
-DoD 原文：**基线产出并可重放；D1 开工前以此为门禁。** 仓库证据已满足基线测试清单；依照现有双轨规则，在控制面决定与真实记录同步之前，不能据此宣称整个 D0 已完成或启动 D1。
+DoD 原文：**基线产出并可重放；D1 开工前以此为门禁。** 仓库证据已满足基线测试清单与 DoD；本批以 Todos＋仓库交付，取消等待真实 WorkMesh 同步的旧阻塞。D1a 的其余前置未由本任务验收，仍不得放行相应实现。
 
 | 界面 | 固定路由 | 桌面基线 | 移动基线 |
 | --- | --- | --- | --- |
@@ -37,7 +43,7 @@ DoD 原文：**基线产出并可重放；D1 开工前以此为门禁。** 仓�
 
 环境：Windows 11 专业工作站版 `10.0.26300`；Node `24.20.0`、pnpm `9.15.4`、Playwright `1.61.1`、Chromium `149.0.7827.55`。锁文件安装成功。视口固定为 `1440 × 1000` / `390 × 844`，DPR 1、`zh-CN`、UTC、亮色、固定时间 `2026-08-22T09:30:00.000Z`。等待字体加载，禁用截图动画与光标，浏览器使用软件渲染和 sRGB。
 
-亮色不仅设置媒体偏好，还在启动前固定现有 `workmesh.theme=light`，并断言实际根节点 `data-wm-theme=light`。当前产品已支持暗色且默认暗色，规格“当前仅亮色”的前提过时；本次仍只采亮色。未修改主题功能。
+亮色不仅设置媒体偏好，还在启动前固定现有 `workmesh.theme=light`，并断言实际根节点 `data-wm-theme=light`。当前产品已支持暗色且默认暗色；最新版任务规格已修正为本任务固定亮色，产品已有明暗切换。未修改主题功能。
 
 固定夹具来自既有 `project-work-preview-server.mjs` 的 `final-tour`。补充工作台对话、消息、轮次、模型列表，以及 Agent Session context、预算利用率的只读 DTO。预算固定为 09:00 开始、09:30 观察，消耗 3600 秒预算的一半。不调用真实模型、不进行领域写入。原 tour 的设置 `?tab=workspace` 路由已失效，本次使用当前有效设置路由。
 
@@ -49,11 +55,15 @@ DoD 原文：**基线产出并可重放；D1 开工前以此为门禁。** 仓�
 | 最终重启重放 | `--config playwright.d0.config.ts --update-snapshots=none` | 14 通过，1.2 分钟；每项两个独立上下文 |
 | 哈希核验 | 基线 + 两轮各两次采集 | 14 项均四次哈希一致，共 56 次；逐项值见 manifest |
 
-比较配置是 `threshold=0.005`、`maxDiffPixels=0`。此前零颜色阈值重启检查出现一次圆角边缘取整噪声：移动端详情原始像素有 13 处 RGB 每通道最多相差 1，Playwright 排除抗锯齿后报告 1 像素，导致 12 通过、1 失败、1 未执行。已保留 [实际截图](failures/strict-mobile-issue-detail-actual.png)、[diff](failures/strict-mobile-issue-detail-diff.png) 与 [失败摘录](failures/README.md)，没有修图或更新基线掩盖该次失败。微小颜色阈值只用于视觉比较；用例内两次采集仍要求哈希完全相同。最终两轮恰好所有原始 PNG 哈希一致，不保证未来每次重启都没有该取整噪声。
+这三行分别记录采集、视觉重放和原始数据核验。用例内 `captureSha256[0] === captureSha256[1]` 证明两次原始 PNG 逐字节一致；重启后的 `toHaveScreenshot` 则用容差比较器检验已有基线，**比较器通过不蕴含 PNG 哈希相同**。manifest 的 `identicalAcrossFourCaptures` 是额外比较四个原始哈希的结果，不由视觉通过状态推导。采集附件与重放记录已在本轮再次核对，结果见 [反馈复核记录](evidence/feedback-verification.json)。相同字节的 PNG 在仓库保留一份原始基线及四个哈希，不重复存四份相同图片。
+
+比较配置保持 `threshold=0.005`、`maxDiffPixels=0`。此前零颜色阈值重启检查出现一次圆角边缘取整差异：移动端详情原始像素有 13 处 RGB 每通道最多相差 1，Playwright 默认抗锯齿处理后报告 1 像素，导致 12 通过、1 失败、1 未执行。已保留 [实际截图](failures/strict-mobile-issue-detail-actual.png)、[diff](failures/strict-mobile-issue-detail-diff.png)、[解码指标](failures/strict-pixel-difference.json) 与 [失败摘录](failures/README.md)，没有修图或更新基线掩盖该次失败。`threshold` 是比较器的颜色感知阈值，不是 RGB 通道差值上限；也可能容许其他微小颜色差异。超出比较器阈值的差异像素允许数量仍为零。用例内两次采集继续要求原始哈希完全相同；此次两轮四次哈希也恰好相同，不保证未来每次重启都如此。调整比较参数只处理基线测试的稳定性，**不代表产品视觉、色彩位移或后续 token 迁移已获用户验收**。
+
+本轮还用当前 Playwright `1.61.1` 自带的 PNG 比较器，直接复算保留的 expected / actual：`threshold=0` 仍报告 1 个差异像素而失败，`threshold=0.005` 则通过，但两份原始 PNG 的 SHA-256 不同。这提供了容差依据，也直接证明视觉通过与字节一致是两个不同判断；结果写入反馈复核记录的 `toleranceEvidence`，不修改历史截图或失败结果。
 
 ## 五项必需检查
 
-命令均实际执行，退出码均为 0。完整日志的 SHA-256、命令、结果与摘录见 [checks.json](evidence/checks.json) 和 [checks.md](evidence/checks.md)。
+命令均在前轮实际执行，退出码均为 0。完整日志的 SHA-256、命令、结果与摘录见 [checks.json](evidence/checks.json) 和 [checks.md](evidence/checks.md)。本轮仅修改计划与证据记录，未改配置、测试、锁文件、PNG 或产品输入；复核其哈希及既有运行记录后沿用结果，未声称重新执行五项检查。checks 中 `d1Gate=closed` 为检查记录生成时的历史状态，当前 D0 与 D1a 其他前置的区别见 manifest 和本报告。
 
 | 检查 | 实际结果 | 未执行范围 |
 | --- | --- | --- |
@@ -77,7 +87,7 @@ DoD 原文：**基线产出并可重放；D1 开工前以此为门禁。** 仓�
 
 在仓库根目录执行 [README.md 的 PowerShell 命令](README.md)，会启动已有 mock API 和 Next Web、逐页采集并比对。必须保持对应 Windows、浏览器与字体环境；完整检查的服务配置按既有 CI 设置。Next dev 的正式和 mock 测试应顺序运行，避免同时写入 `apps/web/.next`。
 
-D1 只有在门禁解除后，才可以改 token，并继续执行 `--update-snapshots=none`。差异会生成 expected / actual / diff，读取本目录现有 PNG，不会自动更新基线。视觉差异须人工评审后决定后续资产变更。
+D1a 只有在全部前置通过后才能新增并存槽，不得改根 token 值或迁移消费方；D1b 才按面迁移，并继续执行 `--update-snapshots=none`。差异会生成 expected / actual / diff，读取本目录现有 PNG，不会自动更新基线。视觉差异须人工评审，真实新视觉取舍须用户裁决后才能决定后续资产变更。
 
 打开此 Markdown 在变更评审中的预览按钮即可查看证据与相对路径图片。以下为工作台的桌面与移动基线，其他页面见上表链接。
 
@@ -85,9 +95,17 @@ D1 只有在门禁解除后，才可以改 token，并继续执行 `--update-sna
 
 ![工作台移动改动前基线](win32/mobile-390x844/workbench.png)
 
-## 剩余阻塞与需要的输入
+## 已解除阻塞与已知限制
 
-1. **控制面归属裁决**：当前团队无 WorkMesh MCP 连接，不能创建、写入或核对真实 Project / WorkItem / Agent Session 活动。本轮未改 AGENTS.md、源计划或 ADR 以绕过双轨规则，也未把 Todos 看板记录等同真实 WorkMesh。需要明确的控制面决定；若继续使用真实 WorkMesh，还需可调用连接及匹配的 Project / WorkItem / Session 标识，才能同步本报告并关闭门禁。
-2. **必读文件缺失**：当前工作树及 Git 跟踪文件中没有 `WORKMESH_PRD.md`。已阅读存在的协议、OpenAPI、Schema 入口及相关 ADR。若该文件仍为有效要求，需提供正确仓库路径或明确替代文件；本轮没有杜撰 PRD。
+1. **控制面决定已落盘**：源计划和本目录记录用户批准的本批例外。不再请求真实 WorkMesh 连接，不修改 AGENTS.md 或产品领域规则，不声称真实记录已同步。此前等待控制面裁决的结论已被用户最新批准取代。
+2. **PRD 为已删除文档，陈旧引用不构成采集阻塞**：已自行核对本分支历史，提交 `dae4620366f33136d65e533d85823db49b9a3fe1`（`chore(docs): 移除过时的需求文档`）删除 `WORKMESH_PRD.md`，且该提交是当前 HEAD 的祖先。[2026-08-22 计划第 34 行](../../../../../docs/plan/2026-08-22-agent-connection-runtime-reliability.md) 明确改用 Issues、`AGENT_PROTOCOL.md`、`OPENAPI.yaml`、`SCHEMA.sql` 与 Accepted ADR；[2026-09-24 基线第 62 行](../../../../../docs/plan/2026-09-24-prototype-pi-agent-workbench.baseline.md) 明确修正 AGENTS.md / MANIFEST.json 的陈旧引用、不重造 PRD。输入一致性修正已交 G1；D0 不修改这两份规范、不等待重传、不编造 PRD，也不把陈旧引用列为真实采集或检查阻塞。来源哈希、提交及核验结果见反馈复核记录。
+3. **条件跳过及跨平台限制**：两个 Linux FD/flock 用例与一个真实模型用例没有执行；不会因本条完成记为通过。基线只验证记录中的 Windows/Chromium/字体环境，其他环境及后续视觉变化需另行验证。
 
-原规格的测试清单和 DoD 均保留。已核实的偏差仅为当前暗色默认、旧设置路由与只读夹具 DTO 缺口，以及上述控制面/必读文件缺失；均记录在此，没有扩大到 D1 或整批迭代的产品实现。
+原规格的测试清单和 DoD 均保留。已核实的差异为当前暗色默认、旧设置路由与只读夹具 DTO 缺口、已删除 PRD 的陈旧引用；本批批准的控制面例外已落实，未扩大到 D1 或其他链的产品实现。
+
+## 独立审查入口
+
+- 按 README 的文件与用例映射核对七个面、两个视口和三个测试清单项；检查配置、夹具与产品输入的来源哈希。
+- 分别核对 manifest 的四个原始哈希、用例内两次采集断言、重启视觉比较与 `toleranceEvidence`；不得把容差通过解释成字节一致或用户视觉批准。
+- 核对必需检查原始退出码、历史失败、补验与剩余三个条件跳过，不能把未执行记为通过。
+- 核对源计划的本批批准、PRD 删除证据与现行文档集合；确认 D0 仅交付基线，D1a 的 G1/P1/R1 仍分别验收。本轮没有执行独立审查或合并，待获授权流程处理。

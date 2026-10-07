@@ -13,11 +13,11 @@
     "projectId": null,
     "workItemId": null,
     "synchronized": false,
-    "reason": "团队确无 WorkMesh MCP 连接，控制面归属等待用户裁决；平台 Todo 不等同 WorkMesh WorkItem。"
+    "reason": "本批已获用户批准使用 Todos＋仓库替代双轨记录；未创建或同步真实 WorkMesh 记录，不再等待其连接。"
   },
   "visualStatus": "passed",
   "d1Gate": "closed",
-  "gateReason": "视觉清单与五项必需检查已通过，条件跳过项如实保留；控制面归属待裁决、真实 WorkMesh 记录未同步，且必读 WORKMESH_PRD.md 缺失。详见 verification.md。",
+  "gateReason": "D0 基线清单、DoD 与必需检查已满足；D1a 还依赖 G1/P1/R1，未由本交付验收，不放行其他前置。PRD 陈旧引用不是 D0 采集/检查阻塞。",
   "screenshotCount": 14,
   "independentCaptureCount": 56,
   "browserLaunchArguments": [
@@ -28,7 +28,11 @@
   "comparator": {
     "maxDiffPixels": 0,
     "threshold": 0.005,
-    "captureEquality": "每轮两个独立上下文的 PNG SHA-256 必须相同"
+    "captureEquality": "每轮两个独立上下文的 PNG SHA-256 必须相同",
+    "pairCaptureEvaluation": "仅比较原始 PNG SHA-256，不使用视觉容差",
+    "restartReplayEvaluation": "Playwright toHaveScreenshot 使用 threshold=0.005、maxDiffPixels=0；通过不蕴含哈希相同",
+    "thresholdBasis": "零颜色阈值时移动详情原始 13 个圆角边缘像素每通道最多差 1，比较器报告 1 个差异像素；保留失败证据后选择微小颜色感知容差，也可能容许其他微小颜色差异",
+    "productVisualApproval": false
   },
   "sources": [
     {
@@ -530,5 +534,31 @@
     "succeeded": true,
     "evidence": "evidence/checks.json",
     "remainingConditionalSkips": 3
-  }
+  },
+  "batchExecution": {
+    "controlPlane": "todos-and-repository",
+    "approval": {
+      "approvedAt": "2026-10-07T18:38:00+08:00",
+      "scope": "仅本批使用 Todos 编排和执行记录、仓库存放规格及证据，替代真实 WorkMesh 双轨记录；其余领域、安全、测试约束保持",
+      "source": "用户本轮完整 D0 规格与反馈，已与 Todos #10 当前规格核对",
+      "sourceTodo": "MPhtZiff23B33m9i2equq",
+      "recordedIn": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+      "futureDesignCredentialPermissionAndExternalReleaseRequireSeparateApproval": true
+    },
+    "realWorkmeshSynchronizationRequiredForThisBatch": false
+  },
+  "d0Status": "passed",
+  "reviewStatus": "awaiting_independent_review",
+  "downstream": {
+    "d1a": "IJQA_DfxU0hF5e8L5Xb3v",
+    "d1b": "2j2sxT5wJ-l001efH_meJ",
+    "d1aPrerequisites": [
+      "G1",
+      "P1",
+      "R1",
+      "D0"
+    ],
+    "otherPrerequisitesVerifiedByThisDelivery": false
+  },
+  "feedbackVerification": "evidence/feedback-verification.json"
 }
