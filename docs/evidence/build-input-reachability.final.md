@@ -28,7 +28,7 @@
 | `docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md` | 16523 | `ddf24ece241d40997adec9297229aa34b2abb91edc71426b47febdf19fb8350f` |
 | `docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md` | 14065 | `a6719cadd221f426f79717946915566128bf9e749c995ed731f7e22c2a29935a` |
 | `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md` | 65613 | `0605c6d97695b0691734a85d1255bfac31f3d82ddfb5c3e9b89232e25d4ffd57` |
-| `docs/evidence/build-input-reachability.md` | 15741 | `af4678097ea70ecf687be73b3d904e1c192a94740c36e0e5e0d43fa7ec34ab12` |
+| `docs/evidence/build-input-reachability.md` | 15949 | `54b1647ba1af2c803d83d90da30f9617693db5ecabd9865a62275ffc2b96e9c5` |
 | `scripts/verify-build-input-reachability.mjs` | 6844 | `bdb2e2ad79c6eeacc8b4b54dfa5285ef2b52342843f23c8645065246a1de5704` |
 | `scripts/verify-build-input-reachability.test.mjs` | 1524 | `44cb9932fb4213269450ee5626aebd10bcc2360fb869ec9dd035a772d52ef993` |
 - `main@4b287b4` 的 CI #353 / run `37626312217` completed/success，8/8 job 成功；它是前次 main 快照，不能代表当前 `origin/main=36c7709` 的 CI。前序证据提交 `70a94f21509b49f1d5a70cbb61a0af1729ee9ba8` 已提交；当前 main 整合仍在本分支 merge 流程中，本分支 PR/CI 待触发。
