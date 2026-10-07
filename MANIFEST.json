@@ -1,7 +1,7 @@
 {
   "package": "WorkMesh 当前权威项目与交接文档",
   "version": "0.1",
-  "snapshot_date": "2026-10-07",
+  "snapshot_date": "2026-10-08",
   "hash_policy": "MANIFEST 中的 bytes 与 SHA-256 对应本次生成时的工作树原始字节；提交 blob 字节由 G1 可达性脚本另行核验。",
   "notes": [
     "WORKMESH_PRD.md 已由 dae4620366f33136d65e533d85823db49b9a3fe1 有意删除，不恢复旧 PRD。",
@@ -81,8 +81,8 @@
     },
     {
       "name": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
-      "bytes": 70077,
-      "sha256": "97404029745fe5b410b5bf991afbae0735765453d3cfb520d38aa5555eaf5bfe"
+      "bytes": 73811,
+      "sha256": "cd1eccdb553ab584fc555e3e37ab09b4a7e8fa80b8bb80de5b2ffd12da01e3b3"
     },
     {
       "name": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md",
@@ -96,13 +96,13 @@
     },
     {
       "name": "docs/evidence/build-input-reachability.md",
-      "bytes": 15741,
-      "sha256": "af4678097ea70ecf687be73b3d904e1c192a94740c36e0e5e0d43fa7ec34ab12"
+      "bytes": 15957,
+      "sha256": "998d64a84d992d36b816badb9a3403f4306333e5e5c730d9d05e4658d395fa94"
     },
     {
       "name": "scripts/verify-build-input-reachability.mjs",
-      "bytes": 6844,
-      "sha256": "bdb2e2ad79c6eeacc8b4b54dfa5285ef2b52342843f23c8645065246a1de5704"
+      "bytes": 8155,
+      "sha256": "e57c33d288f69f5c16c304d97e2643896147b674f48e6072a10c1beeebfe58cf"
     },
     {
       "name": "docs/references/todos-analysis/reviews/todos-review.md",
@@ -113,6 +113,56 @@
       "name": "scripts/verify-build-input-reachability.test.mjs",
       "bytes": 1524,
       "sha256": "44cb9932fb4213269450ee5626aebd10bcc2360fb869ec9dd035a772d52ef993"
+    },
+    {
+      "name": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+      "bytes": 49643,
+      "sha256": "c74135dbed77e918b18b8a15b8e554a4f8dd9bdac548e1bd20eec7928eec7f2a"
+    },
+    {
+      "name": "docs/adr/0078-review-round2.md",
+      "bytes": 24657,
+      "sha256": "8d1f0fd90a005b6f2aa0fd3ae7bcafaadc873a5cb75cb8507a9c83699c48f660"
+    },
+    {
+      "name": "docs/CI.md",
+      "bytes": 13539,
+      "sha256": "361473cedb1ddd1bfb12395d546cc9394fb5d79e5c132a3398a9c0b26d82da6f"
+    },
+    {
+      "name": "docs/plan/2026-10-08-ci-and-test-efficiency.md",
+      "bytes": 7524,
+      "sha256": "3b6ae0279157d699cbec756d69468ca68a576a07b512949e48d219a0e3a278c7"
+    },
+    {
+      "name": "docs/plan/2026-10-08-ci-critical-path.md",
+      "bytes": 2756,
+      "sha256": "a20a553cf9c22dd7aa5b941d1a4ec79e22a93671cc6b0ad963b4d3b327982c35"
+    },
+    {
+      "name": "docs/evidence/build-input-reachability.current/raw-evidence.zip",
+      "bytes": 2339178,
+      "sha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b"
+    },
+    {
+      "name": "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
+      "bytes": 140663,
+      "sha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162"
+    },
+    {
+      "name": "docs/evidence/build-input-reachability.current/raw-evidence-reading.md",
+      "bytes": 1743,
+      "sha256": "92372f2609ea3240977d92539c1b9bf4e726c9b64d3ee0994aefc7d22e74b545"
+    },
+    {
+      "name": "scripts/verify-raw-evidence-archive.mjs",
+      "bytes": 9722,
+      "sha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131"
+    },
+    {
+      "name": "scripts/verify-raw-evidence-archive.test.mjs",
+      "bytes": 4852,
+      "sha256": "37646f2f6efa14ed18e269a575e9cf8f9b7bdd1d0b232b519defebf4c2bf60f2"
     }
   ]
 }

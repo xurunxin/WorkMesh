@@ -1,9 +1,10 @@
 <!-- WM-ACTIVATE-20261007:ROADMAP -->
 # 工作台就绪面、可证明的接入恢复、一个通知渠道与国内模型预置
 
-状态：Proposed；**已落地**：D0 视觉基线（`apps/web/e2e/baselines/d0/`；视觉基线门禁已由 PR #195、独审及 CI #352 通过并合入 main，通用 mocked-dev 失败仍待独立处置）、G1 输入可达性（`scripts/verify-build-input-reachability.mjs`；P1 十六行证据台账已冻结，真实隔离 build 已在 base `419a1d7…` 完成 44/44 文件、16/16 台账、退出码 0，最终门禁待独立复核）、参考材料入库（`docs/references/todos-analysis/`）。**F 链**：总管 / agent graph（ADR 0078），F2 的自主分派方向已定（委派内自主分派 + 人可修订）；其授权契约需按第二轮审查补齐
+状态：Proposed；D0 视觉基线门禁已完成；G1 在真实初始 base `419a1d7`、历史整合点 `4b287b4` / `36c7709` 的 44 项输入读取已通过，最终门禁待当前交付分支独立复核、最新 required CI 全通过及证据合入。通用 mocked-dev 失败仍待独立处置，D1 门禁待 G1/P1/R1 验收。P1 十六行事实台账已冻结，参考材料位于 `docs/references/todos-analysis/`。**F 链**：总管 / agent graph（ADR 0078），F2 的自主分派方向已定（委派内自主分派 + 人可修订）；其授权契约需按第二轮审查补齐
 （撤权传播、与 0062 的合取规则、两层能力上限、用量台账）**并在 F0 实施前冻结**；
-**实现**顺序以 F0 → F1/F2 → F3 为准。**F5 的收件恢复已定为有审计的重新投递**（ADR 0078，合并提交 `dde2a1a`），不再是待决门禁。共六条链（A/B/C/D/F），其余门禁独立验收。本稿经 gpt-6-astra / high 多轮对抗式审查，
+**实现**顺序以 F0 → F1/F2 → F3 为准。**F5 的收件恢复已定为有审计的重新投递**（ADR 0078，合并提交 `dde2a1a`），不再是待决门禁；R1 全批规格同步仍须独立验收。共六条链（A/B/C/D/F），其余门禁独立验收。本稿经 gpt-6-astra / high 多轮对抗式审查，
+
 第一版的结论与被撤回的主张记录在
 `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md`。
 
@@ -50,16 +51,46 @@ P1 冻结与 G1 材料合入不代表 G1 最终门禁通过。真实隔离 build
 验证器退出码 0；Git blob、提交字节 SHA-256 和工作树字节 SHA-256 见
 `docs/evidence/build-input-reachability.final.json`。该结果是初始 base 的有效读取证明，不能改写成后续 main。
 
-D0 经 PR #195 合入 main 后，Chief 于 2026-10-07 21:09 核实最新 main 为
+D0 经 PR #195 合入 main 后，Chief 于 2026-10-07 21:09 核实 main 快照为
 `4b287b4e9892bfb4545dbbff94d04f45633c3a64`（包含 D0 提交
-`768bbd82fcc52a873168b39a8382d2f14c928abc` 与 G1 材料 main `419a1d7…`）。本分支现以 Git merge
-实际包含该 main 历史及 D0 证据文件，保留 D0 计划/清单增量与 P1 冻结、D1a/D1b 拆分；
-主计划和根清单的整合后哈希见最终证据。D0 独审及 CI #352（run `37623264959`，8/8）通过，
-main push CI #353（run `37626312217`，8/8）通过。此整合不会改写 `419a1d7` 初始 build 证明。
+`768bbd82fcc52a873168b39a8382d2f14c928abc` 与 G1 材料 main `419a1d7…`）。原 PR #196 当时实际整合的
+`origin/main` 为 `36c7709a8bd49c640b8dbfa04a09cfb777f943c8`；在该提交的精确 detached worktree
+重跑输入验证，44/44 文件、P1 16/16、0 errors。计划状态行的合并冲突已解决，保留 D0 计划/清单增量、
+P1 冻结、D1a/D1b 拆分和 main 新增的 ADR 0078/F 链；最终合并计划和根清单的哈希见最终证据。
+D0 独审及 CI #352（run `37623264959`，8/8）通过，历史 main push CI #353（run `37626312217`，8/8）通过。
+此整合不会改写 `419a1d7` 初始 build 证明。
 
-本轮必需本地检查已完成（命令、退出码和结果见 `docs/evidence/build-input-reachability.final.md`）；
+原 PR #196 的本地必需检查已完成（历史命令、退出码和结果见 `docs/evidence/build-input-reachability.final.md`）；
 本分支 merge 提交后的 PR/CI 与用户指定的独立复核仍待完成。完成前依赖输入的任务保持“待验证”，
 不放行 #3 或相关实现。D0 视觉基线门禁完成不解除 G1 最终/R1 门禁。
+
+当前交付分支为 `tds/conv-01a116f7-1027-7c75-90df-32ebc5488752`，保留原证据 head
+`af583f71f310e68ade588f9922694dfd8aba7a65`、前次 main
+`dcf355735341bc6daac4101b8c7d0efbaabbe764`、`dde2a1a6926040c35e9d85d89fed6238572f0f25`
+及最新 main `3cdfb9ea02496261a3f68369167165b76d953afa` 的历史。PR #197 的四文件文档增量完整保留，
+不沿用旧“仅六文件差异”的交付条件。最新 main 的精确 detached 读取 checkpoint、另读的
+ADR 0078 / `0078-review-round2.md` / `docs/CI.md` 和本轮检查另记于最终证据的当前交付段，
+不覆盖 `419a1d7`、`4b287b4`、`36c7709` 历史 JSON 记录。原 PR #196 已由用户合入 main（`3cdfb9e`），本任务未关闭或改动该 PR；
+原独审及 CI #357 不代替当前分支独审或最新 PR 的 required CI。当前 G1 最终门禁仍关闭。
+
+本轮按用户允许 rebase 最新 CI 主线的授权对齐精确 `f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9`（PR #199）。
+标准工具没有安全重写已推送分支的 rebase/lease 接口，正常无冲突整合该 main，保留原 `6dbcf33` 及全部合并历史。
+最新 CI 的实际范围、选中任务、输入 checkpoint 与检查版本另记最终证据的 `ciAlignment`；
+原始日志和失败上下文尾随空白可能阻止 `changes` 硬门禁，按原字节保留并记录，不改 CI 规则或豁免。
+旧 run `37656693023` 仅对应 `6dbcf33`；本轮回 review 定向独审后才恢复当前 PR #200 门禁，G1/R1 不提前放行。
+
+当前producer修订已正常整合PR201精确main `70199df743da754068831d709a1ae8c428bd2bb0`。
+按本轮明确授权实施方案A的ZIP/双字节索引和安全读取器；历史日志与checkpoint保持，原件不格式化。
+根集成首败现场不可恢复，带现场采集的标准根命令用于进一步诊断；未复现不当作失败分类。
+PR201新版E2E、正式selection/最新headCI和定向独审仍需完成；本轮不merge，G1/R1门禁保持关闭。
+
+F5 决策来源：用户在 [R1 #3](todo:q_1zKPuGsG-2ZRUwOwQx4) 原问题卡
+于 2026-10-07 23:29:53（Asia/Shanghai）选择“有审计的重新投递”（来源：本次 G1 修订 spec）。
+决定已交 R1，ADR 0078 已随 PR #198 记录；ADR 0037 与全批计划的规格同步仍由 R1 单独验收。
+PR #198 仅改 ADR 0078，本次无冲突整合其原文并新增最新 main 读取 checkpoint；
+本任务按本轮独审要求选择性吸收用户提交 `08ce81a6738407c90cf2629fbb70088a4a899841`
+中的 F5 计划修订：正文、依赖图、风险表及规格分歧均采用已决的有审计重新投递契约。
+保留当前 G1 门禁与完整交付历史；不在 G1 修改 ADR 0037 或实现恢复协议。
 
 交接原件及其引用的测量 JSON、截图索引和 28 张截图保存在 `docs/references/todos-analysis/`；#19 完整审查原件位于
 `docs/references/todos-analysis/reviews/todos-review.md`。来源相对路径、字节数和 SHA-256 见 `SOURCE-MANIFEST.json`。
@@ -487,9 +518,9 @@ G1、P1、R1、D0；D1b 在 D1a 后执行。下列原 D1 清单是两阶段的�
 ## F 链 — 总管 / agent graph（ADR 0078）
 
 **前提是「先证明能协调，再谈长期记忆」。** 0078 与 ADR 0062 是**并行**关系而非收窄：
-总管委派和自主策略都是「常设、有界、可撤销」的授权。**它可能修订 ADR 0037 的收件箱
-恢复语义**，而这一处**必须在实现前由人决定**（复用非终态会话 vs. 加审计过的
-successor/re-delivery）。
+总管委派和自主策略都是「常设、有界、可撤销」的授权。**收件箱恢复已由 owner 决定为
+有审计的 successor/re-delivery**（ADR 0078，`dde2a1a`）；ADR 0037 的原约束逐字保留，
+其指向说明仍由 R1 单独同步与验收，不再把恢复方案交给实现者二选一。
 
 **分派模型的最终口径（owner 决定，2026-10-07）**：**总管在委派范围内自主分派**，
 人通过**修订**（改范围、停任务、改任务本身、撤换任命）介入，**不是逐项批准**。
