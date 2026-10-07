@@ -4,7 +4,7 @@
 
 - 用户在本轮报告 `origin/main` tip 为 `660c74a6247544ffac64e7ef8f968d1025b2a668`（PR #192 merge），本地只读核对该 commit object 的父提交为 `32789cec4d50db0b85a63d91049cc425d9e917a2` 与 `735578d8d0733e04cae5640cedfaf0c6181391c7`。该 merge 已包含 P1 完整台账；合并提交中的主计划 blob 为 `c3ec3155dca3329d61c1c5eb864878fc4a6cc0c1`，提交字节 42780，SHA-256 `8382ccd0f58a0f28b77b6e6c45a08fe48968262f92681c5d19048089ba5bcd2b`。G1 会话分支变更尚未合入该目标分支。
 - `32789…` base 中新输入包**不可读**；G1 会话分支快照 `5fbe891035f856fdd5046afb76b16f90033d431f` 已有输入材料及修订后的验证脚本，但这两个 base 均不能代替 G1 材料合入后的实际隔离 build。P1 已合入；G1 实际 base 正文读取与独立 build 复核仍待执行。
-- 最终门禁状态：**待验证**。当前没有本批改动合入后的真实隔离 build 正文读取证据，也没有独立复核签字。
+- 最终门禁状态：**正文读取与输入校验通过；待当前变更 CI 和独立复核**。真实隔离 build 在 base `419a1d7af90c09cb9364819977f32ec59cf86f87` 完成 44 个文件读取，零错误并确认 16 条 P1 台账；逐文件输出见 [`build-input-reachability.final.json`](build-input-reachability.final.json)，执行记录见 [`build-input-reachability.final.md`](build-input-reachability.final.md)。当前变更的 CI 尚未运行完成，且本轮没有独立复核签字，因此仍不得关闭最终门禁。
 - 批次控制面：用户于 2026-10-07 18:38（Asia/Shanghai）批准本批使用 Todos 编排、仓库保存规格和证据。此例外只适用于本批，不创建、不声称存在 WorkMesh Project/WorkItem，也不改 WorkMesh 产品领域控制面；仅替代 `AGENTS.md` 的双轨记录要求，其他约束有效。
 
 ## 基点、正文和哈希
@@ -66,8 +66,8 @@ P1 的 16 条代码事实台账是**同一路径的另一个提交版本**，不
 
 1. 原件入库后检查来源文件、仓库工作树副本和 `git cat-file blob` 的字节长度/SHA-256；在 `.gitattributes` 规则下应逐字节相等。`SOURCE-MANIFEST.json` 是来源值清单。
 2. #2 的 `run_review` 是 P1 自身的独立审查关口；第二轮独立审查已批准合并，#2 已 done。PR #192 在 merge commit `660c74a6247544ffac64e7ef8f968d1025b2a668` 合入修订提交 `735578d8d0733e04cae5640cedfaf0c6181391c7` 与 16 条事实台账。PR CI check 344 / run `37614969993` 的 8 个 job 全部 success。#3 是 P1/G1 冻结后的独立规格裁决，不是 P1 合入前置。旧 `.review.md` 不替代 P1 台账。
-3. 材料和一致性修正合入后，在同一 Todo #18 继续启动至少一次真实隔离 build。build 内用 `git rev-parse HEAD` 记录实际 base，执行 `node scripts/verify-build-input-reachability.mjs <base-commit>`；脚本逐份核对 `git rev-parse <commit>:<path>`、`git cat-file blob`、`git hash-object --path=<path> <path>`，并分别输出提交 blob 字节与工作树字节的 SHA-256。逐份阅读完整正文；所有输入和 P1 16 条检查通过后由独立复核者签字并追加证据。
-4. 本轮未运行真实隔离 build，不能预填其 base/hash，也未完成独立 build 复核。验证脚本随本轮变更提交后可在 build 中使用；脚本将拒绝没有输入包、工作树缺少必读正文或缺少 P1 16 条表的 base。
+3. 材料和一致性修正合入后，在同一 Todo #18 启动真实隔离 build。2026-10-07 本轮实测 base 为 `419a1d7af90c09cb9364819977f32ec59cf86f87`，执行 `node scripts/verify-build-input-reachability.mjs 419a1d7af90c09cb9364819977f32ec59cf86f87 --json-out docs/evidence/build-input-reachability.final.json`；退出码 0，逐份核对 `git rev-parse <commit>:<path>`、`git cat-file blob`、`git hash-object --path=<path> <path>`，并分别输出提交 blob 和工作树字节长度、SHA-256。完整结果与正文检查范围见最终记录及 JSON。
+4. 真实 build 正文读取和 P1 数量核验已通过；独立复核签字、当前变更 CI 和最终门禁仍待完成。不得将这些待办描述成已通过。
 5. 五项 `pnpm` 仓库检查运行于基于 `ef264842a8e0dcd215151fd2e2d7c0dc7b5d6cdd` 的本轮工作树，时间早于最后一次 verifier 行尾边界微调。该微调后重跑了可达性脚本 3/3 负向/归一化单测、`pnpm lint`、`pnpm typecheck`、`git diff --check` 和清单哈希核验；没有改动应用或 TypeScript 包源码。此 SHA 是检查基线，不是包含本轮改动的最终提交。结果如下：
 
 | 命令 | 退出码 | 结果摘要 |

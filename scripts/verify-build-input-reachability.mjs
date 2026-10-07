@@ -2,7 +2,7 @@
 
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -85,6 +85,7 @@ function inspectCommittedFile(commit, file, expectedSha256, expectedBytes, type,
       committedBytes: blob.length,
       committedSha256,
       worktreeGitBlobId: worktree.worktreeGitBlobId,
+      worktreeBytes: worktreeBytes?.length ?? null,
       worktreeSha256: worktree.worktreeSha256,
       committedReadable: isReadable(blob, type),
       worktreeReadable: worktree.readable,
@@ -146,7 +147,18 @@ function main() {
     errors.push(`P1 台账核验失败: ${error.message}`);
   }
 
-  console.log(JSON.stringify({ commit, sourceManifest: sourceManifestPath, checkedFiles: results.length, p1Assertions: 16, errors, results }, null, 2));
+  const report = { commit, sourceManifest: sourceManifestPath, checkedFiles: results.length, p1Assertions: 16, errors, results };
+  const json = `${JSON.stringify(report, null, 2)}\n`;
+  const outputIndex = process.argv.indexOf('--json-out');
+  if (outputIndex >= 0) {
+    const outputPath = process.argv[outputIndex + 1];
+    if (!outputPath) {
+      console.error('--json-out 后必须提供仓库相对输出路径');
+      process.exit(2);
+    }
+    writeFileSync(outputPath, json, 'utf8');
+  }
+  process.stdout.write(json);
   if (errors.length > 0) process.exit(1);
 }
 
