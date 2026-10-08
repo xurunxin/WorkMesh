@@ -1,33 +1,5 @@
 # [A1] 就绪投影：三态查询，零迁移（Runner 只能 unknown）
 
-## 当前实施口径（保留下文历史来源与验收）
-
-用户已确认显式查询参数、当前资源范围与拒绝审计例外。完整获批计划见
-`docs/plan/a1-configuration-readiness.md`，精确来源与正文哈希见同名目录的
-`source.json`；本轮实施与结果映射见 `docs/reviews/a1/`。历史来源 SHA、R1
-快照与索引生成时的状态不代表当前全文哈希，不覆盖旧记录。
-
-接口 `GET /api/v1/workbench/configuration-readiness`，operationId
-`getConfigurationReadiness`，Human-only；必填 `teamId`、
-`workKind=repository|non_repository`，可选 `projectId`、`workItemId`。
-工作意图只影响查询，不持久化。指定资源只检查对应仓库上下文；WorkItem 包含
-其直接与所属 Project 上下文；两个参数须归属一致。未指定资源才查询所选 Team
-至少一个 Project。不存在、删除、不可见和越界资源统一 `NOT_FOUND`，非仓库
-查询也校验资源范围；其他项目配置不能满足当前已指定任务。
-
-固定 `checks.model/agent/repository/runner`，每项有 `applicability`、`state`、
-`reasonCode`。适用项为 `applicable` 与三态；仓库不适用为
-`not_applicable`、`state=null`、`reasonCode=non_repository_work`。
-Runner 恒 `unknown/not_observable`。缺配置与不可见配置统一 `blocked/unmet`，
-不泄露存在性、名称、数量或标识。查询同一 SELECT 重验当前身份/会话/Team 权限，
-不缓存事实；后续撤权再读立即收敛。投影不提供总体可运行值，不形成激活许可。
-
-成功、重复、参数错误、数据库查询故障零数据库写入；鉴权拒绝只保留既有
-`authorization_denials` 安全审计。这是非零安全审计例外，沿用 Accepted
-全局规则，不 suppress。无业务状态、Session、receipt、event、outbox 写入，
-无 schema、表和迁移。原测试七项、九类适用性与源 DoD 全部保留并映射，未运行
-不得填通过；独立复核与 Chief 最终确认仍须实际完成。
-
 来源卡：[#8](todo:Hxr1xIdh4poZp3F5laGrT)；来源 updatedAt：2026-10-07T15:23:24.979Z；原文 UTF-8 SHA-256：`8dfbbaa305dfb679b4831ac99c7ee726b32a8491844cf9c289a1fbd4d8180d34`。完整原文与读取来源见 execution-inputs.json，非事务快照。
 
 withPlan: true；owner：A1 执行者；源状态：todo；同步：待Chief读回核验。
@@ -40,7 +12,7 @@ withPlan: true；owner：A1 执行者；源状态：todo；同步：待Chief读�
 
 ## 定向验收责任
 
-personal/Team/跨workspace 隔离、撤权实时变化；empty/active/disabled 组合；非仓库项 not_applicable；unknown 不误判 blocked；重复GET与失败GET零写入。
+personal/Team/跨workspace 隔离、撤权实时变化；empty/active/disabled 组合；非仓库项 not_applicable；unknown 不误判 blocked；重复GET与失败GET零领域写入；鉴权拒绝保留用户批准的既有authorization_denials审计例外。
 
 测试目标：`apps/api/integration/configuration-readiness.integration.test.ts`（待创建）。九类适用性、全部原测试/DoD去向见 test-coverage.json；未运行不填通过。
 
@@ -81,6 +53,17 @@ personal/Team/跨workspace 隔离、撤权实时变化；empty/active/disabled �
 
 requires：#1、#2、#18、#3；最终验收 additionally requires：无。
 
-无新增需求裁定，依赖及审查门禁保持。
+本todo原问题已有用户13:34–13:36明确答复，详见末尾同步；依赖及审查门禁保持。
 
 DoD：上面完整源DoD与定向断言全部满足，适用必需检查成功，证据落盘、独立复核及Chief确认；不得以接口存在或历史CI冒称新组合已验收。阶段owner由Chief派发前落实到实际执行者，角色不冒称已任命某agent。
+
+## 总管同步与当前门禁（2026-10-08，Asia/Shanghai）
+
+来源：已独审并合入的 PR203，main `9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7`，第二 parent 为审核 head `550dead055689154359a3406dfce4f0c91c1dad3`，两者 tree 一致；该 head CI383 十项检查全部成功。G1/P1/D0/R1 已完成，本卡仍按上文 requires、阶段验收及授权边界执行。正文中的源状态、待同步说明是文件生成时的历史元数据，不代表当前门禁仍关闭。
+本卡完整规格来自 `docs/plan/activation-task-specs/08.md`；完整原文快照为 `docs/reviews/r1/execution-inputs.json`，逐类测试/原测试与 DoD 去向为 `docs/reviews/r1/test-coverage.json`，阶段和依赖映射为 `docs/plan/activation-task-specs/index.json`。总管同步前复读本卡全文与源哈希一致；仓库索引的 syncStatus 保留生成时状态，不声称已写回仓库或真实 WorkMesh。新增范围、真实方案分歧、权限或仓库外发布仍须另批。
+
+## 用户原问题答复同步（2026-10-08 13:39，Asia/Shanghai）
+
+来源：本todo原问题卡13:36用户答复：「显式查询参数（推荐）」「限定当前上下文（推荐）」「保留拒绝审计（推荐）」。按原卡推荐说明workKind=repository|non_repository只作用查询不持久化；指定projectId/workItemId时仓库限定该上下文，未指定才所选Team查询；成功/重复/错误与故障均零领域写入，鉴权拒绝保留既有authorization_denials安全审计。该安全审计例外是用户明确选择，不要求修改Accepted全局鉴权规则；查询仍不变成运行授权，Runner恒unknown。
+
+本卡源SHA/PR203同步状态保留历史，不冒当前全文哈希或仓库已同步。当前main包含D1a actual1078bbc，开工再复读最新main影响，正常整合已落地增量。独审前须提供完整中文计划文件和当前savedplan来源/精确正文hash供另一agent读取，仅平台doc链接不能代可审全文；允许仅计划文档前置提交，产品编码仍须规划独审及Chief确认。实施前同步受影响ADR/仓库spec、保留历史源与完整验收，未提供的平台版本字段如实null不猜、不为自引用重复存新计划。

@@ -1,0 +1,18 @@
+{
+  "sourceDigest": "0ca18a5edf6734d2bc4535e55e2747daef92b857b0a54abd0a9af5603382c229",
+  "result": {
+    "failed": 1,
+    "didNotRun": 66
+  },
+  "failedLocation": "apps/web/e2e/stage0.spec.ts:204",
+  "assertion": "Current team 包含 Stage 0 delivery",
+  "assertionTimeoutMs": 10000,
+  "teamCreation": {
+    "correlationId": "9823cf69-7763-4bff-a005-4b3609b969bc",
+    "startedAt": "2026-10-08T10:10:52.350Z",
+    "endedAt": "2026-10-08T10:11:02.343Z",
+    "statusCode": 200,
+    "responseTimeMs": 9992.931799999998
+  },
+  "interpretation": "失败发生在新建 Team 列表更新窗口；响应耗时接近既有断言期限。仅为时序证据，未定位延迟根因，不改产品或超时。首败保全后按同一源码完整重跑。"
+}

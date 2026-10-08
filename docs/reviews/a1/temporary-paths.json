@@ -1,0 +1,23 @@
+{
+  "paths": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\web\\.next",
+      "exists": true,
+      "purpose": "本轮Next开发服务编译临时产物，服务结束/证据保全后删除"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\node_modules",
+      "exists": true,
+      "purpose": "当前构建依赖，保留以支持后续审查修复；不删除共享pnpm store"
+    },
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-a1-01a11ac2-playwright",
+      "exists": true,
+      "purpose": "本轮Playwright报告/输出与.auth夹具路径；保存脱敏测试报告后删除，凭据不归档"
+    }
+  ],
+  "previousWorkspace": "C:/Users/xurx/.tds/workspaces/01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+  "previousWorkspaceReason": "用户要求保留dirty原件；尚未实际合入main，禁止删除/force清理",
+  "dedicatedImagesCreated": [],
+  "configuration": "夹具仅通过Node子进程env注入，无系统/用户配置修改；无Team secrets操作"
+}

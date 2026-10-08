@@ -111,6 +111,7 @@ import { registerAutonomousControlPlaneRoutes } from "./autonomous-control-plane
 import { registerWorkbenchLlmConnectionRoutes } from "./workbench-llm-connections.js";
 import { registerWorkbenchConversationRoutes } from "./workbench-conversations.js";
 import { registerWorkbenchRunnerRoutes } from "./workbench-runner.js";
+import { registerConfigurationReadinessRoutes } from "./configuration-readiness.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -417,6 +418,16 @@ export const buildApp = (options: {
     )
       return;
     const coordinationToken = header(request, "x-workmesh-installation-token");
+    // 身份解析会刷新凭据并创建/续期 Coordination Session；Human-only
+    // 策略必须先拒绝此凭据类型，避免失败的只读请求产生领域写入。
+    if (coordinationToken !== undefined) {
+      const policy = policyForRequest(request);
+      if (policy.authentication === "human_session")
+        throw new DomainError("FORBIDDEN", "Installation credentials are not allowed for this route", {
+          authorizationStage: "identity",
+          policyId: policy.policyId,
+        });
+    }
     const requiresCoordinationToken = request.routeOptions.url
       === "/api/v1/agent-connections/current-identity";
     if (coordinationToken || requiresCoordinationToken) {
@@ -1223,6 +1234,7 @@ export const buildApp = (options: {
   registerWorkbenchLlmConnectionRoutes(app, { db, meta: commandContext, header, paginator });
   registerWorkbenchConversationRoutes(app, { db, meta: commandContext, header, paginator });
   registerWorkbenchRunnerRoutes(app, { db, meta: commandContext, header });
+  registerConfigurationReadinessRoutes(app, { db, features });
   registerAgentConnectionRoutes(app, {
     db,
     webOrigin: config.WEB_ORIGIN,

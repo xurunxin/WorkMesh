@@ -1,0 +1,494 @@
+{
+  "capturedAt": "2026-10-08T10:20:39.945636Z",
+  "containers": [
+    {
+      "volumes": [
+        "7769964528fabc6d6f263d68c2b8c69d48463a943c67af41298ce10dbc9a0d48"
+      ],
+      "name": "wm-a1-review-01a11ac2-pg",
+      "removed": true,
+      "reason": "本轮独有测试服务；日志先保全再移除；共享镜像保留",
+      "stopped": true,
+      "imageRetained": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "id": "6f9c72d87c8f4e50db2563a481e82e5473f5c4112f201d0974dfb7832c4f1151",
+      "volumesRemoved": true
+    },
+    {
+      "volumes": [
+        "596941b5dae39fbeb5a33ab96638d1b3095a8cb0d0f5ae27a56bb47c8d0269f1"
+      ],
+      "name": "wm-a1-review-01a11ac2-redis",
+      "removed": true,
+      "reason": "本轮独有测试服务；日志先保全再移除；共享镜像保留",
+      "stopped": true,
+      "imageRetained": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "id": "726797bd68526bc3299c31f0787b47904214ae4f6b2a83ee3bf4626ab34ae54d",
+      "volumesRemoved": true
+    },
+    {
+      "volumes": [
+        "7091877f3b409de70d6c50da6d2fc8a8a54d43c30de765381d76250127a11662"
+      ],
+      "name": "wm-a1-review-01a11ac2-s3",
+      "removed": true,
+      "reason": "本轮独有测试服务；日志先保全再移除；共享镜像保留",
+      "stopped": true,
+      "imageRetained": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "id": "9bcb02ed887d60d154128b62cf8d5f389ae5840ae1ad507f0d52bdeca57c2a54",
+      "volumesRemoved": true
+    }
+  ],
+  "temporaryPaths": [
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-a1-01a11ac2-playwright",
+      "existedBefore": true,
+      "reason": "本轮创建且已闲置；必要日志/首败及最终结果已保全",
+      "absentAfter": true,
+      "operation": "Remove-Item -LiteralPath -Recurse"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\web\\.next",
+      "existedBefore": true,
+      "reason": "本轮创建且已闲置；必要日志/首败及最终结果已保全",
+      "absentAfter": true,
+      "operation": "Remove-Item -LiteralPath -Recurse"
+    },
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-IJpWzG",
+      "existedBefore": false,
+      "reason": "本轮创建且已闲置；必要日志/首败及最终结果已保全",
+      "absentAfter": true,
+      "operation": "Playwright 已自动清理；复查不存在"
+    },
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-se3TKT",
+      "existedBefore": false,
+      "reason": "本轮创建且已闲置；必要日志/首败及最终结果已保全",
+      "absentAfter": true,
+      "operation": "Playwright 已自动清理；复查不存在"
+    }
+  ],
+  "processes": [
+    {
+      "creationDate": "2026-10-08T10:10:02.028443Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 63012,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:02.051829Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 7384,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:02.260296Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 34176,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:02.279916Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 45316,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:02.470828Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 58420,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:02.502738Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 59188,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:02.571051Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 49280,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:02.786858Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 59736,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:02.851145Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 22616,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:03.081692Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 57520,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:03.101591Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 51832,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:03.291158Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 39584,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:03.323608Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 30316,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:03.763967Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 41976,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:03.792233Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 47320,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:04.013601Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 57792,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:04.035227Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 58344,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:04.260106Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 57732,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:04.294405Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 59628,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:04.375609Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 41188,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:04.525407Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 26716,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:06.693968Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 45436,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:06.722976Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 53380,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:06.950798Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 55252,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:06.970268Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 61996,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:07.165375Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 40596,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:07.201625Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 47416,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:07.851732Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 62456,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:40.97555Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 30812,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:43.359472Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 38880,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:43.478026Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 7072,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:43.530979Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 42388,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:43.615082Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 42516,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:10:43.616654Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 31372,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:52.876606Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 13620,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:52.897935Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 42260,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:53.118222Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 50008,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:53.13685Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 45392,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:53.317432Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 48404,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:53.345257Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 45996,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:53.405161Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 2912,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:56.56744Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 46120,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:56.678959Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 32828,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:56.905885Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 11944,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:56.924168Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 60008,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:57.114844Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 10720,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:57.157616Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 10896,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:57.596471Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 49348,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:57.633482Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 29288,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:57.87917Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 21484,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:57.902495Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 30960,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:58.122813Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 36600,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:58.154431Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 40796,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:13:58.23449Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 56004,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:14:00.534842Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 40260,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:14:00.567776Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 19960,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:14:00.825559Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 57072,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:14:00.847813Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 28760,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:14:01.061832Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 39404,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:14:01.099398Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 61512,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:14:01.908798Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 50928,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:15:04.556511Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 52292,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:15:04.94776Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 49460,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:15:05.06278Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 58472,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:15:05.104534Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 61836,
+      "ended": true
+    },
+    {
+      "creationDate": "2026-10-08T10:16:26.151467Z",
+      "operation": "正常测试退出后按 PID＋创建时间复查，未强杀其他进程",
+      "pid": 46952,
+      "ended": true
+    }
+  ],
+  "retained": [
+    "当前构建与依赖：仍需独审及后续修复",
+    "旧 dirty workspace：未证实实际合入 main、成果全部保全及无人使用，不移除",
+    "共享基础镜像和 bridge 网络：未创建专用品，不清理",
+    "其他任务资源和持久业务数据：不操作",
+    "既有 .turbo/dist 与当前依赖：当前构建复核仍需，含既有增量，不作未知归属递归删除"
+  ],
+  "configuration": "环境仅注入子进程，未改系统配置",
+  "logCaptureProcesses": [
+    {
+      "exitCode": 0,
+      "pid": 55768,
+      "command": "docker logs 6f9c72d87c8f4e50db2563a481e82e5473f5c4112f201d0974dfb7832c4f1151"
+    },
+    {
+      "exitCode": 0,
+      "pid": 42752,
+      "command": "docker logs 726797bd68526bc3299c31f0787b47904214ae4f6b2a83ee3bf4626ab34ae54d"
+    },
+    {
+      "exitCode": 0,
+      "pid": 54040,
+      "command": "docker logs 9bcb02ed887d60d154128b62cf8d5f389ae5840ae1ad507f0d52bdeca57c2a54"
+    }
+  ]
+}

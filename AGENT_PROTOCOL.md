@@ -1749,6 +1749,18 @@ W09/W10 当前纵向路径：Human 以 `POST /api/v1/workbench/conversations` �
 `workbench.message.appended` / `workbench.turn.queued` 事件与 outbox。消息、Turn
 按序分页读取；只读该对话有权限的 Human 可见。当前上下文 pin 尚不可提交。
 
+Human 可用 `GET /api/v1/workbench/configuration-readiness` 查询配置投影，必填
+`teamId` 与 `workKind=repository|non_repository`，可传 `projectId`、`workItemId`。
+指定资源时仓库检查只用该资源及 WorkItem 所属 Project 的上下文；未指定时才检查
+所选 Team 的 Project。非仓库意图只影响本次查询，仓库返回
+`applicability=not_applicable`、`state=null`。其他适用检查使用
+`ready|blocked|unknown`；模型要求当前调用者可见的 active connection 与 enabled
+model，Agent 要求 active definition 与当前 Team 未撤销的授权。Runner 恒为
+`unknown`，包括尚无 assignment 的空闲进程和已有 Session heartbeat 的情况。
+查询响应禁用缓存、重读当前 Human 会话与 Team 权限，不透露隐藏配置的存在性。
+投影不产生 Session、receipt、event 或 outbox，不授予激活或执行许可；鉴权拒绝
+保留既有 `authorization_denials` 安全审计。后续命令仍独立执行全部既有授权校验。
+
 独立 Pi Runner 用 Agent installation bearer 加部署级 Runner token 读取
 `/api/v1/workbench/runner/assignments`。新委派的 queued Session 仍须经现有
 `ack` 与带 revision 的 `state` 命令进入 executing，并定期发送诊断 heartbeat；
