@@ -265,6 +265,65 @@ describe('配置就绪只读投影', () => {
     expect(app.hasRoute({ method: 'POST', url: base })).toBe(false)
   })
 
+  it.each(['首次', '已有会话', '过期会话'] as const)(
+    '审查回归：有效 Installation Token %s及重复 GET 只写拒绝审计', async scenario => {
+      const teamId = await team()
+      await db.query(`INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'admin')`,
+        [admin.workspaceId, teamId, admin.id])
+      const agentId = await agent(teamId)
+      const slug = (await db.query<{ slug: string }>('SELECT slug FROM agent_definitions WHERE id=$1', [agentId])).rows[0]!.slug
+      const coordinatorApp = buildApp({ logger: false, features: loadFeatureConfig({ ...process.env, WORKMESH_BETA_COORDINATION_MCP: 'true' }) })
+      try {
+        const created = await coordinatorApp.inject({ method: 'POST', url: '/api/v1/agent-connections',
+          headers: { cookie: admin.cookie, 'x-csrf-token': admin.csrf, 'idempotency-key': randomUUID() },
+          payload: { name: 'Readiness rejection fixture', agentSlug: slug, clientType: 'codex', teamId,
+            principalHumanActorId: admin.id, requestedCapabilities: ['work:read'], grantAgentDelegate: false } })
+        expect(created.statusCode, created.body).toBe(201)
+        const envelope = created.json<{ connection: { id: string }; connect_url: string }>()
+        const redeemed = await coordinatorApp.inject({ method: 'POST', url: '/api/v1/agent-connections/redeem',
+          headers: { 'idempotency-key': randomUUID() }, payload: { pairingCode: new URL(envelope.connect_url).hash.slice(1),
+            agentSlug: slug, client: { type: 'codex', version: '1.1.0' } } })
+        expect(redeemed.statusCode).toBe(200)
+        const token = redeemed.json<{ installation_token: string }>().installation_token
+        const identity = () => coordinatorApp.inject({ method: 'GET', url: '/api/v1/agent-connections/current-identity',
+          headers: { 'x-workmesh-installation-token': token } })
+        expect((await db.query('SELECT id FROM agent_coordination_sessions WHERE connection_id=$1', [envelope.connection.id])).rowCount).toBe(0)
+        let previousSessionId: string | undefined
+        if (scenario !== '首次') {
+          const resolved = await identity()
+          expect(resolved.statusCode, resolved.body).toBe(200)
+          previousSessionId = resolved.json<{ coordination_session: { id: string } }>().coordination_session.id
+          if (scenario === '过期会话') await db.query(
+            "UPDATE agent_coordination_sessions SET expires_at=now()-interval '1 minute' WHERE connection_id=$1",
+            [envelope.connection.id])
+        }
+        const before = await snapshot()
+        const { authorization_denials: auditBefore, ...domainBefore } = before
+        // 包含重复请求和同时携带 Human cookie 的请求，不能绕过凭据类型拒绝。
+        for (const [index, withCookie] of [false, false, true].entries()) {
+          const denied = await coordinatorApp.inject({ method: 'GET', url: url(teamId),
+            headers: { 'x-workmesh-installation-token': token, ...(withCookie ? { cookie: admin.cookie } : {}) } })
+          expect(denied.statusCode, denied.body).toBe(403)
+          expect(denied.json().error).toMatchObject({ code: 'FORBIDDEN', details: { authorizationStage: 'identity' } })
+          expect(denied.body).not.toContain(token)
+          const { authorization_denials: auditAfter, ...domainAfter } = await snapshot()
+          expect(domainAfter).toEqual(domainBefore)
+          expect(auditAfter!.count).toBe(auditBefore!.count + index + 1)
+          const audit = (await db.query<{ operation_id: string; reason_code: string; authorization_stage: string; principal_actor_id: string | null }>(
+            'SELECT operation_id,reason_code,authorization_stage,principal_actor_id FROM authorization_denials WHERE correlation_id=$1',
+            [denied.json().error.correlationId])).rows[0]
+          expect(audit).toEqual({ operation_id: 'getConfigurationReadiness', reason_code: 'FORBIDDEN',
+            authorization_stage: 'identity', principal_actor_id: null })
+        }
+        // 在快照比较之外调用正常身份端点，证明凭据确实有效，而非伪造 token 的无写入假阳性。
+        const resolved = await identity()
+        expect(resolved.statusCode, resolved.body).toBe(200)
+        const sessionId = resolved.json<{ coordination_session: { id: string } }>().coordination_session.id
+        if (scenario === '已有会话') expect(sessionId).toBe(previousSessionId)
+        if (scenario === '过期会话') expect(sessionId).not.toBe(previousSessionId)
+      } finally { await coordinatorApp.close() }
+    })
+
   it('R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown', async () => {
     const teamId = await team(), reader = await human([teamId]), projectId = await project(teamId)
     const ownModel = await model(reader, 'personal'), agentId = await agent(teamId)

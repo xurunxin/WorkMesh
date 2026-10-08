@@ -3,9 +3,9 @@ import { spawn, execFileSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync, openSync, closeSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 
-// 本任务专用夹具；复用旧轮已登记的同一任务容器，不触碰其他任务服务。
+// 本任务专用夹具；运行前登记容器归属，不触碰其他任务服务。
 const root = process.cwd()
-const directory = resolve('docs/reviews/a1/current-run')
+const directory = resolve(process.env.A1_CHECK_DIRECTORY ?? 'docs/reviews/a1/current-run')
 mkdirSync(directory, { recursive: true })
 const hash = data => createHash('sha256').update(data).digest('hex')
 const git = args => execFileSync('git', args, { windowsHide: true })
@@ -19,7 +19,10 @@ const source = () => {
 const commands = {
   lint: ['lint'], typecheck: ['typecheck'], route: ['check:route-policy'],
   targeted: ['--filter', '@workmesh/api', 'exec', 'vitest', 'run', '--config', '../../vitest.integration.config.ts', 'integration/configuration-readiness.integration.test.ts'],
+  regression: ['--filter', '@workmesh/api', 'exec', 'vitest', 'run', '--config', '../../vitest.integration.config.ts', 'integration/configuration-readiness.integration.test.ts', '-t', '审查回归'],
+  unit: ['test'], build: ['build'], ci: ['ci:validate'],
   integration: ['test:integration'], e2e: ['test:e2e'],
+  'e2e-retry': ['test:e2e'],
 }
 const env = { ...process.env, RUN_INTEGRATION: '1',
   DATABASE_URL: 'postgres://workmesh:workmesh-ci-postgres@127.0.0.1:35432/workmesh_a1_test',
@@ -46,6 +49,10 @@ for (const name of process.argv.slice(2)) {
   console.log(`开始 ${name} ${startedAt}`)
   const child = spawn('cmd.exe', ['/d', '/s', '/c', `pnpm ${args.join(' ')}`], { cwd: root, env,
     windowsHide: true, stdio: ['ignore', fd, fd] })
+  writeFileSync(resolve(directory, `${name}.process.json`), JSON.stringify({
+    pid: child.pid, parentPid: process.pid, command: `pnpm ${args.join(' ')}`, startedAt,
+    configuration: '仅子进程环境；随机 bootstrap 不落盘',
+  }, null, 2) + '\n')
   const exitCode = await new Promise((accept, reject) => {
     child.once('error', reject); child.once('exit', code => accept(code))
   }).finally(() => closeSync(fd))

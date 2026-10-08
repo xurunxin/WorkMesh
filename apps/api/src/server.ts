@@ -418,6 +418,16 @@ export const buildApp = (options: {
     )
       return;
     const coordinationToken = header(request, "x-workmesh-installation-token");
+    // 身份解析会刷新凭据并创建/续期 Coordination Session；Human-only
+    // 策略必须先拒绝此凭据类型，避免失败的只读请求产生领域写入。
+    if (coordinationToken !== undefined) {
+      const policy = policyForRequest(request);
+      if (policy.authentication === "human_session")
+        throw new DomainError("FORBIDDEN", "Installation credentials are not allowed for this route", {
+          authorizationStage: "identity",
+          policyId: policy.policyId,
+        });
+    }
     const requiresCoordinationToken = request.routeOptions.url
       === "/api/v1/agent-connections/current-identity";
     if (coordinationToken || requiresCoordinationToken) {
