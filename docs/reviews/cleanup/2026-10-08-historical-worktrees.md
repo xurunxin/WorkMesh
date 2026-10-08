@@ -90,3 +90,23 @@ D0 的采集日志、D1a 的 trace/patch、G1 的 HTML/Playwright 输出及其�
 这次修订仅补充审计。现有证据支持 #2 与五个 G1 嵌套 worktree 已移除、四个候选父 worktree 登记仍在、上述五个受保护当前 workspace 与 #21 checkpoint 路径仍存在；独立浅克隆另有 143 个 tracked 删除，不能用父目录 clean status 概括。此前批量文件的逐项保全和删除前运行引用无法独立复核，缓存、剩余测试材料和独立浅克隆均保留。没有新增空间释放，也没有运行产品测试或 Docker 清理。
 
 机器可核对的逐文件清单、blob 对照、目录大小、状态及时间来源见同目录 [`historical-worktrees-2026-10-08.json`](historical-worktrees-2026-10-08.json) 的 `followupCleanup.reviewerFollowupAudit`。
+
+## 2026-10-08 已合入构建缓存回收阶段
+
+本阶段按用户追加指示，只清理 #3 R1、#10 D0、#11 D1a、#18 G1 四个已合入父 worktree 内，经逐项确认的可重建忽略缓存；不删除父目录、独立 clone、未知测试材料或任何活动/恢复工作区。执行前重新读取全板 Todo：#5、#15、#17、#21 与本清理 #52 为 `building`，#8 为 `done`；#8 仍按原保护要求保留。另行复读 `building` 列表确认持续运行的任务，没有等待团队整体空闲或中断正常构建。机器读取为 DarkFlame（`6DOlLniZ0sqBYGHeIhRMq`），`tds status` 显示 daemon running、pid `59452`、v`0.1.60`。
+
+### 逐路径复核和执行
+
+- 在 `2026-10-08T10:46:05Z` 预检的 133 个精确目录分别属于 #3（34 项）、#10（31 项）、#11（31 项）、#18（37 项）；类型为 `.turbo`、`dist`、`.next`。预检共枚举 2,355 个文件、1,337,637,407 字节。
+- 每个实际删除前都重新检查绝对路径仍在指定 Todo 构建根下且位于 `C:\Users\xurx\.tds\workspaces`，解析路径与给定路径相同，路径链和目录内部没有 reparse/junction，Git 跟踪项数为 0、`git check-ignore` 命中忽略规则，并且没有命令行引用该精确路径或候选父根的进程。任一条失败则不执行；成功项用 PowerShell `Remove-Item -LiteralPath <精确路径> -Recurse -ErrorAction Stop` 单独移除并立即记录退出码与移除后存在性。
+- 共成功移除 133/133 项，实际逐目录枚举为 2,355 个文件、1,337,637,407 字节；每项退出码 0、移除后路径不存在。按 Todo 统计：#3 为 34 项 / 5,918,718 字节，#10 为 31 项 / 218,398,716 字节，#11 为 31 项 / 225,070,619 字节，#18 为 37 项 / 888,249,354 字节。详细绝对路径、逐项预检数据、命令、退出码、进程引用数与结果保存在机器清单 `followupCleanup.generatedCacheCleanup`。
+- 初次边界校验把这些同级构建目录误当作当前会话仓库的子目录，因此 10 次校验提前失败；这些尝试没有执行删除，退出码与删除结果记为空，并保存在机器清单 `nonMutatingValidatorAttempts`。之后改为按 workspaces 父目录校验，并在所有成功删除前再次完成整套复核。
+- C 盘未在本阶段开始前采样可用空间，因此不报卷级净释放量。1,337,637,407 字节是逐项目录删除时枚举的文件长度合计，不等同于 NTFS 实际物理释放；本轮的卷级空间观测受其他构建活动影响，不作本轮归因。
+
+### 清理后状态与保留项
+
+- 最终核对 133 个目标路径均不存在；四个父 linked worktree 均仍存在、Git 登记仍在、各自 `git status --porcelain --untracked-files=all` 为 0 项，HEAD 分别仍是 #3 `550dead055689154359a3406dfce4f0c91c1dad3`、#10 `768bbd82fcc52a873168b39a8382d2f14c928abc`、#11 `7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f`、#18 `c7a1af7d7b2e125368b29975867b4d392690fc38`。Git worktree 列表有 20 项、无 `prunable` 项。
+- #5、#8、#15、#17、#21 的当前/恢复路径及 #21 的旧 checkpoint `d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5` 均复核存在；只做了路径存在检查，没有读取或变更其内容。四个父 worktree 内其余未映射材料和独立浅克隆 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout` 继续保留；其 143 个 tracked 删除项、25 个未映射剩余文件以及来源/活动引用缺口沿用上一节限制，父目录干净状态不覆盖该 clone。
+- 本阶段未清 Docker 资源、未删除父 worktree 或分支、未打包未知材料，也未运行产品测试。旧历史阶段中逐项保全不可独立复核的限制继续有效；本轮缓存清理不表示整项历史资源清理全部完成。
+
+机器可核对的本阶段完整清单与核验值见同目录 `historical-worktrees-2026-10-08.json` 的 `followupCleanup.generatedCacheCleanup`。本阶段采样时间用 UTC；预检与删除前复核时间逐项保存，报告结束时刻以工具时钟读取 `2026-10-08T10:57:57Z` 记载。
