@@ -1,0 +1,110 @@
+[
+  {
+    "name": "s3-prepare",
+    "command": [
+      "node",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\docs\\reviews\\c3\\main-combination\\prepare-s3.mjs"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T11:41:29.972096+00:00",
+    "finishedAt": "2026-10-08T11:41:31.080752+00:00",
+    "exitCode": 0,
+    "sourceBefore": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceAfter": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "28db24281556791fd37628099406bcdb777d76e06ff1efe2a42bbc786f1d92ce",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "reset-api",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/db",
+      "test:reset"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T11:41:31.800748+00:00",
+    "finishedAt": "2026-10-08T11:41:34.613491+00:00",
+    "exitCode": 0,
+    "sourceBefore": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceAfter": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "8988fe158daad03aa673f9879f2d999daa95e85f00feecb724d05c9eeadb9e95",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "api-integration",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/api",
+      "test:integration"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T11:41:35.278980+00:00",
+    "finishedAt": "2026-10-08T11:43:56.351045+00:00",
+    "exitCode": 0,
+    "sourceBefore": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceAfter": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "91435f29569ab311099c85bea0d7e9f985d29500915135df6332456649863198",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "e2e-list",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/web",
+      "run",
+      "test:e2e",
+      "workbench-llm-settings.spec.ts",
+      "--list"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T11:43:57.186312+00:00",
+    "finishedAt": "2026-10-08T11:43:59.233540+00:00",
+    "exitCode": 0,
+    "sourceBefore": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceAfter": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "db7ad1e0f6399b93c3236ea3df2d741d77ac87e7a9d00b2f3d89dc053a5e78ea",
+    "environmentOverride": {
+      "NODE_ENV": "development"
+    }
+  },
+  {
+    "name": "e2e-llm",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/web",
+      "run",
+      "test:e2e",
+      "workbench-llm-settings.spec.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T11:43:59.858554+00:00",
+    "finishedAt": "2026-10-08T11:44:01.782701+00:00",
+    "exitCode": 1,
+    "sourceBefore": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceAfter": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "671168a2d7ad7c4e85f8c24a5202690d54fd466e819ee9f2690370cf4a978b06",
+    "environmentOverride": {
+      "NODE_ENV": "development"
+    }
+  }
+]

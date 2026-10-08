@@ -1,0 +1,240 @@
+{
+  "说明": "只归档平台当前完整计划与规划独审映射，不改写平台计划，不授权产品编码，不声明实现完成。",
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "todoId": "Hxr1xIdh4poZp3F5laGrT",
+  "currentID": "39ypDb7ncugLDlTiQKVhp",
+  "currentIDSource": "mcp__tds__conversation(todoId) 当前 assistant/plan_revision 的 [plan](doc:...) 引用；原始响应见 platform-readback.json",
+  "version": null,
+  "version说明": "平台本轮注入与 todos/conversation 工具未提供计划版本字段，未推测版本。",
+  "savedPlanSource": "平台本轮 plan_revision 消息注入的完整 saved copy；从当前会话 user response_item 精确提取 For reference, this is the current plan 内正文。",
+  "sourceSession": "rollout-2026-10-08T06-28-05-01a1187b-2285-71e1-a580-15cdb76a893f.jsonl",
+  "sourceMessageTimestamp": "2026-10-08T05:41:09.243Z",
+  "sourceMessageSha256": "8e4637526433f5abdfea0a8a23875b259938147cf2875c871b5ac97ad4280bf0",
+  "bodyExtraction": "只移除平台外围 <plan> 标记及其边界换行；不 trim、不改写正文、不规范化 Unicode、换行或空白；快照 UTF-8 无 BOM，无新增末尾换行。",
+  "snapshotPath": "docs/plan/a1-configuration-readiness.md",
+  "contentSha256": "b8f45274b46301a0a2efbd5a7a27ada848e2a1025dd7e698b902db9ddfda0267",
+  "contentBytes": 7427,
+  "contentCharacters": 4527,
+  "readback": {
+    "path": "docs/plan/a1-configuration-readiness/platform-readback.json",
+    "todoSavedPlanTruncated": true,
+    "prefixCharacters": 3603,
+    "prefixMatchesSnapshot": true,
+    "fullBackendDocumentRead": false,
+    "说明": "todos 正文被工具截断；conversation 实读 currentID，完整正文来自平台本轮注入 saved copy，不冒称读取了完整后端 doc。"
+  },
+  "spec": {
+    "source": "mcp__tds__todos(id) 本轮完整 Spec 段",
+    "snapshotPath": "docs/plan/a1-configuration-readiness/current-spec.md",
+    "updatedAt": "2026-10-08T05:41:01.610Z",
+    "contentSha256": "492846bdc69cab9c2939a3423c867c4e59d2cef1ec8b4081a5758d72b6253ceb",
+    "contentBytes": 6647,
+    "originalHistoricalSourceSha256": "8dfbbaa305dfb679b4831ac99c7ee726b32a8491844cf9c289a1fbd4d8180d34",
+    "说明": "本轮全文哈希与原始来源历史哈希分开记录；未改写历史 source、规格索引或 R1 验收记录。"
+  },
+  "worktree": {
+    "branch": "tds/conv-01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+    "baseCommit": "9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7"
+  },
+  "gate": {
+    "observedTodoPhase": "planning",
+    "requestedStop": "confirm",
+    "productImplementationAuthorized": false,
+    "independentPlanReview": "待 Chief 安排另一 agent 独审，通过后再次确认实施",
+    "说明": "工具实读本轮运行中 phase 为 planning；不冒称主动切换了平台状态，回合结束停留计划确认流程。"
+  },
+  "sourceFiles": [
+    {
+      "path": "docs/reviews/r1/test-coverage.json",
+      "sha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/08.md",
+      "sha256": "de2516805359ce3bef38dda2c5b97f066f6d0abe3fe1197b70666bb482c103c2"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/index.json",
+      "sha256": "57055023db51d6a04faccaca19bafc7eb36b7b3d3b25be1dbd24f7195c71ad0b"
+    },
+    {
+      "path": "docs/reviews/r1/execution-inputs.json",
+      "sha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c"
+    }
+  ],
+  "mappingPath": "docs/plan/a1-configuration-readiness/review-map.md",
+  "productTestsRun": false,
+  "归档自校验": [
+    "完整注入正文与快照逐字节一致",
+    "todos 已返回计划前缀与快照一致",
+    "currentID 与 conversation 实读引用一致",
+    "原测试七项与九类适用性完整保留并映射"
+  ],
+  "supplementalFileHashes": [
+    {
+      "path": "docs/plan/a1-configuration-readiness/current-spec.md",
+      "sha256": "492846bdc69cab9c2939a3423c867c4e59d2cef1ec8b4081a5758d72b6253ceb"
+    },
+    {
+      "path": "docs/plan/a1-configuration-readiness/platform-readback.json",
+      "sha256": "eca3a08c07850f21c310ab01c5a3c8a8299e73eaf1e3cb592a274522239394a5"
+    },
+    {
+      "path": "docs/plan/a1-configuration-readiness/review-map.md",
+      "sha256": "56def563dc8cb35821817459beb5c9ff3652534ee37dd0ab48093fb6019d9e65"
+    }
+  ],
+  "hashPolicy": {
+    "content": "contentSha256 为平台注入 saved copy 正文 UTF-8 原字节；快照无 BOM、LF、不加末尾换行；暂存后另核验 Git blob 等字节",
+    "sourceFiles": "sourceFiles.sha256 对应本轮工作树原字节，未冒充历史原件或 Git blob 哈希",
+    "supplemental": "supplementalFileHashes.sha256 对应新归档文件工作树原字节；实际提交前逐文件比对 Git blob"
+  },
+  "testMapping": {
+    "source": "docs/reviews/r1/test-coverage.json",
+    "originalTests": [
+      {
+        "id": "todo-8-T1",
+        "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+        "caseName": "#8 原验收1：四项检查各自的 happy path",
+        "result": "未创建、未运行"
+      },
+      {
+        "id": "todo-8-T2",
+        "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+        "caseName": "#8 原验收2：跨 Team 与他人个人模型**不泄露存在性**",
+        "result": "未创建、未运行"
+      },
+      {
+        "id": "todo-8-T3",
+        "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+        "caseName": "#8 原验收3：**无 assignment 的空闲 Runner 不得被报成离线**（`unknown`）",
+        "result": "未创建、未运行"
+      },
+      {
+        "id": "todo-8-T4",
+        "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+        "caseName": "#8 原验收4：模型 disabled → `blocked`；模型属于他人 → 对该调用者 `blocked` 且不泄露",
+        "result": "未创建、未运行"
+      },
+      {
+        "id": "todo-8-T5",
+        "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+        "caseName": "#8 原验收5：非仓库工作 → `not_applicable` 而非 `blocked`",
+        "result": "未创建、未运行"
+      },
+      {
+        "id": "todo-8-T6",
+        "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+        "caseName": "#8 原验收6：断言**无状态/事件/outbox/receipt 写入**（不是「事务计数为 0」）",
+        "result": "未创建、未运行"
+      },
+      {
+        "id": "todo-8-T7",
+        "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+        "caseName": "#8 原验收7：路由策略矩阵用生成器重生成，不手改",
+        "result": "未创建、未运行"
+      }
+    ],
+    "nineCategories": [
+      {
+        "category": "happy path",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+        "caseName": "R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown",
+        "result": "未创建、未运行"
+      },
+      {
+        "category": "unauthorized actor",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+        "caseName": "R1-8-2 跨workspace/Team及personal模型不可见，不泄漏存在性",
+        "result": "未创建、未运行"
+      },
+      {
+        "category": "invalid state transition",
+        "applicable": false,
+        "reason": "纯Query没有领域状态转换或写入协议。",
+        "file": null,
+        "caseName": null,
+        "result": "不适用，未冒称通过"
+      },
+      {
+        "category": "duplicate idempotency key",
+        "applicable": false,
+        "reason": "GET无幂等键；重复读断言零副作用。",
+        "file": null,
+        "caseName": null,
+        "result": "不适用，未冒称通过"
+      },
+      {
+        "category": "stale revision",
+        "applicable": false,
+        "reason": "GET没有If-Match或可修订就绪记录。",
+        "file": null,
+        "caseName": null,
+        "result": "不适用，未冒称通过"
+      },
+      {
+        "category": "transaction failure",
+        "applicable": false,
+        "reason": "零DB写入；查询失败另断言无Session/receipt/event/outbox。",
+        "file": null,
+        "caseName": null,
+        "result": "不适用，未冒称通过"
+      },
+      {
+        "category": "webhook/job replay",
+        "applicable": false,
+        "reason": "不消费job或写投递意图。",
+        "file": null,
+        "caseName": null,
+        "result": "不适用，未冒称通过"
+      },
+      {
+        "category": "concurrent request",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+        "caseName": "R1-8-8 两个Team并行查询不串投影；撤权后下一次读按实时授权收敛",
+        "result": "未创建、未运行"
+      },
+      {
+        "category": "server restart/outbox recovery",
+        "applicable": false,
+        "reason": "只读投影无outbox/checkpoint；断线重读不创建副作用。",
+        "file": null,
+        "caseName": null,
+        "result": "不适用，未冒称通过"
+      }
+    ],
+    "approvedAuditException": "仅鉴权拒绝允许既有 authorization_denials；非零安全审计，不变更 Accepted 全局鉴权规则",
+    "originalDoD": [
+      {
+        "text": "## DoD\n投影可用 + 全部作用域与三态断言通过 + 零 schema 变更 + 全量检查全绿。\n\n",
+        "sha256": "cda60aaba32650575b09b070ac08ad84a03c1cfe128d57693e754808532fa9b6",
+        "result": "待实施与独审、Chief 确认"
+      }
+    ]
+  },
+  "stagedSnapshot": {
+    "byteKind": "git-blob",
+    "sha256": "b8f45274b46301a0a2efbd5a7a27ada848e2a1025dd7e698b902db9ddfda0267",
+    "bytes": 7427,
+    "objectId": "ebcfb46537606f61a18058d2a6d612ef324153d6",
+    "matchesInjectedBody": true
+  },
+  "checkout说明": "本轮新文件工作树与暂存 Git blob 等字节。core.autocrlf=true 的后续 Windows checkout 可能将文本展开为 CRLF；平台正文哈希仍以此处记录的原 UTF-8/LF 正文或 Git blob 为准，不把将来 checkout 字节自动当原正文。",
+  "archiveValidation": {
+    "status": "文档静态核验通过",
+    "checks": [
+      "平台注入 saved copy 与快照/暂存 Git blob 逐字节一致",
+      "完整 Spec 与来源记录哈希一致",
+      "currentID 实读、version=null、工具截断如实记录",
+      "七条原 caseName/testFile 与九类 category/applicable/caseName 逐项一致",
+      "历史来源工作树字节哈希未变化",
+      "暂存只有五份 docs/plan 新文件"
+    ],
+    "productChecks": "未运行；未产品编码；不宣告 feature DoD"
+  }
+}

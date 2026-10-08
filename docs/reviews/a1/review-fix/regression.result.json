@@ -1,0 +1,13 @@
+{
+  "command": "pnpm --filter @workmesh/api exec vitest run --config ../../vitest.integration.config.ts integration/configuration-readiness.integration.test.ts -t 审查回归",
+  "startedAt": "2026-10-08T09:54:12.325Z",
+  "endedAt": "2026-10-08T09:54:20.368Z",
+  "exitCode": 1,
+  "beforeDigest": "7424b82f0e8d5065d8b3ab6745127e9cbf56124ca814de9766606e34ddff8919",
+  "afterDigest": "7424b82f0e8d5065d8b3ab6745127e9cbf56124ca814de9766606e34ddff8919",
+  "sourceUnchanged": true,
+  "logSha256": "a8df865e3baaac87414b1361736d7994b9c1dbadf146beffa143d12ff2f493e8",
+  "logBytes": 6238,
+  "branch": "tds/conv-01a11ac2-7634-752e-8d81-764c9776f801",
+  "note": "本轮实际运行；配置来自公开测试夹具，bootstrap 随机且不落盘；运行产物在资源清单登记。"
+}

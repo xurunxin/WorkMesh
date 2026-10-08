@@ -175,6 +175,7 @@ const humanOnlyOperations = new Set([
   // of its own to summarise.
   'listCollaborationQueueCounts',
   'listWorkbenchLlmConnections',
+  'getConfigurationReadiness',
   'createWorkbenchLlmConnection',
   'getWorkbenchLlmConnection',
   'updateWorkbenchLlmConnection',

@@ -3,6 +3,11 @@ export const routeOperationBindings = [
   { method: 'GET', path: '/api/v1/workbench/model-presets', operationId: 'listModelPresets' },
   {
     "method": "GET",
+    "path": "/api/v1/workbench/configuration-readiness",
+    "operationId": "getConfigurationReadiness"
+  },
+  {
+    "method": "GET",
     "path": "/livez",
     "operationId": "live"
   },

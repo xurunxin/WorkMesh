@@ -80,6 +80,14 @@ A PostgreSQL-backed ordered checkpoint used to resume event reads. It is not a b
 
 A Human-facing projection shaped for one interface. It may combine authorized facts but never becomes a source of domain authority.
 
+## Configuration readiness
+
+按当前 Human、Team 与工作上下文派生的只读配置投影。检查使用 `ready`、`blocked`、
+`unknown`；仓库适用性另用 `not_applicable` 和 `state=null`。Runner 始终 `unknown`，
+Session heartbeat 不能证明空闲 Runner 在线。显式 `workKind` 只作用本次查询；配置
+就绪不代表 Agent 可执行，不授予委派、激活或任何命令权限。不保存就绪状态，查询
+不产生 Session、receipt、事件或 outbox；鉴权拒绝沿用独立的安全拒绝审计。
+
 ## Command
 
 An explicit request to mutate a durable resource. Commands preserve identity, revision, idempotency and all applicable server-side authority checks.

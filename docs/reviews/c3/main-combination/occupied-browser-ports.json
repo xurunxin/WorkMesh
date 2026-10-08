@@ -1,0 +1,15 @@
+{
+  "source": "本轮 Get-NetTCPConnection 输出及 accepted/e2e-llm.log",
+  "observed": [
+    {
+      "port": 3100,
+      "pid": 52032
+    },
+    {
+      "port": 3101,
+      "pid": 58888
+    }
+  ],
+  "ownership": "不在本轮创建登记内；进一步读取命令行时进程已退出，未取得工作区归属，不冒称已实证具体其他工作区",
+  "action": "未停止或修改占用进程，使用独有 34100/34101 端口副本"
+}
