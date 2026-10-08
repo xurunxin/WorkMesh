@@ -1,7 +1,8 @@
 {
-  "currentPlanID": "doc:IWQ9v6xnjnFyVtXnYDUC6",
-  "sourcePlanID": "doc:IWQ9v6xnjnFyVtXnYDUC6",
+  "currentPlanID": "doc:-JciTypN4XStMNkYksSqi",
+  "sourcePlanID": "doc:-JciTypN4XStMNkYksSqi",
   "historyPlanIDs": [
+    "doc:IWQ9v6xnjnFyVtXnYDUC6",
     "doc:KgCXRfW2d3xDo-yJCfAUS"
   ],
   "taskTodoID": "2j2sxT5wJ-l001efH_meJ",
@@ -19,7 +20,7 @@
   "planVersionStatus": "现有 todos/conversation 响应及平台注入文本均未提供版本字段；未猜测",
   "source": {
     "kind": "platform-injected-current-plan",
-    "bodyReadFrom": "本轮用户消息中标明为平台 saved copy 的完整 <plan> 正文",
+    "bodyReadFrom": "最新用户消息提供的平台当前 saved copy 全文；本轮精确同步，不再次 edit_plan/save_plan",
     "idConfirmedBy": "mcp__tds__conversation todoId=2j2sxT5wJ-l001efH_meJ；最新 plan 链接与用户确认一致",
     "independentDocumentAPIRead": false,
     "resourceReadAttempts": {
@@ -27,29 +28,39 @@
       "templates": "tds resources/templates/list: -32601 Method not found"
     },
     "exactSnapshotPolicy": "去除 <plan> 标签及标签边界换行；正文段落不修改；UTF-8 无 BOM、LF、末尾一个 LF。未声称取得平台数据库原始存储字节。",
-    "bodyBytes": 8406,
-    "bodyUtf8Sha256": "860bf162a90ae3aa57609ce8b6ee4a5daf5e9790445b7e594b8340e36e3159ce",
+    "bodyBytes": 13090,
+    "bodyUtf8Sha256": "7dd6767f4938ac4313606b12275f46fc4a88ba6b3f82355cb1c7808106795c05",
     "planUnchanged": true,
     "newPlatformPlanSaved": false
   },
   "artifacts": [
     {
       "path": "docs/plan/d1b-token-consumer-migration.md",
-      "gitBlob": "31b510d37470e5f03c7257aab0297cf3b6dc1752",
-      "gitBytes": 8406,
-      "gitSha256": "860bf162a90ae3aa57609ce8b6ee4a5daf5e9790445b7e594b8340e36e3159ce",
-      "worktreeBytes": 8406,
-      "worktreeSha256": "860bf162a90ae3aa57609ce8b6ee4a5daf5e9790445b7e594b8340e36e3159ce",
+      "gitBlob": "ce3644f1db7a7cf54f17218873890723a48bdc5c",
+      "gitBytes": 13090,
+      "gitSha256": "7dd6767f4938ac4313606b12275f46fc4a88ba6b3f82355cb1c7808106795c05",
+      "worktreeBytes": 13090,
+      "worktreeSha256": "7dd6767f4938ac4313606b12275f46fc4a88ba6b3f82355cb1c7808106795c05",
       "bytesEqual": true,
       "gitObjectKind": "actual-staged-blob"
     },
     {
       "path": "docs/reviews/d1b/plan-source.json",
-      "gitBlob": "8cccabcdc60a8b8589ba40eb51e7532c2207d39d",
-      "gitBytes": 32291,
-      "gitSha256": "41f53f92894efce7c2e4a3cb7e590121b4f3b62ae19ec4c66f1a54525728c282",
-      "worktreeBytes": 32291,
-      "worktreeSha256": "41f53f92894efce7c2e4a3cb7e590121b4f3b62ae19ec4c66f1a54525728c282",
+      "gitBlob": "236b289fb9def26dad5c8e56a320065840711679",
+      "gitBytes": 44273,
+      "gitSha256": "46e191b73023d4a33e71a4d11aca856183071089ef15921c95bc20c8d6baa091",
+      "worktreeBytes": 44273,
+      "worktreeSha256": "46e191b73023d4a33e71a4d11aca856183071089ef15921c95bc20c8d6baa091",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-staged-blob"
+    },
+    {
+      "path": "docs/reviews/d1b/surface-matrix.json",
+      "gitBlob": "7cb46a6c6cb88628bcb0f79e36b20ab52089e498",
+      "gitBytes": 425943,
+      "gitSha256": "f894561af41587ea931cc5fe490436d9933966aed9977c3b043c91d821a34011",
+      "worktreeBytes": 425943,
+      "worktreeSha256": "f894561af41587ea931cc5fe490436d9933966aed9977c3b043c91d821a34011",
       "bytesEqual": true,
       "gitObjectKind": "actual-staged-blob"
     }
@@ -208,19 +219,267 @@
   ],
   "validation": {
     "exactBody": "通过：工作区正文与 source.planBody 逐字节相同",
-    "initialHashCollection": "首次 child_process 默认缓冲上限不足以读取完整测量 blob；该轮退出非零且没有写 binding，调大只读缓冲后重跑，不改来源字节"
+    "initialHashCollection": "首次 child_process 默认缓冲上限不足以读取完整测量 blob；该轮退出非零且没有写 binding，调大只读缓冲后重跑，不改来源字节",
+    "currentSnapshot": {
+      "sourcePlanBodyEqualsWorktree": true,
+      "artifactGitAndWorktreeBytesEqual": true,
+      "coveredPageFiles": 12,
+      "localRows": 94,
+      "globalReplays": 94,
+      "viewportThemeVariants": 4,
+      "uniqueRowIDs": true,
+      "allReviewAndRuntimeStatusesPending": true,
+      "productChanges": false,
+      "method": "Node 字节/JSON/页面集合/行关联断言 + actual staged blob；只文档结构核验，不是 UI 或 Required CI"
+    }
   },
   "gates": {
-    "readableFullSnapshot": "prepared-and-byte-verified",
-    "versionMetadata": "unavailable-pending-platform-readback",
-    "independentPlanReview": "pending",
-    "chiefConfirmation": "pending",
+    "readableFullSnapshot": "accepted-by-independent-review-and-chief",
+    "historicalInputFingerprints": "accepted-15-inputs-unchanged",
+    "versionMetadata": "null-source-limitation-accepted-closed",
+    "matrixAndScopeIndependentReview": "pending-targeted-platform-review",
+    "chiefConfirmation": "pending-confirm",
     "productImplementation": "not-started",
     "implementationCI": "not-run",
     "merge": "not-performed"
   },
   "limitations": [
-    "平台正文来自明确标为 saved copy 的注入文本，conversation 只独立确认 docID，未提供正文或版本号。",
-    "版本绑定缺口与独审/Chief门禁仍未闭合；本次仅提交文档前置。"
-  ]
+    "平台正文源为明确标为 saved copy 的注入全文；conversation 独立确认当前 ID，不提供版本字段；该来源限制已接受、不是本轮阻塞。",
+    "仅 matrix/作用域剩余定向独审；全部运行截图/属性/人工视觉意见待执行，产品实现未开始。"
+  ],
+  "history": [
+    {
+      "commit": "7f6ae163c4d4934626c64ecef5ce2f30776e6cc6",
+      "planID": "doc:IWQ9v6xnjnFyVtXnYDUC6",
+      "planBodyBytes": 8406,
+      "planBodyUtf8Sha256": "860bf162a90ae3aa57609ce8b6ee4a5daf5e9790445b7e594b8340e36e3159ce",
+      "artifacts": [
+        {
+          "path": "docs/plan/d1b-token-consumer-migration.md",
+          "gitBlob": "31b510d37470e5f03c7257aab0297cf3b6dc1752",
+          "gitBytes": 8406,
+          "gitSha256": "860bf162a90ae3aa57609ce8b6ee4a5daf5e9790445b7e594b8340e36e3159ce",
+          "worktreeBytes": 8406,
+          "worktreeSha256": "860bf162a90ae3aa57609ce8b6ee4a5daf5e9790445b7e594b8340e36e3159ce",
+          "bytesEqual": true,
+          "gitObjectKind": "actual-staged-blob"
+        },
+        {
+          "path": "docs/reviews/d1b/plan-source.json",
+          "gitBlob": "8cccabcdc60a8b8589ba40eb51e7532c2207d39d",
+          "gitBytes": 32291,
+          "gitSha256": "41f53f92894efce7c2e4a3cb7e590121b4f3b62ae19ec4c66f1a54525728c282",
+          "worktreeBytes": 32291,
+          "worktreeSha256": "41f53f92894efce7c2e4a3cb7e590121b4f3b62ae19ec4c66f1a54525728c282",
+          "bytesEqual": true,
+          "gitObjectKind": "actual-staged-blob"
+        }
+      ],
+      "acceptedReview": "全文、15输入与 planVersion=null 来源限制已独审及 Chief 确认闭合，保留此提交，不改历史"
+    }
+  ],
+  "documentSourceCommit": "7f6ae163c4d4934626c64ecef5ce2f30776e6cc6",
+  "matrixInputs": [
+    {
+      "path": "apps/web/app/page.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "34f35e9fbe64fcd224a001fdf4fb3c1363f49848",
+      "gitBytes": 44976,
+      "gitSha256": "ae49730268c671eab48af02b1a9f1b1b9ff55adcc872ee2923244246991ccca3",
+      "worktreeBytes": 45709,
+      "worktreeSha256": "adfd886f2b390812c4a49c7fc27428247f01a91d99f5f85408446a5fcb1f7779",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/lib/navigation.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "dd307dcb99dda6d276793d5df8993eeaede8e957",
+      "gitBytes": 580,
+      "gitSha256": "ad131c90046885e1150a115c36ee37e6cacdaa6b2988c8d565b6059e97f51997",
+      "worktreeBytes": 602,
+      "worktreeSha256": "81589e400d24f1b766cb40a9921aa0b8e6baa6885fc4ba4a93d2bc1f289f8b2b",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/features/work-items/query.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "ef858f65f19b9c000b64fd1f4770d4ed2bc9586f",
+      "gitBytes": 5893,
+      "gitSha256": "33748397a62985a0d92e89507b39c60a36486666ca9390c1f594a487a0b0020f",
+      "worktreeBytes": 5997,
+      "worktreeSha256": "919064f67ccdcb67f8f34bf9ddfe0e06227d75a1e7c245b623f7689d5a71ea1a",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/lib/project-work.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "784b241543c653a92121d05403a30ec48a2b9408",
+      "gitBytes": 1677,
+      "gitSha256": "bbb6cf1403146c48216751e0c97cac7e866c667df1ac23e35f70a867d8417ebd",
+      "worktreeBytes": 1721,
+      "worktreeSha256": "f9fa0bc5681b8934ed2273707848dd4e3a91170d24b16a3966f0ebbee33484f9",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/projects-workbench.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "70e6fcbdf26e01de7a170de383ccf78f8297ddc8",
+      "gitBytes": 3579,
+      "gitSha256": "fd47cc2ffd827c873989b7ce85e85d9a97485b27c00c00caa30c518e94cb2c80",
+      "worktreeBytes": 3653,
+      "worktreeSha256": "f135e074b454407f4b88760c3d91f11b7307ab3dbe65590a8d7c37fdc73bb0fe",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/settings/route-state.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "be8944e992f767d7748a818747c2c1cd4aabf418",
+      "gitBytes": 777,
+      "gitSha256": "ebd535c1cc7d35a730011c8e2d2cd7e6c562e3e99886d55edf4cfa990bb3cf8e",
+      "worktreeBytes": 804,
+      "worktreeSha256": "9827c101057416b81fe1f75852acc70f41fb846b65db74ac023347ccc2a5f5d0",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/settings/page.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "5eaf46d4fe9f4ee6e4a64a47ab70cb750f29b97f",
+      "gitBytes": 30427,
+      "gitSha256": "09458800f630b43f2aa39c3556e2d822327885dcad2b7e49bf54f1ede5b751a9",
+      "worktreeBytes": 31047,
+      "worktreeSha256": "5bf7b22955cc5b2510972aa1e2cfd3270544b370b466dafbfee87c7dcf122265",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/settings/agent-workbench/page.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "f8f50447ff8cabb6ae813c7bd5bb928dfa55cada",
+      "gitBytes": 1896,
+      "gitSha256": "56be449339fe54b057fe1f3408ea74e0d12c5315309f6cd4ae4207fab299104e",
+      "worktreeBytes": 1937,
+      "worktreeSha256": "c518689744b684a7e601d3c8f1b2785d30a62564f3cb373facaa7d46a52bde88",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/agents/approval-route-state.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "71b10b481e7325ab179b8b79d05ef1533fe23c2b",
+      "gitBytes": 4718,
+      "gitSha256": "84ce1b8a9a09527e1c63806d2ca364715915f0bb2b7630c45b6af0123b669625",
+      "worktreeBytes": 4828,
+      "worktreeSha256": "7f6bbfde2b5afd8f4e0a22247be48f0492ab042f5aee9148a4760a233a6018c3",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/collaboration-queue-route.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "b373adabb9133443948ffd28df202bca3887eab0",
+      "gitBytes": 2147,
+      "gitSha256": "ef3378474edff3642b5f1079eae052b4663767bf582e96a3bff207621963a5d5",
+      "worktreeBytes": 2215,
+      "worktreeSha256": "618a6fb564ee5a1d5229907e599128a099c0101507a6857e7e94a88d9377fe42",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/recovery-route.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "535fce273bcfc4f078bbda8f5845196ce854fe03",
+      "gitBytes": 1924,
+      "gitSha256": "ccf93f24a9792fed1ec968a78a77d94c68a280edcfd257b716b96cff9e894db5",
+      "worktreeBytes": 1967,
+      "worktreeSha256": "6a150c70afad7814dc42dc2c5506f3f44e10a648affb8ed647bd7512d83f22be",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/operations/sections.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "9f0e0ef0ef85d65af78a86a40767ee41521a17f9",
+      "gitBytes": 866,
+      "gitSha256": "4b18893c5eaac3aafb5ce811146db53f71b2bc84dfd1fbd89a7a87069c6489e7",
+      "worktreeBytes": 889,
+      "worktreeSha256": "dd8df997e8ae7ee9d91069d342688113328a7b2cde91a2f92d5395e4b6dedd24",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/lib/shortcut-scope.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "2f31654cafeaa7c0b3f1349d9cec0f52c252d7c0",
+      "gitBytes": 706,
+      "gitSha256": "dd0fce91afe58286b631e0afc20ce11b972d3f706bc459da189a26603a77677c",
+      "worktreeBytes": 727,
+      "worktreeSha256": "61d5b4ecc19a049e1e4d2778a2cdf870c62f54095d633a9f9a337aacaefdef0d",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/command-center-mount.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "78eab6f1b5521f8475ce3450a005845f83195311",
+      "gitBytes": 786,
+      "gitSha256": "16022ae1298a61d0ee3e2c09fd3270a694cf6502d80562587562e88f9f816cfa",
+      "worktreeBytes": 805,
+      "worktreeSha256": "f4539a871586546dfddbab364f30af8b9f204e81b968abe300921829bcc07a9c",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/layout.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "7007036c608af443d5e28053c7f80a633e719818",
+      "gitBytes": 1052,
+      "gitSha256": "cedaefc872fd64711340dfd822756eb518fa7a522746560804abf098e1bbad9e",
+      "worktreeBytes": 1071,
+      "worktreeSha256": "aba67b5cd42d68dc67934ef6cf046d870f10783e91db7fc06b6d955f5a5bc034",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/authenticated-workspace-shell.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "95a420268d1a99f87587bcb11cc483a711a9f429",
+      "gitBytes": 3739,
+      "gitSha256": "bcc50b1174f46d5cabf7556d5661dc107eea46df1211ee341c62d2eed4984e6d",
+      "worktreeBytes": 3815,
+      "worktreeSha256": "b16af19c35e3b95b7323763b6411e105159bd140f399e7d4ccb815f765a95d39",
+      "bytesEqual": false
+    },
+    {
+      "path": "packages/ui/src/layout/app-shell.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "3b13f638927112fa9eb9b14057cce20f682fc226",
+      "gitBytes": 9399,
+      "gitSha256": "4b2003a259a86910e7795ba402b090a9460faacd5e949e00f4f154c907807eb7",
+      "worktreeBytes": 9584,
+      "worktreeSha256": "114bbbc1b3a7681ff00e239be143108b16a76885c6724339e8354749487660b5",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/ui-catalog/page.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "b084f1ebefb716d199d7a1e98ff0e351899ed0d1",
+      "gitBytes": 6122,
+      "gitSha256": "77221640c2184bff715b51c03e1e255cc7cc5a605e776d948758497920b8367d",
+      "worktreeBytes": 6205,
+      "worktreeSha256": "a8d520afa42569ee22fb1cf5fb52a92e7de3188da8af34409b7da43b129a6841",
+      "bytesEqual": false
+    },
+    {
+      "path": "packages/ui/src/primitives/catalog.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "8d68533e1be9f9f19d1bc2ea2dee2a2e028e933a",
+      "gitBytes": 13211,
+      "gitSha256": "45084164fad8365f4b127efedf23bd987bd965df3bc61fba48b519c6d4486366",
+      "worktreeBytes": 13469,
+      "worktreeSha256": "e3bc9d5426e59328038bbbd9f2aebc3ec4bd85841def5fd271885ce141eaac7e",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/e2e/mocked/d0-visual-baseline.mocked.spec.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "a1ae2f6eaa0fbf5e72ef4fec6d0715041fa0be05",
+      "gitBytes": 11551,
+      "gitSha256": "a4b784986c56c3c7d8ad2084d50f6fddcc313b15b3a66465209191b3199252c2",
+      "worktreeBytes": 11732,
+      "worktreeSha256": "e6ff52152176b5628f67fa3f01372c08cf78b4a68c21ac7a63b65da0fbe5d546",
+      "bytesEqual": false
+    }
+  ],
+  "authorizedMutationScope": "仅当前计划 Markdown、plan-source.json、plan-binding.json、surface-matrix.json；无产品文件/历史D0修改"
 }
