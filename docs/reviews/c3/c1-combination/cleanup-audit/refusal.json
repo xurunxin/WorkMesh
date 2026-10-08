@@ -1,0 +1,36 @@
+{
+  "callID": "call_f46dfcf7b46c4c748f3d33522a375848",
+  "inputTime": "2026-10-08T12:58:54.641Z",
+  "inputRecord": {
+    "sourceLine": 3560,
+    "byteOffset": 16539498,
+    "bytes": 2812,
+    "sha256": "9b0da49e7263641a6996744b21ed008df528196fc29b77ee2334c9aed87ff138"
+  },
+  "outputTime": "2026-10-08T12:58:54.731Z",
+  "outputRecord": {
+    "sourceLine": 3562,
+    "byteOffset": 16543214,
+    "bytes": 1666,
+    "sha256": "8179c6e3ce721b93fdba8a62c69b0c3df6090a1dd864cdffb4b39ddd5efe3ee5"
+  },
+  "target": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-c1-combination-01a11890",
+  "sourcePath": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T06-52-12-01a11891-35a8-74c3-bb5a-a9aabdd3baa2.jsonl",
+  "processStarted": false,
+  "processExitCode": null,
+  "reasonAsReturned": "blocked by policy",
+  "inputFile": "refusal-input.txt",
+  "outputFile": "refusal-output.json",
+  "inputBytes": 2348,
+  "inputSha256": "0548dac041cadde8760f0130e03b863953b513e6f7e6f46fad194d8f704ae8e3",
+  "outputBytes": 1267,
+  "outputSha256": "201647600847c77c150ec1eb4310bb2817b563dae7f0e1dd76a941ab31c865c5",
+  "innerToolCallID": null,
+  "prechecksExecuted": false,
+  "precheckExplanation": "整条命令在 CreateProcess 前被拒，输入中预检和 Remove-Item 均未执行，不能冒预检已执行",
+  "preservedBecauseRefused": true,
+  "noRetryOrChangedToolOrMoveOrRestore": true,
+  "outputRuntimeTruncation": "原完整可见输出自身包含截断；没有取得内部未截断审批文本",
+  "mutatingTargetActionsAfterRefusal": [],
+  "readOnlyPostRefusalCheck": "Path.exists 实读目标仍存在；没有写入/删除/移动/恢复目标"
+}

@@ -12,6 +12,26 @@ servers:
 security:
   - SessionCookie: []
 paths:
+  /api/v1/workbench/model-presets:
+    get:
+      x-workmesh-policy-id: route.listModelPresets
+      x-workmesh-actor-kinds: []
+      x-workmesh-feature-key: WORKMESH_BETA_MODEL_PRESETS
+      x-workmesh-feature-tier: beta
+      security: []
+      operationId: listModelPresets
+      description: 公开只读目录。预置不验证凭据、可达性或兼容性；选择仅填可编辑草稿。
+      responses:
+        "200":
+          description: 启动时加载并应用禁用清单后的目录。
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ModelPresetCatalog" }
+        "403":
+          description: 功能关闭，错误代码为 FEATURE_DISABLED。
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
   /livez:
     get:
       x-workmesh-policy-id: route.live
@@ -114,7 +134,7 @@ paths:
                       properties:
                         key:
                           type: string
-                          enum: [WORKMESH_BETA_PLANNING, WORKMESH_BETA_TEMPLATES, WORKMESH_BETA_COSTS, WORKMESH_BETA_GITEA, WORKMESH_BETA_OPERATIONS_UI, WORKMESH_EXPERIMENTAL_AUTOMATION, WORKMESH_EXPERIMENTAL_AGENT_LOOPS, WORKMESH_EXPERIMENTAL_A2A, WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS, WORKMESH_EXPERIMENTAL_MULTI_RUNTIME]
+                          enum: [WORKMESH_BETA_PLANNING, WORKMESH_BETA_TEMPLATES, WORKMESH_BETA_COSTS, WORKMESH_BETA_GITEA, WORKMESH_BETA_OPERATIONS_UI, WORKMESH_EXPERIMENTAL_AUTOMATION, WORKMESH_EXPERIMENTAL_AGENT_LOOPS, WORKMESH_EXPERIMENTAL_A2A, WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS, WORKMESH_EXPERIMENTAL_MULTI_RUNTIME, WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS]
                         tier: { type: string, enum: [beta, experimental] }
                         enabled: { type: boolean }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -2236,6 +2256,32 @@ paths:
       parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchConversationContextPinsUpdateInput" } } } }
       responses: { "200": { description: Conversation with replaced context pins, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchConversation" } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+  /api/v1/workbench/configuration-readiness:
+    get:
+      x-workmesh-policy-id: route.getConfigurationReadiness
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: getConfigurationReadiness
+      summary: 按当前 Human、Team 和工作意图查询配置就绪投影
+      description: >-
+        纯查询，不产生领域状态、Session、receipt、event 或 outbox；鉴权拒绝保留既有 authorization_denials 安全审计。
+        配置就绪不构成激活或执行许可。Runner 恒 unknown，不使用 Session heartbeat 推断活性。
+        指定 projectId/workItemId 时只检查当前上下文，无资源参数时检查 Team 的 Project。
+        隐藏配置与缺失配置使用同一 unmet 原因。响应 Cache-Control 为 no-store。
+      parameters:
+        - { name: teamId, in: query, required: true, schema: { type: string, format: uuid } }
+        - { name: workKind, in: query, required: true, schema: { type: string, enum: [repository, non_repository] } }
+        - { name: projectId, in: query, schema: { type: string, format: uuid } }
+        - { name: workItemId, in: query, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: 独立配置检查；无总体运行许可, content: { application/json: { schema: { $ref: "#/components/schemas/ConfigurationReadiness" } } } }
+        "400": { description: 参数不合法, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "401": { description: Human 会话无效, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "403": { description: 调用者不允许访问, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "404": { description: Team 或上下文不存在、不可见或不匹配, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "500": { description: 查询失败；不转换为就绪状态, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
   /api/v1/workbench/llm-connections:
     get:
       x-workmesh-policy-id: route.listWorkbenchLlmConnections
@@ -2312,6 +2358,136 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/RetentionStatus" }
         "403": { $ref: "#/components/responses/Forbidden" }
+  /api/v1/notification-channel-targets/config:
+    get:
+      x-workmesh-policy-id: route.getNotificationChannelConfig
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS
+      x-workmesh-feature-tier: experimental
+      security: [{ SessionCookie: [] }]
+      operationId: getNotificationChannelConfig
+      description: Human manages only their own targets and deliveries. Experimental feature must be enabled; noRedis is unsupported.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationChannelConfig"
+  /api/v1/notification-channel-targets:
+    get:
+      x-workmesh-policy-id: route.listNotificationChannelTargets
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS
+      x-workmesh-feature-tier: experimental
+      security: [{ SessionCookie: [] }]
+      operationId: listNotificationChannelTargets
+      description: Human manages only their own targets and deliveries. Experimental feature must be enabled; noRedis is unsupported.
+      responses:
+        "200":
+          $ref: "#/components/responses/PagedJson"
+    post:
+      x-workmesh-policy-id: route.createNotificationChannelTarget
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS
+      x-workmesh-feature-tier: experimental
+      security: [{ SessionCookie: [] }]
+      operationId: createNotificationChannelTarget
+      description: Human manages only their own targets and deliveries. Experimental feature must be enabled; noRedis is unsupported.
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationChannelTarget"
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationChannelTargetInput"
+  /api/v1/notification-channel-targets/{id}:
+    patch:
+      x-workmesh-policy-id: route.updateNotificationChannelTarget
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS
+      x-workmesh-feature-tier: experimental
+      security: [{ SessionCookie: [] }]
+      operationId: updateNotificationChannelTarget
+      description: Human manages only their own targets and deliveries. Experimental feature must be enabled; noRedis is unsupported.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationChannelTarget"
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/IfMatch"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationChannelTargetUpdate"
+    delete:
+      x-workmesh-policy-id: route.revokeNotificationChannelTarget
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS
+      x-workmesh-feature-tier: experimental
+      security: [{ SessionCookie: [] }]
+      operationId: revokeNotificationChannelTarget
+      description: Human manages only their own targets and deliveries. Experimental feature must be enabled; noRedis is unsupported.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationChannelTarget"
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/IfMatch"
+        - $ref: "#/components/parameters/IdempotencyKey"
+  /api/v1/channel-notification-deliveries:
+    get:
+      x-workmesh-policy-id: route.listChannelNotificationDeliveries
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS
+      x-workmesh-feature-tier: experimental
+      security: [{ SessionCookie: [] }]
+      operationId: listChannelNotificationDeliveries
+      description: Human manages only their own targets and deliveries. Experimental feature must be enabled; noRedis is unsupported.
+      responses:
+        "200":
+          $ref: "#/components/responses/PagedJson"
+  /api/v1/channel-notification-deliveries/{id}/reconcile:
+    post:
+      x-workmesh-policy-id: route.reconcileChannelNotificationDelivery
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS
+      x-workmesh-feature-tier: experimental
+      security: [{ SessionCookie: [] }]
+      operationId: reconcileChannelNotificationDelivery
+      description: Human manages only their own targets and deliveries. Experimental feature must be enabled; noRedis is unsupported.
+      responses:
+        "200":
+          $ref: "#/components/responses/Json"
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/IfMatch"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChannelNotificationReconcile"
 components:
   securitySchemes:
     BootstrapToken:
@@ -3562,6 +3738,58 @@ components:
     GuidanceDiff:
       { description: Authorized line diff between two immutable Guidance revisions., content: { application/json: { schema: { $ref: "#/components/schemas/GuidanceDiff" } } } }
   schemas:
+    ModelPresetCatalog:
+      type: object
+      additionalProperties: false
+      required: [version, entries, disabledIds]
+      properties:
+        version: { type: string, minLength: 1, maxLength: 500 }
+        entries:
+          type: array
+          maxItems: 1000
+          items: { $ref: "#/components/schemas/ModelPreset" }
+        disabledIds:
+          type: array
+          maxItems: 1000
+          uniqueItems: true
+          items: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,79}$' }
+    ModelPreset:
+      type: object
+      additionalProperties: false
+      required: [id, provider, region, apiType, baseUrl, modelId, sourceUrl, checkedAt, confirmationMethod, notes]
+      properties:
+        id: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,79}$' }
+        provider: { type: string, minLength: 1, maxLength: 500 }
+        region: { type: string, minLength: 1, maxLength: 500 }
+        apiType: { type: string, enum: [openai-completions, openai-responses] }
+        baseUrl: { type: string, format: uri, maxLength: 2048, description: HTTPS 地址，不含凭据、查询或片段；保存仍受 normalizeLlmBaseUrl 校验。 }
+        modelId: { type: string, minLength: 1, maxLength: 500 }
+        sourceUrl: { type: string, format: uri, maxLength: 2048, description: 官方 HTTPS 资料，不含凭据、查询或片段。 }
+        checkedAt: { type: string, format: date }
+        confirmationMethod: { type: string, enum: [machine, human] }
+        notes: { type: string, minLength: 1, maxLength: 2000 }
+    ConfigurationReadinessApplicableCheck:
+      oneOf:
+        - { type: object, additionalProperties: false, required: [applicability, state, reasonCode], properties: { applicability: { const: applicable }, state: { const: ready }, reasonCode: { const: configured } } }
+        - { type: object, additionalProperties: false, required: [applicability, state, reasonCode], properties: { applicability: { const: applicable }, state: { const: blocked }, reasonCode: { const: unmet } } }
+        - { type: object, additionalProperties: false, required: [applicability, state, reasonCode], properties: { applicability: { const: applicable }, state: { const: unknown }, reasonCode: { const: not_observable } } }
+    ConfigurationReadiness:
+      type: object
+      additionalProperties: false
+      required: [checks]
+      properties:
+        checks:
+          type: object
+          additionalProperties: false
+          required: [model, agent, repository, runner]
+          properties:
+            model: { $ref: "#/components/schemas/ConfigurationReadinessApplicableCheck" }
+            agent: { $ref: "#/components/schemas/ConfigurationReadinessApplicableCheck" }
+            repository:
+              oneOf:
+                - { $ref: "#/components/schemas/ConfigurationReadinessApplicableCheck" }
+                - { type: object, additionalProperties: false, required: [applicability, state, reasonCode], properties: { applicability: { const: not_applicable }, state: { type: "null" }, reasonCode: { const: non_repository_work } } }
+            runner: { type: object, additionalProperties: false, required: [applicability, state, reasonCode], properties: { applicability: { const: applicable }, state: { const: unknown }, reasonCode: { const: not_observable } } }
     WorkbenchRunnerCredential:
       type: object
       description: Runner-only response. The apiKey and fenceToken must never be persisted in client state, logs, activities, events, or artifacts.
@@ -6791,3 +7019,187 @@ components:
               },
           },
       }
+    NotificationChannelTargetInput:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - provider
+        - secretMaterial
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        provider:
+          type: string
+          enum:
+            - wecom
+        secretMaterial:
+          type: string
+          format: uri
+          maxLength: 4096
+          writeOnly: true
+          description: HTTPS secret material is encrypted at rest; never returned or probed on save
+        enabled:
+          type: boolean
+          default: true
+    NotificationChannelTargetUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        secretMaterial:
+          type: string
+          format: uri
+          maxLength: 4096
+          writeOnly: true
+        enabled:
+          type: boolean
+    NotificationChannelTarget:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - provider
+        - enabled
+        - status
+        - revision
+        - secret_ref
+        - secret_status
+        - endpoint_fingerprint
+        - created_at
+        - updated_at
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+        provider:
+          type: string
+          enum:
+            - wecom
+        enabled:
+          type: boolean
+        status:
+          type: string
+          enum:
+            - active
+            - revoked
+        revision:
+          type: integer
+          minimum: 1
+        secret_ref:
+          $ref: "#/components/schemas/Id"
+        secret_status:
+          type: string
+          enum:
+            - configured
+            - missing
+        endpoint_fingerprint:
+          type: string
+          pattern: ^hmac:[a-f0-9]{64}$
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+    ChannelNotificationReconcile:
+      type: object
+      additionalProperties: false
+      required:
+        - outcome
+      properties:
+        outcome:
+          type: string
+          enum:
+            - delivered
+            - retry
+            - dead
+          description: Owner reconciles an uncertain external result; retry can send again with the original effectKey
+    ChannelNotificationDelivery:
+      type: object
+      required:
+        - id
+        - intent_id
+        - channel_target_id
+        - status
+        - outcome
+        - effect_key
+        - attempt_count
+        - revision
+        - source_type
+        - source_id
+        - source_revision
+        - available_at
+        - delivered_at
+        - last_error_present
+      additionalProperties: false
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        intent_id:
+          $ref: "#/components/schemas/Id"
+        channel_target_id:
+          $ref: "#/components/schemas/Id"
+        status:
+          type: string
+          enum:
+            - pending
+            - claimed
+            - delivered
+            - failed
+            - dead
+            - suppressed
+        outcome:
+          type: string
+          enum:
+            - not_sent
+            - sending
+            - uncertain
+            - delivered
+            - failed
+        effect_key:
+          type: string
+        attempt_count:
+          type: integer
+          minimum: 0
+        revision:
+          type: integer
+          minimum: 1
+        source_type:
+          type: string
+        source_id:
+          $ref: "#/components/schemas/Id"
+        source_revision:
+          type: integer
+          minimum: 1
+        available_at:
+          $ref: "#/components/schemas/Timestamp"
+        delivered_at:
+          anyOf:
+            - $ref: "#/components/schemas/Timestamp"
+            - type: "null"
+        last_error_present:
+          type: boolean
+    NotificationChannelConfig:
+      type: object
+      additionalProperties: false
+      required:
+        - redis_required
+        - no_redis_supported
+        - configured_providers
+      properties:
+        redis_required:
+          type: boolean
+          const: true
+        no_redis_supported:
+          type: boolean
+          const: false
+        configured_providers:
+          type: array
+          items:
+            type: string

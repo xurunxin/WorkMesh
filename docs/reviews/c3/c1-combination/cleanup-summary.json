@@ -1,0 +1,159 @@
+{
+  "recordedAt": "2026-10-08T13:05:05.729760+00:00",
+  "containers": [
+    {
+      "id": "b89007a51c5c769d4572a87af53e9d438492f0e1c0895d69d70c843fd55e8a86",
+      "name": "c3-c1-combination-01a11890-pg",
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {
+        "workmesh.test-owner": "c3-c1-combination-01a11890"
+      },
+      "created": "2026-10-08T12:51:29.0730207Z",
+      "stopCommand": [
+        "docker",
+        "stop",
+        "b89007a51c5c769d4572a87af53e9d438492f0e1c0895d69d70c843fd55e8a86"
+      ],
+      "stopExitCode": 0,
+      "removeCommand": [
+        "docker",
+        "rm",
+        "-v",
+        "b89007a51c5c769d4572a87af53e9d438492f0e1c0895d69d70c843fd55e8a86"
+      ],
+      "removeExitCode": 0,
+      "removedAt": "2026-10-08T12:55:35.475436+00:00",
+      "inspectAfterRemovalExitCode": 1,
+      "verifiedAbsent": true,
+      "serviceLogArchiveMember": "c3-c1-combination-01a11890-pg.log"
+    },
+    {
+      "id": "778044b1b870773f579631576393bdc8a549c590205ad30d9f43d9d718e70a01",
+      "name": "c3-c1-combination-01a11890-redis",
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {
+        "workmesh.test-owner": "c3-c1-combination-01a11890"
+      },
+      "created": "2026-10-08T12:51:29.393706Z",
+      "stopCommand": [
+        "docker",
+        "stop",
+        "778044b1b870773f579631576393bdc8a549c590205ad30d9f43d9d718e70a01"
+      ],
+      "stopExitCode": 0,
+      "removeCommand": [
+        "docker",
+        "rm",
+        "-v",
+        "778044b1b870773f579631576393bdc8a549c590205ad30d9f43d9d718e70a01"
+      ],
+      "removeExitCode": 0,
+      "removedAt": "2026-10-08T12:55:36.142895+00:00",
+      "inspectAfterRemovalExitCode": 1,
+      "verifiedAbsent": true,
+      "serviceLogArchiveMember": "c3-c1-combination-01a11890-redis.log"
+    },
+    {
+      "id": "37fe472ff9eadf1cef2eaa208c9eb750e4f4da0eb12aec82aa40cdcb5ed77c84",
+      "name": "c3-c1-combination-01a11890-s3",
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0",
+        "workmesh.test-owner": "c3-c1-combination-01a11890"
+      },
+      "created": "2026-10-08T12:51:29.7178265Z",
+      "stopCommand": [
+        "docker",
+        "stop",
+        "37fe472ff9eadf1cef2eaa208c9eb750e4f4da0eb12aec82aa40cdcb5ed77c84"
+      ],
+      "stopExitCode": 0,
+      "removeCommand": [
+        "docker",
+        "rm",
+        "-v",
+        "37fe472ff9eadf1cef2eaa208c9eb750e4f4da0eb12aec82aa40cdcb5ed77c84"
+      ],
+      "removeExitCode": 0,
+      "removedAt": "2026-10-08T12:55:36.691265+00:00",
+      "inspectAfterRemovalExitCode": 1,
+      "verifiedAbsent": true,
+      "serviceLogArchiveMember": "c3-c1-combination-01a11890-s3.log"
+    }
+  ],
+  "dedicatedImagesCreated": [],
+  "dedicatedVolumesCreated": [],
+  "dedicatedNetworksCreated": [],
+  "globalPruneUsed": false,
+  "sharedImagesAndNetworksPreserved": true,
+  "retainedTemporaryTargets": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-c1-combination-01a11890",
+      "reason": "自动审批 blocked by policy，保留全部内容和位置；不再删除/移动/恢复，不换工具/命令/拆分",
+      "refusalCallID": "call_f46dfcf7b46c4c748f3d33522a375848",
+      "inputTime": "2026-10-08T12:58:54.641Z",
+      "outputTime": "2026-10-08T12:58:54.731Z",
+      "processStarted": false,
+      "processExitCode": null,
+      "presentOnReadback": true,
+      "originalBytesArchived": true,
+      "mutatingTargetActionsAfterRefusal": [],
+      "readOnlyExistenceCheckRecorded": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\playwright.c3-c1-combination.config.ts",
+      "reason": "自动审批 blocked by policy，保留全部内容和位置；不再删除/移动/恢复，不换工具/命令/拆分",
+      "refusalCallID": "call_b992d8193b7041fc94906f0879543102",
+      "inputTime": "2026-10-08T13:00:42.404Z",
+      "outputTime": "2026-10-08T13:00:42.500Z",
+      "processStarted": false,
+      "processExitCode": null,
+      "presentOnReadback": true,
+      "originalBytesArchived": true,
+      "mutatingTargetActionsAfterRefusal": [],
+      "readOnlyExistenceCheckRecorded": true
+    }
+  ],
+  "cleanupComplete": false,
+  "currentRoundRejectedTargetOperationsAfterRefusal": [],
+  "historicalRejectedTargets": "原 main-combination 六个目标本轮不删除、移动、恢复；历史违规和子回执缺口保留原字节",
+  "environmentPersistence": "只对子进程注入秘密和测试环境；没有改系统/共享配置",
+  "gitIgnoreRetentionRule": "根 .gitignore 仅新增本轮配置精确路径；区别于测试时源码，见 post-validation-metadata.json，保留到审批受限资源被合法处理",
+  "postRunControllerPid": 42204,
+  "controllerVerifiedAbsent": true,
+  "postRunPortListeners": [],
+  "fullE2eChildPidInventory": null,
+  "processLimit": "保留各命令启动 PID 和结束后盘点；没有冒称实时抓到浏览器全部子 PID",
+  "preserved": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+      "reason": "当前构建与组合产品/证据，保留"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\apps\\web\\.next",
+      "reason": "本轮前已有当前缓存，保留；creation见 process-inventory.json"
+    },
+    {
+      "scope": "旧 worktree/恢复 workspace",
+      "reason": "实际 main 合入及无人引用证明未齐，不清理、不 force 抹 dirty"
+    },
+    {
+      "scope": "共享基础镜像、网络、其他任务资源与持久业务数据",
+      "reason": "非本轮归属，未操作"
+    }
+  ]
+}

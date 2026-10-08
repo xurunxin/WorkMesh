@@ -1,5 +1,9 @@
 # WorkMesh domain language
 
+## Preset
+
+Preset 是版本化、带官方出处的只读模型配置目录，不是领域聚合。选择仅填充可编辑的连接和模型草稿；预置不验证凭据，保存不验证可达性或兼容性。首次包含八家国内提供方及 OpenAI，地区与账号条件随条目展示。部署文件整体替换内置目录，功能禁用优先，条目禁用随后生效；目录不建表、不提供 CRUD、不在请求中写回。
+
 ## Human
 
 A person represented by a Human Actor. A Human may be responsible for work, make decisions and grant authority through explicit platform mechanisms.
@@ -75,6 +79,14 @@ A PostgreSQL-backed ordered checkpoint used to resume event reads. It is not a b
 ## View Model
 
 A Human-facing projection shaped for one interface. It may combine authorized facts but never becomes a source of domain authority.
+
+## Configuration readiness
+
+按当前 Human、Team 与工作上下文派生的只读配置投影。检查使用 `ready`、`blocked`、
+`unknown`；仓库适用性另用 `not_applicable` 和 `state=null`。Runner 始终 `unknown`，
+Session heartbeat 不能证明空闲 Runner 在线。显式 `workKind` 只作用本次查询；配置
+就绪不代表 Agent 可执行，不授予委派、激活或任何命令权限。不保存就绪状态，查询
+不产生 Session、receipt、事件或 outbox；鉴权拒绝沿用独立的安全拒绝审计。
 
 ## Command
 

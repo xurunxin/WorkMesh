@@ -1,0 +1,504 @@
+{
+  "preDeliveryHead": "1054c7a4c80b86515d33a58d43134ea9fcbfaf95",
+  "mainVerified": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+  "branch": "tds/conv-01a11ac2-7634-752e-8d81-764c9776f801",
+  "capturedAt": "2026-10-08T10:26:14.122Z",
+  "hashPolicy": "工作树原字节与实际暂存 Git blob 分开记录；日志和运行前后完整生产输入快照在 checks-raw.zip；脱敏 trace 以原/保留 SHA 标注；不猜未来提交 SHA，不自引用。",
+  "schemaUnchanged": true,
+  "savedPlan": {
+    "path": "docs/plan/a1-configuration-readiness.md",
+    "bytes": 7427,
+    "sha256": "b8f45274b46301a0a2efbd5a7a27ada848e2a1025dd7e698b902db9ddfda0267",
+    "source": "已确认历史 savedplan；source.json 和正文未改写"
+  },
+  "productionSourceDigest": "0ca18a5edf6734d2bc4535e55e2747daef92b857b0a54abd0a9af5603382c229",
+  "currentChecks": [
+    "build",
+    "ci",
+    "e2e-retry",
+    "integration",
+    "lint",
+    "route",
+    "targeted",
+    "typecheck",
+    "unit"
+  ],
+  "sourceSnapshotPolicy": "非 docs 的生产源码、测试、配置、SQL 工作树快照；检查入口仅追加运行目录、命令及 PID 登记，文档迭代不改变产品输入和既有超时。",
+  "historicalEvidence": "根 a1 source-manifest 及所有旧 ZIP 保持历史绑定；差异核对见 history-integrity.json，不把旧运行移标为本修复验收。",
+  "environment": {
+    "node": "v24.20.0",
+    "pnpm": "9.15.4",
+    "canonicalNode": "22.19.0",
+    "note": "未升级机器；canonical 环境仍待远端 required CI"
+  },
+  "files": [
+    {
+      "path": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "worktree": {
+        "bytes": 29211,
+        "sha256": "8a26d1567dc85cfa61c17f5332c81e33f283257f03c3e231672a1f767ecba42e"
+      },
+      "gitBlob": {
+        "bytes": 29211,
+        "sha256": "8a26d1567dc85cfa61c17f5332c81e33f283257f03c3e231672a1f767ecba42e",
+        "objectId": "b3399c00e38e1f0c68a13b925a55c2525bc186ad"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "worktree": {
+        "bytes": 74404,
+        "sha256": "089a85e463be7c2b44c954325aefc092e4da6dfb7d3b60514b41c1072ab5a0ca"
+      },
+      "gitBlob": {
+        "bytes": 72665,
+        "sha256": "340a28b8a499c1ca802febc1c232910b2cb54f185b4dc28ff2ef122a8e8495cd",
+        "objectId": "e6d0d8e17ea2cb6ff6d159ac629513d8c95fda78"
+      },
+      "sameBytes": false
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/README.md",
+      "worktree": {
+        "bytes": 8420,
+        "sha256": "40d22db30961e8255081b72a000a6fac8c41db460982b4095b275f4ba8d007cc"
+      },
+      "gitBlob": {
+        "bytes": 8420,
+        "sha256": "40d22db30961e8255081b72a000a6fac8c41db460982b4095b275f4ba8d007cc",
+        "objectId": "adc90a42fafd9daa8b0e8d2632bcf56b09c7fa78"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/build-processes.json",
+      "worktree": {
+        "bytes": 677,
+        "sha256": "829c4630f87d5b257a40b966d900a4283c3dd62a80057a09cff7fe5814b79480"
+      },
+      "gitBlob": {
+        "bytes": 647,
+        "sha256": "a4d2002fa8bfc0270a2e4cc85d5b80b26bbf3e152488dd46bfcff32723d8d7a7",
+        "objectId": "a9409d6215d2f97525503383332e02e57dceda3c"
+      },
+      "sameBytes": false
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/build.process.json",
+      "worktree": {
+        "bytes": 181,
+        "sha256": "2cdd9a959c2adcb38db46121bbb860b65e1c0fb61f1c6c6de5a63cf9450d3c07"
+      },
+      "gitBlob": {
+        "bytes": 181,
+        "sha256": "2cdd9a959c2adcb38db46121bbb860b65e1c0fb61f1c6c6de5a63cf9450d3c07",
+        "objectId": "4b5bfd2573949ec73751a416e8d64788290d9062"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/build.result.json",
+      "worktree": {
+        "bytes": 629,
+        "sha256": "088f3672d46a1a47427c19913cb6469efdbeb4b602c9a6969084333bcd416419"
+      },
+      "gitBlob": {
+        "bytes": 629,
+        "sha256": "088f3672d46a1a47427c19913cb6469efdbeb4b602c9a6969084333bcd416419",
+        "objectId": "5b0c145330a3f85a9bdb321a02e79a81b113d11c"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/checks-raw.index.json",
+      "worktree": {
+        "bytes": 16218,
+        "sha256": "cdebb931992432eba24a0f6132f86bf957763978af09b01c2b2dbbfbdaa41f36"
+      },
+      "gitBlob": {
+        "bytes": 15851,
+        "sha256": "d4a0f51298d7d6eef96e8e0d7026f1a7c6d01a06ea6e5484818718123f8e1e82",
+        "objectId": "67015567c718305907093e64665a9e733a20eeb3"
+      },
+      "sameBytes": false
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/checks-raw.zip",
+      "worktree": {
+        "bytes": 1627681,
+        "sha256": "a3c6d6c5a847b54f590eb6e3789f3d3ca757724df9dd7ba320249ff333785dce"
+      },
+      "gitBlob": {
+        "bytes": 1627681,
+        "sha256": "a3c6d6c5a847b54f590eb6e3789f3d3ca757724df9dd7ba320249ff333785dce",
+        "objectId": "a81c19b4e925d52bc141b736d556fee86c3cca3c"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/ci.process.json",
+      "worktree": {
+        "bytes": 187,
+        "sha256": "3906a462744604b279c0fa8fabaf1ef8b1015a9b31a4fdf7916d2007f422ba5f"
+      },
+      "gitBlob": {
+        "bytes": 187,
+        "sha256": "3906a462744604b279c0fa8fabaf1ef8b1015a9b31a4fdf7916d2007f422ba5f",
+        "objectId": "7fef35a07c31b9dce77d9832f7292ae5bf1c6371"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/ci.result.json",
+      "worktree": {
+        "bytes": 634,
+        "sha256": "03bda520771b4e0551f7fcd3450b295b3a193bdeaad7880299be87e77e7f173d"
+      },
+      "gitBlob": {
+        "bytes": 634,
+        "sha256": "03bda520771b4e0551f7fcd3450b295b3a193bdeaad7880299be87e77e7f173d",
+        "objectId": "179ea5f3ece6d33f5ba392ea669bc0a6b82d03d1"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/cleanup.json",
+      "worktree": {
+        "bytes": 17697,
+        "sha256": "3a16de65870961b19ac03176509ca505303c58fc9feee5833af0ec18bafb1219"
+      },
+      "gitBlob": {
+        "bytes": 17203,
+        "sha256": "9c0904014b35c070d48b9af6e0f84f836dd2b6308fdfde931f41461a390c3c65",
+        "objectId": "0b62adb4e17ee42160a678c4fff2b86bc6604406"
+      },
+      "sameBytes": false
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/e2e-failure-analysis.json",
+      "worktree": {
+        "bytes": 748,
+        "sha256": "cc3cd0a93c872565dff6a94b27b9fda3c618d8c752aaab721af06e6eb3908b25"
+      },
+      "gitBlob": {
+        "bytes": 748,
+        "sha256": "cc3cd0a93c872565dff6a94b27b9fda3c618d8c752aaab721af06e6eb3908b25",
+        "objectId": "f2053e34b0d10fd88690f16c6210c13722ea126d"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/e2e-first-failure.index.json",
+      "worktree": {
+        "bytes": 45155,
+        "sha256": "3925028129b8da023973d37c7108b7b94ba60a6e3385c11feea3de0626616691"
+      },
+      "gitBlob": {
+        "bytes": 44331,
+        "sha256": "942001bf78b592a7250ab7fc3179a9210e800050829683c208a64c20a53626c9",
+        "objectId": "fe72f6abb097fbf2840dcaae0f858fc872d102b6"
+      },
+      "sameBytes": false
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/e2e-first-failure.zip",
+      "worktree": {
+        "bytes": 2458573,
+        "sha256": "43e0be23b2c3638fb0c1a88d1ed0162050393a598bc0d20bf3e27d44c05f7b98"
+      },
+      "gitBlob": {
+        "bytes": 2458573,
+        "sha256": "43e0be23b2c3638fb0c1a88d1ed0162050393a598bc0d20bf3e27d44c05f7b98",
+        "objectId": "9e0da59bac18f11d63cbd3b34cb84955a371c294"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/e2e-last-run.json",
+      "worktree": {
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      },
+      "gitBlob": {
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+        "objectId": "cbcc1fbac11a74b608b2b3edc3a2ffd6ab639cb2"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/e2e-processes.json",
+      "worktree": {
+        "bytes": 8444,
+        "sha256": "51ffcc6319635fe41a17bc8f8541dc849eaaa38c962548805f9e3a664954dd28"
+      },
+      "gitBlob": {
+        "bytes": 8197,
+        "sha256": "628cb886fca389d1def8e083f17c45f01ba73cf97b3f1ace9029f05eb88ea8fb",
+        "objectId": "800c92b55b9764d3908bfe2560f80be1c6c5ce09"
+      },
+      "sameBytes": false
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/e2e-retry-processes.json",
+      "worktree": {
+        "bytes": 7722,
+        "sha256": "af36854c9ed747e8ac853e9e95c5ccabf625b5c1f7b420b9e071a6d19f9fd625"
+      },
+      "gitBlob": {
+        "bytes": 7489,
+        "sha256": "cb26a2037eb25cb2b9ab4f124cd5843dca9a026ea43e43d2d1be393c484d936c",
+        "objectId": "4df0f50047a462bb8360983a33fcd28c9f51a9e9"
+      },
+      "sameBytes": false
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/e2e-retry.process.json",
+      "worktree": {
+        "bytes": 184,
+        "sha256": "46fe7539bfc7540e10095d65e4b401c1b8db43e26a0c2dc40131ac03ae3b35b8"
+      },
+      "gitBlob": {
+        "bytes": 184,
+        "sha256": "46fe7539bfc7540e10095d65e4b401c1b8db43e26a0c2dc40131ac03ae3b35b8",
+        "objectId": "f3e527ff7b1c3aaf9b3658b91c8d8d17ab3f20ae"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/e2e-retry.result.json",
+      "worktree": {
+        "bytes": 634,
+        "sha256": "72fc25fc395edc7f61bb3ef22fbd97f0342c8fe0d579b9e7d82d960e6e84277b"
+      },
+      "gitBlob": {
+        "bytes": 634,
+        "sha256": "72fc25fc395edc7f61bb3ef22fbd97f0342c8fe0d579b9e7d82d960e6e84277b",
+        "objectId": "3f75c6450004785529cc67f91cdff1a7094a3aa7"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/e2e.process.json",
+      "worktree": {
+        "bytes": 184,
+        "sha256": "f4d57523e416051199bd87f4a6a55a27f73fd01915cff733e665c054830136d6"
+      },
+      "gitBlob": {
+        "bytes": 184,
+        "sha256": "f4d57523e416051199bd87f4a6a55a27f73fd01915cff733e665c054830136d6",
+        "objectId": "6773d716260ba3c61c177add0c5ac98e7c33318c"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/e2e.result.json",
+      "worktree": {
+        "bytes": 632,
+        "sha256": "5c30ba2819a3d389d0420d6624cb7bfb8118704b5a1e34261a58dfe3e01b6c50"
+      },
+      "gitBlob": {
+        "bytes": 632,
+        "sha256": "5c30ba2819a3d389d0420d6624cb7bfb8118704b5a1e34261a58dfe3e01b6c50",
+        "objectId": "10906d67021c062cc562fc0d4cadf26d3ec365df"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/history-integrity.json",
+      "worktree": {
+        "bytes": 544,
+        "sha256": "d9664d760f935342c8551a80896808710a38f980801d96d18b08c3fa6811afe3"
+      },
+      "gitBlob": {
+        "bytes": 544,
+        "sha256": "d9664d760f935342c8551a80896808710a38f980801d96d18b08c3fa6811afe3",
+        "objectId": "8afb14df6a6ecf7dc9fdaf24bdd7a0bd4447d4f8"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/integration-processes.json",
+      "worktree": {
+        "bytes": 393,
+        "sha256": "3efde89cd4b80b0f7daad910f877199f0960563fbc445c5277160796f25f97f2"
+      },
+      "gitBlob": {
+        "bytes": 375,
+        "sha256": "c79250090be501dcbde2b0ff4b33d80c89d2584d28989354526ef2c938f01294",
+        "objectId": "b893d26d8a75ed9dbf7d387b3098368dca3957e3"
+      },
+      "sameBytes": false
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/integration.process.json",
+      "worktree": {
+        "bytes": 192,
+        "sha256": "1e286dade2f8821c4c86e4af521334334866f651a9f1f3c9ebab277f90ee4b23"
+      },
+      "gitBlob": {
+        "bytes": 192,
+        "sha256": "1e286dade2f8821c4c86e4af521334334866f651a9f1f3c9ebab277f90ee4b23",
+        "objectId": "eee77879dfe77ade871b0afe8d000ca754df6c1b"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/integration.result.json",
+      "worktree": {
+        "bytes": 642,
+        "sha256": "f3f6251707be897ee6351bbe216f24f814a58d4d8eceba637cf6272fadaa76e7"
+      },
+      "gitBlob": {
+        "bytes": 642,
+        "sha256": "f3f6251707be897ee6351bbe216f24f814a58d4d8eceba637cf6272fadaa76e7",
+        "objectId": "03cd59cee10cc85762cb8b873aa1b81b6d2e479b"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/lint.result.json",
+      "worktree": {
+        "bytes": 627,
+        "sha256": "12e4c47a75ae9e0e491bc32ae368037a304d3552905f167d5b8062ae0000a1fd"
+      },
+      "gitBlob": {
+        "bytes": 627,
+        "sha256": "12e4c47a75ae9e0e491bc32ae368037a304d3552905f167d5b8062ae0000a1fd",
+        "objectId": "01c1b69cb9fa8c56d59971af5de2b953adfec717"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/preserve-e2e-failure.py",
+      "worktree": {
+        "bytes": 4760,
+        "sha256": "d170bd20772ddab8e8f605c0f1494b69712af100ad83306e4ebb582b4425bcb9"
+      },
+      "gitBlob": {
+        "bytes": 4760,
+        "sha256": "d170bd20772ddab8e8f605c0f1494b69712af100ad83306e4ebb582b4425bcb9",
+        "objectId": "6cb1b592650ca225e413c4406178744024424e1c"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/regression.result.json",
+      "worktree": {
+        "bytes": 777,
+        "sha256": "57ec2cd5768c3e964421bca0cd420beb813e4fb911873f635e26a34db1cbf897"
+      },
+      "gitBlob": {
+        "bytes": 777,
+        "sha256": "57ec2cd5768c3e964421bca0cd420beb813e4fb911873f635e26a34db1cbf897",
+        "objectId": "2b4039f21949cb4886f0e83ad4dfdd5628658dab"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/resources.json",
+      "worktree": {
+        "bytes": 4129,
+        "sha256": "0c322d6a1d6053f99030ba15a0b7076324c51afbc05cedaa6fda670e0afe11ea"
+      },
+      "gitBlob": {
+        "bytes": 3996,
+        "sha256": "e029cf6ee68f857fb8497fba05082826182286d15196c6d24da2c1a9a7049ce1",
+        "objectId": "3468b934e6e7a259efa0bbf00ec36e46631c72fb"
+      },
+      "sameBytes": false
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/route.result.json",
+      "worktree": {
+        "bytes": 640,
+        "sha256": "0e6fe315b0f8d4f7ec0321a7bdffce472693f6bc5af8add8d64f088e7b0d1d6a"
+      },
+      "gitBlob": {
+        "bytes": 640,
+        "sha256": "0e6fe315b0f8d4f7ec0321a7bdffce472693f6bc5af8add8d64f088e7b0d1d6a",
+        "objectId": "86a9c03aca53557376a10c659906d9319343f8e1"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/targeted.result.json",
+      "worktree": {
+        "bytes": 760,
+        "sha256": "da5396399d7a126e653afa4242f6f1a4990da1ee7da721140c7ede55af3609dc"
+      },
+      "gitBlob": {
+        "bytes": 760,
+        "sha256": "da5396399d7a126e653afa4242f6f1a4990da1ee7da721140c7ede55af3609dc",
+        "objectId": "5c608bba1fa5ee51df6fc55d663e047de6253a15"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/typecheck.result.json",
+      "worktree": {
+        "bytes": 632,
+        "sha256": "b7517057e8312087a8b90987c5f547d9ee28b5b2d427249cb1d0657861f9e127"
+      },
+      "gitBlob": {
+        "bytes": 632,
+        "sha256": "b7517057e8312087a8b90987c5f547d9ee28b5b2d427249cb1d0657861f9e127",
+        "objectId": "5ed5067b2edc727b96a394ec0d1cd33c926a2b91"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/unit-processes.json",
+      "worktree": {
+        "bytes": 384,
+        "sha256": "a9ea74daea35abf111d5b58e86bb5e6a7a693528886a2b2c7edc0825d0ac82dd"
+      },
+      "gitBlob": {
+        "bytes": 366,
+        "sha256": "56a5d12b97d6945f5482760a63242de54b862ee23b7f580ef46412ba6618c985",
+        "objectId": "ccaf37a275afa9dc41bda390c3a612bd006479a1"
+      },
+      "sameBytes": false
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/unit.result.json",
+      "worktree": {
+        "bytes": 628,
+        "sha256": "0bb26d5a928f40a137f7dfd901bd8f25b785eadf41b287c91714d04aef296e88"
+      },
+      "gitBlob": {
+        "bytes": 628,
+        "sha256": "0bb26d5a928f40a137f7dfd901bd8f25b785eadf41b287c91714d04aef296e88",
+        "objectId": "36bae955e30f7b2ca2676b9e96cbad075a54606c"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/review-fix/verification.json",
+      "worktree": {
+        "bytes": 19276,
+        "sha256": "4fe5039ea3bb392d4a07c271224b21a3a8d83111bf356ce82220d007b8adc6ac"
+      },
+      "gitBlob": {
+        "bytes": 19276,
+        "sha256": "4fe5039ea3bb392d4a07c271224b21a3a8d83111bf356ce82220d007b8adc6ac",
+        "objectId": "d93bd14e429a00c6a7c6a3928a2b1d17bedee500"
+      },
+      "sameBytes": true
+    },
+    {
+      "path": "docs/reviews/a1/run-checks.mjs",
+      "worktree": {
+        "bytes": 4967,
+        "sha256": "80653663ad88e4db3a617426d4cc74d53e717a2bf88ef16ab857334004501136"
+      },
+      "gitBlob": {
+        "bytes": 4967,
+        "sha256": "80653663ad88e4db3a617426d4cc74d53e717a2bf88ef16ab857334004501136",
+        "objectId": "78f2fc75255778bac97d9844e94c9195d1c8bce9"
+      },
+      "sameBytes": true
+    }
+  ]
+}

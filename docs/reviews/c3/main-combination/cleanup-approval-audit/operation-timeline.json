@@ -1,0 +1,1386 @@
+{
+  "status": "操作证据关联，不是审批通过结论",
+  "allCallsAfterFirstRefusalInclusive": [
+    {
+      "callID": "call_a694c2419db74628858fd2b79f9ee0c8",
+      "startedAt": "2026-10-08T11:29:03.882Z",
+      "returnedAt": "2026-10-08T11:29:06.419Z",
+      "inputMember": "call_a694c2419db74628858fd2b79f9ee0c8/input.txt",
+      "outputMember": "call_a694c2419db74628858fd2b79f9ee0c8/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_a694c2419db74628858fd2b79f9ee0c8/command-1.txt",
+          "sha256": "4a7d15752a176aecc0657eac01c4ea76c333b70863516ba417a2d89c44f8e5bd"
+        },
+        {
+          "index": 2,
+          "member": "call_a694c2419db74628858fd2b79f9ee0c8/command-2.txt",
+          "sha256": "c53e42057ce3de10b5fed44fbd8c70bf8fe265d264caac7993eb7077fba66e73"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "211ebd",
+          "exit_code": 0,
+          "wall_time_seconds": 2.2994622
+        }
+      ]
+    },
+    {
+      "callID": "call_daf2599d8ae943d5bd10995153cf3e33",
+      "startedAt": "2026-10-08T11:29:21.406Z",
+      "returnedAt": "2026-10-08T11:29:31.603Z",
+      "inputMember": "call_daf2599d8ae943d5bd10995153cf3e33/input.txt",
+      "outputMember": "call_daf2599d8ae943d5bd10995153cf3e33/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_daf2599d8ae943d5bd10995153cf3e33/command-1.txt",
+          "sha256": "fa38bc2c77160376113fec7d3fea5f3b92b73a7cc22dbbeb9d5d3de43d8482d5"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "eba30b",
+          "session_id": 41935,
+          "wall_time_seconds": 10.0028976
+        }
+      ]
+    },
+    {
+      "callID": "call_e43c29711a02466fa1ea09c0670c1785",
+      "startedAt": "2026-10-08T11:29:38.061Z",
+      "returnedAt": "2026-10-08T11:29:39.840Z",
+      "inputMember": "call_e43c29711a02466fa1ea09c0670c1785/input.txt",
+      "outputMember": "call_e43c29711a02466fa1ea09c0670c1785/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_e43c29711a02466fa1ea09c0670c1785/command-1.txt",
+          "sha256": "374f664674a421b65fdd4952febe5be50077b2eb3f0dfae6629bca9e5174eca0"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "a17d60",
+          "exit_code": 1,
+          "wall_time_seconds": 1.5840212999999999
+        }
+      ]
+    },
+    {
+      "callID": "call_8477665e146c400d990b3f1e10e17215",
+      "startedAt": "2026-10-08T11:29:51.212Z",
+      "returnedAt": "2026-10-08T11:29:57.584Z",
+      "inputMember": "call_8477665e146c400d990b3f1e10e17215/input.txt",
+      "outputMember": "call_8477665e146c400d990b3f1e10e17215/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_8477665e146c400d990b3f1e10e17215/command-1.txt",
+          "sha256": "dc16b64dd3d8ae046b77d18f66c084ba0212644df5e9e1e5e49483eeb650df99"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "92819d",
+          "exit_code": 0,
+          "wall_time_seconds": 1.1527891000000001
+        },
+        {
+          "chunk_id": "e94b2d",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0149588
+        }
+      ]
+    },
+    {
+      "callID": "call_e8a4cbeb5aee4d92b341b7ce55fca789",
+      "startedAt": "2026-10-08T11:30:16.699Z",
+      "returnedAt": "2026-10-08T11:30:18.172Z",
+      "inputMember": "call_e8a4cbeb5aee4d92b341b7ce55fca789/input.txt",
+      "outputMember": "call_e8a4cbeb5aee4d92b341b7ce55fca789/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_e8a4cbeb5aee4d92b341b7ce55fca789/command-1.txt",
+          "sha256": "79f86472b61035e6a011b797baea0ca5302ab859c4527539fc0aa714ef90d20b"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "941a5e",
+          "exit_code": 0,
+          "wall_time_seconds": 1.2905691
+        }
+      ]
+    },
+    {
+      "callID": "call_a84f1ee8e0a14bc2a0e43f2eb090d770",
+      "startedAt": "2026-10-08T11:30:28.453Z",
+      "returnedAt": "2026-10-08T11:30:29.762Z",
+      "inputMember": "call_a84f1ee8e0a14bc2a0e43f2eb090d770/input.txt",
+      "outputMember": "call_a84f1ee8e0a14bc2a0e43f2eb090d770/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_a84f1ee8e0a14bc2a0e43f2eb090d770/command-1.txt",
+          "sha256": "f2866aa45e9ca22ee3eae1d96c75edef0c273022c16ddf4310ebb8ad759ea452"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "811096",
+          "exit_code": 0,
+          "wall_time_seconds": 1.0736014
+        }
+      ]
+    },
+    {
+      "callID": "call_becf6d992e0044c3b1e9dc5b113ac3d5",
+      "startedAt": "2026-10-08T11:30:40.861Z",
+      "returnedAt": "2026-10-08T11:30:42.433Z",
+      "inputMember": "call_becf6d992e0044c3b1e9dc5b113ac3d5/input.txt",
+      "outputMember": "call_becf6d992e0044c3b1e9dc5b113ac3d5/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_becf6d992e0044c3b1e9dc5b113ac3d5/command-1.txt",
+          "sha256": "f6a9c1c9f4fc11771ebcf4e5536081196085bcfa985d4097c91273db5ca00ff2"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "259f0b",
+          "exit_code": 0,
+          "wall_time_seconds": 1.37671
+        }
+      ]
+    },
+    {
+      "callID": "call_fd51ddcb550f47e282b5314a5c9d3bdd",
+      "startedAt": "2026-10-08T11:31:21.269Z",
+      "returnedAt": "2026-10-08T11:31:34.392Z",
+      "inputMember": "call_fd51ddcb550f47e282b5314a5c9d3bdd/input.txt",
+      "outputMember": "call_fd51ddcb550f47e282b5314a5c9d3bdd/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_fd51ddcb550f47e282b5314a5c9d3bdd/command-1.txt",
+          "sha256": "8f2d5dfee263baaf97d087b87886332dfb5a431fa84748934688b3956bb735ba"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "b5f993",
+          "exit_code": 0,
+          "wall_time_seconds": 7.9111286
+        },
+        {
+          "chunk_id": "7a83fa",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0072308
+        }
+      ]
+    },
+    {
+      "callID": "call_294f582d970e4e789ada5f981861bd9c",
+      "startedAt": "2026-10-08T11:32:14.605Z",
+      "returnedAt": "2026-10-08T11:32:19.698Z",
+      "inputMember": "call_294f582d970e4e789ada5f981861bd9c/input.txt",
+      "outputMember": "call_294f582d970e4e789ada5f981861bd9c/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_294f582d970e4e789ada5f981861bd9c/command-1.txt",
+          "sha256": "eb21076e17f8a8dcc7e135f905b77161582203153e330a4d9a7c834fdcc18b87"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "fc6404",
+          "exit_code": 0,
+          "wall_time_seconds": 4.9017666
+        }
+      ]
+    },
+    {
+      "callID": "call_ceb20b12298645b4a84f41eff5c1b01a",
+      "startedAt": "2026-10-08T11:32:32.466Z",
+      "returnedAt": "2026-10-08T11:32:39.504Z",
+      "inputMember": "call_ceb20b12298645b4a84f41eff5c1b01a/input.txt",
+      "outputMember": "call_ceb20b12298645b4a84f41eff5c1b01a/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_ceb20b12298645b4a84f41eff5c1b01a/command-1.txt",
+          "sha256": "723588e71da608b98a2b8f753cca5b6d01e59ac80b1753b8d7d0a3e9460403a4"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "1afbe0",
+          "exit_code": 0,
+          "wall_time_seconds": 1.8243146000000001
+        },
+        {
+          "chunk_id": "0fc995",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0091633
+        }
+      ]
+    },
+    {
+      "callID": "call_9803e619083f4155b66d2e007c25d686",
+      "startedAt": "2026-10-08T11:32:54.577Z",
+      "returnedAt": "2026-10-08T11:32:55.731Z",
+      "inputMember": "call_9803e619083f4155b66d2e007c25d686/input.txt",
+      "outputMember": "call_9803e619083f4155b66d2e007c25d686/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_9803e619083f4155b66d2e007c25d686/command-1.txt",
+          "sha256": "8995ce793fcf0c87631d67c1cdaabbf5ec5e6cb5ce26f0f6a43baaa2f6ef9e73"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "f8055e",
+          "exit_code": 0,
+          "wall_time_seconds": 0.9573893
+        }
+      ]
+    },
+    {
+      "callID": "call_10b896e7356f434cbbf85be70ecb1a74",
+      "startedAt": "2026-10-08T11:33:13.797Z",
+      "returnedAt": "2026-10-08T11:33:20.337Z",
+      "inputMember": "call_10b896e7356f434cbbf85be70ecb1a74/input.txt",
+      "outputMember": "call_10b896e7356f434cbbf85be70ecb1a74/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_10b896e7356f434cbbf85be70ecb1a74/command-1.txt",
+          "sha256": "ad0432fa86e52d36ad2bf7f598aeb7f93d800f72585116c43bf2db229cce37c8"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "becba2",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0107123
+        },
+        {
+          "chunk_id": "e3e3f3",
+          "exit_code": 0,
+          "wall_time_seconds": 1.2899153
+        }
+      ]
+    },
+    {
+      "callID": "call_5b7f5fd85e5b4c2c900af1f85dbea124",
+      "startedAt": "2026-10-08T11:33:26.087Z",
+      "returnedAt": "2026-10-08T11:33:32.836Z",
+      "inputMember": "call_5b7f5fd85e5b4c2c900af1f85dbea124/input.txt",
+      "outputMember": "call_5b7f5fd85e5b4c2c900af1f85dbea124/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_5b7f5fd85e5b4c2c900af1f85dbea124/command-1.txt",
+          "sha256": "a30b89507793496a8f1f668bd85946392ff1d469bf7664b5a3141eacbb534358"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "9bf694",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0138713
+        },
+        {
+          "chunk_id": "6f49c9",
+          "exit_code": 0,
+          "wall_time_seconds": 1.5097165000000001
+        }
+      ]
+    },
+    {
+      "callID": "call_adf93fcfe87f49438ef8f58c992f424d",
+      "startedAt": "2026-10-08T11:34:01.850Z",
+      "returnedAt": "2026-10-08T11:34:07.982Z",
+      "inputMember": "call_adf93fcfe87f49438ef8f58c992f424d/input.txt",
+      "outputMember": "call_adf93fcfe87f49438ef8f58c992f424d/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_adf93fcfe87f49438ef8f58c992f424d/command-1.txt",
+          "sha256": "b788a8acad833589de5204d0d88cc35aaa2d3b8a34fb79701da0f5c1e781743e"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "a6727a",
+          "exit_code": 0,
+          "wall_time_seconds": 0.9336021
+        },
+        {
+          "chunk_id": "1a436c",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0028158
+        }
+      ]
+    },
+    {
+      "callID": "call_47b8595c1cc144fd833e70325c943315",
+      "startedAt": "2026-10-08T11:35:08.488Z",
+      "returnedAt": "2026-10-08T11:35:13.573Z",
+      "inputMember": "call_47b8595c1cc144fd833e70325c943315/input.txt",
+      "outputMember": "call_47b8595c1cc144fd833e70325c943315/output.json",
+      "decodedCommands": [],
+      "processResults": [
+        {
+          "chunk_id": "a3869c",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0105798
+        }
+      ]
+    },
+    {
+      "callID": "call_edab606e83e742f69c8df10db7ad35eb",
+      "startedAt": "2026-10-08T11:35:53.877Z",
+      "returnedAt": "2026-10-08T11:35:59.958Z",
+      "inputMember": "call_edab606e83e742f69c8df10db7ad35eb/input.txt",
+      "outputMember": "call_edab606e83e742f69c8df10db7ad35eb/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_edab606e83e742f69c8df10db7ad35eb/command-1.txt",
+          "sha256": "0c53c41e458860494580a9ff6e671d05c7dc78c950a3ef917dae187a8a210eae"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "ceccc1",
+          "exit_code": 0,
+          "wall_time_seconds": 0.8688568
+        },
+        {
+          "chunk_id": "2cfaaa",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0101339
+        }
+      ]
+    },
+    {
+      "callID": "call_cd16c7e3496a40bdbbfc07d12637387c",
+      "startedAt": "2026-10-08T11:36:06.677Z",
+      "returnedAt": "2026-10-08T11:36:08.831Z",
+      "inputMember": "call_cd16c7e3496a40bdbbfc07d12637387c/input.txt",
+      "outputMember": "call_cd16c7e3496a40bdbbfc07d12637387c/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_cd16c7e3496a40bdbbfc07d12637387c/command-1.txt",
+          "sha256": "3cd61fe7a4f590d1094fb083ea281a5a1688989f449d2edfdd8e0ad093b0adf7"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "267879",
+          "exit_code": 0,
+          "wall_time_seconds": 1.9558757
+        }
+      ]
+    },
+    {
+      "callID": "call_764512a232d64fd78c5047a9c5f41305",
+      "startedAt": "2026-10-08T11:36:21.978Z",
+      "returnedAt": "2026-10-08T11:36:23.856Z",
+      "inputMember": "call_764512a232d64fd78c5047a9c5f41305/input.txt",
+      "outputMember": "call_764512a232d64fd78c5047a9c5f41305/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_764512a232d64fd78c5047a9c5f41305/command-1.txt",
+          "sha256": "b9ee38db036e6f238139dcd0f600bec4ca32e5662f634ffcc3cca81b64b6bccd"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "9ac0ab",
+          "exit_code": 0,
+          "wall_time_seconds": 1.6871082
+        }
+      ]
+    },
+    {
+      "callID": "call_b17e9388c1c34c06a21013a66832e3f2",
+      "startedAt": "2026-10-08T11:36:56.097Z",
+      "returnedAt": "2026-10-08T11:37:01.136Z",
+      "inputMember": "call_b17e9388c1c34c06a21013a66832e3f2/input.txt",
+      "outputMember": "call_b17e9388c1c34c06a21013a66832e3f2/output.json",
+      "decodedCommands": [],
+      "processResults": [
+        {
+          "chunk_id": "915f9f",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0154216
+        }
+      ]
+    },
+    {
+      "callID": "call_7f7c6b0c87b64ee29151931eec67e1c8",
+      "startedAt": "2026-10-08T11:37:34.549Z",
+      "returnedAt": "2026-10-08T11:37:40.490Z",
+      "inputMember": "call_7f7c6b0c87b64ee29151931eec67e1c8/input.txt",
+      "outputMember": "call_7f7c6b0c87b64ee29151931eec67e1c8/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_7f7c6b0c87b64ee29151931eec67e1c8/command-1.txt",
+          "sha256": "c7cbc9162431213fa8e62a3f201daba3bab40dd0b2b2f8b321f8a499c883a31a"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "2b1e46",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7331108
+        },
+        {
+          "chunk_id": "22adf2",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0136963
+        }
+      ]
+    },
+    {
+      "callID": "call_c7b4268182154f2fb77bb105727a71c6",
+      "startedAt": "2026-10-08T11:37:49.084Z",
+      "returnedAt": "2026-10-08T11:37:51.630Z",
+      "inputMember": "call_c7b4268182154f2fb77bb105727a71c6/input.txt",
+      "outputMember": "call_c7b4268182154f2fb77bb105727a71c6/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_c7b4268182154f2fb77bb105727a71c6/command-1.txt",
+          "sha256": "141af34277a4306ea30a26dd7f3b4f9b411ef0387805b32b4a0889c4ad817608"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "214ded",
+          "exit_code": 0,
+          "wall_time_seconds": 2.3464195
+        }
+      ]
+    },
+    {
+      "callID": "call_005ad7512fe6447098a9285f27c0d565",
+      "startedAt": "2026-10-08T11:38:11.557Z",
+      "returnedAt": "2026-10-08T11:38:14.761Z",
+      "inputMember": "call_005ad7512fe6447098a9285f27c0d565/input.txt",
+      "outputMember": "call_005ad7512fe6447098a9285f27c0d565/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_005ad7512fe6447098a9285f27c0d565/command-1.txt",
+          "sha256": "97879b874d76180a177732b6605a96f0ed25a60870cc13543a1ca8d982b3d891"
+        },
+        {
+          "index": 2,
+          "member": "call_005ad7512fe6447098a9285f27c0d565/command-2.txt",
+          "sha256": "39f713be64a1de3cb5be53da6fc891319690eaeb0db2acf0e05fe2602dc09249"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "cb3ecb",
+          "exit_code": 0,
+          "wall_time_seconds": 1.1937159
+        },
+        {
+          "chunk_id": "63bdfb",
+          "exit_code": 0,
+          "wall_time_seconds": 1.645874
+        }
+      ]
+    },
+    {
+      "callID": "call_f40ad8a9396d4998a708c9442335c82e",
+      "startedAt": "2026-10-08T11:39:24.503Z",
+      "returnedAt": "2026-10-08T11:39:25.503Z",
+      "inputMember": "call_f40ad8a9396d4998a708c9442335c82e/input.txt",
+      "outputMember": "call_f40ad8a9396d4998a708c9442335c82e/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_f40ad8a9396d4998a708c9442335c82e/command-1.txt",
+          "sha256": "006afa1a64f8e235ad307f50ae95042794f3a9dffefa506e860bd30900add8ec"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "5ca465",
+          "exit_code": 0,
+          "wall_time_seconds": 0.8115324
+        },
+        {
+          "chunk_id": "8def9f",
+          "exit_code": 1,
+          "wall_time_seconds": 9.2e-06
+        }
+      ]
+    },
+    {
+      "callID": "call_2cf3fb912383432f922edacbe4a5e05a",
+      "startedAt": "2026-10-08T11:39:51.588Z",
+      "returnedAt": "2026-10-08T11:40:02.839Z",
+      "inputMember": "call_2cf3fb912383432f922edacbe4a5e05a/input.txt",
+      "outputMember": "call_2cf3fb912383432f922edacbe4a5e05a/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_2cf3fb912383432f922edacbe4a5e05a/command-1.txt",
+          "sha256": "f58e1f77adf2a12da17ff9c51b084a218c595f3a52aafa4ea0b64316777cb761"
+        },
+        {
+          "index": 2,
+          "member": "call_2cf3fb912383432f922edacbe4a5e05a/command-2.txt",
+          "sha256": "dd78936ad8780149669f1ff8b75e0c19172bab5c88568d54a8548568c1b08740"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "e3d90c",
+          "exit_code": 0,
+          "wall_time_seconds": 0.8554571
+        },
+        {
+          "chunk_id": "2a075c",
+          "session_id": 68283,
+          "wall_time_seconds": 10.0035009
+        }
+      ]
+    },
+    {
+      "callID": "call_162fc15fedd2478bbe74ebbfbe7bd27a",
+      "startedAt": "2026-10-08T11:40:13.642Z",
+      "returnedAt": "2026-10-08T11:40:14.865Z",
+      "inputMember": "call_162fc15fedd2478bbe74ebbfbe7bd27a/input.txt",
+      "outputMember": "call_162fc15fedd2478bbe74ebbfbe7bd27a/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_162fc15fedd2478bbe74ebbfbe7bd27a/command-1.txt",
+          "sha256": "3cd2b09613473a7f8b87c1f78e773f09261fac2353959f8e45b7a42568e0c576"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "cf6e3e",
+          "exit_code": 0,
+          "wall_time_seconds": 1.0193569
+        }
+      ]
+    },
+    {
+      "callID": "call_fed1bae0ad40436c9d97e462b0209143",
+      "startedAt": "2026-10-08T11:40:36.823Z",
+      "returnedAt": "2026-10-08T11:40:37.704Z",
+      "inputMember": "call_fed1bae0ad40436c9d97e462b0209143/input.txt",
+      "outputMember": "call_fed1bae0ad40436c9d97e462b0209143/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_fed1bae0ad40436c9d97e462b0209143/command-1.txt",
+          "sha256": "683fa644f0f0029a31b063b2d05d2bf5395081b591c1ab955be0ce9bff1579c1"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "1fe88d",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7026314
+        }
+      ]
+    },
+    {
+      "callID": "call_9684914360524cf49c53058e94a68ad8",
+      "startedAt": "2026-10-08T11:41:09.953Z",
+      "returnedAt": "2026-10-08T11:41:10.942Z",
+      "inputMember": "call_9684914360524cf49c53058e94a68ad8/input.txt",
+      "outputMember": "call_9684914360524cf49c53058e94a68ad8/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_9684914360524cf49c53058e94a68ad8/command-1.txt",
+          "sha256": "8ba6062959f43b81c24acdd902ed8c182e304dfe58f369a05bf6b8c60e24fc36"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "3d951e",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7874489
+        },
+        {
+          "chunk_id": "d6bf36",
+          "exit_code": 1,
+          "wall_time_seconds": 9.5e-06
+        }
+      ]
+    },
+    {
+      "callID": "call_df726231745842b7adc7ca030024ff93",
+      "startedAt": "2026-10-08T11:41:26.318Z",
+      "returnedAt": "2026-10-08T11:41:37.369Z",
+      "inputMember": "call_df726231745842b7adc7ca030024ff93/input.txt",
+      "outputMember": "call_df726231745842b7adc7ca030024ff93/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_df726231745842b7adc7ca030024ff93/command-1.txt",
+          "sha256": "864961f174afeaaae43879b3424fa9b881b563ab9c037f6c074e4b152f49c52f"
+        },
+        {
+          "index": 2,
+          "member": "call_df726231745842b7adc7ca030024ff93/command-2.txt",
+          "sha256": "ee6e71d8d0c6340454f92a07385265d5c5e1d7914fde722b329e6961a761d78d"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "44ede5",
+          "session_id": 84120,
+          "wall_time_seconds": 10.0049169
+        },
+        {
+          "chunk_id": "3efdbc",
+          "exit_code": 0,
+          "wall_time_seconds": 0.6914894
+        }
+      ]
+    },
+    {
+      "callID": "call_880bc0051a3c440eb6f5c3ba911fd19d",
+      "startedAt": "2026-10-08T11:41:48.395Z",
+      "returnedAt": "2026-10-08T11:41:49.933Z",
+      "inputMember": "call_880bc0051a3c440eb6f5c3ba911fd19d/input.txt",
+      "outputMember": "call_880bc0051a3c440eb6f5c3ba911fd19d/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_880bc0051a3c440eb6f5c3ba911fd19d/command-1.txt",
+          "sha256": "21c24a3261ac95217f77b863c285384592d3f606ed9a217a71626da4b55c3225"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "763f0a",
+          "exit_code": 0,
+          "wall_time_seconds": 1.341702
+        }
+      ]
+    },
+    {
+      "callID": "call_d5480481a2184cc3881a6612f3f468dc",
+      "startedAt": "2026-10-08T11:42:16.432Z",
+      "returnedAt": "2026-10-08T11:42:17.935Z",
+      "inputMember": "call_d5480481a2184cc3881a6612f3f468dc/input.txt",
+      "outputMember": "call_d5480481a2184cc3881a6612f3f468dc/output.json",
+      "decodedCommands": [],
+      "processResults": []
+    },
+    {
+      "callID": "call_e15a94dec40a49b089bd1fbab024abf4",
+      "startedAt": "2026-10-08T11:42:32.957Z",
+      "returnedAt": "2026-10-08T11:42:38.942Z",
+      "inputMember": "call_e15a94dec40a49b089bd1fbab024abf4/input.txt",
+      "outputMember": "call_e15a94dec40a49b089bd1fbab024abf4/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_e15a94dec40a49b089bd1fbab024abf4/command-1.txt",
+          "sha256": "1802d50c11630e0146ed7a4db88a02bf640298c086ab946ef4f64945567c3102"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "abce57",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7883735
+        },
+        {
+          "chunk_id": "cda750",
+          "session_id": 84120,
+          "wall_time_seconds": 5.0087146
+        }
+      ]
+    },
+    {
+      "callID": "call_9320393ae89b4dbe90ffa1d033c082b3",
+      "startedAt": "2026-10-08T11:43:10.598Z",
+      "returnedAt": "2026-10-08T11:43:18.651Z",
+      "inputMember": "call_9320393ae89b4dbe90ffa1d033c082b3/input.txt",
+      "outputMember": "call_9320393ae89b4dbe90ffa1d033c082b3/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_9320393ae89b4dbe90ffa1d033c082b3/command-1.txt",
+          "sha256": "9a0f9a2e726670735af09ed5d3af8a152f82380336e2e40215498e01e349a7ea"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "f7e176",
+          "exit_code": 0,
+          "wall_time_seconds": 2.8548227
+        },
+        {
+          "chunk_id": "c58fc4",
+          "session_id": 84120,
+          "wall_time_seconds": 5.0036734
+        }
+      ]
+    },
+    {
+      "callID": "call_a221ac5028a5427a9c6ac3afb233bc5e",
+      "startedAt": "2026-10-08T11:44:14.824Z",
+      "returnedAt": "2026-10-08T11:44:16.576Z",
+      "inputMember": "call_a221ac5028a5427a9c6ac3afb233bc5e/input.txt",
+      "outputMember": "call_a221ac5028a5427a9c6ac3afb233bc5e/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_a221ac5028a5427a9c6ac3afb233bc5e/command-1.txt",
+          "sha256": "09ee4551b89f6f2554f0a337344572ce1a4237b074d572ab8fbe4c2ebbc47fbf"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "df5760",
+          "exit_code": 0,
+          "wall_time_seconds": 1.5569337
+        },
+        {
+          "chunk_id": "6d9728",
+          "exit_code": 0,
+          "wall_time_seconds": 1.29e-05
+        }
+      ]
+    },
+    {
+      "callID": "call_f9613793031b40dd8bc177f095939ed5",
+      "startedAt": "2026-10-08T11:44:22.062Z",
+      "returnedAt": "2026-10-08T11:44:22.943Z",
+      "inputMember": "call_f9613793031b40dd8bc177f095939ed5/input.txt",
+      "outputMember": "call_f9613793031b40dd8bc177f095939ed5/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_f9613793031b40dd8bc177f095939ed5/command-1.txt",
+          "sha256": "962214af8edebbcefbd9eac3a07f1503e1ffe810cf47e0ac45c2e5cec36277ec"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "fc764a",
+          "exit_code": 0,
+          "wall_time_seconds": 0.6930868
+        }
+      ]
+    },
+    {
+      "callID": "call_a75158e9fcd94790a26f1f0c42aba6f2",
+      "startedAt": "2026-10-08T11:45:02.421Z",
+      "returnedAt": "2026-10-08T11:45:06.047Z",
+      "inputMember": "call_a75158e9fcd94790a26f1f0c42aba6f2/input.txt",
+      "outputMember": "call_a75158e9fcd94790a26f1f0c42aba6f2/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_a75158e9fcd94790a26f1f0c42aba6f2/command-1.txt",
+          "sha256": "1c79d3e62fc3045934d55c34fe1929d6e813e8e9a0b4c4a3b1f79f0341266644"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "984419",
+          "exit_code": 0,
+          "wall_time_seconds": 3.4421581
+        }
+      ]
+    },
+    {
+      "callID": "call_4c7de44ab90147c0a051cef93ca04874",
+      "startedAt": "2026-10-08T11:46:46.651Z",
+      "returnedAt": "2026-10-08T11:46:58.193Z",
+      "inputMember": "call_4c7de44ab90147c0a051cef93ca04874/input.txt",
+      "outputMember": "call_4c7de44ab90147c0a051cef93ca04874/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_4c7de44ab90147c0a051cef93ca04874/command-1.txt",
+          "sha256": "f9b8b85d4cd35f3d9098e25f02d91256b9993c115b24958797a9f695aa0b1c99"
+        },
+        {
+          "index": 2,
+          "member": "call_4c7de44ab90147c0a051cef93ca04874/command-2.txt",
+          "sha256": "ba06c88877c3353189053313a1afc8b0e04dd20d1692d3d4fa9cfdd8b614032c"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "688bec",
+          "exit_code": 0,
+          "wall_time_seconds": 1.1604714
+        },
+        {
+          "chunk_id": "58fa6a",
+          "session_id": 71425,
+          "wall_time_seconds": 10.0148317
+        }
+      ]
+    },
+    {
+      "callID": "call_0f4204fb2d5f4fd8932a74eebea8ceca",
+      "startedAt": "2026-10-08T11:47:34.507Z",
+      "returnedAt": "2026-10-08T11:47:45.270Z",
+      "inputMember": "call_0f4204fb2d5f4fd8932a74eebea8ceca/input.txt",
+      "outputMember": "call_0f4204fb2d5f4fd8932a74eebea8ceca/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_0f4204fb2d5f4fd8932a74eebea8ceca/command-1.txt",
+          "sha256": "01eac3e065284597182c534bf11732482d305fe8a1749e050f5f4cfa478197a7"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "c57077",
+          "exit_code": 0,
+          "wall_time_seconds": 5.5490731
+        },
+        {
+          "chunk_id": "d3af38",
+          "session_id": 71425,
+          "wall_time_seconds": 5.0138482
+        }
+      ]
+    },
+    {
+      "callID": "call_ea8a92262c934fa8abb699bbe0d0029a",
+      "startedAt": "2026-10-08T11:48:06.792Z",
+      "returnedAt": "2026-10-08T11:48:08.173Z",
+      "inputMember": "call_ea8a92262c934fa8abb699bbe0d0029a/input.txt",
+      "outputMember": "call_ea8a92262c934fa8abb699bbe0d0029a/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_ea8a92262c934fa8abb699bbe0d0029a/command-1.txt",
+          "sha256": "8cce849469fda2ada59897351903b894f72fe4d62b2286de1f75edf7d276b761"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "fc73a9",
+          "exit_code": 0,
+          "wall_time_seconds": 1.1918749
+        },
+        {
+          "chunk_id": "4b6905",
+          "exit_code": 0,
+          "wall_time_seconds": 8.7e-06
+        }
+      ]
+    },
+    {
+      "callID": "call_c2e56ce977ef423bba382515b7b4785b",
+      "startedAt": "2026-10-08T11:48:17.736Z",
+      "returnedAt": "2026-10-08T11:48:18.640Z",
+      "inputMember": "call_c2e56ce977ef423bba382515b7b4785b/input.txt",
+      "outputMember": "call_c2e56ce977ef423bba382515b7b4785b/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_c2e56ce977ef423bba382515b7b4785b/command-1.txt",
+          "sha256": "093987196e0107ce66faddc0c10117bffc94d10da891dd49c4cce08606cc010a"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "a02d2b",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7106931
+        }
+      ]
+    },
+    {
+      "callID": "call_365181d6b9d048ec83d08492a4d2c31d",
+      "startedAt": "2026-10-08T11:50:11.812Z",
+      "returnedAt": "2026-10-08T11:50:15.321Z",
+      "inputMember": "call_365181d6b9d048ec83d08492a4d2c31d/input.txt",
+      "outputMember": "call_365181d6b9d048ec83d08492a4d2c31d/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_365181d6b9d048ec83d08492a4d2c31d/command-1.txt",
+          "sha256": "383736b89850f29a8a00ce0c0b6588fda019d3233c3b08fa6081a27af7b18065"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "d888dc",
+          "exit_code": 0,
+          "wall_time_seconds": 3.3017211
+        }
+      ]
+    },
+    {
+      "callID": "call_ad4b07fd096b428a83f28f74c13161d6",
+      "startedAt": "2026-10-08T11:51:56.134Z",
+      "returnedAt": "2026-10-08T11:51:58.291Z",
+      "inputMember": "call_ad4b07fd096b428a83f28f74c13161d6/input.txt",
+      "outputMember": "call_ad4b07fd096b428a83f28f74c13161d6/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_ad4b07fd096b428a83f28f74c13161d6/command-1.txt",
+          "sha256": "0ecb6c9eba5d322003b6ba83f4c708eaa6b1b6f739ee4ad6798d1f5f434b6014"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "ded446",
+          "exit_code": 0,
+          "wall_time_seconds": 1.9299513
+        }
+      ]
+    },
+    {
+      "callID": "call_78479732f3614f6597454defa15f0fc2",
+      "startedAt": "2026-10-08T11:52:51.054Z",
+      "returnedAt": "2026-10-08T11:52:52.037Z",
+      "inputMember": "call_78479732f3614f6597454defa15f0fc2/input.txt",
+      "outputMember": "call_78479732f3614f6597454defa15f0fc2/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_78479732f3614f6597454defa15f0fc2/command-1.txt",
+          "sha256": "c19b8dbc7dffc25c29c520e683937c7b1e4eb3eb6b7a5d7f7e2aff3b3ce7aae2"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "8380bc",
+          "exit_code": 1,
+          "wall_time_seconds": 0.8052143
+        }
+      ]
+    },
+    {
+      "callID": "call_c7686ebccf2c46f48f42fb458dac04a8",
+      "startedAt": "2026-10-08T11:53:00.369Z",
+      "returnedAt": "2026-10-08T11:53:01.451Z",
+      "inputMember": "call_c7686ebccf2c46f48f42fb458dac04a8/input.txt",
+      "outputMember": "call_c7686ebccf2c46f48f42fb458dac04a8/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_c7686ebccf2c46f48f42fb458dac04a8/command-1.txt",
+          "sha256": "794349d93fcd4ac2ff6f31271a09bbf124b190004c2aa1a00385a13f30ecb175"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "76621d",
+          "exit_code": 0,
+          "wall_time_seconds": 0.8962575
+        }
+      ]
+    },
+    {
+      "callID": "call_e06e825e469d455191f17c413f25c6a5",
+      "startedAt": "2026-10-08T11:54:08.777Z",
+      "returnedAt": "2026-10-08T11:54:08.878Z",
+      "inputMember": "call_e06e825e469d455191f17c413f25c6a5/input.txt",
+      "outputMember": "call_e06e825e469d455191f17c413f25c6a5/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_e06e825e469d455191f17c413f25c6a5/command-1.txt",
+          "sha256": "6c7d6d053ab322921a6b2a59c7d60e70040967bc940b29691ff1913b8437ff4f"
+        }
+      ],
+      "processResults": []
+    },
+    {
+      "callID": "call_b86def6a5f4a4b7ab3004fb6a5c8e009",
+      "startedAt": "2026-10-08T11:54:52.922Z",
+      "returnedAt": "2026-10-08T11:54:54.147Z",
+      "inputMember": "call_b86def6a5f4a4b7ab3004fb6a5c8e009/input.txt",
+      "outputMember": "call_b86def6a5f4a4b7ab3004fb6a5c8e009/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_b86def6a5f4a4b7ab3004fb6a5c8e009/command-1.txt",
+          "sha256": "7e2c244255f7b21a69493a546a1868e9be73777e4ed0c623d5d26e413c5acc3c"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "433290",
+          "exit_code": 0,
+          "wall_time_seconds": 1.0398667
+        }
+      ]
+    },
+    {
+      "callID": "call_1ca28db4465943d6ac1da4be1c71fc77",
+      "startedAt": "2026-10-08T11:56:12.655Z",
+      "returnedAt": "2026-10-08T11:56:15.393Z",
+      "inputMember": "call_1ca28db4465943d6ac1da4be1c71fc77/input.txt",
+      "outputMember": "call_1ca28db4465943d6ac1da4be1c71fc77/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_1ca28db4465943d6ac1da4be1c71fc77/command-1.txt",
+          "sha256": "9eb8ef0bb2ee923f37e0fa851b16db62636e7b94f5cb1b0adb942683a49b45e0"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "dbd07a",
+          "exit_code": 0,
+          "wall_time_seconds": 2.54243
+        }
+      ]
+    },
+    {
+      "callID": "call_9a24eb4d84d8421287ea30f72b2887da",
+      "startedAt": "2026-10-08T11:57:48.824Z",
+      "returnedAt": "2026-10-08T11:57:50.654Z",
+      "inputMember": "call_9a24eb4d84d8421287ea30f72b2887da/input.txt",
+      "outputMember": "call_9a24eb4d84d8421287ea30f72b2887da/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_9a24eb4d84d8421287ea30f72b2887da/command-1.txt",
+          "sha256": "b60d34e211a2d31a2116fa2b0678ea6e4148b001063425b4e679fcd6cc0623d2"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "8928fb",
+          "exit_code": 0,
+          "wall_time_seconds": 1.6281603
+        }
+      ]
+    },
+    {
+      "callID": "call_b0184a7639db4e46899fa2c6e00fdd0d",
+      "startedAt": "2026-10-08T11:58:31.552Z",
+      "returnedAt": "2026-10-08T11:58:37.912Z",
+      "inputMember": "call_b0184a7639db4e46899fa2c6e00fdd0d/input.txt",
+      "outputMember": "call_b0184a7639db4e46899fa2c6e00fdd0d/output.json",
+      "decodedCommands": [],
+      "processResults": []
+    },
+    {
+      "callID": "call_ce65e0c0e3fe4a3b9a0f868fca587b63",
+      "startedAt": "2026-10-08T11:58:44.665Z",
+      "returnedAt": "2026-10-08T11:58:48.540Z",
+      "inputMember": "call_ce65e0c0e3fe4a3b9a0f868fca587b63/input.txt",
+      "outputMember": "call_ce65e0c0e3fe4a3b9a0f868fca587b63/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_ce65e0c0e3fe4a3b9a0f868fca587b63/command-1.txt",
+          "sha256": "e38fb13aae4bcf7a58fc0a95b7c63867b1566e54f78b2c11ff2579a98660a7fe"
+        }
+      ],
+      "processResults": []
+    },
+    {
+      "callID": "call_fdd2ed995e074f3686c17bd609b96aeb",
+      "startedAt": "2026-10-08T11:59:53.944Z",
+      "returnedAt": "2026-10-08T11:59:56.548Z",
+      "inputMember": "call_fdd2ed995e074f3686c17bd609b96aeb/input.txt",
+      "outputMember": "call_fdd2ed995e074f3686c17bd609b96aeb/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_fdd2ed995e074f3686c17bd609b96aeb/command-1.txt",
+          "sha256": "496f84bdee7dfc2b777712c643a7acec2651459caf3763baee10d32097bf5f68"
+        },
+        {
+          "index": 2,
+          "member": "call_fdd2ed995e074f3686c17bd609b96aeb/command-2.txt",
+          "sha256": "17bea353cd72e25bef9b6382c7560d78a323f1a9c09bd010a5cc9750c02f3479"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "56c10b",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7599218
+        },
+        {
+          "chunk_id": "8bcbd7",
+          "exit_code": 0,
+          "wall_time_seconds": 1.4499756
+        }
+      ]
+    }
+  ],
+  "sessions": {
+    "41935": {
+      "launchCallID": "call_daf2599d8ae943d5bd10995153cf3e33",
+      "launchedAt": "2026-10-08T11:29:21.406Z",
+      "initialChunkID": "eba30b",
+      "wholeShellExitCode": 1,
+      "finalWaitCallID": "call_f40ad8a9396d4998a708c9442335c82e",
+      "returnedAt": "2026-10-08T11:39:25.503Z",
+      "finalChunkID": "8def9f"
+    },
+    "68283": {
+      "launchCallID": "call_2cf3fb912383432f922edacbe4a5e05a",
+      "launchedAt": "2026-10-08T11:39:51.588Z",
+      "initialChunkID": "2a075c",
+      "wholeShellExitCode": 1,
+      "finalWaitCallID": "call_9684914360524cf49c53058e94a68ad8",
+      "returnedAt": "2026-10-08T11:41:10.942Z",
+      "finalChunkID": "d6bf36"
+    },
+    "84120": {
+      "launchCallID": "call_df726231745842b7adc7ca030024ff93",
+      "launchedAt": "2026-10-08T11:41:26.318Z",
+      "initialChunkID": "44ede5",
+      "wholeShellExitCode": 0,
+      "finalWaitCallID": "call_a221ac5028a5427a9c6ac3afb233bc5e",
+      "returnedAt": "2026-10-08T11:44:16.576Z",
+      "finalChunkID": "6d9728"
+    },
+    "71425": {
+      "launchCallID": "call_4c7de44ab90147c0a051cef93ca04874",
+      "launchedAt": "2026-10-08T11:46:46.651Z",
+      "initialChunkID": "58fa6a",
+      "wholeShellExitCode": 0,
+      "finalWaitCallID": "call_ea8a92262c934fa8abb699bbe0d0029a",
+      "returnedAt": "2026-10-08T11:48:08.173Z",
+      "finalChunkID": "4b6905"
+    }
+  },
+  "independentContainerTargets": [
+    {
+      "run": "first",
+      "name": "c3-main-combination-01a11890-pg",
+      "id": "9b943f753e22693879b303b59fda477f165856a3ff8e077d3255c2a1473c4128",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:38:28.409418+00:00"
+      },
+      "executorSessionID": 41935,
+      "launchCallID": "call_daf2599d8ae943d5bd10995153cf3e33",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "first",
+      "name": "c3-main-combination-01a11890-redis",
+      "id": "eeaae77575fb647b7c71e4c5574e283eded7e7537acbffbde9f8d275aead8a9d",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:38:29.160127+00:00"
+      },
+      "executorSessionID": 41935,
+      "launchCallID": "call_daf2599d8ae943d5bd10995153cf3e33",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "first",
+      "name": "c3-main-combination-01a11890-s3",
+      "id": "eea3b9115e5e0047077e3032320f0ee8f090a21f0102dbef0338916a301f90c8",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:38:29.762526+00:00"
+      },
+      "executorSessionID": 41935,
+      "launchCallID": "call_daf2599d8ae943d5bd10995153cf3e33",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "retry",
+      "name": "c3-main-combination-01a11890-retry-pg",
+      "id": "45f41454ed9ed10aa016f244c0c5878cf9a32164c4b12c7cf2045529355f4a3b",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:41:04.916257+00:00"
+      },
+      "executorSessionID": 68283,
+      "launchCallID": "call_2cf3fb912383432f922edacbe4a5e05a",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "retry",
+      "name": "c3-main-combination-01a11890-retry-redis",
+      "id": "0d3e88a746b4a47b2e9e6d8d74ab3f26d16a7c8054b4feceb783ee58196e1364",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:41:05.674612+00:00"
+      },
+      "executorSessionID": 68283,
+      "launchCallID": "call_2cf3fb912383432f922edacbe4a5e05a",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "retry",
+      "name": "c3-main-combination-01a11890-retry-s3",
+      "id": "b791032cb7500b7beb6521e53c6dda492873f760a89c5089eaa2616cbfbd7cda",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:41:06.319235+00:00"
+      },
+      "executorSessionID": 68283,
+      "launchCallID": "call_2cf3fb912383432f922edacbe4a5e05a",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "accepted",
+      "name": "c3-main-combination-01a11890-accepted-pg",
+      "id": "96e7e1bb7c4515a4c0c95af34a2eb8137a8c4a2b5608a77829b25efa0de427be",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:44:03.242843+00:00"
+      },
+      "executorSessionID": 84120,
+      "launchCallID": "call_df726231745842b7adc7ca030024ff93",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "accepted",
+      "name": "c3-main-combination-01a11890-accepted-redis",
+      "id": "152f644139215b4ef59d900c6e204e54a3f1d48b1bf7b11856a799dc7c1349d0",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:44:03.858901+00:00"
+      },
+      "executorSessionID": 84120,
+      "launchCallID": "call_df726231745842b7adc7ca030024ff93",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "accepted",
+      "name": "c3-main-combination-01a11890-accepted-s3",
+      "id": "5ba6ab24299d2aa5a75cde32779668d9d7b6e907d500e08c47afefd02d4162ce",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:44:04.450911+00:00"
+      },
+      "executorSessionID": 84120,
+      "launchCallID": "call_df726231745842b7adc7ca030024ff93",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "browser",
+      "name": "c3-main-combination-01a11890-browser-pg",
+      "id": "765df3cd8d4471a4b22a91241e136e207c101c9c0cd1993f4dd2ff8071b5565f",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:48:04.834965+00:00"
+      },
+      "executorSessionID": 71425,
+      "launchCallID": "call_4c7de44ab90147c0a051cef93ca04874",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "browser",
+      "name": "c3-main-combination-01a11890-browser-redis",
+      "id": "705d05cca038c6bd4378cd9713d9b008c71a2f102405de768e02c55a4e1e1ee9",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:48:05.510983+00:00"
+      },
+      "executorSessionID": 71425,
+      "launchCallID": "call_4c7de44ab90147c0a051cef93ca04874",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    },
+    {
+      "run": "browser",
+      "name": "c3-main-combination-01a11890-browser-s3",
+      "id": "cd7fb90cf325b572b07742f69a8a6a7bbd85340fd32fb879fcf94f61468b1bcd",
+      "verifiedAbsent": true,
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:48:06.139674+00:00"
+      },
+      "executorSessionID": 71425,
+      "launchCallID": "call_4c7de44ab90147c0a051cef93ca04874",
+      "targetRelation": "独立 Docker 容器 ID，不是被拒 Windows 路径；清理发生在 R2 之前",
+      "individualStopExitCode": null,
+      "individualRemoveExitCode": null,
+      "receiptLimitation": "原脚本 check=True 并核对不存在；未逐项保存数字退出码和底层工具 callID"
+    }
+  ],
+  "executorScript": "../run-checks.py",
+  "originalExecutorCopies": "原 checks-raw.zip 中 run-checks-runtime.py、retry/run-checks-runtime.py、browser/run-checks-runtime.py；accepted 输入绑定保存其脚本摘要，未单独归档该轮副本",
+  "childFilesystemPaths": "被拒目标下已保全文件精确路径见 incident.json；完整删除枚举和逐项回执未知，不补写",
+  "environment": "所有原命令及环境输入保存在 calls.zip；服务秘密仅由脚本生成并注入子进程，原件中未导出秘密值",
+  "currentRound": "只写受控审计文件；不执行提取命令、不删除移动恢复资源、不停止服务"
+}

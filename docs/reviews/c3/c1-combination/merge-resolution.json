@@ -1,0 +1,35 @@
+{
+  "mergeCommand": [
+    "git",
+    "merge",
+    "--no-ff",
+    "--no-commit",
+    "5b9c76b5f79917697906520edcd6947bfbfa925f"
+  ],
+  "initialExitCode": 1,
+  "initialCallChunkID": "74a348",
+  "conflicts": [
+    {
+      "path": "packages/contracts/src/route-policy-bindings.ts",
+      "resolution": "合并 C3 公开只读 GET 与全部七个 C1 Human-only 路由；未改变双方身份/功能策略"
+    },
+    {
+      "path": "docs/route-policy-matrix.md",
+      "resolution": "从组合契约执行 pnpm generate:route-policy 重建，277 实际路由"
+    },
+    {
+      "path": "packages/contracts/src/route-policy.test.ts",
+      "resolution": "数量改为277，双方公开只读及 C1 本人权限/默认关闭原断言保留"
+    },
+    {
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "resolution": "保留 featureDefinitions.length 动态数量及 C1 experimental 默认关闭完整断言，不保留陈旧12硬编码"
+    }
+  ],
+  "generatedRouteCount": 277,
+  "addedTests": [
+    "apps/api/integration/configuration-readiness.integration.test.ts：三个有效 token 场景各覆盖 C1 七路由重复/混合 cookie 拒绝，63 个 C1 拒绝，仍保留原18拒绝与9公开读取及有效身份正对照"
+  ],
+  "mainIntegrationNotPublication": true,
+  "commitStatus": "正常 merge 未完成提交，待必要检查后由平台提交；不自引用未知最终提交"
+}

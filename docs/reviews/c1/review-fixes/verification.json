@@ -1,0 +1,151 @@
+{
+  "status": "本轮完整本地检查成功；待独审、Chief 和平台 required CI，不代表最终验收或发布",
+  "actualMain": "96e724858e692d262107c34db50b40c3ae7c122c",
+  "reviewedHead": "9c10ca4",
+  "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+  "checks": [
+    {
+      "name": "lint",
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T11:23:31.843Z",
+      "endedAt": "2026-10-08T11:23:53.399Z",
+      "pid": 52308,
+      "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+      "log": "docs/reviews/c1/review-fixes/lint-accepted-source.log"
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T11:23:53.484Z",
+      "endedAt": "2026-10-08T11:24:15.613Z",
+      "pid": 42772,
+      "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+      "log": "docs/reviews/c1/review-fixes/typecheck-accepted-source.log"
+    },
+    {
+      "name": "unit",
+      "command": "pnpm test",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T11:24:15.749Z",
+      "endedAt": "2026-10-08T11:26:55.503Z",
+      "pid": 5644,
+      "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+      "log": "docs/reviews/c1/review-fixes/unit-accepted-source.log"
+    },
+    {
+      "name": "integration",
+      "command": "pnpm test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T11:26:55.665Z",
+      "endedAt": "2026-10-08T11:34:20.682Z",
+      "pid": 63028,
+      "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+      "log": "docs/reviews/c1/review-fixes/integration-accepted-source.log"
+    },
+    {
+      "name": "e2e",
+      "command": "pnpm test:e2e",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T11:42:08.375Z",
+      "endedAt": "2026-10-08T11:46:45.976Z",
+      "pid": 10520,
+      "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+      "log": "docs/reviews/c1/review-fixes/e2e-accepted-source-retry.log"
+    },
+    {
+      "name": "route",
+      "command": "pnpm check:route-policy",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T11:35:20.219Z",
+      "endedAt": "2026-10-08T11:35:22.267Z",
+      "pid": 53192,
+      "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+      "log": "docs/reviews/c1/review-fixes/route-accepted-source.log"
+    },
+    {
+      "name": "lock",
+      "command": "pnpm --filter @workmesh/db exec vitest run src/agent-lock-order-inventory.test.ts",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T11:35:22.396Z",
+      "endedAt": "2026-10-08T11:35:26.915Z",
+      "pid": 60880,
+      "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+      "log": "docs/reviews/c1/review-fixes/lock-accepted-source.log"
+    },
+    {
+      "name": "ci",
+      "command": "pnpm ci:validate",
+      "exitCode": 0,
+      "startedAt": "2026-10-08T11:35:27.054Z",
+      "endedAt": "2026-10-08T11:35:29.323Z",
+      "pid": 32472,
+      "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+      "log": "docs/reviews/c1/review-fixes/ci-accepted-source.log"
+    }
+  ],
+  "knownResults": {
+    "unit": {
+      "passed": 1662,
+      "failed": 0,
+      "skipped": 2
+    },
+    "integration": {
+      "passed": 370,
+      "failed": 0,
+      "skipped": 3,
+      "database": 80,
+      "api": 177,
+      "worker": 113,
+      "stage4Automation": 49,
+      "configurationReadiness": 14,
+      "channelManagementApi": 9,
+      "migrationBaseline": 22
+    },
+    "e2e": {
+      "passed": 68,
+      "failed": 0,
+      "skipped": 0,
+      "lastRun": {
+        "status": "passed",
+        "failedTests": []
+      }
+    },
+    "lint": {
+      "successfulTasks": 18,
+      "totalTasks": 18
+    },
+    "typecheck": {
+      "successfulTasks": 18,
+      "totalTasks": 18
+    },
+    "route": {
+      "exitCode": 0,
+      "policyCount": 276
+    },
+    "lockInventory": {
+      "passed": 8,
+      "failed": 0
+    },
+    "ciValidate": {
+      "exitCode": 0,
+      "scope": "本地工作流结构校验，不代替远端 required CI"
+    }
+  },
+  "e2eFirstFailure": "启动前发现其他工作树占用 3100/3101，无用例执行；不复用或停止外任务服务",
+  "gates": {
+    "remoteRequiredCI": "待平台提交后",
+    "independentReview": "待三项缺陷与 workspace 前置锁复核",
+    "chief": "待确认",
+    "realDelivery": "未授权，未执行",
+    "merge": "未执行 main 合入"
+  },
+  "failureRetention": "原首败和所有中间运行保留在 raw-evidence.zip；旧阶段源码分别归档，不重绑定为最终源码。首次 E2E 未执行用例，端口自然释放后完整重跑 68 项成功。",
+  "archive": {
+    "index": "raw-evidence-index.json",
+    "path": "raw-evidence.zip",
+    "bytes": 1308135,
+    "sha256": "d780ccb2687e7c6f590ebfafeacdb76fd314c07bbc827302054748b1890e6cc7"
+  }
+}

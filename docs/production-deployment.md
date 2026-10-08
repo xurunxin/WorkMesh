@@ -378,3 +378,29 @@ bundle, and set every `WORKMESH_*_IMAGE` value to the recorded `name@digest`.
 The GA promotion workflow retags the same manifests; the RC and GA digest values
 must remain equal. Operational commands and verification identities are in
 [Release operations](operations/releases.md).
+
+## 只读模型预置目录
+
+设置 `WORKMESH_BETA_MODEL_PRESETS=true` 后，公开只读 `GET /api/v1/workbench/model-presets` 提供启动时加载的目录。关闭时返回 `FEATURE_DISABLED`，不读取指定目录文件；手工配置始终可用。预置不验证凭据，保存不验证可达性或兼容性；选中仅填可编辑字段，连接保存后仍须显式登记模型和填写能力上限。
+
+加载优先级固定：功能禁用优先；指定 `WORKMESH_MODEL_PRESETS_FILE` 时完整替换内置目录；然后应用所选目录的 `disabledIds`。不合并、不回退、不在请求中写回。启用后文件缺失、坏 JSON、缺必填字段、非法 URL/日期、重复 ID、未知禁用 ID 均阻止 API 启动。文件变更需要重启 API。禁用清单必须引用原始完整文件里的 ID，响应保留禁用 ID、过滤对应 entries。
+
+文件契约为 `{ "version": "operator-catalog", "entries": [...], "disabledIds": [] }`。条目必填 `id/provider/region/apiType/baseUrl/modelId/sourceUrl/checkedAt/confirmationMethod/notes`；`confirmationMethod` 为 `machine` 或 `human`，只表示官方资料的阅读核对。只支持现有 `openai-completions` 和 `openai-responses`。每条需有效核对日期和 HTTPS 官方出处；URL 不含用户信息、查询或片段。完整字段示例可复制 `apps/api/src/data/model-presets.json`，删除不需要的条目或用 disabledIds 禁用，更新目录 version。
+
+目录是公开数据：任何访问 API 的人都能读取其中的部署网关地址、模型、地区和说明。不得写入凭据、令牌、内部秘密或嵌入凭据的 URL；网关认证材料由用户在连接表单填写。共享连接与私有主机保存仍走原有鉴权、normalizeLlmBaseUrl 和 WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST，不因来自目录而授予授权。
+
+Compose 三种部署都传入功能开关与路径。将本地文件通过覆盖文件只读挂载，容器路径必须匹配环境变量：
+
+```yaml
+services:
+  api:
+    environment:
+      WORKMESH_BETA_MODEL_PRESETS: "true"
+      WORKMESH_MODEL_PRESETS_FILE: /etc/workmesh/model-presets.json
+    volumes:
+      - ./model-presets.json:/etc/workmesh/model-presets.json:ro
+```
+
+保存为 `compose.model-presets.yml`，搭配相应基础 Compose 文件与既有部署 env 运行 `docker compose -f docker-compose.production.yml -f compose.model-presets.yml up -d api`。Lite 改用 `docker-compose.lite.yml`；开发类改用 `docker-compose.yml`。保持文件对容器非 root 用户可读；不要设置 URL 或网络共享路径。未指定路径时使用构建产物中的内置目录，不需要挂载文件。
+
+首批只有八家国内提供方及 OpenAI。北京百炼 Key 与业务空间域名、智谱 Coding Plan、方舟接入点、国内/国际凭据均有条件；不构造模板接入点，不从官方格式支持推出 WorkMesh 兼容。出处与逐家核对结果见 `docs/reviews/c3/official-source-review.md`。维护条目必须复读官方调用说明与模型资料，更新核对日期和目录版本；不调用付费推理或验证凭据 API。

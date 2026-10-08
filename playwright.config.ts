@@ -108,12 +108,14 @@ export default defineConfig({
         WORKMESH_BETA_TEMPLATES: "true",
         WORKMESH_BETA_COSTS: "true",
         WORKMESH_BETA_GITEA: "true",
+        WORKMESH_BETA_MODEL_PRESETS: "true",
         WORKMESH_BETA_OPERATIONS_UI: "true",
         WORKMESH_EXPERIMENTAL_AUTOMATION: "true",
         WORKMESH_EXPERIMENTAL_AGENT_LOOPS: "true",
         WORKMESH_EXPERIMENTAL_A2A: "true",
         WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: "true",
         WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: "true",
+        WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS: "true",
         // The formal acceptance suite starts a loopback Fake Agent webhook
         // receiver and still exercises the production webhook URL validator.
         ALLOW_PRIVATE_AGENT_WEBHOOKS: "true",

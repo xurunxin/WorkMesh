@@ -1,0 +1,213 @@
+{
+  "purpose": "本轮实际待提交文件；历史完整计划快照未修改，散日志由无损 ZIP 取代。平台生成最终 commit 后以该 commit diff 为准。",
+  "files": [
+    {
+      "status": "M",
+      "path": ".env.example"
+    },
+    {
+      "status": "M",
+      "path": "OPENAPI.yaml"
+    },
+    {
+      "status": "M",
+      "path": "SCHEMA.sql"
+    },
+    {
+      "status": "A",
+      "path": "apps/api/integration/notification-channels.integration.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/human-attention/projection.ts"
+    },
+    {
+      "status": "A",
+      "path": "apps/api/src/notification-channels.ts"
+    },
+    {
+      "status": "M",
+      "path": "apps/api/src/server.ts"
+    },
+    {
+      "status": "A",
+      "path": "apps/web/app/settings/notification-channel-settings.tsx"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/app/settings/page.test.tsx"
+    },
+    {
+      "status": "M",
+      "path": "apps/web/app/settings/page.tsx"
+    },
+    {
+      "status": "A",
+      "path": "apps/web/e2e/notification-channels.spec.ts"
+    },
+    {
+      "status": "M",
+      "path": "apps/worker/integration/stage4-automation.integration.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "apps/worker/src/automation.ts"
+    },
+    {
+      "status": "M",
+      "path": "apps/worker/src/index.ts"
+    },
+    {
+      "status": "M",
+      "path": "apps/worker/src/session-lifecycle.ts"
+    },
+    {
+      "status": "M",
+      "path": "docker-compose.yml"
+    },
+    {
+      "status": "M",
+      "path": "docs/VERSION_POLICY.md"
+    },
+    {
+      "status": "M",
+      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/plan/c1-channel-delivery.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/README.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/changed-files.json"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/current-spec.md"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/raw-evidence-index.json"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/raw-evidence.zip"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/resources.json"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/screenshots/channel-revoke-first-failure.png"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/screenshots/stage1-first-failure.png"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/test-coverage.json"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/tested-source-before-legacy-compat.json"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/tested-source-before-snapshot-fix.json"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/tested-source.json"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/verification.json"
+    },
+    {
+      "status": "A",
+      "path": "docs/reviews/c1/verify-evidence.mjs"
+    },
+    {
+      "status": "M",
+      "path": "docs/route-policy-matrix.md"
+    },
+    {
+      "status": "M",
+      "path": "packages/contracts/src/index.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/contracts/src/route-policy-bindings.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/contracts/src/route-policy.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/contracts/src/route-policy.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/db/integration/migration-baseline.integration.test.ts"
+    },
+    {
+      "status": "A",
+      "path": "packages/db/migrations/v1/0014_channel_delivery_contract.sql"
+    },
+    {
+      "status": "A",
+      "path": "packages/db/src/channel-notifications.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/db/src/event-resources.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/db/src/event-writer-inventory.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/db/src/events.ts"
+    },
+    {
+      "status": "A",
+      "path": "packages/db/src/human-attention-sources.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/db/src/index.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/db/src/migration-manifest.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/db/src/migrations.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/db/src/schema.ts"
+    },
+    {
+      "status": "M",
+      "path": "packages/domain/src/stage4.ts"
+    },
+    {
+      "status": "M",
+      "path": "playwright.config.ts"
+    }
+  ]
+}

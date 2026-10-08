@@ -1,0 +1,454 @@
+{
+  "status": "五项必需本地完整检查全部通过；待本轮提交 required CI、平台独审与 Chief 确认",
+  "checks": [
+    {
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "tasks": 18,
+      "cached": 14,
+      "log": "raw/lint-compat-final.log"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "tasks": 18,
+      "cached": 13,
+      "log": "raw/typecheck-compat-final.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "tasks": 29,
+      "cached": 22,
+      "log": "raw/test-compat-final.log",
+      "result": {
+        "passed": 1658,
+        "skipped": 2
+      },
+      "note": "完整必需命令成功；Turbo 对未变依赖复用原匹配缓存，跳过项不计通过。"
+    },
+    {
+      "command": "pnpm test:integration",
+      "exitCode": 0,
+      "log": "raw/test-integration-compat-final.log",
+      "db": {
+        "passed": 78,
+        "files": 17,
+        "migrationBaseline": 20
+      },
+      "api": {
+        "passed": 163,
+        "skipped": 1,
+        "files": 23,
+        "c1": 9
+      },
+      "worker": {
+        "passed": 100,
+        "skipped": 1,
+        "filesPassed": 8,
+        "filesSkipped": 1,
+        "stage4": 36,
+        "originalStage4": 14,
+        "newC1": 22
+      },
+      "recovery": {
+        "passed": 0,
+        "skipped": 1
+      },
+      "result": {
+        "passed": 341,
+        "skipped": 3
+      }
+    },
+    {
+      "command": "pnpm test:e2e",
+      "exitCode": 0,
+      "log": "raw/test-e2e-recheck-final.log",
+      "result": {
+        "passed": 68,
+        "failed": 0,
+        "skipped": 0
+      },
+      "note": "完整根命令，非独立单个用例；C1 与既有 Stage 1均通过，原测试与超时没有改动。首轮 Stage 1失败根因尚未定位，原证据保留。"
+    }
+  ],
+  "historicalResults": {
+    "worker30": "历史定向日志30通过；没有当时精确源码树绑定，不用作最新组合验收，当前完整集成将复验",
+    "api6": "历史定向6通过，没有当时精确源码绑定；最终指定API9通过，最新完整API163通过1原skip。",
+    "offline": "机器离线中断；integration-final.log 只有启动记录，无结论，不填通过"
+  },
+  "environment": {
+    "database": "独立 workmesh_c1_test / 127.0.0.1:55461",
+    "redis": "本轮专用 127.0.0.1:56361",
+    "s3": "本轮专用 RustFS 127.0.0.1:59061，含 Object Lock 夹具 bucket",
+    "secrets": "仅进程内本地测试夹具；配置脚本不提交，结束删除",
+    "runDirectory": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-c1-playwright",
+    "realOutbound": false
+  },
+  "gate": {
+    "independentReview": "未执行，交付后平台独审",
+    "chiefConfirmation": "待确认",
+    "merged": false,
+    "requiredRemoteCI": "本轮产品改动尚未由平台提交/push；等待该提交实际 required CI，历史CI不代替"
+  },
+  "skips": [
+    {
+      "scope": "单元",
+      "file": "apps/worker/src/retention-soak-formal-launch.test.ts",
+      "count": 1,
+      "reason": "原 opt-in 正式 soak 启动测试，不计通过"
+    },
+    {
+      "scope": "单元",
+      "file": "apps/worker/src/retention-soak-lock.test.ts",
+      "count": 1,
+      "reason": "原 opt-in 正式 soak 锁测试，不计通过"
+    },
+    {
+      "scope": "集成",
+      "file": "apps/api/integration/workbench-runner.integration.test.ts",
+      "count": 1,
+      "reason": "原 opt-in 外部 runner 用例，本轮未启用，不计通过"
+    },
+    {
+      "scope": "集成",
+      "file": "apps/worker/integration/retention-upgrade-barrier.integration.test.ts",
+      "count": 1,
+      "reason": "原 opt-in retention 升级屏障测试，本轮未启用，不计通过"
+    },
+    {
+      "scope": "集成",
+      "file": "packages/recovery/integration/recovery.integration.test.ts",
+      "count": 1,
+      "reason": "原 RUN_RECOVERY_INTEGRATION opt-in 完整备份恢复测试，本轮未启用，不计通过"
+    }
+  ],
+  "failures": [
+    {
+      "log": "raw/worker-targeted.log",
+      "reason": "新 delivery 来源未纳入事件资源 authority 映射，13失败17通过；补齐两类来源映射",
+      "resolvedBy": "完整 worker 98通过，含 Stage 4 34项"
+    },
+    {
+      "log": "raw/worker-targeted-retry.log",
+      "reason": "对账 status 参数 SQL 推导类型冲突，3失败27通过；显式 notification_delivery_status cast",
+      "resolvedBy": "完整 worker 与目标 API 对账验证"
+    },
+    {
+      "log": "raw/api-targeted.log",
+      "reason": "本地 auth burst 夹具超出配置界限，测试未执行；修正测试环境"
+    },
+    {
+      "log": "raw/api-targeted-retry.log",
+      "reason": "幂等 JSON 键顺序断言与 liveRead 参数缺 SQL $；改语义对象比较及参数插值"
+    },
+    {
+      "log": "raw/api-targeted-final.log",
+      "reason": "替换脚本 $$ 被处理为单 $，SQL 参数仍错误；改用 apply_patch 修复"
+    },
+    {
+      "log": "raw/migration-targeted.log",
+      "reason": "升级夹具 ledger 正则与正式 runner 不同；统一夹具后升级/空库 inventory 一致"
+    },
+    {
+      "log": "raw/integration.log",
+      "reason": "编辑脚本 replacement 的特殊 $ 序列导致文件尾复制、语法错误；恢复测试文件完整结构"
+    },
+    {
+      "log": "raw/integration-final.log",
+      "reason": "Machine offline 中断，仅启动日志，无结果，不算通过"
+    },
+    {
+      "log": "raw/unit-final.log",
+      "reason": "并行窗口库存扫描超时及遗漏新增私有形式/迁移编号断言；保持原预算，修正实际清单并顺序完整复验"
+    },
+    {
+      "log": "raw/db-unit-fixed.log",
+      "reason": "新增私有形式的精确数组位置不一致；对齐受控清单顺序"
+    },
+    {
+      "log": "raw/unit-current.log",
+      "reason": "SettingsPage 旧隔离夹具未提供新卡片的 feature 查询；mock 新卡片，实际卡片由 E2E 验证；另有负载窗口超时，未放宽预算",
+      "resolvedBy": "完整单元1658通过2既有skip"
+    },
+    {
+      "log": "raw/test-integration-acceptance.log",
+      "reason": "原注册表11项断言未包含新增默认关闭开关；改12项并明确断言新开关false",
+      "resolvedBy": "完整集成338通过3既有skip"
+    },
+    {
+      "log": "raw/test-e2e-final-acceptance.log",
+      "reason": "完整 E2E 67通过1失败。撤销请求携带 JSON Content-Type 但无 body，Fastify 拒绝；删除该 header 并增加请求体与返回状态断言。保留首败截图与上下文。",
+      "resolvedBy": "最新完整 E2E 68通过，C1 撤销请求 body/header 断言通过"
+    },
+    {
+      "log": "raw/test-after-delete-fix.log",
+      "reason": "完整单元中既有 Agent detail heading 等待失败，777通过1失败；没有改 Agent 产品、夹具或等待预算。首败保留，最新完整单元复验中。",
+      "resolvedBy": "test-source-final.log：完整单元1658通过2既有skip；原 Agent detail 产品、夹具和等待预算未修改"
+    },
+    {
+      "log": "raw/worker-after-snapshot-fix.log",
+      "reason": "新真实会话超时用例复用已有 executor Work Item 触发唯一约束，34通过2失败；用独立 Work Item 夹具保持产品约束。",
+      "resolvedBy": "worker-after-snapshot-fixture-fix.log 指定全文件36通过"
+    },
+    {
+      "log": "raw/test-integration-source-final.log",
+      "reason": "数据库全套13失败65通过：旧阶段迁移夹具在新增内部列之前调用事件写入器。新增显式 schema 检查，旧阶段仍写原事件格式，列出现后捕获内部来源；不修改历史迁移、不补发旧事件。",
+      "resolvedBy": "test-integration-compat-final.log：完整341成功3原 opt-in skip，数据库78全部成功"
+    },
+    {
+      "log": "raw/test-e2e-compat-final.log",
+      "reason": "E2E 启动未执行用例：3100/3101 被另一个工作树的服务占用，已核实 PID/路径，不终止、不复用；等待端口释放后正常完整重跑。"
+    },
+    {
+      "log": "raw/test-e2e-isolated-final.log",
+      "reason": "完整 E2E 67成功1失败：C1 已通过，既有 Stage 1 atomic agent-session POST 后10秒内未展示 queued；服务未完成响应。截图/上下文/脱敏网络片段保全；保持原测试、预算和产品，完整 E2E 重跑。",
+      "evidence": [
+        "screenshots/stage1-first-failure.png",
+        "raw/e2e-stage1-first-failure-context.md",
+        "raw/e2e-stage1-first-failure-network.json"
+      ],
+      "rootCause": "尚未定位，不将重跑成功冒称根因已修复",
+      "resolvedBy": "完整 E2E 重验68通过；未定位原失败根因，不宣称已修复"
+    }
+  ],
+  "previousChecks": [
+    {
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "tasks": 18,
+      "log": "raw/lint-final-acceptance.log"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "tasks": 18,
+      "log": "raw/typecheck-final-acceptance.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "tasks": 29,
+      "packages": [
+        {
+          "package": "@workmesh/git-provider",
+          "passed": 13,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/artifact-storage",
+          "passed": 22,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/observability",
+          "passed": 16,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/ui",
+          "passed": 50,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/contracts",
+          "passed": 181,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/domain",
+          "passed": 65,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/agent-runner",
+          "passed": 48,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/agent-sdk",
+          "passed": 33,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/a2a-adapter",
+          "passed": 4,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/config",
+          "passed": 33,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/db",
+          "passed": 28,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/conformance",
+          "passed": 1,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/mcp",
+          "passed": 38,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/fake-agent",
+          "passed": 4,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/worker",
+          "passed": 163,
+          "skipped": 2
+        },
+        {
+          "package": "@workmesh/recovery",
+          "passed": 7,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/web",
+          "passed": 778,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/api",
+          "passed": 174,
+          "skipped": 0
+        }
+      ],
+      "passed": 1658,
+      "skipped": 2,
+      "log": "raw/test-final-acceptance.log"
+    },
+    {
+      "command": "pnpm check:route-policy",
+      "exitCode": 0,
+      "log": "raw/route-policy-current.log"
+    },
+    {
+      "command": "pnpm ci:validate",
+      "exitCode": 0,
+      "log": "raw/ci-validate-current.log"
+    },
+    {
+      "command": "pnpm test:integration",
+      "exitCode": 0,
+      "log": "raw/test-integration-final-acceptance.log",
+      "database": {
+        "passed": 78,
+        "files": 17,
+        "migrationBaseline": 20
+      },
+      "api": {
+        "passed": 162,
+        "skipped": 1,
+        "files": 23,
+        "c1": 8
+      },
+      "worker": {
+        "passed": 98,
+        "skipped": 1,
+        "filesPassed": 8,
+        "filesSkipped": 1,
+        "stage4": 34,
+        "originalStage4": 14,
+        "newC1": 20
+      },
+      "recovery": {
+        "passed": 0,
+        "skipped": 1
+      },
+      "total": {
+        "passed": 338,
+        "skipped": 3
+      }
+    }
+  ],
+  "sourceSnapshotCorrection": {
+    "reason": "真实 Room 多受众事件快照原本可能在公开 payload 暴露其他 Inbox ID 和重复 intent；会话超时事件先于 Inbox 插入会漏捕来源。",
+    "change": "内部 domain_events.notification_sources；按 exact audience 分区，公共可见性仅补未被定向覆盖的 responsible Human；同事务先插 Inbox 后 emit 超时事件。",
+    "targeted": {
+      "worker": {
+        "passed": 36,
+        "log": "raw/worker-after-snapshot-fixture-fix.log"
+      },
+      "api": {
+        "passed": 9,
+        "log": "raw/api-after-snapshot-fix.log"
+      }
+    },
+    "previousSourceBindings": "tested-source-before-snapshot-fix.json",
+    "currentVerification": "最终兼容源码完整集成341通过3既有skip，完整E2E68通过；其余必需命令亦成功"
+  },
+  "afterSnapshotChecks": [
+    {
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "tasks": 18,
+      "cached": 14,
+      "log": "raw/lint-source-final.log"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "tasks": 18,
+      "cached": 13,
+      "log": "raw/typecheck-source-final.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "tasks": 29,
+      "cached": 21,
+      "log": "raw/test-source-final.log",
+      "result": {
+        "passed": 1658,
+        "skipped": 2
+      },
+      "note": "1658 成功，2 项原 opt-in skip；Turbo 依赖输入匹配时复用缓存。既有 Agent detail 首败没有改产品、夹具或等待预算，本次全套正常通过。"
+    }
+  ],
+  "additionalChecks": [
+    {
+      "command": "pnpm check:route-policy",
+      "exitCode": 0,
+      "log": "raw/route-policy-source-final.log"
+    },
+    {
+      "command": "pnpm ci:validate",
+      "exitCode": 0,
+      "log": "raw/ci-validate-source-final.log"
+    },
+    {
+      "command": "UPDATE_AGENT_LOCK_MANIFEST=1 pnpm --filter @workmesh/db exec vitest run src/agent-lock-order-inventory.test.ts",
+      "exitCode": 0,
+      "passed": 8,
+      "log": "raw/lock-manifest-after-snapshot.log",
+      "note": "排名锁语句与原清单一致，未制造无内容的 manifest 修改；完整单元包含正常库存与负例检查。"
+    }
+  ],
+  "evidenceStorage": {
+    "archive": "raw-evidence.zip",
+    "index": "raw-evidence-index.json",
+    "logs": "所有 raw/... 路径是原日志逻辑路径；physical 文件保全后删除，按 index.logicalPath=docs/reviews/c1/+log 与 version=文件名解析 ZIP 原字节。",
+    "cleanup": "资源登记与 raw/cleanup.log；无 global prune，当前及旧 workspace 保留"
+  },
+  "evidenceValidation": {
+    "command": "node docs/reviews/c1/verify-evidence.mjs",
+    "exitCode": 0,
+    "archiveEntries": 71,
+    "uniqueMembers": 70,
+    "testedSourceFiles": 48,
+    "stagedSourceBlobsMatch": true,
+    "savedPlanExactBodySha256": "959cb493a06ad8b17d313d419b75cc9e46ed9bdf8697e8c7e18718a31a62367b",
+    "savedPlanVersion": null,
+    "gitDiffCachedCheck": "通过，无新增空白错误",
+    "changedFiles": 52,
+    "cleanup": "三个容器及三个卷确认不存在，自有测试服务退出，专用临时路径不存在；current workspace 保留"
+  }
+}

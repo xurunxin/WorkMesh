@@ -1,0 +1,68 @@
+{
+  "说明": "仅文档前置验证；通过项不表示渠道功能已经实现或验收。",
+  "planId": "Ry2L3-U5lGSRc8EpsaLs6",
+  "planBodySha256": "959cb493a06ad8b17d313d419b75cc9e46ed9bdf8697e8c7e18718a31a62367b",
+  "integratedMain": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+  "branch": "tds/conv-01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+  "checks": [
+    {
+      "name": "精确正文 UTF-8 字节数和 SHA-256",
+      "result": "通过"
+    },
+    {
+      "name": "工具可见 savedplan 前缀逐字一致",
+      "characters": 3478,
+      "result": "通过"
+    },
+    {
+      "name": "当前计划 ID 与 conversation 一致，未提供版本保留 null",
+      "result": "通过"
+    },
+    {
+      "name": "Markdown 完整阅读副本与精确 JSON 正文的派生关系",
+      "result": "通过"
+    },
+    {
+      "name": "当前 spec 全文与工具读回一致",
+      "result": "通过"
+    },
+    {
+      "name": "八项原测试、一项原 DoD、九类矩阵与冻结原对象严格一致",
+      "result": "通过"
+    },
+    {
+      "name": "历史输入工作树/Git blob 摘要与未修改断言",
+      "result": "通过"
+    },
+    {
+      "name": "当前分支和正常快进主线基点",
+      "result": "通过"
+    },
+    {
+      "name": "新增范围仅受控 docs/plan/c1-channel-delivery，产品文件零改动",
+      "result": "通过"
+    },
+    {
+      "name": "UTF-8/LF/无 BOM、已暂存 Git blob 与工作树字节一致",
+      "result": "通过"
+    },
+    {
+      "name": "相对来源引用存在，git diff --cached --check",
+      "result": "通过"
+    }
+  ],
+  "functionalTests": {
+    "lint": "未运行：仅文档前置",
+    "typecheck": "未运行：仅文档前置",
+    "test": "未运行：仅文档前置",
+    "integration": "未运行：仅文档前置",
+    "e2e": "未运行：仅文档前置",
+    "migrationCleanAndUpgrade": "未运行：未实现迁移"
+  },
+  "productChanges": false,
+  "realOutbound": false,
+  "externalPublication": false,
+  "independentReview": "待 Chief 安排另一执行者",
+  "chiefConfirmation": "待门禁通过后确认",
+  "hashPolicy": "仅记录非自身文件和正文摘要；source-metadata.json 与本文件不构造循环自哈希。"
+}

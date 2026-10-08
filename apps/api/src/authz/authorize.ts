@@ -197,6 +197,9 @@ async function resolveTeam(
   resolver: ResourceResolverId,
   operationId: string,
 ): Promise<TeamResolution> {
+  // 就绪投影在最终 SELECT 中统一重验 Team 与上下文，避免早期存在性查询
+  // 让不可见 Team 与不存在 Team 返回不同错误；身份/actor kind 校验仍执行。
+  if (operationId === 'getConfigurationReadiness') return { kind: 'none' }
   const params = pathParams(request)
   const query = queryParams(request)
   const directTeamId = params.teamId ?? query.teamId

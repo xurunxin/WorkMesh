@@ -1,0 +1,124 @@
+{
+  "scope": "仅当前报告末尾空行及必要文档字节绑定/首败保全，无产品或测试源码修改",
+  "todoId": "kkG9VeT3_uTzREhjnX2ve",
+  "pr": 206,
+  "reviewedHead": "76369131ef6de844813fe40a8df519c8fbbf29ed",
+  "actualFetchedMain": "96e724858e692d262107c34db50b40c3ae7c122c",
+  "prComparisonBase": "96e724858e692d262107c34db50b40c3ae7c122c",
+  "reviewedReport": {
+    "path": "docs/reviews/c1/review-fixes/README.md",
+    "commit": "76369131ef6de844813fe40a8df519c8fbbf29ed",
+    "gitBlobSha1": "a4bf3000fe24508e23c5922cda1947fb6b444ef8",
+    "gitBytes": 8617,
+    "gitSha256": "6b704aab4b5927e0d477f3a28e57e51fbe830f196c08628183e41f6dea1fef89",
+    "worktreeBytes": 8621,
+    "worktreeSha256": "9910ec4f2aa3bf4fdc3414e8ca407f493cb2346b8e8bff6b5b2c04be61ff6455"
+  },
+  "currentDocuments": [
+    {
+      "path": "docs/reviews/c1/review-fixes/README.md",
+      "gitBlobSha1": "8a4b57898bfabc7ab4afd71e14de808f23740cc9",
+      "gitBytes": 8614,
+      "gitSha256": "dc9cac2bba8b2a305c566869816a9e707d44251eba2cf051d50ca49750408b2c",
+      "worktreeBytes": 8615,
+      "worktreeSha256": "e83534738e6b24d95e8f33b29932534eebe7e8efab9c2e454248c94eb03ed417"
+    }
+  ],
+  "currentDocumentPolicy": "原 59 文件 tested-source 清单不含本报告；扫描既有 JSON 清单没有当前报告的独立字节绑定。这里只绑定实际修改的报告，不覆写历史受测源码、原 checks、计划或原 raw 日志。自身验证文档与索引不自引用 hash。",
+  "firstFailure": {
+    "runId": 37774039654,
+    "ciNumber": 390,
+    "head": "76369131ef6de844813fe40a8df519c8fbbf29ed",
+    "jobId": 113300330331,
+    "step": 5,
+    "workflowExitCode": 1,
+    "gitErrorReportedStatus": 2,
+    "localReproduction": {
+      "exitCode": 2,
+      "stdout": "docs/reviews/c1/review-fixes/README.md:47: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    "required": "failure",
+    "skippedJobs": 7,
+    "skipPolicy": "不计成功"
+  },
+  "firstFailureProvenance": {
+    "tool": "workflow_runs(runId, jobId)",
+    "local": "读回文本与工具响应逐字节归档；工具标注 Log (tail)，不是完整 job 日志下载，也不声称拿到原 artifact ZIP",
+    "originalArtifact": {
+      "id": 11548816667,
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/37774039654/artifacts/11548816667",
+      "bytes": 1648,
+      "sha256": "5af17133d6d30f1955498ca609892dfc4cdaa24756262e8c4a61f00a602a6543",
+      "retention": "原 GitHub artifact 保留，无覆盖、删除或重新生成"
+    }
+  },
+  "preservation": {
+    "reviewedCommit": "保留原已审 commit，不 amend/rebase",
+    "controlledHistoricalFilesUnchanged": 41,
+    "sourceBinding": {
+      "path": "docs/reviews/c1/review-fixes/tested-source.json",
+      "sha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+      "files": 59
+    },
+    "originalEvidenceVerification": {
+      "entries": 205,
+      "members": 113,
+      "currentSourceFiles": 59,
+      "historical": {
+        "logs": 71,
+        "members": 70,
+        "sourceFiles": 48,
+        "planBody": "一致",
+        "errors": []
+      },
+      "requiredChecks": "全部成功",
+      "planBody": "一致",
+      "errors": []
+    }
+  },
+  "patch": {
+    "archiveLogicalPath": "docs/reviews/c1/ci-whitespace-fix/report-only.patch",
+    "bytes": 1295,
+    "sha256": "ffacf0b105e8074fbd8afd94b6a91fa5ec5af97bcc1481f16801df3f7e22e5fd"
+  },
+  "archive": {
+    "index": "docs/reviews/c1/ci-whitespace-fix/raw-evidence-index.json",
+    "path": "raw-evidence.zip",
+    "bytes": 41065,
+    "sha256": "55f1d9ef102d03b9786a31870b3a776e5547d449b9143edeb6a2531d852e5ec2",
+    "entries": 10,
+    "members": 10,
+    "readback": "逐字节一致"
+  },
+  "stagedRangeCheck": {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "96e724858e692d262107c34db50b40c3ae7c122c"
+    ],
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": "",
+    "scope": "完整暂存内容；最后再次执行同一命令后提交，不把未变工作树的零 diff 当 PR range 验证"
+  },
+  "finalHeadPolicy": "平台 push_branch 生成新 head 后，再执行真实 base→HEAD git diff --check 并在本轮回复报告；不为自引用反复提交证据",
+  "requiredCI": "原 CI390 failure 保留；新 head CI 待平台提交触发，不能用历史 checks 冒成功",
+  "businessChecks": "源码及测试完整不变，遵用户指令不重跑业务全套或原独审；原五项检查保留原受测源码含义",
+  "gates": "回 review 交 Chief；最新 required CI 全 pass 才能另行按授权 merge；不 merge、不外发、不修改 #5 分支",
+  "resources": {
+    "createdContainers": [],
+    "createdImages": [],
+    "createdServices": [],
+    "temporaryPaths": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\docs\\reviews\\c1\\ci-whitespace-fix\\.capture.json",
+        "purpose": "本轮 CI 工具读回中转",
+        "cleanup": "原字节入归档并核验后已移除"
+      }
+    ],
+    "retained": "当前工作树与旧证据保留，未清其他任务资源"
+  }
+}

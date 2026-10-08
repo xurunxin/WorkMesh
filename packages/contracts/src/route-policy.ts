@@ -98,6 +98,7 @@ export type RoutePolicyFeatureResolver = (
 ) => Readonly<{ key: string; tier: RoutePolicyFeatureTier }> | undefined
 
 const publicOperations = new Set([
+  'listModelPresets',
   'live',
   'ready',
   'health',
@@ -168,12 +169,20 @@ const workspaceAdminOperations = new Set([
 ])
 
 const humanOnlyOperations = new Set([
+  'getNotificationChannelConfig',
+  'listNotificationChannelTargets',
+  'createNotificationChannelTarget',
+  'updateNotificationChannelTarget',
+  'revokeNotificationChannelTarget',
+  'listChannelNotificationDeliveries',
+  'reconcileChannelNotificationDelivery',
   ...workspaceAdminOperations,
   // The queue counts are a Human-only disclosure: each count reuses the
   // authorization predicate of the list it summarises, and an Agent has no queue
   // of its own to summarise.
   'listCollaborationQueueCounts',
   'listWorkbenchLlmConnections',
+  'getConfigurationReadiness',
   'createWorkbenchLlmConnection',
   'getWorkbenchLlmConnection',
   'updateWorkbenchLlmConnection',
@@ -273,6 +282,7 @@ const agentOnlyOperations = new Set([
 ])
 
 const revisionedOperations = new Set([
+  'updateNotificationChannelTarget', 'revokeNotificationChannelTarget', 'reconcileChannelNotificationDelivery',
   'archiveWorkbenchConversation',
   'queueWorkbenchTurn',
   'stopWorkbenchTurn',

@@ -15,6 +15,8 @@ import {
 
 export * from './route-policy.js'
 export * from './pi-workbench-contracts.js'
+export * from './model-presets.js'
+export * from './configuration-readiness-contracts.js'
 export { workmeshSkillManifest } from './workmesh-skill-manifest.js'
 export {
   agentLifecycleStatusSchema,
@@ -38,6 +40,7 @@ export const releaseMetadata = Object.freeze({
 })
 
 export const featureKeySchema = z.enum([
+  'WORKMESH_BETA_MODEL_PRESETS',
   'WORKMESH_BETA_PLANNING',
   'WORKMESH_BETA_TEMPLATES',
   'WORKMESH_BETA_COSTS',
@@ -48,6 +51,7 @@ export const featureKeySchema = z.enum([
   'WORKMESH_EXPERIMENTAL_AGENT_LOOPS',
   'WORKMESH_EXPERIMENTAL_A2A',
   'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS',
+  'WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS',
   'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME',
 ])
 export const supportTierSchema = z.enum(['beta', 'experimental'])
@@ -59,6 +63,7 @@ export type FeatureRegistry = z.infer<typeof featureRegistryResponseSchema>
 export type FeatureRuntime = 'api' | 'web' | 'worker' | 'sdk-mcp' | 'reserved'
 
 export const featureDefinitions = Object.freeze([
+  { key: 'WORKMESH_BETA_MODEL_PRESETS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
   { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web', 'worker'] },
   { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
   { key: 'WORKMESH_BETA_COSTS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
@@ -69,6 +74,7 @@ export const featureDefinitions = Object.freeze([
   { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
   { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api'] },
   { key: 'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker'] },
+  { key: 'WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'web', 'worker'] },
   { key: 'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['reserved'] },
 ] as const satisfies readonly {
   key: FeatureKey
@@ -99,6 +105,7 @@ export const featureRegistryResponseSchema = z.object({
 }).strict()
 
 const featureRoutePrefixes = [
+  ['/api/v1/workbench/model-presets', 'WORKMESH_BETA_MODEL_PRESETS'],
   ['/api/v1/cycles', 'WORKMESH_BETA_PLANNING'],
   ['/api/v1/initiatives', 'WORKMESH_BETA_PLANNING'],
   ['/api/v1/advanced-views', 'WORKMESH_BETA_PLANNING'],
@@ -113,6 +120,8 @@ const featureRoutePrefixes = [
   ['/.well-known/workmesh-agent', 'WORKMESH_BETA_COORDINATION_MCP'],
   ['/api/v1/loops', 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS'],
   ['/api/v1/a2a-bindings', 'WORKMESH_EXPERIMENTAL_A2A'],
+  ['/api/v1/notification-channel-targets', 'WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS'],
+  ['/api/v1/channel-notification-deliveries', 'WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS'],
 ] as const satisfies readonly (readonly [string, FeatureKey])[]
 
 export const featureForApiRoute = (route: string): FeatureKey | undefined =>
@@ -465,6 +474,7 @@ export const retentionStatusResponseSchema = z.object({
 })
 
 export const stage0RouteManifest = [
+  { method: 'GET', path: '/api/v1/workbench/model-presets', authenticated: false },
   { method: 'GET', path: '/livez', authenticated: false },
   { method: 'GET', path: '/readyz', authenticated: false },
   { method: 'GET', path: '/health', authenticated: false },
@@ -504,6 +514,7 @@ export const stage0RouteManifest = [
   { method: 'POST', path: '/api/v1/views', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/events', authenticated: true },
   { method: 'GET', path: '/api/v1/events/stream', authenticated: true },
+  { method: 'GET', path: '/api/v1/workbench/configuration-readiness', authenticated: true },
   { method: 'GET', path: '/api/v1/workbench/llm-connections', authenticated: true },
   { method: 'GET', path: '/api/v1/workbench/conversations', authenticated: true },
   { method: 'POST', path: '/api/v1/workbench/conversations', authenticated: true, mutation: true },
@@ -2165,6 +2176,32 @@ export const loopInputSchema = z.object({
 
 export const notificationPrioritySchema = z.enum(['input', 'approval', 'agent_failure', 'mention', 'handoff', 'update'])
 export const notificationChannelSchema = z.enum(['in_app', 'browser', 'webhook'])
+export const notificationChannelTargetCreateSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  provider: z.literal('wecom'),
+  secretMaterial: z.string().url().max(4096),
+  enabled: z.boolean().default(true),
+}).strict()
+export const notificationChannelTargetUpdateSchema = notificationChannelTargetCreateSchema
+  .omit({ provider: true }).partial().strict()
+export const notificationChannelTargetSchema = z.object({
+  id: idSchema, name: z.string(), provider: z.literal('wecom'), enabled: z.boolean(),
+  status: z.enum(['active', 'revoked']), revision: revisionSchema,
+  secret_ref: idSchema, secret_status: z.enum(['configured', 'missing']),
+  endpoint_fingerprint: z.string(), created_at: timestampSchema, updated_at: timestampSchema,
+}).strict()
+export const channelNotificationReconcileSchema = z.object({
+  outcome: z.enum(['delivered', 'retry', 'dead']),
+}).strict()
+export const channelNotificationDeliverySchema = z.object({
+  id: idSchema, intent_id: idSchema, channel_target_id: idSchema,
+  status: z.enum(['pending', 'claimed', 'delivered', 'failed', 'dead', 'suppressed']),
+  outcome: z.enum(['not_sent', 'sending', 'uncertain', 'delivered', 'failed']),
+  effect_key: z.string(), attempt_count: z.number().int().nonnegative(), revision: revisionSchema,
+  source_type: z.string(), source_id: idSchema, source_revision: revisionSchema,
+  available_at: timestampSchema, delivered_at: timestampSchema.nullable(),
+  last_error_present: z.boolean(),
+}).strict()
 export const notificationPreferenceInputSchema = z.object({
   channels: z.array(notificationChannelSchema).min(1).max(3),
   digest: z.enum(['immediate', 'hourly', 'daily']),
@@ -2421,6 +2458,16 @@ export const autonomousControlPlaneRouteManifest = [
   { method: 'POST', path: '/api/v1/agent-enrollments/redeem', authenticated: false, mutation: true },
 ] as const
 
+export const notificationChannelRouteManifest = [
+  { method: 'GET', path: '/api/v1/notification-channel-targets/config', authenticated: true },
+  { method: 'GET', path: '/api/v1/notification-channel-targets', authenticated: true },
+  { method: 'POST', path: '/api/v1/notification-channel-targets', authenticated: true, mutation: true },
+  { method: 'PATCH', path: '/api/v1/notification-channel-targets/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'DELETE', path: '/api/v1/notification-channel-targets/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/channel-notification-deliveries', authenticated: true },
+  { method: 'POST', path: '/api/v1/channel-notification-deliveries/{id}/reconcile', authenticated: true, mutation: true, revisioned: true },
+] as const
+
 export const agentRouteManifest = [
   ...stage0RouteManifest,
   ...stage1RouteManifest,
@@ -2432,6 +2479,7 @@ export const agentRouteManifest = [
   ...recoveryRouteManifest,
   ...controlPlaneReadRouteManifest,
   ...autonomousControlPlaneRouteManifest,
+  ...notificationChannelRouteManifest,
 ] as const
 
 export const routePolicyManifest = createRoutePolicyManifest((path) => {

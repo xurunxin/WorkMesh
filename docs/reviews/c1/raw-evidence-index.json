@@ -1,0 +1,721 @@
+{
+  "schemaVersion": 1,
+  "purpose": "完整本地检查、首败与修复前源码的无损原字节；不是历史CI或未运行证明",
+  "archive": {
+    "path": "raw-evidence.zip",
+    "bytes": 1083542,
+    "sha256": "0639d49dc4f8e56045f56b21b0a6f73394469e438e082270538e622c93a42c84"
+  },
+  "entries": [
+    {
+      "logicalPath": "docs/reviews/c1/raw/api-after-snapshot-fix.log",
+      "version": "api-after-snapshot-fix.log",
+      "byteKind": "worktree",
+      "bytes": 27001,
+      "sha256": "7df4f8037012b34f8b4e601c1417cfe8bb861e434f41538f6e0184320db07b9e",
+      "member": "bytes/7df4f8037012b34f8b4e601c1417cfe8bb861e434f41538f6e0184320db07b9e",
+      "sourceCommit": null,
+      "sourceBlobId": "64d31497bc099d8349d366393c464b325f7c819e"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/api-targeted-final.log",
+      "version": "api-targeted-final.log",
+      "byteKind": "worktree",
+      "bytes": 18548,
+      "sha256": "655f2ffef511c3acd0b8f720db288112a3cfc9931faa510428b0e2dec3843534",
+      "member": "bytes/655f2ffef511c3acd0b8f720db288112a3cfc9931faa510428b0e2dec3843534",
+      "sourceCommit": null,
+      "sourceBlobId": "435f7e949bacea4b444e52ebaf067f5ce9131ad3"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/api-targeted-fixed.log",
+      "version": "api-targeted-fixed.log",
+      "byteKind": "worktree",
+      "bytes": 15425,
+      "sha256": "62c50e36df234d48d36c79074b643537fed45faefab52291b828443aabb4f550",
+      "member": "bytes/62c50e36df234d48d36c79074b643537fed45faefab52291b828443aabb4f550",
+      "sourceCommit": null,
+      "sourceBlobId": "cd5ed4976f58bc51c905a59164bcca277a2019c3"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/api-targeted-retry.log",
+      "version": "api-targeted-retry.log",
+      "byteKind": "worktree",
+      "bytes": 18702,
+      "sha256": "845212c7c0cb237c408b16df73edc9dddf80904c24b17f7803f04f3b429311fa",
+      "member": "bytes/845212c7c0cb237c408b16df73edc9dddf80904c24b17f7803f04f3b429311fa",
+      "sourceCommit": null,
+      "sourceBlobId": "0eba30df37dedfd918c61b76fa9e62954d3bf485"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/api-targeted.log",
+      "version": "api-targeted.log",
+      "byteKind": "worktree",
+      "bytes": 2002,
+      "sha256": "c80cb7ec843e9bb1bd51a7b16f4a4a35b80f7f6c1bf2e831479b206945a37f99",
+      "member": "bytes/c80cb7ec843e9bb1bd51a7b16f4a4a35b80f7f6c1bf2e831479b206945a37f99",
+      "sourceCommit": null,
+      "sourceBlobId": "d746c444c17a5e0d2dca33c596b3d6e3010b9d14"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/ci-validate-current.log",
+      "version": "ci-validate-current.log",
+      "byteKind": "worktree",
+      "bytes": 1512,
+      "sha256": "f339e311de326e6c14d78a71140a984bd2144cc1a263c31deb06c64f02dacad9",
+      "member": "bytes/f339e311de326e6c14d78a71140a984bd2144cc1a263c31deb06c64f02dacad9",
+      "sourceCommit": null,
+      "sourceBlobId": "7437d600fe5a82eed7853dfcbd0652f4114322b4"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/ci-validate-source-final.log",
+      "version": "ci-validate-source-final.log",
+      "byteKind": "worktree",
+      "bytes": 1515,
+      "sha256": "1de52d856e7b12d4782918e31ce5ccf2237affefbde8547e12c52c9ac4b35dd1",
+      "member": "bytes/1de52d856e7b12d4782918e31ce5ccf2237affefbde8547e12c52c9ac4b35dd1",
+      "sourceCommit": null,
+      "sourceBlobId": "e5565c32d03db4d0ab3664fde74dd06cee96fee9"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/contract-fixed.log",
+      "version": "contract-fixed.log",
+      "byteKind": "worktree",
+      "bytes": 5790,
+      "sha256": "2d4158c27039bafc30ce755114b976706a598aa8d2cc28ba7353e330049b8238",
+      "member": "bytes/2d4158c27039bafc30ce755114b976706a598aa8d2cc28ba7353e330049b8238",
+      "sourceCommit": null,
+      "sourceBlobId": "76d9253e9f7fa29484ced702435b3dc998859f14"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/db-unit-fixed.log",
+      "version": "db-unit-fixed.log",
+      "byteKind": "worktree",
+      "bytes": 3032,
+      "sha256": "f56a029c351e8e559309598045ef3d74b679d15fc1427d320df4447e0474982e",
+      "member": "bytes/f56a029c351e8e559309598045ef3d74b679d15fc1427d320df4447e0474982e",
+      "sourceCommit": null,
+      "sourceBlobId": "f1d4da8ab7f792895f9301cff354845e8d9ca5b0"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/e2e-channel-first-failure-context.md",
+      "version": "e2e-channel-first-failure-context.md",
+      "byteKind": "worktree",
+      "bytes": 3899,
+      "sha256": "cef69bcceb08dcdc95939c180f4c67564a555e90960f5ced1e305e9cfc3cd483",
+      "member": "bytes/cef69bcceb08dcdc95939c180f4c67564a555e90960f5ced1e305e9cfc3cd483",
+      "sourceCommit": null,
+      "sourceBlobId": "64b08dc74cadd771baa4b9c8086091797e02d05c"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/e2e-last-run.json",
+      "version": "e2e-last-run.json",
+      "byteKind": "worktree",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "member": "bytes/91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "sourceCommit": null,
+      "sourceBlobId": "cbcc1fbac11a74b608b2b3edc3a2ffd6ab639cb2"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/e2e-stage1-first-failure-context.md",
+      "version": "e2e-stage1-first-failure-context.md",
+      "byteKind": "worktree",
+      "bytes": 17915,
+      "sha256": "063f00c6b0260d40889c8a5712e9785aa43a8c867f5d1fcb110c65eb79ce81ea",
+      "member": "bytes/063f00c6b0260d40889c8a5712e9785aa43a8c867f5d1fcb110c65eb79ce81ea",
+      "sourceCommit": null,
+      "sourceBlobId": "14457b67bc78f8f74b93cbfb2fddd241d961b21b"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/e2e-stage1-first-failure-network.json",
+      "version": "e2e-stage1-first-failure-network.json",
+      "byteKind": "worktree",
+      "bytes": 1106,
+      "sha256": "27ba4f523f2546019862568eb3f534452a073630ddbd3426089b5e44c6a5661e",
+      "member": "bytes/27ba4f523f2546019862568eb3f534452a073630ddbd3426089b5e44c6a5661e",
+      "sourceCommit": null,
+      "sourceBlobId": "7cc76804f4a6abef358f06c5f18943de6e03de16"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/e2e-stage1-recheck-db-activity.log",
+      "version": "e2e-stage1-recheck-db-activity.log",
+      "byteKind": "worktree",
+      "bytes": 3940,
+      "sha256": "a0be694aa3d61292f9db46aa523d4601bece0758d16fec04e9c84d90ec111994",
+      "member": "bytes/a0be694aa3d61292f9db46aa523d4601bece0758d16fec04e9c84d90ec111994",
+      "sourceCommit": null,
+      "sourceBlobId": "2057c11872bd0b2af03c71153b8e32222ffaad3b"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/format-delete-fix.log",
+      "version": "format-delete-fix.log",
+      "byteKind": "worktree",
+      "bytes": 110,
+      "sha256": "2dc3de35c68014bf0addefba17c31e22a9b06995a2bd59e890d8638707704b93",
+      "member": "bytes/2dc3de35c68014bf0addefba17c31e22a9b06995a2bd59e890d8638707704b93",
+      "sourceCommit": null,
+      "sourceBlobId": "ec3741db479e328df30e6204c8a9cce206db5298"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/format-new-files-final.log",
+      "version": "format-new-files-final.log",
+      "byteKind": "worktree",
+      "bytes": 271,
+      "sha256": "8815c52e34adcebacbcaaa5b261eef33ec6d9b0f32e4c26f56a51491b217dae6",
+      "member": "bytes/8815c52e34adcebacbcaaa5b261eef33ec6d9b0f32e4c26f56a51491b217dae6",
+      "sourceCommit": null,
+      "sourceBlobId": "88fef6e1cbab8e849855c343803ff88f48cdb490"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/format-new-files.log",
+      "version": "format-new-files.log",
+      "byteKind": "worktree",
+      "bytes": 271,
+      "sha256": "923f1acb1e7fb4cfb31ccd2dc34f889b28075c4c477f89fd1d2da7cceba08c15",
+      "member": "bytes/923f1acb1e7fb4cfb31ccd2dc34f889b28075c4c477f89fd1d2da7cceba08c15",
+      "sourceCommit": null,
+      "sourceBlobId": "8a354b1142d2b4c3b66cf7a5c6ea3deb3d389745"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/format-source-selection.log",
+      "version": "format-source-selection.log",
+      "byteKind": "worktree",
+      "bytes": 60,
+      "sha256": "af8f111922256c4c2214667b2e3ca7eaa58f1e67d429724d28702361c6c9ab6c",
+      "member": "bytes/af8f111922256c4c2214667b2e3ca7eaa58f1e67d429724d28702361c6c9ab6c",
+      "sourceCommit": null,
+      "sourceBlobId": "52447539bf6bffe60b8bcdbc63748c04ddd19b9d"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/integration-final.log",
+      "version": "integration-final.log",
+      "byteKind": "worktree",
+      "bytes": 872,
+      "sha256": "ee9ab1f080c4b9f988d337df4b052bcfeb0bfac1aec490d441a103387e069ec6",
+      "member": "bytes/ee9ab1f080c4b9f988d337df4b052bcfeb0bfac1aec490d441a103387e069ec6",
+      "sourceCommit": null,
+      "sourceBlobId": "5c2c672f51af51e478528e021d0e7dccf7819b13"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/integration.log",
+      "version": "integration.log",
+      "byteKind": "worktree",
+      "bytes": 6102,
+      "sha256": "91ef5714ad751e24610d402dbe8ef1bd4e49fb730a532493dae1012a43f0fd42",
+      "member": "bytes/91ef5714ad751e24610d402dbe8ef1bd4e49fb730a532493dae1012a43f0fd42",
+      "sourceCommit": null,
+      "sourceBlobId": "e19c77a94e0b3de404f8ab7c80102b7439a29037"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lint-acceptance.log",
+      "version": "lint-acceptance.log",
+      "byteKind": "worktree",
+      "bytes": 6080,
+      "sha256": "a228dfc69d139afa36bed4ac8df42218f461186e1707ef64af4cc5621c5cd2fc",
+      "member": "bytes/a228dfc69d139afa36bed4ac8df42218f461186e1707ef64af4cc5621c5cd2fc",
+      "sourceCommit": null,
+      "sourceBlobId": "7383310e29a7d11e6c25ccdabeccaab9e80f09f0"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lint-after-delete-fix.log",
+      "version": "lint-after-delete-fix.log",
+      "byteKind": "worktree",
+      "bytes": 6097,
+      "sha256": "f6286e6570def3f4f826db617b4a4f29dad909ad4d4f3a77af324e4b75e540b5",
+      "member": "bytes/f6286e6570def3f4f826db617b4a4f29dad909ad4d4f3a77af324e4b75e540b5",
+      "sourceCommit": null,
+      "sourceBlobId": "021802c22d1242be416e3264efe3574a5963aee1"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lint-compat-final.log",
+      "version": "lint-compat-final.log",
+      "byteKind": "worktree",
+      "bytes": 6085,
+      "sha256": "04d3339f34a18655ca4e7a52b5db18ea436f2f2298f2d41177ac4aa1ea18a49a",
+      "member": "bytes/04d3339f34a18655ca4e7a52b5db18ea436f2f2298f2d41177ac4aa1ea18a49a",
+      "sourceCommit": null,
+      "sourceBlobId": "a4e810eebff305824ab1ab604284ff2dbe3dc11a"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lint-current.log",
+      "version": "lint-current.log",
+      "byteKind": "worktree",
+      "bytes": 6086,
+      "sha256": "6574739c5c101f802f7346c92c94888e273caf6ca4cf954f311efc9566a35218",
+      "member": "bytes/6574739c5c101f802f7346c92c94888e273caf6ca4cf954f311efc9566a35218",
+      "sourceCommit": null,
+      "sourceBlobId": "2645e0d8a4bc91467759e2926a18eeb49337c47d"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lint-final-acceptance.log",
+      "version": "lint-final-acceptance.log",
+      "byteKind": "worktree",
+      "bytes": 6097,
+      "sha256": "c7a07e43a14ae177e748b0e2af85891fd5d043327632c9adaae371b64812b960",
+      "member": "bytes/c7a07e43a14ae177e748b0e2af85891fd5d043327632c9adaae371b64812b960",
+      "sourceCommit": null,
+      "sourceBlobId": "da46c951043a7fc46cae42c2bb32db789c48428e"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lint-final.log",
+      "version": "lint-final.log",
+      "byteKind": "worktree",
+      "bytes": 6505,
+      "sha256": "bc9255556a56cabade8816cf917c7d623fee5a41b6ac54255fa5aaa083dd4423",
+      "member": "bytes/bc9255556a56cabade8816cf917c7d623fee5a41b6ac54255fa5aaa083dd4423",
+      "sourceCommit": null,
+      "sourceBlobId": "1f2871239a962feedf5998b9cc2d4a93e4a7f449"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lint-source-final.log",
+      "version": "lint-source-final.log",
+      "byteKind": "worktree",
+      "bytes": 6084,
+      "sha256": "dea2089fa3840f1b4405595be649f3bbe89a344cf5b7496ee0e66a0f7b0272a2",
+      "member": "bytes/dea2089fa3840f1b4405595be649f3bbe89a344cf5b7496ee0e66a0f7b0272a2",
+      "sourceCommit": null,
+      "sourceBlobId": "745715cd16c5aecb5115fa151222e5052d41bd47"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lint-verified.log",
+      "version": "lint-verified.log",
+      "byteKind": "worktree",
+      "bytes": 6093,
+      "sha256": "0f563ca71faf5c250e64d83b1befcf76bac39b67b0d7b88d38aef34437807591",
+      "member": "bytes/0f563ca71faf5c250e64d83b1befcf76bac39b67b0d7b88d38aef34437807591",
+      "sourceCommit": null,
+      "sourceBlobId": "205c2abc37b98916a3d8fc81399f2510bea9d262"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lint.log",
+      "version": "lint.log",
+      "byteKind": "worktree",
+      "bytes": 5699,
+      "sha256": "b5882dfe21cc73224b56fa21186fbc806950bf731619e2c30327575700536007",
+      "member": "bytes/b5882dfe21cc73224b56fa21186fbc806950bf731619e2c30327575700536007",
+      "sourceCommit": null,
+      "sourceBlobId": "a37ee107c0947f934dbd71d8468e8141606a79b7"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lock-manifest-after-snapshot.log",
+      "version": "lock-manifest-after-snapshot.log",
+      "byteKind": "worktree",
+      "bytes": 586,
+      "sha256": "88fcd31048ac3b91433af6f886535b7d4e8dbdb53ac665da7379a5258aa44b15",
+      "member": "bytes/88fcd31048ac3b91433af6f886535b7d4e8dbdb53ac665da7379a5258aa44b15",
+      "sourceCommit": null,
+      "sourceBlobId": "545e12210175e47ba5220728259d408369fdb14b"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/lock-manifest-generate.log",
+      "version": "lock-manifest-generate.log",
+      "byteKind": "worktree",
+      "bytes": 729,
+      "sha256": "8eaa75df2a58360bb6a3f4a6dd711504bc22a0a5faa91d46743d5ddb6079bbf0",
+      "member": "bytes/8eaa75df2a58360bb6a3f4a6dd711504bc22a0a5faa91d46743d5ddb6079bbf0",
+      "sourceCommit": null,
+      "sourceBlobId": "cfb870c75d6d7e50c7224796d0a6ad7f9d9ceda5"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/migration-targeted.log",
+      "version": "migration-targeted.log",
+      "byteKind": "worktree",
+      "bytes": 5425,
+      "sha256": "11a1b93d32e4d0dd9dd71e211737438fbce62b39c4c5ca4aabaa32065e515f58",
+      "member": "bytes/11a1b93d32e4d0dd9dd71e211737438fbce62b39c4c5ca4aabaa32065e515f58",
+      "sourceCommit": null,
+      "sourceBlobId": "dea9327f7baf53e6616179c9234b4c73220d1b96"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/reset-after-snapshot-fix.log",
+      "version": "reset-after-snapshot-fix.log",
+      "byteKind": "worktree",
+      "bytes": 140,
+      "sha256": "5bcefbfd15f6ca44761c74d70f22ec6c9835fe573aa8f3fc35896413ed98a7c9",
+      "member": "bytes/5bcefbfd15f6ca44761c74d70f22ec6c9835fe573aa8f3fc35896413ed98a7c9",
+      "sourceCommit": null,
+      "sourceBlobId": "5baac3613b2756d42c1e78ad1a88e675fa6de975"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/route-policy-current.log",
+      "version": "route-policy-current.log",
+      "byteKind": "worktree",
+      "bytes": 190,
+      "sha256": "87aeb9d36dcc80de604f7f006605adbcaf403fea8db9b76be68ca4fcd8d4a409",
+      "member": "bytes/87aeb9d36dcc80de604f7f006605adbcaf403fea8db9b76be68ca4fcd8d4a409",
+      "sourceCommit": null,
+      "sourceBlobId": "e3120a825d0f2b78c9705d28ec6c852a283b1ff1"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/route-policy-source-final.log",
+      "version": "route-policy-source-final.log",
+      "byteKind": "worktree",
+      "bytes": 190,
+      "sha256": "87aeb9d36dcc80de604f7f006605adbcaf403fea8db9b76be68ca4fcd8d4a409",
+      "member": "bytes/87aeb9d36dcc80de604f7f006605adbcaf403fea8db9b76be68ca4fcd8d4a409",
+      "sourceCommit": null,
+      "sourceBlobId": "e3120a825d0f2b78c9705d28ec6c852a283b1ff1"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-acceptance.log",
+      "version": "test-acceptance.log",
+      "byteKind": "worktree",
+      "bytes": 65011,
+      "sha256": "df355c85d972d71540a88f9d5e63ce8e268ecf3857deb38f78544c04361a7a51",
+      "member": "bytes/df355c85d972d71540a88f9d5e63ce8e268ecf3857deb38f78544c04361a7a51",
+      "sourceCommit": null,
+      "sourceBlobId": "0238a63db8554a5fca0ddda5729a2cccf7f0bda1"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-after-delete-fix.log",
+      "version": "test-after-delete-fix.log",
+      "byteKind": "worktree",
+      "bytes": 102243,
+      "sha256": "3aeebef514a5230201ca33f5f13b1d7b7b83a3f1bda3823891fd061938bc2633",
+      "member": "bytes/3aeebef514a5230201ca33f5f13b1d7b7b83a3f1bda3823891fd061938bc2633",
+      "sourceCommit": null,
+      "sourceBlobId": "ac26deb1a67402ed4e8ea87e47dff6d347d0d488"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-compat-final.log",
+      "version": "test-compat-final.log",
+      "byteKind": "worktree",
+      "bytes": 66577,
+      "sha256": "cc722d138e816dd7bab5b7332525d8d39bd58bfefa10e607dc201f16a22576b4",
+      "member": "bytes/cc722d138e816dd7bab5b7332525d8d39bd58bfefa10e607dc201f16a22576b4",
+      "sourceCommit": null,
+      "sourceBlobId": "a0f9123738c2b5afeb12517e5388b23d3cb5bb3f"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-e2e-compat-final.log",
+      "version": "test-e2e-compat-final.log",
+      "byteKind": "worktree",
+      "bytes": 1898,
+      "sha256": "b2fc84fe1ed079f015f803616e7c279fbf852579b2851e83baea10d6b0892d30",
+      "member": "bytes/b2fc84fe1ed079f015f803616e7c279fbf852579b2851e83baea10d6b0892d30",
+      "sourceCommit": null,
+      "sourceBlobId": "9d38a62c1ca05ba7c91f030216ad551085842285"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-e2e-final-acceptance.log",
+      "version": "test-e2e-final-acceptance.log",
+      "byteKind": "worktree",
+      "bytes": 1602104,
+      "sha256": "ea4cb7b9f9a2d7a0ba5033c858d625d017fa54187314ad336085478642d19e8b",
+      "member": "bytes/ea4cb7b9f9a2d7a0ba5033c858d625d017fa54187314ad336085478642d19e8b",
+      "sourceCommit": null,
+      "sourceBlobId": "4ddf649f4ca77decaaf657837fa7375b1bb7e378"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-e2e-isolated-final.log",
+      "version": "test-e2e-isolated-final.log",
+      "byteKind": "worktree",
+      "bytes": 1636614,
+      "sha256": "76f89e616ef93c4731c0fdead4a818196e15878b8afcd7919ec3bd8f352c32a0",
+      "member": "bytes/76f89e616ef93c4731c0fdead4a818196e15878b8afcd7919ec3bd8f352c32a0",
+      "sourceCommit": null,
+      "sourceBlobId": "684173884eee0fccde817749489cb1bdc4d03758"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-e2e-recheck-final.log",
+      "version": "test-e2e-recheck-final.log",
+      "byteKind": "worktree",
+      "bytes": 1446436,
+      "sha256": "546d3254e3905e20284f031302d94efbfab86d079621b920e6696760f7669bef",
+      "member": "bytes/546d3254e3905e20284f031302d94efbfab86d079621b920e6696760f7669bef",
+      "sourceCommit": null,
+      "sourceBlobId": "4279415ac051f1f57a45a48bd61dbe82b61d25d4"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-final-acceptance.log",
+      "version": "test-final-acceptance.log",
+      "byteKind": "worktree",
+      "bytes": 62968,
+      "sha256": "21b212af7d7417da5dca77bc324f2b56bde8f3c3eebd84fe11c39dc9d01efafd",
+      "member": "bytes/21b212af7d7417da5dca77bc324f2b56bde8f3c3eebd84fe11c39dc9d01efafd",
+      "sourceCommit": null,
+      "sourceBlobId": "7a04833ba49ab94afac8eb6fb5416aa5545de2dc"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-integration-acceptance.log",
+      "version": "test-integration-acceptance.log",
+      "byteKind": "worktree",
+      "bytes": 1058022,
+      "sha256": "1e7c8c8ab7b933ed262704ecad7f6109bb55a04e91eeb17cc6ea62eefbe0cc23",
+      "member": "bytes/1e7c8c8ab7b933ed262704ecad7f6109bb55a04e91eeb17cc6ea62eefbe0cc23",
+      "sourceCommit": null,
+      "sourceBlobId": "e348c1f98b08868e0a08bb53a2c6dc45933cac9a"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-integration-compat-final.log",
+      "version": "test-integration-compat-final.log",
+      "byteKind": "worktree",
+      "bytes": 1065157,
+      "sha256": "ef0cb0a965d4400b4e43df237edd0aa130f93ab2c54722a8a0ce590643dbfb7a",
+      "member": "bytes/ef0cb0a965d4400b4e43df237edd0aa130f93ab2c54722a8a0ce590643dbfb7a",
+      "sourceCommit": null,
+      "sourceBlobId": "c73dfd714fe56ddfcfc56ad4b415884d096b7ee5"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-integration-final-acceptance.log",
+      "version": "test-integration-final-acceptance.log",
+      "byteKind": "worktree",
+      "bytes": 1064893,
+      "sha256": "2b25cc4743efe1bc25c2c05ba7d56f189a291417e1d41dd6849235d62457d103",
+      "member": "bytes/2b25cc4743efe1bc25c2c05ba7d56f189a291417e1d41dd6849235d62457d103",
+      "sourceCommit": null,
+      "sourceBlobId": "7cd3866c1273afc616604c3baa26e47e0d8849fb"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-integration-source-final.log",
+      "version": "test-integration-source-final.log",
+      "byteKind": "worktree",
+      "bytes": 20360,
+      "sha256": "6a1e0cf5453e61a7e91f6221ab99eade8ed40907295a7cd9b4b83c660aaa3b88",
+      "member": "bytes/6a1e0cf5453e61a7e91f6221ab99eade8ed40907295a7cd9b4b83c660aaa3b88",
+      "sourceCommit": null,
+      "sourceBlobId": "fa3ac53c24dc2dc4052043300c117b62c0391548"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/test-source-final.log",
+      "version": "test-source-final.log",
+      "byteKind": "worktree",
+      "bytes": 68132,
+      "sha256": "74f2ee58d5b9b0accfdabb147db0b9f4d39f9adde1d52f37208551f49559e618",
+      "member": "bytes/74f2ee58d5b9b0accfdabb147db0b9f4d39f9adde1d52f37208551f49559e618",
+      "sourceCommit": null,
+      "sourceBlobId": "731c5f2b87f33f2dfbe198553ea313fc4b192985"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/typecheck-acceptance.log",
+      "version": "typecheck-acceptance.log",
+      "byteKind": "worktree",
+      "bytes": 6635,
+      "sha256": "78caf70d86a500b298905d6501fd4cc43c6c34fb0a4b895285188763f896151a",
+      "member": "bytes/78caf70d86a500b298905d6501fd4cc43c6c34fb0a4b895285188763f896151a",
+      "sourceCommit": null,
+      "sourceBlobId": "48d2fbab5930f9352577387030890cd48dbb3fd6"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/typecheck-after-delete-fix.log",
+      "version": "typecheck-after-delete-fix.log",
+      "byteKind": "worktree",
+      "bytes": 6651,
+      "sha256": "266a5b11d8092a4747c2fe2ef4199431c53567a2be513eda493750878883c69f",
+      "member": "bytes/266a5b11d8092a4747c2fe2ef4199431c53567a2be513eda493750878883c69f",
+      "sourceCommit": null,
+      "sourceBlobId": "9a2956ab25a3a0e3cbcbd7029ed95bed195a1600"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/typecheck-compat-final.log",
+      "version": "typecheck-compat-final.log",
+      "byteKind": "worktree",
+      "bytes": 6636,
+      "sha256": "18c6e3092eb549a845a6c3fd3250e1a37bf1a165ac089df1111f6322d9ac97b4",
+      "member": "bytes/18c6e3092eb549a845a6c3fd3250e1a37bf1a165ac089df1111f6322d9ac97b4",
+      "sourceCommit": null,
+      "sourceBlobId": "fc6135461aed06948d072148818a96061b1f9bd2"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/typecheck-current.log",
+      "version": "typecheck-current.log",
+      "byteKind": "worktree",
+      "bytes": 6636,
+      "sha256": "85d7b11b81efec06511f27f591015aeec6e6d6e93d51af094dae7b79c6e9bce9",
+      "member": "bytes/85d7b11b81efec06511f27f591015aeec6e6d6e93d51af094dae7b79c6e9bce9",
+      "sourceCommit": null,
+      "sourceBlobId": "cf391b2b5e5b23f5d2859211132c136ee3dd2ce6"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/typecheck-final-acceptance.log",
+      "version": "typecheck-final-acceptance.log",
+      "byteKind": "worktree",
+      "bytes": 6652,
+      "sha256": "4056cac3bb9db9022010aa071d57e9a106ac42bb4185e6841d504dae977ec2a2",
+      "member": "bytes/4056cac3bb9db9022010aa071d57e9a106ac42bb4185e6841d504dae977ec2a2",
+      "sourceCommit": null,
+      "sourceBlobId": "1d222ca04de3c3637e4a3475fcd47df576318170"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/typecheck-initial.log",
+      "version": "typecheck-initial.log",
+      "byteKind": "worktree",
+      "bytes": 7302,
+      "sha256": "59deef3ae3a2aca973ae725b5fed2c4af130fea1621303e0a1ef3e00bad732df",
+      "member": "bytes/59deef3ae3a2aca973ae725b5fed2c4af130fea1621303e0a1ef3e00bad732df",
+      "sourceCommit": null,
+      "sourceBlobId": "a89fdbbfa80f8668c3a20276ec2531b33f51609f"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/typecheck-source-final.log",
+      "version": "typecheck-source-final.log",
+      "byteKind": "worktree",
+      "bytes": 6636,
+      "sha256": "681c069d73c20a1ff2b774dfe86ed6cb126886236f030511a248b8d0111a10cf",
+      "member": "bytes/681c069d73c20a1ff2b774dfe86ed6cb126886236f030511a248b8d0111a10cf",
+      "sourceCommit": null,
+      "sourceBlobId": "b3f7f9418ecd659d53bb62963fba4ddd7db574bd"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/typecheck-verified.log",
+      "version": "typecheck-verified.log",
+      "byteKind": "worktree",
+      "bytes": 6585,
+      "sha256": "36a62e8342980f04bf25a9363612103b12e6791500400b5694640890ae268ef4",
+      "member": "bytes/36a62e8342980f04bf25a9363612103b12e6791500400b5694640890ae268ef4",
+      "sourceCommit": null,
+      "sourceBlobId": "38c7b67b69fc4a4454b61814486787a41bd0e31f"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/unit-current.log",
+      "version": "unit-current.log",
+      "byteKind": "worktree",
+      "bytes": 197783,
+      "sha256": "08aae07105380e81af1916d1713146c73385e3aca6a86e82a3a1313e741adf88",
+      "member": "bytes/08aae07105380e81af1916d1713146c73385e3aca6a86e82a3a1313e741adf88",
+      "sourceCommit": null,
+      "sourceBlobId": "58bf944a09eaac88e39fad4db30e99f76d6a5d33"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/unit-final.log",
+      "version": "unit-final.log",
+      "byteKind": "worktree",
+      "bytes": 104582,
+      "sha256": "22b95f7f03b879631d7c797e13ef6223ba00b3f76f42a950e25a33243e77431b",
+      "member": "bytes/22b95f7f03b879631d7c797e13ef6223ba00b3f76f42a950e25a33243e77431b",
+      "sourceCommit": null,
+      "sourceBlobId": "2545cf1908075c48131c8a7ac344295c6e23aebe"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/unit.log",
+      "version": "unit.log",
+      "byteKind": "worktree",
+      "bytes": 28388,
+      "sha256": "5c5451367b4b6502c71374bf1a8f514d5fcd21403652702c487433b12f2d3284",
+      "member": "bytes/5c5451367b4b6502c71374bf1a8f514d5fcd21403652702c487433b12f2d3284",
+      "sourceCommit": null,
+      "sourceBlobId": "a89f94305544d007f407d64f035129413a07eeb0"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/worker-after-snapshot-fix.log",
+      "version": "worker-after-snapshot-fix.log",
+      "byteKind": "worktree",
+      "bytes": 7446,
+      "sha256": "c2c571fb6b8b63cd53fd703ffea64de52c9d2e2f2042097f1a1c158b9e5a9c0b",
+      "member": "bytes/c2c571fb6b8b63cd53fd703ffea64de52c9d2e2f2042097f1a1c158b9e5a9c0b",
+      "sourceCommit": null,
+      "sourceBlobId": "07487976fc923ce3c6905787d8d85bc661f291e4"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/worker-after-snapshot-fixture-fix.log",
+      "version": "worker-after-snapshot-fixture-fix.log",
+      "byteKind": "worktree",
+      "bytes": 1292,
+      "sha256": "4fae90ecee3c553e776e0627999d2e85748fdaa84f1962c7067846c5499442c8",
+      "member": "bytes/4fae90ecee3c553e776e0627999d2e85748fdaa84f1962c7067846c5499442c8",
+      "sourceCommit": null,
+      "sourceBlobId": "b73ea37c99028d6102c71ff37017b198e7a31da8"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/worker-targeted-final.log",
+      "version": "worker-targeted-final.log",
+      "byteKind": "worktree",
+      "bytes": 1475,
+      "sha256": "bb742ec2c06a1321b00aeb11db4206f651eac71d8e70f29f6f16b7f5ea83d998",
+      "member": "bytes/bb742ec2c06a1321b00aeb11db4206f651eac71d8e70f29f6f16b7f5ea83d998",
+      "sourceCommit": null,
+      "sourceBlobId": "508e1c74719e52b65cc25250115fc8d1f87b684c"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/worker-targeted-retry.log",
+      "version": "worker-targeted-retry.log",
+      "byteKind": "worktree",
+      "bytes": 7010,
+      "sha256": "bbfe27e9d3b3804f75c1c43f6a61b1040d1870607c627c9c43bc8a5237a4701e",
+      "member": "bytes/bbfe27e9d3b3804f75c1c43f6a61b1040d1870607c627c9c43bc8a5237a4701e",
+      "sourceCommit": null,
+      "sourceBlobId": "b6f58941a51a2b303e9b7b4a7ee6c2a7f745ef8f"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/worker-targeted.log",
+      "version": "worker-targeted.log",
+      "byteKind": "worktree",
+      "bytes": 16502,
+      "sha256": "dc04b45fef8ae666d203084607ecf377d084191ce7b562d82e5e8dd46b8bdda2",
+      "member": "bytes/dc04b45fef8ae666d203084607ecf377d084191ce7b562d82e5e8dd46b8bdda2",
+      "sourceCommit": null,
+      "sourceBlobId": "98a56f707f136750a8dad891fd0501660b3c79a0"
+    },
+    {
+      "logicalPath": "apps/worker/src/session-lifecycle.ts",
+      "version": "来源快照修复前源码",
+      "byteKind": "worktree",
+      "bytes": 39977,
+      "sha256": "b11f6b5e8b9e96b5f836fdc0f84129604829e196270fc07d9485e966b9cca3c5",
+      "member": "bytes/b11f6b5e8b9e96b5f836fdc0f84129604829e196270fc07d9485e966b9cca3c5",
+      "sourceCommit": null,
+      "sourceBlobId": "3f15a07b7880f273e47fc145dc6990fdb09bf2fb"
+    },
+    {
+      "logicalPath": "packages/db/migrations/v1/0014_channel_delivery_contract.sql",
+      "version": "来源快照修复前源码",
+      "byteKind": "worktree",
+      "bytes": 5332,
+      "sha256": "e48b27840d20e29e9123e0c4495596aabb42119c4229f0242944042adb5cd01f",
+      "member": "bytes/e48b27840d20e29e9123e0c4495596aabb42119c4229f0242944042adb5cd01f",
+      "sourceCommit": null,
+      "sourceBlobId": "99d427c8b396178fc6935cf69273baaaa2d3784c"
+    },
+    {
+      "logicalPath": "packages/db/src/channel-notifications.ts",
+      "version": "来源快照修复前源码",
+      "byteKind": "worktree",
+      "bytes": 27445,
+      "sha256": "965e46c53e040ee4aaed07752f2d51577ff8eaf19d397172bcb99393a7373a9b",
+      "member": "bytes/965e46c53e040ee4aaed07752f2d51577ff8eaf19d397172bcb99393a7373a9b",
+      "sourceCommit": null,
+      "sourceBlobId": "6ddf3dd7102cb8a307b8b81489331c9419e65b3e"
+    },
+    {
+      "logicalPath": "packages/db/src/events.ts",
+      "version": "来源快照修复前源码",
+      "byteKind": "worktree",
+      "bytes": 5777,
+      "sha256": "f09a0f4e220dac51912f1065b165dc594ed4c4cbb8adee369007ecced6b1cc86",
+      "member": "bytes/f09a0f4e220dac51912f1065b165dc594ed4c4cbb8adee369007ecced6b1cc86",
+      "sourceCommit": null,
+      "sourceBlobId": "9db2fef2bb91f4f902e1d61037c9d2aa51d55075"
+    },
+    {
+      "logicalPath": "packages/db/src/migration-manifest.ts",
+      "version": "来源快照修复前源码",
+      "byteKind": "worktree",
+      "bytes": 11180,
+      "sha256": "ed91c92e280de8c8527d2ee0a6356a4a82426580ee2055b74ee34696f54f23b7",
+      "member": "bytes/ed91c92e280de8c8527d2ee0a6356a4a82426580ee2055b74ee34696f54f23b7",
+      "sourceCommit": null,
+      "sourceBlobId": "3dd65b368dbf0fb8a0110bdeb817106949723088"
+    },
+    {
+      "logicalPath": "packages/db/src/schema.ts",
+      "version": "来源快照修复前源码",
+      "byteKind": "worktree",
+      "bytes": 89206,
+      "sha256": "7aeb91a32eeb8207832d8c3b94b11dcde12464f53d05d45290a33219fdfd4e87",
+      "member": "bytes/7aeb91a32eeb8207832d8c3b94b11dcde12464f53d05d45290a33219fdfd4e87",
+      "sourceCommit": null,
+      "sourceBlobId": "225a2848c7f31aca851fe480d1000fce41cbaf15"
+    },
+    {
+      "logicalPath": "docs/reviews/c1/raw/cleanup.log",
+      "version": "cleanup.log",
+      "byteKind": "worktree",
+      "bytes": 1085,
+      "sha256": "518bbe8494112c7bab3ed4d0be8b11a36eb8bf6b62590246d0d3e0ed7b0275fc",
+      "member": "bytes/518bbe8494112c7bab3ed4d0be8b11a36eb8bf6b62590246d0d3e0ed7b0275fc",
+      "sourceCommit": null,
+      "sourceBlobId": "33b0dcd1d85f46f057c2e5cbf8f13054f9fc006b"
+    }
+  ]
+}

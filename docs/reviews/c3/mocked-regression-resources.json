@@ -1,0 +1,135 @@
+{
+  "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+  "cleanupTarget": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review",
+  "registeredTemporaryPaths": [
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline.tar",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head.tar",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-external-evidence",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-external-evidence"
+  ],
+  "dockerContainers": [],
+  "dedicatedImages": [],
+  "dockerVolumes": [],
+  "dockerNetworks": [],
+  "services": [
+    {
+      "source": "baseline",
+      "pid": 53044,
+      "creationDate": "2026-10-08T18:30:30.166648+08:00",
+      "result": "Playwright 运行结束后自动退出，已核实原 PID 不存在",
+      "commandLine": "node  e2e/project-work-preview-server.mjs --port=3241 --origin=http://127.0.0.1:3240"
+    },
+    {
+      "source": "baseline",
+      "pid": 39792,
+      "creationDate": "2026-10-08T18:30:32.074025+08:00",
+      "result": "Playwright 运行结束后自动退出，已核实原 PID 不存在",
+      "commandLine": "C:\\nvm4w\\nodejs\\node.exe C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline\\node_modules\\.pnpm\\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\\node_modules\\next\\dist\\server\\lib\\start-server.js"
+    },
+    {
+      "source": "head",
+      "pid": 52140,
+      "creationDate": "2026-10-08T18:38:11.469829+08:00",
+      "result": "Playwright 运行结束后自动退出，已核实原 PID 不存在",
+      "commandLine": "node  e2e/project-work-preview-server.mjs --port=3241 --origin=http://127.0.0.1:3240"
+    },
+    {
+      "source": "head",
+      "pid": 34232,
+      "creationDate": "2026-10-08T18:38:13.173268+08:00",
+      "result": "Playwright 运行结束后自动退出，已核实原 PID 不存在",
+      "commandLine": "C:\\nvm4w\\nodejs\\node.exe C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head\\node_modules\\.pnpm\\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\\node_modules\\next\\dist\\server\\lib\\start-server.js"
+    }
+  ],
+  "executionSessions": [
+    66299,
+    36827,
+    52222,
+    17203,
+    46911
+  ],
+  "configuration": "配置仅传入测试子进程；没有持久环境修改；端口与证据路径调整仅在已删除的源码副本内",
+  "evidence": "清理前已归档并独立核验 221 个必要原件；历史归档保留",
+  "cleanup": [
+    {
+      "result": "已删除",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review",
+      "operation": "核验绝对路径边界，解除 Junction 且不遍历目标，执行 Remove-Item -LiteralPath -Recurse",
+      "globalPrune": false
+    }
+  ],
+  "preserved": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+      "reason": "当前构建工作区，产品与全部审查证据保留"
+    },
+    {
+      "path": "共享 pnpm store 与当前工作区 node_modules",
+      "reason": "共享依赖，不属于本轮专用资源"
+    },
+    {
+      "path": "其他工作区的 3200/3201 服务",
+      "reason": "不归本任务所有，未停止或修改"
+    },
+    {
+      "path": "已有 worktree",
+      "reason": "实际合入、成果保全与无人引用条件尚未满足；本轮未创建 worktree"
+    }
+  ],
+  "portsAfterRuns": [],
+  "temporaryRootChildren": [
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\__pycache__",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-external-evidence",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-external-evidence",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\analyze.py",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\archive.py",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-browser.log",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-install.log",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-process-tree.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-process.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-report.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-result.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-runtime.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-server-ownership.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline.tar",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\bind-git-bytes.py",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\cleanup.ps1",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\comparison-differences.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\environment.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-browser.log",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-install.log",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-process-tree.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-process.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-report.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-result.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-runtime.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-server-ownership.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head.tar",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\old-errors.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\original-browser.log",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\package-evidence.py",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\parsed-reports.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\prepare.py",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\run.py",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\source.json",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\verification-first-failure.json"
+  ],
+  "runnerProcessIds": [
+    53516,
+    52972,
+    57408,
+    57608,
+    33848
+  ],
+  "runnerProcessResult": "对应测试会话均已正常返回，两个 Playwright 退出码均为 1；源码副本无活动进程引用后才删除",
+  "cleanupVerifiedAbsent": true
+}
