@@ -26,6 +26,8 @@
 
 旧 `ansi-main-provenance.json`、`ansi-source.json` 中 `mainProof=false` 和 EOF 告警保留当时历史，不改成曾经成功。当前 `raw-source.json` 使用 `integratedMain=5b9c76b` 与 `landedCombination` 记录实际来源；准确读回见 `raw-main-provenance.json`。未使用共享缓存 FETCH_HEAD 推断 main。
 
+修订与正常主线整合已提交并推送为 `1a88137db9a7b28d207c085fd62e20cb8f074e81`，parents 为4495dbc与真正 main5b9c76b。提交后实际执行完整 `git diff 5b9c76b5f79917697906520edcd6947bfbfa925f 1a88137db9a7b28d207c085fd62e20cb8f074e81 --check`，退出码0、stdout/stderr为空；102个提交文件均与源码清单 Git blob 匹配。精确证明见 `raw-delivery.json`，后续仅补交此证据，不重复产品测试。本次平台查询当前连接器分支返回 `No workflow runs`；尚无修订 PR CI，不能把 C1 的10项成功当作连接器结果。
+
 ## 清理与剩余门禁
 
 本轮两个容器均保存脱敏日志后定向 `docker rm -f -v` 并 inspect 确认不存在：`92962e608a775e6471f31dda434061fa296533561999c5ed4b2b78d275e250fd`（`b1b2-01a11ac2-linux-native-cf44429b`）、`7df5b725e9308a10f6129abc2ba96af460b9ee1b5a2d64a0a9028bf3f1c26932`（`b1b2-01a11ac2-linux-native-d2fa1ac2`）。9个运行临时路径、191个测试临时目录均复查不存在；系统秘密引用由测试 finally 删除。原生测试进程对应本轮独有运行 exe 的存活检查为空，见 `evidence/raw-process-cleanup.json`；其余退出事件按实际日志记录，不冒缺失事件。
