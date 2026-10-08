@@ -189,15 +189,15 @@ export function createSessionLifecycleWorker({
       const updated = await updateSessionState(tx, { id: session.id, from: 'queued', to: 'stale', reason: 'ack_timeout' })
       if (!updated) continue
       const actorId = await systemActorId(tx, updated.workspaceId)
+      await insertInbox(tx, {
+        workspaceId: updated.workspaceId, recipientHumanActorId: session.responsibleHumanActorId!, sessionId: session.id,
+        teamId: session.teamId, kind: 'session_stale', sourceType: 'agent_session', sourceId: session.id, payload: { reason: 'ack_timeout' },
+      })
       await appendOutboxEvent(tx, {
         workspaceId: updated.workspaceId, teamId: session.teamId, actorId, correlationId: `${workerId}:ack-timeout:${session.id}`,
         eventType: 'agent.session.stale', aggregateType: 'agent_session', aggregateId: session.id,
         revision: updated.revision, sessionId: session.id, sessionSequence: updated.sequence,
         payload: { reason: 'ack_timeout' },
-      })
-      await insertInbox(tx, {
-        workspaceId: updated.workspaceId, recipientHumanActorId: session.responsibleHumanActorId!, sessionId: session.id,
-        teamId: session.teamId, kind: 'session_stale', sourceType: 'agent_session', sourceId: session.id, payload: { reason: 'ack_timeout' },
       })
       changed += 1
     }
@@ -254,6 +254,16 @@ export function createSessionLifecycleWorker({
             )
           ).rows[0];
           if (!updated) continue;
+          await insertInbox(tx, {
+            workspaceId: updated.workspaceId,
+            recipientHumanActorId: session.responsibleHumanActorId!,
+            sessionId: session.id,
+            teamId: session.teamId,
+            kind: "session_stale",
+            sourceType: "agent_session",
+            sourceId: session.id,
+            payload: { reason: "heartbeat_timeout" },
+          });
           await appendOutboxEvent(tx, {
             workspaceId: updated.workspaceId,
             teamId: session.teamId,
@@ -270,16 +280,6 @@ export function createSessionLifecycleWorker({
               fromHealth: session.heartbeatHealth,
               toHealth: "stale",
             },
-          });
-          await insertInbox(tx, {
-            workspaceId: updated.workspaceId,
-            recipientHumanActorId: session.responsibleHumanActorId!,
-            sessionId: session.id,
-            teamId: session.teamId,
-            kind: "session_stale",
-            sourceType: "agent_session",
-            sourceId: session.id,
-            payload: { reason: "heartbeat_timeout" },
           });
         } else {
           const projected = await tx.query(

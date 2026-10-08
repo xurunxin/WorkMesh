@@ -1,0 +1,367 @@
+{
+  "purpose": "实际 main A1 与完整三项修复（含 pending quorum）的最终测试前源码绑定",
+  "reviewedHead": "9c10ca4",
+  "verifiedMain": "96e724858e692d262107c34db50b40c3ae7c122c",
+  "branch": "tds/conv-01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+  "todoId": "kkG9VeT3_uTzREhjnX2ve",
+  "savedPlanDocId": "Ry2L3-U5lGSRc8EpsaLs6",
+  "savedPlanVersion": null,
+  "savedPlanBodySha256": "959cb493a06ad8b17d313d419b75cc9e46ed9bdf8697e8c7e18718a31a62367b",
+  "files": [
+    {
+      "path": ".env.example",
+      "worktreeBytes": 7162,
+      "worktreeSha256": "9760238804e0f602daeff2f2aee0f26ff120c6c8c8ec1da76bb0752439e6d657",
+      "gitBlobSha1": "1c4df1a598a140bd5ca947b71bc7b4df112dd8ab"
+    },
+    {
+      "path": "AGENTS.md",
+      "worktreeBytes": 9306,
+      "worktreeSha256": "a3eb6f9d3e9ebe6db6887f561f400db76207645d3478a84d83ae4332af20cf96",
+      "gitBlobSha1": "fe9114d161ce694a5fa3d0b4ba0efbf2c8ab1642"
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "worktreeBytes": 71228,
+      "worktreeSha256": "d7601e8d5fae33dcc7a2c231fd20379ec6f52f7c12d721cde9782700127d26d7",
+      "gitBlobSha1": "f40c57b74ca11e8b1e84b085a01550e430b5a7f6"
+    },
+    {
+      "path": "CONTEXT.md",
+      "worktreeBytes": 4727,
+      "worktreeSha256": "49474d310dde6fee0cb423164830cc6ebc823bed1314acddcf8ddbc171a18841",
+      "gitBlobSha1": "9c0aad56d1fe64dfb45614c0ff81e2ee1b77e3c6"
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "worktreeBytes": 509825,
+      "worktreeSha256": "45bef808fd63bee9a9dc22fd16e7d3a340f6013cfd431414801f332836456d20",
+      "gitBlobSha1": "6f7b79deb73f382d4f26bc7b095664c5a0c41480"
+    },
+    {
+      "path": "SCHEMA.sql",
+      "worktreeBytes": 1557,
+      "worktreeSha256": "70d9d8815c32aaa8b536cd5ddcb32905f6426d0239ec3b3aa678d4ed19416a09",
+      "gitBlobSha1": "7184e1fa7f52bd33ee960d6a370dccbe7dbb504b"
+    },
+    {
+      "path": "apps/api/integration/notification-channels.integration.test.ts",
+      "worktreeBytes": 20576,
+      "worktreeSha256": "166dd0565f045e246a2a8fbd3c4d424165d1dbe8c2036f9bc2cfa527065b14ad",
+      "gitBlobSha1": "84d96e21d517bc81ac8a1acbb69f64bb8055ebbd"
+    },
+    {
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "worktreeBytes": 72101,
+      "worktreeSha256": "69267b75862e7ca901cae458a25769b9729edb0643c38b5a2c51f61620ad8c61",
+      "gitBlobSha1": "f41140403689a7f8d0fb55a3df5178315265bf32"
+    },
+    {
+      "path": "apps/api/src/human-attention/projection.ts",
+      "worktreeBytes": 14366,
+      "worktreeSha256": "b9129aea580b4ff7825d278273e2d5384194c4dc89f3cf2c68154c13c436825c",
+      "gitBlobSha1": "54492425916b6d14ce574c7ec40bcce2fd91164d"
+    },
+    {
+      "path": "apps/api/src/notification-channels.ts",
+      "worktreeBytes": 9559,
+      "worktreeSha256": "a183cedc610871ae0f281f7fd2da0e27e6162d2382c7cbad986c142f0185034b",
+      "gitBlobSha1": "6f2a85a14e163e198ed2cf386ecbf0be8d723a04"
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "worktreeBytes": 74592,
+      "worktreeSha256": "ef09837a96579d38908f17af824ae25c45f545cd66893bfdf5de888bfd679168",
+      "gitBlobSha1": "e1096b1ae66326d1d4214803c0573e9e5683e06b"
+    },
+    {
+      "path": "apps/web/app/settings/notification-channel-settings.tsx",
+      "worktreeBytes": 8935,
+      "worktreeSha256": "d524f7eca11c490fe016d8250e3afcdd4e417bccca906fbeec782e2c9d7e3dba",
+      "gitBlobSha1": "7d44dc81e8b4b669429e4534198840bcf96825ae"
+    },
+    {
+      "path": "apps/web/app/settings/page.test.tsx",
+      "worktreeBytes": 45118,
+      "worktreeSha256": "62bc5181e83fea905593ad4b60c01332d9a1179c1dc6e28193b10bee8f7428f2",
+      "gitBlobSha1": "a50f4a2d72f02f236f9f1c4fd44ff1f9754c9f3e"
+    },
+    {
+      "path": "apps/web/app/settings/page.tsx",
+      "worktreeBytes": 31200,
+      "worktreeSha256": "6d3147daf1aa765ed97b00266c5da43a96e1c6c8c235707a02f69f8a9d85b70a",
+      "gitBlobSha1": "3dc18cac26cbbf7acb3c5885ac825aab92d57040"
+    },
+    {
+      "path": "apps/web/e2e/notification-channels.spec.ts",
+      "worktreeBytes": 2259,
+      "worktreeSha256": "61d8b978079dd2f64e62146142feb5d820053fab6f90f8a7f45ed717713ae711",
+      "gitBlobSha1": "102756b9bffc38edec082371da2b6b639e7bde00"
+    },
+    {
+      "path": "apps/worker/integration/stage4-automation.integration.test.ts",
+      "worktreeBytes": 89972,
+      "worktreeSha256": "9ed8e5eada7af618acf352e208dbe094673c1cb8507edfc193126da2fc4d1a64",
+      "gitBlobSha1": "c5c3aadf1908b8c60e2e7a9f053fee39beb1be63"
+    },
+    {
+      "path": "apps/worker/src/automation.ts",
+      "worktreeBytes": 40958,
+      "worktreeSha256": "e621617ccafad87ff9e8233c4e1007560eb7d7baec64287b81a5bdf96fbd428d",
+      "gitBlobSha1": "b1dbff240dbe61dd48694ba334e81cf755500a42"
+    },
+    {
+      "path": "apps/worker/src/index.ts",
+      "worktreeBytes": 19909,
+      "worktreeSha256": "0f30beb6ed588ad1bd0f6f7718e7e2679594ee92bfb5ba7cfbde3b5fc117c378",
+      "gitBlobSha1": "85050d1224601a17f6d16588c81ee95110722562"
+    },
+    {
+      "path": "apps/worker/src/session-lifecycle.ts",
+      "worktreeBytes": 39975,
+      "worktreeSha256": "f8213ebcb576d42abe6730971501bdc8c195e3dcb4e1f0b1ed5084bb3d7067fa",
+      "gitBlobSha1": "4c4966980e7faf3af6a294dd85320af0468af8da"
+    },
+    {
+      "path": "docker-compose.yml",
+      "worktreeBytes": 14236,
+      "worktreeSha256": "c98d01c3f338ed029c70e27dbefc2fc5c742b367737f5b3139ec25e188236654",
+      "gitBlobSha1": "3446ef8a03cab9cbc619d0c500d5ebd09c09c825"
+    },
+    {
+      "path": "docs/VERSION_POLICY.md",
+      "worktreeBytes": 9805,
+      "worktreeSha256": "7d54fb13ff42307fc036b18b3989d245e20e756dbe6ecfa729c9fc7a7cbbeaa1",
+      "gitBlobSha1": "b6980d222b30ef96f730895bace9d86c64e98629"
+    },
+    {
+      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "worktreeBytes": 20499,
+      "worktreeSha256": "a51f9ba0def5d838a6f132eedbea4d9b188d570d5f5f74cf004b469b1051d374",
+      "gitBlobSha1": "c49ca7563e8751828b0bf0399d476f10fffd3a87"
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery.md",
+      "worktreeBytes": 3578,
+      "worktreeSha256": "b5133f09db5821898133c6188d7200f679337040481954847384d900427d5374",
+      "gitBlobSha1": "e6e920ed93dd09e7e019c789bf7f8a88bddcceb1"
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery/savedplan-Ry2L3-U5lGSRc8EpsaLs6.json",
+      "worktreeBytes": 8547,
+      "worktreeSha256": "94a0178a882f7b41ec44e7faa7ae8f742e82334adbeca52b474eb7ccd49ce586",
+      "gitBlobSha1": "5d2c3ac5666706ead49473c41939b7f9635b8b09"
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery/savedplan-Ry2L3-U5lGSRc8EpsaLs6.md",
+      "worktreeBytes": 7776,
+      "worktreeSha256": "20c37b8a7744abbcd5e32ae4e509264d667db786fc64d875b1092bedddefff8d",
+      "gitBlobSha1": "b18f83afc1cf5991bdd3757c5c0197be0defe04a"
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery/source-metadata.json",
+      "worktreeBytes": 8943,
+      "worktreeSha256": "debe3330ff38a782b832536ee7ca6d944ce4e2eefb2a97a89e5bd9f4d62f3894",
+      "gitBlobSha1": "af3ac7783065d43cfb63899836c0fad0b8caa2eb"
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery/source-test-coverage.json",
+      "worktreeBytes": 15436,
+      "worktreeSha256": "7da9646e68ea60477b74bfb5927e970624691b46259ef90e1c42edf2ff23594c",
+      "gitBlobSha1": "9071211a51ecafee0ab38b22d4c7dab46c70a064"
+    },
+    {
+      "path": "docs/route-policy-matrix.md",
+      "worktreeBytes": 47144,
+      "worktreeSha256": "048ad188353cd2b9bfd24523d9487009e6c1e1d4959aea5c765334a9d39c3091",
+      "gitBlobSha1": "ecdee7e2b491c3bafe8d42d160692648d4e7a6ec"
+    },
+    {
+      "path": "package.json",
+      "worktreeBytes": 4682,
+      "worktreeSha256": "2e06aa849c60f1db7f79c58a550781752570cce0ca68f53aadd3ca67138c62b2",
+      "gitBlobSha1": "d2afc75c7a1e7eb188ba3ae65f673e5a35e476e9"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "worktreeBytes": 188589,
+      "worktreeSha256": "57a54fa5c43f8fe13da6e61fb0b61119e941bfbdb525ebf73fc9c57302e0a4f5",
+      "gitBlobSha1": "0b717d210c7b6d93d8c5daaaf02c0606f57c4188"
+    },
+    {
+      "path": "packages/contracts/src/route-policy-bindings.ts",
+      "worktreeBytes": 33174,
+      "worktreeSha256": "5d2ebff5cfa37211754b6f51fd03f58cb2f2c15dd3b296dba438cfcbd06fb2f3",
+      "gitBlobSha1": "afc6f2b0de72877e468585a5eeee91842bd88a72"
+    },
+    {
+      "path": "packages/contracts/src/route-policy.test.ts",
+      "worktreeBytes": 15489,
+      "worktreeSha256": "2225436cd026f31b93aa0b6886102b70623237eca1575decbe92854cdb741c76",
+      "gitBlobSha1": "57ffcb7ab641638a102616226727e590fd187053"
+    },
+    {
+      "path": "packages/contracts/src/route-policy.ts",
+      "worktreeBytes": 24822,
+      "worktreeSha256": "65c8948545a575d9bea2b5c44bef1fb21ef36a1230d61b9590e9b753421cc47a",
+      "gitBlobSha1": "9db98ee17239c8a2f074f42869098028b7be2ea8"
+    },
+    {
+      "path": "packages/db/integration/migration-baseline.integration.test.ts",
+      "worktreeBytes": 20366,
+      "worktreeSha256": "0e12d40f85384698236bd4dd9e67833862cd35e80bc93d83aed0ac655d1effb2",
+      "gitBlobSha1": "1d0e7a4e747625bd3dfb1a091258e939f34d5906"
+    },
+    {
+      "path": "packages/db/migrations/v1/0014_channel_delivery_contract.sql",
+      "worktreeBytes": 5557,
+      "worktreeSha256": "1f8d766b5215c3bbade32c4f52ac790edb004d30a586034df2518cf2794247e7",
+      "gitBlobSha1": "4681dfdeaa1e8582fc6bf68b516b66f8d407f9fb"
+    },
+    {
+      "path": "packages/db/src/channel-notifications.ts",
+      "worktreeBytes": 31862,
+      "worktreeSha256": "7333d1040f73e63de71f77d31fb54119fe9e2af64b25824d5208da37f1b0ef4a",
+      "gitBlobSha1": "2ed38a67b7ef5c5a0686c0e86759d4c3fe39c176"
+    },
+    {
+      "path": "packages/db/src/event-resources.ts",
+      "worktreeBytes": 36723,
+      "worktreeSha256": "91288cb895710d759e50d63739ecc80854e5af2909af6d5ea4d1fbad05ba7aec",
+      "gitBlobSha1": "9ad73feb9d3dd660ba878c9779de542d40e0ea01"
+    },
+    {
+      "path": "packages/db/src/event-writer-inventory.test.ts",
+      "worktreeBytes": 6188,
+      "worktreeSha256": "8f7cecfb6d908cb39b0578bb8ddac4dd3fa6844f620c0df0b97c9755f9c69a1a",
+      "gitBlobSha1": "5da9ceba3e49dd7f527160ebdac268296c532f7f"
+    },
+    {
+      "path": "packages/db/src/events.ts",
+      "worktreeBytes": 6835,
+      "worktreeSha256": "d4cf2eeb2736651c71ce46be3092a22d90d6a726a720f7effebbe932e62e2015",
+      "gitBlobSha1": "38cafd7c618f89780e63c7f6f7dc8a43a33e2a43"
+    },
+    {
+      "path": "packages/db/src/human-attention-sources.ts",
+      "worktreeBytes": 10960,
+      "worktreeSha256": "4ac967adda4daba404789c5c4f86fad7acafc80097460451ca1aa6aa5083066e",
+      "gitBlobSha1": "c3147fa742541258909130c368c8e5fefb7ebf83"
+    },
+    {
+      "path": "packages/db/src/index.ts",
+      "worktreeBytes": 6731,
+      "worktreeSha256": "a6a651f731a1f13a53a0cf160ac33026f94cb57d31aeae61ee012ab6610ff6f9",
+      "gitBlobSha1": "acb88a6a360f9053d7a340284b09886857959965"
+    },
+    {
+      "path": "packages/db/src/migration-manifest.ts",
+      "worktreeBytes": 11542,
+      "worktreeSha256": "ae6b183db3a5b16e5b64bdbf37d4b37174f0069f34ed8d3665fc5de56f4507e7",
+      "gitBlobSha1": "12e95b2033a3d7a7af10f34de2fbbbaa5152a543"
+    },
+    {
+      "path": "packages/db/src/migrations.test.ts",
+      "worktreeBytes": 2648,
+      "worktreeSha256": "97a4fcb852ceab03a6debe99c25afe6bedc78c4e3f06b7a8537868272b2eaf89",
+      "gitBlobSha1": "59e301c3f8f96a3258dc54978cba79fc23f4ee20"
+    },
+    {
+      "path": "packages/db/src/schema.ts",
+      "worktreeBytes": 89328,
+      "worktreeSha256": "bef6e1de8013c926336512ae250f73bb4017afc4a0cc6ee4a47dcbd2b88c2fac",
+      "gitBlobSha1": "c509d4723dee2897724984db8a89b4a69eec9417"
+    },
+    {
+      "path": "packages/domain/src/stage4.ts",
+      "worktreeBytes": 13455,
+      "worktreeSha256": "801616fe09ffa4fc0e591226e188b391d595d3f203e86156a4a60b9373c128f1",
+      "gitBlobSha1": "437d56906612313f07b17e0b41d1d8c7ef9fd1bf"
+    },
+    {
+      "path": "playwright.config.ts",
+      "worktreeBytes": 5070,
+      "worktreeSha256": "c4b7c002387cc18e9c7291806ecd224bf57cba67510d59ee386a4d1343416056",
+      "gitBlobSha1": "d3b7cabe41a0b1db73c20232904041f1920a9ebe"
+    },
+    {
+      "path": "vitest.config.ts",
+      "worktreeBytes": 1491,
+      "worktreeSha256": "de6eafb8f3cb9b0134c39ed38da801b0d427e6956e893fb00f4e21c4d3003d33",
+      "gitBlobSha1": "22eb710f02612fa3fcf272b9867046726376eef6"
+    },
+    {
+      "path": "vitest.integration.config.ts",
+      "worktreeBytes": 752,
+      "worktreeSha256": "ca9031eca23a729d89184c49246b8f1891c784382293cc91ac7ad25b58b3ccfe",
+      "gitBlobSha1": "e6a813d2cecd039ad9be481a26e6b4129caefba3"
+    },
+    {
+      "path": "packages/db/migrations/v1/0015_channel_notification_kind.sql",
+      "worktreeBytes": 749,
+      "worktreeSha256": "632dbc4eb356f6b032cc405a1960cbf006cced66c950763f165f87bd9f4191e5",
+      "gitBlobSha1": "e44286b27ef3ee785f4b553ee46d6cc7dc59911b"
+    },
+    {
+      "path": "apps/api/src/authz/authorize.ts",
+      "worktreeBytes": 26032,
+      "worktreeSha256": "bbf32fe6ba530689b638e018d664f3c53c859126210f44f23a28741e9d6a2da5",
+      "gitBlobSha1": "f5ffbcb065854bc04b39ed0948ac45a5d8991ed4"
+    },
+    {
+      "path": "apps/api/src/configuration-readiness.ts",
+      "worktreeBytes": 5731,
+      "worktreeSha256": "d3780191894fe301644fd3b943f1366e012d7e38327f3dfcca9a3dfec99fb483",
+      "gitBlobSha1": "f27feb8fd3289996870b82f00a3d61d2af9686a7"
+    },
+    {
+      "path": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "worktreeBytes": 29607,
+      "worktreeSha256": "b295bc9d9776074678d479f8b9f5929bc53cddc81bdee595b16a6ec321fcfb91",
+      "gitBlobSha1": "b3399c00e38e1f0c68a13b925a55c2525bc186ad"
+    },
+    {
+      "path": "packages/contracts/src/configuration-readiness-contracts.ts",
+      "worktreeBytes": 1639,
+      "worktreeSha256": "463688074b1e798dd7f311df7e3e7c2330570a36acc6944dd661c09e4484b638",
+      "gitBlobSha1": "66abb9bde34071257f6ccaa3f1022d905f7201a3"
+    },
+    {
+      "path": "packages/contracts/src/configuration-readiness-contracts.test.ts",
+      "worktreeBytes": 4227,
+      "worktreeSha256": "4537c63edb0d5ab59726b8d04f14d83dcd2625618fb6db4742574af87271958d",
+      "gitBlobSha1": "02c420f0589f97c8dabc66ca4906b4ee1c8b20d7"
+    },
+    {
+      "path": "packages/db/src/agent-locks.ts",
+      "worktreeBytes": 3924,
+      "worktreeSha256": "6a138d80212402b172751868519075b3c6d755a221b1e442423259124860a142",
+      "gitBlobSha1": "cf734d13b36c61aa820a9b4b5df7e91fcd512994"
+    },
+    {
+      "path": "packages/db/src/agent-lock-order-manifest.ts",
+      "worktreeBytes": 27519,
+      "worktreeSha256": "a4f90d637894e14309c1b704046c625b3bafbc74ce985770b0ae218af723db0b",
+      "gitBlobSha1": "1b12233f468bdb0e6494541fc5076f42d6d3e17d"
+    },
+    {
+      "path": "apps/api/src/live-read-authorization.ts",
+      "worktreeBytes": 9856,
+      "worktreeSha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62",
+      "gitBlobSha1": "c105e7c00e49e93438e1e2f93be2afaf0867b7aa"
+    },
+    {
+      "path": "apps/api/src/agent-connections.ts",
+      "worktreeBytes": 67946,
+      "worktreeSha256": "01ef5e1b15275dce163a2d7f33dd33e41b48899552e905f489b830178cb635f7",
+      "gitBlobSha1": "485b47a9863b6daa06eb148ea685b6669e5c5fad"
+    },
+    {
+      "path": "packages/db/migrations/v1/0016_approval_notification_kind.sql",
+      "worktreeBytes": 345,
+      "worktreeSha256": "01fa357c187faf980e7e1344ccd12de5af3826029d45744732041fc5b56d72e4",
+      "gitBlobSha1": "8791ba7e699bc9ad0ce631d785a38be4c224c051"
+    }
+  ],
+  "integratedMain": "96e724858e692d262107c34db50b40c3ae7c122c"
+}

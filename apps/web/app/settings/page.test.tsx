@@ -28,6 +28,10 @@ vi.mock('../lib/api', async importOriginal => {
 vi.mock('../lib/use-authenticated-actor', () => ({
   useAuthenticatedActor: () => authMock,
 }))
+// This suite isolates Team/workflow behavior; the channel card has its own E2E.
+vi.mock('./notification-channel-settings', () => ({
+  NotificationChannelSettings: () => null,
+}))
 type TestItem = { id: string } & Record<string, unknown>
 type TestCollection = PagedCollection<TestItem>
 type MediaStub = {

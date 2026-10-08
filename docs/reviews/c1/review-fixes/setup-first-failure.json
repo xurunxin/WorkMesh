@@ -1,0 +1,7 @@
+{
+  "failure": "MODULE_NOT_FOUND: @aws-sdk/client-s3",
+  "source": "本轮工具输出；最初未生成独立 stderr 文件，不冒称原文件日志",
+  "attempt": "临时 s3.mjs 使用 createRequire(apps/api/package.json)",
+  "fix": "改为实际声明 SDK 依赖的 packages/artifact-storage/package.json",
+  "resultLog": "s3-setup-corrected.log"
+}

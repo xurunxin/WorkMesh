@@ -28,18 +28,18 @@ const recreatePublicSchema = async (): Promise<void> => {
   await db.query('CREATE SCHEMA public')
 }
 
-const installDeployedV1Through0007 = async (): Promise<void> => {
+const installDeployedV1Through0007 = async (through = '0007_active_milestone_name_uniqueness'): Promise<void> => {
   await db.query(`
     CREATE TABLE schema_migrations(
       version text PRIMARY KEY,
       applied_at timestamptz NOT NULL DEFAULT now(),
-      checksum_sha256 text NOT NULL CHECK(checksum_sha256 ~ '^[a-f0-9]{64}$'),
+      checksum_sha256 text NOT NULL CHECK(checksum_sha256 ~ '^[0-9a-f]{64}$'),
       execution_mode text NOT NULL CHECK(execution_mode IN ('applied','adopted','legacy'))
     )
   `)
   const client = await db.connect()
   try {
-    for (const entry of v1MigrationManifest.filter(({ version }) => version <= '0007_active_milestone_name_uniqueness')) {
+    for (const entry of v1MigrationManifest.filter(({ version }) => version <= through)) {
       const source = await readFile(join(import.meta.dirname, '../migrations', entry.file), 'utf8')
       await migrationTestSupport.runTransaction(client, async () => {
         await client.query(source)
@@ -172,6 +172,49 @@ describe.sequential('atomic checksummed v1 migration baseline', () => {
       "SELECT count(*)::int AS count FROM schema_migrations WHERE version='0008_autonomous_control_push_enrollment'",
     )).rows[0]!.count).toBe(1)
   }, 120_000)
+
+  it('upgrades the immediately previous stage without replaying existing deliveries and rolls back a channel migration failure', async () => {
+    const previous=v1MigrationManifest.find(entry=>entry.version==='0013_work_item_board_rank')!
+    await installDeployedV1Through0007(previous.version)
+    const seeded=await seedLegacyRows()
+    const notification=(await db.query<{id:string}>(`INSERT INTO notifications(workspace_id,recipient_actor_id,priority,kind,title,body,source_type,source_id,dedupe_key) VALUES($1,$2,'update','migration','old notification','old body','work_item',$3,'c1-upgrade') RETURNING id`,[seeded.workspaceId,seeded.actorId,seeded.itemId])).rows[0]!
+    const delivery=(await db.query<{id:string}>(`INSERT INTO notification_deliveries(notification_id,channel,status,effect_key) VALUES($1,'in_app','delivered','c1-upgrade-effect') RETURNING id`,[notification.id])).rows[0]!
+    await expect(applyMigrations(db,{failureInjector:(phase,context)=>{if(context.version==='0014_channel_delivery_contract'&&phase==='after_sql')throw new Error('C1_MIGRATION_COMMIT_CRASH')}})).rejects.toThrow('C1_MIGRATION_COMMIT_CRASH')
+    expect((await db.query(`SELECT to_regclass('public.notification_intents') AS relation`)).rows[0]!.relation).toBeNull()
+    await applyMigrations(db);await applyMigrations(db)
+    expect((await db.query('SELECT status,notification_id,intent_id,claim_fence,effect_key FROM notification_deliveries WHERE id=$1',[delivery.id])).rows[0]).toEqual({status:'delivered',notification_id:notification.id,intent_id:null,claim_fence:0,effect_key:'c1-upgrade-effect'})
+    expect((await db.query('SELECT 1 FROM notification_intents')).rowCount).toBe(0)
+    expect(await readSchemaInventory()).toEqual(cleanSchemaInventory)
+  },180_000)
+
+  it('upgrades channel kinds from the previous stage atomically, retaining uncertain attempts and legacy deliveries',async()=>{
+    await installDeployedV1Through0007('0014_channel_delivery_contract')
+    const seeded=await seedLegacyRows()
+    const target=(await db.query<{id:string}>(`INSERT INTO notification_channel_targets(workspace_id,owner_actor_id,provider,name,secret_ciphertext,endpoint_fingerprint) VALUES($1,$2,'wecom','migration kind',decode('00','hex'),'hmac:'||repeat('a',64)) RETURNING id`,[seeded.workspaceId,seeded.actorId])).rows[0]!
+    // Provenance must survive source-event retention; no event FK or new intent is needed.
+    const intent=(await db.query<{id:string}>(`INSERT INTO notification_intents(workspace_id,source_event_id,source_cursor,source_type,source_id,source_revision,recipient_actor_id,intent_hash,target_snapshot) VALUES($1,gen_random_uuid(),1,'approval',gen_random_uuid(),1,$2,repeat('a',64),'[]') RETURNING id`,[seeded.workspaceId,seeded.actorId])).rows[0]!
+    const delivery=(await db.query<{id:string}>(`INSERT INTO notification_deliveries(workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key,status,outcome,attempt_count,claim_fence) VALUES($1,$2,$3,$4,1,'webhook','c1-kind-upgrade','failed','uncertain',3,4) RETURNING id`,[seeded.workspaceId,intent.id,target.id,seeded.actorId])).rows[0]!
+    await expect(applyMigrations(db,{failureInjector:(phase,context)=>{if(context.version==='0015_channel_notification_kind'&&phase==='after_sql')throw new Error('KIND_MIGRATION_CRASH')}})).rejects.toThrow('KIND_MIGRATION_CRASH')
+    expect((await db.query(`SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_deliveries' AND column_name='notification_kind'`)).rowCount).toBe(0)
+    await applyMigrations(db);await applyMigrations(db)
+    expect((await db.query(`SELECT notification_kind,status,outcome,attempt_count,claim_fence,effect_key FROM notification_deliveries WHERE id=$1`,[delivery.id])).rows[0]).toEqual({notification_kind:'approval.requested',status:'failed',outcome:'uncertain',attempt_count:3,claim_fence:4,effect_key:'c1-kind-upgrade'})
+    expect((await db.query('SELECT 1 FROM notification_intents')).rowCount).toBe(1)
+    expect(await readSchemaInventory()).toEqual(cleanSchemaInventory)
+  },180_000)
+
+  it('normalizes pending quorum Approval kinds without replaying an uncertain attempt and rolls back on failure',async()=>{
+    await installDeployedV1Through0007('0015_channel_notification_kind')
+    const seeded=await seedLegacyRows()
+    const target=(await db.query<{id:string}>(`INSERT INTO notification_channel_targets(workspace_id,owner_actor_id,provider,name,secret_ciphertext,endpoint_fingerprint) VALUES($1,$2,'wecom','quorum kind',decode('00','hex'),'hmac:'||repeat('a',64)) RETURNING id`,[seeded.workspaceId,seeded.actorId])).rows[0]!
+    const intent=(await db.query<{id:string}>(`INSERT INTO notification_intents(workspace_id,source_event_id,source_cursor,source_type,source_id,source_revision,recipient_actor_id,intent_hash,target_snapshot) VALUES($1,gen_random_uuid(),1,'approval',gen_random_uuid(),1,$2,repeat('a',64),'[]') RETURNING id`,[seeded.workspaceId,seeded.actorId])).rows[0]!
+    const delivery=(await db.query<{id:string}>(`INSERT INTO notification_deliveries(workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key,status,outcome,attempt_count,claim_fence,notification_kind) VALUES($1,$2,$3,$4,1,'webhook','c1-quorum-upgrade','failed','uncertain',3,4,'approval.decision.recorded') RETURNING id`,[seeded.workspaceId,intent.id,target.id,seeded.actorId])).rows[0]!
+    await expect(applyMigrations(db,{failureInjector:(phase,context)=>{if(context.version==='0016_approval_notification_kind'&&phase==='after_sql')throw new Error('QUORUM_KIND_MIGRATION_CRASH')}})).rejects.toThrow('QUORUM_KIND_MIGRATION_CRASH')
+    expect((await db.query('SELECT notification_kind FROM notification_deliveries WHERE id=$1',[delivery.id])).rows[0]!.notification_kind).toBe('approval.decision.recorded')
+    await applyMigrations(db);await applyMigrations(db)
+    expect((await db.query(`SELECT notification_kind,status,outcome,attempt_count,claim_fence,effect_key FROM notification_deliveries WHERE id=$1`,[delivery.id])).rows[0]).toEqual({notification_kind:'approval.requested',status:'failed',outcome:'uncertain',attempt_count:3,claim_fence:4,effect_key:'c1-quorum-upgrade'})
+    expect((await db.query('SELECT 1 FROM notification_intents')).rowCount).toBe(1)
+    expect(await readSchemaInventory()).toEqual(cleanSchemaInventory)
+  },180_000)
 
   for (const endpoint of supportedLegacyUpgradeEndpoints) {
     it(`atomically upgrades the supported ${endpoint.slice(0, 4)} legacy endpoint without data loss`, async () => {

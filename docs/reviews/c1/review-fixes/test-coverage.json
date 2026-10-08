@@ -1,0 +1,38 @@
+{
+  "historicalMatrix": "../test-coverage.json",
+  "policy": "保留全部原测试、DoD 与九类适用性映射；本文件只补充审核修复断言，不用定向测试替代完整必需检查。实际结果以 verification.json 和原日志归档为准。",
+  "workerFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+  "workerCases": [
+    {
+      "reviewPoint": "授权与撤权竞争，包括 workspace 前置锁",
+      "originalTests": ["todo-15-T2", "todo-15-T4", "todo-15-T5"],
+      "names": [
+        "serializes %s revocation before the send checkpoint and makes zero adapter calls",
+        "holds authorization through checkpoint commit and orders a later revocation after sending"
+      ],
+      "expandedCount": 8,
+      "assertions": "停用、离队、重新指派、grant、delegation、Approval、Team 删除七类双事务竞争，观察真实 PostgreSQL 锁等待；撤权先提交时零 adapter 调用，反向顺序持锁至 checkpoint 提交。"
+    },
+    {
+      "reviewPoint": "持久兼容通知 kind，排队后静音",
+      "originalTests": ["todo-15-T1", "todo-15-T4"],
+      "names": ["persists the compatible approval kind for %s and rechecks a newly muted kind at send time"],
+      "expandedCount": 2,
+      "assertions": "approval.requested 与 partial quorum 的 approval.decision.recorded 都持久为 approval.requested；入队后设置 mutedKinds，发送时抑制且零 adapter 调用。"
+    },
+    {
+      "reviewPoint": "逐条领取与 claim 丢失隔离",
+      "originalTests": ["todo-15-T2", "todo-15-T3", "todo-15-T5", "todo-15-T6"],
+      "names": [
+        "processes a full slow adapter batch without preclaiming waiting attempts and still schedules Loops",
+        "isolates a lost %s claim and continues deliveries and Loop work"
+      ],
+      "expandedCount": 3,
+      "assertions": "完整 25 条批次，第一条 adapter 挂起时其余 24 条未 claim、重试计数为零；全批各领取一次。prepare/ack 丢失分别隔离，其他投递和真实 Loop 工作继续。"
+    }
+  ],
+  "migrationFile": "packages/db/integration/migration-baseline.integration.test.ts",
+  "migrationAssertions": "新增两条迁移分别从前一阶段升级、after_sql 故障回滚、重复执行与空库 inventory 比较；保留 uncertain、attempt、fence、逻辑 attempt 及 legacy 通知语义。",
+  "completeSuites": "指定 worker 从审核基点的 36 项扩展为 49 项，迁移基线从 20 项扩展为 22 项；目标 API 原 9 项、A1 原 14 项和原有 Web Push/webhook/Automation/Loop 路径均进入最终完整集成检查。",
+  "outOfScope": "真实外发、真实发布、未来卡片审批和身份桥接；原可选 soak、runner、retention barrier、灾备 skip 不计通过。"
+}
