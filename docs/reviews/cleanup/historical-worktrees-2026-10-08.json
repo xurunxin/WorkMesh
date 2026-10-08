@@ -58928,6 +58928,115 @@
         "parentWorktreeCleanup": "本阶段未删除四个父目录；历史逐项证据限制沿用之前审计结论。",
         "overallCleanupComplete": false
       }
+    },
+    "postCacheMaterialAssessment": {
+      "recordedAtUtc": "2026-10-08T11:21:50Z",
+      "recordedAtMeaning": "工具时钟读数；不是资源删除时刻。",
+      "latestMain": {
+        "commit": "96e724858e692d262107c34db50b40c3ae7c122c",
+        "source": "mcp__tds__git fetch origin main 后读取 FETCH_HEAD",
+        "parentCandidates": {
+          "#3": "550dead055689154359a3406dfce4f0c91c1dad3",
+          "#10": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+          "#11": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+          "#18": "c7a1af7d7b2e125368b29975867b4d392690fc38"
+        }
+      },
+      "todoSnapshot": {
+        "refreshed": true,
+        "exactReadTimeUtc": null,
+        "timeLimitNote": "本轮读取后以工具时钟 11:21:50Z 记下审计结束时刻；不倒推 Todo 请求时间。",
+        "phaseAtRead": {
+          "#5": "building",
+          "#8": "done; 按用户指示仍保护旧 dirty 材料",
+          "#9": "confirm",
+          "#15": "building",
+          "#17": "review",
+          "#21": "implement_reviewing",
+          "#52": "building"
+        },
+        "protectedWorkspacePaths": [
+          {"todo":"#5","path":"C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301","reason":"用户要求保护活跃/恢复工作区"},
+          {"todo":"#8 current","path":"C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801","reason":"用户明确保护旧 dirty 恢复材料"},
+          {"todo":"#8 historical","path":"C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e","reason":"用户明确保护旧 dirty 恢复材料"},
+          {"todo":"#9","path":"C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe","reason":"本轮新增受保护任务工作区"},
+          {"todo":"#15","path":"C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc","reason":"用户要求保护活跃/恢复工作区"},
+          {"todo":"#17","path":"C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e","reason":"用户要求保护活跃/恢复工作区"},
+          {"todo":"#21 current","path":"C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade","reason":"用户要求保护活跃/恢复工作区"},
+          {"todo":"#21 old checkpoint","path":"C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec","commit":"d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5","reason":"恢复 checkpoint，禁止删除"}
+        ],
+        "workspaceInspection": "此轮没有扫描、读取或更改所列保护路径。"
+      },
+      "d0DuplicateLogAssessment": {
+        "todo": "#10",
+        "ledgerPath": "docs/reviews/cleanup/.duplicate-evidence-stage-2026-10-08.json",
+        "targetCount": 6,
+        "sourceBytesTotal": 66983,
+        "mapping": "每行记录本地原始路径/大小/SHA-256、D0 manifest 命令/退出码/原始日志哈希、仅 CRLF→LF 后的 main 路径及 Git blob ID。原字节可由记录的 LF→CRLF 关系还原。",
+        "deleteInvocation": "Remove-Item -LiteralPath <6 exact .tmp file paths> -Force -ErrorAction Stop",
+        "result": "平台自动审批在 PowerShell 进程启动前拒绝；未删除任何目标，未改用其他删除方式。",
+        "exitCode": null,
+        "preflightLedger": "同文件 pathSafetyPreflight；仅作为拒绝前观察记录，不代表之后的活动引用状态或删除授权。",
+        "netBytesRemovedThisAssessment": 0
+      },
+      "g1CRLFConfigBackup": {
+        "todo": "#18",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-vitest-config-original",
+        "bytes": 752,
+        "rawSha256": "ca9031eca23a729d89184c49246b8f1891c784382293cc91ac7ad25b58b3ccfe",
+        "crlfPairs": 19,
+        "bareLf": 0,
+        "loneCr": 0,
+        "normalizedMainPath": "vitest.integration.config.ts",
+        "reasonRetained": "只证明文本归一后与主线配置匹配；无法判断该 original 副本是可抛弃备份还是验证基线输入。"
+      },
+      "independentCloneRecheck": {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "shallow": true,
+        "registeredParentLinkedWorktree": false,
+        "mainIsAncestor": true,
+        "mainBehindCloneAhead": "26 0",
+        "refs": "仅本地 tds/conv-01a116f7-1027-7c75-90df-32ebc5488752 与同值 origin 跟踪引用；无本地独有提交。",
+        "trackedTreeEntries": 1607,
+        "porcelainEntries": 143,
+        "trackedDeletions": 143,
+        "trackedModifications": 0,
+        "untracked": 0,
+        "ignored": 0,
+        "currentTrackedFiles": 1464,
+        "currentTrackedBytes": 16891322,
+        "allTrackedFilesRecoverableFromCloneHead": true,
+        "deletedPathBlobMapping": "143 条路径与 clone HEAD/main blob ID 已在 reviewerFollowupAudit.independentClone.trackedDeletedPaths 逐项记录；140 个 main blob 相同、3 个不同。",
+        "currentMainObjectCoverage": "1,575 个唯一 HEAD blob 均可由当前 main 对象库读取；当前 1,464 个 tracked 文件中 1,439 个 CRLF→LF 命中 main、25 个未映射。",
+        "enumeratedCloneFileBytes": 33477910,
+        "knownUse": "g1-shallow-read.mjs 将其用作隔离浅克隆归档读取验证 fixture。",
+        "activityOrIndependentUse": "本轮没有可读的机器进程引用接口；当前进程/其他用途引用未知。",
+        "decision": "保留并作为待独立审查的具体回收候选；本轮不逐文件还原或删除 clone。"
+      },
+      "remainingMaterialClassification": {
+        "inventoryPath": "followupCleanup.reviewerFollowupAudit.remainingTmpInventory.roots[*].files",
+        "exactPerFileFields": ["path", "bytes", "classification", "rawMainBlobMatches", "crlfLfOnlyMainBlobMatches", "preservationStatus", "neededInput"],
+        "ordinaryRootCounts": {"#10":1649,"#18 excluding clone":283,"#11":1496},
+        "ordinaryRootBytes": {"#10":196832784,"#18 excluding clone":49882233,"#11":96132695},
+        "currentUnmappedClassification": "test-evidence-unmapped/test-output-unmapped 表示用途或映射未判明，不代表唯一；每个路径均带具体缺失的 manifest/归档成员映射或 owner 保留/可重建决定。",
+        "d1aArchiveProof": "main docs/reviews/d1a/artifact-manifest.json 说明 38 个归档源日志路径及 31 个别名，实际解析依赖 ci385-raw-evidence/raw-evidence-index.json 与 source-map.json；未建立这些归档成员与当前每个 .tmp 本地文件的一对一映射。",
+        "archiveOrSanitization": "未创建归档；未证明其它失败/验收材料确属必要且可安全脱敏，trace/认证类内容不打包。",
+        "specificNeededInputs": "以每个 files 条目的 neededInput 为准，包括精确冻结 manifest、ZIP 成员 path/version/byteKind、运行命令/失败索引或 owner 的逐路径保留/可重建决定。",
+        "unexplained27FileDifference": "较旧 4,919 汇总多出的 27 个文件仍缺前次逐路径清单，不猜测差异。"
+      },
+      "cleanupOutcome": {
+        "newFileDeletions": 0,
+        "newArchiveFiles": 0,
+        "dockerMutations": 0,
+        "parentWorktreesRemoved": 0,
+        "netBytesReleased": 0,
+        "parentsRemain": true,
+        "activeAndRecoveryWorkspacesTouched": false,
+        "overallCleanupComplete": false,
+        "prior2268PerFilePreservationLimit": "继续保留原历史限制，不重写此前证据。",
+        "prior133CacheReceipts": "保留，不改写。"
+      }
     }
   }
 }
