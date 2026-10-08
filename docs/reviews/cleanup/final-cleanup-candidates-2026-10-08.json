@@ -13,11 +13,6 @@
     "statusRefreshed": false,
     "note": "本阶段未调用 machine/daemon 状态接口；仅做只读 repo/todo/conversation 核验。"
   },
-  "currentMain": {
-    "sha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
-    "fetchedThisStage": true,
-    "exactShaFrom": "mcp__tds__git fetch origin main; rev-parse FETCH_HEAD"
-  },
   "stageBoundary": {
     "kind": "只读最终候选清单/最小保全",
     "filesDeleted": 0,
@@ -79,8 +74,6 @@
   "gitWorktreeSnapshot": {
     "listEntryCountObserved": 21,
     "candidateAndParentPathsRegistered": true,
-    "currentMainFetchedThisStage": true,
-    "currentMainSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
     "fetchMethod": "mcp__tds__git fetch origin main; rev-parse FETCH_HEAD",
     "selectedWorktreeStatusChecks": {
       "allCandidatesAndParents": [
@@ -93,7 +86,6 @@
       ],
       "allTrackedAndUntrackedStatusLines": 0,
       "allStatusExitCodes": 0,
-      "allCandidateHeadsAreAncestorsOfMain": true,
       "ancestryExitCodes": {
         "#11": 0,
         "#10": 0,
@@ -104,8 +96,13 @@
       },
       "checkedAtUtc": null,
       "exactCheckTimeAvailable": false,
-      "checkedDuringThisStage": true
-    }
+      "checkedDuringThisStage": true,
+      "allCandidateHeadsAreAncestorsOfObservedFetchHead": true
+    },
+    "fetchOriginMainSucceeded": true,
+    "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "allCandidateHeadsAreAncestorsOfObservedFetchHead": true,
+    "ancestryProofQualification": "ancestor checks use the observed FETCH_HEAD object; not independent proof of remote refs/heads/main"
   },
   "parentWorktrees": [
     {
@@ -119,13 +116,13 @@
       "registered": true,
       "statusExitCode": 0,
       "statusEntries": 0,
-      "ancestorOfFreshMainExitCode": 0,
       "tmpInventory": {
         "exists": false,
         "fileCount": 0,
         "bytes": 0
       },
-      "retentionReason": "Playwright 报告/截图尚缺精确 run、用例/viewport 与归档附件双映射；.tmp 不存在。"
+      "retentionReason": "Playwright 报告/截图尚缺精确 run、用例/viewport 与归档附件双映射；.tmp 不存在。",
+      "ancestorOfObservedFetchHeadExitCode": 0
     },
     {
       "todo": 10,
@@ -138,13 +135,13 @@
       "registered": true,
       "statusExitCode": 0,
       "statusEntries": 0,
-      "ancestorOfFreshMainExitCode": 0,
       "tmpInventory": {
         "exists": true,
         "fileCount": 1649,
         "bytes": 196832784
       },
-      "retentionReason": ".tmp 的未映射 capture/失败/诊断材料保留；六个 d0-upstream 文件虽有主线来源映射，但原删除命令被策略拒绝，禁止重试。"
+      "retentionReason": ".tmp 的未映射 capture/失败/诊断材料保留；六个 d0-upstream 文件虽有主线来源映射，但原删除命令被策略拒绝，禁止重试。",
+      "ancestorOfObservedFetchHeadExitCode": 0
     },
     {
       "todo": 11,
@@ -157,7 +154,6 @@
       "registered": true,
       "statusExitCode": 0,
       "statusEntries": 0,
-      "ancestorOfFreshMainExitCode": 0,
       "tmpInventory": {
         "exists": true,
         "files": 76,
@@ -170,7 +166,8 @@
         ],
         "noNewPathHashReadThisStage": true
       },
-      "retentionReason": "74项逐路径用途/归档来源未闭合；至少一个trace及敏感RAW ZIP仍保留。"
+      "retentionReason": "74项逐路径用途/归档来源未闭合；至少一个trace及敏感RAW ZIP仍保留。",
+      "ancestorOfObservedFetchHeadExitCode": 0
     },
     {
       "todo": 18,
@@ -183,7 +180,6 @@
       "registered": true,
       "statusExitCode": 0,
       "statusEntries": 0,
-      "ancestorOfFreshMainExitCode": 0,
       "tmpInventory": {
         "parentOutsideCloneFiles": 283,
         "parentOutsideCloneBytes": 49882233,
@@ -191,7 +187,8 @@
         "nestedCloneBytes": 33450482,
         "nestedCloneDisposition": "被策略拒绝后停止；拒绝后未重读；此处仅引用拒绝前库存"
       },
-      "retentionReason": "父 .tmp 未映射材料保留；独立浅克隆曾被策略拒绝，禁止再次删除或通过父目录绕过。"
+      "retentionReason": "父 .tmp 未映射材料保留；独立浅克隆曾被策略拒绝，禁止再次删除或通过父目录绕过。",
+      "ancestorOfObservedFetchHeadExitCode": 0
     }
   ],
   "d1aKnownItems": {
@@ -238,12 +235,12 @@
       "gitBlob": "414dfe920c54f68ca1a2f246f1fcdd82e43767bb",
       "sourceCommit": "58d59ed85002da637aaeaa6bf98915d4a6ba918c",
       "sourcePath": "docs/reviews/d1a/evidence/git-blob-hashes.json",
-      "sourceCommitAncestorOfCurrentMainExitCode": 0,
-      "currentMainSamePathBlob": "69a5adba69600bc3d53bf9e8fef989823965ab67",
       "currentTurnTargetFileRead": false,
       "activeTodoConversationExactPathMentions": 0,
       "currentProcessReferences": "not queried",
-      "decision": "conditional single-file ordinary cleanup candidate after reviewer and fresh path/activity/lock checks; source mapping requires no duplicate archive."
+      "decision": "conditional single-file ordinary cleanup candidate after reviewer and fresh path/activity/lock checks; source mapping requires no duplicate archive.",
+      "observedFetchHeadSamePathBlob": "69a5adba69600bc3d53bf9e8fef989823965ab67",
+      "sourceCommitAncestorOfObservedFetchHeadExitCode": 0
     }
   },
   "historicalRefusals": {
@@ -290,7 +287,6 @@
       "phase": "done",
       "linkedWorktreeRegistered": true,
       "currentGitStatusEntries": 0,
-      "headIsAncestorOfCurrentMainExitCode": 0,
       "rootBuildScript": "turbo run build",
       "webBuildScript": "next build",
       "rootE2EScript": "turbo run test:e2e --filter=@workmesh/web",
@@ -926,7 +922,8 @@
         "turboDisposition": "all retained; lint/test/typecheck logs are not rebuilt by pnpm build",
         "webTypecheckDistDirectories": 1,
         "webTypecheckDisposition": "all retained; apps/web/dist contains tsconfig.tsbuildinfo only; command/config are recorded per preservedOutputs"
-      }
+      },
+      "headIsAncestorOfObservedFetchHeadExitCode": 0
     },
     {
       "todo": 15,
@@ -937,7 +934,6 @@
       "phase": "done",
       "linkedWorktreeRegistered": true,
       "currentGitStatusEntries": 0,
-      "headIsAncestorOfCurrentMainExitCode": 0,
       "rootBuildScript": "turbo run build",
       "webBuildScript": "next build",
       "rootE2EScript": "turbo run test:e2e --filter=@workmesh/web",
@@ -1507,7 +1503,8 @@
         "turboDisposition": "all retained; lint/test/typecheck logs are not rebuilt by pnpm build",
         "webTypecheckDistDirectories": 1,
         "webTypecheckDisposition": "all retained; apps/web/dist contains tsconfig.tsbuildinfo only; command/config are recorded per preservedOutputs"
-      }
+      },
+      "headIsAncestorOfObservedFetchHeadExitCode": 0
     }
   ],
   "protectedWorkspaces": [
@@ -1558,5 +1555,15 @@
     "prunableWorktrees": 0,
     "physicalDiskRelease": "unknown",
     "globalHandles": "not enumerated; openfiles access denied"
-  }
+  },
+  "observedFetchHeadObject": {
+    "sha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "exactShaFrom": "mcp__tds__git fetch origin main; rev-parse FETCH_HEAD",
+    "fetchOriginMainSucceeded": true,
+    "independentRemoteMainRefProof": false,
+    "interpretation": "Observed fetched object SHA only; execution-time record lacks an independent remote refs/heads/main binding."
+  },
+  "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "fetchOriginMainSucceeded": true,
+  "independentRemoteMainRefProof": false
 }

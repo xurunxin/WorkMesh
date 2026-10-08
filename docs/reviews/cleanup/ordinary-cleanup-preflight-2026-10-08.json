@@ -67,7 +67,6 @@
     ],
     "source": "mcp__tds__conversation, refreshed this turn"
   },
-  "freshMainSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
   "worktreeListExitCode": 0,
   "registeredWorktrees": [
     {
@@ -76,10 +75,10 @@
       "registered": true,
       "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
       "headExitCode": 0,
-      "mainSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
-      "ancestorExitCode": 0,
       "statusExitCode": 0,
-      "statusLines": 0
+      "statusLines": 0,
+      "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "ancestorOfObservedFetchHeadExitCode": 0
     },
     {
       "todo": 15,
@@ -87,10 +86,10 @@
       "registered": true,
       "head": "81090ec01bcbc84edbe101418d833840999a5326",
       "headExitCode": 0,
-      "mainSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
-      "ancestorExitCode": 0,
       "statusExitCode": 0,
-      "statusLines": 0
+      "statusLines": 0,
+      "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "ancestorOfObservedFetchHeadExitCode": 0
     }
   ],
   "processReferenceCheck": {
@@ -703,15 +702,15 @@
     "gitHashExitCode": 0,
     "sourceBlobReadableExitCode": 0,
     "sourceCommit": "58d59ed85002da637aaeaa6bf98915d4a6ba918c",
-    "sourceCommitAncestorOfFreshMainExitCode": 0,
-    "freshMainSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
     "pathChainNoReparse": true,
     "pathChainReparse": [],
     "aclReadable": true,
     "matchingProcessCommandLineRefs": [],
     "activityChatMentions": 0,
     "activityChatSource": "Fresh #5/#9/#16/#21 conversation searches for exact D1a candidate path: zero; #8/#15 owner conversations also zero.",
-    "canProceed": true
+    "canProceed": true,
+    "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "sourceCommitAncestorOfObservedFetchHeadExitCode": 0
   },
   "dependencyTargetsSkipped": [
     {
@@ -914,7 +913,14 @@
     "headExitCode": 0,
     "statusExitCode": 0,
     "statusEntries": 0,
-    "mainSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
-    "ancestorExitCode": 0
+    "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "ancestorOfObservedFetchHeadExitCode": 0
+  },
+  "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "mainIdentityProof": {
+    "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "independentRemoteMainRefProof": false,
+    "receiptFile": "original-operation-receipts-ordinary-cleanup-2026-10-09.json#mainSourceEvidence",
+    "limitation": "Execution-time fetch origin main was followed by rev-parse FETCH_HEAD. No explicit ls-remote or refs/heads/main verification was recorded in this execution window. The observed object SHA is not represented as independent main-ref proof; no post-hoc query is used to backfill it."
   }
 }
