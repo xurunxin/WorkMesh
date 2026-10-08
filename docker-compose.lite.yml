@@ -310,8 +310,9 @@ services:
       # Browser call this server, and the Next.js proxy forwards to the API, which
       # is what keeps the session cookie first-party. A device can be reached by
       # LAN address, hostname, or tunnel name, and none of those are knowable when
-      # the bundle is built. Declaring NEXT_API_UPSTREAM is what tells the runtime
-      # guard that the Web server terminates /api.
+      # the bundle is built. lite.Dockerfile compiles this private service address
+      # into Next rewrites; changing runtime env does not rebuild those rules.
+      # NEXT_API_UPSTREAM also declares the proxy to the runtime guard.
       NEXT_API_UPSTREAM: http://api:3001
       HOSTNAME: 0.0.0.0
       PORT: 3000

@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
+import { hasEvidence, readEvidence } from './read-evidence-bytes.mjs'
 
 const root = resolve(import.meta.dirname, '../../..')
 const runsRoot = resolve(import.meta.dirname, 'runs')
@@ -25,8 +26,8 @@ const runs = readdirSync(runsRoot).sort().filter(name => existsSync(resolve(runs
     sourceLimitation: before ? '保存 HEAD 加本轮未提交运行源码原字节；Git blob 与工作树换行另核。' : '早期运行未完整捕获前后源码；不以该通过替代当前整合验收。',
     commands: receipt.results.map(result => {
       const logPath = resolve(directory, result.log)
-      const log = existsSync(logPath) ? readFileSync(logPath, 'utf8') : ''
-      return { ...result, log: relative(logPath), summaryLines: log.split(/\r?\n/).filter(line => /Test Files\s|Tests\s+\d|\d+ (passed|failed|skipped)\b|Tasks:\s|Failed Suites|Error:|Error \[|ERR_|FAILED|failed to solve|未验收|不通过/.test(line)).slice(-45) }
+      const log = hasEvidence(logPath) ? readEvidence(logPath).toString('utf8') : ''
+      return { ...result, log: relative(existsSync(logPath) ? logPath : `${logPath}.gz`), uncompressedLogPath: relative(logPath), summaryLines: log.split(/\r?\n/).filter(line => /Test Files\s|Tests\s+\d|\d+ (passed|failed|skipped)\b|Tasks:\s|Failed Suites|Error:|Error \[|ERR_|FAILED|failed to solve|未验收|不通过/.test(line)).slice(-45) }
     }),
     cleanup: receipt.resources.map(item => ({ type: item.type, id: item.id ?? null, name: item.name ?? item.target, owner: item.owner, preDelete: item.preDelete ?? null, cleanup: item.cleanup ?? null, postDelete: item.postDelete ?? null })),
     sanitization: existsSync(resolve(directory, 'sanitization.json')) ? relative(resolve(directory, 'sanitization.json')) : null,

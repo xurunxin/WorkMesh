@@ -2,7 +2,7 @@
   "todoId": "0BkezbmWV6k8vwrlSNuF_",
   "planId": "FkfKZkAdoHUa-nr2Hq1mA",
   "version": null,
-  "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "main": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
   "originalTests": [
     {
       "id": "todo-9-T1",
@@ -38,7 +38,7 @@
       "id": "todo-9-T6",
       "file": "apps/web/e2e/configuration-readiness.spec.ts",
       "caseName": "Lite 安装后逐项补齐直到横幅消失 @lite",
-      "result": "仓库 E2E 中跳过；真实 Lite 运行见 execution-results.json，不以镜像构建或入口探针替代安装链路"
+      "result": "真实 Lite 运行待修补后重验；两轮失败不计通过"
     }
   ],
   "matrix": [
@@ -278,6 +278,21 @@
         "不创建对话或委派，不自动发送"
       ],
       "result": "a2-46fe0e21 与 a2-c2def680 实际通过，未自动激活或发送"
+    },
+    {
+      "id": "lite-build-proxy",
+      "scenario": "构建时绑定既有 api:3001；实际镜像五前缀 manifest 正确，经真实 Web 返回未安装状态，再原浏览器安装配置闭环",
+      "files": [
+        "infra/docker/lite.Dockerfile",
+        "docker-compose.lite.yml",
+        "deploy/lite/README.md",
+        "scripts/verify-a2-lite.mjs",
+        "apps/web/e2e/configuration-readiness.spec.ts"
+      ],
+      "test": "Lite 安装后逐项补齐直到横幅消失 @lite",
+      "evidence": "专用新 SHA 镜像运行待执行；前两轮首败保留",
+      "scope": "无协议、权限、端点、迁移或部署拓扑增量",
+      "result": "真实 Lite 运行待修补后重验；两轮失败不计通过"
     }
   ],
   "DoD": "未满足项列表可用 + 全部交互断言通过 + 既有 IA 与导航无回归；原 DoD 与 Lite 未验收项保持",

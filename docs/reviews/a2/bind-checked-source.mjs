@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
+import { readEvidence } from './read-evidence-bytes.mjs'
 
 const root = resolve(import.meta.dirname, '../../..')
 const sha = bytes => createHash('sha256').update(bytes).digest('hex')
@@ -14,7 +15,7 @@ const records = runs.map(runId => {
   const before = json(resolve(directory, 'source-before.json'))
   const after = json(resolve(directory, 'source-after.json'))
   const files = after.files.map(entry => {
-    const tested = readFileSync(resolve(directory, 'source/after', entry.path))
+    const tested = readEvidence(resolve(directory, 'source/after', entry.path))
     const current = readFileSync(resolve(root, entry.path))
     const blob = spawnSync('git', ['show', `${currentHead}:${entry.path}`], { cwd: root, maxBuffer: 5_000_000 })
     return { path: entry.path, tested: { bytes: tested.length, sha256: sha(tested) },

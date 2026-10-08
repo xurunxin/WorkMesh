@@ -96,4 +96,3 @@ describe('项目仓库配置', () => {
     fireEvent.click(screen.getByRole('button', { name: '新建配置目标项目' })); expect(create).toHaveBeenCalledTimes(1)
   })
 })
-

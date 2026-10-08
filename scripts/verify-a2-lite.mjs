@@ -89,7 +89,12 @@ try {
     await pause(12000)
     const log = await must('docker', ['logs', container.id])
     if (!log.includes(`role=${role} `) || /Cannot find (module|package)|MODULE_NOT_FOUND|ENOENT/.test(log)) throw Error(`${role} 未成功加载入口`)
-    if (role === 'web') await must('docker', ['exec', container.id, 'node', '-e', "fetch('http://127.0.0.1:3000/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"])
+    if (role === 'web') {
+      await must('docker', ['exec', container.id, 'node', '-e', "fetch('http://127.0.0.1:3000/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"])
+      // Inspect the compiled artifact, not the runtime environment or source.
+      const manifest = await must('docker', ['exec', container.id, 'node', '-e', "const fs=require('node:fs');const m=JSON.parse(fs.readFileSync('/opt/workmesh/web/apps/web/.next/routes-manifest.json','utf8'));const rules=Array.isArray(m.rewrites)?m.rewrites:Object.values(m.rewrites).flat();const prefixes=['/api','/.well-known','/auth','/mcp','/sse'];const expected=prefixes.map(p=>({source:p+'/:path*',destination:'http://api:3001'+p+'/:path*'}));if(!expected.every(e=>rules.some(r=>r.source===e.source&&r.destination===e.destination)))throw Error('Lite compiled proxy does not match its private Compose address');process.stdout.write(JSON.stringify(expected))"])
+      receipts.compiledProxy = { imageId: image.id, rules: JSON.parse(manifest), at: new Date().toISOString() }; save()
+    }
     save()
   }
   const tar = resolve(installDir, 'workmesh-lite.tar'); register('file', tar)
@@ -131,6 +136,9 @@ try {
     if (mounts.some(mount => mount.Type === 'bind')) throw Error('无源码安装不得包含主机绑定挂载')
     if (mounts.some(mount => mount.Destination === '/a2-ca' && (mount.Name !== caVolume.target || mount.RW))) throw Error('测试 CA 卷的归属或只读属性不符')
   }
+  // Exercise Web -> API before installation; /readyz only proves the Web role.
+  const installStatus = await must(process.execPath, ['-e', "fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})"])
+  receipts.preInstallProxy = { ...JSON.parse(installStatus), at: new Date().toISOString() }; save()
   const located = spawnSync(process.platform === 'win32' ? 'where.exe' : 'which', ['pnpm'], { encoding: 'utf8', windowsHide: true }).stdout.trim().split(/\r?\n/)[0]
   const standalone = resolve(dirname(located), 'node_modules/pnpm/pnpm.exe')
   const pnpm = existsSync(standalone) ? standalone : located
