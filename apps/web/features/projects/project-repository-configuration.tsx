@@ -61,6 +61,12 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
   const contextAttempt = useRef<{ scope: string; body: string } | null>(null)
   const controller = useRef<AbortController | null>(null)
   const generation = useRef(0)
+  const contextController = useRef<AbortController | null>(null)
+  const contextGeneration = useRef(0)
+  const cancelContextRead = useCallback(() => {
+    ++contextGeneration.current
+    contextController.current?.abort()
+  }, [])
   const target = workItemId ? { workItemId } : projectId ? { projectId } : null
   const targetKey = JSON.stringify(target)
   const scope = `${actorAuthorityScopeKey(actor)}:${teamId}:${targetKey}`
@@ -113,11 +119,21 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
     } finally { if (alive() && latest.current === scope && version === generation.current) setLoading(false) }
   }, [scope, alive, teamId, text])
   const readContexts = useCallback(async (signal?: AbortSignal) => {
-    if (!repositoryId) { setContexts([]); return [] }
+    cancelContextRead()
+    const version = contextGeneration.current
+    const abort = new AbortController()
+    contextController.current = abort
+    const cancel = () => abort.abort()
+    signal?.addEventListener('abort', cancel, { once: true })
+    if (signal?.aborted) abort.abort()
+    const current = () => alive() && latestContext.current === contextScope
+      && !abort.signal.aborted && version === contextGeneration.current
+    if (!current()) { signal?.removeEventListener('abort', cancel); return null }
     try {
-      const values = repositoryContextConfigurationSchema.array().parse(await apiRequest<unknown>(`/api/v1/repositories/${repositoryId}/context`, { signal, cache: 'no-store' }))
+      if (!repositoryId) { setContexts([]); return [] }
+      const values = repositoryContextConfigurationSchema.array().parse(await apiRequest<unknown>(`/api/v1/repositories/${repositoryId}/context`, { signal: abort.signal, cache: 'no-store' }))
       const matches = values.filter(value => value.repository_id === repositoryId && (workItemId ? value.work_item_id === workItemId : value.project_id === projectId))
-      if (alive() && latestContext.current === contextScope && !signal?.aborted) {
+      if (current()) {
         setContexts(matches)
         const original = pendingRef.current
         if (original && matches.some(value => sameContext(value, original))) {
@@ -125,13 +141,17 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
           replacePending(null); setWaiting(false); contextAttempt.current = null
         }
       }
-      else return []
+      else return null
       return matches
     } catch (reason) {
-      if (!alive() || latestContext.current !== contextScope || signal?.aborted) return []
-      throw reason
-    }
-  }, [repositoryId, targetKey, scope, alive])
+      // Cancellation alone is insufficient: a transport may still settle late.
+      // Apply the same generation gate to errors and successful responses.
+      if (!current()) return null
+      if (pendingRef.current) setNotice(latestText.current.notConfirmed)
+      handleError(reason)
+      return null
+    } finally { signal?.removeEventListener('abort', cancel) }
+  }, [repositoryId, targetKey, scope, alive, cancelContextRead])
   const refreshFeatures = useCallback(async (signal?: AbortSignal) => {
     try {
       const value = await apiRequest<{ features: Array<{ key: string; enabled: boolean }> }>('/api/v1/features', { signal, cache: 'no-store' })
@@ -182,8 +202,8 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
     editedPending.current = false
     contextAttempt.current = null
     const abort = new AbortController()
-    void readContexts(abort.signal).catch(reason => { if (alive() && !abort.signal.aborted) handleError(reason) })
-    return () => abort.abort()
+    void readContexts(abort.signal)
+    return () => { abort.abort(); cancelContextRead() }
   }, [readContexts])
   useEffect(() => {
     if (!pending || !waiting) return
@@ -199,24 +219,24 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
         await readContexts(abort.signal)
         if (!alive() || abort.signal.aborted) return
         if (pendingRef.current?.id === pending.id && Date.now() >= pending.deadline) { setNotice(text.notConfirmed); setWaiting(false) }
-      } catch (reason) { if (alive() && !abort.signal.aborted) { setNotice(text.notConfirmed); handleError(reason) } }
-      finally { reading = false }
+      } finally { reading = false }
     }
     const timer = setInterval(() => void check(), 2000)
     void check()
     return () => { clearInterval(timer); abort.abort() }
   }, [pending, waiting, readContexts, text, alive])
   useRealtimeSubscription(actor.workspace_id ? [{ type: 'workspace', id: actor.workspace_id }] : [], () => {
-    void load(); void refreshFeatures(); void readContexts().catch(handleError)
+    void load(); void refreshFeatures(); void readContexts()
   })
   useEffect(() => {
-    const resume = () => { if (document.visibilityState !== 'hidden') { void load(); void refreshFeatures(); void readContexts().catch(handleError) } }
+    const resume = () => { if (document.visibilityState !== 'hidden') { void load(); void refreshFeatures(); void readContexts() } }
     window.addEventListener('focus', resume); window.addEventListener('pageshow', resume); document.addEventListener('visibilitychange', resume)
     return () => { window.removeEventListener('focus', resume); window.removeEventListener('pageshow', resume); document.removeEventListener('visibilitychange', resume) }
   }, [load, readContexts])
   const retryConfirmation = () => {
     const original = pendingRef.current
     if (!original) return
+    cancelContextRead()
     replacePending({ ...original, deadline: Date.now() + 60_000 })
     setWaiting(true); setNotice(text.pending); void load()
   }
@@ -242,7 +262,7 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
         if (original && JSON.stringify(original.body) === identity) { retryConfirmation(); return }
         const baseline = contexts.map(value => value.id)
         const currentContexts = await readContexts()
-        if (!alive() || latestContext.current !== contextScope) return
+        if (!currentContexts || !alive() || latestContext.current !== contextScope) return
         // An uncertain identical attempt can already have published; replay its original key.
         const retry = contextAttempt.current?.scope === contextScope && contextAttempt.current.body === identity
         if (!retry
@@ -252,6 +272,7 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
         contextAttempt.current = { scope: contextScope, body: identity }
         const action = repositoryContextActionSchema.parse(await apiMutation<unknown>(`a2:context:${scope}:${repositoryId}`, `/api/v1/repositories/${repositoryId}/context`, { method: 'POST', headers: json({}), body: JSON.stringify(body) }))
         if (alive() && latestContext.current === contextScope) {
+          cancelContextRead()
           editedPending.current = false
           replacePending({ id: action.id, repositoryId, body, deadline: Date.now() + 60_000 }); setWaiting(true); setNotice(text.pending)
         }
@@ -264,7 +285,7 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
     ? <textarea autoComplete="off" maxLength={100000} onChange={event => setSecrets(current => ({ ...current, [field]: event.target.value }))} value={secrets[field]} />
     : <input type="password" autoComplete="off" maxLength={field === 'webhookSecret' ? 4096 : 10000} onChange={event => setSecrets(current => ({ ...current, [field]: event.target.value }))} value={secrets[field]} />}</label>
   return <section ref={sectionRef} className={styles.section} id="project-repository-configuration" aria-labelledby="repository-configuration-title" tabIndex={-1}>
-    <div className={styles.heading}><h2 id="repository-configuration-title">{text.configurationTitle}</h2><Button disabled={loading} onClick={() => { void load(); void readContexts().catch(handleError) }} variant="secondary">{text.refresh}</Button></div>
+    <div className={styles.heading}><h2 id="repository-configuration-title">{text.configurationTitle}</h2><Button disabled={loading} onClick={() => { void load(); void readContexts() }} variant="secondary">{text.refresh}</Button></div>
     {!target && <p>{text.chooseTarget} <Button onClick={onCreateProject} variant="secondary">{text.createTargetProject}</Button></p>}
     {error && <p role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}
     {pending && !waiting && <div>

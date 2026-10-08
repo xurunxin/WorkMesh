@@ -21,6 +21,7 @@ const walk = directory => {
       const local = relative(evidenceRoot, path).replaceAll('\\', '/')
       if (local.startsWith('pre-c3-source/') || local.startsWith('c3-integration/conflicts/')
         || local.startsWith('configuration-recovery/history/') && local.endsWith('.json') && !local.endsWith('/source.json')
+        || local.startsWith('context-read-generation/') && local.endsWith('.log')
         || local.startsWith('runs/') && (local.includes('/source/') || local.endsWith('.log') || local.endsWith('.md') || local.includes('/.playwright-artifacts'))) candidates.push(path)
     }
   }

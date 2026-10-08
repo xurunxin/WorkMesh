@@ -96225,6 +96225,627 @@
         "bytes": 7686,
         "sha256": "c3a04f3e235a6d132baf7f9e9815f8ce8ce47223be5c4fcc6e4fc61e54898551"
       }
+    },
+    {
+      "originalPath": "docs/reviews/a2/context-read-generation/baseline-failure.log",
+      "archivePath": "docs/reviews/a2/context-read-generation/baseline-failure.log.gz",
+      "original": {
+        "bytes": 3606,
+        "sha256": "d0ae1158b5409de26d82653aaf20999964988e289abe7ac60217be0665ed0aea"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:31.901Z",
+      "roundTrip": {
+        "bytes": 3606,
+        "sha256": "d0ae1158b5409de26d82653aaf20999964988e289abe7ac60217be0665ed0aea",
+        "exact": true,
+        "at": "2026-10-08T18:59:31.920Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:31.938Z"
+      },
+      "archive": {
+        "bytes": 955,
+        "sha256": "2de65fd0abbf74d1def1b7154acf13a08e0a8bc2e1330b861b6d44e5588a3141"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/context-read-generation/first-failure.log",
+      "archivePath": "docs/reviews/a2/context-read-generation/first-failure.log.gz",
+      "original": {
+        "bytes": 137511,
+        "sha256": "6473a1213d1c5ac276bfcdd847493f1dce03841442fb31f5c9a4ff9026dc6cae"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:31.997Z",
+      "roundTrip": {
+        "bytes": 137511,
+        "sha256": "6473a1213d1c5ac276bfcdd847493f1dce03841442fb31f5c9a4ff9026dc6cae",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.014Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.028Z"
+      },
+      "archive": {
+        "bytes": 5016,
+        "sha256": "0089dabf8ac3acf7ccc6bb54f77b12b24574943c96abe353c8a9dc9996b2fb0b"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/context-read-generation/targeted.log",
+      "archivePath": "docs/reviews/a2/context-read-generation/targeted.log.gz",
+      "original": {
+        "bytes": 463,
+        "sha256": "cb6ff9c857cb4db3c77b46f6b0147a886ce902a96fee9e8ae79084f5b4c10b6c"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.084Z",
+      "roundTrip": {
+        "bytes": 463,
+        "sha256": "cb6ff9c857cb4db3c77b46f6b0147a886ce902a96fee9e8ae79084f5b4c10b6c",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.100Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.115Z"
+      },
+      "archive": {
+        "bytes": 304,
+        "sha256": "67decf9101ae5d10b667757b05cf51fdd6270cd0cf6675c70ebc289ed8e885c6"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/0.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/0.log.gz",
+      "original": {
+        "bytes": 65,
+        "sha256": "2fe9a84e5e3a03707393a9a4e05677d7a02155b26c84ea0a2b8aa1e67ac1803a"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.169Z",
+      "roundTrip": {
+        "bytes": 65,
+        "sha256": "2fe9a84e5e3a03707393a9a4e05677d7a02155b26c84ea0a2b8aa1e67ac1803a",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.185Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.200Z"
+      },
+      "archive": {
+        "bytes": 72,
+        "sha256": "93b9386ac8dde1e6367d47b1e7afd373401796377e9fafac1d9cc0ae5c9fedcf"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/1.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/1.log.gz",
+      "original": {
+        "bytes": 65,
+        "sha256": "6085dbc6fd7ac764acb4329719e377b1299e13f690d5cbba7068b66f73f786db"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.256Z",
+      "roundTrip": {
+        "bytes": 65,
+        "sha256": "6085dbc6fd7ac764acb4329719e377b1299e13f690d5cbba7068b66f73f786db",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.272Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.288Z"
+      },
+      "archive": {
+        "bytes": 72,
+        "sha256": "29f10c709da7b92e46ee05538f5b089d1ab87329b4027c42db82ae649ae403b1"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/10.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/10.log.gz",
+      "original": {
+        "bytes": 1484,
+        "sha256": "5b3aeb54e78c4269e24bdd1ec3b397fa53fbc8a5ba4c577c3caad1dd1d69dd71"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.347Z",
+      "roundTrip": {
+        "bytes": 1484,
+        "sha256": "5b3aeb54e78c4269e24bdd1ec3b397fa53fbc8a5ba4c577c3caad1dd1d69dd71",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.365Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.380Z"
+      },
+      "archive": {
+        "bytes": 926,
+        "sha256": "479ac350c927d7ccb5e84c0717a0af77d55b18f22672898f8158c19addef529d"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/11.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/11.log.gz",
+      "original": {
+        "bytes": 2212,
+        "sha256": "f826ccd96a18f972b19d6d76e294223b77b5d4092f1a7a3e0643e9db87417268"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.443Z",
+      "roundTrip": {
+        "bytes": 2212,
+        "sha256": "f826ccd96a18f972b19d6d76e294223b77b5d4092f1a7a3e0643e9db87417268",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.458Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.474Z"
+      },
+      "archive": {
+        "bytes": 859,
+        "sha256": "bfe60df1943a103b1189a37abd098f2c80f571e257f9dbfde56c2273cc54421d"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/12.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/12.log.gz",
+      "original": {
+        "bytes": 65,
+        "sha256": "6f8c6dfb04d5ac1fb053e145e13461350ba328dd0c52ee44ce80231c546c261a"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.529Z",
+      "roundTrip": {
+        "bytes": 65,
+        "sha256": "6f8c6dfb04d5ac1fb053e145e13461350ba328dd0c52ee44ce80231c546c261a",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.545Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.560Z"
+      },
+      "archive": {
+        "bytes": 72,
+        "sha256": "dc1c39192cf31d339765af72e6b89aaa3368e909f4a00ef3d9fbcf01e1ccc2bb"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/13.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/13.log.gz",
+      "original": {
+        "bytes": 65,
+        "sha256": "6085dbc6fd7ac764acb4329719e377b1299e13f690d5cbba7068b66f73f786db"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.617Z",
+      "roundTrip": {
+        "bytes": 65,
+        "sha256": "6085dbc6fd7ac764acb4329719e377b1299e13f690d5cbba7068b66f73f786db",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.633Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.648Z"
+      },
+      "archive": {
+        "bytes": 72,
+        "sha256": "29f10c709da7b92e46ee05538f5b089d1ab87329b4027c42db82ae649ae403b1"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/14.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/14.log.gz",
+      "original": {
+        "bytes": 65,
+        "sha256": "2fe9a84e5e3a03707393a9a4e05677d7a02155b26c84ea0a2b8aa1e67ac1803a"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.703Z",
+      "roundTrip": {
+        "bytes": 65,
+        "sha256": "2fe9a84e5e3a03707393a9a4e05677d7a02155b26c84ea0a2b8aa1e67ac1803a",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.719Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.733Z"
+      },
+      "archive": {
+        "bytes": 72,
+        "sha256": "93b9386ac8dde1e6367d47b1e7afd373401796377e9fafac1d9cc0ae5c9fedcf"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/15.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/15.log.gz",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.790Z",
+      "roundTrip": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.805Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.820Z"
+      },
+      "archive": {
+        "bytes": 20,
+        "sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/2.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/2.log.gz",
+      "original": {
+        "bytes": 65,
+        "sha256": "6f8c6dfb04d5ac1fb053e145e13461350ba328dd0c52ee44ce80231c546c261a"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.879Z",
+      "roundTrip": {
+        "bytes": 65,
+        "sha256": "6f8c6dfb04d5ac1fb053e145e13461350ba328dd0c52ee44ce80231c546c261a",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.897Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.911Z"
+      },
+      "archive": {
+        "bytes": 72,
+        "sha256": "dc1c39192cf31d339765af72e6b89aaa3368e909f4a00ef3d9fbcf01e1ccc2bb"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/3.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/3.log.gz",
+      "original": {
+        "bytes": 186,
+        "sha256": "634724f9d1b0d70dc9d37d0d210fa2d3fed89b7b9d81835f21cf2b2e929c1826"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:32.969Z",
+      "roundTrip": {
+        "bytes": 186,
+        "sha256": "634724f9d1b0d70dc9d37d0d210fa2d3fed89b7b9d81835f21cf2b2e929c1826",
+        "exact": true,
+        "at": "2026-10-08T18:59:32.983Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:32.999Z"
+      },
+      "archive": {
+        "bytes": 166,
+        "sha256": "7d6cd9a998757fae8e0fdee537a76e9c9817948070f7763e48f5c446bb8919f1"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/4.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/4.log.gz",
+      "original": {
+        "bytes": 5991,
+        "sha256": "695ad62f2f94860226f3d0a15a08f6d376684203e057b1fa07b1e6bca302e411"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:33.053Z",
+      "roundTrip": {
+        "bytes": 5991,
+        "sha256": "695ad62f2f94860226f3d0a15a08f6d376684203e057b1fa07b1e6bca302e411",
+        "exact": true,
+        "at": "2026-10-08T18:59:33.070Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:33.085Z"
+      },
+      "archive": {
+        "bytes": 1045,
+        "sha256": "6d4d10cf9f9f482368bca735ecfd0009900e89754211ac4d7a4a180d91858ea1"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/5.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/5.log.gz",
+      "original": {
+        "bytes": 6546,
+        "sha256": "6d9c7fc810457a983996ed91b22fdb6a271d7153a44f303a7288aa83fe94618b"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:33.145Z",
+      "roundTrip": {
+        "bytes": 6546,
+        "sha256": "6d9c7fc810457a983996ed91b22fdb6a271d7153a44f303a7288aa83fe94618b",
+        "exact": true,
+        "at": "2026-10-08T18:59:33.160Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:33.175Z"
+      },
+      "archive": {
+        "bytes": 1059,
+        "sha256": "2de32b1074d5a1231fa686b5f3b423f512de4299a0e8c7d0b2fd7443c3244fd2"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/6.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/6.log.gz",
+      "original": {
+        "bytes": 64370,
+        "sha256": "04f99cdff7ffe76e466e6f0ad07bc1bcdd7cee588f5b501f25ff3f42c0a613d1"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:33.232Z",
+      "roundTrip": {
+        "bytes": 64370,
+        "sha256": "04f99cdff7ffe76e466e6f0ad07bc1bcdd7cee588f5b501f25ff3f42c0a613d1",
+        "exact": true,
+        "at": "2026-10-08T18:59:33.250Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:33.264Z"
+      },
+      "archive": {
+        "bytes": 13681,
+        "sha256": "fcc45399200ae4173c54dca462df5e6e071b698e615274b0e3fb6cbcbe3ec15a"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/7.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/7.log.gz",
+      "original": {
+        "bytes": 1563,
+        "sha256": "28d06ae30f6fca2d9496089e63f5efe8ce7b492ff22dab78b24b9af19da3df76"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:33.322Z",
+      "roundTrip": {
+        "bytes": 1563,
+        "sha256": "28d06ae30f6fca2d9496089e63f5efe8ce7b492ff22dab78b24b9af19da3df76",
+        "exact": true,
+        "at": "2026-10-08T18:59:33.337Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:33.352Z"
+      },
+      "archive": {
+        "bytes": 839,
+        "sha256": "1dcf01e56e1ae17338ba250b62dd601c591c675397032073850b61da3c67ef65"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/8.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/8.log.gz",
+      "original": {
+        "bytes": 895154,
+        "sha256": "b6bd19281226129a06db5defbc0e5d12c4d7301e9847854e6f85c9a4f589211b"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:33.410Z",
+      "roundTrip": {
+        "bytes": 895154,
+        "sha256": "b6bd19281226129a06db5defbc0e5d12c4d7301e9847854e6f85c9a4f589211b",
+        "exact": true,
+        "at": "2026-10-08T18:59:33.440Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:33.454Z"
+      },
+      "archive": {
+        "bytes": 87985,
+        "sha256": "ffdaa6860c1d2d3ce5a3204418e3163c3d30d40c07758a8acd0aa5ae7bbb378f"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/9.log",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/9.log.gz",
+      "original": {
+        "bytes": 2205758,
+        "sha256": "9104be4de075a9eedadd127ae1d64aac3c22698bdca008cc347481619a2a29ee"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:33.518Z",
+      "roundTrip": {
+        "bytes": 2205758,
+        "sha256": "9104be4de075a9eedadd127ae1d64aac3c22698bdca008cc347481619a2a29ee",
+        "exact": true,
+        "at": "2026-10-08T18:59:33.561Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:33.580Z"
+      },
+      "archive": {
+        "bytes": 198801,
+        "sha256": "b22ac04e395e18fedcb79bff04133f0230b42d5066d0a0e56e96a257b699869a"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/source/after/apps/web/features/projects/project-repository-configuration-races.test.tsx",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/source/after/apps/web/features/projects/project-repository-configuration-races.test.tsx.gz",
+      "original": {
+        "bytes": 5969,
+        "sha256": "dd7a36112228898cce97fe253f4e36fa4988f76fb0dd51c02eabaf7ffafe9471"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:33.636Z",
+      "roundTrip": {
+        "bytes": 5969,
+        "sha256": "dd7a36112228898cce97fe253f4e36fa4988f76fb0dd51c02eabaf7ffafe9471",
+        "exact": true,
+        "at": "2026-10-08T18:59:33.653Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:33.667Z"
+      },
+      "archive": {
+        "bytes": 2401,
+        "sha256": "1dc067900520d6679e4a82b326ef89127eb4bf805d09f23127658513fd9107b2"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/source/after/apps/web/features/projects/project-repository-configuration.tsx",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/source/after/apps/web/features/projects/project-repository-configuration.tsx.gz",
+      "original": {
+        "bytes": 23737,
+        "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:33.723Z",
+      "roundTrip": {
+        "bytes": 23737,
+        "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e",
+        "exact": true,
+        "at": "2026-10-08T18:59:33.738Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:33.753Z"
+      },
+      "archive": {
+        "bytes": 6414,
+        "sha256": "2751e4da5d38755cf66fd9feb13db1cdfd109a7ed6a285b285427e858541b50d"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/source/before/apps/web/features/projects/project-repository-configuration-races.test.tsx",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/source/before/apps/web/features/projects/project-repository-configuration-races.test.tsx.gz",
+      "original": {
+        "bytes": 5969,
+        "sha256": "dd7a36112228898cce97fe253f4e36fa4988f76fb0dd51c02eabaf7ffafe9471"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:33.810Z",
+      "roundTrip": {
+        "bytes": 5969,
+        "sha256": "dd7a36112228898cce97fe253f4e36fa4988f76fb0dd51c02eabaf7ffafe9471",
+        "exact": true,
+        "at": "2026-10-08T18:59:33.826Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:33.840Z"
+      },
+      "archive": {
+        "bytes": 2401,
+        "sha256": "1dc067900520d6679e4a82b326ef89127eb4bf805d09f23127658513fd9107b2"
+      }
+    },
+    {
+      "originalPath": "docs/reviews/a2/runs/a2-71164f40/source/before/apps/web/features/projects/project-repository-configuration.tsx",
+      "archivePath": "docs/reviews/a2/runs/a2-71164f40/source/before/apps/web/features/projects/project-repository-configuration.tsx.gz",
+      "original": {
+        "bytes": 23737,
+        "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e"
+      },
+      "priorHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T18:59:33.896Z",
+      "roundTrip": {
+        "bytes": 23737,
+        "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e",
+        "exact": true,
+        "at": "2026-10-08T18:59:33.911Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T18:59:33.926Z"
+      },
+      "archive": {
+        "bytes": 6414,
+        "sha256": "2751e4da5d38755cf66fd9feb13db1cdfd109a7ed6a285b285427e858541b50d"
+      }
     }
   ]
 }

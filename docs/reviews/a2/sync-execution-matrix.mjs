@@ -24,7 +24,7 @@ for (const item of map.matrix) {
       : unitResult
 }
 for (const item of map.repairs) item.result = item.id === 'lite-build-proxy' ? liteResult : item.id?.startsWith('configuration-recovery-')
-  ? `${unitResult}；${uiResult}；精确场景见 configuration-recovery-review.md`
+  ? `${unitResult}；${uiResult}；精确场景见 ${map.configurationRecovery?.report ?? 'docs/reviews/a2/configuration-recovery-review.md'}`
   : item.file.startsWith('apps/api/integration/')
   ? 'a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定'
   : uiResult
@@ -46,7 +46,7 @@ task.execution.originalIntegratedMain ??= task.execution.main
 task.execution.main = map.main
 task.execution.inputMainSource = 'docs/reviews/a2/late-main-input.json'
 if (map.configurationRecovery) {
-  task.execution.configurationRecovery = 'docs/reviews/a2/configuration-recovery-review.md'
+  task.execution.configurationRecovery = map.configurationRecovery.report
   task.execution.testedProductHead = map.configurationRecovery.imageHead ?? null
 }
 write(indexPath, index)
@@ -61,7 +61,7 @@ source.execution.inputMainSource = task.execution.inputMainSource
 source.execution.currentMainInput = map.main
 source.execution.liteProxyRepair = 'docs/reviews/a2/lite-proxy-repair.md'
 if (map.configurationRecovery) {
-  source.execution.configurationRecovery = 'docs/reviews/a2/configuration-recovery-review.md'
+  source.execution.configurationRecovery = map.configurationRecovery.report
   source.execution.testedProductHead = map.configurationRecovery.imageHead ?? null
 }
 write(sourcePath, source)
