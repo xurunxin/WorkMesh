@@ -1,0 +1,1166 @@
+{
+  "format": "PNG 普通文件逐字节复制；SHA-256 对图片原字节，不转换换行、不裁剪历史图片",
+  "preparedFromHead": "741623eca9d26439e575d6119f7ed97d37df1fde",
+  "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+  "observedMain": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+  "mainObservation": "本轮平台 git ls-remote origin refs/heads/main；不用 FETCH_HEAD 或旧 origin/main 推断",
+  "humanVisualApproval": "待确认；不因自动采集或技术审查通过改为视觉通过",
+  "historicalD0": {
+    "runId": "a2-6f596da7",
+    "sourceHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+    "sourceBefore": "docs/reviews/a2/runs/a2-6f596da7/source-before.json",
+    "sourceAfter": "docs/reviews/a2/runs/a2-6f596da7/source-after.json",
+    "sourceBeforeObservedAt": "2026-10-08T16:24:11.744Z",
+    "sourceAfterObservedAt": "2026-10-08T16:26:13.960Z",
+    "sourceFilesUnchanged": true,
+    "dirtySourceOverrides": [
+      {
+        "path": "OPENAPI.yaml",
+        "bytes": 518324,
+        "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+      },
+      {
+        "path": "apps/api/integration/stage3-delivery.integration.test.ts",
+        "bytes": 88291,
+        "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+      },
+      {
+        "path": "apps/api/integration/stage4-operations.integration.test.ts",
+        "bytes": 80095,
+        "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+      },
+      {
+        "path": "apps/api/src/delivery/repository-configuration.ts",
+        "bytes": 3447,
+        "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+      },
+      {
+        "path": "apps/web/app/lib/i18n.test.ts",
+        "bytes": 28482,
+        "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+      },
+      {
+        "path": "apps/web/app/lib/i18n.tsx",
+        "bytes": 206563,
+        "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+      },
+      {
+        "path": "apps/web/app/workbench/page.test.tsx",
+        "bytes": 2734,
+        "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+      },
+      {
+        "path": "apps/web/app/workbench/page.tsx",
+        "bytes": 3211,
+        "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+      },
+      {
+        "path": "apps/web/e2e/configuration-readiness.spec.ts",
+        "bytes": 14745,
+        "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+      },
+      {
+        "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+        "bytes": 8443,
+        "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+      },
+      {
+        "path": "apps/web/e2e/human-reflow.spec.ts",
+        "bytes": 13620,
+        "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+      },
+      {
+        "path": "apps/web/e2e/project-work-preview-server.mjs",
+        "bytes": 95552,
+        "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e"
+      },
+      {
+        "path": "apps/web/e2e/stage0.spec.ts",
+        "bytes": 23010,
+        "sha256": "57bdaebb503492e796439580bd4584e725367f7c2313469bca3b13376b9af6d7"
+      },
+      {
+        "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
+        "bytes": 6723,
+        "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+      },
+      {
+        "path": "apps/web/features/projects/project-repository-configuration.tsx",
+        "bytes": 19833,
+        "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+      },
+      {
+        "path": "apps/web/features/workbench/configuration-readiness.module.css",
+        "bytes": 886,
+        "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+      },
+      {
+        "path": "apps/web/features/workbench/configuration-readiness.tsx",
+        "bytes": 5620,
+        "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+      },
+      {
+        "path": "apps/web/features/workbench/conversation-workbench.module.css",
+        "bytes": 11581,
+        "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+      },
+      {
+        "path": "apps/web/features/workbench/conversation-workbench.tsx",
+        "bytes": 35220,
+        "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+      },
+      {
+        "path": "apps/web/scripts/check-i18n.mjs",
+        "bytes": 36439,
+        "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+      },
+      {
+        "path": "apps/worker/src/provider-actions.ts",
+        "bytes": 75721,
+        "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+      },
+      {
+        "path": "packages/contracts/src/pagination-contract.test.ts",
+        "bytes": 5049,
+        "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+      },
+      {
+        "path": "packages/contracts/src/repository-configuration-contracts.test.ts",
+        "bytes": 1243,
+        "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+      },
+      {
+        "path": "packages/contracts/src/repository-configuration-contracts.ts",
+        "bytes": 2465,
+        "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+      },
+      {
+        "path": "playwright.config.ts",
+        "bytes": 5173,
+        "sha256": "19c63f20302ce46d59baa2d79e96bb6fe9ca8c5bc70d0ae070fe0367900dc25b"
+      },
+      {
+        "path": "scripts/verify-a2-lite.mjs",
+        "bytes": 17976,
+        "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+      }
+    ],
+    "parameters": {
+      "colorScheme": "light",
+      "locale": "zh-CN",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "reducedMotion": "reduce",
+      "serviceWorkers": "block",
+      "launchArguments": [
+        "--disable-gpu",
+        "--disable-skia-runtime-opts",
+        "--force-color-profile=srgb",
+        "--disable-partial-raster"
+      ],
+      "screenshot": {
+        "animations": "disabled",
+        "caret": "hide",
+        "fullPage": true,
+        "style": "apps/web/e2e/mocked/d0-screenshot.css"
+      },
+      "threshold": 0.005,
+      "maxDiffPixels": 0,
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "browserVersionObservation": "同轮通过的窄屏 project-replay.json；五项失败没有自己的 replay.json，不能据此声称已完成双采集"
+    },
+    "surfaces": [
+      {
+        "slug": "workbench",
+        "project": "desktop-1440x1000",
+        "title": "桌面工作台",
+        "route": "/workbench",
+        "explanation": "URL 未明确 workKind，新增上下文提示和普通入口链接；保留会话和消息布局。",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "images": [
+          {
+            "path": "images/d0-workbench-desktop-expected.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/workbench-expected.png",
+            "bytes": 114418,
+            "sha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+            "width": 1440,
+            "height": 1000,
+            "kind": "expected",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "route": "/workbench",
+            "baseline": {
+              "path": "apps/web/e2e/baselines/d0/win32/desktop-1440x1000/workbench.png",
+              "gitHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+              "bytes": 114418,
+              "sha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+            }
+          },
+          {
+            "path": "images/d0-workbench-desktop-actual.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/workbench-actual.png",
+            "bytes": 120481,
+            "sha256": "1f8b19a6c66325b8dd3a2e3c7fcfa12d5fe3e8e166c16f26df75f4a4e66dcb4d",
+            "width": 1440,
+            "height": 1000,
+            "kind": "actual",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "route": "/workbench"
+          },
+          {
+            "path": "images/d0-workbench-desktop-diff.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/workbench-diff.png",
+            "bytes": 104560,
+            "sha256": "9ea437adbc7b3e9016e1c609279ba8b1afbf6a4693ca6cdfb7ca06a226da7fb7",
+            "width": 1440,
+            "height": 1000,
+            "kind": "diff",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "route": "/workbench"
+          }
+        ],
+        "result": "像素比较失败；双采集一致断言未执行；人工接受待确认"
+      },
+      {
+        "slug": "board",
+        "project": "desktop-1440x1000",
+        "title": "桌面看板",
+        "route": "/?view=projects&project=project-1&tab=board",
+        "explanation": "项目仓库配置区改变内容高度；原列标题和目标卡片可达断言已执行。",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "images": [
+          {
+            "path": "images/d0-board-desktop-expected.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/board-expected.png",
+            "bytes": 127257,
+            "sha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+            "width": 1440,
+            "height": 1000,
+            "kind": "expected",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "route": "/?view=projects&project=project-1&tab=board",
+            "baseline": {
+              "path": "apps/web/e2e/baselines/d0/win32/desktop-1440x1000/board.png",
+              "gitHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+              "bytes": 127257,
+              "sha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+            }
+          },
+          {
+            "path": "images/d0-board-desktop-actual.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/board-actual.png",
+            "bytes": 115712,
+            "sha256": "22c749e3eb6283fb9027d9e765da4297db11d42e53c750d7c8b3986d95a8f883",
+            "width": 1440,
+            "height": 1000,
+            "kind": "actual",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "route": "/?view=projects&project=project-1&tab=board"
+          },
+          {
+            "path": "images/d0-board-desktop-diff.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/board-diff.png",
+            "bytes": 99834,
+            "sha256": "532f68f46172fc73277140b9c9904ae27928fd93b56cf17f92896aec50832774",
+            "width": 1440,
+            "height": 1000,
+            "kind": "diff",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "route": "/?view=projects&project=project-1&tab=board"
+          }
+        ],
+        "result": "像素比较失败；双采集一致断言未执行；人工接受待确认"
+      },
+      {
+        "slug": "project",
+        "project": "desktop-1440x1000",
+        "title": "桌面项目总览",
+        "route": "/?view=projects&project=project-1",
+        "explanation": "既有项目面板增加仓库配置区及其焦点入口；总览可视高度改变。",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "images": [
+          {
+            "path": "images/d0-project-desktop-expected.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/project-expected.png",
+            "bytes": 113205,
+            "sha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+            "width": 1440,
+            "height": 1000,
+            "kind": "expected",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "route": "/?view=projects&project=project-1",
+            "baseline": {
+              "path": "apps/web/e2e/baselines/d0/win32/desktop-1440x1000/project.png",
+              "gitHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+              "bytes": 113205,
+              "sha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+            }
+          },
+          {
+            "path": "images/d0-project-desktop-actual.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/project-actual.png",
+            "bytes": 111475,
+            "sha256": "6f08e219dadbe16234af8a00eb3be7d32694d65fd20d4ba24b15fe5da3e36f4d",
+            "width": 1440,
+            "height": 1000,
+            "kind": "actual",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "route": "/?view=projects&project=project-1"
+          },
+          {
+            "path": "images/d0-project-desktop-diff.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/project-diff.png",
+            "bytes": 114290,
+            "sha256": "d7d481a0880c9ff9681e36175be3c622dce1767846d703973e7236a4043e008c",
+            "width": 1440,
+            "height": 1000,
+            "kind": "diff",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "route": "/?view=projects&project=project-1"
+          }
+        ],
+        "result": "像素比较失败；双采集一致断言未执行；人工接受待确认"
+      },
+      {
+        "slug": "workbench",
+        "project": "mobile-390x844",
+        "title": "窄屏工作台",
+        "route": "/workbench",
+        "explanation": "新增 URL 上下文提示和入口在窄屏换行；历史图用于布局差异评审。",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "images": [
+          {
+            "path": "images/d0-workbench-mobile-expected.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/workbench-expected.png",
+            "bytes": 54724,
+            "sha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+            "width": 390,
+            "height": 844,
+            "kind": "expected",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "route": "/workbench",
+            "baseline": {
+              "path": "apps/web/e2e/baselines/d0/win32/mobile-390x844/workbench.png",
+              "gitHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+              "bytes": 54724,
+              "sha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+            }
+          },
+          {
+            "path": "images/d0-workbench-mobile-actual.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/workbench-actual.png",
+            "bytes": 51977,
+            "sha256": "6d1ac63de9fa32e2c70494fc6983ab9e51d4b1cd17ebca6db84af354535d0914",
+            "width": 390,
+            "height": 844,
+            "kind": "actual",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "route": "/workbench"
+          },
+          {
+            "path": "images/d0-workbench-mobile-diff.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/workbench-diff.png",
+            "bytes": 39304,
+            "sha256": "2f1655dff328e57ea0692f0025b5d9843c8b8c0fd3533fcf60364ba5d371a1f3",
+            "width": 390,
+            "height": 844,
+            "kind": "diff",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "route": "/workbench"
+          }
+        ],
+        "result": "像素比较失败；双采集一致断言未执行；人工接受待确认"
+      },
+      {
+        "slug": "board",
+        "project": "mobile-390x844",
+        "title": "窄屏看板",
+        "route": "/?view=projects&project=project-1&tab=board",
+        "explanation": "配置区影响滚动布局；采集前已滚动到目标列并断言卡片及列标题可达。",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "images": [
+          {
+            "path": "images/d0-board-mobile-expected.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/board-expected.png",
+            "bytes": 41674,
+            "sha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+            "width": 390,
+            "height": 897,
+            "kind": "expected",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "route": "/?view=projects&project=project-1&tab=board",
+            "baseline": {
+              "path": "apps/web/e2e/baselines/d0/win32/mobile-390x844/board.png",
+              "gitHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+              "bytes": 41674,
+              "sha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+            }
+          },
+          {
+            "path": "images/d0-board-mobile-actual.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/board-actual.png",
+            "bytes": 38907,
+            "sha256": "155fd62ce4ea3bf12486c264a570d47f80d6a74e44c2c1d0ba50c213558d2690",
+            "width": 390,
+            "height": 897,
+            "kind": "actual",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "route": "/?view=projects&project=project-1&tab=board"
+          },
+          {
+            "path": "images/d0-board-mobile-diff.png",
+            "group": "历史 D0",
+            "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/board-diff.png",
+            "bytes": 29012,
+            "sha256": "3fc54a4ea0615085d92db549c92f929c3e45033559e0d32320c999f2f7576ea8",
+            "width": 390,
+            "height": 897,
+            "kind": "diff",
+            "runId": "a2-6f596da7",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "route": "/?view=projects&project=project-1&tab=board"
+          }
+        ],
+        "result": "像素比较失败；双采集一致断言未执行；人工接受待确认"
+      }
+    ],
+    "result": "8 通过、6 失败；本页五项像素失败均未执行后续双采集一致断言；另项桌面详情 ERR_NO_BUFFER_SPACE 后 a2-40208d29 定向通过，首败不删除"
+  },
+  "currentRun": {
+    "runId": "a2-71164f40",
+    "sourceHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+    "sourceBefore": "docs/reviews/a2/runs/a2-71164f40/source-before.json",
+    "sourceAfter": "docs/reviews/a2/runs/a2-71164f40/source-after.json",
+    "sourceBeforeObservedAt": "2026-10-08T18:48:17.073Z",
+    "sourceAfterObservedAt": "2026-10-08T18:58:54.893Z",
+    "sourceFilesUnchanged": true,
+    "dirtySourceOverrides": [
+      {
+        "path": "apps/web/features/projects/project-repository-configuration-races.test.tsx",
+        "bytes": 5969,
+        "sha256": "dd7a36112228898cce97fe253f4e36fa4988f76fb0dd51c02eabaf7ffafe9471"
+      },
+      {
+        "path": "apps/web/features/projects/project-repository-configuration.tsx",
+        "bytes": 23737,
+        "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e"
+      }
+    ],
+    "component": {
+      "path": "apps/web/features/projects/project-repository-configuration.tsx",
+      "bytes": 23737,
+      "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e",
+      "equalsProductHeadAndPreparedHead": true
+    },
+    "scope": "Gitea 关闭定向浏览器轮已有截图；普通未满足/空仓库布局，不能证明新增恢复状态，也不冒作 D0 像素通过"
+  },
+  "localCapture": {
+    "runId": "visual-f321025a",
+    "receipt": "docs/reviews/a2/visual-delivery/runs/visual-f321025a/receipts.json",
+    "sourceBefore": "docs/reviews/a2/visual-delivery/runs/visual-f321025a/source-before.json",
+    "sourceAfter": "docs/reviews/a2/visual-delivery/runs/visual-f321025a/source-after.json",
+    "browserVersion": "149.0.7827.55",
+    "platform": "win32",
+    "source": "当前 Next 页面和组件；final-tour 传输夹具加仓库动作待处理响应，不运行 API/Worker，不计作安装或领域验收",
+    "fixedClientTime": "2026-10-09T00:00:00.000Z",
+    "clockAdvancesMs": [
+      61000,
+      61000
+    ],
+    "viewport": [
+      {
+        "width": 1440,
+        "height": 1000
+      },
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "screenshot": {
+      "desktopRegion": "#project-repository-configuration",
+      "mobileRegion": "390 × 844 真实视口；配置区标题滚动到可视区",
+      "animations": "disabled",
+      "caret": "hide"
+    },
+    "postCount": 1,
+    "pageErrors": [],
+    "captures": [
+      {
+        "name": "waiting-desktop",
+        "bytes": 41705,
+        "sha256": "10ec7c73cd9a449aea6990fb53129f8b51b03844e0dac68f0c5e9bf92522485c",
+        "width": 1192,
+        "height": 884
+      },
+      {
+        "name": "timeout-desktop",
+        "bytes": 45017,
+        "sha256": "64ebf03e024d62ccf9b715c2653ecbccbe3e08582aa700d3ba9bcd93064be552",
+        "width": 1192,
+        "height": 916
+      },
+      {
+        "name": "edit-desktop",
+        "bytes": 45856,
+        "sha256": "08e02d19b2ef10c48b676ee4ae426b93b324a881f704e3eceec5c3bff2c0eb61",
+        "width": 1192,
+        "height": 916
+      },
+      {
+        "name": "edit-mobile",
+        "bytes": 37567,
+        "sha256": "655c5593719c4b7ac3a589ae0fdc934f8c62d2c1928bb3a2a9ee00e2248bc011",
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "failuresPreserved": [
+      {
+        "runId": "visual-365de426",
+        "reason": "docs 下模块未声明 ESM，import.meta 加载失败；未启动服务，随后只增加局部 package.json"
+      },
+      {
+        "runId": "visual-0780e159",
+        "reason": "局部夹具把项目 Team 映射成 team-2，目标不匹配，表单不存在；修正为原项目 team-1，不改产品"
+      }
+    ],
+    "partialCapturePreserved": {
+      "runId": "visual-82665dc9",
+      "result": "局部采集断言通过，但窄屏元素长图被固定高度滚动容器截断；原件保留，最终窄屏图改为真实视口采集，仅改局部采集脚本"
+    },
+    "result": "局部采集 1 项通过，四张图；重试只读确认后 POST 总数仍 1；非安装、非原 28 项恢复测试的新执行"
+  },
+  "images": [
+    {
+      "path": "images/d0-workbench-desktop-expected.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/workbench-expected.png",
+      "bytes": 114418,
+      "sha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+      "width": 1440,
+      "height": 1000,
+      "kind": "expected",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "route": "/workbench",
+      "baseline": {
+        "path": "apps/web/e2e/baselines/d0/win32/desktop-1440x1000/workbench.png",
+        "gitHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+        "bytes": 114418,
+        "sha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+      }
+    },
+    {
+      "path": "images/d0-workbench-desktop-actual.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/workbench-actual.png",
+      "bytes": 120481,
+      "sha256": "1f8b19a6c66325b8dd3a2e3c7fcfa12d5fe3e8e166c16f26df75f4a4e66dcb4d",
+      "width": 1440,
+      "height": 1000,
+      "kind": "actual",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "route": "/workbench"
+    },
+    {
+      "path": "images/d0-workbench-desktop-diff.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/workbench-diff.png",
+      "bytes": 104560,
+      "sha256": "9ea437adbc7b3e9016e1c609279ba8b1afbf6a4693ca6cdfb7ca06a226da7fb7",
+      "width": 1440,
+      "height": 1000,
+      "kind": "diff",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "route": "/workbench"
+    },
+    {
+      "path": "images/d0-board-desktop-expected.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/board-expected.png",
+      "bytes": 127257,
+      "sha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+      "width": 1440,
+      "height": 1000,
+      "kind": "expected",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "route": "/?view=projects&project=project-1&tab=board",
+      "baseline": {
+        "path": "apps/web/e2e/baselines/d0/win32/desktop-1440x1000/board.png",
+        "gitHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+        "bytes": 127257,
+        "sha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+      }
+    },
+    {
+      "path": "images/d0-board-desktop-actual.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/board-actual.png",
+      "bytes": 115712,
+      "sha256": "22c749e3eb6283fb9027d9e765da4297db11d42e53c750d7c8b3986d95a8f883",
+      "width": 1440,
+      "height": 1000,
+      "kind": "actual",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "route": "/?view=projects&project=project-1&tab=board"
+    },
+    {
+      "path": "images/d0-board-desktop-diff.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/board-diff.png",
+      "bytes": 99834,
+      "sha256": "532f68f46172fc73277140b9c9904ae27928fd93b56cf17f92896aec50832774",
+      "width": 1440,
+      "height": 1000,
+      "kind": "diff",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "route": "/?view=projects&project=project-1&tab=board"
+    },
+    {
+      "path": "images/d0-project-desktop-expected.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/project-expected.png",
+      "bytes": 113205,
+      "sha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+      "width": 1440,
+      "height": 1000,
+      "kind": "expected",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "route": "/?view=projects&project=project-1",
+      "baseline": {
+        "path": "apps/web/e2e/baselines/d0/win32/desktop-1440x1000/project.png",
+        "gitHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+        "bytes": 113205,
+        "sha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+      }
+    },
+    {
+      "path": "images/d0-project-desktop-actual.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/project-actual.png",
+      "bytes": 111475,
+      "sha256": "6f08e219dadbe16234af8a00eb3be7d32694d65fd20d4ba24b15fe5da3e36f4d",
+      "width": 1440,
+      "height": 1000,
+      "kind": "actual",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "route": "/?view=projects&project=project-1"
+    },
+    {
+      "path": "images/d0-project-desktop-diff.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/project-diff.png",
+      "bytes": 114290,
+      "sha256": "d7d481a0880c9ff9681e36175be3c622dce1767846d703973e7236a4043e008c",
+      "width": 1440,
+      "height": 1000,
+      "kind": "diff",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "route": "/?view=projects&project=project-1"
+    },
+    {
+      "path": "images/d0-workbench-mobile-expected.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/workbench-expected.png",
+      "bytes": 54724,
+      "sha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+      "width": 390,
+      "height": 844,
+      "kind": "expected",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/workbench",
+      "baseline": {
+        "path": "apps/web/e2e/baselines/d0/win32/mobile-390x844/workbench.png",
+        "gitHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+        "bytes": 54724,
+        "sha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+      }
+    },
+    {
+      "path": "images/d0-workbench-mobile-actual.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/workbench-actual.png",
+      "bytes": 51977,
+      "sha256": "6d1ac63de9fa32e2c70494fc6983ab9e51d4b1cd17ebca6db84af354535d0914",
+      "width": 390,
+      "height": 844,
+      "kind": "actual",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/workbench"
+    },
+    {
+      "path": "images/d0-workbench-mobile-diff.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/workbench-diff.png",
+      "bytes": 39304,
+      "sha256": "2f1655dff328e57ea0692f0025b5d9843c8b8c0fd3533fcf60364ba5d371a1f3",
+      "width": 390,
+      "height": 844,
+      "kind": "diff",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/workbench"
+    },
+    {
+      "path": "images/d0-board-mobile-expected.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/board-expected.png",
+      "bytes": 41674,
+      "sha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+      "width": 390,
+      "height": 897,
+      "kind": "expected",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/?view=projects&project=project-1&tab=board",
+      "baseline": {
+        "path": "apps/web/e2e/baselines/d0/win32/mobile-390x844/board.png",
+        "gitHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+        "bytes": 41674,
+        "sha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+      }
+    },
+    {
+      "path": "images/d0-board-mobile-actual.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/board-actual.png",
+      "bytes": 38907,
+      "sha256": "155fd62ce4ea3bf12486c264a570d47f80d6a74e44c2c1d0ba50c213558d2690",
+      "width": 390,
+      "height": 897,
+      "kind": "actual",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/?view=projects&project=project-1&tab=board"
+    },
+    {
+      "path": "images/d0-board-mobile-diff.png",
+      "group": "历史 D0",
+      "source": "docs/reviews/a2/runs/a2-6f596da7/playwright/mocked-dev/output/mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/board-diff.png",
+      "bytes": 29012,
+      "sha256": "3fc54a4ea0615085d92db549c92f929c3e45033559e0d32320c999f2f7576ea8",
+      "width": 390,
+      "height": 897,
+      "kind": "diff",
+      "runId": "a2-6f596da7",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "route": "/?view=projects&project=project-1&tab=board"
+    },
+    {
+      "path": "images/current-workbench-desktop.png",
+      "group": "当前源码已有受测轮",
+      "source": "docs/reviews/a2/runs/a2-71164f40/playwright-gitea-disabled/root-mixed/output/configuration-readiness-Back-Forward、键盘焦点、390px-窄屏、中英文和明暗回归-authenticated/workbench-desktop.png",
+      "bytes": 83548,
+      "sha256": "bc090630609aad8479b40a54fe529401f3c21cb238c5ec09f7185f39de23a56f",
+      "width": 1440,
+      "height": 1000,
+      "runId": "a2-71164f40",
+      "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "localeCopy": "zh-CN",
+      "theme": "light",
+      "screenshot": {
+        "fullPage": false,
+        "options": "page.screenshot 默认选项；未套 D0 栅格 CSS"
+      },
+      "clock": "该用例未固定时间",
+      "timezoneId": null,
+      "browserVersion": null,
+      "missingParameters": "原用例未单独记录浏览器版本/时区；不补造、不与 D0 做同参数比较",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "path": "images/current-project-desktop.png",
+      "group": "当前源码已有受测轮",
+      "source": "docs/reviews/a2/runs/a2-71164f40/playwright-gitea-disabled/root-mixed/output/configuration-readiness-Back-Forward、键盘焦点、390px-窄屏、中英文和明暗回归-authenticated/project-desktop.png",
+      "bytes": 103647,
+      "sha256": "2aaa52711101001f8aa706d7cfb808d5b670ecee9d28c4f98264c0a21303affa",
+      "width": 1440,
+      "height": 1000,
+      "runId": "a2-71164f40",
+      "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "localeCopy": "zh-CN",
+      "theme": "light",
+      "screenshot": {
+        "fullPage": false,
+        "options": "page.screenshot 默认选项；未套 D0 栅格 CSS"
+      },
+      "clock": "该用例未固定时间",
+      "timezoneId": null,
+      "browserVersion": null,
+      "missingParameters": "原用例未单独记录浏览器版本/时区；不补造、不与 D0 做同参数比较",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      }
+    },
+    {
+      "path": "images/current-workbench-zh-CN-light.png",
+      "group": "当前源码已有受测轮",
+      "source": "docs/reviews/a2/runs/a2-71164f40/playwright-gitea-disabled/root-mixed/output/configuration-readiness-Back-Forward、键盘焦点、390px-窄屏、中英文和明暗回归-authenticated/workbench-zh-CN-light.png",
+      "bytes": 44332,
+      "sha256": "2f2dc9efc867d5c4cff99ae70be933ff05f7d75bc7760ee1fd3f10e605224cd9",
+      "width": 390,
+      "height": 844,
+      "runId": "a2-71164f40",
+      "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "localeCopy": "zh-CN",
+      "theme": "light",
+      "screenshot": {
+        "fullPage": false,
+        "options": "page.screenshot 默认选项；未套 D0 栅格 CSS"
+      },
+      "clock": "该用例未固定时间",
+      "timezoneId": null,
+      "browserVersion": null,
+      "missingParameters": "原用例未单独记录浏览器版本/时区；不补造、不与 D0 做同参数比较",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "path": "images/current-project-zh-CN-light.png",
+      "group": "当前源码已有受测轮",
+      "source": "docs/reviews/a2/runs/a2-71164f40/playwright-gitea-disabled/root-mixed/output/configuration-readiness-Back-Forward、键盘焦点、390px-窄屏、中英文和明暗回归-authenticated/project-zh-CN-light.png",
+      "bytes": 32097,
+      "sha256": "7c51df5e12caf16b0a495b34c5c6a183c41c2e55fe20f889c77bc54e73d6ae27",
+      "width": 390,
+      "height": 844,
+      "runId": "a2-71164f40",
+      "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "localeCopy": "zh-CN",
+      "theme": "light",
+      "screenshot": {
+        "fullPage": false,
+        "options": "page.screenshot 默认选项；未套 D0 栅格 CSS"
+      },
+      "clock": "该用例未固定时间",
+      "timezoneId": null,
+      "browserVersion": null,
+      "missingParameters": "原用例未单独记录浏览器版本/时区；不补造、不与 D0 做同参数比较",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "path": "images/current-workbench-zh-CN-dark.png",
+      "group": "当前源码已有受测轮",
+      "source": "docs/reviews/a2/runs/a2-71164f40/playwright-gitea-disabled/root-mixed/output/configuration-readiness-Back-Forward、键盘焦点、390px-窄屏、中英文和明暗回归-authenticated/workbench-zh-CN-dark.png",
+      "bytes": 44597,
+      "sha256": "649691e6b465adce0e815dfd01b1db98d0fc09a4b8c34f451d2c7c55d3082f65",
+      "width": 390,
+      "height": 844,
+      "runId": "a2-71164f40",
+      "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "localeCopy": "zh-CN",
+      "theme": "dark",
+      "screenshot": {
+        "fullPage": false,
+        "options": "page.screenshot 默认选项；未套 D0 栅格 CSS"
+      },
+      "clock": "该用例未固定时间",
+      "timezoneId": null,
+      "browserVersion": null,
+      "missingParameters": "原用例未单独记录浏览器版本/时区；不补造、不与 D0 做同参数比较",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "path": "images/current-project-zh-CN-dark.png",
+      "group": "当前源码已有受测轮",
+      "source": "docs/reviews/a2/runs/a2-71164f40/playwright-gitea-disabled/root-mixed/output/configuration-readiness-Back-Forward、键盘焦点、390px-窄屏、中英文和明暗回归-authenticated/project-zh-CN-dark.png",
+      "bytes": 31090,
+      "sha256": "a8459a33f9653d55c38813c8d210cb2b5967969ed914b8abfdadb95f8f45b2a1",
+      "width": 390,
+      "height": 844,
+      "runId": "a2-71164f40",
+      "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "localeCopy": "zh-CN",
+      "theme": "dark",
+      "screenshot": {
+        "fullPage": false,
+        "options": "page.screenshot 默认选项；未套 D0 栅格 CSS"
+      },
+      "clock": "该用例未固定时间",
+      "timezoneId": null,
+      "browserVersion": null,
+      "missingParameters": "原用例未单独记录浏览器版本/时区；不补造、不与 D0 做同参数比较",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "path": "images/recovery-waiting-desktop.png",
+      "group": "当前源码局部采集",
+      "source": "docs/reviews/a2/visual-delivery/runs/visual-f321025a/playwright/mocked-dev/output/capture-局部视觉：等待、超时重试、修改与窄屏恢复入口/waiting-desktop.png",
+      "bytes": 41705,
+      "sha256": "10ec7c73cd9a449aea6990fb53129f8b51b03844e0dac68f0c5e9bf92522485c",
+      "width": 1192,
+      "height": 884,
+      "runId": "visual-f321025a",
+      "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scope": "#project-repository-configuration 元素截图；真实组件、传输夹具，不计 API/Worker/Lite 验收"
+    },
+    {
+      "path": "images/recovery-timeout-desktop.png",
+      "group": "当前源码局部采集",
+      "source": "docs/reviews/a2/visual-delivery/runs/visual-f321025a/playwright/mocked-dev/output/capture-局部视觉：等待、超时重试、修改与窄屏恢复入口/timeout-desktop.png",
+      "bytes": 45017,
+      "sha256": "64ebf03e024d62ccf9b715c2653ecbccbe3e08582aa700d3ba9bcd93064be552",
+      "width": 1192,
+      "height": 916,
+      "runId": "visual-f321025a",
+      "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scope": "#project-repository-configuration 元素截图；真实组件、传输夹具，不计 API/Worker/Lite 验收"
+    },
+    {
+      "path": "images/recovery-edit-desktop.png",
+      "group": "当前源码局部采集",
+      "source": "docs/reviews/a2/visual-delivery/runs/visual-f321025a/playwright/mocked-dev/output/capture-局部视觉：等待、超时重试、修改与窄屏恢复入口/edit-desktop.png",
+      "bytes": 45856,
+      "sha256": "08e02d19b2ef10c48b676ee4ae426b93b324a881f704e3eceec5c3bff2c0eb61",
+      "width": 1192,
+      "height": 916,
+      "runId": "visual-f321025a",
+      "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scope": "#project-repository-configuration 元素截图；真实组件、传输夹具，不计 API/Worker/Lite 验收"
+    },
+    {
+      "path": "images/recovery-edit-mobile.png",
+      "group": "当前源码局部采集",
+      "source": "docs/reviews/a2/visual-delivery/runs/visual-f321025a/playwright/mocked-dev/output/capture-局部视觉：等待、超时重试、修改与窄屏恢复入口/edit-mobile.png",
+      "bytes": 37567,
+      "sha256": "655c5593719c4b7ac3a589ae0fdc934f8c62d2c1928bb3a2a9ee00e2248bc011",
+      "width": 390,
+      "height": 844,
+      "runId": "visual-f321025a",
+      "productHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scope": "真实 390 × 844 视口；配置标题与恢复入口可见，不计 API/Worker/Lite 验收"
+    }
+  ],
+  "immutableInputs": [
+    {
+      "path": "docs/reviews/a2/runs/a2-6f596da7/source-before.json",
+      "bytes": 4839,
+      "sha256": "8fe08922f44e68f9b4f22396814d1b726a391bf91a95bbc97b76aed85b7faa9f",
+      "disposition": "只读历史原件，不改字节"
+    },
+    {
+      "path": "docs/reviews/a2/runs/a2-6f596da7/source-after.json",
+      "bytes": 4839,
+      "sha256": "93324de1b8014d55173851cb63f03755e2070356a1018b7579781af65af5d3a8",
+      "disposition": "只读历史原件，不改字节"
+    },
+    {
+      "path": "docs/reviews/a2/runs/a2-6f596da7/receipts.json",
+      "bytes": 6192,
+      "sha256": "7b472d7e5c1387f85a65fee96ddbba8ef31b088f171e430211ee2e5fc5ccb032",
+      "disposition": "只读历史原件，不改字节"
+    },
+    {
+      "path": "docs/reviews/a2/runs/a2-71164f40/source-before.json",
+      "bytes": 579,
+      "sha256": "2686b1af34ca0beeb0504844b99ab8da041ab250ada5810220da11500f67f81f",
+      "disposition": "只读历史原件，不改字节"
+    },
+    {
+      "path": "docs/reviews/a2/runs/a2-71164f40/source-after.json",
+      "bytes": 579,
+      "sha256": "05ad2f4ce48357eae041a4538515ae862b8dcbdd07873c4af3b129a053fb240a",
+      "disposition": "只读历史原件，不改字节"
+    },
+    {
+      "path": "docs/reviews/a2/runs/a2-71164f40/receipts.json",
+      "bytes": 8600,
+      "sha256": "75fe257265a6a38d560f5322ed5246d57e4d4ea83bddf4b3e606d7072bf27b96",
+      "disposition": "只读历史原件，不改字节"
+    },
+    {
+      "path": "docs/reviews/a2/visual-review.md",
+      "bytes": 2676,
+      "sha256": "b2aff77971f49ebc5894ef5d8e2270ded77a1791b1fe673815b118e656a73e1a",
+      "disposition": "只读历史原件，不改字节"
+    },
+    {
+      "path": "docs/reviews/a2/raw-evidence-archives.json",
+      "bytes": 4659993,
+      "sha256": "1817919c6ed5349845d1b7209ffe721ef9e46b6ccfcdb2e533943e2832154f70",
+      "disposition": "只读历史原件，不改字节"
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness.md",
+      "bytes": 17436,
+      "sha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
+      "disposition": "只读历史原件，不改字节"
+    }
+  ],
+  "sanitization": "图片仅测试夹具内容；连接/凭证表单保持折叠，SHA 为 a/b 固定占位，无真实密钥；逐图查看，未改图像字节"
+}

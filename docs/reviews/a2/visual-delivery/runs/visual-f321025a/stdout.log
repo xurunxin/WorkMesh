@@ -1,0 +1,29 @@
+[WebServer] (node:5404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] project-work-preview-api:3201
+[WebServer] (node:4676) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:34824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:45652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]    ▲ Next.js 15.5.22
+[WebServer]    - Local:        http://localhost:3200
+[WebServer]    - Network:      http://100.77.217.65:3200
+[WebServer]
+[WebServer]  ✓ Starting...
+[WebServer]  ✓ Ready in 3.3s
+[WebServer]  ○ Compiling / ...
+[WebServer]  ✓ Compiled / in 9.2s (10534 modules)
+[WebServer]  GET / 200 in 10197ms
+
+Running 1 test using 1 worker
+
+(node:7944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /?view=projects&teamId=22222222-2222-4222-8222-222222222222&project=11111111-1111-4111-8111-111111111111 200 in 83ms
+[WebServer]  ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+  ✓  1 ..\..\docs\reviews\a2\visual-delivery\capture.spec.ts:5:1 › 局部视觉：等待、超时重试、修改与窄屏恢复入口 (2.2s)
+
+  1 passed (19.1s)

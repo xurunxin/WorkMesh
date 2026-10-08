@@ -1,0 +1,53 @@
+{
+  "runId": "visual-f321025a",
+  "scope": "仅局部视觉采集，不计产品检查或安装验收",
+  "start": "2026-10-08T19:32:53.980Z",
+  "resources": [
+    {
+      "type": "directory",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\visual-delivery\\runs\\visual-f321025a",
+      "owner": "visual-f321025a",
+      "retention": "本轮原始证据，提交保留"
+    },
+    {
+      "type": "preview-service",
+      "port": 3201,
+      "owner": "visual-f321025a",
+      "beforeListening": false,
+      "afterListening": false,
+      "cleanup": "Playwright 正常退出后端口无监听；未手动终止其他进程"
+    },
+    {
+      "type": "next-dev",
+      "port": 3200,
+      "owner": "visual-f321025a",
+      "beforeListening": false,
+      "afterListening": false,
+      "cleanup": "Playwright 正常退出后端口无监听；未手动终止其他进程"
+    }
+  ],
+  "commands": [
+    {
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\node_modules\\.pnpm\\@playwright+test@1.61.1\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "--config",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\visual-delivery\\playwright.config.ts"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\apps\\web",
+      "startedAt": "2026-10-08T19:32:54.958Z",
+      "pid": 60160,
+      "code": 0,
+      "endedAt": "2026-10-08T19:33:14.613Z"
+    }
+  ],
+  "rawLog": {
+    "path": "stdout.log.gz",
+    "uncompressedBytes": 1938,
+    "uncompressedSha256": "ed139a6f7a04bb7b588e1f1afd3240f552dbd741d4e080a0c8e904e495c80c5e",
+    "compressedSha256": "1393b9ed88318231471f0fc88e77c8245b18eb360c3e5945bfc2336d60440d2a"
+  },
+  "sourceUnchanged": true,
+  "end": "2026-10-08T19:33:15.625Z"
+}
