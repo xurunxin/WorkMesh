@@ -2758,7 +2758,7 @@
             "id": "todo-9-T6",
             "file": "apps/web/e2e/configuration-readiness.spec.ts",
             "caseName": "Lite 安装后逐项补齐直到横幅消失 @lite",
-            "result": "本轮 UI 修补后的新精确提交 Lite 安装待重跑；旧 a2-lite-333f7614 仅为旧输入通过"
+            "result": "a2-lite-179f2a01：精确 fc14c523ae86c13e952e47d19b7508695c402d76 镜像，真实四角色/save-load、无源码 Compose、编译代理规则及 Web 安装/认证、HTTPS 生产 Worker 解析；原 @lite 1 项实际通过，退出 0；真实设备与厂商未验收"
           }
         ],
         "matrix": [
@@ -3010,9 +3010,9 @@
               "apps/web/e2e/configuration-readiness.spec.ts"
             ],
             "test": "Lite 安装后逐项补齐直到横幅消失 @lite",
-            "evidence": "本轮 UI 修补后的新精确提交 Lite 安装待重跑；旧 a2-lite-333f7614 仅为旧输入通过",
+            "evidence": "docs/reviews/a2/runs/a2-lite-179f2a01/receipts.json",
             "scope": "无协议、权限、端点、迁移或部署拓扑增量",
-            "result": "本轮 UI 修补后的新精确提交 Lite 安装待重跑；旧 a2-lite-333f7614 仅为旧输入通过"
+            "result": "a2-lite-179f2a01：精确 fc14c523ae86c13e952e47d19b7508695c402d76 镜像，真实四角色/save-load、无源码 Compose、编译代理规则及 Web 安装/认证、HTTPS 生产 Worker 解析；原 @lite 1 项实际通过，退出 0；真实设备与厂商未验收"
           },
           {
             "id": "configuration-recovery-replay",
@@ -3068,7 +3068,7 @@
           "latestCI": "docs/reviews/a2/latest-ci-readback.json",
           "status": "实现检查结果已绑定；Lite 以独立运行结果为准，真实设备/厂商、视觉确认、独审、latest Required CI、actual main 单列，不标记完成"
         },
-        "liteResult": "本轮 UI 修补后的新精确提交 Lite 安装待重跑；旧 a2-lite-333f7614 仅为旧输入通过",
+        "liteResult": "a2-lite-179f2a01：精确 fc14c523ae86c13e952e47d19b7508695c402d76 镜像，真实四角色/save-load、无源码 Compose、编译代理规则及 Web 安装/认证、HTTPS 生产 Worker 解析；原 @lite 1 项实际通过，退出 0；真实设备与厂商未验收",
         "configurationRecovery": {
           "inputHead": "b492a35b11445c157a825b5e747ac0e15506e491",
           "report": "docs/reviews/a2/configuration-recovery-review.md",
@@ -3128,7 +3128,13 @@
               "  11 passed (2.0m)"
             ]
           },
-          "liteRunId": null
+          "liteRunId": "a2-lite-179f2a01",
+          "imageHead": "fc14c523ae86c13e952e47d19b7508695c402d76",
+          "imageReceipt": "docs/reviews/a2/runs/a2-lite-179f2a01/receipts.json",
+          "liteHostBinding": {
+            "before": "docs/reviews/a2/runs/a2-lite-179f2a01/source-before-browser.json",
+            "after": "docs/reviews/a2/runs/a2-lite-179f2a01/source-after-install.json"
+          }
         },
         "previousLiteResult": "a2-lite-333f7614：精确 bb86b1fe31e9b23f6e91171b526c860a0a0fcb22 镜像，四角色/save-load/无源码 Compose/五代理 manifest/真实安装与认证/生产 Worker HTTPS 上下文解析；原 @lite 1 项通过（10.7s），退出 0；真实设备和真实厂商未验收"
       },

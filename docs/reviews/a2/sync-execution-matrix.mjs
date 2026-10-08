@@ -45,7 +45,10 @@ task.execution.latestCI = 'docs/reviews/a2/latest-ci-readback.json'
 task.execution.originalIntegratedMain ??= task.execution.main
 task.execution.main = map.main
 task.execution.inputMainSource = 'docs/reviews/a2/late-main-input.json'
-if (map.configurationRecovery) task.execution.configurationRecovery = 'docs/reviews/a2/configuration-recovery-review.md'
+if (map.configurationRecovery) {
+  task.execution.configurationRecovery = 'docs/reviews/a2/configuration-recovery-review.md'
+  task.execution.testedProductHead = map.configurationRecovery.imageHead ?? null
+}
 write(indexPath, index)
 const sourcePath = 'docs/plan/a2-configuration-readiness/source.json'
 const source = json(sourcePath)
@@ -57,6 +60,9 @@ source.execution.main = map.main
 source.execution.inputMainSource = task.execution.inputMainSource
 source.execution.currentMainInput = map.main
 source.execution.liteProxyRepair = 'docs/reviews/a2/lite-proxy-repair.md'
-if (map.configurationRecovery) source.execution.configurationRecovery = 'docs/reviews/a2/configuration-recovery-review.md'
+if (map.configurationRecovery) {
+  source.execution.configurationRecovery = 'docs/reviews/a2/configuration-recovery-review.md'
+  source.execution.testedProductHead = map.configurationRecovery.imageHead ?? null
+}
 write(sourcePath, source)
 console.log(JSON.stringify({ testCount: map.originalTests.length, categories: map.matrix.length, repairs: map.repairs.length, planUntouched: true }))

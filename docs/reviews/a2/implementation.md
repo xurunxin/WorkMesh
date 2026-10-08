@@ -81,3 +81,5 @@ Lite 入口从精确提交构建并 save/load，目标服务不挂载源码，�
 `a2-99deca8f` 最终关闭 Gitea 浏览器 11 项通过/1 Lite 跳过，lint/typecheck/CI 校验通过，运行前后源码不变；四轮专用容器收尾与脱敏完成。当前产品源码与 `a2-e9a97c5f` 相同，新增可见基线断言的两处测试原字节由后续定向运行独立覆盖。新 Lite 镜像安装待精确提交后执行。
 
 旧映射、源绑定和 CI 原字节存于 `configuration-recovery/history/`；首轮原焦点失败和同源码独立/完整重跑均保留。当前 `execution-map.json`、`execution-results.json` 以及相应原件逐输入给出结果，不标记整卡完成。人类五项视觉差异、真实设备/厂商、实施独审、最新 Required CI 和实际 main 仍待完成。
+
+本轮新 Lite `a2-lite-179f2a01` 已完成，受测提交 `fc14c523ae86c13e952e47d19b7508695c402d76`：真实四角色/save-load、实际代理、无源码安装、认证、逐项配置与生产 Worker HTTPS 解析闭环，原 `@lite` 1 项通过（5.9s），退出 0。关键宿主输入前后十项完全相同；专用 Docker 资源/镜像/目录与七条逐 path 操作均完成收尾，原件及精确绑定见 [恢复报告](configuration-recovery-review.md)。旧安装成功不冒作本轮结果，技术通过不冒人类视觉接受。

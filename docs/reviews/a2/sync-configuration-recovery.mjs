@@ -47,6 +47,9 @@ if (liteRunId) {
   const lite = json(`docs/reviews/a2/runs/${liteRunId}/receipts.json`)
   const browser = lite.results.find(item => item.args.includes('playwright.a2-lite.config.ts'))
   if (!browser || browser.code !== 0 || !lite.preInstallProxy || lite.preInstallProxy.status !== 200 || lite.preInstallProxy.body.installed !== false) throw Error('缺少新精确提交的真实 Lite 安装通过')
+  map.configurationRecovery.imageHead = lite.sha
+  map.configurationRecovery.imageReceipt = `docs/reviews/a2/runs/${liteRunId}/receipts.json`
+  map.configurationRecovery.liteHostBinding = { before: `docs/reviews/a2/runs/${liteRunId}/source-before-browser.json`, after: `docs/reviews/a2/runs/${liteRunId}/source-after-install.json` }
   map.liteResult = `${liteRunId}：精确 ${lite.sha} 镜像，真实四角色/save-load、无源码 Compose、编译代理规则及 Web 安装/认证、HTTPS 生产 Worker 解析；原 @lite 1 项实际通过，退出 0；真实设备与厂商未验收`
 } else map.liteResult = '本轮 UI 修补后的新精确提交 Lite 安装待重跑；旧 a2-lite-333f7614 仅为旧输入通过'
 map.repairs.find(item => item.id === 'lite-build-proxy').evidence = liteRunId ? `docs/reviews/a2/runs/${liteRunId}/receipts.json` : map.liteResult
