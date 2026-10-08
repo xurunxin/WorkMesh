@@ -291,3 +291,30 @@ D1a `.tmp` 总清单有 1,496 项；扣除上述 1,406 个精确映射后，余 
 机器回执为 [`d1a-duplicate-trace-cleanup-2026-10-08.json`](d1a-duplicate-trace-cleanup-2026-10-08.json)。
 
 第二个目标于 `2026-10-08T14:36:23.1867578Z` 使用 `Remove-Item -LiteralPath <exact file path> -ErrorAction Stop` 删除，未使用 `-Force`，退出码 0。操作后目标不存在、其父目录仍在；保留 trace 原件仍为 1,022,701 B 且 SHA-256 不变，两份 RAW ZIP 各为 14,795,293 B 且 SHA-256 不变。D1a `.tmp` 当前为 76 个文件、47,298,811 B；之前两目标合计 2,045,402 B，此数仅为逻辑文件长度，不代表卷物理净释放。其余 74 个材料逐路径复核 `74/74` 字节数与 SHA 一致；D1a Git 状态退出码 0 且无变更，worktree 列表退出码 0、共 21 项，D1a 仍登记。物理磁盘净释放未测量。原始 RAW ZIP、保留 trace、其它 74 项、四父 worktree、G1 clone、D0/C3 被拒目标及所有活动/恢复目录均不在本次操作范围；整项清理仍未完成。
+
+## G1 独立浅克隆：已授权单次强制清理的删除前预检
+
+用户 22:38 对精确方案卡选择“仅此目录强制清理（推荐）”。本次授权只覆盖以下绝对路径的一次原生 PowerShell 调用，不延伸至 G1 父 worktree、其它 `.tmp`、D0/C3 拒绝目标、Docker 或其它 workspace：
+
+`C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout`
+
+2026-10-08T14:45:53Z 的删除前只读检查通过。目标是 #18 G1 已完成任务 `.tmp` 内的**独立 shallow clone**，不是 linked worktree。解析路径严格位于指定 `workspaces` 之下，非 workspace 根、G1 父目录或当前清理目录；被检查的 6 个祖先/目标路径节点及目标递归内容均无 reparse point。G1 父 worktree仍正式登记且 Git 状态 0 项；该独立 clone 不在父仓库的 worktree 注册列表。当前进程命令行对精确目标的非自引用数为 0；可读活动任务 #5/#9/#16/#21 对该路径的对话引用为 0，#18 当前状态 done，#52 为本清理任务。没有声称枚举平台全局 build 注册表或所有 OS handles。
+
+clone 当前有 1,474 个文件、264 个目录、33,450,482 B；它们逐路径与既有部分失败后清单中的 1,474 项完全相同（缺失、变化、新增均为 0），Git 状态仍是 143 个历史 tracked 删除、无 untracked/ignored 文件；`git fsck --full` 退出 0、无输出，`index.lock` 不存在。`.git` 当前有 Hidden 属性、三个 pack 文件为 ReadOnly；这些是当前观察，并非之前普通删除失败的已证根因。本次不改属性或 ACL。前次普通递归删除的结构化操作退出码保留为 `null`、外层退出码 1，错误原文和已移除 17 项的历史回执均沿用旧清单，不补造原因。
+
+当前 main 已在本轮重新 fetch，精确 SHA 为 `18252ba8761aa810c3fd12d31ecae83e8b24d985`。G1 HEAD `002c1d61a7fc5d529b2d480f4c48716971c4236d` 到本次 `FETCH_HEAD` 的 ancestry 查询退出码 0。既有 1,607 条 tracked 路径映射与 1,575 个唯一 blob 的逐项审计记录仍在；本轮再将 1,575 个 blob ID 对当前 main 执行 `git cat-file --batch-check`，全部以 blob 类型返回，退出码 0、缺项 0。1464 个当前 tracked 文件和 143 个 tracked 删除可由 G1 HEAD 对象恢复；25 项与当前 main 末端树不同，但没有发现 local-only branch/commit 或独有源码。此前已移除的 15 个 Git 默认模板元数据，在本轮重新核对的来源文件均 `15/15` 字节匹配。两份缺失 reflog 原字节没有准确恢复来源、也不能由 hash 重建；已确认 fixture 不读取 reflog，因此不恢复、不伪补这些历史。
+
+fixture `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-read.mjs` 位于删除目标外，当前 2,457 B/SHA-256 `ef4c368b093f293ccbc77cd4f31e86492a1188f5b091ac0e0642719c39b84294`。其三个输入都在目标外，当前 main 的 blob 分别为：`scripts/verify-raw-evidence-archive.mjs` → `b32919f321b8d42913e7e476989f1c8f389327dd`，`docs/evidence/build-input-reachability.current/raw-evidence.zip` → `1875e8935dee1d406616f6d5e799d4acc739041a`，`docs/evidence/build-input-reachability.current/raw-evidence-index.json` → `f5c477c404645a070d5ae7e9aafb6c744da8decb`；三份工作区字节、大小和 main blob 均吻合。该临时 fixture 若未来要重跑，需要从这些来源重建 clone；当前活动 build 对话没有引用它。
+
+8 个受保护 workspace 路径仍全部存在；本阶段 D1a 两份 trace 的既有回执/健康核验也已完成，至少一份原 trace 和两份 RAW ZIP 保留。机器清单 [`g1-shallow-layout-force-cleanup-2026-10-08.json`](g1-shallow-layout-force-cleanup-2026-10-08.json) 已先持久化上述预检、来源和唯一允许的命令。若单次操作失败、部分完成或被策略拒绝，将记录原始返回并停止，不再调用、不换方式、不恢复元数据、不改属性/ACL。成功后只读核对目标消失、父/Git worktree 仍健康、8 个保护路径仍在；逻辑字节与物理释放分开记录。
+
+### 单次操作结果：被策略拒绝
+
+本轮只提交了授权的单次命令：
+
+```powershell
+$ErrorActionPreference = 'Stop'
+Remove-Item -LiteralPath 'C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout' -Recurse -Force
+```
+
+执行器在创建 PowerShell 进程前返回拒绝，原文理由为 `rejected: blocked by policy`。因此 `Remove-Item` 实际调用次数为 0、PowerShell 未启动、结构化退出码为 `null`，不冒称文件已删或已释放空间。最后一次通过预检时目标仍存在（1,474 个文件/33,450,482 B）；按“拒绝后立即停止”的要求没有再读取目标，也没有第二次调用、替代删除方式、移动目标或修改属性/ACL。该单次授权动作到此停在策略拒绝，待定向审查。
