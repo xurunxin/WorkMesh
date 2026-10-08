@@ -1,0 +1,10 @@
+Listing tests:
+  [bootstrap] › stage0.spec.ts:156:3 › Stage 0 browser acceptance › installs, manages work, synchronizes drag and mentions over SSE, and rejects child writes after team deletion
+  [authenticated] › configuration-readiness.spec.ts:4:1 › 依赖深度排序
+  [authenticated] › configuration-readiness.spec.ts:13:1 › 逐项配置后 Back 重算并允许逆序解决
+  [authenticated] › configuration-readiness.spec.ts:26:1 › 可观察项全部满足时无横幅
+  [authenticated] › configuration-readiness.spec.ts:34:1 › ready/unknown/not_applicable 及普通空列表不长主动作
+  [authenticated] › configuration-readiness.spec.ts:44:1 › Back/Forward、键盘焦点、390px 窄屏、中英文和明暗回归
+  [authenticated] › configuration-readiness.spec.ts:58:1 › 关闭 Gitea 的混合 provider 跨 Team 分页仍可配置 GitHub
+  [authenticated] › configuration-readiness.spec.ts:67:1 › Lite 安装后逐项补齐直到横幅消失 @lite
+Total: 8 tests in 2 files

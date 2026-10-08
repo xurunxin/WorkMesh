@@ -1,0 +1,189 @@
+{
+  "runId": "a2-ce757e71",
+  "resources": [
+    {
+      "type": "container",
+      "name": "a2-ce757e71-postgres",
+      "owner": "a2-ce757e71",
+      "image": "postgres:16-alpine",
+      "plannedAt": "2026-10-08T13:13:44.435Z",
+      "id": "5d64f180b0b47d50fe97b70f334729f3250c3ab83a9954dc1c090eee77f9ce1b",
+      "cleanup": {
+        "code": 0,
+        "output": "5d64f180b0b47d50fe97b70f334729f3250c3ab83a9954dc1c090eee77f9ce1b\n",
+        "at": "2026-10-08T13:14:14.416Z"
+      },
+      "preDelete": {
+        "id": "5d64f180b0b47d50fe97b70f334729f3250c3ab83a9954dc1c090eee77f9ce1b",
+        "owner": "a2-ce757e71",
+        "exitCode": 0,
+        "at": "2026-10-08T13:14:14.171Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-ce757e71-redis",
+      "owner": "a2-ce757e71",
+      "image": "redis:7-alpine",
+      "plannedAt": "2026-10-08T13:13:44.646Z",
+      "id": "c53c8c6526e0e715b80cf5636905378db6982b1bb887b664be2e7af41ff4a67f",
+      "cleanup": {
+        "code": 0,
+        "output": "c53c8c6526e0e715b80cf5636905378db6982b1bb887b664be2e7af41ff4a67f\n",
+        "at": "2026-10-08T13:14:14.054Z"
+      },
+      "preDelete": {
+        "id": "c53c8c6526e0e715b80cf5636905378db6982b1bb887b664be2e7af41ff4a67f",
+        "owner": "a2-ce757e71",
+        "exitCode": 0,
+        "at": "2026-10-08T13:14:13.765Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-ce757e71-s3",
+      "owner": "a2-ce757e71",
+      "image": "rustfs/rustfs:1.0.0",
+      "plannedAt": "2026-10-08T13:13:45.077Z",
+      "id": "63bbc5888f47ddef30d8c776fb468b745b4934e12288bb77a50871fb973e4f59",
+      "cleanup": {
+        "code": 0,
+        "output": "63bbc5888f47ddef30d8c776fb468b745b4934e12288bb77a50871fb973e4f59\n",
+        "at": "2026-10-08T13:14:13.631Z"
+      },
+      "preDelete": {
+        "id": "63bbc5888f47ddef30d8c776fb468b745b4934e12288bb77a50871fb973e4f59",
+        "owner": "a2-ce757e71",
+        "exitCode": 0,
+        "at": "2026-10-08T13:14:13.408Z"
+      }
+    }
+  ],
+  "results": [
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-ce757e71-postgres",
+        "--label",
+        "workmesh.task=a2-ce757e71",
+        "-p",
+        "127.0.0.1:61174:5432",
+        "-e",
+        "POSTGRES_PASSWORD",
+        "-e",
+        "POSTGRES_USER=workmesh",
+        "-e",
+        "POSTGRES_DB=workmesh_a2_test",
+        "--tmpfs",
+        "/var/lib/postgresql/data",
+        "postgres:16-alpine"
+      ],
+      "start": "2026-10-08T13:13:44.437Z",
+      "end": "2026-10-08T13:13:44.644Z",
+      "code": 0,
+      "log": "0.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-ce757e71-redis",
+        "--label",
+        "workmesh.task=a2-ce757e71",
+        "-p",
+        "127.0.0.1:61175:6379",
+        "redis:7-alpine"
+      ],
+      "start": "2026-10-08T13:13:44.647Z",
+      "end": "2026-10-08T13:13:45.075Z",
+      "code": 0,
+      "log": "1.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-ce757e71-s3",
+        "--label",
+        "workmesh.task=a2-ce757e71",
+        "-p",
+        "127.0.0.1:61176:9000",
+        "-e",
+        "RUSTFS_ACCESS_KEY",
+        "-e",
+        "RUSTFS_SECRET_KEY",
+        "--tmpfs",
+        "/data:rw,mode=1777",
+        "rustfs/rustfs:1.0.0"
+      ],
+      "start": "2026-10-08T13:13:45.077Z",
+      "end": "2026-10-08T13:13:45.279Z",
+      "code": 0,
+      "log": "2.log"
+    },
+    {
+      "name": "pnpm.cmd",
+      "args": [
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage3-delivery.integration.test.ts",
+        "integration/stage4-operations.integration.test.ts"
+      ],
+      "start": "2026-10-08T13:13:45.562Z",
+      "end": "2026-10-08T13:14:13.297Z",
+      "code": 1,
+      "log": "3.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "63bbc5888f47ddef30d8c776fb468b745b4934e12288bb77a50871fb973e4f59"
+      ],
+      "start": "2026-10-08T13:14:13.409Z",
+      "end": "2026-10-08T13:14:13.630Z",
+      "code": 0,
+      "log": "4.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "c53c8c6526e0e715b80cf5636905378db6982b1bb887b664be2e7af41ff4a67f"
+      ],
+      "start": "2026-10-08T13:14:13.765Z",
+      "end": "2026-10-08T13:14:14.053Z",
+      "code": 0,
+      "log": "5.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "5d64f180b0b47d50fe97b70f334729f3250c3ab83a9954dc1c090eee77f9ce1b"
+      ],
+      "start": "2026-10-08T13:14:14.172Z",
+      "end": "2026-10-08T13:14:14.415Z",
+      "code": 0,
+      "log": "6.log"
+    }
+  ]
+}

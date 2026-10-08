@@ -1,0 +1,80 @@
+[WebServer] (node:59592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:58508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:46292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] {"level":30,"time":1791466162331,"pid":46292,"hostname":"DarkFlame","msg":"Server listening at http://127.0.0.1:3101"}
+[WebServer] {"level":30,"time":1791466162331,"pid":46292,"hostname":"DarkFlame","msg":"Server listening at http://100.77.217.65:3101"}
+[WebServer] {"level":30,"time":1791466162332,"pid":46292,"hostname":"DarkFlame","msg":"Server listening at http://172.24.64.1:3101"}
+[WebServer] {"level":30,"time":1791466162332,"pid":46292,"hostname":"DarkFlame","msg":"Server listening at http://192.168.31.186:3101"}
+[WebServer] {"level":30,"time":1791466162332,"pid":46292,"hostname":"DarkFlame","msg":"Server listening at http://10.173.185.137:3101"}
+[WebServer] {"level":30,"time":1791466162343,"pid":46292,"hostname":"DarkFlame","reqId":"a486b618-4354-4b78-a98a-1c5b634e7c0e","req":{"method":"GET","url":"/health","host":"127.0.0.1:3101","remoteAddress":"127.0.0.1","remotePort":59028},"msg":"incoming request"}
+[WebServer] {"level":30,"time":1791466162369,"pid":46292,"hostname":"DarkFlame","reqId":"a486b618-4354-4b78-a98a-1c5b634e7c0e","res":{"statusCode":200},"responseTime":26.114500000000135,"msg":"request completed"}
+[WebServer] (node:60924) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:33960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:37904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]    ▲ Next.js 15.5.22
+[WebServer]    - Local:        http://localhost:3100
+[WebServer]    - Network:      http://100.77.217.65:3100
+[WebServer] 
+[WebServer]  ✓ Starting...
+[WebServer]  ✓ Ready in 3s
+[WebServer]  ○ Compiling / ...
+[WebServer]  ⚠ ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] Warning
+[WebServer] 
+[WebServer] (1567:47) autoprefixer: end value has mixed support, consider using flex-end instead
+[WebServer] 
+[WebServer] Import trace for requested module:
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] ./app/styles.css
+[WebServer] 
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] Warning
+[WebServer] 
+[WebServer] (1760:57) autoprefixer: end value has mixed support, consider using flex-end instead
+[WebServer] 
+[WebServer] Import trace for requested module:
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] ./app/styles.css
+[WebServer] 
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] Warning
+[WebServer] 
+[WebServer] (1849:36) autoprefixer: end value has mixed support, consider using flex-end instead
+[WebServer] 
+[WebServer] Import trace for requested module:
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] ./app/styles.css
+[WebServer] 
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] Warning
+[WebServer] 
+[WebServer] (1860:87) autoprefixer: start value has mixed support, consider using flex-start instead
+[WebServer] 
+[WebServer] Import trace for requested module:
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] ./app/styles.css
+Error: pnpm did not expose npm_execpath to Playwright global setup
+
+   at global-setup.ts:9
+
+   7 |   const pnpmCli = process.env.npm_execpath;
+   8 |   if (!pnpmCli) {
+>  9 |     throw new Error("pnpm did not expose npm_execpath to Playwright global setup");
+     |           ^
+  10 |   }
+  11 |   const pnpmScript = /\.(?:cjs|mjs|js)$/i.test(pnpmCli);
+  12 |   await execFileAsync(
+    at resetAcceptanceDatabase (C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web\e2e\global-setup.ts:9:11)
+[WebServer]  GET / 200 in 26378ms
+[WebServer] <w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web\app\styles.css': No serializer registered for Warning
+[WebServer] <w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 4 items } -> webpack/lib/ModuleWarning -> Warning
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test --config ../../playwright.config.ts configuration-readiness.spec.ts

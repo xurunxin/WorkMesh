@@ -1,0 +1,159 @@
+{
+  "head": "47a22211fde239bff6acc9f8aca0eb3d9e5a421d",
+  "main": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "observedAt": "2026-10-08T13:47:44.830Z",
+  "scope": "C3 整合前保全；早期探索运行无完整逐运行前后绑定，不冒最终 source pass",
+  "latestE2E": "a2-a7aeadc2：9 通过，1 Lite 未运行",
+  "files": [
+    {
+      "path": "apps/api/src/delivery/repository-configuration.ts",
+      "bytes": 3234,
+      "sha256": "c340908d2f0588c8c9ac76ec06fe70d7d9e931ce9f55847cc3ff1d53f2bb9a51"
+    },
+    {
+      "path": "apps/web/app/lib/configuration-readiness-navigation.test.ts",
+      "bytes": 1647,
+      "sha256": "af098edce5a8f8997634b7f63d0dd84a82e62c68958ec005bbf7954c0506a28d"
+    },
+    {
+      "path": "apps/web/app/lib/configuration-readiness-navigation.ts",
+      "bytes": 2518,
+      "sha256": "132d761b9dae6b2a9f7c5a6aaee2bc8f003e40ea24cba1c449f1903df1a08d64"
+    },
+    {
+      "path": "apps/web/e2e/configuration-readiness.spec.ts",
+      "bytes": 10341,
+      "sha256": "e60300d8729aeb3f9e002754a6f8098b70bea69969c4dbcbbab6fd61fa2e9e66"
+    },
+    {
+      "path": "apps/web/e2e/fixtures/configuration-readiness-provider.ts",
+      "bytes": 1336,
+      "sha256": "991b255309731506f3a862bc878b7f7783bacf32f20a623bf8ad05d868b35d5f"
+    },
+    {
+      "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+      "bytes": 8358,
+      "sha256": "cc2c98e0ebf9937153f99894d3642b3d5d425f9fdc89d9e5dbf90d56bc90453a"
+    },
+    {
+      "path": "apps/web/features/projects/project-repository-configuration.module.css",
+      "bytes": 993,
+      "sha256": "28eb9f145a41bd5f6801905545169d7bfe5da8d6bbab62caea5e30b2cb2c4523"
+    },
+    {
+      "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
+      "bytes": 5132,
+      "sha256": "9a6bf28fa6d3182561776e588f7f7fd98254007c5f6ebfc23a3307f81458f895"
+    },
+    {
+      "path": "apps/web/features/projects/project-repository-configuration.tsx",
+      "bytes": 17285,
+      "sha256": "b03025c785f20bce4b58e8c0b70d75af9740c84a3f69727c64027e00f6191ba4"
+    },
+    {
+      "path": "apps/web/features/workbench/configuration-readiness.module.css",
+      "bytes": 723,
+      "sha256": "f7b41c96c362852e2046379584fb4ae92468fbd1d977a520b1e1337f7409cf07"
+    },
+    {
+      "path": "apps/web/features/workbench/configuration-readiness.test.tsx",
+      "bytes": 3328,
+      "sha256": "c8b463a6e4b4c6e79df157787c525421e7620fa12e2a9fbb28980daf89cde678"
+    },
+    {
+      "path": "apps/web/features/workbench/configuration-readiness.tsx",
+      "bytes": 5533,
+      "sha256": "34a54b07f8322bd031045327eb295a081480ad15b9ed480cd9be6e7470ed6934"
+    },
+    {
+      "path": "apps/web/playwright.a2-lite.config.ts",
+      "bytes": 648,
+      "sha256": "4bc1c255350f561b927b8f9b85f511961645d802c74dc07534d51ab3eabcdf33"
+    },
+    {
+      "path": "packages/contracts/src/repository-configuration-contracts.test.ts",
+      "bytes": 1147,
+      "sha256": "b3f99db0acfe0561ee1ea8640d2e98862f4ef22f16ae372dbdca7526d4b57bce"
+    },
+    {
+      "path": "packages/contracts/src/repository-configuration-contracts.ts",
+      "bytes": 2465,
+      "sha256": "5bcaa01eeaaf2f5b576972fe185d8ae24a7e3029b77c98b87b9a83877008b316"
+    },
+    {
+      "path": "scripts/verify-a2-lite.mjs",
+      "bytes": 13314,
+      "sha256": "bf62ae7cf42da7de6037a3e8dfdf8d60543cae3b0ac250719361a9bc888223aa"
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "bytes": 515741,
+      "sha256": "ee00fda916ade23b7a41094e02a2fca75234cd13bce5f429db998015f3e6ed44"
+    },
+    {
+      "path": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "bytes": 85593,
+      "sha256": "718eacd4f2e9815f8a63fd7f65df28fa2d6edec5618e13a6d9d9179ee19f6f78"
+    },
+    {
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 78572,
+      "sha256": "ca640dc64f99a27be7001be53d1610f760a125a910b7af379fd6b8a30e00e090"
+    },
+    {
+      "path": "apps/api/src/delivery/routes.ts",
+      "bytes": 96822,
+      "sha256": "b95483c83d42ae02869d1f59454dd936ad297b450e9f66c1881e4f4f6179a858"
+    },
+    {
+      "path": "apps/web/app/lib/i18n.tsx",
+      "bytes": 203175,
+      "sha256": "369001333688aa172d8e5ccf7d39a6f087eb793edd2e2ec3f00f693cb62865b4"
+    },
+    {
+      "path": "apps/web/app/page.tsx",
+      "bytes": 48163,
+      "sha256": "2c9246f610cbb17b88a9c361ae3c6f829896649a759d65125529611f77f8efbf"
+    },
+    {
+      "path": "apps/web/app/workbench/page.tsx",
+      "bytes": 3101,
+      "sha256": "7f45bc6a3f273171ab6f3501294068f81fe0904889b8f69ffff10ed2e0c7b02e"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.module.css",
+      "bytes": 11744,
+      "sha256": "c87c5f2d7353f1088ebbfa8f0ee54ba04a4a419936fae11ff45c2e591d921ecc"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.test.tsx",
+      "bytes": 10851,
+      "sha256": "bb21b300068eddc81fe70980acf1325884bd55f5bbcfcdd0abab0152cd0dd080"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.tsx",
+      "bytes": 34943,
+      "sha256": "2b07474dfd00b23e393e13359068e9e2942ddb961450441ddd8c77f9c341d5c2"
+    },
+    {
+      "path": "apps/worker/src/provider-actions.ts",
+      "bytes": 75542,
+      "sha256": "6414075d9a66588c17ed348d9a6f310149e8dd53c47ee59d1bd1926f185f60db"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "bytes": 188646,
+      "sha256": "58536e14e548e2391b932251de1d55a08a6877c45cc4e72c027d129dbc1f49e8"
+    },
+    {
+      "path": "packages/db/src/agent-lock-order-manifest.ts",
+      "bytes": 27777,
+      "sha256": "956a27bbb9882fecc69271973da4f134ba2bc905a20394f2f3d31a0e6797792c"
+    },
+    {
+      "path": "playwright.config.ts",
+      "bytes": 5128,
+      "sha256": "fa1391e8ccce30c1dfd6ab2c27f90a636d9ea937f6c3bd6f976acd5081a8bc81"
+    }
+  ]
+}
