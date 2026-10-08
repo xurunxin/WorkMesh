@@ -1,0 +1,259 @@
+{
+  "说明": "冻结原测试、原 DoD 与九类矩阵的 C1 全文子集；本轮仅文档，未执行或预填任何功能测试成功。",
+  "sourcePath": "docs/reviews/r1/test-coverage.json",
+  "feature": {
+    "seqNum": 15,
+    "id": "kkG9VeT3_uTzREhjnX2ve",
+    "owner": "C1 执行者",
+    "originalTests": [
+      {
+        "id": "todo-15-T1",
+        "text": "源事件目标选择、每目标幂等去重；target 管理入口的授权/revision/幂等/脱敏与禁用抑制。",
+        "originalChecked": false,
+        "target": 15,
+        "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "#15 原验收1：源事件目标选择、每目标幂等去重；target 管理入口的授权/revision/幂等/脱敏与禁用抑制。",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-15-1 source event→authorized Human→channel target生成一intent及每目标delivery attempt",
+          "R1-15-2 目标配置未授权拒绝，队列后撤权/离队/禁用发送前抑制零外发",
+          "R1-15-3 disabled/dead-letter目标不继续发送；不把陈旧通知当新的决定",
+          "R1-15-4 同intent/target去重；source/fanout/job/ack同体重放、异体冲突",
+          "R1-15-5 配置If-Match和claim_fence过旧都拒绝，不确认新持有者的attempt"
+        ],
+        "owner": "C1 执行者",
+        "targetTodoId": "kkG9VeT3_uTzREhjnX2ve"
+      },
+      {
+        "id": "todo-15-T2",
+        "text": "两 worker 竞争只允许有效 fence 处理，一个逻辑 attempt，旧 fence ack 被拒。",
+        "originalChecked": false,
+        "target": 15,
+        "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "#15 原验收2：两 worker 竞争只允许有效 fence 处理，一个逻辑 attempt，旧 fence ack 被拒。",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-15-1 source event→authorized Human→channel target生成一intent及每目标delivery attempt",
+          "R1-15-7 重放job与超时reclaim只由有效fence处理，未知外发记录至少一次/对账",
+          "R1-15-8 两个worker竞争同target单逻辑attempt，单渠道失败不重投其他已确认target"
+        ],
+        "owner": "C1 执行者",
+        "targetTodoId": "kkG9VeT3_uTzREhjnX2ve"
+      },
+      {
+        "id": "todo-15-T3",
+        "text": "单渠道故障不导致其他目标正常投递重投；外发未知按至少一次与对账路径记录。",
+        "originalChecked": false,
+        "target": 15,
+        "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "#15 原验收3：单渠道故障不导致其他目标正常投递重投；外发未知按至少一次与对账路径记录。",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-15-1 source event→authorized Human→channel target生成一intent及每目标delivery attempt",
+          "R1-15-7 重放job与超时reclaim只由有效fence处理，未知外发记录至少一次/对账"
+        ],
+        "owner": "C1 执行者",
+        "targetTodoId": "kkG9VeT3_uTzREhjnX2ve"
+      },
+      {
+        "id": "todo-15-T4",
+        "text": "撤权/停用后抑制，断言零外发；Query 零投递写入。",
+        "originalChecked": false,
+        "target": 15,
+        "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "#15 原验收4：撤权/停用后抑制，断言零外发；Query 零投递写入。",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-15-1 source event→authorized Human→channel target生成一intent及每目标delivery attempt",
+          "R1-15-2 目标配置未授权拒绝，队列后撤权/离队/禁用发送前抑制零外发",
+          "R1-15-7 重放job与超时reclaim只由有效fence处理，未知外发记录至少一次/对账"
+        ],
+        "owner": "C1 执行者",
+        "targetTodoId": "kkG9VeT3_uTzREhjnX2ve"
+      },
+      {
+        "id": "todo-15-T5",
+        "text": "每个提交/发送边界崩溃、checkpoint 保存前后崩溃均有恢复证据。",
+        "originalChecked": false,
+        "target": 15,
+        "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "#15 原验收5：每个提交/发送边界崩溃、checkpoint 保存前后崩溃均有恢复证据。",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-15-1 source event→authorized Human→channel target生成一intent及每目标delivery attempt",
+          "R1-15-6 intent/cursor/fanout提交失败共同回滚；外发必须在commit之后",
+          "R1-15-9 各提交/外发/ack/checkpoint边界崩溃重启恢复，旧fence不写确认"
+        ],
+        "owner": "C1 执行者",
+        "targetTodoId": "kkG9VeT3_uTzREhjnX2ve"
+      },
+      {
+        "id": "todo-15-T6",
+        "text": "source-event、fan-out、job、ack 的同体去重/异体冲突与重放恢复。",
+        "originalChecked": false,
+        "target": 15,
+        "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "#15 原验收6：source-event、fan-out、job、ack 的同体去重/异体冲突与重放恢复。",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-15-1 source event→authorized Human→channel target生成一intent及每目标delivery attempt",
+          "R1-15-4 同intent/target去重；source/fanout/job/ack同体重放、异体冲突",
+          "R1-15-5 配置If-Match和claim_fence过旧都拒绝，不确认新持有者的attempt",
+          "R1-15-7 重放job与超时reclaim只由有效fence处理，未知外发记录至少一次/对账",
+          "R1-15-9 各提交/外发/ack/checkpoint边界崩溃重启恢复，旧fence不写确认"
+        ],
+        "owner": "C1 执行者",
+        "targetTodoId": "kkG9VeT3_uTzREhjnX2ve"
+      },
+      {
+        "id": "todo-15-T7",
+        "text": "源 revision 陈旧不形成决策写入；本批不测试或实现未来并发相反审批/决策回调。",
+        "originalChecked": false,
+        "target": 15,
+        "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "#15 原验收7：源 revision 陈旧不形成决策写入；本批不测试或实现未来并发相反审批/决策回调。",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-15-1 source event→authorized Human→channel target生成一intent及每目标delivery attempt",
+          "R1-15-5 配置If-Match和claim_fence过旧都拒绝，不确认新持有者的attempt",
+          "R1-15-8 两个worker竞争同target单逻辑attempt，单渠道失败不重投其他已确认target"
+        ],
+        "owner": "C1 执行者",
+        "targetTodoId": "kkG9VeT3_uTzREhjnX2ve"
+      },
+      {
+        "id": "todo-15-T8",
+        "text": "无 Redis 档位明确不支持，既有路径不受影响。",
+        "originalChecked": false,
+        "target": 15,
+        "testFile": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "#15 原验收8：无 Redis 档位明确不支持，既有路径不受影响。",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-15-1 source event→authorized Human→channel target生成一intent及每目标delivery attempt"
+        ],
+        "owner": "C1 执行者",
+        "targetTodoId": "kkG9VeT3_uTzREhjnX2ve"
+      }
+    ],
+    "originalDoD": [
+      {
+        "text": "## DoD 与依赖\n契约落地、崩溃/并发/撤权/配置断言通过，无适配器时既有路径不受影响；迁移如确有需要遵循 AGENTS.md 新迁移+SCHEMA.sql+升级/空库双测，必需检查通过。复用映射、测试与证据提交仓库。\n依赖：P0、G1、P1、R1；blocks C2。移除无实际依赖的 D5→C1 串行门禁。\n\n",
+        "sha256": "cee08d660f571cb4b862055c144d530a57f148976a6368873886a36a40a78ac2",
+        "target": 15,
+        "owner": "C1 执行者",
+        "targetTodoId": "kkG9VeT3_uTzREhjnX2ve",
+        "acceptance": "原DoD保留，所有合法测试迁移到originalTests；矛盾旧要求按legacy处置和本任务共同契约撤换，不以历史绿灯放行"
+      }
+    ],
+    "matrix": [
+      {
+        "category": "happy path",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "source event→authorized Human→channel target生成一intent及每目标delivery attempt",
+        "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "R1-15-1 source event→authorized Human→channel target生成一intent及每目标delivery attempt",
+        "owner": "C1 执行者",
+        "fileState": "现有文件，待本feature扩展具体用例",
+        "result": "待实现任务运行；本轮不预填功能成功"
+      },
+      {
+        "category": "unauthorized actor",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "目标配置未授权拒绝，队列后撤权/离队/禁用发送前抑制零外发",
+        "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "R1-15-2 目标配置未授权拒绝，队列后撤权/离队/禁用发送前抑制零外发",
+        "owner": "C1 执行者",
+        "fileState": "现有文件，待本feature扩展具体用例",
+        "result": "待实现任务运行；本轮不预填功能成功"
+      },
+      {
+        "category": "invalid state transition",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "disabled/dead-letter目标不继续发送；不把陈旧通知当新的决定",
+        "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "R1-15-3 disabled/dead-letter目标不继续发送；不把陈旧通知当新的决定",
+        "owner": "C1 执行者",
+        "fileState": "现有文件，待本feature扩展具体用例",
+        "result": "待实现任务运行；本轮不预填功能成功"
+      },
+      {
+        "category": "duplicate idempotency key",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "同intent/target去重；source/fanout/job/ack同体重放、异体冲突",
+        "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "R1-15-4 同intent/target去重；source/fanout/job/ack同体重放、异体冲突",
+        "owner": "C1 执行者",
+        "fileState": "现有文件，待本feature扩展具体用例",
+        "result": "待实现任务运行；本轮不预填功能成功"
+      },
+      {
+        "category": "stale revision",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "配置If-Match和claim_fence过旧都拒绝，不确认新持有者的attempt",
+        "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "R1-15-5 配置If-Match和claim_fence过旧都拒绝，不确认新持有者的attempt",
+        "owner": "C1 执行者",
+        "fileState": "现有文件，待本feature扩展具体用例",
+        "result": "待实现任务运行；本轮不预填功能成功"
+      },
+      {
+        "category": "transaction failure",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "intent/cursor/fanout提交失败共同回滚；外发必须在commit之后",
+        "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "R1-15-6 intent/cursor/fanout提交失败共同回滚；外发必须在commit之后",
+        "owner": "C1 执行者",
+        "fileState": "现有文件，待本feature扩展具体用例",
+        "result": "待实现任务运行；本轮不预填功能成功"
+      },
+      {
+        "category": "webhook/job replay",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "重放job与超时reclaim只由有效fence处理，未知外发记录至少一次/对账",
+        "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "R1-15-7 重放job与超时reclaim只由有效fence处理，未知外发记录至少一次/对账",
+        "owner": "C1 执行者",
+        "fileState": "现有文件，待本feature扩展具体用例",
+        "result": "待实现任务运行；本轮不预填功能成功"
+      },
+      {
+        "category": "concurrent request",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "两个worker竞争同target单逻辑attempt，单渠道失败不重投其他已确认target",
+        "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "R1-15-8 两个worker竞争同target单逻辑attempt，单渠道失败不重投其他已确认target",
+        "owner": "C1 执行者",
+        "fileState": "现有文件，待本feature扩展具体用例",
+        "result": "待实现任务运行；本轮不预填功能成功"
+      },
+      {
+        "category": "server restart/outbox recovery",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "各提交/外发/ack/checkpoint边界崩溃重启恢复，旧fence不写确认",
+        "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+        "caseName": "R1-15-9 各提交/外发/ack/checkpoint边界崩溃重启恢复，旧fence不写确认",
+        "owner": "C1 执行者",
+        "fileState": "现有文件，待本feature扩展具体用例",
+        "result": "待实现任务运行；本轮不预填功能成功"
+      }
+    ]
+  }
+}
