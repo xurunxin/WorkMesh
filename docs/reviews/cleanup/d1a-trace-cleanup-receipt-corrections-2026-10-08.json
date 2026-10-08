@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "rawSource": "docs/reviews/cleanup/d1a-trace-cleanup-receipts-2026-10-08.jsonl",
+  "correctionMethod": "raw append-only JSONL preserved; corrected view labels exact preflight/operation timestamps unknown and fixes owner path from mapped sourceRoot",
+  "rows": [
+    {
+      "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\0-trace.network",
+      "rawOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
+      "correctOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "rawTimestampField": "preflightAtUtc",
+      "rawTimestampValue": "2026-10-08T11:53:49.0220427Z",
+      "interpretation": "此时间是在 Remove-Item 和存在性核验之后写入记录；不能当作预检或删除时刻。个别预检/删除时刻未持久采样。"
+    },
+    {
+      "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\0-trace.stacks",
+      "rawOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
+      "correctOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "rawTimestampField": "preflightAtUtc",
+      "rawTimestampValue": "2026-10-08T11:53:49.0479130Z",
+      "interpretation": "此时间是在 Remove-Item 和存在性核验之后写入记录；不能当作预检或删除时刻。个别预检/删除时刻未持久采样。"
+    },
+    {
+      "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\0-trace.trace",
+      "rawOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
+      "correctOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "rawTimestampField": "preflightAtUtc",
+      "rawTimestampValue": "2026-10-08T11:53:49.0590397Z",
+      "interpretation": "此时间是在 Remove-Item 和存在性核验之后写入记录；不能当作预检或删除时刻。个别预检/删除时刻未持久采样。"
+    },
+    {
+      "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\1-trace.stacks",
+      "rawOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
+      "correctOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "rawTimestampField": "preflightAtUtc",
+      "rawTimestampValue": "2026-10-08T11:53:49.0702666Z",
+      "interpretation": "此时间是在 Remove-Item 和存在性核验之后写入记录；不能当作预检或删除时刻。个别预检/删除时刻未持久采样。"
+    },
+    {
+      "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\2-trace.stacks",
+      "rawOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
+      "correctOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "rawTimestampField": "preflightAtUtc",
+      "rawTimestampValue": "2026-10-08T11:53:49.0810276Z",
+      "interpretation": "此时间是在 Remove-Item 和存在性核验之后写入记录；不能当作预检或删除时刻。个别预检/删除时刻未持久采样。"
+    },
+    {
+      "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\2-trace.trace",
+      "rawOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
+      "correctOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "rawTimestampField": "preflightAtUtc",
+      "rawTimestampValue": "2026-10-08T11:53:49.0925925Z",
+      "interpretation": "此时间是在 Remove-Item 和存在性核验之后写入记录；不能当作预检或删除时刻。个别预检/删除时刻未持久采样。"
+    },
+    {
+      "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\test.trace",
+      "rawOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
+      "correctOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "rawTimestampField": "preflightAtUtc",
+      "rawTimestampValue": "2026-10-08T11:53:49.1064228Z",
+      "interpretation": "此时间是在 Remove-Item 和存在性核验之后写入记录；不能当作预检或删除时刻。个别预检/删除时刻未持久采样。"
+    },
+    {
+      "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\00a9be01746bca4f16536b0ee8a7b8b6ad4b6ff7.json",
+      "rawOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2",
+      "correctOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "rawTimestampField": "preflightAtUtc",
+      "rawTimestampValue": "2026-10-08T11:53:49.1216396Z",
+      "interpretation": "此时间是在 Remove-Item 和存在性核验之后写入记录；不能当作预检或删除时刻。个别预检/删除时刻未持久采样。"
+    },
+    {
+      "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\00aadff10ada1cffc30bec93cf0e0f29587f44b5.json",
+      "rawOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2",
+      "correctOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "rawTimestampField": "preflightAtUtc",
+      "rawTimestampValue": "2026-10-08T11:53:49.1372598Z",
+      "interpretation": "此时间是在 Remove-Item 和存在性核验之后写入记录；不能当作预检或删除时刻。个别预检/删除时刻未持久采样。"
+    },
+    {
+      "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\09d8902c9b2450894d60674409677027e3d6062d.htc",
+      "rawOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2",
+      "correctOwnerBuildRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "rawTimestampField": "preflightAtUtc",
+      "rawTimestampValue": "2026-10-08T11:53:49.1503958Z",
+      "interpretation": "此时间是在 Remove-Item 和存在性核验之后写入记录；不能当作预检或删除时刻。个别预检/删除时刻未持久采样。"
+    }
+  ]
+}

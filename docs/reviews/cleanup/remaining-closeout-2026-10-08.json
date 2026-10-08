@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-08T14:00:15.8889268Z",
+  "stage": "只读材料分类与最小脱敏保全映射；提交后停独立审查",
+  "todo": {"number": 52, "id": "6LZdc1ZhadjkkYSzEi6zB", "phase": "building"},
+  "machine": {"name": "DarkFlame", "id": "6DOlLniZ0sqBYGHeIhRMq", "tds": "0.1.60 running", "workspaceRoot": "C:\\Users\\xurx\\.tds\\workspaces"},
+  "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "baseReviewHead": "604c3e2f447f6ccb0a7d488c34870ca5108007e5",
+  "currentGitWorktreeList": {"entryCount": 21, "prunableEntries": 0, "fourParentCandidatesStillRegistered": true},
+  "liveTodos": {
+    "5": "building; 保留",
+    "8": "done; 保留，仅候选",
+    "9": "building; 保留",
+    "15": "done; 保留，仅候选",
+    "16": "building; 保留",
+    "17": "done (C3); 保留",
+    "21": "review (D1b); 保留当前与历史恢复目录",
+    "52": "building"
+  },
+  "parentWorktrees": [
+    {
+      "todo": 3,
+      "todoId": "q_1zKPuGsG-2ZRUwOwQx4",
+      "title": "R1",
+      "phase": "done",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+      "head": "550dead055689154359a3406dfce4f0c91c1dad3",
+      "kind": "registered linked worktree",
+      "statusPorcelainAll": 0,
+      "currentMainReachabilityEvidence": "git log --ancestry-path HEAD..FETCH_HEAD -1 returned 18252ba Merge pull request #207",
+      "tmp": {"exists": false, "fileCount": 0, "bytes": 0},
+      "retainedIgnoredEvidence": [
+        {"path": "apps/web/playwright-report/index.html", "bytes": 612374, "sha256": "44d8f35c68b90829c4bf2f00ea287fe77ae688cb3a3cae06a42d817f5464b33b"},
+        {"path": "apps/web/test-results/.last-run.json", "bytes": 45, "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"},
+        {"path": "apps/web/test-results/recovery-center-Recovery-C-50707-state-and-responsive-layout-authenticated/recovery-center.png", "bytes": 132730, "sha256": "8edc6bd5a80d4c95759b6c19ed59c273b5d3a1e490cd65b8d346b6e7e2147ad9"}
+      ],
+      "retentionReason": "报告/截图没有与精确 run、用例/viewport 及可接受归档附件完成双映射；保留且不称为唯一材料。"
+    },
+    {
+      "todo": 10,
+      "todoId": "MPhtZiff23B33m9i2equq",
+      "title": "D0",
+      "phase": "done",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+      "head": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+      "kind": "registered linked worktree",
+      "statusPorcelainAll": 0,
+      "currentMainReachabilityEvidence": "git log --ancestry-path HEAD..FETCH_HEAD -1 returned 18252ba Merge pull request #207",
+      "tmp": {"exists": true, "fileCount": 1649, "bytes": 196832784},
+      "priorPathInventory": "historical-worktrees-2026-10-08.json#followupCleanup.reviewerFollowupAudit.remainingTmpInventory",
+      "retentionReason": "已映射的六条日志沿用旧来源映射；未映射 capture、失败现场、诊断文件仍逐路径保留。D0 六个已拒绝目标不重试。"
+    },
+    {
+      "todo": 11,
+      "todoId": "IJQA_DfxU0hF5e8L5Xb3v",
+      "title": "D1a",
+      "phase": "done",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "head": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+      "kind": "registered linked worktree",
+      "statusPorcelainAll": 0,
+      "currentMainReachabilityEvidence": "git log --ancestry-path HEAD..FETCH_HEAD -1 returned 18252ba Merge pull request #207",
+      "tmp": {"exists": true, "fileCount": 78, "bytes": 49344213},
+      "remaining74": {"count": 74, "bytes": 45960098, "exactCurrentSizeAndSha256Matches": 74, "missingOrChanged": 0, "perPathEvidence": "remaining-materials-review-2026-10-08.json#d1a.other74.perPathAssessments", "currentPerPathEvidence": "d1a-other74-current-check-2026-10-08.json#items"},
+      "traceAndAuditRemainder": {"traceCopies": 3, "traceBytesEach": 1022701, "auditJsonBytes": 316012, "auditJsonSha256": "5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442", "auditSourceCommit": "58d59ed85002da637aaeaa6bf98915d4a6ba918c", "auditSourcePath": "docs/reviews/d1a/evidence/git-blob-hashes.json", "auditGitBlob": "414dfe920c54f68ca1a2f246f1fcdd82e43767bb"},
+      "minimumTracePreservation": "d1a-trace-minimum-preservation-2026-10-08.json",
+      "rawZipDisposition": "两份敏感 raw ZIP 保持原位；未将其内容入库。"
+    },
+    {
+      "todo": 18,
+      "todoId": "Tws50k02Pi52R-RJEXP_N",
+      "title": "G1",
+      "phase": "done",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+      "head": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+      "kind": "registered linked worktree",
+      "statusPorcelainAll": 0,
+      "currentMainReachabilityEvidence": "git log --ancestry-path HEAD..FETCH_HEAD -1 returned 18252ba Merge pull request #207",
+      "tmp": {"fileCountIncludingNestedCloneGitMetadata": 1757, "bytes": 83332715, "parentTmpExcludingClone": {"fileCount": 283, "bytes": 49882233}, "nestedClone": {"fileCount": 1474, "bytes": 33450482}},
+      "scanScopeCorrection": "本次 -Force 枚举包含 nested clone 的 .git 隐藏元数据。旧 1747/66773555B 扫描少 10 文件/16559160B，差额与仍在的 10 个隐藏 Git 元数据文件相同；不是新文件，不改旧回执。",
+      "retentionReason": "父 .tmp 其余材料按既有逐路径清单保留；浅克隆裁定见 g1CloneDecision。"
+    }
+  ],
+  "ignoredCacheScope": {
+    "decision": "本阶段不枚举 node_modules、.turbo、dist、.next 等大型可重建目录的内部数十万文件，不对其逐文件 hash。",
+    "basis": "目录顶层角色、Git 忽略规则/已有锁文件和构建输入，以及旧的分类观察；回收前仍须确认精确归属、确属生成内容、重建命令/输入和当前引用。",
+    "userSuppliedScale": "用户报告两个候选 workspace 各约 38 万忽略项；本轮未独立复数，未将其作为验证计数。",
+    "boundary": "不从父 worktree status clean 推断 ignored、嵌套仓库、临时日志或验收材料已保全。"
+  },
+  "candidateButProtectedWorkspaces": [
+    {"todo": 8, "todoId": "Hxr1xIdh4poZp3F5laGrT", "phase": "done", "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801", "head": "07aa293c35100959caa08f73efcb6110e9aa92f4", "registered": true, "priorObservedIgnoredTopLevel": [".turbo", "dist", "node_modules"], "currentRootObservation": "仅列根目录项并读 tracked 根 package.json/pnpm-lock.yaml/.gitignore；规则明确忽略 node_modules、.turbo、.next、.next-e2e、dist、playwright-report、test-results；没有遍历这些目录内容。", "trackedRebuildInputs": ["package.json", "pnpm-lock.yaml", ".gitignore", "apps/web/package.json"], "thisStageAction": "保留；不以 done 自动清理。下一步只分层确认顶层生成缓存与精确构建引用，跳过依赖树逐文件扫描；上述输入提供未来可重建性核对依据，但还未授权回收。"},
+    {"todo": 15, "todoId": "kkG9VeT3_uTzREhjnX2ve", "phase": "done", "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc", "head": "81090ec01bcbc84edbe101418d833840999a5326", "registered": true, "priorObservedIgnoredTopLevel": [".turbo", "dist", "node_modules", "playwright-report", "test-results"], "currentRootObservation": "仅列根目录项并读 tracked 根 package.json/pnpm-lock.yaml/.gitignore；规则明确忽略 node_modules、.turbo、.next、.next-e2e、dist、playwright-report、test-results；没有遍历这些目录内容。", "trackedRebuildInputs": ["package.json", "pnpm-lock.yaml", ".gitignore", "apps/web/package.json"], "thisStageAction": "保留；不以 done 自动清理。未映射验收产物先按原地保全，后续候选只读核引用。"}
+  ],
+  "g1CloneDecision": {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout",
+    "kind": "G1 下的独立 shallow clone，不是 linked worktree",
+    "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+    "ownerTodo": 18,
+    "currentPhase": "done",
+    "currentReadOnlyState": {"exists": true, "files": 1474, "logicalBytes": 33450482, "trackedDeletions": 143, "untracked": 0, "ignored": 0, "fsckFullExitCode": 0, "fsckOutputEmpty": true, "currentMainReachability": "git log --oneline --ancestry-path 002c1d61a7fc5d529b2d480f4c48716971c4236d..FETCH_HEAD -1 returned 18252ba Merge pull request #207", "commandLineProcessReferences": 0, "readableTaskChatExactPathMentions": 0},
+    "recoverability": {"trackedPaths": 1607, "allBlobObjectsReadableFromCloneHeadAndCurrentMain": true, "remainingTrackedFiles": 1464, "trackedDeletionsRecoverableFromCloneHead": 143, "differentFromCurrentMain": 25, "uniqueSourceFilesFound": 0, "localOnlyBranchesOrCommitsFound": 0, "fixtureUsesReflogs": false},
+    "fixture": {"path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-read.mjs", "bytes": 2457, "sha256": "ef4c368b093f293ccbc77cd4f31e86492a1188f5b091ac0e0642719c39b84294", "inputCount": 3, "inputMapping": "g1-shallow-layout-inventory-2026-10-08.json#fixtureInputs", "calls": ["assert shallow mode", "check unavailable historical blob", "run archive verifier", "write archive-shallow-validation.json inside clone"]},
+    "metadataAfterPartialAttempt": {"remainingFiles": 10, "bytes": 16559160, "paths": [".git/HEAD", ".git/config", ".git/description", ".git/index", ".git/objects/pack/*.idx", ".git/objects/pack/*.pack", ".git/objects/pack/*.rev", ".git/packed-refs", ".git/refs/heads/tds/conv-01a116f7-1027-7c75-90df-32ebc5488752", ".git/shallow"], "dotGitAttributes": "Hidden", "packReadOnly": true},
+    "missingReflogs": [{"path": ".git/logs/HEAD", "priorBytes": 200, "priorSha256Only": "ec930c46a209a5d9e8c8cd9b81be758545d7c83edd398540e02d4c182a48f95c", "existsNow": false, "exactRestoreSource": null}, {"path": ".git/logs/refs/heads/tds/conv-01a116f7-1027-7c75-90df-32ebc5488752", "priorBytes": 200, "priorSha256Only": "ec930c46a209a5d9e8c8cd9b81be758545d7c83edd398540e02d4c182a48f95c", "existsNow": false, "exactRestoreSource": null}],
+    "reflogValueAssessment": "reflog 曾记录本地 HEAD/分支移动历史；哈希不能还原原文。现有夹具输入、可读当前 build 对话不引用它们；当前 main、clone HEAD 和当前分支源仍可查。它们是已知缺失的本地审计元数据，不是源码/验收物料，也不要求为其重造整个临时 clone。",
+    "previousFailure": {"ordinaryRecursiveRemoveAttemptedOnce": true, "powerShellStructuredExitCode": null, "outerWrapperExitCode": 1, "deletedGitMetadataFiles": 17, "deletedGitMetadataBytes": 27428, "error": "你没有足够的访问权限来执行此操作，或者该项目为隐藏项、系统项或只读项。", "causeIdentified": false, "retryOrRecoveryThisStage": false},
+    "comparison": {
+      "keep": {"cost": "保留 1474 个文件和 33450482 B 逻辑内容；两份本地 reflog 已缺失。", "benefit": "保留浅克隆剩余 Git 元数据、测试夹具状态和可读对象环境，不引入新的破坏性动作。"},
+      "exactTargetForceOrAttributeHandling": {"target": "仅上述绝对 clone 路径", "possibleScope": "Remove-Item -LiteralPath <精确路径> -Recurse -Force，或对该精确目标处理 Hidden/ReadOnly 属性再递归移除", "potentialLogicalBytes": 33450482, "actualPhysicalRelease": "未知", "risk": "前次失败原因未定；可能摧毁尚存本地测试状态/元数据，Force 或属性处理不保证解决访问/锁问题且可能继续部分删除。", "authorization": "未授权且本阶段明确禁止执行。"},
+      "currentDisposition": "保留；资料已足以请 Chief 在独审后对这个精确 clone 选择继续保留或另行批准特定方案。不得把缺失 reflog 的重建作为清理前置，不恢复/重试。"
+    }
+  },
+  "activeAndRecoveryProtection": {
+    "todo5": "building; preserve current/history workspace",
+    "todo8": "done but preserve candidate workspace",
+    "todo9": "building; preserve current/history workspace",
+    "todo15": "done but preserve candidate workspace",
+    "todo16": "building C2 product work; preserve",
+    "todo17": "done C3; preserve current/history workspace",
+    "todo21": "D1b visual review; preserve current and recovery workspace",
+    "todo21Checkpoint": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec @ d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5"
+  },
+  "actionBoundary": {
+    "deleted": 0,
+    "restored": 0,
+    "forceOrAttributeOrAclChanges": 0,
+    "dockerChanges": 0,
+    "productTestsRun": 0,
+    "logicalBytesReleased": 0,
+    "globalHandleOrBuildRegistryEnumerated": false,
+    "largeDependencyCacheFilesEnumerated": false,
+    "old2268PerFileProofLimitationPreserved": true,
+    "old133CacheAnd1406CopyReceiptsUnchanged": true,
+    "old12D1aDeletionReceiptsUnchanged": true,
+    "d0RejectedTargetsRetried": 0,
+    "c3RejectedTargetsRetried": 0
+  }
+}

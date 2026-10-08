@@ -1,0 +1,2536 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-08T12:26:13Z",
+  "scope": "历史 worktree 清理材料映射阶段；只读审计，不删除未经本阶段独审的材料",
+  "machine": {
+    "name": "DarkFlame",
+    "id": "6DOlLniZ0sqBYGHeIhRMq",
+    "status": "tds status: running, v0.1.60; no daemon management"
+  },
+  "project": {
+    "id": "DzkLDn6UW-IbfoTJzN9Ro",
+    "main": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "mainRead": "read-only fetch origin main; FETCH_HEAD matched this SHA"
+  },
+  "liveTodos": {
+    "cleanup52": "building",
+    "todo5": "implement_reviewing",
+    "todo8": "done, protected",
+    "todo9": "planning",
+    "todo11": "done",
+    "todo15": "building",
+    "todo17": "building",
+    "todo18": "done",
+    "todo21": "review"
+  },
+  "d1a": {
+    "todoId": "IJQA_DfxU0hF5e8L5Xb3v",
+    "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+    "inventorySource": "docs/reviews/cleanup/d1a-trace-zip-mapping-2026-10-08.json#remainingD1aTmpInventory",
+    "remainingCount": 90,
+    "remainingBytes": 50817433,
+    "pathHashRecheck": {
+      "paths": 90,
+      "missing": 0,
+      "sizeOrHashChanged": 0
+    },
+    "sanitizedArchive": {
+      "repoPath": "docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-sanitized.zip",
+      "gitBlob": "02c663b7dbdd3c39c891adb99a6908b33bef4ccd",
+      "sha256": "00fe3854f1cb7de42482d2b9cab730af697fb115629719f0850df7d43aaa9ca5",
+      "bytes": 14776952
+    },
+    "redactionReport": {
+      "repoPath": "docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-redaction-report.json",
+      "gitBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9",
+      "sha256": "2dba2ed6cb6df230b0d7d092f94bc434059d0a579f34fb66e6b63b363c712d80",
+      "sensitiveResourceFieldsRemaining": 0,
+      "originalSensitiveValuesRemaining": 0,
+      "crcVerified": true,
+      "resourceRenameMappings": 4
+    },
+    "rawSourceArchive": {
+      "localCopies": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\html-report\\data\\d69f056ec411e76e5d9f9e4664b013966ee3cc75.zip",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\output\\stage0-Stage-0-browser-acc-8d3a0--writes-after-team-deletion-bootstrap\\trace.zip"
+      ],
+      "bytesEach": 14795293,
+      "sha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e",
+      "entryCount": 491,
+      "crcVerified": true,
+      "copiesAreByteEqual": true,
+      "inMemoryTransformationReproducedMainSanitizedArchive": true,
+      "sanitizedOutputSha256": "00fe3854f1cb7de42482d2b9cab730af697fb115629719f0850df7d43aaa9ca5",
+      "rawValuesPersisted": false,
+      "disposition": "preserve both sensitive raw source copies; no source bytes copied into repository",
+      "sanitizerSourcePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+      "sanitizerSourceBytes": 8743,
+      "sanitizerSourceSha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df"
+    },
+    "resourceMappings": [
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+        "sourceBytes": 289,
+        "sourceSha256": "560de4bfe857e0180e2b1ee5c40d65fc50554c43f4859f8d27f2a238a24a60dc",
+        "originalZipMember": "resources/0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json",
+        "sanitizedBytes": 223,
+        "sanitizedSha256": "c28da08ce8b1fd5f39077cec9b6f6af4cf779737f2d0d19215931ae59bcc8fe7",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": true,
+        "duplicateCopyHasSameSourceBytes": false,
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; exact source-to-main sanitized member mapping is recorded above; no deletion in this phase"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+        "sourceBytes": 143,
+        "sourceSha256": "44f5ae27809f7c6b766c1053b556815f53e6010c1cb7ffb3d4270301e68af072",
+        "originalZipMember": "resources/428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/2f350d735635dc137f0f2354c603e5c09ac856d3.json",
+        "sanitizedBytes": 134,
+        "sanitizedSha256": "832a058ef5c4b5138992e91d31203286cdb05275c998e1ca71b0a367f2ee6719",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": true,
+        "duplicateCopyHasSameSourceBytes": false,
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; exact source-to-main sanitized member mapping is recorded above; no deletion in this phase"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+        "sourceBytes": 289,
+        "sourceSha256": "9255c2a4c298ec0923e80ba64973b72a902ead28336796380598a42a960018a5",
+        "originalZipMember": "resources/b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json",
+        "sanitizedBytes": 223,
+        "sanitizedSha256": "c28da08ce8b1fd5f39077cec9b6f6af4cf779737f2d0d19215931ae59bcc8fe7",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": true,
+        "duplicateCopyHasSameSourceBytes": false,
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; exact source-to-main sanitized member mapping is recorded above; no deletion in this phase"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+        "sourceBytes": 63,
+        "sourceSha256": "104668dfeae350c7f02740beac6d9b66c407534cc09db6b74f7c673b36fcc84b",
+        "originalZipMember": "resources/bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/8176e305fe436a5173990ad29d06e4893f7c57ba.json",
+        "sanitizedBytes": 54,
+        "sanitizedSha256": "5c3f5310f8cbe719adc86b831e2f5bb44e728bd9613136536991bf55b64527c9",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": true,
+        "duplicateCopyHasSameSourceBytes": false,
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; exact source-to-main sanitized member mapping is recorded above; no deletion in this phase"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+        "sourceBytes": 289,
+        "sourceSha256": "560de4bfe857e0180e2b1ee5c40d65fc50554c43f4859f8d27f2a238a24a60dc",
+        "originalZipMember": "resources/0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json",
+        "sanitizedBytes": 223,
+        "sanitizedSha256": "c28da08ce8b1fd5f39077cec9b6f6af4cf779737f2d0d19215931ae59bcc8fe7",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": false,
+        "duplicateCopyHasSameSourceBytes": true,
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; exact source-to-main sanitized member mapping is recorded above; no deletion in this phase"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+        "sourceBytes": 143,
+        "sourceSha256": "44f5ae27809f7c6b766c1053b556815f53e6010c1cb7ffb3d4270301e68af072",
+        "originalZipMember": "resources/428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/2f350d735635dc137f0f2354c603e5c09ac856d3.json",
+        "sanitizedBytes": 134,
+        "sanitizedSha256": "832a058ef5c4b5138992e91d31203286cdb05275c998e1ca71b0a367f2ee6719",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": false,
+        "duplicateCopyHasSameSourceBytes": true,
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; exact source-to-main sanitized member mapping is recorded above; no deletion in this phase"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+        "sourceBytes": 289,
+        "sourceSha256": "9255c2a4c298ec0923e80ba64973b72a902ead28336796380598a42a960018a5",
+        "originalZipMember": "resources/b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json",
+        "sanitizedBytes": 223,
+        "sanitizedSha256": "c28da08ce8b1fd5f39077cec9b6f6af4cf779737f2d0d19215931ae59bcc8fe7",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": false,
+        "duplicateCopyHasSameSourceBytes": true,
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; exact source-to-main sanitized member mapping is recorded above; no deletion in this phase"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+        "sourceBytes": 63,
+        "sourceSha256": "104668dfeae350c7f02740beac6d9b66c407534cc09db6b74f7c673b36fcc84b",
+        "originalZipMember": "resources/bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/8176e305fe436a5173990ad29d06e4893f7c57ba.json",
+        "sanitizedBytes": 54,
+        "sanitizedSha256": "5c3f5310f8cbe719adc86b831e2f5bb44e728bd9613136536991bf55b64527c9",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": false,
+        "duplicateCopyHasSameSourceBytes": true,
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; exact source-to-main sanitized member mapping is recorded above; no deletion in this phase"
+      }
+    ],
+    "traceComparisons": [
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\1-trace.network",
+        "sourceBytes": 569068,
+        "sourceSha256": "1b210fb6e8e8fb708b06ca1103a684d8ac11d5325b98709a73d71fb6420a5f06",
+        "sameNameSanitizedMember": "1-trace.network",
+        "sanitizedBytes": 569068,
+        "sanitizedSha256": "e4735b4cbae014ae778a174fc3dc24850d1c3c8072070feaecd39e6a36b7046a",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "verified: existing sanitize-d1a-trace.py redaction logic plus trace-redaction-report.json resourceRenames, applied in memory; transformed bytes equal the exact main ZIP member",
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; no deletion in this phase",
+        "transformationSource": {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+          "bytes": 8743,
+          "sha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df"
+        },
+        "redactionReportBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9",
+        "recomputedOutputBytes": 569068,
+        "recomputedOutputSha256": "e4735b4cbae014ae778a174fc3dc24850d1c3c8072070feaecd39e6a36b7046a",
+        "recomputedOutputEqualsMainZipMember": true,
+        "preservedInputBytes": 569068,
+        "preservedInputSha256": "1b210fb6e8e8fb708b06ca1103a684d8ac11d5325b98709a73d71fb6420a5f06"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\1-trace.trace",
+        "sourceBytes": 1022701,
+        "sourceSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "sameNameSanitizedMember": "1-trace.trace",
+        "sanitizedBytes": 1022635,
+        "sanitizedSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "transformation applied in memory using existing redaction and resource-name mapping; two semantic differences remain in __playwright_value_ snapshot fields on lines 85 and 87; values not copied into this record",
+        "disposition": "retain one source copy as the minimum exact snapshot evidence; the other two byte-identical copies are conditional duplicate-cleanup candidates after fresh reference/path/link/lock checks; no deletion in this phase",
+        "transformationSource": {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+          "bytes": 8743,
+          "sha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df"
+        },
+        "redactionReportBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9",
+        "recomputedOutputBytes": 1022617,
+        "recomputedOutputSha256": "1d215abbf153aa2a2193c30d9a5ac63b86fc1242e1218444e657874c11b3f798",
+        "mainZipMemberBytes": 1022635,
+        "mainZipMemberSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+        "semanticDifferenceCount": 2,
+        "semanticDifferenceFields": [
+          "line 85: snapshot/html/.../__playwright_value_",
+          "line 87: snapshot/html/.../__playwright_value_"
+        ],
+        "differenceValueDisclosure": "values omitted; only field path, type (string) and per-value SHA prefix were inspected",
+        "duplicateSourceSet": {
+          "count": 3,
+          "allByteIdentical": true,
+          "sourceBytes": 1022701,
+          "sourceSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d"
+        }
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\2-trace.network",
+        "sourceBytes": 166758,
+        "sourceSha256": "78e4acabed788349ca43a940611c59aa032429886d16708d7b2ef8a8e64a0993",
+        "sameNameSanitizedMember": "2-trace.network",
+        "sanitizedBytes": 166758,
+        "sanitizedSha256": "919f88b0e5cfe708a963bb866d5077f4036be50af209b938c94615105753a7d3",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "verified: existing sanitize-d1a-trace.py redaction logic plus trace-redaction-report.json resourceRenames, applied in memory; transformed bytes equal the exact main ZIP member",
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; no deletion in this phase",
+        "transformationSource": {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+          "bytes": 8743,
+          "sha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df"
+        },
+        "redactionReportBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9",
+        "recomputedOutputBytes": 166758,
+        "recomputedOutputSha256": "919f88b0e5cfe708a963bb866d5077f4036be50af209b938c94615105753a7d3",
+        "recomputedOutputEqualsMainZipMember": true,
+        "preservedInputBytes": 166758,
+        "preservedInputSha256": "78e4acabed788349ca43a940611c59aa032429886d16708d7b2ef8a8e64a0993"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\1-trace.network",
+        "sourceBytes": 569068,
+        "sourceSha256": "1b210fb6e8e8fb708b06ca1103a684d8ac11d5325b98709a73d71fb6420a5f06",
+        "sameNameSanitizedMember": "1-trace.network",
+        "sanitizedBytes": 569068,
+        "sanitizedSha256": "e4735b4cbae014ae778a174fc3dc24850d1c3c8072070feaecd39e6a36b7046a",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "verified: existing sanitize-d1a-trace.py redaction logic plus trace-redaction-report.json resourceRenames, applied in memory; transformed bytes equal the exact main ZIP member",
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; no deletion in this phase",
+        "transformationSource": {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+          "bytes": 8743,
+          "sha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df"
+        },
+        "redactionReportBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9",
+        "recomputedOutputBytes": 569068,
+        "recomputedOutputSha256": "e4735b4cbae014ae778a174fc3dc24850d1c3c8072070feaecd39e6a36b7046a",
+        "recomputedOutputEqualsMainZipMember": true,
+        "preservedInputBytes": 569068,
+        "preservedInputSha256": "1b210fb6e8e8fb708b06ca1103a684d8ac11d5325b98709a73d71fb6420a5f06"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\1-trace.trace",
+        "sourceBytes": 1022701,
+        "sourceSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "sameNameSanitizedMember": "1-trace.trace",
+        "sanitizedBytes": 1022635,
+        "sanitizedSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "transformation applied in memory using existing redaction and resource-name mapping; two semantic differences remain in __playwright_value_ snapshot fields on lines 85 and 87; values not copied into this record",
+        "disposition": "retain one source copy as the minimum exact snapshot evidence; the other two byte-identical copies are conditional duplicate-cleanup candidates after fresh reference/path/link/lock checks; no deletion in this phase",
+        "transformationSource": {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+          "bytes": 8743,
+          "sha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df"
+        },
+        "redactionReportBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9",
+        "recomputedOutputBytes": 1022617,
+        "recomputedOutputSha256": "1d215abbf153aa2a2193c30d9a5ac63b86fc1242e1218444e657874c11b3f798",
+        "mainZipMemberBytes": 1022635,
+        "mainZipMemberSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+        "semanticDifferenceCount": 2,
+        "semanticDifferenceFields": [
+          "line 85: snapshot/html/.../__playwright_value_",
+          "line 87: snapshot/html/.../__playwright_value_"
+        ],
+        "differenceValueDisclosure": "values omitted; only field path, type (string) and per-value SHA prefix were inspected",
+        "duplicateSourceSet": {
+          "count": 3,
+          "allByteIdentical": true,
+          "sourceBytes": 1022701,
+          "sourceSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d"
+        }
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\2-trace.network",
+        "sourceBytes": 166758,
+        "sourceSha256": "78e4acabed788349ca43a940611c59aa032429886d16708d7b2ef8a8e64a0993",
+        "sameNameSanitizedMember": "2-trace.network",
+        "sanitizedBytes": 166758,
+        "sanitizedSha256": "919f88b0e5cfe708a963bb866d5077f4036be50af209b938c94615105753a7d3",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "verified: existing sanitize-d1a-trace.py redaction logic plus trace-redaction-report.json resourceRenames, applied in memory; transformed bytes equal the exact main ZIP member",
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; no deletion in this phase",
+        "transformationSource": {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+          "bytes": 8743,
+          "sha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df"
+        },
+        "redactionReportBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9",
+        "recomputedOutputBytes": 166758,
+        "recomputedOutputSha256": "919f88b0e5cfe708a963bb866d5077f4036be50af209b938c94615105753a7d3",
+        "recomputedOutputEqualsMainZipMember": true,
+        "preservedInputBytes": 166758,
+        "preservedInputSha256": "78e4acabed788349ca43a940611c59aa032429886d16708d7b2ef8a8e64a0993"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07-round2\\1-trace.trace",
+        "sourceBytes": 1022701,
+        "sourceSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "sameNameSanitizedMember": "1-trace.trace",
+        "sanitizedBytes": 1022635,
+        "sanitizedSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "transformation applied in memory using existing redaction and resource-name mapping; two semantic differences remain in __playwright_value_ snapshot fields on lines 85 and 87; values not copied into this record",
+        "disposition": "retain one source copy as the minimum exact snapshot evidence; the other two byte-identical copies are conditional duplicate-cleanup candidates after fresh reference/path/link/lock checks; no deletion in this phase",
+        "transformationSource": {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+          "bytes": 8743,
+          "sha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df"
+        },
+        "redactionReportBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9",
+        "recomputedOutputBytes": 1022617,
+        "recomputedOutputSha256": "1d215abbf153aa2a2193c30d9a5ac63b86fc1242e1218444e657874c11b3f798",
+        "mainZipMemberBytes": 1022635,
+        "mainZipMemberSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+        "semanticDifferenceCount": 2,
+        "semanticDifferenceFields": [
+          "line 85: snapshot/html/.../__playwright_value_",
+          "line 87: snapshot/html/.../__playwright_value_"
+        ],
+        "differenceValueDisclosure": "values omitted; only field path, type (string) and per-value SHA prefix were inspected",
+        "duplicateSourceSet": {
+          "count": 3,
+          "allByteIdentical": true,
+          "sourceBytes": 1022701,
+          "sourceSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d"
+        }
+      }
+    ],
+    "historicalGitBlobMappings": [
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json",
+        "bytes": 316012,
+        "sha256": "5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442",
+        "gitBlob": "414dfe920c54f68ca1a2f246f1fcdd82e43767bb",
+        "sourceCommit": "58d59ed85002da637aaeaa6bf98915d4a6ba918c",
+        "sourcePath": "docs/reviews/d1a/evidence/git-blob-hashes.json",
+        "commitReachableFromMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+        "verification": "against fetched current main 5b9c76b5f79917697906520edcd6947bfbfa925f: merge-base --is-ancestor sourceCommit FETCH_HEAD exited 0; rev-parse sourceCommit:path equals 414dfe920c54f68ca1a2f246f1fcdd82e43767bb; current-main path blob is 69a5adba69600bc3d53bf9e8fef989823965ab67, so historical mapping is retained without claiming the current path has identical bytes",
+        "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; no deletion in this phase"
+      }
+    ],
+    "other74": {
+      "count": 74,
+      "bytes": 45960098,
+      "reachableMainObjectCountChecked": 8133,
+      "exactHistoricalGitBlobMatches": 0,
+      "exactCurrentMainTreeBlobMatches": 0,
+      "crlfNormalizedMatches": 0,
+      "exactZipMemberMatches": 0,
+      "auditJsonMovedToHistoricalGitBlobMappings": true,
+      "pathInventoryReference": "docs/reviews/cleanup/d1a-trace-zip-mapping-2026-10-08.json#remainingD1aTmpInventory (exclude 8 resource JSON, 7 trace/network rows, and the separately mapped audit JSON)",
+      "perPathAssessments": [
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\add-archive-aliases.mjs",
+          "bytes": 9101,
+          "sha256": "c9b5af7d7e4dd3d9ca2a5df0f17bbc08eca73dc3b0af7659710fef920af1968a",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\add-d1a-environment-07-index.cjs",
+          "bytes": 1934,
+          "sha256": "eec3718707992a095821f3578b661d406670e1cc70722cde92491c48fb4640ef",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\build-ci385-archive.cjs",
+          "bytes": 11124,
+          "sha256": "476d4dfb9125a3d4cf239612f7b9b1e27bd738711dfeceb31a40988e1c308e97",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\candidate-worktree-check.log",
+          "bytes": 399,
+          "sha256": "6ad874a88d2d45528552d4ec5918721cba40beb5e8a84ee37bd690977fd12269",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task evidence index mapping this exact path to a durable redacted source, or owner decision that it is derivable/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "运行日志/文本检查输出，路径/名称表示 CI 或候选验证阶段，但当前没有把此文件映射到冻结 run 记录。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要任务冻结运行记录中的 exact path/hash、命令/退出码及脱敏结论，并确认已持久保存的必要失败摘要。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\capture-env08-checks.ps1",
+          "bytes": 1963,
+          "sha256": "abffc4562b619a891e4e7966605fced5b3057e635232cfbaa52b694782cdae4a",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\ci385-candidate-selection.json",
+          "bytes": 1444,
+          "sha256": "9f23c16d7449813f2d89c807b74118543d0915a57827c38fda4394957eab3775",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "验收/候选选择/索引/审计结构化输出；文件名可识别用途类别，但没有精确 manifest/blob/member 保全映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要在冻结 D1a manifest/index 中补该确切路径、SHA-256、生产命令及对应持久化源；若是唯一审计证据则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\ci385-candidate.index",
+          "bytes": 326826,
+          "sha256": "d90783c5f3d25641afb9b945177463f8e6671e839916e66184c05797ff20365e",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "验收/候选选择/索引/审计结构化输出；文件名可识别用途类别，但没有精确 manifest/blob/member 保全映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要在冻结 D1a manifest/index 中补该确切路径、SHA-256、生产命令及对应持久化源；若是唯一审计证据则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\ci385-final-candidate.index",
+          "bytes": 326826,
+          "sha256": "8f73f3382e55c076833ac17ebb57196db1cc3eeb2f44b066c179e4850f0688c2",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "验收/候选选择/索引/审计结构化输出；文件名可识别用途类别，但没有精确 manifest/blob/member 保全映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要在冻结 D1a manifest/index 中补该确切路径、SHA-256、生产命令及对应持久化源；若是唯一审计证据则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\ci385-final-candidate.mjs",
+          "bytes": 1498,
+          "sha256": "fc2dbc3da0e2dcd8e00de8534ef1ea62ec15f11467e855b6cbfabb7654883173",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-environment-04.ps1",
+          "bytes": 15489,
+          "sha256": "4542e17fbcb63aa0004744dcb12c0dd8ae5d20cdb9807234184a207fea8ba181",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-environment-08.ps1",
+          "bytes": 15571,
+          "sha256": "c77b4be6ee1a297c4312068dc67a7290ab0158c60b916de7ae465ff9a45e3a06",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.cjs",
+          "bytes": 4341,
+          "sha256": "ce4e2661f9291f80b3246067715461b5537ebcc5e848d391e829a22328897a55",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-record-validation.json",
+          "bytes": 541,
+          "sha256": "f199440e42e1df3bbaebbbae5121da4abfdb0056b6378511ee5086806962b4f7",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "验收/候选选择/索引/审计结构化输出；文件名可识别用途类别，但没有精确 manifest/blob/member 保全映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要在冻结 D1a manifest/index 中补该确切路径、SHA-256、生产命令及对应持久化源；若是唯一审计证据则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-reverification-02.ps1",
+          "bytes": 13338,
+          "sha256": "dd517dcb8a83880268991dbb07859051d9957fac057f4de9eda1408b95415f89",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-reverification-03.ps1",
+          "bytes": 13620,
+          "sha256": "b69143656acfd53ce492eab6a68fa05b54ddd84e4e9e9a2812efe3a45ddc354a",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-reverification.ps1",
+          "bytes": 13302,
+          "sha256": "7798312c1497a89f214c11d5bd6da3bc376cfd57f609c58fbe4759283e10953a",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\finalize-d1a-07-reporting.cjs",
+          "bytes": 3687,
+          "sha256": "b97b57656480e7c81f7c1c238ad9ca2a4f36dbc7a53451dd1bafad231f2cfe60",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\finalize-d1a-artifact-manifest.cjs",
+          "bytes": 3656,
+          "sha256": "21d960efdf9d81750edb4ceccf09c0d58d12cfc096463d69facddbc410ceabae",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\finalize-env08-index.cjs",
+          "bytes": 1142,
+          "sha256": "3942b12f33e840f56e5aa83d208fb8eead7b15ebb17403fd16e6d86b86c09f97",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\fix-d1a-index-tail.cjs",
+          "bytes": 269,
+          "sha256": "e4cbcaa061dee071ef12be358e32dfd99d5b31dceadd0e7641963695c8c1a317",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\fix-verification-eof.cjs",
+          "bytes": 157,
+          "sha256": "c42ba3bef045c9efdccbd26023bd023dabf258b41701c868397ea861059e807d",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\git-blob-hashes.cjs",
+          "bytes": 1183,
+          "sha256": "7f2dc4141aa386c33b08d4110205e1942428aa0f0aee5a5d2ae93e607ae8bfbc",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\inspect-logrefs.cjs",
+          "bytes": 747,
+          "sha256": "0371e3ba8e254758845e03547f0c3ca8ae92875c6a21ae974c287369873d9fd9",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\pr-origin-main-diff.patch",
+          "bytes": 9736386,
+          "sha256": "448cd969b467de728af5c4bc2e7a0386b8d714a10f3284bbc96da56052318519",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task evidence index mapping this exact path to a durable redacted source, or owner decision that it is derivable/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "PR/main 差异快照；不是源码工作区，也未与 Git blob 或已接受报告逐字节匹配。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要关联的 PR/base/head、生成命令和 patch 范围，并确认差异内容已由可达提交完整表达或应长期保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\refresh-d1a-manifest-worktree.cjs",
+          "bytes": 949,
+          "sha256": "852d44229f2962dc3dbfc0c1afe5b3f86d7e40252e62d3de2edc1b770ed91f68",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.cjs",
+          "bytes": 2094,
+          "sha256": "f8594571f23faa3f6b225df08452b9da41d54168f42dcaa49be1cf517591a631",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+          "bytes": 8743,
+          "sha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\update-d1a-reverification-index.cjs",
+          "bytes": 2003,
+          "sha256": "c3bb2e594d5d8f1bd451e3c76b4331d404b39a59d7e95c4a3a73af377799a6a9",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\update-d1a-verification-record.cjs",
+          "bytes": 4545,
+          "sha256": "69a1d0d7b06b17cfd039bef02e108d4391c22c6dfe5e2482982df71599b85761",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\update-env08-records.cjs",
+          "bytes": 5874,
+          "sha256": "9e45a273bd1a9e7a42de850718b9fbd9b523d88a462de88c442665a67401dbc1",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\validate-archive-references.cjs",
+          "bytes": 1463,
+          "sha256": "18a9f95e594d10a5db9e079e444ba4473b752c7c2f1d377c04d807a92e90d896",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\validate-d1a-repaired-evidence.py",
+          "bytes": 6861,
+          "sha256": "f5328d1c5f3816f95b5313226fba34dfb70f22928a795a2aed66589d2f9f20f4",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\validate-transcriptrefs.cjs",
+          "bytes": 1155,
+          "sha256": "30cc793ebe9f2782df15acafc966d65fafbec3c96d91295f0fcd0ec6a1bd5edf",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\verify-ci385-archive.mjs",
+          "bytes": 9858,
+          "sha256": "4794cbb3135b24698a1f4d2dd463410991ba8fe9f8f69ddcff9f014c857e3d2b",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\verify-d1a-git-records.cjs",
+          "bytes": 4411,
+          "sha256": "ee31379099f9731610b82938f5c02fe97b237f6d181da545ba4da2a1bea7e88b",
+          "classification": "test-output-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "本地生成/校验脚本源码；扩展名和脚本名表明脚本角色，但未找到其精确路径/hash 的 main 可达 blob 或冻结 manifest 映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要 D1a 冻结验收 manifest 或调用记录把该绝对路径、SHA-256、执行命令、输入与输出逐项关联；并指出是否有已接受的主线脚本替代。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\html-report\\index.html",
+          "bytes": 697062,
+          "sha256": "523917a9d9dc9821c1d30673b1734c9c76967c463453f61187833969c8a25dd8",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report 入口页（生成产物），与相邻 report/data 目录绑定。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要冻结 run manifest 将该 report 与具体执行/保留策略关联，并证明 data 附件均有接受版本；或给可复现命令和输入版本。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\html-report\\data\\11bc66353fa36f75dca27a0f5c3ae65bca3a2639.png",
+          "bytes": 63823,
+          "sha256": "b657d0d3ffb0de79af4d69a1ebd3f89e56558c42a43e26e1058b0ef45eabe7cc",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\html-report\\data\\515ea37e248a97fa2ebe60c0cd2cadf524feeb64.png",
+          "bytes": 184465,
+          "sha256": "7ece6dd7bc0d52174de816613d771afe64101021bbfa3e38f85000ddd06f9c44",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\html-report\\data\\5396ec7c422d8953ecaebf6837e3f5cf86cf1ad1.png",
+          "bytes": 51445,
+          "sha256": "98ef384da3afccd5d89e03be0eee01c2c1b715b467071266e864363d25c2baed",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\html-report\\data\\7b45f65574c54a27b1400821f8207f21b6c2db23.png",
+          "bytes": 203490,
+          "sha256": "7a4b5b338bea9e92d11ecf566b509bf7005c448e759174eab982277078cd9239",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\html-report\\data\\8fb2b5ed896c3e3bb1305d8b3e738cbc6bdcdfb9.json",
+          "bytes": 3918,
+          "sha256": "2a290643e4d11a14b0edd0e0d268127507af5e59deb76169ff34f357dbc623e4",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "验收/候选选择/索引/审计结构化输出；文件名可识别用途类别，但没有精确 manifest/blob/member 保全映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要在冻结 D1a manifest/index 中补该确切路径、SHA-256、生产命令及对应持久化源；若是唯一审计证据则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\html-report\\data\\bd680225420eb0aa514ad9ffa603a32d0bdb4382.png",
+          "bytes": 199803,
+          "sha256": "de181a9932159e7fbe6be0275acb69ee843de3ee5555a7948219100adb00d434",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\html-report\\data\\e5257897559a135919a07ac5380275925a8499ed.png",
+          "bytes": 59466,
+          "sha256": "e528c2e147938d778a14f38a9b3a3712738eaf6374aafcc1ced1b0ca4e102450",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\html-report\\data\\ea43cfcc3a7eb56800ce744587ab4c2c5aa9a8f0.png",
+          "bytes": 85375,
+          "sha256": "28087395c0ee31d96c30396c0079709dd8bd51eef3998ab47af652b3c46b6209",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\html-report\\data\\eeca546f9b42cbddce4043e3164062237b0adc12.png",
+          "bytes": 119565,
+          "sha256": "58ad8d8bd1832775e62c6585711113fb7978769cc92339cd7bb06e95cfc0d435",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\actionable-collaboration-q-9c8c8--URLs-and-responsive-layout-authenticated\\actionable-collaboration-queues.png",
+          "bytes": 157188,
+          "sha256": "ce24cef6bb6976f50fd778c196cb53459b67558a8bb51e9bc36f01b2f0a5bd2b",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\agent-governed-controls-im-1e9c5-d-requires-explicit-reissue-authenticated\\governed-stop-stale-390.png",
+          "bytes": 57413,
+          "sha256": "bbf640ac3be6bb561c7fd47fca9942cce632a0869907c2aea2ee660b8ee14976",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\agent-governed-controls-re-c473d-o-the-current-Plan-revision-authenticated\\governed-steer-1440.png",
+          "bytes": 153727,
+          "sha256": "686ae39874248bcae7e2c9b8e6235eeee605014b8075723cf7de4c516d8a13f2",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\agent-governed-controls-re-d819a-result-Session-exactly-once-authenticated\\governed-retry-768.png",
+          "bytes": 101505,
+          "sha256": "b56eb6be615e736bba9e95eaf0c26978f48b5dc90feb084068af62ebebcbd674",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\agent-run-timeline-Run-Tim-a5d4f-ory-and-responsive-evidence-authenticated\\agent-run-timeline-390.png",
+          "bytes": 48905,
+          "sha256": "0bfe34417a761e75d66a869fb4cf369bc3a5332575338a0def0dcca921386160",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\attention-center-Attention-0296e-s-and-blocks-stale-recovery-authenticated\\attention-center.png",
+          "bytes": 112410,
+          "sha256": "37fddc8f7a03a4df667ab882fd648979f162b02aba4a889c3f0c1aed8aa84e71",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\human-reflow-project-rail-and-shell-reflow-at-1440x1000-authenticated\\attachments\\project-rail-1440x1000-screenshot-cf8819a7e9dd171df25684d0d3da1ce55860688a.png",
+          "bytes": 199803,
+          "sha256": "de181a9932159e7fbe6be0275acb69ee843de3ee5555a7948219100adb00d434",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\human-reflow-project-rail-and-shell-reflow-at-1440x900-authenticated\\attachments\\project-rail-1440x900-screenshot-e4bbfa892b1c7853b64ff65ef081c899dc83c468.png",
+          "bytes": 184465,
+          "sha256": "7ece6dd7bc0d52174de816613d771afe64101021bbfa3e38f85000ddd06f9c44",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\human-reflow-project-rail-and-shell-reflow-at-1920x1080-authenticated\\attachments\\project-rail-1920x1080-screenshot-fa0f7e71ace5ef0ad7c5f9300937a02df59f3790.png",
+          "bytes": 203490,
+          "sha256": "7a4b5b338bea9e92d11ecf566b509bf7005c448e759174eab982277078cd9239",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\human-reflow-project-rail-and-shell-reflow-at-320x800-authenticated\\attachments\\project-rail-320x800-screenshot-69ad9da8e58cceb47368569cf209f6af78a7eed6.png",
+          "bytes": 51445,
+          "sha256": "98ef384da3afccd5d89e03be0eee01c2c1b715b467071266e864363d25c2baed",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\human-reflow-project-rail-and-shell-reflow-at-375x812-authenticated\\attachments\\project-rail-375x812-screenshot-9a77f54a96e21aac7bee7336cb87c83946cb65ac.png",
+          "bytes": 59466,
+          "sha256": "e528c2e147938d778a14f38a9b3a3712738eaf6374aafcc1ced1b0ca4e102450",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\human-reflow-project-rail-and-shell-reflow-at-390x844-authenticated\\attachments\\project-rail-390x844-screenshot-fe940f3db6025dd600df8ae3938e007efe5617dc.png",
+          "bytes": 63823,
+          "sha256": "b657d0d3ffb0de79af4d69a1ebd3f89e56558c42a43e26e1058b0ef45eabe7cc",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\human-reflow-project-rail-and-shell-reflow-at-760x900-authenticated\\attachments\\project-rail-760x900-32e591345a0a24cfb4a75de4b8d01e40df50c793.json",
+          "bytes": 3918,
+          "sha256": "2a290643e4d11a14b0edd0e0d268127507af5e59deb76169ff34f357dbc623e4",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "验收/候选选择/索引/审计结构化输出；文件名可识别用途类别，但没有精确 manifest/blob/member 保全映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要在冻结 D1a manifest/index 中补该确切路径、SHA-256、生产命令及对应持久化源；若是唯一审计证据则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\human-reflow-project-rail-and-shell-reflow-at-760x900-authenticated\\attachments\\project-rail-760x900-screenshot-40b8954a42714834474bea85f455589e5ae98523.png",
+          "bytes": 85375,
+          "sha256": "28087395c0ee31d96c30396c0079709dd8bd51eef3998ab47af652b3c46b6209",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\human-reflow-project-rail-and-shell-reflow-at-761x900-authenticated\\attachments\\project-rail-761x900-screenshot-4cef3d89f6e9575bd5d58b49a127c20047101e92.png",
+          "bytes": 119565,
+          "sha256": "58ad8d8bd1832775e62c6585711113fb7978769cc92339cd7bb06e95cfc0d435",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\output\\recovery-center-Recovery-C-50707-state-and-responsive-layout-authenticated\\recovery-center.png",
+          "bytes": 135110,
+          "sha256": "8d352b5fac2c2b80c3c063e3025bb2705f675ba52eb8018db391f44b9c288f7f",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env04\\root-mixed\\html-report\\index.html",
+          "bytes": 546650,
+          "sha256": "103f013cf66af8199de02be218c78b8f73e4756794e155519ef39024e0b4dbb5",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report 入口页（生成产物），与相邻 report/data 目录绑定。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要冻结 run manifest 将该 report 与具体执行/保留策略关联，并证明 data 附件均有接受版本；或给可复现命令和输入版本。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\html-report\\data\\d69f056ec411e76e5d9f9e4664b013966ee3cc75.zip",
+          "bytes": 14795293,
+          "sha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "原始 Playwright trace/archive 副本，当前证据提示可能包含敏感原值。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "没有归档/删除依据；继续留在原处。若将来处置，先独立做敏感数据审查、保留策略和安全擦除方案；不复制原始 ZIP 到仓库。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\output\\.last-run.json",
+          "bytes": 96,
+          "sha256": "1c7fd2ad7b92ff58c6336c7049de0e47de3d38f503c225f56f82e8097faa4b8c",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest or archive index mapping this exact path, or owner decision on retention/rebuildability",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "验收/候选选择/索引/审计结构化输出；文件名可识别用途类别，但没有精确 manifest/blob/member 保全映射。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要在冻结 D1a manifest/index 中补该确切路径、SHA-256、生产命令及对应持久化源；若是唯一审计证据则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\output\\stage0-Stage-0-browser-acc-8d3a0--writes-after-team-deletion-bootstrap\\trace.zip",
+          "bytes": 14795293,
+          "sha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "原始 Playwright trace/archive 副本，当前证据提示可能包含敏感原值。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "没有归档/删除依据；继续留在原处。若将来处置，先独立做敏感数据审查、保留策略和安全擦除方案；不复制原始 ZIP 到仓库。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env08\\mocked-dev\\html-report\\index.html",
+          "bytes": 548994,
+          "sha256": "3405f09c47b3c06870f2a58467725bbf041429f7bfe47dadc0a123f991937d1b",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report 入口页（生成产物），与相邻 report/data 目录绑定。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要冻结 run manifest 将该 report 与具体执行/保留策略关联，并证明 data 附件均有接受版本；或给可复现命令和输入版本。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env08\\root-mixed\\output\\actionable-collaboration-q-9c8c8--URLs-and-responsive-layout-authenticated\\actionable-collaboration-queues.png",
+          "bytes": 157188,
+          "sha256": "ce24cef6bb6976f50fd778c196cb53459b67558a8bb51e9bc36f01b2f0a5bd2b",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env08\\root-mixed\\output\\agent-governed-controls-im-1e9c5-d-requires-explicit-reissue-authenticated\\governed-stop-stale-390.png",
+          "bytes": 57413,
+          "sha256": "bbf640ac3be6bb561c7fd47fca9942cce632a0869907c2aea2ee660b8ee14976",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env08\\root-mixed\\output\\agent-governed-controls-re-c473d-o-the-current-Plan-revision-authenticated\\governed-steer-1440.png",
+          "bytes": 153727,
+          "sha256": "686ae39874248bcae7e2c9b8e6235eeee605014b8075723cf7de4c516d8a13f2",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env08\\root-mixed\\output\\agent-governed-controls-re-d819a-result-Session-exactly-once-authenticated\\governed-retry-768.png",
+          "bytes": 101505,
+          "sha256": "b56eb6be615e736bba9e95eaf0c26978f48b5dc90feb084068af62ebebcbd674",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env08\\root-mixed\\output\\agent-run-timeline-Run-Tim-a5d4f-ory-and-responsive-evidence-authenticated\\agent-run-timeline-390.png",
+          "bytes": 48905,
+          "sha256": "0bfe34417a761e75d66a869fb4cf369bc3a5332575338a0def0dcca921386160",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env08\\root-mixed\\output\\attention-center-Attention-0296e-s-and-blocks-stale-recovery-authenticated\\attention-center.png",
+          "bytes": 112435,
+          "sha256": "dc667befb25ecc86818d54db5bd73a614416b77fe904a6a681c907145f117657",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env08\\root-mixed\\output\\recovery-center-Recovery-C-50707-state-and-responsive-layout-authenticated\\recovery-center.png",
+          "bytes": 135109,
+          "sha256": "7ec12a9329126a24bed203f9c443f72caa5ecbd28b88c11ed01ff3e6cdcb17c0",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task artifact manifest with exact logicalPath/version/byteKind mapping to a durable member, or owner retention/discard decision",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report/output 下的截图/附件；目录中的测试 slug 与 viewport 表明截图场景，不能单独证明它是已接受的验收产物或可重建。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要精确测试用例/viewport、运行 ID、生成命令及验收附件索引中对应路径或持久化替代物；缺其一则保留。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        },
+        {
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-d0-evidence-ff61\\mocked-dev\\html-report\\index.html",
+          "bytes": 548970,
+          "sha256": "ecefa19a437e797ab4816d180e12b456ad4c1faa967abc03004a84c94d401629",
+          "classification": "test-evidence-unmapped",
+          "preservationStatus": "unmapped; this does not establish uniqueness",
+          "neededInput": "task freeze manifest and exact output-path to archived ZIP member mapping, or owner decision that this output is reproducible/disposable",
+          "sameNameZipMembers": [],
+          "exactZipMemberMatches": [],
+          "observedRole": "Playwright HTML report 入口页（生成产物），与相邻 report/data 目录绑定。",
+          "reachableMainHistoryExactBlobMatch": false,
+          "reviewedSources": [
+            "docs/reviews/d1a/artifact-manifest.json",
+            "docs/reviews/d1a/evidence/reverification-index.json",
+            "docs/reviews/d1a/evidence/check-index.json",
+            "reachable main history through 96e724858e692d262107c34db50b40c3ae7c122c"
+          ],
+          "missingEvidence": "需要冻结 run manifest 将该 report 与具体执行/保留策略关联，并证明 data 附件均有接受版本；或给可复现命令和输入版本。",
+          "disposition": "retain pending the path-specific evidence above; no uniqueness or rebuildability claim"
+        }
+      ],
+      "preservationRule": "retain all 74; each exact path has observed role and a concrete missing-evidence request above; no uniqueness or rebuildability is inferred from names/extensions"
+    },
+    "classificationSummary": {
+      "conditionalCleanupCandidates": {
+        "resourceCopies": 8,
+        "networkCopies": 4,
+        "historicalGitBlobCopy": 1,
+        "total": 13
+      },
+      "traceSources": {
+        "identicalCopies": 3,
+        "minimumSourceCopiesToRetain": 1,
+        "duplicateCopiesConditionalOnFreshReferenceChecks": 2
+      },
+      "otherUnmappedFiles": 74,
+      "sensitiveRawZipCopiesRetained": 2
+    },
+    "preDeleteChecks": {
+      "checkedAtUtc": "2026-10-08T12:57:18.2614267Z",
+      "machineStatus": "tds status: running, v0.1.60; DarkFlame 6DOlLniZ0sqBYGHeIhRMq",
+      "todoSnapshot": {
+        "cleanup52": "building",
+        "d1a11": "done",
+        "g1_18": "done",
+        "c1_15": "done; protected workspace not targeted",
+        "otherActiveOrRecovery": [
+          "#5 review",
+          "#9 building",
+          "#17 building",
+          "#21 review",
+          "#8 done but protected"
+        ]
+      },
+      "readableActiveBuildConversationExactCandidatePathMentions": {
+        "#5": 0,
+        "#9": 0,
+        "#17": 0,
+        "#21": 0,
+        "#52": "references cleanup candidates as this cleanup task; no independent build-path registry exposed"
+      },
+      "nonCurrentProcessCommandLineReferences": 0,
+      "processQuerySucceeded": true,
+      "candidatePaths": "the 8 resourceMappings[].absolutePath values and 4 traceComparisons[].absolutePath values ending in .network; each remains individually enumerated with bytes and source SHA-256 in this JSON",
+      "mappingRecheck": {
+        "resourceCopies": 8,
+        "eachSourceEqualsRawZipMember": true,
+        "eachSanitizedZipMemberShaMatchesLedger": true,
+        "networkCopies": 4,
+        "eachInMemorySanitizedTransformEqualsMainZipMember": true,
+        "sourceAndTargetHashesMatchLedger": true,
+        "currentMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+        "sanitizedArchiveBlob": "02c663b7dbdd3c39c891adb99a6908b33bef4ccd",
+        "redactionReportBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9"
+      },
+      "workspaceAndGit": {
+        "resolvedWorkspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+        "head": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+        "statusEntries": 0,
+        "registeredLinkedWorktree": true,
+        "worktreeCountBefore": 21,
+        "resourceDirectories": [
+          {
+            "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources",
+            "filesBefore": 4,
+            "subdirectoriesBefore": 0
+          },
+          {
+            "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources",
+            "filesBefore": 4,
+            "subdirectoriesBefore": 0
+          }
+        ]
+      },
+      "pathSafety": {
+        "allTargetsInsideExpectedD1aTmp": true,
+        "distinctPathComponentsChecked": 19,
+        "reparsePointsFound": 0,
+        "all12TargetsExist": true
+      },
+      "nativePerFileChecks": {
+        "exclusiveReadWriteOpenSucceeded": 12,
+        "lockedOrAccessDenied": 0,
+        "noContentWasWritten": true,
+        "allTargetsStillMatchRecordedSizeAndSha256": true,
+        "method": "[IO.File]::Open(path, [IO.FileMode]::Open, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None); no content was written",
+        "deletePermissionTestPerformed": false,
+        "interpretation": "Exclusive read-write open succeeded and no lock/access-denied result was observed. This is not a DELETE-access or ACL permission test and does not prove the file can be deleted."
+      },
+      "diskFreeBeforeSampleBytes": 357047390208,
+      "deletionHasNotStartedAtThisCheckpoint": true
+    },
+    "cleanupExecution": {
+      "operationPolicy": "exact-file Remove-Item only; no recurse, force, move, branch deletion, or alternate-method retry",
+      "receiptTimeNote": "PowerShell did not emit a per-call timestamp; receipts are persisted immediately after each tool return without inventing an operation timestamp",
+      "items": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+          "bytesBefore": 63,
+          "sha256Before": "104668dfeae350c7f02740beac6d9b66c407534cc09db6b74f7c673b36fcc84b",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 63,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+          "bytesBefore": 289,
+          "sha256Before": "560de4bfe857e0180e2b1ee5c40d65fc50554c43f4859f8d27f2a238a24a60dc",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 289,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+          "bytesBefore": 143,
+          "sha256Before": "44f5ae27809f7c6b766c1053b556815f53e6010c1cb7ffb3d4270301e68af072",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 143,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+          "bytesBefore": 289,
+          "sha256Before": "9255c2a4c298ec0923e80ba64973b72a902ead28336796380598a42a960018a5",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 289,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+          "bytesBefore": 289,
+          "sha256Before": "560de4bfe857e0180e2b1ee5c40d65fc50554c43f4859f8d27f2a238a24a60dc",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 289,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+          "bytesBefore": 143,
+          "sha256Before": "44f5ae27809f7c6b766c1053b556815f53e6010c1cb7ffb3d4270301e68af072",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 143,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+          "bytesBefore": 289,
+          "sha256Before": "9255c2a4c298ec0923e80ba64973b72a902ead28336796380598a42a960018a5",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 289,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+          "bytesBefore": 63,
+          "sha256Before": "104668dfeae350c7f02740beac6d9b66c407534cc09db6b74f7c673b36fcc84b",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 63,
+          "error": null
+        }
+      ],
+      "completedPhase": "both D1a resource directories and all four network paths",
+      "resourceDirectoriesAfter": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources",
+          "filesAfter": 0,
+          "subdirectoriesAfter": 0
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources",
+          "filesAfter": 0,
+          "subdirectoriesAfter": 0
+        }
+      ],
+      "logicalBytesRemoved": 1473220,
+      "physicalOrNetDiskRelease": null,
+      "remainingCandidateCount": 0,
+      "networkReceipts": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\1-trace.network",
+          "bytesBefore": 569068,
+          "sha256Before": "1b210fb6e8e8fb708b06ca1103a684d8ac11d5325b98709a73d71fb6420a5f06",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 569068,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\2-trace.network",
+          "bytesBefore": 166758,
+          "sha256Before": "78e4acabed788349ca43a940611c59aa032429886d16708d7b2ef8a8e64a0993",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 166758,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\1-trace.network",
+          "bytesBefore": 569068,
+          "sha256Before": "1b210fb6e8e8fb708b06ca1103a684d8ac11d5325b98709a73d71fb6420a5f06",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 569068,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\2-trace.network",
+          "bytesBefore": 166758,
+          "sha256Before": "78e4acabed788349ca43a940611c59aa032429886d16708d7b2ef8a8e64a0993",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "[IO.File]::Open with FileAccess.ReadWrite and FileShare.None succeeded without writing content; DELETE permission was not tested and is not proven",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 166758,
+          "error": null
+        }
+      ],
+      "sourceReceipts": {
+        "rawSessionFile": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T17-15-17-01a11acb-aa1d-7c20-9f0a-069bb121f67b.jsonl",
+        "calls": [
+          {
+            "callId": "call_7901106ca4d049938e86cd0d9696954b",
+            "inputLine": 4761,
+            "outputLine": 4763,
+            "inputTimeUtc": "2026-10-08T12:58:49.822Z",
+            "outputTimeUtc": "2026-10-08T12:58:51.030Z",
+            "execId": "exec-302e1b02-e585-483e-997c-b6716e801274",
+            "exitCode": 0
+          },
+          {
+            "callId": "call_608cb4251b4c42a892f23e76c672f90b",
+            "inputLine": 4779,
+            "outputLine": 4781,
+            "inputTimeUtc": "2026-10-08T12:59:21.666Z",
+            "outputTimeUtc": "2026-10-08T12:59:23.787Z",
+            "execId": "exec-dfcb838f-f121-4388-bc60-b2845915e595",
+            "exitCode": 0
+          },
+          {
+            "callId": "call_cc00b68592ee4ea5a4da62c819021e4d",
+            "inputLine": 4800,
+            "outputLine": 4802,
+            "inputTimeUtc": "2026-10-08T12:59:56.328Z",
+            "outputTimeUtc": "2026-10-08T12:59:58.780Z",
+            "execId": "exec-4c158a83-e972-4521-b7dc-ba74425d6d87",
+            "exitCode": 0
+          },
+          {
+            "callId": "call_dd6708acef0940359feb14bd0036ca17",
+            "inputLine": 4838,
+            "outputLine": 4840,
+            "inputTimeUtc": "2026-10-08T13:01:07.347Z",
+            "outputTimeUtc": "2026-10-08T13:01:08.584Z",
+            "execId": "exec-e2f8d42d-2747-4cff-8f29-08de58b2977c",
+            "exitCode": 0
+          },
+          {
+            "callId": "call_8f6f6788849349d8892ee790d53adc13",
+            "inputLine": 4868,
+            "outputLine": 4870,
+            "inputTimeUtc": "2026-10-08T13:01:43.242Z",
+            "outputTimeUtc": "2026-10-08T13:01:44.462Z",
+            "execId": "exec-791b73ef-3aa5-4699-b33b-8876afb976d2",
+            "exitCode": 0
+          },
+          {
+            "callId": "call_546bc6c84025429496b14e837d84c78d",
+            "inputLine": 4882,
+            "outputLine": 4884,
+            "inputTimeUtc": "2026-10-08T13:02:03.018Z",
+            "outputTimeUtc": "2026-10-08T13:02:04.603Z",
+            "execId": "exec-6fb53b51-c891-487b-89cb-a5a2d8bdba9d",
+            "exitCode": 0
+          },
+          {
+            "callId": "call_9f1624d64e9b44c88cf2ca471985bf1a",
+            "inputLine": 4896,
+            "outputLine": 4898,
+            "inputTimeUtc": "2026-10-08T13:02:33.042Z",
+            "outputTimeUtc": "2026-10-08T13:02:34.240Z",
+            "execId": "exec-9bf20b0d-8508-4998-a76b-b1c60800fbdf",
+            "exitCode": 0
+          }
+        ]
+      }
+    }
+  },
+  "g1Clone": {
+    "todoId": "Tws50k02Pi52R-RJEXP_N",
+    "todoPhase": "done",
+    "parentWorkspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+    "parentHead": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+    "parentStatusEntries": 0,
+    "clonePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout",
+    "resolvedAbsolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout",
+    "classification": "independent shallow clone nested in G1 .tmp; not a linked parent worktree",
+    "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+    "shallow": true,
+    "registeredInParentWorktreeList": false,
+    "statusEntries": 143,
+    "trackedDeletions": 143,
+    "untrackedCount": 0,
+    "ignoredCount": 0,
+    "localHeadBranchCount": 1,
+    "indexLockPresent": false,
+    "fixture": {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-read.mjs",
+      "bytes": 2457,
+      "sha256": "ef4c368b093f293ccbc77cd4f31e86492a1188f5b091ac0e0642719c39b84294",
+      "purpose": "fixture sets clone as cwd, copies three self-contained inputs, asserts shallow mode and unavailable historic blob, then validates archive reads; static inspection only, not executed"
+    },
+    "fixtureInputs": [
+      {
+        "path": "scripts/verify-raw-evidence-archive.mjs",
+        "bytes": 9722,
+        "sha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131",
+        "gitBlob": "b32919f321b8d42913e7e476989f1c8f389327dd"
+      },
+      {
+        "path": "docs/evidence/build-input-reachability.current/raw-evidence.zip",
+        "bytes": 2339178,
+        "sha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b",
+        "gitBlob": "1875e8935dee1d406616f6d5e799d4acc739041a"
+      },
+      {
+        "path": "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
+        "bytes": 140663,
+        "sha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162",
+        "gitBlob": "f5c477c404645a070d5ae7e9aafb6c744da8decb"
+      }
+    ],
+    "referenceSnapshot": {
+      "exactPathMentionsInReadableActiveBuildChats": 0,
+      "readableChatsChecked": [
+        "todo #5 ti53hOGbvnBNrvjXXveGO",
+        "todo #9 0BkezbmWV6k8vwrlSNuF_",
+        "todo #15 kkG9VeT3_uTzREhjnX2ve",
+        "todo #17 4DlyrPrDMMtK5JTmFm1t_",
+        "todo #21 2j2sxT5wJ-l001efH_meJ",
+        "cleanup #52 6LZdc1ZhadjkkYSzEi6zB"
+      ],
+      "otherProcessCommandLineReferences": 0,
+      "platformGlobalBuildPathRegistryQuery": "not exposed in available read-only tool surface; no claim of global absence"
+    },
+    "pathSafety": {
+      "resolvedUnderWorkspaces": true,
+      "checkedElements": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+          "reparsePoint": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp",
+          "reparsePoint": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout",
+          "reparsePoint": false
+        }
+      ]
+    },
+    "lockCheck": {
+      "openfilesExitCode": 1,
+      "openfilesOutput": "maintain objects list flag is disabled; cannot enumerate local opened files",
+      "handleExeAvailable": false,
+      "indexLockPresent": false,
+      "fileHandleAbsenceProven": false
+    },
+    "deletedPathsRecovery": {
+      "trackedDeletedCount": 143,
+      "recoverableFromCloneHead": 143,
+      "sameBlobAsCurrentMain": 140,
+      "differentBlobAsCurrentMain": 3,
+      "currentTrackedFileCount": 1464,
+      "currentTrackedFilesNotInCurrentMain": 25,
+      "allCurrentTrackedFilesRecoverableFromCloneHead": true,
+      "uniqueSourceClaim": "none; earlier independent review says clone HEAD is contained in main (main...HEAD = 26 0); 143 deletions recover from clone HEAD (140 blobs same as main, 3 different), and all 1,464 current tracked files recover from clone HEAD; 25 not matching current main are not unique sources"
+    },
+    "decision": "next-stage conditional cleanup candidate based on completed G1 fixture ownership, recoverable content, readable active-chat/process scans, and current path/reparse checks; do not delete in this review-only phase. Missing OS handle enumeration and global registry query are documented limits, not hard gates or global-absence claims.",
+    "nextStageDeletionProcedure": {
+      "refreshBeforeAction": [
+        "machine online/status",
+        "current todo phases and readable active build chats",
+        "process command-line references to exact clone path"
+      ],
+      "persistBeforeAction": [
+        "full per-path absolute path/size/SHA-256 list",
+        "ownership and Git/fixture source mapping",
+        "current status including tracked deletions, untracked/ignored files and branches"
+      ],
+      "pathSafety": [
+        "resolve exact clone path and verify strictly beneath the designated G1 workspaces .tmp directory",
+        "check root and every path component for root misdirection, symlink, junction or reparse-point traversal"
+      ],
+      "nativeChecks": [
+        "for every file, attempt exclusive-open/lock check and inspect ACL/delete permission without mutating contents"
+      ],
+      "failurePolicy": "if any file is locked, access is denied, or path/link checks fail, retain the affected target and record exact path/error; do not force or switch deletion methods",
+      "operation": "only after all checks succeed, use PowerShell Remove-Item -LiteralPath <verified absolute clone path> -Recurse -ErrorAction Stop without -Force",
+      "receipt": [
+        "command and actual exit code",
+        "exception if any",
+        "post-action root existence",
+        "exact residual paths and their sizes/hashes",
+        "actual freed-byte enumeration; do not infer from disk-volume deltas"
+      ],
+      "idleGate": "do not require all tasks to be idle and do not wait for unavailable global-handle or registry interfaces"
+    },
+    "priorEditRejectionReceipt": {
+      "tool": "functions.exec invoking exec_command with PowerShell",
+      "target": "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d\\docs\\reviews\\cleanup\\remaining-materials-review-2026-10-08.json",
+      "intendedOperation": "composite PowerShell command containing a Python here-string to update g1Clone evidence fields, followed by git diff --stat; no delete, move, restore, or permission change",
+      "callId": null,
+      "eventTimeUtc": null,
+      "inputAvailability": "the attempted payload is present in the preceding conversation tool-call record; the process-rejection wrapper did not expose a separate raw request id or timestamp",
+      "displayedOutput": "Script failed; exec_command failed: CreateProcess { message: Rejected(\"<PowerShell -Command payload elided by wrapper> ... 2128 chars truncated ... blocked by policy\") }",
+      "interpretation": "the tool only reported a generic policy rejection at process creation; it did not identify whether the compound shell form or this document write was prohibited, so no specific risk is inferred. The attempted command did not run and changed no file.",
+      "retry": "none; document synchronization below used the dedicated apply_patch editor only"
+    },
+    "lockCheckInterpretation": "openfiles/handle availability is an observation limitation only; final action preflight uses native per-file exclusive-open and ACL checks. No claim that all global handles were enumerated.",
+    "currentDisposition": "G1 shallow clone removal was attempted once and failed after partially removing 17 Git-metadata files; clone root remains. No retry, force, restore, move, alternate method, or permission change. Exact partial-result inventory is docs/reviews/cleanup/g1-shallow-layout-inventory-2026-10-08.json."
+  },
+  "protectedWorkspacePaths": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+      "exists": true
+    }
+  ],
+  "parentCandidatePaths": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+      "exists": true
+    }
+  ],
+  "actions": {
+    "deletedFiles": 0,
+    "newArchives": 0,
+    "dockerChanges": 0,
+    "parentWorktreesRemoved": 0,
+    "cloneRemoved": false,
+    "knownReleasedBytes": 0,
+    "productCodeChanged": false
+  },
+  "preservedAuditLimits": [
+    "旧批 2,268 项逐项保全不可独立复核；不补造历史回执",
+    "133 缓存与 1,406 D1a 精确副本回收回执不重做",
+    "D0 已拒绝目标仍保留，不以其他命令重试",
+    "四个父 worktree、保护 workspace、未知证据均保留"
+  ],
+  "currentStageVerification": {
+    "sampledAtUtc": "2026-10-08T13:14:56.632172+00:00",
+    "d1aTargets": {
+      "targetCount": 12,
+      "allTargetsAbsent": true,
+      "allReceiptsExit0": true,
+      "logicalBytesRemoved": 1473220,
+      "resourceDirsRemainEmpty": true
+    },
+    "g1CloneAttempt": {
+      "rootExists": true,
+      "remainingFileCount": 1474,
+      "remainingDirectoryCount": 264,
+      "remainingLogicalBytes": 33450482,
+      "gitStatusExitCode": 0,
+      "allPreInventoryTrackedSourceFilesStillPresent": true
+    },
+    "parentWorktrees": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+        "exists": true,
+        "registered": true,
+        "head": "550dead055689154359a3406dfce4f0c91c1dad3",
+        "statusEntryCount": 0,
+        "gitCommonDir": "C:/Users/xurx/.tds/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo/.git"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+        "exists": true,
+        "registered": true,
+        "head": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+        "statusEntryCount": 0,
+        "gitCommonDir": "C:/Users/xurx/.tds/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo/.git"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+        "exists": true,
+        "registered": true,
+        "head": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+        "statusEntryCount": 0,
+        "gitCommonDir": "C:/Users/xurx/.tds/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo/.git"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+        "exists": true,
+        "registered": true,
+        "head": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+        "statusEntryCount": 0,
+        "gitCommonDir": "C:/Users/xurx/.tds/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo/.git"
+      }
+    ],
+    "allProtectedWorkspacesExist": true,
+    "traceFilesRemain": true,
+    "rawZipCopies": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\html-report\\data\\d69f056ec411e76e5d9f9e4664b013966ee3cc75.zip",
+        "exists": true,
+        "bytes": 14795293,
+        "sha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\output\\stage0-Stage-0-browser-acc-8d3a0--writes-after-team-deletion-bootstrap\\trace.zip",
+        "exists": true,
+        "bytes": 14795293,
+        "sha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e"
+      }
+    ],
+    "physicalOrNetDiskRelease": null,
+    "overallCleanupComplete": false
+  },
+  "currentPhaseActions": {
+    "scope": "2026-10-08 已审副本回收与 G1 浅克隆尝试；prior-stage actions field retained as historical",
+    "d1aFilesSuccessfullyRemoved": 12,
+    "d1aLogicalBytesRemoved": 1473220,
+    "g1CloneRemovalAttempted": true,
+    "g1CloneFullyRemoved": false,
+    "g1GitMetadataFilesAbsentAfterFailedAttempt": 17,
+    "g1GitMetadataLogicalBytesAbsent": 27428,
+    "g1TrackedSourceFilesRemoved": 0,
+    "parentWorktreesRemoved": 0,
+    "dockerChanges": 0,
+    "physicalOrNetDiskRelease": null,
+    "overallCleanupComplete": false
+  },
+  "actionsScope": "The existing actions object is a prior-phase snapshot and is preserved unchanged; use currentPhaseActions/currentStageVerification for the latest phase."
+}

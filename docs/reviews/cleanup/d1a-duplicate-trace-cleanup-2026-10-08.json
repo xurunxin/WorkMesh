@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "todo": {
+    "number": 52,
+    "id": "6LZdc1ZhadjkkYSzEi6zB"
+  },
+  "machine": {
+    "name": "DarkFlame",
+    "id": "6DOlLniZ0sqBYGHeIhRMq",
+    "tds": "0.1.60 running"
+  },
+  "scope": "只回收两个已独审的 D1a 重复普通 trace 文件；不递归删除父目录，不触碰其它 .tmp、RAW ZIP、G1 clone 或父 worktree。",
+  "authorization": "用户 2026-10-08 22:28 明确要求执行全文 spec 放行的两个重复 trace 普通清理；定向独审基点 ae929a1779b6e88f46876699f9868cd5de68f4e9。",
+  "preflight": {
+    "recordedAtUtc": "2026-10-08T14:32:48.7134818Z",
+    "machineStatus": "tds 0.1.60; daemon running; 未管理进程",
+    "latestTodoSnapshot": {
+      "cleanup52": "building",
+      "todo5": "review",
+      "todo9": "building",
+      "todo16": "building",
+      "todo17": "done/protected",
+      "todo21": "review/protected"
+    },
+    "d1aWorktree": {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "registeredLinkedWorktree": true,
+      "gitStatusPorcelainAllCount": 0
+    },
+    "targetFiles": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\1-trace.trace",
+        "existsBefore": true,
+        "attributes": "Archive",
+        "bytesBefore": 1022701,
+        "sha256Before": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "expectedBytes": 1022701,
+        "expectedSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "allPathComponentsResolvedUnderD1aRoot": true,
+        "pathComponentsChecked": 4,
+        "reparsePointCount": 0,
+        "exclusiveReadWriteOpen": true,
+        "exclusiveOpenProvesDeletePermission": false
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07-round2\\1-trace.trace",
+        "existsBefore": true,
+        "attributes": "Archive",
+        "bytesBefore": 1022701,
+        "sha256Before": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "expectedBytes": 1022701,
+        "expectedSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "allPathComponentsResolvedUnderD1aRoot": true,
+        "pathComponentsChecked": 4,
+        "reparsePointCount": 0,
+        "exclusiveReadWriteOpen": true,
+        "exclusiveOpenProvesDeletePermission": false
+      }
+    ],
+    "keeper": {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\1-trace.trace",
+      "exists": true,
+      "bytes": 1022701,
+      "sha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+      "matchesExpected": true
+    },
+    "rawZips": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\html-report\\data\\d69f056ec411e76e5d9f9e4664b013966ee3cc75.zip",
+        "exists": true,
+        "bytes": 14795293,
+        "sha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\output\\stage0-Stage-0-browser-acc-8d3a0--writes-after-team-deletion-bootstrap\\trace.zip",
+        "exists": true,
+        "bytes": 14795293,
+        "sha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e"
+      }
+    ],
+    "mainAndSanitizedArchive": {
+      "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "archiveRepoPath": "docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-sanitized.zip",
+      "archiveGitBlob": "02c663b7dbdd3c39c891adb99a6908b33bef4ccd",
+      "archiveBytes": 14776952,
+      "archiveReadable": true,
+      "zipEntryCount": 490,
+      "verifiedMember": "1-trace.trace",
+      "memberBytes": 1022635,
+      "memberSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350"
+    },
+    "currentReferenceChecks": {
+      "activeTaskChatsSearched": [
+        "#5 ti53hOGbvnBNrvjXXveGO",
+        "#9 0BkezbmWV6k8vwrlSNuF_",
+        "#16 kjOs4t_DtMyrkHTBFmpQ5",
+        "#21 2j2sxT5wJ-l001efH_meJ",
+        "#52 6LZdc1ZhadjkkYSzEi6zB"
+      ],
+      "exactTargetPathMentionsForBothFiles": 0,
+      "processCommandLineReferences": 0,
+      "globalHandleOrBuildRegistryEnumerated": false
+    },
+    "preflightDecision": "通过；保留原件及两个 RAW ZIP 校验通过，两个目标均普通文件、哈希匹配、位于 D1a 根下且路径组件无 reparse point。预检已先于删除持久化。"
+  },
+  "operation": {
+    "status": "complete for the two expressly authorized duplicate files only",
+    "method": "PowerShell Remove-Item -LiteralPath <exact file path> -ErrorAction Stop; no -Force; each file separately; no parent directory removal",
+    "perTargetReceipts": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\1-trace.trace",
+        "operationAtUtc": null,
+        "postReceiptTimeSampleUtc": "2026-10-08T14:33:49Z",
+        "operationTimeNote": "工具没有为这条本机命令提供独立时间戳；14:33:49Z 是操作后读取的时钟样本，不用于倒推执行时间。",
+        "preDeleteBytes": 1022701,
+        "preDeleteSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "pathComponentsChecked": 4,
+        "reparsePointCount": 0,
+        "exclusiveReadWriteOpen": true,
+        "deleteCommand": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+        "force": false,
+        "operationExitCode": 0,
+        "failure": null,
+        "targetExistsAfter": false,
+        "parentDirectoryExistsAfter": true,
+        "keeperStillExistsAfter": true
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07-round2\\1-trace.trace",
+        "operationAtUtc": "2026-10-08T14:36:23.1867578Z",
+        "preflightAtUtc": "2026-10-08T14:35:24.5774176Z",
+        "processCommandLineReferencesExcludingCurrentQuery": 0,
+        "preDeleteBytes": 1022701,
+        "preDeleteSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "pathComponentsBelowD1aRoot": 3,
+        "reparsePointCount": 0,
+        "attributes": "Archive",
+        "exclusiveReadWriteOpen": true,
+        "exclusiveReadWriteOpenProvesDeletePermission": false,
+        "keeperBytesBeforeAndAfter": 1022701,
+        "keeperSha256BeforeAndAfter": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "rawZipsBeforeAndAfter": {
+          "eachBytes": 14795293,
+          "eachSha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e",
+          "bothExist": true
+        },
+        "deleteCommand": "Remove-Item -LiteralPath <exact file path> -ErrorAction Stop",
+        "force": false,
+        "operationExitCode": 0,
+        "failure": null,
+        "targetExistsAfter": false,
+        "parentDirectoryExistsAfter": true
+      }
+    ],
+    "interruptedPreflightAttempt": {
+      "commandReturnedExitCode": 1,
+      "processReferenceCount": 1,
+      "interpretation": "匹配项是执行该次查询的当前 PowerShell 进程，其命令行本身包含完整目标路径；不能据此认为存在另一个活动进程引用。",
+      "archivePathLookup": "该次预检引用了错误的 RAW ZIP 路径，Get-Item 报路径不存在。",
+      "deleteAttempted": false,
+      "targetChanged": false,
+      "followup": "命令进程结束后重新执行查询，排除当前查询进程并使用清单中的准确 RAW ZIP 路径；本次结果记录于 secondTargetPreflight。"
+    }
+  },
+  "secondTargetPreflight": {
+    "sampledAtUtc": "2026-10-08T14:35:24.5774176Z",
+    "processCommandLineReferencesExcludingCurrentQuery": 0,
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07-round2\\1-trace.trace",
+    "exists": true,
+    "ordinaryFile": true,
+    "attributes": "Archive",
+    "bytes": 1022701,
+    "sha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+    "pathComponentsBelowD1aRoot": 3,
+    "reparsePointCount": 0,
+    "exclusiveReadWriteOpen": true,
+    "exclusiveReadWriteOpenProvesDeletePermission": false,
+    "keeperExistsAndMatchesBytesAndSha256": true,
+    "bothRawZipsMatchManifestBytesAndSha256": true,
+    "result": "通过，可对该精确普通文件继续原生无 Force 删除；若执行失败则保留，不换方式重试。"
+  },
+  "postflight": {
+    "sampledAtUtc": "2026-10-08T14:37:46.1011722Z",
+    "bothTargetFilesAbsent": true,
+    "bothTargetParentDirectoriesRemain": true,
+    "keeperExistsAndMatchesBytesAndSha256": true,
+    "bothRawZipsExistAndMatchBytesAndSha256": true,
+    "other74Checked": 74,
+    "other74ExactBytesAndSha256Matches": 74,
+    "other74MismatchCount": 0,
+    "d1aTmpFileCount": 76,
+    "d1aTmpLogicalBytes": 47298811,
+    "gitStatusExitCode": 0,
+    "gitStatusPorcelainCount": 0,
+    "gitWorktreeListExitCode": 0,
+    "gitWorktreeCount": 21,
+    "d1aWorktreeStillRegistered": true
+  },
+  "space": {
+    "logicalTargetBytes": 2045402,
+    "physicalDiskRelease": "unknown; not measured"
+  },
+  "protected": {
+    "keeperTrace": "preserve",
+    "rawZips": "preserve",
+    "other74": "preserve",
+    "fourParentWorktrees": "preserve",
+    "g1Clone": "preserve",
+    "d0AndC3RejectedTargets": "do not retry"
+  },
+  "originalOperationReceipts": {
+    "file": "original-operation-receipts-2026-10-08.json",
+    "source": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T17-15-17-01a11acb-aa1d-7c20-9f0a-069bb121f67b.jsonl",
+    "entries": [
+      {
+        "targetPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\1-trace.trace",
+        "receipt": "d1aTraceFirst",
+        "callId": "call_84ca7a1e0fe04bf79b578e26e05bc51e",
+        "dispatchLine": 6851,
+        "returnLine": 6854,
+        "dispatchAtUtc": "2026-10-08T14:33:44.092Z",
+        "returnAtUtc": "2026-10-08T14:33:45.858Z",
+        "operationAtUtc": null
+      },
+      {
+        "targetPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07-round2\\1-trace.trace",
+        "receipt": "d1aTraceSecond",
+        "callId": "call_2d2177aea1a74aa3a67233d667399397",
+        "dispatchLine": 6967,
+        "returnLine": 6970,
+        "dispatchAtUtc": "2026-10-08T14:36:19.604Z",
+        "returnAtUtc": "2026-10-08T14:36:28.819Z",
+        "operationAtUtc": "2026-10-08T14:36:23.1867578Z"
+      }
+    ],
+    "relatedPreflightAndPostflight": "第一次删除前预检见 operation.perTargetReceipts[0]；第二次中止预检及重检分别见 operation.interruptedPreflightAttempt、secondTargetPreflight；最终复核见 postflight.sampledAtUtc。原始删除派发/返回见对应 receipt。"
+  }
+}
