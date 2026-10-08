@@ -385,8 +385,8 @@
         "gitBlob": "414dfe920c54f68ca1a2f246f1fcdd82e43767bb",
         "sourceCommit": "58d59ed85002da637aaeaa6bf98915d4a6ba918c",
         "sourcePath": "docs/reviews/d1a/evidence/git-blob-hashes.json",
-        "commitReachableFromMain": "96e724858e692d262107c34db50b40c3ae7c122c",
-        "verification": "git hash-object equals source blob; rev-parse commit:path equals blob; merge-base --is-ancestor sourceCommit main exited 0",
+        "commitReachableFromMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+        "verification": "against fetched current main 5b9c76b5f79917697906520edcd6947bfbfa925f: merge-base --is-ancestor sourceCommit FETCH_HEAD exited 0; rev-parse sourceCommit:path equals 414dfe920c54f68ca1a2f246f1fcdd82e43767bb; current-main path blob is 69a5adba69600bc3d53bf9e8fef989823965ab67, so historical mapping is retained without claiming the current path has identical bytes",
         "disposition": "conditional cleanup candidate after fresh task/build references and path/link/lock checks; no deletion in this phase"
       }
     ],
@@ -1987,9 +1987,33 @@
       "sameBlobAsCurrentMain": 140,
       "differentBlobAsCurrentMain": 3,
       "currentTrackedFileCount": 1464,
-      "uniqueSourceClaim": "none; earlier independent review says clone HEAD is contained in main (main...HEAD = 26 0); this ancestry result was not redone per user instruction"
+      "currentTrackedFilesNotInCurrentMain": 25,
+      "allCurrentTrackedFilesRecoverableFromCloneHead": true,
+      "uniqueSourceClaim": "none; earlier independent review says clone HEAD is contained in main (main...HEAD = 26 0); 143 deletions recover from clone HEAD (140 blobs same as main, 3 different), and all 1,464 current tracked files recover from clone HEAD; 25 not matching current main are not unique sources"
     },
-    "decision": "retain and submit for review: historical G1 purpose and three exact inputs are evidenced; no readable active chat/process path references; no reparse points; local OS handle enumeration unavailable and no separate global build-path registry query"
+    "decision": "next-stage conditional cleanup candidate based on completed G1 fixture ownership, recoverable content, readable active-chat/process scans, and current path/reparse checks; do not delete in this review-only phase. Missing OS handle enumeration and global registry query are documented limits, not hard gates or global-absence claims.",
+    "nextStageDeletionProcedure": {
+      "refreshBeforeAction": ["machine online/status", "current todo phases and readable active build chats", "process command-line references to exact clone path"],
+      "persistBeforeAction": ["full per-path absolute path/size/SHA-256 list", "ownership and Git/fixture source mapping", "current status including tracked deletions, untracked/ignored files and branches"],
+      "pathSafety": ["resolve exact clone path and verify strictly beneath the designated G1 workspaces .tmp directory", "check root and every path component for root misdirection, symlink, junction or reparse-point traversal"],
+      "nativeChecks": ["for every file, attempt exclusive-open/lock check and inspect ACL/delete permission without mutating contents"],
+      "failurePolicy": "if any file is locked, access is denied, or path/link checks fail, retain the affected target and record exact path/error; do not force or switch deletion methods",
+      "operation": "only after all checks succeed, use PowerShell Remove-Item -LiteralPath <verified absolute clone path> -Recurse -ErrorAction Stop without -Force",
+      "receipt": ["command and actual exit code", "exception if any", "post-action root existence", "exact residual paths and their sizes/hashes", "actual freed-byte enumeration; do not infer from disk-volume deltas"],
+      "idleGate": "do not require all tasks to be idle and do not wait for unavailable global-handle or registry interfaces"
+    },
+    "priorEditRejectionReceipt": {
+      "tool": "functions.exec invoking exec_command with PowerShell",
+      "target": "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d\\docs\\reviews\\cleanup\\remaining-materials-review-2026-10-08.json",
+      "intendedOperation": "composite PowerShell command containing a Python here-string to update g1Clone evidence fields, followed by git diff --stat; no delete, move, restore, or permission change",
+      "callId": null,
+      "eventTimeUtc": null,
+      "inputAvailability": "the attempted payload is present in the preceding conversation tool-call record; the process-rejection wrapper did not expose a separate raw request id or timestamp",
+      "displayedOutput": "Script failed; exec_command failed: CreateProcess { message: Rejected(\"<PowerShell -Command payload elided by wrapper> ... 2128 chars truncated ... blocked by policy\") }",
+      "interpretation": "the tool only reported a generic policy rejection at process creation; it did not identify whether the compound shell form or this document write was prohibited, so no specific risk is inferred. The attempted command did not run and changed no file.",
+      "retry": "none; document synchronization below used the dedicated apply_patch editor only"
+    },
+    "lockCheckInterpretation": "openfiles/handle availability is an observation limitation only; final action preflight uses native per-file exclusive-open and ACL checks. No claim that all global handles were enumerated."
   },
   "protectedWorkspacePaths": [
     {
