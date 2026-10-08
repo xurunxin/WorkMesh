@@ -1,0 +1,80 @@
+Todo #21 "[D1b] 按界面迁移 token 消费方，验证后清理旧值" — latest build conversation (24 message(s)):
+Branch: tds/conv-01a1195f-55ab-7ee9-8baf-c115978d3aec. Files on its branch: https://todos.dev/app/project/DzkLDn6UW-IbfoTJzN9Ro/files?ref=tds%2Fconv-01a1195f-55ab-7ee9-8baf-c115978d3aec — append &path=<repo-relative file> whenever the link text names one file, or it opens on the branch root with nothing selected
+
+[2026-10-08 02:37:21 UTC] (user/plan) [[D1b\] 按界面迁移 token 消费方，验证后清理旧值](todo:2j2sxT5wJ-l001efH_meJ)
+…(10 message(s) omitted)
+[2026-10-08 03:52:49 UTC] (assistant/plan_revision/codex/gpt-6.1-sol) (took 356s) 这次不改计划正文，也不另存新计划。我会把当前 savedplan 的完整正文与可核实的来源元数据落到指定文档路径，并提交供独审读取；仅处理文档前置，不开始 UI 编码。
+当前正文已由平台注入本轮消息，`conversation` 工具也确认最新计划 ID 为 `doc:IWQ9v6xnjnFyVtXnYDUC6`。工具只返回计划链接，未提供文档版本字段；我会如实记录这个缺口，同时将完整正文、UTF-8 哈希和来源证据落盘，不冒称完成了独立文档读取。
+完整快照已落盘：8,406 字节，正文 SHA-256 为 `860bf162a90ae3aa57609ce8b6ee4a5daf5e9790445b7e594b8340e36e3159ce`。逐字节一致性、Git blob 绑定和“仅三个文档文件变更”检查均通过，独立审查已开始；版本字段缺口和产品实施门禁仍明确保留。
+已对提交 `7f6ae163c4d4934626c64ecef5ce2f30776e6cc6` 的完整规划与绑定文件进行只读独审。
+
+- 正文为 8406 字节，UTF-8 无 BOM、LF、末尾一个 LF；SHA-256 为 `860bf162a90ae3aa57609ce8b6ee4a5daf5e9790445b7e594b8340e36e3159ce`。提交 blob、工作区及 `plan-source.json.planBody` 逐字节一致。
+- 15 项输入的 blob、字节数及工作区哈希全部吻合。提交仅新增三份文档，工作树干净，提交差异 `--check` 退出 0；未启动产品实现。
+- 完整规划已落实映射重名防护、暗色同值、derived 作用域重算、全局 portal 单独迁移、阶段断言演进及清旧先决条件；未发现新增的规划内容阻塞项。
+- 全文可读性和本地精确快照问题已解决。当前／历史文档 ID 有存档响应支持；正文来源仍是平台注入快照，未独立读取平台存储正文。`planVersion=null` 如实保留，版本元数据和 Chief 确认仍未闭合。
+- 本结论仅认可这份完整文档规划及前置成果，不构成产品编码放行、视觉批准或最终验收。规格同步、全量映射和阶段断言设计仍须按计划在产品编码前完成并确认。
+[2026-10-08 03:53:48 UTC] (system) Review requested from 总管
+[2026-10-08 03:56:56 UTC] (assistant/plan_review/codex/gpt-6.1-sol) (took 124s) 我会只读核对指定提交的计划全文、绑定与输入哈希，再检查实际 token、共享组件和验证配置，判断上一轮阻塞是否已解除。
+独立复算确认：计划正文为 8406 字节，SHA-256 与报告一致，`source.planBody` 与 Git blob 完全相同；15 个输入的 Git 和工作区指纹也全部匹配，字节差异均来自换行。全文缺失的上一轮阻塞已解除；平台版本仍如实记录为 `null`。接下来核对逐面隔离和验证命令是否与实际代码相容。
+发现一个逐面门禁缺口：`apps/web/app/page.tsx` 还承载首页、收件箱、Session 列表、恢复和指导等查询视图，计划的补齐清单未明确覆盖它们；看板、项目、列表和详情也共用同一个 AppShell。我会核对这些视图的边界，判断最终统一共享样式是否会使它们跳过迁移与视觉评审。
+请先解决以下问题，再开始编码。
+
+上一轮唯一 blocking 已解除：提交 `7f6ae163` 的完整正文为 8406 字节，SHA-256 为 `860bf162a90ae3aa57609ce8b6ee4a5daf5e9790445b7e594b8340e36e3159ce`；与 `source.planBody`、工作区字节一致，15 个输入指纹全部匹配。`planVersion=null` 的来源限制已如实记录，无需猜测版本或反复重存。
+
+1. > 七面完成后，逐路由补齐 Agent 列表、Session 详情、运营、连接、登录、安装及 UI catalog；逐路由沿用相同评审停点。
+
+   补齐清单遗漏实际界面：`/?view=home|inbox|sessions|recovery|guidance` 和 `/settings/agent-workbench`；`active/backlog` 也未明确归属哪个迁移阶段。[page.tsx](/C:/Users/xurx/.tds/workspaces/01a1195f-55ab-7ee9-8baf-c115978d3aec/apps/web/app/page.tsx:664) 确认这些查询视图独立渲染，并且项目、看板、列表及详情共用 AppShell。仅声明 shell 作用域，不能明确保证同时存在的未迁区域不受影响；最终统一共享样式可能让遗漏界面跳过视觉评审。
+
+   在文档前置门禁中补齐“路径＋查询视图＋实际布局／详情模式”的迁移矩阵，落实阶段、作用域边界、共享 shell 归属和人工评审停点。没有 D0 原图的界面须在迁移前保存对比截图，保留 D0 原件；矩阵全部验收后才能移除临时分支、清旧。无需新增这些界面的业务功能。(blocking)
+[2026-10-08 04:00:52 UTC] (assistant/plan_revision/codex/gpt-6.1-sol) (took 232s) 这条反馈需要小幅修订计划：补齐查询视图和实际布局／详情模式的迁移矩阵，并明确同一 AppShell 内各区域的隔离与评审停点。我会先核对路由分支；本轮只修改平台计划，保留已提交的历史快照，不改产品文件。
+已补齐查询视图、设置子路由及实际布局／详情模式的迁移矩阵，明确同屏区域隔离、共享 shell 归属和逐行人工评审停点。本轮未改仓库；修订保存后须实读新计划并落盘复核，全矩阵验收前不得清旧或开始产品实现。
+
+[plan](doc:-JciTypN4XStMNkYksSqi)
+[2026-10-08 04:00:56 UTC] (user/plan_revision) Chief已读11:56独审：全文/15输入/planVersion=null来源限制全部闭合，不重开；剩路由查询/布局详情mode矩阵与共享shell隔离一个blocking，按反馈健康修订继续不interrupt。你本轮提到“只修改平台计划”，请结束前把修订后的完整当前plan精确快照/当前ID/内容hash及矩阵同步提交原docs/plan/d1b-token-consumer-migration.md和plan-binding/source JSON，保留7f6ae163旧历史。已授权仅计划文档前置可写，禁止产品实现；不可仅回复新的doc链接留给独审旧全文。版本无字段如实null不猜、不为自引用再存新ID。新增视图只覆盖既有UI迁移/截图/评审，不扩展业务功能；无D0图的现有面迁前取证，D0原件不改。完成后停confirm，由平台独立审查者定向审此matrix及作用域，之前已闭合内容不重复。
+[2026-10-08 04:14:38 UTC] (assistant/plan_revision/codex/gpt-6.1-sol) (took 820s) 本轮不再修改平台计划，只按文档前置授权同步当前全文、实际计划 ID、哈希和展开后的迁移矩阵。已提交的旧快照保留；完成后停在确认门禁，交平台独立审查者定向审核矩阵与作用域，不开始产品实现。
+已核对：根页的查询视图、项目 tab 和工作项详情共用 shell，但有独立渲染边界；设置页只有现有 workspace/team 状态。矩阵会逐行记录这些边界、实际布局和详情模式，所有截图与人工评审保持“待执行”，不会把文档核验写成视觉验收。
+
+当前计划已展开为 94 个迁移条目，覆盖全部 12 个页面入口，并为每项列出最后全局阶段的复验记录。接下来核验正文、来源 JSON、矩阵和 Git blob 的字节一致性后提交；截图、运行检查与人工评审仍待执行，确认前不开始产品实现。
+
+已提交 `16fcde5`，同步[完整计划](https://todos.dev/app/project/DzkLDn6UW-IbfoTJzN9Ro/files?ref=tds%2Fconv-01a1195f-55ab-7ee9-8baf-c115978d3aec&path=docs%2Fplan%2Fd1b-token-consumer-migration.md)、绑定／来源 JSON 和 94 行矩阵；当前 ID 为 `doc:-JciTypN4XStMNkYksSqi`，正文 SHA-256 为 `7dd6767f4938ac4313606b12275f46fc4a88ba6b3f82355cb1c7808106795c05`。
+
+字节核验与 `git diff --check` 通过，旧历史保留，未修改产品代码；现停在 confirm，等待平台对矩阵及作用域定向独审，计划可在变更审查中点击预览。
+[2026-10-08 04:15:27 UTC] (system) Review requested from 总管
+[2026-10-08 04:18:07 UTC] (assistant/plan_review/codex/gpt-6.1-sol) (took 158s) 我会只读核对 `16fcde5` 相对 `7f6ae163` 的计划增量、正文绑定和新增矩阵，再逐行对照实际渲染入口，判断上一轮阻塞是否解除，以及矩阵是否引入新的实施阻塞。
+已复算：提交中的计划正文为 13090 字节，SHA-256 与报告一致，`plan-source.planBody`、Git blob 和工作区字节完全相同；新增矩阵的绑定也匹配。遗漏的查询视图和设置子路由已列入，接下来核对矩阵中的布局、详情模式和夹具能否实际到达。
+矩阵仍有实际入口匹配问题：项目的 `overview` 不渲染工作项列表，`surface=attention|runs` 是独立分支，但矩阵未展开；`/?view=projects` 在现有夹具下会自动选项目。另有 backlog 行要求显示 `work-101`，而该记录属于 started，现有筛选会将它排除。我会据此给出定向结论。
+请先解决以下问题，再开始编码。
+
+1. > 项目 `tab={overview,list,backlog}` 下实际 list
+
+   上一轮 blocking 尚未完全解除：遗漏入口和隔离门禁已明确，但新增矩阵仍未逐行匹配真实渲染。[路由解析](/C:/Users/xurx/.tds/workspaces/01a1195f-55ab-7ee9-8baf-c115978d3aec/apps/web/app/lib/human-control-plane-navigation.ts:15) 将缺省及 `tab=overview` 解析为 overview；[ProjectControlCenter](/C:/Users/xurx/.tds/workspaces/01a1195f-55ab-7ee9-8baf-c115978d3aec/apps/web/app/project-control-center.tsx:308) 只在 work 分支挂载 WorkSurfaces。因此 `project-work-overview`、`project-default-list` 及对应 sheet 行无法按计划找到列表并点击打开详情。矩阵还没有独立覆盖实际的 `surface=attention|runs`。
+
+   按 `readProjectControlRoute` 修正这些行，补齐真实项目子面和专属详情／浮层；进入 work 的操作须记录实际变更后的 URL。同步修正派生详情行及 `globalReplays`，不要为满足矩阵改变产品路由。(blocking)
+
+2. > 资源 ID 使用实际夹具值，记录原请求与最终规范 URL
+
+   两组新增行与指定夹具冲突：
+   
+   - `projects-unselected` 要求保持未选择项目，但 [page.tsx](/C:/Users/xurx/.tds/workspaces/01a1195f-55ab-7ee9-8baf-c115978d3aec/apps/web/app/page.tsx:451) 在 `final-tour` 有项目时自动选择首项并改写 URL；`.project-workbench` 存在不能证明未选择状态。
+   - backlog 列表／看板及 sheet 行要求显示并点击 `work-101`，但 [夹具](/C:/Users/xurx/.tds/workspaces/01a1195f-55ab-7ee9-8baf-c115978d3aec/apps/web/e2e/project-work-preview-server.mjs:193) 将它定义为 started，真实 backlog 筛选会排除它。
+
+   将自动选项目作为真实导航验收；空项目状态使用明确的只读空夹具。backlog 行明确补充匹配 backlog 状态的只读记录及就绪／点击目标，保留原 D0 夹具和证据。不能将这些行作为不可达组合跳过后宣称矩阵全部验收。(blocking)
+[2026-10-08 04:27:51 UTC] (assistant/plan_revision/codex/gpt-6.1-sol) (took 580s) 这两项反馈需要修订计划：我先核对项目子面的路由与渲染条件，以及 backlog 夹具的筛选结果，再同步修正平台计划和已授权的文档快照、矩阵；本轮不修改产品代码。
+审查意见与源码一致：overview 显示控制中心，只有 work 子面挂载列表／看板；`final-tour` 会自动选中首个项目，且 `work-101` 属于 started。我会删除不可点击的 overview sheet 条目，补齐 attention／runs 及其现有浮层，并明确规划空项目和 backlog 的独立只读夹具，保留 D0 原件。
+平台的 `edit_plan` 已接受五处定向修改，但新计划 ID 要到本轮结束保存后才产生，当前可读 ID 仍指向旧正文。我会提交修订全文及可核验的替换记录，明确标注新 ID 待读回，不把旧 ID 绑定到新正文；此前闭合的全文、输入指纹和版本来源审查保持闭合。
+修订全文和矩阵已同步：overview 的不可达列表／sheet 条目已移除，attention／runs 的详情和证据浮层已列入，backlog 条目改用状态匹配的规划夹具目标。文档字节与关联检查通过；新增夹具、截图和运行检查仍未执行，下一步只提交文档并停在确认门禁。
+已修正项目真实子面、自动选项目和 backlog 夹具目标，并提交 `40cc065` 的[完整计划](https://todos.dev/app/project/DzkLDn6UW-IbfoTJzN9Ro/files?ref=tds%2Fconv-01a1195f-55ab-7ee9-8baf-c115978d3aec&path=docs%2Fplan%2Fd1b-token-consumer-migration.md)、绑定和 115 行矩阵；43 行纯路由核验及字节检查通过。
+
+新计划 ID 须在本轮保存后实读，当前如实标为待绑定；停在 confirm 等待定向独审，未修改产品代码，计划可在变更审查中预览。
+
+[plan](doc:nnchKV-O25SWiYsj3hXgm)
+[2026-10-08 04:28:39 UTC] (system) Review requested from 总管
+[2026-10-08 04:30:25 UTC] (assistant/plan_review/codex/gpt-6.1-sol) (took 104s) 我会只读核对 `40cc065` 相对 `16fcde5` 的修订，重点检查两项阻塞是否闭合，以及新增矩阵行能否匹配真实路由、渲染分支和夹具。
+已确认 overview 的列表／sheet 错配已移除，项目 `attention/runs` 和空项目、backlog 专用夹具已明确列入计划，运行结果仍如实标为未执行。我会继续核对派生详情和全局复验关联，确认修订没有留下同类不可达路径。
+上一轮阻塞①已闭合：矩阵区分了 overview 与 work，补齐 attention/runs 的现有详情及证据入口，派生行和全局复验关联无悬空引用；43 行项目路由预期与实际解析函数一致。
+
+阻塞②已闭合：自动选首项与空项目状态分别验收，backlog 的列表、看板和详情统一使用状态匹配的专用记录。正文、source 和矩阵的 Git／工作区字节及记录哈希一致。本轮未发现新增实施阻塞；产品编码仍须先完成计划规定的动态绑定、全量映射、ADR／规格同步和 Chief 确认，视觉验收及最新 CI 留待实施后验证。
+可以按计划开始实施。
+[2026-10-08 04:31:03 UTC] (assistant/plan_revision/codex/gpt-6.1-sol) (took 35s) 两项阻塞已由独审确认闭合，计划无需修改。产品编码前仍须完成当前计划绑定、全量映射、ADR／规格同步及 Chief 确认，再按既定逐面评审停点推进。
+[2026-10-08 04:32:02 UTC] (user/plan_revision) Confirm plan.
+

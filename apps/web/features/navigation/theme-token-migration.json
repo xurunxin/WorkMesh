@@ -1,0 +1,3089 @@
+{
+  "currentPlanID": "doc:nnchKV-O25SWiYsj3hXgm",
+  "status": "实施前置显式映射；尚未应用于产品",
+  "history": {
+    "baseCommit": "9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7",
+    "declarations": 175,
+    "uniqueLegacySlots": 115,
+    "consumerGroups": 132,
+    "consumerReferences": 1476,
+    "baselineUnchanged": true
+  },
+  "sources": [
+    {
+      "path": "packages/ui/src/tokens.css",
+      "gitBlob": "933d961bedff4a892af472da9b5c08062bd42a91",
+      "gitBytes": 71756,
+      "gitSha256": "e1dae43b076c0142ac5fadabc9ed75a821e5b37900b9c58807360e3015bade5f",
+      "worktreeBytes": 72806,
+      "worktreeSha256": "36502dd86013f37aafceb56971f6347dd3f0920ad2f9381edb2da0f8b93373d8",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/features/navigation/theme-token-baseline.json",
+      "gitBlob": "af15b5e4cb5687c00931575b8e807177de70ee38",
+      "gitBytes": 316529,
+      "gitSha256": "524a7fbb1896010969348440b546f1a89af6a4abfd806fda51137a30685bdea3",
+      "worktreeBytes": 325715,
+      "worktreeSha256": "99d7d536e02281a8faa187cf38f22b16c32f08c10cb4de57b296c244d612cd7b",
+      "bytesEqual": false
+    },
+    {
+      "path": "docs/references/todos-analysis/design-tokens.md",
+      "gitBlob": "c66a054c2679bd6ca39a555fc9594d41ad1e6dc4",
+      "gitBytes": 13406,
+      "gitSha256": "4861fdbb3babde65a64f3de55936fdd53b1ba63498e4ca90c87471404c9e8c9b",
+      "worktreeBytes": 13406,
+      "worktreeSha256": "4861fdbb3babde65a64f3de55936fdd53b1ba63498e4ca90c87471404c9e8c9b",
+      "bytesEqual": true
+    },
+    {
+      "path": "docs/references/todos-analysis/design-observations.json",
+      "gitBlob": "f70a0f62022db197334739b1512b4a98c3c4d7b5",
+      "gitBytes": 1533975,
+      "gitSha256": "cdb7b2479d9a863bc17080f7e3ad4a8226bbcb380c09f9bd58535b971eca8888",
+      "worktreeBytes": 1533975,
+      "worktreeSha256": "cdb7b2479d9a863bc17080f7e3ad4a8226bbcb380c09f9bd58535b971eca8888",
+      "bytesEqual": true
+    },
+    {
+      "path": "docs/references/todos-analysis/css-evidence.json",
+      "gitBlob": "b8b53e9dc54c7013912baa4c3c5e310fb4e13de9",
+      "gitBytes": 334624,
+      "gitSha256": "eee8b725d4b48f12cb89f72b050700e3d6c4ee2905e96e875e45376830b7e199",
+      "worktreeBytes": 334624,
+      "worktreeSha256": "eee8b725d4b48f12cb89f72b050700e3d6c4ee2905e96e875e45376830b7e199",
+      "bytesEqual": true
+    }
+  ],
+  "entries": [
+    {
+      "from": "--wm-canvas",
+      "to": "--wm-ref-surface",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--surface",
+        "raw": "250 247 242",
+        "value": "#faf7f2"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#F7F7F5",
+          "newValue": "#faf7f2",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#0B0C0E",
+          "newValue": "#0B0C0E",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-canvas-subtle",
+      "to": "--wm-ref-canvas-subtle",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-canvas-subtle",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FAFAF8",
+          "newValue": "#FAFAF8",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#0F1113",
+          "newValue": "#0F1113",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-surface",
+      "to": "--wm-ref-surface-card",
+      "provenance": {
+        "kind": "用户授权设计",
+        "reason": "普通 card 使用已实测 elevated 亮色，独立保留原 card 暗色；不合并 canvas/card",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--surface-elevated",
+        "value": "#fdfaf6"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FFFFFF",
+          "newValue": "#fdfaf6",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#141619",
+          "newValue": "#141619",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-surface-raised",
+      "to": "--wm-ref-surface-elevated",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--surface-elevated",
+        "raw": "253 250 246",
+        "value": "#fdfaf6"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FFFFFF",
+          "newValue": "#fdfaf6",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#1A1D21",
+          "newValue": "#1A1D21",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-surface-subtle",
+      "to": "--wm-ref-surface-secondary",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--surface-secondary",
+        "raw": "242 237 230",
+        "value": "#f2ede6"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#F2F2EF",
+          "newValue": "#f2ede6",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#1F2226",
+          "newValue": "#1F2226",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-surface-hover",
+      "to": "--wm-ref-surface-hover",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--surface-hover",
+        "raw": "242 237 230",
+        "value": "#f2ede6"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#ECECE8",
+          "newValue": "#f2ede6",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#262A2F",
+          "newValue": "#262A2F",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-surface-active",
+      "to": "--wm-ref-surface-active",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-surface-active",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#E4E4DF",
+          "newValue": "#E4E4DF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#2D3238",
+          "newValue": "#2D3238",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-surface-inset",
+      "to": "--wm-ref-surface-inset",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--surface-inset",
+        "raw": "242 237 230",
+        "value": "#f2ede6"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#F2F2EF",
+          "newValue": "#f2ede6",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#0E1012",
+          "newValue": "#0E1012",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-surface-overlay",
+      "to": "--wm-ref-surface-overlay",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-surface-overlay",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FFFFFF",
+          "newValue": "#FFFFFF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#1A1D21",
+          "newValue": "#1A1D21",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text",
+      "to": "--wm-ref-text-primary",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--text-primary",
+        "raw": "28 25 23",
+        "value": "#1c1917"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#252522",
+          "newValue": "#1c1917",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#E6E8EB",
+          "newValue": "#E6E8EB",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-strong",
+      "to": "--wm-ref-text-strong",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-text-strong",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#111110",
+          "newValue": "#111110",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#F5F6F7",
+          "newValue": "#F5F6F7",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-muted",
+      "to": "--wm-ref-text-secondary",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--text-secondary",
+        "raw": "87 83 78",
+        "value": "#57534e"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#73736F",
+          "newValue": "#57534e",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#9BA1A9",
+          "newValue": "#9BA1A9",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-subtle",
+      "to": "--wm-ref-text-tertiary",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--text-tertiary",
+        "raw": "120 113 108",
+        "value": "#78716c"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#8E8E89",
+          "newValue": "#78716c",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#6B7178",
+          "newValue": "#6B7178",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-inverse",
+      "to": "--wm-ref-text-inverse",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-text-inverse",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FFFFFF",
+          "newValue": "#FFFFFF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#141619",
+          "newValue": "#141619",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-link",
+      "to": "--wm-ref-text-link",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-text-link",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#2563EB",
+          "newValue": "#2563EB",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#7BA8F0",
+          "newValue": "#7BA8F0",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-muted",
+      "to": "--wm-ref-text-secondary",
+      "provenance": {
+        "kind": "已有别名合并",
+        "canonicalOwner": "--wm-text-muted",
+        "reason": "只迁消费，不输出 secondary 的自引用声明"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "var(--wm-text-muted)",
+          "newValue": "var(--wm-ref-text-secondary)",
+          "emitsDeclaration": false,
+          "dependencies": [
+            "--wm-ref-text-secondary"
+          ]
+        }
+      ],
+      "status": "未迁移",
+      "canonicalOwner": "--wm-text-muted"
+    },
+    {
+      "from": "--wm-border",
+      "to": "--wm-ref-border-default",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--border-default",
+        "raw": "226 219 209",
+        "value": "#e2dbd1"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#E3E3DF",
+          "newValue": "#e2dbd1",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#24282D",
+          "newValue": "#24282D",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-border-strong",
+      "to": "--wm-ref-border-strong",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/design-observations.json",
+        "pointer": "/12/custom/--border-strong",
+        "raw": "206 198 187",
+        "value": "#cec6bb"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#C9C9C3",
+          "newValue": "#cec6bb",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#343A41",
+          "newValue": "#343A41",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-border-subtle",
+      "to": "--wm-ref-border-subtle",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-border-subtle",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#EDEDEA",
+          "newValue": "#EDEDEA",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#1B1E22",
+          "newValue": "#1B1E22",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-focus",
+      "to": "--wm-ref-focus",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/css-evidence.json",
+        "pointer": "/rules/1056",
+        "selector": ".text-indigo-500",
+        "raw": {
+          "--tw-text-opacity": "1",
+          "color": "rgb(99 102 241/var(--tw-text-opacity,1))"
+        },
+        "existingD1aLightValue": "#6366f1"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#2563EB",
+          "newValue": "#6366f1",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#5B8DEF",
+          "newValue": "#5B8DEF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-accent",
+      "to": "--wm-ref-accent",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/css-evidence.json",
+        "pointer": "/rules/897",
+        "selector": ".bg-indigo-600",
+        "raw": {
+          "--tw-bg-opacity": "1",
+          "background-color": "rgb(79 70 229/var(--tw-bg-opacity,1))"
+        },
+        "existingD1aLightValue": "#4f46e5"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#2563EB",
+          "newValue": "#4f46e5",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#4C8DFF",
+          "newValue": "#4C8DFF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-accent-hover",
+      "to": "--wm-ref-accent-hover",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-accent-hover",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#1D4ED8",
+          "newValue": "#1D4ED8",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#6BA0FF",
+          "newValue": "#6BA0FF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-accent-active",
+      "to": "--wm-ref-accent-active",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-accent-active",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#1E40AF",
+          "newValue": "#1E40AF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#3C7CE8",
+          "newValue": "#3C7CE8",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-accent-fg",
+      "to": "--wm-ref-accent-fg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-accent-fg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FFFFFF",
+          "newValue": "#FFFFFF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#0B0C0E",
+          "newValue": "#0B0C0E",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-accent-bg",
+      "to": "--wm-ref-accent-bg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-accent-bg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#EFF6FF",
+          "newValue": "#EFF6FF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#16233A",
+          "newValue": "#16233A",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-accent-border",
+      "to": "--wm-ref-accent-border",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-accent-border",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#BFDBFE",
+          "newValue": "#BFDBFE",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#2B4A7D",
+          "newValue": "#2B4A7D",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-info",
+      "to": "--wm-ref-status-running",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/css-evidence.json",
+        "pointer": "/rules/1044",
+        "selector": ".text-blue-500",
+        "raw": {
+          "--tw-text-opacity": "1",
+          "color": "rgb(59 130 246/var(--tw-text-opacity,1))"
+        },
+        "existingD1aLightValue": "#3b82f6"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#175CD3",
+          "newValue": "#3b82f6",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#6BA0FF",
+          "newValue": "#6BA0FF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-info-bg",
+      "to": "--wm-ref-info-bg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-info-bg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#EFF8FF",
+          "newValue": "#EFF8FF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#16233A",
+          "newValue": "#16233A",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-info-border",
+      "to": "--wm-ref-info-border",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-info-border",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#B2DDFF",
+          "newValue": "#B2DDFF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#2B4A7D",
+          "newValue": "#2B4A7D",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-success",
+      "to": "--wm-ref-status-done",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/css-evidence.json",
+        "pointer": "/rules/1052",
+        "selector": ".text-green-500",
+        "raw": {
+          "--tw-text-opacity": "1",
+          "color": "rgb(34 197 94/var(--tw-text-opacity,1))"
+        },
+        "existingD1aLightValue": "#22c55e"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#087443",
+          "newValue": "#22c55e",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#3FB950",
+          "newValue": "#3FB950",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-success-bg",
+      "to": "--wm-ref-success-bg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-success-bg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#ECFDF3",
+          "newValue": "#ECFDF3",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#10231A",
+          "newValue": "#10231A",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-success-border",
+      "to": "--wm-ref-success-border",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-success-border",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#ABEFC6",
+          "newValue": "#ABEFC6",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#1F4A32",
+          "newValue": "#1F4A32",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-warning",
+      "to": "--wm-ref-status-needs-human",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/css-evidence.json",
+        "pointer": "/rules/1041",
+        "selector": ".text-amber-500",
+        "raw": {
+          "--tw-text-opacity": "1",
+          "color": "rgb(245 158 11/var(--tw-text-opacity,1))"
+        },
+        "existingD1aLightValue": "#f59e0b"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#8A5A00",
+          "newValue": "#f59e0b",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#E3B341",
+          "newValue": "#E3B341",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-warning-bg",
+      "to": "--wm-ref-warning-bg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-warning-bg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FFFAEB",
+          "newValue": "#FFFAEB",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#2A2110",
+          "newValue": "#2A2110",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-warning-border",
+      "to": "--wm-ref-warning-border",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-warning-border",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FEDF89",
+          "newValue": "#FEDF89",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#57431A",
+          "newValue": "#57431A",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-danger",
+      "to": "--wm-ref-danger",
+      "provenance": {
+        "kind": "用户采纳候选",
+        "reason": "用户明确批准用于真实危险语义；未实测参考错误态",
+        "path": "docs/references/todos-analysis/css-evidence.json",
+        "pointer": "/rules/904",
+        "selector": ".bg-red-500",
+        "raw": {
+          "--tw-bg-opacity": "1",
+          "background-color": "rgb(239 68 68/var(--tw-bg-opacity,1))"
+        },
+        "value": "#ef4444"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#9C2A1C",
+          "newValue": "#ef4444",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#FF6B63",
+          "newValue": "#FF6B63",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-danger-bg",
+      "to": "--wm-ref-danger-bg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-danger-bg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FFF1F0",
+          "newValue": "#FFF1F0",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#2E1617",
+          "newValue": "#2E1617",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-danger-border",
+      "to": "--wm-ref-danger-border",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-danger-border",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#F6C1BB",
+          "newValue": "#F6C1BB",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#5C2A2B",
+          "newValue": "#5C2A2B",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-danger-fg",
+      "to": "--wm-ref-danger-fg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-danger-fg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FFFFFF",
+          "newValue": "#FFFFFF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#2E1617",
+          "newValue": "#2E1617",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-violet",
+      "to": "--wm-ref-violet",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-violet",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#7839EE",
+          "newValue": "#7839EE",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#A78BFA",
+          "newValue": "#A78BFA",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-violet-bg",
+      "to": "--wm-ref-violet-bg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-violet-bg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#F5F3FF",
+          "newValue": "#F5F3FF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#241B3A",
+          "newValue": "#241B3A",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-violet-border",
+      "to": "--wm-ref-violet-border",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-violet-border",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#D9D6FE",
+          "newValue": "#D9D6FE",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#463576",
+          "newValue": "#463576",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-neutral",
+      "to": "--wm-ref-status-pending",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/css-evidence.json",
+        "pointer": "/rules/882",
+        "selector": ".bg-gray-400",
+        "raw": {
+          "--tw-bg-opacity": "1",
+          "background-color": "rgb(156 163 175/var(--tw-bg-opacity,1))"
+        },
+        "existingD1aLightValue": "#9ca3af"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#475467",
+          "newValue": "#9ca3af",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#9BA1A9",
+          "newValue": "#9BA1A9",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-neutral-bg",
+      "to": "--wm-ref-neutral-bg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-neutral-bg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#F9FAFB",
+          "newValue": "#F9FAFB",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#1F2226",
+          "newValue": "#1F2226",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-neutral-border",
+      "to": "--wm-ref-neutral-border",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-neutral-border",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#D0D5DD",
+          "newValue": "#D0D5DD",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#343A41",
+          "newValue": "#343A41",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-scrim",
+      "to": "--wm-ref-scrim",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-scrim",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#11111166",
+          "newValue": "#11111166",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#00000099",
+          "newValue": "#00000099",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-skeleton-base",
+      "to": "--wm-ref-skeleton-base",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-skeleton-base",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#F2F2EF",
+          "newValue": "#F2F2EF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#1F2226",
+          "newValue": "#1F2226",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-skeleton-sheen",
+      "to": "--wm-ref-skeleton-sheen",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-skeleton-sheen",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#ECECE8",
+          "newValue": "#ECECE8",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#262A2F",
+          "newValue": "#262A2F",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-tooltip-bg",
+      "to": "--wm-ref-tooltip-bg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-tooltip-bg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#111110",
+          "newValue": "#111110",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#F5F6F7",
+          "newValue": "#F5F6F7",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-tooltip-fg",
+      "to": "--wm-ref-tooltip-fg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-tooltip-fg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "#FFFFFF",
+          "newValue": "#FFFFFF",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "#141619",
+          "newValue": "#141619",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-shadow-sm",
+      "to": "--wm-ref-shadow-sm",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-shadow-sm",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "0 1px 2px rgba(17, 17, 17, .05), 0 2px 8px rgba(17, 17, 17, .04)",
+          "newValue": "0 1px 2px rgba(17, 17, 17, .05), 0 2px 8px rgba(17, 17, 17, .04)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "0 1px 2px rgba(0, 0, 0, .40), 0 2px 8px rgba(0, 0, 0, .22)",
+          "newValue": "0 1px 2px rgba(0, 0, 0, .40), 0 2px 8px rgba(0, 0, 0, .22)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-shadow-md",
+      "to": "--wm-ref-shadow-md",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-shadow-md",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "0 4px 14px rgba(17, 17, 17, .06), 0 16px 40px rgba(17, 17, 17, .10)",
+          "newValue": "0 4px 14px rgba(17, 17, 17, .06), 0 16px 40px rgba(17, 17, 17, .10)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "0 4px 14px rgba(0, 0, 0, .28), 0 16px 40px rgba(0, 0, 0, .32)",
+          "newValue": "0 4px 14px rgba(0, 0, 0, .28), 0 16px 40px rgba(0, 0, 0, .32)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-shadow-lg",
+      "to": "--wm-ref-shadow-lg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-shadow-lg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "0 8px 28px rgba(17, 17, 17, .08), 0 32px 80px rgba(17, 17, 17, .14)",
+          "newValue": "0 8px 28px rgba(17, 17, 17, .08), 0 32px 80px rgba(17, 17, 17, .14)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "0 8px 28px rgba(0, 0, 0, .32), 0 32px 80px rgba(0, 0, 0, .42)",
+          "newValue": "0 8px 28px rgba(0, 0, 0, .32), 0 32px 80px rgba(0, 0, 0, .42)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-shadow-card",
+      "to": "--wm-ref-shadow-card",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-shadow-card",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "0 1px 2px rgba(17, 17, 17, .04), 0 1px 3px rgba(17, 17, 17, .03)",
+          "newValue": "0 1px 2px rgba(17, 17, 17, .04), 0 1px 3px rgba(17, 17, 17, .03)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "0 1px 2px rgba(0, 0, 0, .32)",
+          "newValue": "0 1px 2px rgba(0, 0, 0, .32)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-shadow-card-hover",
+      "to": "--wm-ref-shadow-card-hover",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-shadow-card-hover",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "0 2px 6px rgba(17, 17, 17, .06), 0 8px 20px rgba(17, 17, 17, .07)",
+          "newValue": "0 2px 6px rgba(17, 17, 17, .06), 0 8px 20px rgba(17, 17, 17, .07)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "0 2px 8px rgba(0, 0, 0, .44)",
+          "newValue": "0 2px 8px rgba(0, 0, 0, .44)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-shadow-panel",
+      "to": "--wm-ref-shadow-panel",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-shadow-panel",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "0 1px 2px rgba(17, 17, 17, .03)",
+          "newValue": "0 1px 2px rgba(17, 17, 17, .03)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "0 1px 2px rgba(0, 0, 0, .24)",
+          "newValue": "0 1px 2px rgba(0, 0, 0, .24)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-focus-ring",
+      "to": "--wm-ref-focus-ring",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-focus-ring",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "0 0 0 3px color-mix(in srgb, var(--wm-focus) 32%, transparent)",
+          "newValue": "0 0 0 3px color-mix(in srgb, var(--wm-ref-focus) 32%, transparent)",
+          "emitsDeclaration": true,
+          "dependencies": [
+            "--wm-ref-focus"
+          ]
+        },
+        {
+          "selector": "[data-wm-theme='dark']",
+          "oldValue": "0 0 0 3px color-mix(in srgb, var(--wm-focus) 40%, transparent)",
+          "newValue": "0 0 0 3px color-mix(in srgb, var(--wm-ref-focus) 40%, transparent)",
+          "emitsDeclaration": true,
+          "dependencies": [
+            "--wm-ref-focus"
+          ]
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-font-sans",
+      "to": "--wm-ref-font-sans",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-font-sans",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+          "newValue": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-font-mono",
+      "to": "--wm-ref-font-mono",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-font-mono",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "\"SF Mono\", \"Cascadia Code\", ui-monospace, Consolas, \"Liberation Mono\", monospace",
+          "newValue": "\"SF Mono\", \"Cascadia Code\", ui-monospace, Consolas, \"Liberation Mono\", monospace",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-2xs",
+      "to": "--wm-ref-text-2xs",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-text-2xs",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": ".6875rem",
+          "newValue": ".6875rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-xs",
+      "to": "--wm-ref-text-xs",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-text-xs",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": ".75rem",
+          "newValue": ".75rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-sm",
+      "to": "--wm-ref-text-sm",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-text-sm",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": ".875rem",
+          "newValue": ".875rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-md",
+      "to": "--wm-ref-text-md",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-text-md",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1rem",
+          "newValue": "1rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-lg",
+      "to": "--wm-ref-text-lg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-text-lg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1.25rem",
+          "newValue": "1.25rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-xl",
+      "to": "--wm-ref-text-xl",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-text-xl",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1.5rem",
+          "newValue": "1.5rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-text-2xl",
+      "to": "--wm-ref-text-2xl",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-text-2xl",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1.875rem",
+          "newValue": "1.875rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-leading-2xs",
+      "to": "--wm-ref-leading-2xs",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-leading-2xs",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1rem",
+          "newValue": "1rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-leading-xs",
+      "to": "--wm-ref-leading-xs",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-leading-xs",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1rem",
+          "newValue": "1rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-leading-sm",
+      "to": "--wm-ref-leading-sm",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-leading-sm",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1.25rem",
+          "newValue": "1.25rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-leading-md",
+      "to": "--wm-ref-leading-md",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-leading-md",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1.5rem",
+          "newValue": "1.5rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-leading-lg",
+      "to": "--wm-ref-leading-lg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-leading-lg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1.75rem",
+          "newValue": "1.75rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-leading-xl",
+      "to": "--wm-ref-leading-xl",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-leading-xl",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "2rem",
+          "newValue": "2rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-leading-2xl",
+      "to": "--wm-ref-leading-2xl",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-leading-2xl",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "2.375rem",
+          "newValue": "2.375rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-1",
+      "to": "--wm-ref-space-1",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-1",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": ".25rem",
+          "newValue": ".25rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-2",
+      "to": "--wm-ref-space-2",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-2",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": ".5rem",
+          "newValue": ".5rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-3",
+      "to": "--wm-ref-space-3",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-3",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": ".75rem",
+          "newValue": ".75rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-4",
+      "to": "--wm-ref-space-4",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-4",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1rem",
+          "newValue": "1rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-5",
+      "to": "--wm-ref-space-5",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-5",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1.25rem",
+          "newValue": "1.25rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-6",
+      "to": "--wm-ref-space-6",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-6",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "1.5rem",
+          "newValue": "1.5rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-7",
+      "to": "--wm-ref-space-7",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-7",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "2rem",
+          "newValue": "2rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-8",
+      "to": "--wm-ref-space-8",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-8",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "2.5rem",
+          "newValue": "2.5rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-9",
+      "to": "--wm-ref-space-9",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-9",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "3rem",
+          "newValue": "3rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-10",
+      "to": "--wm-ref-space-10",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-10",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "4rem",
+          "newValue": "4rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-11",
+      "to": "--wm-ref-space-11",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-11",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "5rem",
+          "newValue": "5rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-space-12",
+      "to": "--wm-ref-space-12",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-space-12",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "6rem",
+          "newValue": "6rem",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-radius-sm",
+      "to": "--wm-ref-radius-control",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/css-evidence.json",
+        "pointer": "/rules/815",
+        "selector": ".rounded-md",
+        "raw": {
+          "border-bottom-left-radius": "0.375rem",
+          "border-bottom-right-radius": "0.375rem",
+          "border-top-left-radius": "0.375rem",
+          "border-top-right-radius": "0.375rem"
+        },
+        "existingD1aLightValue": "6px"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "9px",
+          "newValue": "6px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-radius-md",
+      "to": "--wm-ref-radius-md",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-radius-md",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "14px",
+          "newValue": "14px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-radius-lg",
+      "to": "--wm-ref-radius-lg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-radius-lg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "18px",
+          "newValue": "18px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-radius-xl",
+      "to": "--wm-ref-radius-xl",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-radius-xl",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "26px",
+          "newValue": "26px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-radius-2xl",
+      "to": "--wm-ref-radius-2xl",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-radius-2xl",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "34px",
+          "newValue": "34px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-radius-pill",
+      "to": "--wm-ref-radius-pill",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-radius-pill",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "999px",
+          "newValue": "999px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-radius-card",
+      "to": "--wm-ref-radius-card",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/css-evidence.json",
+        "pointer": "/rules/814",
+        "selector": ".rounded-lg",
+        "raw": {
+          "border-bottom-left-radius": "0.5rem",
+          "border-bottom-right-radius": "0.5rem",
+          "border-top-left-radius": "0.5rem",
+          "border-top-right-radius": "0.5rem"
+        },
+        "existingD1aLightValue": "8px"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "16px",
+          "newValue": "8px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-radius-panel",
+      "to": "--wm-ref-radius-column",
+      "provenance": {
+        "kind": "参考实测",
+        "path": "docs/references/todos-analysis/css-evidence.json",
+        "pointer": "/rules/817",
+        "selector": ".rounded-xl",
+        "raw": {
+          "border-bottom-left-radius": "0.75rem",
+          "border-bottom-right-radius": "0.75rem",
+          "border-top-left-radius": "0.75rem",
+          "border-top-right-radius": "0.75rem"
+        },
+        "existingD1aLightValue": "12px"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "22px",
+          "newValue": "12px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-surface-panel",
+      "to": "--wm-ref-surface-panel",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-surface-panel",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "color-mix(in srgb, var(--wm-surface-subtle) 92%, var(--wm-canvas))",
+          "newValue": "color-mix(in srgb, var(--wm-ref-surface-secondary) 92%, var(--wm-ref-surface))",
+          "emitsDeclaration": true,
+          "dependencies": [
+            "--wm-ref-surface-secondary",
+            "--wm-ref-surface"
+          ]
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-border-panel",
+      "to": "--wm-ref-border-panel",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-border-panel",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "color-mix(in srgb, var(--wm-border) 70%, transparent)",
+          "newValue": "color-mix(in srgb, var(--wm-ref-border-default) 70%, transparent)",
+          "emitsDeclaration": true,
+          "dependencies": [
+            "--wm-ref-border-default"
+          ]
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-sidebar-collapsed-w",
+      "to": "--wm-ref-sidebar-collapsed-w",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-sidebar-collapsed-w",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "56px",
+          "newValue": "56px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-control-h-xs",
+      "to": "--wm-ref-control-h-xs",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-control-h-xs",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "24px",
+          "newValue": "24px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-control-h-sm",
+      "to": "--wm-ref-control-h-sm",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-control-h-sm",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "26px",
+          "newValue": "26px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-density='compact']",
+          "oldValue": "22px",
+          "newValue": "22px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-control-h-md",
+      "to": "--wm-ref-control-h-md",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-control-h-md",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "32px",
+          "newValue": "32px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-density='compact']",
+          "oldValue": "26px",
+          "newValue": "26px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-control-h-lg",
+      "to": "--wm-ref-control-h-lg",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-control-h-lg",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "40px",
+          "newValue": "40px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-density='compact']",
+          "oldValue": "32px",
+          "newValue": "32px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-control-h-xl",
+      "to": "--wm-ref-control-h-xl",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-control-h-xl",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "52px",
+          "newValue": "52px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-control-h-input",
+      "to": "--wm-ref-control-h-input",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-control-h-input",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "38px",
+          "newValue": "38px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        },
+        {
+          "selector": "[data-wm-density='compact']",
+          "oldValue": "32px",
+          "newValue": "32px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-sidebar-w",
+      "to": "--wm-ref-sidebar-w",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-sidebar-w",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "240px",
+          "newValue": "240px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-header-h",
+      "to": "--wm-ref-header-h",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-header-h",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "52px",
+          "newValue": "52px",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-z-sticky",
+      "to": "--wm-ref-z-sticky",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-z-sticky",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "9",
+          "newValue": "9",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-overlay-z",
+      "to": "--wm-ref-overlay-z",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-overlay-z",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "40",
+          "newValue": "40",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-z-popover",
+      "to": "--wm-ref-z-popover",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-z-popover",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "140",
+          "newValue": "140",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-z-toast",
+      "to": "--wm-ref-z-toast",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-z-toast",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "200",
+          "newValue": "200",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-motion-fast",
+      "to": "--wm-ref-motion-fast",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-motion-fast",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "120ms",
+          "newValue": "120ms",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-motion-normal",
+      "to": "--wm-ref-motion-normal",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-motion-normal",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "180ms",
+          "newValue": "180ms",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-motion-slow",
+      "to": "--wm-ref-motion-slow",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-motion-slow",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "280ms",
+          "newValue": "280ms",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-ease-standard",
+      "to": "--wm-ref-ease-standard",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-ease-standard",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "cubic-bezier(.2, 0, 0, 1)",
+          "newValue": "cubic-bezier(.2, 0, 0, 1)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-ease-out",
+      "to": "--wm-ref-ease-out",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-ease-out",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "cubic-bezier(.22, 1, .36, 1)",
+          "newValue": "cubic-bezier(.22, 1, .36, 1)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-ease-spring",
+      "to": "--wm-ref-ease-spring",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-ease-spring",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "cubic-bezier(.34, 1.56, .64, 1)",
+          "newValue": "cubic-bezier(.34, 1.56, .64, 1)",
+          "emitsDeclaration": true,
+          "dependencies": []
+        }
+      ],
+      "status": "未迁移"
+    },
+    {
+      "from": "--wm-grad-accent",
+      "to": "--wm-ref-grad-accent",
+      "provenance": {
+        "kind": "产品沿用",
+        "path": "packages/ui/src/tokens.css",
+        "token": "--wm-grad-accent",
+        "reason": "现有 WorkMesh 值/公式同值迁名；不是参考实测"
+      },
+      "declarations": [
+        {
+          "selector": ":root",
+          "oldValue": "linear-gradient(135deg, var(--wm-accent), var(--wm-violet))",
+          "newValue": "linear-gradient(135deg, var(--wm-ref-accent), var(--wm-ref-violet))",
+          "emitsDeclaration": true,
+          "dependencies": [
+            "--wm-ref-accent",
+            "--wm-ref-violet"
+          ]
+        }
+      ],
+      "status": "未迁移"
+    }
+  ],
+  "additionalRetirements": [
+    {
+      "from": "--wm-ref-danger-candidate",
+      "to": "--wm-ref-danger",
+      "reason": "用户批准候选用于危险语义；旧名称最后退役"
+    }
+  ],
+  "existingRefDarkRebindings": [
+    {
+      "from": "--wm-ref-surface",
+      "to": "--wm-ref-surface",
+      "oldExpression": "var(--wm-canvas)",
+      "newValue": "#0B0C0E",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-surface-elevated",
+      "to": "--wm-ref-surface-elevated",
+      "oldExpression": "var(--wm-surface-raised)",
+      "newValue": "#1A1D21",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-surface-hover",
+      "to": "--wm-ref-surface-hover",
+      "oldExpression": "var(--wm-surface-hover)",
+      "newValue": "#262A2F",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-surface-secondary",
+      "to": "--wm-ref-surface-secondary",
+      "oldExpression": "var(--wm-surface-subtle)",
+      "newValue": "#1F2226",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-surface-inset",
+      "to": "--wm-ref-surface-inset",
+      "oldExpression": "var(--wm-surface-inset)",
+      "newValue": "#0E1012",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-border-default",
+      "to": "--wm-ref-border-default",
+      "oldExpression": "var(--wm-border)",
+      "newValue": "#24282D",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-border-strong",
+      "to": "--wm-ref-border-strong",
+      "oldExpression": "var(--wm-border-strong)",
+      "newValue": "#343A41",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-text-primary",
+      "to": "--wm-ref-text-primary",
+      "oldExpression": "var(--wm-text)",
+      "newValue": "#E6E8EB",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-text-secondary",
+      "to": "--wm-ref-text-secondary",
+      "oldExpression": "var(--wm-text-muted)",
+      "newValue": "#9BA1A9",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-text-tertiary",
+      "to": "--wm-ref-text-tertiary",
+      "oldExpression": "var(--wm-text-subtle)",
+      "newValue": "#6B7178",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-text-dim",
+      "to": "--wm-ref-text-dim",
+      "oldExpression": "var(--wm-text-muted)",
+      "newValue": "#9BA1A9",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-status-pending",
+      "to": "--wm-ref-status-pending",
+      "oldExpression": "var(--wm-neutral)",
+      "newValue": "#9BA1A9",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-status-running",
+      "to": "--wm-ref-status-running",
+      "oldExpression": "var(--wm-info)",
+      "newValue": "#6BA0FF",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-status-needs-human",
+      "to": "--wm-ref-status-needs-human",
+      "oldExpression": "var(--wm-warning)",
+      "newValue": "#E3B341",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-status-done",
+      "to": "--wm-ref-status-done",
+      "oldExpression": "var(--wm-success)",
+      "newValue": "#3FB950",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-danger-candidate",
+      "to": "--wm-ref-danger",
+      "oldExpression": "var(--wm-danger)",
+      "newValue": "#FF6B63",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-accent",
+      "to": "--wm-ref-accent",
+      "oldExpression": "var(--wm-accent)",
+      "newValue": "#4C8DFF",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    },
+    {
+      "from": "--wm-ref-focus",
+      "to": "--wm-ref-focus",
+      "oldExpression": "var(--wm-focus)",
+      "newValue": "#5B8DEF",
+      "reason": "既有暗色语义同值重绑定，不采用参考暗色",
+      "dependencies": []
+    }
+  ],
+  "retainedRuntime": [
+    "--wm-status-color",
+    "--wm-dismissal-depth"
+  ],
+  "nonWmConsumers": [
+    {
+      "file": "apps/web/app/agents/agent-workspace.module.css",
+      "from": "--text-muted",
+      "to": "--wm-ref-text-secondary",
+      "status": "未迁移",
+      "reason": "当前使用未声明变量的硬编码 fallback；新槽需实际明暗检查"
+    },
+    {
+      "file": "apps/web/app/agents/agent-workspace.module.css",
+      "from": "--surface-raised",
+      "to": "--wm-ref-surface-elevated",
+      "status": "未迁移",
+      "reason": "当前使用未声明变量的硬编码 fallback；新槽需实际明暗检查"
+    },
+    {
+      "file": "apps/web/app/agents/agent-workspace.module.css",
+      "from": "--border-subtle",
+      "to": "--wm-ref-border-subtle",
+      "status": "未迁移",
+      "reason": "当前使用未声明变量的硬编码 fallback；新槽需实际明暗检查"
+    },
+    {
+      "file": "apps/web/app/agents/agent-workspace.module.css",
+      "from": "--accent",
+      "to": "--wm-ref-accent",
+      "status": "未迁移",
+      "reason": "当前使用未声明变量的硬编码 fallback；新槽需实际明暗检查"
+    },
+    {
+      "file": "apps/web/app/agents/agent-workspace.module.css",
+      "from": "--surface-subtle",
+      "to": "--wm-ref-surface-secondary",
+      "status": "未迁移",
+      "reason": "当前使用未声明变量的硬编码 fallback；新槽需实际明暗检查"
+    },
+    {
+      "file": "apps/web/app/agents/agent-workspace.module.css",
+      "from": "--danger-surface",
+      "to": "--wm-ref-danger-bg",
+      "status": "未迁移",
+      "reason": "当前使用未声明变量的硬编码 fallback；新槽需实际明暗检查"
+    },
+    {
+      "file": "apps/web/app/agents/agent-workspace.module.css",
+      "from": "--danger-text",
+      "to": "--wm-ref-danger",
+      "status": "未迁移",
+      "reason": "当前使用未声明变量的硬编码 fallback；新槽需实际明暗检查"
+    }
+  ],
+  "derivedReDeclaration": {
+    "tokens": [
+      "--wm-ref-surface-panel",
+      "--wm-ref-border-panel",
+      "--wm-ref-grad-accent",
+      "--wm-ref-focus-ring"
+    ],
+    "scopes": [
+      ":root",
+      "[data-wm-theme='light']",
+      "[data-wm-theme='dark']",
+      "[data-wm-density='compact']",
+      "[data-wm-theme='light'][data-wm-density='compact']",
+      "[data-wm-theme='dark'][data-wm-density='compact']"
+    ],
+    "rule": "每个显式明暗主题/密度边界重新声明公式；light 子树重声明亮色新槽，dark 子树重声明原暗色新槽；compact 不覆盖主题选择，组合和嵌套顺序以 computed style 验证"
+  },
+  "cleanupGate": "全部矩阵适用行视觉评审完成、全局复验通过、全部退役消费及依赖零、runtime/derived 明暗验证完成；当前禁止清旧"
+}

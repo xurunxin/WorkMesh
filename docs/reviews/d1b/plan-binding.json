@@ -1,5 +1,5 @@
 {
-  "currentPlanID": null,
+  "currentPlanID": "doc:nnchKV-O25SWiYsj3hXgm",
   "sourcePlanID": "doc:-JciTypN4XStMNkYksSqi",
   "historyPlanIDs": [
     "doc:IWQ9v6xnjnFyVtXnYDUC6",
@@ -20,8 +20,8 @@
   "planVersionStatus": "现有 todos/conversation 响应及平台注入文本均未提供版本字段；未猜测",
   "source": {
     "kind": "accepted-edit-plan-exact-replacement-snapshot",
-    "bodyReadFrom": "已提交/已审源码正文 + 本轮五次 edit_plan 原文精确替换；新正文已完整落盘，不冒称新平台 ID 已可读",
-    "idConfirmedBy": "conversation 仍为历史 doc:-JciTypN4XStMNkYksSqi；新 ID 未提供，currentPlanID=null",
+    "bodyReadFrom": "已审完整 source.planBody 与当前用户注入的 saved copy；正文未改，conversation 本轮读回实际当前 ID",
+    "idConfirmedBy": "docs/reviews/d1b/evidence/implementation-readback.txt",
     "independentDocumentAPIRead": false,
     "resourceReadAttempts": {
       "list": "tds resources/list: -32601 Method not found",
@@ -30,8 +30,8 @@
     "exactSnapshotPolicy": "去除 <plan> 标签及标签边界换行；正文段落不修改；UTF-8 无 BOM、LF、末尾一个 LF。未声称取得平台数据库原始存储字节。",
     "bodyBytes": 14344,
     "bodyUtf8Sha256": "91a9eb7451ff2799754d4207863c67cff09112d1470b5ad1049066309f8dbdb8",
-    "planUnchanged": false,
-    "newPlatformPlanSaved": "pending-end-of-turn",
+    "planUnchanged": true,
+    "newPlatformPlanSaved": false,
     "editsAccepted": 5
   },
   "artifacts": [
@@ -255,12 +255,13 @@
     "readableFullSnapshot": "accepted-by-independent-review-and-chief",
     "historicalInputFingerprints": "accepted-15-inputs-unchanged",
     "versionMetadata": "null-source-limitation-accepted-closed",
-    "matrixAndScopeIndependentReview": "pending-targeted-review-of-rendering-and-fixtures",
-    "chiefConfirmation": "pending-confirm",
+    "matrixAndScopeIndependentReview": "accepted-platform-review-on-40cc065",
+    "chiefConfirmation": "accepted-current-todo-execution-handoff-and-Confirm-plan",
     "productImplementation": "not-started",
     "implementationCI": "not-run",
     "merge": "not-performed",
-    "currentRevisionIDBinding": "pending-ID-readback-after-end-of-turn-save"
+    "currentRevisionIDBinding": "accepted-current-ID-readback",
+    "preflightIndependentReview": "pending-complete-mapping-and-spec-review"
   },
   "limitations": [
     "已接受全文/输入指纹/版本 null 限制不重开。",
@@ -611,5 +612,5 @@
     }
   ],
   "authorizedMutationScope": "仅当前计划 Markdown、plan-source.json、plan-binding.json、surface-matrix.json；无产品文件/历史D0修改",
-  "lastReadCurrentPlanID": "doc:-JciTypN4XStMNkYksSqi"
+  "lastReadCurrentPlanID": "doc:nnchKV-O25SWiYsj3hXgm"
 }

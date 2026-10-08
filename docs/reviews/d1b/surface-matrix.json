@@ -1,9 +1,9 @@
 {
-  "currentPlanID": null,
+  "currentPlanID": "doc:nnchKV-O25SWiYsj3hXgm",
   "planVersion": null,
   "baseCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
   "kind": "workmesh.d1b.surface-migration-planning",
-  "status": "仅文档前置；矩阵/作用域待定向独审及 Chief confirm；产品未实现",
+  "status": "规划矩阵独审及 Chief 实施确认完成；运行/视觉仍待逐面执行",
   "scope": "既有 UI 迁移/截图/评审，不新增业务入口或功能",
   "stages": [
     {
@@ -13267,5 +13267,10 @@
     }
   },
   "sourcePlanID": "doc:-JciTypN4XStMNkYksSqi",
-  "planBindingStatus": "本轮五处 edit_plan 已接受；平台在结束时保存新版本，新 ID 未产生，不把旧 ID 绑给修订正文；新全文已按精确替换落盘"
+  "planBindingStatus": "本轮五处 edit_plan 已接受；平台在结束时保存新版本，新 ID 未产生，不把旧 ID 绑给修订正文；新全文已按精确替换落盘",
+  "planningReview": {
+    "commit": "40cc065edabdc2a6fbdc72f728fd72259e58811c",
+    "source": "docs/reviews/d1b/evidence/implementation-readback.txt",
+    "status": "两项阻塞闭合，没有新增实施阻塞；不表示动态、视觉或 CI 验收"
+  }
 }
