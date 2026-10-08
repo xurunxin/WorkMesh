@@ -1,0 +1,66 @@
+{
+  "capturedAt": "2026-10-08T09:34:06.3435025Z",
+  "containers": [
+    {
+      "id": "b669ac6e6d659b4225964b8a01ce6cf77d18bcbfbb6b05238553c95e501ec335",
+      "name": "/wm-a1-01a1187a-pg",
+      "operation": "docker stop --time 10；docker rm -v",
+      "removed": true,
+      "volumes": [
+        "531eab099adb661d65b00b59dcfa2e8dd1c9e66f8426dc81e45aeeb92c542ab8"
+      ],
+      "imageRetained": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "reason": "本任务专用测试服务已结束，日志已无损保全；基础镜像共享保留"
+    },
+    {
+      "id": "d504e8bb89f32e26944619453c5bb132c3bf446636aeedb51ada971bb4636cdd",
+      "name": "/wm-a1-01a1187a-redis",
+      "operation": "docker stop --time 10；docker rm -v",
+      "removed": true,
+      "volumes": [
+        "8bfdc9836a51625fad096472ea4ac269322acf83381e0e685d94b6cad55fc10d"
+      ],
+      "imageRetained": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "reason": "本任务专用测试服务已结束，日志已无损保全；基础镜像共享保留"
+    },
+    {
+      "id": "286b8ad409ef96baecd63769659c0091200a4b543b3b5512583fedf583775e6a",
+      "name": "/wm-a1-01a1187a-s3",
+      "operation": "docker stop --time 10；docker rm -v",
+      "removed": true,
+      "volumes": [
+        "72a41c31e0ce9ebc8b46e0faff641a97576cc21ff9be04789a370a6d210db607"
+      ],
+      "imageRetained": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "reason": "本任务专用测试服务已结束，日志已无损保全；基础镜像共享保留"
+    }
+  ],
+  "temporaryPaths": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\web\\.next",
+      "removed": true,
+      "reason": "测试已结束；原输出/失败列表与日志已归档，.auth凭据不保留"
+    },
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-a1-01a11ac2-playwright",
+      "removed": true,
+      "reason": "测试已结束；原输出/失败列表与日志已归档，.auth凭据不保留"
+    }
+  ],
+  "retained": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "reason": "当前构建与未合入改动保留"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+      "reason": "原dirty工作区只读保留，尚未实际合入main，未执行force清理"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\node_modules",
+      "reason": "当前构建仍需审查与后续修复，依赖及共享pnpm store保留"
+    }
+  ],
+  "dedicatedImagesCreated": [],
+  "configuration": "临时env仅在已退出子进程，没有系统/用户配置更改；未global prune或触碰其他任务服务"
+}

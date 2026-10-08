@@ -111,6 +111,7 @@ import { registerAutonomousControlPlaneRoutes } from "./autonomous-control-plane
 import { registerWorkbenchLlmConnectionRoutes } from "./workbench-llm-connections.js";
 import { registerWorkbenchConversationRoutes } from "./workbench-conversations.js";
 import { registerWorkbenchRunnerRoutes } from "./workbench-runner.js";
+import { registerConfigurationReadinessRoutes } from "./configuration-readiness.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -1223,6 +1224,7 @@ export const buildApp = (options: {
   registerWorkbenchLlmConnectionRoutes(app, { db, meta: commandContext, header, paginator });
   registerWorkbenchConversationRoutes(app, { db, meta: commandContext, header, paginator });
   registerWorkbenchRunnerRoutes(app, { db, meta: commandContext, header });
+  registerConfigurationReadinessRoutes(app, { db, features });
   registerAgentConnectionRoutes(app, {
     db,
     webOrigin: config.WEB_ORIGIN,
