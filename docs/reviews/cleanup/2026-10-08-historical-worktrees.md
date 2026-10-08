@@ -250,7 +250,9 @@ D1a `.tmp` 总清单有 1,496 项；扣除上述 1,406 个精确映射后，余 
 
 不新增 raw trace 或 ZIP 副本。main 已有脱敏归档 `docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-sanitized.zip`（Git blob `02c663b7dbdd3c39c891adb99a6908b33bef4ccd`），其中 `1-trace.trace` 为 `1,022,635 B`、SHA-256 `f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350`。将既有脱敏逻辑和资源重命名映射在内存复算，输出与该成员逐字节匹配。补充 manifest 列出三份原 trace 的精确路径、原字节数与 SHA；三份均 `1,022,701 B`、同 SHA `17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d`。它们仍在原位置，本轮没有删除。
 
-当前复算确认有两处敏感值需要从 raw 转为脱敏标记：trace line 1612 的字段 `csrf_token` 与 `csrfToken`。仅保存字段路径和名称，不保存/输出原值。既有脱敏报告和 main ZIP 已提供最小安全内容存档；保留至少一份 raw 原件在原处。此前审计记录的 `1,022,617 B` 输出及 line 85/87 差异作为历史观察保留，不覆盖；本次复算准确匹配的是 `1,022,635 B` 成员和 line 1612 两字段，差异来源尚未把历史输出解释为同一次测量。两份敏感 raw ZIP 仍留原位。
+当前复算确认有两处 trace 敏感值需要从 raw 转为脱敏标记：line 1612 的字段 `csrf_token` 与 `csrfToken`；只记录路径和名称，不记录原值。旧 line 85/87 差异也已解释：两行的完整 JSON 路径分别为 `/snapshot/html/3/3/3/3/2/2/3/2/8/3/1/__playwright_value_`，各自位于 trace 行 85、87。原始归档的 `resources/bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json#/password` 与 `resources/428d3ad4971b1acb104802eff03cfb3d45ef6306.json#/password` 都是 19 B，分别对应这两处快照值。完整 RAW ZIP 资源集合转换时将它们加入脱敏集合，两处均替换为 10 B 的 `[REDACTED]`，相对保留值的结果总共少 18 B，得到旧输出 `1,022,617 B`、SHA `1d215abbf153aa2a2193c30d9a5ac63b86fc1242e1218444e657874c11b3f798`。
+
+两处 19 B 值都与本次指定 main `18252ba8761aa810c3fd12d31ecae83e8b24d985` 中 `apps/web/e2e/stage0.spec.ts` 第 185 行的固定 E2E install 测试夹具值相同；该源文件 blob 为 `e4c0ccadabec58a1e6651993a963bf4178764f5b`。它位于 Playwright Stage 0 浏览器验收流程，为 loopback 本地测试 workspace/user 填表，不是生产凭据。故 main 已有脱敏归档保留该确定性测试快照值有可审的测试源码依据；本记录不写出 literal。trace-only 脱敏不把资源值并入敏感集合，因此输出 `1,022,635 B`、SHA `f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350`，正好匹配 main ZIP 成员。两种转换输入集合不同，现可解释旧结果与主线成员为何差 18 B。RAW ZIP 与原件保持原位，本轮没有重跑测试、删除或恢复。
 
 ### #8/#15 候选与大目录扫描边界
 
