@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-08T17:22:43.427Z",
+  "generatedAt": "2026-10-08T18:18:02.359Z",
   "scope": "仅本 A2 工作树登记资源；完整逐 ID/path 原始回执保留，汇总不替代原件",
   "runs": [
     {
@@ -948,6 +948,90 @@
       "crashObservation": null
     },
     {
+      "runId": "a2-5e2b151d",
+      "receipt": "runs/a2-5e2b151d/receipts.json",
+      "outcome": null,
+      "resources": [
+        {
+          "type": "container",
+          "name": "a2-5e2b151d-postgres",
+          "owner": "a2-5e2b151d",
+          "image": "postgres:16-alpine",
+          "plannedAt": "2026-10-08T17:45:23.187Z",
+          "id": "e5c02cfcfdd110abe48e1d7ab788dd02e247f5ea87c31d2a879034b1a90905df",
+          "cleanup": {
+            "code": 0,
+            "output": "e5c02cfcfdd110abe48e1d7ab788dd02e247f5ea87c31d2a879034b1a90905df\n",
+            "at": "2026-10-08T17:50:21.061Z"
+          },
+          "preDelete": {
+            "id": "e5c02cfcfdd110abe48e1d7ab788dd02e247f5ea87c31d2a879034b1a90905df",
+            "owner": "a2-5e2b151d",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T17:50:20.850Z"
+          }
+        },
+        {
+          "type": "container",
+          "name": "a2-5e2b151d-redis",
+          "owner": "a2-5e2b151d",
+          "image": "redis:7-alpine",
+          "plannedAt": "2026-10-08T17:45:23.409Z",
+          "id": "acc3eac1e138fca37177906fac38a9afab2b9d78edbe44da187fd5ebd59cf104",
+          "cleanup": {
+            "code": 0,
+            "output": "acc3eac1e138fca37177906fac38a9afab2b9d78edbe44da187fd5ebd59cf104\n",
+            "at": "2026-10-08T17:50:20.604Z"
+          },
+          "preDelete": {
+            "id": "acc3eac1e138fca37177906fac38a9afab2b9d78edbe44da187fd5ebd59cf104",
+            "owner": "a2-5e2b151d",
+            "exitCode": 0,
+            "mounts": [
+              {
+                "Type": "volume",
+                "Name": "e07278398534df33171e3fa527e9502120853967c69af1196b1cbc3239cee1c6",
+                "Source": "/var/lib/docker/volumes/e07278398534df33171e3fa527e9502120853967c69af1196b1cbc3239cee1c6/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+              }
+            ],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T17:50:20.401Z"
+          }
+        },
+        {
+          "type": "container",
+          "name": "a2-5e2b151d-s3",
+          "owner": "a2-5e2b151d",
+          "image": "rustfs/rustfs:1.0.0",
+          "plannedAt": "2026-10-08T17:45:23.636Z",
+          "id": "bbfe0a2e3002e8ca7d18325aedf34ec29fac04726d209882079bc90a9ae785ac",
+          "cleanup": {
+            "code": 0,
+            "output": "bbfe0a2e3002e8ca7d18325aedf34ec29fac04726d209882079bc90a9ae785ac\n",
+            "at": "2026-10-08T17:50:20.195Z"
+          },
+          "preDelete": {
+            "id": "bbfe0a2e3002e8ca7d18325aedf34ec29fac04726d209882079bc90a9ae785ac",
+            "owner": "a2-5e2b151d",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T17:50:19.977Z"
+          }
+        }
+      ],
+      "pathReceipts": null,
+      "sanitization": "runs/a2-5e2b151d/sanitization.json",
+      "crashObservation": null
+    },
+    {
       "runId": "a2-60486de2",
       "receipt": "runs/a2-60486de2/receipts.json",
       "outcome": null,
@@ -1368,6 +1452,90 @@
       "crashObservation": null
     },
     {
+      "runId": "a2-7e910b69",
+      "receipt": "runs/a2-7e910b69/receipts.json",
+      "outcome": null,
+      "resources": [
+        {
+          "type": "container",
+          "name": "a2-7e910b69-postgres",
+          "owner": "a2-7e910b69",
+          "image": "postgres:16-alpine",
+          "plannedAt": "2026-10-08T17:52:37.588Z",
+          "id": "6a8666d44863605dcf49e61e67e6ffac24041b0e81c6abdf13a0ed2b8329a0a8",
+          "cleanup": {
+            "code": 0,
+            "output": "6a8666d44863605dcf49e61e67e6ffac24041b0e81c6abdf13a0ed2b8329a0a8\n",
+            "at": "2026-10-08T18:02:08.595Z"
+          },
+          "preDelete": {
+            "id": "6a8666d44863605dcf49e61e67e6ffac24041b0e81c6abdf13a0ed2b8329a0a8",
+            "owner": "a2-7e910b69",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:02:08.373Z"
+          }
+        },
+        {
+          "type": "container",
+          "name": "a2-7e910b69-redis",
+          "owner": "a2-7e910b69",
+          "image": "redis:7-alpine",
+          "plannedAt": "2026-10-08T17:52:37.786Z",
+          "id": "a0ea36478931e019c9ee4eef7c3f41caf4c786bebede032e4494af69b8fa29d5",
+          "cleanup": {
+            "code": 0,
+            "output": "a0ea36478931e019c9ee4eef7c3f41caf4c786bebede032e4494af69b8fa29d5\n",
+            "at": "2026-10-08T18:02:08.174Z"
+          },
+          "preDelete": {
+            "id": "a0ea36478931e019c9ee4eef7c3f41caf4c786bebede032e4494af69b8fa29d5",
+            "owner": "a2-7e910b69",
+            "exitCode": 0,
+            "mounts": [
+              {
+                "Type": "volume",
+                "Name": "d6d92c8adfd910847da56a491286991ae74d4398ca4d924ceb7381c405c945d9",
+                "Source": "/var/lib/docker/volumes/d6d92c8adfd910847da56a491286991ae74d4398ca4d924ceb7381c405c945d9/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+              }
+            ],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:02:07.966Z"
+          }
+        },
+        {
+          "type": "container",
+          "name": "a2-7e910b69-s3",
+          "owner": "a2-7e910b69",
+          "image": "rustfs/rustfs:1.0.0",
+          "plannedAt": "2026-10-08T17:52:38.024Z",
+          "id": "3d5f316148e525f50981234350c3e1186511a559ac2be2a8f96410a3189d1848",
+          "cleanup": {
+            "code": 0,
+            "output": "3d5f316148e525f50981234350c3e1186511a559ac2be2a8f96410a3189d1848\n",
+            "at": "2026-10-08T18:02:07.754Z"
+          },
+          "preDelete": {
+            "id": "3d5f316148e525f50981234350c3e1186511a559ac2be2a8f96410a3189d1848",
+            "owner": "a2-7e910b69",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:02:07.556Z"
+          }
+        }
+      ],
+      "pathReceipts": null,
+      "sanitization": "runs/a2-7e910b69/sanitization.json",
+      "crashObservation": null
+    },
+    {
       "runId": "a2-8259e050",
       "receipt": "runs/a2-8259e050/receipts.json",
       "outcome": null,
@@ -1566,6 +1734,90 @@
       ],
       "pathReceipts": null,
       "sanitization": "runs/a2-95a5627a/sanitization.json",
+      "crashObservation": null
+    },
+    {
+      "runId": "a2-99deca8f",
+      "receipt": "runs/a2-99deca8f/receipts.json",
+      "outcome": null,
+      "resources": [
+        {
+          "type": "container",
+          "name": "a2-99deca8f-postgres",
+          "owner": "a2-99deca8f",
+          "image": "postgres:16-alpine",
+          "plannedAt": "2026-10-08T18:13:23.317Z",
+          "id": "45016035fc14949f78e147e014a8326049bf3cc2b2970e10d3e299c7ac61ea0c",
+          "cleanup": {
+            "code": 0,
+            "output": "45016035fc14949f78e147e014a8326049bf3cc2b2970e10d3e299c7ac61ea0c\n",
+            "at": "2026-10-08T18:15:47.439Z"
+          },
+          "preDelete": {
+            "id": "45016035fc14949f78e147e014a8326049bf3cc2b2970e10d3e299c7ac61ea0c",
+            "owner": "a2-99deca8f",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:15:47.236Z"
+          }
+        },
+        {
+          "type": "container",
+          "name": "a2-99deca8f-redis",
+          "owner": "a2-99deca8f",
+          "image": "redis:7-alpine",
+          "plannedAt": "2026-10-08T18:13:23.523Z",
+          "id": "943afa5267d70555a34725e669ca6cb099ac6a64b74ed47385d6a023f855fde2",
+          "cleanup": {
+            "code": 0,
+            "output": "943afa5267d70555a34725e669ca6cb099ac6a64b74ed47385d6a023f855fde2\n",
+            "at": "2026-10-08T18:15:47.044Z"
+          },
+          "preDelete": {
+            "id": "943afa5267d70555a34725e669ca6cb099ac6a64b74ed47385d6a023f855fde2",
+            "owner": "a2-99deca8f",
+            "exitCode": 0,
+            "mounts": [
+              {
+                "Type": "volume",
+                "Name": "2fd94fabeeac2ad3f1aa827f7f9c25e720d6e4f897bd7d754e693b1a7e8056bd",
+                "Source": "/var/lib/docker/volumes/2fd94fabeeac2ad3f1aa827f7f9c25e720d6e4f897bd7d754e693b1a7e8056bd/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+              }
+            ],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:15:46.844Z"
+          }
+        },
+        {
+          "type": "container",
+          "name": "a2-99deca8f-s3",
+          "owner": "a2-99deca8f",
+          "image": "rustfs/rustfs:1.0.0",
+          "plannedAt": "2026-10-08T18:13:23.749Z",
+          "id": "50bd02d60a52e92a179394e5716988f65ae554029f738092196f4036c9e2dc2a",
+          "cleanup": {
+            "code": 0,
+            "output": "50bd02d60a52e92a179394e5716988f65ae554029f738092196f4036c9e2dc2a\n",
+            "at": "2026-10-08T18:15:46.628Z"
+          },
+          "preDelete": {
+            "id": "50bd02d60a52e92a179394e5716988f65ae554029f738092196f4036c9e2dc2a",
+            "owner": "a2-99deca8f",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:15:46.403Z"
+          }
+        }
+      ],
+      "pathReceipts": null,
+      "sanitization": "runs/a2-99deca8f/sanitization.json",
       "crashObservation": null
     },
     {
@@ -2472,6 +2724,90 @@
       ],
       "pathReceipts": null,
       "sanitization": "runs/a2-e1a20704/sanitization.json",
+      "crashObservation": null
+    },
+    {
+      "runId": "a2-e9a97c5f",
+      "receipt": "runs/a2-e9a97c5f/receipts.json",
+      "outcome": null,
+      "resources": [
+        {
+          "type": "container",
+          "name": "a2-e9a97c5f-postgres",
+          "owner": "a2-e9a97c5f",
+          "image": "postgres:16-alpine",
+          "plannedAt": "2026-10-08T18:02:39.911Z",
+          "id": "e4603ec7caac9a769a8842ed7d33d0aad987194d2debeea1ea8ec0e7f520f59a",
+          "cleanup": {
+            "code": 0,
+            "output": "e4603ec7caac9a769a8842ed7d33d0aad987194d2debeea1ea8ec0e7f520f59a\n",
+            "at": "2026-10-08T18:13:04.718Z"
+          },
+          "preDelete": {
+            "id": "e4603ec7caac9a769a8842ed7d33d0aad987194d2debeea1ea8ec0e7f520f59a",
+            "owner": "a2-e9a97c5f",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:13:04.485Z"
+          }
+        },
+        {
+          "type": "container",
+          "name": "a2-e9a97c5f-redis",
+          "owner": "a2-e9a97c5f",
+          "image": "redis:7-alpine",
+          "plannedAt": "2026-10-08T18:02:40.129Z",
+          "id": "24260dac03a728ec62a296dbc6ef1253ccf9bebf4b184b2a1e49e7eea072c170",
+          "cleanup": {
+            "code": 0,
+            "output": "24260dac03a728ec62a296dbc6ef1253ccf9bebf4b184b2a1e49e7eea072c170\n",
+            "at": "2026-10-08T18:13:04.270Z"
+          },
+          "preDelete": {
+            "id": "24260dac03a728ec62a296dbc6ef1253ccf9bebf4b184b2a1e49e7eea072c170",
+            "owner": "a2-e9a97c5f",
+            "exitCode": 0,
+            "mounts": [
+              {
+                "Type": "volume",
+                "Name": "f93c33c4a56ec02b095533392fc0fdc914c6e41358c1208b6a400894b29597c4",
+                "Source": "/var/lib/docker/volumes/f93c33c4a56ec02b095533392fc0fdc914c6e41358c1208b6a400894b29597c4/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+              }
+            ],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:13:04.061Z"
+          }
+        },
+        {
+          "type": "container",
+          "name": "a2-e9a97c5f-s3",
+          "owner": "a2-e9a97c5f",
+          "image": "rustfs/rustfs:1.0.0",
+          "plannedAt": "2026-10-08T18:02:40.395Z",
+          "id": "8b82312a103f8d8c9ac91b87aa5c99a893140154df1e14060af18babeedac0f1",
+          "cleanup": {
+            "code": 0,
+            "output": "8b82312a103f8d8c9ac91b87aa5c99a893140154df1e14060af18babeedac0f1\n",
+            "at": "2026-10-08T18:13:03.870Z"
+          },
+          "preDelete": {
+            "id": "8b82312a103f8d8c9ac91b87aa5c99a893140154df1e14060af18babeedac0f1",
+            "owner": "a2-e9a97c5f",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:13:03.660Z"
+          }
+        }
+      ],
+      "pathReceipts": null,
+      "sanitization": "runs/a2-e9a97c5f/sanitization.json",
       "crashObservation": null
     },
     {
@@ -3945,8 +4281,8 @@
   ],
   "archiveCleanup": {
     "inventory": "raw-evidence-archives.json",
-    "entries": 3045,
-    "verifiedAndRemovedCopies": 3045
+    "entries": 3146,
+    "verifiedAndRemovedCopies": 3146
   },
   "retained": [
     {

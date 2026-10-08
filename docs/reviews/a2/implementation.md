@@ -41,9 +41,9 @@ Lite 入口从精确提交构建并 save/load，目标服务不挂载源码，�
 
 原始日志、源码快照、冲突原件及失败上下文采用逐文件无损 gzip，完整映射、工作树与历史 Git blob 字节、解压核验及未压缩副本清理回执在 `raw-evidence-archives.json`。用 `read-evidence-bytes.mjs` 读取原字节；查看归档 HTML 报告前须按其原相对路径解压数据文件。脱敏 trace 的前后摘要另列，不冒作秘密原字节，不通过格式化日志或忽略 CI 掩盖检查。
 
-## 验收与收尾
+## 上次交付验收与收尾
 
-当前实际结果如下，后续提交的 Git blob 与受测工作树原字节由 `checked-source-binding.json` 分列绑定。根单元、集成运行期间仅浏览器入口测试文件发生变化，API、Worker、组件、契约和锁清单保持受测字节；完整浏览器和最新静态检查期间无源码变化。
+以下为实施独审恢复修补前的交付结果，保留旧输入意义，不代表本轮 UI。根单元、集成运行期间仅浏览器入口测试文件发生变化，API、Worker、组件、契约和锁清单保持当轮受测字节；当轮完整浏览器和静态检查期间无源码变化。修补后的当前结果在下文及 `configuration-recovery-review.md`，当前受测原字节与 Git blob 在 `checked-source-binding.json` 分列绑定。
 
 | 检查 | 运行与实际结果 |
 | --- | --- |
@@ -71,3 +71,13 @@ Lite 入口从精确提交构建并 save/load，目标服务不挂载源码，�
 完整材料提交 `52c314be740ca6e7d2769c96f8614b44101ed6db` 与受测产品提交 `bb86b1fe31e9b23f6e91171b526c860a0a0fcb22` 间无产品差异。`delivery-git-byte-proof.json` 核 3045 个已提交归档 blob 与清单一致；`delivery-remote-readback.json` 的实际查询未发现本分支工作流，最新 Required CI 仍未完成，远端 main 仍为 `74f247f9240eaf21e74ef248f71a445c1d4276d7`。后续只读回执和本文增量属于文档收尾，不伪补未来提交 ID 或未来 CI。
 
 只清理登记归属本任务的测试资源，并保存逐 ID/path 检查和操作回执；汇总及原件入口见 [收尾报告](cleanup-report.md)。共享镜像、默认网络、当前 worktree 保留。C3 的拒绝/违规审计及其新旧目录不修改、不删除，旧 worktree 未满足合入/保全/无活动引用条件时不清理。
+
+## 配置恢复独审修补
+
+本轮三项 blocking 的最小修补、被审代码位置的直接读回及精确场景见 [配置恢复报告](configuration-recovery-review.md)。确认使用动作、仓库、目标及正文，不排除重载基线中的原结果；刷新已展开分页保留有效选择；等待与动作记录分离，挂起读取也按期限释放，原动作只读重试和显式修改均可恢复。没有修改 API、Worker、锁、秘密指纹、服务端分页或部署合同，批准计划及当前规格快照保持。
+
+最终产品源码运行 `a2-e9a97c5f`：路由/lint/typecheck、根单元 29 task（Web 819 项）、完整浏览器 78 项/2 跳过、关闭 Gitea 11 项/1 Lite 跳过、CI 校验及 Web build 全部退出 0。随后只加强两处测试的可见基线断言，由 `a2-99deca8f` 验证；组件 22 项及真实 i18n 3 项通过，最终浏览器及新 Lite 结果结束后另绑定，不用旧镜像覆盖此次 UI。
+
+`a2-99deca8f` 最终关闭 Gitea 浏览器 11 项通过/1 Lite 跳过，lint/typecheck/CI 校验通过，运行前后源码不变；四轮专用容器收尾与脱敏完成。当前产品源码与 `a2-e9a97c5f` 相同，新增可见基线断言的两处测试原字节由后续定向运行独立覆盖。新 Lite 镜像安装待精确提交后执行。
+
+旧映射、源绑定和 CI 原字节存于 `configuration-recovery/history/`；首轮原焦点失败和同源码独立/完整重跑均保留。当前 `execution-map.json`、`execution-results.json` 以及相应原件逐输入给出结果，不标记整卡完成。人类五项视觉差异、真实设备/厂商、实施独审、最新 Required CI 和实际 main 仍待完成。

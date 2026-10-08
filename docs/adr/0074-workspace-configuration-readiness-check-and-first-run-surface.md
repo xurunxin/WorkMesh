@@ -280,6 +280,8 @@ Worker 正常解析和 checkpoint 恢复均在最终落库事务内重验 Human�
 
 Lite 原安装验收包含真实镜像无源码安装与逐项配置闭环。其构建阶段必须将既有 Compose 内部 `api:3001` 地址固化进 Next 五条代理规则，运行时声明不能重建 rewrites；修补及前两轮首败见 `docs/reviews/a2/lite-proxy-repair.md`。不改变外部同源地址、认证、TLS、四角色或只读镜像合同，也不将真实设备和厂商兼容冒作本机安装结果。
 
+异步上下文的恢复确认以精确动作 ID、仓库、目标及正文匹配为准，不因已完成结果出现在重载后的基线中而排除。基线只作新命令的并发提示。等待期限及临时读取失败解除表单禁用，原动作记录继续用于只读确认重试和迟到结果；改正文后由用户显式提交新命令。仓库刷新重读已展开分页并核当前选择，只有授权列表完整证实不可用才清空，不自动替换仓库。具体实现独审修补与实际证据见 `docs/reviews/a2/configuration-recovery-review.md`；不改变 API、权限、事务、幂等或分页合同。
+
 - `OPENAPI.yaml` declares the readiness route, its three states per check
   (`ready` / `blocked` / `unknown`；`not_applicable` 另属适用性), and the fact that it
   is a query with no write counterpart.

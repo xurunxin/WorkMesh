@@ -150,6 +150,36 @@ try {
     await must(pnpm, [...args, '--list']); await must(pnpm, args)
     await must(pnpm, ['ci:validate']); await must(pnpm, ['--filter', '@workmesh/web', 'build'])
     if (unit.code !== 0) throw Error('本次根单元检查失败；已继续独立集成、浏览器与构建，首败和各自结果保留')
+  } else if (phase === 'review-reload-proof') {
+    await must(pnpm, ['lint']); await must(pnpm, ['typecheck'])
+    await must(pnpm, ['--filter', '@workmesh/web', 'exec', 'vitest', 'run', 'features/projects/project-repository-configuration.test.tsx', 'app/lib/i18n.test.ts'])
+    env.WORKMESH_A2_DISABLE_GITEA = '1'
+    env.WORKMESH_PLAYWRIGHT_RUN_DIR = resolve(evidence, 'playwright-gitea-disabled')
+    const args = ['--filter', '@workmesh/web', 'exec', 'playwright', 'test', '--config', '../../playwright.config.ts', 'configuration-readiness.spec.ts']
+    await must(pnpm, [...args, '--list']); await must(pnpm, args)
+    await must(pnpm, ['ci:validate'])
+  } else if (phase === 'review-browser') {
+    env.WORKMESH_A2_DISABLE_GITEA = '1'
+    env.WORKMESH_PLAYWRIGHT_RUN_DIR = resolve(evidence, 'playwright-gitea-disabled')
+    const args = ['--filter', '@workmesh/web', 'exec', 'playwright', 'test', '--config', '../../playwright.config.ts', 'configuration-readiness.spec.ts']
+    await must(pnpm, [...args, '--grep', 'Back/Forward'])
+    await must(pnpm, [...args, '--list']); await must(pnpm, args)
+    delete env.WORKMESH_A2_DISABLE_GITEA
+    env.WORKMESH_PLAYWRIGHT_RUN_DIR = resolve(evidence, 'playwright-full')
+    await must(pnpm, ['test:e2e'])
+    await must(pnpm, ['ci:validate']); await must(pnpm, ['--filter', '@workmesh/web', 'build'])
+  } else if (phase === 'review-fixes') {
+    await must(pnpm, ['check:route-policy'])
+    await must(pnpm, ['lint']); await must(pnpm, ['typecheck'])
+    await must(pnpm, ['test'])
+    env.WORKMESH_A2_DISABLE_GITEA = '1'
+    env.WORKMESH_PLAYWRIGHT_RUN_DIR = resolve(evidence, 'playwright-gitea-disabled')
+    const args = ['--filter', '@workmesh/web', 'exec', 'playwright', 'test', '--config', '../../playwright.config.ts', 'configuration-readiness.spec.ts']
+    await must(pnpm, [...args, '--list']); await must(pnpm, args)
+    delete env.WORKMESH_A2_DISABLE_GITEA
+    env.WORKMESH_PLAYWRIGHT_RUN_DIR = resolve(evidence, 'playwright-full')
+    await must(pnpm, ['test:e2e'])
+    await must(pnpm, ['ci:validate']); await must(pnpm, ['--filter', '@workmesh/web', 'build'])
   } else if (phase === 'delivery') {
     env.WORKMESH_A2_DISABLE_GITEA = '1'
     env.WORKMESH_PLAYWRIGHT_RUN_DIR = resolve(evidence, 'playwright-gitea-disabled')

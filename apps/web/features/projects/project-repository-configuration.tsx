@@ -15,9 +15,12 @@ import { useRealtimeSubscription } from '../../app/lib/realtime'
 import styles from './project-repository-configuration.module.css'
 
 type ContextInput = RepositoryContextInput
-type PendingContext = { id: string; body: ContextInput; baseline: string[]; deadline: number }
+type PendingContext = { id: string; repositoryId: string; body: ContextInput; deadline: number }
 const sameContext = (value: RepositoryContextConfiguration, pending: PendingContext) =>
-  value.provider_action_id === pending.id && !pending.baseline.includes(value.id)
+  value.provider_action_id === pending.id && value.repository_id === pending.repositoryId
+  && value.project_id === (pending.body.projectId ?? null)
+  && value.work_item_id === (pending.body.workItemId ?? null)
+  && value.session_id === (pending.body.sessionId ?? null)
   && value.base_sha === pending.body.baseSha && value.base_branch === pending.body.baseBranch
   && value.branch_pattern === pending.body.branchPattern
   && JSON.stringify(value.allowed_paths) === JSON.stringify(pending.body.allowedPaths)
@@ -48,42 +51,64 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
   const [contextFields, setContextFields] = useState({ baseBranch: 'main', baseSha: '', branchPattern: 'workmesh/{workItemKey}-{slug}', allowedPaths: '.' })
   const [selectedPermissions, setSelectedPermissions] = useState<ContextInput['permissions']>(['read'])
   const [pending, setPending] = useState<PendingContext | null>(null)
+  const pendingRef = useRef<PendingContext | null>(null)
+  const [waiting, setWaiting] = useState(false)
+  const editedPending = useRef(false)
+  const shaInput = useRef<HTMLInputElement>(null)
+  const latestText = useRef(text); latestText.current = text
   const [requestGeneration, setRequestGeneration] = useState(0)
   const [legacyConflict, setLegacyConflict] = useState(false)
-  const contextAttempt = useRef<{ scope: string; body: string; baseline: string[] } | null>(null)
+  const contextAttempt = useRef<{ scope: string; body: string } | null>(null)
   const controller = useRef<AbortController | null>(null)
   const generation = useRef(0)
   const target = workItemId ? { workItemId } : projectId ? { projectId } : null
   const targetKey = JSON.stringify(target)
   const scope = `${actorAuthorityScopeKey(actor)}:${teamId}:${targetKey}`
   const latest = useRef(scope); latest.current = scope
+  const selectedRepository = useRef(repositoryId); selectedRepository.current = repositoryId
+  const loadedPages = useRef({ scope, count: 1, initialized: false })
   const contextScope = `${scope}:${repositoryId}`
   const latestContext = useRef(contextScope); latestContext.current = contextScope
   const repository = repositories.find(item => item.id === repositoryId)
   const canWrite = Boolean(repository?.can_configure_context && !loading && !error && target)
   const clearSecrets = () => setSecrets({ webhookSecret: '', privateKey: '', accessToken: '' })
+  const replacePending = (value: PendingContext | null) => { pendingRef.current = value; setPending(value) }
   const handleError = (reason: unknown) => {
     clearSecrets()
-    if (reason instanceof ApiError && [401, 403, 404].includes(reason.status)) { setRepositories([]); setContexts([]); setRepositoryId(''); setCursor(null); setPending(null) }
+    setWaiting(false)
+    if (reason instanceof ApiError && [401, 403, 404].includes(reason.status)) { setRepositories([]); setContexts([]); setRepositoryId(''); setCursor(null); replacePending(null) }
     if (reason instanceof ApiError && reason.code === 'IDEMPOTENCY_KEY_REUSED') { setLegacyConflict(true); setError(text.reusedKey) }
     else setError(reason instanceof Error && reason.name === 'ZodError' ? text.validationFailed : text.commandFailed)
   }
-  const load = useCallback(async (next: string | null = null) => {
+  const load = useCallback(async (next: string | null = null, retryCursor = true) => {
     const version = ++generation.current
     controller.current?.abort(); const abort = new AbortController(); controller.current = abort
     setLoading(true); setError('')
     try {
-      const params = new URLSearchParams({ teamId, availableOnly: 'true', limit: '20' })
-      if (next) params.set('cursor', next)
-      const page = repositoryConfigurationPageSchema.parse(await apiRequest<unknown>(`/api/v1/repositories?${params}`, { signal: abort.signal, cache: 'no-store' }))
+      const retainedScope = loadedPages.current.scope === scope
+      const selected = retainedScope ? selectedRepository.current : ''
+      const expanded = retainedScope ? loadedPages.current.count : 1
+      const initialized = retainedScope && loadedPages.current.initialized
+      const items: RepositoryConfiguration[] = []
+      let after = next
+      let pages = 0
+      do {
+        const params = new URLSearchParams({ teamId, availableOnly: 'true', limit: '20' })
+        if (after) params.set('cursor', after)
+        const page = repositoryConfigurationPageSchema.parse(await apiRequest<unknown>(`/api/v1/repositories?${params}`, { signal: abort.signal, cache: 'no-store' }))
+        if (!alive() || abort.signal.aborted || latest.current !== scope || version !== generation.current) return
+        items.push(...page.items); after = page.nextCursor; ++pages
+        // Refresh expanded pages, then follow shifted pages until the selection
+        // is verified or the authorized list is exhausted. Never select a substitute.
+      } while (!next && after && (pages < expanded || Boolean(selected && !items.some(item => item.id === selected))))
       if (!alive() || abort.signal.aborted || latest.current !== scope || version !== generation.current) return
-      setRepositories(current => next ? [...new Map([...current, ...page.items].map(item => [item.id, item])).values()] : page.items)
-      setCursor(page.nextCursor)
-      setRepositoryId(current => (!next && !page.items.some(item => item.id === current)) ? page.items[0]?.id ?? '' : current || page.items[0]?.id || '')
+      loadedPages.current = { scope, count: next ? expanded + 1 : pages, initialized: true }
+      setRepositories(current => [...new Map([...(next ? current : []), ...items].map(item => [item.id, item])).values()])
+      setCursor(after)
+      if (!next) setRepositoryId(selected ? (items.some(item => item.id === selected) ? selected : '') : initialized ? '' : items[0]?.id ?? '')
     } catch (reason) {
       if (!alive() || abort.signal.aborted || latest.current !== scope || version !== generation.current) return
-      setRepositories([]); setContexts([]); setCursor(null)
-      if (next && reason instanceof ApiError && reason.code === 'PAGINATION_CURSOR_MISMATCH') { void load(); return }
+      if (retryCursor && reason instanceof ApiError && reason.code === 'PAGINATION_CURSOR_MISMATCH') { void load(null, false); return }
       handleError(reason)
     } finally { if (alive() && latest.current === scope && version === generation.current) setLoading(false) }
   }, [scope, alive, teamId, text])
@@ -91,8 +116,15 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
     if (!repositoryId) { setContexts([]); return [] }
     try {
       const values = repositoryContextConfigurationSchema.array().parse(await apiRequest<unknown>(`/api/v1/repositories/${repositoryId}/context`, { signal, cache: 'no-store' }))
-      const matches = values.filter(value => workItemId ? value.work_item_id === workItemId : value.project_id === projectId)
-      if (alive() && latestContext.current === contextScope && !signal?.aborted) setContexts(matches)
+      const matches = values.filter(value => value.repository_id === repositoryId && (workItemId ? value.work_item_id === workItemId : value.project_id === projectId))
+      if (alive() && latestContext.current === contextScope && !signal?.aborted) {
+        setContexts(matches)
+        const original = pendingRef.current
+        if (original && matches.some(value => sameContext(value, original))) {
+          setNotice(editedPending.current ? latestText.current.previousContextSaved : latestText.current.saved)
+          replacePending(null); setWaiting(false); contextAttempt.current = null
+        }
+      }
       else return []
       return matches
     } catch (reason) {
@@ -146,31 +178,34 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
     }
   }, [scope])
   useEffect(() => {
-    setContexts([]); setPending(null); setNotice(''); clearSecrets()
+    setContexts([]); replacePending(null); setWaiting(false); setNotice(''); clearSecrets()
+    editedPending.current = false
     contextAttempt.current = null
     const abort = new AbortController()
     void readContexts(abort.signal).catch(reason => { if (alive() && !abort.signal.aborted) handleError(reason) })
     return () => abort.abort()
   }, [readContexts])
   useEffect(() => {
-    if (!pending) return
+    if (!pending || !waiting) return
     const abort = new AbortController()
     let reading = false
     const check = async () => {
-      if (reading || abort.signal.aborted) return
+      if (abort.signal.aborted || !alive()) return
+      // The deadline must release the form even when the previous read hangs.
+      if (pendingRef.current?.id === pending.id && Date.now() >= pending.deadline) { setNotice(text.notConfirmed); setWaiting(false); return }
+      if (reading) return
       reading = true
       try {
-        const values = await readContexts(abort.signal)
+        await readContexts(abort.signal)
         if (!alive() || abort.signal.aborted) return
-        if (values.some(value => sameContext(value, pending))) { setNotice(text.saved); setPending(null) }
-        else if (Date.now() >= pending.deadline) { setNotice(text.notConfirmed); clearInterval(timer) }
-      } catch (reason) { if (alive() && !abort.signal.aborted) { handleError(reason); clearInterval(timer) } }
+        if (pendingRef.current?.id === pending.id && Date.now() >= pending.deadline) { setNotice(text.notConfirmed); setWaiting(false) }
+      } catch (reason) { if (alive() && !abort.signal.aborted) { setNotice(text.notConfirmed); handleError(reason) } }
       finally { reading = false }
     }
     const timer = setInterval(() => void check(), 2000)
     void check()
     return () => { clearInterval(timer); abort.abort() }
-  }, [pending, readContexts, text, alive])
+  }, [pending, waiting, readContexts, text, alive])
   useRealtimeSubscription(actor.workspace_id ? [{ type: 'workspace', id: actor.workspace_id }] : [], () => {
     void load(); void refreshFeatures(); void readContexts().catch(handleError)
   })
@@ -179,6 +214,12 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
     window.addEventListener('focus', resume); window.addEventListener('pageshow', resume); document.addEventListener('visibilitychange', resume)
     return () => { window.removeEventListener('focus', resume); window.removeEventListener('pageshow', resume); document.removeEventListener('visibilitychange', resume) }
   }, [load, readContexts])
+  const retryConfirmation = () => {
+    const original = pendingRef.current
+    if (!original) return
+    replacePending({ ...original, deadline: Date.now() + 60_000 })
+    setWaiting(true); setNotice(text.pending); void load()
+  }
   const submit = async (event: FormEvent, kind: 'connection' | 'repository' | 'context') => {
     event.preventDefault()
     if (busyRef.current || loading || legacyConflict) return
@@ -194,9 +235,11 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
         await apiMutation(`a2:repository:${scope}`, '/api/v1/repositories', { method: 'POST', headers: json({}), body: JSON.stringify(body) })
         if (alive() && latest.current === scope) await load()
       } else {
-        if (!canWrite || !target) return
+        if (!canWrite || !target || waiting) return
         const body = repositoryContextInputSchema.parse({ ...target, ...contextFields, allowedPaths: contextFields.allowedPaths.split('\n').map(value => value.trim()).filter(Boolean), permissions: selectedPermissions })
         const identity = JSON.stringify(body)
+        const original = pendingRef.current
+        if (original && JSON.stringify(original.body) === identity) { retryConfirmation(); return }
         const baseline = contexts.map(value => value.id)
         const currentContexts = await readContexts()
         if (!alive() || latestContext.current !== contextScope) return
@@ -206,10 +249,12 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
           && JSON.stringify(currentContexts.map(value => value.id)) !== JSON.stringify(baseline)) {
           setNotice(text.contextChanged); return
         }
-        const attemptBaseline = retry ? contextAttempt.current!.baseline : currentContexts.map(value => value.id)
-        contextAttempt.current = { scope: contextScope, body: identity, baseline: attemptBaseline }
+        contextAttempt.current = { scope: contextScope, body: identity }
         const action = repositoryContextActionSchema.parse(await apiMutation<unknown>(`a2:context:${scope}:${repositoryId}`, `/api/v1/repositories/${repositoryId}/context`, { method: 'POST', headers: json({}), body: JSON.stringify(body) }))
-        if (alive() && latestContext.current === contextScope) { setPending({ id: action.id, body, baseline: attemptBaseline, deadline: Date.now() + 60_000 }); setNotice(text.pending) }
+        if (alive() && latestContext.current === contextScope) {
+          editedPending.current = false
+          replacePending({ id: action.id, repositoryId, body, deadline: Date.now() + 60_000 }); setWaiting(true); setNotice(text.pending)
+        }
       }
     } catch (reason) { if (alive() && latest.current === scope) handleError(reason) }
     finally { if (alive() && latest.current === scope) { clearSecrets(); busyRef.current = false; setBusy(false) } }
@@ -219,20 +264,24 @@ export function ProjectRepositoryConfiguration({ actor, teamId, projectId, workI
     ? <textarea autoComplete="off" maxLength={100000} onChange={event => setSecrets(current => ({ ...current, [field]: event.target.value }))} value={secrets[field]} />
     : <input type="password" autoComplete="off" maxLength={field === 'webhookSecret' ? 4096 : 10000} onChange={event => setSecrets(current => ({ ...current, [field]: event.target.value }))} value={secrets[field]} />}</label>
   return <section ref={sectionRef} className={styles.section} id="project-repository-configuration" aria-labelledby="repository-configuration-title" tabIndex={-1}>
-    <div className={styles.heading}><h2 id="repository-configuration-title">{text.configurationTitle}</h2><Button disabled={loading} onClick={() => { void load(); void readContexts().then(values => { if (pending && values.some(value => sameContext(value, pending))) { setPending(null); setNotice(text.saved) } }).catch(handleError) }} variant="secondary">{text.refresh}</Button></div>
+    <div className={styles.heading}><h2 id="repository-configuration-title">{text.configurationTitle}</h2><Button disabled={loading} onClick={() => { void load(); void readContexts().catch(handleError) }} variant="secondary">{text.refresh}</Button></div>
     {!target && <p>{text.chooseTarget} <Button onClick={onCreateProject} variant="secondary">{text.createTargetProject}</Button></p>}
     {error && <p role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}
+    {pending && !waiting && <div>
+      <Button disabled={busy || loading} onClick={retryConfirmation} variant="secondary">{text.retryContext}</Button>
+      <Button disabled={busy || loading || !canWrite} onClick={() => { editedPending.current = true; shaInput.current?.focus() }} variant="secondary">{text.editContext}</Button>
+    </div>}
     {legacyConflict && <Button onClick={() => { setRequestGeneration(value => value + 1); setLegacyConflict(false); setError('') }} variant="secondary">{text.newRequest}</Button>}
     {loading ? <p role="status">{text.loading}</p> : <>
-      {repositories.length === 0 ? <p>{text.noRepositories}</p> : <label>{text.repositoryLabel}<select aria-label={text.repositoryLabel} value={repositoryId} onChange={event => setRepositoryId(event.target.value)}>{repositories.map(value => <option key={value.id} value={value.id}>{value.full_name}</option>)}</select></label>}
+      {repositories.length === 0 ? <p>{text.noRepositories}</p> : <label>{text.repositoryLabel}<select aria-label={text.repositoryLabel} value={repositoryId} disabled={busy} onChange={event => setRepositoryId(event.target.value)}>{!repositoryId && <option value="">{text.selectRepository}</option>}{repositories.map(value => <option key={value.id} value={value.id}>{value.full_name}</option>)}</select></label>}
       {cursor && <Button onClick={() => void load(cursor)} variant="secondary">{text.more}</Button>}
       {repository && target && <>
         <h3>{text.currentContext}</h3>{contexts[0] ? <p>{contexts[0].base_branch} · <code>{contexts[0].base_sha}</code></p> : <p>{text.noContext}</p>}
         {!repository.can_configure_context && <p>{text.readOnly}</p>}
-        {canWrite && <form onSubmit={event => void submit(event, 'context')}><fieldset disabled={busy || Boolean(pending)} className={styles.fields}>
-          {(['baseBranch', 'baseSha', 'branchPattern'] as const).map(field => <label key={field}>{text[field]}<input required maxLength={500} value={contextFields[field]} onChange={event => setContextFields(current => ({ ...current, [field]: event.target.value }))} /></label>)}
-          <label>{text.allowedPaths}<textarea required value={contextFields.allowedPaths} onChange={event => setContextFields(current => ({ ...current, allowedPaths: event.target.value }))} /></label>
-          <fieldset><legend>{text.permissions}</legend>{permissions.map(permission => <label className={styles.permission} key={permission}><input type="checkbox" checked={selectedPermissions.includes(permission)} onChange={event => setSelectedPermissions(current => event.target.checked ? [...current, permission] : current.filter(value => value !== permission))} />{text.permissionLabels[permission]}</label>)}</fieldset>
+        {canWrite && <form onSubmit={event => void submit(event, 'context')}><fieldset disabled={busy || waiting} className={styles.fields}>
+          {(['baseBranch', 'baseSha', 'branchPattern'] as const).map(field => <label key={field}>{text[field]}<input ref={field === 'baseSha' ? shaInput : undefined} required maxLength={500} value={contextFields[field]} onChange={event => { if (pendingRef.current) editedPending.current = true; setContextFields(current => ({ ...current, [field]: event.target.value })) }} /></label>)}
+          <label>{text.allowedPaths}<textarea required value={contextFields.allowedPaths} onChange={event => { if (pendingRef.current) editedPending.current = true; setContextFields(current => ({ ...current, allowedPaths: event.target.value })) }} /></label>
+          <fieldset><legend>{text.permissions}</legend>{permissions.map(permission => <label className={styles.permission} key={permission}><input type="checkbox" checked={selectedPermissions.includes(permission)} onChange={event => { if (pendingRef.current) editedPending.current = true; setSelectedPermissions(current => event.target.checked ? [...current, permission] : current.filter(value => value !== permission)) }} />{text.permissionLabels[permission]}</label>)}</fieldset>
           <Button type="submit">{text.submitContext}</Button>
         </fieldset></form>}
       </>}

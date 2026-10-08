@@ -4523,6 +4523,10 @@ type ReadinessCopy = {
   submitContext: string
   pending: string
   notConfirmed: string
+  retryContext: string
+  editContext: string
+  previousContextSaved: string
+  selectRepository: string
   saved: string
   validationFailed: string
   commandFailed: string
@@ -4553,6 +4557,7 @@ const readinessCopies: Record<Locale, ReadinessCopy> = {
     baseBranch: '基线分支', baseSha: '基线提交 SHA', branchPattern: '工作分支模式', allowedPaths: '允许路径（每行一项）', permissions: '上下文权限',
     permissionLabels: { read: '读取', write_branch: '写入工作分支', open_pr: '创建 PR', review: '审查', merge: '合并', ci: 'CI' },
     submitContext: '提交上下文配置', pending: '已提交，等待解析。', notConfirmed: '尚未确认解析结果，请刷新查看。', saved: '上下文已配置。',
+    retryContext: '重试确认', editContext: '修改配置', previousContextSaved: '上次提交的上下文已配置；当前修改尚未提交。', selectRepository: '选择仓库',
     validationFailed: '请检查配置字段、资源链接与权限。', commandFailed: '配置请求未完成，请核对结果后重试。',
     contextChanged: '上下文已被更新；已加载最新结果，请核对后再次提交。',
     reusedKey: '该请求身份已用于不同配置；请先核对已有连接，再显式提交新的请求。', newRequest: '已核对，开始新的请求',
@@ -4576,6 +4581,7 @@ const readinessCopies: Record<Locale, ReadinessCopy> = {
     baseBranch: 'Base branch', baseSha: 'Base commit SHA', branchPattern: 'Work branch pattern', allowedPaths: 'Allowed paths (one per line)', permissions: 'Context permissions',
     permissionLabels: { read: 'Read', write_branch: 'Write branch', open_pr: 'Open PR', review: 'Review', merge: 'Merge', ci: 'CI' },
     submitContext: 'Submit context configuration', pending: 'Submitted; waiting for resolution.', notConfirmed: 'Resolution has not been confirmed. Refresh to check.', saved: 'Context configured.',
+    retryContext: 'Retry confirmation', editContext: 'Edit configuration', previousContextSaved: 'The previous context was configured; current edits have not been submitted.', selectRepository: 'Select a repository',
     validationFailed: 'Check configuration fields, resource links, and permissions.', commandFailed: 'The configuration request did not complete. Check the result before retrying.',
     contextChanged: 'The context changed. Review the refreshed result before submitting again.',
     reusedKey: 'This request identity was used for different configuration. Verify existing connections before explicitly submitting a new request.', newRequest: 'Verified; start a new request',

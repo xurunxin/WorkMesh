@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 import { readinessFixture } from './fixtures/configuration-readiness.js'
 import { createDb } from '../../../packages/db/src/index.js'
 import { randomUUID } from 'node:crypto'
+import { resolveReadinessContext } from './fixtures/configuration-readiness-provider.js'
 test.use({ timezoneId: 'UTC', deviceScaleFactor: 1, launchOptions: { args: ['--disable-gpu', '--disable-skia-runtime-opts', '--force-color-profile=srgb', '--disable-partial-raster'] } })
 
 test('依赖深度排序', async ({ page }) => {
@@ -100,10 +101,28 @@ test('关闭 Gitea 的混合 provider 跨 Team 分页仍可配置 GitHub', async
   await section.getByRole('button', { name: /加载更多|Load more/ }).click()
   await expect(section.locator('select').first().locator('option')).toHaveCount(23)
   await expect(section).not.toContainText('0-gitea/hidden'); await expect(section).not.toContainText('0-other/hidden')
-  await f.configureRepository(true); await page.goto(f.href)
+  const selected = expected[22]!
+  await section.getByLabel(/仓库$|^Repository$/).selectOption(selected)
+  await section.getByLabel(/基线提交 SHA|Base commit SHA/).fill('a2-base-sha')
+  const focusedRead = page.waitForResponse(response => response.url().includes('/api/v1/repositories?') && response.request().method() === 'GET')
+  await page.evaluate(() => window.dispatchEvent(new Event('focus'))); await focusedRead
+  await expect(section.getByLabel(/仓库$|^Repository$/)).toHaveValue(selected)
+  const submitted = page.waitForResponse(response => response.url().endsWith(`/repositories/${selected}/context`) && response.request().method() === 'POST')
+  await section.getByRole('button', { name: /提交上下文配置|Submit context configuration/ }).click()
+  const action = await (await submitted).json() as { id: string }
+  await expect(section).toContainText(/已提交，等待解析|Submitted; waiting/)
+  // A real workspace event refreshes the expanded list while the action is pending.
+  const eventRead = page.waitForResponse(response => response.url().includes('/api/v1/repositories?') && response.request().method() === 'GET')
+  await f.call('POST', '/api/v1/repositories', { connectionId: connection.id, teamId: f.teamId, externalId: 'event', fullName: '0-new/event', defaultBranch: 'main' })
+  await eventRead
+  await expect(section.getByLabel(/仓库$|^Repository$/)).toHaveValue(selected)
+  await resolveReadinessContext(action.id)
+  await expect(section).toContainText(/上下文已配置|Context configured/)
+  await expect(section.getByLabel(/仓库$|^Repository$/)).toHaveValue(selected)
+  await page.goto(f.href)
   await expect(page.locator('#readiness-repository')).toHaveCount(0)
 })
-test('A2 响应丢失后重试保持配置请求身份', async ({ page }) => {
+test('A2 响应丢失后真实重载同文重放确认已完成上下文', async ({ page }) => {
   const f = await readinessFixture(page)
   await page.goto(`/?view=projects&teamId=${f.teamId}&project=${f.projectId}#project-repository-configuration`)
   await f.configureRepository(false, true); await page.goto(f.href)

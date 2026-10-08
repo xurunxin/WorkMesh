@@ -84,9 +84,15 @@ export async function readinessFixture(page: Page) {
       })
       await section.getByRole('button', { name: /提交上下文配置|Submit context configuration/ }).click()
       await lostResponse; await expect(section.getByRole('alert')).toBeVisible()
-      await section.getByRole('button', { name: /刷新|Refresh/, exact: true }).click()
+      if (!lite) await resolveReadinessContext(originalAction!)
+      await expect.poll(async () => (await call<Array<{ provider_action_id: string | null }>>('GET', `/api/v1/repositories/${repository.id}/context`)).some(value => value.provider_action_id === originalAction), { timeout: 60000 }).toBe(true)
+      // A real reload destroys component refs but retains apiMutation's session identity.
+      await page.reload()
+      await expect(section.getByLabel(/仓库$|^Repository$/)).toBeVisible()
+      await section.getByLabel(/仓库$|^Repository$/).selectOption(repository.id)
       await expect(section.getByRole('button', { name: /提交上下文配置|Submit context configuration/ })).toBeEnabled()
-      await expect(section.getByLabel(/基线提交 SHA|Base commit SHA/)).toHaveValue('a2-base-sha')
+      await expect(section.getByText('a2-base-sha', { exact: true })).toBeVisible()
+      await section.getByLabel(/基线提交 SHA|Base commit SHA/).fill('a2-base-sha')
     }
     const resolution = page.waitForResponse(response => response.url().endsWith('/context') && response.request().method() === 'POST')
     await section.getByRole('button', { name: /提交上下文配置|Submit context configuration/ }).click()
@@ -97,8 +103,8 @@ export async function readinessFixture(page: Page) {
       expect(action.id).toBe(originalAction)
       await page.unroute('**/api/v1/repositories/*/context')
     }
-    await expect(section).toContainText(/已提交，等待解析|Submitted; waiting/)
-    if (!lite) await resolveReadinessContext(action.id)
+    if (!loseFirstResponse) await expect(section).toContainText(/已提交，等待解析|Submitted; waiting/)
+    if (!lite && !loseFirstResponse) await resolveReadinessContext(action.id)
     await expect(section).toContainText(/上下文已配置|Context configured/, { timeout: 60000 })
   }
   return { call, teamId: team.id, projectId: project.id, actorId: me.actor.id, href, setModel, setAgent, configureRepository, sessionBaseline: sessionBaseline.items }

@@ -19,7 +19,9 @@ const walk = directory => {
     if (entry.isDirectory()) walk(path)
     else if (entry.isFile()) {
       const local = relative(evidenceRoot, path).replaceAll('\\', '/')
-      if (local.startsWith('pre-c3-source/') || local.startsWith('c3-integration/conflicts/') || local.startsWith('runs/') && (local.includes('/source/') || local.endsWith('.log') || local.endsWith('.md') || local.includes('/.playwright-artifacts'))) candidates.push(path)
+      if (local.startsWith('pre-c3-source/') || local.startsWith('c3-integration/conflicts/')
+        || local.startsWith('configuration-recovery/history/') && local.endsWith('.json') && !local.endsWith('/source.json')
+        || local.startsWith('runs/') && (local.includes('/source/') || local.endsWith('.log') || local.endsWith('.md') || local.includes('/.playwright-artifacts'))) candidates.push(path)
     }
   }
 }

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-10-08T17:22:43.241Z",
+  "generatedAt": "2026-10-08T18:18:02.196Z",
   "todoId": "0BkezbmWV6k8vwrlSNuF_",
   "planId": "FkfKZkAdoHUa-nr2Hq1mA",
   "version": null,
-  "head": "bb86b1fe31e9b23f6e91171b526c860a0a0fcb22",
+  "head": "b492a35b11445c157a825b5e747ac0e15506e491",
   "inputs": [
     {
       "path": "docs/plan/a2-configuration-readiness.md",
@@ -34,19 +34,19 @@
         "sha256": "205f141ce3c21dca5d19fc44bcfcf48ee68de661f8217c76439ad1d15578b4ad"
       },
       "headBlob": {
-        "bytes": 12026,
-        "sha256": "7f4cbdbffbe3cea5ccc566744c9ab7b857c94cc5b49a23893d0399bf00b14139"
+        "bytes": 12190,
+        "sha256": "205f141ce3c21dca5d19fc44bcfcf48ee68de661f8217c76439ad1d15578b4ad"
       }
     },
     {
       "path": "docs/reviews/a2/execution-map.json",
       "worktree": {
-        "bytes": 14406,
-        "sha256": "a22b8198c3bc618e5521b613f75abfa79ffddbf5d8f8265b24757637a791be07"
+        "bytes": 21614,
+        "sha256": "f0acfb4a9c6f616ff9aa5e4d16b9deb5a3eedc2374a1ca6a30279fc77df0402c"
       },
       "headBlob": {
-        "bytes": 13570,
-        "sha256": "2f5b99b04aa8e64619b108105cac1ce8abeea3ba1dfe153067d2b80bc09ea92e"
+        "bytes": 14456,
+        "sha256": "cb540caba91438fca3e61a4b989f50114dc718441efc5b7612136330db81c848"
       }
     }
   ],
@@ -3500,6 +3500,379 @@
       "sanitization": "docs/reviews/a2/runs/a2-4c606ff3/sanitization.json"
     },
     {
+      "runId": "a2-5e2b151d",
+      "receipt": "docs/reviews/a2/runs/a2-5e2b151d/receipts.json",
+      "runComplete": true,
+      "outcome": null,
+      "sourceBefore": "docs/reviews/a2/runs/a2-5e2b151d/source-before.json",
+      "sourceAfter": "docs/reviews/a2/runs/a2-5e2b151d/source-after.json",
+      "sourceHead": "b492a35b11445c157a825b5e747ac0e15506e491",
+      "changedDuringRun": [],
+      "sourceLimitation": "保存 HEAD 加本轮未提交运行源码原字节；Git blob 与工作树换行另核。",
+      "liteSourceBinding": null,
+      "commands": [
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-5e2b151d-postgres",
+            "--label",
+            "workmesh.task=a2-5e2b151d",
+            "-p",
+            "127.0.0.1:49728:5432",
+            "-e",
+            "POSTGRES_PASSWORD",
+            "-e",
+            "POSTGRES_USER=workmesh",
+            "-e",
+            "POSTGRES_DB=workmesh_a2_test",
+            "--tmpfs",
+            "/var/lib/postgresql/data",
+            "postgres:16-alpine"
+          ],
+          "pid": 44316,
+          "start": "2026-10-08T17:45:23.188Z",
+          "end": "2026-10-08T17:45:23.408Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/0.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/0.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-5e2b151d-redis",
+            "--label",
+            "workmesh.task=a2-5e2b151d",
+            "-p",
+            "127.0.0.1:49729:6379",
+            "redis:7-alpine"
+          ],
+          "pid": 62552,
+          "start": "2026-10-08T17:45:23.409Z",
+          "end": "2026-10-08T17:45:23.635Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/1.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/1.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-5e2b151d-s3",
+            "--label",
+            "workmesh.task=a2-5e2b151d",
+            "-p",
+            "127.0.0.1:49730:9000",
+            "-e",
+            "RUSTFS_ACCESS_KEY",
+            "-e",
+            "RUSTFS_SECRET_KEY",
+            "--tmpfs",
+            "/data:rw,mode=1777",
+            "rustfs/rustfs:1.0.0"
+          ],
+          "pid": 59424,
+          "start": "2026-10-08T17:45:23.637Z",
+          "end": "2026-10-08T17:45:23.876Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/2.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/2.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "check:route-policy"
+          ],
+          "pid": 53160,
+          "start": "2026-10-08T17:45:24.179Z",
+          "end": "2026-10-08T17:45:25.800Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/3.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/3.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "lint"
+          ],
+          "pid": 28256,
+          "start": "2026-10-08T17:45:25.801Z",
+          "end": "2026-10-08T17:45:56.651Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/4.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/4.log",
+          "summaryLines": [
+            " Tasks:    18 successful, 18 total"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "typecheck"
+          ],
+          "pid": 58304,
+          "start": "2026-10-08T17:45:56.651Z",
+          "end": "2026-10-08T17:46:27.283Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/5.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/5.log",
+          "summaryLines": [
+            " Tasks:    18 successful, 18 total"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "test"
+          ],
+          "pid": 51860,
+          "start": "2026-10-08T17:46:27.283Z",
+          "end": "2026-10-08T17:48:19.072Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/6.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/6.log",
+          "summaryLines": [
+            "@workmesh/observability:test:  Test Files  2 passed (2)",
+            "@workmesh/observability:test:       Tests  16 passed (16)",
+            "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+            "@workmesh/git-provider:test:       Tests  13 passed (13)",
+            "@workmesh/contracts:test:  Test Files  25 passed (25)",
+            "@workmesh/contracts:test:       Tests  187 passed (187)",
+            "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+            "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+            "@workmesh/ui:test:  Test Files  4 passed (4)",
+            "@workmesh/ui:test:       Tests  50 passed (50)",
+            "@workmesh/domain:test:  Test Files  9 passed (9)",
+            "@workmesh/domain:test:       Tests  65 passed (65)",
+            "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+            "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+            "@workmesh/agent-sdk:test:  Test Files  1 passed (1)",
+            "@workmesh/agent-sdk:test:       Tests  33 passed (33)",
+            "@workmesh/agent-runner:test:  Test Files  9 passed (9)",
+            "@workmesh/agent-runner:test:       Tests  48 passed (48)",
+            "@workmesh/config:test:  Test Files  2 passed (2)",
+            "@workmesh/config:test:       Tests  34 passed (34)",
+            "@workmesh/db:test:  Test Files  8 passed (8)",
+            "@workmesh/db:test:       Tests  28 passed (28)",
+            "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+            "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+            "@workmesh/mcp:test:  Test Files  2 passed (2)",
+            "@workmesh/mcp:test:       Tests  38 passed (38)",
+            "@workmesh/conformance:test:  Test Files  1 passed (1)",
+            "@workmesh/conformance:test:       Tests  1 passed (1)",
+            "@workmesh/recovery:test:  Test Files  1 passed (1)",
+            "@workmesh/recovery:test:       Tests  7 passed (7)",
+            "@workmesh/worker:test:  ✓ src/retention-soak-lock.test.ts (10 tests | 1 skipped) 9ms",
+            "@workmesh/worker:test:  ✓ src/retention-soak-formal-launch.test.ts (2 tests | 1 skipped) 3ms",
+            "@workmesh/worker:test:  Test Files  23 passed (23)",
+            "@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)",
+            "@workmesh/web:test:  Test Files  117 passed (117)",
+            "@workmesh/web:test:       Tests  818 passed (818)",
+            "@workmesh/api:test:  Test Files  34 passed (34)",
+            "@workmesh/api:test:       Tests  179 passed (179)",
+            " Tasks:    29 successful, 29 total"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "exec",
+            "playwright",
+            "test",
+            "--config",
+            "../../playwright.config.ts",
+            "configuration-readiness.spec.ts",
+            "--list"
+          ],
+          "pid": 31616,
+          "start": "2026-10-08T17:48:19.072Z",
+          "end": "2026-10-08T17:48:20.522Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/7.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/7.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "exec",
+            "playwright",
+            "test",
+            "--config",
+            "../../playwright.config.ts",
+            "configuration-readiness.spec.ts"
+          ],
+          "pid": 60760,
+          "start": "2026-10-08T17:48:20.523Z",
+          "end": "2026-10-08T17:50:19.171Z",
+          "code": 1,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/8.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/8.log",
+          "summaryLines": [
+            "    Error: expect(locator).toBeFocused() failed",
+            "  1 failed",
+            "  1 skipped",
+            "  10 passed (2.0m)",
+            " ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test --config ../../playwright.config.ts configuration-readiness.spec.ts"
+          ]
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "bbfe0a2e3002e8ca7d18325aedf34ec29fac04726d209882079bc90a9ae785ac"
+          ],
+          "pid": 51448,
+          "start": "2026-10-08T17:50:19.977Z",
+          "end": "2026-10-08T17:50:20.194Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/9.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/9.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "acc3eac1e138fca37177906fac38a9afab2b9d78edbe44da187fd5ebd59cf104"
+          ],
+          "pid": 56704,
+          "start": "2026-10-08T17:50:20.401Z",
+          "end": "2026-10-08T17:50:20.604Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/10.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/10.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "e5c02cfcfdd110abe48e1d7ab788dd02e247f5ea87c31d2a879034b1a90905df"
+          ],
+          "pid": 33332,
+          "start": "2026-10-08T17:50:20.851Z",
+          "end": "2026-10-08T17:50:21.060Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/11.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/11.log",
+          "summaryLines": []
+        },
+        {
+          "name": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-File",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\sanitize-evidence.ps1",
+            "-RunDirectory",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-5e2b151d"
+          ],
+          "pid": 62148,
+          "start": "2026-10-08T17:50:21.062Z",
+          "end": "2026-10-08T17:50:22.101Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-5e2b151d/12.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-5e2b151d/12.log",
+          "summaryLines": []
+        }
+      ],
+      "cleanup": [
+        {
+          "type": "container",
+          "id": "e5c02cfcfdd110abe48e1d7ab788dd02e247f5ea87c31d2a879034b1a90905df",
+          "name": "a2-5e2b151d-postgres",
+          "owner": "a2-5e2b151d",
+          "preDelete": {
+            "id": "e5c02cfcfdd110abe48e1d7ab788dd02e247f5ea87c31d2a879034b1a90905df",
+            "owner": "a2-5e2b151d",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T17:50:20.850Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "e5c02cfcfdd110abe48e1d7ab788dd02e247f5ea87c31d2a879034b1a90905df\n",
+            "at": "2026-10-08T17:50:21.061Z"
+          },
+          "postDelete": null
+        },
+        {
+          "type": "container",
+          "id": "acc3eac1e138fca37177906fac38a9afab2b9d78edbe44da187fd5ebd59cf104",
+          "name": "a2-5e2b151d-redis",
+          "owner": "a2-5e2b151d",
+          "preDelete": {
+            "id": "acc3eac1e138fca37177906fac38a9afab2b9d78edbe44da187fd5ebd59cf104",
+            "owner": "a2-5e2b151d",
+            "exitCode": 0,
+            "mounts": [
+              {
+                "Type": "volume",
+                "Name": "e07278398534df33171e3fa527e9502120853967c69af1196b1cbc3239cee1c6",
+                "Source": "/var/lib/docker/volumes/e07278398534df33171e3fa527e9502120853967c69af1196b1cbc3239cee1c6/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+              }
+            ],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T17:50:20.401Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "acc3eac1e138fca37177906fac38a9afab2b9d78edbe44da187fd5ebd59cf104\n",
+            "at": "2026-10-08T17:50:20.604Z"
+          },
+          "postDelete": null
+        },
+        {
+          "type": "container",
+          "id": "bbfe0a2e3002e8ca7d18325aedf34ec29fac04726d209882079bc90a9ae785ac",
+          "name": "a2-5e2b151d-s3",
+          "owner": "a2-5e2b151d",
+          "preDelete": {
+            "id": "bbfe0a2e3002e8ca7d18325aedf34ec29fac04726d209882079bc90a9ae785ac",
+            "owner": "a2-5e2b151d",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T17:50:19.977Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "bbfe0a2e3002e8ca7d18325aedf34ec29fac04726d209882079bc90a9ae785ac\n",
+            "at": "2026-10-08T17:50:20.195Z"
+          },
+          "postDelete": null
+        }
+      ],
+      "sanitization": "docs/reviews/a2/runs/a2-5e2b151d/sanitization.json"
+    },
+    {
       "runId": "a2-60486de2",
       "receipt": "docs/reviews/a2/runs/a2-60486de2/receipts.json",
       "runComplete": true,
@@ -4862,6 +5235,349 @@
       "sanitization": "docs/reviews/a2/runs/a2-7b267dfa/sanitization.json"
     },
     {
+      "runId": "a2-7e910b69",
+      "receipt": "docs/reviews/a2/runs/a2-7e910b69/receipts.json",
+      "runComplete": true,
+      "outcome": null,
+      "sourceBefore": "docs/reviews/a2/runs/a2-7e910b69/source-before.json",
+      "sourceAfter": "docs/reviews/a2/runs/a2-7e910b69/source-after.json",
+      "sourceHead": "b492a35b11445c157a825b5e747ac0e15506e491",
+      "changedDuringRun": [],
+      "sourceLimitation": "保存 HEAD 加本轮未提交运行源码原字节；Git blob 与工作树换行另核。",
+      "liteSourceBinding": null,
+      "commands": [
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-7e910b69-postgres",
+            "--label",
+            "workmesh.task=a2-7e910b69",
+            "-p",
+            "127.0.0.1:58256:5432",
+            "-e",
+            "POSTGRES_PASSWORD",
+            "-e",
+            "POSTGRES_USER=workmesh",
+            "-e",
+            "POSTGRES_DB=workmesh_a2_test",
+            "--tmpfs",
+            "/var/lib/postgresql/data",
+            "postgres:16-alpine"
+          ],
+          "pid": 61400,
+          "start": "2026-10-08T17:52:37.589Z",
+          "end": "2026-10-08T17:52:37.785Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/0.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/0.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-7e910b69-redis",
+            "--label",
+            "workmesh.task=a2-7e910b69",
+            "-p",
+            "127.0.0.1:58257:6379",
+            "redis:7-alpine"
+          ],
+          "pid": 63240,
+          "start": "2026-10-08T17:52:37.787Z",
+          "end": "2026-10-08T17:52:38.023Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/1.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/1.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-7e910b69-s3",
+            "--label",
+            "workmesh.task=a2-7e910b69",
+            "-p",
+            "127.0.0.1:58258:9000",
+            "-e",
+            "RUSTFS_ACCESS_KEY",
+            "-e",
+            "RUSTFS_SECRET_KEY",
+            "--tmpfs",
+            "/data:rw,mode=1777",
+            "rustfs/rustfs:1.0.0"
+          ],
+          "pid": 50464,
+          "start": "2026-10-08T17:52:38.024Z",
+          "end": "2026-10-08T17:52:38.259Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/2.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/2.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "exec",
+            "playwright",
+            "test",
+            "--config",
+            "../../playwright.config.ts",
+            "configuration-readiness.spec.ts",
+            "--grep",
+            "Back/Forward"
+          ],
+          "pid": 34336,
+          "start": "2026-10-08T17:52:39.661Z",
+          "end": "2026-10-08T17:53:53.710Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/3.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/3.log",
+          "summaryLines": [
+            "  2 passed (1.2m)"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "exec",
+            "playwright",
+            "test",
+            "--config",
+            "../../playwright.config.ts",
+            "configuration-readiness.spec.ts",
+            "--list"
+          ],
+          "pid": 45120,
+          "start": "2026-10-08T17:53:53.711Z",
+          "end": "2026-10-08T17:53:55.090Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/4.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/4.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "exec",
+            "playwright",
+            "test",
+            "--config",
+            "../../playwright.config.ts",
+            "configuration-readiness.spec.ts"
+          ],
+          "pid": 6668,
+          "start": "2026-10-08T17:53:55.091Z",
+          "end": "2026-10-08T17:55:53.427Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/5.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/5.log",
+          "summaryLines": [
+            "  1 skipped",
+            "  11 passed (2.0m)"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "test:e2e"
+          ],
+          "pid": 20432,
+          "start": "2026-10-08T17:55:53.428Z",
+          "end": "2026-10-08T18:00:57.747Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/6.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/6.log",
+          "summaryLines": [
+            "@workmesh/web:test:e2e:   2 skipped",
+            "@workmesh/web:test:e2e:   78 passed (5.0m)",
+            " Tasks:    3 successful, 3 total"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "ci:validate"
+          ],
+          "pid": 41092,
+          "start": "2026-10-08T18:00:57.748Z",
+          "end": "2026-10-08T18:00:59.703Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/7.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/7.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "build"
+          ],
+          "pid": 59880,
+          "start": "2026-10-08T18:00:59.704Z",
+          "end": "2026-10-08T18:02:06.759Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/8.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/8.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "3d5f316148e525f50981234350c3e1186511a559ac2be2a8f96410a3189d1848"
+          ],
+          "pid": 59036,
+          "start": "2026-10-08T18:02:07.556Z",
+          "end": "2026-10-08T18:02:07.753Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/9.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/9.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "a0ea36478931e019c9ee4eef7c3f41caf4c786bebede032e4494af69b8fa29d5"
+          ],
+          "pid": 56724,
+          "start": "2026-10-08T18:02:07.967Z",
+          "end": "2026-10-08T18:02:08.173Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/10.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/10.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "6a8666d44863605dcf49e61e67e6ffac24041b0e81c6abdf13a0ed2b8329a0a8"
+          ],
+          "pid": 18228,
+          "start": "2026-10-08T18:02:08.374Z",
+          "end": "2026-10-08T18:02:08.595Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/11.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/11.log",
+          "summaryLines": []
+        },
+        {
+          "name": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-File",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\sanitize-evidence.ps1",
+            "-RunDirectory",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-7e910b69"
+          ],
+          "pid": 4164,
+          "start": "2026-10-08T18:02:08.596Z",
+          "end": "2026-10-08T18:02:09.179Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-7e910b69/12.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-7e910b69/12.log",
+          "summaryLines": []
+        }
+      ],
+      "cleanup": [
+        {
+          "type": "container",
+          "id": "6a8666d44863605dcf49e61e67e6ffac24041b0e81c6abdf13a0ed2b8329a0a8",
+          "name": "a2-7e910b69-postgres",
+          "owner": "a2-7e910b69",
+          "preDelete": {
+            "id": "6a8666d44863605dcf49e61e67e6ffac24041b0e81c6abdf13a0ed2b8329a0a8",
+            "owner": "a2-7e910b69",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:02:08.373Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "6a8666d44863605dcf49e61e67e6ffac24041b0e81c6abdf13a0ed2b8329a0a8\n",
+            "at": "2026-10-08T18:02:08.595Z"
+          },
+          "postDelete": null
+        },
+        {
+          "type": "container",
+          "id": "a0ea36478931e019c9ee4eef7c3f41caf4c786bebede032e4494af69b8fa29d5",
+          "name": "a2-7e910b69-redis",
+          "owner": "a2-7e910b69",
+          "preDelete": {
+            "id": "a0ea36478931e019c9ee4eef7c3f41caf4c786bebede032e4494af69b8fa29d5",
+            "owner": "a2-7e910b69",
+            "exitCode": 0,
+            "mounts": [
+              {
+                "Type": "volume",
+                "Name": "d6d92c8adfd910847da56a491286991ae74d4398ca4d924ceb7381c405c945d9",
+                "Source": "/var/lib/docker/volumes/d6d92c8adfd910847da56a491286991ae74d4398ca4d924ceb7381c405c945d9/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+              }
+            ],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:02:07.966Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "a0ea36478931e019c9ee4eef7c3f41caf4c786bebede032e4494af69b8fa29d5\n",
+            "at": "2026-10-08T18:02:08.174Z"
+          },
+          "postDelete": null
+        },
+        {
+          "type": "container",
+          "id": "3d5f316148e525f50981234350c3e1186511a559ac2be2a8f96410a3189d1848",
+          "name": "a2-7e910b69-s3",
+          "owner": "a2-7e910b69",
+          "preDelete": {
+            "id": "3d5f316148e525f50981234350c3e1186511a559ac2be2a8f96410a3189d1848",
+            "owner": "a2-7e910b69",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:02:07.556Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "3d5f316148e525f50981234350c3e1186511a559ac2be2a8f96410a3189d1848\n",
+            "at": "2026-10-08T18:02:07.754Z"
+          },
+          "postDelete": null
+        }
+      ],
+      "sanitization": "docs/reviews/a2/runs/a2-7e910b69/sanitization.json"
+    },
+    {
       "runId": "a2-8259e050",
       "receipt": "docs/reviews/a2/runs/a2-8259e050/receipts.json",
       "runComplete": true,
@@ -5650,6 +6366,345 @@
         }
       ],
       "sanitization": "docs/reviews/a2/runs/a2-95a5627a/sanitization.json"
+    },
+    {
+      "runId": "a2-99deca8f",
+      "receipt": "docs/reviews/a2/runs/a2-99deca8f/receipts.json",
+      "runComplete": true,
+      "outcome": null,
+      "sourceBefore": "docs/reviews/a2/runs/a2-99deca8f/source-before.json",
+      "sourceAfter": "docs/reviews/a2/runs/a2-99deca8f/source-after.json",
+      "sourceHead": "b492a35b11445c157a825b5e747ac0e15506e491",
+      "changedDuringRun": [],
+      "sourceLimitation": "保存 HEAD 加本轮未提交运行源码原字节；Git blob 与工作树换行另核。",
+      "liteSourceBinding": null,
+      "commands": [
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-99deca8f-postgres",
+            "--label",
+            "workmesh.task=a2-99deca8f",
+            "-p",
+            "127.0.0.1:54562:5432",
+            "-e",
+            "POSTGRES_PASSWORD",
+            "-e",
+            "POSTGRES_USER=workmesh",
+            "-e",
+            "POSTGRES_DB=workmesh_a2_test",
+            "--tmpfs",
+            "/var/lib/postgresql/data",
+            "postgres:16-alpine"
+          ],
+          "pid": 33908,
+          "start": "2026-10-08T18:13:23.317Z",
+          "end": "2026-10-08T18:13:23.521Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/0.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/0.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-99deca8f-redis",
+            "--label",
+            "workmesh.task=a2-99deca8f",
+            "-p",
+            "127.0.0.1:54563:6379",
+            "redis:7-alpine"
+          ],
+          "pid": 56708,
+          "start": "2026-10-08T18:13:23.524Z",
+          "end": "2026-10-08T18:13:23.748Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/1.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/1.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-99deca8f-s3",
+            "--label",
+            "workmesh.task=a2-99deca8f",
+            "-p",
+            "127.0.0.1:54564:9000",
+            "-e",
+            "RUSTFS_ACCESS_KEY",
+            "-e",
+            "RUSTFS_SECRET_KEY",
+            "--tmpfs",
+            "/data:rw,mode=1777",
+            "rustfs/rustfs:1.0.0"
+          ],
+          "pid": 41140,
+          "start": "2026-10-08T18:13:23.750Z",
+          "end": "2026-10-08T18:13:23.990Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/2.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/2.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "lint"
+          ],
+          "pid": 37188,
+          "start": "2026-10-08T18:13:25.406Z",
+          "end": "2026-10-08T18:13:30.154Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/3.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/3.log",
+          "summaryLines": [
+            " Tasks:    18 successful, 18 total"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "typecheck"
+          ],
+          "pid": 62064,
+          "start": "2026-10-08T18:13:30.154Z",
+          "end": "2026-10-08T18:13:34.843Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/4.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/4.log",
+          "summaryLines": [
+            " Tasks:    18 successful, 18 total"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "exec",
+            "vitest",
+            "run",
+            "features/projects/project-repository-configuration.test.tsx",
+            "app/lib/i18n.test.ts"
+          ],
+          "pid": 53628,
+          "start": "2026-10-08T18:13:34.844Z",
+          "end": "2026-10-08T18:13:42.482Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/5.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/5.log",
+          "summaryLines": [
+            " Test Files  2 passed (2)",
+            "      Tests  25 passed (25)"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "exec",
+            "playwright",
+            "test",
+            "--config",
+            "../../playwright.config.ts",
+            "configuration-readiness.spec.ts",
+            "--list"
+          ],
+          "pid": 50928,
+          "start": "2026-10-08T18:13:42.482Z",
+          "end": "2026-10-08T18:13:43.964Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/6.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/6.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "exec",
+            "playwright",
+            "test",
+            "--config",
+            "../../playwright.config.ts",
+            "configuration-readiness.spec.ts"
+          ],
+          "pid": 39932,
+          "start": "2026-10-08T18:13:43.965Z",
+          "end": "2026-10-08T18:15:43.660Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/7.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/7.log",
+          "summaryLines": [
+            "  1 skipped",
+            "  11 passed (2.0m)"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "ci:validate"
+          ],
+          "pid": 36456,
+          "start": "2026-10-08T18:15:43.661Z",
+          "end": "2026-10-08T18:15:45.556Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/8.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/8.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "50bd02d60a52e92a179394e5716988f65ae554029f738092196f4036c9e2dc2a"
+          ],
+          "pid": 34640,
+          "start": "2026-10-08T18:15:46.404Z",
+          "end": "2026-10-08T18:15:46.628Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/9.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/9.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "943afa5267d70555a34725e669ca6cb099ac6a64b74ed47385d6a023f855fde2"
+          ],
+          "pid": 27228,
+          "start": "2026-10-08T18:15:46.845Z",
+          "end": "2026-10-08T18:15:47.044Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/10.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/10.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "45016035fc14949f78e147e014a8326049bf3cc2b2970e10d3e299c7ac61ea0c"
+          ],
+          "pid": 63012,
+          "start": "2026-10-08T18:15:47.237Z",
+          "end": "2026-10-08T18:15:47.438Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/11.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/11.log",
+          "summaryLines": []
+        },
+        {
+          "name": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-File",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\sanitize-evidence.ps1",
+            "-RunDirectory",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-99deca8f"
+          ],
+          "pid": 39724,
+          "start": "2026-10-08T18:15:47.441Z",
+          "end": "2026-10-08T18:15:47.934Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-99deca8f/12.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-99deca8f/12.log",
+          "summaryLines": []
+        }
+      ],
+      "cleanup": [
+        {
+          "type": "container",
+          "id": "45016035fc14949f78e147e014a8326049bf3cc2b2970e10d3e299c7ac61ea0c",
+          "name": "a2-99deca8f-postgres",
+          "owner": "a2-99deca8f",
+          "preDelete": {
+            "id": "45016035fc14949f78e147e014a8326049bf3cc2b2970e10d3e299c7ac61ea0c",
+            "owner": "a2-99deca8f",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:15:47.236Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "45016035fc14949f78e147e014a8326049bf3cc2b2970e10d3e299c7ac61ea0c\n",
+            "at": "2026-10-08T18:15:47.439Z"
+          },
+          "postDelete": null
+        },
+        {
+          "type": "container",
+          "id": "943afa5267d70555a34725e669ca6cb099ac6a64b74ed47385d6a023f855fde2",
+          "name": "a2-99deca8f-redis",
+          "owner": "a2-99deca8f",
+          "preDelete": {
+            "id": "943afa5267d70555a34725e669ca6cb099ac6a64b74ed47385d6a023f855fde2",
+            "owner": "a2-99deca8f",
+            "exitCode": 0,
+            "mounts": [
+              {
+                "Type": "volume",
+                "Name": "2fd94fabeeac2ad3f1aa827f7f9c25e720d6e4f897bd7d754e693b1a7e8056bd",
+                "Source": "/var/lib/docker/volumes/2fd94fabeeac2ad3f1aa827f7f9c25e720d6e4f897bd7d754e693b1a7e8056bd/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+              }
+            ],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:15:46.844Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "943afa5267d70555a34725e669ca6cb099ac6a64b74ed47385d6a023f855fde2\n",
+            "at": "2026-10-08T18:15:47.044Z"
+          },
+          "postDelete": null
+        },
+        {
+          "type": "container",
+          "id": "50bd02d60a52e92a179394e5716988f65ae554029f738092196f4036c9e2dc2a",
+          "name": "a2-99deca8f-s3",
+          "owner": "a2-99deca8f",
+          "preDelete": {
+            "id": "50bd02d60a52e92a179394e5716988f65ae554029f738092196f4036c9e2dc2a",
+            "owner": "a2-99deca8f",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:15:46.403Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "50bd02d60a52e92a179394e5716988f65ae554029f738092196f4036c9e2dc2a\n",
+            "at": "2026-10-08T18:15:46.628Z"
+          },
+          "postDelete": null
+        }
+      ],
+      "sanitization": "docs/reviews/a2/runs/a2-99deca8f/sanitization.json"
     },
     {
       "runId": "a2-9a277e62",
@@ -8803,6 +9858,421 @@
         }
       ],
       "sanitization": "docs/reviews/a2/runs/a2-e1a20704/sanitization.json"
+    },
+    {
+      "runId": "a2-e9a97c5f",
+      "receipt": "docs/reviews/a2/runs/a2-e9a97c5f/receipts.json",
+      "runComplete": true,
+      "outcome": null,
+      "sourceBefore": "docs/reviews/a2/runs/a2-e9a97c5f/source-before.json",
+      "sourceAfter": "docs/reviews/a2/runs/a2-e9a97c5f/source-after.json",
+      "sourceHead": "b492a35b11445c157a825b5e747ac0e15506e491",
+      "changedDuringRun": [],
+      "sourceLimitation": "保存 HEAD 加本轮未提交运行源码原字节；Git blob 与工作树换行另核。",
+      "liteSourceBinding": null,
+      "commands": [
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-e9a97c5f-postgres",
+            "--label",
+            "workmesh.task=a2-e9a97c5f",
+            "-p",
+            "127.0.0.1:61354:5432",
+            "-e",
+            "POSTGRES_PASSWORD",
+            "-e",
+            "POSTGRES_USER=workmesh",
+            "-e",
+            "POSTGRES_DB=workmesh_a2_test",
+            "--tmpfs",
+            "/var/lib/postgresql/data",
+            "postgres:16-alpine"
+          ],
+          "pid": 15584,
+          "start": "2026-10-08T18:02:39.912Z",
+          "end": "2026-10-08T18:02:40.128Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/0.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/0.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-e9a97c5f-redis",
+            "--label",
+            "workmesh.task=a2-e9a97c5f",
+            "-p",
+            "127.0.0.1:61355:6379",
+            "redis:7-alpine"
+          ],
+          "pid": 48300,
+          "start": "2026-10-08T18:02:40.130Z",
+          "end": "2026-10-08T18:02:40.394Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/1.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/1.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "run",
+            "-d",
+            "--name",
+            "a2-e9a97c5f-s3",
+            "--label",
+            "workmesh.task=a2-e9a97c5f",
+            "-p",
+            "127.0.0.1:61356:9000",
+            "-e",
+            "RUSTFS_ACCESS_KEY",
+            "-e",
+            "RUSTFS_SECRET_KEY",
+            "--tmpfs",
+            "/data:rw,mode=1777",
+            "rustfs/rustfs:1.0.0"
+          ],
+          "pid": 17752,
+          "start": "2026-10-08T18:02:40.396Z",
+          "end": "2026-10-08T18:02:40.625Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/2.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/2.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "check:route-policy"
+          ],
+          "pid": 19120,
+          "start": "2026-10-08T18:02:42.005Z",
+          "end": "2026-10-08T18:02:43.663Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/3.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/3.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "lint"
+          ],
+          "pid": 56732,
+          "start": "2026-10-08T18:02:43.664Z",
+          "end": "2026-10-08T18:02:49.164Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/4.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/4.log",
+          "summaryLines": [
+            " Tasks:    18 successful, 18 total"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "typecheck"
+          ],
+          "pid": 42860,
+          "start": "2026-10-08T18:02:49.165Z",
+          "end": "2026-10-08T18:02:53.704Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/5.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/5.log",
+          "summaryLines": [
+            " Tasks:    18 successful, 18 total"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "test"
+          ],
+          "pid": 7916,
+          "start": "2026-10-08T18:02:53.705Z",
+          "end": "2026-10-08T18:04:52.410Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/6.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/6.log",
+          "summaryLines": [
+            "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+            "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+            "@workmesh/contracts:test:  Test Files  25 passed (25)",
+            "@workmesh/contracts:test:       Tests  187 passed (187)",
+            "@workmesh/ui:test:  Test Files  4 passed (4)",
+            "@workmesh/ui:test:       Tests  50 passed (50)",
+            "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+            "@workmesh/git-provider:test:       Tests  13 passed (13)",
+            "@workmesh/observability:test:  Test Files  2 passed (2)",
+            "@workmesh/observability:test:       Tests  16 passed (16)",
+            "@workmesh/agent-runner:test:  Test Files  9 passed (9)",
+            "@workmesh/agent-runner:test:       Tests  48 passed (48)",
+            "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+            "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+            "@workmesh/config:test:  Test Files  2 passed (2)",
+            "@workmesh/config:test:       Tests  34 passed (34)",
+            "@workmesh/agent-sdk:test:  Test Files  1 passed (1)",
+            "@workmesh/agent-sdk:test:       Tests  33 passed (33)",
+            "@workmesh/domain:test:  Test Files  9 passed (9)",
+            "@workmesh/domain:test:       Tests  65 passed (65)",
+            "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+            "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+            "@workmesh/mcp:test:  Test Files  2 passed (2)",
+            "@workmesh/mcp:test:       Tests  38 passed (38)",
+            "@workmesh/conformance:test:  Test Files  1 passed (1)",
+            "@workmesh/conformance:test:       Tests  1 passed (1)",
+            "@workmesh/db:test:  Test Files  8 passed (8)",
+            "@workmesh/db:test:       Tests  28 passed (28)",
+            "@workmesh/worker:test:  ✓ src/retention-soak-lock.test.ts (10 tests | 1 skipped) 8ms",
+            "@workmesh/worker:test:  ✓ src/retention-soak-formal-launch.test.ts (2 tests | 1 skipped) 3ms",
+            "@workmesh/worker:test:  Test Files  23 passed (23)",
+            "@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)",
+            "@workmesh/recovery:test:  Test Files  1 passed (1)",
+            "@workmesh/recovery:test:       Tests  7 passed (7)",
+            "@workmesh/web:test:  Test Files  117 passed (117)",
+            "@workmesh/web:test:       Tests  819 passed (819)",
+            "@workmesh/api:test:  Test Files  34 passed (34)",
+            "@workmesh/api:test:       Tests  179 passed (179)",
+            " Tasks:    29 successful, 29 total"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "exec",
+            "playwright",
+            "test",
+            "--config",
+            "../../playwright.config.ts",
+            "configuration-readiness.spec.ts",
+            "--list"
+          ],
+          "pid": 28560,
+          "start": "2026-10-08T18:04:52.410Z",
+          "end": "2026-10-08T18:04:53.792Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/7.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/7.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "exec",
+            "playwright",
+            "test",
+            "--config",
+            "../../playwright.config.ts",
+            "configuration-readiness.spec.ts"
+          ],
+          "pid": 36808,
+          "start": "2026-10-08T18:04:53.793Z",
+          "end": "2026-10-08T18:06:52.789Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/8.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/8.log",
+          "summaryLines": [
+            "  1 skipped",
+            "  11 passed (2.0m)"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "test:e2e"
+          ],
+          "pid": 47728,
+          "start": "2026-10-08T18:06:52.790Z",
+          "end": "2026-10-08T18:11:54.672Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/9.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/9.log",
+          "summaryLines": [
+            "@workmesh/web:test:e2e:   2 skipped",
+            "@workmesh/web:test:e2e:   78 passed (4.9m)",
+            " Tasks:    3 successful, 3 total"
+          ]
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "ci:validate"
+          ],
+          "pid": 51808,
+          "start": "2026-10-08T18:11:54.673Z",
+          "end": "2026-10-08T18:11:56.604Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/10.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/10.log",
+          "summaryLines": []
+        },
+        {
+          "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+          "args": [
+            "--filter",
+            "@workmesh/web",
+            "build"
+          ],
+          "pid": 33424,
+          "start": "2026-10-08T18:11:56.604Z",
+          "end": "2026-10-08T18:13:02.841Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/11.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/11.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "8b82312a103f8d8c9ac91b87aa5c99a893140154df1e14060af18babeedac0f1"
+          ],
+          "pid": 27344,
+          "start": "2026-10-08T18:13:03.661Z",
+          "end": "2026-10-08T18:13:03.869Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/12.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/12.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "24260dac03a728ec62a296dbc6ef1253ccf9bebf4b184b2a1e49e7eea072c170"
+          ],
+          "pid": 37928,
+          "start": "2026-10-08T18:13:04.062Z",
+          "end": "2026-10-08T18:13:04.269Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/13.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/13.log",
+          "summaryLines": []
+        },
+        {
+          "name": "docker",
+          "args": [
+            "rm",
+            "-f",
+            "-v",
+            "e4603ec7caac9a769a8842ed7d33d0aad987194d2debeea1ea8ec0e7f520f59a"
+          ],
+          "pid": 53380,
+          "start": "2026-10-08T18:13:04.486Z",
+          "end": "2026-10-08T18:13:04.717Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/14.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/14.log",
+          "summaryLines": []
+        },
+        {
+          "name": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-File",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\sanitize-evidence.ps1",
+            "-RunDirectory",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-e9a97c5f"
+          ],
+          "pid": 62240,
+          "start": "2026-10-08T18:13:04.719Z",
+          "end": "2026-10-08T18:13:05.261Z",
+          "code": 0,
+          "log": "docs/reviews/a2/runs/a2-e9a97c5f/15.log.gz",
+          "uncompressedLogPath": "docs/reviews/a2/runs/a2-e9a97c5f/15.log",
+          "summaryLines": []
+        }
+      ],
+      "cleanup": [
+        {
+          "type": "container",
+          "id": "e4603ec7caac9a769a8842ed7d33d0aad987194d2debeea1ea8ec0e7f520f59a",
+          "name": "a2-e9a97c5f-postgres",
+          "owner": "a2-e9a97c5f",
+          "preDelete": {
+            "id": "e4603ec7caac9a769a8842ed7d33d0aad987194d2debeea1ea8ec0e7f520f59a",
+            "owner": "a2-e9a97c5f",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:13:04.485Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "e4603ec7caac9a769a8842ed7d33d0aad987194d2debeea1ea8ec0e7f520f59a\n",
+            "at": "2026-10-08T18:13:04.718Z"
+          },
+          "postDelete": null
+        },
+        {
+          "type": "container",
+          "id": "24260dac03a728ec62a296dbc6ef1253ccf9bebf4b184b2a1e49e7eea072c170",
+          "name": "a2-e9a97c5f-redis",
+          "owner": "a2-e9a97c5f",
+          "preDelete": {
+            "id": "24260dac03a728ec62a296dbc6ef1253ccf9bebf4b184b2a1e49e7eea072c170",
+            "owner": "a2-e9a97c5f",
+            "exitCode": 0,
+            "mounts": [
+              {
+                "Type": "volume",
+                "Name": "f93c33c4a56ec02b095533392fc0fdc914c6e41358c1208b6a400894b29597c4",
+                "Source": "/var/lib/docker/volumes/f93c33c4a56ec02b095533392fc0fdc914c6e41358c1208b6a400894b29597c4/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+              }
+            ],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:13:04.061Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "24260dac03a728ec62a296dbc6ef1253ccf9bebf4b184b2a1e49e7eea072c170\n",
+            "at": "2026-10-08T18:13:04.270Z"
+          },
+          "postDelete": null
+        },
+        {
+          "type": "container",
+          "id": "8b82312a103f8d8c9ac91b87aa5c99a893140154df1e14060af18babeedac0f1",
+          "name": "a2-e9a97c5f-s3",
+          "owner": "a2-e9a97c5f",
+          "preDelete": {
+            "id": "8b82312a103f8d8c9ac91b87aa5c99a893140154df1e14060af18babeedac0f1",
+            "owner": "a2-e9a97c5f",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:13:03.660Z"
+          },
+          "cleanup": {
+            "code": 0,
+            "output": "8b82312a103f8d8c9ac91b87aa5c99a893140154df1e14060af18babeedac0f1\n",
+            "at": "2026-10-08T18:13:03.870Z"
+          },
+          "postDelete": null
+        }
+      ],
+      "sanitization": "docs/reviews/a2/runs/a2-e9a97c5f/sanitization.json"
     },
     {
       "runId": "a2-ef2c1974",
