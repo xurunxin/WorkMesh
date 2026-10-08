@@ -1,9 +1,9 @@
 # WorkMesh 历史 worktree 与测试资源清理记录
 
 首版报告时间字段：2026-10-08 17:32（Asia/Shanghai；来源未独立核验，非操作时间）
-机器：DarkFlame（`6DOlLniZ0sqBYGHeIhRMq`），Windows，`tds 0.1.60`  
-工作区根目录：`C:\Users\xurx\.tds\workspaces`  
-项目：WorkMesh（`DzkLDn6UW-IbfoTJzN9Ro`）  
+机器：DarkFlame（`6DOlLniZ0sqBYGHeIhRMq`），Windows，`tds 0.1.60`
+工作区根目录：`C:\Users\xurx\.tds\workspaces`
+项目：WorkMesh（`DzkLDn6UW-IbfoTJzN9Ro`）
 最新读取主线：`main` / `1078bbcd527550bfabee73093b7ffd0032d3fd24`
 
 ## 清理结论
@@ -343,3 +343,7 @@ Remove-Item -LiteralPath 'C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-
 - **保留：** 38 个 `node_modules` 目录均仍存在。由于没有证明普通递归删除时不会遍历 junction/reparse 或触及共享 pnpm store，本轮跳过，不改用其它工具或路径。36 个 `.turbo` 日志目录、两个 `apps/web/dist` 类型检查缓存、D1a 剩余 74 项、至少一份原始 trace、两份敏感 RAW ZIP、报告和 test-results 均保留。G1/D0/C3 被策略拒绝目标及其父目录不重试/不整体删除；五项当前或恢复工作区继续保护。
 - **核验：** Git worktree 列表的 21 项登记均无 `prunable`；#3/#8/#10/#11/#15/#18 HEAD 对执行时观察到的 FETCH_HEAD 对象可达（不是独立验证的 remote main ref），`git status --porcelain --untracked-files=all` 退出码 0 且 0 项。28 个 `dist` 和 audit 目标缺失；38 个依赖目录、36 个 `.turbo`、2 个 typecheck cache、保留 trace 与 2 个 RAW ZIP 仍存在。D1a 父 worktree 仍在，HEAD 与操作前相同。
 - **空间与范围：** 10,154,810 B 是所删候选的操作前逻辑长度，不是已测得的磁盘物理净释放量；物理净释放未知。没有删除 Docker 资源、主工作区、父 worktree、分支、共享 pnpm store、任何 RAW 内容或清单外目标。未运行产品测试；本阶段至此停在独立结果审查，整项清理未标记完成。
+
+## PR 208 Required CI 修订记录
+
+原 PR head `d161bcce75ecea013aafb8421f1a6e87ec7f24ec` 的 run `37808292683`、job `113418244057` 中，`Select required jobs` 的 `git diff --check 1078bbcd527550bfabee73093b7ffd0032d3fd24 d161bcce75ecea013aafb8421f1a6e87ec7f24ec` 因本报告第 4–6 行 Markdown 硬换行尾空格以 status 2 失败；12 个测试成功，其余 7 个 job 因 Required CI 连带失败而跳过。原日志来源：artifact `changes-raw-37808292683-1`（ID `11562624946`）及 `required-ci-raw`（ID `11563519051`）。本次只移除这三处行尾空格并记录来源；未改回执或重做清理。
