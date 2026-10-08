@@ -612,11 +612,11 @@
       "attribution": "同期仍有其它 WorkMesh 构建/容器活动，卷净变化不能当作本轮精确物理释放量"
     },
     "limitations": [
-      "批量比较执行记录报告匹配 2,006 个 main Git blob 文件及 262 个 ZIP 成员文件，但未持久化逐文件路径→blob/member 映射；逐项保全不可独立复核。仅保留的汇总/归档索引是仍可读证据，不足以恢复被删文件逐项映射。",
       "删除前活动引用、经解析路径、junction/链接检查及每个文件保全回执未持久化，不能从当前状态倒推；不补造回执。",
       "四个候选父 worktree 状态干净只描述各自登记根；G1 根内存在独立浅克隆，其 143 个 tracked 删除未体现在父根 status。",
       "父根及嵌套项的实际状态、剩余文件和独立克隆以 reviewerFollowupAudit 的只读扫描为准；未执行任何新增删除或恢复。",
-      "未对 #5/#8/#15/#17/#21、主仓库、外部 Temp、Docker 共享资源执行删除；未运行产品测试。"
+      "未对 #5/#8/#15/#17/#21、主仓库、外部 Temp、Docker 共享资源执行删除；未运行产品测试。",
+      "Raw source for the historical Git/ZIP comparison and deletion calls is cited by exact JSONL path, physical line, and call ID under reviewerFollowupAudit.deletionEvidenceLimits.originalExecutionRecord. Git removal count is not confirmed by the raw call return; ZIP return is aggregate only; per-file preservation cannot be independently verified."
     ],
     "finalCheck": {
       "latestMain": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
@@ -648,28 +648,43 @@
       "perFileLedgerCaptured": false,
       "scopes": [
         {
-          "bytesRemoved": 54016759,
           "todo": 10,
           "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp",
-          "filesRemoved": 999
+          "priorSummaryReportedRemovedFiles": 999,
+          "priorSummaryReportedRemovedBytes": 54016759,
+          "comparisonMatchedFiles": 999,
+          "comparisonMatchedBytes": 54016759
         },
         {
-          "bytesRemoved": 27704246,
           "todo": 11,
           "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
-          "filesRemoved": 452
+          "priorSummaryReportedRemovedFiles": 452,
+          "priorSummaryReportedRemovedBytes": 27704246,
+          "comparisonMatchedFiles": 452,
+          "comparisonMatchedBytes": 27704246
         },
         {
-          "bytesRemoved": 32003405,
           "todo": 18,
           "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp",
-          "filesRemoved": 555
+          "priorSummaryReportedRemovedFiles": 555,
+          "priorSummaryReportedRemovedBytes": 32003405,
+          "comparisonMatchedFiles": 555,
+          "comparisonMatchedBytes": 32003405
         }
       ],
-      "totalFiles": 2006,
-      "totalBytes": 113724410,
-      "commandShellExitCode": 0,
-      "receiptLimitation": "执行包装未返回逐文件绝对路径列表；各候选 .tmp 根作用域、object ID 比对规则和总数已保存，不能伪称逐文件回执完整。"
+      "commandShellExitCode": null,
+      "receiptLimitation": "执行包装未返回逐文件绝对路径列表；各候选 .tmp 根作用域、object ID 比对规则和总数已保存，不能伪称逐文件回执完整。",
+      "priorReportCountsAreNotRemovalReceipts": true,
+      "rawExecutionRecordReference": "followupCleanup.reviewerFollowupAudit.deletionEvidenceLimits.originalExecutionRecord.gitComparison and .gitDeletion",
+      "rawReturnSupportsAggregateRemovalCount": false,
+      "evidenceStatus": "The 2,006 count is from pre-delete comparison output; the deletion call return contains no count or per-file output.",
+      "priorSummaryReportedRemovalFiles": 2006,
+      "priorSummaryReportedRemovalBytes": 113724410,
+      "comparisonMatchedFiles": 2006,
+      "comparisonMatchedBytes": 113724410,
+      "priorSummaryRecordedShellExitCode": 0,
+      "rawCallReturnExitCode": null,
+      "scopeBreakdownEvidence": "comparison candidate counts/bytes from raw comparison output lines 838/841; per-scope removal is not reported in the delete call return"
     },
     "archiveDuplicateRemoval": {
       "method": "与已提交 ZIP 每个 member 解压后的原始 bytes/SHA256/长度预筛并逐字节比较",
@@ -684,28 +699,35 @@
       ],
       "scopes": [
         {
-          "bytesRemoved": 85212,
           "todo": 10,
           "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp",
-          "filesRemoved": 9
+          "priorSummaryReportedRemovedFiles": 9,
+          "priorSummaryReportedRemovedBytes": 85212
         },
         {
-          "bytesRemoved": 387293,
           "todo": 11,
           "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
-          "filesRemoved": 40
+          "priorSummaryReportedRemovedFiles": 40,
+          "priorSummaryReportedRemovedBytes": 387293
         },
         {
-          "bytesRemoved": 77310330,
           "todo": 18,
           "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp",
-          "filesRemoved": 213
+          "priorSummaryReportedRemovedFiles": 213,
+          "priorSummaryReportedRemovedBytes": 77310330
         }
       ],
-      "totalFiles": 262,
-      "totalBytes": 77782835,
       "commandShellExitCode": 0,
-      "receiptLimitation": "计划写入 JSON 时 PowerShell NoteProperty 添加失败，删除脚本仍完成并返回总数；逐文件 member→候选路径映射未持久化。"
+      "receiptLimitation": "计划写入 JSON 时 PowerShell NoteProperty 添加失败，删除脚本仍完成并返回总数；逐文件 member→候选路径映射未持久化。",
+      "priorReportCountsAreNotPerFileReceipts": true,
+      "rawExecutionRecordReference": "followupCleanup.reviewerFollowupAudit.deletionEvidenceLimits.originalExecutionRecord.zipDeletion",
+      "evidenceStatus": "The raw call return reports aggregate Removed=262 and 77,782,835 bytes, with report receipt/property write errors; no per-file mapping persisted.",
+      "priorSummaryReportedRemovalFiles": 262,
+      "priorSummaryReportedRemovalBytes": 77782835,
+      "aggregateCallReturnReportedRemovedFiles": 262,
+      "aggregateCallReturnReportedRemovedBytes": 77782835,
+      "scopeBreakdownEvidence": "per-scope breakdown is from the prior summary; raw call return reports aggregate only",
+      "receiptWriteErrorsObserved": true
     },
     "emptyDirectoriesRemoved": [
       {
@@ -53358,14 +53380,53 @@
         "action": "retained; no cache deletion in this audit"
       },
       "deletionEvidenceLimits": {
-        "bulkGitBlobFiles": 2006,
-        "bulkZipMemberFiles": 262,
         "perFilePathToBlobOrMemberMappingPersisted": false,
-        "executionRecordSaysComparedEqual": "execution record reported exact comparisons at the time",
+        "executionRecordSaysComparedEqual": "The Git comparison output reports 2,006 matches; the Git deletion invocation return does not report a count. The ZIP call return reports Removed=262 and Bytes=77,782,835, alongside receipt-write/property errors.",
         "independentPerItemPreservationVerification": "not possible from persisted records",
         "preDeletionActiveReferenceProof": "not persisted for per-item review",
         "preDeletionResolvedPathAndJunctionEvidence": "not persisted for per-item review",
-        "claim": "执行记录报告匹配，逐项保全不可独立复核。"
+        "claim": "The prior report stated 2,268 removals, but the raw Git call return does not independently confirm its deletion count; the ZIP call supports only its aggregate return. Per-file preservation remains independently unverifiable.",
+        "gitBlobComparisonMatchedFiles": 2006,
+        "gitBlobRemovalReturnCount": null,
+        "priorReportClaimedTotalRemovedFiles": 2268,
+        "zipRemovalCallAggregateReportedCount": 262,
+        "zipRemovalCallAggregateReportedBytes": 77782835,
+        "originalExecutionRecord": {
+          "path": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T17-15-17-01a11acb-aa1d-7c20-9f0a-069bb121f67b.jsonl",
+          "lineNumbering": "1-based physical JSONL line numbers",
+          "gitComparison": {
+            "lines": [
+              838,
+              841
+            ],
+            "callId": "call_e95fbe2db386479f82ec0c6a72a42479",
+            "evidence": "comparison command and output; D0 999 + D1a 452 + G1 555 = 2,006 comparison matches, not a removal receipt"
+          },
+          "gitDeletion": {
+            "lines": [
+              865,
+              867
+            ],
+            "callId": "call_672d8a0fd0b34811bcc926014e24d880",
+            "invocationEvidence": "input includes Remove-Item loop over the Git blob match plan",
+            "returnEvidence": "generic wrapper completion and terminal warning only; no deletion count or per-file output",
+            "aggregateRemovalCountIndependentlyConfirmed": null,
+            "perFileReceiptPersisted": false
+          },
+          "zipDeletion": {
+            "lines": [
+              948,
+              951
+            ],
+            "callId": "call_b697c362ad5b4a36a97c84632f8bf0a5",
+            "invocationEvidence": "input builds exact-byte ZIP member plan and executes Remove-Item loop",
+            "returnEvidence": "reports Planned=262, Removed=262, Bytes=77,782,835 and nested exit_code=0; output also includes PowerShell receipt/property write errors",
+            "aggregateRemovalCountReported": 262,
+            "aggregateRemovedBytesReported": 77782835,
+            "perFileReceiptPersisted": false
+          },
+          "limitation": "These source lines distinguish comparison output, deletion invocation, and aggregate return. They do not provide a durable per-file path-to-blob/member deletion receipt; do not claim independent per-item preservation proof."
+        }
       },
       "protectedWorkspacesCurrentExistence": "Rechecked during this correction; see protectedWorkspaceExistenceRecheck for exact current paths. This is path existence only, not a live task-state check.",
       "mutationsDuringThisAudit": [],
