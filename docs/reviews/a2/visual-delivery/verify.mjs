@@ -29,7 +29,7 @@ for (const phase of ['before', 'after']) {
     if (entry.gitBlob && sha(git(['show', `HEAD:${entry.path}`])) !== entry.gitBlob.sha256) throw Error(`产品 Git blob 变化：${entry.path}`)
   }
 }
-const diff = git(['diff', '--name-only', source.preparedFromHead, 'HEAD']).toString().trim().split(/\r?\n/).filter(Boolean)
+const diff = git(['diff', '--name-only', '-z', source.preparedFromHead, 'HEAD']).toString().split('\0').filter(Boolean)
 if (diff.some(path => !path.startsWith('docs/reviews/a2/visual-delivery/'))) throw Error('本轮提交越出视觉材料范围')
 const receipt = { scope: '视觉材料资源/PNG 解码核验；非产品或人工视觉验收', gitMode, head: git(['rev-parse', 'HEAD']).toString().trim(),
   start: new Date().toISOString(), resources: [{ type: 'static-preview', owner: 'a2-visual-delivery', host: '127.0.0.1', port: null, plannedBeforeListen: true, cleanup: null }],
