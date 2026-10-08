@@ -115,6 +115,7 @@ export default defineConfig({
         WORKMESH_EXPERIMENTAL_A2A: "true",
         WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: "true",
         WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: "true",
+        WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS: "true",
         // The formal acceptance suite starts a loopback Fake Agent webhook
         // receiver and still exercises the production webhook URL validator.
         ALLOW_PRIVATE_AGENT_WEBHOOKS: "true",

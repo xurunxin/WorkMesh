@@ -1,0 +1,181 @@
+{
+  "说明": "本文件记录来源和正文摘要，不参与自身哈希，不更新平台计划，不生成自引用计划循环。",
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "todoId": "kkG9VeT3_uTzREhjnX2ve",
+  "branch": "tds/conv-01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+  "gate": "仅文档前置；提交后等待 confirm、另一执行者独审及 Chief 确认；产品实现未放行。",
+  "platformPhaseObserved": "planning",
+  "platformPhase说明": "todos 在本轮进行中返回 planning；confirm 是本轮结束后的等待门禁，不冒称工具已返回 confirm。",
+  "authorizationSource": "当前用户 plan_revision 反馈明确允许仅文档前置，并要求原分支提交；正常整合指定主线。",
+  "integratedMain": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+  "previousBase": "9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7",
+  "integrationMethod": "在当前会话分支从平台只读缓存取得已核验对象，并 git merge --ff-only；没有创建或切换分支。",
+  "sourceReads": {
+    "todos": "mcp__tds__todos(id=kkG9VeT3_uTzREhjnX2ve)",
+    "conversation": "mcp__tds__conversation(todoId=kkG9VeT3_uTzREhjnX2ve)",
+    "main": "mcp__tds__git fetch origin main，随后读取 FETCH_HEAD",
+    "readWindowUtc": "2026-10-08 05:41:26 至 05:43:23 UTC",
+    "transactionalSnapshot": false,
+    "todoUpdatedAt": "2026-10-08T05:41:26.411Z",
+    "completeSpecRead": true,
+    "savedPlanToolReadTruncated": true,
+    "fullPlanSource": "当前用户消息的完整平台 saved copy；正文与 todos 可见前缀逐字一致。"
+  },
+  "savedPlan": {
+    "id": "Ry2L3-U5lGSRc8EpsaLs6",
+    "reference": "doc:Ry2L3-U5lGSRc8EpsaLs6",
+    "version": null,
+    "createdAt": null,
+    "recordedInConversationAt": "2026-10-08 05:40:33 UTC",
+    "bodySha256": "959cb493a06ad8b17d313d419b75cc9e46ed9bdf8697e8c7e18718a31a62367b",
+    "bodyBytes": 7780,
+    "exactJsonPath": "docs/plan/c1-channel-delivery/savedplan-Ry2L3-U5lGSRc8EpsaLs6.json",
+    "readableMarkdownPath": "docs/plan/c1-channel-delivery/savedplan-Ry2L3-U5lGSRc8EpsaLs6.md",
+    "readableDerivation": "仅移除行末空格并加一个文件末尾 LF；完整正文内容不裁剪，精确字节从 JSON.body 按 UTF-8 解码。",
+    "observedPrefixCharacters": 3478,
+    "prefixMatch": true
+  },
+  "userDecision": {
+    "questionId": "q-3ht6S3080fZ0KNuCCvzKm",
+    "answeredAt": "2026-10-08 05:35:26 UTC",
+    "answers": [
+      "Human 仅管理自己的目标（推荐）",
+      "只通知被指派的 Human（推荐）"
+    ],
+    "rule": "Inbox 按明确 Human recipient，其余按既有明确负责 Human/Project lead；无合法明确收件人不投递，不按全 Team 可读扇出。"
+  },
+  "history": {
+    "olderPlanIds": [],
+    "olderPlanIds说明": "本轮 conversation 只明确返回当前 plan ID；不据此断言更早保存计划不存在。",
+    "originalSourceUpdatedAt": "2026-10-07T15:23:31.070Z",
+    "originalSourceSha256": "bf45c2d9b8a382af3804d4b7949f8b84ad9bb4a348962ffa56e0078a0cda572a",
+    "originalSource说明": "生成时历史原文及 SHA 保留；不是当前卡全文或当前 savedplan 的摘要。",
+    "repositorySnapshotsUnmodified": [
+      "docs/plan/activation-task-specs/15.md",
+      "docs/reviews/r1/execution-inputs.json",
+      "docs/reviews/r1/test-coverage.json",
+      "docs/plan/activation-task-specs/index.json",
+      "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md"
+    ]
+  },
+  "currentSpec": {
+    "path": "docs/plan/c1-channel-delivery/source-spec.md",
+    "bodySha256": "5f1238a6c96a58cb528525f49be550cdbbc4a4a22877568a601cd42e1794bc65",
+    "bodyBytes": 7327,
+    "fileHasTrailingLf": true
+  },
+  "sourceCoverage": {
+    "path": "docs/plan/c1-channel-delivery/source-test-coverage.json",
+    "originalTests": 8,
+    "originalDoD": 1,
+    "matrixCategories": 9,
+    "functionalTestsExecuted": false
+  },
+  "repositoryInputs": [
+    {
+      "path": "docs/plan/activation-task-specs/15.md",
+      "baseCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlobId": "c89f403a1eaba14eed9e247b0d705a8210d4fabe",
+      "worktreeBytes": 4969,
+      "worktreeSha256": "16fa58c1916caa477b395b01370369a02d8a0dd5cd398e9257ce41d4ef1272c9",
+      "gitBlobBytes": 4969,
+      "gitBlobSha256": "16fa58c1916caa477b395b01370369a02d8a0dd5cd398e9257ce41d4ef1272c9"
+    },
+    {
+      "path": "docs/reviews/r1/execution-inputs.json",
+      "baseCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlobId": "2ce665d39931c383c22dc1605ac15580c468107f",
+      "worktreeBytes": 328288,
+      "worktreeSha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c",
+      "gitBlobBytes": 328288,
+      "gitBlobSha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c"
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.json",
+      "baseCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlobId": "7679db400761ac1f4ed46ca79f62e56fa923ceff",
+      "worktreeBytes": 322807,
+      "worktreeSha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41",
+      "gitBlobBytes": 322807,
+      "gitBlobSha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/index.json",
+      "baseCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlobId": "2f8c6163b0d3b5d18e13bca79302edf6390c2601",
+      "worktreeBytes": 100195,
+      "worktreeSha256": "57055023db51d6a04faccaca19bafc7eb36b7b3d3b25be1dbd24f7195c71ad0b",
+      "gitBlobBytes": 100195,
+      "gitBlobSha256": "57055023db51d6a04faccaca19bafc7eb36b7b3d3b25be1dbd24f7195c71ad0b"
+    },
+    {
+      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "baseCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlobId": "b80e3ba4c2687f8ef0b7fbbf7b22530a71dba09e",
+      "worktreeBytes": 16267,
+      "worktreeSha256": "ce11c070aabbf75d268f01ef24cc9249d758cfd552283a3481799ae983e4e5d5",
+      "gitBlobBytes": 16009,
+      "gitBlobSha256": "0f4cf7a79b750d55a44923d5fead103e7c5f879933888734056199df3cc11ba2"
+    }
+  ],
+  "scope": {
+    "productChanges": false,
+    "migrationsApplied": false,
+    "apiOrEventsChanged": false,
+    "realOutboundAuthorized": false,
+    "externalPublicationAuthorized": false,
+    "controlPlane": "本批 Todos＋仓库例外，不声称真实 WorkMesh 双轨记录。"
+  },
+  "artifacts": [
+    {
+      "path": "docs/plan/c1-channel-delivery/README.md",
+      "bytes": 4671,
+      "worktreeSha256": "8e9425bc1e43716016fcf41bd1ca8d54deeca5c84ea9c5b41ea3f910c705eae2",
+      "gitBlobSha256": "8e9425bc1e43716016fcf41bd1ca8d54deeca5c84ea9c5b41ea3f910c705eae2",
+      "byteEquality": true
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery/platform-readbacks.json",
+      "bytes": 20187,
+      "worktreeSha256": "5eb928a312143636a2da156c8e7b67a4b9eddef56c43a308b7b936ec4b2f60e5",
+      "gitBlobSha256": "5eb928a312143636a2da156c8e7b67a4b9eddef56c43a308b7b936ec4b2f60e5",
+      "byteEquality": true
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery/savedplan-Ry2L3-U5lGSRc8EpsaLs6.json",
+      "bytes": 8547,
+      "worktreeSha256": "94a0178a882f7b41ec44e7faa7ae8f742e82334adbeca52b474eb7ccd49ce586",
+      "gitBlobSha256": "94a0178a882f7b41ec44e7faa7ae8f742e82334adbeca52b474eb7ccd49ce586",
+      "byteEquality": true
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery/savedplan-Ry2L3-U5lGSRc8EpsaLs6.md",
+      "bytes": 7776,
+      "worktreeSha256": "20c37b8a7744abbcd5e32ae4e509264d667db786fc64d875b1092bedddefff8d",
+      "gitBlobSha256": "20c37b8a7744abbcd5e32ae4e509264d667db786fc64d875b1092bedddefff8d",
+      "byteEquality": true
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery/source-spec.md",
+      "bytes": 7328,
+      "worktreeSha256": "e7834f2597befcfc4f9307e24ea8a2ad85264f91768a3f306415d49dba9192cf",
+      "gitBlobSha256": "e7834f2597befcfc4f9307e24ea8a2ad85264f91768a3f306415d49dba9192cf",
+      "byteEquality": true
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery/source-test-coverage.json",
+      "bytes": 15436,
+      "worktreeSha256": "7da9646e68ea60477b74bfb5927e970624691b46259ef90e1c42edf2ff23594c",
+      "gitBlobSha256": "7da9646e68ea60477b74bfb5927e970624691b46259ef90e1c42edf2ff23594c",
+      "byteEquality": true
+    },
+    {
+      "path": "docs/plan/c1-channel-delivery/verification.json",
+      "bytes": 2247,
+      "worktreeSha256": "68fd63892b1d834dc79a6f9e4cf76690d58c4b95490789948a7889235d3fcadc",
+      "gitBlobSha256": "68fd63892b1d834dc79a6f9e4cf76690d58c4b95490789948a7889235d3fcadc",
+      "byteEquality说明": "文件按 LF 写入；随后再次暂存并验证 Git blob 一致。"
+    }
+  ],
+  "hashPolicy": "正文 SHA 对应 exact JSON.body 的 UTF-8/LF 字节；artifact SHA 分别记录工作树和 Git blob；source-metadata.json 不记录自身摘要，以避免循环自引用。"
+}

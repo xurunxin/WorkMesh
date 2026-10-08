@@ -259,3 +259,39 @@ reviewed per statement, including its owner and canonical lock order.
 - `docs/plan/` gains the staged plan, with the delivery contract landing before
   the first channel adapter, and the identity-binding ADR named as a hard
   prerequisite for any future card action.
+
+
+### C1 渠道投递契约落地
+
+C1 扩展既有 notification delivery，不引入平行发送队列。`notification_channel_targets` 是 Human 本人的目标配置；管理员无代管权限。
+只选择 Inbox 的精确 Human recipient、Work Item 既有 responsible Human 或 Project 明确 lead。
+查询可见不扩大投递受众；没有合法明确 Human 收件人便记录抑制结果。
+
+`appendEvent` 在业务事务内为适用来源写入内部列 `domain_events.notification_sources` 的最小快照：来源类型、ID、revision。
+来源白名单覆盖 decision、approval、inbox_item、agent_session、completion_suggestion，以及产生 Inbox 的 room_message、agent_activity、handoff。
+快照不包含业务正文、地址或秘密，也不进入对外事件 payload/DTO。定向 Room 事件仅捕获对应 audience 的 Inbox，公共可见性事件只捕获未由定向事件覆盖的负责 Human；会话超时在同事务内先建立 Inbox，再捕获事件快照。旧事件没有内部快照时不补发。
+`createOutboxWorker.deliver` 仅处理已提交事件；每事件 checkpoint、不可变 intent 和每目标 delivery 扇出在同一事务提交。
+逐事件 cursor checkpoint 保证低 cursor 晚提交事件不会被最大 cursor 水位遗漏。重放不扩张目标集合。
+
+同 intent/target 只有一条逻辑 attempt，使用原 delivery ID、`effectKey`、`claim_fence`。
+支持有效持有者竞争、超时 reclaim、原退避规则、八次自动重试预算和死信；对账重试开启新预算而保留累计 claim 次数。
+发送前重读有效 fence、当前指派、Human 与 Team 权限、Approval 的实时授权事实、偏好和目标配置。
+变更配置、禁用、撤销或撤权的已排队记录被抑制。发送内容固定为低敏通用提醒和登录深链；陈旧来源 revision 不产生决策写入。
+
+发送 checkpoint 先提交，之后才调用 adapter。发送已开始而 ack 未提交的恢复记录进入 `uncertain`；不自动声称失败或已送达。
+该提交也是授权线性化边界：发送事务按既有 `lockAgentAuthorityPlan` 锁序锁授权计划，再锁来源、Team、Human、membership 并重读；锁保持至提交，撤权先提交时抑制外发，后提交不能召回在途调用。租期在等待锁之后以实际时钟复核。
+通知 kind 持久化兼容类型，Approval 统一沿用 `approval.requested`，包括尚未达到 quorum 的 `approval.decision.recorded`；其他来源使用源事件类型，不以 Attention 展示分类绕过 mutedKinds。tick 逐条即时领取，最多处理 25 条，等待中的记录不预先消耗 claim 次数；单条 claim 丢失与其他投递、Loop 隔离。
+本人按当前 revision 和幂等键显式确认已送达、允许重试或终止；重试复用原 effectKey，可能重送，承诺至少一次而非外部恰好一次。
+ack 同体重放不写入，异体冲突，旧 fence 不能更新任何 delivery 或事件。
+
+目标秘密按既有 `WORKMESH_MASTER_KEY` 与 pgcrypto 加密，API 只返回 secret_ref、配置状态和 HMAC 指纹。
+目标管理及对账命令复用 `mutate` 的幂等预留、当前凭据/本人所有权复核和 If-Match。
+目标保存没有外发探测，地址映射不授予点击者 Human 身份。个人设置提供配置与未知结果对账。
+
+`WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS` 默认关闭。C1 provider registry 默认为空；无 adapter 不 claim 新目标、不消耗重试。
+无 Redis 档位明确不支持，不能静默降级。C2 注册 adapter 时必须落实 provider 协议校验、网络出口与 AbortSignal 约束。
+C1 未实现真实企业微信发送、卡片审批、账号身份桥接或模型目录；本节不将整篇 Proposed ADR 的其他范围标为已验收。
+
+迁移新增目标、intent 和 source checkpoint，扩展既有 delivery 的来源关联、配置快照、发送结果和 revision；旧 delivery 行语义保持，不补发历史通知。
+空库、上一阶段升级、迁移事务失败与重启重复执行，以及原测试矩阵的实际结果见 `docs/reviews/c1/`。
+独立复核和 Chief 确认仍为最终验收门禁，fake 验证不代替真实渠道验证。

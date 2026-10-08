@@ -266,14 +266,15 @@ describe('配置就绪只读投影', () => {
   })
 
   it.each(['首次', '已有会话', '过期会话'] as const)(
-    '审查回归：有效 Installation Token %s及重复 GET 只写拒绝审计', async scenario => {
+    '审查回归：有效 Installation Token %s及重复 Human-only 请求只写拒绝审计', async scenario => {
       const teamId = await team()
       await db.query(`INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'admin')`,
         [admin.workspaceId, teamId, admin.id])
       const agentId = await agent(teamId)
       const slug = (await db.query<{ slug: string }>('SELECT slug FROM agent_definitions WHERE id=$1', [agentId])).rows[0]!.slug
       const coordinatorApp = buildApp({ logger: false, features: loadFeatureConfig({ ...process.env,
-        WORKMESH_BETA_COORDINATION_MCP: 'true', WORKMESH_BETA_MODEL_PRESETS: 'true' }) })
+        WORKMESH_BETA_COORDINATION_MCP: 'true', WORKMESH_BETA_MODEL_PRESETS: 'true',
+        WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS: 'true' }) })
       try {
         const created = await coordinatorApp.inject({ method: 'POST', url: '/api/v1/agent-connections',
           headers: { cookie: admin.cookie, 'x-csrf-token': admin.csrf, 'idempotency-key': randomUUID() },
@@ -311,11 +312,19 @@ describe('配置就绪只读投影', () => {
         }
         // 包含重复请求和同时携带 Human cookie 的请求，不能绕过凭据类型拒绝。
         const requests = [
-          { route: url(teamId), operation: 'getConfigurationReadiness' },
-          { route: '/api/v1/workbench/llm-connections', operation: 'listWorkbenchLlmConnections' },
+          { method: 'GET' as const, route: url(teamId), operation: 'getConfigurationReadiness' },
+          { method: 'GET' as const, route: '/api/v1/workbench/llm-connections', operation: 'listWorkbenchLlmConnections' },
+          // C1 的读取与本人写命令同样须在 identity 副作用前拒绝；不存在的目标不能代替身份拒绝。
+          { method: 'GET' as const, route: '/api/v1/notification-channel-targets/config', operation: 'getNotificationChannelConfig' },
+          { method: 'GET' as const, route: '/api/v1/notification-channel-targets', operation: 'listNotificationChannelTargets' },
+          { method: 'GET' as const, route: '/api/v1/channel-notification-deliveries', operation: 'listChannelNotificationDeliveries' },
+          { method: 'POST' as const, route: '/api/v1/notification-channel-targets', operation: 'createNotificationChannelTarget' },
+          { method: 'PATCH' as const, route: `/api/v1/notification-channel-targets/${randomUUID()}`, operation: 'updateNotificationChannelTarget' },
+          { method: 'DELETE' as const, route: `/api/v1/notification-channel-targets/${randomUUID()}`, operation: 'revokeNotificationChannelTarget' },
+          { method: 'POST' as const, route: `/api/v1/channel-notification-deliveries/${randomUUID()}/reconcile`, operation: 'reconcileChannelNotificationDelivery' },
         ].flatMap(route => [false, false, true].map(withCookie => ({ ...route, withCookie })))
-        for (const [index, { route, operation, withCookie }] of requests.entries()) {
-          const denied = await coordinatorApp.inject({ method: 'GET', url: route,
+        for (const [index, { method, route, operation, withCookie }] of requests.entries()) {
+          const denied = await coordinatorApp.inject({ method, url: route,
             headers: { 'x-workmesh-installation-token': token, ...(withCookie ? { cookie: admin.cookie } : {}) } })
           expect(denied.statusCode, denied.body).toBe(403)
           expect(denied.json().error).toMatchObject({ code: 'FORBIDDEN', details: { authorizationStage: 'identity' } })

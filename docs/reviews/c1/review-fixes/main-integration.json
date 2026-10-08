@@ -1,0 +1,25 @@
+{
+  "previousMain": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+  "actualFetchedMain": "96e724858e692d262107c34db50b40c3ae7c122c",
+  "fetchSource": "tds git fetch origin main，然后由同一工具 rev-parse FETCH_HEAD；本工作树 FETCH_HEAD 保留旧值，未用其冒称最新",
+  "reviewedA1Head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+  "mainTree": "4fafe3eb34e969e17e4017b05cb60b6f95383710",
+  "reviewedTree": "4fafe3eb34e969e17e4017b05cb60b6f95383710",
+  "mergeMode": "当前会话分支 git merge --no-commit --no-ff；由平台生成最终提交，不提前合入 main",
+  "sharedFiles": [
+    "apps/api/src/server.ts",
+    "packages/contracts/src/index.ts",
+    "packages/contracts/src/route-policy.ts",
+    "packages/contracts/src/route-policy-bindings.ts",
+    "OPENAPI.yaml",
+    "docs/route-policy-matrix.md"
+  ],
+  "conflictsResolved": [
+    "docs/route-policy-matrix.md：从同时包含 A1/C1 的真实清单重新生成",
+    "packages/contracts/src/route-policy.test.ts：合并后总数 276"
+  ],
+  "safety": "Human-only Installation Token 早拒绝保留在 resolveCoordinationIdentity 前；configuration-readiness 与 C1 路由同时注册；仅 normal integration，不新增 A1 范围",
+  "historicalBindingSha256": "0f4d2e83c2630d49884913037f57adee3bba7cdda12078a790ba08ae1693ce0d",
+  "finalBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+  "beforeKindBindingSha256": "6baaccda465f88c882b7ccb4de03090cb13a2e895b84524feb666c82d8950334"
+}

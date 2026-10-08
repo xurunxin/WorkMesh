@@ -1,0 +1,844 @@
+{
+  "scope": "仅本任务创建的资源；其他容器、共享镜像、当前及未保全工作树不纳入删除",
+  "containers": [
+    {
+      "id": "c32da4297855c296dde66359147f80ced885c2a5c8d8fd9bee75fdc0ee591ce8",
+      "name": "workmesh-c1-postgres",
+      "createdAt": "2026-10-08T08:07:55.9751196Z",
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "0ffa2b3a8660bde29ff712b1f2f9570a6be4e8780783e8a7fa4b3a663e80e189",
+          "destination": "/var/lib/postgresql/data",
+          "cleanup": "随 docker rm -v 移除，volume ls 确认不存在"
+        }
+      ],
+      "status": "已核验 ID/名称及卷无其他容器引用，docker stop 后 docker rm -v，容器已不存在"
+    },
+    {
+      "id": "752795a3f22fb67507778082cca2d01ae61c2757f74b9bfe8f58d417165f7a49",
+      "name": "workmesh-c1-redis",
+      "createdAt": "2026-10-08T08:07:56.9170843Z",
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "52eb932137647a08456a03d8f116a77887ecabb5f056b976a7af83e35e8b2a31",
+          "destination": "/data",
+          "cleanup": "随 docker rm -v 移除，volume ls 确认不存在"
+        }
+      ],
+      "status": "已核验 ID/名称及卷无其他容器引用，docker stop 后 docker rm -v，容器已不存在"
+    },
+    {
+      "id": "88251e3399a647566b58f013aab9b1206142f3016bbe042cbc308c000e2ab76e",
+      "name": "workmesh-c1-s3",
+      "createdAt": "2026-10-08T08:07:58.2526217Z",
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "bd52d85a0965ba25747a7885378ad55812a6fe2775eccdadb6a1abead2fb89c4",
+          "destination": "/data",
+          "cleanup": "随 docker rm -v 移除，volume ls 确认不存在"
+        }
+      ],
+      "status": "已核验 ID/名称及卷无其他容器引用，docker stop 后 docker rm -v，容器已不存在"
+    }
+  ],
+  "images": [
+    {
+      "id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "name": "postgres:16-alpine",
+      "status": "共享基础镜像，保留；本任务未构建专用镜像"
+    },
+    {
+      "id": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "name": "redis:7-alpine",
+      "status": "共享基础镜像，保留；本任务未构建专用镜像"
+    },
+    {
+      "id": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "name": "rustfs/rustfs:1.0.0",
+      "status": "共享基础镜像，保留；本任务未构建专用镜像"
+    }
+  ],
+  "networks": [
+    {
+      "name": "bridge",
+      "status": "共享默认网络，不删除"
+    }
+  ],
+  "temporaryPaths": [
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-c1-env.ps1",
+      "status": "必要脱敏证据已落盘并通过归档逐字节校验；已删除，Test-Path 确认不存在",
+      "sha256BeforeRemoval": "d14c161c1525285b47f4078d7372eb5f0d410ae3f5fa4839b21583c24d5bf420"
+    },
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-c1-playwright",
+      "status": "必要脱敏证据已落盘并通过归档逐字节校验；已删除，Test-Path 确认不存在"
+    }
+  ],
+  "worktrees": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+      "status": "当前构建且 dirty，保留；main 实际合入前不清理"
+    },
+    {
+      "path": "其他旧 workspace",
+      "status": "不属于本轮创建且保全/运行状态未核验，不删除"
+    }
+  ],
+  "generatedPaths": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc/apps/web/.next",
+      "status": "本任务 E2E 生成，已确认自有 Node 服务退出及路径位于当前 workspace；仅 .next 已清理，当前构建目录保留"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc/node_modules",
+      "status": "当前构建依赖，保留供独审复测；不删除共享 pnpm store"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc/.turbo",
+      "status": "当前构建缓存，保留供复测；当前工作区未合入不整体清理"
+    }
+  ],
+  "serviceProcesses": [
+    {
+      "pid": 47336,
+      "role": "Playwright API tsx 父进程",
+      "status": "历史服务 PID 已退出，未执行终止命令"
+    },
+    {
+      "pid": 45904,
+      "role": "Playwright API，监听3101",
+      "status": "历史服务 PID 已退出，未执行终止命令"
+    },
+    {
+      "pid": 51124,
+      "role": "Playwright Next dev 父进程",
+      "status": "历史服务 PID 已退出，未执行终止命令"
+    },
+    {
+      "pid": 56344,
+      "role": "Playwright Next dev，监听3100",
+      "status": "历史服务 PID 已退出，未执行终止命令"
+    }
+  ],
+  "playwrightProcesses": [
+    {
+      "pid": 52900,
+      "parentPid": 44872,
+      "name": "WindowsTerminal.exe",
+      "createdAt": "2026-10-08T09:28:48.797964Z",
+      "status": "历史观察的父级终端，不是本任务创建，不终止；仅保留关联信息"
+    },
+    {
+      "pid": 33544,
+      "parentPid": 52900,
+      "name": "OpenConsole.exe",
+      "createdAt": "2026-10-08T09:28:49.352884Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 5872,
+      "parentPid": 52900,
+      "name": "pwsh.exe",
+      "createdAt": "2026-10-08T09:28:49.390123Z",
+      "status": "历史观测 PID 当前存在；未凭旧 PID 操作，不计自有存活服务"
+    },
+    {
+      "pid": 44552,
+      "parentPid": 5872,
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T09:38:44.656826Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 56920,
+      "parentPid": 44552,
+      "name": "dotnet.exe",
+      "createdAt": "2026-10-08T09:38:44.806607Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 33176,
+      "parentPid": 13288,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T09:41:32.403933Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 44244,
+      "parentPid": 33176,
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T09:41:33.066434Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 27724,
+      "parentPid": 44244,
+      "name": "pnpm.exe",
+      "createdAt": "2026-10-08T09:41:33.152662Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 60296,
+      "parentPid": 27724,
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T09:41:33.545999Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 43520,
+      "parentPid": 60296,
+      "name": "pnpm.exe",
+      "createdAt": "2026-10-08T09:41:33.63278Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 18220,
+      "parentPid": 43520,
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T09:41:33.946343Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 47336,
+      "parentPid": 18220,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T09:41:34.123501Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 45904,
+      "parentPid": 47336,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T09:41:34.375174Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 58920,
+      "parentPid": 45904,
+      "name": "esbuild.exe",
+      "createdAt": "2026-10-08T09:41:34.703306Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 28632,
+      "parentPid": 33176,
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T09:41:38.042853Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 31904,
+      "parentPid": 28632,
+      "name": "pnpm.exe",
+      "createdAt": "2026-10-08T09:41:38.092113Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 34188,
+      "parentPid": 31904,
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T09:41:38.393392Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 36732,
+      "parentPid": 34188,
+      "name": "pnpm.exe",
+      "createdAt": "2026-10-08T09:41:38.437707Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 10692,
+      "parentPid": 36732,
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T09:41:38.711199Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 51124,
+      "parentPid": 10692,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T09:41:38.77307Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 56344,
+      "parentPid": 51124,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T09:41:39.925654Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 47552,
+      "parentPid": 33176,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T09:43:21.442863Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 62084,
+      "parentPid": 47552,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T09:43:22.659123Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 44872,
+      "parentPid": 62084,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T09:43:22.995284Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 32764,
+      "parentPid": 62084,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T09:43:23.081959Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 37096,
+      "parentPid": 62084,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T09:44:21.093602Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 28540,
+      "parentPid": 62084,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T09:44:32.601378Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 58928,
+      "parentPid": 62084,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T09:44:33.093252Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 22972,
+      "parentPid": 62084,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T09:44:38.121409Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 12924,
+      "parentPid": 62084,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T09:44:38.37998Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 28140,
+      "parentPid": 62084,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T09:44:42.099477Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 49352,
+      "parentPid": 47552,
+      "name": "ffmpeg-win64.exe",
+      "createdAt": "2026-10-08T09:44:42.270788Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 15784,
+      "parentPid": 62084,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T09:44:42.276933Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 4324,
+      "parentPid": 56920,
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T09:44:48.966743Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    },
+    {
+      "pid": 49120,
+      "parentPid": 4324,
+      "name": "java.exe",
+      "createdAt": "2026-10-08T09:44:50.625527Z",
+      "status": "历史观测进程已退出，未执行终止命令"
+    }
+  ],
+  "browserTemporaryPaths": [
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-kdYmle",
+      "status": "Playwright 已自动清理，Test-Path 确认不存在"
+    },
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-rNyrj6",
+      "status": "Playwright 已自动清理，Test-Path 确认不存在"
+    },
+    {
+      "status": "Playwright 已自动清理，Test-Path 确认不存在",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-ITXs27"
+    }
+  ],
+  "configurationRestoration": "所有测试子 shell 已退出，临时 env 脚本已删除；没有修改系统环境或原 .env，产品 .env.example/docker-compose 默认开关为 false。",
+  "foreignServices": [
+    {
+      "pid": 56004,
+      "port": 3101,
+      "createdAt": "2026-10-08T18:13:58.23449+08:00",
+      "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "action": "非本任务资源；只核实归属，未终止或复用"
+    },
+    {
+      "pid": 50928,
+      "port": 3100,
+      "createdAt": "2026-10-08T18:14:01.908798+08:00",
+      "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "action": "非本任务资源；只核实归属，未终止或复用"
+    }
+  ],
+  "finalAcceptanceProcesses": [
+    {
+      "name": "node.exe",
+      "createdAt": "2026-10-08T10:25:40.971705Z",
+      "parentPid": 16868,
+      "pid": 11908,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "turbo.exe",
+      "createdAt": "2026-10-08T10:25:41.230814Z",
+      "parentPid": 11908,
+      "pid": 47504,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T10:25:42.170434Z",
+      "parentPid": 47504,
+      "pid": 62144,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "pnpm.exe",
+      "createdAt": "2026-10-08T10:25:42.522789Z",
+      "parentPid": 62144,
+      "pid": 61872,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T10:25:43.143658Z",
+      "parentPid": 61872,
+      "pid": 34088,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "pnpm.exe",
+      "createdAt": "2026-10-08T10:25:43.306682Z",
+      "parentPid": 34088,
+      "pid": 57680,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T10:25:43.733696Z",
+      "parentPid": 57680,
+      "pid": 48576,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "node.exe",
+      "createdAt": "2026-10-08T10:25:43.93294Z",
+      "parentPid": 48576,
+      "pid": 37208,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T10:25:44.931299Z",
+      "parentPid": 37208,
+      "pid": 15532,
+      "status": "PID 已复用，原测试进程已退出；未操作当前进程"
+    },
+    {
+      "name": "pnpm.exe",
+      "createdAt": "2026-10-08T10:25:45.16914Z",
+      "parentPid": 15532,
+      "pid": 49568,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T10:25:45.788283Z",
+      "parentPid": 49568,
+      "pid": 54104,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "pnpm.exe",
+      "createdAt": "2026-10-08T10:25:45.917637Z",
+      "parentPid": 54104,
+      "pid": 63408,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T10:25:46.496071Z",
+      "parentPid": 63408,
+      "pid": 32476,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "node.exe",
+      "createdAt": "2026-10-08T10:25:47.729135Z",
+      "parentPid": 32476,
+      "pid": 51392,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "node.exe",
+      "createdAt": "2026-10-08T10:25:48.113913Z",
+      "parentPid": 51392,
+      "pid": 45600,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T10:25:58.043945Z",
+      "parentPid": 37208,
+      "pid": 55096,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "pnpm.exe",
+      "createdAt": "2026-10-08T10:25:58.223498Z",
+      "parentPid": 55096,
+      "pid": 59984,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T10:25:58.764062Z",
+      "parentPid": 59984,
+      "pid": 45360,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "pnpm.exe",
+      "createdAt": "2026-10-08T10:25:58.835676Z",
+      "parentPid": 45360,
+      "pid": 17240,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T10:25:59.229458Z",
+      "parentPid": 17240,
+      "pid": 52048,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "node.exe",
+      "createdAt": "2026-10-08T10:25:59.335386Z",
+      "parentPid": 52048,
+      "pid": 48196,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "node.exe",
+      "createdAt": "2026-10-08T10:26:00.832528Z",
+      "parentPid": 48196,
+      "pid": 61916,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "node.exe",
+      "createdAt": "2026-10-08T10:27:02.170848Z",
+      "parentPid": 37208,
+      "pid": 34768,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T10:27:02.574046Z",
+      "parentPid": 34768,
+      "pid": 38180,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T10:27:02.696267Z",
+      "parentPid": 38180,
+      "pid": 13140,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T10:27:02.739743Z",
+      "parentPid": 38180,
+      "pid": 33956,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "ffmpeg-win64.exe",
+      "createdAt": "2026-10-08T10:27:33.572945Z",
+      "parentPid": 34768,
+      "pid": 62824,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    },
+    {
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T10:27:33.579879Z",
+      "parentPid": 38180,
+      "pid": 58616,
+      "status": "进程已由测试运行器正常退出，未执行终止命令"
+    }
+  ],
+  "firstFinalAcceptanceProcesses": [
+    {
+      "pid": 55364,
+      "createdAt": "2026-10-08T10:18:50.278503Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "node.exe",
+      "parentPid": 56908
+    },
+    {
+      "pid": 45132,
+      "createdAt": "2026-10-08T10:18:50.336701Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "turbo.exe",
+      "parentPid": 55364
+    },
+    {
+      "pid": 38052,
+      "createdAt": "2026-10-08T10:18:50.580079Z",
+      "status": "PID 已复用，原测试进程已退出；未操作当前进程",
+      "name": "cmd.exe",
+      "parentPid": 45132
+    },
+    {
+      "pid": 45412,
+      "createdAt": "2026-10-08T10:18:50.644823Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "pnpm.exe",
+      "parentPid": 38052
+    },
+    {
+      "pid": 11764,
+      "createdAt": "2026-10-08T10:18:50.867003Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "cmd.exe",
+      "parentPid": 45412
+    },
+    {
+      "pid": 56900,
+      "createdAt": "2026-10-08T10:18:50.88485Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "pnpm.exe",
+      "parentPid": 11764
+    },
+    {
+      "pid": 55176,
+      "createdAt": "2026-10-08T10:18:51.067549Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "cmd.exe",
+      "parentPid": 56900
+    },
+    {
+      "pid": 60692,
+      "createdAt": "2026-10-08T10:18:51.09763Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "node.exe",
+      "parentPid": 55176
+    },
+    {
+      "pid": 60600,
+      "createdAt": "2026-10-08T10:18:51.530176Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "cmd.exe",
+      "parentPid": 60692
+    },
+    {
+      "pid": 58464,
+      "createdAt": "2026-10-08T10:18:51.554303Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "pnpm.exe",
+      "parentPid": 60600
+    },
+    {
+      "pid": 40864,
+      "createdAt": "2026-10-08T10:18:51.761776Z",
+      "status": "PID 已复用，原测试进程已退出；未操作当前进程",
+      "name": "cmd.exe",
+      "parentPid": 58464
+    },
+    {
+      "pid": 38992,
+      "createdAt": "2026-10-08T10:18:51.78091Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "pnpm.exe",
+      "parentPid": 40864
+    },
+    {
+      "pid": 60020,
+      "createdAt": "2026-10-08T10:18:51.979521Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "cmd.exe",
+      "parentPid": 38992
+    },
+    {
+      "pid": 62724,
+      "createdAt": "2026-10-08T10:18:52.009976Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "node.exe",
+      "parentPid": 60020
+    },
+    {
+      "pid": 29700,
+      "createdAt": "2026-10-08T10:18:52.091228Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "node.exe",
+      "parentPid": 62724
+    },
+    {
+      "pid": 34700,
+      "createdAt": "2026-10-08T10:18:52.30062Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "esbuild.exe",
+      "parentPid": 29700
+    },
+    {
+      "pid": 58864,
+      "createdAt": "2026-10-08T10:18:54.467316Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "cmd.exe",
+      "parentPid": 60692
+    },
+    {
+      "pid": 28924,
+      "createdAt": "2026-10-08T10:18:54.500517Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "pnpm.exe",
+      "parentPid": 58864
+    },
+    {
+      "pid": 59400,
+      "createdAt": "2026-10-08T10:18:54.758758Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "cmd.exe",
+      "parentPid": 28924
+    },
+    {
+      "pid": 18152,
+      "createdAt": "2026-10-08T10:18:54.782403Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "pnpm.exe",
+      "parentPid": 59400
+    },
+    {
+      "pid": 31256,
+      "createdAt": "2026-10-08T10:18:55.068646Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "cmd.exe",
+      "parentPid": 18152
+    },
+    {
+      "pid": 20312,
+      "createdAt": "2026-10-08T10:18:55.103714Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "node.exe",
+      "parentPid": 31256
+    },
+    {
+      "pid": 6528,
+      "createdAt": "2026-10-08T10:18:55.91182Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "node.exe",
+      "parentPid": 20312
+    },
+    {
+      "pid": 10916,
+      "createdAt": "2026-10-08T10:19:13.817022Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "node.exe",
+      "parentPid": 60692
+    },
+    {
+      "pid": 11780,
+      "createdAt": "2026-10-08T10:19:15.901379Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "chrome-headless-shell.exe",
+      "parentPid": 10916
+    },
+    {
+      "pid": 33916,
+      "createdAt": "2026-10-08T10:19:16.024198Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "chrome-headless-shell.exe",
+      "parentPid": 11780
+    },
+    {
+      "pid": 28444,
+      "createdAt": "2026-10-08T10:19:16.064791Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "chrome-headless-shell.exe",
+      "parentPid": 11780
+    },
+    {
+      "pid": 57408,
+      "createdAt": "2026-10-08T10:19:16.157333Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "chrome-headless-shell.exe",
+      "parentPid": 11780
+    },
+    {
+      "pid": 57884,
+      "createdAt": "2026-10-08T10:19:16.158998Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "ffmpeg-win64.exe",
+      "parentPid": 10916
+    },
+    {
+      "pid": 13724,
+      "createdAt": "2026-10-08T10:19:31.494319Z",
+      "status": "进程已由测试运行器正常退出，未执行终止命令",
+      "name": "chrome-headless-shell.exe",
+      "parentPid": 11780
+    }
+  ],
+  "unarchivedSensitiveArtifacts": {
+    "policy": "只保全必要脱敏证据；原 Playwright trace/video/auth 可能含 Cookie 或凭据，不进入仓库。重跑由本任务 Runner 自动清理自己的上一轮 output。",
+    "preserved": [
+      "screenshots/channel-revoke-first-failure.png",
+      "raw/e2e-channel-first-failure-context.md",
+      "screenshots/stage1-first-failure.png",
+      "raw/e2e-stage1-first-failure-context.md",
+      "raw/e2e-stage1-first-failure-network.json"
+    ],
+    "originalTraceSha256": null,
+    "reason": "网络片段已脱敏提取；原 trace 在下一次完整运行自动清理前未记录其摘要，不声称保留原 trace 完整字节。"
+  },
+  "cleanupResult": "自有三容器与三匿名卷、测试环境脚本、含登录态的 Playwright 临时目录及 .next 均已清理；共享镜像/网络、当前及旧工作树保留。未操作 tds，未使用 global prune。",
+  "archivedLooseEvidence": [
+    {
+      "path": "docs/reviews/c1/raw",
+      "status": "71 条原证据已无损归档、逐字节读回与当前源码/计划校验通过后，删除散日志副本；ZIP 与索引保留"
+    },
+    {
+      "path": "docs/reviews/c1/source-before-snapshot-fix",
+      "status": "六份修复前原源码字节在 ZIP 中保留，逐字节验证后删除散 .txt；历史受测哈希 JSON 保留"
+    }
+  ]
+}

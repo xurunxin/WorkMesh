@@ -100,6 +100,7 @@ describe('durable domain-event writer inventory', () => {
       'aggregate:session',
       'aggregate:saved_view',
       'aggregate:notification',
+      'aggregate:notification_channel_target',
       'aggregate:advanced_saved_view:private',
       'aggregate:browser_push_subscription',
       'aggregate:workbench_llm_connection:personal',
@@ -116,6 +117,8 @@ describe('durable domain-event writer inventory', () => {
       'utf8',
     )
     const stage4 = await readFile(join(root, 'packages/db/src/stage4.ts'), 'utf8')
+    const channels = await readFile(join(root, 'packages/db/src/channel-notifications.ts'), 'utf8')
+    expect(channels).toMatch(/aggregateType: 'notification_channel_target'[\s\S]{0,120}audienceActorId: meta.actorId/)
     const worker = await readFile(
       join(root, 'apps/worker/src/automation.ts'),
       'utf8',

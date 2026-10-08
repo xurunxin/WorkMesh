@@ -169,6 +169,13 @@ const workspaceAdminOperations = new Set([
 ])
 
 const humanOnlyOperations = new Set([
+  'getNotificationChannelConfig',
+  'listNotificationChannelTargets',
+  'createNotificationChannelTarget',
+  'updateNotificationChannelTarget',
+  'revokeNotificationChannelTarget',
+  'listChannelNotificationDeliveries',
+  'reconcileChannelNotificationDelivery',
   ...workspaceAdminOperations,
   // The queue counts are a Human-only disclosure: each count reuses the
   // authorization predicate of the list it summarises, and an Agent has no queue
@@ -275,6 +282,7 @@ const agentOnlyOperations = new Set([
 ])
 
 const revisionedOperations = new Set([
+  'updateNotificationChannelTarget', 'revokeNotificationChannelTarget', 'reconcileChannelNotificationDelivery',
   'archiveWorkbenchConversation',
   'queueWorkbenchTurn',
   'stopWorkbenchTurn',

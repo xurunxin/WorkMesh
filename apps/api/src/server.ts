@@ -108,6 +108,7 @@ import {
 } from "./agent-connections.js";
 import type { AgentConnectionCurrentIdentity } from "@workmesh/contracts";
 import { registerAutonomousControlPlaneRoutes } from "./autonomous-control-plane.js";
+import { registerNotificationChannelRoutes } from './notification-channels.js';
 import { registerWorkbenchLlmConnectionRoutes } from "./workbench-llm-connections.js";
 import { loadModelPresets, registerModelPresetRoutes } from "./model-presets.js";
 import { registerWorkbenchConversationRoutes } from "./workbench-conversations.js";
@@ -1247,6 +1248,7 @@ export const buildApp = (options: {
     header,
     paginator,
   });
+  registerNotificationChannelRoutes(app, { db, meta: commandContext, header, paginator });
   registerAutonomousControlPlaneRoutes(app, {
     db,
     webPushPublicKey: config.WORKMESH_WEB_PUSH_PUBLIC_KEY,

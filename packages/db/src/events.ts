@@ -1,4 +1,8 @@
 import type { PoolClient, QueryResultRow } from 'pg'
+import {
+  notificationSourceAggregateTypes,
+  notificationSourceSelectionSql,
+} from './human-attention-sources.js'
 import { resolveEventResources } from './event-resources.js'
 
 export const eventResourceTypes = [
@@ -111,12 +115,49 @@ export async function appendEvent(
   )
   const resolved = await resolveEventResources(tx, input)
   const resources = resolved.resources
+  // Supported legacy upgrade fixtures still write business events before this migration.
+  // Detect the additive column explicitly; never backfill or deliver those historical events.
+  const snapshotsAvailable = (
+    await tx.query<{ available: boolean }>(
+      `SELECT EXISTS(SELECT 1 FROM pg_attribute WHERE attrelid='domain_events'::regclass
+       AND attname='notification_sources' AND NOT attisdropped) AS available`,
+    )
+  ).rows[0]!.available
+  // Persist source revisions in the business transaction, before outbox delivery.
+  const sourceSnapshots =
+    snapshotsAvailable &&
+    !input.type.startsWith('notification.') &&
+    notificationSourceAggregateTypes.some(
+      (type) => type === input.aggregateType,
+    )
+      ? (
+          await tx.query<{
+            source_type: string
+            source_id: string
+            source_revision: number
+          }>(
+            `SELECT selected.source_type,selected.source_id,selected.source_revision FROM (${notificationSourceSelectionSql}) selected
+       WHERE (selected.source_type<>'inbox_item' OR $4::uuid IS NULL OR selected.recipient_actor_id=$4)
+         AND ($5::text<>'room.message.human_visibility_recorded' OR (
+           NOT EXISTS(SELECT 1 FROM room_message_recipients recipient WHERE recipient.message_id=$3 AND recipient.actor_id=selected.recipient_actor_id)
+           AND NOT EXISTS(SELECT 1 FROM room_message_session_recipients recipient WHERE recipient.message_id=$3 AND recipient.actor_id=selected.recipient_actor_id)
+         ))`,
+            [
+              input.workspaceId,
+              input.aggregateType,
+              input.aggregateId,
+              resolved.audienceActorId ?? null,
+              input.type,
+            ],
+          )
+        ).rows
+      : []
   const event = await tx.query<InsertedEvent>(
     `INSERT INTO domain_events(
        workspace_id,team_id,audience_actor_id,event_type,event_version,
        aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
-       idempotency_key,payload,session_id,session_sequence,causation_id
-     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+       idempotency_key,payload,session_id,session_sequence,causation_id${snapshotsAvailable ? ',notification_sources' : ''}
+     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14${snapshotsAvailable ? ',$15' : ''})
      RETURNING id`,
     [
       input.workspaceId,
@@ -133,6 +174,7 @@ export async function appendEvent(
       input.sessionId ?? null,
       input.sessionSequence ?? null,
       input.causationId ?? null,
+      ...(snapshotsAvailable ? [JSON.stringify(sourceSnapshots)] : []),
     ],
   )
   const eventId = event.rows[0]!.id
@@ -145,13 +187,7 @@ export async function appendEvent(
         `INSERT INTO domain_event_resources(
            domain_event_id,workspace_id,relation,resource_type,resource_id
          ) VALUES($1,$2,$3,$4,$5)`,
-        [
-          eventId,
-          input.workspaceId,
-          relation,
-          resource.type,
-          resource.id,
-        ],
+        [eventId, input.workspaceId, relation, resource.type, resource.id],
       )
   await tx.query(
     `INSERT INTO outbox_events(domain_event_id,topic,partition_key)
