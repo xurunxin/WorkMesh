@@ -1,0 +1,63 @@
+[
+  {
+    "name": "s3-prepare",
+    "command": [
+      "node",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\docs\\reviews\\c3\\main-combination\\prepare-s3.mjs"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T11:39:57.019201+00:00",
+    "finishedAt": "2026-10-08T11:39:58.079808+00:00",
+    "exitCode": 0,
+    "sourceBefore": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceAfter": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "28db24281556791fd37628099406bcdb777d76e06ff1efe2a42bbc786f1d92ce",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "reset-api",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/db",
+      "test:reset"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T11:39:58.749050+00:00",
+    "finishedAt": "2026-10-08T11:40:01.485665+00:00",
+    "exitCode": 0,
+    "sourceBefore": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceAfter": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "8988fe158daad03aa673f9879f2d999daa95e85f00feecb724d05c9eeadb9e95",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "api-integration",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/api",
+      "test:integration"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T11:40:02.281205+00:00",
+    "finishedAt": "2026-10-08T11:41:03.266345+00:00",
+    "exitCode": 1,
+    "sourceBefore": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceAfter": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "dcbaf33cf6b245d162957f2f079892ddbf37aaabd870e979e8c4b36672887648",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  }
+]

@@ -266,13 +266,15 @@ describe('配置就绪只读投影', () => {
   })
 
   it.each(['首次', '已有会话', '过期会话'] as const)(
-    '审查回归：有效 Installation Token %s及重复 GET 只写拒绝审计', async scenario => {
+    '审查回归：有效 Installation Token %s及重复 Human-only 请求只写拒绝审计', async scenario => {
       const teamId = await team()
       await db.query(`INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'admin')`,
         [admin.workspaceId, teamId, admin.id])
       const agentId = await agent(teamId)
       const slug = (await db.query<{ slug: string }>('SELECT slug FROM agent_definitions WHERE id=$1', [agentId])).rows[0]!.slug
-      const coordinatorApp = buildApp({ logger: false, features: loadFeatureConfig({ ...process.env, WORKMESH_BETA_COORDINATION_MCP: 'true' }) })
+      const coordinatorApp = buildApp({ logger: false, features: loadFeatureConfig({ ...process.env,
+        WORKMESH_BETA_COORDINATION_MCP: 'true', WORKMESH_BETA_MODEL_PRESETS: 'true',
+        WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS: 'true' }) })
       try {
         const created = await coordinatorApp.inject({ method: 'POST', url: '/api/v1/agent-connections',
           headers: { cookie: admin.cookie, 'x-csrf-token': admin.csrf, 'idempotency-key': randomUUID() },
@@ -299,9 +301,30 @@ describe('配置就绪只读投影', () => {
         }
         const before = await snapshot()
         const { authorization_denials: auditBefore, ...domainBefore } = before
+        // C3 公开目录不解析附带的有效凭据，也不创建或续期身份。
+        for (const headers of [{}, { 'x-workmesh-installation-token': token },
+          { 'x-workmesh-installation-token': token, cookie: admin.cookie }]) {
+          const catalog = await coordinatorApp.inject({ method: 'GET', url: '/api/v1/workbench/model-presets', headers })
+          expect(catalog.statusCode, catalog.body).toBe(200)
+          expect(catalog.json().entries).toHaveLength(9)
+          expect(catalog.body).not.toContain(token)
+          expect(await snapshot()).toEqual(before)
+        }
         // 包含重复请求和同时携带 Human cookie 的请求，不能绕过凭据类型拒绝。
-        for (const [index, withCookie] of [false, false, true].entries()) {
-          const denied = await coordinatorApp.inject({ method: 'GET', url: url(teamId),
+        const requests = [
+          { method: 'GET' as const, route: url(teamId), operation: 'getConfigurationReadiness' },
+          { method: 'GET' as const, route: '/api/v1/workbench/llm-connections', operation: 'listWorkbenchLlmConnections' },
+          // C1 的读取与本人写命令同样须在 identity 副作用前拒绝；不存在的目标不能代替身份拒绝。
+          { method: 'GET' as const, route: '/api/v1/notification-channel-targets/config', operation: 'getNotificationChannelConfig' },
+          { method: 'GET' as const, route: '/api/v1/notification-channel-targets', operation: 'listNotificationChannelTargets' },
+          { method: 'GET' as const, route: '/api/v1/channel-notification-deliveries', operation: 'listChannelNotificationDeliveries' },
+          { method: 'POST' as const, route: '/api/v1/notification-channel-targets', operation: 'createNotificationChannelTarget' },
+          { method: 'PATCH' as const, route: `/api/v1/notification-channel-targets/${randomUUID()}`, operation: 'updateNotificationChannelTarget' },
+          { method: 'DELETE' as const, route: `/api/v1/notification-channel-targets/${randomUUID()}`, operation: 'revokeNotificationChannelTarget' },
+          { method: 'POST' as const, route: `/api/v1/channel-notification-deliveries/${randomUUID()}/reconcile`, operation: 'reconcileChannelNotificationDelivery' },
+        ].flatMap(route => [false, false, true].map(withCookie => ({ ...route, withCookie })))
+        for (const [index, { method, route, operation, withCookie }] of requests.entries()) {
+          const denied = await coordinatorApp.inject({ method, url: route,
             headers: { 'x-workmesh-installation-token': token, ...(withCookie ? { cookie: admin.cookie } : {}) } })
           expect(denied.statusCode, denied.body).toBe(403)
           expect(denied.json().error).toMatchObject({ code: 'FORBIDDEN', details: { authorizationStage: 'identity' } })
@@ -312,7 +335,7 @@ describe('配置就绪只读投影', () => {
           const audit = (await db.query<{ operation_id: string; reason_code: string; authorization_stage: string; principal_actor_id: string | null }>(
             'SELECT operation_id,reason_code,authorization_stage,principal_actor_id FROM authorization_denials WHERE correlation_id=$1',
             [denied.json().error.correlationId])).rows[0]
-          expect(audit).toEqual({ operation_id: 'getConfigurationReadiness', reason_code: 'FORBIDDEN',
+          expect(audit).toEqual({ operation_id: operation, reason_code: 'FORBIDDEN',
             authorization_stage: 'identity', principal_actor_id: null })
         }
         // 在快照比较之外调用正常身份端点，证明凭据确实有效，而非伪造 token 的无写入假阳性。

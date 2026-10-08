@@ -1,5 +1,42 @@
 import { expect, test } from '@playwright/test'
 
+test('读取预置后修改并显式保存连接及登记模型', async ({ page }) => {
+  await page.goto('/settings/agent-workbench')
+  const create = page.locator('form').filter({ has: page.locator('input[name="baseUrl"]') }).first()
+  const writes: string[] = []
+  page.on('request', request => {
+    if (request.url().includes('/api/v1/workbench/llm-connections') && ['POST', 'PATCH', 'DELETE'].includes(request.method())) writes.push(request.url())
+  })
+  await create.locator('select[name="presetId"]').selectOption('openai')
+  await expect(create.locator('input[name="baseUrl"]')).toHaveValue('https://api.openai.com/v1')
+  await expect(create.getByRole('link', { name: /官方出处|Official source/ })).toHaveAttribute('href', 'https://developers.openai.com/api/docs/quickstart')
+  expect(writes).toEqual([])
+  await create.locator('input[name="name"]').fill('Preset browser fixture')
+  await create.locator('input[name="baseUrl"]').fill('https://gateway.example/v1/')
+  await create.locator('input[name="presetModelId"]').fill('user-edited-model')
+  const secret = 'c3-browser-fixture-secret'
+  await create.locator('input[name="secretMaterial"]').fill(secret)
+  await create.getByRole('button', { name: /刷新目录|Refresh catalog/ }).click()
+  await expect(create.locator('input[name="baseUrl"]')).toHaveValue('https://gateway.example/v1/')
+  expect(writes).toEqual([])
+  await create.getByRole('button', { name: /保存服务|Save service/ }).click()
+  await expect(page.getByRole('status')).toContainText(/连接已保存|Connection saved/)
+  const model = page.locator('form').filter({ has: page.locator('input[name="modelId"]') })
+  await expect(model.locator('input[name="modelId"]')).toHaveValue('user-edited-model')
+  expect(writes).toHaveLength(1)
+  await expect(model.locator('input[name="contextWindowTokens"]')).toHaveValue('')
+  await model.locator('input[name="contextWindowTokens"]').fill('10000')
+  await model.locator('input[name="maxOutputTokens"]').fill('1000')
+  await model.getByRole('button', { name: /登记模型|Add model/ }).click()
+  await expect(page.getByText('user-edited-model', { exact: true }).first()).toBeVisible()
+  expect(writes).toHaveLength(2)
+  await page.reload()
+  await page.getByRole('button', { name: /Preset browser fixture/ }).click()
+  await expect(page.getByText('user-edited-model', { exact: true }).first()).toBeVisible()
+  await expect(page.locator('body')).not.toContainText(secret)
+})
+
+
 test('an administrator configures and revokes a model service without exposing its credential', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/settings/agent-workbench')

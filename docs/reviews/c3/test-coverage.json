@@ -1,0 +1,288 @@
+{
+  "sourcePath": "docs/reviews/r1/test-coverage.json",
+  "sourceFileSha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41",
+  "originalFeature": {
+    "seqNum": 17,
+    "id": "4DlyrPrDMMtK5JTmFm1t_",
+    "owner": "C3 执行者",
+    "originalTests": [
+      {
+        "id": "todo-17-T1",
+        "text": "目录版本可读；选中预置只填充配置",
+        "originalChecked": false,
+        "target": 17,
+        "testFile": "apps/web/app/lib/model-presets.test.ts",
+        "caseName": "#17 原验收1：目录版本可读；选中预置只填充配置",
+        "status": "已实现；本轮完整单元及相应 UI/真实 API 集成通过",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-17-1 内置目录加载、部署完整替换优先、禁用优先；选中只填可编辑配置并显示出处"
+        ],
+        "owner": "C3 执行者",
+        "targetTodoId": "4DlyrPrDMMtK5JTmFm1t_",
+        "actualCaseName": "#17 原验收1：目录版本可读；选中预置只填充配置",
+        "evidence": [
+          "execution-logs.zip/c3-test-resource-bounded-final.log"
+        ]
+      },
+      {
+        "id": "todo-17-T2",
+        "text": "目录替换 / 覆盖 / 禁用规则有测试",
+        "originalChecked": false,
+        "target": 17,
+        "testFile": "apps/web/app/lib/model-presets.test.ts",
+        "caseName": "#17 原验收2：目录替换 / 覆盖 / 禁用规则有测试",
+        "status": "已实现；本轮完整单元及相应 UI/真实 API 集成通过",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-17-1 内置目录加载、部署完整替换优先、禁用优先；选中只填可编辑配置并显示出处"
+        ],
+        "owner": "C3 执行者",
+        "targetTodoId": "4DlyrPrDMMtK5JTmFm1t_",
+        "actualCaseName": "#17 原验收2：目录替换 / 覆盖 / 禁用规则有测试",
+        "evidence": [
+          "execution-logs.zip/c3-test-resource-bounded-final.log"
+        ]
+      },
+      {
+        "id": "todo-17-T3",
+        "text": "**保存连接不产生任何出站请求**（断言零外部调用）",
+        "originalChecked": false,
+        "target": 17,
+        "testFile": "apps/web/app/lib/model-presets.test.ts",
+        "caseName": "#17 原验收3：**保存连接不产生任何出站请求**（断言零外部调用）",
+        "status": "已实现；本轮完整单元及相应 UI/真实 API 集成通过",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-17-1 内置目录加载、部署完整替换优先、禁用优先；选中只填可编辑配置并显示出处"
+        ],
+        "owner": "C3 执行者",
+        "targetTodoId": "4DlyrPrDMMtK5JTmFm1t_",
+        "actualCaseName": "#17 原验收3：保存连接不产生任何出站请求（API 集成补证）",
+        "evidence": [
+          "execution-logs.zip/c3-test-resource-bounded-final.log",
+          "execution-logs.zip/c3-integration-final-01.log"
+        ],
+        "additionalFile": "apps/api/integration/workbench-llm-connections.integration.test.ts",
+        "additionalCaseName": "预置配置创建修订及重放零模型服务出站"
+      },
+      {
+        "id": "todo-17-T4",
+        "text": "每条预置带来源 URL 与核对日期，缺一即失败",
+        "originalChecked": false,
+        "target": 17,
+        "testFile": "apps/web/app/lib/model-presets.test.ts",
+        "caseName": "#17 原验收4：每条预置带来源 URL 与核对日期，缺一即失败",
+        "status": "已实现；本轮完整单元及相应 UI/真实 API 集成通过",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-17-1 内置目录加载、部署完整替换优先、禁用优先；选中只填可编辑配置并显示出处"
+        ],
+        "owner": "C3 执行者",
+        "targetTodoId": "4DlyrPrDMMtK5JTmFm1t_",
+        "actualCaseName": "#17 原验收4：每条预置带来源 URL 与核对日期，缺一即失败",
+        "evidence": [
+          "execution-logs.zip/c3-test-resource-bounded-final.log"
+        ]
+      }
+    ],
+    "originalDoD": [
+      {
+        "text": "## DoD\n目录可用 + 上述断言全绿 + 文档明确「预置不验证凭据」。\n\n",
+        "sha256": "e0a09ed6e8203a465320404f8ab4c52bc5f5e3c6201204e1fdf220049e78134f",
+        "target": 17,
+        "owner": "C3 执行者",
+        "targetTodoId": "4DlyrPrDMMtK5JTmFm1t_",
+        "acceptance": "原DoD保留，所有合法测试迁移到originalTests；矛盾旧要求按legacy处置和本任务共同契约撤换，不以历史绿灯放行",
+        "actualDisposition": "目录、四项原验收与文档已实现并通过本地定向检查；额外模拟回归未全绿，独审、最新 CI 与 Chief 确认仍待，最终 DoD 不记完成",
+        "evidence": [
+          "results.json",
+          "official-source-review.md",
+          "../../production-deployment.md"
+        ]
+      }
+    ],
+    "matrix": [
+      {
+        "category": "happy path",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "内置目录加载、部署完整替换优先、禁用优先；选中只填可编辑配置并显示出处",
+        "file": "apps/web/app/lib/model-presets.test.ts",
+        "caseName": "R1-17-1 内置目录加载、部署完整替换优先、禁用优先；选中只填可编辑配置并显示出处",
+        "owner": "C3 执行者",
+        "fileState": "已创建并运行",
+        "result": "本轮通过；纯函数断言与 API/界面补证结合，未以 mock 代替真实保存零出站",
+        "evidence": [
+          "execution-logs.zip/c3-test-resource-bounded-final.log",
+          "execution-logs.zip/c3-integration-final-01.log"
+        ]
+      },
+      {
+        "category": "unauthorized actor",
+        "applicable": false,
+        "reason": "只读公开提供方目录无凭据/身份写入；既有连接授权不在目录内重实现。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "C3 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "invalid state transition",
+        "applicable": false,
+        "reason": "文件目录不是领域状态机。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "C3 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "duplicate idempotency key",
+        "applicable": false,
+        "reason": "没有mutation/idempotency接口。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "C3 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "stale revision",
+        "applicable": false,
+        "reason": "目录版本是部署版本，不是可写资源If-Match。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "C3 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "transaction failure",
+        "applicable": false,
+        "reason": "无目录表或写事务；配置保存零出站由既有连接测试补证。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "C3 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "webhook/job replay",
+        "applicable": false,
+        "reason": "不新增probe/job/webhook。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "C3 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "concurrent request",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "多次读取和替换目录不修改请求内数据、不自动保存用户选择",
+        "file": "apps/web/app/lib/model-presets.test.ts",
+        "caseName": "R1-17-8 多次读取和替换目录不修改请求内数据、不自动保存用户选择",
+        "owner": "C3 执行者",
+        "fileState": "已创建并运行",
+        "result": "本轮通过；纯函数断言与 API/界面补证结合，未以 mock 代替真实保存零出站",
+        "evidence": [
+          "execution-logs.zip/c3-test-resource-bounded-final.log",
+          "execution-logs.zip/c3-integration-final-01.log"
+        ]
+      },
+      {
+        "category": "server restart/outbox recovery",
+        "applicable": false,
+        "reason": "目录文件不产生outbox；冷启动读取指定部署版本。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "C3 执行者",
+        "fileState": null,
+        "result": "不适用"
+      }
+    ]
+  },
+  "supplementalPlannedCases": [
+    {
+      "file": "apps/api/src/model-presets.test.ts",
+      "caseName": "禁用优先且不读取指定文件",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-test-resource-bounded-final.log"
+    },
+    {
+      "file": "apps/api/src/model-presets.test.ts",
+      "caseName": "完整替换不残留内置条目",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-test-resource-bounded-final.log"
+    },
+    {
+      "file": "apps/api/src/model-presets.test.ts",
+      "caseName": "坏文件拒绝启动",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-test-resource-bounded-final.log"
+    },
+    {
+      "file": "apps/api/src/model-presets.test.ts",
+      "caseName": "并发读取不改变冻结目录",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-test-resource-bounded-final.log"
+    },
+    {
+      "file": "apps/web/app/settings/workbench-llm-settings.test.tsx",
+      "caseName": "选择预置只填草稿并显示出处",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-test-resource-bounded-final.log"
+    },
+    {
+      "file": "apps/web/app/settings/workbench-llm-settings.test.tsx",
+      "caseName": "手工编辑不被刷新覆盖",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-test-resource-bounded-final.log"
+    },
+    {
+      "file": "apps/web/app/settings/workbench-llm-settings.test.tsx",
+      "caseName": "模型草稿绑定新连接且显式登记",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-test-resource-bounded-final.log"
+    },
+    {
+      "file": "apps/web/app/settings/workbench-llm-settings.test.tsx",
+      "caseName": "目录失败仍可手工保存",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-test-resource-bounded-final.log"
+    },
+    {
+      "file": "apps/api/integration/workbench-llm-connections.integration.test.ts",
+      "caseName": "预置配置创建修订及重放零模型服务出站",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-integration-final-01.log"
+    },
+    {
+      "file": "apps/api/integration/workbench-llm-connections.integration.test.ts",
+      "caseName": "修改预置 URL 仍受安全策略约束",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-integration-final-01.log"
+    },
+    {
+      "file": "apps/web/e2e/workbench-llm-settings.spec.ts",
+      "caseName": "读取预置后修改并显式保存连接及登记模型",
+      "result": "本轮通过",
+      "evidence": "execution-logs.zip/c3-e2e-full-01.log"
+    }
+  ],
+  "originalAcceptance3Evidence": "原测试目标保留为 apps/web/app/lib/model-presets.test.ts；真实连接保存零出站由 API 集成用例补证，纯函数或浏览器 mock 不代替该验收。",
+  "purpose": "沿用实施前原测试/九类/DoD 映射并填写实际执行；R1 原快照不改写。未运行/不适用/失败与通过分别保留。",
+  "inputMain": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+  "inputPlanId": "uO_iod7YSFgGSOiFtRAwE",
+  "inputPlanVersion": null
+}

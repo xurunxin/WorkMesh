@@ -1,0 +1,4 @@
+$captureProcess = Get-CimInstance Win32_Process -Filter 'ProcessId=30812'
+if ($captureProcess.CommandLine -like '*docs/reviews/c3/main-combination/run-checks.py*' -and $captureProcess.CreationDate.ToString('yyyyMMddHHmmss') -eq '20261008192753') { Stop-Process -Id 30812 }
+Get-ChildItem -LiteralPath .tmp/c3-main-combination-01a11890 -Force
+Get-Content docs/reviews/c3/main-combination/resources.json

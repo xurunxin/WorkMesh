@@ -1,0 +1,56 @@
+[
+  {
+    "ProcessId": 14616,
+    "ParentProcessId": 55756,
+    "CreatedUtc": "2026-10-08T11:41:27.1603900Z",
+    "CommandLine": "\"C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe\" -X utf8 docs/reviews/c3/main-combination/run-checks.py --resume-services --accepted-fixtures"
+  },
+  {
+    "ProcessId": 17560,
+    "ParentProcessId": 14616,
+    "CreatedUtc": "2026-10-08T11:41:35.2819430Z",
+    "CommandLine": "C:\\WINDOWS\\system32\\cmd.exe /c C:\\nvm4w\\nodejs\\pnpm.cmd --filter @workmesh/api test:integration"
+  },
+  {
+    "ProcessId": 13584,
+    "ParentProcessId": 17560,
+    "CreatedUtc": "2026-10-08T11:41:35.3092770Z",
+    "CommandLine": "\"C:\\nvm4w\\nodejs\\\\node_modules\\pnpm\\pnpm.exe\"    --filter @workmesh/api test:integration"
+  },
+  {
+    "ProcessId": 58988,
+    "ParentProcessId": 13584,
+    "CreatedUtc": "2026-10-08T11:41:35.5569440Z",
+    "CommandLine": "cmd.exe /e:ON /v:OFF /d /c \"\"C:\\Users\\xurx\\AppData\\Local\\pnpm\\package-manager-store\\v11\\links\\@pnpm\\exe\\9.15.4\\c429a799790ffeac531462895188ce4383e255721ef1ddce8025d3a7e3e4e6b3\\bin\\pnpm.cmd\" --filter @workmesh/api test:integration\""
+  },
+  {
+    "ProcessId": 56024,
+    "ParentProcessId": 58988,
+    "CreatedUtc": "2026-10-08T11:41:35.5781820Z",
+    "CommandLine": "\"C:\\Users\\xurx\\AppData\\Local\\pnpm\\package-manager-store\\v11\\links\\@pnpm\\exe\\9.15.4\\c429a799790ffeac531462895188ce4383e255721ef1ddce8025d3a7e3e4e6b3\\bin\\\\..\\node_modules\\@pnpm\\exe\\pnpm.exe\"   --filter @workmesh/api test:integration"
+  },
+  {
+    "ProcessId": 40584,
+    "ParentProcessId": 56024,
+    "CreatedUtc": "2026-10-08T11:41:35.7863720Z",
+    "CommandLine": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c vitest run --config ../../vitest.integration.config.ts"
+  },
+  {
+    "ProcessId": 60036,
+    "ParentProcessId": 40584,
+    "CreatedUtc": "2026-10-08T11:41:35.8229700Z",
+    "CommandLine": "node   \"C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\apps\\api\\node_modules\\.bin\\\\..\\vitest\\vitest.mjs\" run --config ../../vitest.integration.config.ts"
+  },
+  {
+    "ProcessId": 4168,
+    "ParentProcessId": 60036,
+    "CreatedUtc": "2026-10-08T11:41:36.3470900Z",
+    "CommandLine": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\node_modules\\.pnpm\\@esbuild+win32-x64@0.28.1\\node_modules\\@esbuild\\win32-x64\\esbuild.exe --service=0.28.1 --ping"
+  },
+  {
+    "ProcessId": 19632,
+    "ParentProcessId": 60036,
+    "CreatedUtc": "2026-10-08T11:43:08.3545320Z",
+    "CommandLine": "C:\\nvm4w\\nodejs\\node.exe --conditions node --conditions development C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\node_modules\\.pnpm\\tinypool@1.1.1\\node_modules\\tinypool\\dist\\entry\\process.js"
+  }
+]

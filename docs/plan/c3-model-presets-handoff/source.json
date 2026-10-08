@@ -1,0 +1,62 @@
+{
+  "todoId": "4DlyrPrDMMtK5JTmFm1t_",
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "source": "mcp__tds__todos 的 Saved plan 全文与 mcp__tds__conversation 实读的最新计划 doc 引用",
+  "sourceDocId": "uO_iod7YSFgGSOiFtRAwE",
+  "currentID": "uO_iod7YSFgGSOiFtRAwE",
+  "planVersion": null,
+  "specVersion": null,
+  "sourceReadAt": "2026-10-08T05:46:33Z",
+  "currentIDReadEvidence": "docs/plan/c3-model-presets-handoff/current-plan-read.json",
+  "planPath": "docs/plan/c3-model-presets.md",
+  "planContentSha256": "873a976342b0143a5cc8ae0b8dfe84ec33c1becbcef81158057e12e4d28c2011",
+  "specPath": "docs/plan/c3-model-presets-handoff/spec.md",
+  "specContentSha256": "30ca80807cdaf112238152925e4f44562daa122c8361bfcef4cd4f75437831eb",
+  "hashPolicy": "计划及规格文件是 todos 返回正文字串的 UTF-8 原字节，未添加 BOM 或结尾换行；sha256 按字节计算。其余清单对应生成时工作树字节，Git blob另实测。source.json 与 validation.json 不自引用；哈希不代表完整官方远端页面快照。",
+  "branch": "tds/conv-01a11890-f4de-7106-b64d-e1b2c0d4608e",
+  "worktreeBaseCommit": "9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7",
+  "observedMainCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+  "mainReadMethod": "mcp__tds__git fetch origin main 后读取 FETCH_HEAD；相关连接/配置/契约/规格路径实际 diff 无输出；本轮未合入主线产品增量",
+  "savedPlanEdited": false,
+  "productImplementationStarted": false,
+  "authorizationScope": "仅 docs/plan 文档前置提交；产品实现须独审及 Chief 确认",
+  "finishGate": "交付停在确认关口，Chief安排独审；未通过工具改动平台phase",
+  "files": {
+    "docs/plan/c3-model-presets.md": {
+      "bytes": 7039,
+      "sha256": "873a976342b0143a5cc8ae0b8dfe84ec33c1becbcef81158057e12e4d28c2011"
+    },
+    "docs/plan/c3-model-presets-handoff/conversation-read.json": {
+      "bytes": 4752,
+      "sha256": "ac837de4f7d1093f0683b7e1b8b56b62cf10c23eaab5438fdd3f26d04aae2a00"
+    },
+    "docs/plan/c3-model-presets-handoff/current-plan-read.json": {
+      "bytes": 33496,
+      "sha256": "84deeb20a8be8bed6573a1303ed4105e001f5daabf9b28f989bdc1e874ba3f8f"
+    },
+    "docs/plan/c3-model-presets-handoff/official-source-review.md": {
+      "bytes": 6649,
+      "sha256": "0bfdc54f689666c74bfeb34a89d4bda6ee0a38a151158d152520158d6629fb14"
+    },
+    "docs/plan/c3-model-presets-handoff/official-sources.json": {
+      "bytes": 10467,
+      "sha256": "34619716986485021964f0d585d906cf7b3f6b1498fe21169a8ca9dda69e73e4"
+    },
+    "docs/plan/c3-model-presets-handoff/README.md": {
+      "bytes": 3096,
+      "sha256": "a9d87fd90e610f003584b545cda2260b0a827d4caad948f40b8e8b8bfd612d01"
+    },
+    "docs/plan/c3-model-presets-handoff/spec.md": {
+      "bytes": 6116,
+      "sha256": "30ca80807cdaf112238152925e4f44562daa122c8361bfcef4cd4f75437831eb"
+    },
+    "docs/plan/c3-model-presets-handoff/test-coverage.json": {
+      "bytes": 9771,
+      "sha256": "aa02f274b2a54a8fd3336a05b195df385cfc84fea1ddac23ead42d8c3cce09a1"
+    },
+    "docs/plan/c3-model-presets-handoff/todo-read.json": {
+      "bytes": 14172,
+      "sha256": "df3c1eac875e9fa9318f58d097a3c933916617421a8968b39a87be6f11a48b80"
+    }
+  }
+}

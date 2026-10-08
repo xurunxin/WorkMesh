@@ -1,5 +1,9 @@
 # WorkMesh version and support policy
 
+## 模型预置目录
+
+`WORKMESH_BETA_MODEL_PRESETS=false` 默认关闭，属于 beta，仅依赖 API 和 Web。公开只读 `GET /api/v1/workbench/model-presets` 在关闭时返回 `FEATURE_DISABLED`，手工配置仍可用。目录版本独立于 REST 与事件版本；官方出处、核对日期、确认方式每条必填，模型和地区变更须重新阅读官方资料并更新目录版本。`WORKMESH_MODEL_PRESETS_FILE` 仅接受本地完整目录，启动时替换，禁用优先，不热更新、不在请求中写回。预置不验证凭据，保存不验证可达性或兼容性。
+
 This document defines the WorkMesh 1.0 support boundary. Historical stage names
 remain in migrations, tests, and ADRs as provenance; they are not the public
 product version or support tier.
