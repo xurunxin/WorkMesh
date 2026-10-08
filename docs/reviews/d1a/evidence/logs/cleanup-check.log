@@ -1,0 +1,4 @@
+command: docker ps -a --filter name=wm-d1a-* --format names/status
+result: no task-owned test containers remain
+environment restoration was not execution-bound in this historical check; see reverification-bound-02/cleanup.json
+exitCode: 0

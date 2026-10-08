@@ -99,6 +99,37 @@ that make it themeable.
 暗色映射到既有暗色语义值，#21 逐面迁移与清理时验证明暗切换、继承和 computed token。
 D0 固定亮色取样不是删除暗色的许可。
 
+### D1a coexistence mapping
+
+D1a adds parallel `--wm-ref-*` slots only. It does not change the declarations or
+consumers of the existing slots; #21 owns consumer migration and eventual cleanup.
+The light values below are transcribed from the controlled measurement source
+[`design-tokens.md`](../references/todos-analysis/design-tokens.md), with the
+underlying observations in `design-observations.json` and `css-evidence.json`.
+The source file records RGB/HEX values in “1. 色彩”, action/focus/status evidence
+in “强调与状态色”, and theme-independent geometry in “3. 间距、圆角、阴影与边框”.
+
+| Existing slot / meaning | Parallel slot | Reference light measurement and evidence | Existing dark alias |
+| --- | --- | --- | --- |
+| `--wm-canvas` | `--wm-ref-surface` | `#faf7f2`, semantic variable `--surface` | `--wm-canvas` |
+| `--wm-surface-raised` | `--wm-ref-surface-elevated` | `#fdfaf6`, `--surface-elevated` | `--wm-surface-raised` |
+| `--wm-surface-hover` | `--wm-ref-surface-hover` | `#f2ede6`, `--surface-hover` | `--wm-surface-hover` |
+| `--wm-surface-subtle` | `--wm-ref-surface-secondary` | `#f2ede6`, `--surface-secondary` | `--wm-surface-subtle` |
+| `--wm-surface-inset` | `--wm-ref-surface-inset` | `#f2ede6`, `--surface-inset` | `--wm-surface-inset` |
+| `--wm-border` / `--wm-border-strong` | `--wm-ref-border-default` / `--wm-ref-border-strong` | `#e2dbd1` / `#cec6bb`, `--border-default` / `--border-strong` | `--wm-border` / `--wm-border-strong` respectively |
+| `--wm-text` / `--wm-text-muted` / `--wm-text-subtle` | `--wm-ref-text-primary` / `--wm-ref-text-secondary` / `--wm-ref-text-tertiary` | `#1c1917` / `#57534e` / `#78716c`, `--text-primary` / `--text-secondary` / `--text-tertiary` | `--wm-text` / `--wm-text-muted` / `--wm-text-subtle` respectively |
+| no direct existing dim slot | `--wm-ref-text-dim` | `#a8a29e`, `--text-dim` | `--wm-text-muted` |
+| `--wm-neutral` / `--wm-info` / `--wm-warning` / `--wm-success` | `--wm-ref-status-pending` / `--wm-ref-status-running` / `--wm-ref-status-needs-human` / `--wm-ref-status-done` | `#9ca3af` / `#3b82f6` / `#f59e0b` / `#22c55e`, status dots in “强调与状态色” | corresponding existing dark semantic slot |
+| `--wm-danger` | `--wm-ref-danger-candidate` | `#ef4444`, utility declaration candidate only; no error state was actively measured | `--wm-danger` |
+| `--wm-accent` / `--wm-focus` | `--wm-ref-accent` / `--wm-ref-focus` | `#4f46e5` / `#6366f1`, primary action / secondary emphasis and focus evidence | `--wm-accent` / `--wm-focus` respectively |
+| `--wm-radius-sm` / `--wm-radius-card` / `--wm-radius-panel` | `--wm-ref-radius-control` / `--wm-ref-radius-card` / `--wm-ref-radius-column` | `6px` / `8px` / `12px`, primary button and radius observations | theme-independent; no dark override |
+
+The two `#f2ede6` surface measurements remain separate semantic slots: the
+reference reports the same light value for hover and secondary surface, while the
+existing dark values differ (`#262A2F` and `#1F2226`). Each slot therefore aliases
+its own prior dark token, preserving #21's migration boundary. The danger value is
+not evidence of a rendered error state. The rounded values do not vary by theme.
+
 ### The card becomes a structural contract
 
 The card's three regions are adopted as a **layout** contract, implemented in

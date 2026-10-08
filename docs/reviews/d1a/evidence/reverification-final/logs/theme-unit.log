@@ -1,0 +1,15 @@
+COMMAND: pnpm --filter @workmesh/web exec vitest run features/navigation/theme.test.tsx
+SOURCE_BEFORE: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a1187a-f4ff-735d-814f-a7b26f8cfdc5/apps/web
+
+ ✓ features/navigation/theme.test.tsx (10 tests) 160ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  07:45:15
+   Duration  2.27s (transform 88ms, setup 193ms, collect 137ms, tests 160ms, environment 990ms, prepare 179ms)
+
+
+EXIT_CODE: 0
+SOURCE_AFTER: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4

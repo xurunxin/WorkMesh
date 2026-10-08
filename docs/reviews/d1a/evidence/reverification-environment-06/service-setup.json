@@ -1,0 +1,68 @@
+{
+  "purpose": "new independent re-execution; does not reconstruct the missing bound-02 setup",
+  "runId": "reverification-environment-06",
+  "consoleLabelNote": "Captured runner output says environment-04 because its temporary script filename was reused; this file and all evidence paths identify the actual independent run as environment-06.",
+  "head": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+  "tree": "d4af6349be64d011d97a8b63281f8cf110332f96",
+  "readiness": {
+    "postgres": true,
+    "rustfs": true,
+    "redis": true
+  },
+  "containers": {
+    "wm-d1a-env04-redis": {
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "running": true,
+      "health": "no-healthcheck; direct probe passed",
+      "portBindings": {
+        "6379/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "26389"
+          }
+        ]
+      }
+    },
+    "wm-d1a-env04-rustfs": {
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "running": true,
+      "health": "no-healthcheck; direct probe passed",
+      "portBindings": {
+        "9000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "29010"
+          }
+        ]
+      }
+    },
+    "wm-d1a-env04-pg": {
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "running": true,
+      "health": "no-healthcheck; direct probe passed",
+      "portBindings": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "25442"
+          }
+        ]
+      }
+    }
+  },
+  "testDatabase": "workmesh_d1a_theme_e2e_test",
+  "testBucket": "workmesh-artifacts",
+  "environment": {
+    "otherSecrets": "random ephemeral values, redacted",
+    "REDIS_URL": "loopback dedicated Redis",
+    "WORKMESH_BOOTSTRAP_TOKEN": "random token generated and redacted",
+    "RUN_INTEGRATION": "1",
+    "DATABASE_URL": "dedicated loopback PostgreSQL test database; password redacted",
+    "S3_ENDPOINT": "loopback dedicated RustFS"
+  },
+  "tokenGenerated": true,
+  "tokenPrintedOrPersisted": false
+}

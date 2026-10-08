@@ -1,0 +1,6 @@
+Runtime probe commands
+
+1. pnpm --filter @workmesh/web exec node -e "const {chromium}=require('playwright'); chromium.launch().then(...)"
+   Exit: 1. `playwright` is not a direct package dependency in apps/web (`MODULE_NOT_FOUND`); this was a version-probe error, not a product test.
+2. pnpm --filter @workmesh/web exec node -e "const {chromium}=require('@playwright/test'); chromium.launch().then(...)"
+   Exit: 0. Output: Chromium 149.0.7827.55.

@@ -67,6 +67,27 @@
   --wm-neutral-bg: #F9FAFB;
   --wm-neutral-border: #D0D5DD;
 
+  /* D1a reference measurements coexist with shipped tokens until D1b migrates consumers. */
+  --wm-ref-surface: #faf7f2;
+  --wm-ref-surface-elevated: #fdfaf6;
+  --wm-ref-surface-hover: #f2ede6;
+  --wm-ref-surface-secondary: #f2ede6;
+  --wm-ref-surface-inset: #f2ede6;
+  --wm-ref-border-default: #e2dbd1;
+  --wm-ref-border-strong: #cec6bb;
+  --wm-ref-text-primary: #1c1917;
+  --wm-ref-text-secondary: #57534e;
+  --wm-ref-text-tertiary: #78716c;
+  --wm-ref-text-dim: #a8a29e;
+  --wm-ref-status-pending: #9ca3af;
+  --wm-ref-status-running: #3b82f6;
+  --wm-ref-status-needs-human: #f59e0b;
+  --wm-ref-status-done: #22c55e;
+  /* CSS candidate observed in utilities; this is not an observed error-state component. */
+  --wm-ref-danger-candidate: #ef4444;
+  --wm-ref-accent: #4f46e5;
+  --wm-ref-focus: #6366f1;
+
   /* Elevation scrims and skeleton ramp */
   --wm-scrim: #11111166;
   --wm-skeleton-base: #F2F2EF;
@@ -143,6 +164,26 @@
   --wm-neutral-bg: #1F2226;
   --wm-neutral-border: #343A41;
 
+  /* Keep each coexistence slot on its existing dark semantic value. */
+  --wm-ref-surface: var(--wm-canvas);
+  --wm-ref-surface-elevated: var(--wm-surface-raised);
+  --wm-ref-surface-hover: var(--wm-surface-hover);
+  --wm-ref-surface-secondary: var(--wm-surface-subtle);
+  --wm-ref-surface-inset: var(--wm-surface-inset);
+  --wm-ref-border-default: var(--wm-border);
+  --wm-ref-border-strong: var(--wm-border-strong);
+  --wm-ref-text-primary: var(--wm-text);
+  --wm-ref-text-secondary: var(--wm-text-muted);
+  --wm-ref-text-tertiary: var(--wm-text-subtle);
+  --wm-ref-text-dim: var(--wm-text-muted);
+  --wm-ref-status-pending: var(--wm-neutral);
+  --wm-ref-status-running: var(--wm-info);
+  --wm-ref-status-needs-human: var(--wm-warning);
+  --wm-ref-status-done: var(--wm-success);
+  --wm-ref-danger-candidate: var(--wm-danger);
+  --wm-ref-accent: var(--wm-accent);
+  --wm-ref-focus: var(--wm-focus);
+
   --wm-scrim: #00000099;
   --wm-skeleton-base: #1F2226;
   --wm-skeleton-sheen: #262A2F;
@@ -214,6 +255,11 @@
      pressable. */
   --wm-radius-card: 16px;
   --wm-radius-panel: 22px;
+
+  /* Reference geometry is additive and theme-independent until D1b migration. */
+  --wm-ref-radius-control: 6px;
+  --wm-ref-radius-card: 8px;
+  --wm-ref-radius-column: 12px;
 
   /* The recessed surface a group of items sits on. Derived from the existing
      surface ramp rather than a new literal, so the panel tracks the theme:
