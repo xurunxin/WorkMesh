@@ -1898,6 +1898,281 @@
       },
       "otherUnmappedFiles": 74,
       "sensitiveRawZipCopiesRetained": 2
+    },
+    "preDeleteChecks": {
+      "checkedAtUtc": "2026-10-08T12:57:18.2614267Z",
+      "machineStatus": "tds status: running, v0.1.60; DarkFlame 6DOlLniZ0sqBYGHeIhRMq",
+      "todoSnapshot": {
+        "cleanup52": "building",
+        "d1a11": "done",
+        "g1_18": "done",
+        "c1_15": "done; protected workspace not targeted",
+        "otherActiveOrRecovery": [
+          "#5 review",
+          "#9 building",
+          "#17 building",
+          "#21 review",
+          "#8 done but protected"
+        ]
+      },
+      "readableActiveBuildConversationExactCandidatePathMentions": {
+        "#5": 0,
+        "#9": 0,
+        "#17": 0,
+        "#21": 0,
+        "#52": "references cleanup candidates as this cleanup task; no independent build-path registry exposed"
+      },
+      "nonCurrentProcessCommandLineReferences": 0,
+      "processQuerySucceeded": true,
+      "candidatePaths": "the 8 resourceMappings[].absolutePath values and 4 traceComparisons[].absolutePath values ending in .network; each remains individually enumerated with bytes and source SHA-256 in this JSON",
+      "mappingRecheck": {
+        "resourceCopies": 8,
+        "eachSourceEqualsRawZipMember": true,
+        "eachSanitizedZipMemberShaMatchesLedger": true,
+        "networkCopies": 4,
+        "eachInMemorySanitizedTransformEqualsMainZipMember": true,
+        "sourceAndTargetHashesMatchLedger": true,
+        "currentMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+        "sanitizedArchiveBlob": "02c663b7dbdd3c39c891adb99a6908b33bef4ccd",
+        "redactionReportBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9"
+      },
+      "workspaceAndGit": {
+        "resolvedWorkspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+        "head": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+        "statusEntries": 0,
+        "registeredLinkedWorktree": true,
+        "worktreeCountBefore": 21,
+        "resourceDirectories": [
+          {
+            "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources",
+            "filesBefore": 4,
+            "subdirectoriesBefore": 0
+          },
+          {
+            "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources",
+            "filesBefore": 4,
+            "subdirectoriesBefore": 0
+          }
+        ]
+      },
+      "pathSafety": {
+        "allTargetsInsideExpectedD1aTmp": true,
+        "distinctPathComponentsChecked": 19,
+        "reparsePointsFound": 0,
+        "all12TargetsExist": true
+      },
+      "nativePerFileChecks": {
+        "exclusiveReadWriteOpenSucceeded": 12,
+        "lockedOrAccessDenied": 0,
+        "noContentWasWritten": true,
+        "allTargetsStillMatchRecordedSizeAndSha256": true
+      },
+      "diskFreeBeforeSampleBytes": 357047390208,
+      "deletionHasNotStartedAtThisCheckpoint": true
+    },
+    "cleanupExecution": {
+      "operationPolicy": "exact-file Remove-Item only; no recurse, force, move, branch deletion, or alternate-method retry",
+      "receiptTimeNote": "PowerShell did not emit a per-call timestamp; receipts are persisted immediately after each tool return without inventing an operation timestamp",
+      "items": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+          "bytesBefore": 63,
+          "sha256Before": "104668dfeae350c7f02740beac6d9b66c407534cc09db6b74f7c673b36fcc84b",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 63,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+          "bytesBefore": 289,
+          "sha256Before": "560de4bfe857e0180e2b1ee5c40d65fc50554c43f4859f8d27f2a238a24a60dc",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 289,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+          "bytesBefore": 143,
+          "sha256Before": "44f5ae27809f7c6b766c1053b556815f53e6010c1cb7ffb3d4270301e68af072",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 143,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+          "bytesBefore": 289,
+          "sha256Before": "9255c2a4c298ec0923e80ba64973b72a902ead28336796380598a42a960018a5",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 289,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+          "bytesBefore": 289,
+          "sha256Before": "560de4bfe857e0180e2b1ee5c40d65fc50554c43f4859f8d27f2a238a24a60dc",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 289,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+          "bytesBefore": 143,
+          "sha256Before": "44f5ae27809f7c6b766c1053b556815f53e6010c1cb7ffb3d4270301e68af072",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 143,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+          "bytesBefore": 289,
+          "sha256Before": "9255c2a4c298ec0923e80ba64973b72a902ead28336796380598a42a960018a5",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 289,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+          "bytesBefore": 63,
+          "sha256Before": "104668dfeae350c7f02740beac6d9b66c407534cc09db6b74f7c673b36fcc84b",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 63,
+          "error": null
+        }
+      ],
+      "completedPhase": "both D1a resource directories and all four network paths",
+      "resourceDirectoriesAfter": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources",
+          "filesAfter": 0,
+          "subdirectoriesAfter": 0
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources",
+          "filesAfter": 0,
+          "subdirectoriesAfter": 0
+        }
+      ],
+      "logicalBytesRemoved": 1473220,
+      "physicalOrNetDiskRelease": null,
+      "remainingCandidateCount": 0,
+      "networkReceipts": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\1-trace.network",
+          "bytesBefore": 569068,
+          "sha256Before": "1b210fb6e8e8fb708b06ca1103a684d8ac11d5325b98709a73d71fb6420a5f06",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 569068,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\2-trace.network",
+          "bytesBefore": 166758,
+          "sha256Before": "78e4acabed788349ca43a940611c59aa032429886d16708d7b2ef8a8e64a0993",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 166758,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\1-trace.network",
+          "bytesBefore": 569068,
+          "sha256Before": "1b210fb6e8e8fb708b06ca1103a684d8ac11d5325b98709a73d71fb6420a5f06",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 569068,
+          "error": null
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\2-trace.network",
+          "bytesBefore": 166758,
+          "sha256Before": "78e4acabed788349ca43a940611c59aa032429886d16708d7b2ef8a8e64a0993",
+          "resolvedPathInsideApprovedRoot": true,
+          "reparsePoints": 0,
+          "exclusiveOpen": "succeeded",
+          "permissionProbe": "read-write-open succeeded without content write",
+          "otherProcessCommandLineReferences": 0,
+          "command": "Remove-Item -LiteralPath <exact path> -ErrorAction Stop",
+          "exitCode": 0,
+          "existsAfter": false,
+          "logicalBytesRemoved": 166758,
+          "error": null
+        }
+      ]
     }
   },
   "g1Clone": {
@@ -1993,13 +2268,32 @@
     },
     "decision": "next-stage conditional cleanup candidate based on completed G1 fixture ownership, recoverable content, readable active-chat/process scans, and current path/reparse checks; do not delete in this review-only phase. Missing OS handle enumeration and global registry query are documented limits, not hard gates or global-absence claims.",
     "nextStageDeletionProcedure": {
-      "refreshBeforeAction": ["machine online/status", "current todo phases and readable active build chats", "process command-line references to exact clone path"],
-      "persistBeforeAction": ["full per-path absolute path/size/SHA-256 list", "ownership and Git/fixture source mapping", "current status including tracked deletions, untracked/ignored files and branches"],
-      "pathSafety": ["resolve exact clone path and verify strictly beneath the designated G1 workspaces .tmp directory", "check root and every path component for root misdirection, symlink, junction or reparse-point traversal"],
-      "nativeChecks": ["for every file, attempt exclusive-open/lock check and inspect ACL/delete permission without mutating contents"],
+      "refreshBeforeAction": [
+        "machine online/status",
+        "current todo phases and readable active build chats",
+        "process command-line references to exact clone path"
+      ],
+      "persistBeforeAction": [
+        "full per-path absolute path/size/SHA-256 list",
+        "ownership and Git/fixture source mapping",
+        "current status including tracked deletions, untracked/ignored files and branches"
+      ],
+      "pathSafety": [
+        "resolve exact clone path and verify strictly beneath the designated G1 workspaces .tmp directory",
+        "check root and every path component for root misdirection, symlink, junction or reparse-point traversal"
+      ],
+      "nativeChecks": [
+        "for every file, attempt exclusive-open/lock check and inspect ACL/delete permission without mutating contents"
+      ],
       "failurePolicy": "if any file is locked, access is denied, or path/link checks fail, retain the affected target and record exact path/error; do not force or switch deletion methods",
       "operation": "only after all checks succeed, use PowerShell Remove-Item -LiteralPath <verified absolute clone path> -Recurse -ErrorAction Stop without -Force",
-      "receipt": ["command and actual exit code", "exception if any", "post-action root existence", "exact residual paths and their sizes/hashes", "actual freed-byte enumeration; do not infer from disk-volume deltas"],
+      "receipt": [
+        "command and actual exit code",
+        "exception if any",
+        "post-action root existence",
+        "exact residual paths and their sizes/hashes",
+        "actual freed-byte enumeration; do not infer from disk-volume deltas"
+      ],
       "idleGate": "do not require all tasks to be idle and do not wait for unavailable global-handle or registry interfaces"
     },
     "priorEditRejectionReceipt": {
@@ -2013,7 +2307,8 @@
       "interpretation": "the tool only reported a generic policy rejection at process creation; it did not identify whether the compound shell form or this document write was prohibited, so no specific risk is inferred. The attempted command did not run and changed no file.",
       "retry": "none; document synchronization below used the dedicated apply_patch editor only"
     },
-    "lockCheckInterpretation": "openfiles/handle availability is an observation limitation only; final action preflight uses native per-file exclusive-open and ACL checks. No claim that all global handles were enumerated."
+    "lockCheckInterpretation": "openfiles/handle availability is an observation limitation only; final action preflight uses native per-file exclusive-open and ACL checks. No claim that all global handles were enumerated.",
+    "currentDisposition": "G1 shallow clone removal was attempted once and failed after partially removing 17 Git-metadata files; clone root remains. No retry, force, restore, move, alternate method, or permission change. Exact partial-result inventory is docs/reviews/cleanup/g1-shallow-layout-inventory-2026-10-08.json."
   },
   "protectedWorkspacePaths": [
     {
@@ -2081,5 +2376,90 @@
     "133 缓存与 1,406 D1a 精确副本回收回执不重做",
     "D0 已拒绝目标仍保留，不以其他命令重试",
     "四个父 worktree、保护 workspace、未知证据均保留"
-  ]
+  ],
+  "currentStageVerification": {
+    "sampledAtUtc": "2026-10-08T13:14:56.632172+00:00",
+    "d1aTargets": {
+      "targetCount": 12,
+      "allTargetsAbsent": true,
+      "allReceiptsExit0": true,
+      "logicalBytesRemoved": 1473220,
+      "resourceDirsRemainEmpty": true
+    },
+    "g1CloneAttempt": {
+      "rootExists": true,
+      "remainingFileCount": 1474,
+      "remainingDirectoryCount": 264,
+      "remainingLogicalBytes": 33450482,
+      "gitStatusExitCode": 0,
+      "allPreInventoryTrackedSourceFilesStillPresent": true
+    },
+    "parentWorktrees": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+        "exists": true,
+        "registered": true,
+        "head": "550dead055689154359a3406dfce4f0c91c1dad3",
+        "statusEntryCount": 0,
+        "gitCommonDir": "C:/Users/xurx/.tds/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo/.git"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+        "exists": true,
+        "registered": true,
+        "head": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+        "statusEntryCount": 0,
+        "gitCommonDir": "C:/Users/xurx/.tds/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo/.git"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+        "exists": true,
+        "registered": true,
+        "head": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+        "statusEntryCount": 0,
+        "gitCommonDir": "C:/Users/xurx/.tds/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo/.git"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+        "exists": true,
+        "registered": true,
+        "head": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+        "statusEntryCount": 0,
+        "gitCommonDir": "C:/Users/xurx/.tds/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo/.git"
+      }
+    ],
+    "allProtectedWorkspacesExist": true,
+    "traceFilesRemain": true,
+    "rawZipCopies": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\html-report\\data\\d69f056ec411e76e5d9f9e4664b013966ee3cc75.zip",
+        "exists": true,
+        "bytes": 14795293,
+        "sha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\output\\stage0-Stage-0-browser-acc-8d3a0--writes-after-team-deletion-bootstrap\\trace.zip",
+        "exists": true,
+        "bytes": 14795293,
+        "sha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e"
+      }
+    ],
+    "physicalOrNetDiskRelease": null,
+    "overallCleanupComplete": false
+  },
+  "currentPhaseActions": {
+    "scope": "2026-10-08 已审副本回收与 G1 浅克隆尝试；prior-stage actions field retained as historical",
+    "d1aFilesSuccessfullyRemoved": 12,
+    "d1aLogicalBytesRemoved": 1473220,
+    "g1CloneRemovalAttempted": true,
+    "g1CloneFullyRemoved": false,
+    "g1GitMetadataFilesAbsentAfterFailedAttempt": 17,
+    "g1GitMetadataLogicalBytesAbsent": 27428,
+    "g1TrackedSourceFilesRemoved": 0,
+    "parentWorktreesRemoved": 0,
+    "dockerChanges": 0,
+    "physicalOrNetDiskRelease": null,
+    "overallCleanupComplete": false
+  },
+  "actionsScope": "The existing actions object is a prior-phase snapshot and is preserved unchanged; use currentPhaseActions/currentStageVerification for the latest phase."
 }

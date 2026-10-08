@@ -199,3 +199,29 @@ D1a `.tmp` 总清单有 1,496 项；扣除上述 1,406 个精确映射后，余 
 本轮删除 0 个文件、未新建原始证据归档、Docker 未变更、未移除四个父 worktree、未移除浅克隆；新增可核释放量为 0 B，未运行产品测试。D1a 现有 13 个条件回收候选（8 资源副本、4 network 副本、1 个有历史 Git blob 保全的 audit JSON）和 2 个重复 trace 副本都须先重核引用/路径安全；3 个 trace 至少保留 1 份，另外 74 项按路径保留，两个原始 ZIP 原地保护。#5/#8/#9/#15/#17/#21 当前和恢复目录以及 #21 旧 checkpoint 继续保留；D0 六个已被策略拒绝的目标没有换方式重试。旧批 2,268 项逐项保全不可独立复核的限制、133 个缓存与 1,406 个精确副本的已审回执均不改写。四个父 worktree 仍留存；本报告不表示整项清理完成。
 
 机器可核对补充清单：[`remaining-materials-review-2026-10-08.json`](remaining-materials-review-2026-10-08.json)。原 D1a 90 项路径清单：[`d1a-trace-zip-mapping-2026-10-08.json`](d1a-trace-zip-mapping-2026-10-08.json)。
+
+## 2026-10-08 已审副本回收与 G1 浅克隆尝试
+
+本阶段按用户既有授权，只对独审已接受映射的 D1a 8 个 resource JSON 副本和 4 个 `.network` 副本执行回收，并在刷新引用与逐路径预检通过后尝试回收 G1 的独立浅克隆。四个父 worktree、未知材料、受保护工作区和 D1a trace/raw ZIP 均不在删除范围。本阶段结果不表示整项清理完成。
+
+### D1a：12 个已映射副本成功回收
+
+- 执行前刷新机器和 Todo：DarkFlame 在线、`tds status` 为 running v0.1.60；#11、#18、#15 为 `done`，#5/#21 为 `review`，#9/#16/#17 为 `building`，本清理 #52 为 `building`。#8、#15 等保护目录没有作为目标。可读的 #5/#9/#17/#21/#52 构建对话均未提到 G1 浅克隆的精确路径；此检查不是全局 build-path registry，也不宣称全局无引用。
+- 最新 main 为 `5b9c76b5f79917697906520edcd6947bfbfa925f`。原 D1a 脱敏 ZIP blob `02c663b7dbdd3c39c891adb99a6908b33bef4ccd` 及原逐文件映射仍为保全依据。逐项原生检查确认 12 个文件均在 D1a `.tmp` 根下、路径组件无 reparse point、文件内容与已审 SHA/大小一致，独占读打开与 DELETE 权限句柄检查成功，其他进程命令行引用为 0。
+- 对 8 个 resource JSON 与 4 个 network 文件分别使用 `Remove-Item -LiteralPath <exact path> -ErrorAction Stop`，12 项退出码均为 0，删除后均不存在；逻辑文件长度合计 `1,473,220 B`。两处 `resources` 目录仍在且为空。未测得可归因的卷级净释放量，不将逻辑字节数称为物理释放。
+- 删除后核对：12/12 目标不存在；3 个 `.trace` 仍存在；两份敏感 raw ZIP 原地存在，均为 `14,795,293 B`、SHA-256 `da1d1efc…13a27e`。另有 74 个未映射文件及 1 个已映射历史 audit JSON 仍保留。逐路径操作回执位于 `remaining-materials-review-2026-10-08.json` 的 `d1a.cleanupExecution`。
+
+### G1：浅克隆尝试失败并部分移除 Git 元数据
+
+- 精确目标为 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout`，确认是 #18 G1 完成构建 `.tmp` 下的**独立 shallow clone**，不是 linked worktree。父 worktree HEAD 为 `c7a1af7d7b2e125368b29975867b4d392690fc38`、状态 0 项，Git common dir 为 WorkMesh 主仓库 `.git`，父路径仍在登记列表中。
+- 最新 main 为 `5b9c76b5f79917697906520edcd6947bfbfa925f`。只读 `fetch origin main` 后，`git log --oneline --ancestry-path 002c1d61a7fc5d529b2d480f4c48716971c4236d..FETCH_HEAD -1` 输出 `5b9c76b Merge pull request #206 ...`；故 clone HEAD 是当前 main 祖先。完整前置机器清单 `g1-shallow-layout-inventory-2026-10-08.json` 为 1,491 个文件逐路径记录绝对路径、字节数、SHA-256 与来源；包含 HEAD blob ID。复核 1,464 个现存 tracked 文件均仅在 CRLF→LF 后匹配 HEAD blob，143 个 tracked deletion 可由该 HEAD 恢复、无未跟踪/ignored 文件；这些删除项没有恢复。
+- 删除前复核机器/Todo/可读活动对话、本机进程命令行、解析绝对路径与所有链接。对 1,763 个目标/目录路径的原生独占读打开和 DELETE 权限句柄检查均成功，未发现 reparse point；进程命令行引用数为 0。没有等待全团队空闲，也没有声称存在全局句柄或 build registry 枚举。
+- 对唯一解析路径执行普通 PowerShell `Remove-Item -LiteralPath <verified absolute path> -Recurse -ErrorAction Stop`，未使用 `-Force`。PowerShell 返回：“你没有足够的访问权限来执行此操作，或者该项目为隐藏项、系统项或只读项。”导致该命令失败的具体文件/目录及结构化退出码没有从调用记录中保留下来，因此清单如实记为未知，不推断具体风险。操作**部分发生**：原清单中 17 个文件消失、共 `27,428 B`，全部是 `.git/hooks` 示例、`.git/info/exclude` 与 `.git/logs` reflog 等 Git 元数据；未发现 tracked 源文件被移除。克隆根仍存在，后核有 1,474 个文件、264 个目录、`33,450,482 B`；Git 状态命令仍成功并显示原 143 个 tracked deletion。完整 17 路径、操作前后字节/hash、剩余逐文件清单、原始错误及时间/退出码限制见 `g1-shallow-layout-inventory-2026-10-08.json`。
+- 失败后停止该目标：未重试、未改用其他删除方式、未恢复/移动残余、未使用 force、未更改权限。故 G1 clone **仍保留但 Git 元数据已有上述部分移除**；因失败项的准确路径未由原命令输出定位，本轮不再对它采取操作。部分消失的 Git 元数据逻辑字节不计为可确认物理释放。
+
+### 收尾核验与仍保留项
+
+- 四个父 linked worktree 均存在且仍登记，HEAD 未变，Git 状态各为 0 项；8 个受保护工作区仍存在。D1a 三个 `.trace`、两份 raw ZIP 仍在；D0 已被审批拒绝的目标保持不动。未清 Docker 资源，未删除任何父 worktree 或成功分支，未运行无关产品测试。
+- `2026-10-08T13:14:56Z` 的最后核验中，Git worktree 列表为 21 项且不含 `prunable`；四个父 worktree 均逐项确认存在、已登记、HEAD 不变并且状态 0 项。12 个 D1a 目标均不存在且 12 份回执退出码为 0；两处资源目录仍为空；三份 `.trace`、两份 raw ZIP 和 8 个受保护 workspace 均仍存在。G1 clone 根仍存在，当前可读 Git 状态退出码 0，1,474 个剩余文件均对应原始清单；其 1,464 个 tracked 源文件完整保留。
+- 本阶段确认从 D1a 精确副本中移除逻辑字节 `1,473,220 B`；G1 递归命令部分消失的元数据为 `27,428 B`，不计入净释放。卷级实际净空间未知。
+- 旧批 2,268 项不可逐项独立复核的限制、133 项缓存和前一阶段 1,406 项回执均未改写。74 项未映射材料、历史 audit JSON、3 个 trace、两份敏感 raw ZIP、四个父 worktree及当前/恢复目录继续保留；本阶段停于需要独审的完整清理结果，不将 todo 标为整体完成。
