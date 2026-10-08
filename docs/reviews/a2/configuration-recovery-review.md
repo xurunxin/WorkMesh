@@ -90,3 +90,5 @@ setWaiting(true); setNotice(text.pending); void load()
 批准计划与当前规格的 Git blob 哈希、四份旧交付原件及本轮归档真实 blob 见 `configuration-recovery/git-byte-proof.json`；不因工作树换行改变历史哈希。原六项、九类与三项恢复场景共十六项修补映射同步至 `execution-map.json` 及 A2 coverage 条目。原 API/Worker/契约/锁与部署输入没有增量，相关集成仅复用于被证明未变的输入；新 UI、两处加强断言及新镜像均各自实际重验。
 
 交付仍停在实施独审、五项人类视觉差异确认、最新 Required CI 和 actual main 门禁。精确远端 main 读回仍为 `74f247f9240eaf21e74ef248f71a445c1d4276d7`；最新本分支查询未找到工作流，不冒称 CI 已完成。全站 i18n 的既有 C1 二十一条诊断保留，本轮真实文案测试通过，不增忽略规则。
+
+完整材料已提交为 `50b91a9bed3252046f2f6e0e8a85140a63050faa`。该 head 与受测产品 `fc14c523…` 的产品差异为空；提交后核 201 份本轮归档真实 Git blob、3045 份旧归档无增量、四份历史原字节及两份批准正文一致。五个 run 的精确 label 只读检查确认专用闲置资源已不存在，未执行额外删除。交付与当前 CI 读回见 `configuration-recovery/delivery-readback.json`；后续这些只读回执属于文档，不预填未来提交 ID。
