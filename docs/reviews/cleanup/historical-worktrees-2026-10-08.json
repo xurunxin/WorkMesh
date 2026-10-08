@@ -76,8 +76,8 @@
         "ignoredTmpBytes": 250939918,
         "enumeratedWorkspaceBytes": 1179390006
       },
-      "action": "kept",
-      "reason": "Ignored .tmp contains capture logs and diagnostics not individually reconciled against persisted main evidence."
+      "action": "partially-cleaned",
+      "reason": "清除已验证主线Git blob/ZIP成员重复项及认证状态；保留未映射capture和诊断文件。"
     },
     {
       "todoNumber": 18,
@@ -100,42 +100,62 @@
             "head": "3cdfb9ea02496261a3f68369167165b76d953afa",
             "statusCount": 0,
             "mainAncestor": true,
-            "enumeratedBytes": 31234372
+            "enumeratedBytes": 31234372,
+            "action": "removed",
+            "gitWorktreeRemoveExitCode": 0,
+            "existsAfter": false,
+            "registrationExistsAfter": false
           },
           {
             "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-70199df",
             "head": "70199df743da754068831d709a1ae8c428bd2bb0",
             "statusCount": 0,
             "mainAncestor": true,
-            "enumeratedBytes": 31287704
+            "enumeratedBytes": 31287704,
+            "action": "removed",
+            "gitWorktreeRemoveExitCode": 0,
+            "existsAfter": false,
+            "registrationExistsAfter": false
           },
           {
             "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-dcf3557",
             "head": "dcf355735341bc6daac4101b8c7d0efbaabbe764",
             "statusCount": 0,
             "mainAncestor": true,
-            "enumeratedBytes": 31120312
+            "enumeratedBytes": 31120312,
+            "action": "removed",
+            "gitWorktreeRemoveExitCode": 0,
+            "existsAfter": false,
+            "registrationExistsAfter": false
           },
           {
             "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-dde2a1a",
             "head": "dde2a1a6926040c35e9d85d89fed6238572f0f25",
             "statusCount": 0,
             "mainAncestor": true,
-            "enumeratedBytes": 31126670
+            "enumeratedBytes": 31126670,
+            "action": "removed",
+            "gitWorktreeRemoveExitCode": 0,
+            "existsAfter": false,
+            "registrationExistsAfter": false
           },
           {
             "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-f4e5915",
             "head": "f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9",
             "statusCount": 0,
             "mainAncestor": true,
-            "enumeratedBytes": 31266275
+            "enumeratedBytes": 31266275,
+            "action": "removed",
+            "gitWorktreeRemoveExitCode": 0,
+            "existsAfter": false,
+            "registrationExistsAfter": false
           }
         ],
         "outsideTempWorktree": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-g1-verify-36c7709",
         "outsideTempWorktreeRemoved": false
       },
-      "action": "kept",
-      "reason": "Ignored evidence archives, diagnostics and verification scripts were not individually reconciled."
+      "action": "partially-cleaned",
+      "reason": "正式移除5个干净且主线可达的嵌套linked worktree，并清理主线blob/ZIP重复项及认证状态；保留未映射G1原始输入和trace。"
     },
     {
       "todoNumber": 3,
@@ -163,7 +183,7 @@
           "existsAfter": false
         }
       ],
-      "reason": "Retained Playwright report and screenshots because their full evidence correspondence was not checked."
+      "reason": "已清理可重建Next/Turbo缓存；唯一报告和截图无主线/归档精确映射，保留。"
     },
     {
       "todoNumber": 11,
@@ -194,7 +214,7 @@
           "existsAfter": false
         }
       ],
-      "reason": "Retained ignored diagnostics, screenshots and Playwright reports because their full evidence correspondence was not checked."
+      "reason": "删除主线blob、ZIP完整副本和临时认证状态；保留未映射trace、patch和验收材料。"
     }
   ],
   "protectedWorkspaces": [
@@ -262,5 +282,479 @@
     "Platform MCP exposes todo status and conversations but no machine-level active-build-reference endpoint; phase and completion transcripts were used for active-reference gating.",
     "The git worktree remove process exit code was not returned after the execution wrapper wait window; final path and registration state were checked independently.",
     "The top-level disk-free delta includes concurrent machine activity and is not an exact per-worktree release measurement."
-  ]
+  ],
+  "followupCleanup": {
+    "recordedAt": "2026-10-08T09:56:54.0993686Z",
+    "main": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "machine": "DarkFlame/6DOlLniZ0sqBYGHeIhRMq",
+    "workspaceRoot": "C:\\Users\\xurx\\.tds\\workspaces",
+    "activeTaskRead": "2026-10-08: #5/#8/#15/#17 active; #21 review; #3/#10/#11/#18 done; cleanup #52 building",
+    "worktreeRootsRemoved": [],
+    "nestedWorktreesRemoved": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-3cdfb9e",
+        "processReferences": 0,
+        "gitWorktreeRemoveExitCode": 0,
+        "mainAncestor": true,
+        "head": "3cdfb9ea02496261a3f68369167165b76d953afa",
+        "statusCount": 0,
+        "registrationExistsAfter": false,
+        "bytes": 31234372,
+        "pathExistsAfter": false,
+        "ignoredCount": 0
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-70199df",
+        "processReferences": 0,
+        "gitWorktreeRemoveExitCode": 0,
+        "mainAncestor": true,
+        "head": "70199df743da754068831d709a1ae8c428bd2bb0",
+        "statusCount": 0,
+        "registrationExistsAfter": false,
+        "bytes": 31287704,
+        "pathExistsAfter": false,
+        "ignoredCount": 0
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-dcf3557",
+        "processReferences": 0,
+        "gitWorktreeRemoveExitCode": 0,
+        "mainAncestor": true,
+        "head": "dcf355735341bc6daac4101b8c7d0efbaabbe764",
+        "statusCount": 0,
+        "registrationExistsAfter": false,
+        "bytes": 31120312,
+        "pathExistsAfter": false,
+        "ignoredCount": 0
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-dde2a1a",
+        "processReferences": 0,
+        "gitWorktreeRemoveExitCode": 0,
+        "mainAncestor": true,
+        "head": "dde2a1a6926040c35e9d85d89fed6238572f0f25",
+        "statusCount": 0,
+        "registrationExistsAfter": false,
+        "bytes": 31126670,
+        "pathExistsAfter": false,
+        "ignoredCount": 0
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-f4e5915",
+        "processReferences": 0,
+        "gitWorktreeRemoveExitCode": 0,
+        "mainAncestor": true,
+        "head": "f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9",
+        "statusCount": 0,
+        "registrationExistsAfter": false,
+        "bytes": 31266275,
+        "pathExistsAfter": false,
+        "ignoredCount": 0
+      }
+    ],
+    "rebuildableCachesRemoved": [
+      {
+        "bytes": 731301061,
+        "pathExistsAfter": false,
+        "action": "Remove-Item -LiteralPath -Recurse",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\web\\.next",
+        "shellExitCode": 0,
+        "classification": "ignored Next build output"
+      },
+      {
+        "bytes": 1174940,
+        "pathExistsAfter": false,
+        "action": "Remove-Item -LiteralPath -Recurse",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\web\\dist",
+        "shellExitCode": 0,
+        "classification": "ignored generated build output"
+      },
+      {
+        "bytes": 29316,
+        "pathExistsAfter": false,
+        "action": "Remove-Item -LiteralPath -Recurse",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\web\\.turbo",
+        "shellExitCode": 0,
+        "classification": "ignored Turborepo cache"
+      }
+    ],
+    "explicitDuplicatePathsRemoved": [
+      {
+        "proof": "raw Git blob bytes equal a main D0 recovery report blob",
+        "bytes": 956,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-recovery-report.json",
+        "shellExitCode": 0
+      },
+      {
+        "proof": "raw Git blob bytes equal a main D0 review recovery report blob",
+        "bytes": 956,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-review-recovery-report.json",
+        "shellExitCode": 0
+      },
+      {
+        "proof": "all 100 files equal actual main Git blob bytes at D1a D0 HTML report paths",
+        "bytes": 1622317,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-d0-40a51b",
+        "files": 100,
+        "shellExitCode": 0
+      },
+      {
+        "proof": "all 100 files equal actual main Git blob bytes at D1a D0 replay report paths",
+        "bytes": 1622293,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-d0-replay",
+        "files": 100,
+        "shellExitCode": 0
+      },
+      {
+        "proof": "full file equals main Git blob docs/reviews/d1a/evidence/reverification-environment-07/e2e-html-report/data/d69f056ec411e76e5d9f9e4664b013966ee3cc75.zip",
+        "bytes": 14776952,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\trace-sanitized-rebuilt.zip",
+        "shellExitCode": 0
+      },
+      {
+        "proof": "empty bytes equal tracked empty setup log Git blob",
+        "bytes": 0,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\candidate-diffcheck.log",
+        "shellExitCode": 0
+      },
+      {
+        "proof": "empty bytes equal tracked empty setup log Git blob",
+        "bytes": 0,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\ci385-candidate-diff-check.log",
+        "shellExitCode": 0
+      }
+    ],
+    "authStatesRemoved": [
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1625,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-formal-e2e\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-review-formal-e2e\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-40a51b\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1625,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env04\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env08\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-playwright\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-playwright-ci-alignment\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-playwright-documents\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-playwright-latest\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-playwright-latest-isolated\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-playwright-pr201\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-playwright-rerun\\root-mixed\\.auth\\admin.json"
+      },
+      {
+        "archived": false,
+        "contentsRead": false,
+        "bytes": 1626,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-playwright-review\\root-mixed\\.auth\\admin.json"
+      }
+    ],
+    "comparisons": [
+      {
+        "exactZipMemberMatchesRemoved": 9,
+        "unmappedBytesKeptBeforeZipCompare": 196917996,
+        "exactMainGitBlobBytesRemoved": 54016759,
+        "filesBeforeExactBlobRemoval": 2657,
+        "candidate": ".tmp",
+        "unmappedFilesKeptBeforeZipCompare": 1658,
+        "exactMainGitBlobMatchesRemoved": 999,
+        "todo": 10,
+        "bytesBeforeExactBlobRemoval": 250934755,
+        "zipPathsCompared": [
+          "docs/reviews/r1/ci381/raw.redacted.zip",
+          "docs/reviews/r1/ci381/readable-source.redacted.zip",
+          "docs/reviews/r1/ci381/trace.redacted.zip",
+          "docs/reviews/r1/execution-logs/raw-checks.zip"
+        ],
+        "exactZipBytesRemoved": 85212,
+        "unmappedSamples": [
+          "d0-capture-2.log",
+          "d0-capture-3.log",
+          "d0-capture-4.log",
+          "d0-capture-5.log",
+          "d0-capture-6.log",
+          "d0-diagnostic-original.log",
+          "d0-final-pr.diff"
+        ],
+        "mainMappings": [
+          "apps/web/e2e/baselines/d0/manifest.json",
+          "apps/web/e2e/baselines/d0/evidence/historical-assets.json",
+          "apps/web/e2e/baselines/d0/evidence/final-evidence-audit.json",
+          "docs/reviews/r1/ci381/evidence-index.json",
+          "docs/reviews/r1/execution-logs/raw-checks-index.json"
+        ]
+      },
+      {
+        "exactZipMemberMatchesRemoved": 40,
+        "unmappedBytesKeptBeforeZipCompare": 96519988,
+        "exactMainGitBlobBytesRemoved": 27704246,
+        "filesBeforeExactBlobRemoval": 1988,
+        "candidate": ".tmp",
+        "unmappedFilesKeptBeforeZipCompare": 1536,
+        "exactMainGitBlobMatchesRemoved": 452,
+        "todo": 11,
+        "bytesBeforeExactBlobRemoval": 124224234,
+        "zipPathsCompared": [
+          "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence.zip",
+          "docs/reviews/r1/ci381/trace.redacted.zip",
+          "docs/reviews/r1/execution-logs/raw-checks.zip"
+        ],
+        "exactZipBytesRemoved": 387293,
+        "unmappedSamples": [
+          ".tmp\\d1a-stage0-trace-env07-2\\0-trace.trace",
+          ".tmp\\d1a-stage0-trace-env07-2\\0-trace.network",
+          ".tmp\\d1a-trace-07\\0-trace.trace",
+          ".tmp\\d1a-trace-07-round2\\0-trace.trace",
+          ".tmp\\pr-origin-main-diff.patch",
+          ".tmp\\d1a-bound-e2e-env07\\root-mixed\\html-report\\data\\d69f056ec411e76e5d9f9e4664b013966ee3cc75.zip"
+        ],
+        "mainMappings": [
+          "docs/reviews/d1a/artifact-manifest.json",
+          "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json"
+        ]
+      },
+      {
+        "exactZipMemberMatchesRemoved": 213,
+        "unmappedBytesKeptBeforeZipCompare": 160670473,
+        "exactMainGitBlobBytesRemoved": 32003405,
+        "filesBeforeExactBlobRemoval": 2542,
+        "candidate": ".tmp",
+        "unmappedFilesKeptBeforeZipCompare": 1987,
+        "exactMainGitBlobMatchesRemoved": 555,
+        "todo": 18,
+        "bytesBeforeExactBlobRemoval": 192673878,
+        "zipPathsCompared": [
+          "docs/evidence/build-input-reachability.current/raw-evidence.zip"
+        ],
+        "exactZipBytesRemoved": 77310330,
+        "unmappedSamples": [
+          ".tmp/g1-list/root-mixed/html-report/index.html",
+          ".tmp/g1-playwright/root-mixed/html-report/index.html",
+          ".tmp/g1-playwright/root-mixed/output/documents-Project-and-Issu-75fb3-hrough-the-real-Web-and-API-authenticated/trace.zip"
+        ],
+        "mainMappings": [
+          "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
+          "docs/evidence/build-input-reachability.current/raw-evidence-compatibility.json",
+          "docs/evidence/build-input-reachability.current/raw-evidence.zip"
+        ]
+      }
+    ],
+    "retainedUniqueOrUnmapped": [
+      {
+        "sha256": "8edc6bd5a80d4c95759b6c19ed59c273b5d3a1e490cd65b8d346b6e7e2147ad9",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\web\\test-results\\recovery-center-Recovery-C-50707-state-and-responsive-layout-authenticated\\recovery-center.png",
+        "exactMatchesInComparedR1Archives": 0,
+        "neededInput": "R1 manifest or archive member mapping proving equivalent screenshot, or owner confirmation that this exact screenshot is disposable",
+        "mainGitBlobMatch": false,
+        "bytes": 132730,
+        "todo": 3,
+        "reason": "unique screenshot; preserve in source workspace until an approved redacted dual mapping is possible"
+      },
+      {
+        "todo": 3,
+        "reason": "self-contained generated acceptance report; no byte-equivalent main mapping proven",
+        "bytes": 612374,
+        "neededInput": "R1 artifact/index mapping or owner confirmation that report can be regenerated/discarded",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\web\\playwright-report\\index.html",
+        "mainGitBlobMatch": false
+      },
+      {
+        "todo": 10,
+        "reason": "not byte-equal to any main Git blob or compared archive member; D0 screenshots are mapped, but these run logs are not",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-capture-2.log through d0-capture-6.log",
+        "neededInput": "explicit D0 manifest/ZIP logicalPath mapping or redacted archive validation"
+      },
+      {
+        "todo": 11,
+        "reason": "not equal to a main Git blob or compared ZIP member; unique source-bound trace candidate",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\0-trace.trace",
+        "neededInput": "D1a raw index exact logicalPath/version/byteKind mapping to archived trace member or owner retention/discard decision"
+      },
+      {
+        "todo": 11,
+        "bytes": 9736386,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\pr-origin-main-diff.patch",
+        "neededInput": "D1a evidence mapping or confirmation patch is derivable and disposable",
+        "reason": "not byte-equal to main or compared archive; retained as potentially unique source diff"
+      },
+      {
+        "todo": 18,
+        "reason": "G1 HTML report index has no exact main Git blob or compared ZIP member mapping; remaining Playwright traces/reports also remain.",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-list\\root-mixed\\html-report\\index.html",
+        "neededInput": "G1 artifact/ZIP index mapping for these exact output paths or confirmation they are reproducible/disposable."
+      }
+    ],
+    "space": {
+      "volume": "C:",
+      "freeBytesAtTurnStart": 360395075584,
+      "freeBytesAfter": 361195458560,
+      "observedNetIncreaseBytes": 800382976,
+      "enumeratedBytesRemovedThisTurn": 1098094131,
+      "attribution": "同期仍有其它 WorkMesh 构建/容器活动，卷净变化不能当作本轮精确物理释放量"
+    },
+    "limitations": [
+      "批量按 Git blob ID 去重删除 2,006 个文件（113,724,410 bytes）和 ZIP 成员逐字节删除 262 个文件（77,782,835 bytes）完成，但执行包装未返回/持久化逐文件删除回执；机器清单目前列候选绝对作用域、比较方法、总数和总字节，不能伪称保留逐文件操作路径。已删除内容在 main blob/ZIP 中仍有精确副本。",
+      "candidate根 #3/#10/#11/#18 因仍有未映射唯一文件保留；本轮不是全批历史根 worktree 回收完成。",
+      "本轮删除的临时 .auth/admin.json 按输出确认具体路径，但无逐项文件内容检查，未归档内容；authPaths 见 audit 数组。",
+      "未对 #5/#8/#15/#17/#21、主仓库、外部 Temp、Docker 共享资源执行删除。",
+      "未运行产品测试。"
+    ],
+    "finalCheck": {
+      "latestMain": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "candidateRootWorktreesRetained": [
+        "01a115d0-87b0-78cd-921d-750713cdde51",
+        "01a116f7-1027-7c75-90df-32ebc5488752",
+        "01a116f8-8172-7082-8d61-867bd9f0b749",
+        "01a1187a-f4ff-735d-814f-a7b26f8cfdc5"
+      ],
+      "candidateRootsExistAndRegistered": true,
+      "candidateGitStatusClean": true,
+      "nestedG1Registrations": 0,
+      "prunableWorktrees": 0,
+      "protectedWorkspaceIdsStillExist": [
+        "01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+        "01a11ac2-7634-752e-8d81-764c9776f801",
+        "01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "01a11890-f4de-7106-b64d-e1b2c0d4608e",
+        "01a11a93-c093-7565-9084-724b6bedcade",
+        "01a1195f-55ab-7ee9-8baf-c115978d3aec"
+      ],
+      "completedCleanupOverall": false
+    },
+    "gitBlobDuplicateRemoval": {
+      "method": "逐文件原始 bytes 计算 Git blob object ID 并与 main git ls-tree 树比较；随后批量逐文件 Remove-Item",
+      "perFileLedgerCaptured": false,
+      "scopes": [
+        {
+          "bytesRemoved": 54016759,
+          "todo": 10,
+          "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp",
+          "filesRemoved": 999
+        },
+        {
+          "bytesRemoved": 27704246,
+          "todo": 11,
+          "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
+          "filesRemoved": 452
+        },
+        {
+          "bytesRemoved": 32003405,
+          "todo": 18,
+          "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp",
+          "filesRemoved": 555
+        }
+      ],
+      "totalFiles": 2006,
+      "totalBytes": 113724410,
+      "commandShellExitCode": 0,
+      "receiptLimitation": "执行包装未返回逐文件绝对路径列表；各候选 .tmp 根作用域、object ID 比对规则和总数已保存，不能伪称逐文件回执完整。"
+    },
+    "archiveDuplicateRemoval": {
+      "method": "与已提交 ZIP 每个 member 解压后的原始 bytes/SHA256/长度预筛并逐字节比较",
+      "perFileLedgerCaptured": false,
+      "archivesCompared": [
+        "docs/evidence/build-input-reachability.current/raw-evidence.zip",
+        "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence.zip",
+        "docs/reviews/r1/ci381/raw.redacted.zip",
+        "docs/reviews/r1/ci381/readable-source.redacted.zip",
+        "docs/reviews/r1/ci381/trace.redacted.zip",
+        "docs/reviews/r1/execution-logs/raw-checks.zip"
+      ],
+      "scopes": [
+        {
+          "bytesRemoved": 85212,
+          "todo": 10,
+          "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp",
+          "filesRemoved": 9
+        },
+        {
+          "bytesRemoved": 387293,
+          "todo": 11,
+          "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
+          "filesRemoved": 40
+        },
+        {
+          "bytesRemoved": 77310330,
+          "todo": 18,
+          "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp",
+          "filesRemoved": 213
+        }
+      ],
+      "totalFiles": 262,
+      "totalBytes": 77782835,
+      "commandShellExitCode": 0,
+      "receiptLimitation": "计划写入 JSON 时 PowerShell NoteProperty 添加失败，删除脚本仍完成并返回总数；逐文件 member→候选路径映射未持久化。"
+    },
+    "emptyDirectoriesRemoved": [
+      {
+        "filesBefore": 0,
+        "shellExitCode": 0,
+        "existsAfter": false,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-original-freeze",
+        "recursive": false,
+        "operation": "[IO.Directory]::Delete(path, false)"
+      }
+    ]
+  }
 }

@@ -41,3 +41,36 @@
 - 共享 WorkMesh 容器/网络/卷、无法归属单任务的镜像、主仓库、外部临时路径、本轮构建目录、tds 安装/配置/用户目录和工作区根目录均未清理。
 
 机器可核对数据见同目录 `historical-worktrees-2026-10-08.json`。本轮没有产品代码、API、事件或数据库变更；无规格偏离。
+
+## 2026-10-08 续核与增量回收（Chief反馈后）
+
+记录时间：2026-10-08 18:10（Asia/Shanghai）。执行前重读活动 Todo：#5/#8/#15/#17 为 `building`，#21 为 `review`；#3/#10/#11/#18 为 `done`；本清理 Todo #52 为 `building`。DarkFlame 在线，tds 0.1.60。`origin/main` 实读为 `1078bbcd527550bfabee73093b7ffd0032d3fd24`；本轮没有清理远端或本地分支。
+
+### 对照方法与差异
+
+逐个读取候选 `.tmp` 原始文件字节，按 Git `blob <size>\0<bytes>` 计算 object ID，与 main 的实际 `git ls-tree` blob ID 比较；再把候选文件与 main 的 D0/D1a/G1/R1 压缩证据逐成员解压并逐字节比较。只在对象 ID 或压缩成员原始 bytes 一致时删除重复副本。这个比较不把 CRLF 工作树字节误当成 Git blob，也不以 manifest 内的摘要字段单独证明覆盖。引用的主线映射：D0 基线 `manifest.json`、`historical-assets.json`、`final-evidence-audit.json`；R1 `ci381/evidence-index.json` 与 `execution-logs/raw-checks-index.json`；D1a `artifact-manifest.json`、`ci385-raw-evidence/raw-evidence-index.json`；G1 `raw-evidence-compatibility.json`、`raw-evidence-index.json`。压缩成员实际比对范围见机器清单。
+
+| Todo | 清理前待比对文件 | 与 main Git blob 原字节一致 | 与 main ZIP 成员逐字节一致 | 本轮仍保留的差异 |
+|---|---:|---:|---:|---|
+| #10 D0 `.tmp` | 2,657 / 250,934,755 B | 999 / 54,016,759 B，已删 | 9 / 85,212 B，已删 | 1,649 个文件 / 196,832,784 B；包括 `d0-capture-2.log` 至 `d0-capture-6.log`、诊断和失败日志，未能与主线证据建立逐字节映射 |
+| #11 D1a `.tmp` | 1,988 / 124,224,234 B | 452 / 27,704,246 B，已删 | 40 / 387,293 B，已删 | 1,496 个文件 / 96,132,695 B；包括 `d1a-stage0-trace-env07-2\0-trace.trace`、`d1a-trace-07\0-trace.trace`、`d1a-trace-07-round2\0-trace.trace`、`pr-origin-main-diff.patch` 及未映射浏览器输出 |
+| #18 G1 `.tmp`（已先移除5个嵌套 worktree） | 2,542 / 192,673,878 B | 555 / 32,003,405 B，已删 | 213 / 77,310,330 B，已删 | 1,774 个文件 / 83,360,143 B；剩余 `g1-list/root-mixed/html-report/index.html`、Playwright 报告/trace 和未映射 output 保留；已归档完的 `g1-original-freeze` 空目录以非递归方式移除 |
+| #3 R1 `apps/web` 测试产物 | 报告 612,374 B；截图 132,730 B；`.last-run.json` 45 B | 截图无 main blob 精确匹配 | 与 R1 `raw.redacted.zip`、`readable-source.redacted.zip`、`trace.redacted.zip`、`raw-checks.zip` 共 176 个成员逐字节比较，0 匹配 | 唯一 screenshot 与 HTML 报告保留；缺少精确归档映射，不能以同名或相近用途替代 |
+
+D0 另有两个 956 B 的 recovery JSON 文件与 main blob 原字节一致后删除。D1a 的 `d1a-bound-d0-40a51b`（100/100 文件、1,622,317 B）及 `d1a-d0-replay`（100/100、1,622,293 B）逐文件与 main 报告映射相同后删除；`trace-sanitized-rebuilt.zip`（14,776,952 B）与 main ZIP blob 相同后删除。两个空 diff-check 日志与 main 空日志 blob 相同后删除。上述项目均在机器清单列出精确目标路径与证据。
+
+### 已执行操作
+
+- #18 的五个嵌套 linked worktree 按注册顺序用 `git worktree remove <精确绝对路径>` 正式移除，没有 `--force`。五个 HEAD 均为 main 祖先、工作树修改/未跟踪/ignored 项均为 0、无活动进程引用；每条命令退出码 0，移除后路径与登记都不存在。合计枚举文件 `156,035,333` B。父 G1 worktree仍保留。
+- #3 R1 的 `apps/web/.next`（731,301,061 B）、`dist`（1,174,940 B）、`.turbo`（29,316 B）为忽略的可重建输出，无链接项、无已跟踪文件、无运行进程引用；分别以受控绝对路径 `Remove-Item -LiteralPath -Recurse` 清理，PowerShell 命令返回成功且路径不存在。R1 主 worktree因唯一 screenshot/report 未删。
+- 清除 #10 两个、#11 四个、#18 八个旧 Playwright `.auth/admin.json` 临时状态，共 22,762 B；未读取或归档文件内容。#3/#11 主 `test-results/.auth/admin.json` 的各 1,625 B 清理在上一记录中已完成。
+- 按实际 Git blob 内容去重批量删除 #10/#11/#18 `.tmp` 内共 2,006 个文件（113,724,410 B）；按压缩归档成员原始 bytes 去重又删除 262 个文件（77,782,835 B）。需要披露：这两次批处理的执行包装没有返回逐文件操作回执；因此机器清单记录了候选绝对作用域、比较规则、计数、字节、索引/归档来源，但没有完整逐文件路径数组。不能把它描述成逐文件收据完整；所有删除内容当时均与 main 的实际 Git blob 或 ZIP 成员完整字节相同，原证据仍可从对应持久来源读取。
+- 本轮所有可量化枚举删除共 `1,098,094,131` B。C 盘可用空间本轮开始 `360,395,075,584` B，结束观测 `361,195,458,560` B，净增加 `800,382,976` B；期间其它任务和 Docker 服务仍活动，因此只报告观测净变化，不冒称精确物理释放。
+
+### 结束核验与保留原因
+
+#3/#10/#11/#18 四个父 worktree 仍存在、Git 登记存在、`git status --porcelain --untracked-files=all` 均为空；#18 五个嵌套 worktree 登记均消失，当前没有 `prunable` 条目。#5/#8/#15/#17/#21 当前目录与 #21 的旧 checkpoint 路径均仍存在。候选根 worktree未全部删除：D0/D1a/G1仍有数量可列、但未映射到持久 Git blob/ZIP 的材料；R1留有未归档唯一截图和报告。后续若要删除这些父目录，需要先取得逐文件逻辑映射或对这些精确材料的处置结论；本轮不据 `done` 状态推定它们可删。
+
+Docker 未新增清理；本轮未运行 `docker prune`，未触碰共享服务/镜像/卷/网络，也未运行产品测试。项目主线未改动；报告与清单仅在本清理构建分支。
+
+机器可核对后续差异、嵌套 worktree 退出码、缓存与认证状态清理、最终核验及限制见同目录 `historical-worktrees-2026-10-08.json` 的 `followupCleanup` 字段。
