@@ -11,7 +11,7 @@
   /* The workbench is the default landing, so it fills the shell rather than
      sitting in a letterboxed column with empty space beneath it. */
   min-height: 100%;
-  background: var(--wm-canvas);
+  background: var(--wm-ref-surface);
   overflow: hidden;
 }
 
@@ -22,10 +22,10 @@
   gap: .75rem;
   min-width: 0;
   padding: 1rem .9rem;
-  background: var(--wm-surface-subtle);
+  background: var(--wm-ref-surface-secondary);
 }
-.sidebar { border-right: 1px solid var(--wm-border); }
-.context { border-left: 1px solid var(--wm-border); }
+.sidebar { border-right: 1px solid var(--wm-ref-border-default); }
+.context { border-left: 1px solid var(--wm-ref-border-default); }
 
 /* ---------- Left column ---------- */
 
@@ -40,19 +40,19 @@
   align-items: center;
   align-self: flex-start;
   padding: .3rem .55rem;
-  color: var(--wm-text-muted);
-  background: var(--wm-surface-subtle);
-  border: 1px solid var(--wm-border);
-  border-radius: var(--wm-radius-sm);
+  color: var(--wm-ref-text-secondary);
+  background: var(--wm-ref-surface-secondary);
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-control);
   font-size: .78rem;
   text-decoration: none;
 }
-.backToIssues:hover { color: var(--wm-text); border-color: var(--wm-border-strong); }
-.backToIssues:focus-visible { outline: 0; box-shadow: var(--wm-focus-ring); }
+.backToIssues:hover { color: var(--wm-ref-text-primary); border-color: var(--wm-ref-border-strong); }
+.backToIssues:focus-visible { outline: 0; box-shadow: var(--wm-ref-focus-ring); }
 
 .sectionLabel {
   margin: .35rem 0 .1rem;
-  color: var(--wm-text-subtle);
+  color: var(--wm-ref-text-tertiary);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: .07em;
@@ -68,23 +68,23 @@
   display: grid;
   gap: .5rem;
   padding: .7rem;
-  background: var(--wm-surface-raised);
-  border: 1px solid var(--wm-border);
-  border-radius: var(--wm-radius-md);
+  background: var(--wm-ref-surface-elevated);
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-md);
 }
 /* The prototype keeps the conversation list as the resting state and reveals
    creation behind the gradient action. The old layout left this form pinned
    open on desktop, which is exactly the composition being replaced. */
 .create[data-open="false"] { display: none; }
-.create label { display: grid; gap: .2rem; font-size: .78rem; color: var(--wm-text-muted); }
+.create label { display: grid; gap: .2rem; font-size: .78rem; color: var(--wm-ref-text-secondary); }
 .create input, .create select {
   width: 100%;
   min-width: 0;
   padding: .4rem .5rem;
-  color: var(--wm-text);
-  background: var(--wm-surface);
-  border: 1px solid var(--wm-border);
-  border-radius: var(--wm-radius-sm);
+  color: var(--wm-ref-text-primary);
+  background: var(--wm-ref-surface-card);
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-control);
 }
 
 .list { display: grid; align-content: start; gap: .15rem; min-height: 0; overflow: auto; }
@@ -98,16 +98,16 @@
   text-align: left;
   background: transparent;
   border: 0;
-  border-radius: var(--wm-radius-sm);
+  border-radius: var(--wm-ref-radius-control);
   cursor: pointer;
 }
-.listItem:hover { background: var(--wm-surface-hover); }
-.listItemActive { background: var(--wm-surface-hover); }
-.listItemActive:hover { background: var(--wm-surface-active); }
+.listItem:hover { background: var(--wm-ref-surface-hover); }
+.listItemActive { background: var(--wm-ref-surface-hover); }
+.listItemActive:hover { background: var(--wm-ref-surface-active); }
 .listTitle {
   min-width: 0;
   overflow: hidden;
-  color: var(--wm-text-strong);
+  color: var(--wm-ref-text-strong);
   font-size: .84rem;
   font-weight: 600;
   text-overflow: ellipsis;
@@ -118,38 +118,38 @@
   display: flex;
   align-items: center;
   gap: .3rem;
-  color: var(--wm-text-muted);
+  color: var(--wm-ref-text-secondary);
   font-size: .72rem;
 }
 
 /* 5px status dot, per the prototype's .badge-dot::before. */
 .statusDot { width: 5px; height: 5px; margin-top: .4rem; background: currentColor; border-radius: 50%; }
-.statusDotActive { color: var(--wm-success); }
-.statusDotArchived { color: var(--wm-text-subtle); }
+.statusDotActive { color: var(--wm-ref-status-done); }
+.statusDotArchived { color: var(--wm-ref-text-tertiary); }
 
 /* Connector facts pinned to the bottom of the conversations column. */
-.rail { display: grid; gap: .3rem; margin-top: auto; padding-top: .75rem; border-top: 1px solid var(--wm-border); }
-.railRow { display: flex; align-items: center; gap: .45rem; color: var(--wm-text-muted); font-size: .76rem; }
+.rail { display: grid; gap: .3rem; margin-top: auto; padding-top: .75rem; border-top: 1px solid var(--wm-ref-border-default); }
+.railRow { display: flex; align-items: center; gap: .45rem; color: var(--wm-ref-text-secondary); font-size: .76rem; }
 .railName { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.railValue { margin-left: auto; color: var(--wm-text-subtle); font-family: var(--wm-font-mono); font-size: .7rem; }
+.railValue { margin-left: auto; color: var(--wm-ref-text-tertiary); font-family: var(--wm-ref-font-mono); font-size: .7rem; }
 .railDot { width: 6px; height: 6px; flex: none; border-radius: 50%; }
-.railDotReady { background: var(--wm-success); }
-.railDotIdle { background: var(--wm-text-subtle); }
-.railDotBad { background: var(--wm-danger); }
+.railDotReady { background: var(--wm-ref-status-done); }
+.railDotIdle { background: var(--wm-ref-text-tertiary); }
+.railDotBad { background: var(--wm-ref-danger); }
 
 /* ---------- Main column ---------- */
 
-.main { display: flex; flex-direction: column; min-width: 0; background: var(--wm-canvas); }
+.main { display: flex; flex-direction: column; min-width: 0; background: var(--wm-ref-surface); }
 .conversationHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding: .9rem 1.1rem;
-  border-bottom: 1px solid var(--wm-border);
+  border-bottom: 1px solid var(--wm-ref-border-default);
 }
-.conversationHeader p { margin: .25rem 0 0; color: var(--wm-text-muted); font-size: .8rem; }
-.conversationFacts { display: flex; align-items: center; gap: .5rem; color: var(--wm-text-muted); font-size: .75rem; }
+.conversationHeader p { margin: .25rem 0 0; color: var(--wm-ref-text-secondary); font-size: .8rem; }
+.conversationFacts { display: flex; align-items: center; gap: .5rem; color: var(--wm-ref-text-secondary); font-size: .75rem; }
 
 .timeline { display: flex; flex: 1; flex-direction: column; gap: .85rem; min-height: 0; overflow: auto; padding: 1.1rem; }
 
@@ -158,9 +158,9 @@
   align-self: flex-end;
   max-width: min(78%, 720px);
   padding: .7rem .9rem;
-  background: var(--wm-accent-bg);
-  border: 1px solid var(--wm-accent-border);
-  border-radius: var(--wm-radius-lg);
+  background: var(--wm-ref-accent-bg);
+  border: 1px solid var(--wm-ref-accent-border);
+  border-radius: var(--wm-ref-radius-lg);
   overflow-wrap: anywhere;
 }
 
@@ -169,9 +169,9 @@
   align-self: flex-start;
   max-width: min(88%, 820px);
   overflow: hidden;
-  background: var(--wm-surface-raised);
-  border: 1px solid var(--wm-border);
-  border-radius: var(--wm-radius-lg);
+  background: var(--wm-ref-surface-elevated);
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-lg);
 }
 .messageHead { display: flex; align-items: center; gap: .5rem; padding: .6rem .9rem 0; }
 .actorBadge {
@@ -180,15 +180,15 @@
   width: 22px;
   height: 22px;
   flex: none;
-  color: var(--wm-accent-fg);
-  background: var(--wm-accent);
+  color: var(--wm-ref-accent-fg);
+  background: var(--wm-ref-accent);
   border-radius: 50%;
   font-size: .7rem;
   font-weight: 700;
 }
-.actorBadgeHuman { background: var(--wm-neutral, var(--wm-text-muted)); }
-.actorBadgeSystem { background: var(--wm-text-subtle); }
-.actorName { color: var(--wm-text-strong); font-size: .8rem; font-weight: 600; }
+.actorBadgeHuman { background: var(--wm-ref-status-pending, var(--wm-ref-text-secondary)); }
+.actorBadgeSystem { background: var(--wm-ref-text-tertiary); }
+.actorName { color: var(--wm-ref-text-strong); font-size: .8rem; font-weight: 600; }
 .messageBody { padding: .5rem .9rem .8rem; }
 .userMessage .messageHead { padding: 0 0 .35rem; }
 .userMessage .messageBody { padding: 0; }
@@ -201,16 +201,16 @@
   gap: 5px;
   height: 22px;
   padding: 0 8px;
-  color: var(--wm-text-muted);
-  background: var(--wm-surface-subtle);
-  border: 1px solid var(--wm-border);
-  border-radius: var(--wm-radius-sm);
-  font-family: var(--wm-font-mono);
+  color: var(--wm-ref-text-secondary);
+  background: var(--wm-ref-surface-secondary);
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-control);
+  font-family: var(--wm-ref-font-mono);
   font-size: 11px;
 }
-.chipPending { color: var(--wm-warning); border-color: var(--wm-warning-border); background: var(--wm-warning-bg); }
-.chipFailed { color: var(--wm-danger); border-color: var(--wm-danger-border); background: var(--wm-danger-bg); }
-.chipSettled { color: var(--wm-success); border-color: var(--wm-success-border); background: var(--wm-success-bg); }
+.chipPending { color: var(--wm-ref-status-needs-human); border-color: var(--wm-ref-warning-border); background: var(--wm-ref-warning-bg); }
+.chipFailed { color: var(--wm-ref-danger); border-color: var(--wm-ref-danger-border); background: var(--wm-ref-danger-bg); }
+.chipSettled { color: var(--wm-ref-status-done); border-color: var(--wm-ref-success-border); background: var(--wm-ref-success-bg); }
 
 .turnState { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
 .steerForm { display: flex; flex: 1 1 240px; align-items: center; gap: .4rem; min-width: 0; }
@@ -218,15 +218,15 @@
   flex: 1;
   min-width: 0;
   padding: .4rem .6rem;
-  color: var(--wm-text);
-  background: var(--wm-surface);
-  border: 1px solid var(--wm-border);
-  border-radius: var(--wm-radius-sm);
+  color: var(--wm-ref-text-primary);
+  background: var(--wm-ref-surface-card);
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-control);
 }
 
 /* ---------- Composer ---------- */
 
-.composer { display: grid; gap: .5rem; padding: .75rem 1.1rem .9rem; border-top: 1px solid var(--wm-border); background: var(--wm-canvas); }
+.composer { display: grid; gap: .5rem; padding: .75rem 1.1rem .9rem; border-top: 1px solid var(--wm-ref-border-default); background: var(--wm-ref-surface); }
 .composerPills { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
 .contextPill {
   display: inline-flex;
@@ -234,59 +234,59 @@
   gap: .3rem;
   height: 24px;
   padding: 0 .55rem;
-  color: var(--wm-text-muted);
-  background: var(--wm-surface-subtle);
-  border: 1px solid var(--wm-border);
-  border-radius: var(--wm-radius-pill);
+  color: var(--wm-ref-text-secondary);
+  background: var(--wm-ref-surface-secondary);
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-pill);
   font-size: .74rem;
   cursor: pointer;
   text-decoration: none;
 }
-.contextPillBound { color: var(--wm-accent); background: var(--wm-accent-bg); border-color: var(--wm-accent-border); }
+.contextPillBound { color: var(--wm-ref-accent); background: var(--wm-ref-accent-bg); border-color: var(--wm-ref-accent-border); }
 .composerFooter { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
-.composerFacts { display: flex; align-items: center; gap: .5rem; min-width: 0; color: var(--wm-text-muted); font-size: .75rem; }
+.composerFacts { display: flex; align-items: center; gap: .5rem; min-width: 0; color: var(--wm-ref-text-secondary); font-size: .75rem; }
 .composerActions { display: flex; align-items: center; gap: .5rem; }
 .turnModelSelection { display: flex; align-items: center; gap: .35rem; min-width: 0; }
-.turnModelSelection label { display: inline-flex; align-items: center; gap: .25rem; min-width: 0; color: var(--wm-text-subtle); font-size: .72rem; }
+.turnModelSelection label { display: inline-flex; align-items: center; gap: .25rem; min-width: 0; color: var(--wm-ref-text-tertiary); font-size: .72rem; }
 .turnModelSelection select {
   min-width: 0;
   max-width: 11rem;
   padding: .25rem .4rem;
-  color: var(--wm-text);
-  background: var(--wm-surface);
-  border: 1px solid var(--wm-border);
-  border-radius: var(--wm-radius-sm);
+  color: var(--wm-ref-text-primary);
+  background: var(--wm-ref-surface-card);
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-control);
   font-size: .75rem;
 }
-.hint { margin: 0; color: var(--wm-text-subtle); font-size: .7rem; }
-.hintReady { color: var(--wm-success); }
-.hintBlocked { color: var(--wm-warning); }
+.hint { margin: 0; color: var(--wm-ref-text-tertiary); font-size: .7rem; }
+.hintReady { color: var(--wm-ref-status-done); }
+.hintBlocked { color: var(--wm-ref-status-needs-human); }
 
 /* ---------- Context column ---------- */
 
 .contextPins { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; padding: 0; list-style: none; }
 .contextPins li {
   padding: .2rem .5rem;
-  color: var(--wm-text-muted);
-  background: var(--wm-surface-raised);
-  border: 1px solid var(--wm-border);
-  border-radius: var(--wm-radius-sm);
-  font-family: var(--wm-font-mono);
+  color: var(--wm-ref-text-secondary);
+  background: var(--wm-ref-surface-elevated);
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-control);
+  font-family: var(--wm-ref-font-mono);
   font-size: .72rem;
 }
-.contextPins a { color: var(--wm-text); text-decoration: none; }
-.context p { margin: 0; color: var(--wm-text-muted); font-size: .8rem; }
+.contextPins a { color: var(--wm-ref-text-primary); text-decoration: none; }
+.context p { margin: 0; color: var(--wm-ref-text-secondary); font-size: .8rem; }
 
-.empty { margin: auto; color: var(--wm-text-muted); }
-.error { padding: .6rem .8rem; color: var(--wm-danger); background: var(--wm-danger-bg); border: 1px solid var(--wm-danger-border); border-radius: var(--wm-radius-sm); }
+.empty { margin: auto; color: var(--wm-ref-text-secondary); }
+.error { padding: .6rem .8rem; color: var(--wm-ref-danger); background: var(--wm-ref-danger-bg); border: 1px solid var(--wm-ref-danger-border); border-radius: var(--wm-ref-radius-control); }
 
 @media (max-width: 1100px) {
   .layout { grid-template-columns: minmax(210px, 250px) minmax(0, 1fr); }
-  .context { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--wm-border); }
+  .context { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--wm-ref-border-default); }
 }
 @media (max-width: 700px) {
   .layout { display: flex; min-height: 0; flex-direction: column; }
-  .sidebar { border-right: 0; border-bottom: 1px solid var(--wm-border); }
+  .sidebar { border-right: 0; border-bottom: 1px solid var(--wm-ref-border-default); }
   .list { max-height: 190px; }
   .main { min-height: 520px; }
   .userMessage, .agentMessage { max-width: 100%; align-self: stretch; }

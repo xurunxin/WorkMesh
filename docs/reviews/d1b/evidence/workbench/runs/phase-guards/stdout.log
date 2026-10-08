@@ -1,0 +1,23 @@
+{
+  "phase": "workbench",
+  "ledgerEntries": 2316,
+  "scopedAdditions": 320,
+  "remainingLegacyExpressions": 1854,
+  "runtime": [
+    "--wm-status-color",
+    "--wm-dismissal-depth",
+    "--wm-overlay-depth"
+  ],
+  "cleanupAllowed": false,
+  "visualReview": "待人工视觉评审",
+  "nextStageAllowed": false,
+  "negativeCases": [
+    "旧声明有消费时禁止删除",
+    "未迁共享消费禁止无条件替换",
+    "嵌套 fallback 未知依赖失败",
+    "新分支边界删除失败",
+    "已迁项回退失败",
+    "循环依赖失败",
+    "运行时生产者缺失失败"
+  ]
+}

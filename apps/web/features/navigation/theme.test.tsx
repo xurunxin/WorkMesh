@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { readFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { resolve } from 'node:path'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -19,7 +20,11 @@ type TokenBaseline = {
 
 const tokenBaseline = JSON.parse(readFileSync(resolve(process.cwd(), 'features/navigation/theme-token-baseline.json'), 'utf8')) as TokenBaseline
 const tokenCssPath = resolve(process.cwd(), '../../packages/ui/src/tokens.css')
+const migration = JSON.parse(readFileSync(resolve(process.cwd(), 'features/navigation/theme-token-migration.json'), 'utf8')) as { entries: Array<{ from: string; to: string }> }
+const migratedToken = (name: string) => migration.entries.find(entry => entry.from === name)?.to ?? name
+const migratedExpression = (value: string) => value.replace(/--wm-[\w-]+/g, migratedToken)
 const runtimeTokenDefinitions: Record<string, Array<{ file: string; marker: string }>> = {
+  '--wm-overlay-depth': [{ file: 'packages/ui/src/internal/overlay.ts', marker: "setProperty('--wm-overlay-depth'" }],
   '--wm-dismissal-depth': [{ file: 'packages/ui/src/internal/overlay.ts', marker: "setProperty('--wm-dismissal-depth'" }],
   '--wm-status-color': [
     { file: 'packages/ui/src/domain/workflow.tsx', marker: "'--wm-status-color':" },
@@ -97,7 +102,7 @@ describe('theme state helpers', () => {
 })
 
 describe('coexisting reference token contract', () => {
-  it('preserves every base token declaration, scope, value, and existing CSS consumer', () => {
+  it('preserves legacy declarations and unmigrated consumers while enforcing the workbench mapping', () => {
     expect(tokenBaseline.baseCommit).toBe('9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7')
     const css = readFileSync(tokenCssPath, 'utf8')
     const currentDeclarations = parseTokenDeclarations(css)
@@ -109,7 +114,9 @@ describe('coexisting reference token contract', () => {
       const originalSource = readFileSync(sourcePath, 'utf8')
       const sourceLines = sourceWithoutComments(originalSource).split(/\r?\n/)
       const originalLines = originalSource.split(/\r?\n/)
-      const tokenPattern = new RegExp(`var\\(\\s*${consumer.token}\\s*(?=[,)])`, 'g')
+      const migrated = consumer.file === 'apps/web/features/workbench/conversation-workbench.module.css'
+      const token = migrated ? migratedToken(consumer.token) : consumer.token
+      const tokenPattern = new RegExp(`var\\(\\s*${token}\\s*(?=[,)])`, 'g')
       const actualReferences = sourceLines.flatMap((line, lineIndex) =>
         [...line.matchAll(tokenPattern)].map((_, occurrenceIndex) => ({
           line: lineIndex + 1,
@@ -117,7 +124,7 @@ describe('coexisting reference token contract', () => {
           text: originalLines[lineIndex]!.trim(),
         })),
       )
-      expect(actualReferences).toEqual(consumer.references)
+      expect(actualReferences).toEqual(consumer.references.map(reference => ({ ...reference, text: migrated ? migratedExpression(reference.text) : reference.text })))
       expect(actualReferences).toHaveLength(consumer.count)
       if (!currentDeclarations.some(declaration => declaration.token === consumer.token)) {
         const definitions = runtimeTokenDefinitions[consumer.token] ?? []
@@ -130,7 +137,7 @@ describe('coexisting reference token contract', () => {
     }
   })
 
-  it('declares measured light slots and resolves dark slots through existing semantics', () => {
+  it('declares measured light slots and rebinds dark slots to the same existing values', () => {
     const css = readFileSync(tokenCssPath, 'utf8')
     const lightSlots: Record<string, string> = {
       '--wm-ref-surface': '#faf7f2',
@@ -182,10 +189,19 @@ describe('coexisting reference token contract', () => {
       '--wm-ref-focus': '--wm-focus',
     }
     for (const [token, value] of Object.entries(darkAliases)) {
-      expect(dark).toContainEqual({ selector: "[data-wm-theme='dark']", token, value: `var(${value})` })
+      const original = tokenBaseline.declarations.find(declaration => declaration.selector === "[data-wm-theme='dark']" && declaration.token === value)
+      expect(original, `missing original dark semantic ${value}`).toBeDefined()
+      expect(dark).toContainEqual({ selector: "[data-wm-theme='dark']", token, value: original!.value })
     }
     expect(css).toContain('CSS candidate observed in utilities; this is not an observed error-state component.')
     expect(css).toContain('D1a reference measurements coexist with shipped tokens until D1b migrates consumers.')
+  })
+
+  it('enforces the AST/CSS phase ledger and rejects premature cleanup and scope regressions', () => {
+    const result = JSON.parse(execFileSync(process.execPath, [resolve(process.cwd(), '../../docs/reviews/d1b/stage-ledger.mjs'), '--self-test'], { cwd: resolve(process.cwd(), '../../'), encoding: 'utf8' })) as { cleanupAllowed: boolean; nextStageAllowed: boolean; negativeCases: string[] }
+    expect(result.cleanupAllowed).toBe(false)
+    expect(result.nextStageAllowed).toBe(false)
+    expect(result.negativeCases).toHaveLength(7)
   })
 })
 

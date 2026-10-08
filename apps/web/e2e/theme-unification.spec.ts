@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { verifyThemeInheritance } from './mocked/d1b-theme-probes'
 
 const legacyDarkBackgrounds = new Set(['rgb(15, 23, 42)', 'rgb(17, 24, 39)'])
 
@@ -18,6 +19,14 @@ test.describe('unified light theme', () => {
   test.beforeEach(async ({ page }) => {
     await page.context().clearCookies({ name: 'workmesh_locale' })
     await page.addInitScript(() => window.localStorage.removeItem('workmesh_locale'))
+  })
+
+  test('recomputes workbench derived tokens across nested themes and compact density', async ({ page }) => {
+    await page.goto('/workbench?theme=light')
+    await expect(page).toHaveURL(/\/workbench\?theme=light$/)
+    await expect(page.getByTestId('conversation-workbench')).toBeVisible()
+    await expect(page.locator('html')).toHaveAttribute('data-wm-theme', 'light')
+    await verifyThemeInheritance(page)
   })
 
   for (const route of routes) {

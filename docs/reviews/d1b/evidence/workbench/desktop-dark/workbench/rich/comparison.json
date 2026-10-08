@@ -1,0 +1,32 @@
+{
+  "variant": "desktop-dark",
+  "rowID": "workbench",
+  "state": "rich",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/workbench/desktop-dark/workbench/rich/before.png",
+      "bytes": 116037,
+      "sha256": "fbea58c5da34c87ea35041e2edf9f693e124d8780cead7327fc6fea3ae15f97b"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/workbench/desktop-dark/workbench/rich/after.png",
+      "bytes": 115165,
+      "sha256": "c67bb4aa432bc8068bab3f75a949fc23a8f1ca9b04084a099abf12ae7e01e2fb"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "3688 pixels (ratio 0.01 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/workbench/desktop-dark/workbench/rich/diff.png",
+      "bytes": 105967,
+      "sha256": "269ad43c6829d58fcf0b83e164e09d7ffb14aa138997effe77bfad052ebdb5d7"
+    }
+  },
+  "historical": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/workbench/desktop-dark/workbench/rich/before.json",
+    "after": "docs/reviews/d1b/evidence/workbench/desktop-dark/workbench/rich/after.json"
+  },
+  "humanReview": "待人工视觉评审",
+  "disposition": "保留真实设计差异；比较器结果不代表颜色验收"
+}

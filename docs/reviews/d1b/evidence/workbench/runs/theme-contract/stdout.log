@@ -1,0 +1,411 @@
+[WebServer] project-work-preview-api:3201
+[WebServer]    ▲ Next.js 15.5.22
+[WebServer]    - Local:        http://localhost:3200
+[WebServer]    - Network:      http://100.77.217.65:3200
+[WebServer] 
+[WebServer]  ✓ Starting...
+[WebServer]  ✓ Ready in 3.5s
+[WebServer]  ○ Compiling / ...
+[WebServer]  ✓ Compiled / in 9.1s (10513 modules)
+[WebServer]  GET / 200 in 9928ms
+
+Running 40 tests using 1 worker
+
+[WebServer]  ○ Compiling /workbench ...
+[WebServer]  ✓ Compiled /workbench in 1967ms (10528 modules)
+[WebServer]  GET /workbench?theme=light 200 in 2434ms
+  ok  1 [desktop-light] › e2e\theme-unification.spec.ts:24:3 › unified light theme › recomputes workbench derived tokens across nested themes and compact density (3.4s)
+[WebServer]  ○ Compiling /login ...
+[WebServer]  ✓ Compiled /login in 1714ms (10535 modules)
+[WebServer]  GET /login 200 in 2005ms
+  ok  2 [desktop-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /login on the unified light theme (2.7s)
+[WebServer]  ○ Compiling /install ...
+[WebServer]  ✓ Compiled /install in 1811ms (10542 modules)
+[WebServer]  GET /install 200 in 2227ms
+[WebServer]  GET /login 200 in 72ms
+  ok  3 [desktop-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /install on the unified light theme (3.8s)
+[WebServer]  GET /?view=my-work 200 in 318ms
+  ok  4 [desktop-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /?view=my-work on the unified light theme (1.5s)
+[WebServer]  GET /workbench 200 in 108ms
+  ok  5 [desktop-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /workbench on the unified light theme (897ms)
+[WebServer]  ○ Compiling /agents ...
+[WebServer]  ✓ Compiled /agents in 1608ms (10575 modules)
+[WebServer]  GET /agents 200 in 2050ms
+  ok  6 [desktop-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /agents on the unified light theme (2.9s)
+[WebServer]  ○ Compiling /operations ...
+[WebServer]  ✓ Compiled /operations in 3.6s (10592 modules)
+[WebServer]  GET /operations 200 in 3987ms
+  ok  7 [desktop-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /operations on the unified light theme (5.1s)
+[WebServer]  ○ Compiling /connect ...
+[WebServer]  ✓ Compiled /connect in 2.9s (10601 modules)
+[WebServer]  GET /connect 200 in 3249ms
+  ok  8 [desktop-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /connect on the unified light theme (5.3s)
+[WebServer]  GET /login 200 in 81ms
+  ok  9 [desktop-light] › e2e\theme-unification.spec.ts:88:3 › unified light theme › keeps the dark default and toggles light/dark/light with persisted theme state (894ms)
+[WebServer]  GET /login 200 in 37ms
+  ok 10 [desktop-light] › e2e\theme-unification.spec.ts:104:3 › unified light theme › resolves reference slots through root, inherited, and nested dark scopes (793ms)
+[WebServer]  GET /workbench?theme=light 200 in 313ms
+  ok 11 [desktop-dark] › e2e\theme-unification.spec.ts:24:3 › unified light theme › recomputes workbench derived tokens across nested themes and compact density (1.2s)
+[WebServer]  GET /login 200 in 47ms
+  ok 12 [desktop-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /login on the unified light theme (739ms)
+[WebServer]  GET /install 200 in 88ms
+[WebServer]  GET /login 200 in 63ms
+  ok 13 [desktop-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /install on the unified light theme (1.4s)
+[WebServer]  GET /?view=my-work 200 in 282ms
+  ok 14 [desktop-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /?view=my-work on the unified light theme (1.4s)
+[WebServer]  GET /workbench 200 in 104ms
+  ok 15 [desktop-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /workbench on the unified light theme (926ms)
+[WebServer]  GET /agents 200 in 159ms
+  ok 16 [desktop-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /agents on the unified light theme (996ms)
+[WebServer]  GET /operations 200 in 131ms
+  ok 17 [desktop-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /operations on the unified light theme (880ms)
+[WebServer]  GET /connect 200 in 57ms
+  ok 18 [desktop-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /connect on the unified light theme (811ms)
+[WebServer]  GET /login 200 in 65ms
+  ok 19 [desktop-dark] › e2e\theme-unification.spec.ts:88:3 › unified light theme › keeps the dark default and toggles light/dark/light with persisted theme state (928ms)
+[WebServer]  GET /login 200 in 52ms
+  ok 20 [desktop-dark] › e2e\theme-unification.spec.ts:104:3 › unified light theme › resolves reference slots through root, inherited, and nested dark scopes (800ms)
+[WebServer]  GET /workbench?theme=light 200 in 104ms
+  ok 21 [mobile-light] › e2e\theme-unification.spec.ts:24:3 › unified light theme › recomputes workbench derived tokens across nested themes and compact density (984ms)
+[WebServer]  GET /login 200 in 72ms
+  x  22 [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /login on the unified light theme (15.1s)
+[WebServer]  GET /install 200 in 70ms
+[WebServer]  GET /login 200 in 68ms
+  ok 23 [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /install on the unified light theme (1.4s)
+[WebServer]  GET /?view=my-work 200 in 74ms
+  ok 24 [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /?view=my-work on the unified light theme (1.1s)
+[WebServer]  GET /workbench 200 in 78ms
+  x  25 [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /workbench on the unified light theme (15.2s)
+[WebServer]  GET /agents 200 in 80ms
+  x  26 [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /agents on the unified light theme (15.2s)
+[WebServer]  GET /operations 200 in 87ms
+  ok 27 [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /operations on the unified light theme (883ms)
+[WebServer]  GET /connect 200 in 67ms
+  ok 28 [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /connect on the unified light theme (744ms)
+[WebServer]  GET /login 200 in 37ms
+  x  29 [mobile-light] › e2e\theme-unification.spec.ts:88:3 › unified light theme › keeps the dark default and toggles light/dark/light with persisted theme state (2.0m)
+[WebServer]  GET /login 200 in 82ms
+  ok 30 [mobile-light] › e2e\theme-unification.spec.ts:104:3 › unified light theme › resolves reference slots through root, inherited, and nested dark scopes (839ms)
+[WebServer]  GET /workbench?theme=light 200 in 81ms
+  ok 31 [mobile-dark] › e2e\theme-unification.spec.ts:24:3 › unified light theme › recomputes workbench derived tokens across nested themes and compact density (943ms)
+[WebServer]  GET /login 200 in 40ms
+  x  32 [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /login on the unified light theme (14.9s)
+[WebServer]  GET /install 200 in 64ms
+[WebServer]  GET /login 200 in 59ms
+  ok 33 [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /install on the unified light theme (1.4s)
+[WebServer]  GET /?view=my-work 200 in 77ms
+  ok 34 [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /?view=my-work on the unified light theme (1.1s)
+[WebServer]  GET /workbench 200 in 99ms
+  x  35 [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /workbench on the unified light theme (15.1s)
+[WebServer]  GET /agents 200 in 136ms
+  x  36 [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /agents on the unified light theme (15.4s)
+[WebServer]  GET /operations 200 in 111ms
+  ok 37 [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /operations on the unified light theme (980ms)
+[WebServer]  GET /connect 200 in 79ms
+  ok 38 [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /connect on the unified light theme (908ms)
+[WebServer]  GET /login 200 in 96ms
+  x  39 [mobile-dark] › e2e\theme-unification.spec.ts:88:3 › unified light theme › keeps the dark default and toggles light/dark/light with persisted theme state (2.0m)
+[WebServer]  GET /login 200 in 122ms
+  ok 40 [mobile-dark] › e2e\theme-unification.spec.ts:104:3 › unified light theme › resolves reference slots through root, inherited, and nested dark scopes (885ms)
+
+
+  1) [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /login on the unified light theme 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 15000ms exceeded while waiting on the predicate
+
+      82 |         if ((await smoke.count()) === 0) return true
+      83 |         return smoke.isVisible().catch(() => false)
+    > 84 |       }).toBe(true)
+         |          ^
+      85 |     })
+      86 |   }
+      87 |
+        at C:\Users\xurx\.tds\workspaces\01a1195f-55ab-7ee9-8baf-c115978d3aec\apps\web\e2e\theme-unification.spec.ts:84:10
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--93217--on-the-unified-light-theme-mobile-light\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--93217--on-the-unified-light-theme-mobile-light\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--93217--on-the-unified-light-theme-mobile-light\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--93217--on-the-unified-light-theme-mobile-light\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /workbench on the unified light theme 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 15000ms exceeded while waiting on the predicate
+
+      82 |         if ((await smoke.count()) === 0) return true
+      83 |         return smoke.isVisible().catch(() => false)
+    > 84 |       }).toBe(true)
+         |          ^
+      85 |     })
+      86 |   }
+      87 |
+        at C:\Users\xurx\.tds\workspaces\01a1195f-55ab-7ee9-8baf-c115978d3aec\apps\web\e2e\theme-unification.spec.ts:84:10
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--e8e29--on-the-unified-light-theme-mobile-light\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--e8e29--on-the-unified-light-theme-mobile-light\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--e8e29--on-the-unified-light-theme-mobile-light\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--e8e29--on-the-unified-light-theme-mobile-light\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /agents on the unified light theme 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 15000ms exceeded while waiting on the predicate
+
+      82 |         if ((await smoke.count()) === 0) return true
+      83 |         return smoke.isVisible().catch(() => false)
+    > 84 |       }).toBe(true)
+         |          ^
+      85 |     })
+      86 |   }
+      87 |
+        at C:\Users\xurx\.tds\workspaces\01a1195f-55ab-7ee9-8baf-c115978d3aec\apps\web\e2e\theme-unification.spec.ts:84:10
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--ea998--on-the-unified-light-theme-mobile-light\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--ea998--on-the-unified-light-theme-mobile-light\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--ea998--on-the-unified-light-theme-mobile-light\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--ea998--on-the-unified-light-theme-mobile-light\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [mobile-light] › e2e\theme-unification.spec.ts:88:3 › unified light theme › keeps the dark default and toggles light/dark/light with persisted theme state 
+
+    Test timeout of 120000ms exceeded.
+
+    Error: locator.click: Test timeout of 120000ms exceeded.
+    Call log:
+      - waiting for getByTestId('theme-toggle')
+        - locator resolved to <button type="button" title="切换到浅色主题" aria-label="切换到浅色主题" class="theme-toggle" data-testid="theme-toggle">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+          - waiting 100ms
+        230 × waiting for element to be visible, enabled and stable
+            - element is not visible
+          - retrying click action
+            - waiting 500ms
+
+
+      92 |     const toggle = page.getByTestId('theme-toggle')
+      93 |     await expect(toggle).toHaveAttribute('aria-label', '切换到浅色主题')
+    > 94 |     await toggle.click()
+         |                  ^
+      95 |     await expect(page.locator('html')).toHaveAttribute('data-wm-theme', 'light')
+      96 |     await expect.poll(() => page.evaluate(() => window.localStorage.getItem('workmesh.theme'))).toBe('light')
+      97 |     await toggle.click()
+        at C:\Users\xurx\.tds\workspaces\01a1195f-55ab-7ee9-8baf-c115978d3aec\apps\web\e2e\theme-unification.spec.ts:94:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--d4531--with-persisted-theme-state-mobile-light\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--d4531--with-persisted-theme-state-mobile-light\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--d4531--with-persisted-theme-state-mobile-light\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--d4531--with-persisted-theme-state-mobile-light\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /login on the unified light theme 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 15000ms exceeded while waiting on the predicate
+
+      82 |         if ((await smoke.count()) === 0) return true
+      83 |         return smoke.isVisible().catch(() => false)
+    > 84 |       }).toBe(true)
+         |          ^
+      85 |     })
+      86 |   }
+      87 |
+        at C:\Users\xurx\.tds\workspaces\01a1195f-55ab-7ee9-8baf-c115978d3aec\apps\web\e2e\theme-unification.spec.ts:84:10
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--93217--on-the-unified-light-theme-mobile-dark\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--93217--on-the-unified-light-theme-mobile-dark\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--93217--on-the-unified-light-theme-mobile-dark\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--93217--on-the-unified-light-theme-mobile-dark\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /workbench on the unified light theme 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 15000ms exceeded while waiting on the predicate
+
+      82 |         if ((await smoke.count()) === 0) return true
+      83 |         return smoke.isVisible().catch(() => false)
+    > 84 |       }).toBe(true)
+         |          ^
+      85 |     })
+      86 |   }
+      87 |
+        at C:\Users\xurx\.tds\workspaces\01a1195f-55ab-7ee9-8baf-c115978d3aec\apps\web\e2e\theme-unification.spec.ts:84:10
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--e8e29--on-the-unified-light-theme-mobile-dark\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--e8e29--on-the-unified-light-theme-mobile-dark\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--e8e29--on-the-unified-light-theme-mobile-dark\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--e8e29--on-the-unified-light-theme-mobile-dark\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /agents on the unified light theme 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 15000ms exceeded while waiting on the predicate
+
+      82 |         if ((await smoke.count()) === 0) return true
+      83 |         return smoke.isVisible().catch(() => false)
+    > 84 |       }).toBe(true)
+         |          ^
+      85 |     })
+      86 |   }
+      87 |
+        at C:\Users\xurx\.tds\workspaces\01a1195f-55ab-7ee9-8baf-c115978d3aec\apps\web\e2e\theme-unification.spec.ts:84:10
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--ea998--on-the-unified-light-theme-mobile-dark\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--ea998--on-the-unified-light-theme-mobile-dark\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--ea998--on-the-unified-light-theme-mobile-dark\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--ea998--on-the-unified-light-theme-mobile-dark\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [mobile-dark] › e2e\theme-unification.spec.ts:88:3 › unified light theme › keeps the dark default and toggles light/dark/light with persisted theme state 
+
+    Test timeout of 120000ms exceeded.
+
+    Error: locator.click: Test timeout of 120000ms exceeded.
+    Call log:
+      - waiting for getByTestId('theme-toggle')
+        - locator resolved to <button type="button" title="切换到浅色主题" aria-label="切换到浅色主题" class="theme-toggle" data-testid="theme-toggle">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+          - waiting 100ms
+        230 × waiting for element to be visible, enabled and stable
+            - element is not visible
+          - retrying click action
+            - waiting 500ms
+
+
+      92 |     const toggle = page.getByTestId('theme-toggle')
+      93 |     await expect(toggle).toHaveAttribute('aria-label', '切换到浅色主题')
+    > 94 |     await toggle.click()
+         |                  ^
+      95 |     await expect(page.locator('html')).toHaveAttribute('data-wm-theme', 'light')
+      96 |     await expect.poll(() => page.evaluate(() => window.localStorage.getItem('workmesh.theme'))).toBe('light')
+      97 |     await toggle.click()
+        at C:\Users\xurx\.tds\workspaces\01a1195f-55ab-7ee9-8baf-c115978d3aec\apps\web\e2e\theme-unification.spec.ts:94:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--d4531--with-persisted-theme-state-mobile-dark\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--d4531--with-persisted-theme-state-mobile-dark\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--d4531--with-persisted-theme-state-mobile-dark\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\..\..\..\AppData\Local\Temp\workmesh-d1b-theme-contract\mocked-dev\output\theme-unification-unified--d4531--with-persisted-theme-state-mobile-dark\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8 failed
+    [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /login on the unified light theme 
+    [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /workbench on the unified light theme 
+    [mobile-light] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /agents on the unified light theme 
+    [mobile-light] › e2e\theme-unification.spec.ts:88:3 › unified light theme › keeps the dark default and toggles light/dark/light with persisted theme state 
+    [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /login on the unified light theme 
+    [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /workbench on the unified light theme 
+    [mobile-dark] › e2e\theme-unification.spec.ts:33:5 › unified light theme › renders /agents on the unified light theme 
+    [mobile-dark] › e2e\theme-unification.spec.ts:88:3 › unified light theme › keeps the dark default and toggles light/dark/light with persisted theme state 
+  32 passed (6.7m)
