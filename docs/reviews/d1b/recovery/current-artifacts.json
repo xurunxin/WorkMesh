@@ -4247,11 +4247,11 @@
     },
     {
       "path": "docs/reviews/d1b/workbench-visual-review.html",
-      "gitBlob": "0e19fcc267e7d178c0acf38d9c1d52124da6dd01",
-      "gitBytes": 2613,
-      "gitSha256": "fec7de30d48095657c02dcb143eac0843327982f7d3d614705ce45e03d1aeb1c",
-      "worktreeBytes": 2625,
-      "worktreeSha256": "9120d1a0c3a96c8d3af3a8f1de973fb4dd78b723c97e2553480e8bad466ba6d5",
+      "gitBlob": "77b693c3ae5a701a57182189b4399c3702b93a16",
+      "gitBytes": 2610,
+      "gitSha256": "4289e2c9dd2f97c311dadecda300b30c4279dedb85bebbb0c955bd73180b9b96",
+      "worktreeBytes": 2622,
+      "worktreeSha256": "0cabd071e52cd63f369ce2c792098e4e9f7e83300cb426d53557a5d95528da30",
       "bytesEqual": false,
       "gitObjectKind": "actual-index-blob"
     },
@@ -4275,5 +4275,15 @@
       "bytesEqual": false,
       "gitObjectKind": "actual-index-blob"
     }
-  ]
+  ],
+  "linkCorrection": {
+    "checkedAt": "2026-10-08T09:33:59.132Z",
+    "page": "docs/reviews/d1b/workbench-visual-review.html",
+    "updatedText": "<a href=\"verification.md\">阶段报告与剩余责任</a>",
+    "rows": 32,
+    "uniqueTargets": 162,
+    "missingTargets": 0,
+    "scope": "仅修正报告链接并核对静态资源及全部动态截图/运行记录目标；未运行浏览器或补作视觉批准",
+    "resources": "本轮未创建Docker资源、服务或临时路径，无待清理新增资源"
+  }
 }
