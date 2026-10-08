@@ -1,6 +1,6 @@
 {
-  "observedAt": "2026-10-08T18:30:51.000Z",
-  "currentHead": "50b91a9bed3252046f2f6e0e8a85140a63050faa",
+  "observedAt": "2026-10-08T19:06:12.596Z",
+  "currentHead": "380aad996489dbdabddd212be8f45edbcdda7209",
   "byteRule": "原字节与 Git blob 分列；仅 CRLF 转换单独证明，不把不同源码或运行中变化冒作相同。",
   "records": [
     {
@@ -295,14 +295,14 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a"
+            "bytes": 23737,
+            "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e"
           },
           "currentMatchesTested": false,
           "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a",
+            "bytes": 23737,
+            "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e",
             "matchesTested": false,
             "matchesTestedExceptCRLF": false
           }
@@ -812,14 +812,14 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a"
+            "bytes": 23737,
+            "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e"
           },
           "currentMatchesTested": false,
           "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a",
+            "bytes": 23737,
+            "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e",
             "matchesTested": false,
             "matchesTestedExceptCRLF": false
           }
@@ -1352,14 +1352,14 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a"
+            "bytes": 23737,
+            "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e"
           },
           "currentMatchesTested": false,
           "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a",
+            "bytes": 23737,
+            "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e",
             "matchesTested": false,
             "matchesTestedExceptCRLF": false
           }
@@ -1596,420 +1596,25 @@
       ]
     },
     {
-      "runId": "a2-5e2b151d",
-      "testedHead": "b492a35b11445c157a825b5e747ac0e15506e491",
+      "runId": "a2-71164f40",
+      "testedHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
       "files": [
         {
-          "path": "apps/web/app/lib/i18n.tsx",
+          "path": "apps/web/features/projects/project-repository-configuration-races.test.tsx",
           "tested": {
-            "bytes": 207067,
-            "sha256": "43c387ab269479f247ad0007f686b7c88ef4fe9790776108209d709f145b48e7"
+            "bytes": 5969,
+            "sha256": "dd7a36112228898cce97fe253f4e36fa4988f76fb0dd51c02eabaf7ffafe9471"
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 207067,
-            "sha256": "43c387ab269479f247ad0007f686b7c88ef4fe9790776108209d709f145b48e7"
+            "bytes": 5969,
+            "sha256": "dd7a36112228898cce97fe253f4e36fa4988f76fb0dd51c02eabaf7ffafe9471"
           },
           "currentMatchesTested": true,
           "currentMatchesTestedExceptCRLF": true,
           "headBlob": {
-            "bytes": 202503,
-            "sha256": "e18a59f6b056fa53c9d2d0b3bcfc10f96dfaf24373d72dc3a1e51324541cb139",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": true
-          }
-        },
-        {
-          "path": "apps/web/e2e/configuration-readiness.spec.ts",
-          "tested": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66"
-          },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
-          "headBlob": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66",
-            "matchesTested": true,
-            "matchesTestedExceptCRLF": true
-          }
-        },
-        {
-          "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
-          "tested": {
-            "bytes": 8968,
-            "sha256": "934a4d4302984fe23ecda8e527cbfe4ab34479b46d1ef70bfbaf127f1664d667"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 9052,
-            "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77"
-          },
-          "currentMatchesTested": false,
-          "currentMatchesTestedExceptCRLF": false,
-          "headBlob": {
-            "bytes": 9052,
-            "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": false
-          }
-        },
-        {
-          "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
-          "tested": {
-            "bytes": 14317,
-            "sha256": "447f4548ce2cf7da4b6004d0d42b5f25ce53479c9b5b4e256d15428f590692c0"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 15471,
-            "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe"
-          },
-          "currentMatchesTested": false,
-          "currentMatchesTestedExceptCRLF": false,
-          "headBlob": {
-            "bytes": 15471,
-            "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": false
-          }
-        },
-        {
-          "path": "apps/web/features/projects/project-repository-configuration.tsx",
-          "tested": {
-            "bytes": 22662,
-            "sha256": "24e12db170e4dc2dfdd2df1c23bfe21d17ea3646a4c8d4ba12d453dd5df61e37"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a"
-          },
-          "currentMatchesTested": false,
-          "currentMatchesTestedExceptCRLF": false,
-          "headBlob": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": false
-          }
-        }
-      ],
-      "changedDuringRun": [],
-      "currentDifferences": [
-        "apps/web/e2e/fixtures/configuration-readiness.ts",
-        "apps/web/features/projects/project-repository-configuration.test.tsx",
-        "apps/web/features/projects/project-repository-configuration.tsx"
-      ]
-    },
-    {
-      "runId": "a2-7e910b69",
-      "testedHead": "b492a35b11445c157a825b5e747ac0e15506e491",
-      "files": [
-        {
-          "path": "apps/web/app/lib/i18n.tsx",
-          "tested": {
-            "bytes": 207067,
-            "sha256": "43c387ab269479f247ad0007f686b7c88ef4fe9790776108209d709f145b48e7"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 207067,
-            "sha256": "43c387ab269479f247ad0007f686b7c88ef4fe9790776108209d709f145b48e7"
-          },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
-          "headBlob": {
-            "bytes": 202503,
-            "sha256": "e18a59f6b056fa53c9d2d0b3bcfc10f96dfaf24373d72dc3a1e51324541cb139",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": true
-          }
-        },
-        {
-          "path": "apps/web/e2e/configuration-readiness.spec.ts",
-          "tested": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66"
-          },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
-          "headBlob": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66",
-            "matchesTested": true,
-            "matchesTestedExceptCRLF": true
-          }
-        },
-        {
-          "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
-          "tested": {
-            "bytes": 8968,
-            "sha256": "934a4d4302984fe23ecda8e527cbfe4ab34479b46d1ef70bfbaf127f1664d667"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 9052,
-            "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77"
-          },
-          "currentMatchesTested": false,
-          "currentMatchesTestedExceptCRLF": false,
-          "headBlob": {
-            "bytes": 9052,
-            "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": false
-          }
-        },
-        {
-          "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
-          "tested": {
-            "bytes": 14317,
-            "sha256": "447f4548ce2cf7da4b6004d0d42b5f25ce53479c9b5b4e256d15428f590692c0"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 15471,
-            "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe"
-          },
-          "currentMatchesTested": false,
-          "currentMatchesTestedExceptCRLF": false,
-          "headBlob": {
-            "bytes": 15471,
-            "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": false
-          }
-        },
-        {
-          "path": "apps/web/features/projects/project-repository-configuration.tsx",
-          "tested": {
-            "bytes": 22662,
-            "sha256": "24e12db170e4dc2dfdd2df1c23bfe21d17ea3646a4c8d4ba12d453dd5df61e37"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a"
-          },
-          "currentMatchesTested": false,
-          "currentMatchesTestedExceptCRLF": false,
-          "headBlob": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": false
-          }
-        }
-      ],
-      "changedDuringRun": [],
-      "currentDifferences": [
-        "apps/web/e2e/fixtures/configuration-readiness.ts",
-        "apps/web/features/projects/project-repository-configuration.test.tsx",
-        "apps/web/features/projects/project-repository-configuration.tsx"
-      ]
-    },
-    {
-      "runId": "a2-e9a97c5f",
-      "testedHead": "b492a35b11445c157a825b5e747ac0e15506e491",
-      "files": [
-        {
-          "path": "apps/web/app/lib/i18n.tsx",
-          "tested": {
-            "bytes": 207067,
-            "sha256": "43c387ab269479f247ad0007f686b7c88ef4fe9790776108209d709f145b48e7"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 207067,
-            "sha256": "43c387ab269479f247ad0007f686b7c88ef4fe9790776108209d709f145b48e7"
-          },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
-          "headBlob": {
-            "bytes": 202503,
-            "sha256": "e18a59f6b056fa53c9d2d0b3bcfc10f96dfaf24373d72dc3a1e51324541cb139",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": true
-          }
-        },
-        {
-          "path": "apps/web/e2e/configuration-readiness.spec.ts",
-          "tested": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66"
-          },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
-          "headBlob": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66",
-            "matchesTested": true,
-            "matchesTestedExceptCRLF": true
-          }
-        },
-        {
-          "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
-          "tested": {
-            "bytes": 8968,
-            "sha256": "934a4d4302984fe23ecda8e527cbfe4ab34479b46d1ef70bfbaf127f1664d667"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 9052,
-            "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77"
-          },
-          "currentMatchesTested": false,
-          "currentMatchesTestedExceptCRLF": false,
-          "headBlob": {
-            "bytes": 9052,
-            "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": false
-          }
-        },
-        {
-          "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
-          "tested": {
-            "bytes": 15429,
-            "sha256": "7a4f157c0efc65b87a5887d8abdd8718e5f34ccc3b0a3408b9c3b746b16c45f6"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 15471,
-            "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe"
-          },
-          "currentMatchesTested": false,
-          "currentMatchesTestedExceptCRLF": false,
-          "headBlob": {
-            "bytes": 15471,
-            "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": false
-          }
-        },
-        {
-          "path": "apps/web/features/projects/project-repository-configuration.tsx",
-          "tested": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a"
-          },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
-          "headBlob": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a",
-            "matchesTested": true,
-            "matchesTestedExceptCRLF": true
-          }
-        }
-      ],
-      "changedDuringRun": [],
-      "currentDifferences": [
-        "apps/web/e2e/fixtures/configuration-readiness.ts",
-        "apps/web/features/projects/project-repository-configuration.test.tsx"
-      ]
-    },
-    {
-      "runId": "a2-99deca8f",
-      "testedHead": "b492a35b11445c157a825b5e747ac0e15506e491",
-      "files": [
-        {
-          "path": "apps/web/app/lib/i18n.tsx",
-          "tested": {
-            "bytes": 207067,
-            "sha256": "43c387ab269479f247ad0007f686b7c88ef4fe9790776108209d709f145b48e7"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 207067,
-            "sha256": "43c387ab269479f247ad0007f686b7c88ef4fe9790776108209d709f145b48e7"
-          },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
-          "headBlob": {
-            "bytes": 202503,
-            "sha256": "e18a59f6b056fa53c9d2d0b3bcfc10f96dfaf24373d72dc3a1e51324541cb139",
-            "matchesTested": false,
-            "matchesTestedExceptCRLF": true
-          }
-        },
-        {
-          "path": "apps/web/e2e/configuration-readiness.spec.ts",
-          "tested": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66"
-          },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
-          "headBlob": {
-            "bytes": 16437,
-            "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66",
-            "matchesTested": true,
-            "matchesTestedExceptCRLF": true
-          }
-        },
-        {
-          "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
-          "tested": {
-            "bytes": 9052,
-            "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 9052,
-            "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77"
-          },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
-          "headBlob": {
-            "bytes": 9052,
-            "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77",
-            "matchesTested": true,
-            "matchesTestedExceptCRLF": true
-          }
-        },
-        {
-          "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
-          "tested": {
-            "bytes": 15471,
-            "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe"
-          },
-          "beforeMatchesAfter": true,
-          "current": {
-            "bytes": 15471,
-            "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe"
-          },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
-          "headBlob": {
-            "bytes": 15471,
-            "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe",
+            "bytes": 5969,
+            "sha256": "dd7a36112228898cce97fe253f4e36fa4988f76fb0dd51c02eabaf7ffafe9471",
             "matchesTested": true,
             "matchesTestedExceptCRLF": true
           }
@@ -2017,19 +1622,19 @@
         {
           "path": "apps/web/features/projects/project-repository-configuration.tsx",
           "tested": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a"
+            "bytes": 23737,
+            "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e"
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a"
+            "bytes": 23737,
+            "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e"
           },
           "currentMatchesTested": true,
           "currentMatchesTestedExceptCRLF": true,
           "headBlob": {
-            "bytes": 22911,
-            "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a",
+            "bytes": 23737,
+            "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e",
             "matchesTested": true,
             "matchesTestedExceptCRLF": true
           }

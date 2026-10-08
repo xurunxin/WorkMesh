@@ -83,3 +83,5 @@ Lite 入口从精确提交构建并 save/load，目标服务不挂载源码，�
 旧映射、源绑定和 CI 原字节存于 `configuration-recovery/history/`；首轮原焦点失败和同源码独立/完整重跑均保留。当前 `execution-map.json`、`execution-results.json` 以及相应原件逐输入给出结果，不标记整卡完成。人类五项视觉差异、真实设备/厂商、实施独审、最新 Required CI 和实际 main 仍待完成。
 
 本轮新 Lite `a2-lite-179f2a01` 已完成，受测提交 `fc14c523ae86c13e952e47d19b7508695c402d76`：真实四角色/save-load、实际代理、无源码安装、认证、逐项配置与生产 Worker HTTPS 解析闭环，原 `@lite` 1 项通过（5.9s），退出 0。关键宿主输入前后十项完全相同；专用 Docker 资源/镜像/目录与七条逐 path 操作均完成收尾，原件及精确绑定见 [恢复报告](configuration-recovery-review.md)。旧安装成功不冒作本轮结果，技术通过不冒人类视觉接受。
+
+后续独审发现上述第三项在焦点/实时/手动读取迟到时仍未闭合。本轮统一取消和代际门禁，当前成果见 [读取代际报告](context-read-generation-review.md)：六个真实 apiMutation 反例与原 22 项恢复测试通过，`a2-71164f40` 根单元 Web 825 项、完整浏览器 78 项及 A2 关闭 Gitea 11 项通过，lint/typecheck/CI 策略/build 退出 0。新精确产品 `380aad996489dbdabddd212be8f45edbcdda7209` 的 `a2-lite-23646193` 原无源码安装用例 1 项通过，十个宿主输入前后相同，专用资源与七条临时路径完成归属清理。前面的运行和结论保留历史，原六项/九类要求、五项人类视觉差异、独审/latest Required CI/actual main 门禁不删除。

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-08T18:29:46.016Z",
+  "generatedAt": "2026-10-08T19:07:40.676Z",
   "scope": "仅本 A2 工作树登记资源；完整逐 ID/path 原始回执保留，汇总不替代原件",
   "runs": [
     {
@@ -1281,6 +1281,90 @@
       ],
       "pathReceipts": null,
       "sanitization": "runs/a2-6f89cd29/sanitization.json",
+      "crashObservation": null
+    },
+    {
+      "runId": "a2-71164f40",
+      "receipt": "runs/a2-71164f40/receipts.json",
+      "outcome": null,
+      "resources": [
+        {
+          "type": "container",
+          "name": "a2-71164f40-postgres",
+          "owner": "a2-71164f40",
+          "image": "postgres:16-alpine",
+          "plannedAt": "2026-10-08T18:48:17.094Z",
+          "id": "0026d30e257d5600de30c0b7fb11586e5a77765d6a448ba01693d510d08c6677",
+          "cleanup": {
+            "code": 0,
+            "output": "0026d30e257d5600de30c0b7fb11586e5a77765d6a448ba01693d510d08c6677\n",
+            "at": "2026-10-08T18:58:56.248Z"
+          },
+          "preDelete": {
+            "id": "0026d30e257d5600de30c0b7fb11586e5a77765d6a448ba01693d510d08c6677",
+            "owner": "a2-71164f40",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:58:55.890Z"
+          }
+        },
+        {
+          "type": "container",
+          "name": "a2-71164f40-redis",
+          "owner": "a2-71164f40",
+          "image": "redis:7-alpine",
+          "plannedAt": "2026-10-08T18:48:17.313Z",
+          "id": "8394081acacad2ac77731a6d333dc76b78c9eb3fdef93b5454c49dc966822bf7",
+          "cleanup": {
+            "code": 0,
+            "output": "8394081acacad2ac77731a6d333dc76b78c9eb3fdef93b5454c49dc966822bf7\n",
+            "at": "2026-10-08T18:58:55.699Z"
+          },
+          "preDelete": {
+            "id": "8394081acacad2ac77731a6d333dc76b78c9eb3fdef93b5454c49dc966822bf7",
+            "owner": "a2-71164f40",
+            "exitCode": 0,
+            "mounts": [
+              {
+                "Type": "volume",
+                "Name": "2e1eee431b7c2477eb7da95ea85ff3156e4de0d56981ebd7ba6855a445b72a6a",
+                "Source": "/var/lib/docker/volumes/2e1eee431b7c2477eb7da95ea85ff3156e4de0d56981ebd7ba6855a445b72a6a/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+              }
+            ],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:58:55.484Z"
+          }
+        },
+        {
+          "type": "container",
+          "name": "a2-71164f40-s3",
+          "owner": "a2-71164f40",
+          "image": "rustfs/rustfs:1.0.0",
+          "plannedAt": "2026-10-08T18:48:17.562Z",
+          "id": "00cd32ae908b496cd1a88bca8d4dd75c33759c70d7f7080cc9d09195345e537e",
+          "cleanup": {
+            "code": 0,
+            "output": "00cd32ae908b496cd1a88bca8d4dd75c33759c70d7f7080cc9d09195345e537e\n",
+            "at": "2026-10-08T18:58:55.296Z"
+          },
+          "preDelete": {
+            "id": "00cd32ae908b496cd1a88bca8d4dd75c33759c70d7f7080cc9d09195345e537e",
+            "owner": "a2-71164f40",
+            "exitCode": 0,
+            "mounts": [],
+            "activity": "验收子进程已结束，保全日志与源码后收尾",
+            "at": "2026-10-08T18:58:55.070Z"
+          }
+        }
+      ],
+      "pathReceipts": null,
+      "sanitization": "runs/a2-71164f40/sanitization.json",
       "crashObservation": null
     },
     {
@@ -3467,6 +3551,427 @@
       "crashObservation": null
     },
     {
+      "runId": "a2-lite-23646193",
+      "receipt": "runs/a2-lite-23646193/receipts.json",
+      "outcome": "本机无源码 Lite 配置链路通过；真实设备和真实厂商未验收",
+      "resources": [
+        {
+          "type": "directory",
+          "target": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T18:59:45.668Z",
+          "cleanup": {
+            "code": 0,
+            "output": ""
+          },
+          "realPath": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193",
+          "created": true,
+          "preDelete": {
+            "paths": [
+              {
+                "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193",
+                "type": "directory",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\docker-compose.lite.yml",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\provider.override.yml",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\tls",
+                "type": "directory",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\tls\\ca.pem",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\tls\\key.pem",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\workmesh-lite.tar",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              }
+            ],
+            "activity": "compose/provider/probe 收尾完成",
+            "at": "2026-10-08T19:05:55.921Z"
+          }
+        },
+        {
+          "type": "image",
+          "target": "workmesh-a2-lite:a2-lite-23646193",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T18:59:45.671Z",
+          "cleanup": {
+            "code": 0,
+            "output": "Untagged: workmesh-a2-lite:a2-lite-23646193\nDeleted: sha256:eababb69224f1db675a2f0f1d78e1b8267cb551b1f8f36152e5ffbeb4c9b388f\n"
+          },
+          "id": "sha256:eababb69224f1db675a2f0f1d78e1b8267cb551b1f8f36152e5ffbeb4c9b388f",
+          "preDelete": {
+            "owner": "a2-lite-23646193",
+            "id": "sha256:eababb69224f1db675a2f0f1d78e1b8267cb551b1f8f36152e5ffbeb4c9b388f",
+            "referenceIds": [],
+            "activity": "核对专用镜像实际容器引用",
+            "at": "2026-10-08T19:05:55.626Z"
+          }
+        },
+        {
+          "type": "container",
+          "target": "a2-lite-23646193-probe-migrate",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T19:03:47.427Z",
+          "cleanup": {
+            "code": 0,
+            "output": "8e62b5eb790cb64ad4bdb19de3e80e303105e43b01c70ee147a88495dc105519\n"
+          },
+          "id": "8e62b5eb790cb64ad4bdb19de3e80e303105e43b01c70ee147a88495dc105519",
+          "preDelete": {
+            "owner": "a2-lite-23646193",
+            "code": 0,
+            "id": "8e62b5eb790cb64ad4bdb19de3e80e303105e43b01c70ee147a88495dc105519",
+            "at": "2026-10-08T19:05:55.285Z"
+          }
+        },
+        {
+          "type": "container",
+          "target": "a2-lite-23646193-probe-api",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T19:04:20.328Z",
+          "cleanup": {
+            "code": 0,
+            "output": "295bffb8a0c7c04cf717f62a9e389c8fb1bf9a4260ce01593f5e6adadf4eccd0\n"
+          },
+          "id": "295bffb8a0c7c04cf717f62a9e389c8fb1bf9a4260ce01593f5e6adadf4eccd0",
+          "preDelete": {
+            "owner": "a2-lite-23646193",
+            "code": 0,
+            "id": "295bffb8a0c7c04cf717f62a9e389c8fb1bf9a4260ce01593f5e6adadf4eccd0",
+            "at": "2026-10-08T19:05:55.007Z"
+          }
+        },
+        {
+          "type": "container",
+          "target": "a2-lite-23646193-probe-worker",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T19:04:35.057Z",
+          "cleanup": {
+            "code": 0,
+            "output": "c4f850d347eab962230518bf6dbeee64ebdd2ffb292e9c2a431fc5d4148f1594\n"
+          },
+          "id": "c4f850d347eab962230518bf6dbeee64ebdd2ffb292e9c2a431fc5d4148f1594",
+          "preDelete": {
+            "owner": "a2-lite-23646193",
+            "code": 0,
+            "id": "c4f850d347eab962230518bf6dbeee64ebdd2ffb292e9c2a431fc5d4148f1594",
+            "at": "2026-10-08T19:05:54.799Z"
+          }
+        },
+        {
+          "type": "container",
+          "target": "a2-lite-23646193-probe-web",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T19:04:47.487Z",
+          "cleanup": {
+            "code": 0,
+            "output": "119dcbdd7225eab218531241837bb349d7f41ff978d86f2b5618912de71105ba\n"
+          },
+          "id": "119dcbdd7225eab218531241837bb349d7f41ff978d86f2b5618912de71105ba",
+          "preDelete": {
+            "owner": "a2-lite-23646193",
+            "code": 0,
+            "id": "119dcbdd7225eab218531241837bb349d7f41ff978d86f2b5618912de71105ba",
+            "at": "2026-10-08T19:05:54.520Z"
+          }
+        },
+        {
+          "type": "file",
+          "target": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\workmesh-lite.tar",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T19:05:00.214Z",
+          "cleanup": null
+        },
+        {
+          "type": "volume",
+          "target": "a2-lite-23646193-ca",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T19:05:04.226Z",
+          "cleanup": {
+            "code": 0,
+            "output": "a2-lite-23646193-ca\n"
+          },
+          "created": true,
+          "preDelete": {
+            "owner": "a2-lite-23646193",
+            "referenceIds": [],
+            "activity": "compose 已结束，CA 装载容器已清理；核对外部测试卷引用",
+            "at": "2026-10-08T19:05:54.348Z"
+          }
+        },
+        {
+          "type": "container",
+          "target": "a2-lite-23646193-ca-loader",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T19:05:04.496Z",
+          "cleanup": {
+            "code": 0,
+            "output": "8ad19f9fb452864ecbd95f06428a407757fa8bc85e324b8168aee6eea68d0789\n"
+          },
+          "id": "8ad19f9fb452864ecbd95f06428a407757fa8bc85e324b8168aee6eea68d0789",
+          "preDelete": {
+            "owner": "a2-lite-23646193",
+            "code": 0,
+            "id": "8ad19f9fb452864ecbd95f06428a407757fa8bc85e324b8168aee6eea68d0789",
+            "at": "2026-10-08T19:05:51.411Z"
+          }
+        },
+        {
+          "type": "https-provider",
+          "target": "host.docker.internal:56749",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T19:05:05.033Z",
+          "cleanup": "已关闭"
+        },
+        {
+          "type": "compose-project",
+          "target": "a2-lite-23646193",
+          "owner": "a2-lite-23646193",
+          "createdAt": "2026-10-08T19:05:05.036Z",
+          "cleanup": {
+            "code": 0,
+            "output": " Container a2-lite-23646193-worker-1 Stopping \n Container a2-lite-23646193-web-1 Stopping \n Container a2-lite-23646193-web-1 Stopped \n Container a2-lite-23646193-web-1 Removing \n Container a2-lite-23646193-worker-1 Stopped \n Container a2-lite-23646193-worker-1 Removing \n Container a2-lite-23646193-web-1 Removed \n Container a2-lite-23646193-api-1 Stopping \n Container a2-lite-23646193-worker-1 Removed \n Container a2-lite-23646193-api-1 Stopped \n Container a2-lite-23646193-api-1 Removing \n Container a2-lite-23646193-api-1 Removed \n Container a2-lite-23646193-migrate-1 Stopping \n Container a2-lite-23646193-minio-init-1 Stopping \n Container a2-lite-23646193-redis-1 Stopping \n Container a2-lite-23646193-minio-init-1 Stopped \n Container a2-lite-23646193-minio-init-1 Removing \n Container a2-lite-23646193-migrate-1 Stopped \n Container a2-lite-23646193-migrate-1 Removing \n Container a2-lite-23646193-minio-init-1 Removed \n Container a2-lite-23646193-minio-1 Stopping \n Container a2-lite-23646193-migrate-1 Removed \n Container a2-lite-23646193-postgres-1 Stopping \n Container a2-lite-23646193-redis-1 Stopped \n Container a2-lite-23646193-redis-1 Removing \n Container a2-lite-23646193-redis-1 Removed \n Container a2-lite-23646193-minio-1 Stopped \n Container a2-lite-23646193-minio-1 Removing \n Container a2-lite-23646193-minio-1 Removed \n Container a2-lite-23646193-postgres-1 Stopped \n Container a2-lite-23646193-postgres-1 Removing \n Container a2-lite-23646193-postgres-1 Removed \n Volume a2-lite-23646193_lite-redis-data Removing \n Volume a2-lite-23646193_lite-object-data Removing \n Volume a2-lite-23646193_lite-postgres-data Removing \n Network a2-lite-23646193_default Removing \n Volume a2-lite-23646193_lite-object-data Removed \n Volume a2-lite-23646193_lite-redis-data Removed \n Volume a2-lite-23646193_lite-postgres-data Removed \n Network a2-lite-23646193_default Removed \n"
+          },
+          "preDelete": {
+            "projectName": "a2-lite-23646193",
+            "directory": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193",
+            "resources": [
+              {
+                "kind": "container",
+                "id": "cf4fe2c2999e",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:46.863Z"
+              },
+              {
+                "kind": "container",
+                "id": "9e464a8c2a86",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:46.951Z"
+              },
+              {
+                "kind": "container",
+                "id": "260d340fda23",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:47.041Z"
+              },
+              {
+                "kind": "container",
+                "id": "4c446f0e3fc4",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:47.128Z"
+              },
+              {
+                "kind": "container",
+                "id": "a63e5fbf4c37",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:47.215Z"
+              },
+              {
+                "kind": "container",
+                "id": "1d3ef900b7a2",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:47.302Z"
+              },
+              {
+                "kind": "container",
+                "id": "b3fbd227bf1c",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:47.397Z"
+              },
+              {
+                "kind": "container",
+                "id": "f03d7a775e83",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:47.489Z"
+              },
+              {
+                "kind": "volume",
+                "id": "a2-lite-23646193_lite-object-data",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:47.687Z"
+              },
+              {
+                "kind": "volume",
+                "id": "a2-lite-23646193_lite-postgres-data",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:47.783Z"
+              },
+              {
+                "kind": "volume",
+                "id": "a2-lite-23646193_lite-redis-data",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:47.878Z"
+              },
+              {
+                "kind": "network",
+                "id": "afe1658fe744",
+                "owner": "a2-lite-23646193",
+                "code": 0,
+                "at": "2026-10-08T19:05:48.081Z"
+              }
+            ],
+            "activity": "验收已结束，已保全 ps/logs，逐资源核对 project label",
+            "at": "2026-10-08T19:05:48.081Z"
+          },
+          "postDelete": [
+            {
+              "kind": "container",
+              "id": "cf4fe2c2999e",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:50.099Z"
+            },
+            {
+              "kind": "container",
+              "id": "9e464a8c2a86",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:50.205Z"
+            },
+            {
+              "kind": "container",
+              "id": "260d340fda23",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:50.314Z"
+            },
+            {
+              "kind": "container",
+              "id": "4c446f0e3fc4",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:50.421Z"
+            },
+            {
+              "kind": "container",
+              "id": "a63e5fbf4c37",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:50.529Z"
+            },
+            {
+              "kind": "container",
+              "id": "1d3ef900b7a2",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:50.713Z"
+            },
+            {
+              "kind": "container",
+              "id": "b3fbd227bf1c",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:50.827Z"
+            },
+            {
+              "kind": "container",
+              "id": "f03d7a775e83",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:50.932Z"
+            },
+            {
+              "kind": "volume",
+              "id": "a2-lite-23646193_lite-object-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:51.023Z"
+            },
+            {
+              "kind": "volume",
+              "id": "a2-lite-23646193_lite-postgres-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:51.115Z"
+            },
+            {
+              "kind": "volume",
+              "id": "a2-lite-23646193_lite-redis-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:51.201Z"
+            },
+            {
+              "kind": "network",
+              "id": "afe1658fe744",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-08T19:05:51.293Z"
+            }
+          ]
+        }
+      ],
+      "pathReceipts": [
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\workmesh-lite.tar",
+          "code": 0,
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\tls\\key.pem",
+          "code": 0,
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\tls\\ca.pem",
+          "code": 0,
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\tls",
+          "code": 0,
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\provider.override.yml",
+          "code": 0,
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193\\docker-compose.lite.yml",
+          "code": 0,
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-23646193",
+          "code": 0,
+          "exists": false
+        }
+      ],
+      "sanitization": null,
+      "crashObservation": null
+    },
+    {
       "runId": "a2-lite-333f7614",
       "receipt": "runs/a2-lite-333f7614/receipts.json",
       "outcome": "本机无源码 Lite 配置链路通过；真实设备和真实厂商未验收",
@@ -4702,8 +5207,8 @@
   ],
   "archiveCleanup": {
     "inventory": "raw-evidence-archives.json",
-    "entries": 3246,
-    "verifiedAndRemovedCopies": 3246
+    "entries": 3369,
+    "verifiedAndRemovedCopies": 3369
   },
   "retained": [
     {

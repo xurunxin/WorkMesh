@@ -1,0 +1,67 @@
+{
+  "observedAt": "2026-10-08T19:06:08.836Z",
+  "phase": "实际安装及收尾结束后实读",
+  "head": "380aad996489dbdabddd212be8f45edbcdda7209",
+  "files": [
+    {
+      "path": "infra/docker/lite.Dockerfile",
+      "bytes": 5908,
+      "sha256": "ed12490b9f817cb5331d0be986594c93f70deb0b6433a89ec6d853008632ba01",
+      "matchesBeforeBrowser": true
+    },
+    {
+      "path": "docker-compose.lite.yml",
+      "bytes": 14981,
+      "sha256": "6afd85d7af1b28da003fd4c26a123e2b9e7102a9b73b937b1c500621275e0edb",
+      "matchesBeforeBrowser": true
+    },
+    {
+      "path": "apps/web/next.config.ts",
+      "bytes": 1920,
+      "sha256": "166dcbee4bbddfbdce41ee2b892ce586c61c6aaeb8b40318649f10246777e54f",
+      "matchesBeforeBrowser": true
+    },
+    {
+      "path": "scripts/verify-a2-lite.mjs",
+      "bytes": 21912,
+      "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32",
+      "matchesBeforeBrowser": true
+    },
+    {
+      "path": "apps/web/playwright.a2-lite.config.ts",
+      "bytes": 648,
+      "sha256": "4bc1c255350f561b927b8f9b85f511961645d802c74dc07534d51ab3eabcdf33",
+      "matchesBeforeBrowser": true
+    },
+    {
+      "path": "apps/web/e2e/configuration-readiness.spec.ts",
+      "bytes": 16437,
+      "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66",
+      "matchesBeforeBrowser": true
+    },
+    {
+      "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+      "bytes": 9052,
+      "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77",
+      "matchesBeforeBrowser": true
+    },
+    {
+      "path": "apps/web/e2e/fixtures/configuration-readiness-provider.ts",
+      "bytes": 1336,
+      "sha256": "991b255309731506f3a862bc878b7f7783bacf32f20a623bf8ad05d868b35d5f",
+      "matchesBeforeBrowser": true
+    },
+    {
+      "path": "apps/web/features/projects/project-repository-configuration.tsx",
+      "bytes": 23737,
+      "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e",
+      "matchesBeforeBrowser": true
+    },
+    {
+      "path": "apps/web/app/lib/i18n.tsx",
+      "bytes": 207067,
+      "sha256": "43c387ab269479f247ad0007f686b7c88ef4fe9790776108209d709f145b48e7",
+      "matchesBeforeBrowser": true
+    }
+  ]
+}

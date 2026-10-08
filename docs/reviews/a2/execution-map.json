@@ -8,37 +8,37 @@
       "id": "todo-9-T1",
       "file": "apps/web/e2e/configuration-readiness.spec.ts",
       "caseName": "依赖深度排序",
-      "result": "a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史"
+      "result": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过"
     },
     {
       "id": "todo-9-T2",
       "file": "apps/web/e2e/configuration-readiness.spec.ts",
       "caseName": "逐项配置后 Back 重算并允许逆序解决",
-      "result": "a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史"
+      "result": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过"
     },
     {
       "id": "todo-9-T3",
       "file": "apps/web/e2e/configuration-readiness.spec.ts",
       "caseName": "可观察项全部满足时无横幅",
-      "result": "a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史"
+      "result": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过"
     },
     {
       "id": "todo-9-T4",
       "file": "apps/web/e2e/configuration-readiness.spec.ts",
       "caseName": "ready/unknown/not_applicable 及普通空列表不长主动作",
-      "result": "a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史"
+      "result": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过"
     },
     {
       "id": "todo-9-T5",
       "file": "apps/web/e2e/configuration-readiness.spec.ts",
       "caseName": "Back/Forward、键盘焦点、390px 窄屏、中英文和明暗回归",
-      "result": "a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史"
+      "result": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过"
     },
     {
       "id": "todo-9-T6",
       "file": "apps/web/e2e/configuration-readiness.spec.ts",
       "caseName": "Lite 安装后逐项补齐直到横幅消失 @lite",
-      "result": "a2-lite-179f2a01：精确 fc14c523ae86c13e952e47d19b7508695c402d76 镜像，真实四角色/save-load、无源码 Compose、编译代理规则及 Web 安装/认证、HTTPS 生产 Worker 解析；原 @lite 1 项实际通过，退出 0；真实设备与厂商未验收"
+      "result": "a2-lite-23646193：精确 380aad996489dbdabddd212be8f45edbcdda7209 镜像，真实四角色/save-load、无源码 Compose、Web 安装/认证及 HTTPS 生产 Worker；原 @lite 1 项通过，退出 0；真实设备与厂商未验收"
     }
   ],
   "matrix": [
@@ -47,21 +47,21 @@
       "applicable": true,
       "file": "apps/web/e2e/configuration-readiness.spec.ts",
       "caseName": "依赖深度排序",
-      "result": "a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史"
+      "result": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过"
     },
     {
       "category": "unauthorized actor",
       "applicable": true,
       "file": "apps/web/e2e/configuration-readiness.spec.ts",
       "caseName": "部分撤权后项目配置只读，撤销 Team 后不回退或保留旧操作",
-      "result": "a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史"
+      "result": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过"
     },
     {
       "category": "invalid state transition",
       "applicable": true,
       "file": "apps/web/features/projects/project-repository-configuration.test.tsx",
       "caseName": "POST 只进入等待状态，其他动作或旧上下文不能确认本次成功",
-      "result": "a2-e9a97c5f 根单元 29 task 成功、Web 819 通过；仅测试加强后 a2-99deca8f 组件 22 项和真实 i18n 3 项通过；当前受测原字节与提交 blob 分列绑定"
+      "result": "a2-71164f40 根单元退出 0；三入口×迟到成功/失败共六个真实 apiMutation 反例通过，原 22 项恢复测试保留"
     },
     {
       "category": "duplicate idempotency key",
@@ -215,7 +215,7 @@
         "23 条 GitHub，小页 SQL 筛选无重复遗漏",
         "UI 加载更多后实际 pin 与返回重算"
       ],
-      "result": "a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史"
+      "result": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过"
     },
     {
       "issue": "B3",
@@ -277,7 +277,7 @@
         "提交后秘密清除且不进入 storage 或 URL",
         "不创建对话或委派，不自动发送"
       ],
-      "result": "a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史"
+      "result": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过"
     },
     {
       "id": "lite-build-proxy",
@@ -292,7 +292,7 @@
       "test": "Lite 安装后逐项补齐直到横幅消失 @lite",
       "evidence": "docs/reviews/a2/runs/a2-lite-179f2a01/receipts.json",
       "scope": "无协议、权限、端点、迁移或部署拓扑增量",
-      "result": "a2-lite-179f2a01：精确 fc14c523ae86c13e952e47d19b7508695c402d76 镜像，真实四角色/save-load、无源码 Compose、编译代理规则及 Web 安装/认证、HTTPS 生产 Worker 解析；原 @lite 1 项实际通过，退出 0；真实设备与厂商未验收"
+      "result": "a2-lite-23646193：精确 380aad996489dbdabddd212be8f45edbcdda7209 镜像，真实四角色/save-load、无源码 Compose、Web 安装/认证及 HTTPS 生产 Worker；原 @lite 1 项通过，退出 0；真实设备与厂商未验收"
     },
     {
       "id": "configuration-recovery-replay",
@@ -303,7 +303,7 @@
         "page.reload() 后同文重放保持原 key 和 action ID",
         "准确动作/仓库/目标/正文确认，不以新基线排除"
       ],
-      "result": "a2-e9a97c5f 根单元 29 task 成功、Web 819 通过；仅测试加强后 a2-99deca8f 组件 22 项和真实 i18n 3 项通过；当前受测原字节与提交 blob 分列绑定；a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史；精确场景见 configuration-recovery-review.md"
+      "result": "a2-71164f40 根单元退出 0；三入口×迟到成功/失败共六个真实 apiMutation 反例通过，原 22 项恢复测试保留；a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过；精确场景见 docs/reviews/a2/context-read-generation-review.md"
     },
     {
       "id": "configuration-recovery-pages",
@@ -314,7 +314,7 @@
         "焦点、真实 workspace 事件及 pinned 后保留选择和待确认动作",
         "真实 POST 指向所选仓库，返回后缺口消失"
       ],
-      "result": "a2-e9a97c5f 根单元 29 task 成功、Web 819 通过；仅测试加强后 a2-99deca8f 组件 22 项和真实 i18n 3 项通过；当前受测原字节与提交 blob 分列绑定；a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史；精确场景见 configuration-recovery-review.md"
+      "result": "a2-71164f40 根单元退出 0；三入口×迟到成功/失败共六个真实 apiMutation 反例通过，原 22 项恢复测试保留；a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过；精确场景见 docs/reviews/a2/context-read-generation-review.md"
     },
     {
       "id": "configuration-recovery-waiting",
@@ -330,7 +330,27 @@
         "只读确认重试不追加命令",
         "超时与读取失败恢复编辑/原动作重试，挂起读取按期限取消"
       ],
-      "result": "a2-e9a97c5f 根单元 29 task 成功、Web 819 通过；仅测试加强后 a2-99deca8f 组件 22 项和真实 i18n 3 项通过；当前受测原字节与提交 blob 分列绑定；a2-e9a97c5f 最终产品源码完整浏览器退出 0；仅两处测试加强可见基线断言后 a2-99deca8f 关闭 Gitea 的完整 A2 用例退出 0；首败与旧源码重跑保留历史；精确场景见 configuration-recovery-review.md"
+      "result": "a2-71164f40 根单元退出 0；三入口×迟到成功/失败共六个真实 apiMutation 反例通过，原 22 项恢复测试保留；a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过；精确场景见 docs/reviews/a2/context-read-generation-review.md"
+    },
+    {
+      "id": "configuration-recovery-read-generation",
+      "file": "apps/web/features/projects/project-repository-configuration-races.test.tsx",
+      "caseName": "上下文读取代际隔离",
+      "cases": [
+        "焦点旧读取迟到成功不覆盖修改正文后的新动作，继续自动确认",
+        "焦点旧读取迟到失败不覆盖修改正文后的新动作，继续自动确认",
+        "实时旧读取迟到成功不覆盖修改正文后的新动作，继续自动确认",
+        "实时旧读取迟到失败不覆盖修改正文后的新动作，继续自动确认",
+        "手动旧读取迟到成功不覆盖修改正文后的新动作，继续自动确认",
+        "手动旧读取迟到失败不覆盖修改正文后的新动作，继续自动确认"
+      ],
+      "assertions": [
+        "超时保留原动作并允许改 SHA",
+        "真实 apiMutation 两次正文产生不同 key，CSRF 正常",
+        "统一 AbortSignal；无视 abort 的迟到成功/失败亦不得落地",
+        "新动作等待、表单、准确上下文不受旧读取影响，下一轮自动确认且零额外 POST"
+      ],
+      "result": "a2-71164f40 根单元退出 0；三入口×迟到成功/失败共六个真实 apiMutation 反例通过，原 22 项恢复测试保留；a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过；精确场景见 docs/reviews/a2/context-read-generation-review.md"
     }
   ],
   "DoD": "未满足项列表可用 + 全部交互断言通过 + 既有 IA 与导航无回归；原六项与九类要求保持，实际结果逐输入绑定，独审/人类视觉/latest Required CI/actual main 尚未完成",
@@ -348,8 +368,24 @@
     "latestCI": "docs/reviews/a2/latest-ci-readback.json",
     "status": "实现检查结果已绑定；Lite 以独立运行结果为准，真实设备/厂商、视觉确认、独审、latest Required CI、actual main 单列，不标记完成"
   },
-  "liteResult": "a2-lite-179f2a01：精确 fc14c523ae86c13e952e47d19b7508695c402d76 镜像，真实四角色/save-load、无源码 Compose、编译代理规则及 Web 安装/认证、HTTPS 生产 Worker 解析；原 @lite 1 项实际通过，退出 0；真实设备与厂商未验收",
+  "liteResult": "a2-lite-23646193：精确 380aad996489dbdabddd212be8f45edbcdda7209 镜像，真实四角色/save-load、无源码 Compose、Web 安装/认证及 HTTPS 生产 Worker；原 @lite 1 项通过，退出 0；真实设备与厂商未验收",
   "configurationRecovery": {
+    "inputHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+    "report": "docs/reviews/a2/context-read-generation-review.md",
+    "runId": "a2-71164f40",
+    "proofRunId": null,
+    "uiResult": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过",
+    "unitResult": "a2-71164f40 根单元退出 0；三入口×迟到成功/失败共六个真实 apiMutation 反例通过，原 22 项恢复测试保留",
+    "liteRunId": "a2-lite-23646193",
+    "imageHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+    "imageReceipt": "docs/reviews/a2/runs/a2-lite-23646193/receipts.json",
+    "liteHostBinding": {
+      "before": "docs/reviews/a2/runs/a2-lite-23646193/source-before-browser.json",
+      "after": "docs/reviews/a2/runs/a2-lite-23646193/source-after-install.json"
+    }
+  },
+  "previousLiteResult": "a2-lite-333f7614：精确 bb86b1fe31e9b23f6e91171b526c860a0a0fcb22 镜像，四角色/save-load/无源码 Compose/五代理 manifest/真实安装与认证/生产 Worker HTTPS 上下文解析；原 @lite 1 项通过（10.7s），退出 0；真实设备和真实厂商未验收",
+  "previousConfigurationRecovery": {
     "inputHead": "b492a35b11445c157a825b5e747ac0e15506e491",
     "report": "docs/reviews/a2/configuration-recovery-review.md",
     "runId": "a2-e9a97c5f",
@@ -416,5 +452,22 @@
       "after": "docs/reviews/a2/runs/a2-lite-179f2a01/source-after-install.json"
     }
   },
-  "previousLiteResult": "a2-lite-333f7614：精确 bb86b1fe31e9b23f6e91171b526c860a0a0fcb22 镜像，四角色/save-load/无源码 Compose/五代理 manifest/真实安装与认证/生产 Worker HTTPS 上下文解析；原 @lite 1 项通过（10.7s），退出 0；真实设备和真实厂商未验收"
+  "contextReadGeneration": {
+    "inputHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+    "report": "docs/reviews/a2/context-read-generation-review.md",
+    "runId": "a2-71164f40",
+    "proofRunId": null,
+    "uiResult": "a2-71164f40 本轮源码 A2 关闭 Gitea 浏览器及根完整浏览器退出 0；原六项和导航断言保留，skip 不计通过",
+    "unitResult": "a2-71164f40 根单元退出 0；三入口×迟到成功/失败共六个真实 apiMutation 反例通过，原 22 项恢复测试保留",
+    "liteRunId": "a2-lite-23646193",
+    "imageHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+    "imageReceipt": "docs/reviews/a2/runs/a2-lite-23646193/receipts.json",
+    "liteHostBinding": {
+      "before": "docs/reviews/a2/runs/a2-lite-23646193/source-before-browser.json",
+      "after": "docs/reviews/a2/runs/a2-lite-23646193/source-after-install.json"
+    },
+    "feedback": "docs/reviews/a2/context-read-generation/reviewer-feedback.md",
+    "input": "docs/reviews/a2/context-read-generation/input.json"
+  },
+  "priorLiteResult": "a2-lite-179f2a01：精确 fc14c523ae86c13e952e47d19b7508695c402d76 镜像，真实四角色/save-load、无源码 Compose、编译代理规则及 Web 安装/认证、HTTPS 生产 Worker 解析；原 @lite 1 项实际通过，退出 0；真实设备与厂商未验收"
 }

@@ -37,6 +37,8 @@ const approved = input.approvedInputs.map(item => {
   const blob = git(['show', `${head}:${item.path}`])
   return { ...item, actual: digest(blob), matches: same(digest(blob), item) }
 })
+const feedbackBlob = git(['show', `${head}:${input.feedbackSnapshot.path}`])
+const feedback = { ...input.feedbackSnapshot, actual: digest(feedbackBlob), matches: same(digest(feedbackBlob), input.feedbackSnapshot) }
 const backendDiff = git(['diff', '--name-only', input.inputHead, head, '--', 'apps/api', 'apps/worker', 'packages', 'OPENAPI.yaml', 'infra', 'docker-compose.lite.yml', 'scripts']).toString().trim()
 const source = process.argv[2] ? json(`docs/reviews/a2/runs/${process.argv[2]}/source-after.json`).files.map(item => {
   const tested = readEvidence(resolve(root, `docs/reviews/a2/runs/${process.argv[2]}/source/after`, item.path))
@@ -46,10 +48,10 @@ const source = process.argv[2] ? json(`docs/reviews/a2/runs/${process.argv[2]}/s
 }) : []
 const oldEvidenceChanged = [...changes].filter(path => path.startsWith('docs/reviews/a2/configuration-recovery/'))
 const result = { observedAt: new Date().toISOString(), head, inputHead: input.inputHead,
-  originalArchives: { count: before.entries.length, changed: oldChanged }, archives, history, approved,
+  originalArchives: { count: before.entries.length, changed: oldChanged }, archives, history, approved, feedback,
   backendAndDeploymentChanged: backendDiff, oldRecoveryEvidenceChanged: oldEvidenceChanged, source,
   rule: '精确提交 Git blob；gzip 原字节与批准正文独立核验，旧证据只核不变，不重写历史，不预填后续文档提交。' }
 writeFileSync(resolve(root, directory, 'git-byte-proof.json'), JSON.stringify(result, null, 2) + '\n')
-if (oldChanged.length || oldEvidenceChanged.length || backendDiff || [...archives, ...history, ...approved].some(item => !item.matches) || source.some(item => !item.onlyCRLF)) throw Error('当前输入/提交字节未闭合')
+if (oldChanged.length || oldEvidenceChanged.length || backendDiff || !feedback.matches || [...archives, ...history, ...approved].some(item => !item.matches) || source.some(item => !item.onlyCRLF)) throw Error('当前输入/提交字节未闭合')
 console.log(JSON.stringify({ head, archives: archives.length, oldArchivesUnchanged: before.entries.length,
   historyExact: history.length, approvedExact: approved.length, testedSourceExactExceptCRLF: source.length, backendUnchanged: true }))
