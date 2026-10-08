@@ -1,19 +1,39 @@
 {
-  "args": {
-    "branch": "tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe",
-    "limit": 5
-  },
+  "history": [
+    {
+      "args": {
+        "branch": "tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe",
+        "limit": 5
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "No workflow runs in xurunxin/WorkMesh matching branch \"tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe\"."
+          }
+        ]
+      },
+      "observedAfter": {
+        "current_time": "2026-10-08 16:36:12 UTC"
+      },
+      "sourceHead": "3a30e30985b2de92d4dde90d566833297da94cde",
+      "status": "该分支没有可读取的 workflow run；本机检查与历史主线 CI 均不替代本次最新 Required CI。"
+    }
+  ],
+  "observedAt": "2026-10-08 17:24:34 UTC",
+  "head": "52c314be740ca6e7d2769c96f8614b44101ed6db",
+  "codeHead": "bb86b1fe31e9b23f6e91171b526c860a0a0fcb22",
   "result": {
-    "content": [
-      {
-        "type": "text",
-        "text": "No workflow runs in xurunxin/WorkMesh matching branch \"tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe\"."
-      }
-    ]
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "No workflow runs in xurunxin/WorkMesh matching branch \"tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe\"."
+        }
+      ]
+    }
   },
-  "observedAfter": {
-    "current_time": "2026-10-08 16:36:12 UTC"
-  },
-  "sourceHead": "3a30e30985b2de92d4dde90d566833297da94cde",
-  "status": "该分支没有可读取的 workflow run；本机检查与历史主线 CI 均不替代本次最新 Required CI。"
+  "status": "未查询到本分支工作流；latest Required CI 未完成，不复用 main 历史 CI",
+  "deliveryReadback": "docs/reviews/a2/delivery-remote-readback.json"
 }

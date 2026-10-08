@@ -68,4 +68,6 @@ Lite 入口从精确提交构建并 save/load，目标服务不挂载源码，�
 
 原六项、九类适用性、DoD 和三安全修补的实际用例绑定见 `execution-map.json`，规划矩阵仍保留历史要求。不因文档存在、旧 source 通过或主线历史 CI 标记本次通过。最终独审、最新 Required CI、实际 main 落地及人类视觉确认仍单列；本记录不标记整卡完成。
 
+完整材料提交 `52c314be740ca6e7d2769c96f8614b44101ed6db` 与受测产品提交 `bb86b1fe31e9b23f6e91171b526c860a0a0fcb22` 间无产品差异。`delivery-git-byte-proof.json` 核 3045 个已提交归档 blob 与清单一致；`delivery-remote-readback.json` 的实际查询未发现本分支工作流，最新 Required CI 仍未完成，远端 main 仍为 `74f247f9240eaf21e74ef248f71a445c1d4276d7`。后续只读回执和本文增量属于文档收尾，不伪补未来提交 ID 或未来 CI。
+
 只清理登记归属本任务的测试资源，并保存逐 ID/path 检查和操作回执；汇总及原件入口见 [收尾报告](cleanup-report.md)。共享镜像、默认网络、当前 worktree 保留。C3 的拒绝/违规审计及其新旧目录不修改、不删除，旧 worktree 未满足合入/保全/无活动引用条件时不清理。

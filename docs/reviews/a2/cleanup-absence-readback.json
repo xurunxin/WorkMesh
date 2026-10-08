@@ -1,0 +1,2428 @@
+{
+  "policy": "只读核对已登记且回执成功清理的精确资源，不删除、不枚举他人环境",
+  "results": [
+    {
+      "runId": "a2-0c45176e",
+      "kind": "container",
+      "id": "29696499b3788d3f98d2c449aa4e8427cb199ed70a06f3ee432c07608e7a0acf",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "29696499b3788d3f98d2c449aa4e8427cb199ed70a06f3ee432c07608e7a0acf"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 29696499b3788d3f98d2c449aa4e8427cb199ed70a06f3ee432c07608e7a0acf\n",
+      "observedAt": "2026-10-08T17:26:27.015Z"
+    },
+    {
+      "runId": "a2-0c45176e",
+      "kind": "container",
+      "id": "6f46c6a13b3de405b85a0395bb3d1a8549a502c22534e7233e28ceea752163d6",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "6f46c6a13b3de405b85a0395bb3d1a8549a502c22534e7233e28ceea752163d6"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 6f46c6a13b3de405b85a0395bb3d1a8549a502c22534e7233e28ceea752163d6\n",
+      "observedAt": "2026-10-08T17:26:27.138Z"
+    },
+    {
+      "runId": "a2-0c45176e",
+      "kind": "container",
+      "id": "e2580bc5df97a38fbf456b504aea6c402e352e72191f9eba58cd5f538f252a0f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "e2580bc5df97a38fbf456b504aea6c402e352e72191f9eba58cd5f538f252a0f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: e2580bc5df97a38fbf456b504aea6c402e352e72191f9eba58cd5f538f252a0f\n",
+      "observedAt": "2026-10-08T17:26:27.233Z"
+    },
+    {
+      "runId": "a2-1a5e7ae3",
+      "kind": "container",
+      "id": "877c1326648531d280ac7d5f788e2704617f962392b3bfaa5d4a77df57ca3be4",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "877c1326648531d280ac7d5f788e2704617f962392b3bfaa5d4a77df57ca3be4"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 877c1326648531d280ac7d5f788e2704617f962392b3bfaa5d4a77df57ca3be4\n",
+      "observedAt": "2026-10-08T17:26:27.327Z"
+    },
+    {
+      "runId": "a2-1a5e7ae3",
+      "kind": "container",
+      "id": "0b19491afd224f4bcf52fed70a13a38006742097526cb2bc52714ab25c8bb53d",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "0b19491afd224f4bcf52fed70a13a38006742097526cb2bc52714ab25c8bb53d"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 0b19491afd224f4bcf52fed70a13a38006742097526cb2bc52714ab25c8bb53d\n",
+      "observedAt": "2026-10-08T17:26:27.419Z"
+    },
+    {
+      "runId": "a2-1a5e7ae3",
+      "kind": "container",
+      "id": "0e87e4fd6fba848e071eeb754dee8eff708396fc524ac875d6980388971252d5",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "0e87e4fd6fba848e071eeb754dee8eff708396fc524ac875d6980388971252d5"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 0e87e4fd6fba848e071eeb754dee8eff708396fc524ac875d6980388971252d5\n",
+      "observedAt": "2026-10-08T17:26:27.512Z"
+    },
+    {
+      "runId": "a2-1bd8a4f8",
+      "kind": "container",
+      "id": "6988a51a2551ab3f7b731d9e08e6d5a59b8d7fb6cbac5386b64ad1bc2d96f036",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "6988a51a2551ab3f7b731d9e08e6d5a59b8d7fb6cbac5386b64ad1bc2d96f036"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 6988a51a2551ab3f7b731d9e08e6d5a59b8d7fb6cbac5386b64ad1bc2d96f036\n",
+      "observedAt": "2026-10-08T17:26:27.627Z"
+    },
+    {
+      "runId": "a2-1bd8a4f8",
+      "kind": "container",
+      "id": "dfd2d3492b0a86265cfa11177db2685444ae0f585fa4da57333bead3068b5e61",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "dfd2d3492b0a86265cfa11177db2685444ae0f585fa4da57333bead3068b5e61"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: dfd2d3492b0a86265cfa11177db2685444ae0f585fa4da57333bead3068b5e61\n",
+      "observedAt": "2026-10-08T17:26:27.724Z"
+    },
+    {
+      "runId": "a2-1bd8a4f8",
+      "kind": "container",
+      "id": "f02714a657dd5c3379a00a2e8906f61e68c03c7e8ad30ba2940d7b849b44a727",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "f02714a657dd5c3379a00a2e8906f61e68c03c7e8ad30ba2940d7b849b44a727"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: f02714a657dd5c3379a00a2e8906f61e68c03c7e8ad30ba2940d7b849b44a727\n",
+      "observedAt": "2026-10-08T17:26:27.816Z"
+    },
+    {
+      "runId": "a2-21cc8a38",
+      "kind": "container",
+      "id": "6c38a4751ffcbb72a7adee9470a048264a0f16e980d266d489961ee47fc2088d",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "6c38a4751ffcbb72a7adee9470a048264a0f16e980d266d489961ee47fc2088d"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 6c38a4751ffcbb72a7adee9470a048264a0f16e980d266d489961ee47fc2088d\n",
+      "observedAt": "2026-10-08T17:26:27.930Z"
+    },
+    {
+      "runId": "a2-21cc8a38",
+      "kind": "container",
+      "id": "f0427e25e3f7a7501a0c2816d726000f64a81b6f5ef691181e4e45f288ef70d6",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "f0427e25e3f7a7501a0c2816d726000f64a81b6f5ef691181e4e45f288ef70d6"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: f0427e25e3f7a7501a0c2816d726000f64a81b6f5ef691181e4e45f288ef70d6\n",
+      "observedAt": "2026-10-08T17:26:28.021Z"
+    },
+    {
+      "runId": "a2-21cc8a38",
+      "kind": "container",
+      "id": "a9c4a598259b73b7944f675f68ac1bbbffa1a5ffeb4ac901a601bc04a5f69053",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "a9c4a598259b73b7944f675f68ac1bbbffa1a5ffeb4ac901a601bc04a5f69053"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: a9c4a598259b73b7944f675f68ac1bbbffa1a5ffeb4ac901a601bc04a5f69053\n",
+      "observedAt": "2026-10-08T17:26:28.117Z"
+    },
+    {
+      "runId": "a2-22323ec0",
+      "kind": "container",
+      "id": "e7049bd69daa1da02b382c4336863eeec0bbfe1b80c59a29123327d56ba66f9b",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "e7049bd69daa1da02b382c4336863eeec0bbfe1b80c59a29123327d56ba66f9b"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: e7049bd69daa1da02b382c4336863eeec0bbfe1b80c59a29123327d56ba66f9b\n",
+      "observedAt": "2026-10-08T17:26:28.215Z"
+    },
+    {
+      "runId": "a2-22323ec0",
+      "kind": "container",
+      "id": "584011ef3e597a2a159dfd8f468575c6f60e9d6841cb21be0224664e52b246a2",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "584011ef3e597a2a159dfd8f468575c6f60e9d6841cb21be0224664e52b246a2"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 584011ef3e597a2a159dfd8f468575c6f60e9d6841cb21be0224664e52b246a2\n",
+      "observedAt": "2026-10-08T17:26:28.310Z"
+    },
+    {
+      "runId": "a2-22323ec0",
+      "kind": "container",
+      "id": "c06f4434ea6e3b6229a18ecf1c6810a230b1e2df443aedc8da50be35721d7c41",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "c06f4434ea6e3b6229a18ecf1c6810a230b1e2df443aedc8da50be35721d7c41"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: c06f4434ea6e3b6229a18ecf1c6810a230b1e2df443aedc8da50be35721d7c41\n",
+      "observedAt": "2026-10-08T17:26:28.410Z"
+    },
+    {
+      "runId": "a2-24d1b785",
+      "kind": "container",
+      "id": "6304a9cf7a62ee7d78951215eaa8d2d974cc3b814dfebb99dab50845b3ea73ea",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "6304a9cf7a62ee7d78951215eaa8d2d974cc3b814dfebb99dab50845b3ea73ea"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 6304a9cf7a62ee7d78951215eaa8d2d974cc3b814dfebb99dab50845b3ea73ea\n",
+      "observedAt": "2026-10-08T17:26:28.502Z"
+    },
+    {
+      "runId": "a2-24d1b785",
+      "kind": "container",
+      "id": "3c7c149a641ee920c32da6aab405c1d2d995600ef62a76129ae8c297a3f5121c",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "3c7c149a641ee920c32da6aab405c1d2d995600ef62a76129ae8c297a3f5121c"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 3c7c149a641ee920c32da6aab405c1d2d995600ef62a76129ae8c297a3f5121c\n",
+      "observedAt": "2026-10-08T17:26:28.597Z"
+    },
+    {
+      "runId": "a2-24d1b785",
+      "kind": "container",
+      "id": "4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246\n",
+      "observedAt": "2026-10-08T17:26:28.689Z"
+    },
+    {
+      "runId": "a2-2c4f9f75",
+      "kind": "container",
+      "id": "529007d21515c060e3bb878b7c51a1812a2498e34cf979a491b4f059f89bdd8b",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "529007d21515c060e3bb878b7c51a1812a2498e34cf979a491b4f059f89bdd8b"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 529007d21515c060e3bb878b7c51a1812a2498e34cf979a491b4f059f89bdd8b\n",
+      "observedAt": "2026-10-08T17:26:28.782Z"
+    },
+    {
+      "runId": "a2-2c4f9f75",
+      "kind": "container",
+      "id": "708b5e9bdd5ae6d3cb9a3928531114e9c5393ad471e4ef697db496de1bd89d29",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "708b5e9bdd5ae6d3cb9a3928531114e9c5393ad471e4ef697db496de1bd89d29"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 708b5e9bdd5ae6d3cb9a3928531114e9c5393ad471e4ef697db496de1bd89d29\n",
+      "observedAt": "2026-10-08T17:26:28.877Z"
+    },
+    {
+      "runId": "a2-2c4f9f75",
+      "kind": "container",
+      "id": "23e70eb42e4e52cdfdcadf6bbdb02ee6de07eef27c7ebfd8003690dacd781d4f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "23e70eb42e4e52cdfdcadf6bbdb02ee6de07eef27c7ebfd8003690dacd781d4f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 23e70eb42e4e52cdfdcadf6bbdb02ee6de07eef27c7ebfd8003690dacd781d4f\n",
+      "observedAt": "2026-10-08T17:26:28.968Z"
+    },
+    {
+      "runId": "a2-3c3cd914",
+      "kind": "container",
+      "id": "a7905478a0bf811af73a47c7177928f309b48496afaf3286c9b1930b722b71f7",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "a7905478a0bf811af73a47c7177928f309b48496afaf3286c9b1930b722b71f7"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: a7905478a0bf811af73a47c7177928f309b48496afaf3286c9b1930b722b71f7\n",
+      "observedAt": "2026-10-08T17:26:29.061Z"
+    },
+    {
+      "runId": "a2-3c3cd914",
+      "kind": "container",
+      "id": "e17c50232be5fd1aaf5c21575a00dddc7a940a20db313e101c46e060bcbc1086",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "e17c50232be5fd1aaf5c21575a00dddc7a940a20db313e101c46e060bcbc1086"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: e17c50232be5fd1aaf5c21575a00dddc7a940a20db313e101c46e060bcbc1086\n",
+      "observedAt": "2026-10-08T17:26:29.152Z"
+    },
+    {
+      "runId": "a2-3c3cd914",
+      "kind": "container",
+      "id": "b1373b3dbda91055f7ce0bcd17dff1f9dc0098c41f88cd090daa62b2ce2aa780",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "b1373b3dbda91055f7ce0bcd17dff1f9dc0098c41f88cd090daa62b2ce2aa780"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: b1373b3dbda91055f7ce0bcd17dff1f9dc0098c41f88cd090daa62b2ce2aa780\n",
+      "observedAt": "2026-10-08T17:26:29.247Z"
+    },
+    {
+      "runId": "a2-40208d29",
+      "kind": "container",
+      "id": "8355ad7657f593d54f62c5d0fd10d48a024982d601d045c14120769bd8999369",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "8355ad7657f593d54f62c5d0fd10d48a024982d601d045c14120769bd8999369"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 8355ad7657f593d54f62c5d0fd10d48a024982d601d045c14120769bd8999369\n",
+      "observedAt": "2026-10-08T17:26:29.340Z"
+    },
+    {
+      "runId": "a2-40208d29",
+      "kind": "container",
+      "id": "0a1cd16de5a62c4bd3ef8717f6214394ba6577d04e8dabe54bf6a4021600a4ad",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "0a1cd16de5a62c4bd3ef8717f6214394ba6577d04e8dabe54bf6a4021600a4ad"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 0a1cd16de5a62c4bd3ef8717f6214394ba6577d04e8dabe54bf6a4021600a4ad\n",
+      "observedAt": "2026-10-08T17:26:29.437Z"
+    },
+    {
+      "runId": "a2-40208d29",
+      "kind": "container",
+      "id": "27594c3606367b52978af0a78d8e36c96f1c38c4bd874c8f7ee808998d533338",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "27594c3606367b52978af0a78d8e36c96f1c38c4bd874c8f7ee808998d533338"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 27594c3606367b52978af0a78d8e36c96f1c38c4bd874c8f7ee808998d533338\n",
+      "observedAt": "2026-10-08T17:26:29.532Z"
+    },
+    {
+      "runId": "a2-43315499",
+      "kind": "container",
+      "id": "ce03d2ba625a65de0a8afcf8920d472a22c54aad767d4d7d8c060d7fce91102c",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "ce03d2ba625a65de0a8afcf8920d472a22c54aad767d4d7d8c060d7fce91102c"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: ce03d2ba625a65de0a8afcf8920d472a22c54aad767d4d7d8c060d7fce91102c\n",
+      "observedAt": "2026-10-08T17:26:29.625Z"
+    },
+    {
+      "runId": "a2-43315499",
+      "kind": "container",
+      "id": "adc6af129b808b26fde9c2e8bd18e2f1171ada43f597be69eb9127daaf5256f3",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "adc6af129b808b26fde9c2e8bd18e2f1171ada43f597be69eb9127daaf5256f3"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: adc6af129b808b26fde9c2e8bd18e2f1171ada43f597be69eb9127daaf5256f3\n",
+      "observedAt": "2026-10-08T17:26:29.717Z"
+    },
+    {
+      "runId": "a2-43315499",
+      "kind": "container",
+      "id": "2327c10954692d09877b2d6305381bcf209726a31f8c0848062f0f7bd9c98af9",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "2327c10954692d09877b2d6305381bcf209726a31f8c0848062f0f7bd9c98af9"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 2327c10954692d09877b2d6305381bcf209726a31f8c0848062f0f7bd9c98af9\n",
+      "observedAt": "2026-10-08T17:26:29.809Z"
+    },
+    {
+      "runId": "a2-46fe0e21",
+      "kind": "container",
+      "id": "841cdb54ec944c3ff4eca5aa3497d9081901b9febb4c00b1a8017fd686e48e5c",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "841cdb54ec944c3ff4eca5aa3497d9081901b9febb4c00b1a8017fd686e48e5c"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 841cdb54ec944c3ff4eca5aa3497d9081901b9febb4c00b1a8017fd686e48e5c\n",
+      "observedAt": "2026-10-08T17:26:29.905Z"
+    },
+    {
+      "runId": "a2-46fe0e21",
+      "kind": "container",
+      "id": "05b750fd12ae37ad51b51c0d2147962a1cf59eec1032b282e158adba833be868",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "05b750fd12ae37ad51b51c0d2147962a1cf59eec1032b282e158adba833be868"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 05b750fd12ae37ad51b51c0d2147962a1cf59eec1032b282e158adba833be868\n",
+      "observedAt": "2026-10-08T17:26:30.004Z"
+    },
+    {
+      "runId": "a2-46fe0e21",
+      "kind": "container",
+      "id": "4b2dbe5d5c4e08e92d30154a3971328d09f417847e25ba7e13cd8fc4d9562ad9",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "4b2dbe5d5c4e08e92d30154a3971328d09f417847e25ba7e13cd8fc4d9562ad9"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 4b2dbe5d5c4e08e92d30154a3971328d09f417847e25ba7e13cd8fc4d9562ad9\n",
+      "observedAt": "2026-10-08T17:26:30.100Z"
+    },
+    {
+      "runId": "a2-4c606ff3",
+      "kind": "container",
+      "id": "5a927fd8a672494d322badc9812e41a6f2189c2117a7b786a63dd7bd9a1a8ccb",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "5a927fd8a672494d322badc9812e41a6f2189c2117a7b786a63dd7bd9a1a8ccb"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 5a927fd8a672494d322badc9812e41a6f2189c2117a7b786a63dd7bd9a1a8ccb\n",
+      "observedAt": "2026-10-08T17:26:30.199Z"
+    },
+    {
+      "runId": "a2-4c606ff3",
+      "kind": "container",
+      "id": "2a338265ff7c5502b6158aa89320a0f9ad4cbb6e5edc86835f430272e5cf2038",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "2a338265ff7c5502b6158aa89320a0f9ad4cbb6e5edc86835f430272e5cf2038"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 2a338265ff7c5502b6158aa89320a0f9ad4cbb6e5edc86835f430272e5cf2038\n",
+      "observedAt": "2026-10-08T17:26:30.295Z"
+    },
+    {
+      "runId": "a2-4c606ff3",
+      "kind": "container",
+      "id": "f4fcf8804c683bf2534143c52c0358aafc5a5724a9e095e22ce0ddc3839be0c9",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "f4fcf8804c683bf2534143c52c0358aafc5a5724a9e095e22ce0ddc3839be0c9"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: f4fcf8804c683bf2534143c52c0358aafc5a5724a9e095e22ce0ddc3839be0c9\n",
+      "observedAt": "2026-10-08T17:26:30.423Z"
+    },
+    {
+      "runId": "a2-60486de2",
+      "kind": "container",
+      "id": "737694dab6e0ab8c6c4fce51f3496493738cd08c5eee6549431585438896b100",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "737694dab6e0ab8c6c4fce51f3496493738cd08c5eee6549431585438896b100"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 737694dab6e0ab8c6c4fce51f3496493738cd08c5eee6549431585438896b100\n",
+      "observedAt": "2026-10-08T17:26:30.549Z"
+    },
+    {
+      "runId": "a2-60486de2",
+      "kind": "container",
+      "id": "6cc0cb0214ad15b49e8be8b8e27bae0b4c06e81861ddc5f524cae6c662a95a24",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "6cc0cb0214ad15b49e8be8b8e27bae0b4c06e81861ddc5f524cae6c662a95a24"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 6cc0cb0214ad15b49e8be8b8e27bae0b4c06e81861ddc5f524cae6c662a95a24\n",
+      "observedAt": "2026-10-08T17:26:30.647Z"
+    },
+    {
+      "runId": "a2-60486de2",
+      "kind": "container",
+      "id": "c43a2457aee0197ab6c5482b4ea5c92c69d232c19f44a1986217e8828fada421",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "c43a2457aee0197ab6c5482b4ea5c92c69d232c19f44a1986217e8828fada421"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: c43a2457aee0197ab6c5482b4ea5c92c69d232c19f44a1986217e8828fada421\n",
+      "observedAt": "2026-10-08T17:26:30.742Z"
+    },
+    {
+      "runId": "a2-6f596da7",
+      "kind": "container",
+      "id": "be41d24c5616cd75fd54b27140c9b6bb1a11cdbc809d0cf629fa231806796df3",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "be41d24c5616cd75fd54b27140c9b6bb1a11cdbc809d0cf629fa231806796df3"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: be41d24c5616cd75fd54b27140c9b6bb1a11cdbc809d0cf629fa231806796df3\n",
+      "observedAt": "2026-10-08T17:26:30.837Z"
+    },
+    {
+      "runId": "a2-6f596da7",
+      "kind": "container",
+      "id": "46d5a059e041ab1719ce5036349ce2da917aed6f84a00e3dad85393941d13afb",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "46d5a059e041ab1719ce5036349ce2da917aed6f84a00e3dad85393941d13afb"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 46d5a059e041ab1719ce5036349ce2da917aed6f84a00e3dad85393941d13afb\n",
+      "observedAt": "2026-10-08T17:26:30.931Z"
+    },
+    {
+      "runId": "a2-6f596da7",
+      "kind": "container",
+      "id": "0cb05480f6a4c071ab2a5ad45398dcc6c413e7c0f5e1b7c80a78645067262ce1",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "0cb05480f6a4c071ab2a5ad45398dcc6c413e7c0f5e1b7c80a78645067262ce1"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 0cb05480f6a4c071ab2a5ad45398dcc6c413e7c0f5e1b7c80a78645067262ce1\n",
+      "observedAt": "2026-10-08T17:26:31.025Z"
+    },
+    {
+      "runId": "a2-6f89cd29",
+      "kind": "container",
+      "id": "5871bff77bf5e0eb26e796490adff49415841f481deef6f54e407513b52db8da",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "5871bff77bf5e0eb26e796490adff49415841f481deef6f54e407513b52db8da"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 5871bff77bf5e0eb26e796490adff49415841f481deef6f54e407513b52db8da\n",
+      "observedAt": "2026-10-08T17:26:31.120Z"
+    },
+    {
+      "runId": "a2-6f89cd29",
+      "kind": "container",
+      "id": "64dba5e7fe95d1711e1fc3dc229ad929d2637a41cfb40e5db33a338d8761d7c3",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "64dba5e7fe95d1711e1fc3dc229ad929d2637a41cfb40e5db33a338d8761d7c3"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 64dba5e7fe95d1711e1fc3dc229ad929d2637a41cfb40e5db33a338d8761d7c3\n",
+      "observedAt": "2026-10-08T17:26:31.214Z"
+    },
+    {
+      "runId": "a2-6f89cd29",
+      "kind": "container",
+      "id": "aeb553cf5daff9cbff95d580a8c860c8eef557e961a1ab9ab69a167c6ded60a2",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "aeb553cf5daff9cbff95d580a8c860c8eef557e961a1ab9ab69a167c6ded60a2"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: aeb553cf5daff9cbff95d580a8c860c8eef557e961a1ab9ab69a167c6ded60a2\n",
+      "observedAt": "2026-10-08T17:26:31.308Z"
+    },
+    {
+      "runId": "a2-7a6ae37a",
+      "kind": "container",
+      "id": "b6f314ae8520241504cf97654efa1723ab5aedfb4d850152b226684d2f00af8b",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "b6f314ae8520241504cf97654efa1723ab5aedfb4d850152b226684d2f00af8b"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: b6f314ae8520241504cf97654efa1723ab5aedfb4d850152b226684d2f00af8b\n",
+      "observedAt": "2026-10-08T17:26:31.403Z"
+    },
+    {
+      "runId": "a2-7a6ae37a",
+      "kind": "container",
+      "id": "5e18aecc20d57e5661a1055ba2cee9c2a4e6eb37995d9ee94c5f8ebe4941a988",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "5e18aecc20d57e5661a1055ba2cee9c2a4e6eb37995d9ee94c5f8ebe4941a988"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 5e18aecc20d57e5661a1055ba2cee9c2a4e6eb37995d9ee94c5f8ebe4941a988\n",
+      "observedAt": "2026-10-08T17:26:31.496Z"
+    },
+    {
+      "runId": "a2-7a6ae37a",
+      "kind": "container",
+      "id": "8bd024980ff0b23d77c47fe2e89c148dd9b8e79e085121490440b890d278927f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "8bd024980ff0b23d77c47fe2e89c148dd9b8e79e085121490440b890d278927f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 8bd024980ff0b23d77c47fe2e89c148dd9b8e79e085121490440b890d278927f\n",
+      "observedAt": "2026-10-08T17:26:31.588Z"
+    },
+    {
+      "runId": "a2-7b267dfa",
+      "kind": "container",
+      "id": "5da7b79f9b42f31ee5b1d74a85fbc24e041da775104eae9db8a2d478fed3fea0",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "5da7b79f9b42f31ee5b1d74a85fbc24e041da775104eae9db8a2d478fed3fea0"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 5da7b79f9b42f31ee5b1d74a85fbc24e041da775104eae9db8a2d478fed3fea0\n",
+      "observedAt": "2026-10-08T17:26:31.687Z"
+    },
+    {
+      "runId": "a2-7b267dfa",
+      "kind": "container",
+      "id": "a5451a3833219184161dc4abb6e415bba74f348d2f5d89d394f875e4d951962a",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "a5451a3833219184161dc4abb6e415bba74f348d2f5d89d394f875e4d951962a"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: a5451a3833219184161dc4abb6e415bba74f348d2f5d89d394f875e4d951962a\n",
+      "observedAt": "2026-10-08T17:26:31.780Z"
+    },
+    {
+      "runId": "a2-7b267dfa",
+      "kind": "container",
+      "id": "8fc090ba14eb1cddecfa4bbf90a7e4f20e35c5b19f9d63fd1d958924e1de7043",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "8fc090ba14eb1cddecfa4bbf90a7e4f20e35c5b19f9d63fd1d958924e1de7043"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 8fc090ba14eb1cddecfa4bbf90a7e4f20e35c5b19f9d63fd1d958924e1de7043\n",
+      "observedAt": "2026-10-08T17:26:31.877Z"
+    },
+    {
+      "runId": "a2-8259e050",
+      "kind": "container",
+      "id": "10f1b4f6316220958806488c68854f6456e0024621098c92f892659318615264",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "10f1b4f6316220958806488c68854f6456e0024621098c92f892659318615264"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 10f1b4f6316220958806488c68854f6456e0024621098c92f892659318615264\n",
+      "observedAt": "2026-10-08T17:26:31.969Z"
+    },
+    {
+      "runId": "a2-8259e050",
+      "kind": "container",
+      "id": "95d1fc52c3c6ebc0daebf4cacbc38088e5a340a842a3feec65a23ef8bc672c89",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "95d1fc52c3c6ebc0daebf4cacbc38088e5a340a842a3feec65a23ef8bc672c89"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 95d1fc52c3c6ebc0daebf4cacbc38088e5a340a842a3feec65a23ef8bc672c89\n",
+      "observedAt": "2026-10-08T17:26:32.063Z"
+    },
+    {
+      "runId": "a2-8259e050",
+      "kind": "container",
+      "id": "23aacfdc8687d1b8f7109723d56ad7020888ce10ce44efb74561413117bded65",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "23aacfdc8687d1b8f7109723d56ad7020888ce10ce44efb74561413117bded65"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 23aacfdc8687d1b8f7109723d56ad7020888ce10ce44efb74561413117bded65\n",
+      "observedAt": "2026-10-08T17:26:32.158Z"
+    },
+    {
+      "runId": "a2-82e1368b",
+      "kind": "container",
+      "id": "998d7d01157ae57eecf32ac47f2bf19c4bde9f455a38c22c0d267a7db59e9049",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "998d7d01157ae57eecf32ac47f2bf19c4bde9f455a38c22c0d267a7db59e9049"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 998d7d01157ae57eecf32ac47f2bf19c4bde9f455a38c22c0d267a7db59e9049\n",
+      "observedAt": "2026-10-08T17:26:32.250Z"
+    },
+    {
+      "runId": "a2-82e1368b",
+      "kind": "container",
+      "id": "508ab030bfc7d51f8845d86d07a74eaf02c725bd74b1ed24777bdaa65e4e0571",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "508ab030bfc7d51f8845d86d07a74eaf02c725bd74b1ed24777bdaa65e4e0571"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 508ab030bfc7d51f8845d86d07a74eaf02c725bd74b1ed24777bdaa65e4e0571\n",
+      "observedAt": "2026-10-08T17:26:32.341Z"
+    },
+    {
+      "runId": "a2-82e1368b",
+      "kind": "container",
+      "id": "56acc24ffe11415dafa6faaf5a9e94461b537d21da4e786035c5990e297f2c5e",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "56acc24ffe11415dafa6faaf5a9e94461b537d21da4e786035c5990e297f2c5e"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 56acc24ffe11415dafa6faaf5a9e94461b537d21da4e786035c5990e297f2c5e\n",
+      "observedAt": "2026-10-08T17:26:32.432Z"
+    },
+    {
+      "runId": "a2-95a5627a",
+      "kind": "container",
+      "id": "8d05c942323fce76985f464f74ab84ef888de934541ddbeb12d48341a6d3561f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "8d05c942323fce76985f464f74ab84ef888de934541ddbeb12d48341a6d3561f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 8d05c942323fce76985f464f74ab84ef888de934541ddbeb12d48341a6d3561f\n",
+      "observedAt": "2026-10-08T17:26:32.524Z"
+    },
+    {
+      "runId": "a2-95a5627a",
+      "kind": "container",
+      "id": "c44e6f633ce9df2db53d957aa48bcf22c2c5ab1519bbaf0253f1610a4d46c2a0",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "c44e6f633ce9df2db53d957aa48bcf22c2c5ab1519bbaf0253f1610a4d46c2a0"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: c44e6f633ce9df2db53d957aa48bcf22c2c5ab1519bbaf0253f1610a4d46c2a0\n",
+      "observedAt": "2026-10-08T17:26:32.615Z"
+    },
+    {
+      "runId": "a2-95a5627a",
+      "kind": "container",
+      "id": "172df63344b97a3a4b8a03e42e270f8aa42494d72fd13d21c366820690103fbf",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "172df63344b97a3a4b8a03e42e270f8aa42494d72fd13d21c366820690103fbf"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 172df63344b97a3a4b8a03e42e270f8aa42494d72fd13d21c366820690103fbf\n",
+      "observedAt": "2026-10-08T17:26:32.707Z"
+    },
+    {
+      "runId": "a2-9a277e62",
+      "kind": "container",
+      "id": "3d41e2fdfd711068d3edca69f8f1bcb9b8c22b9d317babb463e1ef7c0a0e7a7b",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "3d41e2fdfd711068d3edca69f8f1bcb9b8c22b9d317babb463e1ef7c0a0e7a7b"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 3d41e2fdfd711068d3edca69f8f1bcb9b8c22b9d317babb463e1ef7c0a0e7a7b\n",
+      "observedAt": "2026-10-08T17:26:32.799Z"
+    },
+    {
+      "runId": "a2-9a277e62",
+      "kind": "container",
+      "id": "87771993409fd2a852aee65341e3a3f7c3428d23c53ae2057e4df55ddbf3132e",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "87771993409fd2a852aee65341e3a3f7c3428d23c53ae2057e4df55ddbf3132e"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 87771993409fd2a852aee65341e3a3f7c3428d23c53ae2057e4df55ddbf3132e\n",
+      "observedAt": "2026-10-08T17:26:32.892Z"
+    },
+    {
+      "runId": "a2-9a277e62",
+      "kind": "container",
+      "id": "124ce47a60381976c5c2fcdd335fae532d1ca7f30b836e9a303cdffed90a253d",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "124ce47a60381976c5c2fcdd335fae532d1ca7f30b836e9a303cdffed90a253d"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 124ce47a60381976c5c2fcdd335fae532d1ca7f30b836e9a303cdffed90a253d\n",
+      "observedAt": "2026-10-08T17:26:32.985Z"
+    },
+    {
+      "runId": "a2-9c5522e6",
+      "kind": "container",
+      "id": "c1a59300faf8cac76df9228622fdf5daa7c4592edf5795d13b8de308a0e69bd5",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "c1a59300faf8cac76df9228622fdf5daa7c4592edf5795d13b8de308a0e69bd5"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: c1a59300faf8cac76df9228622fdf5daa7c4592edf5795d13b8de308a0e69bd5\n",
+      "observedAt": "2026-10-08T17:26:33.099Z"
+    },
+    {
+      "runId": "a2-9c5522e6",
+      "kind": "container",
+      "id": "153fb097516054aaa1807ee73f688c8f0c812cd80e57c9772135f02be01d959f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "153fb097516054aaa1807ee73f688c8f0c812cd80e57c9772135f02be01d959f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 153fb097516054aaa1807ee73f688c8f0c812cd80e57c9772135f02be01d959f\n",
+      "observedAt": "2026-10-08T17:26:33.192Z"
+    },
+    {
+      "runId": "a2-9c5522e6",
+      "kind": "container",
+      "id": "ee4b4474b2a96fe96cc41e5caf8e1a68f53c4978966ded652952fbe4f9849de5",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "ee4b4474b2a96fe96cc41e5caf8e1a68f53c4978966ded652952fbe4f9849de5"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: ee4b4474b2a96fe96cc41e5caf8e1a68f53c4978966ded652952fbe4f9849de5\n",
+      "observedAt": "2026-10-08T17:26:33.288Z"
+    },
+    {
+      "runId": "a2-a7aeadc2",
+      "kind": "container",
+      "id": "f93b2cb9cb39648d8e0d36c32625cd2428c45a28f84a2d741a2334415a9b9a55",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "f93b2cb9cb39648d8e0d36c32625cd2428c45a28f84a2d741a2334415a9b9a55"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: f93b2cb9cb39648d8e0d36c32625cd2428c45a28f84a2d741a2334415a9b9a55\n",
+      "observedAt": "2026-10-08T17:26:33.383Z"
+    },
+    {
+      "runId": "a2-a7aeadc2",
+      "kind": "container",
+      "id": "a57cb9471c43c57931d354ba11fb8483028164896e421e17220118ab55a778b5",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "a57cb9471c43c57931d354ba11fb8483028164896e421e17220118ab55a778b5"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: a57cb9471c43c57931d354ba11fb8483028164896e421e17220118ab55a778b5\n",
+      "observedAt": "2026-10-08T17:26:33.478Z"
+    },
+    {
+      "runId": "a2-a7aeadc2",
+      "kind": "container",
+      "id": "55687f516252b3c1efb3d86136517bc7beed18b3f2a98fb5c03a405d15b124ed",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "55687f516252b3c1efb3d86136517bc7beed18b3f2a98fb5c03a405d15b124ed"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 55687f516252b3c1efb3d86136517bc7beed18b3f2a98fb5c03a405d15b124ed\n",
+      "observedAt": "2026-10-08T17:26:33.572Z"
+    },
+    {
+      "runId": "a2-ae8589df",
+      "kind": "container",
+      "id": "6ceffa02449c37ac3331e2c3ab6f39a42b6c531dd3e84b4589ea1859464f0ab5",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "6ceffa02449c37ac3331e2c3ab6f39a42b6c531dd3e84b4589ea1859464f0ab5"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 6ceffa02449c37ac3331e2c3ab6f39a42b6c531dd3e84b4589ea1859464f0ab5\n",
+      "observedAt": "2026-10-08T17:26:33.666Z"
+    },
+    {
+      "runId": "a2-ae8589df",
+      "kind": "container",
+      "id": "b292eef02c99c88d589b3a634a61bacff951057df50187f3b5dc60db95f66fd4",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "b292eef02c99c88d589b3a634a61bacff951057df50187f3b5dc60db95f66fd4"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: b292eef02c99c88d589b3a634a61bacff951057df50187f3b5dc60db95f66fd4\n",
+      "observedAt": "2026-10-08T17:26:33.761Z"
+    },
+    {
+      "runId": "a2-ae8589df",
+      "kind": "container",
+      "id": "44156084b280a3821d1c22a9742f07537e815ae6c4a9a2891c08436672976595",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "44156084b280a3821d1c22a9742f07537e815ae6c4a9a2891c08436672976595"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 44156084b280a3821d1c22a9742f07537e815ae6c4a9a2891c08436672976595\n",
+      "observedAt": "2026-10-08T17:26:33.854Z"
+    },
+    {
+      "runId": "a2-c2def680",
+      "kind": "container",
+      "id": "e237c45b1f738d509046e71ff3759096327027e552d44bbdbe295ec7c1541076",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "e237c45b1f738d509046e71ff3759096327027e552d44bbdbe295ec7c1541076"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: e237c45b1f738d509046e71ff3759096327027e552d44bbdbe295ec7c1541076\n",
+      "observedAt": "2026-10-08T17:26:33.949Z"
+    },
+    {
+      "runId": "a2-c2def680",
+      "kind": "container",
+      "id": "399aed5cb9db4d710d2a357ef7c2d2c5cb72b89d1d2db82e764ec9f0efbcf262",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "399aed5cb9db4d710d2a357ef7c2d2c5cb72b89d1d2db82e764ec9f0efbcf262"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 399aed5cb9db4d710d2a357ef7c2d2c5cb72b89d1d2db82e764ec9f0efbcf262\n",
+      "observedAt": "2026-10-08T17:26:34.044Z"
+    },
+    {
+      "runId": "a2-c2def680",
+      "kind": "container",
+      "id": "74c0a5996d4b48422a21738743da643d0dbafa50c2d8ea0b742c7f4cdec3d80d",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "74c0a5996d4b48422a21738743da643d0dbafa50c2d8ea0b742c7f4cdec3d80d"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 74c0a5996d4b48422a21738743da643d0dbafa50c2d8ea0b742c7f4cdec3d80d\n",
+      "observedAt": "2026-10-08T17:26:34.138Z"
+    },
+    {
+      "runId": "a2-ce757e71",
+      "kind": "container",
+      "id": "5d64f180b0b47d50fe97b70f334729f3250c3ab83a9954dc1c090eee77f9ce1b",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "5d64f180b0b47d50fe97b70f334729f3250c3ab83a9954dc1c090eee77f9ce1b"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 5d64f180b0b47d50fe97b70f334729f3250c3ab83a9954dc1c090eee77f9ce1b\n",
+      "observedAt": "2026-10-08T17:26:34.246Z"
+    },
+    {
+      "runId": "a2-ce757e71",
+      "kind": "container",
+      "id": "c53c8c6526e0e715b80cf5636905378db6982b1bb887b664be2e7af41ff4a67f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "c53c8c6526e0e715b80cf5636905378db6982b1bb887b664be2e7af41ff4a67f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: c53c8c6526e0e715b80cf5636905378db6982b1bb887b664be2e7af41ff4a67f\n",
+      "observedAt": "2026-10-08T17:26:34.360Z"
+    },
+    {
+      "runId": "a2-ce757e71",
+      "kind": "container",
+      "id": "63bbc5888f47ddef30d8c776fb468b745b4934e12288bb77a50871fb973e4f59",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "63bbc5888f47ddef30d8c776fb468b745b4934e12288bb77a50871fb973e4f59"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 63bbc5888f47ddef30d8c776fb468b745b4934e12288bb77a50871fb973e4f59\n",
+      "observedAt": "2026-10-08T17:26:34.467Z"
+    },
+    {
+      "runId": "a2-d04b4a12",
+      "kind": "container",
+      "id": "e3efecf6bfec241943d2416723f635622c1b04196d5c23469e8b9a6c819767ac",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "e3efecf6bfec241943d2416723f635622c1b04196d5c23469e8b9a6c819767ac"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: e3efecf6bfec241943d2416723f635622c1b04196d5c23469e8b9a6c819767ac\n",
+      "observedAt": "2026-10-08T17:26:34.595Z"
+    },
+    {
+      "runId": "a2-d04b4a12",
+      "kind": "container",
+      "id": "8d882d33fadfc15cef47086c9707d9ea5a52dac9e6ec200d3f3bfb0eb3aacdf3",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "8d882d33fadfc15cef47086c9707d9ea5a52dac9e6ec200d3f3bfb0eb3aacdf3"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 8d882d33fadfc15cef47086c9707d9ea5a52dac9e6ec200d3f3bfb0eb3aacdf3\n",
+      "observedAt": "2026-10-08T17:26:34.703Z"
+    },
+    {
+      "runId": "a2-d04b4a12",
+      "kind": "container",
+      "id": "120e2f369d251a5f885141671bcab44a661d5f2cd9be0dbad7aa976970bc0f6d",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "120e2f369d251a5f885141671bcab44a661d5f2cd9be0dbad7aa976970bc0f6d"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 120e2f369d251a5f885141671bcab44a661d5f2cd9be0dbad7aa976970bc0f6d\n",
+      "observedAt": "2026-10-08T17:26:34.800Z"
+    },
+    {
+      "runId": "a2-d220f5c7",
+      "kind": "container",
+      "id": "0b900ac4379c325910063bcb23438b865f3d6ed4db2ad07cff0e12e22f7ef269",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "0b900ac4379c325910063bcb23438b865f3d6ed4db2ad07cff0e12e22f7ef269"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 0b900ac4379c325910063bcb23438b865f3d6ed4db2ad07cff0e12e22f7ef269\n",
+      "observedAt": "2026-10-08T17:26:34.898Z"
+    },
+    {
+      "runId": "a2-d220f5c7",
+      "kind": "container",
+      "id": "1d623247fb99902ce25170794c41b70fe47b1f207d5f1de61becdfe04777aa28",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "1d623247fb99902ce25170794c41b70fe47b1f207d5f1de61becdfe04777aa28"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 1d623247fb99902ce25170794c41b70fe47b1f207d5f1de61becdfe04777aa28\n",
+      "observedAt": "2026-10-08T17:26:34.991Z"
+    },
+    {
+      "runId": "a2-d220f5c7",
+      "kind": "container",
+      "id": "0ef21fbf716a9b9bc1a6542783965531aeacc424302ad78d6eadd02112d5602f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "0ef21fbf716a9b9bc1a6542783965531aeacc424302ad78d6eadd02112d5602f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 0ef21fbf716a9b9bc1a6542783965531aeacc424302ad78d6eadd02112d5602f\n",
+      "observedAt": "2026-10-08T17:26:35.085Z"
+    },
+    {
+      "runId": "a2-d79204b5",
+      "kind": "container",
+      "id": "6bad40909ab350fe6354fc777a70f49151a5935371d4f600b95b338fc605da7f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "6bad40909ab350fe6354fc777a70f49151a5935371d4f600b95b338fc605da7f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 6bad40909ab350fe6354fc777a70f49151a5935371d4f600b95b338fc605da7f\n",
+      "observedAt": "2026-10-08T17:26:35.204Z"
+    },
+    {
+      "runId": "a2-d79204b5",
+      "kind": "container",
+      "id": "2e251efec0b5deab42804adb0fba99f6c064482afa1ebfedfbf6857fed809ef9",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "2e251efec0b5deab42804adb0fba99f6c064482afa1ebfedfbf6857fed809ef9"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 2e251efec0b5deab42804adb0fba99f6c064482afa1ebfedfbf6857fed809ef9\n",
+      "observedAt": "2026-10-08T17:26:35.298Z"
+    },
+    {
+      "runId": "a2-d79204b5",
+      "kind": "container",
+      "id": "6cd3347de09eadc12407af385d45041015ee4aeaf5a150a310ca78c632819689",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "6cd3347de09eadc12407af385d45041015ee4aeaf5a150a310ca78c632819689"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 6cd3347de09eadc12407af385d45041015ee4aeaf5a150a310ca78c632819689\n",
+      "observedAt": "2026-10-08T17:26:35.393Z"
+    },
+    {
+      "runId": "a2-dbb16887",
+      "kind": "container",
+      "id": "cd2db58f3ddc35677a61f6949a19b492243a287bfb7ab60635766119bb076d69",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "cd2db58f3ddc35677a61f6949a19b492243a287bfb7ab60635766119bb076d69"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: cd2db58f3ddc35677a61f6949a19b492243a287bfb7ab60635766119bb076d69\n",
+      "observedAt": "2026-10-08T17:26:35.484Z"
+    },
+    {
+      "runId": "a2-dbb16887",
+      "kind": "container",
+      "id": "e99eecf200607fc994ce91ddd816d726f590fbdba6fc8afd47a9514db61c07ce",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "e99eecf200607fc994ce91ddd816d726f590fbdba6fc8afd47a9514db61c07ce"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: e99eecf200607fc994ce91ddd816d726f590fbdba6fc8afd47a9514db61c07ce\n",
+      "observedAt": "2026-10-08T17:26:35.578Z"
+    },
+    {
+      "runId": "a2-dbb16887",
+      "kind": "container",
+      "id": "bbd6866aa6d476052bbc57f1313421c83631f959a3b8c01a474517a3a9a30113",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "bbd6866aa6d476052bbc57f1313421c83631f959a3b8c01a474517a3a9a30113"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: bbd6866aa6d476052bbc57f1313421c83631f959a3b8c01a474517a3a9a30113\n",
+      "observedAt": "2026-10-08T17:26:35.671Z"
+    },
+    {
+      "runId": "a2-deb17b28",
+      "kind": "container",
+      "id": "b5893497a6a641d45bae092d1faa905c4dc96c3220bc051c4ed1bf54facf41fa",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "b5893497a6a641d45bae092d1faa905c4dc96c3220bc051c4ed1bf54facf41fa"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: b5893497a6a641d45bae092d1faa905c4dc96c3220bc051c4ed1bf54facf41fa\n",
+      "observedAt": "2026-10-08T17:26:35.762Z"
+    },
+    {
+      "runId": "a2-deb17b28",
+      "kind": "container",
+      "id": "650dda6c0ac4f5b0eac1e64fb8c964f4bc4fbddce4f2f6239262e766114e10c7",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "650dda6c0ac4f5b0eac1e64fb8c964f4bc4fbddce4f2f6239262e766114e10c7"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 650dda6c0ac4f5b0eac1e64fb8c964f4bc4fbddce4f2f6239262e766114e10c7\n",
+      "observedAt": "2026-10-08T17:26:35.860Z"
+    },
+    {
+      "runId": "a2-deb17b28",
+      "kind": "container",
+      "id": "669f03c790072d2a3d302deca3665e0ce3894bab441cda861911d057144cd045",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "669f03c790072d2a3d302deca3665e0ce3894bab441cda861911d057144cd045"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 669f03c790072d2a3d302deca3665e0ce3894bab441cda861911d057144cd045\n",
+      "observedAt": "2026-10-08T17:26:35.951Z"
+    },
+    {
+      "runId": "a2-e1a20704",
+      "kind": "container",
+      "id": "fd7f9fb2983fe781bca740b651c4d07ce3190d3d7332e36dc9eabbb99728eae5",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "fd7f9fb2983fe781bca740b651c4d07ce3190d3d7332e36dc9eabbb99728eae5"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: fd7f9fb2983fe781bca740b651c4d07ce3190d3d7332e36dc9eabbb99728eae5\n",
+      "observedAt": "2026-10-08T17:26:36.046Z"
+    },
+    {
+      "runId": "a2-e1a20704",
+      "kind": "container",
+      "id": "03308f584ed1533ef2b386f3254952c37817309a9584aed5d85673c2f9bc75ab",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "03308f584ed1533ef2b386f3254952c37817309a9584aed5d85673c2f9bc75ab"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 03308f584ed1533ef2b386f3254952c37817309a9584aed5d85673c2f9bc75ab\n",
+      "observedAt": "2026-10-08T17:26:36.138Z"
+    },
+    {
+      "runId": "a2-e1a20704",
+      "kind": "container",
+      "id": "869fd20a8ef4b9fb2d9324f937d064733e634cdfd7b2e6ed750e2c49b2ec9cc1",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "869fd20a8ef4b9fb2d9324f937d064733e634cdfd7b2e6ed750e2c49b2ec9cc1"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 869fd20a8ef4b9fb2d9324f937d064733e634cdfd7b2e6ed750e2c49b2ec9cc1\n",
+      "observedAt": "2026-10-08T17:26:36.231Z"
+    },
+    {
+      "runId": "a2-ef2c1974",
+      "kind": "container",
+      "id": "b63c996927fcd1600060af8d26018b014a74f96a1d3eabe993f41626cac5537b",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "b63c996927fcd1600060af8d26018b014a74f96a1d3eabe993f41626cac5537b"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: b63c996927fcd1600060af8d26018b014a74f96a1d3eabe993f41626cac5537b\n",
+      "observedAt": "2026-10-08T17:26:36.323Z"
+    },
+    {
+      "runId": "a2-ef2c1974",
+      "kind": "container",
+      "id": "afe9f6eaf083f51a2f833d7d4899a3f27846b715fde33c7d35f805c6e5db32d7",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "afe9f6eaf083f51a2f833d7d4899a3f27846b715fde33c7d35f805c6e5db32d7"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: afe9f6eaf083f51a2f833d7d4899a3f27846b715fde33c7d35f805c6e5db32d7\n",
+      "observedAt": "2026-10-08T17:26:36.415Z"
+    },
+    {
+      "runId": "a2-ef2c1974",
+      "kind": "container",
+      "id": "8faa2e36bc54149f45a1c00ebf25214fe8fe1a5194937bf15da74f5e4cba5075",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "8faa2e36bc54149f45a1c00ebf25214fe8fe1a5194937bf15da74f5e4cba5075"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 8faa2e36bc54149f45a1c00ebf25214fe8fe1a5194937bf15da74f5e4cba5075\n",
+      "observedAt": "2026-10-08T17:26:36.511Z"
+    },
+    {
+      "runId": "a2-fa75f75c",
+      "kind": "container",
+      "id": "8a1dc64f6eecfcc359e1b3bf5da81b877217b2a1a90f077ac15dbd536a63ee8f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "8a1dc64f6eecfcc359e1b3bf5da81b877217b2a1a90f077ac15dbd536a63ee8f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 8a1dc64f6eecfcc359e1b3bf5da81b877217b2a1a90f077ac15dbd536a63ee8f\n",
+      "observedAt": "2026-10-08T17:26:36.601Z"
+    },
+    {
+      "runId": "a2-fa75f75c",
+      "kind": "container",
+      "id": "92bcc46423c468f2a98e3f6c1bf14fe93c1c82a0a2e6bbaa9403f1e159656692",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "92bcc46423c468f2a98e3f6c1bf14fe93c1c82a0a2e6bbaa9403f1e159656692"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 92bcc46423c468f2a98e3f6c1bf14fe93c1c82a0a2e6bbaa9403f1e159656692\n",
+      "observedAt": "2026-10-08T17:26:36.693Z"
+    },
+    {
+      "runId": "a2-fa75f75c",
+      "kind": "container",
+      "id": "24da2c9fce1fef2540fddbe38ee66ddbde5c1a83854f9f3309ec6180c3c6a972",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "24da2c9fce1fef2540fddbe38ee66ddbde5c1a83854f9f3309ec6180c3c6a972"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 24da2c9fce1fef2540fddbe38ee66ddbde5c1a83854f9f3309ec6180c3c6a972\n",
+      "observedAt": "2026-10-08T17:26:36.785Z"
+    },
+    {
+      "runId": "a2-fe69f607",
+      "kind": "container",
+      "id": "c9aad5e173c6587e77bc03c759b45b6ab81a9c1ba1072a842dc2f6c6317492dd",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "c9aad5e173c6587e77bc03c759b45b6ab81a9c1ba1072a842dc2f6c6317492dd"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: c9aad5e173c6587e77bc03c759b45b6ab81a9c1ba1072a842dc2f6c6317492dd\n",
+      "observedAt": "2026-10-08T17:26:36.877Z"
+    },
+    {
+      "runId": "a2-fe69f607",
+      "kind": "container",
+      "id": "2c667a5857fa92aef117816532edf656c33f49c68dacd5d9cecdf2a1360dc1c0",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "2c667a5857fa92aef117816532edf656c33f49c68dacd5d9cecdf2a1360dc1c0"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 2c667a5857fa92aef117816532edf656c33f49c68dacd5d9cecdf2a1360dc1c0\n",
+      "observedAt": "2026-10-08T17:26:36.970Z"
+    },
+    {
+      "runId": "a2-fe69f607",
+      "kind": "container",
+      "id": "6be6ab795882613956a0be775c3a2bb32aa7e816a418b90d9457b654c4a13ec0",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "6be6ab795882613956a0be775c3a2bb32aa7e816a418b90d9457b654c4a13ec0"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 6be6ab795882613956a0be775c3a2bb32aa7e816a418b90d9457b654c4a13ec0\n",
+      "observedAt": "2026-10-08T17:26:37.061Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "directory",
+      "id": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-333f7614",
+      "absent": true,
+      "observedAt": "2026-10-08T17:26:37.061Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "image",
+      "id": "sha256:edb6ceca231ce39067dc940aab92e5da4c19a1fa260f092cfb25d410512d6c7c",
+      "args": [
+        "image",
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "sha256:edb6ceca231ce39067dc940aab92e5da4c19a1fa260f092cfb25d410512d6c7c"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: No such image: sha256:edb6ceca231ce39067dc940aab92e5da4c19a1fa260f092cfb25d410512d6c7c\n",
+      "observedAt": "2026-10-08T17:26:37.145Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "0ce76781ace3f1bfcbb0d5d5b88acf13edefb2f776cd1efabf383a7936b45905",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "0ce76781ace3f1bfcbb0d5d5b88acf13edefb2f776cd1efabf383a7936b45905"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 0ce76781ace3f1bfcbb0d5d5b88acf13edefb2f776cd1efabf383a7936b45905\n",
+      "observedAt": "2026-10-08T17:26:37.238Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "0d0858ff1e44a86c88f83f83f2a7c2d308fb581058314a1517b9af30227184aa",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "0d0858ff1e44a86c88f83f83f2a7c2d308fb581058314a1517b9af30227184aa"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 0d0858ff1e44a86c88f83f83f2a7c2d308fb581058314a1517b9af30227184aa\n",
+      "observedAt": "2026-10-08T17:26:37.331Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "a015c766a0d0a14a7863db0c57f67375a121678aa2867462d133fe1da9657c3d",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "a015c766a0d0a14a7863db0c57f67375a121678aa2867462d133fe1da9657c3d"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: a015c766a0d0a14a7863db0c57f67375a121678aa2867462d133fe1da9657c3d\n",
+      "observedAt": "2026-10-08T17:26:37.424Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "7ff1e2c1e81ba8e59b5b556c3f00eb0ee814871bbbe35770b7799d18572391f0",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "7ff1e2c1e81ba8e59b5b556c3f00eb0ee814871bbbe35770b7799d18572391f0"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 7ff1e2c1e81ba8e59b5b556c3f00eb0ee814871bbbe35770b7799d18572391f0\n",
+      "observedAt": "2026-10-08T17:26:37.515Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "volume",
+      "id": "a2-lite-333f7614-ca",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-333f7614-ca"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-333f7614-ca: no such volume\n",
+      "observedAt": "2026-10-08T17:26:37.599Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "94c7b6c2ba14bb12f7ea6d7a1f03440d79ebe3385f6dd33778ca2a49c775523b",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "94c7b6c2ba14bb12f7ea6d7a1f03440d79ebe3385f6dd33778ca2a49c775523b"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 94c7b6c2ba14bb12f7ea6d7a1f03440d79ebe3385f6dd33778ca2a49c775523b\n",
+      "observedAt": "2026-10-08T17:26:37.725Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "40c12f701702",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "40c12f701702"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 40c12f701702\n",
+      "observedAt": "2026-10-08T17:26:37.818Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "a9425a003dd2",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "a9425a003dd2"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: a9425a003dd2\n",
+      "observedAt": "2026-10-08T17:26:37.915Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "449fda11f6e9",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "449fda11f6e9"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 449fda11f6e9\n",
+      "observedAt": "2026-10-08T17:26:38.029Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "e6f14973ecad",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "e6f14973ecad"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: e6f14973ecad\n",
+      "observedAt": "2026-10-08T17:26:38.137Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "1e51e462f219",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "1e51e462f219"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 1e51e462f219\n",
+      "observedAt": "2026-10-08T17:26:38.265Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "1db2b50dd14f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "1db2b50dd14f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 1db2b50dd14f\n",
+      "observedAt": "2026-10-08T17:26:38.370Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "0a29977ecbb9",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "0a29977ecbb9"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 0a29977ecbb9\n",
+      "observedAt": "2026-10-08T17:26:38.465Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "container",
+      "id": "c0f8598ff120",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "c0f8598ff120"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: c0f8598ff120\n",
+      "observedAt": "2026-10-08T17:26:38.558Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "volume",
+      "id": "a2-lite-333f7614_lite-object-data",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-333f7614_lite-object-data"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-333f7614_lite-object-data: no such volume\n",
+      "observedAt": "2026-10-08T17:26:38.643Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "volume",
+      "id": "a2-lite-333f7614_lite-postgres-data",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-333f7614_lite-postgres-data"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-333f7614_lite-postgres-data: no such volume\n",
+      "observedAt": "2026-10-08T17:26:38.725Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "volume",
+      "id": "a2-lite-333f7614_lite-redis-data",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-333f7614_lite-redis-data"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-333f7614_lite-redis-data: no such volume\n",
+      "observedAt": "2026-10-08T17:26:38.809Z"
+    },
+    {
+      "runId": "a2-lite-333f7614",
+      "kind": "network",
+      "id": "0fb3f3e0d3e4",
+      "args": [
+        "network",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "0fb3f3e0d3e4"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: network 0fb3f3e0d3e4 not found\n",
+      "observedAt": "2026-10-08T17:26:38.891Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "directory",
+      "id": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-9b8957e6",
+      "absent": true,
+      "observedAt": "2026-10-08T17:26:38.891Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "image",
+      "id": "sha256:aa72827efe54566835e9dbf01bd9094eeb1d14a0f428c7e8553d85dd81b29207",
+      "args": [
+        "image",
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "sha256:aa72827efe54566835e9dbf01bd9094eeb1d14a0f428c7e8553d85dd81b29207"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: No such image: sha256:aa72827efe54566835e9dbf01bd9094eeb1d14a0f428c7e8553d85dd81b29207\n",
+      "observedAt": "2026-10-08T17:26:38.976Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "58468b6775255df9d34447375f2b39873c5b93035396fd41f4a84b026666e460",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "58468b6775255df9d34447375f2b39873c5b93035396fd41f4a84b026666e460"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 58468b6775255df9d34447375f2b39873c5b93035396fd41f4a84b026666e460\n",
+      "observedAt": "2026-10-08T17:26:39.070Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "f3f6e39a51e75f628853ea66cdbac4a04a653cc8b00598c5fdc05c765ed71714",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "f3f6e39a51e75f628853ea66cdbac4a04a653cc8b00598c5fdc05c765ed71714"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: f3f6e39a51e75f628853ea66cdbac4a04a653cc8b00598c5fdc05c765ed71714\n",
+      "observedAt": "2026-10-08T17:26:39.165Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "164b1ae1cfdc698a479fdfb205e98b0e19b300e3088bed111f4791b0cc64b4c0",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "164b1ae1cfdc698a479fdfb205e98b0e19b300e3088bed111f4791b0cc64b4c0"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 164b1ae1cfdc698a479fdfb205e98b0e19b300e3088bed111f4791b0cc64b4c0\n",
+      "observedAt": "2026-10-08T17:26:39.258Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "d6bf10ccf9e5f6a9b2aa8af0f61027ec06dd9f338a9043c9b580504b39afbbac",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "d6bf10ccf9e5f6a9b2aa8af0f61027ec06dd9f338a9043c9b580504b39afbbac"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: d6bf10ccf9e5f6a9b2aa8af0f61027ec06dd9f338a9043c9b580504b39afbbac\n",
+      "observedAt": "2026-10-08T17:26:39.352Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "volume",
+      "id": "a2-lite-9b8957e6-ca",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-9b8957e6-ca"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-9b8957e6-ca: no such volume\n",
+      "observedAt": "2026-10-08T17:26:39.435Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "2dbf2b360b37b46bdc52cd9fe8b4c6065b85d73a5ec20e4ef189ff45e4c8ca5f",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "2dbf2b360b37b46bdc52cd9fe8b4c6065b85d73a5ec20e4ef189ff45e4c8ca5f"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 2dbf2b360b37b46bdc52cd9fe8b4c6065b85d73a5ec20e4ef189ff45e4c8ca5f\n",
+      "observedAt": "2026-10-08T17:26:39.529Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "df249f4126ab",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "df249f4126ab"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: df249f4126ab\n",
+      "observedAt": "2026-10-08T17:26:39.622Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "2227a9d1a685",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "2227a9d1a685"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 2227a9d1a685\n",
+      "observedAt": "2026-10-08T17:26:39.717Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "d60ea4e300a8",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "d60ea4e300a8"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: d60ea4e300a8\n",
+      "observedAt": "2026-10-08T17:26:39.810Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "4b369695ab10",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "4b369695ab10"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 4b369695ab10\n",
+      "observedAt": "2026-10-08T17:26:39.907Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "f24e481f847e",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "f24e481f847e"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: f24e481f847e\n",
+      "observedAt": "2026-10-08T17:26:39.998Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "997f3ac79bfc",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "997f3ac79bfc"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 997f3ac79bfc\n",
+      "observedAt": "2026-10-08T17:26:40.093Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "a756752b61ea",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "a756752b61ea"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: a756752b61ea\n",
+      "observedAt": "2026-10-08T17:26:40.185Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "container",
+      "id": "1358cdf24eed",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "1358cdf24eed"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 1358cdf24eed\n",
+      "observedAt": "2026-10-08T17:26:40.306Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "volume",
+      "id": "a2-lite-9b8957e6_lite-object-data",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-9b8957e6_lite-object-data"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-9b8957e6_lite-object-data: no such volume\n",
+      "observedAt": "2026-10-08T17:26:40.387Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "volume",
+      "id": "a2-lite-9b8957e6_lite-postgres-data",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-9b8957e6_lite-postgres-data"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-9b8957e6_lite-postgres-data: no such volume\n",
+      "observedAt": "2026-10-08T17:26:40.469Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "volume",
+      "id": "a2-lite-9b8957e6_lite-redis-data",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-9b8957e6_lite-redis-data"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-9b8957e6_lite-redis-data: no such volume\n",
+      "observedAt": "2026-10-08T17:26:40.552Z"
+    },
+    {
+      "runId": "a2-lite-9b8957e6",
+      "kind": "network",
+      "id": "eb322b22913a",
+      "args": [
+        "network",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "eb322b22913a"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: network eb322b22913a not found\n",
+      "observedAt": "2026-10-08T17:26:40.633Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "directory",
+      "id": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791",
+      "absent": true,
+      "observedAt": "2026-10-08T17:26:40.633Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "image",
+      "id": "sha256:ec3903990ed43d464eae205ba41167ac0fea47188c5e0c44dd04abf90ceb42db",
+      "args": [
+        "image",
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "sha256:ec3903990ed43d464eae205ba41167ac0fea47188c5e0c44dd04abf90ceb42db"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: No such image: sha256:ec3903990ed43d464eae205ba41167ac0fea47188c5e0c44dd04abf90ceb42db\n",
+      "observedAt": "2026-10-08T17:26:40.716Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "250f662d0e074f144593b996cb8675357ce19e57643ea060eba670cc573d71a7",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "250f662d0e074f144593b996cb8675357ce19e57643ea060eba670cc573d71a7"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 250f662d0e074f144593b996cb8675357ce19e57643ea060eba670cc573d71a7\n",
+      "observedAt": "2026-10-08T17:26:40.809Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "feac2915ce084503606e7581b4a121d41dfe79a3e8b41ea3fef861e544c7e172",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "feac2915ce084503606e7581b4a121d41dfe79a3e8b41ea3fef861e544c7e172"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: feac2915ce084503606e7581b4a121d41dfe79a3e8b41ea3fef861e544c7e172\n",
+      "observedAt": "2026-10-08T17:26:40.902Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "0dc2e9f5b416ceb191cea83b00fe569a3b2e25760bd5fd063f88b6b0551ca0e7",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "0dc2e9f5b416ceb191cea83b00fe569a3b2e25760bd5fd063f88b6b0551ca0e7"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 0dc2e9f5b416ceb191cea83b00fe569a3b2e25760bd5fd063f88b6b0551ca0e7\n",
+      "observedAt": "2026-10-08T17:26:40.993Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "c277b2c5b28cab92e04fc00400e5d216c522bd946a16c811cafe4627d0f89ccb",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "c277b2c5b28cab92e04fc00400e5d216c522bd946a16c811cafe4627d0f89ccb"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: c277b2c5b28cab92e04fc00400e5d216c522bd946a16c811cafe4627d0f89ccb\n",
+      "observedAt": "2026-10-08T17:26:41.085Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "4e868dab9882",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "4e868dab9882"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 4e868dab9882\n",
+      "observedAt": "2026-10-08T17:26:41.177Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "d3d20ca1ded6",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "d3d20ca1ded6"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: d3d20ca1ded6\n",
+      "observedAt": "2026-10-08T17:26:41.276Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "efcaee2cbfe1",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "efcaee2cbfe1"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: efcaee2cbfe1\n",
+      "observedAt": "2026-10-08T17:26:41.370Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "9508299f9b29",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "9508299f9b29"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 9508299f9b29\n",
+      "observedAt": "2026-10-08T17:26:41.464Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "b8c071d3d796",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "b8c071d3d796"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: b8c071d3d796\n",
+      "observedAt": "2026-10-08T17:26:41.559Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "b498746f0c67",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "b498746f0c67"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: b498746f0c67\n",
+      "observedAt": "2026-10-08T17:26:41.653Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "container",
+      "id": "8ce4835ac237",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "8ce4835ac237"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nerror: no such object: 8ce4835ac237\n",
+      "observedAt": "2026-10-08T17:26:41.746Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "volume",
+      "id": "a2-lite-c4424791_lite-object-data",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-c4424791_lite-object-data"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-c4424791_lite-object-data: no such volume\n",
+      "observedAt": "2026-10-08T17:26:41.828Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "volume",
+      "id": "a2-lite-c4424791_lite-postgres-data",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-c4424791_lite-postgres-data"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-c4424791_lite-postgres-data: no such volume\n",
+      "observedAt": "2026-10-08T17:26:41.911Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "volume",
+      "id": "a2-lite-c4424791_lite-redis-data",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "a2-lite-c4424791_lite-redis-data"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: get a2-lite-c4424791_lite-redis-data: no such volume\n",
+      "observedAt": "2026-10-08T17:26:41.992Z"
+    },
+    {
+      "runId": "a2-lite-c4424791",
+      "kind": "network",
+      "id": "4590aec65823",
+      "args": [
+        "network",
+        "inspect",
+        "--format",
+        "{{.Name}}",
+        "4590aec65823"
+      ],
+      "code": 1,
+      "absent": true,
+      "output": "\nError response from daemon: network 4590aec65823 not found\n",
+      "observedAt": "2026-10-08T17:26:42.073Z"
+    }
+  ]
+}
