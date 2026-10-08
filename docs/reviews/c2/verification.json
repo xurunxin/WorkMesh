@@ -168,6 +168,13 @@
       "main": "5b9c76b5f79917697906520edcd6947bfbfa925f",
       "exitCode": 0,
       "raw": "review-fix-range-results.json"
+    },
+    {
+      "command": "git diff --check origin/main...HEAD",
+      "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "head": "2c0192444a8cb6ef46ca3a11a850391f25f1350b",
+      "exitCode": 0,
+      "raw": "latest-main-readback.json"
     }
   ],
   "push": {
@@ -217,5 +224,12 @@
     }
   ],
   "previousChecksMeaning": "旧退出零受 whitespace 属性豁免影响，不能证明 PR 空白门禁；first-whitespace-check.json、archive-check-results.json、final-check-results.json 原件均保持不变",
-  "currentReviewFixes": "review-fixes.json"
+  "currentReviewFixes": "review-fixes.json",
+  "latestMainReadback": {
+    "actualMain": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "head": "2c0192444a8cb6ef46ca3a11a850391f25f1350b",
+    "comparisonBase": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+    "raw": "latest-main-readback.json",
+    "inputMeaning": "C3 模型目录增量；C1、深链源码和 CI 策略不变。ADR 在 presets 段变更，与本次 C2 追加段不同；只记录读取，不在本轮整合产品代码。原规划输入及哈希仍冻结在 5b9c76b，不冒称新组合验收或 main 合入。"
+  }
 }
