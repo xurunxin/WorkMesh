@@ -58974,9 +58974,17 @@
         "sourceBytesTotal": 66983,
         "mapping": "每行记录本地原始路径/大小/SHA-256、D0 manifest 命令/退出码/原始日志哈希、仅 CRLF→LF 后的 main 路径及 Git blob ID。原字节可由记录的 LF→CRLF 关系还原。",
         "deleteInvocation": "Remove-Item -LiteralPath <6 exact .tmp file paths> -Force -ErrorAction Stop",
+        "rawReceipt": {
+          "path": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T17-15-17-01a11acb-aa1d-7c20-9f0a-069bb121f67b.jsonl",
+          "numbering": "1-based physical JSONL lines",
+          "preflightBeforeAttempt": {"lines":[2473,2477],"callId":"call_649a530f1c5b4b88a33389796d5a9663","inputAtUtc":"2026-10-08T11:14:54.422Z","outputAtUtc":"2026-10-08T11:14:59.372Z","result":"six files; resolved paths equal; no reparse point; processReferenceCount=0; trackedCount=0; ignored by .tmp"},
+          "deleteAttempt": {"lines":[2496,2498],"callId":"call_5b40b1d9ba8a4b399bf78894b63e9bd9","inputAtUtc":"2026-10-08T11:15:45.689Z","outputAtUtc":"2026-10-08T11:15:45.796Z","commandInputSynopsis":"The attempted PowerShell body looped over the six exact paths and called Remove-Item -LiteralPath <path> -Force -ErrorAction Stop.","rawRejectionReason":"rejected: blocked by policy","processStarted":false},
+          "pathSafetyPreflightWasPersistedAfterRejection": {"lines":[2523,2526],"callId":"call_96b6e92abbc94fe9a1cc1b1930395500","inputAtUtc":"2026-10-08T11:16:44.681Z","outputAtUtc":"2026-10-08T11:16:48.674Z","output":"rows=6; allSafetyPassed=true; totalBytes=66983; deletion=not executed","meaning":"the pathSafetyPreflight array in the supplemental ledger comes from this post-rejection read and is not the preflight-before-attempt"}
+        },
         "result": "平台自动审批在 PowerShell 进程启动前拒绝；未删除任何目标，未改用其他删除方式。",
         "exitCode": null,
-        "preflightLedger": "同文件 pathSafetyPreflight；仅作为拒绝前观察记录，不代表之后的活动引用状态或删除授权。",
+        "rejection": "rejected: blocked by policy",
+        "preflightLedger": "原始回执第2473/2477行是拒绝前检查；补充清单 pathSafetyPreflight 来自拒绝后第2523/2526行。不得混为同一次观察，也不授权重试。",
         "netBytesRemovedThisAssessment": 0
       },
       "g1CRLFConfigBackup": {
@@ -58995,7 +59003,9 @@
         "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
         "shallow": true,
         "registeredParentLinkedWorktree": false,
-        "mainIsAncestor": true,
+        "cloneHeadIsAncestorOfMain": true,
+        "mainIsAncestorOfClone": false,
+        "ancestorCommandsAndExitCodes": {"git merge-base --is-ancestor 002c1d61a7fc5d529b2d480f4c48716971c4236d 96e724858e692d262107c34db50b40c3ae7c122c":0,"git merge-base --is-ancestor 96e724858e692d262107c34db50b40c3ae7c122c 002c1d61a7fc5d529b2d480f4c48716971c4236d":1},
         "mainBehindCloneAhead": "26 0",
         "refs": "仅本地 tds/conv-01a116f7-1027-7c75-90df-32ebc5488752 与同值 origin 跟踪引用；无本地独有提交。",
         "trackedTreeEntries": 1607,
@@ -59007,11 +59017,14 @@
         "currentTrackedFiles": 1464,
         "currentTrackedBytes": 16891322,
         "allTrackedFilesRecoverableFromCloneHead": true,
+        "currentTrackedFilesUniqueSourceConclusion": "1,464 个现存 tracked 文件在 clone 工作区均未修改，因此可从 clone HEAD 逐个恢复；其中 25 个未映射到当前 main 的文件不构成 clone 内的独有源证据。",
         "deletedPathBlobMapping": "143 条路径与 clone HEAD/main blob ID 已在 reviewerFollowupAudit.independentClone.trackedDeletedPaths 逐项记录；140 个 main blob 相同、3 个不同。",
         "currentMainObjectCoverage": "1,575 个唯一 HEAD blob 均可由当前 main 对象库读取；当前 1,464 个 tracked 文件中 1,439 个 CRLF→LF 命中 main、25 个未映射。",
         "enumeratedCloneFileBytes": 33477910,
         "knownUse": "g1-shallow-read.mjs 将其用作隔离浅克隆归档读取验证 fixture。",
-        "activityOrIndependentUse": "本轮没有可读的机器进程引用接口；当前进程/其他用途引用未知。",
+        "historicalProcessAndPathReceipt": {"path":"C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T17-15-17-01a11acb-aa1d-7c20-9f0a-069bb121f67b.jsonl:2548","atUtc":"2026-10-08T11:17:32.627Z","reparsePoints":0,"processReferences":0},
+        "currentProcessCommandLineReferenceQuery": {"atUtc":"2026-10-08T11:37:40.3676759Z","matchingProcesses":0,"scope":"local Win32 process command lines containing this exact clone path"},
+        "activityOrIndependentUse": "本地命令行引用查询已可用且当前为0；平台内部构建引用和 fixture 后续用途仍不可由该进程查询证明，回收前仍须重读。",
         "decision": "保留并作为待独立审查的具体回收候选；本轮不逐文件还原或删除 clone。"
       },
       "remainingMaterialClassification": {
@@ -59020,7 +59033,7 @@
         "ordinaryRootCounts": {"#10":1649,"#18 excluding clone":283,"#11":1496},
         "ordinaryRootBytes": {"#10":196832784,"#18 excluding clone":49882233,"#11":96132695},
         "currentUnmappedClassification": "test-evidence-unmapped/test-output-unmapped 表示用途或映射未判明，不代表唯一；每个路径均带具体缺失的 manifest/归档成员映射或 owner 保留/可重建决定。",
-        "d1aArchiveProof": "main docs/reviews/d1a/artifact-manifest.json 说明 38 个归档源日志路径及 31 个别名，实际解析依赖 ci385-raw-evidence/raw-evidence-index.json 与 source-map.json；未建立这些归档成员与当前每个 .tmp 本地文件的一对一映射。",
+        "d1aArchiveProof": "经 d1a-trace-zip-mapping-2026-10-08.json 逐项 SHA/大小验证，三处解包 trace 目录中 1,406 项、45,315,262 字节与最新 main 脱敏 ZIP 成员逐字节相同；另外 90 项、50,817,433 字节逐项列有哈希和具体 neededInput。",
         "archiveOrSanitization": "未创建归档；未证明其它失败/验收材料确属必要且可安全脱敏，trace/认证类内容不打包。",
         "specificNeededInputs": "以每个 files 条目的 neededInput 为准，包括精确冻结 manifest、ZIP 成员 path/version/byteKind、运行命令/失败索引或 owner 的逐路径保留/可重建决定。",
         "unexplained27FileDifference": "较旧 4,919 汇总多出的 27 个文件仍缺前次逐路径清单，不猜测差异。"
@@ -59036,6 +59049,30 @@
         "overallCleanupComplete": false,
         "prior2268PerFilePreservationLimit": "继续保留原历史限制，不重写此前证据。",
         "prior133CacheReceipts": "保留，不改写。"
+      },
+      "d1aTraceZipAssessment": {
+        "mappingPath": "docs/reviews/cleanup/d1a-trace-zip-mapping-2026-10-08.json",
+        "zipMainPath": "docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-sanitized.zip",
+        "zipGitBlobId": "02c663b7dbdd3c39c891adb99a6908b33bef4ccd",
+        "zipBytes": 14776952,
+        "zipSha256": "00fe3854f1cb7de42482d2b9cab730af697fb115629719f0850df7d43aaa9ca5",
+        "exactMappedFiles": 1406,
+        "exactMappedBytes": 45315262,
+        "notExactMappedFiles": 90,
+        "notExactMappedBytes": 50817433,
+        "sameNameButDifferentTraceFiles": 7,
+        "resourceCopiesMappedByTraceRedactionReport": 8,
+        "archiveCRCsVerified": true,
+        "sensitiveFieldsRemaining": 0,
+        "originalSensitiveValuesRemaining": 0,
+        "pathAndHashRecheck": {"atUtc":"2026-10-08T11:39:04.683935Z","files":1406,"allHashesAndResolvedPathsEqual":true,"reparsePaths":0},
+        "currentTodoSnapshot": {"clockReadUtc":"2026-10-08T11:36:44Z","#5":"building","#9":"confirm","#15":"building","#17":"building","#21":"review","#52":"building","#11":"done; absent from active phase filter"},
+        "latestParentProcessReferenceQueryAtUtc": "2026-10-08T11:40:26.6957762Z",
+        "latestParentProcessCommandLineReferences": 0,
+        "remaining90Bytes": 50817433,
+        "remaining90IndividualMappings": "d1a-trace-zip-mapping-2026-10-08.json: remainingD1aTmpInventory[*] includes each path, size, SHA-256, same-name ZIP member evidence, redaction rename where present, classification, preservation status, and neededInput",
+        "eligibility": "under the user's standing cleanup authorization, these are specific cleanup candidates; before removal refresh task/build references, repeat per-path safety checks, and complete independent review of the mapping. No deletion was performed in this stage.",
+        "unmapped90Disposition": "retained; each exact path/size/SHA-256 and neededInput is in mappingPath. The 8 redaction-renamed resource copies map to sanitized ZIP members but remain pending fresh activity/path review; 7 trace/network files need a per-file redaction transformation link; 75 other files remain under their individually listed manifest/archive/owner evidence gaps."
       }
     }
   }

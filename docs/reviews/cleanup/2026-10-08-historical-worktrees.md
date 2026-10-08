@@ -77,7 +77,7 @@
 
 旧汇总为 4,919 个，较本次扫描多 27 个。由于没有前次逐文件清单，无法识别这 27 个路径，也无法确定差异原因或发生时间。JSON 的 `remainingTmpInventory` 含本次全部当前文件绝对路径、字节数、逐项比较分类和精确 main blob 路径；浅克隆当前文件在 `independentClone.currentTrackedFiles`，缺失的 143 个 tracked 文件在 `trackedDeletedPaths`。没有用摘要或文件名推断覆盖。
 
-原字节对比未匹配不等于文件唯一。本次将普通文件内容按 Git blob 规则与 main 对象树比较，并对含 CRLF 的文本另做仅 CRLF→LF 的归一化比较。当前扫描共发现 1,446 个文件仅在 CRLF→LF 后匹配 main blob：#10 为 6，#18 为 1,440（浅克隆当前文件中 1,439 个，克隆外 1 个），#11 为 0。先前提到的 1,375 不是本次重算值；本次确切匹配路径及对应 main 路径均见 JSON。其余未映射项逐文件标为“用途/映射未判明”，并列出尚需的冻结 manifest、精确归档成员映射或 owner 保留/丢弃决定；不标称为唯一材料。
+原字节对比未匹配不等于文件唯一。在该次清单采样时，普通文件按 Git blob 与 CRLF→LF 归一化进行比较，共发现 1,446 个仅归一化后匹配 main 的文件；当时其余项逐文件标为“用途/映射未判明”，并列出所缺 manifest、归档成员映射或 owner 决定，不称为唯一。后续 D0 阶段已补六份日志映射；本次 D1a 阶段又补出 1,406 个与主线脱敏 ZIP 成员逐字节相同的文件。当前剩余具体文件及所缺证据见新机器清单 `d1a-trace-zip-mapping-2026-10-08.json` 和 `remainingTmpInventory`，不再将已映射项统一列作未知。
 
 ### 保留的可重建缓存与其他材料
 
@@ -117,18 +117,22 @@ D0 的采集日志、D1a 的 trace/patch、G1 的 HTML/Playwright 输出及其�
 
 ### 已映射的 CRLF 副本
 
-- #10 `.tmp` 中六份 D0 `upstream` 日志均有逐文件原始 SHA-256、字节数、D0 `upstream-scope-verification.json` 中对应命令/成功退出码/原始日志哈希，以及仅将 CRLF 转为 LF 后匹配的最新 main 路径与 Git blob ID。逐项值见 `docs/reviews/cleanup/.duplicate-evidence-stage-2026-10-08.json`。这些是可恢复的重复日志，但紧接执行前的 PowerShell 删除调用被平台自动审批在进程启动前拒绝；没有目标被删除，工具没有给出退出码（`null`）。不使用其他方式重试。拒绝前保存的路径、链接、Git 跟踪/忽略和进程引用预检见该清单；该预检不作为之后删除授权。
+- #10 `.tmp` 中六份 D0 `upstream` 日志均有逐文件原始 SHA-256、字节数、D0 `upstream-scope-verification.json` 中对应命令/成功退出码/原始日志哈希，以及仅将 CRLF 转为 LF 后匹配的最新 main 路径与 Git blob ID。逐项值见 `docs/reviews/cleanup/.duplicate-evidence-stage-2026-10-08.json`。原始会话记录显示：删除前预检在第 2473/2477 行（调用 `call_649a530f1c5b4b88a33389796d5a9663`，`11:14:54.422Z`–`11:14:59.372Z`）；删除调用的输入/返回在第 2496/2498 行（调用 `call_5b40b1d9ba8a4b399bf78894b63e9bd9`，`11:15:45.689Z`/`11:15:45.796Z`）。返回原因为 `rejected: blocked by policy`：PowerShell 未启动、退出码 `null`、目标仍在，且没有换方式重试。清单中当前 `pathSafetyPreflight` 字段是在拒绝后才补存：第 2523/2526 行（调用 `call_96b6e92abbc94fe9a1cc1b1930395500`，`11:16:44.681Z`–`11:16:48.674Z`）；它只反映拒绝后的复核，不冒充拒绝前状态或之后的删除授权。原始记录路径和字段时序详见机器清单。
 - #18 `.tmp\g1-vitest-config-original`（752 字节）仅在 CRLF→LF 后匹配 `vitest.integration.config.ts`；原始 SHA-256 为 `ca9031eca23a729d89184c49246b8f1891c784382293cc91ac7ad25b58b3ccfe`，19 对 CRLF，未见独立 LF 或孤立 CR。文件名与内容不足以判定它是临时备份还是 G1 验证基线输入，因此保留。
 - 未为日志、配置或其他证据新建归档。D0 六份日志已有主线原文可恢复；其余失败/验收材料尚未逐项确认必要性、已有归档成员或安全脱敏方法。未将认证状态、trace 或未知材料打包进仓库。
 
 ### 浅克隆复核及独立审查候选
 
-对精确路径 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout` 重新读取 Git 状态：独立浅克隆，HEAD `002c1d61a7fc5d529b2d480f4c48716971c4236d`，`--is-shallow-repository=true`；`96e7248...` 主线是其祖先，`main...HEAD` 为 `26 0`。仅发现该构建分支及同值远端跟踪分支，没有本地独有提交；1,607 个 HEAD tracked 路径中，工作区状态恰为 143 个 tracked 删除、无修改、无未跟踪、无 ignored。文件映射显示 143 个删除路径均能从 clone HEAD blob 恢复，并均存在于 main 对象树（140 个 blob 相同、3 个不同）；clone 当前 1,464 个 tracked 文件可从其 HEAD 恢复，现存机器清单记录其中 1,439 个 CRLF→LF 可映射到 main、25 个未映射。旧清单保存了 143 条删除路径及两侧 blob，不曾恢复这些删除。此次测得克隆文件字节数为 33,477,910；未测卷级配对空间变化。
+对精确路径 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout` 重新读取 Git 状态：独立浅克隆，HEAD `002c1d61a7fc5d529b2d480f4c48716971c4236d`，`--is-shallow-repository=true`。祖先方向是 clone HEAD → main：`git merge-base --is-ancestor 002c1d61a7fc5d529b2d480f4c48716971c4236d 96e724858e692d262107c34db50b40c3ae7c122c` 退出码 0；反向命令退出码 1；`git rev-list --left-right --count 96e724...002c1d6` 为 `26 0`。仅发现该构建分支及同值远端跟踪分支，没有本地独有提交；1,607 个 HEAD tracked 路径中，工作区状态恰为 143 个 tracked 删除、无修改、无未跟踪、无 ignored。文件映射显示 143 个删除路径均能从 clone HEAD blob 恢复，并均存在于 main 对象树（140 个 blob 相同、3 个不同）；clone 当前 1,464 个 tracked 文件可从其 HEAD 恢复，现存机器清单记录其中 1,439 个 CRLF→LF 可映射到 main、25 个未映射。由于工作区状态只含 143 个删除项，其余 1,464 个文件都与 clone HEAD 一致；25 个没有映射到当前 main 的文件仍由 clone HEAD 保全，不是独有源证据。旧清单保存了 143 条删除路径及两侧 blob，不曾恢复这些删除。此次测得克隆文件字节数为 33,477,910；未测卷级配对空间变化。
 
-G1 的 `g1-shallow-read.mjs` 将此目录设为隔离布局测试 cwd，main 中也有归档浅克隆验证记录；这是已知的独立测试用途。此次没有可读的平台进程引用接口，因此当前运行引用仍为未知。基于用途与引用缺口，克隆按用户要求保留为独立审查候选，不以父 worktree 的干净状态覆盖其删除，也不执行去重或删除。精确路径、当前 Git 状态、143 条路径/对象映射仍在机器清单 `followupCleanup.reviewerFollowupAudit.independentClone`。
+G1 的 `g1-shallow-read.mjs` 将此目录设为隔离布局测试 cwd，main 中也有归档浅克隆验证记录；这是已知的独立测试用途。原始回执第 2548 行记载一次历史采样 `reparsePoints=0`、`processReferences=0`；本轮 `11:37:40Z` 当前命令行引用查询也为 0，路径解析与链接检查为 0。该查询不覆盖平台内部构建引用或之后的 fixture 用途，因此这些引用仍需在实际回收前重读。基于用途与剩余引用缺口，克隆按用户要求保留为独立审查候选，不以父 worktree 的干净状态覆盖其删除，也不执行去重或删除。精确路径、当前 Git 状态、143 条路径/对象映射仍在机器清单 `followupCleanup.reviewerFollowupAudit.independentClone`。
 
 ### 其他剩余材料与阶段结果
 
-三个 `.tmp` 根的清单仍逐文件列有绝对路径、字节数、原字节/CRLF→LF 的 main blob 比较结果、分类和该文件缺少的具体输入。它们分别有 1,649（#10）、283（#18，排除独立克隆）和 1,496（#11）个普通文件。D1a 主线 `docs/reviews/d1a/artifact-manifest.json` 声明 `raw-evidence.zip`、`raw-evidence-index.json` 与 `source-map.json` 保留 38 个源日志路径、31 个别名；这只证明归档本身的映射规则，尚无证据把每个剩余本地 trace、patch、脚本、HTML 报告或日志路径配到某一精确归档成员/版本/`byteKind`。相关项保持 `用途/映射未判明`，不称为唯一；如需推进须补具体任务冻结 manifest/归档成员双映射，或给出逐路径的保留/可重建决定。无法从现有材料判定的具体文件路径与大小以 JSON 完整清单为准。
+三个 `.tmp` 根的清单仍逐文件列有绝对路径、字节数、原字节/CRLF→LF 的 main blob 比较结果、分类和该文件缺少的具体输入。它们分别有 1,649（#10）、283（#18，排除独立克隆）和 1,496（#11）个普通文件。D1a 主线 `docs/reviews/d1a/artifact-manifest.json` 声明的主线脱敏 trace ZIP 经逐字节核验后，三处解包 trace 目录中 1,406 个文件、45,315,262 字节与 ZIP 成员完全相同；每项本地 SHA-256、成员路径/大小/SHA-256、ZIP 的 main blob `02c663b7dbdd3c39c891adb99a6908b33bef4ccd` 和 ZIP SHA-256 均见 `d1a-trace-zip-mapping-2026-10-08.json`。例如 `d1a-stage0-trace-env07-2\0-trace.network`（1,501 字节）与成员 `0-trace.network` 逐字节相同。此映射把这些文件列为**完成最新任务/构建引用与逐路径安全复核后**可回收候选；本轮未删除它们。
+
+D1a `.tmp` 总清单有 1,496 项；扣除上述 1,406 个精确映射后，余 90 项、50,817,433 字节，且对这些 90 项与 ZIP 再比对后没有额外的逐字节命中。机器映射 JSON 为每项保留路径、大小、SHA-256、已有 ZIP 同名成员信息、分类与 `neededInput`。其中 15 项位于三个解包目录但未与 ZIP 成员逐字节相同；4 个资源名在 `trace-redaction-report.json` 中逐项映射到脱敏后成员（8 份本地拷贝），报告还记录 ZIP CRC 已验证且剩余敏感字段/原始敏感值计数均为 0。其余 7 个 trace/network 文件虽有同名脱敏成员，仍缺逐文件脱敏变换映射，暂保留。其余 75 项在三个解包目录之外，按机器清单列明的具体冻结 manifest、归档成员或 owner 决定缺口保留。当前 `11:39:04Z` 对 1,406 个映射文件重新校验路径、字节数、SHA-256，全部一致且沿途无 reparse point；`11:40:26Z` 对父构建根的本地命令行引用查询为 0。该快照不替代删除当刻的引用和路径复核，也不覆盖平台内部构建引用。
+
+同批 Todo 刷新及紧邻工具时钟 `11:36:44Z` 显示 #5/#15/#17/#52 为 `building`、#9 为 `confirm`、#21 为 `review`；#11 为 `done`，#8 为 `done` 但仍按指示保护旧 dirty 材料。活动任务均未被中断，#9 及其余活跃/恢复工作区没有作为本轮清理对象。
 
 本阶段没有执行成功的文件删除、归档或 Docker 操作，新增释放量为 0 字节；D0 删除调用的自动审批拒绝已如实记录，没有绕行。四个父 linked worktree 均保留；未映射的 D0/D1a/G1 文件和独立浅克隆均保留。旧批 2,268 项的逐项保全不可独立复核限制不变，133 项缓存清理回执不变。由于仍有需独审的克隆回收依据和无法判定的具体材料，本报告只提交本阶段的审计结果，不表示整体清理完成。

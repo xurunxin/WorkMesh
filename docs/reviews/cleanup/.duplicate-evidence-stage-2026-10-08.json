@@ -120,6 +120,35 @@
     }
   ],
   "status": "D0 验收映射和拒绝前路径预检已留证；删除命令被平台自动审批拒绝，文件仍存在；本记录不授权重试",
+  "rawExecutionReceipt": {
+    "sourcePath": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T17-15-17-01a11acb-aa1d-7c20-9f0a-069bb121f67b.jsonl",
+    "lineNumbering": "1-based physical JSONL line numbers",
+    "preflightBeforeRejectedAttempt": {
+      "lines": [2473, 2477],
+      "callId": "call_649a530f1c5b4b88a33389796d5a9663",
+      "inputAtUtc": "2026-10-08T11:14:54.422Z",
+      "outputAtUtc": "2026-10-08T11:14:59.372Z",
+      "result": "six target paths resolved unchanged; reparsePointInPath=false; processReferenceCount=0; trackedPathCount=0; each ignored by .tmp"
+    },
+    "deleteInvocationAndRejection": {
+      "lines": [2496, 2498],
+      "callId": "call_5b40b1d9ba8a4b399bf78894b63e9bd9",
+      "inputAtUtc": "2026-10-08T11:15:45.689Z",
+      "outputAtUtc": "2026-10-08T11:15:45.796Z",
+      "inputSynopsis": "The attempted PowerShell body iterated the six exact paths and invoked Remove-Item -LiteralPath <path> -Force -ErrorAction Stop.",
+      "rawRejectionReason": "rejected: blocked by policy",
+      "powershellStarted": false,
+      "exitCode": null
+    },
+    "postRejectionSafetyRecheck": {
+      "lines": [2523, 2526],
+      "callId": "call_96b6e92abbc94fe9a1cc1b1930395500",
+      "inputAtUtc": "2026-10-08T11:16:44.681Z",
+      "outputAtUtc": "2026-10-08T11:16:48.674Z",
+      "result": "rows=6; allSafetyPassed=true; totalBytes=66983; deletion=not executed",
+      "note": "pathSafetyPreflight below was written by this post-rejection call; it is distinct from the earlier preflight at lines 2473/2477"
+    }
+  },
   "pathSafetyPreflight": [
     {
       "sourcePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-upstream-contract.log",
@@ -218,6 +247,6 @@
     "targetCount": 6,
     "result": "平台自动审批在启动 PowerShell 进程前拒绝该命令；目标文件未删除",
     "exitCode": null,
-    "rejection": "CreateProcess 返回 Rejected(...blocked by policy); 未改用其他删除方式"
+    "rejection": "rejected: blocked by policy; PowerShell 未启动；未改用其他删除方式"
   }
 }
