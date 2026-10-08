@@ -228,3 +228,49 @@ D1a `.tmp` 总清单有 1,496 项；扣除上述 1,406 个精确映射后，余 
 - `2026-10-08T13:14:56Z` 的最后核验中，Git worktree 列表为 21 项且不含 `prunable`；四个父 worktree 均逐项确认存在、已登记、HEAD 不变并且状态 0 项。12 个 D1a 目标均不存在且 12 份回执退出码为 0；两处资源目录仍为空；三份 `.trace`、两份 raw ZIP 和 8 个受保护 workspace 均仍存在。G1 clone 根仍存在，当前可读 Git 状态退出码 0，1,474 个剩余文件均对应原始清单；其 1,464 个 tracked 源文件完整保留。
 - 本阶段确认从 D1a 精确副本中移除逻辑字节 `1,473,220 B`；G1 递归命令部分消失的元数据为 `27,428 B`，不计入净释放。卷级实际净空间未知。
 - 旧批 2,268 项不可逐项独立复核的限制、133 项缓存和前一阶段 1,406 项回执均未改写。74 项未映射材料、历史 audit JSON、3 个 trace、两份敏感 raw ZIP、四个父 worktree及当前/恢复目录继续保留；本阶段停于需要独审的完整清理结果，不将 todo 标为整体完成。
+
+## 2026-10-08 当前收尾盘点：D1a 保全映射、父目录和 G1 裁定
+
+本节是基于审核基点 `604c3e2f447f6ccb0a7d488c34870ca5108007e5` 的新增只读阶段记录。DarkFlame 此时 `tds status` 仍为 running v0.1.60；Todo #52 为 building；实读 `origin/main` 为 `18252ba8761aa810c3fd12d31ecae83e8b24d985`。Todo 快照为 #5/#9/#16 building、#8/#15/#17 done、#21 review。#16 的 C2 产品构建仍在进行；#17/C3 虽已 done 仍受保护。所有活动和恢复 workspace 保留。
+
+### 父 worktree 与材料分层
+
+四个父目录均仍是正式登记的 linked worktree。当前 `git worktree list --porcelain` 共 21 项、没有 `prunable` 项；四父的当前 HEAD 与 `git status --porcelain --untracked-files=all` 结果如下；`HEAD..FETCH_HEAD` 的 ancestry-path 查询均返回 `18252ba Merge pull request #207`，说明各父提交被本次读取的 main 包含。clean 状态只描述 Git 可见变更，不代表 `.tmp`、ignored 输出、嵌套仓库或未映射验收材料已保全。
+
+| Todo/材料 | 当前绝对路径 | HEAD | Git 登记与状态 | 单独盘点的忽略/临时内容 |
+| --- | --- | --- | --- | --- |
+| #3 R1 | `C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749` | `550dead055689154359a3406dfce4f0c91c1dad3` | linked、已登记、状态 0 项 | `.tmp` 不存在。仍留 `apps/web/playwright-report/index.html`（612,374 B）、`.last-run.json`（45 B）与 `recovery-center.png`（132,730 B）；缺精确 run/用例 viewport/归档附件映射，保留。原 SHA-256 和路径在机器清单。 |
+| #10 D0 | `C:\Users\xurx\.tds\workspaces\01a115d0-87b0-78cd-921d-750713cdde51` | `768bbd82fcc52a873168b39a8382d2f14c928abc` | linked、已登记、状态 0 项 | `.tmp` 现有 1,649 文件、196,832,784 B。六条已映射日志沿用既有 blob 对照；其余 capture、失败现场与诊断文件继续按旧逐路径清单保留。D0 六个已拒绝目标未重试。 |
+| #11 D1a | `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5` | `7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f` | linked、已登记、状态 0 项 | `.tmp` 现有 78 文件、49,344,213 B：74 个未映射项 45,960,098 B、3 份同字节 trace 共 3,068,103 B、历史 audit JSON 316,012 B。 |
+| #18 G1 | `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752` | `c7a1af7d7b2e125368b29975867b4d392690fc38` | linked、已登记、状态 0 项 | `.tmp` 以 `-Force` 枚举 1,757 文件、83,332,715 B；其中父临时文件 283 个/49,882,233 B，另有嵌套独立 clone 1,474 个/33,450,482 B。此前 1,747/66,773,555 B 的读数漏掉 10 个隐藏 Git 元数据文件/16,559,160 B；差额与当前仍存在的元数据相同，不是新产生文件。 |
+
+机器清单对 D1a 的 74 个精确路径再次检查了当前存在、字节数和 SHA-256：`74/74` 与上一份逐路径清单一致，总计 `45,960,098 B`；逐项角色、来源、未闭合的特定输入需求仍以原清单为准，没有因此把任何项判成“唯一”或可删除。R1、D0、G1 的剩余日志/截图/脚本/诊断文件同样按既有 inventory 的逐路径分类和缺口保留；没有因为名称、扩展名或父仓库 clean 而猜它们可重建。
+
+### D1a 三份 trace 的最小无秘密保全
+
+不新增 raw trace 或 ZIP 副本。main 已有脱敏归档 `docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-sanitized.zip`（Git blob `02c663b7dbdd3c39c891adb99a6908b33bef4ccd`），其中 `1-trace.trace` 为 `1,022,635 B`、SHA-256 `f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350`。将既有脱敏逻辑和资源重命名映射在内存复算，输出与该成员逐字节匹配。补充 manifest 列出三份原 trace 的精确路径、原字节数与 SHA；三份均 `1,022,701 B`、同 SHA `17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d`。它们仍在原位置，本轮没有删除。
+
+当前复算确认有两处敏感值需要从 raw 转为脱敏标记：trace line 1612 的字段 `csrf_token` 与 `csrfToken`。仅保存字段路径和名称，不保存/输出原值。既有脱敏报告和 main ZIP 已提供最小安全内容存档；保留至少一份 raw 原件在原处。此前审计记录的 `1,022,617 B` 输出及 line 85/87 差异作为历史观察保留，不覆盖；本次复算准确匹配的是 `1,022,635 B` 成员和 line 1612 两字段，差异来源尚未把历史输出解释为同一次测量。两份敏感 raw ZIP 仍留原位。
+
+### #8/#15 候选与大目录扫描边界
+
+#8 A1（路径 `C:\Users\xurx\.tds\workspaces\01a11ac2-7634-752e-8d81-764c9776f801`，HEAD `07aa293c35100959caa08f73efcb6110e9aa92f4`）和 #15 C1（路径 `C:\Users\xurx\.tds\workspaces\01a1187a-f0f0-76d8-8f5b-b954ee399cdc`，HEAD `81090ec01bcbc84edbe101418d833840999a5326`）当前仍为 Git 登记目录。它们虽在 Todo 上显示 done，本阶段只列作以后逐项评估的候选，全部保留。
+
+既有顶层忽略观察在 #8 见 `.turbo`、`dist`、`node_modules`；#15 见 `.turbo`、`dist`、`node_modules`、`playwright-report`、`test-results`。Chief 报告这两个目录各约 38 万 ignored 项；本轮没有重新遍历这些内部文件，也未独立复数。分层理由是依赖/构建目录可按锁文件、忽略规则、构建脚本与输入判断可重建性，不需逐文件 hash；但这不等于已证明这些完整目录均安全清理。下一候选只能先核顶层归属、Git 忽略/锁文件/生成命令和当前 build 引用，把 report/test-results/未跟踪验收源与缓存拆开；没有精确引用或生成依据的项仍保留。不得以此扫描限制推断所有 ignored 内容是垃圾。
+
+### G1 浅克隆：部分元数据、reflog 价值与有限选择
+
+精确目标 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout` 是 #18 `.tmp` 下的**独立 shallow clone**，不是父 worktree 登记项。现存 1,474 文件、33,450,482 B；原 143 个 tracked deletion 仍在 Git 状态中、无 untracked/ignored 文件，`git fsck --full` 退出码 0 且无输出。1,607 个 tracked 路径的 blob 可从 clone HEAD/current main 读到；现存 1,464 文件与 143 个删除路径均可从 clone HEAD 恢复。它们不是独有源码；fixture `g1-shallow-read.mjs` 和三个输入均有既有逐项来源。没有发现 local-only branch/commit；当前可读构建对话与本机进程命令行对精确 clone path 的引用数为 0。该引用观察不等于全局句柄或平台 build registry 枚举。
+
+部分失败后剩余 10 个 Git 元数据文件/16,559,160 B：`.git/HEAD`、`config`、`description`、`index`、pack 的 `.idx/.pack/.rev`、`packed-refs`、唯一本地 branch ref 和 `shallow`。两个 200 B reflog（`.git/logs/HEAD` 和 `.git/logs/refs/heads/tds/conv-01a116f7-1027-7c75-90df-32ebc5488752`）已经消失。只剩删除前 SHA，没有原文或可精确恢复源；不能通过 SHA 重建。reflog 记录本地 HEAD/branch 移动，可能有操作审计价值，但不是提交对象或本 fixture 输入。当前 fixture 静态读取未使用 reflog；没有找到活动任务引用该本地 reflog。当前 main、clone HEAD 与 branch 的对象源可用，因此不会为了缺少临时 reflog 而重造 Git 元数据，也不把 reflog 缺失作为要求重建整个 clone 的门禁。旧结构化 PowerShell 删除退出码仍是 `null`，外层 wrapper exit `1`，已删 17 元数据的历史回执保持不变。
+
+这里仅列两种后续决策，不执行其一：
+
+1. **保留精确 clone**：继续保有 1,474 文件/33,450,482 B、剩余对象和本地测试状态；代价是占用约 33.45 MB 逻辑空间，且两份 reflog 已知不可恢复。
+2. **只针对精确 clone 的 Force/属性方案**：若另行批准，可考虑对上面唯一绝对目标执行 PowerShell `Remove-Item -LiteralPath <精确目标> -Recurse -Force`，或先处理该目标的 `Hidden`/pack `ReadOnly` 属性再执行普通移除。潜在释放量仅为 33,450,482 B 逻辑内容，实际卷空间未知；前次错误未确定根因，任何方案仍可能继续部分移除，且会毁掉残留克隆元数据/现场。此路径当前未授权，禁止试跑、拆分、恢复文件、改属性/ACL或换方式重试。若 Chief 后续考虑批准，须先重新核活动引用、原生锁/路径条件和精确目标，并明确批准哪一种目标操作；不需要重建 reflog 才能作出选择。
+
+### 未执行的操作与停点
+
+本阶段删除 `0` 项、恢复 `0` 项、没有 Force/权限/属性改动、没有 Docker 变更、没有产品测试；未新增可测的磁盘释放。四个父 worktree、#8/#15 候选、#5/#9/#16/#17/#21 活动与历史恢复目录、D0 六个审批拒绝目标、C3 两个审批拒绝目标及两份 raw ZIP 均保持原样。没有枚举全局 handles/build registry；也没有因约 38 万个依赖缓存文件而逐个读取或 hash。旧批 2,268 项不可逐项独核、133 缓存和 1,406 文件既有回执、12 个 D1a 成功删除回执全部保留。
+
+机器核对文件：[`remaining-closeout-2026-10-08.json`](remaining-closeout-2026-10-08.json)、[`d1a-other74-current-check-2026-10-08.json`](d1a-other74-current-check-2026-10-08.json)、[`d1a-trace-minimum-preservation-2026-10-08.json`](d1a-trace-minimum-preservation-2026-10-08.json)。本阶段停在定向独立审查；整项清理仍未完成，不合并、不标记 todo done。
