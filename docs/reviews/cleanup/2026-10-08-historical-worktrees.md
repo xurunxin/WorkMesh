@@ -162,3 +162,35 @@ D1a `.tmp` 总清单有 1,496 项；扣除上述 1,406 个精确映射后，余 
 - C 盘可用空间样本：操作前 357,786,767,360 B（11:52:38Z），操作后 357,656,641,536 B（11:58:28Z），结束复核 357,750,951,936 B（11:59:23Z）。并行构建期间卷级空间净差为减少 35,815,424 B，无法归因于本次删除；只报告可核验的文件枚举长度 45,315,262 B，不声称这就是物理或净释放空间。
 
 本阶段没有运行产品测试。历史批次 2,268 项逐文件保全不可独立复核的限制不变；133 个缓存回收原始回执也不改写。剩余 90 项、四个父 worktree、浅克隆、D0 拒绝项及未知材料仍需各自的归属/用途/活动引用依据。本次只完成已逐字节保全的 D1a 重复副本回收，**整体历史清理仍未完成**。
+
+## 2026-10-08 剩余验收材料映射与 G1 浅克隆用途复核
+
+本阶段只补充证据，不删除文件、克隆或父 worktree。记录机器为 DarkFlame（`6DOlLniZ0sqBYGHeIhRMq`）；只读 fetch 后 main 为 `96e724858e692d262107c34db50b40c3ae7c122c`。末次可读 Todo 快照：#52 `building`、#5 `implement_reviewing`、#9 `planning`、#15/#17 `building`、#21 `review`；#11/#18 `done`。#8 虽为 `done` 仍受保护。受保护当前/恢复路径及四个父候选目录再次检查均存在，未读写其内容。
+
+### D1a 的 90 项剩余清单
+
+末次逐路径重核 90/90 个文件仍存在，大小和 SHA-256 与原清单一致，合计 50,817,433 B。机器补充清单 `remaining-materials-review-2026-10-08.json` 引用原逐路径清单 `d1a-trace-zip-mapping-2026-10-08.json#remainingD1aTmpInventory`；后者逐项保留 90 个绝对路径、大小、SHA-256、同名 ZIP 候选与 `neededInput`。
+
+- **8 份资源 JSON 副本**（4 个原名分别位于两个解包目录）已按当前 main 的 `trace-redaction-report.json` 逐项核对。每个本地资源与原始 ZIP 的对应成员字节相同，原始成员名到脱敏成员名的映射、源/目标大小及 SHA-256 都已落在机器清单。报告中的映射为：`0fc850b1775d3c97277a3def3ae5756cd44cf49f.json` → `a0eaa9aab07a906e34e1d14c1224957824da6afc.json`；`428d3ad4971b1acb104802eff03cfb3d45ef6306.json` → `2f350d735635dc137f0f2354c603e5c09ac856d3.json`；`b013c45627a222c7fa334f5ee3120f9cd7341c75.json` → `a0eaa9aab07a906e34e1d14c1224957824da6afc.json`；`bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json` → `8176e305fe436a5173990ad29d06e4893f7c57ba.json`。main 的脱敏报告 blob 为 `f06c182a55446c9c734176320efbc54c17d5d5e9`，SHA-256 为 `2dba2ed6cb6df230b0d7d092f94bc434059d0a579f34fb66e6b63b363c712d80`；报告标记 CRC 已验证、脱敏归档中敏感字段及捕获原值均为 0。两份 `.tmp` 原始 ZIP 副本也逐字节相同（各 14,795,293 B，SHA-256 `da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e`，491 个成员、CRC 正常）；按现存脱敏逻辑在内存重建的结果 SHA 与 main 脱敏 ZIP 相同。原始 ZIP 可能含敏感值，仍留在原路径，未复制到仓库、未删除。
+- **7 个 trace/network 文件**仅找到同名的 main 脱敏成员，源与成员的字节数或 SHA-256 有差异。main 报告未给这 7 个文件的逐文件源到目标差异/变换映射，因此同名不作为已保全证明：4 个 `.network`（两个目录各两份）和 3 个 `1-trace.trace` 均继续保留。精确路径及两侧大小、哈希、缺失的逐项映射见机器清单。
+- **其他 75 项**共 46,276,110 B。将它们逐项与 main `96e7248` 的 2,277 个 blob 核对，原始字节匹配 0 项；对可验证 UTF-8 文本做 CRLF→LF 归一化后匹配 0 项；ZIP 成员逐字节匹配 0 项。按目录与扩展名可以看出它们包括 Playwright 报告/截图/输出 ZIP、临时验收脚本、CI/索引/审计和 patch，但这些只是路径分类，不证明唯一、必要或可重建。每一项继续使用原清单中的具体 `neededInput`；最小缺口是相应的 D1a 运行/验收 manifest 到精确路径及版本/字节类型的映射，或命中 main 的 source blob/准确生成命令，以及必要材料的保留/可重建决定。尚未确认哪些失败/验收源是必要唯一材料，因此本轮没有将未知数据打包入 repo。
+
+### G1 独立浅克隆的用途与当前回收边界
+
+目标为 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout`，父任务 #18 G1 已 `done`，父 worktree HEAD `c7a1af7d7b2e125368b29975867b4d392690fc38` 且 `git status` 为 0 项。该目录有独立 `.git`，是 shallow clone，不是父仓库的 linked worktree。静态检查同目录夹具 `.tmp\g1-shallow-read.mjs`（2,457 B，SHA-256 `ef4c368b093f293ccbc77cd4f31e86492a1188f5b091ac0e0642719c39b84294`）将该 clone 设为 cwd，临时复制三项已提交输入，再检查 shallow 状态、旧日志 blob 不可用及归档读取结果；本轮没有运行夹具。三项输入均在 G1 worktree 与 main 上具有相同 Git blob：
+
+| 仓库路径 | 字节数 | 工作区 SHA-256 | main Git blob |
+| --- | ---: | --- | --- |
+| `scripts/verify-raw-evidence-archive.mjs` | 9,722 | `f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131` | `b32919f321b8d42913e7e476989f1c8f389327dd` |
+| `docs/evidence/build-input-reachability.current/raw-evidence.zip` | 2,339,178 | `58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b` | `1875e8935dee1d406616f6d5e799d4acc739041a` |
+| `docs/evidence/build-input-reachability.current/raw-evidence-index.json` | 140,663 | `cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162` | `f5c477c404645a070d5ae7e9aafb6c744da8decb` |
+
+当前 clone HEAD 仍为 `002c1d61a7fc5d529b2d480f4c48716971c4236d`；其 143 个 tracked 删除不构成独有源，已有审核记录表明 143 项可由 clone HEAD 恢复、其中 140 项 blob 与 main 相同、3 项不同；现存 1,464 个 tracked 文件也都可从 HEAD 恢复。本轮遵用户要求，不重做祖先方向核验，不恢复或逐文件去重。刷新后的可读活动 Todo 对话（#5/#9/#15/#17/#21 与 #52）没有命中该 clone/fixture 的精确路径；本机其他进程命令行引用为 0。绝对路径解析位于 WorkMesh workspaces 内，G1 根、`.tmp` 和 clone 本身均无 reparse point；clone 当前 143 项状态均为 tracked deletion，untracked/ignored 均为 0，只有一个本地 HEAD 分支。
+
+仍有明确的删除前缺口：`openfiles /query /fo csv /v` 退出码 1，提示系统未启用本地句柄列表；`handle.exe` 不存在，`.git/index.lock` 当前不存在，但这不足以证明没有其它打开句柄。可读工具也没有独立的全局 build-path registry 查询，因此记录的是已读 Todo/chat 未见引用，而非“全平台无引用”。按本轮指示，浅克隆保留并提交独审，不因父目录 clean 或 143/25 项可恢复而删除。
+
+### 本阶段结果及保留边界
+
+本轮删除 0 个文件、未新建原始证据归档、Docker 未变更、未移除四个父 worktree、未移除浅克隆；新增可核释放量为 0 B，未运行产品测试。#5/#8/#9/#15/#17/#21 当前和恢复目录以及 #21 旧 checkpoint 继续保留；D0 六个已被策略拒绝的目标没有换方式重试。旧批 2,268 项逐项保全不可独立复核的限制、133 个缓存与 1,406 个精确副本的已审回执均不改写。D1a 未映射材料及浅克隆用途证据提交本阶段独审；本报告不表示整项清理完成。
+
+机器可核对补充清单：[`remaining-materials-review-2026-10-08.json`](remaining-materials-review-2026-10-08.json)。原 D1a 90 项路径清单：[`d1a-trace-zip-mapping-2026-10-08.json`](d1a-trace-zip-mapping-2026-10-08.json)。

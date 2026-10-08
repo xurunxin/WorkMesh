@@ -1,0 +1,432 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-08T12:26:13Z",
+  "scope": "历史 worktree 清理材料映射阶段；只读审计，不删除未经本阶段独审的材料",
+  "machine": {
+    "name": "DarkFlame",
+    "id": "6DOlLniZ0sqBYGHeIhRMq",
+    "status": "tds status: running, v0.1.60; no daemon management"
+  },
+  "project": {
+    "id": "DzkLDn6UW-IbfoTJzN9Ro",
+    "main": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "mainRead": "read-only fetch origin main; FETCH_HEAD matched this SHA"
+  },
+  "liveTodos": {
+    "cleanup52": "building",
+    "todo5": "implement_reviewing",
+    "todo8": "done, protected",
+    "todo9": "planning",
+    "todo11": "done",
+    "todo15": "building",
+    "todo17": "building",
+    "todo18": "done",
+    "todo21": "review"
+  },
+  "d1a": {
+    "todoId": "IJQA_DfxU0hF5e8L5Xb3v",
+    "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+    "inventorySource": "docs/reviews/cleanup/d1a-trace-zip-mapping-2026-10-08.json#remainingD1aTmpInventory",
+    "remainingCount": 90,
+    "remainingBytes": 50817433,
+    "pathHashRecheck": {
+      "paths": 90,
+      "missing": 0,
+      "sizeOrHashChanged": 0
+    },
+    "sanitizedArchive": {
+      "repoPath": "docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-sanitized.zip",
+      "gitBlob": "02c663b7dbdd3c39c891adb99a6908b33bef4ccd",
+      "sha256": "00fe3854f1cb7de42482d2b9cab730af697fb115629719f0850df7d43aaa9ca5",
+      "bytes": 14776952
+    },
+    "redactionReport": {
+      "repoPath": "docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-redaction-report.json",
+      "gitBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9",
+      "sha256": "2dba2ed6cb6df230b0d7d092f94bc434059d0a579f34fb66e6b63b363c712d80",
+      "sensitiveResourceFieldsRemaining": 0,
+      "originalSensitiveValuesRemaining": 0,
+      "crcVerified": true,
+      "resourceRenameMappings": 4
+    },
+    "rawSourceArchive": {
+      "localCopies": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\html-report\\data\\d69f056ec411e76e5d9f9e4664b013966ee3cc75.zip",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-e2e-env07\\root-mixed\\output\\stage0-Stage-0-browser-acc-8d3a0--writes-after-team-deletion-bootstrap\\trace.zip"
+      ],
+      "bytesEach": 14795293,
+      "sha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e",
+      "entryCount": 491,
+      "crcVerified": true,
+      "copiesAreByteEqual": true,
+      "inMemoryTransformationReproducedMainSanitizedArchive": true,
+      "sanitizedOutputSha256": "00fe3854f1cb7de42482d2b9cab730af697fb115629719f0850df7d43aaa9ca5",
+      "rawValuesPersisted": false,
+      "disposition": "preserve both sensitive raw source copies; no source bytes copied into repository",
+      "sanitizerSourcePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+      "sanitizerSourceBytes": 8743,
+      "sanitizerSourceSha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df"
+    },
+    "resourceMappings": [
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+        "sourceBytes": 289,
+        "sourceSha256": "560de4bfe857e0180e2b1ee5c40d65fc50554c43f4859f8d27f2a238a24a60dc",
+        "originalZipMember": "resources/0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json",
+        "sanitizedBytes": 223,
+        "sanitizedSha256": "c28da08ce8b1fd5f39077cec9b6f6af4cf779737f2d0d19215931ae59bcc8fe7",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": true,
+        "duplicateCopyHasSameSourceBytes": false
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+        "sourceBytes": 143,
+        "sourceSha256": "44f5ae27809f7c6b766c1053b556815f53e6010c1cb7ffb3d4270301e68af072",
+        "originalZipMember": "resources/428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/2f350d735635dc137f0f2354c603e5c09ac856d3.json",
+        "sanitizedBytes": 134,
+        "sanitizedSha256": "832a058ef5c4b5138992e91d31203286cdb05275c998e1ca71b0a367f2ee6719",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": true,
+        "duplicateCopyHasSameSourceBytes": false
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+        "sourceBytes": 289,
+        "sourceSha256": "9255c2a4c298ec0923e80ba64973b72a902ead28336796380598a42a960018a5",
+        "originalZipMember": "resources/b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json",
+        "sanitizedBytes": 223,
+        "sanitizedSha256": "c28da08ce8b1fd5f39077cec9b6f6af4cf779737f2d0d19215931ae59bcc8fe7",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": true,
+        "duplicateCopyHasSameSourceBytes": false
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\resources\\bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+        "sourceBytes": 63,
+        "sourceSha256": "104668dfeae350c7f02740beac6d9b66c407534cc09db6b74f7c673b36fcc84b",
+        "originalZipMember": "resources/bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/8176e305fe436a5173990ad29d06e4893f7c57ba.json",
+        "sanitizedBytes": 54,
+        "sanitizedSha256": "5c3f5310f8cbe719adc86b831e2f5bb44e728bd9613136536991bf55b64527c9",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": true,
+        "duplicateCopyHasSameSourceBytes": false
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+        "sourceBytes": 289,
+        "sourceSha256": "560de4bfe857e0180e2b1ee5c40d65fc50554c43f4859f8d27f2a238a24a60dc",
+        "originalZipMember": "resources/0fc850b1775d3c97277a3def3ae5756cd44cf49f.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json",
+        "sanitizedBytes": 223,
+        "sanitizedSha256": "c28da08ce8b1fd5f39077cec9b6f6af4cf779737f2d0d19215931ae59bcc8fe7",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": false,
+        "duplicateCopyHasSameSourceBytes": true
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+        "sourceBytes": 143,
+        "sourceSha256": "44f5ae27809f7c6b766c1053b556815f53e6010c1cb7ffb3d4270301e68af072",
+        "originalZipMember": "resources/428d3ad4971b1acb104802eff03cfb3d45ef6306.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/2f350d735635dc137f0f2354c603e5c09ac856d3.json",
+        "sanitizedBytes": 134,
+        "sanitizedSha256": "832a058ef5c4b5138992e91d31203286cdb05275c998e1ca71b0a367f2ee6719",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": false,
+        "duplicateCopyHasSameSourceBytes": true
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+        "sourceBytes": 289,
+        "sourceSha256": "9255c2a4c298ec0923e80ba64973b72a902ead28336796380598a42a960018a5",
+        "originalZipMember": "resources/b013c45627a222c7fa334f5ee3120f9cd7341c75.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json",
+        "sanitizedBytes": 223,
+        "sanitizedSha256": "c28da08ce8b1fd5f39077cec9b6f6af4cf779737f2d0d19215931ae59bcc8fe7",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": false,
+        "duplicateCopyHasSameSourceBytes": true
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\resources\\bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+        "sourceBytes": 63,
+        "sourceSha256": "104668dfeae350c7f02740beac6d9b66c407534cc09db6b74f7c673b36fcc84b",
+        "originalZipMember": "resources/bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json",
+        "sourceEqualsOriginalZipMember": true,
+        "sanitizedZipMember": "resources/8176e305fe436a5173990ad29d06e4893f7c57ba.json",
+        "sanitizedBytes": 54,
+        "sanitizedSha256": "5c3f5310f8cbe719adc86b831e2f5bb44e728bd9613136536991bf55b64527c9",
+        "sourceToSanitizedMappingFromMainReport": true,
+        "localSourceRecheckedAgainstRawZip": false,
+        "duplicateCopyHasSameSourceBytes": true
+      }
+    ],
+    "traceComparisons": [
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\1-trace.network",
+        "sourceBytes": 569068,
+        "sourceSha256": "1b210fb6e8e8fb708b06ca1103a684d8ac11d5325b98709a73d71fb6420a5f06",
+        "sameNameSanitizedMember": "1-trace.network",
+        "sanitizedBytes": 569068,
+        "sanitizedSha256": "e4735b4cbae014ae778a174fc3dc24850d1c3c8072070feaecd39e6a36b7046a",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "not established: report has archive-level redaction counts and resource renames, not per-file trace/network source-to-member transform",
+        "disposition": "retain"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\1-trace.trace",
+        "sourceBytes": 1022701,
+        "sourceSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "sameNameSanitizedMember": "1-trace.trace",
+        "sanitizedBytes": 1022635,
+        "sanitizedSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "not established: report has archive-level redaction counts and resource renames, not per-file trace/network source-to-member transform",
+        "disposition": "retain"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\2-trace.network",
+        "sourceBytes": 166758,
+        "sourceSha256": "78e4acabed788349ca43a940611c59aa032429886d16708d7b2ef8a8e64a0993",
+        "sameNameSanitizedMember": "2-trace.network",
+        "sanitizedBytes": 166758,
+        "sanitizedSha256": "919f88b0e5cfe708a963bb866d5077f4036be50af209b938c94615105753a7d3",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "not established: report has archive-level redaction counts and resource renames, not per-file trace/network source-to-member transform",
+        "disposition": "retain"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\1-trace.network",
+        "sourceBytes": 569068,
+        "sourceSha256": "1b210fb6e8e8fb708b06ca1103a684d8ac11d5325b98709a73d71fb6420a5f06",
+        "sameNameSanitizedMember": "1-trace.network",
+        "sanitizedBytes": 569068,
+        "sanitizedSha256": "e4735b4cbae014ae778a174fc3dc24850d1c3c8072070feaecd39e6a36b7046a",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "not established: report has archive-level redaction counts and resource renames, not per-file trace/network source-to-member transform",
+        "disposition": "retain"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\1-trace.trace",
+        "sourceBytes": 1022701,
+        "sourceSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "sameNameSanitizedMember": "1-trace.trace",
+        "sanitizedBytes": 1022635,
+        "sanitizedSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "not established: report has archive-level redaction counts and resource renames, not per-file trace/network source-to-member transform",
+        "disposition": "retain"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\2-trace.network",
+        "sourceBytes": 166758,
+        "sourceSha256": "78e4acabed788349ca43a940611c59aa032429886d16708d7b2ef8a8e64a0993",
+        "sameNameSanitizedMember": "2-trace.network",
+        "sanitizedBytes": 166758,
+        "sanitizedSha256": "919f88b0e5cfe708a963bb866d5077f4036be50af209b938c94615105753a7d3",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "not established: report has archive-level redaction counts and resource renames, not per-file trace/network source-to-member transform",
+        "disposition": "retain"
+      },
+      {
+        "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07-round2\\1-trace.trace",
+        "sourceBytes": 1022701,
+        "sourceSha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+        "sameNameSanitizedMember": "1-trace.trace",
+        "sanitizedBytes": 1022635,
+        "sanitizedSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+        "sameNameOnly": true,
+        "byteEqual": false,
+        "sourceToTargetTransformationMapping": "not established: report has archive-level redaction counts and resource renames, not per-file trace/network source-to-member transform",
+        "disposition": "retain"
+      }
+    ],
+    "other75": {
+      "count": 75,
+      "bytes": 46276110,
+      "mainTreeBlobCountChecked": 2277,
+      "exactGitBlobMatches": 0,
+      "eligibleUtf8TextCrLfToLfMatches": 0,
+      "exactZipMemberMatches": 0,
+      "pathInventoryReference": "docs/reviews/cleanup/d1a-trace-zip-mapping-2026-10-08.json#remainingD1aTmpInventory (filter: exclude 15 trace/resource paths); this referenced inventory gives each of 75 absolute paths, byte count, SHA-256 and neededInput",
+      "roleAssessment": "path/extension grouping only; not proof of uniqueness, necessity or rebuildability",
+      "retainReason": "retain each exact path until its per-path producer/run or artifact-manifest mapping and retention/rebuildability decision is available"
+    }
+  },
+  "g1Clone": {
+    "todoId": "Tws50k02Pi52R-RJEXP_N",
+    "todoPhase": "done",
+    "parentWorkspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+    "parentHead": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+    "parentStatusEntries": 0,
+    "clonePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout",
+    "resolvedAbsolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout",
+    "classification": "independent shallow clone nested in G1 .tmp; not a linked parent worktree",
+    "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+    "shallow": true,
+    "registeredInParentWorktreeList": false,
+    "statusEntries": 143,
+    "trackedDeletions": 143,
+    "untrackedCount": 0,
+    "ignoredCount": 0,
+    "localHeadBranchCount": 1,
+    "indexLockPresent": false,
+    "fixture": {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-read.mjs",
+      "bytes": 2457,
+      "sha256": "ef4c368b093f293ccbc77cd4f31e86492a1188f5b091ac0e0642719c39b84294",
+      "purpose": "fixture sets clone as cwd, copies three self-contained inputs, asserts shallow mode and unavailable historic blob, then validates archive reads; static inspection only, not executed"
+    },
+    "fixtureInputs": [
+      {
+        "path": "scripts/verify-raw-evidence-archive.mjs",
+        "bytes": 9722,
+        "sha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131",
+        "gitBlob": "b32919f321b8d42913e7e476989f1c8f389327dd"
+      },
+      {
+        "path": "docs/evidence/build-input-reachability.current/raw-evidence.zip",
+        "bytes": 2339178,
+        "sha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b",
+        "gitBlob": "1875e8935dee1d406616f6d5e799d4acc739041a"
+      },
+      {
+        "path": "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
+        "bytes": 140663,
+        "sha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162",
+        "gitBlob": "f5c477c404645a070d5ae7e9aafb6c744da8decb"
+      }
+    ],
+    "referenceSnapshot": {
+      "exactPathMentionsInReadableActiveBuildChats": 0,
+      "readableChatsChecked": [
+        "todo #5 ti53hOGbvnBNrvjXXveGO",
+        "todo #9 0BkezbmWV6k8vwrlSNuF_",
+        "todo #15 kkG9VeT3_uTzREhjnX2ve",
+        "todo #17 4DlyrPrDMMtK5JTmFm1t_",
+        "todo #21 2j2sxT5wJ-l001efH_meJ",
+        "cleanup #52 6LZdc1ZhadjkkYSzEi6zB"
+      ],
+      "otherProcessCommandLineReferences": 0,
+      "platformGlobalBuildPathRegistryQuery": "not exposed in available read-only tool surface; no claim of global absence"
+    },
+    "pathSafety": {
+      "resolvedUnderWorkspaces": true,
+      "checkedElements": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+          "reparsePoint": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp",
+          "reparsePoint": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout",
+          "reparsePoint": false
+        }
+      ]
+    },
+    "lockCheck": {
+      "openfilesExitCode": 1,
+      "openfilesOutput": "maintain objects list flag is disabled; cannot enumerate local opened files",
+      "handleExeAvailable": false,
+      "indexLockPresent": false,
+      "fileHandleAbsenceProven": false
+    },
+    "deletedPathsRecovery": {
+      "trackedDeletedCount": 143,
+      "recoverableFromCloneHead": 143,
+      "sameBlobAsCurrentMain": 140,
+      "differentBlobAsCurrentMain": 3,
+      "currentTrackedFileCount": 1464,
+      "uniqueSourceClaim": "none; earlier independent review says clone HEAD is contained in main (main...HEAD = 26 0); this ancestry result was not redone per user instruction"
+    },
+    "decision": "retain and submit for review: historical G1 purpose and three exact inputs are evidenced; no readable active chat/process path references; no reparse points; local OS handle enumeration unavailable and no separate global build-path registry query"
+  },
+  "protectedWorkspacePaths": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+      "exists": true
+    }
+  ],
+  "parentCandidatePaths": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+      "exists": true
+    }
+  ],
+  "actions": {
+    "deletedFiles": 0,
+    "newArchives": 0,
+    "dockerChanges": 0,
+    "parentWorktreesRemoved": 0,
+    "cloneRemoved": false,
+    "knownReleasedBytes": 0,
+    "productCodeChanged": false
+  },
+  "preservedAuditLimits": [
+    "旧批 2,268 项逐项保全不可独立复核；不补造历史回执",
+    "133 缓存与 1,406 D1a 精确副本回收回执不重做",
+    "D0 已拒绝目标仍保留，不以其他命令重试",
+    "四个父 worktree、保护 workspace、未知证据均保留"
+  ]
+}
