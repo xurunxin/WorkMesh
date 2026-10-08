@@ -378,6 +378,9 @@ test.describe("Stage 0 browser acceptance", () => {
       // Address the surface this test is about. Signing in lands on the
       // default landing, which is the Agent workbench, not the Issues list.
       await secondPage.getByTestId("view-my-work").click();
+      await secondPage.waitForURL(
+        (url) => url.pathname === "/" && url.searchParams.get("view") === "my-work",
+      );
       const secondEnglishLocale = secondPage.getByRole("button", { name: "EN", exact: true });
       await secondEnglishLocale.click();
       await expect(secondEnglishLocale).toHaveAttribute("aria-pressed", "true");

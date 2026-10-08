@@ -1,0 +1,153 @@
+{
+  "removedContainers": [
+    "wm-d1a-reverify-40a51-pg",
+    "wm-d1a-reverify-40a51-redis",
+    "wm-d1a-reverify-40a51-rustfs"
+  ],
+  "remaining": [],
+  "containerCleanupVerified": true,
+  "envRestore": [
+    {
+      "name": "RUN_INTEGRATION",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "RUN_RECOVERY_INTEGRATION",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "RUN_RETENTION_UPGRADE_INTEGRATION",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "DATABASE_URL",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "REDIS_URL",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "SESSION_SECRET",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "WORKMESH_MASTER_KEY",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "WORKMESH_BOOTSTRAP_TOKEN",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "S3_ENDPOINT",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "S3_REGION",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "S3_BUCKET",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "S3_ACCESS_KEY_ID",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "S3_SECRET_ACCESS_KEY",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "S3_FORCE_PATH_STYLE",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "RECOVERY_SOURCE_DATABASE_URL",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "RECOVERY_TARGET_DATABASE_URL",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "RECOVERY_TEST_S3_ENDPOINT",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "RECOVERY_TEST_S3_ACCESS_KEY_ID",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "RECOVERY_TEST_S3_SECRET_ACCESS_KEY",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "RECOVERY_SOURCE_S3_BUCKET",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "RECOVERY_TARGET_S3_BUCKET",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "RECOVERY_TEST_SUFFIX",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "WORKMESH_POSTGRES_TOOL_CONTAINER",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "WORKMESH_POSTGRES_TOOL_HOST",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "WORKMESH_POSTGRES_TOOL_PORT",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "WEB_ORIGIN",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "NEXT_PUBLIC_API_URL",
+      "wasSet": false,
+      "restored": true
+    },
+    {
+      "name": "WORKMESH_PLAYWRIGHT_RUN_DIR",
+      "wasSet": false,
+      "restored": true
+    }
+  ],
+  "environmentRestored": true,
+  "testDatabaseAndBucketsDestroyedWithContainers": true
+}

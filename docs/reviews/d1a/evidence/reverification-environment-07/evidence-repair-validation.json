@@ -1,0 +1,47 @@
+{
+  "sourceRun": "reverification-environment-07",
+  "traceRedactionReport": "e2e-failure-captures/trace-redaction-report.json",
+  "redactedFieldCountsByName": {
+    "csrf_token": 2,
+    "csrfToken": 2,
+    "password": 2
+  },
+  "verifiedRedactedFieldCountsByName": {
+    "password": 2,
+    "csrf_token": 1,
+    "csrfToken": 1
+  },
+  "verifiedRedactedSerializedFieldCountsByName": {
+    "csrf_token": 1,
+    "csrfToken": 1
+  },
+  "renamedResourceTargetsPresent": {
+    "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json": true,
+    "resources/2f350d735635dc137f0f2354c603e5c09ac856d3.json": true,
+    "resources/8176e305fe436a5173990ad29d06e4893f7c57ba.json": true
+  },
+  "remainingSensitiveJsonFields": 0,
+  "remainingSensitiveSerializedFields": 0,
+  "originalSensitiveValuesRemaining": 0,
+  "zipCopiesIdentical": true,
+  "traceArchiveSha256": "00fe3854f1cb7de42482d2b9cab730af697fb115629719f0850df7d43aaa9ca5",
+  "zipChecks": {
+    "directTrace": {
+      "crcVerified": true,
+      "entries": 490,
+      "bytes": 14776952
+    },
+    "htmlReportAttachment": {
+      "crcVerified": true,
+      "entries": 490,
+      "bytes": 14776952
+    }
+  },
+  "dynamicImports": {
+    "./assets/xtermModule-CsJ4vdCR.js": true
+  },
+  "playwrightModuleSource": "node_modules/.pnpm/playwright-core@1.61.1/node_modules/playwright-core/lib/vite/traceViewer/assets/xtermModule-CsJ4vdCR.js",
+  "includedModule": "e2e-html-report/trace/assets/xtermModule-CsJ4vdCR.js",
+  "includedModuleBytes": 292244,
+  "includedModuleSha256": "4aa82b0448cef1cf951bbe0ac80bf2d2b7c5d279dd74bcc798a9e563e98e5295"
+}
