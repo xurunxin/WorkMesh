@@ -11,3 +11,5 @@
 原六测试、原 DoD 和九类全部保留，当前逐文件/场景映射见 [测试覆盖](../c2-wecom/test-coverage.json)。本轮没有产品代码或测试实现，也没有运行产品测试、真实发送或最终验收。未来产品测试不得预填通过。
 
 当前完整方案见 [implementation-plan.md](../c2-wecom/implementation-plan.md)，输入/字节/哈希见 [source-metadata.json](../c2-wecom/source-metadata.json)。本批采用 Todos 编排＋仓库证据，不创建真实 WorkMesh 双轨记录。文档推送后停止在 review，交 Chief 安排另一 Agent 阅读仓库完整产品方案独审；blocking/high 闭合和 Chief 另行明确放行前不实施产品。本轮 confirm 只放行文档归档。
+
+独审修正：原始官方响应、正文片段和三份 savedplan 由 [raw-evidence.zip](raw-evidence.zip) 无损保全，[索引](raw-evidence-index.json) 分列来源路径、工作树/Git blob 双哈希。可读副本正常接受空白检查，旧豁免移除，首次失败和旧检查原件保留，旧绿色结果不能证明 CI 门禁。频控额度保留至 max(D, 实际完成或安全终止时间)+60 秒，崩溃按 D+60 秒保守保留；新增锁等待跨窗口、进程崩溃与多 Worker 用例映射，仍全部未实施/未运行。实际验证与资源回执见 [review-fixes.json](../../reviews/c2/review-fixes.json)。

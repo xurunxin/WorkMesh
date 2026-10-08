@@ -22,10 +22,10 @@
    -H 'Content-Type: application/json' \
    -d '
    {
-    	"msgtype": "text",
-    	"text": {
-        	"content": "hello world"
-    	}
+        "msgtype": "text",
+        "text": {
+            "content": "hello world"
+        }
    }'
 
     当前自定义消息推送支持文本（text）、markdown（markdown、markdown_v2）、图片（image）、图文（news）、文件（file）、语音（voice）、模板卡片（template_card）八种消息类型。
@@ -37,12 +37,12 @@
     "msgtype": "text",
     "text": {
         "content": "广州今日天气：29度，大部分多云，降雨概率：60%",
-		"mentioned_list":["wangqing","@all"],
-		"mentioned_mobile_list":["13800001111","@all"]
+        "mentioned_list":["wangqing","@all"],
+        "mentioned_mobile_list":["13800001111","@all"]
     }
 }
 
-    
+
         参数是否必填说明
 msgtype是消息类型，此时固定为text
 content是文本内容，最长不超过2048个字节，必须是utf8编码
@@ -60,14 +60,14 @@ markdown类型
     }
 }
 
-    
+
         参数是否必填说明
 msgtype是消息类型，此时固定为markdown
 content是markdown内容，最长不超过4096个字节，必须是utf8编码
 
  
 目前支持的markdown语法是如下的子集：
-标题 （支持1至6级标题，注意#与文字中间要有空格） 
+标题 （支持1至6级标题，注意#与文字中间要有空格）
 
       # 标题一
 ## 标题二
@@ -76,54 +76,54 @@ content是markdown内容，最长不超过4096个字节，必须是utf8编码
 ##### 标题五
 ###### 标题六
 
-    
+
 加粗
 
       **bold**
 
-    
+
 链接
 
       [这是一个链接](https://work.weixin.qq.com/api/doc)
 
-    
+
 行内代码段（暂不支持跨行）
 
       `code`
 
-    
+
 引用
 
       > 引用文字
 
-    
+
 字体颜色(只支持3种内置颜色)
 
       <font color="info">绿色</font>
 <font color="comment">灰色</font>
 <font color="warning">橙红色</font>
 
-    
+
 markdown_v2类型
 
       {
-	"msgtype": "markdown_v2",
-	"markdown_v2": {
+    "msgtype": "markdown_v2",
+    "markdown_v2": {
          "content": "# 一、标题\n## 二级标题\n### 三级标题\n# 二、字体\n*斜体*\n\n**加粗**\n# 三、列表 \n- 无序列表 1 \n- 无序列表 2\n  - 无序列表 2.1\n  - 无序列表 2.2\n1. 有序列表 1\n2. 有序列表 2\n# 四、引用\n> 一级引用\n>>二级引用\n>>>三级引用\n# 五、链接\n[这是一个链接](https:work.weixin.qq.com\/api\/doc)\n![](https://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png)\n# 六、分割线\n\n---\n# 七、代码\n`这是行内代码`\n```\n这是独立代码块\n```\n\n# 八、表格\n| 姓名 | 文化衫尺寸 | 收货地址 |\n| :----- | :----: | -------: |\n| 张三 | S | 广州 |\n| 李四 | L | 深圳 |\n"
-	   }
+       }
 }
 
-    
+
         参数是否必填说明
 msgtype是消息类型，此时固定为markdown_v2。
 content是markdown_v2内容，最长不超过4096个字节，必须是utf8编码。
-特殊的， 
-1. markdown_v2不支持字体颜色、@群成员的语法， 具体支持的语法可参考下面说明 
+特殊的，
+1. markdown_v2不支持字体颜色、@群成员的语法， 具体支持的语法可参考下面说明
  2. 消息内容在客户端 4.1.36 版本以下(安卓端为4.1.38以下) 消息表现为纯文本，建议使用最新客户端版本体验
 
 
 目前支持的markdown_v2语法是如下的子集：
-标题 （支持1至6级标题，注意#与文字中间要有空格） 
+标题 （支持1至6级标题，注意#与文字中间要有空格）
 
       # 标题一
 ## 标题二
@@ -132,13 +132,13 @@ content是markdown_v2内容，最长不超过4096个字节，必须是utf8编码
 ##### 标题五
 ###### 标题六
 
-    
+
 字体
 
       *斜体*
 **加粗**
 
-    
+
 列表
 
       - 无序列表 1
@@ -148,26 +148,26 @@ content是markdown_v2内容，最长不超过4096个字节，必须是utf8编码
 1. 有序列表 1
 2. 有序列表 2
 
-    
+
 引用
 
       >一级引用
 >>二级引用
 >>>三级引用
 
-    
+
 链接
 
       [这是一个链接](https://work.weixin.qq.com/api/doc)
 ![这是一个图片](https://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png)
 
-    
+
 分割线
 
-      
+
 ---
 
-    
+
 代码
 `这是行内代码`
 
@@ -184,7 +184,7 @@ content是markdown_v2内容，最长不超过4096个字节，必须是utf8编码
 | 张三 | S | 广州 |
 | 李四 | L | 深圳 |
 
-    
+
  
 图片类型
 
@@ -192,11 +192,11 @@ content是markdown_v2内容，最长不超过4096个字节，必须是utf8编码
     "msgtype": "image",
     "image": {
         "base64": "DATA",
-		"md5": "MD5"
+        "md5": "MD5"
     }
 }
 
-    
+
         参数是否必填说明
 msgtype是消息类型，此时固定为image
 base64是图片内容的base64编码
@@ -218,7 +218,7 @@ md5是图片内容（base64编码前）的md5值
     }
 }
 
-    
+
         参数是否必填说明
 msgtype是消息类型，此时固定为news
 articles是图文消息，一个图文消息支持1到8条图文
@@ -232,11 +232,11 @@ picurl否图文消息的图片链接，支持JPG、PNG格式，较好的效果�
       {
     "msgtype": "file",
     "file": {
- 		"media_id": "3a8asd892asd8asd"
+         "media_id": "3a8asd892asd8asd"
     }
 }
 
-    
+
         参数是否必填说明
 msgtype是消息类型，此时固定为file
 media_id是文件id，通过下文的文件上传接口获取
@@ -245,13 +245,13 @@ media_id是文件id，通过下文的文件上传接口获取
 语音类型
 
       {
-	"msgtype": "voice",
-	"voice": {
-		"media_id": "MEDIA_ID"
-	}
+    "msgtype": "voice",
+    "voice": {
+        "media_id": "MEDIA_ID"
+    }
 }
 
-    
+
         参数是否必填说明
 msgtype是语音类型，此时固定为voice
 media_id是语音文件id，通过下文的文件上传接口获取

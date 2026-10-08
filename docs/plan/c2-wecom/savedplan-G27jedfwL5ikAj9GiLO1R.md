@@ -15,11 +15,11 @@
 ## 文档变更
 
 - `docs/plan/c2-wecom/implementation-plan.md`：保存完整中文实现方案和后续逐文件变更清单。适配器落在 `apps/worker/src/wecom-notifications.ts`，由 `apps/worker/src/index.ts` 注册到 `createAutomationWorker.channelAdapters`；复用 `claimNotifications`、`deliverNotification` 及 `packages/db/src/channel-notifications.ts` 的 `prepareChannelSend`、`settleChannelSend`、`reconcileChannelSend`，不新增 CRUD 或队列。保留 workspace 前置锁、`lockAgentAuthorityPlan` 锁序、锁后实际租期检查、静音 kind、逐条 claim 和八次重试预算。
-  
+
   冻结端点白名单为 HTTPS `qyapi.weixin.qq.com/cgi-bin/webhook/send`，仅接受一个非空 `key`，拒绝凭据、额外参数、fragment 和重定向；复用 `resolveWebhookTarget` 的公共地址校验与 DNS 固定连接模式。现有 `fetchResolvedWebhook` 只返回 HTTP 状态，方案明确增加有界响应正文读取并用 Zod 校验提供方结果。仅有效成功响应记 delivered；明确拒绝记 failed；请求发出后的 timeout、断连、畸形响应或不确定结果进入 unknown。沿用五秒上限及 claim 剩余租期，不自动重送 uncertain，不保存原始 URL、key 或 `errmsg`。[错误码来源](https://developer.work.weixin.qq.com/document/path/90313)
-  
+
   频控采用 Redis Lua，以秘密 HMAC 指纹区分实际目标，跨 Worker 和重复 target 配置共用滚动窗口及串行发送许可。频控等待发生在发送 checkpoint 之前；使用原 delivery 延后领取，不消耗失败重试预算，Redis 不可用时停止发送。许可过期必须重新取得许可并重新鉴权。
-  
+
   深链由 `WEB_ORIGIN` 与 C1 的 Attention 相对路由构造。冻结 `use-authenticated-actor.ts`、`login/page.tsx` 的安全 `returnTo` 修改：保留站内目的地，拒绝外域及协议相对地址；登录后按当前 Human 读取目标，复用 `canonicalObjectHref`、`safeInternalHref` 和既有返回、焦点行为。陈旧来源仅保留通用提醒；网页读取当前状态，渠道不写决策。
 
 - `docs/plan/c2-wecom/` 中的来源快照与绑定文件：分别保存 R1 原始正文、当前完整 Todos spec、原九类矩阵和官方核实记录。记录准确 Git SHA、工作树及 Git blob 的字节数与 SHA-256、UTF-8 编码和换行差异；官方记录包含 URL、读取时间、读取方式、事实出处及浏览工具访问失败。归档平台 savedplan 正文与来源，未提供的 ID 或 version 写 `null`，按实际生成顺序补充一次，不制造自引用计划。

@@ -1,31 +1,83 @@
 {
-  "generatedAt": "2026-10-08T13:17:37.439Z",
+  "generatedAt": "2026-10-08T13:35:51.380Z",
   "inputMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
   "executionPlanId": "8K46xBWutJwsqCy89K5Oq",
   "files": [
     {
-      "path": "docs/plan/c2-wecom/.gitattributes",
+      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
       "worktree": {
-        "bytes": 342,
-        "sha256": "f8565dca63a5bd08aba69ab5a84cfc3cf66f75b6504c71013a70802f79d002ff"
+        "bytes": 22788,
+        "sha256": "2ad58a2684904b3368040a5cf804100e0ef58518cc2c019add1e8702ca4abd43"
       },
       "gitBlob": {
-        "bytes": 342,
-        "sha256": "f8565dca63a5bd08aba69ab5a84cfc3cf66f75b6504c71013a70802f79d002ff",
-        "oid": "16b0666295170d6f547c8a80c6c2a7d07abd9185"
+        "bytes": 22494,
+        "sha256": "6aa10899f3b1f7407aaa28bafb1feb053e74a362683974cbfb404777126b9f26",
+        "oid": "cc6c0a774883771f229e33484fba9c0cfe150511"
+      },
+      "identity": "Git 换行转换，工作树/Git 各自哈希分别保留"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/16.md",
+      "worktree": {
+        "bytes": 13193,
+        "sha256": "7b5cf6532e847824f102ed4cf6c98cf681047b0dbc831d89b5ac5549fc2f5963"
+      },
+      "gitBlob": {
+        "bytes": 13193,
+        "sha256": "7b5cf6532e847824f102ed4cf6c98cf681047b0dbc831d89b5ac5549fc2f5963",
+        "oid": "1e2b093222bacb7b3a38da3db5e562a731f66964"
+      },
+      "identity": "字节一致"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/index.json",
+      "worktree": {
+        "bytes": 101253,
+        "sha256": "b02a1f753d31d2e26f8b373d01c0d47d479d087312c7d56dd9bcd577ab8b5b71"
+      },
+      "gitBlob": {
+        "bytes": 101253,
+        "sha256": "b02a1f753d31d2e26f8b373d01c0d47d479d087312c7d56dd9bcd577ab8b5b71",
+        "oid": "01e8742593a4e19266c85852c7c1e2ee0f0e6322"
+      },
+      "identity": "字节一致"
+    },
+    {
+      "path": "docs/plan/c2-wecom/.gitattributes",
+      "worktree": {
+        "bytes": 139,
+        "sha256": "4acddb9cf00f2c3e1eeec0072cca906b2e31dddcd2723c90f41c4831ee06e909"
+      },
+      "gitBlob": {
+        "bytes": 139,
+        "sha256": "4acddb9cf00f2c3e1eeec0072cca906b2e31dddcd2723c90f41c4831ee06e909",
+        "oid": "76cc19c89ce763ee9977fdea8f2fb38f3058c57b"
+      },
+      "identity": "字节一致"
+    },
+    {
+      "path": "docs/plan/c2-wecom/README.md",
+      "worktree": {
+        "bytes": 3719,
+        "sha256": "32abcaab7125b6fe6ee4842d6136d73f4c72cdc4c5e38d6874c6bbc77dcc6d0f"
+      },
+      "gitBlob": {
+        "bytes": 3719,
+        "sha256": "32abcaab7125b6fe6ee4842d6136d73f4c72cdc4c5e38d6874c6bbc77dcc6d0f",
+        "oid": "bf4fe6b16ec28119be39ce5e79781f2515e43874"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/archive-sync.md",
       "worktree": {
-        "bytes": 1996,
-        "sha256": "f17bfea316220961185579bc43a6e5b317340e34b8d7538881449ce71f8cf07f"
+        "bytes": 2638,
+        "sha256": "ac247fdfe4dc6409bddade7945af8bf053af2a81d78fd8f14c2fdffeb171438d"
       },
       "gitBlob": {
-        "bytes": 1996,
-        "sha256": "f17bfea316220961185579bc43a6e5b317340e34b8d7538881449ce71f8cf07f",
-        "oid": "fd77108942e0929e87849034c20a05730680e33d"
+        "bytes": 2638,
+        "sha256": "ac247fdfe4dc6409bddade7945af8bf053af2a81d78fd8f14c2fdffeb171438d",
+        "oid": "ebd5b7efac3cc7c261d9878e84d5b4f03590b315"
       },
       "identity": "字节一致"
     },
@@ -58,117 +110,65 @@
     {
       "path": "docs/plan/c2-wecom/implementation-plan.md",
       "worktree": {
-        "bytes": 8980,
-        "sha256": "1726a59735e8b426ee04b2535aebd9a36c777c282873e1ac484cd3de00ae4c26"
+        "bytes": 9505,
+        "sha256": "8369303eb7aedffe3d289a97ce923951843f9629b9580288fc37c694061ceb55"
       },
       "gitBlob": {
-        "bytes": 8980,
-        "sha256": "1726a59735e8b426ee04b2535aebd9a36c777c282873e1ac484cd3de00ae4c26",
-        "oid": "87884cf5cf69dde96a7a572a5803961cb098944b"
-      },
-      "identity": "字节一致"
-    },
-    {
-      "path": "docs/plan/c2-wecom/official/90313.body-source.txt",
-      "worktree": {
-        "bytes": 200512,
-        "sha256": "fe2508fca2521ee4b02a0bba5570d0bf228277ccda87e490af5b03eda8c5be5b"
-      },
-      "gitBlob": {
-        "bytes": 200512,
-        "sha256": "fe2508fca2521ee4b02a0bba5570d0bf228277ccda87e490af5b03eda8c5be5b",
-        "oid": "04811353d661b68de4dc1d8e25c4e996b12e822b"
+        "bytes": 9505,
+        "sha256": "8369303eb7aedffe3d289a97ce923951843f9629b9580288fc37c694061ceb55",
+        "oid": "eea753564f8d4b23dc5a9a804086aa71fd1ce94b"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/official/90313.body.txt",
       "worktree": {
-        "bytes": 115870,
-        "sha256": "ba497fa2dabbda8af65888096126cab652e8c1babcc600299686d1fceb87c138"
+        "bytes": 115871,
+        "sha256": "0126da1cb7baf2e6f270c0e0bf46ddb395969522398b5f955cb4c7d86676b297"
       },
       "gitBlob": {
-        "bytes": 115870,
-        "sha256": "ba497fa2dabbda8af65888096126cab652e8c1babcc600299686d1fceb87c138",
-        "oid": "5a780e90d16237911e0961661527e4a10d165b3e"
-      },
-      "identity": "字节一致"
-    },
-    {
-      "path": "docs/plan/c2-wecom/official/90313.response.bin",
-      "worktree": {
-        "bytes": 1869713,
-        "sha256": "3d5441fc242768d77ee1721c5af87b016c20fffd3c233a6d85bc960b88290407"
-      },
-      "gitBlob": {
-        "bytes": 1869713,
-        "sha256": "3d5441fc242768d77ee1721c5af87b016c20fffd3c233a6d85bc960b88290407",
-        "oid": "fe7a46d51bd59d71b5c0d8397dcbde109b670bb2"
-      },
-      "identity": "字节一致"
-    },
-    {
-      "path": "docs/plan/c2-wecom/official/91770.body-source.txt",
-      "worktree": {
-        "bytes": 86654,
-        "sha256": "914249fadb84586a845c2685ecd9892e81cf1dfbfa09bd7b2111f6d4bdc2d2a0"
-      },
-      "gitBlob": {
-        "bytes": 86654,
-        "sha256": "914249fadb84586a845c2685ecd9892e81cf1dfbfa09bd7b2111f6d4bdc2d2a0",
-        "oid": "fe50e39daac8c07e7751ad65cb5102aab83150bb"
+        "bytes": 115871,
+        "sha256": "0126da1cb7baf2e6f270c0e0bf46ddb395969522398b5f955cb4c7d86676b297",
+        "oid": "bde8bfa58fe4e828fbdabab8b28e10d701e242d3"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/official/91770.body.txt",
       "worktree": {
-        "bytes": 22525,
-        "sha256": "f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0"
+        "bytes": 22495,
+        "sha256": "7fc0c6fc44238b93b06b614cd9da4d68fd79c476f230d83cc12d27ab13320245"
       },
       "gitBlob": {
-        "bytes": 22525,
-        "sha256": "f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0",
-        "oid": "307c939b3930c53c6f8fb76ca1cc3fc7a1000712"
-      },
-      "identity": "字节一致"
-    },
-    {
-      "path": "docs/plan/c2-wecom/official/91770.response.bin",
-      "worktree": {
-        "bytes": 1795167,
-        "sha256": "f67b7d4f050b01f93dbd130eeb30534fec0b52860d46e11bb25f20f856629583"
-      },
-      "gitBlob": {
-        "bytes": 1795167,
-        "sha256": "f67b7d4f050b01f93dbd130eeb30534fec0b52860d46e11bb25f20f856629583",
-        "oid": "d16e11a53f162b59cf088429b533d4b3cf7f7926"
+        "bytes": 22495,
+        "sha256": "7fc0c6fc44238b93b06b614cd9da4d68fd79c476f230d83cc12d27ab13320245",
+        "oid": "45557f0e522904e922908b724667c03c95021f68"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/official/protocol-evidence.json",
       "worktree": {
-        "bytes": 4221,
-        "sha256": "d1392c1b6ab143a628ba30c77ba54c686278e42843c24c7246ad14aa494f895d"
+        "bytes": 9251,
+        "sha256": "dcab80d761294144880ceef1c54a2be0b429b63693ed01c7c6b66bfa1941db6f"
       },
       "gitBlob": {
-        "bytes": 4221,
-        "sha256": "d1392c1b6ab143a628ba30c77ba54c686278e42843c24c7246ad14aa494f895d",
-        "oid": "e4eafce016f3693da89d47201590ab50f89267b7"
+        "bytes": 9251,
+        "sha256": "dcab80d761294144880ceef1c54a2be0b429b63693ed01c7c6b66bfa1941db6f",
+        "oid": "d756d7da12a08024e64ecfb4df481a14562a2d25"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/official/retrieval.json",
       "worktree": {
-        "bytes": 4153,
-        "sha256": "8f430d5acbe5728a6a585510384b65a1daa1d0e60afd317bccf5f600bfcbf751"
+        "bytes": 8354,
+        "sha256": "0c6a41f48d52fc01733d2d8e9b3aef928e0829a1a3c4506f1c1fc35bf85e12f6"
       },
       "gitBlob": {
-        "bytes": 4153,
-        "sha256": "8f430d5acbe5728a6a585510384b65a1daa1d0e60afd317bccf5f600bfcbf751",
-        "oid": "2999eaae4f9e927e2d66fee9ade41d114e6be5ef"
+        "bytes": 8354,
+        "sha256": "0c6a41f48d52fc01733d2d8e9b3aef928e0829a1a3c4506f1c1fc35bf85e12f6",
+        "oid": "1949312814d4f4227791856ae9a015a478e65873"
       },
       "identity": "字节一致"
     },
@@ -201,104 +201,117 @@
     {
       "path": "docs/plan/c2-wecom/product-design.md",
       "worktree": {
-        "bytes": 12754,
-        "sha256": "e1dfc7e7b60cf893ab8a479fc0e9585be2643b53f35c9a988e9e03bc2fed6a3a"
+        "bytes": 13891,
+        "sha256": "bb2e6a5eda2ac4fe893e10ebe3e7e6f1de839a719bf4fc1940dc7759ec34f0a5"
       },
       "gitBlob": {
-        "bytes": 12754,
-        "sha256": "e1dfc7e7b60cf893ab8a479fc0e9585be2643b53f35c9a988e9e03bc2fed6a3a",
-        "oid": "36bf3da6383c704aebf872a45e6ca2646c62a312"
+        "bytes": 13891,
+        "sha256": "bb2e6a5eda2ac4fe893e10ebe3e7e6f1de839a719bf4fc1940dc7759ec34f0a5",
+        "oid": "b49373d810a672243e16e4752d4ad97b69aa7513"
       },
       "identity": "字节一致"
     },
     {
-      "path": "docs/plan/c2-wecom/README.md",
+      "path": "docs/plan/c2-wecom/raw-evidence-index.json",
       "worktree": {
-        "bytes": 2812,
-        "sha256": "ab814539bc92ed7c39e2b009a72334125e3bffc8eef8c128c0ef48809c48fdfd"
+        "bytes": 19922,
+        "sha256": "c22f1d0fa24e5eddccf2a80b8dd01c4c1d293d673591aee9e65c9b5c997faffd"
       },
       "gitBlob": {
-        "bytes": 2812,
-        "sha256": "ab814539bc92ed7c39e2b009a72334125e3bffc8eef8c128c0ef48809c48fdfd",
-        "oid": "3708cdb36d7b5758534d2f841bda4b5370a9796c"
+        "bytes": 19922,
+        "sha256": "c22f1d0fa24e5eddccf2a80b8dd01c4c1d293d673591aee9e65c9b5c997faffd",
+        "oid": "ff892a8dec0c320f2115678cc030367d17672140"
+      },
+      "identity": "字节一致"
+    },
+    {
+      "path": "docs/plan/c2-wecom/raw-evidence.zip",
+      "worktree": {
+        "bytes": 601968,
+        "sha256": "e0727c44a131967ac950e4b8382faccb1616444d11f3bbb9d4b6f82fa3197e27"
+      },
+      "gitBlob": {
+        "bytes": 601968,
+        "sha256": "e0727c44a131967ac950e4b8382faccb1616444d11f3bbb9d4b6f82fa3197e27",
+        "oid": "359aa48bfeb73f4b5bbaf903335f0b0e4f44be81"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.json",
       "worktree": {
-        "bytes": 9043,
-        "sha256": "4b6fc77ec1f482e61189c34e6910cad84e754f72153b333175a208741cdf1051"
+        "bytes": 9963,
+        "sha256": "d2ae5fda4b19a31bc61f1c73b4890330589d08bfa4d1c437627156f0c17eaff1"
       },
       "gitBlob": {
-        "bytes": 9043,
-        "sha256": "4b6fc77ec1f482e61189c34e6910cad84e754f72153b333175a208741cdf1051",
-        "oid": "2f9b9ede23fc101a68ecf65ff78d3cc414d8863e"
+        "bytes": 9963,
+        "sha256": "d2ae5fda4b19a31bc61f1c73b4890330589d08bfa4d1c437627156f0c17eaff1",
+        "oid": "c9596c3718b657db952cb4fe9ca9f0327767fd4b"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.md",
       "worktree": {
-        "bytes": 8184,
-        "sha256": "e414db43dd730f332ab85f92f42bc1f618bf1dd31fa07da1bbae350791d0e9cd"
+        "bytes": 8179,
+        "sha256": "c6c64f217e5e2b1b818d0dcec18c6eb678e0bbe1165d20871978ef36d2794294"
       },
       "gitBlob": {
-        "bytes": 8184,
-        "sha256": "e414db43dd730f332ab85f92f42bc1f618bf1dd31fa07da1bbae350791d0e9cd",
-        "oid": "5ddafa1f3746257fe90ff25a3b7b0f77938b314d"
+        "bytes": 8179,
+        "sha256": "c6c64f217e5e2b1b818d0dcec18c6eb678e0bbe1165d20871978ef36d2794294",
+        "oid": "de56613c44a1102a91d9d77fba742a44a05ba0ce"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.json",
       "worktree": {
-        "bytes": 7014,
-        "sha256": "3011401daaac6a45165900a671075719431ea16b0a09907dce7f9e8406a35aff"
+        "bytes": 7934,
+        "sha256": "46ed3df40dfcb699d7583923e252890c2ab687ddd83c10ba4d380ba99ba48ff7"
       },
       "gitBlob": {
-        "bytes": 7014,
-        "sha256": "3011401daaac6a45165900a671075719431ea16b0a09907dce7f9e8406a35aff",
-        "oid": "0cdadb7c4e8510f27830e02e2026fc77b27294d3"
+        "bytes": 7934,
+        "sha256": "46ed3df40dfcb699d7583923e252890c2ab687ddd83c10ba4d380ba99ba48ff7",
+        "oid": "7646291515302bd7862d320b7dc3d390f5cab9f4"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.md",
       "worktree": {
-        "bytes": 6174,
-        "sha256": "090e9b865c2a56bb1f686cd4c3f423bf57e021bee00ce07ef4ac313bfe76d84e"
+        "bytes": 6169,
+        "sha256": "57dc61dae3552f7ee913f831b4fafc2cbcd8ee83c4fb225a81e8354b202241ca"
       },
       "gitBlob": {
-        "bytes": 6174,
-        "sha256": "090e9b865c2a56bb1f686cd4c3f423bf57e021bee00ce07ef4ac313bfe76d84e",
-        "oid": "9d30a2afe0dffb839f2fbd56d8f78ed81241df8b"
+        "bytes": 6169,
+        "sha256": "57dc61dae3552f7ee913f831b4fafc2cbcd8ee83c4fb225a81e8354b202241ca",
+        "oid": "3f690e28e4bb3e66eb1e6ea3a32112d10a323e51"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.json",
       "worktree": {
-        "bytes": 8446,
-        "sha256": "005e313af5b29e12cb36c8a73472530c344d716ae05acb3135c21706227dafca"
+        "bytes": 9366,
+        "sha256": "33e485f5b408e47d03222d64383a5efb13920374ac873d581028f72161ef5d1f"
       },
       "gitBlob": {
-        "bytes": 8446,
-        "sha256": "005e313af5b29e12cb36c8a73472530c344d716ae05acb3135c21706227dafca",
-        "oid": "b8d8da57733d1b6b563360168d2dd077c18d78e6"
+        "bytes": 9366,
+        "sha256": "33e485f5b408e47d03222d64383a5efb13920374ac873d581028f72161ef5d1f",
+        "oid": "af2ef08015760d93d932ccdddfc514942825c11e"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.md",
       "worktree": {
-        "bytes": 7587,
-        "sha256": "960ecc69474220020f62a3ca831a534d8df2756f744416952827ce4498cd22f8"
+        "bytes": 7582,
+        "sha256": "99facf7c258e33e85f1b237e67d27352e9ae9a62423df0ee58d03d9c10c7f25f"
       },
       "gitBlob": {
-        "bytes": 7587,
-        "sha256": "960ecc69474220020f62a3ca831a534d8df2756f744416952827ce4498cd22f8",
-        "oid": "5ec5bf9729914c0a2ff952b3234de720df54b000"
+        "bytes": 7582,
+        "sha256": "99facf7c258e33e85f1b237e67d27352e9ae9a62423df0ee58d03d9c10c7f25f",
+        "oid": "d63fd2e06e5a2eddedb46828178c22fd367b77ef"
       },
       "identity": "字节一致"
     },
@@ -318,13 +331,13 @@
     {
       "path": "docs/plan/c2-wecom/source-metadata.json",
       "worktree": {
-        "bytes": 25058,
-        "sha256": "19e2ac6532f5c8ed8f2596fa1fb97771dbdc65430729f11ff444f95b376eb968"
+        "bytes": 28421,
+        "sha256": "4d87774ba1341754fc87536bc9eca306d68c704579ab92641b44f6e32fa8625e"
       },
       "gitBlob": {
-        "bytes": 25058,
-        "sha256": "19e2ac6532f5c8ed8f2596fa1fb97771dbdc65430729f11ff444f95b376eb968",
-        "oid": "ed49aacb82c0295eeb29a8d575a6e076b4ca4e99"
+        "bytes": 28421,
+        "sha256": "4d87774ba1341754fc87536bc9eca306d68c704579ab92641b44f6e32fa8625e",
+        "oid": "dd5598c58979a9301bb958b18de7f8266d6b4dd9"
       },
       "identity": "字节一致"
     },
@@ -357,52 +370,39 @@
     {
       "path": "docs/plan/c2-wecom/test-coverage.json",
       "worktree": {
-        "bytes": 29658,
-        "sha256": "a3a97d7278ce7dc48766f713d2ee26067ebc3d43b84c12850acd72d05a33723a"
+        "bytes": 35225,
+        "sha256": "e595fb656452e6e5a676533e100beb25f29d0a36697631162182dbc244366b62"
       },
       "gitBlob": {
-        "bytes": 29658,
-        "sha256": "a3a97d7278ce7dc48766f713d2ee26067ebc3d43b84c12850acd72d05a33723a",
-        "oid": "1a1153664c32ef5597f7ca7ac7b5000f97cf0677"
+        "bytes": 35225,
+        "sha256": "e595fb656452e6e5a676533e100beb25f29d0a36697631162182dbc244366b62",
+        "oid": "bf7a0acfa994511f9c7109eba2062d68db696bee"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/plan/c2-wecom/test-mapping-input.json",
       "worktree": {
-        "bytes": 23254,
-        "sha256": "21547c205419dd34f503b1d6cf5b139d5857ddfac1afb14b386753119edc235e"
+        "bytes": 28721,
+        "sha256": "e7d4445d68f869bbf610bbe0e045b2ab9d3c4904ae2412bf88cfe231cc708c7f"
       },
       "gitBlob": {
-        "bytes": 23254,
-        "sha256": "21547c205419dd34f503b1d6cf5b139d5857ddfac1afb14b386753119edc235e",
-        "oid": "7a3b9bd4661b16ab2f5d5d34e116ab3f4484aa74"
+        "bytes": 28721,
+        "sha256": "e7d4445d68f869bbf610bbe0e045b2ab9d3c4904ae2412bf88cfe231cc708c7f",
+        "oid": "97fd2f34fbb5bd9a5b99486150fbfaa75e9b612e"
       },
       "identity": "字节一致"
     },
     {
-      "path": "docs/plan/activation-task-specs/16.md",
+      "path": "docs/plan/c2-wecom/verify-archive.mjs",
       "worktree": {
-        "bytes": 12631,
-        "sha256": "1ed2532b1aadb7c01861ac835be422a1ad66ffd00894d822a5f095d584d5b89a"
+        "bytes": 5324,
+        "sha256": "a97f0e4dda9c3604d0a3f3c440b34f25b5d2e6709d303b3028c211cbed772e73"
       },
       "gitBlob": {
-        "bytes": 12631,
-        "sha256": "1ed2532b1aadb7c01861ac835be422a1ad66ffd00894d822a5f095d584d5b89a",
-        "oid": "54c89e5718e9e639243fce49fb50b54b1b143bcb"
-      },
-      "identity": "字节一致"
-    },
-    {
-      "path": "docs/plan/activation-task-specs/index.json",
-      "worktree": {
-        "bytes": 101119,
-        "sha256": "7fbc68aeefd57f30ba7b7f2aa0ec29f93d436012933a2de9c3a1dab61ced5680"
-      },
-      "gitBlob": {
-        "bytes": 101119,
-        "sha256": "7fbc68aeefd57f30ba7b7f2aa0ec29f93d436012933a2de9c3a1dab61ced5680",
-        "oid": "bbf2d8166f138e3555e3338905d62315c3e7cb92"
+        "bytes": 5324,
+        "sha256": "a97f0e4dda9c3604d0a3f3c440b34f25b5d2e6709d303b3028c211cbed772e73",
+        "oid": "7714e21b56c577b4b57ccd02cbc766188ce91523"
       },
       "identity": "字节一致"
     },
@@ -422,41 +422,28 @@
     {
       "path": "docs/reviews/r1/test-coverage.json",
       "worktree": {
-        "bytes": 347264,
-        "sha256": "592e974f273da15d73854a09c732e3696453ae16ad4e92327c33469453448b3d"
+        "bytes": 353111,
+        "sha256": "c4eecb377a25e9619589026999463a2beffd7769e7f9c07ba4b2a1fd48ec89a8"
       },
       "gitBlob": {
-        "bytes": 347264,
-        "sha256": "592e974f273da15d73854a09c732e3696453ae16ad4e92327c33469453448b3d",
-        "oid": "d7211b67163ed25713b81fa9d36cef8a7cc6ad50"
+        "bytes": 353111,
+        "sha256": "c4eecb377a25e9619589026999463a2beffd7769e7f9c07ba4b2a1fd48ec89a8",
+        "oid": "78571b13ee55be282d0ced275c5104819a64e0ea"
       },
       "identity": "字节一致"
     },
     {
       "path": "docs/reviews/r1/test-coverage.md",
       "worktree": {
-        "bytes": 56146,
-        "sha256": "2ff9c0242e5b9235a04c1689d52d06571a3d2a71a2202fe2341f97983c7ace75"
+        "bytes": 56808,
+        "sha256": "a46ef644ea28d76ff049d5f737bfedb6c03b87fb97fa35ebbd258e310cc68f32"
       },
       "gitBlob": {
-        "bytes": 56146,
-        "sha256": "2ff9c0242e5b9235a04c1689d52d06571a3d2a71a2202fe2341f97983c7ace75",
-        "oid": "098cf07d4765eb0244e900312340664b871dbbb0"
+        "bytes": 56808,
+        "sha256": "a46ef644ea28d76ff049d5f737bfedb6c03b87fb97fa35ebbd258e310cc68f32",
+        "oid": "b97ea9998f912c9792d2061d09c3ed6be1812502"
       },
       "identity": "字节一致"
-    },
-    {
-      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
-      "worktree": {
-        "bytes": 22351,
-        "sha256": "1d4d60488da3958e1abd7da83ecc4b47ad0184823c65b25a34f01043e85ac951"
-      },
-      "gitBlob": {
-        "bytes": 22057,
-        "sha256": "a753caccaa360313b723246491bd74f153e61e5d1154b53d1e025afa888ed899",
-        "oid": "50fe8c793c79d2f40b9ef072fd3bb2f657580385"
-      },
-      "identity": "Git 换行转换，工作树/Git 各自哈希分别保留"
     }
   ],
   "exclusions": [
@@ -468,5 +455,7 @@
       "path": "docs/reviews/c2/**",
       "reason": "实际验证/推送回执账本后生成，不与冻结来源形成自引用；这些文件仍提交 Git"
     }
-  ]
+  ],
+  "reviewCorrectionInput": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+  "rawEvidenceIndex": "docs/plan/c2-wecom/raw-evidence-index.json"
 }

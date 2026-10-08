@@ -242,6 +242,8 @@
 | concurrent request | `apps/worker/src/wecom-notifications.test.ts`：C2 限流：同指纹滚动窗口与多个 target 隔离；`apps/worker/integration/stage4-automation.integration.test.ts`：C2 多 Worker：频控延期不消耗 claim 预算、不阻塞其他目标 | 未实施/未运行 |
 | server restart/outbox recovery | `apps/worker/integration/stage4-automation.integration.test.ts`：C2 重启：已发送 ACK 丢失进入 uncertain，显式对账才允许重送；`apps/web/e2e/wecom-notifications.spec.ts`：C2 渠道故障：网页可见及 C1 本人管理/未知对账仍可用 | 未实施/未运行 |
 
+频控独审补充：`apps/worker/src/wecom-notifications.test.ts` 映射“第 0 秒预留、第 4 秒发送，第 60 秒仍拒绝第 21 条”及“Redis 状态丢失：所有 Worker 共同冷却至少 120 秒”；`apps/worker/integration/stage4-automation.integration.test.ts` 映射“授权锁跨窗口”及“预留、checkpoint、网络开始和完成回执各边界崩溃”。核验串行 token 与额度分别释放，额度至 max(D, 实际完成或安全终止时间)+60 秒，崩溃至 D+60 秒，多 Worker 任意实际发送的 60 秒窗口不超过 20 条。这些用例同步到当前六原测试与九类 JSON，全部未实施/未运行。
+
 仅出站无入站 handler、签名时窗或 binding/unbinding，三者不适用；job replay 仍按 C1 fence 覆盖，不新增假测试。深链补充负例、六原测试及 DoD 逐项去向在链接 JSON 中；旧表为历史分配，不以旧表的单元文件代替真实 DB/浏览器验收。
 
 ## #17 · C3 执行者

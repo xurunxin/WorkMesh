@@ -47,4 +47,6 @@
 
 本文件保留已批准执行输入 doc:8K46xBWutJwsqCy89K5Oq 的完整文字，仅清理可编辑副本的空白行尾，再追加本段说明；原样输入及独立哈希见同目录 savedplan-8K46xBWutJwsqCy89K5Oq.md/json。原计划与修订输入分别保存，不回写其正文，不生成自引用平台计划。当前源码输入及字节绑定见 source-metadata.json。
 
+独审修正以 product-design.md 为后续实现依据：频控额度不得按预留时间出窗，至少保留至实际完成或安全终止后 60 秒，崩溃按发送截止上界 D+60 秒保守回收；串行 token 释放不释放额度。原始 savedplan 与官方原件改由 raw-evidence.zip/index 无损保存，同名 Markdown 和官方正文仅为可读副本；原始正文和历史哈希不变。移除全部空白豁免，重新核验整个 PR 范围。此修正不生成平台计划，不放行产品实现。
+
 逐产品文件变更、载荷/错误/频控、部署前提、安全登录返回与焦点的完整细化见 [product-design.md](product-design.md)；原六测试、九类及 DoD 逐项见 [test-coverage.json](test-coverage.json)。本轮仅归档文档，按当前完整 spec 的最新 Chief 确认，推送后停止在 review，等待仓库产品方案独审和另外放行。

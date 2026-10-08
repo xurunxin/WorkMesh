@@ -56,9 +56,13 @@ createAutomationWorker.claimNotifications / deliverNotification 逐条领取，�
 
 这些文件本轮均不修改。无新 target API、decision endpoint、领域事件或数据库 migration；沿用 notification.delivery.* 事实。配置能力查询当前返回空 configured_providers，不能把它冒称已注册 adapter 或已验证凭据；后续只需同步既有查询的 provider 能力信息，不改变 target CRUD 或传输 DTO。
 
-频控采用当前部署的 Redis Lua，使用 Redis TIME、每 endpoint HMAC 指纹滚动 60 秒窗口、最多 20 次发送许可及串行 token。先查询 due 候选的非秘密指纹，再取得许可，再对该精确候选调用扩展的 claimChannelNotifications；失去候选时释放占用，保守保留已消耗窗口额度。无额度或 Redis 不可用时，延期原未 claim delivery 的 available_at，不改 attempt_count、retry_budget_start、claim_fence，不创建新任务。其他目标仍可推进，避免一个群堵住 tick。
+频控采用当前部署的 Redis Lua 和 Redis TIME，每 endpoint HMAC 指纹最多占用 20 份额度，另持有串行发送 token。查询 due 候选的非秘密指纹后，原子预留额度和 token，再对该精确候选调用扩展的 claimChannelNotifications；额度不会在预留后第 60 秒自动出窗。无额度或 Redis 不可用时，延期原未 claim delivery 的 available_at，不改 attempt_count、retry_budget_start、claim_fence，不创建新任务。其他目标仍可推进，避免一个群堵住 tick。
 
-许可与 claim 关联，checkpoint 前核验许可及实际租期；发生等待导致许可失效时，丢弃许可，重新准入并通过 prepareChannelSend 重新鉴权。许可在实际网络完成或安全终止后释放，窗口只使用保守已预留额度；不在 checkpoint 后排队或静默 retry。进程重启、Redis 重连/状态丢失采用 60 秒冷却，再开启准入，未知发送仍留 C1 对账。Redis 仅约束出口频控，不成为授权或 delivery 状态的真相；不存在有效许可时不启动外部请求。
+额度至少保留至实际网络完成或安全终止后 60 秒，串行 token 与额度分别释放。许可颁发时以 Redis TIME 固定发送截止上界 D，D 不晚于预留后 60 秒；claim、授权锁等待、checkpoint、网络与响应读取均受该上界约束，实际网络预算仍取五秒、claim 剩余租期和 D 剩余时间中的最小值。checkpoint 前与提交后启动网络前均重新核验 token、D 和实际租期；等待超界就停止，不持过期许可外发，重新准入时重新鉴权。失去候选或确认未发送也须安全终止，不提前腾出额度。
+
+Lua 将每份额度的最早回收时刻设为 D+60 秒；收到可信完成/安全终止回执时使用 max(D, 实际完成或安全终止时间)+60 秒，绝不使用预留时间+60 秒。崩溃、回执丢失或结果未知时按 D+60 秒保守保留；进程失去许可不得恢复旧调用，未知结果仍留 C1 uncertain 对账。网络 Abort 必须关闭 socket、停止读取，不能只结束等待 Promise。第 0 秒预留、第 4 秒发送的额度在第 60 秒仍占用，其他 Worker 此时不能取得第 21 份额度。
+
+Worker 重启复用 Redis 中尚未到期的额度和截止记录；Redis 状态丢失时所有 Worker 停止准入，由同一 Redis 冷却标记协调至少 120 秒（最大剩余截止 60 秒加尾部 60 秒），期间拒绝旧 token，不能各自重置额度或以 60 秒冷却提前恢复。不在 checkpoint 后排队或静默 retry。Redis 仅约束出口频控，不成为授权或 delivery 状态的真相。锁等待跨窗口、进程崩溃、状态丢失与多 Worker 对应的未来用例见 test-coverage.json，全部未实施/未运行。
 
 ## 登录返回、授权与焦点
 

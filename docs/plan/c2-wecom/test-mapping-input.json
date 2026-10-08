@@ -129,6 +129,16 @@
           "file": "apps/worker/integration/stage4-automation.integration.test.ts",
           "name": "C2 多 Worker：频控延期不消耗 claim 预算、不阻塞其他目标",
           "assertion": "有效 permit 才 claim，Redis 故障不外发，授权锁等待后 permit/lease 再检查"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 实际发送窗口：第 0 秒预留、第 4 秒发送，第 60 秒仍拒绝第 21 条",
+          "assertion": "额度保留至 max(D,完成或安全终止时间)+60 秒；重复 target、多个 Worker 共用指纹，断言任意实际发送 60 秒窗口最多 20 条"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 授权锁跨窗口：等待后发送与 permit 截止复核",
+          "assertion": "持锁等待跨第 60 秒不能令预留额度提前回收；超 D 不外发，重新准入重新鉴权；观察实际锁等待及 fake transport 开始/结束时间，多 Worker 竞争不能超额"
         }
       ],
       "id": "R1-16-8",
@@ -147,6 +157,16 @@
           "file": "apps/web/e2e/wecom-notifications.spec.ts",
           "name": "C2 渠道故障：网页可见及 C1 本人管理/未知对账仍可用",
           "assertion": "fake provider 故障不影响 Attention GET，不出现第二套 CRUD"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 频控崩溃：预留、checkpoint、网络开始和完成回执各边界",
+          "assertion": "崩溃后 quota 至 D+60 秒才可回收，serial token 释放不释放 quota；重启 Worker 不清共享状态，未知发送保持 uncertain；其他 Worker 任意实际发送窗口不超 20 条"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 Redis 状态丢失：所有 Worker 共同冷却至少 120 秒",
+          "assertion": "最大剩余发送截止 60 秒加尾部 60 秒；拒绝旧 token，进程分别启动不能重置标记或提前开放预算，Redis 不可用零外发"
         }
       ],
       "id": "R1-16-9",
@@ -200,6 +220,16 @@
           "assertion": "有效 permit 才 claim，Redis 故障不外发，授权锁等待后 permit/lease 再检查"
         },
         {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 实际发送窗口：第 0 秒预留、第 4 秒发送，第 60 秒仍拒绝第 21 条",
+          "assertion": "额度保留至 max(D,完成或安全终止时间)+60 秒；重复 target、多个 Worker 共用指纹，断言任意实际发送 60 秒窗口最多 20 条"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 授权锁跨窗口：等待后发送与 permit 截止复核",
+          "assertion": "持锁等待跨第 60 秒不能令预留额度提前回收；超 D 不外发，重新准入重新鉴权；观察实际锁等待及 fake transport 开始/结束时间，多 Worker 竞争不能超额"
+        },
+        {
           "file": "apps/worker/integration/stage4-automation.integration.test.ts",
           "name": "C2 重启：已发送 ACK 丢失进入 uncertain，显式对账才允许重送",
           "assertion": "checkpoint/发送/ACK 各边界进程崩溃，原 effectKey、旧 fence 拒绝、重试预算与 Redis 冷却恢复"
@@ -208,6 +238,16 @@
           "file": "apps/web/e2e/wecom-notifications.spec.ts",
           "name": "C2 渠道故障：网页可见及 C1 本人管理/未知对账仍可用",
           "assertion": "fake provider 故障不影响 Attention GET，不出现第二套 CRUD"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 频控崩溃：预留、checkpoint、网络开始和完成回执各边界",
+          "assertion": "崩溃后 quota 至 D+60 秒才可回收，serial token 释放不释放 quota；重启 Worker 不清共享状态，未知发送保持 uncertain；其他 Worker 任意实际发送窗口不超 20 条"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 Redis 状态丢失：所有 Worker 共同冷却至少 120 秒",
+          "assertion": "最大剩余发送截止 60 秒加尾部 60 秒；拒绝旧 token，进程分别启动不能重置标记或提前开放预算，Redis 不可用零外发"
         }
       ],
       "status": "未实施/未运行"
@@ -295,6 +335,16 @@
           "file": "apps/worker/integration/stage4-automation.integration.test.ts",
           "name": "C2 多 Worker：频控延期不消耗 claim 预算、不阻塞其他目标",
           "assertion": "有效 permit 才 claim，Redis 故障不外发，授权锁等待后 permit/lease 再检查"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 实际发送窗口：第 0 秒预留、第 4 秒发送，第 60 秒仍拒绝第 21 条",
+          "assertion": "额度保留至 max(D,完成或安全终止时间)+60 秒；重复 target、多个 Worker 共用指纹，断言任意实际发送 60 秒窗口最多 20 条"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 授权锁跨窗口：等待后发送与 permit 截止复核",
+          "assertion": "持锁等待跨第 60 秒不能令预留额度提前回收；超 D 不外发，重新准入重新鉴权；观察实际锁等待及 fake transport 开始/结束时间，多 Worker 竞争不能超额"
         }
       ],
       "status": "未实施/未运行"
@@ -359,6 +409,16 @@
           "file": "apps/web/e2e/wecom-notifications.spec.ts",
           "name": "C2 渠道故障：网页可见及 C1 本人管理/未知对账仍可用",
           "assertion": "fake provider 故障不影响 Attention GET，不出现第二套 CRUD"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 频控崩溃：预留、checkpoint、网络开始和完成回执各边界",
+          "assertion": "崩溃后 quota 至 D+60 秒才可回收，serial token 释放不释放 quota；重启 Worker 不清共享状态，未知发送保持 uncertain；其他 Worker 任意实际发送窗口不超 20 条"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 Redis 状态丢失：所有 Worker 共同冷却至少 120 秒",
+          "assertion": "最大剩余发送截止 60 秒加尾部 60 秒；拒绝旧 token，进程分别启动不能重置标记或提前开放预算，Redis 不可用零外发"
         }
       ],
       "status": "未实施/未运行"
@@ -411,6 +471,16 @@
           "file": "apps/web/e2e/wecom-notifications.spec.ts",
           "name": "C2 渠道故障：网页可见及 C1 本人管理/未知对账仍可用",
           "assertion": "fake provider 故障不影响 Attention GET，不出现第二套 CRUD"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 频控崩溃：预留、checkpoint、网络开始和完成回执各边界",
+          "assertion": "崩溃后 quota 至 D+60 秒才可回收，serial token 释放不释放 quota；重启 Worker 不清共享状态，未知发送保持 uncertain；其他 Worker 任意实际发送窗口不超 20 条"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 Redis 状态丢失：所有 Worker 共同冷却至少 120 秒",
+          "assertion": "最大剩余发送截止 60 秒加尾部 60 秒；拒绝旧 token，进程分别启动不能重置标记或提前开放预算，Redis 不可用零外发"
         }
       ],
       "status": "未实施/未运行"

@@ -15,11 +15,11 @@
 ## 文档变更
 
 - `docs/plan/c2-wecom/implementation-plan.md`：保存完整中文实现方案和后续逐文件变更清单。适配器落在 `apps/worker/src/wecom-notifications.ts`，由 `apps/worker/src/index.ts` 注册到 `createAutomationWorker.channelAdapters`；复用 `claimNotifications`、`deliverNotification` 及 `packages/db/src/channel-notifications.ts` 的 `prepareChannelSend`、`settleChannelSend`、`reconcileChannelSend`，不新增 CRUD 或队列。保留 workspace 前置锁、`lockAgentAuthorityPlan` 锁序、锁后实际租期检查、静音 kind、逐条 claim 和八次重试预算。
-  
+
   冻结端点白名单为 HTTPS `qyapi.weixin.qq.com/cgi-bin/webhook/send`，仅接受一个非空 `key`，拒绝凭据、额外参数、fragment 和重定向；复用 `resolveWebhookTarget` 的公共地址校验与 DNS 固定连接模式。现有 `fetchResolvedWebhook` 只返回 HTTP 状态，方案明确增加有界响应正文读取并用 Zod 校验提供方结果。仅有效成功响应记 delivered；明确拒绝记 failed；请求发出后的 timeout、断连、畸形响应或不确定结果进入 unknown。沿用五秒上限及 claim 剩余租期，不自动重送 uncertain，不保存原始 URL、key 或 `errmsg`。[错误码来源](https://developer.work.weixin.qq.com/document/path/90313)
-  
+
   频控采用 Redis Lua，以秘密 HMAC 指纹区分实际目标，跨 Worker 和重复 target 配置共用滚动窗口及串行发送许可。频控等待发生在发送 checkpoint 之前；使用原 delivery 延后领取，不消耗失败重试预算，Redis 不可用时停止发送。许可过期必须重新取得许可并重新鉴权。
-  
+
   深链由 `WEB_ORIGIN` 与 C1 的 Attention 相对路由构造。冻结 `apps/web/app/lib/use-authenticated-actor.ts`、`apps/web/app/login/page.tsx` 及 `apps/web/app/lib/canonical-route.ts` 的安全 `returnTo` 方案：接受以单个 `/` 开头的站内路径和与当前网页 origin 完全一致的 HTTP(S) 绝对 URL，规范化后只返回 pathname、search、hash；拒绝外域、协议相对地址、反斜杠、控制字符、URL 凭据、畸形编码及登录/安装循环，失败回首页。查询参数只解码一次，规范化后重新验证，跳转端重复校验，防止开放重定向；复用 `canonicalObjectHref`、`safeInternalHref`。返回后以当前 Human 会话重新请求 Attention，授权完成才展示和聚焦详情；无权转发者看到既有不可见状态，不能继承 target owner 权限。验证 Back/Forward、关闭详情后的焦点恢复及登录重开后的详情焦点，不携带跨身份缓存。陈旧来源仅保留通用提醒；网页读取当前状态，渠道不写决策。
 
 - `docs/plan/c2-wecom/` 中的来源快照与绑定文件：分别保存 R1 原始正文、当前完整 Todos spec、原九类矩阵，以及官方协议页和错误码页的完整正文来源快照；保留准确 URL、读取日期/时间、方法、原始响应与正文提取边界、字节数及 SHA-256。浏览工具失败与本机 HTTPS 取得正文分开记录；保留实际出处和部署前提缺口，不以第三方摘要补证。记录真实 main 精确 SHA 与实际源码输入，分别登记工作树和 Git blob 的 UTF-8 字节、哈希及换行差异。将平台本条注入的完整 savedplan `doc:G27jedfwL5ikAj9GiLO1R` 中文正文原样归档至 `savedplan-G27jedfwL5ikAj9GiLO1R.md`，配套 JSON 绑定正文哈希、来源和生成先后；version 与不可得的生成时间写 `null`，不推测。该原始 savedplan 保持不变，本轮修订另存 `implementation-plan.md` 并关联它；后续修订 ID 未生成时写 `null`，不为自引用反复存 plan，不改历史来源。

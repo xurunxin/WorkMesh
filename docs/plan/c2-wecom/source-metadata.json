@@ -25,7 +25,24 @@
       "path": "docs/plan/c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.md",
       "bytes": 6174,
       "sha256": "090e9b865c2a56bb1f686cd4c3f423bf57e021bee00ce07ef4ac313bfe76d84e",
-      "predecessor": null
+      "predecessor": null,
+      "pathKind": "原始路径作为 ZIP 索引键；当前同名文件为可读副本",
+      "rawEvidence": {
+        "archive": "raw-evidence.zip",
+        "index": "raw-evidence-index.json",
+        "logicalPath": "docs/plan/c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.md",
+        "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+        "byteKind": "worktree",
+        "member": "bytes/090e9b865c2a56bb1f686cd4c3f423bf57e021bee00ce07ef4ac313bfe76d84e",
+        "bytes": 6174,
+        "sha256": "090e9b865c2a56bb1f686cd4c3f423bf57e021bee00ce07ef4ac313bfe76d84e"
+      },
+      "readableCopy": {
+        "path": "docs/plan/c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.md",
+        "bytes": 6169,
+        "sha256": "57dc61dae3552f7ee913f831b4fafc2cbcd8ee83c4fb225a81e8354b202241ca",
+        "transformation": "仅可读副本：CRLF 转 LF、制表符展开为空格、移除行尾空白、末尾保留一个 LF；原字节在 ZIP，不以此哈希替代原哈希"
+      }
     },
     {
       "id": "vYxCwh0TMRC3mOrr6cU1K",
@@ -35,7 +52,24 @@
       "path": "docs/plan/c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.md",
       "bytes": 7587,
       "sha256": "960ecc69474220020f62a3ca831a534d8df2756f744416952827ce4498cd22f8",
-      "predecessor": "G27jedfwL5ikAj9GiLO1R"
+      "predecessor": "G27jedfwL5ikAj9GiLO1R",
+      "pathKind": "原始路径作为 ZIP 索引键；当前同名文件为可读副本",
+      "rawEvidence": {
+        "archive": "raw-evidence.zip",
+        "index": "raw-evidence-index.json",
+        "logicalPath": "docs/plan/c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.md",
+        "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+        "byteKind": "worktree",
+        "member": "bytes/960ecc69474220020f62a3ca831a534d8df2756f744416952827ce4498cd22f8",
+        "bytes": 7587,
+        "sha256": "960ecc69474220020f62a3ca831a534d8df2756f744416952827ce4498cd22f8"
+      },
+      "readableCopy": {
+        "path": "docs/plan/c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.md",
+        "bytes": 7582,
+        "sha256": "99facf7c258e33e85f1b237e67d27352e9ae9a62423df0ee58d03d9c10c7f25f",
+        "transformation": "仅可读副本：CRLF 转 LF、制表符展开为空格、移除行尾空白、末尾保留一个 LF；原字节在 ZIP，不以此哈希替代原哈希"
+      }
     },
     {
       "id": "8K46xBWutJwsqCy89K5Oq",
@@ -45,7 +79,24 @@
       "path": "docs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.md",
       "bytes": 8184,
       "sha256": "e414db43dd730f332ab85f92f42bc1f618bf1dd31fa07da1bbae350791d0e9cd",
-      "predecessor": "vYxCwh0TMRC3mOrr6cU1K"
+      "predecessor": "vYxCwh0TMRC3mOrr6cU1K",
+      "pathKind": "原始路径作为 ZIP 索引键；当前同名文件为可读副本",
+      "rawEvidence": {
+        "archive": "raw-evidence.zip",
+        "index": "raw-evidence-index.json",
+        "logicalPath": "docs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.md",
+        "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+        "byteKind": "worktree",
+        "member": "bytes/e414db43dd730f332ab85f92f42bc1f618bf1dd31fa07da1bbae350791d0e9cd",
+        "bytes": 8184,
+        "sha256": "e414db43dd730f332ab85f92f42bc1f618bf1dd31fa07da1bbae350791d0e9cd"
+      },
+      "readableCopy": {
+        "path": "docs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.md",
+        "bytes": 8179,
+        "sha256": "c6c64f217e5e2b1b818d0dcec18c6eb678e0bbe1165d20871978ef36d2794294",
+        "transformation": "仅可读副本：CRLF 转 LF、制表符展开为空格、移除行尾空白、末尾保留一个 LF；原字节在 ZIP，不以此哈希替代原哈希"
+      }
     }
   ],
   "originalSpec": {
@@ -671,5 +722,12 @@
   ],
   "generatedOutputPlanId": null,
   "generatedOutputPlanIdReason": "本轮没有写平台新计划；8K46 是已生成的执行输入，不为归档自引用生成新 ID",
-  "sourceGap": "backend doc version/createdAt 未提供，不由消息时间推算；修改前文档工作树原字节未全部单独捕获，Git 基点原字节均可核验"
+  "sourceGap": "backend doc version/createdAt 未提供，不由消息时间推算；修改前文档工作树原字节未全部单独捕获，Git 基点原字节均可核验",
+  "reviewCorrection": {
+    "inputHead": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+    "actualMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+    "observedAt": "2026-10-08T13:33:04.648Z",
+    "rawArchive": "raw-evidence-index.json",
+    "historicalMetadata": "原 source-metadata.json、retrieval.json、MANIFEST.json 及属性文件的工作树/Git 原字节均已保存在 ZIP，原输入字段不被当前副本覆盖"
+  }
 }

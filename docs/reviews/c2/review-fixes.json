@@ -1,0 +1,168 @@
+{
+  "scope": "只修正文档；产品、测试实现、CI 和权限未修改，没有真实发送",
+  "inputHead": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+  "actualMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "observedAt": "2026-10-08T13:33:37.749Z",
+  "archive": {
+    "paths": 13,
+    "entries": 26,
+    "members": 13,
+    "bytes": 601968,
+    "sha256": "e0727c44a131967ac950e4b8382faccb1616444d11f3bbb9d4b6f82fa3197e27",
+    "producer": "G1 createRawEvidenceZip",
+    "verifier": "G1 readRawEvidenceArchive，26 份工作树/Git 条目逐字节比较成功"
+  },
+  "historicalChecks": "旧退出零受 whitespace 属性豁免影响，不能证明 PR 空白门禁；first-whitespace-check.json、archive-check-results.json、final-check-results.json 原件均保持不变",
+  "checks": [
+    {
+      "command": "Python zipfile 独立解包、路径/普通文件、26 份条目 SHA-256/Git blob ID",
+      "chunk_id": "25edd5",
+      "wall_time_seconds": 1.2272286000000001,
+      "exit_code": 0,
+      "original_token_count": 35,
+      "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n{\"entries\": 26, \"members\": 13, \"independent_zipfile_checks\": \"passed\"}\r\n"
+    },
+    {
+      "command": "git diff --cached --check origin/main",
+      "chunk_id": "041739",
+      "wall_time_seconds": 1.0606184,
+      "exit_code": 0,
+      "original_token_count": 17,
+      "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n"
+    },
+    {
+      "command": "精确位置重读、变更范围及 Git 二进制自动判定",
+      "chunk_id": "d3e0cb",
+      "wall_time_seconds": 1.3152135,
+      "exit_code": 0,
+      "original_token_count": 1838,
+      "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n# 可读副本遵循既有空白规则；原始字节由无损 ZIP 保存。\r\n* text=auto eol=lf\r\nsource-spec.md -text\r\ncurrent-spec.md -text\r\n这些文件本轮均不修改。无新 target API、decision endpoint、领域事件或数据库 migration；沿用 notification.delivery.* 事实。配置能力查询当前返回空 configured_providers，不能把它冒称已注册 adapter 或已验证凭据；后续只需同步既有查询的 provider 能力信息，不改变 target CRUD 或传输 DTO。\r\n\r\n频控采用当前部署的 Redis Lua 和 Redis TIME，每 endpoint HMAC 指纹最多占用 20 份额度，另持有串行发送 token。查询 due 候选的非秘密指纹后，原子预留额度和 token，再对该精确候选调用扩展的 claimChannelNotifications；额度不会在预留后第 60 秒自动出窗。无额度或 Redis 不可用时，延期原未 claim delivery 的 available_at，不改 attempt_count、retry_budget_start、claim_fence，不创建新任务。其他目标仍可推进，避免一个群堵住 tick。\r\n\r\n额度至少保留至实际网络完成或安全终止后 60 秒，串行 token 与额度分别释放。许可颁发时以 Redis TIME 固定发送截止上界 D，D 不晚于预留后 60 秒；claim、授权锁等待、checkpoint、网络与响应读取均受该上界约束，实际网络预算仍取五秒、claim 剩余租期和 D 剩余时间中的最小值。checkpoint 前与提交后启动网络前均重新核验 token、D 和实际租期；等待超界就停止，不持过期许可外发，重新准入时重新鉴权。失去候选或确认未发送也须安全终止，不提前腾出额度。\r\n\r\nLua 将每份额度的最早回收时刻设为 D+60 秒；收到可信完成/安全终止回执时使用 max(D, 实际完成或安全终止时间)+60 秒，绝不使用预留时间+60 秒。崩溃、回执丢失或结果未知时按 D+60 秒保守保留；进程失去许可不得恢复旧调用，未知结果仍留 C1 uncertain 对账。网络 Abort 必须关闭 socket、停止读取，不能只结束等待 Promise。第 0 秒预留、第 4 秒发送的额度在第 60 秒仍占用，其他 Worker 此时不能取得第 21 份额度。\r\n\r\nWorker 重启复用 Redis 中尚未到期的额度和截止记录；Redis 状态丢失时所有 Worker 停止准入，由同一 Redis 冷却标记协调至少 120 秒（最大剩余截止 60 秒加尾部 60 秒），期间拒绝旧 token，不能各自重置额度或以 60 秒冷却提前恢复。不在 checkpoint 后排队或静默 retry。Redis 仅约束出口频控，不成为授权或 delivery 状态的真相。锁等待跨窗口、进程崩溃、状态丢失与多 Worker 对应的未来用例见 test-coverage.json，全部未实施/未运行。\r\n\r\n## 登录返回、授权与焦点\r\n\r\n来源定位使用 C1 的 /?view=inbox&attentionSelected=v1:SOURCE_TYPE:SOURCE_ID 路由词汇；由 canonicalObjectHref 验证兼容性，不解析通知正文来制造关系。adapter 仅以 WEB_ORIGIN 生成绝对 HTTPS 深链，不能拿 target 地址作返回 origin。\r\n\r\nreturnTo 共用解析器接受单个 / 开头的相对路径或与 window.location.origin 完全一致的 HTTP(S) 绝对 URL，输出仅 pathname+search+hash。URLSearchParams 只执行一次查询解码；拒绝外域、//、反斜杠、控制字符、URL 凭据、畸形百分号/UTF-8 编码及 /login、/install 循环。检查原始值与解析后的路径，编码形式的危险路径也拒绝；不再次解码嵌套 returnTo，不信任 Referer，不将任意字符串交给 location.assign。无效/空值回 /，登录提交端重复校验。\r\n ...-channel-delivery-contract-and-model-presets.md |   2 +\n docs/plan/activation-task-specs/16.md              |   5 +\n docs/plan/activation-task-specs/index.json         |   6 +-\n docs/plan/c2-wecom/.gitattributes                  |   9 +-\n docs/plan/c2-wecom/MANIFEST.json                   | 343 +++++++-------\n docs/plan/c2-wecom/README.md                       |   8 +-\n docs/plan/c2-wecom/archive-sync.md                 |   2 +\n docs/plan/c2-wecom/implementation-plan.md          |   2 +\n docs/plan/c2-wecom/official/90313.body-source.txt  |   2 -\n docs/plan/c2-wecom/official/90313.body.txt         |  22 +-\n docs/plan/c2-wecom/official/90313.response.bin     | 231 ---------\n docs/plan/c2-wecom/official/91770.body-source.txt  | 299 ------------\n docs/plan/c2-wecom/official/91770.body.txt         |  80 ++--\n docs/plan/c2-wecom/official/91770.response.bin     | 522 ---------------------\n docs/plan/c2-wecom/official/protocol-evidence.json | 130 ++++-\n docs/plan/c2-wecom/official/retrieval.json         |  96 +++-\n docs/plan/c2-wecom/product-design.md               |   8 +-\n docs/plan/c2-wecom/raw-evidence-index.json         | 379 +++++++++++++++\n docs/plan/c2-wecom/raw-evidence.zip                | Bin 0 -> 601968 bytes\n .../c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.json  |  19 +-\n .../c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.md    |   8 +-\n .../c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.json  |  19 +-\n .../c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.md    |   8 +-\n .../c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.json  |  19 +-\n .../c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.md    |   8 +-\n docs/plan/c2-wecom/source-metadata.json            |  66 ++-\n docs/plan/c2-wecom/test-coverage.json              |  70 +++\n docs/plan/c2-wecom/test-mapping-input.json         |  70 +++\n docs/plan/c2-wecom/verify-archive.mjs              |  89 ++++\n docs/reviews/c2/review-fixes.json                  | 125 +++++\n docs/reviews/c2/verification.json                  | 122 ++++-\n docs/reviews/r1/test-coverage.json                 |  70 +++\n docs/reviews/r1/test-coverage.md                   |   2 +\n 33 files changed, 1488 insertions(+), 1353 deletions(-)\n-\t-\tdocs/plan/c2-wecom/raw-evidence.zip\ndocs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md\ndocs/plan/activation-task-specs/16.md\ndocs/plan/activation-task-specs/index.json\ndocs/plan/c2-wecom/.gitattributes\ndocs/plan/c2-wecom/MANIFEST.json\ndocs/plan/c2-wecom/README.md\ndocs/plan/c2-wecom/archive-sync.md\ndocs/plan/c2-wecom/implementation-plan.md\ndocs/plan/c2-wecom/official/90313.body-source.txt\ndocs/plan/c2-wecom/official/90313.body.txt\ndocs/plan/c2-wecom/official/90313.response.bin\ndocs/plan/c2-wecom/official/91770.body-source.txt\ndocs/plan/c2-wecom/official/91770.body.txt\ndocs/plan/c2-wecom/official/91770.response.bin\ndocs/plan/c2-wecom/official/protocol-evidence.json\ndocs/plan/c2-wecom/official/retrieval.json\ndocs/plan/c2-wecom/product-design.md\ndocs/plan/c2-wecom/raw-evidence-index.json\ndocs/plan/c2-wecom/raw-evidence.zip\ndocs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.json\ndocs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.md\ndocs/plan/c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.json\ndocs/plan/c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.md\ndocs/plan/c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.json\ndocs/plan/c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.md\ndocs/plan/c2-wecom/source-metadata.json\ndocs/plan/c2-wecom/test-coverage.json\ndocs/plan/c2-wecom/test-mapping-input.json\ndocs/plan/c2-wecom/verify-archive.mjs\ndocs/reviews/c2/review-fixes.json\ndocs/reviews/c2/verification.json\ndocs/reviews/r1/test-coverage.json\ndocs/reviews/r1/test-coverage.md\n"
+    },
+    {
+      "command": "node docs/plan/c2-wecom/verify-archive.mjs",
+      "exitCode": 0,
+      "result": "26 条映射、13 ZIP 成员、34 文件双哈希、39 链接、六原测试与九类映射通过",
+      "toolChunkId": "c93973"
+    }
+  ],
+  "cleanupOperations": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\91770.response.bin",
+      "startedAt": null,
+      "finishedAt": null,
+      "operation": "前一 shell 已执行 unlinkSync，随后记录对象字段名错误中断；本次只观察不存在，不再次删除",
+      "result": "原 unlinkSync 已正常返回；元数据写入失败",
+      "exitCode": null,
+      "preflight": {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\91770.response.bin",
+        "realPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\91770.response.bin",
+        "ordinaryFile": true,
+        "symbolicLink": false,
+        "activeServiceReferences": [],
+        "retention": "原件工作树与 Git blob 均完整保存到内容寻址 ZIP；原提交仍可达"
+      },
+      "member": "bytes/f67b7d4f050b01f93dbd130eeb30534fec0b52860d46e11bb25f20f856629583",
+      "sourceCommit": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+      "gap": "逐项时间和独立进程退出码未持久保存；原执行整体 exit=1，不将不存在冒作逐项回执"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\91770.body-source.txt",
+      "startedAt": "2026-10-08T13:33:37.740Z",
+      "finishedAt": "2026-10-08T13:33:37.743Z",
+      "operation": "仅移除已逐字节验证归档的本任务独立副本",
+      "result": "成功",
+      "exitCode": 0,
+      "preflight": {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\91770.body-source.txt",
+        "realPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\91770.body-source.txt",
+        "ordinaryFile": true,
+        "symbolicLink": false,
+        "activeServiceReferences": [],
+        "retention": "原件工作树与 Git blob 均完整保存到内容寻址 ZIP；原提交仍可达"
+      },
+      "member": "bytes/914249fadb84586a845c2685ecd9892e81cf1dfbfa09bd7b2111f6d4bdc2d2a0",
+      "sourceCommit": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.response.bin",
+      "startedAt": "2026-10-08T13:33:37.745Z",
+      "finishedAt": "2026-10-08T13:33:37.746Z",
+      "operation": "仅移除已逐字节验证归档的本任务独立副本",
+      "result": "成功",
+      "exitCode": 0,
+      "preflight": {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.response.bin",
+        "realPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.response.bin",
+        "ordinaryFile": true,
+        "symbolicLink": false,
+        "activeServiceReferences": [],
+        "retention": "原件工作树与 Git blob 均完整保存到内容寻址 ZIP；原提交仍可达"
+      },
+      "member": "bytes/3d5441fc242768d77ee1721c5af87b016c20fffd3c233a6d85bc960b88290407",
+      "sourceCommit": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.body-source.txt",
+      "startedAt": "2026-10-08T13:33:37.747Z",
+      "finishedAt": "2026-10-08T13:33:37.749Z",
+      "operation": "仅移除已逐字节验证归档的本任务独立副本",
+      "result": "成功",
+      "exitCode": 0,
+      "preflight": {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.body-source.txt",
+        "realPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.body-source.txt",
+        "ordinaryFile": true,
+        "symbolicLink": false,
+        "activeServiceReferences": [],
+        "retention": "原件工作树与 Git blob 均完整保存到内容寻址 ZIP；原提交仍可达"
+      },
+      "member": "bytes/fe2508fca2521ee4b02a0bba5570d0bf228277ccda87e490af5b03eda8c5be5b",
+      "sourceCommit": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14"
+    }
+  ],
+  "retained": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+      "reason": "当前活动 worktree，未 actual main 落地，不移除"
+    },
+    {
+      "path": "docs/plan/c2-wecom/raw-evidence.zip",
+      "reason": "全部原字节保全"
+    },
+    {
+      "path": "docs/reviews/c2/first-whitespace-check.json",
+      "reason": "首次失败原件保留"
+    }
+  ],
+  "resources": {
+    "containers": [],
+    "dedicatedImages": [],
+    "volumes": [],
+    "networks": [],
+    "temporaryServices": [],
+    "temporaryPaths": [],
+    "approvalRejections": []
+  },
+  "operationalFailures": [
+    {
+      "command": "Node stdin 来源映射与副本迁移",
+      "exitCode": 1,
+      "error": "ReferenceError: preflight is not defined",
+      "effect": "在第一份已保全文件 unlinkSync 返回后构造日志失败；已完成的文档修改保留，其余三份后续单独保全删除；未重做归档或修改原始字节",
+      "toolChunkId": "23090a"
+    },
+    {
+      "command": "首次暂存 ZIP",
+      "result": "旧 * text 强制 ZIP 换行转换，暂存 warning 指出 CRLF -> LF；推送前改为 text=auto 并重新暂存，新增 ZIP 工作树/Git blob 逐字节相等断言",
+      "effect": "未推送损坏 ZIP，工作树原 ZIP 字节未改变",
+      "firstToolChunkId": "c93973"
+    }
+  ],
+  "stage": "review，等待独立复核和 Chief 产品范围另行放行",
+  "scopeVerification": {
+    "originMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+    "remoteMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+    "comparison": "本轮 ls-remote 实读 main 与本地 origin/main 相等，完整暂存候选差异检查使用该 origin/main；提交后另检查 origin/main...HEAD",
+    "files": "全部变更位于 docs；未修改产品、CI 或权限"
+  }
+}
