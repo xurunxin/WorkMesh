@@ -276,3 +276,18 @@ D1a `.tmp` 总清单有 1,496 项；扣除上述 1,406 个精确映射后，余 
 本阶段删除 `0` 项、恢复 `0` 项、没有 Force/权限/属性改动、没有 Docker 变更、没有产品测试；未新增可测的磁盘释放。四个父 worktree、#8/#15 候选、#5/#9/#16/#17/#21 活动与历史恢复目录、D0 六个审批拒绝目标、C3 两个审批拒绝目标及两份 raw ZIP 均保持原样。没有枚举全局 handles/build registry；也没有因约 38 万个依赖缓存文件而逐个读取或 hash。旧批 2,268 项不可逐项独核、133 缓存和 1,406 文件既有回执、12 个 D1a 成功删除回执全部保留。
 
 机器核对文件：[`remaining-closeout-2026-10-08.json`](remaining-closeout-2026-10-08.json)、[`d1a-other74-current-check-2026-10-08.json`](d1a-other74-current-check-2026-10-08.json)、[`d1a-trace-minimum-preservation-2026-10-08.json`](d1a-trace-minimum-preservation-2026-10-08.json)。本阶段停在定向独立审查；整项清理仍未完成，不合并、不标记 todo done。
+
+## 2026-10-08 追加：两份重复 trace 的有限回收执行
+
+依据 22:28 定向独审和用户 22:28 的明确执行指令，本阶段仅针对以下两个普通文件；至少保留 `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\.tmp\d1a-stage0-trace-env07-2\1-trace.trace` 原件，不移除父目录：
+
+| 精确目标 | 删除前依据 | 本次状态 |
+| --- | --- | --- |
+| `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\.tmp\d1a-trace-07\1-trace.trace` | 1,022,701 B；SHA-256 `17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d`；路径在 D1a 根下，0 个 reparse point；独占读写打开成功（不证明 DELETE 权限）。 | PowerShell `Remove-Item -LiteralPath <exact path> -ErrorAction Stop`，未使用 `-Force`；退出码 0；目标消失，父目录和保留原件仍在。 |
+| `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\.tmp\d1a-trace-07-round2\1-trace.trace` | 2026-10-08T14:35:24.5774176Z 重新预检：1,022,701 B、同一 SHA、普通 Archive 文件；目标以下 3 个路径组件无 reparse point；独占读写打开成功；排除本次查询 PowerShell 后，精确命令行引用数 0。保留原件仍为 1,022,701 B、同 SHA。两份 RAW ZIP 均仍为 14,795,293 B、SHA-256 `da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e`。 | `2026-10-08T14:36:23.1867578Z` 以普通 `Remove-Item` 删除，未使用 `-Force`；退出码 0，目标消失，父目录仍在；保留原件与两 ZIP 复核通过。 |
+
+第二目标此前有一次**未执行删除的预检中止**：进程查询计数为 1，但命令行匹配项就是运行该查询的当前 `pwsh.exe`，因为查询脚本本身含完整目标路径；同时该次 `Get-Item` 使用的 RAW ZIP 路径并非清单中的真实路径并返回找不到路径。`Remove-Item` 未运行，目标未改变。随后在命令进程排除自身、使用清单准确归档路径后重查，得到上述 0 个其它进程命令行引用及两份 RAW ZIP 完整哈希一致的结果。两次观察分别保留于机器清单，不把自匹配误记为活动使用，也不声称枚举了全局 handles/build registry。
+
+机器回执为 [`d1a-duplicate-trace-cleanup-2026-10-08.json`](d1a-duplicate-trace-cleanup-2026-10-08.json)。
+
+第二个目标于 `2026-10-08T14:36:23.1867578Z` 使用 `Remove-Item -LiteralPath <exact file path> -ErrorAction Stop` 删除，未使用 `-Force`，退出码 0。操作后目标不存在、其父目录仍在；保留 trace 原件仍为 1,022,701 B 且 SHA-256 不变，两份 RAW ZIP 各为 14,795,293 B 且 SHA-256 不变。D1a `.tmp` 当前为 76 个文件、47,298,811 B；之前两目标合计 2,045,402 B，此数仅为逻辑文件长度，不代表卷物理净释放。其余 74 个材料逐路径复核 `74/74` 字节数与 SHA 一致；D1a Git 状态退出码 0 且无变更，worktree 列表退出码 0、共 21 项，D1a 仍登记。物理磁盘净释放未测量。原始 RAW ZIP、保留 trace、其它 74 项、四父 worktree、G1 clone、D0/C3 被拒目标及所有活动/恢复目录均不在本次操作范围；整项清理仍未完成。
