@@ -16,6 +16,8 @@ C3 增量不仅是文档：新增模型目录契约和公开路由、默认关�
 
 新增 `c3-main-source.json` 保存本轮工作树原字节及 Git blob；`verify-c3-main.mjs` 可独立核验，提交后加 `--committed` 绑定新 head。运行时记录的 HEAD 为7ea518且有 main182 的待提交正常 merge，不冒当时已经执行新提交。检查前后 SHA 与最终源码逐文件比较，范围不足不冒覆盖：impact 使用原有捕获范围，新模型目录由实际单元命令验证；integration 增补 config、模型目录及 JSON 的运行前后记录。最终正式提交和完整 PR diffcheck 另见 `c3-main-delivery.json`。
 
+正常合并与检查成果已推送为 `c1c7bca6b3231144c7bcfadff390c479ab116c22`，parents 为7ea518与真正 main182。实际执行该提交相对 main182 的完整 PR `git diff --check`，退出码0、stdout/stderr为空；129个源码 blob 全部匹配新清单。平台查询连接器自身分支仍返回 `No workflow runs`。随后仅补交这份提交后证据，不把纯证据提交当新产品代码或重复执行检查。
+
 原 `raw-source.json`、原检查/报告和 Windows 3通过2缺夹具失败/macOS未测事实保留原字节；763/4495 的“当时未落地组合”不倒改。旧151份日志在增量 ZIP 内逐字节保留，新日志加入后共162份逻辑路径/109内容成员、8798540字节，完整校验成功。新证据校验器首轮错误地将本轮有意修改的 cleanup 脚本当历史报告，失败摘录如实保留于 `evidence/c3-verifier-first-failure.json`；修正明确允许变化项，未改历史事实或产品断言。
 
 ## 资源与下一门禁
@@ -26,6 +28,6 @@ C3 增量不仅是文档：新增模型目录契约和公开路由、默认关�
 - Redis：`b1b2-01a11ac2-redis-f72c8f96`，ID `a5bb1b2fde04a3c987a78194fc686002eb0a4a47a8e7d847f45c50abf250977d`。
 - S3：`b1b2-01a11ac2-s3-f72c8f96`，ID `c132de1190604cfad67c20b3245b490a875da36a6b576bccc979b6658341c91e`。
 
-两个独有 Node 运行目录 `C:\Users\xurx\AppData\Local\Temp\workmesh-b1-b2-revision-node-2F3B90`、`C:\Users\xurx\AppData\Local\Temp\workmesh-b1-b2-revision-node-Bv6nKr` 已删除，按对应 exe 复查无存活进程；模型目录单元的临时测试目录已由 finally 删除。具体路径/结果见本轮 `evidence/c3-cleanup.json`、`c3-process-cleanup.json` 和每次 `resources.json`。只清本任务已登记资源，保留共享基础镜像；未创建专用镜像/网络，未 prune 或更改全局环境。当前及旧工作区保留，不接触 C3 被拒目标，不 force 删除 dirty worktree；连接器尚未 actual main，不满足旧 worktree 清理条件。
+两个独有 Node 运行目录 `C:\Users\xurx\AppData\Local\Temp\workmesh-b1-b2-revision-node-2F3B90`、`C:\Users\xurx\AppData\Local\Temp\workmesh-b1-b2-revision-node-Bv6nKr` 已删除，按对应 exe 复查无存活进程。具体路径/结果见本轮 `evidence/c3-cleanup.json`、`c3-process-cleanup.json` 和每次 `resources.json`。模型目录单元沿用 C3 原测试的 `c3-presets-` 随机目录及 finally 删除，但原测试未打印精确随机路径，本轮未取得该目录逐项删除回执，不能冒全路径已独立复查；不扫描或批量删除同前缀其他任务目录。只清本任务已登记资源，保留共享基础镜像；未创建专用镜像/网络，未 prune 或更改全局环境。当前及旧工作区保留，不接触 C3 被拒目标，不 force 删除 dirty worktree；连接器尚未 actual main，不满足旧 worktree 清理条件。
 
 本轮仅回 review 进行实际主线增量的定向读回。用户需在任务页面“分支与PR→提交”创建当前分支 PR；没有单独建 PR 的工具，不用 merge_branch/gh 绕行。最终必须取得当前修订 head 的三系统原生依赖/系统存储、Windows 两项第二用户完整执行、macOS Keychain、真实 CLI/PTY 和自身 Required CI 成功，再按 Chief 确认与 actual main 门禁合入。不以 CI393 或历史本机结果代替新组合验收。
