@@ -10,6 +10,7 @@ import { temporaryDirectory, cleanupDirectory } from '../test-support/resources.
 import { configurationSchema, parseJson, serialize, sha256 } from '../src/config.js'
 import { SystemSecretStore } from '../src/secret-store.js'
 import { readPrivate } from '../src/platform-security.js'
+import { rawOutputCases } from '../test-support/raw-output-cases.js'
 
 it('实际 CLI 单次完整验证、系统存储、无秘密片段与启动注入', async () => {
   const parent = await temporaryDirectory('cli'); const directory = join(parent, 'connector')
@@ -53,6 +54,7 @@ it('实际 CLI 单次完整验证、系统存储、无秘密片段与启动注�
     // 先做布尔比较，再断言，失败也不把真实系统凭据印进日志。
     const rendered = stripVTControlCharacters(stdout + stderr)
     expect(rendered.includes(f.token) || rendered.includes(pairingCode)).toBe(false)
+    expect(/(?:wmi_|wmp_)[A-Za-z0-9_-]{43}/.test(stdout + stderr)).toBe(false)
     return { code, stdout, stderr }
   }
   try {
@@ -67,9 +69,10 @@ it('实际 CLI 单次完整验证、系统存储、无秘密片段与启动注�
     const config = parseJson(configurationSchema, raw.toString()); reference = config.secretReference
     expect(await store.get(reference) === f.token).toBe(true)
     expect(raw.includes(f.token) || raw.includes(pairingCode)).toBe(false)
-    const program = "const t=process.env.WORKMESH_INSTALLATION_TOKEN;if(require('node:crypto').createHash('sha256').update(t).digest('hex')!==process.env.WM_TEST_DIGEST)process.exit(1);process.stdout.write('injected\\n'+t.slice(0,20)+'\\x1b[');setTimeout(()=>{process.stdout.write('31m'+t.slice(20)+'\\x1b[0m');process.stderr.write(t.slice(0,12)+'\\x1b[32m'+t.slice(12)+'\\x1b[0m')},10);"
+    const program = rawOutputCases('stdout') + "const t=process.env.WORKMESH_INSTALLATION_TOKEN;if(require('node:crypto').createHash('sha256').update(t).digest('hex')!==process.env.WM_TEST_DIGEST)process.exit(1);process.stdout.write('injected\\n'+t.slice(0,20)+'\\x1b[');setTimeout(()=>{process.stdout.write('31m'+t.slice(20)+'\\x1b[0m');process.stderr.write(t.slice(0,12)+'\\x1b[32m'+t.slice(12)+'\\x1b[0m');emitRawCases(()=>{})},10);"
     const started = await cli(['run', '--', process.execPath, '-e', program])
     expect(started.code).toBe(0); expect(started.stdout).toContain('injected')
+    expect(started.stdout).toContain('RAW_END')
     expect(stripVTControlCharacters(started.stderr)).toBe('[已隐藏]')
     const interactive = await cli([], '', 'test-support/terminal-driver.ts')
     expect(interactive.code, interactive.stderr).toBe(0)

@@ -5,10 +5,11 @@ import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const root = process.cwd(), base = 'docs/reviews/b1-b2/'
-const ansi = process.argv.includes('--ansi')
-const main = '96e724858e692d262107c34db50b40c3ae7c122c'
-const combinedHead = ansi ? '76369131ef6de844813fe40a8df519c8fbbf29ed' : main
-const manifest = base + (ansi ? 'ansi-source.json' : 'revision-source.json')
+const raw = process.argv.includes('--raw')
+const ansi = process.argv.includes('--ansi') || raw
+const main = raw ? '5b9c76b5f79917697906520edcd6947bfbfa925f' : '96e724858e692d262107c34db50b40c3ae7c122c'
+const combinedHead = ansi && !raw ? '76369131ef6de844813fe40a8df519c8fbbf29ed' : main
+const manifest = base + (raw ? 'raw-source.json' : ansi ? 'ansi-source.json' : 'revision-source.json')
 const hash = bytes => createHash('sha256').update(bytes).digest('hex')
 const read = path => readFileSync(resolve(root, path))
 const json = path => JSON.parse(read(path).toString())
@@ -60,9 +61,13 @@ if (process.argv.includes('--capture')) {
     }
   }
   writeFileSync(resolve(root, manifest), JSON.stringify({ capturedAt: new Date().toISOString(),
-    historicalProductCommit: ansi ? '375990f10d73679f3c0724d21e8d7c58b3d8bd9b' : '903573a873538613c054a4f9732c321587b0a45e', integratedMain: main,
-    ...(ansi ? { unlandedCombination: { head: combinedHead, owner: '#15 C1', mainProof: false,
+    historicalProductCommit: raw ? '4495dbcde8c5b8689c94708e0eb19a63cdad4947' : ansi ? '375990f10d73679f3c0724d21e8d7c58b3d8bd9b' : '903573a873538613c054a4f9732c321587b0a45e', integratedMain: main,
+    ...(ansi && !raw ? { unlandedCombination: { head: combinedHead, owner: '#15 C1', mainProof: false,
       commonAncestor: main, reason: '共享缓存 FETCH_HEAD 被误判为 main；Chief 已纠正，跨分支组合保全，不冒主线落地或 CI 成功' } } : {}),
+    ...(raw ? { landedCombination: { historicalHead: '76369131ef6de844813fe40a8df519c8fbbf29ed', main,
+      reviewedHead: '81090ec01bcbc84edbe101418d833840999a5326', pr: 206, ciRun: 37776599223,
+      headTreeEqualsMain: true, productChangesSinceHistoricalHead: false,
+      reason: '直接 ls-remote 核 main；C1 原任务修复证据空白、CI391 十项成功后合入；仅4个证据文件变化，保留运行源绑定' } } : {}),
     bytePolicy: '运行工作树与实际暂存 Git blob 分开；先 stage 再 capture；审查证据更新不引发产品重测',
     runtimeSourceId: hash(Buffer.from(JSON.stringify(files))), files, bindings,
     gates: { threeOSCI: '未闭合', windowsSecondUser: '本机缺夹具，失败', macOS: '未运行', requiredCI: '未取得修订提交成功结果',
@@ -82,5 +87,5 @@ for (const name of ['current-source.json', 'current-spec.md', 'current-spec-sour
 assert.equal(git('diff', combinedHead, '--', 'SCHEMA.sql', 'packages/db', 'apps/api/src', 'apps/mcp/src', 'packages/contracts/src').length, 0)
 console.log(JSON.stringify({ runtimeSourceId: source.runtimeSourceId, files: source.files.length,
   mode: gitOnly ? 'Git blob' : '工作树与 Git blob', zeroOwnSchemaChanges: true, mainSafetyPreserved: true, historicalEvidenceUnchanged: true,
-  actualMain: main, unlandedCombination: ansi ? combinedHead : null,
+  actualMain: main, unlandedCombination: ansi && !raw ? combinedHead : null,
   finalSourceRuns: source.bindings.filter(row => row.finalSource).map(row => row.run), gates: source.gates }, null, 2))

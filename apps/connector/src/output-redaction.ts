@@ -1,8 +1,33 @@
 type Part = { text: string; control: boolean }
 
+// 独立匹配原始字节，不让 ANSI 的结束字节分类吞掉凭据前缀。
+function redactRawOutput(write: (text: string) => void) {
+  let pending = ''
+  const prefix = /(?:w(?:m(?:[ip](?:_[A-Za-z0-9_-]{0,42})?)?)?)$/
+  return {
+    push(text: string) {
+      pending = (pending + text).replace(/(?:wmi_|wmp_)[A-Za-z0-9_-]{43}/g, '[已隐藏]')
+      const suffix = prefix.exec(pending)?.[0] ?? ''
+      write(pending.slice(0, pending.length - suffix.length)); pending = suffix
+    },
+    finish() { write(/^(?:wmi_|wmp_)/.test(pending) ? '[已隐藏]' : pending); pending = '' },
+  }
+}
+
+export function redactChildOutput(write: (text: string) => void, depth = 0) {
+  // 输入原字节、ANSI 可见字符、变换后的输出原字节均独立防护。
+  const rawOutput = redactRawOutput(write)
+  const terminal = redactTerminalOutput(text => rawOutput.push(text), depth)
+  const rawInput = redactRawOutput(text => terminal.push(text))
+  return {
+    push(text: string) { rawInput.push(text) },
+    finish() { rawInput.finish(); terminal.finish(); rawOutput.finish() },
+  }
+}
+
 // ANSI 控制序列不打断可见凭据；候选字符和夹在其中的控制序列一起暂存。
 // OSC/DCS 等控制载荷也独立脱敏，不能把秘密转移到终端标题或日志。
-export function redactChildOutput(write: (text: string) => void, depth = 0) {
+function redactTerminalOutput(write: (text: string) => void, depth: number) {
   let parts: Part[] = [], visible = '', control = '', state: 'text' | 'escape' | 'csi' | 'string' | 'string-escape' = 'text'
   let oversized = false, output = ''
   const prefix = /(?:w(?:m(?:[ip](?:_[A-Za-z0-9_-]{0,42})?)?)?)$/
@@ -37,7 +62,10 @@ export function redactChildOutput(write: (text: string) => void, depth = 0) {
       sink.push(control.slice(start, -end)); sink.finish()
       safe = control.slice(0, start) + payload + control.slice(-end)
     }
-    accept(safe, true); control = ''; state = 'text'; oversized = false
+    // 控制结束字节 w 也可能是原字节凭据的起点；保留它参与后续 ANSI 跨块匹配。
+    if (safe.endsWith('w')) { accept(safe.slice(0, -1), true); accept('w', false) }
+    else accept(safe, true)
+    control = ''; state = 'text'; oversized = false
   }
   return {
     push(text: string) {

@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-10-08T12:40:05.626Z",
+  "readback": {
+    "tool": "mcp__tds__git",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "result": "5b9c76b5f79917697906520edcd6947bfbfa925f\trefs/heads/main"
+  },
+  "main": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "parents": [
+    "96e724858e692d262107c34db50b40c3ae7c122c",
+    "81090ec01bcbc84edbe101418d833840999a5326"
+  ],
+  "reviewedHead": "81090ec01bcbc84edbe101418d833840999a5326",
+  "mainTree": "059b73da4de571965ce7fb88c139d8bc07ec7455",
+  "reviewedTree": "059b73da4de571965ce7fb88c139d8bc07ec7455",
+  "historicalCombination": "76369131ef6de844813fe40a8df519c8fbbf29ed",
+  "changedPathsSinceHistorical": [
+    "docs/reviews/c1/ci-whitespace-fix/raw-evidence-index.json",
+    "docs/reviews/c1/ci-whitespace-fix/raw-evidence.zip",
+    "docs/reviews/c1/ci-whitespace-fix/verification.json",
+    "docs/reviews/c1/review-fixes/README.md"
+  ],
+  "productDiffSinceHistorical": "",
+  "pendingMergeHead": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "ownProductDiff": "",
+  "ci": {
+    "tool": "mcp__tds__workflow_runs",
+    "runId": 37776599223,
+    "number": 391,
+    "head": "81090ec01bcbc84edbe101418d833840999a5326",
+    "jobs": 10,
+    "conclusion": "success",
+    "url": "https://github.com/xurunxin/WorkMesh/actions/runs/37776599223",
+    "scope": "仅 C1 门禁，不替代连接器自己的 CI"
+  }
+}
