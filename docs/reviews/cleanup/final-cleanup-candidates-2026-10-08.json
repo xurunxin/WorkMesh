@@ -1533,5 +1533,30 @@
     "Do not delete #15 apps/web/playwright-report or test-results; exact run, inputs, failure/acceptance links remain unmapped.",
     "D1a audit file deletion remains conditional on independent review, fresh DarkFlame machine/task state, existence/hash/path checks and activity checks; its source is already in reachable main, so do not copy an archive.",
     "Never retry G1/D0/C3 policy-rejected targets, including parent directory deletion, alternate tool, move, permissions or attributes."
-  ]
+  ],
+  "executionStageResult": {
+    "recordedAtUtc": "2026-10-08T15:52:23.7017345Z",
+    "executionLedger": "ordinary-cleanup-execution-2026-10-08.json",
+    "distDirectoriesRemoved": 28,
+    "distLogicalBytes": 9838798,
+    "distRegularFiles": 752,
+    "distDirectoriesIncludingRoots": 57,
+    "d1aAuditFileRemoved": true,
+    "d1aAuditPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json",
+    "d1aAuditBytes": 316012,
+    "d1aAuditSha256": "5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442",
+    "nodeModulesSkipped": 38,
+    "nodeModulesStillPresent": 38,
+    "reason": "recursive reparse/junction and shared pnpm store boundary not proven",
+    "turboRetained": 36,
+    "turboStillPresent": 36,
+    "webTypecheckCachesRetained": 2,
+    "webTypecheckCachesStillPresent": 2,
+    "protectedTracePresent": true,
+    "rawZipCopiesPresent": 2,
+    "worktreeCount": 21,
+    "prunableWorktrees": 0,
+    "physicalDiskRelease": "unknown",
+    "globalHandles": "not enumerated; openfiles access denied"
+  }
 }
