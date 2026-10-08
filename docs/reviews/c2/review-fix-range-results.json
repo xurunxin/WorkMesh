@@ -1,0 +1,32 @@
+{
+  "actualRange": {
+    "command": "git diff --check origin/main...HEAD",
+    "main": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+    "head": "f957cf48e2babc4808c7276285a281bfda320801",
+    "chunk_id": "58e505",
+    "wall_time_seconds": 0.6552437,
+    "exit_code": 0,
+    "original_token_count": 17,
+    "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n"
+  },
+  "archive": {
+    "command": "node docs/plan/c2-wecom/verify-archive.mjs",
+    "chunk_id": "3ebfa0",
+    "wall_time_seconds": 4.2031177,
+    "exit_code": 0,
+    "original_token_count": 56,
+    "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n{\"结果\":\"通过\",\"原始映射\":26,\"ZIP成员\":13,\"清单文件\":34,\"本地链接\":39,\"六原测试\":6,\"九类\":9,\"产品测试\":\"未实施/未运行\"}\n"
+  },
+  "remoteReadback": {
+    "main": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+    "branch": "tds/conv-01a11b85-41f9-74f5-b456-7083d4d83e5e",
+    "head": "f957cf48e2babc4808c7276285a281bfda320801",
+    "tool": "mcp__tds__git",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main",
+      "refs/heads/tds/conv-01a11b85-41f9-74f5-b456-7083d4d83e5e"
+    ]
+  }
+}

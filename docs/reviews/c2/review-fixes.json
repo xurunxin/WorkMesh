@@ -43,6 +43,13 @@
       "exitCode": 0,
       "result": "26 条映射、13 ZIP 成员、34 文件双哈希、39 链接、六原测试与九类映射通过",
       "toolChunkId": "c93973"
+    },
+    {
+      "command": "git diff --check origin/main...HEAD",
+      "head": "f957cf48e2babc4808c7276285a281bfda320801",
+      "main": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "exitCode": 0,
+      "raw": "review-fix-range-results.json"
     }
   ],
   "cleanupOperations": [
@@ -71,7 +78,7 @@
       "finishedAt": "2026-10-08T13:33:37.743Z",
       "operation": "仅移除已逐字节验证归档的本任务独立副本",
       "result": "成功",
-      "exitCode": 0,
+      "exitCode": null,
       "preflight": {
         "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\91770.body-source.txt",
         "realPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\91770.body-source.txt",
@@ -81,7 +88,9 @@
         "retention": "原件工作树与 Git blob 均完整保存到内容寻址 ZIP；原提交仍可达"
       },
       "member": "bytes/914249fadb84586a845c2685ecd9892e81cf1dfbfa09bd7b2111f6d4bdc2d2a0",
-      "sourceCommit": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14"
+      "sourceCommit": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+      "apiResult": "unlinkSync 正常返回（undefined），没有独立子进程退出码",
+      "enclosingProcessExitCode": 0
     },
     {
       "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.response.bin",
@@ -89,7 +98,7 @@
       "finishedAt": "2026-10-08T13:33:37.746Z",
       "operation": "仅移除已逐字节验证归档的本任务独立副本",
       "result": "成功",
-      "exitCode": 0,
+      "exitCode": null,
       "preflight": {
         "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.response.bin",
         "realPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.response.bin",
@@ -99,7 +108,9 @@
         "retention": "原件工作树与 Git blob 均完整保存到内容寻址 ZIP；原提交仍可达"
       },
       "member": "bytes/3d5441fc242768d77ee1721c5af87b016c20fffd3c233a6d85bc960b88290407",
-      "sourceCommit": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14"
+      "sourceCommit": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+      "apiResult": "unlinkSync 正常返回（undefined），没有独立子进程退出码",
+      "enclosingProcessExitCode": 0
     },
     {
       "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.body-source.txt",
@@ -107,7 +118,7 @@
       "finishedAt": "2026-10-08T13:33:37.749Z",
       "operation": "仅移除已逐字节验证归档的本任务独立副本",
       "result": "成功",
-      "exitCode": 0,
+      "exitCode": null,
       "preflight": {
         "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.body-source.txt",
         "realPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\docs\\plan\\c2-wecom\\official\\90313.body-source.txt",
@@ -117,7 +128,9 @@
         "retention": "原件工作树与 Git blob 均完整保存到内容寻址 ZIP；原提交仍可达"
       },
       "member": "bytes/fe2508fca2521ee4b02a0bba5570d0bf228277ccda87e490af5b03eda8c5be5b",
-      "sourceCommit": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14"
+      "sourceCommit": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+      "apiResult": "unlinkSync 正常返回（undefined），没有独立子进程退出码",
+      "enclosingProcessExitCode": 0
     }
   ],
   "retained": [
@@ -155,7 +168,7 @@
       "command": "首次暂存 ZIP",
       "result": "旧 * text 强制 ZIP 换行转换，暂存 warning 指出 CRLF -> LF；推送前改为 text=auto 并重新暂存，新增 ZIP 工作树/Git blob 逐字节相等断言",
       "effect": "未推送损坏 ZIP，工作树原 ZIP 字节未改变",
-      "firstToolChunkId": "c93973"
+      "correctedAndVerifiedToolChunkId": "c93973"
     }
   ],
   "stage": "review，等待独立复核和 Chief 产品范围另行放行",
@@ -164,5 +177,26 @@
     "remoteMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
     "comparison": "本轮 ls-remote 实读 main 与本地 origin/main 相等，完整暂存候选差异检查使用该 origin/main；提交后另检查 origin/main...HEAD",
     "files": "全部变更位于 docs；未修改产品、CI 或权限"
-  }
+  },
+  "push": {
+    "status": "文档修正已成功推送，平台 git ls-remote 读回精确 head 一致",
+    "head": "f957cf48e2babc4808c7276285a281bfda320801",
+    "branch": "tds/conv-01a11b85-41f9-74f5-b456-7083d4d83e5e",
+    "followup": "本次仅追加实际范围检查回执；追加提交及最终范围结果在本轮工具回执和最终回复中报告，不循环归档自己的 SHA"
+  },
+  "cleanupMeaning": "逐路径保存实际 API 返回与起止时间；首次删除时间/记录缺口保持 null，不将批量进程退出码冒作逐项退出码",
+  "baselinePreservation": [
+    {
+      "path": "docs/reviews/c2/first-whitespace-check.json",
+      "result": "与上一提交 Git blob 逐字节一致，未覆写原件"
+    },
+    {
+      "path": "docs/reviews/c2/archive-check-results.json",
+      "result": "与上一提交 Git blob 逐字节一致，未覆写原件"
+    },
+    {
+      "path": "docs/reviews/c2/final-check-results.json",
+      "result": "与上一提交 Git blob 逐字节一致，未覆写原件"
+    }
+  ]
 }
