@@ -110,6 +110,7 @@ import type { AgentConnectionCurrentIdentity } from "@workmesh/contracts";
 import { registerAutonomousControlPlaneRoutes } from "./autonomous-control-plane.js";
 import { registerNotificationChannelRoutes } from './notification-channels.js';
 import { registerWorkbenchLlmConnectionRoutes } from "./workbench-llm-connections.js";
+import { loadModelPresets, registerModelPresetRoutes } from "./model-presets.js";
 import { registerWorkbenchConversationRoutes } from "./workbench-conversations.js";
 import { registerWorkbenchRunnerRoutes } from "./workbench-runner.js";
 import { registerConfigurationReadinessRoutes } from "./configuration-readiness.js";
@@ -137,6 +138,7 @@ const sessionCookie = "workmesh_session";
 const dummyPasswordHash = "$argon2id$v=19$m=65536,t=3,p=4$jIrvJoYL8u7zyxBFSmb4rQ$ktNePxUds6iumXhzFBjTTBxpNThz95LuN0QCV/z1ixY";
 const mutationMethods = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 const publicPaths = new Set([
+  "/api/v1/workbench/model-presets",
   "/api/v1/auth/login",
   "/api/v1/install-status",
   "/api/v1/info",
@@ -334,6 +336,7 @@ export const buildApp = (options: {
   realtimeMaxClients?: number;
 } = {}) => {
   const features = options.features ?? loadFeatureConfig();
+  const modelPresets = loadModelPresets(features.WORKMESH_BETA_MODEL_PRESETS, config.WORKMESH_MODEL_PRESETS_FILE);
   const releaseInfo = options.releaseInfo ?? loadReleaseInfo();
   const paginator = createPaginator(config, undefined, options.beforePagedQuery);
   const app = Fastify({
@@ -1233,6 +1236,7 @@ export const buildApp = (options: {
   registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerAdminRetentionRoutes(app, db);
   registerWorkbenchLlmConnectionRoutes(app, { db, meta: commandContext, header, paginator });
+  registerModelPresetRoutes(app, modelPresets);
   registerWorkbenchConversationRoutes(app, { db, meta: commandContext, header, paginator });
   registerWorkbenchRunnerRoutes(app, { db, meta: commandContext, header });
   registerConfigurationReadinessRoutes(app, { db, features });

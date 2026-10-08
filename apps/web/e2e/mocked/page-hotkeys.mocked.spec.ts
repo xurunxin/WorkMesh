@@ -37,6 +37,7 @@ const canonicalFeatures = [
   { key: 'WORKMESH_BETA_GITEA', tier: 'beta' },
   { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta' },
   { key: 'WORKMESH_BETA_COORDINATION_MCP', tier: 'beta' },
+  { key: 'WORKMESH_BETA_MODEL_PRESETS', tier: 'beta' },
   { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental' },
   { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental' },
   { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental' },

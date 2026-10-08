@@ -15,6 +15,7 @@ import {
 
 export * from './route-policy.js'
 export * from './pi-workbench-contracts.js'
+export * from './model-presets.js'
 export * from './configuration-readiness-contracts.js'
 export { workmeshSkillManifest } from './workmesh-skill-manifest.js'
 export {
@@ -39,6 +40,7 @@ export const releaseMetadata = Object.freeze({
 })
 
 export const featureKeySchema = z.enum([
+  'WORKMESH_BETA_MODEL_PRESETS',
   'WORKMESH_BETA_PLANNING',
   'WORKMESH_BETA_TEMPLATES',
   'WORKMESH_BETA_COSTS',
@@ -61,6 +63,7 @@ export type FeatureRegistry = z.infer<typeof featureRegistryResponseSchema>
 export type FeatureRuntime = 'api' | 'web' | 'worker' | 'sdk-mcp' | 'reserved'
 
 export const featureDefinitions = Object.freeze([
+  { key: 'WORKMESH_BETA_MODEL_PRESETS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
   { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web', 'worker'] },
   { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
   { key: 'WORKMESH_BETA_COSTS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
@@ -102,6 +105,7 @@ export const featureRegistryResponseSchema = z.object({
 }).strict()
 
 const featureRoutePrefixes = [
+  ['/api/v1/workbench/model-presets', 'WORKMESH_BETA_MODEL_PRESETS'],
   ['/api/v1/cycles', 'WORKMESH_BETA_PLANNING'],
   ['/api/v1/initiatives', 'WORKMESH_BETA_PLANNING'],
   ['/api/v1/advanced-views', 'WORKMESH_BETA_PLANNING'],
@@ -470,6 +474,7 @@ export const retentionStatusResponseSchema = z.object({
 })
 
 export const stage0RouteManifest = [
+  { method: 'GET', path: '/api/v1/workbench/model-presets', authenticated: false },
   { method: 'GET', path: '/livez', authenticated: false },
   { method: 'GET', path: '/readyz', authenticated: false },
   { method: 'GET', path: '/health', authenticated: false },

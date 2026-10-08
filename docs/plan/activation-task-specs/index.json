@@ -1139,6 +1139,15 @@
         "historicalFields": "原 phase、specSha256、sourceSha256、syncStatus、requires 和 stages 保留历史含义",
         "rawEvidenceIndex": "docs/plan/c2-wecom/raw-evidence-index.json",
         "reviewFixes": "docs/reviews/c2/review-fixes.json"
+      },
+      "currentProductExecution": {
+        "stage": "executing",
+        "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+        "input": "docs/reviews/c2/product-input.json",
+        "spec": "docs/reviews/c2/product-spec.md",
+        "specSha256": "46f23f7c1e403fd9129a84d3e8c91fd4a624c2bc2f3b0f0e30cfa5ee7c5f3266",
+        "reviewedDesignHead": "178ac8cb297a78ea830f23845aa1d59972cca149",
+        "stopAt": "review，产品独审、当前 Required CI 与 actual main 后才验收"
       }
     },
     {

@@ -1,0 +1,34 @@
+{
+  "callID": "call_b992d8193b7041fc94906f0879543102",
+  "inputTime": "2026-10-08T13:00:42.404Z",
+  "inputRecord": {
+    "sourceLine": 3578,
+    "byteOffset": 16576670,
+    "bytes": 2339,
+    "sha256": "f2279bda3b58de34bc35c68081e8b4947171f1bbf693c0f3041b797479b5821f"
+  },
+  "outputTime": "2026-10-08T13:00:42.500Z",
+  "outputRecord": {
+    "sourceLine": 3580,
+    "byteOffset": 16579913,
+    "bytes": 1658,
+    "sha256": "bf2b4e5f06c466159eb515f821695346e8fcec9f7dbf799ef4bac7b48e275bd3"
+  },
+  "target": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\playwright.c3-c1-combination.config.ts",
+  "sourcePath": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T06-52-12-01a11891-35a8-74c3-bb5a-a9aabdd3baa2.jsonl",
+  "processStarted": false,
+  "processExitCode": null,
+  "reasonAsReturned": "blocked by policy",
+  "inputFile": "config-refusal-input.txt",
+  "outputFile": "config-refusal-output.json",
+  "inputSha256": "88727104d527e396a27992cb7b0bd20e69641dfa790c9f8f94199974055fd1ff",
+  "outputSha256": "8cb6ed8fc6a23536ac886a511afa074551cba3ee582497a4912878c60614e57b",
+  "innerToolCallID": null,
+  "prechecksExecuted": false,
+  "targetRelation": "与第一次新拒绝目录不同的独立文件目标，不是该目录子项；本次拒绝后同样保留停止",
+  "preservedBecauseRefused": true,
+  "noRetryOrChangedToolOrMoveOrRestore": true,
+  "outputRuntimeTruncation": "原可见返回自身截断，未取得审批器内部更详细理由",
+  "mutatingTargetActionsAfterRefusal": [],
+  "readOnlyPostRefusalCheck": "Path.exists 实读目标仍存在；没有写入/删除/移动/恢复目标"
+}

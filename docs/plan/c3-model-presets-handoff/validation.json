@@ -1,0 +1,78 @@
+{
+  "scope": "仅文档前置，不是产品验收",
+  "checks": [
+    {
+      "check": "保存计划/当前规格正文逐字节一致，currentID实读绑定，缺失版本为null",
+      "result": "通过"
+    },
+    {
+      "check": "来源清单SHA-256、字节数与工作树相等，逐文件staged Git blob与工作树字节相等",
+      "result": "通过"
+    },
+    {
+      "check": "所有交接JSON可解析",
+      "result": "通过"
+    },
+    {
+      "check": "Markdown本地链接目标存在",
+      "result": "通过"
+    },
+    {
+      "check": "九家官方资料记录、未验证状态、四项原验收及九类适用性完整",
+      "result": "通过"
+    },
+    {
+      "check": "全部暂存文件仅在获准docs/plan范围内",
+      "result": "通过"
+    },
+    {
+      "check": "git diff --cached --check",
+      "result": "通过"
+    }
+  ],
+  "productChecks": [
+    {
+      "command": "pnpm lint",
+      "result": "未运行",
+      "reason": "产品实现未开始；本轮仅文档交接，不能把本报告当功能DoD通过"
+    },
+    {
+      "command": "pnpm typecheck",
+      "result": "未运行",
+      "reason": "产品实现未开始；本轮仅文档交接，不能把本报告当功能DoD通过"
+    },
+    {
+      "command": "pnpm test",
+      "result": "未运行",
+      "reason": "产品实现未开始；本轮仅文档交接，不能把本报告当功能DoD通过"
+    },
+    {
+      "command": "pnpm test:integration",
+      "result": "未运行",
+      "reason": "产品实现未开始；本轮仅文档交接，不能把本报告当功能DoD通过"
+    },
+    {
+      "command": "pnpm test:e2e",
+      "result": "未运行",
+      "reason": "产品实现未开始；本轮仅文档交接，不能把本报告当功能DoD通过"
+    },
+    {
+      "command": "pnpm check:route-policy",
+      "result": "未运行",
+      "reason": "产品实现未开始；本轮仅文档交接，不能把本报告当功能DoD通过"
+    },
+    {
+      "command": "适用CI与独立复核",
+      "result": "未运行",
+      "reason": "产品实现未开始；本轮仅文档交接，不能把本报告当功能DoD通过"
+    }
+  ],
+  "migrations": "无",
+  "apiEventsChanged": "无",
+  "savedPlanEdited": false,
+  "currentID": "uO_iod7YSFgGSOiFtRAwE",
+  "planVersion": null,
+  "specVersion": null,
+  "productImplementationStarted": false,
+  "gitBlobPolicy": "上述逐字节核验覆盖source.json.files全部列项；validation.json不自引用。提交前再次运行暂存差异检查。"
+}

@@ -1,0 +1,3020 @@
+{
+  "source": {
+    "path": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T06-52-12-01a11891-35a8-74c3-bb5a-a9aabdd3baa2.jsonl",
+    "sessionID": "01a11891-35a8-74c3-bb5a-a9aabdd3baa2",
+    "prefixBytes": 14023615,
+    "prefixSha256": "ff3a0e625dd7a6b07c1e97bbe508e2a435a3f2104f6be007ac123831026211a9",
+    "timeRangeStartInclusive": "2026-10-08T11:29:03.882Z",
+    "timeRangeEndExclusive": "2026-10-08T12:01:14.412Z"
+  },
+  "extractionPolicy": "只导出 response_item 的可见工具调用及输出；完整保留 input 和 output 值；不提取 analysis、私有推理或 opaque metadata。原 JSONL 未改，原行 SHA/偏移可复核。",
+  "archive": "calls.zip",
+  "archiveBytes": 195776,
+  "archiveSha256": "7f091ecaed75c1683bd1ce2c37eebe6e06a6b8b83de217917b927a3d487b5ef1",
+  "records": 100,
+  "calls": [
+    {
+      "callID": "call_a694c2419db74628858fd2b79f9ee0c8",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:29:03.882Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2581,
+          "sourceByteOffset": 12915916,
+          "originalRecordBytes": 3103,
+          "originalRecordSha256": "01eddc3b9f45cf867ba8e475ed6b5bc5e58bcf51ccc9aa34ca41d7b7fd286eb2"
+        },
+        {
+          "timestamp": "2026-10-08T11:29:06.419Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2586,
+          "sourceByteOffset": 12927681,
+          "originalRecordBytes": 2914,
+          "originalRecordSha256": "0fc0bbbfcd436d17de06c4640c0502ba3d4c1e041815b826a6b82e923f454d6d"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:29:03.882Z",
+      "returnedAt": "2026-10-08T11:29:06.419Z",
+      "inputMember": "call_a694c2419db74628858fd2b79f9ee0c8/input.txt",
+      "outputMember": "call_a694c2419db74628858fd2b79f9ee0c8/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_a694c2419db74628858fd2b79f9ee0c8/command-1.txt",
+          "sha256": "4a7d15752a176aecc0657eac01c4ea76c333b70863516ba417a2d89c44f8e5bd"
+        },
+        {
+          "index": 2,
+          "member": "call_a694c2419db74628858fd2b79f9ee0c8/command-2.txt",
+          "sha256": "c53e42057ce3de10b5fed44fbd8c70bf8fe265d264caac7993eb7077fba66e73"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "211ebd",
+          "exit_code": 0,
+          "wall_time_seconds": 2.2994622
+        }
+      ]
+    },
+    {
+      "callID": "call_daf2599d8ae943d5bd10995153cf3e33",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:29:21.406Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2590,
+          "sourceByteOffset": 12934787,
+          "originalRecordBytes": 1110,
+          "originalRecordSha256": "c3b7d10fe07e0c5459b1a281ba8f3f549f21ef94a1ebb4cc64cf685d94a37dff"
+        },
+        {
+          "timestamp": "2026-10-08T11:29:31.603Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2592,
+          "sourceByteOffset": 12936796,
+          "originalRecordBytes": 1114,
+          "originalRecordSha256": "5f85bef36ef1d7234eb646074a5340f5d95d8633230628387c6093e7a9c9e3e6"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:29:21.406Z",
+      "returnedAt": "2026-10-08T11:29:31.603Z",
+      "inputMember": "call_daf2599d8ae943d5bd10995153cf3e33/input.txt",
+      "outputMember": "call_daf2599d8ae943d5bd10995153cf3e33/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_daf2599d8ae943d5bd10995153cf3e33/command-1.txt",
+          "sha256": "fa38bc2c77160376113fec7d3fea5f3b92b73a7cc22dbbeb9d5d3de43d8482d5"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "eba30b",
+          "session_id": 41935,
+          "wall_time_seconds": 10.0028976
+        }
+      ]
+    },
+    {
+      "callID": "call_e43c29711a02466fa1ea09c0670c1785",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:29:38.061Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2596,
+          "sourceByteOffset": 12940989,
+          "originalRecordBytes": 798,
+          "originalRecordSha256": "0fd3db50e5a49e68c94dd114d258e55bd78543a5c94420c6b9524a066951cd31"
+        },
+        {
+          "timestamp": "2026-10-08T11:29:39.840Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2599,
+          "sourceByteOffset": 12961863,
+          "originalRecordBytes": 7123,
+          "originalRecordSha256": "1d72b0421abd07bd9ad74368f3578a286b14da9536537d917732ae668affa864"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:29:38.061Z",
+      "returnedAt": "2026-10-08T11:29:39.840Z",
+      "inputMember": "call_e43c29711a02466fa1ea09c0670c1785/input.txt",
+      "outputMember": "call_e43c29711a02466fa1ea09c0670c1785/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_e43c29711a02466fa1ea09c0670c1785/command-1.txt",
+          "sha256": "374f664674a421b65fdd4952febe5be50077b2eb3f0dfae6629bca9e5174eca0"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "a17d60",
+          "exit_code": 1,
+          "wall_time_seconds": 1.5840212999999999
+        }
+      ]
+    },
+    {
+      "callID": "call_8477665e146c400d990b3f1e10e17215",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:29:51.212Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2603,
+          "sourceByteOffset": 12972728,
+          "originalRecordBytes": 1022,
+          "originalRecordSha256": "0ade054cab6f85ef59092ca4b8c71dca663d5e43f3bb64e14663e050dc7caa29"
+        },
+        {
+          "timestamp": "2026-10-08T11:29:57.584Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2606,
+          "sourceByteOffset": 13005217,
+          "originalRecordBytes": 9522,
+          "originalRecordSha256": "3f105c7fc295d4129913f81c4953fe1a4147d7710e24fb687a49d62d10ea1bef"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:29:51.212Z",
+      "returnedAt": "2026-10-08T11:29:57.584Z",
+      "inputMember": "call_8477665e146c400d990b3f1e10e17215/input.txt",
+      "outputMember": "call_8477665e146c400d990b3f1e10e17215/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_8477665e146c400d990b3f1e10e17215/command-1.txt",
+          "sha256": "dc16b64dd3d8ae046b77d18f66c084ba0212644df5e9e1e5e49483eeb650df99"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "92819d",
+          "exit_code": 0,
+          "wall_time_seconds": 1.1527891000000001
+        },
+        {
+          "chunk_id": "e94b2d",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0149588
+        }
+      ]
+    },
+    {
+      "callID": "call_e8a4cbeb5aee4d92b341b7ce55fca789",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:30:16.699Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2610,
+          "sourceByteOffset": 13018972,
+          "originalRecordBytes": 899,
+          "originalRecordSha256": "5a06d8c0b3628f9a52709e1d07366eb63446f7ebddcde8f0f7ab3a3caab21699"
+        },
+        {
+          "timestamp": "2026-10-08T11:30:18.172Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2613,
+          "sourceByteOffset": 13027522,
+          "originalRecordBytes": 2629,
+          "originalRecordSha256": "36a415a4d2d54b88d137c796b7f1541068315583e5a058af04c2c1cbd4638547"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:30:16.699Z",
+      "returnedAt": "2026-10-08T11:30:18.172Z",
+      "inputMember": "call_e8a4cbeb5aee4d92b341b7ce55fca789/input.txt",
+      "outputMember": "call_e8a4cbeb5aee4d92b341b7ce55fca789/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_e8a4cbeb5aee4d92b341b7ce55fca789/command-1.txt",
+          "sha256": "79f86472b61035e6a011b797baea0ca5302ab859c4527539fc0aa714ef90d20b"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "941a5e",
+          "exit_code": 0,
+          "wall_time_seconds": 1.2905691
+        }
+      ]
+    },
+    {
+      "callID": "call_a84f1ee8e0a14bc2a0e43f2eb090d770",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:30:28.453Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2619,
+          "sourceByteOffset": 13035162,
+          "originalRecordBytes": 741,
+          "originalRecordSha256": "924323fcde04ce0170a236d080faf184a4d4a76ed30c2d622781f3a3ddee1731"
+        },
+        {
+          "timestamp": "2026-10-08T11:30:29.762Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2622,
+          "sourceByteOffset": 13044041,
+          "originalRecordBytes": 2900,
+          "originalRecordSha256": "b905db0601faa81a42008a18808d74a39e5d8591543a0cead90f163a035c2983"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:30:28.453Z",
+      "returnedAt": "2026-10-08T11:30:29.762Z",
+      "inputMember": "call_a84f1ee8e0a14bc2a0e43f2eb090d770/input.txt",
+      "outputMember": "call_a84f1ee8e0a14bc2a0e43f2eb090d770/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_a84f1ee8e0a14bc2a0e43f2eb090d770/command-1.txt",
+          "sha256": "f2866aa45e9ca22ee3eae1d96c75edef0c273022c16ddf4310ebb8ad759ea452"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "811096",
+          "exit_code": 0,
+          "wall_time_seconds": 1.0736014
+        }
+      ]
+    },
+    {
+      "callID": "call_becf6d992e0044c3b1e9dc5b113ac3d5",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:30:40.861Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2626,
+          "sourceByteOffset": 13050342,
+          "originalRecordBytes": 1003,
+          "originalRecordSha256": "ad13b15c9a6c7677c0737deb49ef9cfc17dbd2b37e4d55ef11efee668b54f6e3"
+        },
+        {
+          "timestamp": "2026-10-08T11:30:42.433Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2629,
+          "sourceByteOffset": 13062800,
+          "originalRecordBytes": 3782,
+          "originalRecordSha256": "2ad6250e941c09cb603a31e8001ebc54311f9974f1433d58d93de9754d18ec25"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:30:40.861Z",
+      "returnedAt": "2026-10-08T11:30:42.433Z",
+      "inputMember": "call_becf6d992e0044c3b1e9dc5b113ac3d5/input.txt",
+      "outputMember": "call_becf6d992e0044c3b1e9dc5b113ac3d5/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_becf6d992e0044c3b1e9dc5b113ac3d5/command-1.txt",
+          "sha256": "f6a9c1c9f4fc11771ebcf4e5536081196085bcfa985d4097c91273db5ca00ff2"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "259f0b",
+          "exit_code": 0,
+          "wall_time_seconds": 1.37671
+        }
+      ]
+    },
+    {
+      "callID": "call_fd51ddcb550f47e282b5314a5c9d3bdd",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:31:21.269Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2633,
+          "sourceByteOffset": 13071436,
+          "originalRecordBytes": 3306,
+          "originalRecordSha256": "1e2d3d7b90e6a845d2fd866424ad3e7d149022252d2064e9cac4c18a12a29be5"
+        },
+        {
+          "timestamp": "2026-10-08T11:31:34.392Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2636,
+          "sourceByteOffset": 13081991,
+          "originalRecordBytes": 1042,
+          "originalRecordSha256": "64aa402d2c9b0b850f3de15f71f3e93b4f9719dd0c1dfba6f62797957d0ddd7c"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:31:21.269Z",
+      "returnedAt": "2026-10-08T11:31:34.392Z",
+      "inputMember": "call_fd51ddcb550f47e282b5314a5c9d3bdd/input.txt",
+      "outputMember": "call_fd51ddcb550f47e282b5314a5c9d3bdd/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_fd51ddcb550f47e282b5314a5c9d3bdd/command-1.txt",
+          "sha256": "8f2d5dfee263baaf97d087b87886332dfb5a431fa84748934688b3956bb735ba"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "b5f993",
+          "exit_code": 0,
+          "wall_time_seconds": 7.9111286
+        },
+        {
+          "chunk_id": "7a83fa",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0072308
+        }
+      ]
+    },
+    {
+      "callID": "call_294f582d970e4e789ada5f981861bd9c",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:32:14.605Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2640,
+          "sourceByteOffset": 13089168,
+          "originalRecordBytes": 2285,
+          "originalRecordSha256": "e2075e00d2803af0656c6f7638bff6d720ed24b839094189f84b3f8f9bb34d79"
+        },
+        {
+          "timestamp": "2026-10-08T11:32:19.698Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2643,
+          "sourceByteOffset": 13098856,
+          "originalRecordBytes": 1486,
+          "originalRecordSha256": "5566f5b733025995420dc0fc9d0f1fa8295871afedde00004f787a6f3d353544"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:32:14.605Z",
+      "returnedAt": "2026-10-08T11:32:19.698Z",
+      "inputMember": "call_294f582d970e4e789ada5f981861bd9c/input.txt",
+      "outputMember": "call_294f582d970e4e789ada5f981861bd9c/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_294f582d970e4e789ada5f981861bd9c/command-1.txt",
+          "sha256": "eb21076e17f8a8dcc7e135f905b77161582203153e330a4d9a7c834fdcc18b87"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "fc6404",
+          "exit_code": 0,
+          "wall_time_seconds": 4.9017666
+        }
+      ]
+    },
+    {
+      "callID": "call_ceb20b12298645b4a84f41eff5c1b01a",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:32:32.466Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2649,
+          "sourceByteOffset": 13104976,
+          "originalRecordBytes": 1607,
+          "originalRecordSha256": "9c8126accabb3de8b74df2d9f5523fbd3dfc7e3b132dd0a29dc65efb42a4c059"
+        },
+        {
+          "timestamp": "2026-10-08T11:32:39.504Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2652,
+          "sourceByteOffset": 13114097,
+          "originalRecordBytes": 2197,
+          "originalRecordSha256": "41a46d10c89d3d1279cf44a6bbf2ec9a58ddbc1ff6f6e453e00f12fd164ecb2d"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:32:32.466Z",
+      "returnedAt": "2026-10-08T11:32:39.504Z",
+      "inputMember": "call_ceb20b12298645b4a84f41eff5c1b01a/input.txt",
+      "outputMember": "call_ceb20b12298645b4a84f41eff5c1b01a/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_ceb20b12298645b4a84f41eff5c1b01a/command-1.txt",
+          "sha256": "723588e71da608b98a2b8f753cca5b6d01e59ac80b1753b8d7d0a3e9460403a4"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "1afbe0",
+          "exit_code": 0,
+          "wall_time_seconds": 1.8243146000000001
+        },
+        {
+          "chunk_id": "0fc995",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0091633
+        }
+      ]
+    },
+    {
+      "callID": "call_9803e619083f4155b66d2e007c25d686",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:32:54.577Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2656,
+          "sourceByteOffset": 13120551,
+          "originalRecordBytes": 792,
+          "originalRecordSha256": "6c96a5e2d7eb4d72f5c8d6a1dee81757062a291ac38324ad74bb28d302550217"
+        },
+        {
+          "timestamp": "2026-10-08T11:32:55.731Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2659,
+          "sourceByteOffset": 13137286,
+          "originalRecordBytes": 9426,
+          "originalRecordSha256": "d2006665b56a5db15de2293cc6f36e16942d7153693c0461cc75fad208ea4682"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:32:54.577Z",
+      "returnedAt": "2026-10-08T11:32:55.731Z",
+      "inputMember": "call_9803e619083f4155b66d2e007c25d686/input.txt",
+      "outputMember": "call_9803e619083f4155b66d2e007c25d686/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_9803e619083f4155b66d2e007c25d686/command-1.txt",
+          "sha256": "8995ce793fcf0c87631d67c1cdaabbf5ec5e6cb5ce26f0f6a43baaa2f6ef9e73"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "f8055e",
+          "exit_code": 0,
+          "wall_time_seconds": 0.9573893
+        }
+      ]
+    },
+    {
+      "callID": "call_10b896e7356f434cbbf85be70ecb1a74",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:33:13.797Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2663,
+          "sourceByteOffset": 13151822,
+          "originalRecordBytes": 793,
+          "originalRecordSha256": "1a261d2b7b77629cc03a4d88add718866b47735fe0c9860346442abf03b75224"
+        },
+        {
+          "timestamp": "2026-10-08T11:33:20.337Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2666,
+          "sourceByteOffset": 13168585,
+          "originalRecordBytes": 5638,
+          "originalRecordSha256": "c45407fdb1142c67f1abfd10a7c54ccf2ae2095eb1845e1d27153b901844d2c8"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:33:13.797Z",
+      "returnedAt": "2026-10-08T11:33:20.337Z",
+      "inputMember": "call_10b896e7356f434cbbf85be70ecb1a74/input.txt",
+      "outputMember": "call_10b896e7356f434cbbf85be70ecb1a74/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_10b896e7356f434cbbf85be70ecb1a74/command-1.txt",
+          "sha256": "ad0432fa86e52d36ad2bf7f598aeb7f93d800f72585116c43bf2db229cce37c8"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "becba2",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0107123
+        },
+        {
+          "chunk_id": "e3e3f3",
+          "exit_code": 0,
+          "wall_time_seconds": 1.2899153
+        }
+      ]
+    },
+    {
+      "callID": "call_5b7f5fd85e5b4c2c900af1f85dbea124",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:33:26.087Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2670,
+          "sourceByteOffset": 13177265,
+          "originalRecordBytes": 781,
+          "originalRecordSha256": "0cdd8a58e294a540c96274e06d5e6a2a505caa67517164acfa216c06a1054b8a"
+        },
+        {
+          "timestamp": "2026-10-08T11:33:32.836Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2673,
+          "sourceByteOffset": 13182953,
+          "originalRecordBytes": 1920,
+          "originalRecordSha256": "763b1734edfee7b061930010b425a7edfff725e854bf71b68a7a04276f4e73a6"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:33:26.087Z",
+      "returnedAt": "2026-10-08T11:33:32.836Z",
+      "inputMember": "call_5b7f5fd85e5b4c2c900af1f85dbea124/input.txt",
+      "outputMember": "call_5b7f5fd85e5b4c2c900af1f85dbea124/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_5b7f5fd85e5b4c2c900af1f85dbea124/command-1.txt",
+          "sha256": "a30b89507793496a8f1f668bd85946392ff1d469bf7664b5a3141eacbb534358"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "9bf694",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0138713
+        },
+        {
+          "chunk_id": "6f49c9",
+          "exit_code": 0,
+          "wall_time_seconds": 1.5097165000000001
+        }
+      ]
+    },
+    {
+      "callID": "call_adf93fcfe87f49438ef8f58c992f424d",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:34:01.850Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2677,
+          "sourceByteOffset": 13190986,
+          "originalRecordBytes": 791,
+          "originalRecordSha256": "3ec9ab02059ac78ddb303102e9ae633bfcd78e0ab8cd410a39d2c67442b46dda"
+        },
+        {
+          "timestamp": "2026-10-08T11:34:07.982Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2680,
+          "sourceByteOffset": 13196324,
+          "originalRecordBytes": 1774,
+          "originalRecordSha256": "a434548471561724e583af9b2c4158f2884782bb7ce73663c42b55e9d8b77a92"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:34:01.850Z",
+      "returnedAt": "2026-10-08T11:34:07.982Z",
+      "inputMember": "call_adf93fcfe87f49438ef8f58c992f424d/input.txt",
+      "outputMember": "call_adf93fcfe87f49438ef8f58c992f424d/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_adf93fcfe87f49438ef8f58c992f424d/command-1.txt",
+          "sha256": "b788a8acad833589de5204d0d88cc35aaa2d3b8a34fb79701da0f5c1e781743e"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "a6727a",
+          "exit_code": 0,
+          "wall_time_seconds": 0.9336021
+        },
+        {
+          "chunk_id": "1a436c",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0028158
+        }
+      ]
+    },
+    {
+      "callID": "call_47b8595c1cc144fd833e70325c943315",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:35:08.488Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2688,
+          "sourceByteOffset": 13208517,
+          "originalRecordBytes": 4579,
+          "originalRecordSha256": "03666ab49da7865706faaa0154636762b0edacf11ad6958cee7642a0b4ddf281"
+        },
+        {
+          "timestamp": "2026-10-08T11:35:13.573Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2691,
+          "sourceByteOffset": 13218399,
+          "originalRecordBytes": 707,
+          "originalRecordSha256": "efd37ab41d5b5d46a8220e247c15b8e1cd00785c553b0cc9606f45c1ebd8af26"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:35:08.488Z",
+      "returnedAt": "2026-10-08T11:35:13.573Z",
+      "inputMember": "call_47b8595c1cc144fd833e70325c943315/input.txt",
+      "outputMember": "call_47b8595c1cc144fd833e70325c943315/output.json",
+      "decodedCommands": [],
+      "processResults": [
+        {
+          "chunk_id": "a3869c",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0105798
+        }
+      ]
+    },
+    {
+      "callID": "call_edab606e83e742f69c8df10db7ad35eb",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:35:53.877Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2697,
+          "sourceByteOffset": 13228537,
+          "originalRecordBytes": 848,
+          "originalRecordSha256": "65f127a358b2a0c7e9775c4a8bac180e3fdb098b9ae1d2a706cd68ba295db511"
+        },
+        {
+          "timestamp": "2026-10-08T11:35:59.958Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2700,
+          "sourceByteOffset": 13239195,
+          "originalRecordBytes": 3482,
+          "originalRecordSha256": "5f64a0d4ca7fbdd32cb2893db9993e2fd7a7966b72050a471c458d7beb6377ad"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:35:53.877Z",
+      "returnedAt": "2026-10-08T11:35:59.958Z",
+      "inputMember": "call_edab606e83e742f69c8df10db7ad35eb/input.txt",
+      "outputMember": "call_edab606e83e742f69c8df10db7ad35eb/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_edab606e83e742f69c8df10db7ad35eb/command-1.txt",
+          "sha256": "0c53c41e458860494580a9ff6e671d05c7dc78c950a3ef917dae187a8a210eae"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "ceccc1",
+          "exit_code": 0,
+          "wall_time_seconds": 0.8688568
+        },
+        {
+          "chunk_id": "2cfaaa",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0101339
+        }
+      ]
+    },
+    {
+      "callID": "call_cd16c7e3496a40bdbbfc07d12637387c",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:36:06.677Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2704,
+          "sourceByteOffset": 13245719,
+          "originalRecordBytes": 834,
+          "originalRecordSha256": "96f37b6cf8a010e28fb493ecb842551b9375b06f5579d3400eea43263f948dc2"
+        },
+        {
+          "timestamp": "2026-10-08T11:36:08.831Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2707,
+          "sourceByteOffset": 13250689,
+          "originalRecordBytes": 1323,
+          "originalRecordSha256": "5be6b84dea0e5e133bf752ac603a6f2592cca41137d8035f745c6bde0d8c64c9"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:36:06.677Z",
+      "returnedAt": "2026-10-08T11:36:08.831Z",
+      "inputMember": "call_cd16c7e3496a40bdbbfc07d12637387c/input.txt",
+      "outputMember": "call_cd16c7e3496a40bdbbfc07d12637387c/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_cd16c7e3496a40bdbbfc07d12637387c/command-1.txt",
+          "sha256": "3cd61fe7a4f590d1094fb083ea281a5a1688989f449d2edfdd8e0ad093b0adf7"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "267879",
+          "exit_code": 0,
+          "wall_time_seconds": 1.9558757
+        }
+      ]
+    },
+    {
+      "callID": "call_764512a232d64fd78c5047a9c5f41305",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:36:21.978Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2711,
+          "sourceByteOffset": 13255329,
+          "originalRecordBytes": 1464,
+          "originalRecordSha256": "eb429df1744c791fbb29807543ba6600dd40f912c2941d6d2b5acc371c35fb04"
+        },
+        {
+          "timestamp": "2026-10-08T11:36:23.856Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2714,
+          "sourceByteOffset": 13266617,
+          "originalRecordBytes": 3023,
+          "originalRecordSha256": "b724dcf83d1b346103311c77672c5634bba1052559e07647b17b09188c5b4571"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:36:21.978Z",
+      "returnedAt": "2026-10-08T11:36:23.856Z",
+      "inputMember": "call_764512a232d64fd78c5047a9c5f41305/input.txt",
+      "outputMember": "call_764512a232d64fd78c5047a9c5f41305/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_764512a232d64fd78c5047a9c5f41305/command-1.txt",
+          "sha256": "b9ee38db036e6f238139dcd0f600bec4ca32e5662f634ffcc3cca81b64b6bccd"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "9ac0ab",
+          "exit_code": 0,
+          "wall_time_seconds": 1.6871082
+        }
+      ]
+    },
+    {
+      "callID": "call_b17e9388c1c34c06a21013a66832e3f2",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:36:56.097Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2718,
+          "sourceByteOffset": 13274729,
+          "originalRecordBytes": 2841,
+          "originalRecordSha256": "2695f4841249449542ea595a76ddfc08fa704e34180fdfbd33559518d95dabcd"
+        },
+        {
+          "timestamp": "2026-10-08T11:37:01.136Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2721,
+          "sourceByteOffset": 13281244,
+          "originalRecordBytes": 778,
+          "originalRecordSha256": "9199cfd29834148c571fd398f204a9f437f3383d4535f5ead93c735c8eb2e19f"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:36:56.097Z",
+      "returnedAt": "2026-10-08T11:37:01.136Z",
+      "inputMember": "call_b17e9388c1c34c06a21013a66832e3f2/input.txt",
+      "outputMember": "call_b17e9388c1c34c06a21013a66832e3f2/output.json",
+      "decodedCommands": [],
+      "processResults": [
+        {
+          "chunk_id": "915f9f",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0154216
+        }
+      ]
+    },
+    {
+      "callID": "call_7f7c6b0c87b64ee29151931eec67e1c8",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:37:34.549Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2725,
+          "sourceByteOffset": 13288285,
+          "originalRecordBytes": 1089,
+          "originalRecordSha256": "974a1b144baba83f708459ba5dbbc3c2bda1f333ad977124b071ea9fac325584"
+        },
+        {
+          "timestamp": "2026-10-08T11:37:40.490Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2728,
+          "sourceByteOffset": 13298471,
+          "originalRecordBytes": 3443,
+          "originalRecordSha256": "91457bf1ed91c79168c8d35c49af0bd2e7d0da6091ccf8e8a30dd5ab0a19082e"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:37:34.549Z",
+      "returnedAt": "2026-10-08T11:37:40.490Z",
+      "inputMember": "call_7f7c6b0c87b64ee29151931eec67e1c8/input.txt",
+      "outputMember": "call_7f7c6b0c87b64ee29151931eec67e1c8/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_7f7c6b0c87b64ee29151931eec67e1c8/command-1.txt",
+          "sha256": "c7cbc9162431213fa8e62a3f201daba3bab40dd0b2b2f8b321f8a499c883a31a"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "2b1e46",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7331108
+        },
+        {
+          "chunk_id": "22adf2",
+          "session_id": 41935,
+          "wall_time_seconds": 5.0136963
+        }
+      ]
+    },
+    {
+      "callID": "call_c7b4268182154f2fb77bb105727a71c6",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:37:49.084Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2732,
+          "sourceByteOffset": 13304784,
+          "originalRecordBytes": 662,
+          "originalRecordSha256": "2ed12a5a93151d64688eb98d690793c6064f166c15912475a8bb714f0990e409"
+        },
+        {
+          "timestamp": "2026-10-08T11:37:51.630Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2735,
+          "sourceByteOffset": 13315854,
+          "originalRecordBytes": 3822,
+          "originalRecordSha256": "f430fa5af7444a8683f574bf6683e6f9db30c362c4dcd98413cd6de69766aa1d"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:37:49.084Z",
+      "returnedAt": "2026-10-08T11:37:51.630Z",
+      "inputMember": "call_c7b4268182154f2fb77bb105727a71c6/input.txt",
+      "outputMember": "call_c7b4268182154f2fb77bb105727a71c6/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_c7b4268182154f2fb77bb105727a71c6/command-1.txt",
+          "sha256": "141af34277a4306ea30a26dd7f3b4f9b411ef0387805b32b4a0889c4ad817608"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "214ded",
+          "exit_code": 0,
+          "wall_time_seconds": 2.3464195
+        }
+      ]
+    },
+    {
+      "callID": "call_005ad7512fe6447098a9285f27c0d565",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:38:11.557Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2741,
+          "sourceByteOffset": 13325529,
+          "originalRecordBytes": 1508,
+          "originalRecordSha256": "9ff50b468f6f18fa96024ad7825cb31e5f352e7e9d0c1e45f82ff23cae86a6a2"
+        },
+        {
+          "timestamp": "2026-10-08T11:38:14.761Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2745,
+          "sourceByteOffset": 13333507,
+          "originalRecordBytes": 1650,
+          "originalRecordSha256": "17f25d7e56d3cb45fb50dbdf1063c175015b229cb0cc178475fa534833fb65eb"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:38:11.557Z",
+      "returnedAt": "2026-10-08T11:38:14.761Z",
+      "inputMember": "call_005ad7512fe6447098a9285f27c0d565/input.txt",
+      "outputMember": "call_005ad7512fe6447098a9285f27c0d565/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_005ad7512fe6447098a9285f27c0d565/command-1.txt",
+          "sha256": "97879b874d76180a177732b6605a96f0ed25a60870cc13543a1ca8d982b3d891"
+        },
+        {
+          "index": 2,
+          "member": "call_005ad7512fe6447098a9285f27c0d565/command-2.txt",
+          "sha256": "39f713be64a1de3cb5be53da6fc891319690eaeb0db2acf0e05fe2602dc09249"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "cb3ecb",
+          "exit_code": 0,
+          "wall_time_seconds": 1.1937159
+        },
+        {
+          "chunk_id": "63bdfb",
+          "exit_code": 0,
+          "wall_time_seconds": 1.645874
+        }
+      ]
+    },
+    {
+      "callID": "call_f40ad8a9396d4998a708c9442335c82e",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:39:24.503Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2754,
+          "sourceByteOffset": 13356974,
+          "originalRecordBytes": 856,
+          "originalRecordSha256": "7438665aebd5821214f5615e1d3169b83bc3dd282ab5d55d9077edbd6a57776c"
+        },
+        {
+          "timestamp": "2026-10-08T11:39:25.503Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2757,
+          "sourceByteOffset": 13363388,
+          "originalRecordBytes": 2669,
+          "originalRecordSha256": "46d8b0e6c9efec447bdadc10c724fb0412278bcca67d6bb3870b15117875fe6d"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:39:24.503Z",
+      "returnedAt": "2026-10-08T11:39:25.503Z",
+      "inputMember": "call_f40ad8a9396d4998a708c9442335c82e/input.txt",
+      "outputMember": "call_f40ad8a9396d4998a708c9442335c82e/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_f40ad8a9396d4998a708c9442335c82e/command-1.txt",
+          "sha256": "006afa1a64f8e235ad307f50ae95042794f3a9dffefa506e860bd30900add8ec"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "5ca465",
+          "exit_code": 0,
+          "wall_time_seconds": 0.8115324
+        },
+        {
+          "chunk_id": "8def9f",
+          "exit_code": 1,
+          "wall_time_seconds": 9.2e-06
+        }
+      ]
+    },
+    {
+      "callID": "call_2cf3fb912383432f922edacbe4a5e05a",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:39:51.588Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2761,
+          "sourceByteOffset": 13369505,
+          "originalRecordBytes": 3373,
+          "originalRecordSha256": "0d5e58f2d7951cd644a092253765351a0ad9e4ee88c0c428e3263ed805c63780"
+        },
+        {
+          "timestamp": "2026-10-08T11:40:02.839Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2765,
+          "sourceByteOffset": 13415202,
+          "originalRecordBytes": 13804,
+          "originalRecordSha256": "b66609803cfead5bf04a524591a53d61273227eeab0dbf634ba52a9c1af9aaa5"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:39:51.588Z",
+      "returnedAt": "2026-10-08T11:40:02.839Z",
+      "inputMember": "call_2cf3fb912383432f922edacbe4a5e05a/input.txt",
+      "outputMember": "call_2cf3fb912383432f922edacbe4a5e05a/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_2cf3fb912383432f922edacbe4a5e05a/command-1.txt",
+          "sha256": "f58e1f77adf2a12da17ff9c51b084a218c595f3a52aafa4ea0b64316777cb761"
+        },
+        {
+          "index": 2,
+          "member": "call_2cf3fb912383432f922edacbe4a5e05a/command-2.txt",
+          "sha256": "dd78936ad8780149669f1ff8b75e0c19172bab5c88568d54a8548568c1b08740"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "e3d90c",
+          "exit_code": 0,
+          "wall_time_seconds": 0.8554571
+        },
+        {
+          "chunk_id": "2a075c",
+          "session_id": 68283,
+          "wall_time_seconds": 10.0035009
+        }
+      ]
+    },
+    {
+      "callID": "call_162fc15fedd2478bbe74ebbfbe7bd27a",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:40:13.642Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2769,
+          "sourceByteOffset": 13432560,
+          "originalRecordBytes": 813,
+          "originalRecordSha256": "06f6b6111c38dbac8de335fabbd8351b438e141ac9eece161c8393176a8fc8d1"
+        },
+        {
+          "timestamp": "2026-10-08T11:40:14.865Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2772,
+          "sourceByteOffset": 13454432,
+          "originalRecordBytes": 8161,
+          "originalRecordSha256": "335b3bef6c6f0315a6c03c35e901f1bc2dfc62c30fecd620e952ef485989815b"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:40:13.642Z",
+      "returnedAt": "2026-10-08T11:40:14.865Z",
+      "inputMember": "call_162fc15fedd2478bbe74ebbfbe7bd27a/input.txt",
+      "outputMember": "call_162fc15fedd2478bbe74ebbfbe7bd27a/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_162fc15fedd2478bbe74ebbfbe7bd27a/command-1.txt",
+          "sha256": "3cd2b09613473a7f8b87c1f78e773f09261fac2353959f8e45b7a42568e0c576"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "cf6e3e",
+          "exit_code": 0,
+          "wall_time_seconds": 1.0193569
+        }
+      ]
+    },
+    {
+      "callID": "call_fed1bae0ad40436c9d97e462b0209143",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:40:36.823Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2776,
+          "sourceByteOffset": 13467403,
+          "originalRecordBytes": 860,
+          "originalRecordSha256": "40d7d48a20b737072486be0096a85a5e4d7ae73440e62cca853e45a7a5c3d8d5"
+        },
+        {
+          "timestamp": "2026-10-08T11:40:37.704Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2779,
+          "sourceByteOffset": 13479849,
+          "originalRecordBytes": 3952,
+          "originalRecordSha256": "8e999a51382cae34d592f3a5e8c6a889d10dc0f4bfa680b0bd5b31c5e38eed36"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:40:36.823Z",
+      "returnedAt": "2026-10-08T11:40:37.704Z",
+      "inputMember": "call_fed1bae0ad40436c9d97e462b0209143/input.txt",
+      "outputMember": "call_fed1bae0ad40436c9d97e462b0209143/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_fed1bae0ad40436c9d97e462b0209143/command-1.txt",
+          "sha256": "683fa644f0f0029a31b063b2d05d2bf5395081b591c1ab955be0ce9bff1579c1"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "1fe88d",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7026314
+        }
+      ]
+    },
+    {
+      "callID": "call_9684914360524cf49c53058e94a68ad8",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:41:09.953Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2784,
+          "sourceByteOffset": 13492020,
+          "originalRecordBytes": 2613,
+          "originalRecordSha256": "46f74c7fd838030278c1377d0a9323e680a8d97aa61de8eff6ea94859b3ac9e7"
+        },
+        {
+          "timestamp": "2026-10-08T11:41:10.942Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2788,
+          "sourceByteOffset": 13499723,
+          "originalRecordBytes": 1542,
+          "originalRecordSha256": "cd8cbe6b02d4201dd020e04b0916d0685c58492d0ce403be0eeb95755544140e"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:41:09.953Z",
+      "returnedAt": "2026-10-08T11:41:10.942Z",
+      "inputMember": "call_9684914360524cf49c53058e94a68ad8/input.txt",
+      "outputMember": "call_9684914360524cf49c53058e94a68ad8/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_9684914360524cf49c53058e94a68ad8/command-1.txt",
+          "sha256": "8ba6062959f43b81c24acdd902ed8c182e304dfe58f369a05bf6b8c60e24fc36"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "3d951e",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7874489
+        },
+        {
+          "chunk_id": "d6bf36",
+          "exit_code": 1,
+          "wall_time_seconds": 9.5e-06
+        }
+      ]
+    },
+    {
+      "callID": "call_df726231745842b7adc7ca030024ff93",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:41:26.318Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2794,
+          "sourceByteOffset": 13506485,
+          "originalRecordBytes": 1463,
+          "originalRecordSha256": "281169ceddf45719b981fa624b5c8aff1b5495bf9f772dc8b9f5167157964401"
+        },
+        {
+          "timestamp": "2026-10-08T11:41:37.369Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2797,
+          "sourceByteOffset": 13513935,
+          "originalRecordBytes": 2022,
+          "originalRecordSha256": "55a85b8ae317e2204372053e4b361362830f7d9eb27681fe45ef171b25bd7665"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:41:26.318Z",
+      "returnedAt": "2026-10-08T11:41:37.369Z",
+      "inputMember": "call_df726231745842b7adc7ca030024ff93/input.txt",
+      "outputMember": "call_df726231745842b7adc7ca030024ff93/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_df726231745842b7adc7ca030024ff93/command-1.txt",
+          "sha256": "864961f174afeaaae43879b3424fa9b881b563ab9c037f6c074e4b152f49c52f"
+        },
+        {
+          "index": 2,
+          "member": "call_df726231745842b7adc7ca030024ff93/command-2.txt",
+          "sha256": "ee6e71d8d0c6340454f92a07385265d5c5e1d7914fde722b329e6961a761d78d"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "44ede5",
+          "session_id": 84120,
+          "wall_time_seconds": 10.0049169
+        },
+        {
+          "chunk_id": "3efdbc",
+          "exit_code": 0,
+          "wall_time_seconds": 0.6914894
+        }
+      ]
+    },
+    {
+      "callID": "call_880bc0051a3c440eb6f5c3ba911fd19d",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:41:48.395Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2801,
+          "sourceByteOffset": 13519403,
+          "originalRecordBytes": 819,
+          "originalRecordSha256": "2d95207542728271c48ddd66cc61c7b1a32a8b6ba41a09c7fa09f883e1eb14fb"
+        },
+        {
+          "timestamp": "2026-10-08T11:41:49.933Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2804,
+          "sourceByteOffset": 13526589,
+          "originalRecordBytes": 3456,
+          "originalRecordSha256": "f3735ac2be34dca2c7d28a1ecc9fae46353ed423ffbb8f92af3bfe1162419fd9"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:41:48.395Z",
+      "returnedAt": "2026-10-08T11:41:49.933Z",
+      "inputMember": "call_880bc0051a3c440eb6f5c3ba911fd19d/input.txt",
+      "outputMember": "call_880bc0051a3c440eb6f5c3ba911fd19d/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_880bc0051a3c440eb6f5c3ba911fd19d/command-1.txt",
+          "sha256": "21c24a3261ac95217f77b863c285384592d3f606ed9a217a71626da4b55c3225"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "763f0a",
+          "exit_code": 0,
+          "wall_time_seconds": 1.341702
+        }
+      ]
+    },
+    {
+      "callID": "call_d5480481a2184cc3881a6612f3f468dc",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:42:16.432Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2808,
+          "sourceByteOffset": 13533151,
+          "originalRecordBytes": 3817,
+          "originalRecordSha256": "63358ac08ce5acadd672fe7a6192e6b71d1f906517c6f55629c142ea183064a5"
+        },
+        {
+          "timestamp": "2026-10-08T11:42:17.935Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2812,
+          "sourceByteOffset": 13543074,
+          "originalRecordBytes": 952,
+          "originalRecordSha256": "41c94bf1e9e76b9b6b01378e3bcf0cc28d2a46ffb8f0c85b66a934b6380acbb7"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:42:16.432Z",
+      "returnedAt": "2026-10-08T11:42:17.935Z",
+      "inputMember": "call_d5480481a2184cc3881a6612f3f468dc/input.txt",
+      "outputMember": "call_d5480481a2184cc3881a6612f3f468dc/output.json",
+      "decodedCommands": [],
+      "processResults": []
+    },
+    {
+      "callID": "call_e15a94dec40a49b089bd1fbab024abf4",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:42:32.957Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2816,
+          "sourceByteOffset": 13548004,
+          "originalRecordBytes": 1130,
+          "originalRecordSha256": "edf7d409a4cb29fde5544b804e0d5d04682a75c653c535b7b202f3e03dea8c55"
+        },
+        {
+          "timestamp": "2026-10-08T11:42:38.942Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2819,
+          "sourceByteOffset": 13552401,
+          "originalRecordBytes": 1012,
+          "originalRecordSha256": "a157852554669ea4c0e65e945ba4b4c91db19c2e074f24cd0bb5f80a5858f813"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:42:32.957Z",
+      "returnedAt": "2026-10-08T11:42:38.942Z",
+      "inputMember": "call_e15a94dec40a49b089bd1fbab024abf4/input.txt",
+      "outputMember": "call_e15a94dec40a49b089bd1fbab024abf4/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_e15a94dec40a49b089bd1fbab024abf4/command-1.txt",
+          "sha256": "1802d50c11630e0146ed7a4db88a02bf640298c086ab946ef4f64945567c3102"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "abce57",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7883735
+        },
+        {
+          "chunk_id": "cda750",
+          "session_id": 84120,
+          "wall_time_seconds": 5.0087146
+        }
+      ]
+    },
+    {
+      "callID": "call_9320393ae89b4dbe90ffa1d033c082b3",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:43:10.598Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2823,
+          "sourceByteOffset": 13559183,
+          "originalRecordBytes": 1624,
+          "originalRecordSha256": "48b8e68386a74c20848697171afdf45280dc11c328282c11d35d23999986acfd"
+        },
+        {
+          "timestamp": "2026-10-08T11:43:18.651Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2826,
+          "sourceByteOffset": 13567059,
+          "originalRecordBytes": 1736,
+          "originalRecordSha256": "9435cc85249173da6427d7be06670a1fd931c5337282e4d3b7a775c4996d803f"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:43:10.598Z",
+      "returnedAt": "2026-10-08T11:43:18.651Z",
+      "inputMember": "call_9320393ae89b4dbe90ffa1d033c082b3/input.txt",
+      "outputMember": "call_9320393ae89b4dbe90ffa1d033c082b3/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_9320393ae89b4dbe90ffa1d033c082b3/command-1.txt",
+          "sha256": "9a0f9a2e726670735af09ed5d3af8a152f82380336e2e40215498e01e349a7ea"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "f7e176",
+          "exit_code": 0,
+          "wall_time_seconds": 2.8548227
+        },
+        {
+          "chunk_id": "c58fc4",
+          "session_id": 84120,
+          "wall_time_seconds": 5.0036734
+        }
+      ]
+    },
+    {
+      "callID": "call_a221ac5028a5427a9c6ac3afb233bc5e",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:44:14.824Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2835,
+          "sourceByteOffset": 13581516,
+          "originalRecordBytes": 2845,
+          "originalRecordSha256": "ed671a0c6c109e48f720c945f93590b7017d725cc850781c44dda967faa8f793"
+        },
+        {
+          "timestamp": "2026-10-08T11:44:16.576Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2838,
+          "sourceByteOffset": 13590711,
+          "originalRecordBytes": 1097,
+          "originalRecordSha256": "bbe57f0f99cb85c280f08edaa0e57236c15b2decd6f640bd0bea5e358d91fd29"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:44:14.824Z",
+      "returnedAt": "2026-10-08T11:44:16.576Z",
+      "inputMember": "call_a221ac5028a5427a9c6ac3afb233bc5e/input.txt",
+      "outputMember": "call_a221ac5028a5427a9c6ac3afb233bc5e/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_a221ac5028a5427a9c6ac3afb233bc5e/command-1.txt",
+          "sha256": "09ee4551b89f6f2554f0a337344572ce1a4237b074d572ab8fbe4c2ebbc47fbf"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "df5760",
+          "exit_code": 0,
+          "wall_time_seconds": 1.5569337
+        },
+        {
+          "chunk_id": "6d9728",
+          "exit_code": 0,
+          "wall_time_seconds": 1.29e-05
+        }
+      ]
+    },
+    {
+      "callID": "call_f9613793031b40dd8bc177f095939ed5",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:44:22.062Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2842,
+          "sourceByteOffset": 13594723,
+          "originalRecordBytes": 791,
+          "originalRecordSha256": "cc718193be5e9b2ae7bd69697b2f23d54b8fca613e53000a23eb1677efb2b751"
+        },
+        {
+          "timestamp": "2026-10-08T11:44:22.943Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2845,
+          "sourceByteOffset": 13605305,
+          "originalRecordBytes": 3377,
+          "originalRecordSha256": "a6823d3cb7eebbd67eb61a3440e668971bfbadf4beeebf33830fbfdd3bf4555f"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:44:22.062Z",
+      "returnedAt": "2026-10-08T11:44:22.943Z",
+      "inputMember": "call_f9613793031b40dd8bc177f095939ed5/input.txt",
+      "outputMember": "call_f9613793031b40dd8bc177f095939ed5/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_f9613793031b40dd8bc177f095939ed5/command-1.txt",
+          "sha256": "962214af8edebbcefbd9eac3a07f1503e1ffe810cf47e0ac45c2e5cec36277ec"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "fc764a",
+          "exit_code": 0,
+          "wall_time_seconds": 0.6930868
+        }
+      ]
+    },
+    {
+      "callID": "call_a75158e9fcd94790a26f1f0c42aba6f2",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:45:02.421Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2852,
+          "sourceByteOffset": 13618088,
+          "originalRecordBytes": 1011,
+          "originalRecordSha256": "7cb5207e2a93c1d3432895ec36146093a3eab7134e6fdcef0dd99925c9b12058"
+        },
+        {
+          "timestamp": "2026-10-08T11:45:06.047Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2855,
+          "sourceByteOffset": 13632549,
+          "originalRecordBytes": 4446,
+          "originalRecordSha256": "4016ffc6fb0823667978782c7a007b6f28646ca82999929937ad6337c0dd7fc9"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:45:02.421Z",
+      "returnedAt": "2026-10-08T11:45:06.047Z",
+      "inputMember": "call_a75158e9fcd94790a26f1f0c42aba6f2/input.txt",
+      "outputMember": "call_a75158e9fcd94790a26f1f0c42aba6f2/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_a75158e9fcd94790a26f1f0c42aba6f2/command-1.txt",
+          "sha256": "1c79d3e62fc3045934d55c34fe1929d6e813e8e9a0b4c4a3b1f79f0341266644"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "984419",
+          "exit_code": 0,
+          "wall_time_seconds": 3.4421581
+        }
+      ]
+    },
+    {
+      "callID": "call_4c7de44ab90147c0a051cef93ca04874",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:46:46.651Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2862,
+          "sourceByteOffset": 13649003,
+          "originalRecordBytes": 4730,
+          "originalRecordSha256": "f552a48df620ac7933b37970e66af4c58cd54025000c0493cbc8ef00e32cb185"
+        },
+        {
+          "timestamp": "2026-10-08T11:46:58.193Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2866,
+          "sourceByteOffset": 13666092,
+          "originalRecordBytes": 2987,
+          "originalRecordSha256": "902c889aa34ac29fb906414eebfd7410551f6dd5a91315a292caa54d2ee78b1f"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:46:46.651Z",
+      "returnedAt": "2026-10-08T11:46:58.193Z",
+      "inputMember": "call_4c7de44ab90147c0a051cef93ca04874/input.txt",
+      "outputMember": "call_4c7de44ab90147c0a051cef93ca04874/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_4c7de44ab90147c0a051cef93ca04874/command-1.txt",
+          "sha256": "f9b8b85d4cd35f3d9098e25f02d91256b9993c115b24958797a9f695aa0b1c99"
+        },
+        {
+          "index": 2,
+          "member": "call_4c7de44ab90147c0a051cef93ca04874/command-2.txt",
+          "sha256": "ba06c88877c3353189053313a1afc8b0e04dd20d1692d3d4fa9cfdd8b614032c"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "688bec",
+          "exit_code": 0,
+          "wall_time_seconds": 1.1604714
+        },
+        {
+          "chunk_id": "58fa6a",
+          "session_id": 71425,
+          "wall_time_seconds": 10.0148317
+        }
+      ]
+    },
+    {
+      "callID": "call_0f4204fb2d5f4fd8932a74eebea8ceca",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:47:34.507Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2874,
+          "sourceByteOffset": 13679174,
+          "originalRecordBytes": 1017,
+          "originalRecordSha256": "398a98681814a02658f036cf6e8474e228bdbd0d8ae7f56bcf1a5328aa66317e"
+        },
+        {
+          "timestamp": "2026-10-08T11:47:45.270Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2877,
+          "sourceByteOffset": 13687742,
+          "originalRecordBytes": 2656,
+          "originalRecordSha256": "bc690d2c263e318b63e4417df6af5a0231ca5520cca0c799af798288bb99b5fe"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:47:34.507Z",
+      "returnedAt": "2026-10-08T11:47:45.270Z",
+      "inputMember": "call_0f4204fb2d5f4fd8932a74eebea8ceca/input.txt",
+      "outputMember": "call_0f4204fb2d5f4fd8932a74eebea8ceca/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_0f4204fb2d5f4fd8932a74eebea8ceca/command-1.txt",
+          "sha256": "01eac3e065284597182c534bf11732482d305fe8a1749e050f5f4cfa478197a7"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "c57077",
+          "exit_code": 0,
+          "wall_time_seconds": 5.5490731
+        },
+        {
+          "chunk_id": "d3af38",
+          "session_id": 71425,
+          "wall_time_seconds": 5.0138482
+        }
+      ]
+    },
+    {
+      "callID": "call_ea8a92262c934fa8abb699bbe0d0029a",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:48:06.792Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2882,
+          "sourceByteOffset": 13696560,
+          "originalRecordBytes": 1564,
+          "originalRecordSha256": "a35d90d322e55f0fad504b14ac44e71a2e82b07b27b84ce5b67cc74269761dcf"
+        },
+        {
+          "timestamp": "2026-10-08T11:48:08.173Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2885,
+          "sourceByteOffset": 13701945,
+          "originalRecordBytes": 942,
+          "originalRecordSha256": "3796047ea52eeeda45c2231c71422830441958dab6ae51789159fc2aa3eeb834"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:48:06.792Z",
+      "returnedAt": "2026-10-08T11:48:08.173Z",
+      "inputMember": "call_ea8a92262c934fa8abb699bbe0d0029a/input.txt",
+      "outputMember": "call_ea8a92262c934fa8abb699bbe0d0029a/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_ea8a92262c934fa8abb699bbe0d0029a/command-1.txt",
+          "sha256": "8cce849469fda2ada59897351903b894f72fe4d62b2286de1f75edf7d276b761"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "fc73a9",
+          "exit_code": 0,
+          "wall_time_seconds": 1.1918749
+        },
+        {
+          "chunk_id": "4b6905",
+          "exit_code": 0,
+          "wall_time_seconds": 8.7e-06
+        }
+      ]
+    },
+    {
+      "callID": "call_c2e56ce977ef423bba382515b7b4785b",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:48:17.736Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2889,
+          "sourceByteOffset": 13706077,
+          "originalRecordBytes": 944,
+          "originalRecordSha256": "78def89b5f55f95d47eff68ded7969f8753f0e22bd9ceb1347f7094d5eb6f4bb"
+        },
+        {
+          "timestamp": "2026-10-08T11:48:18.640Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2892,
+          "sourceByteOffset": 13740324,
+          "originalRecordBytes": 5472,
+          "originalRecordSha256": "3b94cb29e668c6508765a0685eadb5d8acd76325545b9304e793f398f01a57e6"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:48:17.736Z",
+      "returnedAt": "2026-10-08T11:48:18.640Z",
+      "inputMember": "call_c2e56ce977ef423bba382515b7b4785b/input.txt",
+      "outputMember": "call_c2e56ce977ef423bba382515b7b4785b/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_c2e56ce977ef423bba382515b7b4785b/command-1.txt",
+          "sha256": "093987196e0107ce66faddc0c10117bffc94d10da891dd49c4cce08606cc010a"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "a02d2b",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7106931
+        }
+      ]
+    },
+    {
+      "callID": "call_365181d6b9d048ec83d08492a4d2c31d",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:50:11.812Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2904,
+          "sourceByteOffset": 13769358,
+          "originalRecordBytes": 1726,
+          "originalRecordSha256": "9b567367469e4bf4909c6896b4bc24503176e8120ecf2424479d81eaae2e9724"
+        },
+        {
+          "timestamp": "2026-10-08T11:50:15.321Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2907,
+          "sourceByteOffset": 13776106,
+          "originalRecordBytes": 1020,
+          "originalRecordSha256": "1860ecce05ce2689cdfb0b4539af3047aba69f7f524864471de796f4f49ebdf8"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:50:11.812Z",
+      "returnedAt": "2026-10-08T11:50:15.321Z",
+      "inputMember": "call_365181d6b9d048ec83d08492a4d2c31d/input.txt",
+      "outputMember": "call_365181d6b9d048ec83d08492a4d2c31d/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_365181d6b9d048ec83d08492a4d2c31d/command-1.txt",
+          "sha256": "383736b89850f29a8a00ce0c0b6588fda019d3233c3b08fa6081a27af7b18065"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "d888dc",
+          "exit_code": 0,
+          "wall_time_seconds": 3.3017211
+        }
+      ]
+    },
+    {
+      "callID": "call_ad4b07fd096b428a83f28f74c13161d6",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:51:56.134Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2913,
+          "sourceByteOffset": 13786598,
+          "originalRecordBytes": 9508,
+          "originalRecordSha256": "51c774e6f710ce85e4b67761e04c09c93ab9dc7ef4970ddd1dddda2e08a387ab"
+        },
+        {
+          "timestamp": "2026-10-08T11:51:58.291Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2917,
+          "sourceByteOffset": 13808241,
+          "originalRecordBytes": 1007,
+          "originalRecordSha256": "5a7ea477ffe5e68a236a96208513b1f66c90ec9c289538c5a7026e1e1f191fc9"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:51:56.134Z",
+      "returnedAt": "2026-10-08T11:51:58.291Z",
+      "inputMember": "call_ad4b07fd096b428a83f28f74c13161d6/input.txt",
+      "outputMember": "call_ad4b07fd096b428a83f28f74c13161d6/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_ad4b07fd096b428a83f28f74c13161d6/command-1.txt",
+          "sha256": "0ecb6c9eba5d322003b6ba83f4c708eaa6b1b6f739ee4ad6798d1f5f434b6014"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "ded446",
+          "exit_code": 0,
+          "wall_time_seconds": 1.9299513
+        }
+      ]
+    },
+    {
+      "callID": "call_78479732f3614f6597454defa15f0fc2",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:52:51.054Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2923,
+          "sourceByteOffset": 13820491,
+          "originalRecordBytes": 778,
+          "originalRecordSha256": "efd0005da1e7888e8bbba4e0c811c79bfedbaa41b8fe0440d1e69b72d20d39b3"
+        },
+        {
+          "timestamp": "2026-10-08T11:52:52.037Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2926,
+          "sourceByteOffset": 13836415,
+          "originalRecordBytes": 3778,
+          "originalRecordSha256": "6c227ee31aa91b46ecac0980a29ec5b475b6e2a4be797cb2b7ff48051c5cfa33"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:52:51.054Z",
+      "returnedAt": "2026-10-08T11:52:52.037Z",
+      "inputMember": "call_78479732f3614f6597454defa15f0fc2/input.txt",
+      "outputMember": "call_78479732f3614f6597454defa15f0fc2/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_78479732f3614f6597454defa15f0fc2/command-1.txt",
+          "sha256": "c19b8dbc7dffc25c29c520e683937c7b1e4eb3eb6b7a5d7f7e2aff3b3ce7aae2"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "8380bc",
+          "exit_code": 1,
+          "wall_time_seconds": 0.8052143
+        }
+      ]
+    },
+    {
+      "callID": "call_c7686ebccf2c46f48f42fb458dac04a8",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:53:00.369Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2930,
+          "sourceByteOffset": 13843557,
+          "originalRecordBytes": 922,
+          "originalRecordSha256": "a6217b410807085fb0011e8c1b251cf8a46ad86799edece534bdc00ed5ff52d9"
+        },
+        {
+          "timestamp": "2026-10-08T11:53:01.451Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2933,
+          "sourceByteOffset": 13854907,
+          "originalRecordBytes": 3706,
+          "originalRecordSha256": "b9d616baf5024b5a31cddb7d1215484b1cb1bd56c13bb4e6dc23eb665bc2e814"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:53:00.369Z",
+      "returnedAt": "2026-10-08T11:53:01.451Z",
+      "inputMember": "call_c7686ebccf2c46f48f42fb458dac04a8/input.txt",
+      "outputMember": "call_c7686ebccf2c46f48f42fb458dac04a8/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_c7686ebccf2c46f48f42fb458dac04a8/command-1.txt",
+          "sha256": "794349d93fcd4ac2ff6f31271a09bbf124b190004c2aa1a00385a13f30ecb175"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "76621d",
+          "exit_code": 0,
+          "wall_time_seconds": 0.8962575
+        }
+      ]
+    },
+    {
+      "callID": "call_e06e825e469d455191f17c413f25c6a5",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:54:08.777Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2941,
+          "sourceByteOffset": 13872018,
+          "originalRecordBytes": 2981,
+          "originalRecordSha256": "477879df4d9fefe7a8d36c04b19cde074f88b36d7d48c8c5b675de7cf3e2addd"
+        },
+        {
+          "timestamp": "2026-10-08T11:54:08.878Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2943,
+          "sourceByteOffset": 13875904,
+          "originalRecordBytes": 1554,
+          "originalRecordSha256": "886c5fa856ea7f0289132e1007077d39a08fc7d384940e18e94f10c64dca5889"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:54:08.777Z",
+      "returnedAt": "2026-10-08T11:54:08.878Z",
+      "inputMember": "call_e06e825e469d455191f17c413f25c6a5/input.txt",
+      "outputMember": "call_e06e825e469d455191f17c413f25c6a5/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_e06e825e469d455191f17c413f25c6a5/command-1.txt",
+          "sha256": "6c7d6d053ab322921a6b2a59c7d60e70040967bc940b29691ff1913b8437ff4f"
+        }
+      ],
+      "processResults": []
+    },
+    {
+      "callID": "call_b86def6a5f4a4b7ab3004fb6a5c8e009",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:54:52.922Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2951,
+          "sourceByteOffset": 13887815,
+          "originalRecordBytes": 2672,
+          "originalRecordSha256": "644254dea270ed5c2a9c801bd263896089219cd4bb59073e0e46ad98685fd5d6"
+        },
+        {
+          "timestamp": "2026-10-08T11:54:54.147Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2954,
+          "sourceByteOffset": 13900156,
+          "originalRecordBytes": 2004,
+          "originalRecordSha256": "5cb0057fdb7693cbc2ba8a427a01c744f06a4d20827237f478513a02630e8a84"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:54:52.922Z",
+      "returnedAt": "2026-10-08T11:54:54.147Z",
+      "inputMember": "call_b86def6a5f4a4b7ab3004fb6a5c8e009/input.txt",
+      "outputMember": "call_b86def6a5f4a4b7ab3004fb6a5c8e009/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_b86def6a5f4a4b7ab3004fb6a5c8e009/command-1.txt",
+          "sha256": "7e2c244255f7b21a69493a546a1868e9be73777e4ed0c623d5d26e413c5acc3c"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "433290",
+          "exit_code": 0,
+          "wall_time_seconds": 1.0398667
+        }
+      ]
+    },
+    {
+      "callID": "call_1ca28db4465943d6ac1da4be1c71fc77",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:56:12.655Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2960,
+          "sourceByteOffset": 13913403,
+          "originalRecordBytes": 4081,
+          "originalRecordSha256": "af02f942b6ef4ef522ddf794d5b47f848f17f912b3d482513fa503133943b963"
+        },
+        {
+          "timestamp": "2026-10-08T11:56:15.393Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2963,
+          "sourceByteOffset": 13926833,
+          "originalRecordBytes": 869,
+          "originalRecordSha256": "530f651d760e41fd5ad3b9c84ffa034fc765b9405eef6285fa8c2aae565d51ad"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:56:12.655Z",
+      "returnedAt": "2026-10-08T11:56:15.393Z",
+      "inputMember": "call_1ca28db4465943d6ac1da4be1c71fc77/input.txt",
+      "outputMember": "call_1ca28db4465943d6ac1da4be1c71fc77/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_1ca28db4465943d6ac1da4be1c71fc77/command-1.txt",
+          "sha256": "9eb8ef0bb2ee923f37e0fa851b16db62636e7b94f5cb1b0adb942683a49b45e0"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "dbd07a",
+          "exit_code": 0,
+          "wall_time_seconds": 2.54243
+        }
+      ]
+    },
+    {
+      "callID": "call_9a24eb4d84d8421287ea30f72b2887da",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:57:48.824Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2967,
+          "sourceByteOffset": 13933666,
+          "originalRecordBytes": 9243,
+          "originalRecordSha256": "68ddbacbe2c8856b298554b3febe3133e59098a79ff3e0a8f53560bcfec70b6f"
+        },
+        {
+          "timestamp": "2026-10-08T11:57:50.654Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2971,
+          "sourceByteOffset": 13954581,
+          "originalRecordBytes": 905,
+          "originalRecordSha256": "b72d82980a076b2647088aa5dec99c80e8873999f5db4c3d91569ae3b8a22cac"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:57:48.824Z",
+      "returnedAt": "2026-10-08T11:57:50.654Z",
+      "inputMember": "call_9a24eb4d84d8421287ea30f72b2887da/input.txt",
+      "outputMember": "call_9a24eb4d84d8421287ea30f72b2887da/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_9a24eb4d84d8421287ea30f72b2887da/command-1.txt",
+          "sha256": "b60d34e211a2d31a2116fa2b0678ea6e4148b001063425b4e679fcd6cc0623d2"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "8928fb",
+          "exit_code": 0,
+          "wall_time_seconds": 1.6281603
+        }
+      ]
+    },
+    {
+      "callID": "call_b0184a7639db4e46899fa2c6e00fdd0d",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:58:31.552Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2979,
+          "sourceByteOffset": 13966829,
+          "originalRecordBytes": 521,
+          "originalRecordSha256": "f46a3d1623435cc849ecf3b1286223e51d290203afb3ccd8ca3737d9fd760940"
+        },
+        {
+          "timestamp": "2026-10-08T11:58:37.912Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2982,
+          "sourceByteOffset": 13968970,
+          "originalRecordBytes": 1492,
+          "originalRecordSha256": "a1fd6fee4daa5c4b364ce72bfe36aa935ec556b6e2b070af5a61f72bfb67c244"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:58:31.552Z",
+      "returnedAt": "2026-10-08T11:58:37.912Z",
+      "inputMember": "call_b0184a7639db4e46899fa2c6e00fdd0d/input.txt",
+      "outputMember": "call_b0184a7639db4e46899fa2c6e00fdd0d/output.json",
+      "decodedCommands": [],
+      "processResults": []
+    },
+    {
+      "callID": "call_ce65e0c0e3fe4a3b9a0f868fca587b63",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:58:44.665Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2986,
+          "sourceByteOffset": 13973460,
+          "originalRecordBytes": 826,
+          "originalRecordSha256": "8cf50982f12ea183cd56d8f0f083a77a596d9c6e1364a930e1fd58eab64abcf1"
+        },
+        {
+          "timestamp": "2026-10-08T11:58:48.540Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2990,
+          "sourceByteOffset": 13978151,
+          "originalRecordBytes": 1338,
+          "originalRecordSha256": "656089a3649d384c91fb83f6e3496bc9ea241d5b0827063e6c67ce3f069a0c13"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:58:44.665Z",
+      "returnedAt": "2026-10-08T11:58:48.540Z",
+      "inputMember": "call_ce65e0c0e3fe4a3b9a0f868fca587b63/input.txt",
+      "outputMember": "call_ce65e0c0e3fe4a3b9a0f868fca587b63/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_ce65e0c0e3fe4a3b9a0f868fca587b63/command-1.txt",
+          "sha256": "e38fb13aae4bcf7a58fc0a95b7c63867b1566e54f78b2c11ff2579a98660a7fe"
+        }
+      ],
+      "processResults": []
+    },
+    {
+      "callID": "call_fdd2ed995e074f3686c17bd609b96aeb",
+      "records": [
+        {
+          "timestamp": "2026-10-08T11:59:53.944Z",
+          "type": "custom_tool_call",
+          "sourceLine": 2994,
+          "sourceByteOffset": 13985770,
+          "originalRecordBytes": 5280,
+          "originalRecordSha256": "1c2deb46a65f15510cb128ff5a98a0abbf08e6b01714c142bde3e0e2f8046d98"
+        },
+        {
+          "timestamp": "2026-10-08T11:59:56.548Z",
+          "type": "custom_tool_call_output",
+          "sourceLine": 2999,
+          "sourceByteOffset": 14002753,
+          "originalRecordBytes": 1562,
+          "originalRecordSha256": "3a72962c4253c7f4a583532501cf9a2baa5c21f607cc96a856084b434ff60a57"
+        }
+      ],
+      "name": "exec",
+      "startedAt": "2026-10-08T11:59:53.944Z",
+      "returnedAt": "2026-10-08T11:59:56.548Z",
+      "inputMember": "call_fdd2ed995e074f3686c17bd609b96aeb/input.txt",
+      "outputMember": "call_fdd2ed995e074f3686c17bd609b96aeb/output.json",
+      "decodedCommands": [
+        {
+          "index": 1,
+          "member": "call_fdd2ed995e074f3686c17bd609b96aeb/command-1.txt",
+          "sha256": "496f84bdee7dfc2b777712c643a7acec2651459caf3763baee10d32097bf5f68"
+        },
+        {
+          "index": 2,
+          "member": "call_fdd2ed995e074f3686c17bd609b96aeb/command-2.txt",
+          "sha256": "17bea353cd72e25bef9b6382c7560d78a323f1a9c09bd010a5cc9750c02f3479"
+        }
+      ],
+      "processResults": [
+        {
+          "chunk_id": "56c10b",
+          "exit_code": 0,
+          "wall_time_seconds": 0.7599218
+        },
+        {
+          "chunk_id": "8bcbd7",
+          "exit_code": 0,
+          "wall_time_seconds": 1.4499756
+        }
+      ]
+    }
+  ],
+  "members": [
+    {
+      "member": "visible-tool-records.jsonl",
+      "bytes": 235886,
+      "sha256": "e3c2d5ebc84bd09f50c709949d18edd772571802d9a89a4d15fb598a957ac1df",
+      "crc32": 564170624
+    },
+    {
+      "member": "call_a694c2419db74628858fd2b79f9ee0c8/input.txt",
+      "bytes": 2619,
+      "sha256": "d410f2b42a0322ec919e307652269da33c501cb0798a776f48772ab9831d7f86",
+      "crc32": 1872085422
+    },
+    {
+      "member": "call_a694c2419db74628858fd2b79f9ee0c8/output.json",
+      "bytes": 2551,
+      "sha256": "6098c4f0c105f6d935650af50fc8a4f4f5a1c21cc0c48747cb9c289a067f4bce",
+      "crc32": 2188225637
+    },
+    {
+      "member": "call_a694c2419db74628858fd2b79f9ee0c8/command-1.txt",
+      "bytes": 400,
+      "sha256": "4a7d15752a176aecc0657eac01c4ea76c333b70863516ba417a2d89c44f8e5bd",
+      "crc32": 69833566
+    },
+    {
+      "member": "call_a694c2419db74628858fd2b79f9ee0c8/command-2.txt",
+      "bytes": 1066,
+      "sha256": "c53e42057ce3de10b5fed44fbd8c70bf8fe265d264caac7993eb7077fba66e73",
+      "crc32": 1373464045
+    },
+    {
+      "member": "call_daf2599d8ae943d5bd10995153cf3e33/input.txt",
+      "bytes": 659,
+      "sha256": "289b5803ce806c7be30ebc565cca9bca114e998a086ed05c543fa4e82ab818d8",
+      "crc32": 3251464410
+    },
+    {
+      "member": "call_daf2599d8ae943d5bd10995153cf3e33/output.json",
+      "bytes": 715,
+      "sha256": "2179570b063dd5cf2b658823bfbcf95d7139772def3458e03718cdbabb4b15ce",
+      "crc32": 2106027074
+    },
+    {
+      "member": "call_daf2599d8ae943d5bd10995153cf3e33/command-1.txt",
+      "bytes": 552,
+      "sha256": "fa38bc2c77160376113fec7d3fea5f3b92b73a7cc22dbbeb9d5d3de43d8482d5",
+      "crc32": 4119862349
+    },
+    {
+      "member": "call_e43c29711a02466fa1ea09c0670c1785/input.txt",
+      "bytes": 388,
+      "sha256": "3ae2271fc8faf23d625986f1aed95e6046aa7fe547e42a447bfaa946a7bc95a7",
+      "crc32": 687387802
+    },
+    {
+      "member": "call_e43c29711a02466fa1ea09c0670c1785/output.json",
+      "bytes": 6725,
+      "sha256": "d84a8d7b401bfe0cb3fdb25fd416dd456e60430aca129603a9653ebd5b6fec33",
+      "crc32": 2925650061
+    },
+    {
+      "member": "call_e43c29711a02466fa1ea09c0670c1785/command-1.txt",
+      "bytes": 320,
+      "sha256": "374f664674a421b65fdd4952febe5be50077b2eb3f0dfae6629bca9e5174eca0",
+      "crc32": 3256595272
+    },
+    {
+      "member": "call_8477665e146c400d990b3f1e10e17215/input.txt",
+      "bytes": 609,
+      "sha256": "a72bd0737cda79b805c7c9f5ed851c9b84905aacbd50a7112fd7e6549ac40b28",
+      "crc32": 354322876
+    },
+    {
+      "member": "call_8477665e146c400d990b3f1e10e17215/output.json",
+      "bytes": 9141,
+      "sha256": "97b142caf1a7f2a062cdf50ac3678e467dce9c480736d5bd8cdb69afd863c850",
+      "crc32": 3079767356
+    },
+    {
+      "member": "call_8477665e146c400d990b3f1e10e17215/command-1.txt",
+      "bytes": 439,
+      "sha256": "dc16b64dd3d8ae046b77d18f66c084ba0212644df5e9e1e5e49483eeb650df99",
+      "crc32": 2477384028
+    },
+    {
+      "member": "call_e8a4cbeb5aee4d92b341b7ce55fca789/input.txt",
+      "bytes": 489,
+      "sha256": "f87b73efa06edb7a3514bde563b87b9bb4915f0dc937d1176108e86cc202f6bd",
+      "crc32": 1919086529
+    },
+    {
+      "member": "call_e8a4cbeb5aee4d92b341b7ce55fca789/output.json",
+      "bytes": 2230,
+      "sha256": "815447adfae5fd88910455c99a69ade9c64c691a3d8307f109d0c1c838f3f346",
+      "crc32": 1078487770
+    },
+    {
+      "member": "call_e8a4cbeb5aee4d92b341b7ce55fca789/command-1.txt",
+      "bytes": 422,
+      "sha256": "79f86472b61035e6a011b797baea0ca5302ab859c4527539fc0aa714ef90d20b",
+      "crc32": 1759308920
+    },
+    {
+      "member": "call_a84f1ee8e0a14bc2a0e43f2eb090d770/input.txt",
+      "bytes": 334,
+      "sha256": "8135fbc4cd7f34fc287d75832e8966feff5d83bd674cab211ecc6f2c0047bb6c",
+      "crc32": 4280694739
+    },
+    {
+      "member": "call_a84f1ee8e0a14bc2a0e43f2eb090d770/output.json",
+      "bytes": 2501,
+      "sha256": "8dc198b6c6385a0873d8e82228b697a6a87ebddaf6caad06f29e7e21c3ef28df",
+      "crc32": 4005759273
+    },
+    {
+      "member": "call_a84f1ee8e0a14bc2a0e43f2eb090d770/command-1.txt",
+      "bytes": 267,
+      "sha256": "f2866aa45e9ca22ee3eae1d96c75edef0c273022c16ddf4310ebb8ad759ea452",
+      "crc32": 2720901096
+    },
+    {
+      "member": "call_becf6d992e0044c3b1e9dc5b113ac3d5/input.txt",
+      "bytes": 592,
+      "sha256": "a839c423b94e86c8d4a24fffa04910e5109e3c3704a328922c103029eb792b84",
+      "crc32": 2755731621
+    },
+    {
+      "member": "call_becf6d992e0044c3b1e9dc5b113ac3d5/output.json",
+      "bytes": 3384,
+      "sha256": "6f17fc227fb3e6c9e3baffe05e98bff436638ec449e04f71b440cf0420dbf7dc",
+      "crc32": 118138112
+    },
+    {
+      "member": "call_becf6d992e0044c3b1e9dc5b113ac3d5/command-1.txt",
+      "bytes": 523,
+      "sha256": "f6a9c1c9f4fc11771ebcf4e5536081196085bcfa985d4097c91273db5ca00ff2",
+      "crc32": 3358239957
+    },
+    {
+      "member": "call_fd51ddcb550f47e282b5314a5c9d3bdd/input.txt",
+      "bytes": 2856,
+      "sha256": "ea4707974efb5d6f20f1a80f899c7b1e51a18e6d19c12f0d7bf5e83fc4a99dc1",
+      "crc32": 834522331
+    },
+    {
+      "member": "call_fd51ddcb550f47e282b5314a5c9d3bdd/output.json",
+      "bytes": 661,
+      "sha256": "552790327b7b0e4c4f7b8d6bab2975e279b19cf50b2ed65fbce67860dae0d505",
+      "crc32": 2354536795
+    },
+    {
+      "member": "call_fd51ddcb550f47e282b5314a5c9d3bdd/command-1.txt",
+      "bytes": 2654,
+      "sha256": "8f2d5dfee263baaf97d087b87886332dfb5a431fa84748934688b3956bb735ba",
+      "crc32": 4179317328
+    },
+    {
+      "member": "call_294f582d970e4e789ada5f981861bd9c/input.txt",
+      "bytes": 1849,
+      "sha256": "e63fb3184d76a84bfe7127900ad30f57c982f1a9f255d79131367cbf64ec058f",
+      "crc32": 3247531689
+    },
+    {
+      "member": "call_294f582d970e4e789ada5f981861bd9c/output.json",
+      "bytes": 1087,
+      "sha256": "ad8136e2c85552fb88ba2eedf1cb21d9d721b6d911f74f1f737cb5af06d15886",
+      "crc32": 1046416317
+    },
+    {
+      "member": "call_294f582d970e4e789ada5f981861bd9c/command-1.txt",
+      "bytes": 1759,
+      "sha256": "eb21076e17f8a8dcc7e135f905b77161582203153e330a4d9a7c834fdcc18b87",
+      "crc32": 802805366
+    },
+    {
+      "member": "call_ceb20b12298645b4a84f41eff5c1b01a/input.txt",
+      "bytes": 1185,
+      "sha256": "069b6b98aa1977abd714fe05dc50400b27ed853680b26c1dd4a799f189a959e3",
+      "crc32": 722298708
+    },
+    {
+      "member": "call_ceb20b12298645b4a84f41eff5c1b01a/output.json",
+      "bytes": 1816,
+      "sha256": "61e0904118cbd7868f15eddb31b5472ec9477d01bcc9d17ac15ec0c0dfa99df7",
+      "crc32": 4171286232
+    },
+    {
+      "member": "call_ceb20b12298645b4a84f41eff5c1b01a/command-1.txt",
+      "bytes": 1008,
+      "sha256": "723588e71da608b98a2b8f753cca5b6d01e59ac80b1753b8d7d0a3e9460403a4",
+      "crc32": 3085594279
+    },
+    {
+      "member": "call_9803e619083f4155b66d2e007c25d686/input.txt",
+      "bytes": 382,
+      "sha256": "19574c142fb96632caef38d9e6ba4b38e86eacb5c8ef69138c01cb454fea9222",
+      "crc32": 2235810986
+    },
+    {
+      "member": "call_9803e619083f4155b66d2e007c25d686/output.json",
+      "bytes": 9045,
+      "sha256": "c6e31f245adb8f89b4b43ccd85f2ad2a979a38980e8d901d76b1007be5487b26",
+      "crc32": 3515870072
+    },
+    {
+      "member": "call_9803e619083f4155b66d2e007c25d686/command-1.txt",
+      "bytes": 213,
+      "sha256": "8995ce793fcf0c87631d67c1cdaabbf5ec5e6cb5ce26f0f6a43baaa2f6ef9e73",
+      "crc32": 4173376607
+    },
+    {
+      "member": "call_10b896e7356f434cbbf85be70ecb1a74/input.txt",
+      "bytes": 381,
+      "sha256": "1a0641dac1026b1d8d181f87477cba6ca5e5c96504cfb926d547ea6481b9a22a",
+      "crc32": 3388074858
+    },
+    {
+      "member": "call_10b896e7356f434cbbf85be70ecb1a74/output.json",
+      "bytes": 5257,
+      "sha256": "d70b272b0df7a58ac5e73d339ce6efc1722101ddf2eedee59a8e9b6df53e8c62",
+      "crc32": 2091407420
+    },
+    {
+      "member": "call_10b896e7356f434cbbf85be70ecb1a74/command-1.txt",
+      "bytes": 213,
+      "sha256": "ad0432fa86e52d36ad2bf7f598aeb7f93d800f72585116c43bf2db229cce37c8",
+      "crc32": 2727800823
+    },
+    {
+      "member": "call_5b7f5fd85e5b4c2c900af1f85dbea124/input.txt",
+      "bytes": 370,
+      "sha256": "b98f5707b3a241927800ed6c95f881814d8927aca91852c1d4715dc0d09ef42b",
+      "crc32": 553524979
+    },
+    {
+      "member": "call_5b7f5fd85e5b4c2c900af1f85dbea124/output.json",
+      "bytes": 1539,
+      "sha256": "8a962f4171f0b1a135202bd6e0b0983f58677c05f31bbb8e8d1b8b2b4e4f6774",
+      "crc32": 1921066409
+    },
+    {
+      "member": "call_5b7f5fd85e5b4c2c900af1f85dbea124/command-1.txt",
+      "bytes": 203,
+      "sha256": "a30b89507793496a8f1f668bd85946392ff1d469bf7664b5a3141eacbb534358",
+      "crc32": 3398114963
+    },
+    {
+      "member": "call_adf93fcfe87f49438ef8f58c992f424d/input.txt",
+      "bytes": 379,
+      "sha256": "09e5a8aa0796921639f08dce4a9666ff8297f82dd214a91ef1ebada0b7f1f7bc",
+      "crc32": 3908849072
+    },
+    {
+      "member": "call_adf93fcfe87f49438ef8f58c992f424d/output.json",
+      "bytes": 1393,
+      "sha256": "dab34726779b6387211d4f71166c09f4ecbfb33edba5a05734559735d264a6a1",
+      "crc32": 3278828309
+    },
+    {
+      "member": "call_adf93fcfe87f49438ef8f58c992f424d/command-1.txt",
+      "bytes": 211,
+      "sha256": "b788a8acad833589de5204d0d88cc35aaa2d3b8a34fb79701da0f5c1e781743e",
+      "crc32": 2234046706
+    },
+    {
+      "member": "call_47b8595c1cc144fd833e70325c943315/input.txt",
+      "bytes": 4046,
+      "sha256": "8c673ccc1f8f255ddb313feb735037a0df5d7b29b1e3dd8583116db378fc1b44",
+      "crc32": 745477543
+    },
+    {
+      "member": "call_47b8595c1cc144fd833e70325c943315/output.json",
+      "bytes": 326,
+      "sha256": "097319acfeabc5ffc5ff07ed9a017d94fadf0834ae950af6c86b096669097f90",
+      "crc32": 1813480243
+    },
+    {
+      "member": "call_edab606e83e742f69c8df10db7ad35eb/input.txt",
+      "bytes": 433,
+      "sha256": "86475635f845d211859db155f3625666a4ab24c4428eb11664618a3a463ebfe1",
+      "crc32": 1363665813
+    },
+    {
+      "member": "call_edab606e83e742f69c8df10db7ad35eb/output.json",
+      "bytes": 3102,
+      "sha256": "7e0388e8b5e16073405d2088eb55793b8873eb7c4378f878da7570765419d801",
+      "crc32": 3437339780
+    },
+    {
+      "member": "call_edab606e83e742f69c8df10db7ad35eb/command-1.txt",
+      "bytes": 263,
+      "sha256": "0c53c41e458860494580a9ff6e671d05c7dc78c950a3ef917dae187a8a210eae",
+      "crc32": 3979045028
+    },
+    {
+      "member": "call_cd16c7e3496a40bdbbfc07d12637387c/input.txt",
+      "bytes": 425,
+      "sha256": "b33483b0e10aba0c088effada7c3ccc2735b3a92b205f4e23aa39f0b0892e4f6",
+      "crc32": 1215094895
+    },
+    {
+      "member": "call_cd16c7e3496a40bdbbfc07d12637387c/output.json",
+      "bytes": 924,
+      "sha256": "b89aaff6240f7ca626dcf9cb27e1a6d922fccf9bd59a706b4e447787f62c11b3",
+      "crc32": 3102158860
+    },
+    {
+      "member": "call_cd16c7e3496a40bdbbfc07d12637387c/command-1.txt",
+      "bytes": 358,
+      "sha256": "3cd61fe7a4f590d1094fb083ea281a5a1688989f449d2edfdd8e0ad093b0adf7",
+      "crc32": 3620321633
+    },
+    {
+      "member": "call_764512a232d64fd78c5047a9c5f41305/input.txt",
+      "bytes": 1046,
+      "sha256": "3dbf6feefdf2bde8db67f0381ac64f09832db43fa8bf340bec81787df8a8590c",
+      "crc32": 2465002298
+    },
+    {
+      "member": "call_764512a232d64fd78c5047a9c5f41305/output.json",
+      "bytes": 2624,
+      "sha256": "d63ff162279689c61efac12b13e43c43a48cb5993385a8d48108372d1bf96383",
+      "crc32": 2277386181
+    },
+    {
+      "member": "call_764512a232d64fd78c5047a9c5f41305/command-1.txt",
+      "bytes": 970,
+      "sha256": "b9ee38db036e6f238139dcd0f600bec4ca32e5662f634ffcc3cca81b64b6bccd",
+      "crc32": 49157001
+    },
+    {
+      "member": "call_b17e9388c1c34c06a21013a66832e3f2/input.txt",
+      "bytes": 2377,
+      "sha256": "7bb3ec69d6fe33c57ffc943cd36d1276730e0c595cb455d915801de0d02d9207",
+      "crc32": 1693408101
+    },
+    {
+      "member": "call_b17e9388c1c34c06a21013a66832e3f2/output.json",
+      "bytes": 399,
+      "sha256": "0b314ab3b39c3281fd783264d4b3d4c02bfeb8ebe3ff02324374988771f5084d",
+      "crc32": 523479486
+    },
+    {
+      "member": "call_7f7c6b0c87b64ee29151931eec67e1c8/input.txt",
+      "bytes": 665,
+      "sha256": "6d0637f18bbf1b086c162f77bb609a195d4470fc3930af5717819ffb25977327",
+      "crc32": 3903783558
+    },
+    {
+      "member": "call_7f7c6b0c87b64ee29151931eec67e1c8/output.json",
+      "bytes": 3062,
+      "sha256": "1ed493a21accef6d41c5fce600ee568ee14d99257ccb1b6b7efc0797240b946f",
+      "crc32": 1017154049
+    },
+    {
+      "member": "call_7f7c6b0c87b64ee29151931eec67e1c8/command-1.txt",
+      "bytes": 487,
+      "sha256": "c7cbc9162431213fa8e62a3f201daba3bab40dd0b2b2f8b321f8a499c883a31a",
+      "crc32": 3130570915
+    },
+    {
+      "member": "call_c7b4268182154f2fb77bb105727a71c6/input.txt",
+      "bytes": 254,
+      "sha256": "cd5c12a36639d45e8dc2902474c016041582e304aca6d5c50a022ac42321f249",
+      "crc32": 272648744
+    },
+    {
+      "member": "call_c7b4268182154f2fb77bb105727a71c6/output.json",
+      "bytes": 3423,
+      "sha256": "5c0424f2e4b21ca9ac61e5ef1f20df5a74b96961d52f7dde83dfcf376ef4058d",
+      "crc32": 36366176
+    },
+    {
+      "member": "call_c7b4268182154f2fb77bb105727a71c6/command-1.txt",
+      "bytes": 187,
+      "sha256": "141af34277a4306ea30a26dd7f3b4f9b411ef0387805b32b4a0889c4ad817608",
+      "crc32": 1796245009
+    },
+    {
+      "member": "call_005ad7512fe6447098a9285f27c0d565/input.txt",
+      "bytes": 1082,
+      "sha256": "31f205d413e9c788803982062e473e5bca355edd284e1ecb37fb3440c5b4f415",
+      "crc32": 2328747986
+    },
+    {
+      "member": "call_005ad7512fe6447098a9285f27c0d565/output.json",
+      "bytes": 1269,
+      "sha256": "29e56f815a9279f1fe09b56a7db96d749593212776f017c52ef730a433b6240c",
+      "crc32": 861170902
+    },
+    {
+      "member": "call_005ad7512fe6447098a9285f27c0d565/command-1.txt",
+      "bytes": 621,
+      "sha256": "97879b874d76180a177732b6605a96f0ed25a60870cc13543a1ca8d982b3d891",
+      "crc32": 1747863782
+    },
+    {
+      "member": "call_005ad7512fe6447098a9285f27c0d565/command-2.txt",
+      "bytes": 316,
+      "sha256": "39f713be64a1de3cb5be53da6fc891319690eaeb0db2acf0e05fe2602dc09249",
+      "crc32": 3829316205
+    },
+    {
+      "member": "call_f40ad8a9396d4998a708c9442335c82e/input.txt",
+      "bytes": 444,
+      "sha256": "34797371198e1c0bc5870c7f2f449f0a0d0c40d24011e1e0391f9a3d9b583c14",
+      "crc32": 1441691050
+    },
+    {
+      "member": "call_f40ad8a9396d4998a708c9442335c82e/output.json",
+      "bytes": 2288,
+      "sha256": "4f6ca74aa876a706bce237921a795306f2adbe1ae13ad9c6b9e5d8d55172d370",
+      "crc32": 2821550676
+    },
+    {
+      "member": "call_f40ad8a9396d4998a708c9442335c82e/command-1.txt",
+      "bytes": 276,
+      "sha256": "006afa1a64f8e235ad307f50ae95042794f3a9dffefa506e860bd30900add8ec",
+      "crc32": 4119941519
+    },
+    {
+      "member": "call_2cf3fb912383432f922edacbe4a5e05a/input.txt",
+      "bytes": 2856,
+      "sha256": "fae27652782cc355e7d22190a8fccf0e409ee02786a6536eec3e2ccf75f756c8",
+      "crc32": 941435133
+    },
+    {
+      "member": "call_2cf3fb912383432f922edacbe4a5e05a/output.json",
+      "bytes": 13441,
+      "sha256": "c674388833a004d12588809af8569045a782e44379d525f907113c6fdde6b648",
+      "crc32": 773619493
+    },
+    {
+      "member": "call_2cf3fb912383432f922edacbe4a5e05a/command-1.txt",
+      "bytes": 214,
+      "sha256": "f58e1f77adf2a12da17ff9c51b084a218c595f3a52aafa4ea0b64316777cb761",
+      "crc32": 1644287142
+    },
+    {
+      "member": "call_2cf3fb912383432f922edacbe4a5e05a/command-2.txt",
+      "bytes": 79,
+      "sha256": "dd78936ad8780149669f1ff8b75e0c19172bab5c88568d54a8548568c1b08740",
+      "crc32": 2356577626
+    },
+    {
+      "member": "call_162fc15fedd2478bbe74ebbfbe7bd27a/input.txt",
+      "bytes": 397,
+      "sha256": "63f9bd2cb72b57080aef65408e305a7e606b4106ee0c0cd54812a2331a9baa31",
+      "crc32": 2227554222
+    },
+    {
+      "member": "call_162fc15fedd2478bbe74ebbfbe7bd27a/output.json",
+      "bytes": 7762,
+      "sha256": "61ed83c3e777f9fda8458eeff3d5228f8887078264aa0b1d60f2abd4e38d68fe",
+      "crc32": 2658262790
+    },
+    {
+      "member": "call_162fc15fedd2478bbe74ebbfbe7bd27a/command-1.txt",
+      "bytes": 324,
+      "sha256": "3cd2b09613473a7f8b87c1f78e773f09261fac2353959f8e45b7a42568e0c576",
+      "crc32": 3627353626
+    },
+    {
+      "member": "call_fed1bae0ad40436c9d97e462b0209143/input.txt",
+      "bytes": 449,
+      "sha256": "d86e00dedfd0273f3ee46af071eaa5805bb0ab0711dc577fbf8e92d5d1a5290e",
+      "crc32": 2667372370
+    },
+    {
+      "member": "call_fed1bae0ad40436c9d97e462b0209143/output.json",
+      "bytes": 3553,
+      "sha256": "8de83c0d566abd2a9a8ba20c83ab5bd8d1f817220ec023869cddfa542d024150",
+      "crc32": 2177532162
+    },
+    {
+      "member": "call_fed1bae0ad40436c9d97e462b0209143/command-1.txt",
+      "bytes": 380,
+      "sha256": "683fa644f0f0029a31b063b2d05d2bf5395081b591c1ab955be0ce9bff1579c1",
+      "crc32": 2221664918
+    },
+    {
+      "member": "call_9684914360524cf49c53058e94a68ad8/input.txt",
+      "bytes": 2152,
+      "sha256": "cb08362848428d20b84d3cf658edebf25bab880e48d86c4efa792990f4f6425f",
+      "crc32": 1528978195
+    },
+    {
+      "member": "call_9684914360524cf49c53058e94a68ad8/output.json",
+      "bytes": 1179,
+      "sha256": "09a890070d72f33a7606b42f21116f9ee35b762b34cb58be0134673602e7bd63",
+      "crc32": 1266978465
+    },
+    {
+      "member": "call_9684914360524cf49c53058e94a68ad8/command-1.txt",
+      "bytes": 144,
+      "sha256": "8ba6062959f43b81c24acdd902ed8c182e304dfe58f369a05bf6b8c60e24fc36",
+      "crc32": 1047284629
+    },
+    {
+      "member": "call_df726231745842b7adc7ca030024ff93/input.txt",
+      "bytes": 1037,
+      "sha256": "691b2469cf2b0abbb6f4e51b1261922074a23216aaf2e8fc19a4754e295b12a5",
+      "crc32": 3353340151
+    },
+    {
+      "member": "call_df726231745842b7adc7ca030024ff93/output.json",
+      "bytes": 1641,
+      "sha256": "86f6492db630e4b013f1748f5da89fbd0efc584167c8e9bd9502016763de183d",
+      "crc32": 283963307
+    },
+    {
+      "member": "call_df726231745842b7adc7ca030024ff93/command-1.txt",
+      "bytes": 99,
+      "sha256": "864961f174afeaaae43879b3424fa9b881b563ab9c037f6c074e4b152f49c52f",
+      "crc32": 4122887125
+    },
+    {
+      "member": "call_df726231745842b7adc7ca030024ff93/command-2.txt",
+      "bytes": 777,
+      "sha256": "ee6e71d8d0c6340454f92a07385265d5c5e1d7914fde722b329e6961a761d78d",
+      "crc32": 487753930
+    },
+    {
+      "member": "call_880bc0051a3c440eb6f5c3ba911fd19d/input.txt",
+      "bytes": 410,
+      "sha256": "1b29abf842057db039b928520bad0eae8af59430153b5b2a629abb42091fc700",
+      "crc32": 3083533386
+    },
+    {
+      "member": "call_880bc0051a3c440eb6f5c3ba911fd19d/output.json",
+      "bytes": 3075,
+      "sha256": "6e98570ac536f0556f9ea40c7840ec7041e3c316296a9249efe17be4f066f928",
+      "crc32": 636669546
+    },
+    {
+      "member": "call_880bc0051a3c440eb6f5c3ba911fd19d/command-1.txt",
+      "bytes": 283,
+      "sha256": "21c24a3261ac95217f77b863c285384592d3f606ed9a217a71626da4b55c3225",
+      "crc32": 3249478540
+    },
+    {
+      "member": "call_d5480481a2184cc3881a6612f3f468dc/input.txt",
+      "bytes": 3326,
+      "sha256": "34dffffc61f5deda366057c59fc7969663e6bd86a517f119106f26fd2f4a1729",
+      "crc32": 3446110573
+    },
+    {
+      "member": "call_d5480481a2184cc3881a6612f3f468dc/output.json",
+      "bytes": 571,
+      "sha256": "5c939d6b8d356b7c9a1e80d9190abf23ab254712677f375c0c29189ff7740da4",
+      "crc32": 2642366738
+    },
+    {
+      "member": "call_e15a94dec40a49b089bd1fbab024abf4/input.txt",
+      "bytes": 700,
+      "sha256": "3ee9cb6c0b7d9ce7bfd5f5c819736de20bd307ab8549a087e26db15848c820af",
+      "crc32": 948044785
+    },
+    {
+      "member": "call_e15a94dec40a49b089bd1fbab024abf4/output.json",
+      "bytes": 631,
+      "sha256": "1294f01afdd40e4594ca772e36e3f82ad6ff02676fcd774412ce2da8dfd5a3ab",
+      "crc32": 2049137387
+    },
+    {
+      "member": "call_e15a94dec40a49b089bd1fbab024abf4/command-1.txt",
+      "bytes": 520,
+      "sha256": "1802d50c11630e0146ed7a4db88a02bf640298c086ab946ef4f64945567c3102",
+      "crc32": 1622735282
+    },
+    {
+      "member": "call_9320393ae89b4dbe90ffa1d033c082b3/input.txt",
+      "bytes": 1202,
+      "sha256": "24994833c8b34e5850f2baced446bef047bd4477a0cd31707dd0895245bd8c63",
+      "crc32": 2715667270
+    },
+    {
+      "member": "call_9320393ae89b4dbe90ffa1d033c082b3/output.json",
+      "bytes": 1357,
+      "sha256": "4dc4ac582277d3f9b029bdec201f0eea8dba8b116e4b8d92b6bf8fc79193781b",
+      "crc32": 1691621484
+    },
+    {
+      "member": "call_9320393ae89b4dbe90ffa1d033c082b3/command-1.txt",
+      "bytes": 1024,
+      "sha256": "9a0f9a2e726670735af09ed5d3af8a152f82380336e2e40215498e01e349a7ea",
+      "crc32": 3438958092
+    },
+    {
+      "member": "call_a221ac5028a5427a9c6ac3afb233bc5e/input.txt",
+      "bytes": 2406,
+      "sha256": "9e2a876d8f9f73fad2c287aef14370da78e2d525e5b611a68045cd0b0f1214d1",
+      "crc32": 2549292562
+    },
+    {
+      "member": "call_a221ac5028a5427a9c6ac3afb233bc5e/output.json",
+      "bytes": 718,
+      "sha256": "7aec0ad4d1b6d2690afd4a12a9094d16789f16adbc46fbc1425d55ae21c4194d",
+      "crc32": 680161080
+    },
+    {
+      "member": "call_a221ac5028a5427a9c6ac3afb233bc5e/command-1.txt",
+      "bytes": 2216,
+      "sha256": "09ee4551b89f6f2554f0a337344572ce1a4237b074d572ab8fbe4c2ebbc47fbf",
+      "crc32": 2856960535
+    },
+    {
+      "member": "call_f9613793031b40dd8bc177f095939ed5/input.txt",
+      "bytes": 381,
+      "sha256": "a83f0f141c755f426a7f06094f3c08dfa2371c1721983e9c67c3d63237c166ef",
+      "crc32": 251987416
+    },
+    {
+      "member": "call_f9613793031b40dd8bc177f095939ed5/output.json",
+      "bytes": 2978,
+      "sha256": "60d2986b050d96102aa64adef7ccbd66431bb7d282c8463a7cc42df1473174ce",
+      "crc32": 1499615169
+    },
+    {
+      "member": "call_f9613793031b40dd8bc177f095939ed5/command-1.txt",
+      "bytes": 313,
+      "sha256": "962214af8edebbcefbd9eac3a07f1503e1ffe810cf47e0ac45c2e5cec36277ec",
+      "crc32": 1740826561
+    },
+    {
+      "member": "call_a75158e9fcd94790a26f1f0c42aba6f2/input.txt",
+      "bytes": 600,
+      "sha256": "a5480b28328af0155c4f1df40e2078556c26015eaf157695a35702242777db2f",
+      "crc32": 1911453580
+    },
+    {
+      "member": "call_a75158e9fcd94790a26f1f0c42aba6f2/output.json",
+      "bytes": 4047,
+      "sha256": "81d0ac890502bdc5b6f8689c54ba70105847e29914d0d82e5ea666c928deff9c",
+      "crc32": 2401425410
+    },
+    {
+      "member": "call_a75158e9fcd94790a26f1f0c42aba6f2/command-1.txt",
+      "bytes": 531,
+      "sha256": "1c79d3e62fc3045934d55c34fe1929d6e813e8e9a0b4c4a3b1f79f0341266644",
+      "crc32": 115257320
+    },
+    {
+      "member": "call_4c7de44ab90147c0a051cef93ca04874/input.txt",
+      "bytes": 4222,
+      "sha256": "4771b127a66979755794764ee93b94db70c75ff29571e9726d072fe54e1c8c41",
+      "crc32": 27772551
+    },
+    {
+      "member": "call_4c7de44ab90147c0a051cef93ca04874/output.json",
+      "bytes": 2624,
+      "sha256": "67ad3f9d5fbf54bde2bc29e2bca214b1c08ded001dcc503b78871a28818f33eb",
+      "crc32": 2888190026
+    },
+    {
+      "member": "call_4c7de44ab90147c0a051cef93ca04874/command-1.txt",
+      "bytes": 413,
+      "sha256": "f9b8b85d4cd35f3d9098e25f02d91256b9993c115b24958797a9f695aa0b1c99",
+      "crc32": 2600289722
+    },
+    {
+      "member": "call_4c7de44ab90147c0a051cef93ca04874/command-2.txt",
+      "bytes": 74,
+      "sha256": "ba06c88877c3353189053313a1afc8b0e04dd20d1692d3d4fa9cfdd8b614032c",
+      "crc32": 42536630
+    },
+    {
+      "member": "call_0f4204fb2d5f4fd8932a74eebea8ceca/input.txt",
+      "bytes": 604,
+      "sha256": "2d5aef8461ef7bd79679bb6e70ed415f56216ec97f989f80bd208cff2dc48dac",
+      "crc32": 4185491318
+    },
+    {
+      "member": "call_0f4204fb2d5f4fd8932a74eebea8ceca/output.json",
+      "bytes": 2275,
+      "sha256": "04fa193a616e1edb4c870e0ca79f98cb3ca754fafe8a1f1aed1b986dd6cde3b7",
+      "crc32": 902465903
+    },
+    {
+      "member": "call_0f4204fb2d5f4fd8932a74eebea8ceca/command-1.txt",
+      "bytes": 436,
+      "sha256": "01eac3e065284597182c534bf11732482d305fe8a1749e050f5f4cfa478197a7",
+      "crc32": 1662740182
+    },
+    {
+      "member": "call_ea8a92262c934fa8abb699bbe0d0029a/input.txt",
+      "bytes": 1143,
+      "sha256": "1d0c477d51f39a05bcc237986d2b0b7795e5466920b6934749ee861c02099a05",
+      "crc32": 3167842034
+    },
+    {
+      "member": "call_ea8a92262c934fa8abb699bbe0d0029a/output.json",
+      "bytes": 562,
+      "sha256": "66a04377ea81ee9c6dbea3b8e2ffd56c5c3548117be0c452f1082c4c40a7d891",
+      "crc32": 4063829479
+    },
+    {
+      "member": "call_ea8a92262c934fa8abb699bbe0d0029a/command-1.txt",
+      "bytes": 966,
+      "sha256": "8cce849469fda2ada59897351903b894f72fe4d62b2286de1f75edf7d276b761",
+      "crc32": 3998305014
+    },
+    {
+      "member": "call_c2e56ce977ef423bba382515b7b4785b/input.txt",
+      "bytes": 535,
+      "sha256": "4b3caa0210ed23c0440d85101fdbd9b52a3e9ba277c6401d44c3866ea820b4e4",
+      "crc32": 4239974172
+    },
+    {
+      "member": "call_c2e56ce977ef423bba382515b7b4785b/output.json",
+      "bytes": 5073,
+      "sha256": "112a6994fe0f9e130ea5e1a92f3b5a6e67e8df65ebf9c72057e1d7346b113ea8",
+      "crc32": 1201572040
+    },
+    {
+      "member": "call_c2e56ce977ef423bba382515b7b4785b/command-1.txt",
+      "bytes": 467,
+      "sha256": "093987196e0107ce66faddc0c10117bffc94d10da891dd49c4cce08606cc010a",
+      "crc32": 1161266213
+    },
+    {
+      "member": "call_365181d6b9d048ec83d08492a4d2c31d/input.txt",
+      "bytes": 1292,
+      "sha256": "117853d0b9d172f53dfe1bf2037de4b4e7d5d758d40309eea2c593ed72acae51",
+      "crc32": 297137753
+    },
+    {
+      "member": "call_365181d6b9d048ec83d08492a4d2c31d/output.json",
+      "bytes": 621,
+      "sha256": "af0c0ed2ce6e157ff04cbe076d24aacbbe81b64d6463fd4ab40514a62b93a574",
+      "crc32": 3647195247
+    },
+    {
+      "member": "call_365181d6b9d048ec83d08492a4d2c31d/command-1.txt",
+      "bytes": 1210,
+      "sha256": "383736b89850f29a8a00ce0c0b6588fda019d3233c3b08fa6081a27af7b18065",
+      "crc32": 3596995043
+    },
+    {
+      "member": "call_ad4b07fd096b428a83f28f74c13161d6/input.txt",
+      "bytes": 8874,
+      "sha256": "e98852171af89932e0d4369ee68e7ab8ff1a4a91ce58a3d43ed5eb546872aa79",
+      "crc32": 1202648039
+    },
+    {
+      "member": "call_ad4b07fd096b428a83f28f74c13161d6/output.json",
+      "bytes": 626,
+      "sha256": "b72737ac9c8653ec28f755fb4d46e3d88e088a05439b2705f90f8b6abc69b317",
+      "crc32": 153976112
+    },
+    {
+      "member": "call_ad4b07fd096b428a83f28f74c13161d6/command-1.txt",
+      "bytes": 146,
+      "sha256": "0ecb6c9eba5d322003b6ba83f4c708eaa6b1b6f739ee4ad6798d1f5f434b6014",
+      "crc32": 1501883496
+    },
+    {
+      "member": "call_78479732f3614f6597454defa15f0fc2/input.txt",
+      "bytes": 368,
+      "sha256": "13e874642209068018b8704029475b7547cf9d254f894c88b7d43c032e55dde1",
+      "crc32": 3457883090
+    },
+    {
+      "member": "call_78479732f3614f6597454defa15f0fc2/output.json",
+      "bytes": 3380,
+      "sha256": "60afe7db5125d44d6f41afc5b4a4f65522364f4debf88a313131e556d18e1958",
+      "crc32": 3776740368
+    },
+    {
+      "member": "call_78479732f3614f6597454defa15f0fc2/command-1.txt",
+      "bytes": 301,
+      "sha256": "c19b8dbc7dffc25c29c520e683937c7b1e4eb3eb6b7a5d7f7e2aff3b3ce7aae2",
+      "crc32": 3447990659
+    },
+    {
+      "member": "call_c7686ebccf2c46f48f42fb458dac04a8/input.txt",
+      "bytes": 512,
+      "sha256": "3245fb92fe2a7bd7062747cee138d7d735bdd2ed59c98b539985cce17b40a88c",
+      "crc32": 4245095616
+    },
+    {
+      "member": "call_c7686ebccf2c46f48f42fb458dac04a8/output.json",
+      "bytes": 3307,
+      "sha256": "0d5fa4d7f0a804a4b6d529e14fa2db87a94fef741fd52ce1780529bbba614a43",
+      "crc32": 1448167769
+    },
+    {
+      "member": "call_c7686ebccf2c46f48f42fb458dac04a8/command-1.txt",
+      "bytes": 443,
+      "sha256": "794349d93fcd4ac2ff6f31271a09bbf124b190004c2aa1a00385a13f30ecb175",
+      "crc32": 4073282773
+    },
+    {
+      "member": "call_e06e825e469d455191f17c413f25c6a5/input.txt",
+      "bytes": 2465,
+      "sha256": "7b941241eb611ca0018f9dbf47fcd98e06fd100ee38045a9d933d1ab94d55b8f",
+      "crc32": 246923287
+    },
+    {
+      "member": "call_e06e825e469d455191f17c413f25c6a5/output.json",
+      "bytes": 1155,
+      "sha256": "9b6ed6baaff92c0755f210646c80c3f400105c1f23e4a66f712d334f34c89371",
+      "crc32": 29626989
+    },
+    {
+      "member": "call_e06e825e469d455191f17c413f25c6a5/command-1.txt",
+      "bytes": 2334,
+      "sha256": "6c7d6d053ab322921a6b2a59c7d60e70040967bc940b29691ff1913b8437ff4f",
+      "crc32": 1878432807
+    },
+    {
+      "member": "call_b86def6a5f4a4b7ab3004fb6a5c8e009/input.txt",
+      "bytes": 2231,
+      "sha256": "b01537671798b48b539fd6e0449d5c96bcb20c65354b1455b65ae9c3e14bfefc",
+      "crc32": 837589654
+    },
+    {
+      "member": "call_b86def6a5f4a4b7ab3004fb6a5c8e009/output.json",
+      "bytes": 1605,
+      "sha256": "4bc0d5912430898d08e2ff74b963d418948a108465e1a6885ac67669cf53b522",
+      "crc32": 2080306758
+    },
+    {
+      "member": "call_b86def6a5f4a4b7ab3004fb6a5c8e009/command-1.txt",
+      "bytes": 2139,
+      "sha256": "7e2c244255f7b21a69493a546a1868e9be73777e4ed0c623d5d26e413c5acc3c",
+      "crc32": 988041764
+    },
+    {
+      "member": "call_1ca28db4465943d6ac1da4be1c71fc77/input.txt",
+      "bytes": 3634,
+      "sha256": "7054cbd6a785cf798b2981a7bf0735185036479dc30036112cc18e2abebde9e0",
+      "crc32": 1048595578
+    },
+    {
+      "member": "call_1ca28db4465943d6ac1da4be1c71fc77/output.json",
+      "bytes": 470,
+      "sha256": "6befe88e5af12f3a985ce48f241c4281ef9dc932e77c568e3999ba9280506e7b",
+      "crc32": 266640998
+    },
+    {
+      "member": "call_1ca28db4465943d6ac1da4be1c71fc77/command-1.txt",
+      "bytes": 3512,
+      "sha256": "9eb8ef0bb2ee923f37e0fa851b16db62636e7b94f5cb1b0adb942683a49b45e0",
+      "crc32": 1094849710
+    },
+    {
+      "member": "call_9a24eb4d84d8421287ea30f72b2887da/input.txt",
+      "bytes": 8705,
+      "sha256": "6cb756f04bc5cc111f8f131a5b6cbf3ab336204e98768a68d6d667903918624a",
+      "crc32": 2807398037
+    },
+    {
+      "member": "call_9a24eb4d84d8421287ea30f72b2887da/output.json",
+      "bytes": 524,
+      "sha256": "adc3ba3fd7b6c4831f3dd3f645df0de576b26cb9f0d3d402ba1ebe7dff63b3f8",
+      "crc32": 1239156385
+    },
+    {
+      "member": "call_9a24eb4d84d8421287ea30f72b2887da/command-1.txt",
+      "bytes": 160,
+      "sha256": "b60d34e211a2d31a2116fa2b0678ea6e4148b001063425b4e679fcd6cc0623d2",
+      "crc32": 1856176568
+    },
+    {
+      "member": "call_b0184a7639db4e46899fa2c6e00fdd0d/input.txt",
+      "bytes": 114,
+      "sha256": "b2d8f4ce0aba5e7a6f25ab5c439d60347ff97961d6059665bc238f18b1bc4b29",
+      "crc32": 3125299656
+    },
+    {
+      "member": "call_b0184a7639db4e46899fa2c6e00fdd0d/output.json",
+      "bytes": 339,
+      "sha256": "4c7caae18e359d589d7eb608a102f37dccd5e15c53b16558080f617c91145d68",
+      "crc32": 3634493525
+    },
+    {
+      "member": "call_ce65e0c0e3fe4a3b9a0f868fca587b63/input.txt",
+      "bytes": 406,
+      "sha256": "fa835e27d6a95e0d4c06ea3721a048637443fbba92007494c4cb8ebced5221d8",
+      "crc32": 2125756333
+    },
+    {
+      "member": "call_ce65e0c0e3fe4a3b9a0f868fca587b63/output.json",
+      "bytes": 958,
+      "sha256": "abd69a98240e59c2db46d7894c45eb8b661a8420e2c61ace501e58c2b68aa25a",
+      "crc32": 3376245895
+    },
+    {
+      "member": "call_ce65e0c0e3fe4a3b9a0f868fca587b63/command-1.txt",
+      "bytes": 132,
+      "sha256": "e38fb13aae4bcf7a58fc0a95b7c63867b1566e54f78b2c11ff2579a98660a7fe",
+      "crc32": 2769520198
+    },
+    {
+      "member": "call_fdd2ed995e074f3686c17bd609b96aeb/input.txt",
+      "bytes": 4814,
+      "sha256": "7fee0bb2dc0f712eda7c5e187d04f361ed2b42d05455851e52fb53edf36e6978",
+      "crc32": 4182853395
+    },
+    {
+      "member": "call_fdd2ed995e074f3686c17bd609b96aeb/output.json",
+      "bytes": 1199,
+      "sha256": "1efb373311bb17dbe27eec28e3663a5caa92a85996ae7a383c4674f60afb6b86",
+      "crc32": 3923065694
+    },
+    {
+      "member": "call_fdd2ed995e074f3686c17bd609b96aeb/command-1.txt",
+      "bytes": 1833,
+      "sha256": "496f84bdee7dfc2b777712c643a7acec2651459caf3763baee10d32097bf5f68",
+      "crc32": 632989622
+    },
+    {
+      "member": "call_fdd2ed995e074f3686c17bd609b96aeb/command-2.txt",
+      "bytes": 104,
+      "sha256": "17bea353cd72e25bef9b6382c7560d78a323f1a9c09bd010a5cc9750c02f3479",
+      "crc32": 3211215074
+    }
+  ],
+  "archiveVerifiedAgainstExtractedOriginalValues": true
+}

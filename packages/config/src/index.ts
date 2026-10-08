@@ -107,6 +107,9 @@ function bootstrapTokenIssue(
 const envSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+    WORKMESH_MODEL_PRESETS_FILE: optionalString.transform(value => value?.trim()).refine(value => value === undefined ||
+      (value.trim().length > 0 && (!/^[a-z][a-z0-9+.-]*:/i.test(value) || /^[a-z]:[\\/]/i.test(value)) && !value.startsWith('\\\\') && !value.startsWith('//')),
+      'WORKMESH_MODEL_PRESETS_FILE 必须是本地文件路径'),
     DATABASE_URL: z.string().url(),
     REDIS_URL: z.string().url(),
     SESSION_SECRET: z.string().min(32),

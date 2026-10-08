@@ -1,0 +1,1945 @@
+{
+  "archive": "mocked-regression-evidence.zip",
+  "archiveSha256": "8e3718f0a9a0548f11db7265a9e612a84c13e38569f072cae5cbc73df8f933d0",
+  "policy": "两次完整执行原报告、日志与必要附件原字节无损归档；未删除失败，不把匹配失败计成通过。trace/认证状态不进入提交。",
+  "members": [
+    {
+      "member": "prepare.py",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\prepare.py",
+      "bytes": 2317,
+      "sha256": "c465056880d028fd89e2626d1c2f4e1c9a36c01fc902369b9323a69af0b9cede",
+      "crc32": "541cdbce"
+    },
+    {
+      "member": "run.py",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\run.py",
+      "bytes": 3064,
+      "sha256": "f3b81b21cb5c7e1e3ef07890e46929f8382c63d9e49a4b694611cd0bb13cfdff",
+      "crc32": "1aaa3eeb"
+    },
+    {
+      "member": "analyze.py",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\analyze.py",
+      "bytes": 2890,
+      "sha256": "c93c5ced0a2ad47746e97c31028a5f6d57b92ee386f07c1c095a03954558d94c",
+      "crc32": "195eec6b"
+    },
+    {
+      "member": "package-evidence.py",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\package-evidence.py",
+      "bytes": 10760,
+      "sha256": "d99f5222ddcb4925b5b9ac9c60408b898383e2de69ac43222b1c539c97fa6a26",
+      "crc32": "28fa35af"
+    },
+    {
+      "member": "bind-git-bytes.py",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\bind-git-bytes.py",
+      "bytes": 2774,
+      "sha256": "6162333beb25389d5cca7cdec52699bc75cd2cf527afa3e8b93811ff8d92b766",
+      "crc32": "58894852"
+    },
+    {
+      "member": "archive.py",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\archive.py",
+      "bytes": 3564,
+      "sha256": "ec9e5b77af506d6b2a6147d21206d64d75bd8096237a52ef8979e90dc3baf119",
+      "crc32": "543c4163"
+    },
+    {
+      "member": "verification-first-failure.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\verification-first-failure.json",
+      "bytes": 404,
+      "sha256": "ebd3c4f380b887be1f866cd48fce8d1c883d103b1057f95a35dc3c23b61f360f",
+      "crc32": "87e8b1fe"
+    },
+    {
+      "member": "source.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\source.json",
+      "bytes": 1140355,
+      "sha256": "ea0a4b685ea011b43414cdde2ba346bc21bf09cda9ef28f9cc4af61701c21523",
+      "crc32": "7358daa3"
+    },
+    {
+      "member": "environment.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\environment.json",
+      "bytes": 758,
+      "sha256": "d0817b585491ea05910547c44350425c3137694f2bab510b03d1fba9564d985f",
+      "crc32": "4d01ddf1"
+    },
+    {
+      "member": "baseline-runtime.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-runtime.json",
+      "bytes": 556,
+      "sha256": "e56c67a5c11b3ce614fc3dc6b5d4a5e482bed1d4c9dfc7bb50da65443c963e95",
+      "crc32": "fbe82cb3"
+    },
+    {
+      "member": "head-runtime.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-runtime.json",
+      "bytes": 548,
+      "sha256": "6a657a91dd245727daec8070b6e3cb928764a9d596589a982d66823811ba00c4",
+      "crc32": "60cb08ff"
+    },
+    {
+      "member": "baseline-install.log",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-install.log",
+      "bytes": 3754,
+      "sha256": "f4b388973f96cf23787f9398fc55ae0e8adf5086d898846790398152b02ed7af",
+      "crc32": "9e80817b"
+    },
+    {
+      "member": "head-install.log",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-install.log",
+      "bytes": 3754,
+      "sha256": "1f9792f6080e79d4ab84ae2519e6b6bf65d4568747d0eab0dca74ba75fd7703c",
+      "crc32": "eabe4553"
+    },
+    {
+      "member": "baseline-browser.log",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-browser.log",
+      "bytes": 127276,
+      "sha256": "d12a76f346e8e2ef66dd004011f22161d52dad00ca9193121abe6807803fc555",
+      "crc32": "a45018d0"
+    },
+    {
+      "member": "head-browser.log",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-browser.log",
+      "bytes": 126301,
+      "sha256": "0c8be5e59b816fc9ffb2b44a1d35cc5bf68fe89dc5180e9edd5bfead7b6c8e7d",
+      "crc32": "304613ab"
+    },
+    {
+      "member": "baseline-report.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-report.json",
+      "bytes": 232248,
+      "sha256": "67be24e02af8838a647b63957f16d1b1dcbc8a050b3acf4fd93042dc1831abe7",
+      "crc32": "61c127ab"
+    },
+    {
+      "member": "head-report.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-report.json",
+      "bytes": 231136,
+      "sha256": "67c735f2022d275938243fc58478af1ea0cae496d61159634095184a7fbac033",
+      "crc32": "64e03297"
+    },
+    {
+      "member": "baseline-result.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-result.json",
+      "bytes": 795,
+      "sha256": "242f643881a5179890004f8bb07dbc023cc8c34f6db83f5034d3a52e3badf1a8",
+      "crc32": "0a3d76b9"
+    },
+    {
+      "member": "head-result.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-result.json",
+      "bytes": 791,
+      "sha256": "b86a9864ff362ef7749d4a1527b6831dd838087a3c23192894575fcae5d56f62",
+      "crc32": "1587b6f6"
+    },
+    {
+      "member": "baseline-process.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-process.json",
+      "bytes": 678,
+      "sha256": "73172cf7e672edbf7bf3c3dec31ab57b5bfa1009ef40307815b2df50f9167d99",
+      "crc32": "e8b61957"
+    },
+    {
+      "member": "head-process.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-process.json",
+      "bytes": 674,
+      "sha256": "e2c53b2f3d216a60cfc95bf371ddfed72552f0b5ad224f4c1107f7e97b59b238",
+      "crc32": "9e61cab2"
+    },
+    {
+      "member": "baseline-server-ownership.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-server-ownership.json",
+      "bytes": 688,
+      "sha256": "f0f036d220a3053e1f3380a086351d4ae1f7337a3d8b83a2eaa45ae97cc24e24",
+      "crc32": "81220af1"
+    },
+    {
+      "member": "head-server-ownership.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-server-ownership.json",
+      "bytes": 684,
+      "sha256": "edd14f43d122066554bcc81b5dee3dd660630d04439c81eb5b1a55a265d4eab0",
+      "crc32": "89dc260c"
+    },
+    {
+      "member": "comparison-differences.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\comparison-differences.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "crc32": "0d4cbb29"
+    },
+    {
+      "member": "old-errors.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\old-errors.json",
+      "bytes": 33094,
+      "sha256": "7e13ba1a53705c17104914a0c9bc6031844135724f6e82e3781fdf363dfd13b7",
+      "crc32": "f6a1d9b9"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/.last-run.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\.last-run.json",
+      "bytes": 1615,
+      "sha256": "4754fead658f5dfa0e5a9666e81cdda6962db4b3f28ddc030a711dd7ab945fb9",
+      "crc32": "ec5ca751"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-1a450-es-layers-and-focus-restore/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-1a450-es-layers-and-focus-restore\\error-context.md",
+      "bytes": 23313,
+      "sha256": "a535c7c684f53851457efa2c2ab739ffa273df023e6981368ac24e22f33ec5a9",
+      "crc32": "aea80f15"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-1a450-es-layers-and-focus-restore/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-1a450-es-layers-and-focus-restore\\test-failed-1.png",
+      "bytes": 183044,
+      "sha256": "8bf0d341e8a6afbe15903069d43069561e33b827097befb541d2602658a40d7f",
+      "crc32": "7cdd4aa3"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-1b203--top-layers-and-containment/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-1b203--top-layers-and-containment\\error-context.md",
+      "bytes": 20686,
+      "sha256": "182f6a0e09a319cb6f365a6d23f9e529e5eb44bef73012615c4cd89df4f06f81",
+      "crc32": "359b6975"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-1b203--top-layers-and-containment/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-1b203--top-layers-and-containment\\test-failed-1.png",
+      "bytes": 91935,
+      "sha256": "48c60d8aef38014e0ae516c7d779b6b2b585c6607c210b0a96faa3e6d0ab571d",
+      "crc32": "56eb6d62"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-3fc72-antic-boundary-at-1920px-en/accessibility-public-1920-en.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-3fc72-antic-boundary-at-1920px-en\\accessibility-public-1920-en.json",
+      "bytes": 3655,
+      "sha256": "90cc7cc1f9e7341eda62cc83abed004dc4a3cb4f7eaafbb1a41c3678a7c46149",
+      "crc32": "35f76ea4"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-3fc72-antic-boundary-at-1920px-en/attachments/accessibility-public-1920-en-f0cee113249be5c3b088bc5899557295d9316d22.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-3fc72-antic-boundary-at-1920px-en\\attachments\\accessibility-public-1920-en-f0cee113249be5c3b088bc5899557295d9316d22.json",
+      "bytes": 3655,
+      "sha256": "90cc7cc1f9e7341eda62cc83abed004dc4a3cb4f7eaafbb1a41c3678a7c46149",
+      "crc32": "35f76ea4"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en\\error-context.md",
+      "bytes": 15985,
+      "sha256": "58884ec7bf4e9b068893647b863d7f1141e3b5d811b7deb247379e0b17a8904a",
+      "crc32": "9f7f8ed4"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en\\test-failed-1.png",
+      "bytes": 159423,
+      "sha256": "f258d87fa8d4da035a9431cf9dfba369abfaa07be2df66436d23312db44ad605",
+      "crc32": "542c6824"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN\\error-context.md",
+      "bytes": 14884,
+      "sha256": "e29fbe3d9dee6e95e5f9db20aa8f244ab0f8f8251b60a8ac33d78b4a15b83730",
+      "crc32": "e2b02d84"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN\\test-failed-1.png",
+      "bytes": 94175,
+      "sha256": "878584803db15306887b6fc2b0e443bae5da7b555534c622d1f9ef77825f36b0",
+      "crc32": "b6e7c870"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-f18f0-tic-boundary-at-390px-zh-CN/accessibility-public-390-zh-CN.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-f18f0-tic-boundary-at-390px-zh-CN\\accessibility-public-390-zh-CN.json",
+      "bytes": 3598,
+      "sha256": "59b9fb789de3cfe4d28174e088828c7423b3466788bd8af5d519898d4c2bbea3",
+      "crc32": "788b3ba0"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-accessibility-keybo-f18f0-tic-boundary-at-390px-zh-CN/attachments/accessibility-public-390-zh-CN-2a6e87089f2f2e12927ff0914ae2134e66d41bc0.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-f18f0-tic-boundary-at-390px-zh-CN\\attachments\\accessibility-public-390-zh-CN-2a6e87089f2f2e12927ff0914ae2134e66d41bc0.json",
+      "bytes": 3598,
+      "sha256": "59b9fb789de3cfe4d28174e088828c7423b3466788bd8af5d519898d4c2bbea3",
+      "crc32": "788b3ba0"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-01c54-nt-through-a-failed-refresh/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-01c54-nt-through-a-failed-refresh\\error-context.md",
+      "bytes": 22052,
+      "sha256": "9b982ada13035193c4494ecfa234cbf6698ec2d8c7165d3e221212698abaf60c",
+      "crc32": "676e1c3b"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-01c54-nt-through-a-failed-refresh/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-01c54-nt-through-a-failed-refresh\\test-failed-1.png",
+      "bytes": 178680,
+      "sha256": "16335b8c1ce303aa9997e8c9f0ccac203410ff53fdc0eda0fc924c891082eeb1",
+      "crc32": "a7f2781a"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island\\error-context.md",
+      "bytes": 22518,
+      "sha256": "16296c6163be6203540bc6d9f865a84cf7741073c90033ca2c1fc41b67fbf298",
+      "crc32": "02040b1e"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island\\test-failed-1.png",
+      "bytes": 52134,
+      "sha256": "18d834742507d1386445dc93365fe7bf30091fae6589738887ce4bfb0afebbf9",
+      "crc32": "510d33c5"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-21d4d-cus-through-refresh-failure/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-21d4d-cus-through-refresh-failure\\error-context.md",
+      "bytes": 24114,
+      "sha256": "ea2006a0c73304808aa769023f4a9c0a109951110855cfc1f5706c419e7813e4",
+      "crc32": "a041c6a6"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-21d4d-cus-through-refresh-failure/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-21d4d-cus-through-refresh-failure\\test-failed-1.png",
+      "bytes": 123936,
+      "sha256": "14374fc11a539eb70018c582a3fda78e51230f7375cec75894e1bba75e6c3e7b",
+      "crc32": "c4bcffe9"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-692a7-ace-through-refresh-failure/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-692a7-ace-through-refresh-failure\\error-context.md",
+      "bytes": 14221,
+      "sha256": "ebc7f598f7f1b6a34f7a022fbdfefe246f6b50886bfc0cdbfc578a30543eac86",
+      "crc32": "98a304e1"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-692a7-ace-through-refresh-failure/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-692a7-ace-through-refresh-failure\\test-failed-1.png",
+      "bytes": 17185,
+      "sha256": "06c99190c576c9143f75f2b87801f621de99b0cbc9e2579909bf5ae62b217c2f",
+      "crc32": "9158c681"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island\\error-context.md",
+      "bytes": 25618,
+      "sha256": "b02fec656e6d55a7273c14813224884bd33685f8c3c704155a9875f0132cf5a4",
+      "crc32": "5ffd3eea"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island\\test-failed-1.png",
+      "bytes": 123403,
+      "sha256": "c6e9370ba5f46800eea6132ff37a63610133b3c0b20b8d393f92ff032f297f20",
+      "crc32": "30dc72bb"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-9a035-hout-focusable-placeholders/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-9a035-hout-focusable-placeholders\\error-context.md",
+      "bytes": 24200,
+      "sha256": "8e5f3ee78ba835babecd0dc8d2f923ec3729e57eed11ef2a25de631b87d58f58",
+      "crc32": "d1bd7aeb"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-9a035-hout-focusable-placeholders/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-9a035-hout-focusable-placeholders\\test-failed-1.png",
+      "bytes": 182882,
+      "sha256": "6e4bbb1b45fe463df44ec07e5b7c1324859011aee19ae83272000dcd0aed565b",
+      "crc32": "b272252a"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-a0ce2-hout-focusable-placeholders/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-a0ce2-hout-focusable-placeholders\\error-context.md",
+      "bytes": 24200,
+      "sha256": "a74efb405f44cad2d28187b59bd451dc437a1e32928f20655e2c2ad0b9535a09",
+      "crc32": "7d57d43c"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-a0ce2-hout-focusable-placeholders/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-a0ce2-hout-focusable-placeholders\\test-failed-1.png",
+      "bytes": 178680,
+      "sha256": "16335b8c1ce303aa9997e8c9f0ccac203410ff53fdc0eda0fc924c891082eeb1",
+      "crc32": "a7f2781a"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-a18c7-y-and-null-downstream-paths/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-a18c7-y-and-null-downstream-paths\\error-context.md",
+      "bytes": 14152,
+      "sha256": "5d5cf14b05150e161a7ee9b2729cda4ee376d799f2491fa7c6e66164b9027154",
+      "crc32": "68d36578"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-a18c7-y-and-null-downstream-paths/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-a18c7-y-and-null-downstream-paths\\test-failed-1.png",
+      "bytes": 17185,
+      "sha256": "06c99190c576c9143f75f2b87801f621de99b0cbc9e2579909bf5ae62b217c2f",
+      "crc32": "9158c681"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island\\error-context.md",
+      "bytes": 25618,
+      "sha256": "5b75cb02cad164c988fa966d8406476a9ee9c514b0ea2c5f727bde4d5533b629",
+      "crc32": "b6dfc8f2"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island\\test-failed-1.png",
+      "bytes": 136792,
+      "sha256": "6486e08e93eae67e924104d3640a1211cc67b4a54a744605df1ef468858d7a16",
+      "crc32": "98c750c2"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-f2657-hout-focusable-placeholders/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-f2657-hout-focusable-placeholders\\error-context.md",
+      "bytes": 20960,
+      "sha256": "6826ef4298b5e74137f71d571a393eab154ba773580f35764a0fd62872f2c413",
+      "crc32": "ce9da5ab"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-f2657-hout-focusable-placeholders/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-f2657-hout-focusable-placeholders\\test-failed-1.png",
+      "bytes": 97371,
+      "sha256": "9d16d5c4ddead38259db3985a5cdb86821856839ccc8a35ff49a489c7a81c1ed",
+      "crc32": "9af5c303"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-f72b5-tates-without-stale-actions/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-f72b5-tates-without-stale-actions\\error-context.md",
+      "bytes": 17849,
+      "sha256": "eb641b84498501994c8e59efbf940bbeab591bb946379d8ef06f60c9adc5aac3",
+      "crc32": "7b3f4b3f"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-loading-states.mock-f72b5-tates-without-stale-actions/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-f72b5-tates-without-stale-actions\\test-failed-1.png",
+      "bytes": 209291,
+      "sha256": "9bf0148cb0cb860ec2fdccb9b028327720d5a6aad6e0fb6d247fce005c5dbc1a",
+      "crc32": "51b2d443"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible\\error-context.md",
+      "bytes": 12704,
+      "sha256": "736f1a5ba5d04e59ad8d6bdbd61fcd8dab5783e0258980c772e2dbef1f1e67cb",
+      "crc32": "18530540"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible\\test-failed-1.png",
+      "bytes": 15418,
+      "sha256": "eb04c5e291609d96dc3a2ec3f31e301fedc392e452342346bdefcb9c0ec77e6f",
+      "crc32": "3ca48dae"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry\\error-context.md",
+      "bytes": 21326,
+      "sha256": "91c4c3f28aec2f10a1f74f935c6d25ae9324e3cf4e7eadf0bc46af2696e4fae9",
+      "crc32": "a40d53ab"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry\\test-failed-1.png",
+      "bytes": 127607,
+      "sha256": "63c549063646d50fd30ba9b030948d2ab0dbafafb713e0901112364afda02fe0",
+      "crc32": "ebfdd137"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-31d93-related-Operations-requests/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-31d93-related-Operations-requests\\error-context.md",
+      "bytes": 11461,
+      "sha256": "46d56ac6cf6db15769b64ad24e21fa60bc8c377793fc56b8ad084678731f23e9",
+      "crc32": "4a854a6c"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry\\error-context.md",
+      "bytes": 14160,
+      "sha256": "c0be22c522940ce4f75902843c7e344f13b9634826b27dcb188828e80778e635",
+      "crc32": "a02a0100"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry\\test-failed-1.png",
+      "bytes": 19699,
+      "sha256": "4ac32b8affb4ea01b0272fcdd9a6e8f8738f2257b7f9f399e000344fabb2b2eb",
+      "crc32": "6728cd47"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-49e26-xt-after-committed-deletion/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-49e26-xt-after-committed-deletion\\error-context.md",
+      "bytes": 21909,
+      "sha256": "bb5f42a6884771ae52f8b950e699d93c4081488fcba4a308d57a0f1b948c124a",
+      "crc32": "7225461e"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-49e26-xt-after-committed-deletion/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-49e26-xt-after-committed-deletion\\test-failed-1.png",
+      "bytes": 151135,
+      "sha256": "94206fdc0480a1208733825ef4a02016033bdd8683f4185bb3b8e8925597fba2",
+      "crc32": "6e7428bb"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/attachments/task-5-4-delete-dialog-narrow-pass-047c4e9af6d2704b3aa79ee867ef0a43cae85d2d.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\attachments\\task-5-4-delete-dialog-narrow-pass-047c4e9af6d2704b3aa79ee867ef0a43cae85d2d.png",
+      "bytes": 61969,
+      "sha256": "94ed15893ce6e86778b4667a075670ffd5bbf4362cdff1d393e966eda3cb15c5",
+      "crc32": "ff61639e"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/attachments/task-5-4-delete-dialog-narrow-top-pass-1ebe243a54b153385b81a06515c90b8de1d9f8ab.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\attachments\\task-5-4-delete-dialog-narrow-top-pass-1ebe243a54b153385b81a06515c90b8de1d9f8ab.png",
+      "bytes": 97395,
+      "sha256": "77d605311116f2e842ac99d39dc6d3aaced65192219646f9f5a517735c049091",
+      "crc32": "d7aa7c7d"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/attachments/task-5-4-delete-dialog-retry-request-geometry-pass-721658e6502686c2e32e5087f1af59489567db8c.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\attachments\\task-5-4-delete-dialog-retry-request-geometry-pass-721658e6502686c2e32e5087f1af59489567db8c.json",
+      "bytes": 1597,
+      "sha256": "30f2293af577b6adaeb56af9cbd3db38abe390344f924dfe1581ac1f4dfe7158",
+      "crc32": "f147a34e"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/task-5.4-delete-dialog-narrow-pass.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\task-5.4-delete-dialog-narrow-pass.png",
+      "bytes": 61969,
+      "sha256": "94ed15893ce6e86778b4667a075670ffd5bbf4362cdff1d393e966eda3cb15c5",
+      "crc32": "ff61639e"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/task-5.4-delete-dialog-narrow-top-pass.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\task-5.4-delete-dialog-narrow-top-pass.png",
+      "bytes": 97395,
+      "sha256": "77d605311116f2e842ac99d39dc6d3aaced65192219646f9f5a517735c049091",
+      "crc32": "d7aa7c7d"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/task-5.4-delete-dialog-retry-request-geometry-pass.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\task-5.4-delete-dialog-retry-request-geometry-pass.json",
+      "bytes": 1597,
+      "sha256": "30f2293af577b6adaeb56af9cbd3db38abe390344f924dfe1581ac1f4dfe7158",
+      "crc32": "f147a34e"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths\\error-context.md",
+      "bytes": 9173,
+      "sha256": "87f1ea892d0ef341b96532d4e3950d76d4dfdc92529ee1a5c43507e9a8296fde",
+      "crc32": "a32f37d4"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths\\test-failed-1.png",
+      "bytes": 50855,
+      "sha256": "a8f35d16236d2e17e22b79e811c238137c876fdb8cb1cf87fa1a8ec52e5e3733",
+      "crc32": "326e2193"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings\\error-context.md",
+      "bytes": 34057,
+      "sha256": "941d558d8233ba7e1dbbed9283224680b1d6c0c2926fd9f962a2e2498cd78380",
+      "crc32": "b6703b1d"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings\\test-failed-1.png",
+      "bytes": 120032,
+      "sha256": "3c4d351cdd92ea999a605615225497be22a5ad5f1602a9f7ca9ff84f2ad3dd00",
+      "crc32": "eea38496"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/attachments/task-4-2-request-geometry-pass-f26a70629ed56193f16d55909ddc8a1d3556d01f.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\attachments\\task-4-2-request-geometry-pass-f26a70629ed56193f16d55909ddc8a1d3556d01f.json",
+      "bytes": 2265,
+      "sha256": "7d185bd625bfa2f503a5fdaf1b8cf66cb8759aeccb252107b358ed4480f3ec2a",
+      "crc32": "769048cf"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/attachments/task-4-2-search-1920-pass-354ffaa0fcbe2cba351b91041969b8ac4ecddc18.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\attachments\\task-4-2-search-1920-pass-354ffaa0fcbe2cba351b91041969b8ac4ecddc18.png",
+      "bytes": 136800,
+      "sha256": "a27f1bb1468742d0c6749871e5aada41af2733bda639f3a4e1bea7da7bb43289",
+      "crc32": "a0a09270"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/attachments/task-4-2-search-390-pass-c7f5e085dcdcdcb727cd6c7a9a3d3a30f3d008ff.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\attachments\\task-4-2-search-390-pass-c7f5e085dcdcdcb727cd6c7a9a3d3a30f3d008ff.png",
+      "bytes": 57187,
+      "sha256": "edd5d8d0a504983a2cb4c9d446691544855e548f0cb3b6911fe79885c845a5c2",
+      "crc32": "e8037bc7"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/task-4.2-request-geometry-pass.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\task-4.2-request-geometry-pass.json",
+      "bytes": 2265,
+      "sha256": "7d185bd625bfa2f503a5fdaf1b8cf66cb8759aeccb252107b358ed4480f3ec2a",
+      "crc32": "769048cf"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/task-4.2-search-1920-pass.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\task-4.2-search-1920-pass.png",
+      "bytes": 136800,
+      "sha256": "a27f1bb1468742d0c6749871e5aada41af2733bda639f3a4e1bea7da7bb43289",
+      "crc32": "a0a09270"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/task-4.2-search-390-pass.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\task-4.2-search-390-pass.png",
+      "bytes": 57187,
+      "sha256": "edd5d8d0a504983a2cb4c9d446691544855e548f0cb3b6911fe79885c845a5c2",
+      "crc32": "e8037bc7"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths\\error-context.md",
+      "bytes": 30712,
+      "sha256": "fc022bc9faa858f0dd0308e87a9aaa02b7589ba7059a257704a3c348320f49a4",
+      "crc32": "94c4609d"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths\\test-failed-1.png",
+      "bytes": 46347,
+      "sha256": "f763d17516e90f13b8362c1364166a7bcbb6e6df7be830362717982141d2010d",
+      "crc32": "1953107b"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL\\error-context.md",
+      "bytes": 13945,
+      "sha256": "a4b1a20fbfd9b724f71e572bf595190d972731459ef505dbcfa1a7a2a41a8c0e",
+      "crc32": "dee06a3c"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL\\test-failed-1.png",
+      "bytes": 15418,
+      "sha256": "eb04c5e291609d96dc3a2ec3f31e301fedc392e452342346bdefcb9c0ec77e6f",
+      "crc32": "3ca48dae"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-overlay-contract.mo-497cf-urn-ownership-deterministic/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-497cf-urn-ownership-deterministic\\error-context.md",
+      "bytes": 18153,
+      "sha256": "0a145965e8038391aad35c8b0fe8be89267383c0b7e061485b09b0d534d015fc",
+      "crc32": "e933517a"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-overlay-contract.mo-497cf-urn-ownership-deterministic/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-497cf-urn-ownership-deterministic\\test-failed-1.png",
+      "bytes": 206534,
+      "sha256": "5fcd27cb1a844b2d11cc9c9f5f00db60712f9e595ca4eb3b52cd568a8db69137",
+      "crc32": "810a5810"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic\\error-context.md",
+      "bytes": 17119,
+      "sha256": "02bf2c81286ba166f81feac998091d40f61ae5a27815ffd78ddf9490a46b39bf",
+      "crc32": "e5f51090"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic\\test-failed-1.png",
+      "bytes": 92919,
+      "sha256": "134d2608b4cc8385c55e6878a9eb9c00724648b6785a6fd16f92509032108192",
+      "crc32": "6156a128"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-overlay-contract.mo-85caf-background-after-completion/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-85caf-background-after-completion\\error-context.md",
+      "bytes": 17833,
+      "sha256": "5b026ded91c2b113e3a15278da7f6042a8ece25fd0a1f69d175f8fc00143983e",
+      "crc32": "b9842cf9"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-overlay-contract.mo-85caf-background-after-completion/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-85caf-background-after-completion\\test-failed-1.png",
+      "bytes": 32205,
+      "sha256": "f35ffe6be477f0c4f6bbb8326a9fe7583b3595c655767cd0ef0e7e7b32ee3b04",
+      "crc32": "96dd389b"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-overlay-contract.mo-d1081-background-after-completion/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-d1081-background-after-completion\\error-context.md",
+      "bytes": 19162,
+      "sha256": "2193cf6e228ec8fdbcfea1c716a73a8964813037312c445142bc1e245b1e95f9",
+      "crc32": "8106bac3"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-overlay-contract.mo-d1081-background-after-completion/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-d1081-background-after-completion\\test-failed-1.png",
+      "bytes": 104067,
+      "sha256": "38c8a52cdd4fdda7c53d272df307fbb0f768ce2746dccbe0776a64e29924b8bc",
+      "crc32": "78998f8c"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-0b345--approval-state-independent/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-0b345--approval-state-independent\\error-context.md",
+      "bytes": 18047,
+      "sha256": "5dcbb58454bfe019f7084420e7e793a68589275305f40d40bbfd4ebabe361c2c",
+      "crc32": "e0922d0d"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-0b345--approval-state-independent/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-0b345--approval-state-independent\\test-failed-1.png",
+      "bytes": 158543,
+      "sha256": "a0701b4f2686690ec81997a290a4cd2ebf987fca3e9a5aa55086e52dbb4af40e",
+      "crc32": "097c7bca"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-0ddd9-ommand-center-or-page-chord/attachments/public-zero-auth-requests-1920-5b6d3d50d9891cca29afd90bd44ad5d407f8a2c2.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-0ddd9-ommand-center-or-page-chord\\attachments\\public-zero-auth-requests-1920-5b6d3d50d9891cca29afd90bd44ad5d407f8a2c2.json",
+      "bytes": 410,
+      "sha256": "c7d5f562369a3c8a531872c1ef4f426b4068ee3683c93970fb224293f2e167e4",
+      "crc32": "feed5f98"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-0ddd9-ommand-center-or-page-chord/public-zero-auth-requests-1920.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-0ddd9-ommand-center-or-page-chord\\public-zero-auth-requests-1920.json",
+      "bytes": 410,
+      "sha256": "c7d5f562369a3c8a531872c1ef4f426b4068ee3683c93970fb224293f2e167e4",
+      "crc32": "feed5f98"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-132e4-ommand-center-or-page-chord/attachments/public-zero-auth-requests-390-d3c650afcd831ce5ab933ed1138abbea1c0ae1b2.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-132e4-ommand-center-or-page-chord\\attachments\\public-zero-auth-requests-390-d3c650afcd831ce5ab933ed1138abbea1c0ae1b2.json",
+      "bytes": 410,
+      "sha256": "c7d5f562369a3c8a531872c1ef4f426b4068ee3683c93970fb224293f2e167e4",
+      "crc32": "feed5f98"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-132e4-ommand-center-or-page-chord/public-zero-auth-requests-390.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-132e4-ommand-center-or-page-chord\\public-zero-auth-requests-390.json",
+      "bytes": 410,
+      "sha256": "c7d5f562369a3c8a531872c1ef4f426b4068ee3683c93970fb224293f2e167e4",
+      "crc32": "feed5f98"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/attachments/home-filter-1920-98f88a887b1d423c5e6e12f810ae7fd45f1501a9.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\attachments\\home-filter-1920-98f88a887b1d423c5e6e12f810ae7fd45f1501a9.json",
+      "bytes": 458,
+      "sha256": "5df349343d8f8d9a4d41369a22ceb5803f41f5ee35b87e62f8fe847b16c7427f",
+      "crc32": "34548c0b"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/attachments/home-filter-1920-screenshot-d27628e390ed14c7e8dadb3a8be13fa04cee1799.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\attachments\\home-filter-1920-screenshot-d27628e390ed14c7e8dadb3a8be13fa04cee1799.png",
+      "bytes": 115740,
+      "sha256": "fbe7cb26085a90cc1ffc09c91bcbcab722d56f8c3153581201ce830fab74b324",
+      "crc32": "87c7114f"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\error-context.md",
+      "bytes": 19360,
+      "sha256": "80c1760ab414124e7e454eee81049ebd743fe165d6a056c3ad3a2091546e0899",
+      "crc32": "1dfbba79"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/home-filter-1920.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\home-filter-1920.json",
+      "bytes": 458,
+      "sha256": "5df349343d8f8d9a4d41369a22ceb5803f41f5ee35b87e62f8fe847b16c7427f",
+      "crc32": "34548c0b"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/home-filter-1920.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\home-filter-1920.png",
+      "bytes": 115740,
+      "sha256": "fbe7cb26085a90cc1ffc09c91bcbcab722d56f8c3153581201ce830fab74b324",
+      "crc32": "87c7114f"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\test-failed-1.png",
+      "bytes": 102035,
+      "sha256": "6b0cc16251bd0524b80ef0ee8c36f557164246b170e02caf73415ec96674c97a",
+      "crc32": "1af48fbb"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/attachments/home-filter-390-9560e73829e1c752875b90188be35225b35ad3f9.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\attachments\\home-filter-390-9560e73829e1c752875b90188be35225b35ad3f9.json",
+      "bytes": 449,
+      "sha256": "f8a592b597414c3aed47a22f8814057a2b605a9bd01664088015b2164a458f82",
+      "crc32": "fa988793"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/attachments/home-filter-390-screenshot-4eae80a025a8e7ef3fb9892dce2c4342f45e5ea2.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\attachments\\home-filter-390-screenshot-4eae80a025a8e7ef3fb9892dce2c4342f45e5ea2.png",
+      "bytes": 39494,
+      "sha256": "a7f2d39dc1a0f83b71b7402fb476595761dc0f91b316be3107daa01d88bb886f",
+      "crc32": "2489d5b6"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\error-context.md",
+      "bytes": 16094,
+      "sha256": "e12eea9db58c6244b4d3a826630b2a0f8ca42fd9763a281cf59aa38eba49d806",
+      "crc32": "0c1de2f6"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/home-filter-390.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\home-filter-390.json",
+      "bytes": 449,
+      "sha256": "f8a592b597414c3aed47a22f8814057a2b605a9bd01664088015b2164a458f82",
+      "crc32": "fa988793"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/home-filter-390.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\home-filter-390.png",
+      "bytes": 39494,
+      "sha256": "a7f2d39dc1a0f83b71b7402fb476595761dc0f91b316be3107daa01d88bb886f",
+      "crc32": "2489d5b6"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\test-failed-1.png",
+      "bytes": 37182,
+      "sha256": "6b0ae72f07c43abe75409aa0afee2ba56e055c9f90158d51dab4ad90f13a2354",
+      "crc32": "63fa4626"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-92a88--approval-state-independent/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-92a88--approval-state-independent\\error-context.md",
+      "bytes": 14809,
+      "sha256": "e3e47c72a4ee83cde79ec95240572ad701e901e3087055a9577288f4235b1c20",
+      "crc32": "2db5de27"
+    },
+    {
+      "member": "baseline-run/mocked-dev/output/mocked-page-hotkeys.mocked-92a88--approval-state-independent/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-92a88--approval-state-independent\\test-failed-1.png",
+      "bytes": 71893,
+      "sha256": "4e1eb73369367a94c24f1d166198c612351b8e846b556bc0de8ec92558970208",
+      "crc32": "38824cf5"
+    },
+    {
+      "member": "baseline-external-evidence/loading-agents-registry-pending-1440x900.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-external-evidence\\loading-agents-registry-pending-1440x900.png",
+      "bytes": 120333,
+      "sha256": "e052da956779b70b4505ae55fff4d7cfa6344448f9d6c2a062f2575844475994",
+      "crc32": "a7b47b42"
+    },
+    {
+      "member": "baseline-external-evidence/loading-agents-registry-pending-1920x1080.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-external-evidence\\loading-agents-registry-pending-1920x1080.png",
+      "bytes": 129948,
+      "sha256": "1012a8226f548e6c23d9c0af8fe02e4f45dd37ace126e02d5d2a59bfcbaad24a",
+      "crc32": "2324675a"
+    },
+    {
+      "member": "baseline-external-evidence/loading-agents-registry-pending-390x844.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-external-evidence\\loading-agents-registry-pending-390x844.png",
+      "bytes": 41824,
+      "sha256": "c5a1114549551be703485acf38a43538f42af829b1aceb25e59e3b785be8ca43",
+      "crc32": "d45c98d4"
+    },
+    {
+      "member": "baseline-external-evidence/loading-operations-pending-1440x900.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-external-evidence\\loading-operations-pending-1440x900.png",
+      "bytes": 185516,
+      "sha256": "7f0c73cb8e565ed81306dec4691326dcb1500c167ffc7cb6e46cfabf2adf9dc1",
+      "crc32": "e20b9b62"
+    },
+    {
+      "member": "baseline-external-evidence/loading-operations-pending-1920x1080.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-external-evidence\\loading-operations-pending-1920x1080.png",
+      "bytes": 343496,
+      "sha256": "a732a80aafa5346d291da54314270f69c5b00ea50db9ff687a3b7f6c1b07e01b",
+      "crc32": "1337135c"
+    },
+    {
+      "member": "baseline-external-evidence/loading-operations-pending-390x844.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-external-evidence\\loading-operations-pending-390x844.png",
+      "bytes": 31934,
+      "sha256": "474f50183b6996338efddb2caf49bd3049f1aad52ae6aa4968e748d7bb50590c",
+      "crc32": "aadf04f8"
+    },
+    {
+      "member": "head-run/mocked-dev/output/.last-run.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\.last-run.json",
+      "bytes": 1615,
+      "sha256": "4754fead658f5dfa0e5a9666e81cdda6962db4b3f28ddc030a711dd7ab945fb9",
+      "crc32": "ec5ca751"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-1a450-es-layers-and-focus-restore/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-1a450-es-layers-and-focus-restore\\error-context.md",
+      "bytes": 23313,
+      "sha256": "a535c7c684f53851457efa2c2ab739ffa273df023e6981368ac24e22f33ec5a9",
+      "crc32": "aea80f15"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-1a450-es-layers-and-focus-restore/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-1a450-es-layers-and-focus-restore\\test-failed-1.png",
+      "bytes": 183044,
+      "sha256": "8bf0d341e8a6afbe15903069d43069561e33b827097befb541d2602658a40d7f",
+      "crc32": "7cdd4aa3"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-1b203--top-layers-and-containment/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-1b203--top-layers-and-containment\\error-context.md",
+      "bytes": 20681,
+      "sha256": "2a928633b68017b424d38e88cb68fcef04908339e4adc0c0867b2d424dddb9b0",
+      "crc32": "5503af3d"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-1b203--top-layers-and-containment/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-1b203--top-layers-and-containment\\test-failed-1.png",
+      "bytes": 91935,
+      "sha256": "48c60d8aef38014e0ae516c7d779b6b2b585c6607c210b0a96faa3e6d0ab571d",
+      "crc32": "56eb6d62"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-3fc72-antic-boundary-at-1920px-en/accessibility-public-1920-en.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-3fc72-antic-boundary-at-1920px-en\\accessibility-public-1920-en.json",
+      "bytes": 3655,
+      "sha256": "90cc7cc1f9e7341eda62cc83abed004dc4a3cb4f7eaafbb1a41c3678a7c46149",
+      "crc32": "35f76ea4"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-3fc72-antic-boundary-at-1920px-en/attachments/accessibility-public-1920-en-56d27e4e977c970aab4e20b8e4cdae86a6c38bd0.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-3fc72-antic-boundary-at-1920px-en\\attachments\\accessibility-public-1920-en-56d27e4e977c970aab4e20b8e4cdae86a6c38bd0.json",
+      "bytes": 3655,
+      "sha256": "90cc7cc1f9e7341eda62cc83abed004dc4a3cb4f7eaafbb1a41c3678a7c46149",
+      "crc32": "35f76ea4"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en\\error-context.md",
+      "bytes": 15985,
+      "sha256": "58884ec7bf4e9b068893647b863d7f1141e3b5d811b7deb247379e0b17a8904a",
+      "crc32": "9f7f8ed4"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en\\test-failed-1.png",
+      "bytes": 159423,
+      "sha256": "f258d87fa8d4da035a9431cf9dfba369abfaa07be2df66436d23312db44ad605",
+      "crc32": "542c6824"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN\\error-context.md",
+      "bytes": 14884,
+      "sha256": "e29fbe3d9dee6e95e5f9db20aa8f244ab0f8f8251b60a8ac33d78b4a15b83730",
+      "crc32": "e2b02d84"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN\\test-failed-1.png",
+      "bytes": 94175,
+      "sha256": "878584803db15306887b6fc2b0e443bae5da7b555534c622d1f9ef77825f36b0",
+      "crc32": "b6e7c870"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-f18f0-tic-boundary-at-390px-zh-CN/accessibility-public-390-zh-CN.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-f18f0-tic-boundary-at-390px-zh-CN\\accessibility-public-390-zh-CN.json",
+      "bytes": 3598,
+      "sha256": "59b9fb789de3cfe4d28174e088828c7423b3466788bd8af5d519898d4c2bbea3",
+      "crc32": "788b3ba0"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-accessibility-keybo-f18f0-tic-boundary-at-390px-zh-CN/attachments/accessibility-public-390-zh-CN-8f9d9c7e50c33132d16b7833ec5d44c8bd209b69.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-f18f0-tic-boundary-at-390px-zh-CN\\attachments\\accessibility-public-390-zh-CN-8f9d9c7e50c33132d16b7833ec5d44c8bd209b69.json",
+      "bytes": 3598,
+      "sha256": "59b9fb789de3cfe4d28174e088828c7423b3466788bd8af5d519898d4c2bbea3",
+      "crc32": "788b3ba0"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-01c54-nt-through-a-failed-refresh/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-01c54-nt-through-a-failed-refresh\\error-context.md",
+      "bytes": 22052,
+      "sha256": "e8fb6c3bb80eef6095b8c517cdf0b90be0e0c57a5884992edabab8df7e66e374",
+      "crc32": "1cb017b6"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-01c54-nt-through-a-failed-refresh/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-01c54-nt-through-a-failed-refresh\\test-failed-1.png",
+      "bytes": 178680,
+      "sha256": "16335b8c1ce303aa9997e8c9f0ccac203410ff53fdc0eda0fc924c891082eeb1",
+      "crc32": "a7f2781a"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island\\error-context.md",
+      "bytes": 22518,
+      "sha256": "2080b5c10bc5e1083f92c95aaa857936afc86d03df8283b1f5ca7af4e210fd9d",
+      "crc32": "fba59e39"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island\\test-failed-1.png",
+      "bytes": 52134,
+      "sha256": "18d834742507d1386445dc93365fe7bf30091fae6589738887ce4bfb0afebbf9",
+      "crc32": "510d33c5"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-21d4d-cus-through-refresh-failure/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-21d4d-cus-through-refresh-failure\\error-context.md",
+      "bytes": 24114,
+      "sha256": "38cd4e76a8bd69a3e00173f1fcf9a7bcc67c468692b5bdf696e1ffe2af845610",
+      "crc32": "f9ca6b51"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-21d4d-cus-through-refresh-failure/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-21d4d-cus-through-refresh-failure\\test-failed-1.png",
+      "bytes": 123936,
+      "sha256": "14374fc11a539eb70018c582a3fda78e51230f7375cec75894e1bba75e6c3e7b",
+      "crc32": "c4bcffe9"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-692a7-ace-through-refresh-failure/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-692a7-ace-through-refresh-failure\\error-context.md",
+      "bytes": 14221,
+      "sha256": "25a74212e99ba62c8025ecac12f4205018e69a03c01116f66caee3efa5bf40df",
+      "crc32": "89824595"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-692a7-ace-through-refresh-failure/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-692a7-ace-through-refresh-failure\\test-failed-1.png",
+      "bytes": 17185,
+      "sha256": "06c99190c576c9143f75f2b87801f621de99b0cbc9e2579909bf5ae62b217c2f",
+      "crc32": "9158c681"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island\\error-context.md",
+      "bytes": 25618,
+      "sha256": "7d5ad24025070c2c2a34d6da1f7a695a5d18f7562af9963c9efde52604e23902",
+      "crc32": "1fde3c3a"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island\\test-failed-1.png",
+      "bytes": 123403,
+      "sha256": "c6e9370ba5f46800eea6132ff37a63610133b3c0b20b8d393f92ff032f297f20",
+      "crc32": "30dc72bb"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-9a035-hout-focusable-placeholders/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-9a035-hout-focusable-placeholders\\error-context.md",
+      "bytes": 24200,
+      "sha256": "62e2b524ae2ca5022a7326d4021171dba0e898dd033ee658c9188416927e8c7c",
+      "crc32": "937b4234"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-9a035-hout-focusable-placeholders/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-9a035-hout-focusable-placeholders\\test-failed-1.png",
+      "bytes": 182882,
+      "sha256": "6e4bbb1b45fe463df44ec07e5b7c1324859011aee19ae83272000dcd0aed565b",
+      "crc32": "b272252a"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-a0ce2-hout-focusable-placeholders/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-a0ce2-hout-focusable-placeholders\\error-context.md",
+      "bytes": 24200,
+      "sha256": "e208afae84ebc3195f5d76c512ea7ceec8c0e82fc5c45e5993fc347c48f110e8",
+      "crc32": "62ed3442"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-a0ce2-hout-focusable-placeholders/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-a0ce2-hout-focusable-placeholders\\test-failed-1.png",
+      "bytes": 178680,
+      "sha256": "16335b8c1ce303aa9997e8c9f0ccac203410ff53fdc0eda0fc924c891082eeb1",
+      "crc32": "a7f2781a"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-a18c7-y-and-null-downstream-paths/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-a18c7-y-and-null-downstream-paths\\error-context.md",
+      "bytes": 14152,
+      "sha256": "db286f3c36a57551e024bfb8111e137ad3c683c05b3acd9e8141c6621fa49ccb",
+      "crc32": "154c5c72"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-a18c7-y-and-null-downstream-paths/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-a18c7-y-and-null-downstream-paths\\test-failed-1.png",
+      "bytes": 17185,
+      "sha256": "06c99190c576c9143f75f2b87801f621de99b0cbc9e2579909bf5ae62b217c2f",
+      "crc32": "9158c681"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island\\error-context.md",
+      "bytes": 25618,
+      "sha256": "03ee77f306bdda532237290f84bd734de9782a3c97dfd916a6e911b433ce6053",
+      "crc32": "f6fcca22"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island\\test-failed-1.png",
+      "bytes": 136792,
+      "sha256": "6486e08e93eae67e924104d3640a1211cc67b4a54a744605df1ef468858d7a16",
+      "crc32": "98c750c2"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-f2657-hout-focusable-placeholders/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-f2657-hout-focusable-placeholders\\error-context.md",
+      "bytes": 20960,
+      "sha256": "61ab3598daaa851e87b712e7ad8be0dcd549c4dde1638fb5eb1f9579de9dd9a9",
+      "crc32": "d3bcae8a"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-f2657-hout-focusable-placeholders/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-f2657-hout-focusable-placeholders\\test-failed-1.png",
+      "bytes": 97371,
+      "sha256": "9d16d5c4ddead38259db3985a5cdb86821856839ccc8a35ff49a489c7a81c1ed",
+      "crc32": "9af5c303"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-f72b5-tates-without-stale-actions/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-f72b5-tates-without-stale-actions\\error-context.md",
+      "bytes": 17849,
+      "sha256": "6c29c534441a72ebc1d310deffbb0fd7d6b006bd1e6a71b05b5a9e3629fef55a",
+      "crc32": "09b07690"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-loading-states.mock-f72b5-tates-without-stale-actions/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-f72b5-tates-without-stale-actions\\test-failed-1.png",
+      "bytes": 201970,
+      "sha256": "5cbf6ea2fb379b333c5f643bbb23906f3117948977074f0ff67d4884133aaf3a",
+      "crc32": "e813f5d6"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible\\error-context.md",
+      "bytes": 12704,
+      "sha256": "4864f78c97f412ab9f9ce65d38ac0e0bcc00deafc2d65d6874169a29a75c9b17",
+      "crc32": "71a6b581"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible\\test-failed-1.png",
+      "bytes": 15418,
+      "sha256": "eb04c5e291609d96dc3a2ec3f31e301fedc392e452342346bdefcb9c0ec77e6f",
+      "crc32": "3ca48dae"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry\\error-context.md",
+      "bytes": 21326,
+      "sha256": "8f179512b7b4ad17ae889ac123e1c9a76e78bc21cbfc12e988bc10cc8d1117b8",
+      "crc32": "5c50764c"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry\\test-failed-1.png",
+      "bytes": 127588,
+      "sha256": "ab3e8cbf2c00d2c6da0baf42f11774063249e231362a0e199d425e6644fc889f",
+      "crc32": "1adfa979"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-31d93-related-Operations-requests/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-31d93-related-Operations-requests\\error-context.md",
+      "bytes": 11461,
+      "sha256": "d717191a8f52981fe8c8a824523815436101ee5548cde504ec244410c95778e4",
+      "crc32": "3bd6e7a3"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry\\error-context.md",
+      "bytes": 14160,
+      "sha256": "e373c366d27de667e8515152eecee97913394ed5d0241e4f06860780d9396bff",
+      "crc32": "17c777b1"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry\\test-failed-1.png",
+      "bytes": 19699,
+      "sha256": "4ac32b8affb4ea01b0272fcdd9a6e8f8738f2257b7f9f399e000344fabb2b2eb",
+      "crc32": "6728cd47"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-49e26-xt-after-committed-deletion/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-49e26-xt-after-committed-deletion\\error-context.md",
+      "bytes": 21909,
+      "sha256": "e9196bb71627bd3581e46c2dc1292a95d6ada5ca5dab4183a276e927b868654d",
+      "crc32": "fda9d323"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-49e26-xt-after-committed-deletion/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-49e26-xt-after-committed-deletion\\test-failed-1.png",
+      "bytes": 151135,
+      "sha256": "94206fdc0480a1208733825ef4a02016033bdd8683f4185bb3b8e8925597fba2",
+      "crc32": "6e7428bb"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/attachments/task-5-4-delete-dialog-narrow-pass-c22491cea2cbf4d3d175a67dd0fc08051863442c.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\attachments\\task-5-4-delete-dialog-narrow-pass-c22491cea2cbf4d3d175a67dd0fc08051863442c.png",
+      "bytes": 61969,
+      "sha256": "94ed15893ce6e86778b4667a075670ffd5bbf4362cdff1d393e966eda3cb15c5",
+      "crc32": "ff61639e"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/attachments/task-5-4-delete-dialog-narrow-top-pass-3a5be2becbcd0d595cd7f83bee8cad35030de746.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\attachments\\task-5-4-delete-dialog-narrow-top-pass-3a5be2becbcd0d595cd7f83bee8cad35030de746.png",
+      "bytes": 97395,
+      "sha256": "77d605311116f2e842ac99d39dc6d3aaced65192219646f9f5a517735c049091",
+      "crc32": "d7aa7c7d"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/attachments/task-5-4-delete-dialog-retry-request-geometry-pass-500bee62b42d8a5fcd46c1a477f0fdf368ba1a94.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\attachments\\task-5-4-delete-dialog-retry-request-geometry-pass-500bee62b42d8a5fcd46c1a477f0fdf368ba1a94.json",
+      "bytes": 1597,
+      "sha256": "30f2293af577b6adaeb56af9cbd3db38abe390344f924dfe1581ac1f4dfe7158",
+      "crc32": "f147a34e"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/task-5.4-delete-dialog-narrow-pass.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\task-5.4-delete-dialog-narrow-pass.png",
+      "bytes": 61969,
+      "sha256": "94ed15893ce6e86778b4667a075670ffd5bbf4362cdff1d393e966eda3cb15c5",
+      "crc32": "ff61639e"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/task-5.4-delete-dialog-narrow-top-pass.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\task-5.4-delete-dialog-narrow-top-pass.png",
+      "bytes": 97395,
+      "sha256": "77d605311116f2e842ac99d39dc6d3aaced65192219646f9f5a517735c049091",
+      "crc32": "d7aa7c7d"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-4f219-long-failure-content-at-390/task-5.4-delete-dialog-retry-request-geometry-pass.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-4f219-long-failure-content-at-390\\task-5.4-delete-dialog-retry-request-geometry-pass.json",
+      "bytes": 1597,
+      "sha256": "30f2293af577b6adaeb56af9cbd3db38abe390344f924dfe1581ac1f4dfe7158",
+      "crc32": "f147a34e"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths\\error-context.md",
+      "bytes": 9173,
+      "sha256": "e0d1011e6a1d816be1f4d52e41b69984839685f5ba6be4d43421e3c3f2a88b44",
+      "crc32": "2cdee3a0"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths\\test-failed-1.png",
+      "bytes": 50855,
+      "sha256": "a8f35d16236d2e17e22b79e811c238137c876fdb8cb1cf87fa1a8ec52e5e3733",
+      "crc32": "326e2193"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings\\error-context.md",
+      "bytes": 34057,
+      "sha256": "2ad6611562ce29697aa5139fc6b2140a1319bcee886856690641aab78a1043b2",
+      "crc32": "0e5be441"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings\\test-failed-1.png",
+      "bytes": 120032,
+      "sha256": "3c4d351cdd92ea999a605615225497be22a5ad5f1602a9f7ca9ff84f2ad3dd00",
+      "crc32": "eea38496"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/attachments/task-4-2-request-geometry-pass-5ffca6f9ee3bd5d7914690b92c97956a867329e9.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\attachments\\task-4-2-request-geometry-pass-5ffca6f9ee3bd5d7914690b92c97956a867329e9.json",
+      "bytes": 2266,
+      "sha256": "a7f7c52ef2d4511651bbbd9c0910c0805a1a9181642c4c69da698436d1ba6ab7",
+      "crc32": "415d334b"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/attachments/task-4-2-search-1920-pass-695d60a53e60b802efd5a16ed9d03caf60f14bc8.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\attachments\\task-4-2-search-1920-pass-695d60a53e60b802efd5a16ed9d03caf60f14bc8.png",
+      "bytes": 136800,
+      "sha256": "a27f1bb1468742d0c6749871e5aada41af2733bda639f3a4e1bea7da7bb43289",
+      "crc32": "a0a09270"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/attachments/task-4-2-search-390-pass-0deeb2acb26e89cc0a6698f0939d32c8388f0a17.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\attachments\\task-4-2-search-390-pass-0deeb2acb26e89cc0a6698f0939d32c8388f0a17.png",
+      "bytes": 57187,
+      "sha256": "edd5d8d0a504983a2cb4c9d446691544855e548f0cb3b6911fe79885c845a5c2",
+      "crc32": "e8037bc7"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/task-4.2-request-geometry-pass.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\task-4.2-request-geometry-pass.json",
+      "bytes": 2266,
+      "sha256": "a7f7c52ef2d4511651bbbd9c0910c0805a1a9181642c4c69da698436d1ba6ab7",
+      "crc32": "415d334b"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/task-4.2-search-1920-pass.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\task-4.2-search-1920-pass.png",
+      "bytes": 136800,
+      "sha256": "a27f1bb1468742d0c6749871e5aada41af2733bda639f3a4e1bea7da7bb43289",
+      "crc32": "a0a09270"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts/task-4.2-search-390-pass.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-ad752-th-auditable-PASS-artifacts\\task-4.2-search-390-pass.png",
+      "bytes": 57187,
+      "sha256": "edd5d8d0a504983a2cb4c9d446691544855e548f0cb3b6911fe79885c845a5c2",
+      "crc32": "e8037bc7"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths\\error-context.md",
+      "bytes": 30712,
+      "sha256": "c7a3be5452a69cb2073ac8aeb98d754a6d67294840f8fe2ddc6dfd6b1cdb6359",
+      "crc32": "434af829"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths\\test-failed-1.png",
+      "bytes": 46347,
+      "sha256": "f763d17516e90f13b8362c1364166a7bcbb6e6df7be830362717982141d2010d",
+      "crc32": "1953107b"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL\\error-context.md",
+      "bytes": 13945,
+      "sha256": "46d6da34da3cef36e14a26e044ff7628138482d6fcb7a98aee8b2550a5645424",
+      "crc32": "5cb0d8a4"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL\\test-failed-1.png",
+      "bytes": 15418,
+      "sha256": "eb04c5e291609d96dc3a2ec3f31e301fedc392e452342346bdefcb9c0ec77e6f",
+      "crc32": "3ca48dae"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-overlay-contract.mo-497cf-urn-ownership-deterministic/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-497cf-urn-ownership-deterministic\\error-context.md",
+      "bytes": 18153,
+      "sha256": "cd8fe51c4308a0c856558433f4660f89c3d1b912c5606e982dafb0182e2e2144",
+      "crc32": "d59ca5eb"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-overlay-contract.mo-497cf-urn-ownership-deterministic/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-497cf-urn-ownership-deterministic\\test-failed-1.png",
+      "bytes": 206534,
+      "sha256": "5fcd27cb1a844b2d11cc9c9f5f00db60712f9e595ca4eb3b52cd568a8db69137",
+      "crc32": "810a5810"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic\\error-context.md",
+      "bytes": 17119,
+      "sha256": "348c7866eb8cb465cd659af39ae7fe245a90f4a5f0d3ec70041ee25d7a71c103",
+      "crc32": "8335339f"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic\\test-failed-1.png",
+      "bytes": 92919,
+      "sha256": "134d2608b4cc8385c55e6878a9eb9c00724648b6785a6fd16f92509032108192",
+      "crc32": "6156a128"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-overlay-contract.mo-85caf-background-after-completion/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-85caf-background-after-completion\\error-context.md",
+      "bytes": 17833,
+      "sha256": "89681d37d70f214399611f4ed3a0f9e5833d7fca7ab76717aeb3a402795705a7",
+      "crc32": "0f23e824"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-overlay-contract.mo-85caf-background-after-completion/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-85caf-background-after-completion\\test-failed-1.png",
+      "bytes": 32205,
+      "sha256": "f35ffe6be477f0c4f6bbb8326a9fe7583b3595c655767cd0ef0e7e7b32ee3b04",
+      "crc32": "96dd389b"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-overlay-contract.mo-d1081-background-after-completion/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-d1081-background-after-completion\\error-context.md",
+      "bytes": 19162,
+      "sha256": "d61a4f5fcc2002723a6a4c2659488ad4d1e3ca7db03af757e4d4dd7217750382",
+      "crc32": "2d254de7"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-overlay-contract.mo-d1081-background-after-completion/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-d1081-background-after-completion\\test-failed-1.png",
+      "bytes": 104067,
+      "sha256": "38c8a52cdd4fdda7c53d272df307fbb0f768ce2746dccbe0776a64e29924b8bc",
+      "crc32": "78998f8c"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-0b345--approval-state-independent/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-0b345--approval-state-independent\\error-context.md",
+      "bytes": 18047,
+      "sha256": "ed88895eeffd77be9a83ce9e67e2d4e5b98a0385504e03039e4275b9fbb74611",
+      "crc32": "4b32ee6f"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-0b345--approval-state-independent/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-0b345--approval-state-independent\\test-failed-1.png",
+      "bytes": 158543,
+      "sha256": "a0701b4f2686690ec81997a290a4cd2ebf987fca3e9a5aa55086e52dbb4af40e",
+      "crc32": "097c7bca"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-0ddd9-ommand-center-or-page-chord/attachments/public-zero-auth-requests-1920-2b323b00bb31e17ab8620f6abefa968c85dde1aa.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-0ddd9-ommand-center-or-page-chord\\attachments\\public-zero-auth-requests-1920-2b323b00bb31e17ab8620f6abefa968c85dde1aa.json",
+      "bytes": 410,
+      "sha256": "c7d5f562369a3c8a531872c1ef4f426b4068ee3683c93970fb224293f2e167e4",
+      "crc32": "feed5f98"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-0ddd9-ommand-center-or-page-chord/public-zero-auth-requests-1920.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-0ddd9-ommand-center-or-page-chord\\public-zero-auth-requests-1920.json",
+      "bytes": 410,
+      "sha256": "c7d5f562369a3c8a531872c1ef4f426b4068ee3683c93970fb224293f2e167e4",
+      "crc32": "feed5f98"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-132e4-ommand-center-or-page-chord/attachments/public-zero-auth-requests-390-bff37977407b01c3d98530c88e19ceac1db31bf8.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-132e4-ommand-center-or-page-chord\\attachments\\public-zero-auth-requests-390-bff37977407b01c3d98530c88e19ceac1db31bf8.json",
+      "bytes": 410,
+      "sha256": "c7d5f562369a3c8a531872c1ef4f426b4068ee3683c93970fb224293f2e167e4",
+      "crc32": "feed5f98"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-132e4-ommand-center-or-page-chord/public-zero-auth-requests-390.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-132e4-ommand-center-or-page-chord\\public-zero-auth-requests-390.json",
+      "bytes": 410,
+      "sha256": "c7d5f562369a3c8a531872c1ef4f426b4068ee3683c93970fb224293f2e167e4",
+      "crc32": "feed5f98"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/attachments/home-filter-1920-360ef6ea49800e3a78747938a924b02451874387.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\attachments\\home-filter-1920-360ef6ea49800e3a78747938a924b02451874387.json",
+      "bytes": 458,
+      "sha256": "5df349343d8f8d9a4d41369a22ceb5803f41f5ee35b87e62f8fe847b16c7427f",
+      "crc32": "34548c0b"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/attachments/home-filter-1920-screenshot-41408f26f2597165da5a347c519d5c64e75490ce.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\attachments\\home-filter-1920-screenshot-41408f26f2597165da5a347c519d5c64e75490ce.png",
+      "bytes": 115775,
+      "sha256": "652f586c09e195af14021b858d35d86c3341c1fbc3de80f2109005690a8cb94f",
+      "crc32": "fa02b2bc"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\error-context.md",
+      "bytes": 19360,
+      "sha256": "2bc3083157b9cc09b431cde4ce7db512f7681f3c9167baf840bb9727dd4c7328",
+      "crc32": "92e976b5"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/home-filter-1920.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\home-filter-1920.json",
+      "bytes": 458,
+      "sha256": "5df349343d8f8d9a4d41369a22ceb5803f41f5ee35b87e62f8fe847b16c7427f",
+      "crc32": "34548c0b"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/home-filter-1920.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\home-filter-1920.png",
+      "bytes": 115775,
+      "sha256": "652f586c09e195af14021b858d35d86c3341c1fbc3de80f2109005690a8cb94f",
+      "crc32": "fa02b2bc"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\test-failed-1.png",
+      "bytes": 100025,
+      "sha256": "25a9637a6fdfabc86ea98a8677aebca6c3407108f65880b0eece02c752207be0",
+      "crc32": "438e9af7"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/attachments/home-filter-390-767f3e6cfacb55143906340dc6b12bb9043605e9.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\attachments\\home-filter-390-767f3e6cfacb55143906340dc6b12bb9043605e9.json",
+      "bytes": 449,
+      "sha256": "f8a592b597414c3aed47a22f8814057a2b605a9bd01664088015b2164a458f82",
+      "crc32": "fa988793"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/attachments/home-filter-390-screenshot-f4bc22a69c07407fb6db5115163ae2fcf5cae0f0.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\attachments\\home-filter-390-screenshot-f4bc22a69c07407fb6db5115163ae2fcf5cae0f0.png",
+      "bytes": 39541,
+      "sha256": "366081cf7be19439ed63748bacf2d9b090ad7f730fe7c565dd534b9888d344fc",
+      "crc32": "91f6e945"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\error-context.md",
+      "bytes": 16094,
+      "sha256": "c8c925b25455c33e9f19f499335e46c7ba0fe07bacfc463aeca056e20cba7cc5",
+      "crc32": "31523aa2"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/home-filter-390.json",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\home-filter-390.json",
+      "bytes": 449,
+      "sha256": "f8a592b597414c3aed47a22f8814057a2b605a9bd01664088015b2164a458f82",
+      "crc32": "fa988793"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/home-filter-390.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\home-filter-390.png",
+      "bytes": 39541,
+      "sha256": "366081cf7be19439ed63748bacf2d9b090ad7f730fe7c565dd534b9888d344fc",
+      "crc32": "91f6e945"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\test-failed-1.png",
+      "bytes": 37192,
+      "sha256": "43c5cf5b10cb1f596e3d7cc6918c6ce3047036304f821967a28513819370a275",
+      "crc32": "1324834e"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-92a88--approval-state-independent/error-context.md",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-92a88--approval-state-independent\\error-context.md",
+      "bytes": 14809,
+      "sha256": "c44a6ad68bfb9648c64d367d0a7eddfe6517105478019e6a02c9c78ad0115f5f",
+      "crc32": "7fbce8f6"
+    },
+    {
+      "member": "head-run/mocked-dev/output/mocked-page-hotkeys.mocked-92a88--approval-state-independent/test-failed-1.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-92a88--approval-state-independent\\test-failed-1.png",
+      "bytes": 71893,
+      "sha256": "4e1eb73369367a94c24f1d166198c612351b8e846b556bc0de8ec92558970208",
+      "crc32": "38824cf5"
+    },
+    {
+      "member": "head-external-evidence/loading-agents-registry-pending-1440x900.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-external-evidence\\loading-agents-registry-pending-1440x900.png",
+      "bytes": 120334,
+      "sha256": "b68c4ae94cd8e0ddd79628a3b92bb711767951784661f4e6b6c5b7ba0b2aac3b",
+      "crc32": "4feb021d"
+    },
+    {
+      "member": "head-external-evidence/loading-agents-registry-pending-1920x1080.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-external-evidence\\loading-agents-registry-pending-1920x1080.png",
+      "bytes": 129949,
+      "sha256": "84049f2e49e5b026d4d1e66a866a929dfcca57c3068eb8cb54487e5d756eb69c",
+      "crc32": "a958406b"
+    },
+    {
+      "member": "head-external-evidence/loading-agents-registry-pending-390x844.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-external-evidence\\loading-agents-registry-pending-390x844.png",
+      "bytes": 42318,
+      "sha256": "e085a76f2b099feef38f11ef91f95d86bca2e3d7c1d346923e08d48312a99fbd",
+      "crc32": "de1be18a"
+    },
+    {
+      "member": "head-external-evidence/loading-operations-pending-1440x900.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-external-evidence\\loading-operations-pending-1440x900.png",
+      "bytes": 173228,
+      "sha256": "76eb9f4cbc5df4a183be72cc115d9b947495a83a4b8c695b58f6dee3c2ffb646",
+      "crc32": "f94bfb35"
+    },
+    {
+      "member": "head-external-evidence/loading-operations-pending-1920x1080.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-external-evidence\\loading-operations-pending-1920x1080.png",
+      "bytes": 377765,
+      "sha256": "4b1a6065d8ae152f3823dff78a7a405bc15f3aba689f684108e0440560243b5a",
+      "crc32": "77e6b6dd"
+    },
+    {
+      "member": "head-external-evidence/loading-operations-pending-390x844.png",
+      "originalPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-external-evidence\\loading-operations-pending-390x844.png",
+      "bytes": 33251,
+      "sha256": "bac54eff5ef2fff461a03f24c8532d570c001455b23add33c1b7ba8bc7d17494",
+      "crc32": "803908b8"
+    }
+  ],
+  "excluded": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-1a450-es-layers-and-focus-restore\\trace.zip",
+      "bytes": 2505322,
+      "sha256": "4fe491cbea42fffc7868bccd22a1a028f4bc82e916998a47839c6776f0ff12dc",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-1b203--top-layers-and-containment\\trace.zip",
+      "bytes": 3496096,
+      "sha256": "1ec733e9a3929625cdce42f7580842bdb77acb6e488da85cde3a595e3ef2194f",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en\\trace.zip",
+      "bytes": 417778,
+      "sha256": "b14d27830861c0fbee4811abbf657c7747637b10e65f16732b7ed2db7c93048d",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN\\trace.zip",
+      "bytes": 350217,
+      "sha256": "ae5e350c6ef8fd2cc78b14787b544bb271268d471bf6c0e6fba1ffd09c926315",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-01c54-nt-through-a-failed-refresh\\trace.zip",
+      "bytes": 663888,
+      "sha256": "9d65b2f4c815878e567dc8ede360a8da47c12f6b4f20f9bb853a2f7019cf6682",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island\\trace.zip",
+      "bytes": 490657,
+      "sha256": "256c9c9c7494fd8c3e342b6ce20228ea1500082eb392a46d8482157f21cd2419",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-21d4d-cus-through-refresh-failure\\trace.zip",
+      "bytes": 678508,
+      "sha256": "86b3e9f7a087b0ea8c1e4ee1038334aec917f35e6f546dbf25a02e61e8e96e72",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-692a7-ace-through-refresh-failure\\trace.zip",
+      "bytes": 134381,
+      "sha256": "d083c5ffe9264fd28e24f2ef080dd92396919ec65efcc3f5450d4895097fd966",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island\\trace.zip",
+      "bytes": 650793,
+      "sha256": "2359c5a6bdb222108c83007c03da768d3c83015a8475722a2039a2d8714711d2",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-9a035-hout-focusable-placeholders\\trace.zip",
+      "bytes": 612084,
+      "sha256": "17116a92b7cc2123e2702354a83770cf74edf29891683501238f0a8712dc8424",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-a0ce2-hout-focusable-placeholders\\trace.zip",
+      "bytes": 790601,
+      "sha256": "941e63b22d2394154a883cccea180713bce872c3c57c3511820d6ecef902b620",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-a18c7-y-and-null-downstream-paths\\trace.zip",
+      "bytes": 1902824,
+      "sha256": "2a4295a8ebedc4a08daf3ef91b183733798c442703860d499f754c92f85beabb",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island\\trace.zip",
+      "bytes": 1053267,
+      "sha256": "803291a9cd122f7555dfc6e3d864b2f114c6aaed09f81adac7497673e64d6183",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-f2657-hout-focusable-placeholders\\trace.zip",
+      "bytes": 700463,
+      "sha256": "cc55910ea33e475599aa22ab141a2b8723c70cf0c5cebd22aeb42b3fa2fa11d4",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-loading-states.mock-f72b5-tates-without-stale-actions\\trace.zip",
+      "bytes": 10716345,
+      "sha256": "2a63dc51dda39ad92bec69e35f564a3edf15c914c9d0355038600c84e9de9821",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible\\trace.zip",
+      "bytes": 143561,
+      "sha256": "70cd362884003a74f20b0849b53b67c6f271a743d8a2a5e7b13f5444e5d4b7f7",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry\\trace.zip",
+      "bytes": 340615,
+      "sha256": "4283e52aeaccce5a2f41ee3c072b7f98ebd5b2c4bace947bd7afee675936332b",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-31d93-related-Operations-requests\\trace.zip",
+      "bytes": 341329,
+      "sha256": "6a7948e962b68fee936b3788833a0940b2ad116d66efe6ff4ab41074d0d05c90",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry\\trace.zip",
+      "bytes": 131441,
+      "sha256": "b15bb719cd4a96bc948a756622cc7f4efc9d98117ca4be3e41d8cca1a8231075",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-49e26-xt-after-committed-deletion\\trace.zip",
+      "bytes": 380348,
+      "sha256": "201e4e927d61d9a7d49a2885b66b0961cf3073e40c395119226f892aa66afdd7",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths\\trace.zip",
+      "bytes": 271961,
+      "sha256": "afa2196c70a801a1b67078f059a8fc18cebc6ce4f6228fda86edc4c13c0d821a",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings\\trace.zip",
+      "bytes": 569468,
+      "sha256": "65852897fb060043b026038ea41ffd2a8e13345c132904d40e0c5d5828b3f7af",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths\\trace.zip",
+      "bytes": 282190,
+      "sha256": "706fbbbb1191c755ce1233cd6c8f819944e2683ebe3b62e6a4ccad0ff0348dd1",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL\\trace.zip",
+      "bytes": 1474709,
+      "sha256": "153be758b21a2d5655255371664d79569f35f62c3bf10549adee959eba597cb4",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-497cf-urn-ownership-deterministic\\trace.zip",
+      "bytes": 510934,
+      "sha256": "6af53e50e5d39c9148d5214a226bd296dff52eba193726ce98ae15845eacb28f",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic\\trace.zip",
+      "bytes": 485870,
+      "sha256": "eaf3c5bdd8029a60cb70b76af2e9d1f7d61da110a811102fe8b94c0b3ff806b6",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-85caf-background-after-completion\\trace.zip",
+      "bytes": 291070,
+      "sha256": "64dee056b4c5d749adfadf8c1fa3ea1b311cb064701ad6311e707454377f02e4",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-overlay-contract.mo-d1081-background-after-completion\\trace.zip",
+      "bytes": 321898,
+      "sha256": "ff7e749efc164fa82019d2d3f62cf23e85cd3fde67186016b46f8ee7fa377a4b",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-0b345--approval-state-independent\\trace.zip",
+      "bytes": 955598,
+      "sha256": "f4d2de03ea348edea51e6ccab534ba2409a258087750facd6378cf29e5c02937",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\trace.zip",
+      "bytes": 1140002,
+      "sha256": "b5c4fadd355288beddbf900abc093e5ea62bddc8ffad541708322d3231889ded",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\trace.zip",
+      "bytes": 837266,
+      "sha256": "15221f550719f587d433715df7684a6afe0c44bf67828ddb282b17eca692f57c",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\baseline-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-92a88--approval-state-independent\\trace.zip",
+      "bytes": 1655245,
+      "sha256": "f1bc94d7a3fd3ff09df7ae77bf4a2d46af86af3683111f7acdc11cc5bfefb77b",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-1a450-es-layers-and-focus-restore\\trace.zip",
+      "bytes": 2997414,
+      "sha256": "f1f06808dbddbf22b394192cd29bdcad248fb0e658293c55097bfacf3921d82e",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-1b203--top-layers-and-containment\\trace.zip",
+      "bytes": 3474190,
+      "sha256": "aa04bc5bc0edcbd1b647c78caf1181b0b9d21b57f7dd7338a1c39431c67749cc",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en\\trace.zip",
+      "bytes": 417741,
+      "sha256": "2411b81082261342ba34ece2273b335884103f9f6a2990a699a5a906b015f7b5",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN\\trace.zip",
+      "bytes": 365553,
+      "sha256": "6d1ba739abc7302c26bf90c403707818b91658472b7fde4561fb68a6286400e9",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-01c54-nt-through-a-failed-refresh\\trace.zip",
+      "bytes": 676059,
+      "sha256": "e0162020346015da088f7da2371a208cc4ce484c1ad16e63946c200641db9762",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island\\trace.zip",
+      "bytes": 532604,
+      "sha256": "0b720bac0388488ea9d03969b911d0c66e08a3409a71b781be9ff53d3059ee14",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-21d4d-cus-through-refresh-failure\\trace.zip",
+      "bytes": 718492,
+      "sha256": "38a387a41430a1b6d634ed3367fae99faa5046cef728e54c22fc1086760bd52c",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-692a7-ace-through-refresh-failure\\trace.zip",
+      "bytes": 117593,
+      "sha256": "487f931f85818701ab3bd71b38923698ae2d4b19ff064e9624bb89255d967b42",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island\\trace.zip",
+      "bytes": 683746,
+      "sha256": "11683414130a27c9cb41c1e73dabbdc9eaef72d80ca86fdfaf214e183c7be9d4",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-9a035-hout-focusable-placeholders\\trace.zip",
+      "bytes": 593762,
+      "sha256": "f2e614361969582a0c3c0a016f1ef428c00f3e02488dfa0edd5c7fa84694ae53",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-a0ce2-hout-focusable-placeholders\\trace.zip",
+      "bytes": 798720,
+      "sha256": "1c182d1e434db63e2bc328352b6589cdadc47701d6800697f19496ede0cb1456",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-a18c7-y-and-null-downstream-paths\\trace.zip",
+      "bytes": 2153878,
+      "sha256": "44f3c6fc0b32478ead13e060dfe23884c1ec063c248f807347df1213c1e02a60",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island\\trace.zip",
+      "bytes": 968011,
+      "sha256": "fec5be8b39162b816031f56fa1e9da6b2539585be0d6f845c7f0eb8518189580",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-f2657-hout-focusable-placeholders\\trace.zip",
+      "bytes": 730905,
+      "sha256": "c8ba32d0af3654914cc9e8c25e26167ed91cabaf0ef700cd286c3565a614cad3",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-loading-states.mock-f72b5-tates-without-stale-actions\\trace.zip",
+      "bytes": 10392858,
+      "sha256": "6b13d57cf8bbdcadbe1023f97e1582b33c4e184bcbde8138b356ac1b9778dcd2",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible\\trace.zip",
+      "bytes": 126342,
+      "sha256": "878ac204289dfb15e06fa714c37aedc0f8f0eccd7d1fc9f3ac5442d8bd3ccb5f",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry\\trace.zip",
+      "bytes": 317393,
+      "sha256": "37ad047dbf1b3dfe7fb95abd81eac7fb6761361785be02431abfe1a06376b819",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-31d93-related-Operations-requests\\trace.zip",
+      "bytes": 374046,
+      "sha256": "84be9ab85804fe170688ffb54b3b82a0bc26f9c8b0a327dab0405feda192f4a1",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry\\trace.zip",
+      "bytes": 131370,
+      "sha256": "1100caa70b9bfd3f2d6b0bc1507756297edb4755bc9c63e939154421f7cafc48",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-49e26-xt-after-committed-deletion\\trace.zip",
+      "bytes": 377375,
+      "sha256": "3a088b31dd5099e4fd53fc7b6b482673ce7d86909bc2276dbf38289bdb8e7897",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths\\trace.zip",
+      "bytes": 313646,
+      "sha256": "09db0de536a804f7cbbd2af99d66e00dadd72acd09231fbd62812a7eb11f2d6b",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings\\trace.zip",
+      "bytes": 556708,
+      "sha256": "55463e748d989eeeeab6b9b1b734068ca5b76327f96ea5420c8506572a188819",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths\\trace.zip",
+      "bytes": 313860,
+      "sha256": "1d668b8551701ed601ab01c300dae38619c3f30b749cc7c22eb24f0ea43a16f9",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL\\trace.zip",
+      "bytes": 1627005,
+      "sha256": "e300f7b83df0ff4d9ca1a90a1158a4349a91c60b748ec220160798d4bbe07066",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-497cf-urn-ownership-deterministic\\trace.zip",
+      "bytes": 495797,
+      "sha256": "07831b8bf49751e662c1fbc2ec2b9945bb2a21e653b9d4146962153d0bff84c0",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic\\trace.zip",
+      "bytes": 612373,
+      "sha256": "a22e081422f7049cbd4d32683aad6b1247dff405face01b1644dfa35f0fb788c",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-85caf-background-after-completion\\trace.zip",
+      "bytes": 289245,
+      "sha256": "cb3d4c8669ec610dab1969f812ce769a6468db361a3719f3ffeb23b0e4cdf7a1",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-overlay-contract.mo-d1081-background-after-completion\\trace.zip",
+      "bytes": 326292,
+      "sha256": "d633c0ff63379e1a3491fd8101a88d9cf94a4a05a98fd48287e689787ecd2d4e",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-0b345--approval-state-independent\\trace.zip",
+      "bytes": 983960,
+      "sha256": "f5ff3d150306215006ade4204df2849ac99529ec51939f0fab5387e29c3e858f",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic\\trace.zip",
+      "bytes": 1080738,
+      "sha256": "1597a851dd30f53f5a78a8ec3ca9734e705c898b1c062c7f5a668b37269af10c",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic\\trace.zip",
+      "bytes": 808897,
+      "sha256": "bb13d92b27c0b36c07655e804d35d96c9c73325cca69f860c0c7756dd19d0794",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-review\\head-run\\mocked-dev\\output\\mocked-page-hotkeys.mocked-92a88--approval-state-independent\\trace.zip",
+      "bytes": 1649263,
+      "sha256": "f8b19ed380dc7e9718a5dd935b4744e720c7880dc4e657803855be5c020b5671",
+      "reason": "原始 trace/认证状态不提交；必要失败控制台、DOM、截图已另行保全"
+    }
+  ],
+  "secretScan": {
+    "fixtureSecretOrCookieHits": [],
+    "realProviderCredentialsUsed": false
+  },
+  "verification": "逐成员原字节、SHA-256、CRC 与 ZIP.testzip 均一致；独立 verifier 再检查源码 Git blob 与 47 项语义结果"
+}

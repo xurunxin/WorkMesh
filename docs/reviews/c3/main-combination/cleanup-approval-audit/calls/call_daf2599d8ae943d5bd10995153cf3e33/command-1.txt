@@ -1,0 +1,4 @@
+Get-CimInstance Win32_Process -Filter 'ProcessId=30812' | Select-Object ProcessId,CreationDate,CommandLine
+Get-ChildItem -LiteralPath 'C:\Users\xurx\.tds\workspaces\01a11890-f4de-7106-b64d-e1b2c0d4608e\.tmp\c3-main-combination-01a11890' -Force
+Move-Item -LiteralPath 'C:\Users\xurx\.tds\workspaces\01a11890-f4de-7106-b64d-e1b2c0d4608e\.tmp\c3-main-combination-01a11890' -Destination 'C:\Users\xurx\.tds\workspaces\01a11890-f4de-7106-b64d-e1b2c0d4608e\.tmp\c3-main-combination-first-capture'
+python -X utf8 docs/reviews/c3/main-combination/run-checks.py

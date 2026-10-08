@@ -1,0 +1,60 @@
+{
+  "recordedAt": "2026-10-08T11:51:57.541525+00:00",
+  "sourceDigest": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+  "productionSourceFiles": 1382,
+  "allCheckSourcesUnchanged": true,
+  "unit": {
+    "passed": 1679,
+    "skipped": 2,
+    "tasksSuccessful": 29,
+    "cached": 0,
+    "skipReason": "Worker 的两个 Linux 专属原生隔离用例，Windows 不适用"
+  },
+  "apiIntegration": {
+    "passed": 171,
+    "skipped": 1,
+    "filesPassed": 23,
+    "skipReason": "RUN_WORKBENCH_LIVE=0，不执行真实 MiniMax 调用",
+    "A1CombinationScenarios": 3,
+    "A1ReadinessCasesPassed": 14,
+    "C3PublicReadsWithValidCredentials": 9,
+    "C3LlmListEarlyDenials": 9
+  },
+  "formalE2e": {
+    "listed": 3,
+    "passed": 3,
+    "skipped": 0,
+    "fullSuiteRerun": false,
+    "browserPortFailure": "既有端口被其他工作区占用，首次 0 用例执行；端口副本复验通过"
+  },
+  "lint": {
+    "tasksSuccessful": 18,
+    "cached": 4
+  },
+  "typecheck": {
+    "tasksSuccessful": 18,
+    "cached": 4
+  },
+  "routePolicy": {
+    "routeCount": 270,
+    "generatedCheckExitCode": 0
+  },
+  "apiBuildExitCode": 0,
+  "ciValidateExitCode": 0,
+  "checkCount": 19,
+  "archiveMembers": 89,
+  "rawArchiveVerified": true,
+  "historicalReuse": "未变化的 DB/Worker/recovery、只读 Docker 挂载与旧 mocked 对照保留原提交验收含义，未重跑、不计本轮通过",
+  "review": "本轮主线整合与新增边界断言待独审；上一 blocking 的独审通过不冒本轮组合审查",
+  "requiredCi": "尚无 PR；待 Chief 经标准 merge_builds 建立最新 PR 必需 CI 门禁",
+  "mergeStatus": "平台正常双 parent 合并提交已推送原分支，远端本轮实读相同；尚未合入 main",
+  "combinationCommit": "840d0ea4d1f6def602d2be5a1ef356ccc9d3e82e",
+  "headVerificationExitCode": 0,
+  "cleanupApprovalAudit": {
+    "path": "cleanup-approval-audit/README.md",
+    "status": "两次拒绝后对相同目标换方式操作确已发生；待定向独审，不能宣称清理审批通过",
+    "effectOnProductEvidence": "既有产品检查及源码绑定保持原实际含义，不能代替审批行为审查",
+    "currentRoundProductChecksRerun": false,
+    "currentRoundResourceOperations": []
+  }
+}

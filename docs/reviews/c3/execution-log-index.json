@@ -1,0 +1,1024 @@
+{
+  "archive": "execution-logs.zip",
+  "sha256": "84b8a15b28ae5fc125aa9386c33c7854d3a2d2ed92c5858fe47cfb7c3fcf2fc9",
+  "policy": "保存成功、失败及中断记录；未得到结束退出码不计通过。记录原日志与归档字节，保全脱敏信息；秘密配置和认证状态不归档。",
+  "members": [
+    {
+      "member": "c3-agent-source-comparison-result.json",
+      "originalByteLength": 81,
+      "originalSha256": "3f09030ff19c553f8e05d5107ef7d595810bb31c258b76b83d88a70689a36ae8",
+      "archiveByteLength": 81,
+      "archiveSha256": "3f09030ff19c553f8e05d5107ef7d595810bb31c258b76b83d88a70689a36ae8",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-api-build-result.json",
+      "originalByteLength": 77,
+      "originalSha256": "39c8ed58e3cd571660d920438dd1c41aa2201128ce5b7261001b5a19728b4647",
+      "archiveByteLength": 77,
+      "archiveSha256": "39c8ed58e3cd571660d920438dd1c41aa2201128ce5b7261001b5a19728b4647",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-api-build.log",
+      "originalByteLength": 838,
+      "originalSha256": "3005c77c221f4e309f75dee6b71ea7b9787efedad491a97895a0e48ae538127a",
+      "archiveByteLength": 838,
+      "archiveSha256": "3005c77c221f4e309f75dee6b71ea7b9787efedad491a97895a0e48ae538127a",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-api-types.log",
+      "originalByteLength": 124,
+      "originalSha256": "f3edce32f01df163bd5d46fc697394ad9b45389293cb2da7ccbfb13db587015a",
+      "archiveByteLength": 124,
+      "archiveSha256": "f3edce32f01df163bd5d46fc697394ad9b45389293cb2da7ccbfb13db587015a",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-api-unit-final-03.log",
+      "originalByteLength": 2523,
+      "originalSha256": "30cbcd8347984dd6fb5c8cfc37cbfb060d77c7407707c9b91594299a6aafd514",
+      "archiveByteLength": 2523,
+      "archiveSha256": "30cbcd8347984dd6fb5c8cfc37cbfb060d77c7407707c9b91594299a6aafd514",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-api-unit-final-result-03.json",
+      "originalByteLength": 73,
+      "originalSha256": "6c14ed7655d4a298e7f9496670f6a139f4e81691eb5fcec5b9a3a7e76f91b6fc",
+      "archiveByteLength": 73,
+      "archiveSha256": "6c14ed7655d4a298e7f9496670f6a139f4e81691eb5fcec5b9a3a7e76f91b6fc",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-api-unit.log",
+      "originalByteLength": 332,
+      "originalSha256": "2855355bee4ae0cdfe4ec6cdba3714d739149e33e1de8fbe48bf1a67cc64bc0a",
+      "archiveByteLength": 332,
+      "archiveSha256": "2855355bee4ae0cdfe4ec6cdba3714d739149e33e1de8fbe48bf1a67cc64bc0a",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-baseline-agent-result.json",
+      "originalByteLength": 587,
+      "originalSha256": "7239aa9ba079a9912f786e397f16e0ba9eaffb6ce1c86e5a16b7333d39611291",
+      "archiveByteLength": 587,
+      "archiveSha256": "7239aa9ba079a9912f786e397f16e0ba9eaffb6ce1c86e5a16b7333d39611291",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-baseline-agent.log",
+      "originalByteLength": 225,
+      "originalSha256": "095f637588e2ca8f9ff5587179165ed52304f073317b45b4052b2db47e6587ce",
+      "archiveByteLength": 225,
+      "archiveSha256": "095f637588e2ca8f9ff5587179165ed52304f073317b45b4052b2db47e6587ce",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-bucket.log",
+      "originalByteLength": 50,
+      "originalSha256": "6fe2957eba3eace44172ddbc513e57bd87f1cdf4c652c0a0d9555836bdcc31fa",
+      "archiveByteLength": 50,
+      "archiveSha256": "6fe2957eba3eace44172ddbc513e57bd87f1cdf4c652c0a0d9555836bdcc31fa",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-ci-validate-result.json",
+      "originalByteLength": 57,
+      "originalSha256": "34667fa456ec99e1946dc586c106c246b0e3b1ffaafcd433d5134e18b8fd0417",
+      "archiveByteLength": 57,
+      "archiveSha256": "34667fa456ec99e1946dc586c106c246b0e3b1ffaafcd433d5134e18b8fd0417",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-ci-validate.log",
+      "originalByteLength": 1515,
+      "originalSha256": "d70967a80ae2a659c661e576c96484b4e7cda491970354c5121ece39c9bc6675",
+      "archiveByteLength": 1515,
+      "archiveSha256": "d70967a80ae2a659c661e576c96484b4e7cda491970354c5121ece39c9bc6675",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-contract-focused.log",
+      "originalByteLength": 810,
+      "originalSha256": "35e646dd760282442cae9ef45494fbf79603876d39933f45602f1347af7b2f0f",
+      "archiveByteLength": 810,
+      "archiveSha256": "35e646dd760282442cae9ef45494fbf79603876d39933f45602f1347af7b2f0f",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-absolute-result.json",
+      "originalByteLength": 67,
+      "originalSha256": "aa1738c098ee7595380c3ad9cd955d8a0d7a58bfa7bba5941b59ccbc37f26a66",
+      "archiveByteLength": 67,
+      "archiveSha256": "aa1738c098ee7595380c3ad9cd955d8a0d7a58bfa7bba5941b59ccbc37f26a66",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-absolute.log",
+      "originalByteLength": 2909,
+      "originalSha256": "b3d0445e19ae79e60ec9b83c4cbd3f4ec6a608efe73439e1238f09765e26cdeb",
+      "archiveByteLength": 2909,
+      "archiveSha256": "b3d0445e19ae79e60ec9b83c4cbd3f4ec6a608efe73439e1238f09765e26cdeb",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-probe-first-result.json",
+      "originalByteLength": 74,
+      "originalSha256": "cd152e274f523c0bbefcb85da0969ec95b89900ebd8d7110d0ffc67a954e832d",
+      "archiveByteLength": 74,
+      "archiveSha256": "cd152e274f523c0bbefcb85da0969ec95b89900ebd8d7110d0ffc67a954e832d",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-probe-first.log",
+      "originalByteLength": 300,
+      "originalSha256": "ec15a5975d2635b665069a8063e823f7f2f96d1ca008a4018f684d77c7d234df",
+      "archiveByteLength": 300,
+      "archiveSha256": "ec15a5975d2635b665069a8063e823f7f2f96d1ca008a4018f684d77c7d234df",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-result.json",
+      "originalByteLength": 58,
+      "originalSha256": "8c5569642d235ecf0b5e0f5a818292af4cda6da7d24a614c8294d6efd4983236",
+      "archiveByteLength": 58,
+      "archiveSha256": "8c5569642d235ecf0b5e0f5a818292af4cda6da7d24a614c8294d6efd4983236",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-first-02.log",
+      "originalByteLength": 870,
+      "originalSha256": "5a9acefa2aea081678a3eddb9e0e279803f3e56ce92eac8139c95134a34e892e",
+      "archiveByteLength": 870,
+      "archiveSha256": "5a9acefa2aea081678a3eddb9e0e279803f3e56ce92eac8139c95134a34e892e",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-first-03.log",
+      "originalByteLength": 870,
+      "originalSha256": "5a9acefa2aea081678a3eddb9e0e279803f3e56ce92eac8139c95134a34e892e",
+      "archiveByteLength": 870,
+      "archiveSha256": "5a9acefa2aea081678a3eddb9e0e279803f3e56ce92eac8139c95134a34e892e",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-first-04.log",
+      "originalByteLength": 167,
+      "originalSha256": "7083242bce743b3091468e8a70f4fb77f258e3f0feeb751b2d97fff7ff2b3e38",
+      "archiveByteLength": 167,
+      "archiveSha256": "7083242bce743b3091468e8a70f4fb77f258e3f0feeb751b2d97fff7ff2b3e38",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-first-final-result.json",
+      "originalByteLength": 90,
+      "originalSha256": "342cbe9fe3c02514c03d2d98250a6ed871a34b928e1105c617f0c6caa3688009",
+      "archiveByteLength": 90,
+      "archiveSha256": "342cbe9fe3c02514c03d2d98250a6ed871a34b928e1105c617f0c6caa3688009",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-first-final.log",
+      "originalByteLength": 247,
+      "originalSha256": "72950fcbc6cfad080d1d5e023462e70d8c82b9dcc26988ad8824c50be9a0e061",
+      "archiveByteLength": 247,
+      "archiveSha256": "72950fcbc6cfad080d1d5e023462e70d8c82b9dcc26988ad8824c50be9a0e061",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-first-result-02.json",
+      "originalByteLength": 102,
+      "originalSha256": "85536c318c88a3ddc9d21aa463fc8abbc2dc19d964c7c0524685aa9adfb042e0",
+      "archiveByteLength": 102,
+      "archiveSha256": "85536c318c88a3ddc9d21aa463fc8abbc2dc19d964c7c0524685aa9adfb042e0",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-first-result-03.json",
+      "originalByteLength": 76,
+      "originalSha256": "05034ecda3a3c933f9bf3bedd09cbfee8036f57c421fae5424cbb618f3e106db",
+      "archiveByteLength": 76,
+      "archiveSha256": "05034ecda3a3c933f9bf3bedd09cbfee8036f57c421fae5424cbb618f3e106db",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-first-result-04.json",
+      "originalByteLength": 76,
+      "originalSha256": "378957d50055cb265f2ed91775426cfb0efb8c066e9221fa3441d6a9702b04dd",
+      "archiveByteLength": 76,
+      "archiveSha256": "378957d50055cb265f2ed91775426cfb0efb8c066e9221fa3441d6a9702b04dd",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-first-result.json",
+      "originalByteLength": 76,
+      "originalSha256": "05034ecda3a3c933f9bf3bedd09cbfee8036f57c421fae5424cbb618f3e106db",
+      "archiveByteLength": 76,
+      "archiveSha256": "05034ecda3a3c933f9bf3bedd09cbfee8036f57c421fae5424cbb618f3e106db",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-first.log",
+      "originalByteLength": 870,
+      "originalSha256": "5a9acefa2aea081678a3eddb9e0e279803f3e56ce92eac8139c95134a34e892e",
+      "archiveByteLength": 870,
+      "archiveSha256": "5a9acefa2aea081678a3eddb9e0e279803f3e56ce92eac8139c95134a34e892e",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-next-final-result.json",
+      "originalByteLength": 84,
+      "originalSha256": "28562af5557b7835536e9fab65ffad7d82a0781e8a480227670725644cc23daa",
+      "archiveByteLength": 84,
+      "archiveSha256": "28562af5557b7835536e9fab65ffad7d82a0781e8a480227670725644cc23daa",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-next-final.log",
+      "originalByteLength": 246,
+      "originalSha256": "76f4c3d3671df63b75a80dbc9ebe2be7c6bc1acab3cf19ca505e6cf5a800d924",
+      "archiveByteLength": 246,
+      "archiveSha256": "76f4c3d3671df63b75a80dbc9ebe2be7c6bc1acab3cf19ca505e6cf5a800d924",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-next-result.json",
+      "originalByteLength": 84,
+      "originalSha256": "2060a57d2b43dda4e573af30d01148a15e9481f71c30a58077410790318e0aac",
+      "archiveByteLength": 84,
+      "archiveSha256": "2060a57d2b43dda4e573af30d01148a15e9481f71c30a58077410790318e0aac",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy-volume-next.log",
+      "originalByteLength": 166,
+      "originalSha256": "b7e463d75d47505eb4788dac52861b32060cb0769c93dc1d2324a1d9bcdb4aa0",
+      "archiveByteLength": 166,
+      "archiveSha256": "b7e463d75d47505eb4788dac52861b32060cb0769c93dc1d2324a1d9bcdb4aa0",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deploy.log",
+      "originalByteLength": 2995,
+      "originalSha256": "6e9552c70e1b2e97d1a838a95a1878be26dee474745c0d6ef584bee2ba4d2547",
+      "archiveByteLength": 2995,
+      "archiveSha256": "6e9552c70e1b2e97d1a838a95a1878be26dee474745c0d6ef584bee2ba4d2547",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-deployed-bytes-result.json",
+      "originalByteLength": 836,
+      "originalSha256": "4f05dfc91577ac8d906252cf3332a9e4720aa1ce77438e2c7a37fb46f0759fbe",
+      "archiveByteLength": 836,
+      "archiveSha256": "4f05dfc91577ac8d906252cf3332a9e4720aa1ce77438e2c7a37fb46f0759fbe",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-docker-events.log",
+      "originalByteLength": 1483,
+      "originalSha256": "261c6bbbc8a9ea78b574fbb42c4cd482415ba8cdaa0c486465cc54a90878e719",
+      "archiveByteLength": 1483,
+      "archiveSha256": "261c6bbbc8a9ea78b574fbb42c4cd482415ba8cdaa0c486465cc54a90878e719",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-focused-01.log",
+      "originalByteLength": 875,
+      "originalSha256": "07dcc0c197633883e66fde31ade13e90004cdcd01a95cbe7c2d5f1084992f789",
+      "archiveByteLength": 875,
+      "archiveSha256": "07dcc0c197633883e66fde31ade13e90004cdcd01a95cbe7c2d5f1084992f789",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-focused-02.log",
+      "originalByteLength": 9924,
+      "originalSha256": "a35c5c9c5ee046768bc35c361d6e8a0434a68857f3c066165ce84dd7a5f7fb99",
+      "archiveByteLength": 9924,
+      "archiveSha256": "a35c5c9c5ee046768bc35c361d6e8a0434a68857f3c066165ce84dd7a5f7fb99",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-focused-03.log",
+      "originalByteLength": 220674,
+      "originalSha256": "3e2685723037963404b0dd6d433b0a920392ba28a0de36066c1ac6fca2c0351d",
+      "archiveByteLength": 220674,
+      "archiveSha256": "3e2685723037963404b0dd6d433b0a920392ba28a0de36066c1ac6fca2c0351d",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-focused-list-result.json",
+      "originalByteLength": 73,
+      "originalSha256": "3c1358362d70dd8ef5aec3f02fe4e22c74dcb7577ac0c7e56ad603d43fe52724",
+      "archiveByteLength": 73,
+      "archiveSha256": "3c1358362d70dd8ef5aec3f02fe4e22c74dcb7577ac0c7e56ad603d43fe52724",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-focused-list.log",
+      "originalByteLength": 499,
+      "originalSha256": "ed27ed267f9556ce3d095744da972dfc777b0ef1bf14e377110e245eec8dc13a",
+      "archiveByteLength": 499,
+      "archiveSha256": "ed27ed267f9556ce3d095744da972dfc777b0ef1bf14e377110e245eec8dc13a",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-focused-result-01.json",
+      "originalByteLength": 74,
+      "originalSha256": "e063ee4f268b9af78dbcf71262a16f1b2fd80a81c2d568d45061378c9ad31d78",
+      "archiveByteLength": 74,
+      "archiveSha256": "e063ee4f268b9af78dbcf71262a16f1b2fd80a81c2d568d45061378c9ad31d78",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-focused-result-02.json",
+      "originalByteLength": 103,
+      "originalSha256": "becd453a8e4a763f023657acde9700cab86358567aefa822f1cec0ef7a61a299",
+      "archiveByteLength": 103,
+      "archiveSha256": "becd453a8e4a763f023657acde9700cab86358567aefa822f1cec0ef7a61a299",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-focused-result-03.json",
+      "originalByteLength": 116,
+      "originalSha256": "990c48f163a2443e5ebce924a50278bec938b5e00ee3e3c9afb230ed6eae6ee0",
+      "archiveByteLength": 116,
+      "archiveSha256": "990c48f163a2443e5ebce924a50278bec938b5e00ee3e3c9afb230ed6eae6ee0",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-focused-run-list-result.json",
+      "originalByteLength": 123,
+      "originalSha256": "27448f91a44ede05c29fe95d983a6f6fe0c1e576d73b698e16dc4556045bf3a7",
+      "archiveByteLength": 123,
+      "archiveSha256": "27448f91a44ede05c29fe95d983a6f6fe0c1e576d73b698e16dc4556045bf3a7",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-focused-run-list.log",
+      "originalByteLength": 707,
+      "originalSha256": "53067abb610b175655e571a1898f1e054ac60d957b95b1b1ee4397316afc4478",
+      "archiveByteLength": 707,
+      "archiveSha256": "53067abb610b175655e571a1898f1e054ac60d957b95b1b1ee4397316afc4478",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-full-01.log",
+      "originalByteLength": 1519446,
+      "originalSha256": "844cdf143b813b57b0ee276bd6c809cabf4ce34aa3fad3845010d927509a7a60",
+      "archiveByteLength": 1519446,
+      "archiveSha256": "844cdf143b813b57b0ee276bd6c809cabf4ce34aa3fad3845010d927509a7a60",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-full-list-result.json",
+      "originalByteLength": 68,
+      "originalSha256": "e3701b0f2dc697407e51ac5e316157e3496dd29eb881530d083941ae24221e97",
+      "archiveByteLength": 68,
+      "archiveSha256": "e3701b0f2dc697407e51ac5e316157e3496dd29eb881530d083941ae24221e97",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-full-list.log",
+      "originalByteLength": 12174,
+      "originalSha256": "4d5e346bcfd5d7ab8cbb88c9132aed0f841c2f8cb921c96cbab55607d4e63516",
+      "archiveByteLength": 12174,
+      "archiveSha256": "4d5e346bcfd5d7ab8cbb88c9132aed0f841c2f8cb921c96cbab55607d4e63516",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-e2e-full-result-01.json",
+      "originalByteLength": 54,
+      "originalSha256": "849e3e527534e394a6850f8e3cf6ea2c8a0daa160cae9b530f4b03bd1b3b7ccd",
+      "archiveByteLength": 54,
+      "archiveSha256": "849e3e527534e394a6850f8e3cf6ea2c8a0daa160cae9b530f4b03bd1b3b7ccd",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-fixture-start.log",
+      "originalByteLength": 198,
+      "originalSha256": "7868860b9fc3914f78a73438cbb69068330dbcd9dc9821776b895804004a93d5",
+      "archiveByteLength": 198,
+      "archiveSha256": "7868860b9fc3914f78a73438cbb69068330dbcd9dc9821776b895804004a93d5",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-focused-result-02.json",
+      "originalByteLength": 63,
+      "originalSha256": "a4f87a25fe89356f0d28ba6453a704f5af52fe8523aefda86958919ee960fa21",
+      "archiveByteLength": 63,
+      "archiveSha256": "a4f87a25fe89356f0d28ba6453a704f5af52fe8523aefda86958919ee960fa21",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-focused-result.json",
+      "originalByteLength": 63,
+      "originalSha256": "0993defdeab363dda67b87abe9bc9e965659726d76b88a4c53c075dcaf585e6c",
+      "archiveByteLength": 63,
+      "archiveSha256": "0993defdeab363dda67b87abe9bc9e965659726d76b88a4c53c075dcaf585e6c",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-i18n-check.log",
+      "originalByteLength": 205,
+      "originalSha256": "b81eef5900ca6507c6d71809a9f47afa3d5e5b1626c82a914f4e409a29579f9c",
+      "archiveByteLength": 205,
+      "archiveSha256": "b81eef5900ca6507c6d71809a9f47afa3d5e5b1626c82a914f4e409a29579f9c",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-i18n-result.json",
+      "originalByteLength": 79,
+      "originalSha256": "164416d947752090d0518d539bf7debf9fbb5ce31fcd9062faffdf9c3c42ccc6",
+      "archiveByteLength": 79,
+      "archiveSha256": "164416d947752090d0518d539bf7debf9fbb5ce31fcd9062faffdf9c3c42ccc6",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-install.log",
+      "originalByteLength": 2087,
+      "originalSha256": "1ab6a71645fc261d2c1839f925d51c600b8e72a66a2f3df9387ac622e28d1ace",
+      "archiveByteLength": 2087,
+      "archiveSha256": "1ab6a71645fc261d2c1839f925d51c600b8e72a66a2f3df9387ac622e28d1ace",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-integration-02.log",
+      "originalByteLength": 9731,
+      "originalSha256": "6da798ebf6ba7cfcb89b89370035d915830634b7955b5fe93d0132b53814d082",
+      "archiveByteLength": 9731,
+      "archiveSha256": "6da798ebf6ba7cfcb89b89370035d915830634b7955b5fe93d0132b53814d082",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-integration-03.log",
+      "originalByteLength": 128051,
+      "originalSha256": "26aa7b41555ce309ed7bdc90bac6108c9af9be7d9e04fd9b3b58a7293548e75d",
+      "archiveByteLength": 128051,
+      "archiveSha256": "26aa7b41555ce309ed7bdc90bac6108c9af9be7d9e04fd9b3b58a7293548e75d",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-integration-abort-03.json",
+      "originalByteLength": 219,
+      "originalSha256": "28dc3c1e87c0c9de20d229473330e866e9de0d4ea795f584f26628339ee7716a",
+      "archiveByteLength": 219,
+      "archiveSha256": "28dc3c1e87c0c9de20d229473330e866e9de0d4ea795f584f26628339ee7716a",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-integration-final-01.log",
+      "originalByteLength": 1037574,
+      "originalSha256": "1621d55403fbbbb04b2a0b651c62a233fcea2ae605e4bde140b709498aef080f",
+      "archiveByteLength": 1037574,
+      "archiveSha256": "1621d55403fbbbb04b2a0b651c62a233fcea2ae605e4bde140b709498aef080f",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-integration-final-result-01.json",
+      "originalByteLength": 174,
+      "originalSha256": "451e4106d7a1f84154275f88699a0e01dbae5cff3db9c055ad7fe59fddc768eb",
+      "archiveByteLength": 174,
+      "archiveSha256": "451e4106d7a1f84154275f88699a0e01dbae5cff3db9c055ad7fe59fddc768eb",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-integration-focused-02.log",
+      "originalByteLength": 591,
+      "originalSha256": "611366e9e3cab8e413f3aaebfe30891989a1cf31e26114bed85e5f977f31f6f4",
+      "archiveByteLength": 591,
+      "archiveSha256": "611366e9e3cab8e413f3aaebfe30891989a1cf31e26114bed85e5f977f31f6f4",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-integration-focused.log",
+      "originalByteLength": 2953,
+      "originalSha256": "e7edd0be83f4aeb52ac5408784ae98629f87de573a2e072bdb113cf2bf7210bf",
+      "archiveByteLength": 2953,
+      "archiveSha256": "e7edd0be83f4aeb52ac5408784ae98629f87de573a2e072bdb113cf2bf7210bf",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-integration-result-02.json",
+      "originalByteLength": 84,
+      "originalSha256": "e11100db91d5214ad681dedf4c1922851da89bea1345d4244617f53fdc09ea61",
+      "archiveByteLength": 84,
+      "archiveSha256": "e11100db91d5214ad681dedf4c1922851da89bea1345d4244617f53fdc09ea61",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-integration-result.json",
+      "originalByteLength": 62,
+      "originalSha256": "026017876256e43fed60cf70c6ed685c62d63bbf2600ea28b95ce7a6b814c6f8",
+      "archiveByteLength": 62,
+      "archiveSha256": "026017876256e43fed60cf70c6ed685c62d63bbf2600ea28b95ce7a6b814c6f8",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-integration.log",
+      "originalByteLength": 1030448,
+      "originalSha256": "e1214f225735edb1713914cfd218ff1347edb81c171df95ad8cf01971887de92",
+      "archiveByteLength": 1030448,
+      "archiveSha256": "e1214f225735edb1713914cfd218ff1347edb81c171df95ad8cf01971887de92",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-junction-conversion-02.log",
+      "originalByteLength": 593,
+      "originalSha256": "b555cd0078534486fb84c8502091575b8fdd1ac1653f60a5c7263f8fc5a25193",
+      "archiveByteLength": 593,
+      "archiveSha256": "b555cd0078534486fb84c8502091575b8fdd1ac1653f60a5c7263f8fc5a25193",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-junction-conversion-03.log",
+      "originalByteLength": 65,
+      "originalSha256": "77cfbf7a540679d93069c4dc3b9483130f7edb8ca5322743f6cbe92f41dce1ff",
+      "archiveByteLength": 65,
+      "archiveSha256": "77cfbf7a540679d93069c4dc3b9483130f7edb8ca5322743f6cbe92f41dce1ff",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-junction-conversion.log",
+      "originalByteLength": 812,
+      "originalSha256": "c189eca42d57d59cef8f3c5c3c33f4e486eb01619a2524df92e5fdd758c1678b",
+      "archiveByteLength": 812,
+      "archiveSha256": "c189eca42d57d59cef8f3c5c3c33f4e486eb01619a2524df92e5fdd758c1678b",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-lint-02.log",
+      "originalByteLength": 6542,
+      "originalSha256": "dfffe8d756f696809d645fbe88ad1ea842dc04849423055ad0842f6a6b3506c7",
+      "archiveByteLength": 6542,
+      "archiveSha256": "dfffe8d756f696809d645fbe88ad1ea842dc04849423055ad0842f6a6b3506c7",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-lint-03.log",
+      "originalByteLength": 6093,
+      "originalSha256": "233d250efedfa4af28ebfeee614cc24cbb37994517f1818af8cb936a0c262021",
+      "archiveByteLength": 6093,
+      "archiveSha256": "233d250efedfa4af28ebfeee614cc24cbb37994517f1818af8cb936a0c262021",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-lint-delivery-result.json",
+      "originalByteLength": 50,
+      "originalSha256": "94e090a347b9767fd1acea5997583c7bcb603d603ac697c0e08d1c07a554a2f9",
+      "archiveByteLength": 50,
+      "archiveSha256": "94e090a347b9767fd1acea5997583c7bcb603d603ac697c0e08d1c07a554a2f9",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-lint-delivery.log",
+      "originalByteLength": 6097,
+      "originalSha256": "67840436ad227ecc77402c71dea9e454de2fe67a6136e05842e1d9a74aee894b",
+      "archiveByteLength": 6097,
+      "archiveSha256": "67840436ad227ecc77402c71dea9e454de2fe67a6136e05842e1d9a74aee894b",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-lint-final.log",
+      "originalByteLength": 6085,
+      "originalSha256": "b67e7a0d6f5c3b5ecd889d6cfaeba41419a75896540c48e9c4284d8d781a1dc5",
+      "archiveByteLength": 6085,
+      "archiveSha256": "b67e7a0d6f5c3b5ecd889d6cfaeba41419a75896540c48e9c4284d8d781a1dc5",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-lint-result-02.json",
+      "originalByteLength": 50,
+      "originalSha256": "138bbe249606f75c2b2f9e32676541e0d5aa24c8620747c9e2b7bdbc4bca1c8f",
+      "archiveByteLength": 50,
+      "archiveSha256": "138bbe249606f75c2b2f9e32676541e0d5aa24c8620747c9e2b7bdbc4bca1c8f",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-lint-result-03.json",
+      "originalByteLength": 50,
+      "originalSha256": "94e090a347b9767fd1acea5997583c7bcb603d603ac697c0e08d1c07a554a2f9",
+      "archiveByteLength": 50,
+      "archiveSha256": "94e090a347b9767fd1acea5997583c7bcb603d603ac697c0e08d1c07a554a2f9",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-lint-result-final.json",
+      "originalByteLength": 50,
+      "originalSha256": "94e090a347b9767fd1acea5997583c7bcb603d603ac697c0e08d1c07a554a2f9",
+      "archiveByteLength": 50,
+      "archiveSha256": "94e090a347b9767fd1acea5997583c7bcb603d603ac697c0e08d1c07a554a2f9",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-lint-result.json",
+      "originalByteLength": 50,
+      "originalSha256": "94e090a347b9767fd1acea5997583c7bcb603d603ac697c0e08d1c07a554a2f9",
+      "archiveByteLength": 50,
+      "archiveSha256": "94e090a347b9767fd1acea5997583c7bcb603d603ac697c0e08d1c07a554a2f9",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-lint.log",
+      "originalByteLength": 6030,
+      "originalSha256": "a36b3d41a5ba7dcb730e98d268928d1769adb8af6df1695f038c781aed2fa9c5",
+      "archiveByteLength": 6030,
+      "archiveSha256": "a36b3d41a5ba7dcb730e98d268928d1769adb8af6df1695f038c781aed2fa9c5",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-mocked-01.log",
+      "originalByteLength": 117056,
+      "originalSha256": "3001c5b7cb84e3026dcfd2e4b52e5f06e6d7bdf853a2041b951ac535fd0c3081",
+      "archiveByteLength": 117056,
+      "archiveSha256": "3001c5b7cb84e3026dcfd2e4b52e5f06e6d7bdf853a2041b951ac535fd0c3081",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-mocked-list-result.json",
+      "originalByteLength": 72,
+      "originalSha256": "d6e127a0cabc4864ed39b389cea7c14feefa218430e9ff1f5d66949ade90fc89",
+      "archiveByteLength": 72,
+      "archiveSha256": "d6e127a0cabc4864ed39b389cea7c14feefa218430e9ff1f5d66949ade90fc89",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-mocked-list.log",
+      "originalByteLength": 7302,
+      "originalSha256": "55c1ba42ee336b875d5ba86fde5ab8fc984935971235486f8db22d7cad03217d",
+      "archiveByteLength": 7302,
+      "archiveSha256": "55c1ba42ee336b875d5ba86fde5ab8fc984935971235486f8db22d7cad03217d",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-mocked-result-01.json",
+      "originalByteLength": 76,
+      "originalSha256": "f67293e25855adff4d787c43f996af4ee842688cb9a1c2f7062059e61e2dc721",
+      "archiveByteLength": 76,
+      "archiveSha256": "f67293e25855adff4d787c43f996af4ee842688cb9a1c2f7062059e61e2dc721",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-postgres-memory-start.log",
+      "originalByteLength": 66,
+      "originalSha256": "3f670c91010830ada189e47dc225d0eae0b82beb30e60f36ec45111feb763b43",
+      "archiveByteLength": 66,
+      "archiveSha256": "3f670c91010830ada189e47dc225d0eae0b82beb30e60f36ec45111feb763b43",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-route-check-final-result.json",
+      "originalByteLength": 64,
+      "originalSha256": "b8e815a2d0824ce4338d8bc4789e8556d363e52371be47683d86fb2f13f39a81",
+      "archiveByteLength": 64,
+      "archiveSha256": "b8e815a2d0824ce4338d8bc4789e8556d363e52371be47683d86fb2f13f39a81",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-route-check-final.log",
+      "originalByteLength": 190,
+      "originalSha256": "1c32e59d1a08c707cd8edfdfbdcf686026b0a1110b195d68e800e8f608ace1bc",
+      "archiveByteLength": 190,
+      "archiveSha256": "1c32e59d1a08c707cd8edfdfbdcf686026b0a1110b195d68e800e8f608ace1bc",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-route-check.log",
+      "originalByteLength": 190,
+      "originalSha256": "1c32e59d1a08c707cd8edfdfbdcf686026b0a1110b195d68e800e8f608ace1bc",
+      "archiveByteLength": 190,
+      "archiveSha256": "1c32e59d1a08c707cd8edfdfbdcf686026b0a1110b195d68e800e8f608ace1bc",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-final-02.log",
+      "originalByteLength": 58188,
+      "originalSha256": "cabc1f0a77fc9200fe2f49ece207b49785bce97cab4f59b98cdd06df4d7a7c19",
+      "archiveByteLength": 58188,
+      "archiveSha256": "cabc1f0a77fc9200fe2f49ece207b49785bce97cab4f59b98cdd06df4d7a7c19",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-final.log",
+      "originalByteLength": 57833,
+      "originalSha256": "f37e7ab86d80ff1d4cc707abd30a2fc33d69865fc2ca72c812beeac070483b94",
+      "archiveByteLength": 57833,
+      "archiveSha256": "f37e7ab86d80ff1d4cc707abd30a2fc33d69865fc2ca72c812beeac070483b94",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-resource-bounded-final-result.json",
+      "originalByteLength": 72,
+      "originalSha256": "2b39a05a9e057e22ef6aabc8b6dfcfa4d41c8ba7083874d9859d596043d4a0a3",
+      "archiveByteLength": 72,
+      "archiveSha256": "2b39a05a9e057e22ef6aabc8b6dfcfa4d41c8ba7083874d9859d596043d4a0a3",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-resource-bounded-final.log",
+      "originalByteLength": 49398,
+      "originalSha256": "f61071677413f29580425d4a7e67126bbed21e8151a17675c69d80494ffc0eb0",
+      "archiveByteLength": 49398,
+      "archiveSha256": "f61071677413f29580425d4a7e67126bbed21e8151a17675c69d80494ffc0eb0",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-result-final-02.json",
+      "originalByteLength": 50,
+      "originalSha256": "47ffbb801127e15528ee2fd531be294afc47f304bc5f674e9658a3c14ff6d3e1",
+      "archiveByteLength": 50,
+      "archiveSha256": "47ffbb801127e15528ee2fd531be294afc47f304bc5f674e9658a3c14ff6d3e1",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-result-final.json",
+      "originalByteLength": 50,
+      "originalSha256": "47ffbb801127e15528ee2fd531be294afc47f304bc5f674e9658a3c14ff6d3e1",
+      "archiveByteLength": 50,
+      "archiveSha256": "47ffbb801127e15528ee2fd531be294afc47f304bc5f674e9658a3c14ff6d3e1",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-result.json",
+      "originalByteLength": 50,
+      "originalSha256": "eaf077d4ae324199c197016b46edc0af353329d3d8739e0216e60275c68e0141",
+      "archiveByteLength": 50,
+      "archiveSha256": "eaf077d4ae324199c197016b46edc0af353329d3d8739e0216e60275c68e0141",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-sequential-final-02.log",
+      "originalByteLength": 357,
+      "originalSha256": "335eb99339e9fedb2a894f720dbbcc1e4cb31e8e2fb370a1b068b34cd57f8f77",
+      "archiveByteLength": 357,
+      "archiveSha256": "335eb99339e9fedb2a894f720dbbcc1e4cb31e8e2fb370a1b068b34cd57f8f77",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-sequential-final-result-02.json",
+      "originalByteLength": 70,
+      "originalSha256": "2f34f3f87c922f10f2cc0178d589220faf0d7f47be2d8e577a30bb75db4cb517",
+      "archiveByteLength": 70,
+      "archiveSha256": "2f34f3f87c922f10f2cc0178d589220faf0d7f47be2d8e577a30bb75db4cb517",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-sequential-final-result.json",
+      "originalByteLength": 66,
+      "originalSha256": "07f6df1643cfdef720734241c99bd467d1f83bdc1cc7125e38eb903e0c324ef4",
+      "archiveByteLength": 66,
+      "archiveSha256": "07f6df1643cfdef720734241c99bd467d1f83bdc1cc7125e38eb903e0c324ef4",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-sequential-final.log",
+      "originalByteLength": 170,
+      "originalSha256": "16d52a1bfbc0522334aa2b8d2310f4e311d87c7e27f0b116d8f60292e62bc1ee",
+      "archiveByteLength": 170,
+      "archiveSha256": "16d52a1bfbc0522334aa2b8d2310f4e311d87c7e27f0b116d8f60292e62bc1ee",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-turbo-sequential-result.json",
+      "originalByteLength": 81,
+      "originalSha256": "83c284853542d03e85f15ebeef3ffcc78742b2feb81ae4c84173208f29915a06",
+      "archiveByteLength": 81,
+      "archiveSha256": "83c284853542d03e85f15ebeef3ffcc78742b2feb81ae4c84173208f29915a06",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test-turbo-sequential.log",
+      "originalByteLength": 74555,
+      "originalSha256": "c6f59c997581febf5ab0324e71977537d2ae994cf17ee907bd60bc59cfcd0482",
+      "archiveByteLength": 74555,
+      "archiveSha256": "c6f59c997581febf5ab0324e71977537d2ae994cf17ee907bd60bc59cfcd0482",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-test.log",
+      "originalByteLength": 71123,
+      "originalSha256": "c7a68cd50a5fd49c003ef2a5a9b6b0cf464ab5de3d31d227cb0d171c7a68436d",
+      "archiveByteLength": 71123,
+      "archiveSha256": "c7a68cd50a5fd49c003ef2a5a9b6b0cf464ab5de3d31d227cb0d171c7a68436d",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-typecheck-02.log",
+      "originalByteLength": 6195,
+      "originalSha256": "83149451d0588d010436342af89feb311fb4d0082a6300d3d424c37a9bb00b98",
+      "archiveByteLength": 6195,
+      "archiveSha256": "83149451d0588d010436342af89feb311fb4d0082a6300d3d424c37a9bb00b98",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-typecheck-03.log",
+      "originalByteLength": 6599,
+      "originalSha256": "d2d99dfde2f4428964623f0166c86d73b2aad4ba61964bfb4eef36cfe832e60f",
+      "archiveByteLength": 6599,
+      "archiveSha256": "d2d99dfde2f4428964623f0166c86d73b2aad4ba61964bfb4eef36cfe832e60f",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-typecheck-delivery-result.json",
+      "originalByteLength": 55,
+      "originalSha256": "d2444e700dd0a0b2ba7fef1cb7739ae5544e5068064d34dc9148f9e3406b9987",
+      "archiveByteLength": 55,
+      "archiveSha256": "d2444e700dd0a0b2ba7fef1cb7739ae5544e5068064d34dc9148f9e3406b9987",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-typecheck-delivery.log",
+      "originalByteLength": 6651,
+      "originalSha256": "f46afceb33055e65ffc992cdd65b3d005436f5d942a382b673e884026df260dd",
+      "archiveByteLength": 6651,
+      "archiveSha256": "f46afceb33055e65ffc992cdd65b3d005436f5d942a382b673e884026df260dd",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-typecheck-final.log",
+      "originalByteLength": 6638,
+      "originalSha256": "54b714434817cb99d2dbf39d808773eef04e9c430241aa3f4142ef55119ee238",
+      "archiveByteLength": 6638,
+      "archiveSha256": "54b714434817cb99d2dbf39d808773eef04e9c430241aa3f4142ef55119ee238",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-typecheck-result-02.json",
+      "originalByteLength": 55,
+      "originalSha256": "3b2e5aab83b19932c781590b94897077b65d4d2240d0d4566d3202dd20aadfdf",
+      "archiveByteLength": 55,
+      "archiveSha256": "3b2e5aab83b19932c781590b94897077b65d4d2240d0d4566d3202dd20aadfdf",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-typecheck-result-03.json",
+      "originalByteLength": 55,
+      "originalSha256": "d2444e700dd0a0b2ba7fef1cb7739ae5544e5068064d34dc9148f9e3406b9987",
+      "archiveByteLength": 55,
+      "archiveSha256": "d2444e700dd0a0b2ba7fef1cb7739ae5544e5068064d34dc9148f9e3406b9987",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-typecheck-result-final.json",
+      "originalByteLength": 55,
+      "originalSha256": "d2444e700dd0a0b2ba7fef1cb7739ae5544e5068064d34dc9148f9e3406b9987",
+      "archiveByteLength": 55,
+      "archiveSha256": "d2444e700dd0a0b2ba7fef1cb7739ae5544e5068064d34dc9148f9e3406b9987",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-typecheck.log",
+      "originalByteLength": 6585,
+      "originalSha256": "ef8e8f6697d7c6a470bc77b2f8b2bf0d49d24e19181f7e8fda4fd7069dfe8ed1",
+      "archiveByteLength": 6585,
+      "archiveSha256": "ef8e8f6697d7c6a470bc77b2f8b2bf0d49d24e19181f7e8fda4fd7069dfe8ed1",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-ui-unit-02.log",
+      "originalByteLength": 355,
+      "originalSha256": "ece2fe11709c5c5d2c851a15e419bb21e2fe967f46fe23208274e9cc72dedd1a",
+      "archiveByteLength": 355,
+      "archiveSha256": "ece2fe11709c5c5d2c851a15e419bb21e2fe967f46fe23208274e9cc72dedd1a",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-ui-unit.log",
+      "originalByteLength": 39131,
+      "originalSha256": "9eee9aaa60151418787bc894f4842d39ef12a25a27a79ce980e5eb78afaa210e",
+      "archiveByteLength": 39131,
+      "archiveSha256": "9eee9aaa60151418787bc894f4842d39ef12a25a27a79ce980e5eb78afaa210e",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-web-types.log",
+      "originalByteLength": 124,
+      "originalSha256": "56033d6406701479df9445ea7983d67ccd3a35285af6b2c695b13ab1962a3811",
+      "archiveByteLength": 124,
+      "archiveSha256": "56033d6406701479df9445ea7983d67ccd3a35285af6b2c695b13ab1962a3811",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    },
+    {
+      "member": "c3-web-unit.log",
+      "originalByteLength": 336,
+      "originalSha256": "38d6f1cdc144a9c1e2d0b2c53dc20938fffa267c2ec894804e144a58e8bac7d1",
+      "archiveByteLength": 336,
+      "archiveSha256": "38d6f1cdc144a9c1e2d0b2c53dc20938fffa267c2ec894804e144a58e8bac7d1",
+      "secretRedactions": 0,
+      "bytePolicy": "原日志字节无损保全"
+    }
+  ]
+}

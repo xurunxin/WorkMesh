@@ -1,0 +1,101 @@
+{
+  "createdAt": "2026-10-08T11:41:27.282948+00:00",
+  "owner": "c3-main-combination-01a11890-accepted",
+  "temporaryPaths": [
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-main-combination-01a11890-accepted"
+  ],
+  "containers": [
+    {
+      "id": "96e7e1bb7c4515a4c0c95af34a2eb8137a8c4a2b5608a77829b25efa0de427be",
+      "name": "c3-main-combination-01a11890-accepted-pg",
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "created": "2026-10-08T11:41:28.6110051Z",
+      "mounts": [],
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "25489"
+          }
+        ]
+      },
+      "labels": {
+        "workmesh.test-owner": "c3-main-combination-01a11890-accepted"
+      },
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:44:03.242843+00:00"
+      }
+    },
+    {
+      "id": "152f644139215b4ef59d900c6e204e54a3f1d48b1bf7b11856a799dc7c1349d0",
+      "name": "c3-main-combination-01a11890-accepted-redis",
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "created": "2026-10-08T11:41:28.8965784Z",
+      "mounts": [],
+      "ports": {
+        "6379/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "26489"
+          }
+        ]
+      },
+      "labels": {
+        "workmesh.test-owner": "c3-main-combination-01a11890-accepted"
+      },
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:44:03.858901+00:00"
+      }
+    },
+    {
+      "id": "5ba6ab24299d2aa5a75cde32779668d9d7b6e907d500e08c47afefd02d4162ce",
+      "name": "c3-main-combination-01a11890-accepted-s3",
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "created": "2026-10-08T11:41:29.186716Z",
+      "mounts": [],
+      "ports": {
+        "9000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "27489"
+          }
+        ]
+      },
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0",
+        "workmesh.test-owner": "c3-main-combination-01a11890-accepted"
+      },
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T11:44:04.450911+00:00"
+      }
+    }
+  ],
+  "dedicatedImages": [],
+  "dedicatedNetworks": [],
+  "environmentPersistence": "仅子进程；父进程及系统配置未改",
+  "preserved": [
+    "当前工作区、旧 worktree、共享镜像、共享网络及其他任务资源"
+  ],
+  "serviceCleanupFinishedAt": "2026-10-08T11:44:04.452207+00:00",
+  "temporaryCleanup": "必要原件已归档，所属临时路径已逐项删除并复查不存在；见 temporary-cleanup.json"
+}

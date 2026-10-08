@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-10-08T11:08:07.863126+00:00",
+  "verificationCommand": "python -X utf8 docs/reviews/c3/fixtures/verify-regression-evidence.py",
+  "exitCode": 0,
+  "archiveSha256": "8e3718f0a9a0548f11db7265a9e612a84c13e38569f072cae5cbc73df8f933d0",
+  "archiveMembers": 221,
+  "gitBlobs": 1373,
+  "testCasesCompared": 47,
+  "matchingExistingFailures": 32,
+  "newRegressions": 0,
+  "unknownClassification": 0,
+  "cleanupVerifiedAbsent": true,
+  "ciValidate": {
+    "command": "pnpm ci:validate",
+    "exitCode": 0,
+    "archiveUnitTestsPassed": 15
+  },
+  "gitDiffCheck": {
+    "command": "git diff --check",
+    "exitCode": 0
+  },
+  "latestPlatformCI": "待本轮提交后的平台 CI；本地核验不代替该门禁",
+  "independentReview": "待补核"
+}
