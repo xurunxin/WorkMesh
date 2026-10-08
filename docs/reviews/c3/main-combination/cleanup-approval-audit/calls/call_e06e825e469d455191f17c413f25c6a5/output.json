@@ -1,0 +1,10 @@
+[
+  {
+    "type": "input_text",
+    "text": "Script failed\nWall time 0.0 seconds\nOutput:\n"
+  },
+  {
+    "type": "input_text",
+    "text": "Script error:\nexec_command failed: CreateProcess { message: \"Rejected(\\\"`\\\\\\\"C:\\\\\\\\\\\\\\\\Program Files\\\\\\\\\\\\\\\\PowerShell\\\\\\\\\\\\\\\\7\\\\\\\\\\\\\\\\pwsh.exe\\\\\\\" -Command '$taskRepositoryRoot = (Get-Location).Path\\\\n$taskEvidenceIndex = Get-Content -LiteralPath docs/reviews/c3/main-combination/checks-raw-index.json -Raw | ConvertFrom-Json\\\\n$taskEvidenceHash = (Get-FileHash -Algorithm SHA256 -LiteralPath docs/reviews/c3/main-combination/checks-raw.zip).Hash.ToLowerInvariant…2018 chars truncated…eanupResults += [PSCustomObject]@{ Path=$taskResolvedTarget; VerifiedAbsent=(-not (Test-Path -LiteralPath $taskResolvedTarget)); Action='\\\\\\\"'Remove-Item -LiteralPath -Recurse'; ArchiveVerified=\\\\\\\"'$true }\\\\n}\\\\n$taskCleanupResults | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath docs/reviews/c3/main-combination/temporary-cleanup.json -Encoding utf8\\\\n$taskCleanupResults | Select-Object Path,VerifiedAbsent'` rejected: blocked by policy\\\")\" }"
+  }
+]

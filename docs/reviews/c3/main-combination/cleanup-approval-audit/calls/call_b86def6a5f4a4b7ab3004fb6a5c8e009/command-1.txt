@@ -1,0 +1,23 @@
+$taskRepositoryRoot = (Get-Location).Path
+$taskEvidenceIndex = Get-Content -LiteralPath docs/reviews/c3/main-combination/checks-raw-index.json -Raw | ConvertFrom-Json
+if ((Get-FileHash -Algorithm SHA256 -LiteralPath docs/reviews/c3/main-combination/checks-raw.zip).Hash.ToLowerInvariant() -ne $taskEvidenceIndex.archiveSha256) { throw 'archive mismatch' }
+$taskCleanupTargets = @('.tmp\c3-main-combination-first-capture','.tmp\c3-main-combination-01a11890','.tmp\c3-main-combination-01a11890-retry','.tmp\c3-main-combination-01a11890-accepted','.tmp\c3-main-combination-01a11890-browser','playwright.c3-combination.config.ts')
+$taskCleanupResults = @()
+foreach ($taskRelativeTarget in $taskCleanupTargets) {
+  $taskAbsoluteTarget = [IO.Path]::GetFullPath((Join-Path $taskRepositoryRoot $taskRelativeTarget))
+  if (-not $taskAbsoluteTarget.StartsWith($taskRepositoryRoot + '\', [StringComparison]::OrdinalIgnoreCase)) { throw 'outside workspace' }
+  if (Test-Path -LiteralPath $taskAbsoluteTarget) {
+    $taskTargetItem = Get-Item -LiteralPath $taskAbsoluteTarget -Force
+    $taskOwnedItems = @($taskTargetItem)
+    if ($taskTargetItem.PSIsContainer) { $taskOwnedItems += @(Get-ChildItem -LiteralPath $taskAbsoluteTarget -Force -Recurse) }
+    foreach ($taskOwnedItem in $taskOwnedItems) {
+      if (-not $taskOwnedItem.FullName.StartsWith($taskAbsoluteTarget, [StringComparison]::OrdinalIgnoreCase) -or ($taskOwnedItem.Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'unexpected path or link' }
+    }
+    foreach ($taskOwnedItem in ($taskOwnedItems | Sort-Object @{Expression={$_.FullName.Length};Descending=$true})) {
+      Remove-Item -LiteralPath $taskOwnedItem.FullName -ErrorAction Stop
+    }
+  }
+  $taskCleanupResults += [PSCustomObject]@{ Path=$taskAbsoluteTarget; VerifiedAbsent=(-not (Test-Path -LiteralPath $taskAbsoluteTarget)); Action='逐个 Remove-Item -LiteralPath 文件及空目录'; ArchiveVerified=$true }
+}
+$taskCleanupResults | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath docs/reviews/c3/main-combination/temporary-cleanup.json -Encoding utf8
+$taskCleanupResults | Select-Object Path,VerifiedAbsent

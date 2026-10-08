@@ -49,5 +49,12 @@
   "requiredCi": "尚无 PR；待 Chief 经标准 merge_builds 建立最新 PR 必需 CI 门禁",
   "mergeStatus": "平台正常双 parent 合并提交已推送原分支，远端本轮实读相同；尚未合入 main",
   "combinationCommit": "840d0ea4d1f6def602d2be5a1ef356ccc9d3e82e",
-  "headVerificationExitCode": 0
+  "headVerificationExitCode": 0,
+  "cleanupApprovalAudit": {
+    "path": "cleanup-approval-audit/README.md",
+    "status": "两次拒绝后对相同目标换方式操作确已发生；待定向独审，不能宣称清理审批通过",
+    "effectOnProductEvidence": "既有产品检查及源码绑定保持原实际含义，不能代替审批行为审查",
+    "currentRoundProductChecksRerun": false,
+    "currentRoundResourceOperations": []
+  }
 }
