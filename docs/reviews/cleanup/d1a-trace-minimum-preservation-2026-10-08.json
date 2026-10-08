@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-08T14:00:15.8889268Z",
+  "purpose": "为三个 D1a trace 提供最小、无秘密、机器可核验的保全映射；不复制任何原始 trace 或 raw ZIP 内容。",
+  "sourceMain": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "sanitizedArchive": {
+    "repoPath": "docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-sanitized.zip",
+    "gitBlob": "02c663b7dbdd3c39c891adb99a6908b33bef4ccd",
+    "member": "1-trace.trace",
+    "memberBytes": 1022635,
+    "memberSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+    "redactionReport": "docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-redaction-report.json",
+    "redactionReportGitBlob": "f06c182a55446c9c734176320efbc54c17d5d5e9"
+  },
+  "transformation": {
+    "sourceScript": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\sanitize-d1a-trace.py",
+    "sourceScriptBytes": 8743,
+    "sourceScriptSha256": "0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df",
+    "method": "使用既有脱敏逻辑与资源重命名表在内存中复算，没有运行会写文件的脚本入口。复算输出与 main ZIP 中的目标成员逐字节相同。",
+    "redactedFields": [
+      {"line": 1612, "jsonPath": "/result/value/o/1/v/o/1/v/s", "field": "csrf_token"},
+      {"line": 1612, "jsonPath": "/result/value/o/1/v/o/2/v/s", "field": "csrfToken"}
+    ],
+    "redactedFieldValueCount": 2,
+    "traceSecretValuesPersistedOrLogged": false,
+    "fixtureCredentialLiteralPersistedInThisManifest": false
+  },
+  "rawSources": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-stage0-trace-env07-2\\1-trace.trace",
+      "bytes": 1022701,
+      "sha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+      "presentAtSnapshot": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07\\1-trace.trace",
+      "bytes": 1022701,
+      "sha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+      "presentAtSnapshot": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-trace-07-round2\\1-trace.trace",
+      "bytes": 1022701,
+      "sha256": "17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d",
+      "presentAtSnapshot": true
+    }
+  ],
+  "sourceSet": {
+    "copyCount": 3,
+    "allByteIdentical": true,
+    "minimumOriginalCopiesToRetain": 1,
+    "decision": "保留一份原始快照在原位置；其余副本没有在本阶段删除，需未来重新刷新引用和路径安全后再评估。main 已有脱敏归档，不需要另复制二进制内容。"
+  },
+  "snapshotDifferenceReconciliation": {
+    "historicTransformation": {
+      "sensitiveStringSetSource": "从完整 RAW ZIP 的 resources JSON 收集敏感字符串，再用于 trace 转换。",
+      "rawResourceArchiveSha256": "da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e",
+      "resourceFields": [
+        {"member": "resources/bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json", "jsonPath": "/password", "bytes": 63, "sha256": "104668dfeae350c7f02740beac6d9b66c407534cc09db6b74f7c673b36fcc84b", "valueLength": 19, "matchesMainTestFixture": true},
+        {"member": "resources/428d3ad4971b1acb104802eff03cfb3d45ef6306.json", "jsonPath": "/password", "bytes": 143, "sha256": "44f5ae27809f7c6b766c1053b556815f53e6010c1cb7ffb3d4270301e68af072", "valueLength": 19, "matchesMainTestFixture": true}
+      ],
+      "traceFields": [
+        {"line": 85, "jsonPath": "/snapshot/html/3/3/3/3/2/2/3/2/8/3/1/__playwright_value_", "valueLength": 19, "sourceResourceJsonPath": "/resources/bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json/password"},
+        {"line": 87, "jsonPath": "/snapshot/html/3/3/3/3/2/2/3/2/8/3/1/__playwright_value_", "valueLength": 19, "sourceResourceJsonPath": "/resources/428d3ad4971b1acb104802eff03cfb3d45ef6306.json/password"}
+      ],
+      "outputBytes": 1022617,
+      "outputSha256": "1d215abbf153aa2a2193c30d9a5ac63b86fc1242e1218444e657874c11b3f798",
+      "differenceExplanation": "把两处 19 B 的 snapshot 值替换为 10 B 的 [REDACTED]，各少 9 B，合计输出比保留测试夹具值的 trace 多减 18 B。"
+    },
+    "traceOnlyTransformation": {
+      "sensitiveStringSetSource": "仅从 trace 本身收集敏感值（如 line 1612 的两处 CSRF 字段），不从 resources JSON 扩展敏感字符串集合。",
+      "outputBytes": 1022635,
+      "outputSha256": "f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350",
+      "equalsMainSanitizedZipMember": true
+    },
+    "testFixtureProof": {
+      "mainCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "sourcePath": "apps/web/e2e/stage0.spec.ts",
+      "gitBlob": "e4c0ccadabec58a1e6651993a963bf4178764f5b",
+      "line": 185,
+      "fixtureLiteralBytes": 19,
+      "literalPersistedInThisManifest": false,
+      "context": "Playwright E2E Stage 0 browser acceptance test fills the local install form for its test workspace/user; test source uses local loopback URLs and a .test email. This is a deterministic test fixture value, not a production credential.",
+      "retentionBasis": "The test fixture source is already tracked and reachable at the exact recorded main commit; preserving the value in the sanitized trace maintains the accepted browser snapshot, while the two raw CSRF values remain redacted and undisclosed."
+    },
+    "rawValuesWrittenIntoThisRecord": false
+  },
+  "historicalObservation": "此前记录的 1,022,617 B 输出及 line 85/87 差异继续保留，不改写。它由从整个 RAW ZIP resources 收集敏感串的转换重现；两处 19 B snapshot 值来自 main 已跟踪的 Stage 0 E2E 测试夹具，替换为 [REDACTED] 后各缩短 9 B。当前 trace-only 转换只使用 trace 内敏感值，输出 1,022,635 B 并与 main ZIP 成员逐字节匹配。",
+  "rawZipDisposition": "两份敏感 raw ZIP 留在原位置，未复制入仓库。"
+}
