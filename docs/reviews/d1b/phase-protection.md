@@ -16,7 +16,11 @@
 
 18 个既有暗色 ref 别名单独列出同值重绑定；canvas/card/elevated、hover/secondary、tertiary/dim 不混并暗色。旧槽没有暗色覆盖时保留继承其原 root 值；同值不仅验证字面值，也验证 browser computed style。panel/border/gradient/focus-ring 公式在 root、显式 light/dark、compact 及 light/dark+compact 边界重声明；light 子树重声明亮色新槽，避免继承暗色父级的解析结果。组合及嵌套主题验证来源 token 在本层解析，不继承父层已解析的结果。
 
-`--wm-status-color` 保留 `workflow.tsx`／`work-item.tsx` 的实例生产者及服务器自定义颜色，fallback 转到新语义槽；`--wm-dismissal-depth` 保留 overlay 的生产者、清除与消费。所有依赖（包括嵌套 fallback）要求可达声明或登记生产者；任一作用域中未知依赖、自引用或循环失败。AgentWorkspace 的七类非 wm fallback 与硬编码值单列，不漏扫。
+三个实例变量全部保留，生产者、清除、消费者与 fallback 在映射的 `runtimeDefinitions` 单列。`--wm-status-color` 保留 `workflow.tsx`／`work-item.tsx` 的实例生产者及服务器自定义颜色，空颜色 fallback 从 muted 转到 secondary；React style 随更新／卸载管理，不虚构显式清除调用。`--wm-dismissal-depth` 保留 overlay 的 dismissal 栈生产者与清除，四类浮层消费的默认深度仍为 `0`。
+
+`--wm-overlay-depth` 保留 modal 实例深度：`updateLayerDepths` 对 backdrop 设置 `String(index * 2)`，`unregisterModal` 清除该属性；`.wm-overlay` 使用 `calc(var(--wm-overlay-z) + var(--wm-overlay-depth, 0))`，深度 fallback 保持 `0`，基础 overlay-z 槽按退役映射迁名。前置脚本核对生产／清除／消费及 fallback，删除任一标记的负例必须失败；弹层创建、嵌套、关闭的实际 z-index、depth 清除与回焦仍须在对应迁移面和全局复验执行，当前不冒称运行时行为通过。
+
+所有依赖（包括嵌套 fallback）要求可达声明或登记生产者；任一作用域中未知依赖、自引用或循环失败。CSS 中全部未声明 wm 依赖必须恰好对应三个登记实例变量，不能因 fallback 存在漏验。AgentWorkspace 的七类非 wm fallback 与硬编码值单列，不漏扫。
 
 ## 删除前置与失败用例
 
@@ -24,4 +28,6 @@
 
 只有矩阵全部适用行的迁移前／后截图、diff、实际 computed／焦点／导航与人工视觉意见通过，且全局对全部组合复验通过，才移除临时分支。统一后全矩阵再次检查无意外变化，全消费扫描为零才删除 root/dark/density 的旧声明和候选旧名。清理后的扫描还须证明无退役声明、无悬空／循环以及 runtime 完整，随后执行本轮必需回归与最新 Required CI、独审及合入。
 
-文档核验命令：`node docs/reviews/d1b/verify-preflight.mjs`。此命令不启动服务、不改产品、不代表动态／视觉验收；当前清旧门禁必须为关闭。
+只读核验命令为 `node docs/reviews/d1b/verify-preflight.mjs`；脚本同时核对当前 `plan-binding.json.artifacts` 与实际 index blob、工作区原字节。旧快照记录只留在 `historicalArtifactBindings`，不参与当前成果校验。
+
+留证运行使用 `node docs/reviews/d1b/run-preflight.mjs`，记录该子命令的准确 executable／args／cwd、真实退出码、runtime、开始／结束与耗时，以及全源码、脚本／映射和当前绑定等输入的执行前后双字节指纹。子进程 stdout／stderr 原字节及哈希、skip、服务准备／恢复／清理单列；执行输出不纳入自身输入，避免哈希循环。用 `node docs/reviews/d1b/run-preflight.mjs --check-record` 独立复核报告原件、前后相等及当前输入仍一致。这些命令不启动服务、不改产品、不代表动态／视觉验收；当前清旧门禁必须为关闭。

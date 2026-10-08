@@ -20,6 +20,70 @@ const dependencies = text => [...text.matchAll(/var\(\s*(--[\w-]+)/g)].map(match
 const declarations = css => [...withoutComments(css).matchAll(/([^{}]+)\{([^{}]*)\}/gs)].flatMap(block =>
   [...block[2].matchAll(/(--wm-[\w-]+)\s*:\s*([^;]+);/g)].map(match => ({ selector: block[1].trim().replace(/\s+/g, ' '), token: match[1], value: match[2].trim() })))
 
+// 读取实际 index blob；提交后它与 HEAD 一致。工作区字节单独保存，不能用 LF 假设替代。
+export function fingerprintFiles(paths) {
+  const index = new Map(git('ls-files', '--stage').toString().trim().split(/\r?\n/).map(line => {
+    const match = /^\d+ ([a-f0-9]+) 0\t(.+)$/.exec(line)
+    assert(match, `index 不可读或有冲突：${line}`)
+    return [match[2], match[1]]
+  }))
+  const sorted = [...new Set(paths)].sort()
+  const ids = [...new Set(sorted.map(path => {
+    assert(index.has(path), `文件必须先加入 index：${path}`)
+    return index.get(path)
+  }))]
+  const batch = gitWithInput(ids.join('\n') + '\n')
+  const blobs = new Map()
+  let offset = 0
+  for (const id of ids) {
+    const end = batch.indexOf(10, offset)
+    const header = /^([a-f0-9]+) blob (\d+)$/.exec(batch.subarray(offset, end).toString())
+    assert(header && header[1] === id, `无法读取 blob ${id}`)
+    const size = Number(header[2])
+    const bytes = batch.subarray(end + 1, end + 1 + size)
+    assert.equal(bytes.length, size)
+    assert.equal(batch[end + 1 + size], 10)
+    blobs.set(id, bytes)
+    offset = end + 2 + size
+  }
+  assert.equal(offset, batch.length)
+  return sorted.map(path => {
+    const bytes = readFileSync(resolve(root, path))
+    const gitBlob = index.get(path)
+    const gitBytes = blobs.get(gitBlob)
+    return { path, gitBlob, gitBytes: gitBytes.length, gitSha256: sha(gitBytes), worktreeBytes: bytes.length, worktreeSha256: sha(bytes), bytesEqual: bytes.equals(gitBytes), gitObjectKind: 'actual-index-blob' }
+  })
+}
+
+function gitWithInput(input) {
+  return execFileSync('git', ['cat-file', '--batch'], { cwd: root, input, maxBuffer: 64 * 1024 * 1024 })
+}
+
+export function verifyArtifactBindings(artifacts) {
+  assert(artifacts.length > 0, '当前成果绑定不能为空')
+  const actual = fingerprintFiles(artifacts.map(artifact => artifact.path))
+  assert.deepEqual(actual, artifacts, '当前成果的 Git/index 与工作区双字节绑定过期')
+  return actual
+}
+
+export function assertRuntimeDefinitions(definitions, readSource = read) {
+  for (const definition of definitions) {
+    for (const marker of [...definition.producers, ...definition.cleanup, ...definition.consumers]) {
+      assert(withoutComments(readSource(marker.file)).includes(marker.expression), `${definition.token} 缺少生产者／清除／消费：${marker.expression}`)
+    }
+    if (definition.fallback) assert(withoutComments(readSource(definition.fallback.file)).includes(definition.fallback.expression), `${definition.token} fallback 缺失`)
+  }
+}
+
+export function sourcePaths() {
+  return git('ls-files', 'apps/web', 'packages/ui/src').toString().trim().split(/\r?\n/).filter(path => /\.(css|tsx?|mjs|jsx?)$/.test(path) && !path.includes('/baselines/'))
+}
+
+export function executionInputPaths() {
+  const binding = json('docs/reviews/d1b/plan-binding.json')
+  return [...new Set([...sourcePaths(), ...binding.artifacts.map(artifact => artifact.path), ...registry.sources.map(input => input.path), ...binding.inputFiles.map(input => input.path), ...binding.matrixInputs.map(input => input.path), 'docs/reviews/d1b/plan-binding.json'])].sort()
+}
+
 export function validateGraph(values, producers = []) {
   const visiting = new Set()
   const visited = new Set(producers)
@@ -41,6 +105,9 @@ export function assertDeletionSafe(names, references) {
 }
 
 export function verify() {
+  const binding = json('docs/reviews/d1b/plan-binding.json')
+  const artifactBinding = verifyArtifactBindings(binding.artifacts)
+  assert.equal(binding.currentPlanID, source.currentPlanID)
   assert.equal(source.planBody, read('docs/plan/d1b-token-consumer-migration.md'))
   assert.equal(sha(source.planBody), source.readback.bodyUtf8Sha256)
   assert.equal(registry.currentPlanID, source.currentPlanID)
@@ -53,6 +120,11 @@ export function verify() {
   const mapping = new Map(registry.entries.map(e => [e.from, e.to]))
   const rewrite = value => value.replace(/--wm-[\w-]+/g, name => mapping.get(name) ?? name)
   const current = declarations(read(cssPath))
+  assert.deepEqual(registry.runtimeDefinitions.map(definition => definition.token), registry.retainedRuntime)
+  assertRuntimeDefinitions(registry.runtimeDefinitions)
+  const declaredNames = new Set(current.map(declaration => declaration.token))
+  const undefinedCssDependencies = [...new Set(dependencies(withoutComments(read(cssPath))).filter(name => !declaredNames.has(name)))].sort()
+  assert.deepEqual(undefinedCssDependencies, [...registry.retainedRuntime].sort(), 'CSS 实例依赖登记不完整')
   const rootValues = new Map(current.filter(d => d.selector === ':root' && d.token.startsWith('--wm-ref-')).map(d => [d.token, d.value]))
   rootValues.delete('--wm-ref-danger-candidate')
   for (const entry of emitted) {
@@ -102,15 +174,12 @@ export function verify() {
   assert.equal(matrix.globalReplays.length, matrix.rows.length)
 
   // 保守清单包含测试中的预期字符串；最终阶段账本须按 AST 语义细化，不能据词法计数放行。
-  const candidates = git('ls-files', 'apps/web', 'packages/ui/src').toString().trim().split(/\r?\n/).filter(path => /\.(css|tsx?|mjs|jsx?)$/.test(path) && !path.includes('/baselines/'))
+  const candidates = sourcePaths()
   const retired = new Set([...registry.entries.map(e => e.from), ...registry.additionalRetirements.map(e => e.from), ...registry.nonWmConsumers.map(e => e.from)])
   const references = []
-  const files = []
+  const files = fingerprintFiles(candidates)
   for (const path of candidates) {
     const bytes = readFileSync(resolve(root, path))
-    const blob = git('rev-parse', `HEAD:${path}`).toString().trim()
-    const gitBytes = git('cat-file', 'blob', blob)
-    files.push({ path, worktreeBytes: bytes.length, worktreeSha256: sha(bytes), gitBlob: blob, gitBytes: gitBytes.length, gitSha256: sha(gitBytes), bytesEqual: bytes.equals(gitBytes) })
     const lines = withoutComments(bytes.toString('utf8')).split(/\r?\n/)
     const identities = new Map()
     lines.forEach((line, index) => {
@@ -132,8 +201,37 @@ export function verify() {
   assert.throws(() => validateGraph(new Map([['--a', 'var(--b)'], ['--b', 'var(--a)']])), /循环依赖/)
   assert.throws(() => validateGraph(new Map([['--wm-ref-text-secondary', 'var(--wm-ref-text-secondary)']])), /循环依赖/)
   assert.throws(() => validateGraph(new Map([['--consumer', 'var(--wm-status-color)']])), /未知依赖/)
-  validateGraph(new Map([['--consumer', 'var(--wm-status-color)']]), registry.retainedRuntime)
-  return { currentPlanID: source.currentPlanID, status: '静态前置核验通过；动态／视觉／CI 未运行', legacySlots: registry.entries.length, legacyDeclarations: baseline.declarations.length, graphScopesChecked: ['root', 'dark', 'compact', 'dark+compact'], negativeGuardsChecked: ['旧消费未零禁止删除', '嵌套未知依赖', '相互循环', '合并自引用', 'runtime 定义缺失'], matrixRows: matrix.rows.length, globalReplays: matrix.globalReplays.length, lexicalInventoryPolicy: '保守词法引用清单，不是已实现的 AST 阶段账本；包含声明和测试预期字符串，不能将总数直接作为消费数', cleanupAllowed: false, files, references }
+  for (const definition of registry.runtimeDefinitions) {
+    const values = new Map([['--consumer', `var(${definition.token}, 0)`]])
+    assert.throws(() => validateGraph(values), /未知依赖/)
+    validateGraph(values, registry.retainedRuntime)
+    const firstProducer = definition.producers[0]
+    assert.throws(() => assertRuntimeDefinitions([definition], path => read(path).replace(firstProducer.expression, '')), /缺少生产者/)
+    if (definition.cleanup.length > 0) {
+      const marker = definition.cleanup[0]
+      assert.throws(() => assertRuntimeDefinitions([definition], path => read(path).replace(marker.expression, '')), /缺少生产者／清除/)
+    }
+    if (definition.fallback) {
+      const marker = definition.fallback
+      assert.throws(() => assertRuntimeDefinitions([definition], path => read(path).replaceAll(marker.expression, '')), /fallback 缺失|缺少生产者／清除／消费/)
+    }
+  }
+  const staleArtifact = { ...artifactBinding[0], worktreeSha256: '0'.repeat(64) }
+  assert.throws(() => verifyArtifactBindings([staleArtifact]), /绑定过期/)
+  return {
+    currentPlanID: source.currentPlanID, status: '静态前置核验通过；动态／视觉／CI 未运行',
+    legacySlots: registry.entries.length, legacyDeclarations: baseline.declarations.length,
+    graphScopesChecked: ['root', 'dark', 'compact', 'dark+compact'],
+    negativeGuardsChecked: ['旧消费未零禁止删除', '嵌套未知依赖', '相互循环', '合并自引用', 'runtime 定义缺失', '各实例生产者／清除／fallback 缺失', '当前成果绑定过期'],
+    runtimeDefinitionsChecked: registry.runtimeDefinitions,
+    matrixRows: matrix.rows.length, globalReplays: matrix.globalReplays.length,
+    lexicalInventoryPolicy: '保守词法引用清单，不是已实现的 AST 阶段账本；包含声明和测试预期字符串，不能将总数直接作为消费数',
+    cleanupAllowed: false,
+    artifactBinding,
+    inputBinding: fingerprintFiles(executionInputPaths()),
+    executionRecord: 'docs/reviews/d1b/evidence/preflight-execution.json',
+    files, references,
+  }
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

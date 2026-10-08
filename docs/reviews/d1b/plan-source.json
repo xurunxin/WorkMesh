@@ -62,7 +62,7 @@
     "bodyBytes": 14344,
     "sourceLimitations": "todos Saved plan 工具尾部截断；全文来自已审精确快照及用户注入全文，非平台原始存储字节；版本字段仍缺失，保留 null"
   },
-  "previousSourceLimitations": "已审全文/15输入/planVersion=null 不重开；本轮缺口仅新 ID 尚未产生，不能旧 ID 绑定新正文",
+  "previousSourceLimitations": "历史修订轮次曾待新 ID；该限制已在实施读回 doc:nnchKV-O25SWiYsj3hXgm 时解除。已审全文／15 输入／版本 null 来源限制保持闭合。",
   "nextBindingStep": "已读回，无需再次保存平台计划",
   "historicalSource": {
     "commit": "7f6ae163c4d4934626c64ecef5ce2f30776e6cc6",

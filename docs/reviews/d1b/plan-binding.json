@@ -36,6 +36,76 @@
   },
   "artifacts": [
     {
+      "path": "apps/web/features/navigation/theme-token-migration.json",
+      "gitBlob": "832d6ca2c2671c7ac47514e1671d268f9fd5dde4",
+      "gitBytes": 93215,
+      "gitSha256": "8afef2e224b955a5ed07c78efe1bab48743f320129a7eeebadb4d14b588e71f0",
+      "worktreeBytes": 93215,
+      "worktreeSha256": "8afef2e224b955a5ed07c78efe1bab48743f320129a7eeebadb4d14b588e71f0",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+      "gitBlob": "44d3638662ceb67535b9464098f06483f3d4bdc9",
+      "gitBytes": 21323,
+      "gitSha256": "90d7ec6d439b20dbc1363b32809677d877ae85ca0aa2901fb7db6699b655abef",
+      "worktreeBytes": 21594,
+      "worktreeSha256": "62b2824a815406b2e680eb95bc03c6da1e3969575daa043cbca03b21c0080e9f",
+      "bytesEqual": false,
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/12.md",
+      "gitBlob": "74e0da45990a8ffd5962b2f0a7c495f31a8bf939",
+      "gitBytes": 5991,
+      "gitSha256": "9678f2e1081498bc282cb8a45c72423849e011d333cf9f7813cc8b5e7118ef05",
+      "worktreeBytes": 5991,
+      "worktreeSha256": "9678f2e1081498bc282cb8a45c72423849e011d333cf9f7813cc8b5e7118ef05",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/13.md",
+      "gitBlob": "78020c906cbea8b2519046efdc884b7bd21d7f9f",
+      "gitBytes": 4690,
+      "gitSha256": "68b591a60b45c9fd5ffec3a673638a6b5b8d38f38ad98605006d24f0b3d35988",
+      "worktreeBytes": 4690,
+      "worktreeSha256": "68b591a60b45c9fd5ffec3a673638a6b5b8d38f38ad98605006d24f0b3d35988",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/14.md",
+      "gitBlob": "beea3fc5a56b1e19179940aa3e513fb136626f84",
+      "gitBytes": 4672,
+      "gitSha256": "c481e737ac4090fcfced24d2ee48a2ee35e7c35cd65781ddddee1b46ab6c3fb9",
+      "worktreeBytes": 4672,
+      "worktreeSha256": "c481e737ac4090fcfced24d2ee48a2ee35e7c35cd65781ddddee1b46ab6c3fb9",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/21.md",
+      "gitBlob": "02bb618ccaf5ec1c7872fdd426c629dc2d582507",
+      "gitBytes": 11494,
+      "gitSha256": "88020fb8888b672566afb3e484d0931a4c714e894865cefceb01e8816bc4182e",
+      "worktreeBytes": 11494,
+      "worktreeSha256": "88020fb8888b672566afb3e484d0931a4c714e894865cefceb01e8816bc4182e",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/22.md",
+      "gitBlob": "e121ac4baad29f9c8ddd6ea21ec2785f2788af67",
+      "gitBytes": 5046,
+      "gitSha256": "a0701b423b0ce442d85a231a63f4b14a1cbfb24a6164449622b7a05b42c5eac5",
+      "worktreeBytes": 5046,
+      "worktreeSha256": "a0701b423b0ce442d85a231a63f4b14a1cbfb24a6164449622b7a05b42c5eac5",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
       "path": "docs/plan/d1b-token-consumer-migration.md",
       "gitBlob": "2d5824ffd1593db1325287d4ec92613f5e3aef51",
       "gitBytes": 14344,
@@ -43,27 +113,87 @@
       "worktreeBytes": 14344,
       "worktreeSha256": "91a9eb7451ff2799754d4207863c67cff09112d1470b5ad1049066309f8dbdb8",
       "bytesEqual": true,
-      "gitObjectKind": "actual-staged-blob"
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/reviews/d1b/evidence/implementation-readback.txt",
+      "gitBlob": "432b68fde639dc9a668afb28c4a10a7a91fbf939",
+      "gitBytes": 14882,
+      "gitSha256": "01f0fc647e58c9ee9a91a771420274921c115f649a9827ec7cc3018da6cb86e8",
+      "worktreeBytes": 14882,
+      "worktreeSha256": "01f0fc647e58c9ee9a91a771420274921c115f649a9827ec7cc3018da6cb86e8",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/reviews/d1b/phase-protection.md",
+      "gitBlob": "23ac4a6ee03625836237d04ac56956c1a51e0e06",
+      "gitBytes": 5983,
+      "gitSha256": "85d785c454b25b114021ed8d03c2a8aaf2fde8ba040e1119131e709c9354ffa7",
+      "worktreeBytes": 5983,
+      "worktreeSha256": "85d785c454b25b114021ed8d03c2a8aaf2fde8ba040e1119131e709c9354ffa7",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
     },
     {
       "path": "docs/reviews/d1b/plan-source.json",
-      "gitBlob": "138b04991c06dbb2a19ce909d0f8d03e5c78bc87",
-      "gitBytes": 21057,
-      "gitSha256": "1e888897a8efc68c8ee0e08b50f952b3460258f4632cb7ae65e16b3177ed981d",
-      "worktreeBytes": 21057,
-      "worktreeSha256": "1e888897a8efc68c8ee0e08b50f952b3460258f4632cb7ae65e16b3177ed981d",
+      "gitBlob": "5c28c1b7795b2146caa42e0c6b263bea062db1d0",
+      "gitBytes": 21123,
+      "gitSha256": "d6ae8c4cdb727a4514e04466af03eac29cb6a87baf315786c944e1a37b53cfcb",
+      "worktreeBytes": 21123,
+      "worktreeSha256": "d6ae8c4cdb727a4514e04466af03eac29cb6a87baf315786c944e1a37b53cfcb",
       "bytesEqual": true,
-      "gitObjectKind": "actual-staged-blob"
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/reviews/d1b/run-preflight.mjs",
+      "gitBlob": "4b9ac58783d3a6f0fb4b6f64f96ebf3b1b4dba67",
+      "gitBytes": 4425,
+      "gitSha256": "82b4682df7a0af63171eb792030663ebbd955a870c3e361878c86c78efdb0986",
+      "worktreeBytes": 4425,
+      "worktreeSha256": "82b4682df7a0af63171eb792030663ebbd955a870c3e361878c86c78efdb0986",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
     },
     {
       "path": "docs/reviews/d1b/surface-matrix.json",
-      "gitBlob": "0d79f6356112aa7e818c50552a8d52718e9a57ff",
-      "gitBytes": 525319,
-      "gitSha256": "675de038fbeb28df4cbb5947f0404b45f08b3e0d10973154a601d911177c4680",
-      "worktreeBytes": 525319,
-      "worktreeSha256": "675de038fbeb28df4cbb5947f0404b45f08b3e0d10973154a601d911177c4680",
+      "gitBlob": "b571f471a66ce5fac4dd136d512e084812ffaf34",
+      "gitBytes": 525596,
+      "gitSha256": "6c6e4558796311cb1b8d2812005d6a190a52d9cc0f0f9bf7e2f2c55057a7a06d",
+      "worktreeBytes": 525596,
+      "worktreeSha256": "6c6e4558796311cb1b8d2812005d6a190a52d9cc0f0f9bf7e2f2c55057a7a06d",
       "bytesEqual": true,
-      "gitObjectKind": "actual-staged-blob"
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/reviews/d1b/test-coverage.json",
+      "gitBlob": "17d5a3bb40d5437b92cd98f4f0974624a80f6460",
+      "gitBytes": 11119,
+      "gitSha256": "f3b172d116fac1954df5b3e5286b39542920e6403a39478e5f462abb83cbc758",
+      "worktreeBytes": 11119,
+      "worktreeSha256": "f3b172d116fac1954df5b3e5286b39542920e6403a39478e5f462abb83cbc758",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/reviews/d1b/verification.md",
+      "gitBlob": "307102cb5dc2cd3750014050cd0ec50edbbb25b3",
+      "gitBytes": 2618,
+      "gitSha256": "7d2f2fd8c0630d1bd837d1c0e51ceebe1e96576ed40ea9a669d64def0333912f",
+      "worktreeBytes": 2618,
+      "worktreeSha256": "7d2f2fd8c0630d1bd837d1c0e51ceebe1e96576ed40ea9a669d64def0333912f",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
+    },
+    {
+      "path": "docs/reviews/d1b/verify-preflight.mjs",
+      "gitBlob": "1167afe78361946018dbc60630e66bcf1027af48",
+      "gitBytes": 14278,
+      "gitSha256": "c82030fbac0b0ad10ca34a39c83c936156c3e38179a7526683d1e8a80f921e39",
+      "worktreeBytes": 14278,
+      "worktreeSha256": "c82030fbac0b0ad10ca34a39c83c936156c3e38179a7526683d1e8a80f921e39",
+      "bytesEqual": true,
+      "gitObjectKind": "actual-index-blob"
     }
   ],
   "inputFiles": [
@@ -261,12 +391,12 @@
     "implementationCI": "not-run",
     "merge": "not-performed",
     "currentRevisionIDBinding": "accepted-current-ID-readback",
-    "preflightIndependentReview": "pending-complete-mapping-and-spec-review"
+    "preflightIndependentReview": "pending-targeted-recheck-of-three-feedback-fixes"
   },
   "limitations": [
-    "已接受全文/输入指纹/版本 null 限制不重开。",
-    "新平台 ID 在 edit_plan 本轮结束保存后生成；新正文不能冒绑旧 ID。修订快照及五处替换完整可读，待新 ID 实读绑定。",
-    "新增只读 fixture recipe 尚未实现/运行；全部视觉/焦点/导航及人工评审待执行，产品实现禁止。"
+    "已接受全文／输入指纹／版本 null 限制不重开。",
+    "当前 ID 已实读绑定为 doc:nnchKV-O25SWiYsj3hXgm；不为填 ID 再保存计划。",
+    "当前仅实施前置修正；只读夹具及视觉／焦点／导航尚未执行，前置关口独审通过前不开始 UI 产品编码。"
   ],
   "history": [
     {
@@ -611,6 +741,52 @@
       "bytesEqual": false
     }
   ],
-  "authorizedMutationScope": "仅当前计划 Markdown、plan-source.json、plan-binding.json、surface-matrix.json；无产品文件/历史D0修改",
-  "lastReadCurrentPlanID": "doc:nnchKV-O25SWiYsj3hXgm"
+  "authorizedMutationScope": "按已确认计划实施前置：完整映射、阶段保护设计、绑定／来源及 ADR／受影响规格、只读验证与证据；本轮无 UI 产品源码或历史 D0／D1a 修改",
+  "lastReadCurrentPlanID": "doc:nnchKV-O25SWiYsj3hXgm",
+  "historicalArtifactBindings": [
+    {
+      "recordedAtCommit": "bb3963e6531d89cd7f95cb99d8a1c1e19fa9a8ec",
+      "status": "上一提交沿用了旧快照的 artifacts；本次明确转为历史，不作为当前成果校验依据",
+      "artifacts": [
+        {
+          "path": "docs/plan/d1b-token-consumer-migration.md",
+          "gitBlob": "2d5824ffd1593db1325287d4ec92613f5e3aef51",
+          "gitBytes": 14344,
+          "gitSha256": "91a9eb7451ff2799754d4207863c67cff09112d1470b5ad1049066309f8dbdb8",
+          "worktreeBytes": 14344,
+          "worktreeSha256": "91a9eb7451ff2799754d4207863c67cff09112d1470b5ad1049066309f8dbdb8",
+          "bytesEqual": true,
+          "gitObjectKind": "actual-staged-blob"
+        },
+        {
+          "path": "docs/reviews/d1b/plan-source.json",
+          "gitBlob": "138b04991c06dbb2a19ce909d0f8d03e5c78bc87",
+          "gitBytes": 21057,
+          "gitSha256": "1e888897a8efc68c8ee0e08b50f952b3460258f4632cb7ae65e16b3177ed981d",
+          "worktreeBytes": 21057,
+          "worktreeSha256": "1e888897a8efc68c8ee0e08b50f952b3460258f4632cb7ae65e16b3177ed981d",
+          "bytesEqual": true,
+          "gitObjectKind": "actual-staged-blob"
+        },
+        {
+          "path": "docs/reviews/d1b/surface-matrix.json",
+          "gitBlob": "0d79f6356112aa7e818c50552a8d52718e9a57ff",
+          "gitBytes": 525319,
+          "gitSha256": "675de038fbeb28df4cbb5947f0404b45f08b3e0d10973154a601d911177c4680",
+          "worktreeBytes": 525319,
+          "worktreeSha256": "675de038fbeb28df4cbb5947f0404b45f08b3e0d10973154a601d911177c4680",
+          "bytesEqual": true,
+          "gitObjectKind": "actual-staged-blob"
+        }
+      ]
+    }
+  ],
+  "currentArtifactPolicy": "artifacts 绑定当前实际 index blob 和工作区原字节；提交后 index 与 HEAD 一致。binding 自身由执行前后 inputBinding 绑定，执行输出由 preflight-execution.json 的原始字节哈希绑定，避免自引用循环。历史记录单列，不作为当前绑定。",
+  "currentOutputPolicy": {
+    "record": "docs/reviews/d1b/evidence/preflight-execution.json",
+    "stdout": "docs/reviews/d1b/evidence/preflight-inventory.json",
+    "stderr": "docs/reviews/d1b/evidence/preflight-stderr.txt",
+    "historicalInventoryCommit": "bb3963e",
+    "rule": "保留旧报告在实际 Git 历史；当前执行记录验证 before/after、命令与 runtime、真实退出及 stdout/stderr 原字节，不以旧报告证明新运行。"
+  }
 }
