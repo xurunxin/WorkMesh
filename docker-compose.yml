@@ -127,6 +127,7 @@ services:
       WORKMESH_EXPERIMENTAL_A2A: ${WORKMESH_EXPERIMENTAL_A2A:-false}
       WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: ${WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS:-false}
       WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: ${WORKMESH_EXPERIMENTAL_MULTI_RUNTIME:-false}
+      WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS: ${WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS:-false}
     ports: ["127.0.0.1:${API_HOST_PORT:-3001}:3001"]
     depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy }, minio-init: { condition: service_completed_successfully }, migrate: { condition: service_completed_successfully } }
     healthcheck: { test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/health"], interval: 10s, timeout: 3s, retries: 15 }
@@ -172,6 +173,7 @@ services:
       WORKMESH_EXPERIMENTAL_A2A: ${WORKMESH_EXPERIMENTAL_A2A:-false}
       WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: ${WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS:-false}
       WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: ${WORKMESH_EXPERIMENTAL_MULTI_RUNTIME:-false}
+      WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS: ${WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS:-false}
     depends_on: { postgres: { condition: service_healthy }, minio-init: { condition: service_completed_successfully }, migrate: { condition: service_completed_successfully } }
   mcp:
     profiles: ["agent"]

@@ -1,0 +1,387 @@
+{
+  "scope": "本轮 C1 审核修复专用资源",
+  "retained": "共享镜像、其他任务服务及当前工作树保留",
+  "containers": [
+    {
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "已停止并移除，匿名专用测试卷确认不存在",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "e9656a5e2c2b90cdeedc2a3426d768110baf65dac7961a3b7d33ca7f59235e3c",
+          "Source": "/var/lib/docker/volumes/e9656a5e2c2b90cdeedc2a3426d768110baf65dac7961a3b7d33ca7f59235e3c/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "name": "/workmesh-c1-review-postgres",
+      "createdAt": "2026-10-08T10:53:59.1288573Z",
+      "id": "9cb78424600bf3a0549606675f7999a2226924fc555a4a7a7b8fdc6d45c03125",
+      "cleanup": {
+        "at": "2026-10-08T11:47:07.016Z",
+        "commands": [
+          "docker stop --timeout 10 9cb78424600bf3a0549606675f7999a2226924fc555a4a7a7b8fdc6d45c03125",
+          "docker rm -v 9cb78424600bf3a0549606675f7999a2226924fc555a4a7a7b8fdc6d45c03125"
+        ],
+        "containerAbsent": true,
+        "volumeAbsent": true,
+        "serviceLog": "docs/reviews/c1/review-fixes/workmesh-c1-review-postgres-cleanup.log",
+        "before": {
+          "status": "running",
+          "exitCode": 0
+        }
+      }
+    },
+    {
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "status": "已停止并移除，匿名专用测试卷确认不存在",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "a8f0509f537f35fb32d6d8b2050f1636519edb189fd5296fdb2e9f78e368cfd9",
+          "Source": "/var/lib/docker/volumes/a8f0509f537f35fb32d6d8b2050f1636519edb189fd5296fdb2e9f78e368cfd9/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "name": "/workmesh-c1-review-redis",
+      "createdAt": "2026-10-08T10:53:59.4163787Z",
+      "id": "791861c72adeb8e7db8d76e1cf10ebc3bc42880a2d8a7cb204ff6dbadb95cbd7",
+      "cleanup": {
+        "at": "2026-10-08T11:47:12.835Z",
+        "commands": [
+          "docker stop --timeout 10 791861c72adeb8e7db8d76e1cf10ebc3bc42880a2d8a7cb204ff6dbadb95cbd7",
+          "docker rm -v 791861c72adeb8e7db8d76e1cf10ebc3bc42880a2d8a7cb204ff6dbadb95cbd7"
+        ],
+        "containerAbsent": true,
+        "volumeAbsent": true,
+        "serviceLog": "docs/reviews/c1/review-fixes/workmesh-c1-review-redis-cleanup.log",
+        "before": {
+          "status": "running",
+          "exitCode": 0
+        }
+      }
+    },
+    {
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "status": "已停止并移除，匿名专用测试卷确认不存在",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "5ecc6e6156096c6aabb629354b4d0710968b63c881b2cca7f2fc713835450ca9",
+          "Source": "/var/lib/docker/volumes/5ecc6e6156096c6aabb629354b4d0710968b63c881b2cca7f2fc713835450ca9/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "name": "/workmesh-c1-review-s3",
+      "createdAt": "2026-10-08T10:54:00.060669Z",
+      "id": "1f4bedf5bc83a9d904418e4f368a383517ace4c65e0d0e08337b99ecee4326a3",
+      "cleanup": {
+        "at": "2026-10-08T11:47:13.503Z",
+        "commands": [
+          "docker stop --timeout 10 1f4bedf5bc83a9d904418e4f368a383517ace4c65e0d0e08337b99ecee4326a3",
+          "docker rm -v 1f4bedf5bc83a9d904418e4f368a383517ace4c65e0d0e08337b99ecee4326a3"
+        ],
+        "containerAbsent": true,
+        "volumeAbsent": true,
+        "serviceLog": "docs/reviews/c1/review-fixes/workmesh-c1-review-s3-cleanup.log",
+        "before": {
+          "status": "running",
+          "exitCode": 0
+        }
+      }
+    }
+  ],
+  "temporaryPath": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-c1-review-01a1187a",
+  "processes": [
+    {
+      "pid": 21304,
+      "parentPid": 54136,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T19:43:36.437651+08:00",
+      "purpose": "本轮 E2E headless browser，按工作树父子链确认",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "purpose": "本轮测试命令及子进程，按路径和创建时间登记",
+      "createdAt": "2026-10-08T19:04:59.683564+08:00",
+      "pid": 21608,
+      "name": "node.exe",
+      "parentPid": 61936,
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "createdAt": "2026-10-08T19:23:31.71524+08:00",
+      "name": "node.exe",
+      "parentPid": 31080,
+      "pid": 27956,
+      "purpose": "本轮测试命令及子进程，按路径和创建时间登记",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 31108,
+      "parentPid": 10116,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T19:42:21.508473+08:00",
+      "purpose": "本轮完整 E2E 服务/命令/浏览器，按工作树路径和父子链确认",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 34324,
+      "parentPid": 31880,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T19:42:09.336963+08:00",
+      "purpose": "本轮完整 E2E 服务/命令/浏览器，按工作树路径和父子链确认",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "createdAt": "2026-10-08T19:30:24.159032+08:00",
+      "name": "node.exe",
+      "parentPid": 55336,
+      "pid": 36924,
+      "purpose": "本轮测试命令及子进程，按路径和创建时间登记",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 37964,
+      "parentPid": 47052,
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T19:42:20.903506+08:00",
+      "purpose": "本轮 E2E 按路径及父子链归属",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "createdAt": "2026-10-08T19:26:55.537601+08:00",
+      "name": "node.exe",
+      "parentPid": 27956,
+      "pid": 44000,
+      "purpose": "本轮测试命令及子进程，按路径和创建时间登记",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 47052,
+      "parentPid": 39988,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T19:42:16.340096+08:00",
+      "purpose": "本轮 E2E 按路径及父子链归属",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 49668,
+      "parentPid": 1800,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T19:42:17.660293+08:00",
+      "purpose": "本轮完整 E2E 服务/命令/浏览器，按工作树路径和父子链确认",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 50048,
+      "parentPid": 21304,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T19:43:36.60304+08:00",
+      "purpose": "本轮 E2E headless browser，按工作树父子链确认",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 51064,
+      "parentPid": 47052,
+      "name": "cmd.exe",
+      "createdAt": "2026-10-08T19:42:16.945468+08:00",
+      "purpose": "本轮 E2E 按路径及父子链归属",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 52032,
+      "parentPid": 31108,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T19:42:22.532976+08:00",
+      "purpose": "本轮 E2E 按路径及父子链归属",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "purpose": "本轮测试命令及子进程，按路径和创建时间登记",
+      "createdAt": "2026-10-08T19:01:55.369066+08:00",
+      "pid": 52132,
+      "name": "node.exe",
+      "parentPid": 20888,
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 53552,
+      "parentPid": 21304,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T19:43:36.665503+08:00",
+      "purpose": "本轮 E2E headless browser，按工作树父子链确认",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "purpose": "本轮测试命令及子进程，按路径和创建时间登记",
+      "createdAt": "2026-10-08T19:05:00.226394+08:00",
+      "pid": 53720,
+      "name": "node.exe",
+      "parentPid": 21608,
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 54136,
+      "parentPid": 47052,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T19:43:35.961758+08:00",
+      "purpose": "本轮 E2E 按路径及父子链归属",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "createdAt": "2026-10-08T19:29:47.032413+08:00",
+      "name": "node.exe",
+      "parentPid": 40268,
+      "pid": 55336,
+      "purpose": "本轮测试命令及子进程，按路径和创建时间登记",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 58888,
+      "parentPid": 49668,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T19:42:17.801032+08:00",
+      "purpose": "本轮完整 E2E 服务/命令/浏览器，按工作树路径和父子链确认",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    },
+    {
+      "pid": 60500,
+      "parentPid": 21304,
+      "name": "chrome-headless-shell.exe",
+      "createdAt": "2026-10-08T19:45:24.087535+08:00",
+      "purpose": "本轮 E2E headless browser，按工作树父子链确认",
+      "cleanup": "原进程已退出，不操作复用 PID"
+    }
+  ],
+  "s3Bucket": "workmesh-c1-review-artifacts：本轮 ObjectLock 隔离夹具，随本轮容器/卷清理",
+  "nextDirectoryExistedBeforeE2E": false,
+  "browserTemporaryProfiles": [
+    "C:\\Users\\xurx\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-iGH5mK"
+  ],
+  "images": {
+    "createdDedicated": [],
+    "retained": [
+      "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff"
+    ],
+    "reason": "使用共享基础镜像，无本任务构建专用镜像；未删除共享镜像或 bridge，未执行 global prune"
+  },
+  "sharedContainersRetained": [
+    "cd7fb90cf325 c3-main-combination-01a11890-browser-s3 Up 22 seconds",
+    "705d05cca038 c3-main-combination-01a11890-browser-redis Up 23 seconds",
+    "765df3cd8d44 c3-main-combination-01a11890-browser-pg Up 23 seconds",
+    "8955a6225785 r1ci381d-rustfs-test Exited (0) 14 hours ago",
+    "fdbfaf96fc4b r1ci381d-redis-test Exited (0) 14 hours ago",
+    "afb321d3ab88 r1ci381d-postgres-test Exited (0) 14 hours ago",
+    "42c1f96772b6 r1ci381c-rustfs-test Exited (0) 14 hours ago",
+    "16d965766d2c r1ci381c-redis-test Exited (0) 14 hours ago",
+    "567c5c781c26 r1ci381c-postgres-test Exited (0) 14 hours ago",
+    "bb6b39f0959d r1ci381b-rustfs-test Exited (0) 14 hours ago",
+    "1244d5e4667d r1ci381b-redis-test Exited (0) 14 hours ago",
+    "4d8e4c20dc84 r1ci381b-postgres-test Exited (0) 14 hours ago",
+    "959f0cabf5d6 r1ci381-rustfs-test Exited (0) 14 hours ago",
+    "f3359d7c72a7 r1ci381-redis-test Exited (0) 14 hours ago",
+    "4b9d5cc52acd r1ci381-postgres-test Exited (0) 14 hours ago",
+    "54f147c18124 r1i-rustfs-test Exited (0) 16 hours ago",
+    "ebf6f15a199e r1i-redis-test Exited (0) 16 hours ago",
+    "2709a753abeb r1i-postgres-test Exited (0) 16 hours ago",
+    "39acded25c5f r1h-rustfs-test Exited (0) 16 hours ago",
+    "446d990bae3d r1h-redis-test Exited (0) 16 hours ago",
+    "1aa94d42b532 r1h-postgres-test Exited (0) 16 hours ago",
+    "885491d285b0 r1g-rustfs-test Exited (0) 16 hours ago",
+    "88d7597271c3 r1g-redis-test Exited (0) 16 hours ago",
+    "68ddd591771d r1g-postgres-test Exited (0) 16 hours ago",
+    "accb377d0f75 r1f-rustfs-test Exited (0) 16 hours ago",
+    "95612d167478 r1f-redis-test Exited (0) 16 hours ago",
+    "666b8a945f4e r1f-postgres-test Exited (0) 16 hours ago",
+    "6572b97faee7 r1e-rustfs-test Exited (0) 16 hours ago",
+    "d74db6d52c21 r1e-redis-test Exited (0) 16 hours ago",
+    "25a235596355 r1e-postgres-test Exited (0) 16 hours ago",
+    "a31c79775de3 r1d-rustfs-test Exited (0) 16 hours ago",
+    "cef8749bbce4 r1d-redis-test Exited (0) 16 hours ago",
+    "16bd2b3e9824 r1d-postgres-test Exited (0) 16 hours ago",
+    "d89c37d3a22e r1c-rustfs-test Exited (0) 16 hours ago",
+    "1da14d685015 r1c-redis-test Exited (0) 16 hours ago",
+    "a4173ad93c5a r1c-postgres-test Exited (0) 16 hours ago",
+    "fb305d53eee0 r1b-rustfs-test Exited (0) 15 hours ago",
+    "8be4c0b2f3b2 r1b-redis-test Exited (0) 15 hours ago",
+    "3ac7b4978d97 r1b-postgres-test Exited (0) 15 hours ago",
+    "a016713d06d3 r1-rustfs-test Exited (0) 16 hours ago",
+    "7a1f3fad0cc9 r1-redis-test Exited (0) 16 hours ago",
+    "557e9b8f1cab r1-postgres-test Exited (0) 16 hours ago",
+    "00f4596dc354 workmesh-postgres-1 Up 22 hours (healthy)",
+    "16feb81cf9d2 workmesh-redis-1 Up 22 hours (healthy)",
+    "34820cf2e25e workmesh-web-1 Exited (255) 7 days ago",
+    "a3b6f726f524 workmesh-api-1 Exited (255) 7 days ago",
+    "951afd926067 workmesh-worker-1 Exited (255) 8 days ago",
+    "70078a3028a6 workmesh-migrate-1 Exited (0) 8 days ago",
+    "f8b614913c4e workmesh-minio-init-1 Exited (0) 42 hours ago",
+    "ed7ebe27231e workmesh-minio-1 Up 22 hours (healthy)"
+  ],
+  "nextCleanup": {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\web\\.next",
+    "createdByThisRun": true,
+    "absent": true,
+    "operation": "只读确认绝对路径位于本工作树且自身/子项无 reparse point 后，Remove-Item -LiteralPath 明确完整路径 -Recurse（无 force）",
+    "reason": "本轮 E2E 前不存在；服务退出及原日志保全后清理，当前工作树和依赖保留"
+  },
+  "browserProfileCleanup": [
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-iGH5mK",
+      "absent": true,
+      "operation": "Playwright 正常退出自动清理，无主动删除"
+    }
+  ],
+  "configurationRestore": "所有测试配置仅注入子进程；服务全部退出，未改系统环境、.env 或真实部署配置",
+  "worktreesRetained": {
+    "current": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+    "reason": "当前待审核构建保留；C1 尚未实际合入 main，旧工作树未满足合入、成果保全与无人运行条件，不移除或 force 清理 dirty"
+  },
+  "cleanupFirstRejection": {
+    "action": "删除 .next、写资源登记和归档的复合 shell 命令",
+    "executed": false,
+    "reason": "工具自动审批 blocked by policy",
+    "resolution": "先独立只读核对绝对路径和 reparse point，再以明确完整路径执行无 force 的单一删除命令，成功"
+  },
+  "archiveFirstFailure": {
+    "action": "归档原日志",
+    "exitCode": 1,
+    "message": "RAW_EVIDENCE_INVALID: 来源blob非法",
+    "logsDeletedOnFailure": false,
+    "reason": "临时归档脚本给日志填 sourceBlobId=null，不符合现有验证器格式",
+    "resolution": "为日志计算原字节 Git blob 身份（sourceCommit 仍 null），保持验证器不变；逐字节读回全部成功后才删除已归档散日志",
+    "provenance": "本轮真实工具 stdout/退出码记录；没有原 stderr 文件，不冒原件"
+  },
+  "temporaryInventory": {
+    "root": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-c1-review-01a1187a",
+    "files": [
+      "archive.mjs",
+      "cleanup-containers.mjs",
+      "finalize-evidence.mjs",
+      "playwright",
+      "run.mjs",
+      "s3.mjs",
+      "suite.mjs"
+    ],
+    "playwrightArtifacts": "认证状态、浏览器 profile、HTML report、trace/video 为临时验证产物；最终 E2E 无失败，原 stdout 与 last-run 摘要已保全，不将认证 cookies 或 trace 内容提交仓库"
+  },
+  "temporaryCleanup": {
+    "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-c1-review-01a1187a",
+    "absent": true,
+    "operation": "只读核验专用绝对路径、无 reparse point、无活动引用后，Remove-Item -LiteralPath 明确完整路径 -Recurse（无 force）",
+    "evidenceSaved": "raw-evidence.zip/index 逐字节核验成功，完整运行结果及首败保留；仅清本轮临时脚本与浏览器认证/报告产物"
+  }
+}

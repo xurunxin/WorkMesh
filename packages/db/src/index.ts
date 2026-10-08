@@ -122,3 +122,6 @@ export async function createAdmin(db: Db, input: { email: string; password: stri
 export const rows = <T extends QueryResultRow>(result: { rows: T[] }) => result.rows
 
 export * from './stage4.js'
+
+export * from './human-attention-sources.js'
+export * from './channel-notifications.js'
