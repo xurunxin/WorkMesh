@@ -39,9 +39,10 @@ it('实际 CLI 单次完整验证、系统存储、无秘密片段与启动注�
   const address = server.address(); if (!address || typeof address === 'string') throw new Error('Invalid fixture address')
   const origin = `http://127.0.0.1:${address.port}`
   console.log(JSON.stringify({ resource: 'httpService', address: origin, state: 'created' }))
-  async function cli(args: string[], input = '') {
-    const child = spawn(process.execPath, ['--import', 'tsx', 'src/cli.ts', ...args], {
-      env: { ...process.env, WORKMESH_CONNECTOR_DIRECTORY: directory, WM_TEST_DIGEST: sha256(f.token) },
+  async function cli(args: string[], input = '', entry = 'src/cli.ts') {
+    const child = spawn(process.execPath, ['--import', 'tsx', entry, ...args], {
+      env: { ...process.env, WORKMESH_CONNECTOR_DIRECTORY: directory, WM_TEST_DIGEST: sha256(f.token),
+        WM_TEST_CONFIGURED_DIRECTORY: entry === 'test-support/terminal-driver.ts' ? directory : undefined },
       stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true,
     })
     let stdout = '', stderr = ''
@@ -66,6 +67,9 @@ it('实际 CLI 单次完整验证、系统存储、无秘密片段与启动注�
     const program = "const t=process.env.WORKMESH_INSTALLATION_TOKEN;if(require('node:crypto').createHash('sha256').update(t).digest('hex')!==process.env.WM_TEST_DIGEST)process.exit(1);process.stdout.write('injected\\n'+t.slice(0,20));process.stdout.write(t.slice(20));process.stderr.write(t);"
     const started = await cli(['run', '--', process.execPath, '-e', program])
     expect(started.code).toBe(0); expect(started.stdout).toContain('injected')
+    const interactive = await cli([], '', 'test-support/terminal-driver.ts')
+    expect(interactive.code, interactive.stderr).toBe(0)
+    expect(interactive.stdout).toContain('"tty":true')
     const repeated = await cli(['connect', '--expect', expected], pairingCode + '\n')
     expect(repeated.code).toBe(0); expect((await readFile(join(directory, 'config.json'))).equals(raw)).toBe(true)
     f.context.profileVersion = '2.0'

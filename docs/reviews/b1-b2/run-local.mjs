@@ -34,6 +34,8 @@ function source() {
     'pnpm-lock.yaml', 'turbo.json', '.github/workflows/ci.yml', 'scripts/ci-policy.mjs', 'scripts/ci-policy.test.mjs', 'scripts/ci-test-inputs.mjs', 'scripts/validate-ci.mjs',
     'scripts/test-connector-linux.sh', 'scripts/test-connector-windows.ps1', 'AGENT_PROTOCOL.md', 'OPENAPI.yaml']
   paths.push('apps/web/app/attention-center.tsx', 'apps/web/app/attention-center-approval.test.tsx', 'scripts/connector-secret-probe.mts')
+  paths.push('apps/api/src/server.ts', 'apps/api/src/authz/authorize.ts', 'apps/api/src/configuration-readiness.ts',
+    'apps/api/integration/configuration-readiness.integration.test.ts', 'docs/route-policy-matrix.md')
   const files = []
   function visit(path) {
     if (!existsSync(resolve(root, path))) return
@@ -49,6 +51,7 @@ function source() {
     byteKind: '运行时工作树原字节', files: files.sort().map(path => { const bytes = readFileSync(resolve(root, path)); return { path, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') } }) }
 }
 async function check(name, args) {
+  save(`${name}-source-before.json`, source())
   const startedAt = new Date().toISOString(); let output = ''
   const code = await new Promise((resolveCode, reject) => {
     const child = spawn(pnpm.endsWith('.exe') ? pnpm : process.execPath, pnpm.endsWith('.exe') ? args : [pnpm, ...args], { cwd: root, env, windowsHide: true })
@@ -62,6 +65,7 @@ async function check(name, args) {
     child.on('close', code => { clearInterval(pulse); activeChild = undefined; resolveCode(code) })
   })
   const log = safe(output); writeFileSync(join(logRoot, `${name}.log`), log)
+  save(`${name}-source-after.json`, source())
   results.push({ name, command: ['pnpm', ...args], startedAt, endedAt: new Date().toISOString(), exitCode: code, log: `logs/${name}.log`, secretRedaction: true })
   save('checks.json', results); console.log(`${name}: exit=${code}`)
   if (code !== 0) { console.log(log.slice(-4500)); throw new Error(`检查失败：${name}`) }
@@ -108,6 +112,25 @@ try {
     await check('connector-build', ['--filter', '@workmesh/connector', 'build'])
     await check('lint', ['lint']); await check('typecheck', ['typecheck']); await check('unit', ['test'])
     await check('ci-validate', ['ci:validate']); await check('route-policy', ['check:route-policy']); await check('skill-pin', ['check:workmesh-skill'])
+  } else if (mode === 'connector') {
+    await check('connector-typecheck', ['--filter', '@workmesh/connector', 'typecheck'])
+    await check('connector-unit', ['--filter', '@workmesh/connector', 'test'])
+  } else if (mode === 'affected-final') {
+    await check('connector-lint', ['--filter', '@workmesh/connector', 'lint'])
+    await check('contracts-lint', ['--filter', '@workmesh/contracts', 'lint'])
+    await check('api-lint', ['--filter', '@workmesh/api', 'lint'])
+    await check('api-unit', ['--filter', '@workmesh/api', 'test'])
+  } else if (mode === 'final-types') {
+    await check('connector-build', ['--filter', '@workmesh/connector', 'build'])
+    await check('connector-typecheck', ['--filter', '@workmesh/connector', 'typecheck'])
+    await check('api-typecheck', ['--filter', '@workmesh/api', 'typecheck'])
+  } else if (mode === 'main-impact') {
+    await check('connector-typecheck', ['--filter', '@workmesh/connector', 'typecheck'])
+    await check('contracts-typecheck', ['--filter', '@workmesh/contracts', 'typecheck'])
+    await check('api-typecheck', ['--filter', '@workmesh/api', 'typecheck'])
+    await check('contracts-unit', ['--filter', '@workmesh/contracts', 'test'])
+    await check('route-policy', ['check:route-policy'])
+    await check('ci-validate', ['ci:validate'])
   } else if (mode === 'unit') await check('unit', ['test'])
   else if (mode === 'windows-platform') await check('windows-platform', ['--filter', '@workmesh/connector', 'test:platform'])
   else if (mode === 'documentation') await check('expectation-example', ['--filter', '@workmesh/connector', 'exec', 'tsx', '--eval',
@@ -121,6 +144,7 @@ try {
       await check('focused-api', ['--filter', '@workmesh/api', 'exec', 'vitest', 'run', '--config', '../../vitest.integration.config.ts', 'integration/stage5-agent-connections.integration.test.ts', 'integration/stage5-connector.integration.test.ts'])
     } else if (mode === 'integration') await check('integration', ['test:integration'])
     else if (mode === 'e2e') {
+      await check('web-build', ['--filter', '@workmesh/web', 'build'])
       env.WORKMESH_PLAYWRIGHT_RUN_DIR = join(evidence, 'playwright-runtime')
       resources.push({ kind: 'temporaryPath', path: env.WORKMESH_PLAYWRIGHT_RUN_DIR, cleaned: false })
       await check('e2e', ['test:e2e'])

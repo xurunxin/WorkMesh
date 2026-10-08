@@ -88,13 +88,37 @@ to a teammate, and a Team-scoped Agent is not visible from another Team.
 | Check | v1 state | Source |
 | --- | --- | --- |
 | Model | `ready` / `blocked` | `LlmConnection.status = 'active'` and at least one `enabled` model, within caller visibility |
-| Team | `ready` / `blocked` | at least one visible, active Agent definition |
-| Repository-backed work | `ready` / `blocked` / `not_applicable` | at least one Project with an attached repository and base branch, **and** only surfaced when the workbench context is repository-backed |
+| Agent | `ready` / `blocked` | 当前 workspace、Team 中 active definition 且 Team 授权未撤销 |
+| Repository-backed work | `ready` / `blocked`；适用性另列 | 指定资源只检查当前上下文；未指定才检查所选 Team 至少一个 Project 的仓库与 base branch |
 | Runner liveness | `unknown` in v1 | no fact exists; a durable runner registration and heartbeat is a **separate** task, and this ADR withdraws the zero-migration claim for that reason only if that task is taken |
 
-`not_applicable` is a distinct outcome from `ready` and from `blocked`: a team
-doing non-repository work is not misconfigured, and a check that cannot apply
-must not render as a failure.
+仓库不适用用 `applicability=not_applicable`、`state=null` 表示；适用项使用
+`applicability=applicable` 和三态 `ready|blocked|unknown`。`not_applicable`
+不是第四种就绪状态，非仓库工作不会因此被标成配置失败。
+
+### 已确认的查询契约与安全边界
+
+`GET /api/v1/workbench/configuration-readiness`（`getConfigurationReadiness`）
+只允许 Human session，查询必填 `teamId`、`workKind=repository|non_repository`，
+可选 `projectId`、`workItemId`。`workKind` 仅影响查询，不保存仓库工作意图。
+指定 Project 时只检查该 Project；指定 WorkItem 时检查其直接上下文及所属 Project。
+同时传入两个资源时必须归属一致；未指定资源时才检查所选 Team 的 Project。
+资源不存在、删除、不可见或越过 workspace/Team 时统一 `NOT_FOUND`。非仓库查询
+仍先校验所传资源范围。仓库及 provider 必须 active、base branch 非空，并遵守
+现有 Gitea 功能开关。模型 personal 仅本人、team 仅所选 Team，workspace 按
+既有可见性。看不见或配置不满足统一 `blocked/unmet`，不返回隐藏资源元数据。
+
+响应固定 `checks.model/agent/repository/runner`，每项含 `applicability`、
+`state`、`reasonCode`；`ready/configured`、`blocked/unmet`、
+`unknown/not_observable`，非仓库项 `null/non_repository_work`。
+Runner 恒 unknown，不读取 assignment、Attempt 或 Session heartbeat，不提供
+总体可运行布尔值。同一 SELECT 重验当前会话、Actor、Team 与配置权限；响应
+`Cache-Control: no-store`。数据库故障按结构化错误返回，不冒充状态。
+
+成功、重复、参数错误和查询故障均零数据库写入；鉴权拒绝保留既有
+`authorization_denials` 安全审计例外（ADR 0028），不代表零安全审计。
+没有写入端点、schema 变更或迁移，不产生 Session、receipt、event、outbox，
+查询不成为委派、激活或执行授权。这里记录用户已确认的契约，不宣告实现验收通过。
 
 ### The gate is advisory in the domain and binding in the interface
 
@@ -207,7 +231,7 @@ numbers alone, because `statementId` covers the owner and a canonical SQL hash
 ## Spec changes
 
 - `OPENAPI.yaml` declares the readiness route, its three states per check
-  (`ready` / `blocked` / `unknown`, plus `not_applicable`), and the fact that it
+  (`ready` / `blocked` / `unknown`；`not_applicable` 另属适用性), and the fact that it
   is a query with no write counterpart.
 - `CONTEXT.md` gains **Configuration readiness** as a derived View Model,
   explicitly not an authorization input and not a run permit.

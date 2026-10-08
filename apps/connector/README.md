@@ -9,6 +9,8 @@
 
 将输出片段放入对应客户端配置，然后使用 `pnpm --filter @workmesh/connector exec tsx src/cli.ts run -- /path/to/client <args>` 启动。已构建时也可执行 `pnpm --filter @workmesh/connector start run -- /path/to/client <args>`。启动入口从系统秘密存储读取令牌，只注入子进程 `WORKMESH_INSTALLATION_TOKEN`。配对码不放在命令参数、URL、环境变量或普通文件中；扫码输入同样保留完整 256 位随机 bearer。
 
+在交互终端启动时，连接器通过 POSIX PTY／Windows ConPTY 保留客户端 stdin/stdout/stderr 的 TTY 属性、终端尺寸变化和原始输入，支持交互客户端。Ctrl-C 交给终端前台客户端；外部 SIGTERM 在 POSIX 转发给客户端，在 Windows 结束 ConPTY 会话。终端合并输出统一脱敏。重定向输入或输出时使用管道模式，分别脱敏 stdout/stderr，转发 SIGINT/SIGTERM。安全提示立即显示，仅可能尚未完成的凭据前缀暂存；不再固定扣留尾部文本。
+
 ## 恢复与存储
 
 断网、丢响应或中断后，使用原清单和原配对码重跑相同命令。受保护 pending 复用原 key、精确 body、origin 和 user-agent。成功重跑通过摘要识别已提交操作，并重新验证当前身份。服务端历史重放不重新验证撤权；连接器仍在当前 MCP 身份检查中拒绝撤销、过期和旧 overlap 凭据。
@@ -18,6 +20,8 @@
 Windows 使用 Credential Manager，macOS 使用 Keychain，Linux 强制 Secret Service。后端锁定或不可用时失败，不回退文件或内存。POSIX 目录/文件分别验证 `0700`/`0600`；Windows 创建时设置当前用户专用、禁继承 DACL，再读取实际 owner/DACL 验证。
 
 默认配置目录是 Windows `%APPDATA%/WorkMesh/connector`、macOS `~/Library/Application Support/WorkMesh/connector`、Linux `$XDG_CONFIG_HOME/workmesh/connector`（未设置时 `~/.config/workmesh/connector`）。可用非秘密的 `WORKMESH_CONNECTOR_DIRECTORY` 显式选择专用目录；同样执行所有权限检查，不接受链接、重解析点或多硬链接。
+
+从文件系统根到配置目录逐级验证可信所有者和替换权限，缺失层级在创建时即受保护。POSIX 仅信任当前 uid/root，拒绝其他用户可写的非 sticky 祖先；sticky 目录下每个子目录也必须有可信 owner。macOS 另检查扩展 ACL 的修改授权。Windows 仅信任当前 SID、SYSTEM、Administrators 和 TrustedInstaller，拒绝其他 SID 对祖先的 DELETE、DELETE_CHILD、改 DACL/owner 等权限；无法解释的 ACL 保守失败，不修改现有祖先权限。系统管理员/root 属于系统秘密存储的既有信任边界。
 
 正式 `config.json` 只含秘密引用及已验证的公开事实。完整配对码仅存于受保护 pending；安装令牌唯一持久化落点为系统秘密存储。提交 journal 使用独有新引用，配置替换前失败补偿新增秘密、保留旧配置原字节；替换后崩溃按新配置摘要收尾。旧引用不覆盖、不删除。补偿失败保留 journal 并阻止新提交，需先恢复系统后端。
 

@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "pg",
+    "image": "postgres:16-alpine",
+    "name": "b1b2-01a11ac2-pg-7e28db2f",
+    "id": "2b38b9cf480bf0d135592c98e72222b8bf2092b64bf23e63002c269eb2a053d9",
+    "address": "127.0.0.1:59414",
+    "cleaned": true
+  },
+  {
+    "kind": "redis",
+    "image": "redis:7-alpine",
+    "name": "b1b2-01a11ac2-redis-7e28db2f",
+    "id": "1d192f8a22e8979ba3823c87cc559f43d7adff88930220f3e657be7e4d6bb342",
+    "address": "127.0.0.1:59426",
+    "cleaned": true
+  },
+  {
+    "kind": "s3",
+    "image": "rustfs/rustfs:1.0.0",
+    "name": "b1b2-01a11ac2-s3-7e28db2f",
+    "id": "5384daa6033d0aef3cf6aa8f5b39479a81e167ef9a7cd7768ba861a42411befd",
+    "address": "127.0.0.1:59427",
+    "cleaned": true
+  }
+]

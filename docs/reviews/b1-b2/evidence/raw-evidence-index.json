@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "archive": {
     "path": "docs/reviews/b1-b2/evidence/raw-evidence.zip",
-    "bytes": 541800,
-    "sha256": "ab2fec6bcfe3c2b1662bb8d90151376f9d3a5e381498d08df8bdb0a951340375"
+    "bytes": 1037200,
+    "sha256": "2c2359d0605b47720a02d28ad88d0ded4fc462bee0c3d1d199cd3573dbff6047"
   },
   "note": "日志为执行时脱敏后的原始工作树字节，未格式化或归一化换行。sourceCommit=null；sourceBlobId 仅为按这些原字节计算的 Git 对象 ID，不声称已写入源提交或具备可达性。旧检查中的 log 路径由本索引精确解析。",
   "entries": [
@@ -446,6 +446,566 @@
       "member": "bytes/3403b3888737727124d387e9e200777b427d57d90e2fb1a0a91161378c71696b",
       "sourceCommit": null,
       "sourceBlobId": "c90cfbf127502614b1436b668912501e7dd5cce1"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-affected-final-01/logs/api-lint.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 115,
+      "sha256": "8682c11be55bad2f834211037cec7d31a46037b74a0709c96c0f57291378140b",
+      "member": "bytes/8682c11be55bad2f834211037cec7d31a46037b74a0709c96c0f57291378140b",
+      "sourceCommit": null,
+      "sourceBlobId": "0c27795502d9a2d70563879017f80a185c912fe9"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-affected-final-01/logs/api-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 2351,
+      "sha256": "d07ee388dfb59dea274ef93e706fd9433c92c9df212e0d9bba1e17edb2f9ecf0",
+      "member": "bytes/d07ee388dfb59dea274ef93e706fd9433c92c9df212e0d9bba1e17edb2f9ecf0",
+      "sourceCommit": null,
+      "sourceBlobId": "880ea153e4893111ccb9922b9b43dcba2bae950b"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-affected-final-01/logs/connector-lint.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 127,
+      "sha256": "ff92bcadf2d1adbfef7357b8ca65474fa90423a19885c802ed4fe945e4086068",
+      "member": "bytes/ff92bcadf2d1adbfef7357b8ca65474fa90423a19885c802ed4fe945e4086068",
+      "sourceCommit": null,
+      "sourceBlobId": "6aa58bfc8d65aa43a6de8038beb9534950b76d7f"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-affected-final-01/logs/contracts-lint.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 131,
+      "sha256": "50926e9c2a54506985fed97777fdc7060924a7a979cac3fef2f774b301fdff73",
+      "member": "bytes/50926e9c2a54506985fed97777fdc7060924a7a979cac3fef2f774b301fdff73",
+      "sourceCommit": null,
+      "sourceBlobId": "bf977cb278b880ea8f805b7b882d26c76429516e"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-final-types-01/logs/api-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 120,
+      "sha256": "3e3f1f6d5c3d36ab2a45a08651bed86f58d43f4b719b8a4c21d3c7a22456ae5f",
+      "member": "bytes/3e3f1f6d5c3d36ab2a45a08651bed86f58d43f4b719b8a4c21d3c7a22456ae5f",
+      "sourceCommit": null,
+      "sourceBlobId": "5810841f3f11e3d6df3b17ac0d074606548f9b9b"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-final-types-01/logs/connector-build.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 142,
+      "sha256": "88166449721957ca9c49f906dafe86e55a47a277c27640d32b539de46c879fd3",
+      "member": "bytes/88166449721957ca9c49f906dafe86e55a47a277c27640d32b539de46c879fd3",
+      "sourceCommit": null,
+      "sourceBlobId": "3bba8c36c455cb371d92d71b1020d216ca5d4f2c"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-final-types-01/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-linux-01/native.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 39414,
+      "sha256": "1a903585effc555bb3e86fc953c34f072610f4a94fbb11608635c473a81259e2",
+      "member": "bytes/1a903585effc555bb3e86fc953c34f072610f4a94fbb11608635c473a81259e2",
+      "sourceCommit": null,
+      "sourceBlobId": "d593a39c910e07b9247c07f2a34187142bb9d81b"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-linux-02/native.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 60297,
+      "sha256": "27b14e6712eccfd156f529691f8d4b1f8a70a1b8634a461ec090c91c4d5b5a09",
+      "member": "bytes/27b14e6712eccfd156f529691f8d4b1f8a70a1b8634a461ec090c91c4d5b5a09",
+      "sourceCommit": null,
+      "sourceBlobId": "9643179c88f9fe972c919d1b158452cee89d43a3"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-linux-03/native.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 60289,
+      "sha256": "53b3d7f0ded6b10649b5b13b6c34f94cc8c1f0745604f24be14d34b230c237a2",
+      "member": "bytes/53b3d7f0ded6b10649b5b13b6c34f94cc8c1f0745604f24be14d34b230c237a2",
+      "sourceCommit": null,
+      "sourceBlobId": "7b49ee303e0d11afaa5ae38ccc26af7bb312b83f"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-e2e-01/logs/e2e.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 1545817,
+      "sha256": "7e3a35a5946d4df78e29154aa76db93e76d4ee263e26ee68b70408ab65cc5722",
+      "member": "bytes/7e3a35a5946d4df78e29154aa76db93e76d4ee263e26ee68b70408ab65cc5722",
+      "sourceCommit": null,
+      "sourceBlobId": "83f90538e90b9def90c228c258ddff704bed352c"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-e2e-01/logs/pg-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 2329,
+      "sha256": "44463b66c4f76c03bf2b440bc8a8d5ed78744669c3ed735b3f4ed19dbe558c05",
+      "member": "bytes/44463b66c4f76c03bf2b440bc8a8d5ed78744669c3ed735b3f4ed19dbe558c05",
+      "sourceCommit": null,
+      "sourceBlobId": "0b835d75478e10d0690ed5846bed9e69ed7d9202"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-e2e-01/logs/redis-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 944,
+      "sha256": "625edf9fb309c101ebbe25224128d09476c761bd1dad084dc73bbd5cc782180a",
+      "member": "bytes/625edf9fb309c101ebbe25224128d09476c761bd1dad084dc73bbd5cc782180a",
+      "sourceCommit": null,
+      "sourceBlobId": "d43572e5ff061163bc2ba7d4a48d273cb67c7a68"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-e2e-01/logs/s3-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 103,
+      "sha256": "44cedffa60a01547c2eceb848ef80a0bbc8dcf937545645219fdcb25a4656895",
+      "member": "bytes/44cedffa60a01547c2eceb848ef80a0bbc8dcf937545645219fdcb25a4656895",
+      "sourceCommit": null,
+      "sourceBlobId": "8f237d0047cb23dbb02905a3cdbb5c9dc6745023"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-e2e-01/logs/web-build.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 8063,
+      "sha256": "6162c0d958f1941da0fbd6c1eb44c6c45497bb64e91175914daeea7c9d153c4a",
+      "member": "bytes/6162c0d958f1941da0fbd6c1eb44c6c45497bb64e91175914daeea7c9d153c4a",
+      "sourceCommit": null,
+      "sourceBlobId": "8bed8053273b2a26935c7bb01f08624540dadddb"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-impact-01/logs/api-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 120,
+      "sha256": "3e3f1f6d5c3d36ab2a45a08651bed86f58d43f4b719b8a4c21d3c7a22456ae5f",
+      "member": "bytes/3e3f1f6d5c3d36ab2a45a08651bed86f58d43f4b719b8a4c21d3c7a22456ae5f",
+      "sourceCommit": null,
+      "sourceBlobId": "5810841f3f11e3d6df3b17ac0d074606548f9b9b"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-impact-01/logs/ci-validate.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 2804,
+      "sha256": "0e59ec280cf42e97c3dd742c99afc2c1f777e0131843c0d75101ef4921dd1a71",
+      "member": "bytes/0e59ec280cf42e97c3dd742c99afc2c1f777e0131843c0d75101ef4921dd1a71",
+      "sourceCommit": null,
+      "sourceBlobId": "aca20a2d1079b06eec90c2a70487008fbc6a88cb"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-impact-01/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-impact-01/logs/contracts-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 136,
+      "sha256": "fc006abb13b41ce7427dc9ac953a1fa1eb1df11b4c2494f5c7d74cc0e7a1149a",
+      "member": "bytes/fc006abb13b41ce7427dc9ac953a1fa1eb1df11b4c2494f5c7d74cc0e7a1149a",
+      "sourceCommit": null,
+      "sourceBlobId": "439a589565ce2c2f748b6e75c7f5afde27f20e91"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-impact-01/logs/contracts-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 3132,
+      "sha256": "911f49f4b6620db94e7416c9cf92673014e17908ff758524a7071c96d5ec64eb",
+      "member": "bytes/911f49f4b6620db94e7416c9cf92673014e17908ff758524a7071c96d5ec64eb",
+      "sourceCommit": null,
+      "sourceBlobId": "5bc9e7c0082ab7a2d12ac06914ee56658af40854"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-impact-01/logs/route-policy.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 186,
+      "sha256": "9adabc6f77f29d63612477f56eb46f9c0518d2cef645d4a8480edf4b1558b2d6",
+      "member": "bytes/9adabc6f77f29d63612477f56eb46f9c0518d2cef645d4a8480edf4b1558b2d6",
+      "sourceCommit": null,
+      "sourceBlobId": "32b6f8f7a6055d2f69b1298bf54025170edd38a1"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-integration-01/logs/integration.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 1032372,
+      "sha256": "4c23844e598d5e27a03091894d92d9e0fa4d3dbebd4ba1adeb78581dfd6d544a",
+      "member": "bytes/4c23844e598d5e27a03091894d92d9e0fa4d3dbebd4ba1adeb78581dfd6d544a",
+      "sourceCommit": null,
+      "sourceBlobId": "e677615453e36b7ec8929525c07c0e5916086c67"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-integration-01/logs/pg-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 2329,
+      "sha256": "ff25874c152ebb3694a2612288196a8a9a402b592dbde2f83d191c7dbd38b1fa",
+      "member": "bytes/ff25874c152ebb3694a2612288196a8a9a402b592dbde2f83d191c7dbd38b1fa",
+      "sourceCommit": null,
+      "sourceBlobId": "b9e080f3fd9c744c503b24c4668ad0259c34b6c5"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-integration-01/logs/redis-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 944,
+      "sha256": "ac8537a87f03b2a5c013abf10e09f627f1ef1860a9327a096b1fb6afa1fc8d9d",
+      "member": "bytes/ac8537a87f03b2a5c013abf10e09f627f1ef1860a9327a096b1fb6afa1fc8d9d",
+      "sourceCommit": null,
+      "sourceBlobId": "ef9c3533b12d6461a5013d7ba576ec4284f71ead"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-integration-01/logs/s3-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 103,
+      "sha256": "44cedffa60a01547c2eceb848ef80a0bbc8dcf937545645219fdcb25a4656895",
+      "member": "bytes/44cedffa60a01547c2eceb848ef80a0bbc8dcf937545645219fdcb25a4656895",
+      "sourceCommit": null,
+      "sourceBlobId": "8f237d0047cb23dbb02905a3cdbb5c9dc6745023"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-integration-02/logs/integration.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 1036491,
+      "sha256": "9c75daea705077821566d4db530bd8d1e66c9e7860b3fd02c4249cedafdf45cc",
+      "member": "bytes/9c75daea705077821566d4db530bd8d1e66c9e7860b3fd02c4249cedafdf45cc",
+      "sourceCommit": null,
+      "sourceBlobId": "6bde8200bafae6b9f682f97fcaa55b64fa87d4a5"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-integration-02/logs/pg-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 2329,
+      "sha256": "223f9e80e4646d79af922677a03a905f294820eaf2864972d389e1c67367eeff",
+      "member": "bytes/223f9e80e4646d79af922677a03a905f294820eaf2864972d389e1c67367eeff",
+      "sourceCommit": null,
+      "sourceBlobId": "a7c55f7b0d4a442983bf1d1f602039691ed69aad"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-integration-02/logs/redis-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 944,
+      "sha256": "92d543b6d17b1c776256aa630de9c8208b0c9b23f1fe33cd32257b4ea35c265e",
+      "member": "bytes/92d543b6d17b1c776256aa630de9c8208b0c9b23f1fe33cd32257b4ea35c265e",
+      "sourceCommit": null,
+      "sourceBlobId": "e15a819298ee4c01e9d295835d4f90643e5c006f"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-main-integration-02/logs/s3-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 103,
+      "sha256": "44cedffa60a01547c2eceb848ef80a0bbc8dcf937545645219fdcb25a4656895",
+      "member": "bytes/44cedffa60a01547c2eceb848ef80a0bbc8dcf937545645219fdcb25a4656895",
+      "sourceCommit": null,
+      "sourceBlobId": "8f237d0047cb23dbb02905a3cdbb5c9dc6745023"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-static-01/logs/ci-validate.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 2802,
+      "sha256": "b2bcc54c4b7b0c997e652f8b93b531e172a4ddd0ba22146a0aa075fe163d3c66",
+      "member": "bytes/b2bcc54c4b7b0c997e652f8b93b531e172a4ddd0ba22146a0aa075fe163d3c66",
+      "sourceCommit": null,
+      "sourceBlobId": "f138bb41a58835c5171dae546411ba22c3105d90"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-static-01/logs/connector-build.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 142,
+      "sha256": "88166449721957ca9c49f906dafe86e55a47a277c27640d32b539de46c879fd3",
+      "member": "bytes/88166449721957ca9c49f906dafe86e55a47a277c27640d32b539de46c879fd3",
+      "sourceCommit": null,
+      "sourceBlobId": "3bba8c36c455cb371d92d71b1020d216ca5d4f2c"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-static-01/logs/lint.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 6239,
+      "sha256": "4d692627f0a97ac2cad7913da6e465c74dbccd4fc1aad8a4fd5412834ca840d7",
+      "member": "bytes/4d692627f0a97ac2cad7913da6e465c74dbccd4fc1aad8a4fd5412834ca840d7",
+      "sourceCommit": null,
+      "sourceBlobId": "9ecd0037d816b4c1deaab88355495bd07262ae6e"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-static-01/logs/route-policy.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 186,
+      "sha256": "9adabc6f77f29d63612477f56eb46f9c0518d2cef645d4a8480edf4b1558b2d6",
+      "member": "bytes/9adabc6f77f29d63612477f56eb46f9c0518d2cef645d4a8480edf4b1558b2d6",
+      "sourceCommit": null,
+      "sourceBlobId": "32b6f8f7a6055d2f69b1298bf54025170edd38a1"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-static-01/logs/skill-pin.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 243,
+      "sha256": "3403b3888737727124d387e9e200777b427d57d90e2fb1a0a91161378c71696b",
+      "member": "bytes/3403b3888737727124d387e9e200777b427d57d90e2fb1a0a91161378c71696b",
+      "sourceCommit": null,
+      "sourceBlobId": "c90cfbf127502614b1436b668912501e7dd5cce1"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-static-01/logs/typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 6827,
+      "sha256": "d84d279248f42fd63164f4f2b311255e9a5d3542a16bb100a505f48fcaa2fc53",
+      "member": "bytes/d84d279248f42fd63164f4f2b311255e9a5d3542a16bb100a505f48fcaa2fc53",
+      "sourceCommit": null,
+      "sourceBlobId": "25e68f4d671d014c437c5c6669d57eef539d6d52"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-static-01/logs/unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 90603,
+      "sha256": "e083ee96b5ae30ab3e2ade300e933b0cb63260e3c6cd505d1eb124881c93f937",
+      "member": "bytes/e083ee96b5ae30ab3e2ade300e933b0cb63260e3c6cd505d1eb124881c93f937",
+      "sourceCommit": null,
+      "sourceBlobId": "dc3e1dacbecb10b5b1d08d65ab2186eb4babe72e"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-01/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-01/logs/connector-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 22668,
+      "sha256": "ec02557c4611ae3d9b98ebad16e6e83664f2f7509cfafb19a0ac65940f2aaebd",
+      "member": "bytes/ec02557c4611ae3d9b98ebad16e6e83664f2f7509cfafb19a0ac65940f2aaebd",
+      "sourceCommit": null,
+      "sourceBlobId": "8631d1ec187cb9a1d2373d6d9059444bad3e10bd"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-02/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-02/logs/connector-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 23780,
+      "sha256": "6e34d8614e8aca9108ae7d3fe24a9e178793daef677b87b9b48819a726f2f87a",
+      "member": "bytes/6e34d8614e8aca9108ae7d3fe24a9e178793daef677b87b9b48819a726f2f87a",
+      "sourceCommit": null,
+      "sourceBlobId": "240be3a91b280c80d83f22a9908bb61ec3669eb9"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-03/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-03/logs/connector-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 16038,
+      "sha256": "c693ae7f6e16d471f6f2ae8bc707ee6d2b2d7808883b1e1cff07b72cd2386013",
+      "member": "bytes/c693ae7f6e16d471f6f2ae8bc707ee6d2b2d7808883b1e1cff07b72cd2386013",
+      "sourceCommit": null,
+      "sourceBlobId": "4cb11125df81c79c352ea0f529473404692fbeff"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-04/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-04/logs/connector-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 21156,
+      "sha256": "79c5cc5baf50c086687118b7f99b384574011d6e829972cee246b4e99b531045",
+      "member": "bytes/79c5cc5baf50c086687118b7f99b384574011d6e829972cee246b4e99b531045",
+      "sourceCommit": null,
+      "sourceBlobId": "030d711f88c462210407bd1f3485c199dca34166"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-05/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-05/logs/connector-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 21359,
+      "sha256": "6af551117d4c4c851c5c7d98929085d672957fab942deffbb12188fd5ffcdeac",
+      "member": "bytes/6af551117d4c4c851c5c7d98929085d672957fab942deffbb12188fd5ffcdeac",
+      "sourceCommit": null,
+      "sourceBlobId": "8659eb64e8be8d369dc59b2e84d35a706495e132"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-06/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-06/logs/connector-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 21215,
+      "sha256": "48d87d3505e017f1a3d7c54045cf772094ce3e25809fe608db7ad1be4f176f60",
+      "member": "bytes/48d87d3505e017f1a3d7c54045cf772094ce3e25809fe608db7ad1be4f176f60",
+      "sourceCommit": null,
+      "sourceBlobId": "a1482fd05d0ac408b5fe22269a6750817296c49e"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-07/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-07/logs/connector-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 19790,
+      "sha256": "2c05ce6208f864a7f1da9c574a7d8e07c31ae5d2c2c50d9dba70fe20d2e65ad0",
+      "member": "bytes/2c05ce6208f864a7f1da9c574a7d8e07c31ae5d2c2c50d9dba70fe20d2e65ad0",
+      "sourceCommit": null,
+      "sourceBlobId": "d616739d3b9d867dcd29cdbb2e58139e9d00899a"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-08/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-08/logs/connector-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 20365,
+      "sha256": "823f87e306822451c02f076fb6630c5a836abfd08fa20b08bb705c9f9f1e6f6b",
+      "member": "bytes/823f87e306822451c02f076fb6630c5a836abfd08fa20b08bb705c9f9f1e6f6b",
+      "sourceCommit": null,
+      "sourceBlobId": "fb634930490accd438e9991d2ced189af5a7dd24"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-09/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-unit-09/logs/connector-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 20367,
+      "sha256": "508bcbf39b9fb602a2791ca3e6884934e94394bea0857d0debad0aed53008480",
+      "member": "bytes/508bcbf39b9fb602a2791ca3e6884934e94394bea0857d0debad0aed53008480",
+      "sourceCommit": null,
+      "sourceBlobId": "0828b2bbf7442f6e76d33b8fc4c3b44b9613db8d"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-windows-01/logs/windows-platform.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 6616,
+      "sha256": "0570f622f60b4c1364f10d9933c2d42c423727bace1e808497fb5fdbf5b62eb0",
+      "member": "bytes/0570f622f60b4c1364f10d9933c2d42c423727bace1e808497fb5fdbf5b62eb0",
+      "sourceCommit": null,
+      "sourceBlobId": "03176f1c28672dae331eb1adb528037add867bd7"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-windows-02/logs/windows-platform.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 6613,
+      "sha256": "3566eff37f2ff4dae4b15e652db32243db79418a1e61f200fe19225ff7006d02",
+      "member": "bytes/3566eff37f2ff4dae4b15e652db32243db79418a1e61f200fe19225ff7006d02",
+      "sourceCommit": null,
+      "sourceBlobId": "fc3b5af9cc74c3534f1f0603cc2f3e3b27487512"
     },
     {
       "logicalPath": "docs/reviews/b1-b2/evidence/static-01/logs/connector-build.log",

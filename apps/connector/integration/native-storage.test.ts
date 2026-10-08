@@ -5,7 +5,7 @@ import { stat, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { SystemSecretStore } from '../src/secret-store.js'
-import { withDirectoryLock, atomicWrite, verifyPrivate } from '../src/platform-security.js'
+import { withDirectoryLock, atomicWrite, verifyPrivate, prepareDirectory } from '../src/platform-security.js'
 import { sha256 } from '../src/config.js'
 import { temporaryDirectory, cleanupDirectory } from '../test-support/resources.js'
 
@@ -45,7 +45,7 @@ describe('实际系统后端与权限（不可跳过）', () => {
   })
   it('不同用户实际读取被拒绝', async () => {
     // macOS 用户 TMPDIR 的祖先可能是 0700，不能把祖先拒绝冒作连接器权限证明。
-    const parent = await temporaryDirectory('other-user', process.platform === 'win32' ? undefined : '/tmp'); const dir = join(parent, 'connector')
+    const parent = await temporaryDirectory('other-user', process.platform === 'win32' ? process.env.WM_CONNECTOR_PUBLIC_ROOT : '/tmp'); const dir = join(parent, 'connector')
     try {
       await withDirectoryLock(dir, async () => { await atomicWrite(join(dir, 'pending.json'), '非秘密探针') })
       if (process.platform === 'win32') {
@@ -77,6 +77,47 @@ if ($process.ExitCode -ne 23) { exit 1 }
         // 放开权限后的正对照必须可读，排除账户/父路径/探针自身故障造成的假拒绝。
         await execute('sudo', ['-n', '-u', 'nobody', 'sh', '-c', 'cat "$1" >/dev/null', 'probe', join(dir, 'pending.json')])
       }
+    } finally { await cleanupDirectory(parent) }
+  })
+  it('不同用户不能重命名或替换安全祖先/连接器；不安全祖先拒绝且攻击正对照成功', async () => {
+    const parent = await temporaryDirectory('rename', process.platform === 'win32' ? process.env.WM_CONNECTOR_PUBLIC_ROOT : '/tmp')
+    const dir = join(parent, 'connector'), unsafe = join(parent, 'unsafe'), victim = join(unsafe, 'connector')
+    try {
+      await withDirectoryLock(dir, () => atomicWrite(join(dir, 'pending.json'), '稳定身份非秘密探针'))
+      await prepareDirectory(victim)
+      if (process.platform === 'win32') {
+        expect(Boolean(process.env.WM_CONNECTOR_OTHER_USER && process.env.WM_CONNECTOR_OTHER_PASSWORD && process.env.WM_CONNECTOR_PUBLIC_ROOT)).toBe(true)
+        // DC 单独足以绕过子目录 DELETE 拒绝；AD 允许攻击者创建同名替换。
+        await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(DC,AD)'], { windowsHide: true })
+        await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
+        const script = `
+$ErrorActionPreference='Stop'
+$cred=New-Object Management.Automation.PSCredential($env:WM_CONNECTOR_OTHER_USER,(ConvertTo-SecureString $env:WM_CONNECTOR_OTHER_PASSWORD -AsPlainText -Force))
+$cmd=@'
+$p=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${Buffer.from(parent, 'utf8').toString('base64')}'))
+try { [IO.File]::ReadAllText([IO.Path]::Combine($p,'control.txt'))|Out-Null } catch {exit 24}
+foreach($target in @($p,[IO.Path]::Combine($p,'connector'))) { try { [IO.Directory]::Move($target,$target+'-moved'); exit 25 } catch {} }
+$v=[IO.Path]::Combine($p,'unsafe','connector')
+try { [IO.Directory]::Move($v,$v+'-moved'); [IO.Directory]::CreateDirectory($v)|Out-Null; [IO.Directory]::Delete($v); [IO.Directory]::Move($v+'-moved',$v) } catch {exit 26}
+exit 0
+'@
+$args=@('-NoProfile','-NonInteractive','-EncodedCommand',[Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd)))
+$probe=Start-Process powershell.exe -Credential $cred -ArgumentList $args -WindowStyle Hidden -Wait -PassThru
+if ($probe.ExitCode -ne 0) {exit $probe.ExitCode}
+`
+        await writeFile(join(parent, 'control.txt'), '非秘密可读对照')
+        const env: NodeJS.ProcessEnv = { ...process.env, WM_TEST_PARENT: parent }; delete env.PSModulePath
+        await execute('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')], { env, windowsHide: true })
+      } else {
+        await execute('chmod', ['0755', parent]); await execute('chmod', ['0777', unsafe])
+        await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
+        await execute('sudo', ['-n', '-u', 'nobody', 'sh', '-c',
+          'set -eu; test -d "$1"; if mv "$1/connector" "$1/connector-moved" 2>/dev/null; then exit 25; fi; if mv "$1" "$1-moved" 2>/dev/null; then exit 26; fi; v="$1/unsafe/connector"; mv "$v" "$v-moved"; mkdir "$v"; rmdir "$v"; mv "$v-moved" "$v"', 'probe', parent])
+        // sticky 公共祖先通过且确实阻止同一攻击者替换可信 owner 的子项。
+        await execute('chmod', ['1777', unsafe]); await prepareDirectory(victim)
+        await execute('sudo', ['-n', '-u', 'nobody', 'sh', '-c', 'if mv "$1" "$1-moved" 2>/dev/null; then exit 1; fi', 'probe', victim])
+      }
+      await prepareDirectory(dir)
     } finally { await cleanupDirectory(parent) }
   })
   if (process.platform === 'linux') it('Secret Service 不可用必须失败，不退回 keyutils', async () => {

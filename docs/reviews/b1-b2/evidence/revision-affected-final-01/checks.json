@@ -1,0 +1,58 @@
+[
+  {
+    "name": "connector-lint",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "lint"
+    ],
+    "startedAt": "2026-10-08T11:38:55.832Z",
+    "endedAt": "2026-10-08T11:38:59.623Z",
+    "exitCode": 0,
+    "log": "logs/connector-lint.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "contracts-lint",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/contracts",
+      "lint"
+    ],
+    "startedAt": "2026-10-08T11:39:00.200Z",
+    "endedAt": "2026-10-08T11:39:04.060Z",
+    "exitCode": 0,
+    "log": "logs/contracts-lint.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "api-lint",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/api",
+      "lint"
+    ],
+    "startedAt": "2026-10-08T11:39:04.684Z",
+    "endedAt": "2026-10-08T11:39:19.383Z",
+    "exitCode": 0,
+    "log": "logs/api-lint.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "api-unit",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/api",
+      "test"
+    ],
+    "startedAt": "2026-10-08T11:39:20.033Z",
+    "endedAt": "2026-10-08T11:39:48.434Z",
+    "exitCode": 0,
+    "log": "logs/api-unit.log",
+    "secretRedaction": true
+  }
+]

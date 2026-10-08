@@ -1,7 +1,5 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { spawn } from 'node:child_process'
-import { once } from 'node:events'
 import { fileURLToPath } from 'node:url'
 import { configurationSchema, defaultDirectory, expectationSchema, parseJson, sha256 } from './config.js'
 import { connect, clientSnippet, abandonPending } from './connect.js'
@@ -9,6 +7,8 @@ import { recoverCommit } from './commit.js'
 import { requireThat, safeError } from './errors.js'
 import { readPrivate, withDirectoryLock } from './platform-security.js'
 import { SystemSecretStore } from './secret-store.js'
+import { launchClient } from './client-process.js'
+export { redactChildOutput } from './client-process.js'
 
 async function pairingInput(): Promise<string> {
   if (!process.stdin.isTTY) {
@@ -37,18 +37,6 @@ async function pairingInput(): Promise<string> {
     process.stdin.on('data', data)
   })
 }
-// 跨 chunk 暂存完整 token 长度，避免子进程意外 echo 令牌穿过输出边界。
-export function redactChildOutput(write: (text: string) => void) {
-  let pending = ''
-  return {
-    push(text: string) {
-      pending += text
-      pending = pending.replace(/(?:wmi_|wmp_)[A-Za-z0-9_-]{43}/g, '[已隐藏]')
-      if (pending.length > 64) { write(pending.slice(0, -64)); pending = pending.slice(-64) }
-    },
-    finish() { write(pending.replace(/(?:wmi_|wmp_)[A-Za-z0-9_-]{43}/g, '[已隐藏]')); pending = '' },
-  }
-}
 export async function runClient(directory: string, command: string, args: string[]): Promise<number> {
   const store = new SystemSecretStore()
   const token = await withDirectoryLock(directory, async () => {
@@ -61,15 +49,7 @@ export async function runClient(directory: string, command: string, args: string
       && sha256(secret).slice(0, 12) === config.fingerprint, 'CONNECTOR_SECRET_MISSING')
     return secret
   })
-  const child = spawn(command, args, { env: { ...process.env, WORKMESH_INSTALLATION_TOKEN: token }, stdio: ['inherit', 'pipe', 'pipe'], windowsHide: true, shell: false })
-  const stdout = redactChildOutput(text => process.stdout.write(text))
-  const stderr = redactChildOutput(text => process.stderr.write(text))
-  child.stdout.setEncoding('utf8'); child.stderr.setEncoding('utf8')
-  child.stdout.on('data', (text: string) => stdout.push(text)); child.stderr.on('data', (text: string) => stderr.push(text))
-  const stop = () => child.kill('SIGTERM')
-  process.on('SIGINT', stop); process.on('SIGTERM', stop)
-  try { const [code] = await once(child, 'close'); return typeof code === 'number' ? code : 1 }
-  finally { process.off('SIGINT', stop); process.off('SIGTERM', stop); stdout.finish(); stderr.finish() }
+  return launchClient(command, args, token)
 }
 export async function main(args = process.argv.slice(2)): Promise<void> {
   const directory = defaultDirectory()
@@ -84,7 +64,16 @@ export async function main(args = process.argv.slice(2)): Promise<void> {
     process.stdout.write('已清理未决请求；旧配对码不能换 key 重试，请管理员签发新配对码。\n')
   } else throw new Error('usage')
 }
-if (process.argv[1] === fileURLToPath(import.meta.url)) main().catch(error => {
+export async function finishClientProcess(code: number): Promise<never> {
+  // node-pty 的 ConPTY 输入 socket 在 shell 退出后仍可保持引用；CLI 已恢复终端、刷完脱敏流，
+  // 排空输出后退出本进程，由 OS 回收剩余原生会话句柄，不再次 kill 已退出/可能重用的 PID。
+  await Promise.all([new Promise<void>(resolve => process.stdout.write('', () => resolve())),
+    new Promise<void>(resolve => process.stderr.write('', () => resolve()))])
+  process.exit(code)
+}
+if (process.argv[1] === fileURLToPath(import.meta.url)) main().then(async () => {
+  if (process.argv[2] === 'run') await finishClientProcess(process.exitCode === undefined ? 0 : Number(process.exitCode))
+}).catch(error => {
   process.stderr.write(`${safeError(error).code}：连接未完成；保留旧配置。重试须使用原清单与原配对码，窗口外请管理员重新配对。\n`)
   process.exitCode = 1
 })

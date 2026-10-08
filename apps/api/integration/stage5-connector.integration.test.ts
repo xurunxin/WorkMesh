@@ -1,9 +1,8 @@
 import { randomUUID } from 'node:crypto'
 import { once } from 'node:events'
 import { createServer, request as httpRequest, type Server } from 'node:http'
-import { mkdtemp, readFile, rm } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { tmpdir } from 'node:os'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb, tokenHash } from '@workmesh/db'
 import { loadFeatureConfig } from '@workmesh/config'
@@ -13,6 +12,7 @@ import { parseJson, pendingSchema, type Expectation } from '../../connector/src/
 import { readPrivate } from '../../connector/src/platform-security.js'
 import { bootstrapMcp } from '../../connector/src/protocol.js'
 import { MemoryStore } from '../../connector/test-support/fixture.js'
+import { temporaryDirectory, cleanupDirectory } from '../../connector/test-support/resources.js'
 import { createWorkMeshMcpHttpServer } from '../../mcp/src/http.js'
 import { createSessionLifecycleWorker } from '../../worker/src/session-lifecycle.js'
 
@@ -29,7 +29,7 @@ const human = (method: 'GET' | 'POST' | 'DELETE', path: string, payload?: object
 const listen = async (server: Server) => { server.listen(0, '127.0.0.1'); await once(server, 'listening'); const a = server.address(); if (!a || typeof a === 'string') throw new Error('测试地址无效'); return `http://127.0.0.1:${a.port}` }
 const close = async (server: Server) => { server.close(); server.closeAllConnections(); await once(server, 'close') }
 beforeAll(async () => {
-  temp = await mkdtemp(join(tmpdir(), 'workmesh-b1-b2-api-'))
+  temp = await temporaryDirectory('api')
   const skill = await readFile(new URL('../../web/public/skills/workmesh-1.1.0.md', import.meta.url))
   gateway = createServer((incoming, outgoing) => {
     if (incoming.url === '/skills/workmesh-1.1.0.md') { outgoing.writeHead(200, { 'Content-Type': 'text/markdown' }); outgoing.end(skill); return }
@@ -63,7 +63,7 @@ afterAll(async () => {
   if (mcp) await close(mcp)
   if (app) await app.close()
   await db.end()
-  if (temp) await rm(temp, { recursive: true, force: true })
+  if (temp) await cleanupDirectory(temp)
   if (priorWeb === undefined) delete process.env.WEB_ORIGIN; else process.env.WEB_ORIGIN = priorWeb
   if (priorMcp === undefined) delete process.env.PUBLIC_MCP_ORIGIN; else process.env.PUBLIC_MCP_ORIGIN = priorMcp
 })

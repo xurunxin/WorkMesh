@@ -20,7 +20,11 @@ pending 在首次网络发送前写入受保护临时文件、同步、同目录
 
 提交前保存受保护 journal，包含旧配置原文、新配置及其摘要、独有新秘密引用和 Skill 是否已存在。旧配置先按严格无秘密 schema 校验，旧引用不覆盖、不删除。新增秘密并读回核对后写入 Skill，再原子替换配置；POSIX 同步目录，Windows 使用同步文件与 `MoveFileExW(REPLACE_EXISTING|WRITE_THROUGH)`。配置替换为提交点。恢复看到新配置摘要一致时确认新秘密/Skill 后收尾；否则要求仍与旧配置一致，补偿新增秘密和新 Skill。补偿删除失败保留 journal，禁止后续新提交。提交后相同配对码仅通过摘要识别，重新验证当前身份再幂等返回，不保留原码。
 
-CLI 从隐藏输入或扫码设备原始文本读取配对码；不接受 URL fragment 或命令行秘密参数。`run` 读取系统秘密后注入 `WORKMESH_INSTALLATION_TOKEN`，处理退出码和终止信号，对子进程输出中意外出现的完整凭据形态做跨块隐藏。
+CLI 从隐藏输入或扫码设备原始文本读取配对码；不接受 URL fragment 或命令行秘密参数。`run` 读取系统秘密后注入 `WORKMESH_INSTALLATION_TOKEN`，处理退出码和终止信号，对子进程输出中意外出现的完整凭据形态做跨块隐藏。独审修订：只保留可能尚未完成的凭据后缀，确定安全的提示立即输出。交互模式新增客户端依赖 `node-pty` 固定 `1.1.0`，提供 POSIX PTY/Windows ConPTY、尺寸变化、原始输入和 Ctrl-C，终端合并输出仍经过同一脱敏器；重定向模式保留分别脱敏的管道。Windows 使用包内 ConPTY DLL，退出后排空 CLI 输出并退出本进程以回收剩余原生输入句柄，不再次终止已退出的 PID。
+
+独审修订：路径校验覆盖根目录及所有祖先，不仅验证叶目录。POSIX 可信 owner 为当前 uid/root；其他用户可写的祖先须有 sticky，且每一级子目录 owner 也须可信。macOS 额外拒绝扩展 ACL 的修改型 allow。Windows 可信 owner/授权主体为当前 SID、SYSTEM、Administrators、TrustedInstaller；对其他主体授予 DELETE、DELETE_CHILD、修改 DACL/owner、GENERIC_ALL/WRITE 均拒绝，继承专用 ACE 不授予当前祖先权限，未知条件/object ACE 保守拒绝。拒绝不安全现存路径，不替用户修改祖先权限；逐层创建缺失目录时设置保护。第二用户测试同时证明安全路径不可重命名、不安全路径确实可替换且连接器拒绝进入；保留可读取正对照。
+
+Windows 在 owner/ACL 核验前从根到叶打开 `READ_CONTROL|READ_ATTRIBUTES` 目录句柄，仅共享读取，持有到锁覆盖的完整操作结束后逆序关闭。这也阻止已核验空祖先被写成重解析点，或祖先在创建下一级期间被删除/重命名；其他用户仅有 ADD_FILE/ADD_SUBDIRECTORY 时不能删除已有受保护子项。所有异常也释放本次句柄，不修改祖先 ACL。
 
 Alternatives
 
@@ -37,3 +41,5 @@ Migration
 Spec changes
 
 修正 `AGENT_PROTOCOL.md` 与 `OPENAPI.yaml` 的重放窗口和客户端提交顺序；冻结规格/计划历史保留在 `docs/reviews/b1-b2/`，当前规格单独存入 `current-spec.md`。ADR 0075 整体的其他任务仍未因本实现全部完成。
+
+独审修订依据为本轮三项 implementation blocking；完整历史规划不重写。新增原生客户端依赖的 API 与平台边界参照 [node-pty 官方仓库](https://github.com/microsoft/node-pty)，Windows 权限语义参照 [Microsoft 文件安全文档](https://learn.microsoft.com/en-us/windows/win32/fileio/file-security-and-access-rights)。三系统实际验证、Required CI、成果复审和 actual main 门禁继续保留。

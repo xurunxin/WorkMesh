@@ -6,12 +6,18 @@ $priorTemp = $env:TEMP
 $priorTmp = $env:TMP
 $priorOtherUser = $env:WM_CONNECTOR_OTHER_USER
 $priorOtherPassword = $env:WM_CONNECTOR_OTHER_PASSWORD
+$priorPublicRoot = $env:WM_CONNECTOR_PUBLIC_ROOT
 $createdUser = $null
 $directoryCreated = $false
 try {
   $createdUser = New-LocalUser -Name $name -Password (ConvertTo-SecureString $password -AsPlainText -Force)
-  New-Item -ItemType Directory -Path $parent | Out-Null
+  if (Test-Path -LiteralPath $parent) { throw 'temporary directory collision' }
+  $env:WM_CONNECTOR_PUBLIC_ROOT = $parent
+  & node --import tsx --input-type=module -e "import {prepareDirectory} from './apps/connector/src/platform-security.ts'; await prepareDirectory(process.env.WM_CONNECTOR_PUBLIC_ROOT)"
+  if ($LASTEXITCODE -ne 0) { throw 'protected temporary directory creation failed' }
   $directoryCreated = $true
+  & icacls.exe $parent /grant '*S-1-1-0:(OI)(CI)(RX)' | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw 'public read control setup failed' }
   $env:WM_CONNECTOR_OTHER_USER = $env:COMPUTERNAME + '\' + $name
   $env:WM_CONNECTOR_OTHER_PASSWORD = $password
   $env:TEMP = $parent
@@ -25,6 +31,7 @@ try {
   $env:TMP = $priorTmp
   if ($null -eq $priorOtherUser) { Remove-Item Env:WM_CONNECTOR_OTHER_USER -ErrorAction SilentlyContinue } else { $env:WM_CONNECTOR_OTHER_USER = $priorOtherUser }
   if ($null -eq $priorOtherPassword) { Remove-Item Env:WM_CONNECTOR_OTHER_PASSWORD -ErrorAction SilentlyContinue } else { $env:WM_CONNECTOR_OTHER_PASSWORD = $priorOtherPassword }
+  if ($null -eq $priorPublicRoot) { Remove-Item Env:WM_CONNECTOR_PUBLIC_ROOT -ErrorAction SilentlyContinue } else { $env:WM_CONNECTOR_PUBLIC_ROOT = $priorPublicRoot }
   $cleanupErrors = @()
   $userRemoved = $null -eq $createdUser
   try {

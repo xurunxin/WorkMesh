@@ -6,6 +6,7 @@ import { dirname, join, resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import koffi from 'koffi'
 import { ConnectorError, requireThat } from './errors.js'
+import { trustedPosixDirectory, trustedWindowsDescriptor } from './path-policy.js'
 
 const execute = promisify(execFile)
 const windows = process.platform === 'win32'
@@ -46,6 +47,36 @@ function nativePathError(code: number): NodeJS.ErrnoException {
 const libc = windows ? null : koffi.load(process.platform === 'darwin' ? '/usr/lib/libSystem.B.dylib' : 'libc.so.6')
 const flock = libc?.func('int flock(int fd, int operation)')
 const errnoAddress = libc?.func(process.platform === 'darwin' ? 'int * __error()' : 'int * __errno_location()')
+const macAclGet = process.platform === 'darwin' ? libc?.func('void * acl_get_file(str path, int type)') : null
+const macAclText = process.platform === 'darwin' ? libc?.func('void * acl_to_text(void * acl, void * length)') : null
+const macAclFree = process.platform === 'darwin' ? libc?.func('int acl_free(void * acl)') : null
+
+async function verifyAncestor(path: string): Promise<void> {
+  const info = await lstat(path)
+  requireThat(info.isDirectory() && !info.isSymbolicLink(), 'CONNECTOR_UNSAFE_PATH')
+  if (windows) {
+    requireThat((attributes!(path) & 0x400) === 0, 'CONNECTOR_UNSAFE_PATH')
+    const descriptor = Buffer.alloc(32_768), needed = [0]
+    requireThat(getSecurity!(path, 5, descriptor, descriptor.length, needed), 'CONNECTOR_UNSAFE_ACL')
+    trustedWindowsDescriptor(descriptor.subarray(0, needed[0]), await userSid())
+  } else {
+    trustedPosixDirectory(info.uid, info.mode, process.getuid!())
+    if (macAclGet) {
+      const entry = macAclGet(path, 0x100)
+      requireThat(entry, 'CONNECTOR_UNSAFE_ACL')
+      try {
+        const text = macAclText!(entry, null)
+        requireThat(text, 'CONNECTOR_UNSAFE_ACL')
+        try {
+          // macOS 扩展 ACL 不受 chmod 的 mode 位完整约束；保守拒绝所有修改型 allow。
+          const aclText = koffi.decode.string(text)
+          requireThat(!aclText.split('\n').some(line => /\ballow\b/.test(line)
+            && /\b(?:write|append|delete|delete_child|add_file|add_subdirectory|writeattr|writeextattr|writesecurity|chown)\b/.test(line)), 'CONNECTOR_UNSAFE_ANCESTOR')
+        } finally { macAclFree!(text) }
+      } finally { macAclFree!(entry) }
+    }
+  }
+}
 
 // 创建时传入安全描述符，写敏感字节前读回实际 owner/DACL。
 async function acl(path: string, establish: boolean): Promise<void> {
@@ -74,30 +105,38 @@ export async function verifyPrivate(path: string, directory = false): Promise<vo
   else requireThat(info.uid === process.getuid?.() && (info.mode & 0o777) === (directory ? 0o700 : 0o600)
     && (directory || info.nlink === 1), 'CONNECTOR_UNSAFE_PERMISSIONS')
 }
-export async function prepareDirectory(directory: string): Promise<void> {
+async function withPreparedDirectory<T>(directory: string, action: () => Promise<T>): Promise<T> {
   const path = resolve(directory)
-  let ancestor = dirname(path)
-  while (dirname(ancestor) !== ancestor) {
-    try {
-      const info = await lstat(ancestor)
-      requireThat(!info.isSymbolicLink(), 'CONNECTOR_UNSAFE_PATH')
-      if (windows) {
-        requireThat((attributes!(ancestor) & 0x400) === 0, 'CONNECTOR_UNSAFE_PATH')
-      }
-    } catch (e) { if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw new ConnectorError('CONNECTOR_UNSAFE_PATH') }
-    ancestor = dirname(ancestor)
-  }
+  const chain: string[] = []
+  for (let part = path; ; part = dirname(part)) { chain.unshift(part); if (dirname(part) === part) break }
+  const handles: unknown[] = []
   try {
-    if (windows) await withSecurityAttributes(attributes => {
-      if (!nativeDirectory!(path, attributes)) throw nativePathError(nativeError!())
-    })
-    else await mkdir(path, { mode: 0o700, recursive: false })
-  }
-  catch (e) {
-    if ((e as NodeJS.ErrnoException).code === 'ENOENT') { await mkdir(dirname(path), { recursive: true }); return prepareDirectory(path) }
-    if ((e as NodeJS.ErrnoException).code !== 'EEXIST') throw e
-  }
-  await verifyPrivate(path, true)
+    for (const part of chain) {
+      try { await lstat(part) }
+      catch (e) {
+        if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e
+        // 父级已经核验，缺失层级在创建时即保护，不用默认 ACL 的 recursive mkdir。
+        try {
+          if (windows) await withSecurityAttributes(attributes => {
+            if (!nativeDirectory!(part, attributes)) throw nativePathError(nativeError!())
+          })
+          else await mkdir(part, { mode: 0o700 })
+        } catch (error) { if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error }
+      }
+      if (windows) {
+        // 根到叶逐级固定目录对象；不共享写入/删除，封住空祖先被设置 reparse 的窗口。
+        const handle = nativeOpen!(part, 0x20000 | 0x80, 1, null, 3, 0x02000000 | 0x00200000, null)
+        requireThat(handle !== null && koffi.address(handle) !== 0xffffffffffffffffn, 'CONNECTOR_UNSAFE_PATH')
+        handles.push(handle)
+      }
+      await verifyAncestor(part)
+    }
+    await verifyPrivate(path, true)
+    return await action()
+  } finally { for (const handle of handles.reverse()) nativeClose!(handle) }
+}
+export async function prepareDirectory(directory: string): Promise<void> {
+  await withPreparedDirectory(directory, async () => {})
 }
 async function privateEmpty(path: string): Promise<void> {
   if (windows) {
@@ -145,7 +184,9 @@ export async function cleanTemps(directory: string): Promise<void> {
   for (const name of await readdir(directory)) if (/^\.connector-tmp-[a-f0-9-]{36}$/.test(name)) await removePrivate(join(directory, name))
 }
 export async function withDirectoryLock<T>(directory: string, action: () => Promise<T>): Promise<T> {
-  await prepareDirectory(directory)
+  return withPreparedDirectory(directory, () => lockPreparedDirectory(directory, action))
+}
+async function lockPreparedDirectory<T>(directory: string, action: () => Promise<T>): Promise<T> {
   const path = join(directory, 'connector.lock')
   try { await privateEmpty(path) } catch (e) { if ((e as NodeJS.ErrnoException).code !== 'EEXIST') throw e }
   await verifyPrivate(path)

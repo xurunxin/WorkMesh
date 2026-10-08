@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import { join, resolve, sep } from 'node:path'
 
 const owned = new Set<string>()
-export async function temporaryDirectory(kind: string, root = tmpdir()): Promise<string> {
+export async function temporaryDirectory(kind: string, root = process.platform === 'win32' ? process.env.APPDATA! : tmpdir()): Promise<string> {
   if (!/^[a-z-]+$/.test(kind)) throw new Error('Invalid test resource kind')
   const boundary = await realpath(root)
   const path = await realpath(await mkdtemp(join(boundary, `workmesh-b1-b2-${kind}-`)))
