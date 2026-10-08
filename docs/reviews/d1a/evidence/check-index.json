@@ -8,88 +8,143 @@
       "command": "pnpm --filter @workmesh/web exec vitest run features/navigation/theme.test.tsx",
       "exitCode": 0,
       "log": "logs/theme-unit.log",
-      "sha256": "99a325062b1b23064c1c89d1ac5788fb88568c4e4f35e7b1fdcf6820dbbcb252",
-      "bytes": 348
+      "gitObjectAtHead": "80dcda8fb13dedc8b5c7862d47f07920eb00b27a",
+      "gitBytesAtHead": 338,
+      "gitSha256AtHead": "877b3b790f608c264416903dcd5d1f3c0d7b3148ae677183c9e0bdeb87cef37d",
+      "worktreeBytes": 348,
+      "worktreeSha256": "99a325062b1b23064c1c89d1ac5788fb88568c4e4f35e7b1fdcf6820dbbcb252",
+      "checkoutTransform": "UTF-8 checkout normalization (BOM/CRLF to LF)",
+      "normalizedEqualsGitBlob": true
     },
     {
       "id": "lint",
       "command": "pnpm lint",
       "exitCode": 0,
       "log": "logs/lint.log",
-      "sha256": "01b5229c8d61ea7277b8f167792a0fd1b1f294290b707a7a49428eb71208724c",
-      "bytes": 6113
+      "gitObjectAtHead": "5ae792fe4f815675ed43dfdce94f9493f063e49f",
+      "gitBytesAtHead": 6008,
+      "gitSha256AtHead": "9477223063d7e7f83845d147a62c33bb60125fd0e75c7a4363bb1b440103e694",
+      "worktreeBytes": 6113,
+      "worktreeSha256": "01b5229c8d61ea7277b8f167792a0fd1b1f294290b707a7a49428eb71208724c",
+      "checkoutTransform": "UTF-8 checkout normalization (BOM/CRLF to LF)",
+      "normalizedEqualsGitBlob": true
     },
     {
       "id": "typecheck",
       "command": "pnpm typecheck",
       "exitCode": 0,
       "log": "logs/typecheck.log",
-      "sha256": "b4e3b07f27dcfc6af085a20d9a694124d3d046142bc68551e8444f6b3521356e",
-      "bytes": 6668
+      "gitObjectAtHead": "7dfcf17b22038d1a3de51b16651e4361442e49e7",
+      "gitBytesAtHead": 6563,
+      "gitSha256AtHead": "5e644b045bb8fbca220d6d3c99201a2f881ee5f5ae3bfc097a7eaa59682ac41e",
+      "worktreeBytes": 6668,
+      "worktreeSha256": "b4e3b07f27dcfc6af085a20d9a694124d3d046142bc68551e8444f6b3521356e",
+      "checkoutTransform": "UTF-8 checkout normalization (BOM/CRLF to LF)",
+      "normalizedEqualsGitBlob": true
     },
     {
       "id": "unit-suite",
       "command": "pnpm test",
       "exitCode": 0,
       "log": "logs/unit-suite.log",
-      "sha256": "2e3575dbcfbd82f676d0750d8f53b952236e260bf9ee670dbb2de29c769b6e55",
-      "bytes": 60187
+      "gitObjectAtHead": "bf5ad4e2ab594168fb9e633670ffd1b43ef3e664",
+      "gitBytesAtHead": 59457,
+      "gitSha256AtHead": "191f35c6ed59991d48f69e417511c4aaa889eb92ed6b1a23e298cd5b0e40d78d",
+      "worktreeBytes": 60187,
+      "worktreeSha256": "2e3575dbcfbd82f676d0750d8f53b952236e260bf9ee670dbb2de29c769b6e55",
+      "checkoutTransform": "UTF-8 checkout normalization (BOM/CRLF to LF)",
+      "normalizedEqualsGitBlob": true
     },
     {
       "id": "theme-e2e-focused",
       "command": "pnpm --filter @workmesh/web test:e2e e2e/theme-unification.spec.ts",
       "exitCode": 0,
       "log": "logs/theme-e2e-focused.log",
-      "sha256": "b1623f66c51fdcb072129be7706cadb71eb0d4100434dec55052dc3155877af1",
-      "bytes": 232386
+      "gitObjectAtHead": "324d07c82dd384d25f857f9f652525b771530557",
+      "gitBytesAtHead": 231422,
+      "gitSha256AtHead": "c410b7c2aa1de4b2fe9a3b9711b878e04e53e912f32c4e15a1d2f015a4041af1",
+      "worktreeBytes": 232386,
+      "worktreeSha256": "b1623f66c51fdcb072129be7706cadb71eb0d4100434dec55052dc3155877af1",
+      "checkoutTransform": "UTF-8 checkout normalization (BOM/CRLF to LF)",
+      "normalizedEqualsGitBlob": true
     },
     {
       "id": "integration-suite",
       "command": "pnpm test:integration",
       "exitCode": 0,
       "log": "logs/integration-suite.log",
-      "sha256": "2d709767fac2a28aa8e911703a117f6fff2545fe2afe45b1b538d18372317eff",
-      "bytes": 1036944
+      "gitObjectAtHead": "b7d24cd95941282962f7bbb3ac4fa3baf1592d6a",
+      "gitBytesAtHead": 1032542,
+      "gitSha256AtHead": "4625928d795dbaf944462b2b6b9443ccaf41be64ccc0413cf70d95b9d43be181",
+      "worktreeBytes": 1036944,
+      "worktreeSha256": "2d709767fac2a28aa8e911703a117f6fff2545fe2afe45b1b538d18372317eff",
+      "checkoutTransform": "UTF-8 checkout normalization (BOM/CRLF to LF)",
+      "normalizedEqualsGitBlob": true
     },
     {
       "id": "e2e-suite",
       "command": "pnpm test:e2e",
       "exitCode": 0,
       "log": "logs/e2e-suite.log",
-      "sha256": "a5b0cc53ea546479f9819fe00fa7f4256665681c6de40270a79854b1459d8e3f",
-      "bytes": 1710849
+      "gitObjectAtHead": "a4ffa21351f01e8a414ac623f109c62096f8d30c",
+      "gitBytesAtHead": 1704565,
+      "gitSha256AtHead": "48cb7c510253d0d9055f785c3917f9c989cfb180fb09493ccd25bddd72a73b26",
+      "worktreeBytes": 1710849,
+      "worktreeSha256": "a5b0cc53ea546479f9819fe00fa7f4256665681c6de40270a79854b1459d8e3f",
+      "checkoutTransform": "UTF-8 checkout normalization (BOM/CRLF to LF)",
+      "normalizedEqualsGitBlob": true
     },
     {
       "id": "d0-baseline",
       "command": "pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --update-snapshots=none",
       "exitCode": 0,
       "log": "logs/d0-baseline.log",
-      "sha256": "a4a5561ca33e94365a380f72196ebd34ba791e688ca09dc5094f1e9bddf4a184",
-      "bytes": 7053
+      "gitObjectAtHead": "bbafe8410f2f01d60c128763d5e591266bcb8145",
+      "gitBytesAtHead": 6968,
+      "gitSha256AtHead": "d9516d3c940add916ab40e60d65144c1c20719002e7a2b178a9c6e5002cadfc0",
+      "worktreeBytes": 7053,
+      "worktreeSha256": "a4a5561ca33e94365a380f72196ebd34ba791e688ca09dc5094f1e9bddf4a184",
+      "checkoutTransform": "UTF-8 checkout normalization (BOM/CRLF to LF)",
+      "normalizedEqualsGitBlob": true
     },
     {
       "id": "diff-check",
       "command": "git diff --check",
       "exitCode": 0,
       "log": "logs/diff-check.log",
-      "sha256": "d30e60140df9a4745ad2661f798c66087ffb4f75d4134e8ed663028d37eb5158",
-      "bytes": 424
+      "gitObjectAtHead": "16866c2a6895975596ad90633edeaf93f13339bd",
+      "gitBytesAtHead": 420,
+      "gitSha256AtHead": "f593ad6f85d60dcd343ffdc754e6289485f44fd2fe61944fd5ecd45511163ee9",
+      "worktreeBytes": 424,
+      "worktreeSha256": "d30e60140df9a4745ad2661f798c66087ffb4f75d4134e8ed663028d37eb5158",
+      "checkoutTransform": "UTF-8 checkout normalization (BOM/CRLF to LF)",
+      "normalizedEqualsGitBlob": true
     },
     {
       "id": "runtime-probe",
       "command": "Playwright browser version probe through @playwright/test",
       "exitCode": 0,
       "log": "logs/runtime-probe.log",
-      "sha256": "509f0853e3e88a101b6f36a88d51d17eac210ece514b75b4b29f29c3f4e4f1a7",
-      "bytes": 449
+      "gitObjectAtHead": "439697b33d433ff8cf550fac95bca6577c6a7826",
+      "gitBytesAtHead": 448,
+      "gitSha256AtHead": "2f58ac0aea898549897cedf2a7db4d2c5dfd879902f844c6e537b1c67affff97",
+      "worktreeBytes": 449,
+      "worktreeSha256": "509f0853e3e88a101b6f36a88d51d17eac210ece514b75b4b29f29c3f4e4f1a7",
+      "checkoutTransform": "UTF-8 checkout normalization (BOM/CRLF to LF)",
+      "normalizedEqualsGitBlob": true
     },
     {
       "id": "cleanup-check",
       "command": "docker ps -a for wm-d1a task-owned containers",
       "exitCode": 0,
       "log": "logs/cleanup-check.log",
-      "sha256": "8c2eaac08da742ac5e03b101f8dc55504ab4148a1fe8710c24e225abcf987205",
-      "bytes": 209
+      "gitObjectAtHead": "055501ac7c4e7d1ff2108c8e4019573582158d0f",
+      "gitBytesAtHead": 205,
+      "gitSha256AtHead": "5564300de7cc07c4760b952184d2ee3897a9cffb57b88392a09fd813e11a8191",
+      "worktreeBytes": 242,
+      "worktreeSha256": "31a2da38472fc6e1ee38b5094e9bc628acbd7ad70e82e43d8f4a365602489d09",
+      "checkoutTransform": "different content",
+      "normalizedEqualsGitBlob": false
     }
   ],
   "runtime": "runtime.txt",
@@ -107,5 +162,7 @@
       "integration: exact-session MiniMax live provider skipped because RUN_WORKBENCH_LIVE and MINIMAX_CN_API_KEY were not configured"
     ]
   },
-  "resultLogSha256": "ef78764392887f5661a30a44d0c11e8c012b7dfe0ef9344eb7cdd211621f66dc"
+  "resultLogSha256": "ef78764392887f5661a30a44d0c11e8c012b7dfe0ef9344eb7cdd211621f66dc",
+  "priorEvidenceStatus": "Historical run logs with no execution-time source binding; not accepted as current verification.",
+  "sourceBoundReverificationIndex": "reverification-index.json"
 }

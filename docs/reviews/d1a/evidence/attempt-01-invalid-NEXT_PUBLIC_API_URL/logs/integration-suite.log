@@ -1,0 +1,21 @@
+COMMAND: pnpm test:integration
+SOURCE_BEFORE: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4
+
+> workmesh@ test:integration C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5
+> pnpm test:integration:db && pnpm test:integration:api && pnpm test:integration:worker && pnpm test:integration:recovery
+
+
+> workmesh@ test:integration:db C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/db test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/db@ test:integration C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\packages\db
+> vitest run --config ../../vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a1187a-f4ff-735d-814f-a7b26f8cfdc5/packages/db
+

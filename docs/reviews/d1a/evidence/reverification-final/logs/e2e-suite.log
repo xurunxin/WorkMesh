@@ -1,0 +1,55 @@
+COMMAND: pnpm test:e2e
+SOURCE_BEFORE: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4
+
+> workmesh@ test:e2e C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5
+> turbo run test:e2e --filter=@workmesh/web
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/web
+   • Running test:e2e in 1 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/contracts:build: cache hit, replaying logs 587bd32580d3f542
+@workmesh/contracts:build: 
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build: 
+@workmesh/ui:build: cache hit, replaying logs 5df68c3c7071d7b7
+@workmesh/ui:build: 
+@workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\packages\ui
+@workmesh/ui:build: > tsc -p tsconfig.json
+@workmesh/ui:build: 
+@workmesh/web:test:e2e: cache bypass, force executing 575218b7cfaecfda
+@workmesh/web:test:e2e: 
+@workmesh/web:test:e2e: > @workmesh/web@ test:e2e C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\apps\web
+@workmesh/web:test:e2e: > playwright test --config ../../playwright.config.ts
+@workmesh/web:test:e2e: 
+@workmesh/web:test:e2e: Error: WORKMESH_PLAYWRIGHT_RUN_DIR must be an absolute path
+@workmesh/web:test:e2e:     at Object.<anonymous> (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\playwright.config.ts:25:9)
+@workmesh/web:test:e2e:     at Module._compile (node:internal/modules/cjs/loader:1929:14)
+@workmesh/web:test:e2e:     at Object.<anonymous> (node:internal/modules/cjs/loader:2060:10)
+@workmesh/web:test:e2e:     at Module.load (node:internal/modules/cjs/loader:1651:32)
+@workmesh/web:test:e2e:     at Module._load (node:internal/modules/cjs/loader:1443:12)
+@workmesh/web:test:e2e:     at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+@workmesh/web:test:e2e:     at Module.require (node:internal/modules/cjs/loader:1674:12)
+@workmesh/web:test:e2e:     at require (node:internal/modules/helpers:157:16)
+@workmesh/web:test:e2e:     at requireOrImport (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1149:18)
+@workmesh/web:test:e2e:     at loadUserConfig (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1334:52)
+@workmesh/web:test:e2e:     at loadConfig (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1341:28)
+@workmesh/web:test:e2e:     at Object.loadConfigFromFile (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1553:10)
+@workmesh/web:test:e2e:     at runTests (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\cli\testActions.js:46:18)
+@workmesh/web:test:e2e:     at _Command.<anonymous> (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\program.js:53:7)
+@workmesh/web:test:e2e:  ELIFECYCLE  Command failed with exit code 1.
+@workmesh/web#test:e2e:  ERROR  command (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\apps\web) C:\nvm4w\nodejs\pnpm.cmd run test:e2e exited (1)
+
+ Tasks:    2 successful, 3 total
+Cached:    2 cached, 3 total
+  Time:    1.278s 
+Failed:    @workmesh/web#test:e2e
+
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT_CODE: 1
+SOURCE_AFTER: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4

@@ -1,0 +1,17 @@
+COMMAND: pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --update-snapshots=none
+SOURCE_BEFORE: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4
+Error: WORKMESH_PLAYWRIGHT_RUN_DIR must be an absolute path
+    at resolvePlaywrightRunPaths (file:///C:/Users/xurx/.tds/workspaces/01a1187a-f4ff-735d-814f-a7b26f8cfdc5/apps/web/e2e/playwright-run-directory.ts:25:11)
+    at file:///C:/Users/xurx/.tds/workspaces/01a1187a-f4ff-735d-814f-a7b26f8cfdc5/apps/web/playwright.mocked.config.ts:10:18
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at node:internal/modules/esm/loader:647:26
+    at requireOrImport (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1147:12)
+    at loadUserConfig (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1334:46)
+    at loadConfig (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1341:22)
+    at Object.loadConfigFromFile (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1553:10)
+    at runTests (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\cli\testActions.js:46:18)
+    at _Command.<anonymous> (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\program.js:53:7)
+
+EXIT_CODE: 1
+SOURCE_AFTER: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4

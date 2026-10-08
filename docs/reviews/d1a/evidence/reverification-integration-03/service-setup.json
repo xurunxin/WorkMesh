@@ -1,0 +1,83 @@
+{
+  "head": "40a51cc476aa1de1d9e313dfd9bdfbbb64ef5aeb",
+  "tree": "5126885a0a17b5871208ee34496639bd2dc99590",
+  "health": {
+    "postgres": true,
+    "rustfs": true,
+    "redis": true
+  },
+  "containers": {
+    "wm-d1a-reverify-40a51c-rustfs": {
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "running": true,
+      "health": "no-healthcheck",
+      "ports": {
+        "9000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "29000"
+          }
+        ]
+      }
+    },
+    "wm-d1a-reverify-40a51c-redis": {
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "running": true,
+      "health": "no-healthcheck",
+      "ports": {
+        "6379/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "26379"
+          }
+        ]
+      }
+    },
+    "wm-d1a-reverify-40a51c-pg": {
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "running": true,
+      "health": "no-healthcheck",
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "25432"
+          }
+        ]
+      }
+    }
+  },
+  "testDatabases": [
+    "workmesh_d1a_integration_test",
+    "workmesh_d1a_recovery_source_test",
+    "workmesh_d1a_recovery_target_test"
+  ],
+  "buckets": [
+    "workmesh-artifacts",
+    "recovery-target-d1a-reverify",
+    "recovery-source-d1a-reverify (created in integration suite)"
+  ],
+  "envConfigured": {
+    "RECOVERY_TARGET_DATABASE_URL": "127.0.0.1:25432/workmesh_d1a_recovery_target_test",
+    "RUN_RETENTION_UPGRADE_INTEGRATION": "1",
+    "RUN_RECOVERY_INTEGRATION": "1",
+    "RECOVERY_SOURCE_DATABASE_URL": "127.0.0.1:25432/workmesh_d1a_recovery_source_test",
+    "secrets": "random ephemeral values redacted",
+    "WORKMESH_RUNNER_SERVICE_TOKEN": "configured, value redacted",
+    "S3_ENDPOINT": "http://127.0.0.1:29000",
+    "AUTH_RATE_LIMIT_INSTALL_BURST": "100",
+    "WORKMESH_POSTGRES_TOOL_CONTAINER": "wm-d1a-reverify-40a51c-pg",
+    "AUTH_RATE_LIMIT_ENDPOINT_BURST": "10000",
+    "AUTH_RATE_LIMIT_CLIENT_IP_BURST": "10000",
+    "AUTH_RATE_LIMIT_SUBJECT_BURST": "1000",
+    "AUTH_RATE_LIMIT_SOCKET_BURST": "10000",
+    "RUN_INTEGRATION": "1",
+    "REDIS_URL": "127.0.0.1:26379",
+    "DATABASE_URL": "127.0.0.1:25432/workmesh_d1a_integration_test"
+  },
+  "bootstrapTokenGenerated": true,
+  "bootstrapTokenPrintedOrPersisted": false
+}

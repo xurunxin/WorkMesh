@@ -1,0 +1,28 @@
+COMMAND: pnpm --filter @workmesh/web test:e2e e2e/theme-unification.spec.ts
+SOURCE_BEFORE: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4
+
+> @workmesh/web@ test:e2e C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\apps\web
+> playwright test --config ../../playwright.config.ts "e2e/theme-unification.spec.ts"
+
+Error: WORKMESH_PLAYWRIGHT_RUN_DIR must be an absolute path
+    at Object.<anonymous> (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\playwright.config.ts:25:9)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object.<anonymous> (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.require (node:internal/modules/cjs/loader:1674:12)
+    at require (node:internal/modules/helpers:157:16)
+    at requireOrImport (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1149:18)
+    at loadUserConfig (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1334:52)
+    at loadConfig (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1341:28)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at Object.loadConfigFromFile (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1553:10)
+    at runTests (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\cli\testActions.js:46:18)
+    at _Command.<anonymous> (C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\program.js:53:7)
+C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\apps\web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/web@ test:e2e: `playwright test --config ../../playwright.config.ts "e2e/theme-unification.spec.ts"`
+Exit status 1
+
+EXIT_CODE: 1
+SOURCE_AFTER: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4

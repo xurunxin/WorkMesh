@@ -1,0 +1,110 @@
+COMMAND: pnpm lint
+SOURCE_BEFORE: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4
+
+> workmesh@ lint C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5
+> turbo run lint
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running lint in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/artifact-storage:lint: cache hit, replaying logs e20cf5daa32bc38f
+@workmesh/artifact-storage:lint: 
+@workmesh/artifact-storage:lint: > @workmesh/artifact-storage@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\artifact-storage
+@workmesh/artifact-storage:lint: > tsc --noEmit
+@workmesh/artifact-storage:lint: 
+@workmesh/ui:lint: cache hit, replaying logs f0ea3920870207ce
+@workmesh/ui:lint: 
+@workmesh/ui:lint: > @workmesh/ui@ lint C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\packages\ui
+@workmesh/ui:lint: > tsc --noEmit
+@workmesh/ui:lint: 
+@workmesh/observability:lint: cache hit, replaying logs f09ba1946e75c894
+@workmesh/observability:lint: 
+@workmesh/observability:lint: > @workmesh/observability@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\observability
+@workmesh/observability:lint: > tsc --noEmit
+@workmesh/observability:lint: 
+@workmesh/contracts:lint: cache hit, replaying logs 74b2c4c2e79e2cbf
+@workmesh/contracts:lint: 
+@workmesh/contracts:lint: > @workmesh/contracts@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\contracts
+@workmesh/contracts:lint: > tsc --noEmit
+@workmesh/contracts:lint: 
+@workmesh/git-provider:lint: cache hit, replaying logs 564ca0c3edc3922a
+@workmesh/git-provider:lint: 
+@workmesh/git-provider:lint: > @workmesh/git-provider@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\git-provider
+@workmesh/git-provider:lint: > tsc --noEmit
+@workmesh/git-provider:lint: 
+@workmesh/agent-runner:lint: cache hit, replaying logs 1c18099491265105
+@workmesh/agent-runner:lint: 
+@workmesh/agent-runner:lint: > @workmesh/agent-runner@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\agent-runner
+@workmesh/agent-runner:lint: > tsc --noEmit
+@workmesh/agent-runner:lint: 
+@workmesh/config:lint: cache hit, replaying logs a5715e4a92b02c08
+@workmesh/config:lint: 
+@workmesh/config:lint: > @workmesh/config@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\config
+@workmesh/config:lint: > tsc --noEmit
+@workmesh/config:lint: 
+@workmesh/agent-sdk:lint: cache hit, replaying logs 2ba5a7af9135d7a4
+@workmesh/agent-sdk:lint: 
+@workmesh/agent-sdk:lint: > @workmesh/agent-sdk@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\agent-sdk
+@workmesh/agent-sdk:lint: > tsc --noEmit
+@workmesh/agent-sdk:lint: 
+@workmesh/web:lint: cache miss, executing ee0820f03be99127
+@workmesh/domain:lint: cache hit, replaying logs 77d16a6638a832e4
+@workmesh/domain:lint: 
+@workmesh/domain:lint: > @workmesh/domain@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\domain
+@workmesh/domain:lint: > tsc --noEmit
+@workmesh/domain:lint: 
+@workmesh/a2a-adapter:lint: cache hit, replaying logs 6d4222c5cd7ef166
+@workmesh/a2a-adapter:lint: 
+@workmesh/a2a-adapter:lint: > @workmesh/a2a-adapter@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\a2a-adapter
+@workmesh/a2a-adapter:lint: > tsc --noEmit
+@workmesh/a2a-adapter:lint: 
+@workmesh/conformance:lint: cache hit, replaying logs cf0ad3b86c770f79
+@workmesh/conformance:lint: 
+@workmesh/conformance:lint: > @workmesh/conformance@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\conformance
+@workmesh/conformance:lint: > tsc --noEmit
+@workmesh/conformance:lint: 
+@workmesh/mcp:lint: cache hit, replaying logs 65376a9cf3eb89ed
+@workmesh/mcp:lint: 
+@workmesh/mcp:lint: > @workmesh/mcp@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\mcp
+@workmesh/mcp:lint: > tsc --noEmit
+@workmesh/mcp:lint: 
+@workmesh/fake-agent:lint: cache hit, replaying logs 6ed05c805ce2e03b
+@workmesh/fake-agent:lint: 
+@workmesh/fake-agent:lint: > @workmesh/fake-agent@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\fake-agent
+@workmesh/fake-agent:lint: > tsc --noEmit
+@workmesh/fake-agent:lint: 
+@workmesh/db:lint: cache hit, replaying logs e0ed65e2961d18f4
+@workmesh/db:lint: 
+@workmesh/db:lint: > @workmesh/db@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\db
+@workmesh/db:lint: > tsc --noEmit
+@workmesh/db:lint: 
+@workmesh/worker:lint: cache hit, replaying logs 6695ac6496cc3129
+@workmesh/worker:lint: 
+@workmesh/worker:lint: > @workmesh/worker@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\worker
+@workmesh/worker:lint: > tsc --noEmit
+@workmesh/worker:lint: 
+@workmesh/recovery:lint: cache hit, replaying logs c54164b911d4fc46
+@workmesh/recovery:lint: 
+@workmesh/recovery:lint: > @workmesh/recovery@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\recovery
+@workmesh/recovery:lint: > tsc --noEmit
+@workmesh/recovery:lint: 
+@workmesh/api:lint: cache hit, replaying logs d444cbf0bc20bb2c
+@workmesh/api:lint: 
+@workmesh/api:lint: > @workmesh/api@ lint C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\api
+@workmesh/api:lint: > tsc --noEmit
+@workmesh/api:lint: 
+@workmesh/web:lint: 
+@workmesh/web:lint: > @workmesh/web@ lint C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\apps\web
+@workmesh/web:lint: > tsc --noEmit
+@workmesh/web:lint: 
+
+ Tasks:    18 successful, 18 total
+Cached:    17 cached, 18 total
+  Time:    3.965s 
+
+
+EXIT_CODE: 0
+SOURCE_AFTER: 116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4
