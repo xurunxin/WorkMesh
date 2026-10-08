@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>看板迁移视觉评审</title><link rel="stylesheet" href="workbench-visual-review.css"></head>
+<body>
+  <header><p>WorkMesh · D1b · 看板</p><h1>看板迁移前后视觉证据</h1><p>工作台已于2026-10-08 18:07获用户视觉接受。本面仅迁移实际看板区域；列表、项目导航、详情、共享shell与body portal保留旧消费。项目阶段和清旧均未放行。</p></header>
+  <main>
+    <section class="controls"><label>对比组合<select id="combination" aria-label="对比组合"></select></label><p id="summary" role="status">正在读取本面对比清单…</p></section>
+    <section class="pair"><figure><figcaption>迁移前</figcaption><a id="before-link"><img id="before" alt="看板迁移前截图"></a></figure><figure><figcaption>迁移后 · 待本面人工评审</figcaption><a id="after-link"><img id="after" alt="看板迁移后截图"></a></figure></section>
+    <details><summary>固定比较器与运行原件</summary><p>threshold=0.005，maxDiffPixels=0。差异如实保留，比较器通过不等于颜色批准。</p><img id="diff" alt="固定比较器差异图"><p id="comparison"></p><p><a id="before-json">迁前计算样式／请求／定向结果</a> · <a id="after-json">迁后计算样式／请求／定向结果</a></p><p id="historical"></p></details>
+    <section class="notes"><h2>设计理由与评审边界</h2><ul><li>使用已审映射中的暖色画布、卡片表面、分层文字、边框和圆角；不重新选择暗色值。</li><li>五种真实入口分别覆盖明暗、桌面／移动和七种状态；backlog只读夹具与原D0记录分开。</li><li>服务器提供的工作流自定义颜色优先，只有本面空颜色回退改用新语义槽；切回列表恢复旧回退。</li><li>未迁项目导航、详情sheet与共享CommandCenter均独立核对；实际布局控制边界，不能只按URL声明已迁。</li><li>修复430px以下隐藏主题按钮的可达性；原8项失败及本轮初始试验失败均保留，不把用户视觉接受写为技术全绿。</li></ul><p>本面尚待用户人工视觉意见；后续项目阶段、全局迁移、清旧、最新Required CI及实际main合入仍受门禁约束。</p><p><a href="board-verification.md">本面报告与剩余责任</a> · <a href="evidence/board/comparisons.json">完整对比清单</a> · <a href="workbench-visual-review.html">已接受的工作台材料</a></p></section>
+  </main><script src="board-visual-review.js"></script>
+</body></html>

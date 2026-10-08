@@ -1,6 +1,8 @@
 'use client'
 
 import {
+  createContext,
+  useContext,
   memo,
   useCallback,
   useEffect,
@@ -276,8 +278,9 @@ function PriorityBars({ priority }: Readonly<{ priority: string }>) {
     {[0, 1, 2].map(index => <i className="wm-priority-bar" data-on={index < filled} key={index} />)}
   </span>
 }
-function workflowStatusStyle(color?: string): CSSProperties {
-  return { '--wm-status-color': color || 'var(--wm-muted)' } as CSSProperties
+const WorkItemTokenSurfaceContext = createContext(false)
+function workflowStatusStyle(color?: string, semantic = false): CSSProperties {
+  return { '--wm-status-color': color || (semantic ? 'var(--wm-ref-text-secondary)' : 'var(--wm-muted)') } as CSSProperties
 }
 function handlePresentationPromise(callback: (() => void | Promise<void>) | undefined): void {
   if (!callback) return
@@ -444,6 +447,7 @@ function workItemLabelTone(label: string): string {
 }
 
 export function WorkItemCard({ availableLabels, className, copy, density = 'comfortable', draggable = false, dragState = 'idle', item, layout = 'list', maxVisibleLabels, onLabelsChange, onMove, onOpen, onOpenProject, onPointerDown, showStatusControl = true, statusOptions = [] }: WorkItemCardProps) {
+  const semanticTokens = useContext(WorkItemTokenSurfaceContext)
   const text = resolveWorkItemCopy(copy)
   const [labelMenuOpen, setLabelMenuOpen] = useState(false)
   const [labelMenuAnchorVersion, setLabelMenuAnchorVersion] = useState(0)
@@ -516,7 +520,7 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
     setLabelMenuAnchorVersion(version => version + 1)
     setLabelMenuOpen(true)
   }
-  return <article aria-busy={dragState === 'pending' || undefined} aria-label={`${item.identifier}: ${item.title}`} className={workItemClassNames('wm-work-item-card', `wm-work-item-card-${layout}`, density === 'compact' && 'wm-work-item-card--compact', `wm-work-item-card-${dragState}`, labelMenuOpen && 'is-label-menu-open', className)} data-status-category={statusCategory} data-density={density} data-work-item-id={item.id} draggable={draggable && dragState !== 'pending'} onDragEnd={draggable ? handleDragEnd : undefined} onDragStart={draggable ? handleDragStart : undefined} onKeyDown={showStatusControl ? moveByKeyboard : undefined} onPointerDown={onPointerDown} style={workflowStatusStyle(statusColor)}>
+  return <article aria-busy={dragState === 'pending' || undefined} aria-label={`${item.identifier}: ${item.title}`} className={workItemClassNames('wm-work-item-card', `wm-work-item-card-${layout}`, density === 'compact' && 'wm-work-item-card--compact', `wm-work-item-card-${dragState}`, labelMenuOpen && 'is-label-menu-open', className)} data-status-category={statusCategory} data-density={density} data-work-item-id={item.id} draggable={draggable && dragState !== 'pending'} onDragEnd={draggable ? handleDragEnd : undefined} onDragStart={draggable ? handleDragStart : undefined} onKeyDown={showStatusControl ? moveByKeyboard : undefined} onPointerDown={onPointerDown} style={workflowStatusStyle(statusColor, semanticTokens)}>
     <div className="wm-work-item-card-heading">
       <span className="wm-work-item-identifier">{item.identifier}</span>
       <span className={workItemClassNames('wm-work-item-status-pill', `status-${statusCategory}`)}>{item.statusName}</span>
@@ -638,6 +642,7 @@ export function WorkItemBoard({ availableLabels, columnWidths, columns, copy, de
 }
 
 export type WorkItemAdaptiveCollectionProps = WorkItemBoardProps & {
+  tokenSurface?: 'board'
   empty?: ReactNode
   layout: 'list' | 'board'
 }
@@ -688,6 +693,7 @@ type AdaptiveColumnProps = {
 }
 
 const AdaptiveWorkItemColumn = memo(function AdaptiveWorkItemColumn({ cards, column, columnIndex, count, dropTarget, layout, onColumnDragLeave, onColumnDragOver, onColumnDrop, onColumnKeyDown, onColumnPointerUp, onColumnResize, showResize, text, width }: AdaptiveColumnProps) {
+  const semanticTokens = useContext(WorkItemTokenSurfaceContext)
   const board = layout === 'board'
   // The keyboard move lives on every card, but describing it on every card
   // would repeat it once per Issue. One description per column keeps the
@@ -706,7 +712,7 @@ const AdaptiveWorkItemColumn = memo(function AdaptiveWorkItemColumn({ cards, col
     onKeyDown={board ? event => onColumnKeyDown(columnIndex, event) : undefined}
     onPointerUp={board ? () => onColumnPointerUp(column) : undefined}
     role={board ? 'group' : 'presentation'}
-    style={{ ...workflowStatusStyle(column.color), flex: `0 0 ${width}px` }}
+    style={{ ...workflowStatusStyle(column.color, semanticTokens), flex: `0 0 ${width}px` }}
     tabIndex={board ? 0 : -1}
   >
     {/* The dot carries the column's status color at the point of use. The
@@ -726,7 +732,7 @@ const AdaptiveWorkItemColumn = memo(function AdaptiveWorkItemColumn({ cards, col
  * The five column containers persist; list mode flattens them with CSS and uses
  * each card's source-order value, while board mode restores the grouped layout.
  */
-export function WorkItemAdaptiveCollection({ availableLabels, columnWidths, columns, copy, density, empty = 'No work items match this view.', items, layout, maxColumnWidth = MAX_COLUMN_WIDTH, maxVisibleLabels, minColumnWidth = MIN_COLUMN_WIDTH, onColumnWidthChange, onLabelsChange, onMove, onOpen, onOpenProject, pannable = true }: WorkItemAdaptiveCollectionProps) {
+export function WorkItemAdaptiveCollection({ availableLabels, columnWidths, columns, copy, density, empty = 'No work items match this view.', items, layout, maxColumnWidth = MAX_COLUMN_WIDTH, maxVisibleLabels, minColumnWidth = MIN_COLUMN_WIDTH, onColumnWidthChange, onLabelsChange, onMove, onOpen, onOpenProject, pannable = true, tokenSurface }: WorkItemAdaptiveCollectionProps) {
   const text = useMemo(() => resolveWorkItemCopy(copy), [copy])
   const draggedItem = useRef<string | null>(null)
   const [pointerItem, setPointerItem] = useState<string | null>(null)
@@ -918,7 +924,7 @@ export function WorkItemAdaptiveCollection({ availableLabels, columnWidths, colu
   }, [layout, pannable])
 
   if (items.length === 0) return <section aria-label={text.listLabel} className="wm-work-item-list-empty" data-testid="work-items-empty">{empty}</section>
-  return <section
+  return <WorkItemTokenSurfaceContext.Provider value={tokenSurface === 'board' && layout === 'board'}><section
     aria-label={layout === 'board' ? text.boardLabel : text.listLabel}
     className={workItemClassNames('wm-work-item-adaptive', isPanning && 'is-panning')}
     data-layout={layout}
@@ -950,7 +956,7 @@ export function WorkItemAdaptiveCollection({ availableLabels, columnWidths, colu
       text={text}
       width={columnWidths?.[column.id] ?? DEFAULT_COLUMN_WIDTH}
     />)}</div>
-  </section>
+  </section></WorkItemTokenSurfaceContext.Provider>
 }
 
 export type WorkItemFilterValues = { search?: string; statusId?: string; priority?: string; responsibleHumanActorId?: string; ownerId?: string; projectId?: string; milestoneId?: string; label?: string; statusCategory?: string; mine?: boolean }

@@ -1,0 +1,41 @@
+{
+  "variant": "mobile-light",
+  "rowID": "project-work-board",
+  "state": "portal",
+  "requestedURL": "/?view=projects&project=project-1&tab=board",
+  "actualURL": "http://127.0.0.1:3200/?view=projects&project=project-1&tab=board",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/project-work-board/portal/before.png",
+      "bytes": 31929,
+      "sha256": "a7efa0a68e99bf40f6fc7773164c6e7da17fcfe2b4b2371d484eeb39de762646"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/project-work-board/portal/after.png",
+      "bytes": 31866,
+      "sha256": "e40da766b464235525849b6ab996bdf02777beb049ba1933526a2c60dda899e5"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "Expected an image 390px by 897px, received 390px by 885px. ",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/project-work-board/portal/diff.png",
+      "bytes": 35731,
+      "sha256": "fa54ec8a3ecda4e05e5a855566ffab38d60544e517984529d8ac6e7dae0da92d"
+    }
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/mobile-light/project-work-board/portal/before.json",
+    "after": "docs/reviews/d1b/evidence/board/mobile-light/project-work-board/portal/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": true,
+    "detail": false,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

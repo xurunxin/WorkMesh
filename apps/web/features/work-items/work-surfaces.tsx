@@ -1,5 +1,6 @@
 'use client'
 
+import './board-shared.css'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, WorkItemAdaptiveCollection, WorkItemFilters, WorkSurfacePagination, WorkSurfaceState, type WorkItemCardData, type WorkItemCopy, type WorkItemFilterOption, type WorkItemMoveSource, type WorkItemStatusOption } from '@workmesh/ui'
 import { KanbanIcon } from '@phosphor-icons/react/dist/csr/Kanban'
@@ -248,7 +249,7 @@ export function useWorkSurfaceController({
 export function WorkSurfaces(props: WorkSurfacesProps) {
   const text = { ...defaultCopy, ...props.surfaceCopy }
   if (props.authorityKey === null)
-    return <section className="work-surfaces" data-testid="work-surfaces"><SkeletonList columns={1} items={6} label={text.loadingTitle} /></section>
+    return <section className="work-surfaces" data-testid="work-surfaces" data-wm-token-surface={props.initialLayout === 'board' ? 'board' : undefined}><SkeletonList columns={1} items={6} label={text.loadingTitle} /></section>
   return <WorkSurfacesScope key={props.authorityKey} {...props} />
 }
 
@@ -363,7 +364,7 @@ function WorkSurfacesScope({ actorId = null, authorityKey, columnWidths, copy, h
   )
   const filterErrorState = viewsError instanceof ApiError && viewsError.status === 403
   const state = workSurfaceErrorState(collection.error ?? controller.actionError)
-  if (state === 'forbidden') return <section className="work-surfaces" data-testid="work-surfaces"><WorkSurfaceState actionLabel={text.retry} description={text.forbiddenDescription} onAction={() => void controller.refresh()} state="forbidden" title={text.forbiddenTitle} /></section>
+  if (state === 'forbidden') return <section className="work-surfaces" data-testid="work-surfaces" data-wm-token-surface={layout === 'board' ? 'board' : undefined}><WorkSurfaceState actionLabel={text.retry} description={text.forbiddenDescription} onAction={() => void controller.refresh()} state="forbidden" title={text.forbiddenTitle} /></section>
   const retainedFailureState = vm.state === 'error' || vm.state === 'offline' || vm.state === 'conflict'
   const showResolvedContent = (vm.state === 'ready'
     || vm.state === 'reconnecting'
@@ -375,6 +376,7 @@ function WorkSurfacesScope({ actorId = null, authorityKey, columnWidths, copy, h
     aria-label={text.ariaLabel}
     className="work-surfaces"
     data-testid="work-surfaces"
+    data-wm-token-surface={layout === 'board' ? 'board' : undefined}
   >
     <WorkItemFilters compact={filtersCompact} copy={copy} humans={toFilterOptions(humans)} milestones={toFilterOptions(milestones)} onApplySavedView={applyView} onChange={value => changeQuery({ ...value, priority: value.priority as WorkSurfaceQuery['priority'], statusCategory: value.statusCategory as WorkSurfaceQuery['statusCategory'] })} onClear={() => changeQuery({})} onCompactChange={updateFiltersCompact} onCreateSavedView={createView} projects={toFilterOptions(projects)} savedViews={views.filter((view): view is WorkSurfaceView & { id: string } => Boolean(view.id)).map(view => ({ id: view.id, name: view.name }))} statuses={toFilterOptions(statuses)} value={filters} />
     {filterErrorState && <WorkSurfaceState description={text.savedViewsDescription} state="forbidden" title={text.savedViewsTitle} />}
@@ -395,7 +397,7 @@ function WorkSurfacesScope({ actorId = null, authorityKey, columnWidths, copy, h
         vm.stale ? 'work-surface-stale' : undefined,
       ].filter(Boolean).join(' ')}
       data-stale={vm.stale || undefined}
-    ><WorkItemAdaptiveCollection columnWidths={columnWidths} columns={columns} copy={copy} density={density} items={uiItems} layout={layout} onColumnWidthChange={onColumnWidthChange} onMove={move} onOpen={open} onOpenProject={openProject} /><WorkSurfacePagination copy={copy} loading={collection.loading || collection.loadingMore} nextCursor={collection.nextCursor} onLoadMore={collection.loadMore} /></div>}
+    ><WorkItemAdaptiveCollection tokenSurface="board" columnWidths={columnWidths} columns={columns} copy={copy} density={density} items={uiItems} layout={layout} onColumnWidthChange={onColumnWidthChange} onMove={move} onOpen={open} onOpenProject={openProject} /><WorkSurfacePagination copy={copy} loading={collection.loading || collection.loadingMore} nextCursor={collection.nextCursor} onLoadMore={collection.loadMore} /></div>}
   </section>
 }
 

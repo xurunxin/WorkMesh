@@ -1,0 +1,41 @@
+{
+  "variant": "desktop-dark",
+  "rowID": "project-surface-work-board",
+  "state": "portal",
+  "requestedURL": "/?view=projects&project=project-1&surface=work&tab=board",
+  "actualURL": "http://127.0.0.1:3200/?view=projects&project=project-1&surface=work&tab=board",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-dark/project-surface-work-board/portal/before.png",
+      "bytes": 150499,
+      "sha256": "ae3270cc1f6420953a8990d20087faad87b47f39c3fe9a19106b83dc9cc2ddb8"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-dark/project-surface-work-board/portal/after.png",
+      "bytes": 149596,
+      "sha256": "4f277a05052c685ed8a48cd08909f3751a826e27068f3565946c5492799dfd4c"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "29026 pixels (ratio 0.03 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-dark/project-surface-work-board/portal/diff.png",
+      "bytes": 76055,
+      "sha256": "e1d325e7d63d0ff8a123a71fb0e99381d607ee71ac334d301dfcbb5cc34a29b6"
+    }
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/desktop-dark/project-surface-work-board/portal/before.json",
+    "after": "docs/reviews/d1b/evidence/board/desktop-dark/project-surface-work-board/portal/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": true,
+    "detail": false,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

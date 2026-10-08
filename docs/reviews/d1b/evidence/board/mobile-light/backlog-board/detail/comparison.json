@@ -1,0 +1,37 @@
+{
+  "variant": "mobile-light",
+  "rowID": "backlog-board",
+  "state": "detail",
+  "requestedURL": "/?view=backlog&layout=board",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board&statusCategory=backlog",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/backlog-board/detail/before.png",
+      "bytes": 48272,
+      "sha256": "2f6a5764ad858903816539433e6b276a93158ff477418bb18a57b72c2fc52925"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/backlog-board/detail/after.png",
+      "bytes": 48272,
+      "sha256": "2f6a5764ad858903816539433e6b276a93158ff477418bb18a57b72c2fc52925"
+    },
+    "rawBytesEqual": true,
+    "comparatorPassed": true,
+    "message": "固定比较器未发现超过阈值的变化",
+    "diff": null
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/mobile-light/backlog-board/detail/before.json",
+    "after": "docs/reviews/d1b/evidence/board/mobile-light/backlog-board/detail/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": true,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

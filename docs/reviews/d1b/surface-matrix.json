@@ -3,21 +3,21 @@
   "planVersion": null,
   "baseCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
   "kind": "workmesh.d1b.surface-migration-planning",
-  "status": "规划矩阵独审及 Chief 实施确认完成；运行/视觉仍待逐面执行",
+  "status": "工作台已获用户接受；看板140组前后及定向结果已采集，等待本面人工视觉；其他面未执行",
   "scope": "既有 UI 迁移/截图/评审，不新增业务入口或功能",
   "stages": [
     {
       "id": "workbench",
       "label": "工作台",
       "order": 1,
-      "status": "待实施/人工评审",
+      "status": "用户视觉接受；历史技术失败另列",
       "exitGate": "本面全部适用组合验收后停 confirm；获准才进入下一面"
     },
     {
       "id": "board",
       "label": "看板",
       "order": 2,
-      "status": "待实施/人工评审",
+      "status": "本轮实施，等待本面人工视觉评审",
       "exitGate": "本面全部适用组合验收后停 confirm；获准才进入下一面"
     },
     {
@@ -305,8 +305,22 @@
       "checks": {
         "protocol": "local-surface",
         "runtimeStatus": "未运行",
-        "humanReview": "待人工评审",
-        "reviewRecord": null,
+        "humanReview": "用户已接受",
+        "reviewRecord": {
+          "decision": "接受，继续下一面",
+          "source": "本轮用户注入的Chief交接，用户于2026-10-08 18:07 Asia/Shanghai回答首面视觉卡",
+          "acceptedCommit": "567f68dc9b2905a166184c24686a9f2fd74f2832",
+          "acceptedSurface": "workbench",
+          "authorizedSurface": "board",
+          "review": "17:39平台定向独审确认唯一断链闭合，无新增blocking/high",
+          "limitations": [
+            "独审未实测Files/preview宿主加载，用户接受不制造独立浏览器运行记录",
+            "原8项移动失败继续保留，视觉接受不代替测试全绿"
+          ],
+          "nextSurfaceAllowed": false,
+          "cleanupAllowed": false,
+          "mergeMainAllowed": false
+        },
         "stopBeforeNextSurface": true,
         "globalReplayRequired": true
       }
@@ -378,8 +392,22 @@
       "checks": {
         "protocol": "local-surface",
         "runtimeStatus": "未运行",
-        "humanReview": "待人工评审",
-        "reviewRecord": null,
+        "humanReview": "用户已接受",
+        "reviewRecord": {
+          "decision": "接受，继续下一面",
+          "source": "本轮用户注入的Chief交接，用户于2026-10-08 18:07 Asia/Shanghai回答首面视觉卡",
+          "acceptedCommit": "567f68dc9b2905a166184c24686a9f2fd74f2832",
+          "acceptedSurface": "workbench",
+          "authorizedSurface": "board",
+          "review": "17:39平台定向独审确认唯一断链闭合，无新增blocking/high",
+          "limitations": [
+            "独审未实测Files/preview宿主加载，用户接受不制造独立浏览器运行记录",
+            "原8项移动失败继续保留，视觉接受不代替测试全绿"
+          ],
+          "nextSurfaceAllowed": false,
+          "cleanupAllowed": false,
+          "mergeMainAllowed": false
+        },
         "stopBeforeNextSurface": true,
         "globalReplayRequired": true
       }
@@ -400,7 +428,8 @@
       "canonical": {
         "expectedURL": "/?view=my-work&layout=board",
         "basis": "restoreRoute 保留 layout 并归一 active/backlog；parseWorkSurfaceLayout 缺省 list；不按 view 猜布局",
-        "observedURL": null
+        "observedURL": "/?view=my-work&layout=board",
+        "observationBasis": "截图前Playwright toHaveURL实际断言；runtime.actualURL另为控件导航结束URL"
       },
       "render": {
         "component": "WorkSurfaces",
@@ -408,8 +437,8 @@
         "detailMode": "none",
         "submode": "默认",
         "readySelector": "[data-testid=\"board\"] [data-work-item-id=\"work-101\"]",
-        "observedLayout": null,
-        "observedDetailMode": null
+        "observedLayout": "board",
+        "observedDetailMode": "none（detail状态实跑sheet）"
       },
       "region": {
         "owner": "board",
@@ -421,7 +450,7 @@
         ],
         "sourceRowID": null,
         "sharedShellOwner": "global",
-        "scopeStatus": "待实现"
+        "scopeStatus": "仅实际board布局生效；切回list及body portal不继承"
       },
       "fixture": {
         "scenario": "final-tour",
@@ -433,29 +462,31 @@
           "settingsTeam": "team-page-2"
         },
         "requirement": "复用现有契约 DTO；缺少的只读响应实施时补齐；选中资源 ID 从实际响应取得，不猜",
-        "ready": false
+        "ready": true
       },
       "states": {
-        "ready": "待验证",
-        "loading": "待验证既有加载分支/只读响应延迟",
-        "error": "待验证既有失败/权限拒绝/不可用分支",
-        "unavailable": "保留既有空态/不可用呈现，不新增业务状态"
+        "ready": "四组合已运行",
+        "loading": "GET延迟／恢复已运行",
+        "error": "GET503／重试已运行；403由既有受影响单测验证",
+        "unavailable": "空集合已运行，不新增业务状态"
       },
       "overlays": "实际页面专属浮层随所属面取证；没有入口须提供源码不适用依据，不虚构",
       "evidence": {
-        "before": "docs/reviews/d1b/evidence/my-work-board/{variantID}/{state}/{overlayMode}/before.png",
-        "after": "docs/reviews/d1b/evidence/my-work-board/{variantID}/{state}/{overlayMode}/after.png",
-        "diff": "docs/reviews/d1b/evidence/my-work-board/{variantID}/{state}/{overlayMode}/diff.png",
-        "runtime": "docs/reviews/d1b/evidence/my-work-board/{variantID}/{state}/{overlayMode}/runtime.json",
-        "filesExist": false,
+        "before": "docs/reviews/d1b/evidence/board/{variantID}/my-work-board/{state}/before.png",
+        "after": "docs/reviews/d1b/evidence/board/{variantID}/my-work-board/{state}/after.png",
+        "diff": "docs/reviews/d1b/evidence/board/{variantID}/my-work-board/{state}/diff.png",
+        "runtime": "docs/reviews/d1b/evidence/board/{variantID}/my-work-board/{state}/{before|after}.json",
+        "filesExist": true,
         "d0Slug": null,
         "d0Policy": "仅精确原路由/亮色/就绪/对应视口与条件可引用冻结原图；其余组合迁移前采截图，原件不变",
-        "d0References": []
+        "d0References": [],
+        "comparisonCount": 28,
+        "comparisonManifest": "docs/reviews/d1b/evidence/board/comparisons.json"
       },
       "checks": {
         "protocol": "local-surface",
-        "runtimeStatus": "未运行",
-        "humanReview": "待人工评审",
+        "runtimeStatus": "迁前和迁后28组合实跑；scope/shared样式、恢复、明暗子树、键盘/导航/回焦通过",
+        "humanReview": "待看板人工视觉评审",
         "reviewRecord": null,
         "stopBeforeNextSurface": true,
         "globalReplayRequired": true
@@ -653,7 +684,8 @@
       "canonical": {
         "expectedURL": "/?view=my-work&layout=board&statusCategory=started",
         "basis": "restoreRoute 保留 layout 并归一 active/backlog；parseWorkSurfaceLayout 缺省 list；不按 view 猜布局",
-        "observedURL": null
+        "observedURL": "/?view=my-work&layout=board&statusCategory=started",
+        "observationBasis": "截图前Playwright toHaveURL实际断言；runtime.actualURL另为控件导航结束URL"
       },
       "render": {
         "component": "WorkSurfaces",
@@ -661,8 +693,8 @@
         "detailMode": "none",
         "submode": "默认",
         "readySelector": "[data-testid=\"board\"] [data-work-item-id=\"work-101\"]",
-        "observedLayout": null,
-        "observedDetailMode": null
+        "observedLayout": "board",
+        "observedDetailMode": "none（detail状态实跑sheet）"
       },
       "region": {
         "owner": "board",
@@ -674,7 +706,7 @@
         ],
         "sourceRowID": null,
         "sharedShellOwner": "global",
-        "scopeStatus": "待实现"
+        "scopeStatus": "仅实际board布局生效；切回list及body portal不继承"
       },
       "fixture": {
         "scenario": "final-tour",
@@ -686,29 +718,31 @@
           "settingsTeam": "team-page-2"
         },
         "requirement": "复用现有契约 DTO；缺少的只读响应实施时补齐；选中资源 ID 从实际响应取得，不猜",
-        "ready": false
+        "ready": true
       },
       "states": {
-        "ready": "待验证",
-        "loading": "待验证既有加载分支/只读响应延迟",
-        "error": "待验证既有失败/权限拒绝/不可用分支",
-        "unavailable": "保留既有空态/不可用呈现，不新增业务状态"
+        "ready": "四组合已运行",
+        "loading": "GET延迟／恢复已运行",
+        "error": "GET503／重试已运行；403由既有受影响单测验证",
+        "unavailable": "空集合已运行，不新增业务状态"
       },
       "overlays": "实际页面专属浮层随所属面取证；没有入口须提供源码不适用依据，不虚构",
       "evidence": {
-        "before": "docs/reviews/d1b/evidence/active-board/{variantID}/{state}/{overlayMode}/before.png",
-        "after": "docs/reviews/d1b/evidence/active-board/{variantID}/{state}/{overlayMode}/after.png",
-        "diff": "docs/reviews/d1b/evidence/active-board/{variantID}/{state}/{overlayMode}/diff.png",
-        "runtime": "docs/reviews/d1b/evidence/active-board/{variantID}/{state}/{overlayMode}/runtime.json",
-        "filesExist": false,
+        "before": "docs/reviews/d1b/evidence/board/{variantID}/active-board/{state}/before.png",
+        "after": "docs/reviews/d1b/evidence/board/{variantID}/active-board/{state}/after.png",
+        "diff": "docs/reviews/d1b/evidence/board/{variantID}/active-board/{state}/diff.png",
+        "runtime": "docs/reviews/d1b/evidence/board/{variantID}/active-board/{state}/{before|after}.json",
+        "filesExist": true,
         "d0Slug": null,
         "d0Policy": "仅精确原路由/亮色/就绪/对应视口与条件可引用冻结原图；其余组合迁移前采截图，原件不变",
-        "d0References": []
+        "d0References": [],
+        "comparisonCount": 28,
+        "comparisonManifest": "docs/reviews/d1b/evidence/board/comparisons.json"
       },
       "checks": {
         "protocol": "local-surface",
-        "runtimeStatus": "未运行",
-        "humanReview": "待人工评审",
+        "runtimeStatus": "迁前和迁后28组合实跑；scope/shared样式、恢复、明暗子树、键盘/导航/回焦通过",
+        "humanReview": "待看板人工视觉评审",
         "reviewRecord": null,
         "stopBeforeNextSurface": true,
         "globalReplayRequired": true
@@ -883,7 +917,8 @@
       "canonical": {
         "expectedURL": "/?view=my-work&layout=board&statusCategory=backlog",
         "basis": "restoreRoute 保留 layout 并归一 active/backlog；parseWorkSurfaceLayout 缺省 list；不按 view 猜布局",
-        "observedURL": null
+        "observedURL": "/?view=my-work&layout=board&statusCategory=backlog",
+        "observationBasis": "截图前Playwright toHaveURL实际断言；runtime.actualURL另为控件导航结束URL"
       },
       "render": {
         "component": "WorkSurfaces",
@@ -891,8 +926,8 @@
         "detailMode": "none",
         "submode": "默认",
         "readySelector": "[data-testid=\"board\"] [data-work-item-id=\"work-d1b-backlog\"]",
-        "observedLayout": null,
-        "observedDetailMode": null
+        "observedLayout": "board",
+        "observedDetailMode": "none（detail状态实跑sheet）"
       },
       "region": {
         "owner": "board",
@@ -904,7 +939,7 @@
         ],
         "sourceRowID": null,
         "sharedShellOwner": "global",
-        "scopeStatus": "待实现"
+        "scopeStatus": "仅实际board布局生效；切回list及body portal不继承"
       },
       "fixture": {
         "scenario": "d1b-backlog",
@@ -916,29 +951,31 @@
           "settingsTeam": "team-page-2"
         },
         "requirement": "使用 fixtureRecipes.d1b-backlog；集合/详情及所需只读依赖同 ID/状态，不改 D0 work-101",
-        "ready": false
+        "ready": true
       },
       "states": {
-        "ready": "待验证",
-        "loading": "待验证既有加载分支/只读响应延迟",
-        "error": "待验证既有失败/权限拒绝/不可用分支",
-        "unavailable": "保留既有空态/不可用呈现，不新增业务状态"
+        "ready": "四组合已运行",
+        "loading": "GET延迟／恢复已运行",
+        "error": "GET503／重试已运行；403由既有受影响单测验证",
+        "unavailable": "空集合已运行，不新增业务状态"
       },
       "overlays": "实际页面专属浮层随所属面取证；没有入口须提供源码不适用依据，不虚构",
       "evidence": {
-        "before": "docs/reviews/d1b/evidence/backlog-board/{variantID}/{state}/{overlayMode}/before.png",
-        "after": "docs/reviews/d1b/evidence/backlog-board/{variantID}/{state}/{overlayMode}/after.png",
-        "diff": "docs/reviews/d1b/evidence/backlog-board/{variantID}/{state}/{overlayMode}/diff.png",
-        "runtime": "docs/reviews/d1b/evidence/backlog-board/{variantID}/{state}/{overlayMode}/runtime.json",
-        "filesExist": false,
+        "before": "docs/reviews/d1b/evidence/board/{variantID}/backlog-board/{state}/before.png",
+        "after": "docs/reviews/d1b/evidence/board/{variantID}/backlog-board/{state}/after.png",
+        "diff": "docs/reviews/d1b/evidence/board/{variantID}/backlog-board/{state}/diff.png",
+        "runtime": "docs/reviews/d1b/evidence/board/{variantID}/backlog-board/{state}/{before|after}.json",
+        "filesExist": true,
         "d0Slug": null,
         "d0Policy": "仅精确原路由/亮色/就绪/对应视口与条件可引用冻结原图；其余组合迁移前采截图，原件不变",
-        "d0References": []
+        "d0References": [],
+        "comparisonCount": 28,
+        "comparisonManifest": "docs/reviews/d1b/evidence/board/comparisons.json"
       },
       "checks": {
         "protocol": "local-surface",
-        "runtimeStatus": "未运行",
-        "humanReview": "待人工评审",
+        "runtimeStatus": "迁前和迁后28组合实跑；scope/shared样式、恢复、明暗子树、键盘/导航/回焦通过",
+        "humanReview": "待看板人工视觉评审",
         "reviewRecord": null,
         "stopBeforeNextSurface": true,
         "globalReplayRequired": true
@@ -1623,7 +1660,8 @@
       "canonical": {
         "expectedURL": "/?view=projects&project=project-1&tab=board",
         "basis": "源码推导，运行时必须记录实际最终 URL",
-        "observedURL": null
+        "observedURL": "/?view=projects&project=project-1&tab=board",
+        "observationBasis": "截图前Playwright toHaveURL实际断言；runtime.actualURL另为控件导航结束URL"
       },
       "render": {
         "component": "ProjectWorkspace 内 WorkSurfaces",
@@ -1631,8 +1669,8 @@
         "detailMode": "none",
         "submode": "board",
         "readySelector": "[data-testid=\"board\"] [data-work-item-id=\"work-101\"]",
-        "observedLayout": null,
-        "observedDetailMode": null,
+        "observedLayout": "board",
+        "observedDetailMode": "none（detail状态实跑sheet）",
         "controlRoute": {
           "mechanism": "readProjectControlRoute",
           "surface": "work",
@@ -1651,7 +1689,7 @@
         ],
         "sourceRowID": null,
         "sharedShellOwner": "global",
-        "scopeStatus": "待实现"
+        "scopeStatus": "仅实际board布局生效；切回list及body portal不继承"
       },
       "fixture": {
         "scenario": "final-tour",
@@ -1663,29 +1701,48 @@
           "settingsTeam": "team-page-2"
         },
         "requirement": "复用现有契约 DTO；缺少的只读响应实施时补齐；选中资源 ID 从实际响应取得，不猜",
-        "ready": false
+        "ready": true
       },
       "states": {
-        "ready": "待验证",
-        "loading": "待验证既有加载分支/只读响应延迟",
-        "error": "待验证既有失败/权限拒绝/不可用分支",
-        "unavailable": "保留既有空态/不可用呈现，不新增业务状态"
+        "ready": "四组合已运行",
+        "loading": "GET延迟／恢复已运行",
+        "error": "GET503／重试已运行；403由既有受影响单测验证",
+        "unavailable": "空集合已运行，不新增业务状态"
       },
       "overlays": "实际页面专属浮层随所属面取证；没有入口须提供源码不适用依据，不虚构",
       "evidence": {
-        "before": "docs/reviews/d1b/evidence/project-work-board/{variantID}/{state}/{overlayMode}/before.png",
-        "after": "docs/reviews/d1b/evidence/project-work-board/{variantID}/{state}/{overlayMode}/after.png",
-        "diff": "docs/reviews/d1b/evidence/project-work-board/{variantID}/{state}/{overlayMode}/diff.png",
-        "runtime": "docs/reviews/d1b/evidence/project-work-board/{variantID}/{state}/{overlayMode}/runtime.json",
-        "filesExist": false,
+        "before": "docs/reviews/d1b/evidence/board/{variantID}/project-work-board/{state}/before.png",
+        "after": "docs/reviews/d1b/evidence/board/{variantID}/project-work-board/{state}/after.png",
+        "diff": "docs/reviews/d1b/evidence/board/{variantID}/project-work-board/{state}/diff.png",
+        "runtime": "docs/reviews/d1b/evidence/board/{variantID}/project-work-board/{state}/{before|after}.json",
+        "filesExist": true,
         "d0Slug": null,
         "d0Policy": "仅精确原路由/亮色/就绪/对应视口与条件可引用冻结原图；其余组合迁移前采截图，原件不变",
-        "d0References": []
+        "d0References": [
+          {
+            "variant": "desktop-light",
+            "state": "ready",
+            "path": "apps/web/e2e/baselines/d0/win32/desktop-1440x1000/board.png",
+            "sha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+            "beforePassed": true,
+            "afterPassed": false
+          },
+          {
+            "variant": "mobile-light",
+            "state": "ready",
+            "path": "apps/web/e2e/baselines/d0/win32/mobile-390x844/board.png",
+            "sha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+            "beforePassed": true,
+            "afterPassed": false
+          }
+        ],
+        "comparisonCount": 28,
+        "comparisonManifest": "docs/reviews/d1b/evidence/board/comparisons.json"
       },
       "checks": {
         "protocol": "local-surface",
-        "runtimeStatus": "未运行",
-        "humanReview": "待人工评审",
+        "runtimeStatus": "迁前和迁后28组合实跑；scope/shared样式、恢复、明暗子树、键盘/导航/回焦通过",
+        "humanReview": "待看板人工视觉评审",
         "reviewRecord": null,
         "stopBeforeNextSurface": true,
         "globalReplayRequired": true
@@ -8550,7 +8607,8 @@
       "canonical": {
         "expectedURL": "/?view=projects&project=project-1&surface=work&tab=board",
         "basis": "readProjectControlRoute/projectControlHref 与实际触发路径；最终 URL 必须运行时另录",
-        "observedURL": null
+        "observedURL": "/?view=projects&project=project-1&surface=work&tab=board",
+        "observationBasis": "截图前Playwright toHaveURL实际断言；runtime.actualURL另为控件导航结束URL"
       },
       "render": {
         "component": "WorkSurfaces",
@@ -8558,8 +8616,8 @@
         "detailMode": "none",
         "submode": "readProjectControlRoute workView=board",
         "readySelector": "[data-testid=\"board\"] [data-work-item-id=\"work-101\"]",
-        "observedLayout": null,
-        "observedDetailMode": null,
+        "observedLayout": "board",
+        "observedDetailMode": "none（detail状态实跑sheet）",
         "controlRoute": {
           "mechanism": "readProjectControlRoute",
           "surface": "work",
@@ -8578,7 +8636,7 @@
         ],
         "sourceRowID": null,
         "sharedShellOwner": "global",
-        "scopeStatus": "待实现"
+        "scopeStatus": "仅实际board布局生效；切回list及body portal不继承"
       },
       "fixture": {
         "scenario": "final-tour",
@@ -8590,29 +8648,31 @@
           "settingsTeam": "team-page-2"
         },
         "requirement": "D1b 项目控制中心契约有效只读集合/明细/证据响应，原 final-tour 不修改",
-        "ready": false
+        "ready": true
       },
       "states": {
-        "ready": "待验证",
-        "loading": "待验证既有加载分支/只读响应延迟",
-        "error": "待验证既有失败/权限拒绝/不可用分支",
-        "unavailable": "保留既有空态/不可用呈现，不新增业务状态"
+        "ready": "四组合已运行",
+        "loading": "GET延迟／恢复已运行",
+        "error": "GET503／重试已运行；403由既有受影响单测验证",
+        "unavailable": "空集合已运行，不新增业务状态"
       },
       "overlays": "现有专属详情和 evidence drawer；只打开/取消/关闭，不执行业务命令",
       "evidence": {
-        "before": "docs/reviews/d1b/evidence/project-surface-work-board/{variantID}/{state}/{overlayMode}/before.png",
-        "after": "docs/reviews/d1b/evidence/project-surface-work-board/{variantID}/{state}/{overlayMode}/after.png",
-        "diff": "docs/reviews/d1b/evidence/project-surface-work-board/{variantID}/{state}/{overlayMode}/diff.png",
-        "runtime": "docs/reviews/d1b/evidence/project-surface-work-board/{variantID}/{state}/{overlayMode}/runtime.json",
-        "filesExist": false,
+        "before": "docs/reviews/d1b/evidence/board/{variantID}/project-surface-work-board/{state}/before.png",
+        "after": "docs/reviews/d1b/evidence/board/{variantID}/project-surface-work-board/{state}/after.png",
+        "diff": "docs/reviews/d1b/evidence/board/{variantID}/project-surface-work-board/{state}/diff.png",
+        "runtime": "docs/reviews/d1b/evidence/board/{variantID}/project-surface-work-board/{state}/{before|after}.json",
+        "filesExist": true,
         "d0Slug": null,
         "d0Policy": "仅精确原路由/亮色/就绪/对应视口与条件可引用冻结原图；其余组合迁移前采截图，原件不变",
-        "d0References": []
+        "d0References": [],
+        "comparisonCount": 28,
+        "comparisonManifest": "docs/reviews/d1b/evidence/board/comparisons.json"
       },
       "checks": {
         "protocol": "local-surface",
-        "runtimeStatus": "未运行",
-        "humanReview": "待人工评审",
+        "runtimeStatus": "迁前和迁后28组合实跑；scope/shared样式、恢复、明暗子树、键盘/导航/回焦通过",
+        "humanReview": "待看板人工视觉评审",
         "reviewRecord": null,
         "stopBeforeNextSurface": true,
         "globalReplayRequired": true
@@ -13218,7 +13278,7 @@
   },
   "fixtureRecipes": {
     "d1b-backlog": {
-      "status": "规划，尚未创建或运行",
+      "status": "仅本轮backlog看板与其只读sheet已实施/运行；后续列表/项目backlog未运行",
       "mechanism": "仅 D1b 专用 mocked 测试通过 context.route 覆写只读 GET 响应，不改 project-work-preview-server final-tour/D0",
       "record": {
         "id": "work-d1b-backlog",
@@ -13240,7 +13300,7 @@
         "详情同 ID/同状态，无 active_assignment/active_executor",
         "work-101 started 不出现在 backlog 筛选集合"
       ],
-      "validation": "未运行"
+      "validation": "本轮backlog-board共28组合迁前/迁后；独立ID、backlog状态、执行事实清空、started项排除、详情回焦实际断言；符号ID沿用mock约定，标量schema校验，不冒完整生产UUID契约"
     },
     "d1b-empty-projects": {
       "status": "规划，尚未创建或运行",

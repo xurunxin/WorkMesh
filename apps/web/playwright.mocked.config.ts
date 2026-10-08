@@ -16,6 +16,7 @@ export default defineConfig({
   testIgnore: [
     /[\\/]mocked[\\/]d0-visual-baseline\.mocked\.spec\.ts$/,
     /[\\/]mocked[\\/]d1b-workbench\.mocked\.spec\.ts$/,
+    /[\\/]mocked[\\/]d1b-board\.mocked\.spec\.ts$/,
   ],
   fullyParallel: false,
   workers: 1,

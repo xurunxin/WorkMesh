@@ -1,0 +1,41 @@
+{
+  "variant": "mobile-light",
+  "rowID": "active-board",
+  "state": "compact",
+  "requestedURL": "/?view=active&layout=board",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board&statusCategory=started",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/active-board/compact/before.png",
+      "bytes": 40622,
+      "sha256": "a5e25bffec345ba81f3ebe934530c5dfa2f38abe29e0ae4fc3639d90370e08d4"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/active-board/compact/after.png",
+      "bytes": 42575,
+      "sha256": "e4aa99ec32204b717c181f733c556ca3c7829ebc69d3605dbabc343195271cf7"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "279972 pixels (ratio 0.86 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/active-board/compact/diff.png",
+      "bytes": 21356,
+      "sha256": "1b004585efe9e7d5436979924afa53d39387d4063d0957c1725520f41114febf"
+    }
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/mobile-light/active-board/compact/before.json",
+    "after": "docs/reviews/d1b/evidence/board/mobile-light/active-board/compact/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": false,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

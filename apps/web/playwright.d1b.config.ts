@@ -8,8 +8,7 @@ export default defineConfig({
   projects: [
     { name: 'desktop-light', use: { viewport: { width: 1440, height: 1000 } } },
     { name: 'desktop-dark', use: { viewport: { width: 1440, height: 1000 } } },
-    // 原主题套件依赖桌面顶栏入口；移动端实际主题/导航由本面的定向用例验证。
-    { name: 'mobile-light', testIgnore: /theme-unification\.spec\.ts$/, use: { viewport: { width: 390, height: 844 } } },
-    { name: 'mobile-dark', testIgnore: /theme-unification\.spec\.ts$/, use: { viewport: { width: 390, height: 844 } } },
+    { name: 'mobile-light', use: { viewport: { width: 390, height: 844 } } },
+    { name: 'mobile-dark', use: { viewport: { width: 390, height: 844 } } },
   ],
 })

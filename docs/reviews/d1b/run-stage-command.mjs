@@ -10,13 +10,15 @@ import { fingerprintFiles, executionInputPaths } from './verify-preflight.mjs'
 const root = fileURLToPath(new URL('../../../', import.meta.url))
 const [id, phase, ...args] = process.argv.slice(2)
 if (!id || !/^[a-z0-9-]+$/.test(id) || !['before', 'after', 'check'].includes(phase) || !args.length) throw new Error('用法：run-stage-command.mjs <id> <before|after|check> <pnpm arguments...>')
-const directory = resolve(root, 'docs/reviews/d1b/evidence/workbench/runs', id)
+const surface = process.env.WORKMESH_D1B_SURFACE ?? 'workbench'
+if (!['workbench', 'board'].includes(surface)) throw new Error('未知迁移阶段')
+const directory = resolve(root, `docs/reviews/d1b/evidence/${surface}/runs`, id)
 if (existsSync(directory)) throw new Error('不得覆盖已有运行原件；请使用新的 run id')
 mkdirSync(directory, { recursive: true })
 const pnpm = resolve(dirname(process.execPath), 'node_modules/pnpm/pnpm.exe')
 if (!existsSync(pnpm)) throw new Error('当前 Node 目录下无法定位 pnpm CLI')
 const stageScripts = execFileSync('git', ['ls-files', 'docs/reviews/d1b'], { cwd: root, encoding: 'utf8' }).trim().split(/\r?\n/).filter(path => path.endsWith('.mjs'))
-const trackedInputs = [...new Set([...executionInputPaths(), ...stageScripts, 'docs/reviews/d1b/workbench-ledger.json'])]
+const trackedInputs = [...new Set([...executionInputPaths(), ...stageScripts, 'docs/reviews/d1b/workbench-ledger.json', ...(surface === 'board' ? ['docs/reviews/d1b/board-authorization.json', ...(existsSync(resolve(root, 'docs/reviews/d1b/board-ledger.json')) ? ['docs/reviews/d1b/board-ledger.json'] : [])] : [])])]
 const before = fingerprintFiles(trackedInputs)
 const startedAt = new Date().toISOString()
 const clock = performance.now()
@@ -33,7 +35,7 @@ const after = fingerprintFiles(trackedInputs)
 const raw = { stdout: Buffer.concat(stdout), stderr: Buffer.concat(stderr) }
 for (const [name, bytes] of Object.entries(raw)) writeFileSync(resolve(directory, `${name}.log`), bytes)
 const record = {
-  id, phase, command: ['pnpm', ...args].join(' '), invocation,
+  id, phase, surface, command: ['pnpm', ...args].join(' '), invocation,
   baseCommit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
   startedAt, finishedAt: new Date().toISOString(), elapsedMs: performance.now() - clock,
   ...completion, error, sourceUnchanged: JSON.stringify(before) === JSON.stringify(after),

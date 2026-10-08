@@ -1,0 +1,213 @@
+{
+  "phase": "after",
+  "row": "backlog-board",
+  "state": "compact",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board&statusCategory=backlog",
+  "requestedURL": "/?view=backlog&layout=board",
+  "theme": "light",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "fixedTime": "2026-08-22T09:30:00.000Z",
+  "browserVersion": "149.0.7827.55",
+  "launchArguments": [
+    "--disable-gpu",
+    "--disable-skia-runtime-opts",
+    "--force-color-profile=srgb",
+    "--disable-partial-raster"
+  ],
+  "screenshot": {
+    "bytes": 97452,
+    "sha256": "bea279701726e399cc5989f1eeb67c4edbda0e3b474271493fda7ae1c39374bc"
+  },
+  "styles": {
+    "body": {
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(0, 0, 0)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(0, 0, 0) none 3px",
+      "display": "block"
+    },
+    ".app-sidebar": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgb(242, 242, 239)",
+      "border": "rgb(37, 37, 34) rgb(227, 227, 223) rgb(37, 37, 34) rgb(37, 37, 34)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "display": "flex"
+    },
+    ".wm-shell-header": {
+      "color": "rgb(37, 37, 34)",
+      "background": "color(srgb 0.968627 0.968627 0.960784 / 0.92)",
+      "border": "rgb(37, 37, 34) rgb(37, 37, 34) rgb(227, 227, 223)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "display": "flex"
+    },
+    ".project-rail": null,
+    ".project-workspace-header": null,
+    "[data-testid=\"work-surfaces\"]": {
+      "color": "rgb(28, 25, 23)",
+      "background": "rgb(250, 247, 242)",
+      "border": "rgb(28, 25, 23)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(28, 25, 23) none 3px",
+      "display": "flex"
+    },
+    ".wm-work-item-column": {
+      "color": "rgb(28, 25, 23)",
+      "background": "color(srgb 0.951529 0.932549 0.905725)",
+      "border": "color(srgb 0.886275 0.858823 0.819608 / 0.7)",
+      "radius": "12px",
+      "shadow": "rgba(17, 17, 17, 0.03) 0px 1px 2px 0px",
+      "outline": "rgb(28, 25, 23) none 3px",
+      "display": "grid"
+    },
+    ".wm-work-item-card": {
+      "color": "rgb(28, 25, 23)",
+      "background": "rgb(253, 250, 246)",
+      "border": "rgb(226, 219, 209)",
+      "radius": "8px",
+      "shadow": "rgba(17, 17, 17, 0.04) 0px 1px 2px 0px, rgba(17, 17, 17, 0.03) 0px 1px 3px 0px",
+      "outline": "rgb(28, 25, 23) none 3px",
+      "display": "flex"
+    },
+    ".wm-work-item-title": {
+      "color": "rgb(17, 17, 16)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(17, 17, 16)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(17, 17, 16) none 3px",
+      "display": "flow-root"
+    },
+    ".wm-dialog": null,
+    ".wm-overlay": null,
+    ".wm-sheet": null,
+    ".wm-toast-viewport": null
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/install-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/actors/humans",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/install-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/views",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams/team-1/states",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/actors/humans",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/views",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    }
+  ],
+  "failures": [],
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": false,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "derived": null,
+  "humanReview": "待本面人工视觉评审"
+}

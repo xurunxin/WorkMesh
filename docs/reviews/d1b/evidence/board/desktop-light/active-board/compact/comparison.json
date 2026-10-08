@@ -1,0 +1,41 @@
+{
+  "variant": "desktop-light",
+  "rowID": "active-board",
+  "state": "compact",
+  "requestedURL": "/?view=active&layout=board",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board&statusCategory=started",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-light/active-board/compact/before.png",
+      "bytes": 106804,
+      "sha256": "1ae6ff83d502b53672b72c46115af796086ee1fd0fa653d165d79403214e8260"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-light/active-board/compact/after.png",
+      "bytes": 108075,
+      "sha256": "dcd426fd8f0f8b9a4808fb62c9b272e2cd67c8f3613506acce96695f7a33ad41"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "900159 pixels (ratio 0.63 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-light/active-board/compact/diff.png",
+      "bytes": 70545,
+      "sha256": "761eebe8294902b12cca5491eb9c0bc6d69d048b64687c7c79683aec2ed9e4ac"
+    }
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/desktop-light/active-board/compact/before.json",
+    "after": "docs/reviews/d1b/evidence/board/desktop-light/active-board/compact/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": false,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

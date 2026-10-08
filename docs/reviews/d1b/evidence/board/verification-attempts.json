@@ -1,0 +1,11 @@
+{
+  "attempts": [
+    {
+      "command": "node docs/reviews/d1b/verify-board-evidence.mjs",
+      "exitCode": 1,
+      "reason": "核验开始时最后一次board-web-types-final归档尚未完成，source-inputs-index.json不存在（ENOENT）",
+      "classification": "依赖执行顺序错误，未计通过；等归档完整后顺序复验",
+      "rawSource": "本轮工具返回；此处为操作摘要，不冒原始子进程字节归档"
+    }
+  ]
+}

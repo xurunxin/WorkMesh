@@ -1,0 +1,189 @@
+{
+  "phase": "after",
+  "row": "active-board",
+  "state": "empty",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board&statusCategory=started",
+  "requestedURL": "/?view=active&layout=board",
+  "theme": "dark",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "fixedTime": "2026-08-22T09:30:00.000Z",
+  "browserVersion": "149.0.7827.55",
+  "launchArguments": [
+    "--disable-gpu",
+    "--disable-skia-runtime-opts",
+    "--force-color-profile=srgb",
+    "--disable-partial-raster"
+  ],
+  "screenshot": {
+    "bytes": 38873,
+    "sha256": "4ce548b687d15b57c37ee2ed1704ba289342a7ce03163195ef9ad4695e712825"
+  },
+  "styles": {
+    "body": {
+      "color": "rgb(255, 255, 255)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(255, 255, 255)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(255, 255, 255) none 3px",
+      "display": "block"
+    },
+    ".app-sidebar": {
+      "color": "rgb(230, 232, 235)",
+      "background": "rgb(31, 34, 38)",
+      "border": "rgb(230, 232, 235) rgb(36, 40, 45) rgb(230, 232, 235) rgb(230, 232, 235)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "display": "none"
+    },
+    ".wm-shell-header": {
+      "color": "rgb(230, 232, 235)",
+      "background": "color(srgb 0.0431373 0.0470588 0.054902 / 0.92)",
+      "border": "rgb(230, 232, 235) rgb(230, 232, 235) rgb(36, 40, 45)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "display": "flex"
+    },
+    ".project-rail": null,
+    ".project-workspace-header": null,
+    "[data-testid=\"work-surfaces\"]": {
+      "color": "rgb(230, 232, 235)",
+      "background": "rgb(11, 12, 14)",
+      "border": "rgb(230, 232, 235)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "display": "flex"
+    },
+    ".wm-work-item-column": null,
+    ".wm-work-item-card": null,
+    ".wm-work-item-title": null,
+    ".wm-dialog": null,
+    ".wm-overlay": null,
+    ".wm-sheet": null,
+    ".wm-toast-viewport": null
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/install-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/actors/humans",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/install-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/views",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams/team-1/states",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/actors/humans",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/views",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    }
+  ],
+  "failures": [],
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": false,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "derived": null,
+  "humanReview": "待本面人工视觉评审"
+}

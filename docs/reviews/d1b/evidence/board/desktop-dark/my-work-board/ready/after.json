@@ -1,0 +1,282 @@
+{
+  "phase": "after",
+  "row": "my-work-board",
+  "state": "ready",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board",
+  "requestedURL": "/?view=my-work&layout=board",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "fixedTime": "2026-08-22T09:30:00.000Z",
+  "browserVersion": "149.0.7827.55",
+  "launchArguments": [
+    "--disable-gpu",
+    "--disable-skia-runtime-opts",
+    "--force-color-profile=srgb",
+    "--disable-partial-raster"
+  ],
+  "screenshot": {
+    "bytes": 108522,
+    "sha256": "e21865c98f2673ed193dc4b035a8516481a99307b8519ae35052a5974b815c9d"
+  },
+  "styles": {
+    "body": {
+      "color": "rgb(255, 255, 255)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(255, 255, 255)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(255, 255, 255) none 3px",
+      "display": "block"
+    },
+    ".app-sidebar": {
+      "color": "rgb(230, 232, 235)",
+      "background": "rgb(31, 34, 38)",
+      "border": "rgb(230, 232, 235) rgb(36, 40, 45) rgb(230, 232, 235) rgb(230, 232, 235)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "display": "flex"
+    },
+    ".wm-shell-header": {
+      "color": "rgb(230, 232, 235)",
+      "background": "color(srgb 0.0431373 0.0470588 0.054902 / 0.92)",
+      "border": "rgb(230, 232, 235) rgb(230, 232, 235) rgb(36, 40, 45)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "display": "flex"
+    },
+    ".project-rail": null,
+    ".project-workspace-header": null,
+    "[data-testid=\"work-surfaces\"]": {
+      "color": "rgb(230, 232, 235)",
+      "background": "rgb(11, 12, 14)",
+      "border": "rgb(230, 232, 235)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "display": "flex"
+    },
+    ".wm-work-item-column": {
+      "color": "rgb(230, 232, 235)",
+      "background": "color(srgb 0.115294 0.126431 0.14149)",
+      "border": "color(srgb 0.141176 0.156863 0.176471 / 0.7)",
+      "radius": "12px",
+      "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "display": "grid"
+    },
+    ".wm-work-item-card": {
+      "color": "rgb(230, 232, 235)",
+      "background": "rgb(20, 22, 25)",
+      "border": "rgb(36, 40, 45)",
+      "radius": "8px",
+      "shadow": "rgba(0, 0, 0, 0.32) 0px 1px 2px 0px",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "display": "flex"
+    },
+    ".wm-work-item-title": {
+      "color": "rgb(245, 246, 247)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(245, 246, 247)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(245, 246, 247) none 3px",
+      "display": "flow-root"
+    },
+    ".wm-dialog": null,
+    ".wm-overlay": null,
+    ".wm-sheet": null,
+    ".wm-toast-viewport": null
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/install-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/actors/humans",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/install-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/views",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams/team-1/states",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/actors/humans",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/views",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    }
+  ],
+  "failures": [],
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": false,
+    "recovery": false,
+    "navigation": true,
+    "keyboard": true
+  },
+  "derived": [
+    {
+      "theme": "light",
+      "compact": false,
+      "actual": {
+        "background": "color(srgb 0.951529 0.932549 0.905725)",
+        "border": "color(srgb 0.886275 0.858823 0.819608 / 0.7)",
+        "shadow": "color(srgb 0.388235 0.4 0.945098 / 0.32) 0px 0px 0px 3px",
+        "gradient": "linear-gradient(135deg, rgb(79, 70, 229), rgb(120, 57, 238))"
+      },
+      "expected": {
+        "background": "color(srgb 0.951529 0.932549 0.905725)",
+        "border": "color(srgb 0.886275 0.858823 0.819608 / 0.7)",
+        "shadow": "color(srgb 0.388235 0.4 0.945098 / 0.32) 0px 0px 0px 3px",
+        "gradient": "linear-gradient(135deg, rgb(79, 70, 229), rgb(120, 57, 238))"
+      },
+      "height": "32px"
+    },
+    {
+      "theme": "light",
+      "compact": true,
+      "actual": {
+        "background": "color(srgb 0.951529 0.932549 0.905725)",
+        "border": "color(srgb 0.886275 0.858823 0.819608 / 0.7)",
+        "shadow": "color(srgb 0.388235 0.4 0.945098 / 0.32) 0px 0px 0px 3px",
+        "gradient": "linear-gradient(135deg, rgb(79, 70, 229), rgb(120, 57, 238))"
+      },
+      "expected": {
+        "background": "color(srgb 0.951529 0.932549 0.905725)",
+        "border": "color(srgb 0.886275 0.858823 0.819608 / 0.7)",
+        "shadow": "color(srgb 0.388235 0.4 0.945098 / 0.32) 0px 0px 0px 3px",
+        "gradient": "linear-gradient(135deg, rgb(79, 70, 229), rgb(120, 57, 238))"
+      },
+      "height": "26px"
+    },
+    {
+      "theme": "dark",
+      "compact": false,
+      "actual": {
+        "background": "color(srgb 0.115294 0.126431 0.14149)",
+        "border": "color(srgb 0.141176 0.156863 0.176471 / 0.7)",
+        "shadow": "color(srgb 0.356863 0.552941 0.937255 / 0.4) 0px 0px 0px 3px",
+        "gradient": "linear-gradient(135deg, rgb(76, 141, 255), rgb(167, 139, 250))"
+      },
+      "expected": {
+        "background": "color(srgb 0.115294 0.126431 0.14149)",
+        "border": "color(srgb 0.141176 0.156863 0.176471 / 0.7)",
+        "shadow": "color(srgb 0.356863 0.552941 0.937255 / 0.4) 0px 0px 0px 3px",
+        "gradient": "linear-gradient(135deg, rgb(76, 141, 255), rgb(167, 139, 250))"
+      },
+      "height": "32px"
+    },
+    {
+      "theme": "dark",
+      "compact": true,
+      "actual": {
+        "background": "color(srgb 0.115294 0.126431 0.14149)",
+        "border": "color(srgb 0.141176 0.156863 0.176471 / 0.7)",
+        "shadow": "color(srgb 0.356863 0.552941 0.937255 / 0.4) 0px 0px 0px 3px",
+        "gradient": "linear-gradient(135deg, rgb(76, 141, 255), rgb(167, 139, 250))"
+      },
+      "expected": {
+        "background": "color(srgb 0.115294 0.126431 0.14149)",
+        "border": "color(srgb 0.141176 0.156863 0.176471 / 0.7)",
+        "shadow": "color(srgb 0.356863 0.552941 0.937255 / 0.4) 0px 0px 0px 3px",
+        "gradient": "linear-gradient(135deg, rgb(76, 141, 255), rgb(167, 139, 250))"
+      },
+      "height": "26px"
+    }
+  ],
+  "humanReview": "待本面人工视觉评审"
+}

@@ -1,0 +1,420 @@
+{
+  "startedAt": "2026-10-08T10:13:01.818Z",
+  "containers": [],
+  "images": [],
+  "volumes": [],
+  "networks": [],
+  "services": [
+    {
+      "run": "board-after-complete",
+      "ports": [
+        3200,
+        3201
+      ],
+      "reportedWebServerPIDs": [
+        38964,
+        32708,
+        61540,
+        47216
+      ],
+      "source": "docs/reviews/d1b/evidence/board/runs/board-after-complete/raw-evidence-index.json",
+      "lifecycle": "Playwright正常/失败退出负责终止；收尾再核对无监听，不以PID数字强杀未知进程"
+    },
+    {
+      "run": "board-after-probe",
+      "ports": [
+        3200,
+        3201
+      ],
+      "reportedWebServerPIDs": [
+        28140,
+        4196,
+        43056,
+        35640
+      ],
+      "source": "docs/reviews/d1b/evidence/board/runs/board-after-probe/raw-evidence-index.json",
+      "lifecycle": "Playwright正常/失败退出负责终止；收尾再核对无监听，不以PID数字强杀未知进程"
+    },
+    {
+      "run": "board-after-ready",
+      "ports": [
+        3200,
+        3201
+      ],
+      "reportedWebServerPIDs": [
+        3532,
+        53408,
+        18212,
+        32196
+      ],
+      "source": "docs/reviews/d1b/evidence/board/runs/board-after-ready/raw-evidence-index.json",
+      "lifecycle": "Playwright正常/失败退出负责终止；收尾再核对无监听，不以PID数字强杀未知进程"
+    },
+    {
+      "run": "board-before-complete",
+      "ports": [
+        3200,
+        3201
+      ],
+      "reportedWebServerPIDs": [
+        31964,
+        53092,
+        36964,
+        55612
+      ],
+      "source": "docs/reviews/d1b/evidence/board/runs/board-before-complete/raw-evidence-index.json",
+      "lifecycle": "Playwright正常/失败退出负责终止；收尾再核对无监听，不以PID数字强杀未知进程"
+    },
+    {
+      "run": "board-before-full",
+      "ports": [
+        3200,
+        3201
+      ],
+      "reportedWebServerPIDs": [
+        47508,
+        48372,
+        33276,
+        36220
+      ],
+      "source": "docs/reviews/d1b/evidence/board/runs/board-before-full/raw-evidence-index.json",
+      "lifecycle": "Playwright正常/失败退出负责终止；收尾再核对无监听，不以PID数字强杀未知进程"
+    },
+    {
+      "run": "board-before-initial",
+      "ports": [
+        3200,
+        3201
+      ],
+      "reportedWebServerPIDs": [
+        44780,
+        60396,
+        54668,
+        37652
+      ],
+      "source": "docs/reviews/d1b/evidence/board/runs/board-before-initial/raw-evidence-index.json",
+      "lifecycle": "Playwright正常/失败退出负责终止；收尾再核对无监听，不以PID数字强杀未知进程"
+    },
+    {
+      "run": "board-before-mobile",
+      "ports": [
+        3200,
+        3201
+      ],
+      "reportedWebServerPIDs": [
+        60736,
+        47856,
+        42216,
+        40944
+      ],
+      "source": "docs/reviews/d1b/evidence/board/runs/board-before-mobile/raw-evidence-index.json",
+      "lifecycle": "Playwright正常/失败退出负责终止；收尾再核对无监听，不以PID数字强杀未知进程"
+    },
+    {
+      "run": "board-before-probe",
+      "ports": [
+        3200,
+        3201
+      ],
+      "reportedWebServerPIDs": [
+        49728,
+        35096,
+        33936,
+        55248
+      ],
+      "source": "docs/reviews/d1b/evidence/board/runs/board-before-probe/raw-evidence-index.json",
+      "lifecycle": "Playwright正常/失败退出负责终止；收尾再核对无监听，不以PID数字强杀未知进程"
+    },
+    {
+      "run": "board-theme-regression",
+      "ports": [
+        3200,
+        3201
+      ],
+      "reportedWebServerPIDs": [
+        40928,
+        36804,
+        22960,
+        45660
+      ],
+      "source": "docs/reviews/d1b/evidence/board/runs/board-theme-regression/raw-evidence-index.json",
+      "lifecycle": "Playwright正常/失败退出负责终止；收尾再核对无监听，不以PID数字强杀未知进程"
+    },
+    {
+      "source": "docs/reviews/d1b/evidence/board/local-preview.json",
+      "pid": 59348,
+      "port": 57029,
+      "lifecycle": "浏览器与本机HTTP服务finally已关闭，收尾再核对无监听"
+    }
+  ],
+  "retainedWorktrees": [
+    {
+      "path": "C:/Users/xurx/.tds/workspaces/01a11a93-c093-7565-9084-724b6bedcade",
+      "reason": "当前构建"
+    },
+    {
+      "path": "C:/Users/xurx/.tds/workspaces/01a1195f-55ab-7ee9-8baf-c115978d3aec",
+      "reason": "尚未实际合入main且未确认无人引用，不删除"
+    }
+  ],
+  "config": "环境仅注入运行子进程；未改持久配置",
+  "globalPrune": false,
+  "temporaryPaths": [
+    {
+      "id": "board-after-complete",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-after-complete",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-after-complete"
+    },
+    {
+      "id": "board-after-probe",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-after-probe",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-after-probe"
+    },
+    {
+      "id": "board-after-ready",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-after-ready",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-after-ready"
+    },
+    {
+      "id": "board-before-complete",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-before-complete",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-before-complete"
+    },
+    {
+      "id": "board-before-full",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-before-full",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-before-full"
+    },
+    {
+      "id": "board-before-initial",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-before-initial",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-before-initial"
+    },
+    {
+      "id": "board-before-mobile",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-before-mobile",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-before-mobile"
+    },
+    {
+      "id": "board-before-probe",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-before-probe",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-before-probe"
+    },
+    {
+      "id": "board-lint",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-lint",
+      "existedBefore": false,
+      "action": "未创建／已不存在，不删除",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-lint"
+    },
+    {
+      "id": "board-theme-list",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-theme-list",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-theme-list"
+    },
+    {
+      "id": "board-theme-regression",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-theme-regression",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-theme-regression"
+    },
+    {
+      "id": "board-typecheck",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-typecheck",
+      "existedBefore": false,
+      "action": "未创建／已不存在，不删除",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-typecheck"
+    },
+    {
+      "id": "board-typecheck-final",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-typecheck-final",
+      "existedBefore": false,
+      "action": "未创建／已不存在，不删除",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-typecheck-final"
+    },
+    {
+      "id": "board-unit-all",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-unit-all",
+      "existedBefore": false,
+      "action": "未创建／已不存在，不删除",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-unit-all"
+    },
+    {
+      "id": "board-unit-final",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-unit-final",
+      "existedBefore": false,
+      "action": "未创建／已不存在，不删除",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-unit-final"
+    },
+    {
+      "id": "board-unit-scoped",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-unit-scoped",
+      "existedBefore": false,
+      "action": "未创建／已不存在，不删除",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-unit-scoped"
+    },
+    {
+      "id": "board-web-types-final",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-web-types-final",
+      "existedBefore": false,
+      "action": "未创建／已不存在，不删除",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-web-types-final"
+    }
+  ],
+  "cleaned": [
+    {
+      "id": "board-after-complete",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-after-complete",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-after-complete"
+    },
+    {
+      "id": "board-after-probe",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-after-probe",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-after-probe"
+    },
+    {
+      "id": "board-after-ready",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-after-ready",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-after-ready"
+    },
+    {
+      "id": "board-before-complete",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-before-complete",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-before-complete"
+    },
+    {
+      "id": "board-before-full",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-before-full",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-before-full"
+    },
+    {
+      "id": "board-before-initial",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-before-initial",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-before-initial"
+    },
+    {
+      "id": "board-before-mobile",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-before-mobile",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-before-mobile"
+    },
+    {
+      "id": "board-before-probe",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-before-probe",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-before-probe"
+    },
+    {
+      "id": "board-theme-list",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-theme-list",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-theme-list"
+    },
+    {
+      "id": "board-theme-regression",
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-board-theme-regression",
+      "existedBefore": true,
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "evidence": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence\\board\\runs\\board-theme-regression"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\apps\\web\\.next",
+      "action": "Remove-Item -LiteralPath -Recurse；无Force",
+      "absentAfter": true,
+      "reason": "本轮独有服务已结束；失败及成功运行输出先保全，闲置派生缓存"
+    }
+  ],
+  "cleanedAt": "2026-10-08T11:04:15.1816110Z",
+  "serviceListenerCheck": {
+    "listeners": [],
+    "ports": [
+      3200,
+      3201,
+      57029
+    ],
+    "result": "均无监听；未终止不明进程"
+  },
+  "retained": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+      "reason": "当前构建，保留供平台提交和人工评审"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+      "reason": "旧工作树尚未actual main合入及确认无人使用，不移除、不Force抹dirty"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\node_modules",
+      "reason": "当前审查需要的依赖；共享基础包不删除"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\packages",
+      "reason": "本轮单测所需dist派生依赖保留；不删除源码包或共享依赖"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\docs\\reviews\\d1b\\evidence",
+      "reason": "必要脱敏证据已归档，不作为垃圾清理"
+    }
+  ]
+}

@@ -1,0 +1,338 @@
+{
+  "phase": "before",
+  "row": "backlog-board",
+  "state": "detail",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board&statusCategory=backlog",
+  "requestedURL": "/?view=backlog&layout=board",
+  "theme": "light",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "fixedTime": "2026-08-22T09:30:00.000Z",
+  "browserVersion": "149.0.7827.55",
+  "launchArguments": [
+    "--disable-gpu",
+    "--disable-skia-runtime-opts",
+    "--force-color-profile=srgb",
+    "--disable-partial-raster"
+  ],
+  "screenshot": {
+    "bytes": 48272,
+    "sha256": "2f6a5764ad858903816539433e6b276a93158ff477418bb18a57b72c2fc52925"
+  },
+  "styles": {
+    "body": {
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(0, 0, 0)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(0, 0, 0) none 3px",
+      "display": "block"
+    },
+    ".app-sidebar": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgb(242, 242, 239)",
+      "border": "rgb(37, 37, 34) rgb(227, 227, 223) rgb(37, 37, 34) rgb(37, 37, 34)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "display": "none"
+    },
+    ".wm-shell-header": {
+      "color": "rgb(37, 37, 34)",
+      "background": "color(srgb 0.968627 0.968627 0.960784 / 0.92)",
+      "border": "rgb(37, 37, 34) rgb(37, 37, 34) rgb(227, 227, 223)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "display": "flex"
+    },
+    ".project-rail": null,
+    ".project-workspace-header": null,
+    "[data-testid=\"work-surfaces\"]": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(37, 37, 34)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "display": "flex"
+    },
+    ".wm-work-item-column": {
+      "color": "rgb(37, 37, 34)",
+      "background": "color(srgb 0.950588 0.950588 0.939137)",
+      "border": "color(srgb 0.890196 0.890196 0.87451 / 0.7)",
+      "radius": "22px",
+      "shadow": "rgba(17, 17, 17, 0.03) 0px 1px 2px 0px",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "display": "grid"
+    },
+    ".wm-work-item-card": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgb(255, 255, 255)",
+      "border": "rgb(227, 227, 223)",
+      "radius": "16px",
+      "shadow": "rgba(17, 17, 17, 0.04) 0px 1px 2px 0px, rgba(17, 17, 17, 0.03) 0px 1px 3px 0px",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "display": "flex"
+    },
+    ".wm-work-item-title": {
+      "color": "rgb(17, 17, 16)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(17, 17, 16)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(17, 17, 16) none 3px",
+      "display": "flow-root"
+    },
+    ".wm-dialog": null,
+    ".wm-overlay": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgba(17, 17, 17, 0.4)",
+      "border": "rgb(37, 37, 34)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "display": "grid"
+    },
+    ".wm-sheet": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgb(255, 255, 255)",
+      "border": "rgb(37, 37, 34) rgb(37, 37, 34) rgb(37, 37, 34) rgb(227, 227, 223)",
+      "radius": "0px",
+      "shadow": "rgba(17, 17, 17, 0.08) 0px 8px 28px 0px, rgba(17, 17, 17, 0.14) 0px 32px 80px 0px",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "display": "block"
+    },
+    ".wm-toast-viewport": null
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/install-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/actors/humans",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/install-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/views",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams/team-1/states",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/actors/humans",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/views",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items/work-d1b-backlog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/human-attention",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/project-1/milestones",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/human-attention",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/human-attention",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/human-attention",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items/work-d1b-backlog/execution-summary",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items/work-d1b-backlog/comments",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items/work-d1b-backlog/execution-summary",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items/work-d1b-backlog/execution-summary",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items/work-d1b-backlog/relations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/human-attention",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items/work-d1b-backlog/execution-summary",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/human-attention",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/human-attention",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/human-attention",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agent-sessions/session-1/explanation",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agent-sessions/session-1/explanation",
+      "status": 200
+    }
+  ],
+  "failures": [],
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": true,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

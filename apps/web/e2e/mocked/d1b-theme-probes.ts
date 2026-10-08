@@ -1,10 +1,10 @@
 import { expect, type Page } from '@playwright/test'
 
-export async function verifyThemeInheritance(page: Page) {
-  const result = await page.evaluate(() => {
+export async function verifyThemeInheritance(page: Page, surface: 'workbench' | 'board' = 'workbench') {
+  const result = await page.evaluate(surface => {
     const host = document.createElement('section')
     host.style.cssText = 'position:fixed;left:-10000px;top:0'
-    document.querySelector('[data-wm-token-surface="workbench"]')!.append(host)
+    document.querySelector(`[data-wm-token-surface="${surface}"]`)!.append(host)
     const rows = []
     for (const theme of ['light', 'dark']) for (const compact of [false, true]) {
       const parent = document.createElement('div')
@@ -30,7 +30,7 @@ export async function verifyThemeInheritance(page: Page) {
     }
     host.remove()
     return rows
-  })
+  }, surface)
   for (const row of result) {
     expect(row.actual, `${row.theme}/${row.compact ? 'compact' : 'default'} 子树实际派生属性`).toEqual(row.expected)
     expect(row.height).toBe(row.compact ? '26px' : '32px')

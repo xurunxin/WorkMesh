@@ -1994,6 +1994,6 @@ main#workmesh-main:focus-visible {
 }
 
 @media (max-width: 430px) {
-  .wm-shell-header > p, .wm-shell-actions { display: none; }
+  .wm-shell-header > p { display: none; }
   .project-rail-list > button { flex-basis: min(78vw, 240px); }
 }

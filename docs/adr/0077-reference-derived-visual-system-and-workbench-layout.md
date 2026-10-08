@@ -311,3 +311,26 @@ required by this ADR, because presentation owns no locked row.
   dark follow-up, and which were rejected as mechanism.
 - The board gains a card-structure test and the one-warm-colour invariant test
   described above.
+
+## D1b 看板阶段落地记录（2026-10-08）
+
+工作台提交`567f68dc9b2905a166184c24686a9f2fd74f2832`已获用户18:07明确答复
+「接受，继续下一面」；本轮按已审计划迁看板，停在本面人工视觉，不放行#12。
+原17:39独审未实测Todos宿主预览加载的历史限制保留。
+
+本面使用既有完整映射，未重选暗色。已重新读取G1原始
+`docs/references/todos-analysis/design-observations.json`：`/12/custom/--surface`为
+`250 247 242`，采用暖色画布`#faf7f2`；`/12/custom/--surface-elevated`为
+`253 250 246`，卡片采用`#fdfaf6`属于已审用户授权设计应用。
+这些是具体原始测量节点，完整出处/沿用值/设计值分类仍见
+`apps/web/features/navigation/theme-token-migration.json`，不凭摘要把所有新槽称为实测。
+hover与secondary仍为独立暗色槽；危险语义`#ef4444`仍是用户批准的候选采纳，
+不是参考错误态实测。本轮未改根值或服务器自定义工作流颜色。
+
+看板采用局部CSS分支与实际布局边界，不引入Tailwind、不整体切换共享shell。
+共享卡片保留同一DOM；空颜色的实例回退只在本面用语义secondary，切回列表恢复旧回退。
+暖色画布、卡片与分层文字的位移来自已审映射，128组实际差异提交评审；
+只有精确D0项目看板亮色原路由另外比较冻结原图，参数不放宽、原图不改。
+本轮没有新业务状态、API、事件、数据库或TA工作，也不提前实施后续卡的结构/功能责任。
+原移动主题失败已留证修复，40项回归通过；技术通过不代本面视觉接受。
+证据、失败分类与剩余门禁见`docs/reviews/d1b/board-verification.md`。

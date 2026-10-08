@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "archive": {
+    "path": "raw-evidence.zip",
+    "bytes": 5405,
+    "sha256": "b3da2153e96bb2836088fd552dda3148f827a14e9f4d61ef200e191f813ad13c"
+  },
+  "entries": [
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/board/runs/board-before-probe/stdout.log",
+      "version": "board-before-probe",
+      "byteKind": "worktree",
+      "bytes": 3426,
+      "sha256": "120abaada070fd41061b14ed07a0c269d0793ec7163bbe3e1a9775220447e163",
+      "member": "bytes/120abaada070fd41061b14ed07a0c269d0793ec7163bbe3e1a9775220447e163",
+      "sourceCommit": null,
+      "sourceBlobId": "4d7114a6d38a6aa7ba79ca8d64151c74e0919203"
+    },
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/board/runs/board-before-probe/stderr.log",
+      "version": "board-before-probe",
+      "byteKind": "worktree",
+      "bytes": 7530,
+      "sha256": "ec5e36bc2d9ef793cb0a2f2f7dd3a89b1f7beb610eb9014fd49eeedd5bf30149",
+      "member": "bytes/ec5e36bc2d9ef793cb0a2f2f7dd3a89b1f7beb610eb9014fd49eeedd5bf30149",
+      "sourceCommit": null,
+      "sourceBlobId": "c208a926394be3a60abc28c104722d8c3f40d1bf"
+    },
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/board/runs/board-before-probe/playwright/mocked-d1b-board.mocked-my-work-board-ready：看板前后、局部边界与真实导航-desktop-light/error-context.md",
+      "version": "board-before-probe",
+      "byteKind": "worktree",
+      "bytes": 11824,
+      "sha256": "ce3352bd6ca989dc192cb2ecd2757179cf7f1398c273565a643a546631fbed99",
+      "member": "bytes/ce3352bd6ca989dc192cb2ecd2757179cf7f1398c273565a643a546631fbed99",
+      "sourceCommit": null,
+      "sourceBlobId": "6d395fe629fe1da8cea1cb6fa0a495a9a3cce182"
+    }
+  ],
+  "policy": "实际Git对象及工作区/运行原字节；无损自包含，不trim，不猜测换行"
+}

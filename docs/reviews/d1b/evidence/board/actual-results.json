@@ -1,0 +1,144 @@
+{
+  "source": "从实际raw stdout逐包汇总；execution.skip默认空数组不是零跳过证明",
+  "unit": {
+    "run": "board-unit-final",
+    "exitCode": 0,
+    "passed": 1659,
+    "skipped": 2,
+    "packages": [
+      {
+        "package": "workmesh/git-provider",
+        "passed": 13,
+        "skipped": 0,
+        "rawLine": "@workmesh/git-provider:test:       Tests  13 passed (13)"
+      },
+      {
+        "package": "workmesh/observability",
+        "passed": 16,
+        "skipped": 0,
+        "rawLine": "@workmesh/observability:test:       Tests  16 passed (16)"
+      },
+      {
+        "package": "workmesh/artifact-storage",
+        "passed": 22,
+        "skipped": 0,
+        "rawLine": "@workmesh/artifact-storage:test:       Tests  22 passed (22)"
+      },
+      {
+        "package": "workmesh/contracts",
+        "passed": 180,
+        "skipped": 0,
+        "rawLine": "@workmesh/contracts:test:       Tests  180 passed (180)"
+      },
+      {
+        "package": "workmesh/ui",
+        "passed": 50,
+        "skipped": 0,
+        "rawLine": "@workmesh/ui:test:       Tests  50 passed (50)"
+      },
+      {
+        "package": "workmesh/a2a-adapter",
+        "passed": 4,
+        "skipped": 0,
+        "rawLine": "@workmesh/a2a-adapter:test:       Tests  4 passed (4)"
+      },
+      {
+        "package": "workmesh/agent-sdk",
+        "passed": 33,
+        "skipped": 0,
+        "rawLine": "@workmesh/agent-sdk:test:       Tests  33 passed (33)"
+      },
+      {
+        "package": "workmesh/config",
+        "passed": 33,
+        "skipped": 0,
+        "rawLine": "@workmesh/config:test:       Tests  33 passed (33)"
+      },
+      {
+        "package": "workmesh/domain",
+        "passed": 65,
+        "skipped": 0,
+        "rawLine": "@workmesh/domain:test:       Tests  65 passed (65)"
+      },
+      {
+        "package": "workmesh/agent-runner",
+        "passed": 48,
+        "skipped": 0,
+        "rawLine": "@workmesh/agent-runner:test:       Tests  48 passed (48)"
+      },
+      {
+        "package": "workmesh/db",
+        "passed": 28,
+        "skipped": 0,
+        "rawLine": "@workmesh/db:test:       Tests  28 passed (28)"
+      },
+      {
+        "package": "workmesh/fake-agent",
+        "passed": 4,
+        "skipped": 0,
+        "rawLine": "@workmesh/fake-agent:test:       Tests  4 passed (4)"
+      },
+      {
+        "package": "workmesh/mcp",
+        "passed": 38,
+        "skipped": 0,
+        "rawLine": "@workmesh/mcp:test:       Tests  38 passed (38)"
+      },
+      {
+        "package": "workmesh/conformance",
+        "passed": 1,
+        "skipped": 0,
+        "rawLine": "@workmesh/conformance:test:       Tests  1 passed (1)"
+      },
+      {
+        "package": "workmesh/worker",
+        "passed": 163,
+        "skipped": 2,
+        "rawLine": "@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)"
+      },
+      {
+        "package": "workmesh/recovery",
+        "passed": 7,
+        "skipped": 0,
+        "rawLine": "@workmesh/recovery:test:       Tests  7 passed (7)"
+      },
+      {
+        "package": "workmesh/web",
+        "passed": 780,
+        "skipped": 0,
+        "rawLine": "@workmesh/web:test:       Tests  780 passed (780)"
+      },
+      {
+        "package": "workmesh/api",
+        "passed": 174,
+        "skipped": 0,
+        "rawLine": "@workmesh/api:test:       Tests  174 passed (174)"
+      }
+    ]
+  },
+  "capture": {
+    "beforeDesktop": 70,
+    "beforeMobile": 70,
+    "after": 140
+  },
+  "theme": {
+    "list": 40,
+    "passed": 40,
+    "skipped": 0,
+    "run": "board-theme-regression"
+  },
+  "checks": {
+    "lint": "18成功，16缓存；受影响UI/web实跑",
+    "typecheck": "18成功，15缓存；受影响UI/web/API实跑；末尾web定向类型再验",
+    "integration": "本轮未运行，最终门禁后置",
+    "fullE2E": "本轮未运行，最终门禁后置",
+    "latestRequiredCI": "未取得当前成果最新CI，不冒完成"
+  },
+  "visual": {
+    "workbench": "用户2026-10-08 18:07接受567f68dc",
+    "board": "pending",
+    "hostPreviewTested": false
+  },
+  "nextStageAllowed": false,
+  "cleanupAllowed": false
+}

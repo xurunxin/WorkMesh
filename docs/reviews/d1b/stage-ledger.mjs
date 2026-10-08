@@ -16,7 +16,7 @@ const map = new Map(registry.entries.map(entry => [entry.from, entry.to]))
 const local = 'apps/web/features/workbench/conversation-workbench.module.css'
 const cssPath = 'packages/ui/src/tokens.css'
 const scope = 'data-wm-token-surface="workbench"'
-const ledgerPath = 'docs/reviews/d1b/workbench-ledger.json'
+const ledgerPath = readFileExists('docs/reviews/d1b/board-ledger.json') ? 'docs/reviews/d1b/board-ledger.json' : 'docs/reviews/d1b/workbench-ledger.json'
 const normalized = text => text.replace(/\s+/g, ' ').trim()
 const replace = value => value.replace(/--wm-[\w-]+/g, name => map.get(name) ?? name)
 const dependencies = value => [...value.matchAll(/var\(\s*(--[\w-]+)/g)].map(match => match[1])
@@ -64,10 +64,19 @@ const withoutLine = ({ line, ...record }) => record
 export function validate(current, ledger) {
   const actual = new Map(current.map(record => [record.id, record]))
   const consumed = new Set()
+  for (const retirement of ledger.retirements ?? []) {
+    assert(!actual.has(retirement.original.id), '重构后旧AST身份不应复现')
+    assert.equal(retirement.original.value, 'var(--wm-muted)')
+    assert.equal(retirement.original.path, 'packages/ui/src/domain/work-item.tsx')
+    const replacements = retirement.replacements.map(id => actual.get(id)?.value)
+    assert.deepEqual(replacements, ['var(--wm-ref-text-secondary)', 'var(--wm-muted)'], '局部迁移不能丢失旧回退或新映射')
+  }
   for (const entry of ledger.entries) {
     const value = actual.get(entry.id)
     assert(value, `消费/声明身份消失：${entry.id}`)
+    for (const key of ['path', 'kind', 'owner', 'property', 'occurrence']) assert.equal(value[key], entry[key], `身份字段偏离：${entry.id}/${key}`)
     assert.equal(value.value, entry.expectedValue, `阶段表达式被改写：${entry.id}`)
+    assert.deepEqual(value.dependencies, dependencies(entry.expectedValue), `实际依赖偏离：${entry.id}`)
     consumed.add(entry.id)
   }
   const added = current.filter(record => !consumed.has(record.id))
@@ -96,10 +105,21 @@ export function validate(current, ledger) {
   const boundary = read('apps/web/app/workbench/page.tsx')
   assert(boundary.includes('<section className="content workbench-page" data-wm-token-surface="workbench">'), '工作台边界缺失')
   assert(!read('packages/ui/src/layout/app-shell.tsx').includes(scope), '不得整体切换共享 shell')
-  for (const record of ledger.additions.filter(record => record.kind !== 'definition' && record.path.endsWith('.css'))) assert(record.owner.includes(scope), `共享新分支未隔离：${record.id}`)
+  const scopes = ledger.phase === 'board' ? [scope, 'data-wm-token-surface="board"'] : [scope]
+  for (const record of ledger.additions.filter(record => record.kind !== 'definition' && record.path.endsWith('.css'))) assert(scopes.some(scope => record.owner.includes(scope)), `共享新分支未隔离：${record.id}`)
+  if (ledger.phase === 'board') {
+    const authorization = JSON.parse(read('docs/reviews/d1b/board-authorization.json'))
+    assert.equal(authorization.decision, '接受，继续下一面')
+    assert.equal(authorization.acceptedCommit, '567f68dc9b2905a166184c24686a9f2fd74f2832')
+    assert(!read('packages/ui/src/layout/app-shell.tsx').includes('data-wm-token-surface="board"'), '共享shell不得整体切换')
+    assert(read('apps/web/features/work-items/work-surfaces.tsx').includes("data-wm-token-surface={layout === 'board' ? 'board' : undefined}"), '实际看板布局边界缺失')
+    const ui = read('packages/ui/src/domain/work-item.tsx')
+    assert(ui.includes("value={tokenSurface === 'board' && layout === 'board'}"), '列表不得继承看板实例槽')
+    assert(ui.includes("color || (semantic ? 'var(--wm-ref-text-secondary)' : 'var(--wm-muted)')"), '实际颜色/旧回退保护缺失')
+  }
   const legacy = current.filter(record => record.dependencies.some(name => map.has(name)))
   assert(legacy.length > 0, '首面不能清空全部旧消费')
-  return { phase: 'workbench', ledgerEntries: ledger.entries.length, scopedAdditions: ledger.additions.length, remainingLegacyExpressions: legacy.length, runtime: registry.retainedRuntime, cleanupAllowed: false, visualReview: '待人工视觉评审', nextStageAllowed: false }
+  return { phase: ledger.phase, ledgerEntries: ledger.entries.length, scopedAdditions: ledger.additions.length, remainingLegacyExpressions: legacy.length, runtime: registry.retainedRuntime, cleanupAllowed: false, visualReview: ledger.visualReview, nextStageAllowed: false }
 }
 
 function expectedValue(record) {
@@ -126,7 +146,7 @@ if (main && process.argv.includes('--snapshot')) {
       mutation('未迁共享消费禁止无条件替换', records => { const record = records.find(record => record.path === cssPath && record.kind === 'consumer' && record.dependencies.some(name => map.has(name))); record.value = replace(record.value) }),
       mutation('嵌套 fallback 未知依赖失败', records => { records.find(record => record.path === local).value += ' var(--wm-ref-focus, var(--wm-unknown))' }),
       mutation('新分支边界删除失败', records => { records.find(record => record.owner.includes(scope)).owner = '.wm-button' }),
-      mutation('已迁项回退失败', records => { const record = records.find(record => record.path === local); record.value = ledger.entries.find(entry => entry.id === record.id).value }),
+      mutation('已迁项回退失败', records => { const record = records.find(record => record.path === local && record.dependencies.some(name => registry.entries.some(entry => entry.to === name))); const mapping = registry.entries.find(entry => record.dependencies.includes(entry.to)); record.value = record.value.replace(mapping.to, mapping.from) }),
     ]
     assert.throws(() => validateGraph(new Map([['--a', 'var(--b)'], ['--b', 'var(--a)']])))
     assert.throws(() => assertRuntimeDefinitions(registry.runtimeDefinitions.filter(record => record.token === '--wm-overlay-depth'), path => read(path).replace("layer.backdrop.style.setProperty('--wm-overlay-depth', String(index * 2))", '')))

@@ -76,10 +76,13 @@ test.describe('unified light theme', () => {
       }
       // A protected route may finish its client redirect after the initial
       // document paints. Check route text only while that route remains active.
-      const smoke = page.getByText(route.zhSmokeText, { exact: false }).first()
+      // 响应式 shell 保留隐藏导航副本；验证当前可见目标而非 DOM 中的首个副本。
+      const smoke = page.getByText(route.zhSmokeText, { exact: false }).filter({ visible: true }).first()
       await expect.poll(async () => {
-        if (new URL(page.url()).pathname !== route.path) return true
-        if ((await smoke.count()) === 0) return true
+        const current = new URL(page.url())
+        const target = new URL(route.path, current.origin)
+        if (current.pathname !== target.pathname) return true
+        if ((await smoke.count()) === 0) return false
         return smoke.isVisible().catch(() => false)
       }).toBe(true)
     })

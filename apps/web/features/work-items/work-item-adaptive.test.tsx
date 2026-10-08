@@ -7,6 +7,22 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 afterEach(() => { cleanup() })
 
+it('uses semantic fallback only inside the migrated board while retaining server colors and persistent cards', () => {
+  const column = { id: 'status', name: '待办' }
+  const item: WorkItemCardData = { id: 'scoped', identifier: 'WM-1', title: '局部回退', statusId: 'status', statusName: '待办' }
+  const view = render(<WorkItemAdaptiveCollection columns={[column]} items={[item]} layout="list" tokenSurface="board" />)
+  const card = view.container.querySelector<HTMLElement>('[data-work-item-id="scoped"]')!
+  expect(card.style.getPropertyValue('--wm-status-color')).toBe('var(--wm-muted)')
+  view.rerender(<WorkItemAdaptiveCollection columns={[column]} items={[item]} layout="board" tokenSurface="board" />)
+  expect(view.container.querySelector('[data-work-item-id="scoped"]')).toBe(card)
+  expect(card.style.getPropertyValue('--wm-status-color')).toBe('var(--wm-ref-text-secondary)')
+  view.rerender(<WorkItemAdaptiveCollection columns={[{ ...column, color: '#123456' }]} items={[item]} layout="board" tokenSurface="board" />)
+  expect(card.style.getPropertyValue('--wm-status-color')).toBe('#123456')
+  expect(view.container.querySelector<HTMLElement>('[data-workflow-state-id="status"]')!.style.getPropertyValue('--wm-status-color')).toBe('#123456')
+  view.rerender(<WorkItemAdaptiveCollection columns={[column]} items={[item]} layout="list" tokenSurface="board" />)
+  expect(card.style.getPropertyValue('--wm-status-color')).toBe('var(--wm-muted)')
+})
+
 /**
  * Wall-clock budget for the suite that mounts 300 real cards across three
  * layout changes and then proves not one of them re-rendered.

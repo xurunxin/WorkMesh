@@ -1,0 +1,41 @@
+{
+  "variant": "desktop-dark",
+  "rowID": "backlog-board",
+  "state": "compact",
+  "requestedURL": "/?view=backlog&layout=board",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board&statusCategory=backlog",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-dark/backlog-board/compact/before.png",
+      "bytes": 99096,
+      "sha256": "9b5e072530094a383d46a462385f1de4198f596d5b3185c953e85fe3e5a64741"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-dark/backlog-board/compact/after.png",
+      "bytes": 97695,
+      "sha256": "a0b081c44e2e0a5bb4e9fa374156a863965e3ea2b8fc533761139919c88d3ee6"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "29945 pixels (ratio 0.03 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-dark/backlog-board/compact/diff.png",
+      "bytes": 100883,
+      "sha256": "2d0990bc854fc4c9c55aaf381c16c6c3d9ed2d3b6686ce63adf5e30f37ecd2e0"
+    }
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/desktop-dark/backlog-board/compact/before.json",
+    "after": "docs/reviews/d1b/evidence/board/desktop-dark/backlog-board/compact/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": false,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

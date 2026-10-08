@@ -1,0 +1,37 @@
+{
+  "variant": "mobile-dark",
+  "rowID": "active-board",
+  "state": "detail",
+  "requestedURL": "/?view=active&layout=board",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board&statusCategory=started",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-dark/active-board/detail/before.png",
+      "bytes": 46799,
+      "sha256": "668601adc63743fab4e1fb1105b1712117e294802846f942a93c79848f28acab"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-dark/active-board/detail/after.png",
+      "bytes": 46799,
+      "sha256": "668601adc63743fab4e1fb1105b1712117e294802846f942a93c79848f28acab"
+    },
+    "rawBytesEqual": true,
+    "comparatorPassed": true,
+    "message": "固定比较器未发现超过阈值的变化",
+    "diff": null
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/mobile-dark/active-board/detail/before.json",
+    "after": "docs/reviews/d1b/evidence/board/mobile-dark/active-board/detail/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": true,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

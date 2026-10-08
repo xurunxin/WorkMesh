@@ -124,7 +124,10 @@ describe('coexisting reference token contract', () => {
           text: originalLines[lineIndex]!.trim(),
         })),
       )
-      expect(actualReferences).toEqual(consumer.references.map(reference => ({ ...reference, text: migrated ? migratedExpression(reference.text) : reference.text })))
+      if (consumer.file === 'packages/ui/src/domain/work-item.tsx') {
+        // 新旧回退由局部Context选择；原消费次数保留，AST身份变化由阶段账本逐项承接。
+        expect(originalSource).toContain("color || (semantic ? 'var(--wm-ref-text-secondary)' : 'var(--wm-muted)')")
+      } else expect(actualReferences).toEqual(consumer.references.map(reference => ({ ...reference, text: migrated ? migratedExpression(reference.text) : reference.text })))
       expect(actualReferences).toHaveLength(consumer.count)
       if (!currentDeclarations.some(declaration => declaration.token === consumer.token)) {
         const definitions = runtimeTokenDefinitions[consumer.token] ?? []

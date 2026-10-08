@@ -1,0 +1,63 @@
+{
+  "scope": "本轮看板与既有移动主题问题；原失败完整保留，不以重跑删除失败",
+  "historicalTheme": {
+    "id": "theme-contract",
+    "result": "32通过、8失败",
+    "source": "工作台旧checkpoint归档",
+    "cause": "原8项移动用例定位到响应式隐藏导航文字副本；另有430px以下shell主题操作被隐藏的可达性问题",
+    "resolution": "产品恢复移动操作可达性；测试明确选可见导航，零匹配不通过；修复后实际结果另以board-theme-regression为准",
+    "current": "board-theme-regression实跑40通过，原8项失败保留"
+  },
+  "runs": [
+    {
+      "id": "board-before-initial",
+      "category": "夹具模块边界",
+      "cause": "web无直接zod依赖，夹具从contracts导入已有schema"
+    },
+    {
+      "id": "board-before-probe",
+      "category": "测试定位器",
+      "cause": "按钮实际名称为列表视图；修正精确名称，未改超时"
+    },
+    {
+      "id": "board-before-full",
+      "category": "历史mock DTO缺口",
+      "result": "12通过、2失败、126未执行",
+      "cause": "session explanation缺budgetUtilization；复用D0明确startedAt/预算只读补齐，不改产品解析"
+    },
+    {
+      "id": "board-before-complete",
+      "category": "移动滚动可达性断言",
+      "result": "73通过、2失败、65未执行",
+      "cause": "通用移动入口整卡尾部在滚动区域中被裁；保留D0精确项目原路由整卡要求，其余检查标题实际可达。比较器参数未改"
+    },
+    {
+      "id": "board-before-mobile",
+      "category": "定向重跑",
+      "result": "70通过，桌面70取board-before-complete原件"
+    },
+    {
+      "id": "board-typecheck",
+      "category": "新增测试类型错误",
+      "cause": "WorkItemCardData无statusColor；应传服务器工作流column.color并验证卡片/列都使用它"
+    },
+    {
+      "id": "board-after-probe",
+      "category": "测试过滤表达式",
+      "cause": "grep使用连字符未匹配测试名斜杠，No tests found，不冒运行通过"
+    },
+    {
+      "id": "board-unit-all",
+      "category": "配置隔离契约漏同步",
+      "cause": "通用mock配置隔离专用D1b文件后，旧契约仍仅断言D0排除；补精确三项隔离及D1b移动主题完整匹配断言，后续复验另列"
+    },
+    {
+      "id": "board-unit-final",
+      "category": "修订后的完整单测",
+      "result": "1659通过、2个worker条件跳过，退出0；原失败运行保留"
+    }
+  ],
+  "partialCaptureLimit": "早期initial/probe/full没有captures.zip；probe首张PNG及失败PNG/trace、全部raw/source保全。full首12项输出没有逐运行captures包，不冒每次部分截图完整独立保全。主before140均有captures包精确绑定。",
+  "productSourceChange": "看板仅局部消费与实例空颜色回退；原移动主题可达性修复。无API/事件/数据库/TA新增范围。",
+  "nextStageAllowed": false
+}

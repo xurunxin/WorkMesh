@@ -2,13 +2,13 @@
   "taskTodoID": "2j2sxT5wJ-l001efH_meJ",
   "projectID": "DzkLDn6UW-IbfoTJzN9Ro",
   "branch": "tds/conv-01a11a93-c093-7565-9084-724b6bedcade",
-  "currentHeadBeforeTurn": "4067ecd3573d392114c8adb51534bcdb3a52dfb4",
+  "currentHeadBeforeTurn": "567f68dc9b2905a166184c24686a9f2fd74f2832",
   "mergeCheckpoint": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5",
   "baseCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
   "latestMain": {
-    "commit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
-    "readMethod": "本轮 mcp__tds__git ls-remote origin refs/heads/main",
-    "matchesBase": true
+    "commit": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "readMethod": "本轮收尾mcp__tds__git ls-remote/fetch main；精确差异见evidence/board/main-readback.json",
+    "matchesBase": false
   },
   "reviewedPlanCommit": "40cc065edabdc2a6fbdc72f728fd72259e58811c",
   "reviewedPlanBody": {
@@ -25,22 +25,34 @@
   "handoffPlanID": "doc:nnchKV-O25SWiYsj3hXgm",
   "planVersion": null,
   "planIDStatus": "本轮 conversation 实读仅新构建记录，没有最新 savedplan 字段；继承用户确认的40cc065已审正文及SHA256、13:02前置独审和13:03首面放行，不重新保存/确认计划。",
-  "gate": "首面工作台待平台独立阶段审查与人工视觉评审；下一面、清旧、整项合入均未放行",
-  "stage": "workbench-awaiting-review",
+  "gate": "工作台用户接受；当前仅看板可审，下一面/清旧/整项合入/#12未放行",
+  "stage": "board-awaiting-human-visual-review",
   "historicalExecutionBinding": "recovery/history-execution-binding-4067ecd.json",
   "historicalPlanBindings": "plan-binding.json与plan-source.json为0ebb986前置时的已审记录，保持历史内容；本轮不运行冻结前置校验冒充当前阶段。",
-  "stageLedger": "workbench-ledger.json",
+  "stageLedger": "board-ledger.json",
   "currentStage": "recovery/current-stage.json",
   "integration": "recovery/integration.json",
   "evidenceAudit": "recovery/historical-run-audit.json",
   "rawEvidence": "recovery/raw-evidence-index.json",
   "sourceInputs": "recovery/source-inputs-index.json",
-  "protocolScope": "当前仅恢复工作台首面，未改API/事件/数据库",
-  "servicePreparation": "本轮无Docker/测试服务，依赖按锁文件安装；子进程环境自动结束，不改用户配置。",
+  "protocolScope": "看板局部token与必要移动主题可达性修复；无API/事件/数据库/TA范围",
+  "servicePreparation": "本轮独有Playwright Next/mocked服务3200/3201，以及本机临时HTTP视觉资源核验；归属清理详见board-resources.json",
   "runtime": {
     "node": "v24.20.0",
     "git": "git version 2.55.0.windows.3",
     "python": "仅用于本轮离线生成，产品无新增依赖"
   },
-  "cleanup": "recovery/resource-cleanup.json"
+  "cleanup": "board-resources.json",
+  "historicalWorkbenchBinding": {
+    "stage": "workbench-awaiting-review",
+    "head": "4067ecd3573d392114c8adb51534bcdb3a52dfb4",
+    "gate": "首面工作台待平台独立阶段审查与人工视觉评审；下一面、清旧、整项合入均未放行",
+    "ledger": "workbench-ledger.json"
+  },
+  "boardAuthorization": "board-authorization.json",
+  "boardReport": "board-verification.md",
+  "initialMain": {
+    "commit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "readMethod": "本轮开工实读"
+  }
 }

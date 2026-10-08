@@ -1,0 +1,41 @@
+{
+  "variant": "desktop-light",
+  "rowID": "backlog-board",
+  "state": "detail",
+  "requestedURL": "/?view=backlog&layout=board",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board&statusCategory=backlog",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-light/backlog-board/detail/before.png",
+      "bytes": 180917,
+      "sha256": "cc4bc9013b38491725922bf0e9bbf09db6ac6c02960a6b6baf95b9ba4c1cedde"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-light/backlog-board/detail/after.png",
+      "bytes": 184411,
+      "sha256": "91b093fadead6c1adf9e10a9bcd3fd74ea330ae5c45ef1da00dc998edbaa0d98"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "328551 pixels (ratio 0.23 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-light/backlog-board/detail/diff.png",
+      "bytes": 119195,
+      "sha256": "3eaa0f7befd60247e6b71a5684c6f4c7bb87e9bcf3ae55cc30cd9a8534aa5760"
+    }
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/desktop-light/backlog-board/detail/before.json",
+    "after": "docs/reviews/d1b/evidence/board/desktop-light/backlog-board/detail/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": true,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

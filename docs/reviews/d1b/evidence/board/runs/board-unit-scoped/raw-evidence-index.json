@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "archive": {
+    "path": "raw-evidence.zip",
+    "bytes": 1344,
+    "sha256": "8d35e4b66cd8f7dea0328d119bff694331eb36f86801d98fd8e0d19affd57a2d"
+  },
+  "entries": [
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/board/runs/board-unit-scoped/stdout.log",
+      "version": "board-unit-scoped",
+      "byteKind": "worktree",
+      "bytes": 929,
+      "sha256": "b6bb1b2dcca2c9792961500313799bd038bcd32c9a389963531d97f066347169",
+      "member": "bytes/b6bb1b2dcca2c9792961500313799bd038bcd32c9a389963531d97f066347169",
+      "sourceCommit": null,
+      "sourceBlobId": "fd1607ab064ad0f3d09c4c64dd40bac7b83c3f54"
+    },
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/board/runs/board-unit-scoped/stderr.log",
+      "version": "board-unit-scoped",
+      "byteKind": "worktree",
+      "bytes": 818,
+      "sha256": "ab32f21c177307e2f708c24c17715a95d9bb76d9f5cb3386fd0d5364fc34d582",
+      "member": "bytes/ab32f21c177307e2f708c24c17715a95d9bb76d9f5cb3386fd0d5364fc34d582",
+      "sourceCommit": null,
+      "sourceBlobId": "d9d28f2fe5466d15630fcd8911d1440987fced41"
+    }
+  ],
+  "policy": "实际Git对象及工作区/运行原字节；无损自包含，不trim，不猜测换行"
+}

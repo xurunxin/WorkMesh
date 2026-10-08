@@ -1,0 +1,41 @@
+{
+  "variant": "mobile-light",
+  "rowID": "project-surface-work-board",
+  "state": "ready",
+  "requestedURL": "/?view=projects&project=project-1&surface=work&tab=board",
+  "actualURL": "http://127.0.0.1:3200/?view=projects&project=project-1&tab=board",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/project-surface-work-board/ready/before.png",
+      "bytes": 41674,
+      "sha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/project-surface-work-board/ready/after.png",
+      "bytes": 42701,
+      "sha256": "ab3538f6ed8ca6b7cdb08929699a609df9b486848ed89c1968e4203997b2cc5c"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "Expected an image 390px by 897px, received 390px by 885px. 299364 pixels (ratio 0.86 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-light/project-surface-work-board/ready/diff.png",
+      "bytes": 22067,
+      "sha256": "837fc5eb33d58ffa35726daad124b7b217e29d184368cd231bb0021713044d3e"
+    }
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/mobile-light/project-surface-work-board/ready/before.json",
+    "after": "docs/reviews/d1b/evidence/board/mobile-light/project-surface-work-board/ready/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": false,
+    "recovery": false,
+    "navigation": true,
+    "keyboard": true
+  },
+  "humanReview": "待本面人工视觉评审"
+}

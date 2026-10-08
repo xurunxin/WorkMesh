@@ -1,0 +1,41 @@
+{
+  "variant": "mobile-dark",
+  "rowID": "backlog-board",
+  "state": "error",
+  "requestedURL": "/?view=backlog&layout=board",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board&statusCategory=backlog",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-dark/backlog-board/error/before.png",
+      "bytes": 39579,
+      "sha256": "199a7ad75bde4a215eb5925a85195204b824e5804a498f6c9433caf118495e88"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-dark/backlog-board/error/after.png",
+      "bytes": 38930,
+      "sha256": "60b292907939e33f93c2939f7afe7eb26e2a06c4785e96a1ef0960fffc28587f"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "55307 pixels (ratio 0.17 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-dark/backlog-board/error/diff.png",
+      "bytes": 35626,
+      "sha256": "13418a5042b088d4e417c6ac06f98ba569be7ad8305932d8fbda1e843b982d1e"
+    }
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/mobile-dark/backlog-board/error/before.json",
+    "after": "docs/reviews/d1b/evidence/board/mobile-dark/backlog-board/error/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": false,
+    "recovery": true,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

@@ -1,0 +1,41 @@
+{
+  "variant": "desktop-light",
+  "rowID": "project-work-board",
+  "state": "empty",
+  "requestedURL": "/?view=projects&project=project-1&tab=board",
+  "actualURL": "http://127.0.0.1:3200/?view=projects&project=project-1&tab=board",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-light/project-work-board/empty/before.png",
+      "bytes": 107841,
+      "sha256": "4f8f102b08d3b472e2bbefe079825fa958a95b3ea54da039fc4dd021b5c74758"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-light/project-work-board/empty/after.png",
+      "bytes": 109173,
+      "sha256": "de9e786e73c913f50be468745275dbc6975ea9bdf9dfb96644acfeaa1ff74774"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "326152 pixels (ratio 0.23 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/board/desktop-light/project-work-board/empty/diff.png",
+      "bytes": 89623,
+      "sha256": "3921c3fc8f88f7716709cf62b4323023c96afc6cd4efa71d1489321b6e1967fa"
+    }
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/desktop-light/project-work-board/empty/before.json",
+    "after": "docs/reviews/d1b/evidence/board/desktop-light/project-work-board/empty/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": false,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

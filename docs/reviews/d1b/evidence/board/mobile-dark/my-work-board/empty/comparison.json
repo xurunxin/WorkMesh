@@ -1,0 +1,41 @@
+{
+  "variant": "mobile-dark",
+  "rowID": "my-work-board",
+  "state": "empty",
+  "requestedURL": "/?view=my-work&layout=board",
+  "actualURL": "http://127.0.0.1:3200/?view=my-work&layout=board",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-dark/my-work-board/empty/before.png",
+      "bytes": 39416,
+      "sha256": "ecb1926ddba45a84b2e3e144fd40564fc8b991bf55e2756cdec0ffc11af3fabe"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-dark/my-work-board/empty/after.png",
+      "bytes": 38873,
+      "sha256": "4ce548b687d15b57c37ee2ed1704ba289342a7ce03163195ef9ad4695e712825"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "53082 pixels (ratio 0.17 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/board/mobile-dark/my-work-board/empty/diff.png",
+      "bytes": 36124,
+      "sha256": "1395578701bc5b6e2c8344f5d38d234e02c81a8fac4e0ae045a6bd6bbea20b0e"
+    }
+  },
+  "historicalD0": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/board/mobile-dark/my-work-board/empty/before.json",
+    "after": "docs/reviews/d1b/evidence/board/mobile-dark/my-work-board/empty/after.json"
+  },
+  "checks": {
+    "scope": true,
+    "portal": false,
+    "detail": false,
+    "recovery": false,
+    "navigation": false,
+    "keyboard": false
+  },
+  "humanReview": "待本面人工视觉评审"
+}

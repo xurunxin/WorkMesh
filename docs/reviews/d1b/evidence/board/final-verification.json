@@ -1,0 +1,46 @@
+{
+  "recordedAt": "2026-10-08T11:10:40.094Z",
+  "source": "本轮工具返回的操作摘要；output是工具合并文本，不冒子进程原始stdout/stderr双流",
+  "operations": [
+    {
+      "id": 0,
+      "result": {
+        "chunk_id": "1f32bc",
+        "wall_time_seconds": 3.1603825,
+        "exit_code": 0,
+        "original_token_count": 69,
+        "output": "warning: in the working copy of 'docs/reviews/d1b/recovery/current-artifacts.json', LF will be replaced by CRLF the next time Git touches it\n{\"phase\":\"board\",\"boundFiles\":995,\"binaryFiles\":459,\"binding\":\"当前实际Git/index与工作区双字节\",\"remotePushVerified\":false}\n"
+      }
+    },
+    {
+      "id": 1,
+      "result": {
+        "chunk_id": "2f7918",
+        "wall_time_seconds": 0.0000125,
+        "exit_code": 0,
+        "original_token_count": 150,
+        "output": "{\n  \"runs\": 17,\n  \"archives\": 38,\n  \"comparisons\": 140,\n  \"changed\": 128,\n  \"d0Comparisons\": 4,\n  \"verifiedTargets\": 565,\n  \"currentTestedSources\": 8,\n  \"guard\": {\n    \"phase\": \"board\",\n    \"ledgerEntries\": 2635,\n    \"scopedAdditions\": 348,\n    \"remainingLegacyExpressions\": 1857,\n    \"runtime\": [\n      \"--wm-status-color\",\n      \"--wm-dismissal-depth\",\n      \"--wm-overlay-depth\"\n    ],\n    \"cleanupAllowed\": false,\n    \"visualReview\": \"pending\",\n    \"nextStageAllowed\": false\n  },\n  \"humanReview\": \"pending\",\n  \"hostPreviewTested\": false,\n  \"nextStageAllowed\": false,\n  \"cleanupAllowed\": false\n}\n"
+      }
+    },
+    {
+      "id": 2,
+      "result": {
+        "chunk_id": "3fa445",
+        "wall_time_seconds": 0.8149341,
+        "exit_code": 0,
+        "original_token_count": 90,
+        "output": "warning: in the working copy of 'docs/reviews/d1b/recovery/current-artifacts.json', LF will be replaced by CRLF the next time Git touches it\n1\t1\tapps/web/app/styles.css\n5\t3\tapps/web/features/work-items/work-surfaces.tsx\n13\t7\tpackages/ui/src/domain/work-item.tsx\n\r\nLines Words Characters Property\r\n----- ----- ---------- --------\r\n  996                  \r\n\r\n"
+      }
+    }
+  ],
+  "stage": "board-awaiting-human-visual-review",
+  "scope": "首面接受授权继承；仅看板及必要移动主题修复，未进入项目面",
+  "artifactBinding": "recovery/current-artifacts.json",
+  "results": "evidence/board/actual-results.json",
+  "cleanup": "board-resources.json",
+  "historicalFailuresRetained": true,
+  "nextStageAllowed": false,
+  "tokenCleanupAllowed": false,
+  "mergeMainAllowed": false,
+  "remotePushVerified": false
+}

@@ -13,6 +13,7 @@ type ConfigContract = Readonly<{
   outputDir?: string
   projects?: ReadonlyArray<
     Readonly<{
+      name?: string
       use?: Readonly<{ storageState?: unknown }>
       testMatch?: string | RegExp | Array<string | RegExp>
       testIgnore?: unknown
@@ -58,17 +59,21 @@ describe('Playwright topology configs', () => {
     vi.stubEnv('NEXT_DEV_API_UPSTREAM', 'http://127.0.0.1:1/fixture-upstream')
     vi.resetModules()
 
-    const [rootModule, mockedModule, productionModule, d0Module] =
+    const [rootModule, mockedModule, productionModule, d0Module, d1bModule, boardModule] =
       await Promise.all([
         import('../../../playwright.config.js'),
         import('../playwright.mocked.config.js'),
         import('../playwright.production.config.js'),
         import('../playwright.d0.config.js'),
+        import('../playwright.d1b.config.js'),
+        import('../playwright.d1b-board.config.js'),
       ])
     const root = rootModule.default as unknown as ConfigContract
     const mocked = mockedModule.default as unknown as ConfigContract
     const production = productionModule.default as unknown as ConfigContract
     const d0 = d0Module.default as unknown as ConfigContract
+    const d1b = d1bModule.default as unknown as ConfigContract
+    const board = boardModule.default as unknown as ConfigContract
 
     expect(root.outputDir).toBe(
       path.join(isolatedRunRoot, 'root-mixed', 'output'),
@@ -91,7 +96,15 @@ describe('Playwright topology configs', () => {
       String(/[\\/]mocked[\\/].*\.mocked\.spec\.ts$/),
       String(/human-reflow\.spec\.ts$/),
     ])
-    expect(String(mocked.testIgnore)).toBe(String(/[\\/]mocked[\\/]d0-visual-baseline\.mocked\.spec\.ts$/))
+    expect(patternStrings(mocked.testIgnore as ConfigContract['testMatch'])).toEqual([
+      String(/[\\/]mocked[\\/]d0-visual-baseline\.mocked\.spec\.ts$/),
+      String(/[\\/]mocked[\\/]d1b-workbench\.mocked\.spec\.ts$/),
+      String(/[\\/]mocked[\\/]d1b-board\.mocked\.spec\.ts$/),
+    ])
+    expect(patternStrings(board.testMatch)).toEqual([String(/[\\/]mocked[\\/]d1b-board\.mocked\.spec\.ts$/)])
+    expect(patternStrings(d1b.testMatch)).toContain(String(/theme-unification\.spec\.ts$/))
+    expect(d1b.projects?.map(project => project.name)).toEqual(['desktop-light', 'desktop-dark', 'mobile-light', 'mobile-dark'])
+    expect(d1b.projects?.every(project => !String(project.testIgnore).includes('theme-unification'))).toBe(true)
     expect(patternStrings(d0.testMatch)).toEqual([String(/[\\/]mocked[\\/]d0-visual-baseline\.mocked\.spec\.ts$/)])
     expect(d0.testIgnore).toEqual([])
 

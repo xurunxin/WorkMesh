@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "archive": {
+    "path": "raw-evidence.zip",
+    "bytes": 13814,
+    "sha256": "df4f94a0409ef094cb711bd673a8fd05dbeb7d88b18502df70506e5f5401aa76"
+  },
+  "entries": [
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/board/runs/board-before-complete/stdout.log",
+      "version": "board-before-complete",
+      "byteKind": "worktree",
+      "bytes": 30180,
+      "sha256": "3670e783af37536bd7a3c4373ec439a4e96f0a4b7456d4da16c45223e1d142a3",
+      "member": "bytes/3670e783af37536bd7a3c4373ec439a4e96f0a4b7456d4da16c45223e1d142a3",
+      "sourceCommit": null,
+      "sourceBlobId": "0883b6590991f85c792b13519b4deef0736e66b7"
+    },
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/board/runs/board-before-complete/stderr.log",
+      "version": "board-before-complete",
+      "byteKind": "worktree",
+      "bytes": 1723,
+      "sha256": "3437f0bbeba2e09e6243ff9376270a57a2a13fb2c7f2d0ced349484756bdb53f",
+      "member": "bytes/3437f0bbeba2e09e6243ff9376270a57a2a13fb2c7f2d0ced349484756bdb53f",
+      "sourceCommit": null,
+      "sourceBlobId": "979d4b3453246ce025fa1d1c8dd8ec48eaafe634"
+    },
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/board/runs/board-before-complete/playwright/mocked-d1b-board.mocked-my-work-board-compact：看板前后、局部边界与真实导航-mobile-light/error-context.md",
+      "version": "board-before-complete",
+      "byteKind": "worktree",
+      "bytes": 13409,
+      "sha256": "f5570186a5a5de785ed1a8cf06f03d5ceb87c41cd7561ba61b66a2c7c3392a58",
+      "member": "bytes/f5570186a5a5de785ed1a8cf06f03d5ceb87c41cd7561ba61b66a2c7c3392a58",
+      "sourceCommit": null,
+      "sourceBlobId": "e5d9b84b4dcb741e500a10a9d2bf47bf91095fbc"
+    },
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/board/runs/board-before-complete/playwright/mocked-d1b-board.mocked-my-work-board-ready：看板前后、局部边界与真实导航-mobile-light/error-context.md",
+      "version": "board-before-complete",
+      "byteKind": "worktree",
+      "bytes": 13388,
+      "sha256": "eb74073fe312ec6cf4c9e605ddb6269c7c2d65e636ba2830dd2f13b4a4afc6c1",
+      "member": "bytes/eb74073fe312ec6cf4c9e605ddb6269c7c2d65e636ba2830dd2f13b4a4afc6c1",
+      "sourceCommit": null,
+      "sourceBlobId": "f942075b1634801e15073d65e23191f8d789d6c4"
+    }
+  ],
+  "policy": "实际Git对象及工作区/运行原字节；无损自包含，不trim，不猜测换行"
+}

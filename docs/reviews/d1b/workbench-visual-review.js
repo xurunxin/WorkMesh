@@ -24,7 +24,7 @@ fetch('evidence/workbench/comparisons.json').then(response => {
     diff.hidden = !row.comparison.diff;
     if (row.comparison.diff) diff.src = local(row.comparison.diff.path);
     document.getElementById('comparison').textContent = row.comparison.message;
-    document.getElementById('summary').textContent = `共 ${rows.length} 组；当前原始 PNG ${row.comparison.rawBytesEqual ? '字节相同' : '字节不同'}，固定比较器${row.comparison.comparatorPassed ? '通过' : '有差异'}。人工视觉评审待定。`;
+    document.getElementById('summary').textContent = `共 ${rows.length} 组；当前原始 PNG ${row.comparison.rawBytesEqual ? '字节相同' : '字节不同'}，固定比较器${row.comparison.comparatorPassed ? '通过' : '有差异'}。用户已于2026-10-08 18:07接受工作台首面567f68dc，仅放行看板；原运行限制仍保留。`;
   };
   combinations.addEventListener('change', render);
   render();

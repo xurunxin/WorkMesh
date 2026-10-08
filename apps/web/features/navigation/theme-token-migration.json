@@ -3098,7 +3098,7 @@
         },
         {
           "file": "packages/ui/src/domain/work-item.tsx",
-          "expression": "'--wm-status-color': color || 'var(--wm-muted)'"
+          "expression": "'--wm-status-color': color || (semantic ? 'var(--wm-ref-text-secondary)' : 'var(--wm-muted)')"
         }
       ],
       "cleanup": [],
@@ -3111,10 +3111,10 @@
       ],
       "fallback": {
         "file": "packages/ui/src/domain/work-item.tsx",
-        "expression": "color || 'var(--wm-muted)'",
+        "expression": "color || (semantic ? 'var(--wm-ref-text-secondary)' : 'var(--wm-muted)')",
         "current": "var(--wm-muted)",
         "migration": "var(--wm-ref-text-secondary)",
-        "rule": "保留 color 优先；仅迁移空颜色回退"
+        "rule": "服务器color优先；React局部Context只在tokenSurface=board且实际layout=board时迁移空颜色回退；列表及其他调用保留旧回退"
       }
     },
     {
