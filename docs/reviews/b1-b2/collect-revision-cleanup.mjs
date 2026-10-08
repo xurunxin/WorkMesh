@@ -46,7 +46,7 @@ const result = { capturedAt: new Date().toISOString(), containers, temporaryPath
     { path: 'C:/Users/xurx/.tds/workspaces/01a1187a-f0f1-74d9-a5e7-0022c903a6e6', reason: '旧 dirty 工作区保留，未满足 actual main/保全/无人运行条件' },
     { path: resolve('apps/connector/dist'), reason: '上一轮删除被自动审批拒绝；本轮 build 更新，保留且不入 Git' }],
   systemSecrets: '实际平台随机引用的删除记录见 events；仅列引用，未保存令牌；本轮不创建业务配置' }
-writeFileSync(resolve(base, process.argv.includes('--raw') ? 'raw-cleanup.json' : process.argv.includes('--ansi') ? 'ansi-cleanup.json' : 'revision-cleanup.json'), JSON.stringify(result, null, 2) + '\n')
+writeFileSync(resolve(base, process.argv.includes('--c3') ? 'c3-cleanup.json' : process.argv.includes('--raw') ? 'raw-cleanup.json' : process.argv.includes('--ansi') ? 'ansi-cleanup.json' : 'revision-cleanup.json'), JSON.stringify(result, null, 2) + '\n')
 console.log(JSON.stringify({ containers: containers.length, containersAbsent: containers.every(row => row.verifiedAbsent),
   temporaryPaths: temporaryPaths.length, temporaryAbsent: temporaryPaths.every(row => row.verifiedAbsent),
   testPaths: paths.length, testPathsAbsent: result.testPaths.every(row => row.verifiedAbsent) }))

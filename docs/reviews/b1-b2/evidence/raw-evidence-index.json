@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "archive": {
     "path": "docs/reviews/b1-b2/evidence/raw-evidence.zip",
-    "bytes": 1097058,
-    "sha256": "4788a379bca30f0784005711557b600cc5fa99d691f4ab9e90ede35b329ea33b"
+    "bytes": 1105157,
+    "sha256": "9ff853bcdf74d43761e3bd2d23d285f636f75fdd846ab50d216aba9a78ebdc99"
   },
   "note": "日志为执行时脱敏后的原始工作树字节，未格式化或归一化换行。sourceCommit=null；sourceBlobId 仅为按这些原字节计算的 Git 对象 ID，不声称已写入源提交或具备可达性。旧检查中的 log 路径由本索引精确解析。",
   "entries": [
@@ -626,6 +626,116 @@
       "member": "bytes/c6da571c5bd3984904d9c6fd0ba0465008f0853ac418772392087e787891d138",
       "sourceCommit": null,
       "sourceBlobId": "09881eafcb1e91c5431f790fcabb0cda54c3993e"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-impact-01/logs/api-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 120,
+      "sha256": "3e3f1f6d5c3d36ab2a45a08651bed86f58d43f4b719b8a4c21d3c7a22456ae5f",
+      "member": "bytes/3e3f1f6d5c3d36ab2a45a08651bed86f58d43f4b719b8a4c21d3c7a22456ae5f",
+      "sourceCommit": null,
+      "sourceBlobId": "5810841f3f11e3d6df3b17ac0d074606548f9b9b"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-impact-01/logs/ci-validate.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 2801,
+      "sha256": "be9c255e5e38865fe2e055deabb67b07a6a7032934581eddaabc3083c26b4526",
+      "member": "bytes/be9c255e5e38865fe2e055deabb67b07a6a7032934581eddaabc3083c26b4526",
+      "sourceCommit": null,
+      "sourceBlobId": "61879aa7d90cc276f2439eca3a5f8af252d68a93"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-impact-01/logs/connector-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 132,
+      "sha256": "cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "member": "bytes/cfd0760b4e67b075e0499e5eafadfdbb07c2a012d79614a81347b69bb5bbe372",
+      "sourceCommit": null,
+      "sourceBlobId": "098927b4c8aa889d1b19864b07617762e8369765"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-impact-01/logs/contracts-typecheck.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 136,
+      "sha256": "fc006abb13b41ce7427dc9ac953a1fa1eb1df11b4c2494f5c7d74cc0e7a1149a",
+      "member": "bytes/fc006abb13b41ce7427dc9ac953a1fa1eb1df11b4c2494f5c7d74cc0e7a1149a",
+      "sourceCommit": null,
+      "sourceBlobId": "439a589565ce2c2f748b6e75c7f5afde27f20e91"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-impact-01/logs/contracts-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 3356,
+      "sha256": "868e98a7597a8af0a69acbe46932250c5a302d811e4aa1ec098e12f5cd6fd035",
+      "member": "bytes/868e98a7597a8af0a69acbe46932250c5a302d811e4aa1ec098e12f5cd6fd035",
+      "sourceCommit": null,
+      "sourceBlobId": "24d81d43ee8d400d2f5a88a3bd3e064128af67c6"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-impact-01/logs/model-presets-unit.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 322,
+      "sha256": "07f0695a89776a57a7101d68857eaab85819c0e7f2de56c56002ee5a7aa8f7ce",
+      "member": "bytes/07f0695a89776a57a7101d68857eaab85819c0e7f2de56c56002ee5a7aa8f7ce",
+      "sourceCommit": null,
+      "sourceBlobId": "d74d6e2f75071983df2f7d5a00ae13bf90a42768"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-impact-01/logs/route-policy.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 186,
+      "sha256": "9adabc6f77f29d63612477f56eb46f9c0518d2cef645d4a8480edf4b1558b2d6",
+      "member": "bytes/9adabc6f77f29d63612477f56eb46f9c0518d2cef645d4a8480edf4b1558b2d6",
+      "sourceCommit": null,
+      "sourceBlobId": "32b6f8f7a6055d2f69b1298bf54025170edd38a1"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-integration-01/logs/c3-connector-api.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 17203,
+      "sha256": "a0ca4b21927fc46a7a738ceb19ec11943e85eeebcd934f6695db04054dc8e71a",
+      "member": "bytes/a0ca4b21927fc46a7a738ceb19ec11943e85eeebcd934f6695db04054dc8e71a",
+      "sourceCommit": null,
+      "sourceBlobId": "0414cdd951fec95ebb9704eb60ce6dc8238a080b"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-integration-01/logs/pg-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 2329,
+      "sha256": "7256e57f5946cd970a0ee80818d10fc3a36bcb81845a5e120960fee2871f688e",
+      "member": "bytes/7256e57f5946cd970a0ee80818d10fc3a36bcb81845a5e120960fee2871f688e",
+      "sourceCommit": null,
+      "sourceBlobId": "e83989dd72bea670600b653a68a01ae8a13746d8"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-integration-01/logs/redis-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 598,
+      "sha256": "04b21c918fbc4e473c9909ccb057401d25f4b810b47db0a0d2dad2c35c17f485",
+      "member": "bytes/04b21c918fbc4e473c9909ccb057401d25f4b810b47db0a0d2dad2c35c17f485",
+      "sourceCommit": null,
+      "sourceBlobId": "bd5156ae72ac3cde34634f848cd315db6ce80b6f"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/evidence/revision-c3-integration-01/logs/s3-service.log",
+      "version": "execution-2026-10-08",
+      "byteKind": "worktree",
+      "bytes": 103,
+      "sha256": "44cedffa60a01547c2eceb848ef80a0bbc8dcf937545645219fdcb25a4656895",
+      "member": "bytes/44cedffa60a01547c2eceb848ef80a0bbc8dcf937545645219fdcb25a4656895",
+      "sourceCommit": null,
+      "sourceBlobId": "8f237d0047cb23dbb02905a3cdbb5c9dc6745023"
     },
     {
       "logicalPath": "docs/reviews/b1-b2/evidence/revision-final-types-01/logs/api-typecheck.log",

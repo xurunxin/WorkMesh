@@ -1,0 +1,10 @@
+[
+  {
+    "type": "input_text",
+    "text": "Script failed\nWall time 0.0 seconds\nOutput:\n"
+  },
+  {
+    "type": "input_text",
+    "text": "Script error:\nexec_command failed: CreateProcess { message: \"Rejected(\\\"`\\\\\\\"C:\\\\\\\\\\\\\\\\Program Files\\\\\\\\\\\\\\\\PowerShell\\\\\\\\\\\\\\\\7\\\\\\\\\\\\\\\\pwsh.exe\\\\\\\" -NoProfile -Command '$taskConfig = '\\\\\\\"'C:\\\\\\\\\\\\\\\\Users\\\\\\\\\\\\\\\\xurx\\\\\\\\\\\\\\\\.tds\\\\\\\\\\\\\\\\workspaces\\\\\\\\\\\\\\\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\\\\\\\\\\\\\\\playwright.c3-c1-combination.config.ts'\\\\n\\\\\\\"'$taskRoot = '\\\\\\\"'C:\\\\\\\\\\\\\\\\Users\\\\\\\\\\\\\\\\xurx\\\\\\\\\\\\\\\\.tds\\\\\\\\\\\\\\\\workspaces\\\\\\\\\\\\\\\\01a11890-f4de-7106-b64d-e1b2c0d4608e…1191 chars truncated…[PSCustomObject]@{ Path=$taskConfig; Action='\\\\\\\"'Remove-Item -LiteralPath file'; VerifiedAbsent=(-not (Test-Path -LiteralPath \\\\\\\"'$taskConfig)); At=[DateTime]::UtcNow.ToString('\\\\\\\"'o'); IndependentOfDeniedDirectory=\\\\\\\"'$true }\\\\n$taskResult | ConvertTo-Json | Set-Content -LiteralPath docs/reviews/c3/c1-combination/temporary-config-cleanup.json -Encoding utf8\\\\n$taskResult | Select-Object Path,VerifiedAbsent'` rejected: blocked by policy\\\")\" }"
+  }
+]

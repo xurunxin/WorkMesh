@@ -36,6 +36,8 @@ function source() {
   paths.push('apps/web/app/attention-center.tsx', 'apps/web/app/attention-center-approval.test.tsx', 'scripts/connector-secret-probe.mts')
   paths.push('apps/api/src/server.ts', 'apps/api/src/authz/authorize.ts', 'apps/api/src/configuration-readiness.ts',
     'apps/api/integration/configuration-readiness.integration.test.ts', 'docs/route-policy-matrix.md')
+  if (mode.startsWith('c3-')) paths.push('packages/config/src', 'apps/api/src/model-presets.ts',
+    'apps/api/src/model-presets.test.ts', 'apps/api/src/data/model-presets.json')
   const files = []
   function visit(path) {
     if (!existsSync(resolve(root, path))) return
@@ -129,13 +131,14 @@ try {
     await check('connector-build', ['--filter', '@workmesh/connector', 'build'])
     await check('connector-typecheck', ['--filter', '@workmesh/connector', 'typecheck'])
     await check('api-typecheck', ['--filter', '@workmesh/api', 'typecheck'])
-  } else if (mode === 'main-impact') {
+  } else if (mode === 'main-impact' || mode === 'c3-main-impact') {
     await check('connector-typecheck', ['--filter', '@workmesh/connector', 'typecheck'])
     await check('contracts-typecheck', ['--filter', '@workmesh/contracts', 'typecheck'])
     await check('api-typecheck', ['--filter', '@workmesh/api', 'typecheck'])
     await check('contracts-unit', ['--filter', '@workmesh/contracts', 'test'])
     await check('route-policy', ['check:route-policy'])
     await check('ci-validate', ['ci:validate'])
+    if (mode === 'c3-main-impact') await check('model-presets-unit', ['--filter', '@workmesh/api', 'exec', 'vitest', 'run', 'src/model-presets.test.ts'])
   } else if (mode === 'unit') await check('unit', ['test'])
   else if (mode === 'windows-platform') await check('windows-platform', ['--filter', '@workmesh/connector', 'test:platform'])
   else if (mode === 'documentation') await check('expectation-example', ['--filter', '@workmesh/connector', 'exec', 'tsx', '--eval',
@@ -145,7 +148,9 @@ try {
     await check('route-policy', ['check:route-policy']); await check('skill-pin', ['check:workmesh-skill'])
   } else {
     await services()
-    if (mode === 'focused') {
+    if (mode === 'c3-main-integration') {
+      await check('c3-connector-api', ['--filter', '@workmesh/api', 'exec', 'vitest', 'run', '--config', '../../vitest.integration.config.ts', 'integration/stage5-agent-connections.integration.test.ts', 'integration/stage5-connector.integration.test.ts', 'integration/configuration-readiness.integration.test.ts'])
+    } else if (mode === 'focused') {
       await check('focused-api', ['--filter', '@workmesh/api', 'exec', 'vitest', 'run', '--config', '../../vitest.integration.config.ts', 'integration/stage5-agent-connections.integration.test.ts', 'integration/stage5-connector.integration.test.ts'])
     } else if (mode === 'integration') await check('integration', ['test:integration'])
     else if (mode === 'e2e') {

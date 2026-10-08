@@ -1,0 +1,329 @@
+[
+  {
+    "name": "route",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "check:route-policy"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:45:37.392868+00:00",
+    "finishedAt": "2026-10-08T12:45:39.846523+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "e46aabdeeaf33315d5ee9d04c84b978d05e81a813078fba41bb4302e142b4b4d",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "lint",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "lint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:45:40.658924+00:00",
+    "finishedAt": "2026-10-08T12:46:15.826045+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "b3cb82193f8641e68a280b1eaa3b718784a6f11b8e103fde4dcffa543c13c46b",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "typecheck",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:46:16.610065+00:00",
+    "finishedAt": "2026-10-08T12:46:51.657745+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "e2c5a51e5fbe6e6b829f0f08bc83bc96c44fed2ca23ad2cf38f7a8e64f3b1294",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "unit",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "run",
+      "test",
+      "--",
+      "--maxWorkers=2"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:46:52.368816+00:00",
+    "finishedAt": "2026-10-08T12:51:14.221641+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "e77fda45ce4424a0556d98f9808918f2766e5f09f6e58f6a01db5c7b40911a87",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "api-build",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/api",
+      "build"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:51:15.010655+00:00",
+    "finishedAt": "2026-10-08T12:51:25.273690+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "fc989f2135f475a1a2747e563f51d4ee64c4f684511fee6a0a82d75d3bb81c25",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "ci-validate",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "ci:validate"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:51:26.031951+00:00",
+    "finishedAt": "2026-10-08T12:51:28.992105+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "86acbab6fb22ca30008dd1bb3c5e7c3160543a6399b96e3fd4b474031fed3cbe",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "s3-prepare",
+    "command": [
+      "node",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\docs\\reviews\\c3\\c1-combination\\prepare-s3.mjs"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:51:30.902697+00:00",
+    "finishedAt": "2026-10-08T12:51:32.047216+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "28db24281556791fd37628099406bcdb777d76e06ff1efe2a42bbc786f1d92ce",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "reset-api",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/db",
+      "test:reset"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:51:33.023182+00:00",
+    "finishedAt": "2026-10-08T12:51:36.385431+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "8988fe158daad03aa673f9879f2d999daa95e85f00feecb724d05c9eeadb9e95",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "api-integration",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/api",
+      "test:integration"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:51:37.435717+00:00",
+    "finishedAt": "2026-10-08T12:53:38.873095+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "d567f9bdb7745da17cfbbdcd22fb06c627714a75f7e44a92b1acec30118e83fb",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "reset-worker",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/db",
+      "test:reset"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:53:39.750527+00:00",
+    "finishedAt": "2026-10-08T12:53:43.830127+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "8988fe158daad03aa673f9879f2d999daa95e85f00feecb724d05c9eeadb9e95",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "worker-channels",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/worker",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "../../vitest.integration.config.ts",
+      "integration/stage4-automation.integration.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:53:44.658822+00:00",
+    "finishedAt": "2026-10-08T12:54:00.044609+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "9bcfeae8a41fb4407faf11fedaec5037750af29a488b50fa059ccf908230bcb7",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "reset-migration",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/db",
+      "test:reset"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:54:00.877570+00:00",
+    "finishedAt": "2026-10-08T12:54:04.266279+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "8988fe158daad03aa673f9879f2d999daa95e85f00feecb724d05c9eeadb9e95",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "migration-baseline",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/db",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "../../vitest.integration.config.ts",
+      "integration/migration-baseline.integration.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:54:05.010589+00:00",
+    "finishedAt": "2026-10-08T12:54:28.275487+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "e263458b21b8c86899c26809f235349dbb7b897d24a95046ed941e74eeba1368",
+    "environmentOverride": {
+      "NODE_ENV": "test"
+    }
+  },
+  {
+    "name": "e2e-list",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/web",
+      "run",
+      "test:e2e",
+      "workbench-llm-settings.spec.ts",
+      "notification-channels.spec.ts",
+      "--config",
+      "../../playwright.c3-c1-combination.config.ts",
+      "--list"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:54:29.014446+00:00",
+    "finishedAt": "2026-10-08T12:54:31.051174+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "f57d646234401d17fdc0e552e92793be56c55c8f08513067461a9d3cc834a131",
+    "environmentOverride": {
+      "NODE_ENV": "development"
+    }
+  },
+  {
+    "name": "e2e-settings",
+    "command": [
+      "C:\\nvm4w\\nodejs\\pnpm.cmd",
+      "--filter",
+      "@workmesh/web",
+      "run",
+      "test:e2e",
+      "workbench-llm-settings.spec.ts",
+      "notification-channels.spec.ts",
+      "--config",
+      "../../playwright.c3-c1-combination.config.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "startedAt": "2026-10-08T12:54:31.857771+00:00",
+    "finishedAt": "2026-10-08T12:55:33.728065+00:00",
+    "exitCode": 0,
+    "sourceBefore": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceAfter": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+    "sourceUnchanged": true,
+    "secretReplacements": 0,
+    "logSha256": "47dee5a651d22b058c3083b79193238c3db8784e26892abea855c53fedb645da",
+    "environmentOverride": {
+      "NODE_ENV": "development"
+    }
+  }
+]

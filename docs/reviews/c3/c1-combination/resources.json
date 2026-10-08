@@ -1,0 +1,141 @@
+{
+  "createdAt": "2026-10-08T12:45:35.552965+00:00",
+  "owner": "c3-c1-combination-01a11890",
+  "temporaryPaths": [
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-c1-combination-01a11890",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\playwright.c3-c1-combination.config.ts"
+  ],
+  "containers": [
+    {
+      "id": "b89007a51c5c769d4572a87af53e9d438492f0e1c0895d69d70c843fd55e8a86",
+      "name": "c3-c1-combination-01a11890-pg",
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "created": "2026-10-08T12:51:29.0730207Z",
+      "mounts": [],
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "25589"
+          }
+        ]
+      },
+      "labels": {
+        "workmesh.test-owner": "c3-c1-combination-01a11890"
+      },
+      "stopExitCode": 0,
+      "stopCommand": [
+        "docker",
+        "stop",
+        "b89007a51c5c769d4572a87af53e9d438492f0e1c0895d69d70c843fd55e8a86"
+      ],
+      "removeExitCode": 0,
+      "removeCommand": [
+        "docker",
+        "rm",
+        "-v",
+        "b89007a51c5c769d4572a87af53e9d438492f0e1c0895d69d70c843fd55e8a86"
+      ],
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T12:55:35.475436+00:00"
+      }
+    },
+    {
+      "id": "778044b1b870773f579631576393bdc8a549c590205ad30d9f43d9d718e70a01",
+      "name": "c3-c1-combination-01a11890-redis",
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "created": "2026-10-08T12:51:29.393706Z",
+      "mounts": [],
+      "ports": {
+        "6379/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "26589"
+          }
+        ]
+      },
+      "labels": {
+        "workmesh.test-owner": "c3-c1-combination-01a11890"
+      },
+      "stopExitCode": 0,
+      "stopCommand": [
+        "docker",
+        "stop",
+        "778044b1b870773f579631576393bdc8a549c590205ad30d9f43d9d718e70a01"
+      ],
+      "removeExitCode": 0,
+      "removeCommand": [
+        "docker",
+        "rm",
+        "-v",
+        "778044b1b870773f579631576393bdc8a549c590205ad30d9f43d9d718e70a01"
+      ],
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T12:55:36.142895+00:00"
+      }
+    },
+    {
+      "id": "37fe472ff9eadf1cef2eaa208c9eb750e4f4da0eb12aec82aa40cdcb5ed77c84",
+      "name": "c3-c1-combination-01a11890-s3",
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "created": "2026-10-08T12:51:29.7178265Z",
+      "mounts": [],
+      "ports": {
+        "9000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "27589"
+          }
+        ]
+      },
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0",
+        "workmesh.test-owner": "c3-c1-combination-01a11890"
+      },
+      "stopExitCode": 0,
+      "stopCommand": [
+        "docker",
+        "stop",
+        "37fe472ff9eadf1cef2eaa208c9eb750e4f4da0eb12aec82aa40cdcb5ed77c84"
+      ],
+      "removeExitCode": 0,
+      "removeCommand": [
+        "docker",
+        "rm",
+        "-v",
+        "37fe472ff9eadf1cef2eaa208c9eb750e4f4da0eb12aec82aa40cdcb5ed77c84"
+      ],
+      "cleanup": {
+        "stoppedAndRemoved": true,
+        "verifiedAbsent": true,
+        "at": "2026-10-08T12:55:36.691265+00:00"
+      }
+    }
+  ],
+  "dedicatedImages": [],
+  "dedicatedNetworks": [],
+  "environmentPersistence": "仅子进程；父进程及系统配置未改",
+  "preserved": [
+    "当前工作区、旧 worktree、共享镜像、共享网络及其他任务资源"
+  ],
+  "serviceCleanupFinishedAt": "2026-10-08T12:55:36.692538+00:00",
+  "temporaryCleanup": "日志及失败现场待保全后按绝对路径清理；当前未冒完成"
+}

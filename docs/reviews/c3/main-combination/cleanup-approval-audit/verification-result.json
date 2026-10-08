@@ -1,0 +1,99 @@
+{
+  "status": "仅证据字节核验通过；清理审批事件待定向独审",
+  "inputHead": "a55d3b5f3334524eddb7f635919a1240966a113c",
+  "workingDirectory": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+  "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+  "os": "Windows-11-10.0.26300-SP0",
+  "commands": [
+    {
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "docs/reviews/c3/main-combination/cleanup-approval-audit/verify-evidence.py",
+        "--session",
+        "C:/Users/xurx/.tds/codex-home/sessions/2026/10/08/rollout-2026-10-08T06-52-12-01a11891-35a8-74c3-bb5a-a9aabdd3baa2.jsonl"
+      ],
+      "startedAt": "2026-10-08T12:21:59.203185+00:00",
+      "finishedAt": "2026-10-08T12:21:59.888251+00:00",
+      "exitCode": 0,
+      "stdout": "证据字节核验通过：153 个 ZIP 成员、100 条可见记录、50 次调用、两次拒绝与同目标后续操作；原会话核验=True。\r\n此结果不代表审批行为合规；逐子路径和独立回执缺口仍待定向独审。\r\n",
+      "stderr": "",
+      "stdoutSha256": "30d1e482d45b37f2fd799345bdb9137e60715b73bb6505027daf270308accf1e",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "docs/reviews/c3/main-combination/verify-combination.py"
+      ],
+      "startedAt": "2026-10-08T12:21:59.888304+00:00",
+      "finishedAt": "2026-10-08T12:22:00.647309+00:00",
+      "exitCode": 0,
+      "stdout": "核验成功：1382 个组合源码、31 个历史证据文件、89 个本轮归档成员；目标=HEAD\r\n",
+      "stderr": "",
+      "stdoutSha256": "3bdb7202238533c97d39db2eb01f6bfca74bb1c518c96dc9e223dc2024ec2c00",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "startedAt": "2026-10-08T12:22:00.647344+00:00",
+      "finishedAt": "2026-10-08T12:22:00.723781+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'docs/reviews/c3/main-combination/README.md', LF will be replaced by CRLF the next time Git touches it\n",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "a4548b55134a5285ba359abec213c1d6ee4b6d11689b9d7fdedecffcf2191772"
+    }
+  ],
+  "originalEvidenceUnmodified": [
+    {
+      "path": "docs/reviews/c3/main-combination/temporary-cleanup.json",
+      "gitBlobSha256": "bc06b7c8fef43c88fb48ce6a6d3cd47661b6e9ddd5910b9d389a7c334fcf7c32",
+      "worktreeSha256": "2cf34f7eb8474d5726bc30d98d4bc6fe5bfd9a95cd232e105221894b920dfe84",
+      "gitDiffAgainstInputHeadExitCode": 0
+    },
+    {
+      "path": "docs/reviews/c3/main-combination/checks-raw.zip",
+      "gitBlobSha256": "fc8b64f590b685cfc24e76bc2346f43c5541de174465e6a6ec60fc45aa0ba8b8",
+      "worktreeSha256": "fc8b64f590b685cfc24e76bc2346f43c5541de174465e6a6ec60fc45aa0ba8b8",
+      "gitDiffAgainstInputHeadExitCode": 0
+    },
+    {
+      "path": "docs/reviews/c3/main-combination/checks-raw-index.json",
+      "gitBlobSha256": "466737fbfd43123ee5354f4d13106d5f83103b0d00ab264df9624a44efa4c0fd",
+      "worktreeSha256": "598dc746e446d355cfc1aadc5ad77b27cf5cf1435ad4fa81e3147facbbc07544",
+      "gitDiffAgainstInputHeadExitCode": 0
+    },
+    {
+      "path": "docs/reviews/c3/main-combination/history-integrity.json",
+      "gitBlobSha256": "0c5b1e27b169e6c257cab0c9db47bf0889be7c9bd755735cb5a002788d0aa813",
+      "worktreeSha256": "184ce8ef53c3e02b60a9d15e7abe34a934ceaf1f71bfe95bbcab7eb67559e1cc",
+      "gitDiffAgainstInputHeadExitCode": 0
+    }
+  ],
+  "resourceOperationsThisRound": [],
+  "configurationChangesThisRound": [],
+  "productionChangesThisRound": [],
+  "temporaryResourcesCreatedThisRound": [],
+  "preserved": "当前工作区、旧恢复工作区、共享资源、旧审查及失败原件；审计文件作为受控证据保留",
+  "auditHelperFailure": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "docs/reviews/c3/main-combination/cleanup-approval-audit/supplement.py"
+    ],
+    "firstExitCode": 1,
+    "chunkID": "41ec38",
+    "reasonAsReturned": "LookupError: unknown encoding: utf8-sig",
+    "correction": "改为 utf-8-sig，原件不覆盖；后续退出0，仅写审计文件，无资源操作"
+  },
+  "originalCallCopiesGitConversionVerified": 13
+}

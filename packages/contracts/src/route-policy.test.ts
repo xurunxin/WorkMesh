@@ -40,6 +40,13 @@ const securityFor = (
 }
 
 describe('routePolicyManifest', () => {
+  it('公开模型目录仅有受开关控制的只读路由', () => {
+    const routes = routePolicyManifest.filter(route => route.path === '/api/v1/workbench/model-presets')
+    expect(routes).toHaveLength(1)
+    expect(routes[0]).toMatchObject({ method: 'GET', operationId: 'listModelPresets', authentication: 'public', actorKinds: [],
+      idempotency: 'none', revision: 'none', resourceResolverId: 'none',
+      feature: { key: 'WORKMESH_BETA_MODEL_PRESETS', tier: 'beta', disabledBehavior: 'feature_disabled' } })
+  })
   it('declares the intended shared credential-rate-limit operations', () => {
     expect(
       routePolicyManifest
@@ -61,7 +68,7 @@ describe('routePolicyManifest', () => {
     const policyRoutes = routePolicyManifest.map(keyOf)
     const legacyRoutes = agentRouteManifest.map(keyOf)
 
-    expect(routePolicyManifest).toHaveLength(276)
+    expect(routePolicyManifest).toHaveLength(277)
     expect(new Set(policyRoutes).size).toBe(routePolicyManifest.length)
     expect(new Set(routePolicyManifest.map(route => route.operationId)).size)
       .toBe(routePolicyManifest.length)

@@ -125,10 +125,13 @@ Redis or be explicitly declared unsupported in that profile.
 
 ### Presets are a read-only, versioned catalogue
 
-A versioned catalogue ships the domestic providers with region-correct base URLs,
-protocols, and model identifiers: MiniMax, DashScope, Z.AI/GLM, Moonshot/Kimi,
-DeepSeek, Volcengine, SiliconFlow, and Baidu Qianfan, plus the global providers
-reachable from the region. Selecting one **fills in editable configuration**.
+首批目录包含 MiniMax、DashScope、智谱、Moonshot·Kimi、DeepSeek、火山、SiliconFlow、百度千帆及 OpenAI。
+条目记录官方文档的地区、调用格式、base URL 和模型标识，不推断部署网络可达或 WorkMesh 兼容。
+选择仅填充可编辑配置；连接保存和模型登记是两个显式操作，均不探测提供方。
+
+`WORKMESH_BETA_MODEL_PRESETS` 默认关闭。启用时 `WORKMESH_MODEL_PRESETS_FILE` 指定本地完整 JSON，整体替换内置目录；然后应用该目录的 `disabledIds`。功能关闭时不读取文件，启用后文件缺失或校验失败阻止启动。未知禁用 ID 拒绝加载；加载结果冻结，请求只读，重启生效。目录和部署网关地址通过公开 GET 可见，禁止写入秘密；既有 `normalizeLlmBaseUrl`、私有主机 allowlist、作用域与管理员授权继续约束实际保存。
+
+目录 `version` 与每条出处、核对日期和确认方式必填。确认方式仅表示机器或人工阅读官方资料。预置不验证凭据。百炼的地域 Key 与业务空间专属域名按[官方说明](https://help.aliyun.com/zh/model-studio/compatibility-of-openai-with-dashscope)核对；内置使用文档保留的北京固定域名，部署方可填真实专属域名，不制造 WorkspaceId。官方复核记录见 `docs/reviews/c3/official-source-review.md`。
 
 Presets are deployment data, versioned and read-only over the API. They are not
 an aggregate with CRUD, and they are not editable through a request. Loading,

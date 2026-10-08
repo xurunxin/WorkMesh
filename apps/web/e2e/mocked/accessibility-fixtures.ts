@@ -170,6 +170,7 @@ const run = {
 }
 
 const canonicalFeatures = [
+  { key: 'WORKMESH_BETA_MODEL_PRESETS', tier: 'beta' },
   { key: 'WORKMESH_BETA_PLANNING', tier: 'beta' },
   { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta' },
   { key: 'WORKMESH_BETA_COSTS', tier: 'beta' },

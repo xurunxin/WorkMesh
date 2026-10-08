@@ -1,5 +1,9 @@
 import { randomUUID } from 'node:crypto'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import http from 'node:http'
+import https from 'node:https'
+import { loadFeatureConfig } from '@workmesh/config'
+import { loadModelPresets } from '../src/model-presets.js'
 import { applyMigrations, createDb, opaqueToken, tokenHash } from '@workmesh/db'
 import { buildApp } from '../src/server.js'
 
@@ -8,7 +12,7 @@ if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]
   throw new Error('Workbench LLM integration requires a dedicated *test* database and RUN_INTEGRATION=1')
 
 const db = createDb(databaseUrl)
-const app = buildApp({ logger: { level: 'error' } })
+const app = buildApp({ logger: { level: 'error' }, features: { ...loadFeatureConfig(), WORKMESH_BETA_MODEL_PRESETS: true } })
 type Reply = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T; body: string }
 let cookie = '', csrf = ''
 let workspaceId = ''
@@ -30,6 +34,62 @@ describe('Workbench LLM connection settings', () => {
     workspaceId = (await db.query<{ id: string }>('SELECT id FROM workspaces LIMIT 1')).rows[0]!.id
   }, 300_000)
   afterAll(async () => { await app.close(); await db.end() })
+
+  it('公开只读路由受功能开关约束且并发读取不改目录', async () => {
+    const catalog = loadModelPresets(true)!
+    const responses = await Promise.all(Array.from({ length: 5 }, () => app.inject('/api/v1/workbench/model-presets')))
+    expect(responses.every(response => response.statusCode === 200 && JSON.stringify(response.json()) === JSON.stringify(catalog))).toBe(true)
+    const disabled = buildApp({ logger: false, features: { ...loadFeatureConfig(), WORKMESH_BETA_MODEL_PRESETS: false } })
+    try {
+      const response = await disabled.inject('/api/v1/workbench/model-presets')
+      expect(response.statusCode).toBe(403)
+      expect(response.json()).toMatchObject({ error: { code: 'FEATURE_DISABLED' } })
+      // 未登记的写方法由现有路由策略封闭拒绝，不新增 CRUD。
+      expect((await app.inject({ method: 'POST', url: '/api/v1/workbench/model-presets', headers: { cookie, 'x-csrf-token': csrf, 'idempotency-key': randomUUID() }, payload: {} })).statusCode).toBe(403)
+    } finally { await disabled.close() }
+  })
+
+  it('预置配置创建修订及重放零模型服务出站', async () => {
+    const fetchTrap = vi.spyOn(globalThis, 'fetch').mockImplementation(() => { throw new Error('保存不得出站') })
+    const httpTrap = vi.spyOn(http, 'request').mockImplementation(() => { throw new Error('保存不得出站') })
+    const httpsTrap = vi.spyOn(https, 'request').mockImplementation(() => { throw new Error('保存不得出站') })
+    const httpGetTrap = vi.spyOn(http, 'get').mockImplementation(() => { throw new Error('保存不得出站') })
+    const httpsGetTrap = vi.spyOn(https, 'get').mockImplementation(() => { throw new Error('保存不得出站') })
+    try {
+      for (const entry of loadModelPresets(true)!.entries) {
+        const payload = { scope: 'personal', name: entry.provider, apiType: entry.apiType, baseUrl: entry.baseUrl, secretMaterial: `fixture-${randomUUID()}` }
+        const key = randomUUID()
+        const created = await call('POST', '/api/v1/workbench/llm-connections', payload, { 'idempotency-key': key })
+        expect(created.statusCode, created.body).toBe(201)
+        expect((await call('POST', '/api/v1/workbench/llm-connections', payload, { 'idempotency-key': key })).json()).toEqual(created.json())
+        const connection = created.json<{ id: string; revision: number }>()
+        const patchKey = randomUUID()
+        const headers = { 'if-match': `"revision-${connection.revision}"`, 'idempotency-key': patchKey }
+        const patched = await call('PATCH', `/api/v1/workbench/llm-connections/${connection.id}`, { baseUrl: `${entry.baseUrl}/`, name: `${entry.provider} edited` }, headers)
+        expect(patched.statusCode, patched.body).toBe(200)
+        expect((await call('PATCH', `/api/v1/workbench/llm-connections/${connection.id}`, { baseUrl: `${entry.baseUrl}/`, name: `${entry.provider} edited` }, headers)).json()).toEqual(patched.json())
+        expect((await call('GET', `/api/v1/workbench/llm-connections/${connection.id}`)).json<{ models: unknown[] }>().models).toEqual([])
+        expect(created.body + patched.body).not.toContain(payload.secretMaterial)
+      }
+      for (const trap of [fetchTrap, httpTrap, httpsTrap, httpGetTrap, httpsGetTrap]) expect(trap).not.toHaveBeenCalled()
+    } finally { vi.restoreAllMocks() }
+  })
+
+  it('修改预置 URL 仍受安全策略约束', async () => {
+    const entry = loadModelPresets(true)!.entries[0]!
+    const created = await call('POST', '/api/v1/workbench/llm-connections', { scope: 'personal', name: entry.provider, apiType: entry.apiType, baseUrl: entry.baseUrl, secretMaterial: 'fixture-only-secret' })
+    expect(created.statusCode, created.body).toBe(201)
+    const connection = created.json<{ id: string; revision: number }>()
+    for (const baseUrl of ['http://api.example/v1', 'https://secret@api.example/v1', 'https://127.0.0.1/v1', 'https://localhost/v1', 'https://api.example/v1%2fchat', 'https://api.example/v1/chat/completions/chat/completions']) {
+      const response = await call('POST', '/api/v1/workbench/llm-connections', { scope: 'personal', name: entry.provider, apiType: entry.apiType, baseUrl, secretMaterial: 'fixture-only-secret' })
+      const privateHost = baseUrl.includes('127.0.0.1') || baseUrl.includes('localhost')
+      expect(response.statusCode, response.body).toBe(privateHost ? 403 : 400)
+      expect(response.json()).toMatchObject({ error: { code: privateHost ? 'FORBIDDEN' : 'VALIDATION_ERROR' } })
+      const patch = await call('PATCH', `/api/v1/workbench/llm-connections/${connection.id}`, { baseUrl }, { 'if-match': `"revision-${connection.revision}"` })
+      expect(patch.statusCode, patch.body).toBe(privateHost ? 403 : 400)
+    }
+    expect((await call('GET', `/api/v1/workbench/llm-connections/${connection.id}`)).json()).toMatchObject({ base_url: entry.baseUrl, revision: connection.revision })
+  })
 
   it('stores encrypted secrets, guards revisions, replays idempotently, and revokes', async () => {
     const endpoint = '/api/v1/workbench/llm-connections'

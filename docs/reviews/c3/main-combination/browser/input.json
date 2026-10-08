@@ -1,0 +1,29 @@
+{
+  "headBefore": "19cca3577ad3c4ec3dc4969ba335d191d1cbc148",
+  "mainSource": "96e724858e692d262107c34db50b40c3ae7c122c",
+  "mainReadMethod": "tds git fetch origin main 后 ls-remote origin refs/heads/main 实读",
+  "candidateIndexTree": "d888037c108d58e6c494e20d62063cf18f078969",
+  "sourceDigest": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+  "historicalBaseline": "8aee051c23eca1fc7653f688d6570c5808c0011d",
+  "historicalProduct": "c0bb931bf5dbf5c297835ee321b4de69f47e7695",
+  "environment": {
+    "NODE_ENV": "test",
+    "RUN_INTEGRATION": "1",
+    "REDIS_URL": "redis://127.0.0.1:26489",
+    "S3_ENDPOINT": "http://127.0.0.1:27489",
+    "S3_BUCKET": "workmesh-artifacts",
+    "WORKMESH_PLAYWRIGHT_RUN_DIR": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-main-combination-01a11890-browser\\playwright"
+  },
+  "database": "127.0.0.1:25489/c3_combination_test，独有临时数据库",
+  "secrets": "随机测试夹具，仅内存和子进程环境；未落盘",
+  "fixturePolicy": {
+    "masterKey": "32 个随机字节，编码为 64 个 hex 字符；符合 auth-idempotency.ts",
+    "authBurstSource": ".github/workflows/ci.yml API/E2E jobs；仅测试子进程覆盖",
+    "liveProviderCalls": "RUN_WORKBENCH_LIVE=0"
+  },
+  "runtime": {
+    "node": "v24.20.0",
+    "pnpm": "9.15.4"
+  },
+  "latestRequiredCI": "待平台提交及 Chief 建立 PR 后实读；未运行、不填通过"
+}

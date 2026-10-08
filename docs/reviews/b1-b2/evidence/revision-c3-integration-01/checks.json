@@ -1,0 +1,23 @@
+[
+  {
+    "name": "c3-connector-api",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/api",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "../../vitest.integration.config.ts",
+      "integration/stage5-agent-connections.integration.test.ts",
+      "integration/stage5-connector.integration.test.ts",
+      "integration/configuration-readiness.integration.test.ts"
+    ],
+    "startedAt": "2026-10-08T13:47:11.587Z",
+    "endedAt": "2026-10-08T13:47:44.218Z",
+    "exitCode": 0,
+    "log": "logs/c3-connector-api.log",
+    "secretRedaction": true
+  }
+]

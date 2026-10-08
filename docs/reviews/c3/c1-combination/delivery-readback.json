@@ -1,0 +1,30 @@
+{
+  "recordedAt": "2026-10-08 13:15:49 UTC",
+  "combinationCommit": "9f4ff863611af7027314ae1783f898f704643863",
+  "parents": [
+    "7a86ecc46e8fb79f8cf177749f9fef21bd410d0b",
+    "5b9c76b5f79917697906520edcd6947bfbfa925f"
+  ],
+  "tree": "8007e2cad2c67dcb33d369813c4c5254356d5073",
+  "subject": "chore(c3): integrate c1 main and verify shared boundaries",
+  "inputHead": "7a86ecc46e8fb79f8cf177749f9fef21bd410d0b",
+  "main": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "remoteReadMethod": "本轮 tds git ls-remote origin 两个精确 refs",
+  "remoteReadbackAsReturned": "5b9c76b5f79917697906520edcd6947bfbfa925f\trefs/heads/main\n9f4ff863611af7027314ae1783f898f704643863\trefs/heads/tds/conv-01a11890-f4de-7106-b64d-e1b2c0d4608e",
+  "remoteCombinationMatchesLocal": true,
+  "mainUnchangedSinceInput": true,
+  "normalTwoParentMerge": true,
+  "headVerification": {
+    "chunk_id": "eac252",
+    "wall_time_seconds": 0.9757885,
+    "exit_code": 0,
+    "original_token_count": 89,
+    "output": "核验通过：1391 个组合源码、92 份历史证据、56 个原件成员；目标=HEAD。\r\n最终 Git 忽略规则有单独元数据差异绑定；15 条原检查仍绑定测试时摘要，不冒最终忽略规则已参与旧运行。\r\n旧审批违规事实与子回执缺口保持原义；本核验不代表独审、PR RequiredCI 或合入通过。\r\n"
+  },
+  "cleanAtReadback": true,
+  "subsequentChanges": "仅新增/完善提交绑定文档与核验器的元数据一致性断言；产品及 Git 忽略规则不变；不自引用未知下一文档提交",
+  "requiredCi": "尚未建立当前 C3 PR RequiredCI；由 Chief 定向独审后标准 merge_builds 门禁",
+  "actualMainMerge": false,
+  "liveCallsOrPublication": false,
+  "cleanupStatus": "3 个容器已清理；2 个新路径被拒后保留，完整输入/输出/callID与时间已落盘，不改方式继续"
+}
