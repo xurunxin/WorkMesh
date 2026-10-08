@@ -18,6 +18,8 @@ local epoch = redis.call('HGET', state, 'epoch')
 if not epoch or (redis.call('HEXISTS', state, fingerprint)==1 and redis.call('EXISTS', quota)==0) then
   epoch = token
   redis.call('HSET', state, 'epoch', epoch, 'ready', now+120000)
+  -- 同一次桶丢失只触发一次冷却；必须在冷却提前返回前恢复 sentinel。
+  redis.call('ZADD', quota, '+inf', '__sentinel')
 end
 local ready = tonumber(redis.call('HGET', state, 'ready'))
 if now < ready then return {0, ready-now, epoch} end

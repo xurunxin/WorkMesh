@@ -9,7 +9,7 @@
 - Worker registry/API 配置、三份 compose、环境示例和 `docs/production-deployment.md`：渠道默认关闭；启用要求 Redis、HTTPS WEB_ORIGIN、当前 Human 本人安全秘密引用。C3 目录/A1 拒绝/C1 授权语义保留；无数据库迁移或新增 API/领域事件。
 - 网页 `safeLoginReturnTo`、登录和 Attention：拒绝外域/协议相对/控制字符/凭据/畸形编码/登录循环；只返回同源路径。登录前 hydration 门禁及 POST 表单防原生 GET 泄露；返回后按当前 Human 重新读取。转发详情 GET 404、失权重新登录；返回、Back/Forward、关闭详情焦点与迟响应取消都有实际断言。
 
-## 验证与复现
+## 验证与复现（61736fa 历史受测源码）
 
 前四项正式必需检查回执：[results.json](product/20261008T160516Z-c88908/results.json)；正式根 `pnpm test:e2e` 回执：[E2E results.json](product/20261008T162342Z-55df46/results.json)。前一轮 E2E 因共享端口已占用在启动前失败，保留原退出码；端口自行释放后只重跑失败的根 E2E，不接管其它任务服务。两轮各自使用独有随机凭据和 PostgreSQL/Redis/S3，五项命令的源码前后及跨轮指纹完全一致，未将不同源码拼成通过。Node `.node-version` 指定的运行时和 pnpm 子进程路径已实读；每个命令记录 UTC 起止、PID、退出码。五项 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:e2e` 均退出 0。API/Web 单元先在前四项这一轮同源码、同 env 顺序实际执行，正式 `pnpm test` 复用其本轮绿色 Turbo 缓存并检查全部包，不借历史检查冒当前通过。集成分组实际结果：DB 80 通过、0 skip；API 197 通过、1 skip；Worker 113 通过、1 skip；可选 recovery 1 skip；E2E 71 项通过。Skip 不计通过，未启用的可选 recovery/retention/runner 夹具不冒作实证。
 
@@ -29,7 +29,7 @@
 
 ## 尚未齐备的门禁
 
-当前成果停 review，等待另一 Agent 实读成果独审、Chief 视觉停点、最新 PR Required CI、实际 main 合入及最终确认。当前 main 输入为 `18252ba8761aa810c3fd12d31ecae83e8b24d985`；不以文档通过、历史 CI 或 fake 消息冒作整卡验收与真实外发验证。
+当前成果停 review，等待另一 Agent 实读成果独审、Chief 视觉停点、最新 PR Required CI、实际 main 合入及最终确认。上一轮 main 输入为 `18252ba8761aa810c3fd12d31ecae83e8b24d985`；不以文档通过、历史 CI 或 fake 消息冒作整卡验收与真实外发验证。
 
 ## 前后截图
 
@@ -45,3 +45,9 @@
 ![转发后无权](product/ui/after-forwarded.png)
 
 截图原字节与来源见 [ui-index.json](product/ui-index.json)；浏览器 URL、当前身份和焦点通过实际 Playwright 断言，截图不冒作路径/授权证明。
+
+<!-- C2-QUOTA-RECOVERY -->
+
+## 当前频控恢复修订
+
+本轮 quota 丢失恢复及真实 Redis 负例见 [当前复审](quota-recovery/review.md)。上文旧绿色/源码指纹/首败保持历史含义，本轮五项检查及最新 main 输入另存独立回执；独审与最终门禁仍待。

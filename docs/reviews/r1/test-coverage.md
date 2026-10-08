@@ -433,3 +433,8 @@
 
 六原验收与九类的历史字段保持原义。当前已实现及真实运行结果见 [产品审阅入口](../c2/product-review.md) 和 test-coverage.json 中 C2 currentProductExecution。真实 Redis 竞态用例复用现有 API integration 夹具；C1 原 Worker 回归保留，无 CI 工作流/门禁修改。只出站不适用入站签名、绑定解绑、回调时窗；fake 不冒真实外发通过，独审/当前 CI/main 尚待验收。
 <!-- C2-PRODUCT-REVIEW:END -->
+
+
+<!-- C2-QUOTA-RECOVERY -->
+
+C2 的原六测试、九类与 DoD 保留；R1-16-1/8/9 追加真实 Redis quota 丢失后固定冷却、六路并发重试、双目标恢复和旧许可失效，当前回执见 [频控恢复审阅](../c2/quota-recovery/review.md)。

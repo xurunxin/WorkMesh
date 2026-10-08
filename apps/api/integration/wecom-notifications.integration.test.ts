@@ -290,6 +290,44 @@ describe('C2 channel delivery with existing Redis integration fixture',()=>{
         expect(await result.permit!.remainingMs()).toBe(0)
         expect((await limit.reserve(target.endpoint_fingerprint)).retryAfterMs).toBeGreaterThan(119000)
       })
+      it('quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效', async () => {
+        const lost = await c2Target(), healthy = await c2Target(), limit = admission()
+        const oldLost = await limit.reserve(lost.endpoint_fingerprint), oldHealthy = await limit.reserve(healthy.endpoint_fingerprint)
+        expect(oldLost.permit).toBeDefined(); expect(oldHealthy.permit).toBeDefined()
+        await redis.del(`${namespace}:${lost.endpoint_fingerprint}:quota`)
+        expect(await oldLost.permit!.remainingMs()).toBe(0)
+        const stateKey = `${namespace}:state`, epoch = await redis.hGet(stateKey, 'epoch')
+        expect(await redis.hGet(stateKey, 'ready')).toBe('120000')
+        for (const at of [1, 30000, 60000, 119999]) {
+          clock = at
+          const retries = await Promise.all(Array.from({ length: 6 }, (_, index) => admission().reserve(index % 2 ? lost.endpoint_fingerprint : healthy.endpoint_fingerprint)))
+          expect(retries.every(row => !row.permit && row.retryAfterMs === Math.max(100, 120000 - at))).toBe(true)
+          expect(await oldLost.permit!.remainingMs()).toBe(0)
+          expect(await oldHealthy.permit!.remainingMs()).toBe(0)
+          await Promise.all([oldLost.permit!.finish(), oldHealthy.permit!.finish()])
+          expect(await redis.hGet(stateKey, 'ready')).toBe('120000')
+          expect(await redis.hGet(stateKey, 'epoch')).toBe(epoch)
+        }
+        expect(await redis.zRange(`${namespace}:${lost.endpoint_fingerprint}:quota`, 0, -1)).toEqual(['__sentinel'])
+        // 替换 TIME 不推进真实 Redis TTL；仅模拟早于冷却结束的 serial TTL 到期。
+        await redis.del([`${namespace}:${lost.endpoint_fingerprint}:serial`, `${namespace}:${healthy.endpoint_fingerprint}:serial`])
+        clock = 120000
+        for (const target of [lost, healthy]) {
+          const resumed = await Promise.all(Array.from({ length: 6 }, () => admission().reserve(target.endpoint_fingerprint)))
+          expect(resumed.filter(row => row.permit)).toHaveLength(1)
+          const fresh = resumed.find(row => row.permit)!.permit!
+          await Promise.all([oldLost.permit!.finish(), oldHealthy.permit!.finish()])
+          expect(await oldLost.permit!.remainingMs()).toBe(0)
+          expect(await oldHealthy.permit!.remainingMs()).toBe(0)
+          const remaining = await fresh.remainingMs()
+          expect(remaining).toBeGreaterThan(59000); expect(remaining).toBeLessThanOrEqual(60000)
+          expect((await limit.reserve(target.endpoint_fingerprint)).permit).toBeUndefined()
+          await fresh.finish()
+          expect(await redis.exists(`${namespace}:${target.endpoint_fingerprint}:serial`)).toBe(0)
+        }
+        expect(await redis.hGet(stateKey, 'ready')).toBe('120000')
+        expect(await redis.hGet(stateKey, 'epoch')).toBe(epoch)
+      })
       it('网络未知不自动重送；C1 显式对账复用原 delivery/fence，渠道零决策事件/outbox', async () => {
         await c2Target(); await enqueue()
         const decisions = async () => (await db.query(`SELECT count(*)::int AS n FROM domain_events WHERE event_type LIKE 'decision.%' OR event_type LIKE 'approval.decision.%'`)).rows[0].n

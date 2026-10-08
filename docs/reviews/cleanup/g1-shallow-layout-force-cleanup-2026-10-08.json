@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "todo": {
+    "number": 52,
+    "id": "6LZdc1ZhadjkkYSzEi6zB",
+    "ownerTodo": 18,
+    "ownerTodoId": "Tws50k02Pi52R-RJEXP_N",
+    "ownerTodoPhase": "done"
+  },
+  "machine": {
+    "name": "DarkFlame",
+    "id": "6DOlLniZ0sqBYGHeIhRMq",
+    "tdsStatus": "running; v0.1.60"
+  },
+  "authorization": {
+    "source": "用户 2026-10-08 22:38 回答精确方案卡：仅此目录强制清理（推荐）。",
+    "scope": "只对本文件记录的 G1 独立临时 clone 绝对路径调用一次 PowerShell Remove-Item -LiteralPath <exact path> -Recurse -Force。",
+    "excluded": [
+      "G1 父 worktree 和其它任何 worktree",
+      "D0/C3 已拒绝目标",
+      "D1a trace、其它 74 项和两份 RAW ZIP",
+      "当前构建、共享缓存、Docker 或其它任务资源",
+      "恢复被删 reflog、修改属性/ACL、移动目标、替代删除方式或重试"
+    ]
+  },
+  "preflight": {
+    "sampledAtUtc": "2026-10-08T14:45:53.0351497Z",
+    "readOnlyPreflightRunHistory": [
+      {
+        "sampledAtUtc": "2026-10-08T14:45:21Z",
+        "exitCode": 1,
+        "issue": "只读断言把 fixture 路径字符串当作 FileInfo 读取 Exists 属性；非文件系统检查逻辑错误。",
+        "mutation": "无；未执行删除、恢复或权限/属性更改。"
+      },
+      {
+        "sampledAtUtc": "2026-10-08T14:45:53.0351497Z",
+        "exitCode": 0,
+        "correction": "改用 Test-Path 校验 fixture 后，完整路径、递归、锁、来源和引用预检通过。",
+        "mutation": "无；仅只读检查。"
+      }
+    ],
+    "machineAndTodoRefresh": {
+      "tdsStatusCommandExitCode": 0,
+      "machineOnline": true,
+      "activeTodos": {
+        "cleanup52": "building",
+        "todo5": "review",
+        "todo9": "building",
+        "todo16": "building",
+        "todo21": "review"
+      },
+      "protectedDoneTodos": {
+        "todo8": "done; workspace preserved",
+        "todo15": "done; workspace preserved",
+        "todo17": "done; workspace preserved"
+      },
+      "g1Todo18": "done",
+      "activeBuildChatExactTargetMentions": {
+        "todo5": 0,
+        "todo9": 0,
+        "todo16": 0,
+        "todo21": 0,
+        "todo18DoneOwnerChat": 0
+      },
+      "cleanupTodo52IsOwnerOfThisOperation": true
+    },
+    "freshMainAndRecoverability": {
+      "mainFetchedThisTurn": true,
+      "mainSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "cloneHead": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+      "headToFreshMainAncestryExitCode": 0,
+      "ancestryEvidence": "18252ba Merge pull request #207 from xurunxin/tds/conv-01a11890-f4de-7106-b64d-e1b2c0d4608e",
+      "trackedPathToBlobMappings": 1607,
+      "uniqueTrackedBlobObjects": 1575,
+      "freshMainCatFileCheckedObjects": 1575,
+      "freshMainCatFileExitCode": 0,
+      "missingOrNonBlobObjects": 0,
+      "currentTrackedFiles": 1464,
+      "trackedDeletionsRecoverableFromCloneHead": 143,
+      "uniqueSourceFilesFound": 0,
+      "localOnlyBranchesOrCommitsFound": 0,
+      "cloneHeadIsShallow": true
+    },
+    "target": {
+      "kind": "G1 todo 18 .tmp 下的独立 shallow clone；不是 linked worktree",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout",
+      "resolvedAbsolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout",
+      "workspacesRoot": "C:\\Users\\xurx\\.tds\\workspaces",
+      "strictlyBelowWorkspacesRoot": true,
+      "notWorkspaceRootOrParentOrCurrentCleanupWorkspace": true,
+      "pathComponentCountChecked": 6,
+      "reparsePointsInPath": 0,
+      "recursiveReparsePoints": 0,
+      "notRegisteredAsLinkedWorktree": true,
+      "parentG1WorktreeRegisteredAndClean": true,
+      "parentGitStatusExitCode": 0,
+      "parentGitStatusEntries": 0,
+      "fileCount": 1474,
+      "directoryCount": 264,
+      "logicalBytes": 33450482,
+      "perPathInventoryFile": "docs/reviews/cleanup/g1-shallow-layout-inventory-2026-10-08.json",
+      "perPathInventorySha256": "9f260aed5d33716da8a64f1d7172fb4365914d9c9e7604954441da26dd2a0fc4",
+      "priorInventoryEntries": 1474,
+      "missingInventoryEntries": 0,
+      "changedInventoryEntries": 0,
+      "unexpectedInventoryEntries": 0,
+      "gitHead": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+      "gitBranch": "tds/conv-01a116f7-1027-7c75-90df-32ebc5488752",
+      "gitStatusExitCode": 0,
+      "gitStatusEntries": 143,
+      "untrackedCount": 0,
+      "ignoredCount": 0,
+      "gitFsckFullExitCode": 0,
+      "gitFsckOutputLines": 0,
+      "indexLockPresent": false,
+      "gitDirectoryAttributes": "Hidden, Directory",
+      "readOnlyPackFiles": 3,
+      "nonSelfProcessCommandLineReferences": 0,
+      "globalHandleOrBuildRegistryEnumerated": false
+    },
+    "fixtureAndInputSourcesOutsideTarget": {
+      "fixture": {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-read.mjs",
+        "exists": true,
+        "bytes": 2457,
+        "sha256": "ef4c368b093f293ccbc77cd4f31e86492a1188f5b091ac0e0642719c39b84294",
+        "usesReflogs": false
+      },
+      "inputsFromFreshMain": [
+        {
+          "path": "scripts/verify-raw-evidence-archive.mjs",
+          "bytes": 9722,
+          "sha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131",
+          "gitBlob": "b32919f321b8d42913e7e476989f1c8f389327dd"
+        },
+        {
+          "path": "docs/evidence/build-input-reachability.current/raw-evidence.zip",
+          "bytes": 2339178,
+          "sha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b",
+          "gitBlob": "1875e8935dee1d406616f6d5e799d4acc739041a"
+        },
+        {
+          "path": "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
+          "bytes": 140663,
+          "sha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162",
+          "gitBlob": "f5c477c404645a070d5ae7e9aafb6c744da8decb"
+        }
+      ],
+      "allInputWorkingCopyHashesAndMainGitBlobsMatched": true
+    },
+    "priorPartialMetadataAndReflogLimitations": {
+      "previousOrdinaryRecursiveAttempt": {
+        "operationExitCode": null,
+        "outerWrapperExitCode": 1,
+        "error": "你没有足够的访问权限来执行此操作，或者该项目为隐藏项、系统项或只读项。",
+        "causeKnown": false,
+        "retryOrRestoreBeforeNewAuthorization": false
+      },
+      "alreadyRemovedMetadata": 17,
+      "remainingGitMetadataBeforeThisCleanup": 10,
+      "fifteenDeletedDefaultTemplateFiles": "existing audit maps them byte-identically to Git for Windows template sources; all 15 source files were rechecked in this turn",
+      "twoMissingReflogs": "exact bytes remain unavailable; no restoration or reconstruction attempted; fixture does not use reflogs",
+      "observedAttributesAreNotProvenPriorFailureCause": true,
+      "noAttributeOrAclChanges": true
+    },
+    "protectedWorkspaces": {
+      "expected": 8,
+      "present": 8,
+      "contentsReadOrChanged": false,
+      "d1aTraceCleanupReceiptAndHealthCheckCompleted": true,
+      "d1aTraceTargetsRemainAbsent": true,
+      "d1aKeeperTraceAndBothRawZipsRemain": true
+    },
+    "preflightDecision": "通过。所有现存路径逐项与先前清单大小/SHA 完全匹配，目标范围、归属、活动引用和 Git 来源已核实；仅执行已授权的精确目标单次 PowerShell Force 删除。"
+  },
+  "operation": {
+    "authorizedExactCommand": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout' -Recurse -Force",
+    "dispatchAttempted": true,
+    "removeItemInvocationCount": 0,
+    "powerShellStarted": false,
+    "attemptCountAllowed": 1,
+    "operationAtUtc": null,
+    "toolStructuredExitCode": null,
+    "dispatchStatus": "CreateProcess rejected before PowerShell started; no deletion call ran",
+    "exactPolicyRejection": "rejected: blocked by policy",
+    "toolErrorClass": "CreateProcess rejected before launching PowerShell",
+    "exactCommandInput": "$ErrorActionPreference = 'Stop'\nRemove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout' -Recurse -Force",
+    "targetState": "The last preflight showed target present with 1,474 files/33,450,482 B. No post-rejection filesystem read was performed; no retry or alternate method was attempted.",
+    "result": "policy-rejected; stopped immediately",
+    "originalDispatchReceipt": {
+      "file": "original-operation-receipts-2026-10-08.json",
+      "receipt": "g1ForcePolicyRejected",
+      "callId": "call_389935a8bffb4040b7f914b311d06626",
+      "sourceLine": 7358,
+      "returnLine": 7360,
+      "dispatchAtUtc": "2026-10-08T14:48:00.987Z",
+      "returnAtUtc": "2026-10-08T14:48:01.072Z",
+      "operationAtUtc": null,
+      "note": "dispatch/return 时点不是文件系统操作时间；PowerShell 未启动，Remove-Item 调用 0 次，操作时间与退出码均未知/null。拒绝后未读取目标文件系统。"
+    }
+  },
+  "postflight": null,
+  "space": {
+    "targetLogicalBytesBefore": 33450482,
+    "physicalDiskRelease": "待操作后实际测量；不据逻辑字节推算"
+  },
+  "overallCleanupComplete": false
+}

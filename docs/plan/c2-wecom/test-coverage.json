@@ -1062,5 +1062,23 @@
     },
     "review": "docs/reviews/c2/product-review.md",
     "status": "产品本机验证完成；等待独审/视觉停点/当前 CI/actual main，历史规划状态不覆写"
+  },
+  "currentQuotaRecovery": {
+    "review": "docs/reviews/c2/quota-recovery/review.md",
+    "verification": "docs/reviews/c2/quota-recovery/verification.json",
+    "inputHead": "61736fa2298279f76642309ee2e2478439258f80",
+    "actualMainInput": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+    "case": {
+      "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+      "name": "quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效",
+      "matrixIds": [
+        "R1-16-1",
+        "R1-16-8",
+        "R1-16-9"
+      ],
+      "receipt": "docs/reviews/c2/product/20261008T165722Z-99576c/results.json",
+      "result": "真实 Redis Lua 通过；仅 TIME 替换为受控时钟，serial TTL 到期单独模拟；保留原生 Redis TIME 用例"
+    },
+    "status": "本轮五项必需本机检查通过；待独审/latest CI/actual main/Chief"
   }
 }

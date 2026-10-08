@@ -1,0 +1,1569 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-08T15:11:41Z",
+  "project": "WorkMesh",
+  "todo": {
+    "number": 52,
+    "id": "6LZdc1ZhadjkkYSzEi6zB",
+    "phase": "building"
+  },
+  "machine": {
+    "name": "DarkFlame",
+    "id": "6DOlLniZ0sqBYGHeIhRMq",
+    "statusRefreshed": false,
+    "note": "本阶段未调用 machine/daemon 状态接口；仅做只读 repo/todo/conversation 核验。"
+  },
+  "stageBoundary": {
+    "kind": "只读最终候选清单/最小保全",
+    "filesDeleted": 0,
+    "directoriesDeleted": 0,
+    "restores": 0,
+    "attributeAclChanges": 0,
+    "dockerChanges": 0,
+    "productTests": 0,
+    "oldHashesRecomputed": 0,
+    "largeDependencyTreeFilesEnumerated": 0,
+    "globalHandlesOrBuildRegistryEnumerated": false
+  },
+  "liveTodos": {
+    "refreshedThisStage": true,
+    "snapshotCompleteness": "mcp__tds__todos full board plus direct todo reads for #3/#8/#10/#11/#15/#18/#52; active build conversations #5/#9/#16/#21; owner conversations #8/#15",
+    "phases": {
+      "3": "done",
+      "5": "review",
+      "8": "done",
+      "9": "building",
+      "10": "done",
+      "11": "done",
+      "15": "done",
+      "16": "building",
+      "17": "done",
+      "18": "done",
+      "21": "review",
+      "52": "building"
+    },
+    "candidatePathMentionCountsInActiveChats": {
+      "tasks": [
+        "#5",
+        "#9",
+        "#16",
+        "#21"
+      ],
+      "a1WorkspaceExactRootMentions": {
+        "#16": 0,
+        "#21": 0,
+        "#5": 0,
+        "#9": 0
+      },
+      "c1WorkspaceExactRootMentions": {
+        "#16": 0,
+        "#21": 0,
+        "#5": 0,
+        "#9": 0
+      },
+      "d1aCandidateExactPathMentions": {
+        "#16": 0,
+        "#21": 0,
+        "#5": 0,
+        "#9": 0
+      }
+    },
+    "limitation": "聊天中无精确路径命中不等于 OS 进程/句柄检查，也不代表平台全局 build registry 已枚举；候选删除前仍需逐路径刷新。",
+    "observedAtUtc": null
+  },
+  "gitWorktreeSnapshot": {
+    "listEntryCountObserved": 21,
+    "candidateAndParentPathsRegistered": true,
+    "fetchMethod": "mcp__tds__git fetch origin main; rev-parse FETCH_HEAD",
+    "selectedWorktreeStatusChecks": {
+      "allCandidatesAndParents": [
+        "#3",
+        "#8",
+        "#10",
+        "#11",
+        "#15",
+        "#18"
+      ],
+      "allTrackedAndUntrackedStatusLines": 0,
+      "allStatusExitCodes": 0,
+      "ancestryExitCodes": {
+        "#11": 0,
+        "#10": 0,
+        "#8": 0,
+        "#15": 0,
+        "#3": 0,
+        "#18": 0
+      },
+      "checkedAtUtc": null,
+      "exactCheckTimeAvailable": false,
+      "checkedDuringThisStage": true,
+      "allCandidateHeadsAreAncestorsOfObservedFetchHead": true
+    },
+    "fetchOriginMainSucceeded": true,
+    "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "allCandidateHeadsAreAncestorsOfObservedFetchHead": true,
+    "ancestryProofQualification": "ancestor checks use the observed FETCH_HEAD object; not independent proof of remote refs/heads/main"
+  },
+  "parentWorktrees": [
+    {
+      "todo": 3,
+      "todoId": "q_1zKPuGsG-2ZRUwOwQx4",
+      "title": "R1",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+      "head": "550dead055689154359a3406dfce4f0c91c1dad3",
+      "kind": "registered linked worktree",
+      "phase": "done",
+      "registered": true,
+      "statusExitCode": 0,
+      "statusEntries": 0,
+      "tmpInventory": {
+        "exists": false,
+        "fileCount": 0,
+        "bytes": 0
+      },
+      "retentionReason": "Playwright 报告/截图尚缺精确 run、用例/viewport 与归档附件双映射；.tmp 不存在。",
+      "ancestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "todo": 10,
+      "todoId": "MPhtZiff23B33m9i2equq",
+      "title": "D0",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+      "head": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+      "kind": "registered linked worktree",
+      "phase": "done",
+      "registered": true,
+      "statusExitCode": 0,
+      "statusEntries": 0,
+      "tmpInventory": {
+        "exists": true,
+        "fileCount": 1649,
+        "bytes": 196832784
+      },
+      "retentionReason": ".tmp 的未映射 capture/失败/诊断材料保留；六个 d0-upstream 文件虽有主线来源映射，但原删除命令被策略拒绝，禁止重试。",
+      "ancestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "todo": 11,
+      "todoId": "IJQA_DfxU0hF5e8L5Xb3v",
+      "title": "D1a",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "head": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+      "kind": "registered linked worktree",
+      "phase": "done",
+      "registered": true,
+      "statusExitCode": 0,
+      "statusEntries": 0,
+      "tmpInventory": {
+        "exists": true,
+        "files": 76,
+        "logicalBytes": 47298811,
+        "lastSampleUtc": "2026-10-08T14:37:46.1011722Z",
+        "contains": [
+          "74项待分类材料",
+          "1份必须保留trace",
+          "1份历史git证据审计JSON"
+        ],
+        "noNewPathHashReadThisStage": true
+      },
+      "retentionReason": "74项逐路径用途/归档来源未闭合；至少一个trace及敏感RAW ZIP仍保留。",
+      "ancestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "todo": 18,
+      "todoId": "Tws50k02Pi52R-RJEXP_N",
+      "title": "G1",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+      "head": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+      "kind": "registered linked worktree",
+      "phase": "done",
+      "registered": true,
+      "statusExitCode": 0,
+      "statusEntries": 0,
+      "tmpInventory": {
+        "parentOutsideCloneFiles": 283,
+        "parentOutsideCloneBytes": 49882233,
+        "nestedCloneFiles": 1474,
+        "nestedCloneBytes": 33450482,
+        "nestedCloneDisposition": "被策略拒绝后停止；拒绝后未重读；此处仅引用拒绝前库存"
+      },
+      "retentionReason": "父 .tmp 未映射材料保留；独立浅克隆曾被策略拒绝，禁止再次删除或通过父目录绕过。",
+      "ancestorOfObservedFetchHeadExitCode": 0
+    }
+  ],
+  "d1aKnownItems": {
+    "previouslyRemovedByAuthorizedEarlierStage": {
+      "resourceFiles": 8,
+      "networkFiles": 4,
+      "logicalBytes": 1473220,
+      "traceCopies": 2,
+      "traceLogicalBytes": 2045402,
+      "allOperationsHistoricalOnly": true,
+      "physicalDiskRelease": "unknown"
+    },
+    "minimumPreserved": {
+      "trace": "d1a-stage0-trace-env07-2/1-trace.trace",
+      "rawZipCopies": 2,
+      "rawZipContentAddedToRepo": false
+    },
+    "remaining74": {
+      "count": 74,
+      "bytes": 45960098,
+      "lastCheckedCount": 74,
+      "lastCheckedMatches": 74,
+      "lastChanged": 0,
+      "source": "remaining-materials-review-2026-10-08.json#d1a.other74.perPathAssessments",
+      "currentTurnRehashed": false,
+      "classes": [
+        {
+          "name": "test-evidence-unmapped",
+          "count": 47,
+          "bytes": 45162855
+        },
+        {
+          "name": "test-output-unmapped",
+          "count": 27,
+          "bytes": 797243
+        }
+      ],
+      "decision": "retain every exact path; mapped source/reference and needed input remain in per-path assessment; no uniqueness claim."
+    },
+    "auditCandidate": {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json",
+      "bytes": 316012,
+      "sha256": "5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442",
+      "gitBlob": "414dfe920c54f68ca1a2f246f1fcdd82e43767bb",
+      "sourceCommit": "58d59ed85002da637aaeaa6bf98915d4a6ba918c",
+      "sourcePath": "docs/reviews/d1a/evidence/git-blob-hashes.json",
+      "currentTurnTargetFileRead": false,
+      "activeTodoConversationExactPathMentions": 0,
+      "currentProcessReferences": "not queried",
+      "decision": "conditional single-file ordinary cleanup candidate after reviewer and fresh path/activity/lock checks; source mapping requires no duplicate archive.",
+      "observedFetchHeadSamePathBlob": "69a5adba69600bc3d53bf9e8fef989823965ab67",
+      "sourceCommitAncestorOfObservedFetchHeadExitCode": 0
+    }
+  },
+  "historicalRefusals": {
+    "g1": {
+      "path": null,
+      "callId": "call_389935a8bffb4040b7f914b311d06626",
+      "dispatchAtUtc": "2026-10-08T14:48:00.987Z",
+      "returnAtUtc": "2026-10-08T14:48:01.072Z",
+      "reason": "rejected: blocked by policy",
+      "removeItemInvocations": 0,
+      "operationAtUtc": null,
+      "exitCode": null,
+      "retryForbidden": true,
+      "postRejectionFilesystemRead": false
+    },
+    "d0": {
+      "exactPaths": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-upstream-contract.log",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-upstream-lint.log",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-upstream-replay.log",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-upstream-suite-scope.log",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-upstream-test.log",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-upstream-typecheck.log"
+      ],
+      "receipt": "docs/reviews/cleanup/.duplicate-evidence-stage-2026-10-08.json#deletionAttempt",
+      "reason": "rejected: blocked by policy; PowerShell 未启动；未改用其他删除方式",
+      "retryForbidden": true
+    },
+    "c3": {
+      "todo": 17,
+      "status": "done/protected",
+      "historicalTargets": "保留在既有拒绝回执/历史报告范围内；本阶段不重新枚举、也不触碰",
+      "retryForbidden": true
+    },
+    "parentBypassForbidden": true
+  },
+  "candidateWorkspaces": [
+    {
+      "todo": 8,
+      "todoId": "Hxr1xIdh4poZp3F5laGrT",
+      "label": "A1",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+      "phase": "done",
+      "linkedWorktreeRegistered": true,
+      "currentGitStatusEntries": 0,
+      "rootBuildScript": "turbo run build",
+      "webBuildScript": "next build",
+      "rootE2EScript": "turbo run test:e2e --filter=@workmesh/web",
+      "webE2EScript": "playwright test --config ../../playwright.config.ts",
+      "packageManager": "pnpm@9.15.4",
+      "lockfile": {
+        "repoPath": "pnpm-lock.yaml",
+        "bytes": 233344,
+        "present": true
+      },
+      "rebuildInputs": [
+        {
+          "repoPath": "package.json",
+          "gitBlob": "d2afc75c7a1e7eb188ba3ae65f673e5a35e476e9"
+        },
+        {
+          "repoPath": "pnpm-lock.yaml",
+          "gitBlob": "3a82aa7be5867c98e3de5bbbb7a6c4f91673ce91"
+        },
+        {
+          "repoPath": "pnpm-workspace.yaml",
+          "gitBlob": "286cf7f5643db97142c425abe7c8e5d5663f5d65"
+        },
+        {
+          "repoPath": ".gitignore",
+          "gitBlob": "472be399b01fc545f83551d0ed6b87ae90921f83"
+        },
+        {
+          "repoPath": "turbo.json",
+          "gitBlob": "f632a4d79c68c9e8de8d1d49d6c430cac19da1d1"
+        },
+        {
+          "repoPath": "apps/web/package.json",
+          "gitBlob": "18180f3cb44f2433d329a3ab4c4f2f7f20fc6bc0"
+        }
+      ],
+      "turboBuildOutputs": [
+        "dist/**",
+        ".next/**"
+      ],
+      "ignoreRules": [
+        "node_modules",
+        ".turbo",
+        ".next",
+        ".next-e2e",
+        "dist",
+        "playwright-report",
+        "test-results",
+        ".tmp/",
+        ".evidence",
+        ".recovery"
+      ],
+      "candidateDirectories": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\node_modules",
+          "relativePath": "node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\node_modules",
+          "relativePath": "apps/agent-runner/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\node_modules",
+          "relativePath": "apps/api/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\node_modules",
+          "relativePath": "apps/fake-agent/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\node_modules",
+          "relativePath": "apps/mcp/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\web\\node_modules",
+          "relativePath": "apps/web/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\node_modules",
+          "relativePath": "apps/worker/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\node_modules",
+          "relativePath": "packages/a2a-adapter/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\node_modules",
+          "relativePath": "packages/agent-sdk/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\node_modules",
+          "relativePath": "packages/artifact-storage/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\node_modules",
+          "relativePath": "packages/config/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\node_modules",
+          "relativePath": "packages/conformance/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\node_modules",
+          "relativePath": "packages/contracts/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\node_modules",
+          "relativePath": "packages/db/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\node_modules",
+          "relativePath": "packages/domain/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\node_modules",
+          "relativePath": "packages/git-provider/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\node_modules",
+          "relativePath": "packages/observability/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\node_modules",
+          "relativePath": "packages/recovery/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\node_modules",
+          "relativePath": "packages/ui/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+          "relativePath": "apps/agent-runner/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+          "relativePath": "apps/api/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+          "relativePath": "apps/fake-agent/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+          "relativePath": "apps/mcp/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+          "relativePath": "apps/worker/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist",
+          "relativePath": "packages/a2a-adapter/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist",
+          "relativePath": "packages/agent-sdk/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist",
+          "relativePath": "packages/artifact-storage/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\dist",
+          "relativePath": "packages/config/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\dist",
+          "relativePath": "packages/conformance/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\dist",
+          "relativePath": "packages/contracts/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\dist",
+          "relativePath": "packages/db/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\dist",
+          "relativePath": "packages/domain/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\dist",
+          "relativePath": "packages/git-provider/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\dist",
+          "relativePath": "packages/observability/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\dist",
+          "relativePath": "packages/recovery/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\dist",
+          "relativePath": "packages/ui/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        }
+      ],
+      "preservedOutputs": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\web\\playwright-report",
+          "present": false,
+          "decision": "preserve evidence output until run/source/accepted-attachment mapping is closed"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\web\\test-results",
+          "present": false,
+          "decision": "preserve evidence output until run/source/accepted-attachment mapping is closed"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\.tmp",
+          "present": false,
+          "decision": "not a cache candidate; do not infer from absent/present top-level only"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\.evidence",
+          "present": false,
+          "decision": "not a cache candidate; do not infer from absent/present top-level only"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\.recovery",
+          "present": false,
+          "decision": "not a cache candidate; do not infer from absent/present top-level only"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\web\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\web\\dist",
+          "present": true,
+          "category": "typescript-incremental-cache",
+          "observedContents": "tsconfig.tsbuildinfo only",
+          "decision": "保留：这是类型检查增量缓存，本阶段不清理。",
+          "rebuildCommand": "pnpm --filter @workmesh/web typecheck",
+          "commandImplementation": "apps/web/package.json: typecheck=tsc --noEmit",
+          "configInputs": [
+            "apps/web/tsconfig.json",
+            "tsconfig.base.json",
+            "apps/web/package.json",
+            "apps/web 源码及相关 workspace 源码"
+          ]
+        }
+      ],
+      "currentObservation": "仅根与 apps/*、packages/* 的直接子目录层级检查；未递归清点目录内部文件或测量逻辑字节。",
+      "ownerBuildChatExactCacheReferences": 0,
+      "activeOtherTodoChatExactWorkspaceRootReferences": {
+        "#5": 0,
+        "#9": 0,
+        "#16": 0,
+        "#21": 0
+      },
+      "currentProcessReferences": "未查询",
+      "worktreeLocks": "未查询",
+      "cleanupEligibility": "conditional cache candidates only; no deletion in this stage; confirm active build/process, exact resolved path, links/reparse points, locks, permissions and preserve evidence before one-by-one ordinary non-Force removal.",
+      "proposedOperation": "仅对独立精确目录使用 Remove-Item -LiteralPath <exact path> -Recurse -ErrorAction Stop；若占用/权限/链接检查失败则保留；不得删根workspace、pnpm store、报告或test-results。",
+      "retainedGeneratedOutputs": {
+        "turboTaskLogDirectories": 18,
+        "turboDisposition": "all retained; lint/test/typecheck logs are not rebuilt by pnpm build",
+        "webTypecheckDistDirectories": 1,
+        "webTypecheckDisposition": "all retained; apps/web/dist contains tsconfig.tsbuildinfo only; command/config are recorded per preservedOutputs"
+      },
+      "headIsAncestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "todo": 15,
+      "todoId": "kkG9VeT3_uTzREhjnX2ve",
+      "label": "C1",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+      "head": "81090ec01bcbc84edbe101418d833840999a5326",
+      "phase": "done",
+      "linkedWorktreeRegistered": true,
+      "currentGitStatusEntries": 0,
+      "rootBuildScript": "turbo run build",
+      "webBuildScript": "next build",
+      "rootE2EScript": "turbo run test:e2e --filter=@workmesh/web",
+      "webE2EScript": "playwright test --config ../../playwright.config.ts",
+      "packageManager": "pnpm@9.15.4",
+      "lockfile": {
+        "repoPath": "pnpm-lock.yaml",
+        "bytes": 233344,
+        "present": true
+      },
+      "rebuildInputs": [
+        {
+          "repoPath": "package.json",
+          "gitBlob": "d2afc75c7a1e7eb188ba3ae65f673e5a35e476e9"
+        },
+        {
+          "repoPath": "pnpm-lock.yaml",
+          "gitBlob": "3a82aa7be5867c98e3de5bbbb7a6c4f91673ce91"
+        },
+        {
+          "repoPath": "pnpm-workspace.yaml",
+          "gitBlob": "286cf7f5643db97142c425abe7c8e5d5663f5d65"
+        },
+        {
+          "repoPath": ".gitignore",
+          "gitBlob": "472be399b01fc545f83551d0ed6b87ae90921f83"
+        },
+        {
+          "repoPath": "turbo.json",
+          "gitBlob": "f632a4d79c68c9e8de8d1d49d6c430cac19da1d1"
+        },
+        {
+          "repoPath": "apps/web/package.json",
+          "gitBlob": "18180f3cb44f2433d329a3ab4c4f2f7f20fc6bc0"
+        }
+      ],
+      "turboBuildOutputs": [
+        "dist/**",
+        ".next/**"
+      ],
+      "ignoreRules": [
+        "node_modules",
+        ".turbo",
+        ".next",
+        ".next-e2e",
+        "dist",
+        "playwright-report",
+        "test-results",
+        ".tmp/",
+        ".evidence",
+        ".recovery"
+      ],
+      "candidateDirectories": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\node_modules",
+          "relativePath": "node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\agent-runner\\node_modules",
+          "relativePath": "apps/agent-runner/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\api\\node_modules",
+          "relativePath": "apps/api/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\fake-agent\\node_modules",
+          "relativePath": "apps/fake-agent/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\mcp\\node_modules",
+          "relativePath": "apps/mcp/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\web\\node_modules",
+          "relativePath": "apps/web/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\worker\\node_modules",
+          "relativePath": "apps/worker/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\node_modules",
+          "relativePath": "packages/a2a-adapter/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\node_modules",
+          "relativePath": "packages/agent-sdk/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\node_modules",
+          "relativePath": "packages/artifact-storage/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\node_modules",
+          "relativePath": "packages/config/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\conformance\\node_modules",
+          "relativePath": "packages/conformance/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\node_modules",
+          "relativePath": "packages/contracts/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\node_modules",
+          "relativePath": "packages/db/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\node_modules",
+          "relativePath": "packages/domain/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\node_modules",
+          "relativePath": "packages/git-provider/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\node_modules",
+          "relativePath": "packages/observability/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\node_modules",
+          "relativePath": "packages/recovery/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\node_modules",
+          "relativePath": "packages/ui/node_modules",
+          "category": "dependencies",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm install --frozen-lockfile"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+          "relativePath": "packages/a2a-adapter/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+          "relativePath": "packages/agent-sdk/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+          "relativePath": "packages/artifact-storage/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+          "relativePath": "packages/config/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+          "relativePath": "packages/contracts/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist",
+          "relativePath": "packages/db/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist",
+          "relativePath": "packages/domain/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\dist",
+          "relativePath": "packages/git-provider/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\dist",
+          "relativePath": "packages/observability/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\dist",
+          "relativePath": "packages/recovery/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\dist",
+          "relativePath": "packages/ui/dist",
+          "category": "build-output",
+          "topLevelAttributes": "Directory",
+          "directNodeIsReparsePoint": false,
+          "logicalBytes": null,
+          "recursiveContentsEnumerated": false,
+          "reparseDescendantsChecked": false,
+          "rebuildCommand": "pnpm build"
+        }
+      ],
+      "preservedOutputs": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\web\\playwright-report",
+          "present": true,
+          "decision": "preserve evidence output until run/source/accepted-attachment mapping is closed"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\web\\test-results",
+          "present": true,
+          "decision": "preserve evidence output until run/source/accepted-attachment mapping is closed"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\.tmp",
+          "present": false,
+          "decision": "not a cache candidate; do not infer from absent/present top-level only"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\.evidence",
+          "present": false,
+          "decision": "not a cache candidate; do not infer from absent/present top-level only"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\.recovery",
+          "present": false,
+          "decision": "not a cache candidate; do not infer from absent/present top-level only"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\agent-runner\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\api\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\fake-agent\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\mcp\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\web\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\worker\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\conformance\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\.turbo",
+          "present": true,
+          "category": "turbo-task-log-cache",
+          "decision": "保留：目录内含 lint/test/typecheck 日志；pnpm build 不重建这些日志，准确生成运行/验收映射未闭合。",
+          "currentContentsFromReview": "contains lint/test/typecheck logs"
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\web\\dist",
+          "present": true,
+          "category": "typescript-incremental-cache",
+          "observedContents": "tsconfig.tsbuildinfo only",
+          "decision": "保留：这是类型检查增量缓存，本阶段不清理。",
+          "rebuildCommand": "pnpm --filter @workmesh/web typecheck",
+          "commandImplementation": "apps/web/package.json: typecheck=tsc --noEmit",
+          "configInputs": [
+            "apps/web/tsconfig.json",
+            "tsconfig.base.json",
+            "apps/web/package.json",
+            "apps/web 源码及相关 workspace 源码"
+          ]
+        }
+      ],
+      "currentObservation": "仅根与 apps/*、packages/* 的直接子目录层级检查；未递归清点目录内部文件或测量逻辑字节。",
+      "ownerBuildChatExactCacheReferences": 0,
+      "activeOtherTodoChatExactWorkspaceRootReferences": {
+        "#5": 0,
+        "#9": 0,
+        "#16": 0,
+        "#21": 0
+      },
+      "currentProcessReferences": "未查询",
+      "worktreeLocks": "未查询",
+      "cleanupEligibility": "conditional cache candidates only; no deletion in this stage; confirm active build/process, exact resolved path, links/reparse points, locks, permissions and preserve evidence before one-by-one ordinary non-Force removal.",
+      "proposedOperation": "仅对独立精确目录使用 Remove-Item -LiteralPath <exact path> -Recurse -ErrorAction Stop；若占用/权限/链接检查失败则保留；不得删根workspace、pnpm store、报告或test-results。",
+      "retainedGeneratedOutputs": {
+        "turboTaskLogDirectories": 18,
+        "turboDisposition": "all retained; lint/test/typecheck logs are not rebuilt by pnpm build",
+        "webTypecheckDistDirectories": 1,
+        "webTypecheckDisposition": "all retained; apps/web/dist contains tsconfig.tsbuildinfo only; command/config are recorded per preservedOutputs"
+      },
+      "headIsAncestorOfObservedFetchHeadExitCode": 0
+    }
+  ],
+  "protectedWorkspaces": [
+    "#5 current/history",
+    "#9 current/history",
+    "#16 current/history and dedicated services",
+    "#17 current/history",
+    "#21 current/recovery and old checkpoint"
+  ],
+  "preservedOrUnknown": {
+    "d0Remainder": "D0 .tmp 既有 1,649 files / 196,832,784 B snapshot; six mapped upstream logs are policy-rejected targets; capture/failure/diagnostic files remain per-path from prior inventory.",
+    "g1ParentRemainder": "G1 .tmp outside independent clone had prior inventory 283 files / 49,882,233 B; keep because not fully mapped.",
+    "g1Clone": "Exact prior preflight inventory 1,474 files / 33,450,482 B; one Force dispatch policy rejected; no post-rejection read or retry.",
+    "r1": "R1 .tmp absent in prior inventory; Playwright report/index, last-run and screenshot remain without exact run/case/viewport archive mapping.",
+    "parentWorktrees": "Do not remove any of #3/#10/#11/#18 parents in this stage; ignored/untracked evidence/remaining .tmp or blocked descendants are outside clean git status.",
+    "d1aRawZips": "Preserve sensitive RAW ZIPs in place; do not archive raw contents."
+  },
+  "nextStepGates": [
+    "Before removing any cache directory or D1a audit file, refresh online/running-task state for DarkFlame machine ID 6DOlLniZ0sqBYGHeIhRMq and refresh current Todo/build references. If machine status or the candidate active-build reference cannot be verified, skip that candidate; chat no-hit is not a substitute.",
+    "For each exact candidate independently resolve root and target, check root boundary, target type, ancestor/descendant reparse/link behavior, current process/lock references and permissions; on lock, policy or permission failure stop and retain.",
+    "For node_modules, do not touch the pnpm content-addressed store or external targets; require that any junction/symlink removal affects the link only and not the target. If this cannot be proven, keep the candidate.",
+    "Keep all 36 .turbo task-log directories and both apps/web/dist TypeScript incremental cache directories; they are not in this cleanup candidate batch.",
+    "Do not delete #15 apps/web/playwright-report or test-results; exact run, inputs, failure/acceptance links remain unmapped.",
+    "D1a audit file deletion remains conditional on independent review, fresh DarkFlame machine/task state, existence/hash/path checks and activity checks; its source is already in reachable main, so do not copy an archive.",
+    "Never retry G1/D0/C3 policy-rejected targets, including parent directory deletion, alternate tool, move, permissions or attributes."
+  ],
+  "executionStageResult": {
+    "recordedAtUtc": "2026-10-08T15:52:23.7017345Z",
+    "executionLedger": "ordinary-cleanup-execution-2026-10-08.json",
+    "distDirectoriesRemoved": 28,
+    "distLogicalBytes": 9838798,
+    "distRegularFiles": 752,
+    "distDirectoriesIncludingRoots": 57,
+    "d1aAuditFileRemoved": true,
+    "d1aAuditPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json",
+    "d1aAuditBytes": 316012,
+    "d1aAuditSha256": "5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442",
+    "nodeModulesSkipped": 38,
+    "nodeModulesStillPresent": 38,
+    "reason": "recursive reparse/junction and shared pnpm store boundary not proven",
+    "turboRetained": 36,
+    "turboStillPresent": 36,
+    "webTypecheckCachesRetained": 2,
+    "webTypecheckCachesStillPresent": 2,
+    "protectedTracePresent": true,
+    "rawZipCopiesPresent": 2,
+    "worktreeCount": 21,
+    "prunableWorktrees": 0,
+    "physicalDiskRelease": "unknown",
+    "globalHandles": "not enumerated; openfiles access denied"
+  },
+  "observedFetchHeadObject": {
+    "sha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "exactShaFrom": "mcp__tds__git fetch origin main; rev-parse FETCH_HEAD",
+    "fetchOriginMainSucceeded": true,
+    "independentRemoteMainRefProof": false,
+    "interpretation": "Observed fetched object SHA only; execution-time record lacks an independent remote refs/heads/main binding."
+  },
+  "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "fetchOriginMainSucceeded": true,
+  "independentRemoteMainRefProof": false
+}

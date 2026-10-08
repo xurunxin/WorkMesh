@@ -140,7 +140,12 @@ def main():
     if REPORT['mode'] == 'visual':
         visual_baseline()
         return
-    if REPORT['mode'] == 'targeted':
+    if REPORT['mode'] == 'quota-regression':
+        checks = [
+            ('reset', ['pnpm.cmd', '--filter', '@workmesh/db', 'test:reset']),
+            ('quota-regression', ['pnpm.cmd', '--filter', '@workmesh/api', 'exec', 'vitest', 'run', '--config', '../../vitest.integration.config.ts', 'integration/wecom-notifications.integration.test.ts', '--maxWorkers=1', '-t', 'quota 丢失只触发一次冷却']),
+        ]
+    elif REPORT['mode'] == 'targeted':
         checks = [
             ('unit', ['pnpm.cmd', '--filter', '@workmesh/worker', 'exec', 'vitest', 'run', 'src/wecom-notifications.test.ts', 'src/agent-webhook.test.ts']),
             ('web-unit', ['pnpm.cmd', '--filter', '@workmesh/web', 'exec', 'vitest', 'run', 'app/lib/canonical-route.test.ts']),

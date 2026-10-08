@@ -1,0 +1,1825 @@
+{
+  "startedAt": "2026-10-08T17:12:17.824170+00:00",
+  "inputHead": "61736fa2298279f76642309ee2e2478439258f80",
+  "main": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+  "commands": [
+    {
+      "command": [
+        "node",
+        "docs/plan/c2-wecom/verify-archive.mjs"
+      ],
+      "startedAt": "2026-10-08T17:12:17.824195+00:00",
+      "finishedAt": "2026-10-08T17:12:21.031692+00:00",
+      "exitCode": 0,
+      "stdout": "{\"结果\":\"通过\",\"原始映射\":26,\"ZIP成员\":13,\"清单文件\":34,\"本地链接\":41,\"六原测试\":6,\"九类\":9,\"历史规划矩阵\":\"未实施/未运行；保持冻结来源\",\"当前产品结果\":\"另见 docs/reviews/c2/product-review.md，不由本归档检查判定\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "74f247f9240eaf21e74ef248f71a445c1d4276d7"
+      ],
+      "startedAt": "2026-10-08T17:12:21.033000+00:00",
+      "finishedAt": "2026-10-08T17:12:21.213124+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "5b9c76b5f79917697906520edcd6947bfbfa925f"
+      ],
+      "startedAt": "2026-10-08T17:12:21.213712+00:00",
+      "finishedAt": "2026-10-08T17:12:21.467079+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code",
+        "61736fa2298279f76642309ee2e2478439258f80",
+        "--",
+        ".github",
+        "scripts/ci-policy.mjs",
+        "apps/web",
+        "packages",
+        "SCHEMA.sql",
+        "OPENAPI.yaml",
+        "docs/plan/c2-wecom/implementation-plan.md",
+        "docs/plan/c2-wecom/product-design.md"
+      ],
+      "startedAt": "2026-10-08T17:12:21.468031+00:00",
+      "finishedAt": "2026-10-08T17:12:21.510667+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "source": {
+    "files": 889,
+    "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+    "result": "逐文件工作树与实际暂存 Git blob 核对通过",
+    "index": "tested-source-git-bytes.json"
+  },
+  "archives": [
+    {
+      "path": "docs/reviews/c2/product/20261008T165543Z-057421/raw-logs.zip",
+      "bytes": 9288,
+      "sha256": "61056cb17215878176d13cdf5e17ad8cb57d39f95f0b64903c7cc5429e2fe3b1",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": [
+        {
+          "path": "official-node-SHASUMS256.txt",
+          "crc32": 52944576,
+          "bytes": 3777,
+          "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+        },
+        {
+          "path": "node-version.log",
+          "crc32": 312133389,
+          "bytes": 10,
+          "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+        },
+        {
+          "path": "pnpm-version.log",
+          "crc32": 2947134239,
+          "bytes": 7,
+          "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+        },
+        {
+          "path": "pnpm-child-runtime.log",
+          "crc32": 540658722,
+          "bytes": 160,
+          "sha256": "92d954a058940a174409ba9dccda762cf165c68f72ca74227a9edd150f908df0"
+        },
+        {
+          "path": "start-pg.log",
+          "crc32": 1513093672,
+          "bytes": 65,
+          "sha256": "fdac22c883a113c8e28a2e7d2a58be555ee6b269b9bbc4271538f76a0f189c44"
+        },
+        {
+          "path": "start-redis.log",
+          "crc32": 4145459664,
+          "bytes": 65,
+          "sha256": "f4ef1af5fa0fbd046ce9c946407c2ee0f7d5ad166cd16703ecf674e3d18cf26c"
+        },
+        {
+          "path": "start-s3.log",
+          "crc32": 4287939952,
+          "bytes": 65,
+          "sha256": "bf6b70f434d7fd7b25a1d6d6f8d2f01e05ad7923515f2bcf74a5542cb046f6eb"
+        },
+        {
+          "path": "prepare-s3.log",
+          "crc32": 1405606169,
+          "bytes": 48,
+          "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+        },
+        {
+          "path": "reset.log",
+          "crc32": 3899375691,
+          "bytes": 136,
+          "sha256": "785b2310c85420f49d93820c020a5e7c26737781f018671ae6b1e0f022b60de9"
+        },
+        {
+          "path": "quota-regression.log",
+          "crc32": 3814812612,
+          "bytes": 5322,
+          "sha256": "7be5a730433b22725d4433ade25825d602153b1de8f3e41657eb1a21f9c43f39"
+        },
+        {
+          "path": "service-log-pg.log",
+          "crc32": 3710725206,
+          "bytes": 3228,
+          "sha256": "0bfb053b046f091103cc038f8a88276f97869883fd0fbb6d4b8bfb5c459eb1f7"
+        },
+        {
+          "path": "inspect-pg.log",
+          "crc32": 3513256130,
+          "bytes": 247,
+          "sha256": "11f52628862d61e3cb89c989c4d5e0317e5d3b0a75f30a55db124e106be25f1b"
+        },
+        {
+          "path": "stop-pg.log",
+          "crc32": 1513093672,
+          "bytes": 65,
+          "sha256": "fdac22c883a113c8e28a2e7d2a58be555ee6b269b9bbc4271538f76a0f189c44"
+        },
+        {
+          "path": "remove-pg.log",
+          "crc32": 1513093672,
+          "bytes": 65,
+          "sha256": "fdac22c883a113c8e28a2e7d2a58be555ee6b269b9bbc4271538f76a0f189c44"
+        },
+        {
+          "path": "service-log-redis.log",
+          "crc32": 2882846919,
+          "bytes": 599,
+          "sha256": "fce965f268aaaf0d1cad38d64038dd41f819a15a8d238c8eee44aade24d6243e"
+        },
+        {
+          "path": "inspect-redis.log",
+          "crc32": 1802656671,
+          "bytes": 247,
+          "sha256": "9e04d41ef5fbe8cac67483320ac48cf4b8e5e457379fc7d2b03e94cb466f1bc7"
+        },
+        {
+          "path": "stop-redis.log",
+          "crc32": 4145459664,
+          "bytes": 65,
+          "sha256": "f4ef1af5fa0fbd046ce9c946407c2ee0f7d5ad166cd16703ecf674e3d18cf26c"
+        },
+        {
+          "path": "remove-redis.log",
+          "crc32": 4145459664,
+          "bytes": 65,
+          "sha256": "f4ef1af5fa0fbd046ce9c946407c2ee0f7d5ad166cd16703ecf674e3d18cf26c"
+        },
+        {
+          "path": "service-log-s3.log",
+          "crc32": 3126902235,
+          "bytes": 104,
+          "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+        },
+        {
+          "path": "inspect-s3.log",
+          "crc32": 2224702631,
+          "bytes": 1079,
+          "sha256": "e28b67f80a428cacf34497a73db75695aab408254b4cdc06dae2bec30950b39e"
+        },
+        {
+          "path": "stop-s3.log",
+          "crc32": 4287939952,
+          "bytes": 65,
+          "sha256": "bf6b70f434d7fd7b25a1d6d6f8d2f01e05ad7923515f2bcf74a5542cb046f6eb"
+        },
+        {
+          "path": "remove-s3.log",
+          "crc32": 4287939952,
+          "bytes": 65,
+          "sha256": "bf6b70f434d7fd7b25a1d6d6f8d2f01e05ad7923515f2bcf74a5542cb046f6eb"
+        }
+      ]
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165543Z-057421/ui-evidence.zip",
+      "bytes": 589,
+      "sha256": "9cd737d23ef5a478a77d3a2f6ec1cf7ac3254617e63e31e7f510c1ef1d67ac79",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": [
+        {
+          "path": "prepare-s3.mjs",
+          "crc32": 2344195723,
+          "bytes": 820,
+          "sha256": "57aebf0f8c2217864c5e2dc334732fefd29b8ecd309cd63969812fac7315fd1e"
+        }
+      ]
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165614Z-311be3/raw-logs.zip",
+      "bytes": 9320,
+      "sha256": "340a134159af7982e143af890157e5235dcad0ae562bfe55874af63e5bccb820",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": [
+        {
+          "path": "official-node-SHASUMS256.txt",
+          "crc32": 52944576,
+          "bytes": 3777,
+          "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+        },
+        {
+          "path": "node-version.log",
+          "crc32": 312133389,
+          "bytes": 10,
+          "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+        },
+        {
+          "path": "pnpm-version.log",
+          "crc32": 2947134239,
+          "bytes": 7,
+          "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+        },
+        {
+          "path": "pnpm-child-runtime.log",
+          "crc32": 3861215407,
+          "bytes": 160,
+          "sha256": "35358a5da02cdd271f2f238751abb6b45d7210fe0bee41d734eac08a2a3d2a9b"
+        },
+        {
+          "path": "start-pg.log",
+          "crc32": 826645121,
+          "bytes": 65,
+          "sha256": "36abd67ae253bdd977fc82b7549d016f9d35f15318f9f282046ebfb6726147af"
+        },
+        {
+          "path": "start-redis.log",
+          "crc32": 3659247961,
+          "bytes": 65,
+          "sha256": "7210209e2a40f1bd17a56dd16ba62c25c1963a24d98ac2119e1f571383b9d75a"
+        },
+        {
+          "path": "start-s3.log",
+          "crc32": 2746875280,
+          "bytes": 65,
+          "sha256": "44739f14f7b36a10ae44acd0a862ca8bf2392413aef9723d268fcbbc98403c50"
+        },
+        {
+          "path": "prepare-s3.log",
+          "crc32": 1405606169,
+          "bytes": 48,
+          "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+        },
+        {
+          "path": "reset.log",
+          "crc32": 3899375691,
+          "bytes": 136,
+          "sha256": "785b2310c85420f49d93820c020a5e7c26737781f018671ae6b1e0f022b60de9"
+        },
+        {
+          "path": "quota-regression.log",
+          "crc32": 1799751954,
+          "bytes": 5322,
+          "sha256": "a9a19b169573b346ce761b5e7ed2d6726e2091c44a10c45abc07d7d3a7761dfa"
+        },
+        {
+          "path": "service-log-pg.log",
+          "crc32": 2850346221,
+          "bytes": 3311,
+          "sha256": "a2c9e109f22a9aaefbac3ccaddcec66b568d994dcc6cc944615eba95f1f67f12"
+        },
+        {
+          "path": "inspect-pg.log",
+          "crc32": 2031963487,
+          "bytes": 247,
+          "sha256": "a6f7b4626cb653dbd7c112087f737fd6317d88da70cdb626646ee2411ceaae00"
+        },
+        {
+          "path": "stop-pg.log",
+          "crc32": 826645121,
+          "bytes": 65,
+          "sha256": "36abd67ae253bdd977fc82b7549d016f9d35f15318f9f282046ebfb6726147af"
+        },
+        {
+          "path": "remove-pg.log",
+          "crc32": 826645121,
+          "bytes": 65,
+          "sha256": "36abd67ae253bdd977fc82b7549d016f9d35f15318f9f282046ebfb6726147af"
+        },
+        {
+          "path": "service-log-redis.log",
+          "crc32": 782242652,
+          "bytes": 599,
+          "sha256": "f69fe9019cd0248e412ea5f960e9f3d7006ad599f26e957659973107b1aa0bc9"
+        },
+        {
+          "path": "inspect-redis.log",
+          "crc32": 926715791,
+          "bytes": 247,
+          "sha256": "11e34c0090bc2d95105229df4ed4db0c2cacf715a7bded5c72752f0639f61339"
+        },
+        {
+          "path": "stop-redis.log",
+          "crc32": 3659247961,
+          "bytes": 65,
+          "sha256": "7210209e2a40f1bd17a56dd16ba62c25c1963a24d98ac2119e1f571383b9d75a"
+        },
+        {
+          "path": "remove-redis.log",
+          "crc32": 3659247961,
+          "bytes": 65,
+          "sha256": "7210209e2a40f1bd17a56dd16ba62c25c1963a24d98ac2119e1f571383b9d75a"
+        },
+        {
+          "path": "service-log-s3.log",
+          "crc32": 3126902235,
+          "bytes": 104,
+          "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+        },
+        {
+          "path": "inspect-s3.log",
+          "crc32": 1587345775,
+          "bytes": 1079,
+          "sha256": "2b60a74d1397a503f1281e0fe146725301e548b3070f20c3104b051a29733cb2"
+        },
+        {
+          "path": "stop-s3.log",
+          "crc32": 2746875280,
+          "bytes": 65,
+          "sha256": "44739f14f7b36a10ae44acd0a862ca8bf2392413aef9723d268fcbbc98403c50"
+        },
+        {
+          "path": "remove-s3.log",
+          "crc32": 2746875280,
+          "bytes": 65,
+          "sha256": "44739f14f7b36a10ae44acd0a862ca8bf2392413aef9723d268fcbbc98403c50"
+        }
+      ]
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165614Z-311be3/ui-evidence.zip",
+      "bytes": 589,
+      "sha256": "b4dd1c937a9d33e4ebe57536bdccc33e9155548e1442995e4dc29794ebd7f874",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": [
+        {
+          "path": "prepare-s3.mjs",
+          "crc32": 2344195723,
+          "bytes": 820,
+          "sha256": "57aebf0f8c2217864c5e2dc334732fefd29b8ecd309cd63969812fac7315fd1e"
+        }
+      ]
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165652Z-58c2fe/raw-logs.zip",
+      "bytes": 9345,
+      "sha256": "86b652cd748d227061809c5de9521ab64e24ab00df02b43630210f8b88773e96",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": [
+        {
+          "path": "official-node-SHASUMS256.txt",
+          "crc32": 52944576,
+          "bytes": 3777,
+          "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+        },
+        {
+          "path": "node-version.log",
+          "crc32": 312133389,
+          "bytes": 10,
+          "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+        },
+        {
+          "path": "pnpm-version.log",
+          "crc32": 2947134239,
+          "bytes": 7,
+          "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+        },
+        {
+          "path": "pnpm-child-runtime.log",
+          "crc32": 1771167290,
+          "bytes": 160,
+          "sha256": "7ead7b330e3bdc23baf2f6e5386509042795847340861b5a745b3b6839d82a63"
+        },
+        {
+          "path": "start-pg.log",
+          "crc32": 2665056157,
+          "bytes": 65,
+          "sha256": "bfadf9620830804d842a79961d236be65323eeb63eff6dd6dc9274ce9d20d2a0"
+        },
+        {
+          "path": "start-redis.log",
+          "crc32": 3901555282,
+          "bytes": 65,
+          "sha256": "844d5f8849569b385d449b507e7f88860f392d439094bd1f95fe99712dbe660d"
+        },
+        {
+          "path": "start-s3.log",
+          "crc32": 161355628,
+          "bytes": 65,
+          "sha256": "405bb31eb0cea110d15a0b9d78ccd04252f6dba645e7326e7e073d184880e1f9"
+        },
+        {
+          "path": "prepare-s3.log",
+          "crc32": 1405606169,
+          "bytes": 48,
+          "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+        },
+        {
+          "path": "reset.log",
+          "crc32": 3899375691,
+          "bytes": 136,
+          "sha256": "785b2310c85420f49d93820c020a5e7c26737781f018671ae6b1e0f022b60de9"
+        },
+        {
+          "path": "quota-regression.log",
+          "crc32": 3166623160,
+          "bytes": 5372,
+          "sha256": "59cbbf5ddc75c6c02a3956ef884b3772a7a5007fe8ef99595a8ce6caec641bd2"
+        },
+        {
+          "path": "service-log-pg.log",
+          "crc32": 2955220682,
+          "bytes": 3311,
+          "sha256": "9a7f527a074f68d37ebefd22eddc14f547d4bb5b2e45b4e7c1bc81099c10cdac"
+        },
+        {
+          "path": "inspect-pg.log",
+          "crc32": 3994928817,
+          "bytes": 247,
+          "sha256": "5c5841003a46bf539f66181f2ade126e64fdd7eed2c5b7689d1e0eb1d4d41784"
+        },
+        {
+          "path": "stop-pg.log",
+          "crc32": 2665056157,
+          "bytes": 65,
+          "sha256": "bfadf9620830804d842a79961d236be65323eeb63eff6dd6dc9274ce9d20d2a0"
+        },
+        {
+          "path": "remove-pg.log",
+          "crc32": 2665056157,
+          "bytes": 65,
+          "sha256": "bfadf9620830804d842a79961d236be65323eeb63eff6dd6dc9274ce9d20d2a0"
+        },
+        {
+          "path": "service-log-redis.log",
+          "crc32": 1545818902,
+          "bytes": 599,
+          "sha256": "5e65791d31887d23f917c639c3b6b85508e1659544c6879f96328f22fee0385f"
+        },
+        {
+          "path": "inspect-redis.log",
+          "crc32": 1914755592,
+          "bytes": 247,
+          "sha256": "c76808ccf6f3b8056f4235156ebda3f20950aee216d1747701db5d860ae570e5"
+        },
+        {
+          "path": "stop-redis.log",
+          "crc32": 3901555282,
+          "bytes": 65,
+          "sha256": "844d5f8849569b385d449b507e7f88860f392d439094bd1f95fe99712dbe660d"
+        },
+        {
+          "path": "remove-redis.log",
+          "crc32": 3901555282,
+          "bytes": 65,
+          "sha256": "844d5f8849569b385d449b507e7f88860f392d439094bd1f95fe99712dbe660d"
+        },
+        {
+          "path": "service-log-s3.log",
+          "crc32": 3126902235,
+          "bytes": 104,
+          "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+        },
+        {
+          "path": "inspect-s3.log",
+          "crc32": 3787578065,
+          "bytes": 1079,
+          "sha256": "be8fb98a79cd997fd4bce3e7ced306c705ed849969c20bc5cdd488e9bee89c9c"
+        },
+        {
+          "path": "stop-s3.log",
+          "crc32": 161355628,
+          "bytes": 65,
+          "sha256": "405bb31eb0cea110d15a0b9d78ccd04252f6dba645e7326e7e073d184880e1f9"
+        },
+        {
+          "path": "remove-s3.log",
+          "crc32": 161355628,
+          "bytes": 65,
+          "sha256": "405bb31eb0cea110d15a0b9d78ccd04252f6dba645e7326e7e073d184880e1f9"
+        }
+      ]
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165652Z-58c2fe/ui-evidence.zip",
+      "bytes": 589,
+      "sha256": "fcc5593da049dfd6466987b35402c303934333ce09d152171017af304d9b878b",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": [
+        {
+          "path": "prepare-s3.mjs",
+          "crc32": 2344195723,
+          "bytes": 820,
+          "sha256": "57aebf0f8c2217864c5e2dc334732fefd29b8ecd309cd63969812fac7315fd1e"
+        }
+      ]
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165722Z-99576c/raw-logs.zip",
+      "bytes": 7964,
+      "sha256": "09f56f05019f7f6d0a16a9e1ea4ead2b1a3eece88f12f795ba45f14168ea14c7",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": [
+        {
+          "path": "official-node-SHASUMS256.txt",
+          "crc32": 52944576,
+          "bytes": 3777,
+          "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+        },
+        {
+          "path": "node-version.log",
+          "crc32": 312133389,
+          "bytes": 10,
+          "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+        },
+        {
+          "path": "pnpm-version.log",
+          "crc32": 2947134239,
+          "bytes": 7,
+          "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+        },
+        {
+          "path": "pnpm-child-runtime.log",
+          "crc32": 1891089446,
+          "bytes": 160,
+          "sha256": "ae9575b80fb0dcfd9a1b8ff46f35ed5274b44d8b8ac2cbe012bd9ae361b93684"
+        },
+        {
+          "path": "start-pg.log",
+          "crc32": 2490131753,
+          "bytes": 65,
+          "sha256": "e95ec2abd0e9241e792da61de91513a161a1a83168fe7d9f6bb52d845710e717"
+        },
+        {
+          "path": "start-redis.log",
+          "crc32": 3141130754,
+          "bytes": 65,
+          "sha256": "292fa3982108b1e5a9880b376c9555f0dc75144b6f10403cd14f16fd7cdb4d7f"
+        },
+        {
+          "path": "start-s3.log",
+          "crc32": 2253019448,
+          "bytes": 65,
+          "sha256": "aaefd6530d9f3d80cac818d4230cf381f23f12cde708d9b25ff96c33db9a3f84"
+        },
+        {
+          "path": "prepare-s3.log",
+          "crc32": 1405606169,
+          "bytes": 48,
+          "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+        },
+        {
+          "path": "reset.log",
+          "crc32": 3899375691,
+          "bytes": 136,
+          "sha256": "785b2310c85420f49d93820c020a5e7c26737781f018671ae6b1e0f022b60de9"
+        },
+        {
+          "path": "quota-regression.log",
+          "crc32": 4219179958,
+          "bytes": 376,
+          "sha256": "c22ca7244a3d980a9b064ed51db852e445ffc440b766d955aec3e4a07a7257f7"
+        },
+        {
+          "path": "service-log-pg.log",
+          "crc32": 4162463247,
+          "bytes": 3311,
+          "sha256": "a250d21d1dc3dbe291358e48006f2ff4667d76fe47198480c44d328816b957fa"
+        },
+        {
+          "path": "inspect-pg.log",
+          "crc32": 1490136608,
+          "bytes": 247,
+          "sha256": "a13f7724f6fe4607a1222c50873c403b9584b188019eb6786af3c7f22953e4dc"
+        },
+        {
+          "path": "stop-pg.log",
+          "crc32": 2490131753,
+          "bytes": 65,
+          "sha256": "e95ec2abd0e9241e792da61de91513a161a1a83168fe7d9f6bb52d845710e717"
+        },
+        {
+          "path": "remove-pg.log",
+          "crc32": 2490131753,
+          "bytes": 65,
+          "sha256": "e95ec2abd0e9241e792da61de91513a161a1a83168fe7d9f6bb52d845710e717"
+        },
+        {
+          "path": "service-log-redis.log",
+          "crc32": 532028540,
+          "bytes": 599,
+          "sha256": "8c105fa125ec33c5d4aa2fce224ddbe121abf82777c62dca251ce478bfc22230"
+        },
+        {
+          "path": "inspect-redis.log",
+          "crc32": 2789500059,
+          "bytes": 247,
+          "sha256": "e4964700eef8b9a41472e755bdf7f6380b127e2aba56b88c2cef742646daf3dd"
+        },
+        {
+          "path": "stop-redis.log",
+          "crc32": 3141130754,
+          "bytes": 65,
+          "sha256": "292fa3982108b1e5a9880b376c9555f0dc75144b6f10403cd14f16fd7cdb4d7f"
+        },
+        {
+          "path": "remove-redis.log",
+          "crc32": 3141130754,
+          "bytes": 65,
+          "sha256": "292fa3982108b1e5a9880b376c9555f0dc75144b6f10403cd14f16fd7cdb4d7f"
+        },
+        {
+          "path": "service-log-s3.log",
+          "crc32": 3126902235,
+          "bytes": 104,
+          "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+        },
+        {
+          "path": "inspect-s3.log",
+          "crc32": 18359688,
+          "bytes": 1079,
+          "sha256": "77ab0ea53477d8dfb8684b195890b300a608f510e383730d21590dbd1a1ce5c0"
+        },
+        {
+          "path": "stop-s3.log",
+          "crc32": 2253019448,
+          "bytes": 65,
+          "sha256": "aaefd6530d9f3d80cac818d4230cf381f23f12cde708d9b25ff96c33db9a3f84"
+        },
+        {
+          "path": "remove-s3.log",
+          "crc32": 2253019448,
+          "bytes": 65,
+          "sha256": "aaefd6530d9f3d80cac818d4230cf381f23f12cde708d9b25ff96c33db9a3f84"
+        }
+      ]
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165722Z-99576c/ui-evidence.zip",
+      "bytes": 589,
+      "sha256": "54c3e9ebd4ba2f6cd0b1e8a5f3d0e6942eee27bc85c211272402f83dd3df311d",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": [
+        {
+          "path": "prepare-s3.mjs",
+          "crc32": 2344195723,
+          "bytes": 820,
+          "sha256": "57aebf0f8c2217864c5e2dc334732fefd29b8ecd309cd63969812fac7315fd1e"
+        }
+      ]
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165750Z-622d5c/raw-logs.zip",
+      "bytes": 22,
+      "sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": []
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165750Z-622d5c/ui-evidence.zip",
+      "bytes": 22,
+      "sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": []
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165759Z-568467/raw-logs.zip",
+      "bytes": 362674,
+      "sha256": "3d22f60626c54e39148d3e2a2bdd343b31a2a972796dac0e6479467665f078d4",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": [
+        {
+          "path": "official-node-SHASUMS256.txt",
+          "crc32": 52944576,
+          "bytes": 3777,
+          "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+        },
+        {
+          "path": "node-version.log",
+          "crc32": 312133389,
+          "bytes": 10,
+          "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+        },
+        {
+          "path": "pnpm-version.log",
+          "crc32": 2947134239,
+          "bytes": 7,
+          "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+        },
+        {
+          "path": "pnpm-child-runtime.log",
+          "crc32": 2505197729,
+          "bytes": 160,
+          "sha256": "6d121a6a48ebd573c352196b400d88a2162753548f6cd0b50637a55fa46dff38"
+        },
+        {
+          "path": "start-pg.log",
+          "crc32": 848989513,
+          "bytes": 65,
+          "sha256": "b9307eee7e13dba26b90b2566b01785b678122a3602f75ecf0a8fb5e4e5a6526"
+        },
+        {
+          "path": "start-redis.log",
+          "crc32": 1699177950,
+          "bytes": 65,
+          "sha256": "2fb3a301b7b78dccef5c54c3380a3b1b0827239bc844b0cf2df4a0226d0e4029"
+        },
+        {
+          "path": "start-s3.log",
+          "crc32": 1928199740,
+          "bytes": 65,
+          "sha256": "e19f6478a1c0fa2cb2d5d8d1014719a14d6e58904e65b0f5995fcdd2a36fe647"
+        },
+        {
+          "path": "prepare-s3.log",
+          "crc32": 1405606169,
+          "bytes": 48,
+          "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+        },
+        {
+          "path": "lint.log",
+          "crc32": 1494647476,
+          "bytes": 5976,
+          "sha256": "5176d59662e16f70c9b079529174d81e8703cf0ee820bda12cb96759d3e2b690"
+        },
+        {
+          "path": "typecheck.log",
+          "crc32": 1824796790,
+          "bytes": 6531,
+          "sha256": "16206b8baed5a14f9ca42216cc3e3292385741691f23b81fcac9766ec15ba21a"
+        },
+        {
+          "path": "api-unit-sequential.log",
+          "crc32": 3888480176,
+          "bytes": 6636,
+          "sha256": "67328ba8fe836e57c8075b37cb0d87f43ce5a4e4b99d34d8a8376dc37129c023"
+        },
+        {
+          "path": "web-unit-sequential.log",
+          "crc32": 3116181968,
+          "bytes": 26077,
+          "sha256": "ffa10ea74043b55cf9f61d545f7998bafa81e1ecbacfd1a4a55b72b584634aef"
+        },
+        {
+          "path": "test.log",
+          "crc32": 2927834097,
+          "bytes": 58169,
+          "sha256": "f949a79bb6d185e898d647cb98608e89827ce1c96c64ab63b73ff15eb1330a33"
+        },
+        {
+          "path": "test-integration.log",
+          "crc32": 1458950630,
+          "bytes": 1059371,
+          "sha256": "32d18a57756c9964d62575a95a850f8915c32a4dc1a52e5dac84346e7cdda7e1"
+        },
+        {
+          "path": "test-e2e.log",
+          "crc32": 1078061119,
+          "bytes": 1870183,
+          "sha256": "b1bb1195eaeb182fd87e89e658d1fb0fef3595af0c3f4f46d672f64e9d10d895"
+        },
+        {
+          "path": "service-log-pg.log",
+          "crc32": 352686174,
+          "bytes": 75753,
+          "sha256": "deaa1cdc287a01bbfb8e57ffdc89ebf9e1c47afe028d1acfa628f9d6fb56984f"
+        },
+        {
+          "path": "inspect-pg.log",
+          "crc32": 983947834,
+          "bytes": 247,
+          "sha256": "349d10bf55220c020410c08a6a7fe1427ec82e03c42144ebd95ce08e9a8e2d32"
+        },
+        {
+          "path": "stop-pg.log",
+          "crc32": 848989513,
+          "bytes": 65,
+          "sha256": "b9307eee7e13dba26b90b2566b01785b678122a3602f75ecf0a8fb5e4e5a6526"
+        },
+        {
+          "path": "remove-pg.log",
+          "crc32": 848989513,
+          "bytes": 65,
+          "sha256": "b9307eee7e13dba26b90b2566b01785b678122a3602f75ecf0a8fb5e4e5a6526"
+        },
+        {
+          "path": "service-log-redis.log",
+          "crc32": 3303006528,
+          "bytes": 1291,
+          "sha256": "306e6f6189d701c1dc6d5a38e4c26f345f7ef78900c6693c70b13c555d3ef735"
+        },
+        {
+          "path": "inspect-redis.log",
+          "crc32": 1051557742,
+          "bytes": 247,
+          "sha256": "a653a808a6d2d82e48da88517f8c5860c27c6d7a1f1ed68495770d1a3a0d4d0f"
+        },
+        {
+          "path": "stop-redis.log",
+          "crc32": 1699177950,
+          "bytes": 65,
+          "sha256": "2fb3a301b7b78dccef5c54c3380a3b1b0827239bc844b0cf2df4a0226d0e4029"
+        },
+        {
+          "path": "remove-redis.log",
+          "crc32": 1699177950,
+          "bytes": 65,
+          "sha256": "2fb3a301b7b78dccef5c54c3380a3b1b0827239bc844b0cf2df4a0226d0e4029"
+        },
+        {
+          "path": "service-log-s3.log",
+          "crc32": 3126902235,
+          "bytes": 104,
+          "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+        },
+        {
+          "path": "inspect-s3.log",
+          "crc32": 174692458,
+          "bytes": 1079,
+          "sha256": "3857eba92262217dd29135555c3f6e0c200c45eb2b31144f32d216af08ecad9d"
+        },
+        {
+          "path": "stop-s3.log",
+          "crc32": 1928199740,
+          "bytes": 65,
+          "sha256": "e19f6478a1c0fa2cb2d5d8d1014719a14d6e58904e65b0f5995fcdd2a36fe647"
+        },
+        {
+          "path": "remove-s3.log",
+          "crc32": 1928199740,
+          "bytes": 65,
+          "sha256": "e19f6478a1c0fa2cb2d5d8d1014719a14d6e58904e65b0f5995fcdd2a36fe647"
+        }
+      ]
+    },
+    {
+      "path": "docs/reviews/c2/product/20261008T165759Z-568467/ui-evidence.zip",
+      "bytes": 4208094,
+      "sha256": "0af0e8346501aa0b1c0e83d2562ada44b396755a3e262be5ff0d31aa44c0c74f",
+      "crc": "通过",
+      "gitBlobIdentity": true,
+      "members": [
+        {
+          "path": "playwright/root-mixed/html-report/data/14cf713a728cf670bcd36f6ab53dd62f9682d1a0.png",
+          "crc32": 2835465619,
+          "bytes": 127917,
+          "sha256": "e67aa5b2b8aabaef71a65e18f3689d379fd237c274807a760772291a4feda81b"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/2200047ac8ca6432207efc05c3d8f1086788bde5.png",
+          "crc32": 1560689438,
+          "bytes": 51315,
+          "sha256": "c3b976b134ca18568637b8d45f273f9364c7ab368f98beb0e0b44efa5e01b611"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/5396ec7c422d8953ecaebf6837e3f5cf86cf1ad1.png",
+          "crc32": 854302545,
+          "bytes": 51445,
+          "sha256": "98ef384da3afccd5d89e03be0eee01c2c1b715b467071266e864363d25c2baed"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/63c232d241b5598b65436fc7cc8045d008850af7.png",
+          "crc32": 3155464086,
+          "bytes": 59395,
+          "sha256": "127542c99ae10cdc6ce5c8b88d38183eacbc938140d5ed005806fa2e45162a4e"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/65fb971a21e874708511b8c70954a90fb991462f.png",
+          "crc32": 354618790,
+          "bytes": 203506,
+          "sha256": "8b6df08bb5d64f7cab18669e3b2421561b84d14924c1bbd94da1fd0f1682279c"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/7ac3a6d0b37bb640ad1f54879a3ffb1714513c7a.png",
+          "crc32": 3121367427,
+          "bytes": 166553,
+          "sha256": "63828db1ec66a0a4dce58d2f0ba14004b78108d1f57c33054320db9adfafb9f5"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/91d94bd1a18bdd7fe09e67e333f204a67da83118.png",
+          "crc32": 1502452924,
+          "bytes": 128914,
+          "sha256": "9464865caf41f3993be38099b40ac99701387d271cd68ef9ccc1785b9e5cdffb"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/98dabc03006aeaf08584c245d98bb73d8b657c11.png",
+          "crc32": 3516838036,
+          "bytes": 63750,
+          "sha256": "8173e938cac7544d6da4cf851235b6aaab52d8e01ea44eff7c3f7c26519eb8cd"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/a9a524370ecb2f055a582c73f9f526b31e052b1f.png",
+          "crc32": 1766274317,
+          "bytes": 119599,
+          "sha256": "0c3fc40edc61abe25331b851161c59be6824f43a3e333fbefb2baa6eb4999932"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/bd680225420eb0aa514ad9ffa603a32d0bdb4382.png",
+          "crc32": 461426268,
+          "bytes": 199803,
+          "sha256": "de181a9932159e7fbe6be0275acb69ee843de3ee5555a7948219100adb00d434"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/c9efa842b44f8a22f45da9a574376a3fce215fd5.png",
+          "crc32": 3081444873,
+          "bytes": 46099,
+          "sha256": "4330f3de676acea8044f0cbc49a95eb4fa98c33045f6fd84ff2b54b95a28e0c8"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/cbbb6e16dcdb58a03ec5a5ee66191e9ac40f4e4e.png",
+          "crc32": 3338044725,
+          "bytes": 85341,
+          "sha256": "b85cdcb9859a4a93d1697d6769ff4b02e6400d09143a5b9265145a970aaad91a"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/ebe0a371915b823a4afd17fa470fe22d23237f14.png",
+          "crc32": 2619688632,
+          "bytes": 184499,
+          "sha256": "9a4014e4ea70388d2d305b7a7efaaa229ae05c766458d98573e383544c426d26"
+        },
+        {
+          "path": "playwright/root-mixed/output/actionable-collaboration-q-9c8c8--URLs-and-responsive-layout-authenticated/actionable-collaboration-queues.png",
+          "crc32": 184490981,
+          "bytes": 157188,
+          "sha256": "ce24cef6bb6976f50fd778c196cb53459b67558a8bb51e9bc36f01b2f0a5bd2b"
+        },
+        {
+          "path": "playwright/root-mixed/output/agent-governed-controls-im-1e9c5-d-requires-explicit-reissue-authenticated/governed-stop-stale-390.png",
+          "crc32": 764066968,
+          "bytes": 57413,
+          "sha256": "bbf640ac3be6bb561c7fd47fca9942cce632a0869907c2aea2ee660b8ee14976"
+        },
+        {
+          "path": "playwright/root-mixed/output/agent-governed-controls-re-c473d-o-the-current-Plan-revision-authenticated/governed-steer-1440.png",
+          "crc32": 347670184,
+          "bytes": 153727,
+          "sha256": "686ae39874248bcae7e2c9b8e6235eeee605014b8075723cf7de4c516d8a13f2"
+        },
+        {
+          "path": "playwright/root-mixed/output/agent-governed-controls-re-d819a-result-Session-exactly-once-authenticated/governed-retry-768.png",
+          "crc32": 22366300,
+          "bytes": 101505,
+          "sha256": "b56eb6be615e736bba9e95eaf0c26978f48b5dc90feb084068af62ebebcbd674"
+        },
+        {
+          "path": "playwright/root-mixed/output/agent-run-timeline-Run-Tim-a5d4f-ory-and-responsive-evidence-authenticated/agent-run-timeline-390.png",
+          "crc32": 2818381237,
+          "bytes": 48905,
+          "sha256": "0bfe34417a761e75d66a869fb4cf369bc3a5332575338a0def0dcca921386160"
+        },
+        {
+          "path": "playwright/root-mixed/output/attention-center-Attention-0296e-s-and-blocks-stale-recovery-authenticated/attention-center.png",
+          "crc32": 3477932200,
+          "bytes": 112444,
+          "sha256": "88127edcdcf7b4c10f43cf5140807a041995f53eef298e80efff7946c6ca89a0"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-1440x1000-authenticated/attachments/project-rail-1440x1000-screenshot-cf8819a7e9dd171df25684d0d3da1ce55860688a.png",
+          "crc32": 461426268,
+          "bytes": 199803,
+          "sha256": "de181a9932159e7fbe6be0275acb69ee843de3ee5555a7948219100adb00d434"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-1440x900-authenticated/attachments/project-rail-1440x900-screenshot-e4bbfa892b1c7853b64ff65ef081c899dc83c468.png",
+          "crc32": 2619688632,
+          "bytes": 184499,
+          "sha256": "9a4014e4ea70388d2d305b7a7efaaa229ae05c766458d98573e383544c426d26"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-1920x1080-authenticated/attachments/project-rail-1920x1080-screenshot-fa0f7e71ace5ef0ad7c5f9300937a02df59f3790.png",
+          "crc32": 354618790,
+          "bytes": 203506,
+          "sha256": "8b6df08bb5d64f7cab18669e3b2421561b84d14924c1bbd94da1fd0f1682279c"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-320x800-authenticated/attachments/project-rail-320x800-screenshot-69ad9da8e58cceb47368569cf209f6af78a7eed6.png",
+          "crc32": 854302545,
+          "bytes": 51445,
+          "sha256": "98ef384da3afccd5d89e03be0eee01c2c1b715b467071266e864363d25c2baed"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-375x812-authenticated/attachments/project-rail-375x812-screenshot-9a77f54a96e21aac7bee7336cb87c83946cb65ac.png",
+          "crc32": 3155464086,
+          "bytes": 59395,
+          "sha256": "127542c99ae10cdc6ce5c8b88d38183eacbc938140d5ed005806fa2e45162a4e"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-390x844-authenticated/attachments/project-rail-390x844-screenshot-fe940f3db6025dd600df8ae3938e007efe5617dc.png",
+          "crc32": 3516838036,
+          "bytes": 63750,
+          "sha256": "8173e938cac7544d6da4cf851235b6aaab52d8e01ea44eff7c3f7c26519eb8cd"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-760x900-authenticated/attachments/project-rail-760x900-screenshot-40b8954a42714834474bea85f455589e5ae98523.png",
+          "crc32": 3338044725,
+          "bytes": 85341,
+          "sha256": "b85cdcb9859a4a93d1697d6769ff4b02e6400d09143a5b9265145a970aaad91a"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-761x900-authenticated/attachments/project-rail-761x900-screenshot-4cef3d89f6e9575bd5d58b49a127c20047101e92.png",
+          "crc32": 1766274317,
+          "bytes": 119599,
+          "sha256": "0c3fc40edc61abe25331b851161c59be6824f43a3e333fbefb2baa6eb4999932"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-768x1024-authenticated/attachments/project-rail-768x1024-screenshot-e616266e7a75adaceb25948266949e1b115d11bf.png",
+          "crc32": 1502452924,
+          "bytes": 128914,
+          "sha256": "9464865caf41f3993be38099b40ac99701387d271cd68ef9ccc1785b9e5cdffb"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6117c-oarding-geometry-at-1440-en-authenticated/attachments/task-5-5-connect-1440-en-f2b448168faad4151a2e722cb55687d19bc844e3.png",
+          "crc32": 2835465619,
+          "bytes": 127917,
+          "sha256": "e67aa5b2b8aabaef71a65e18f3689d379fd237c274807a760772291a4feda81b"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6117c-oarding-geometry-at-1440-en-authenticated/task-5.5-connect-1440-en.png",
+          "crc32": 2835465619,
+          "bytes": 127917,
+          "sha256": "e67aa5b2b8aabaef71a65e18f3689d379fd237c274807a760772291a4feda81b"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6ceac-boarding-geometry-at-390-zh-authenticated/attachments/task-5-5-connect-390-zh-5270800605f617d9a70ec382a9177197e790b50b.png",
+          "crc32": 3081444873,
+          "bytes": 46099,
+          "sha256": "4330f3de676acea8044f0cbc49a95eb4fa98c33045f6fd84ff2b54b95a28e0c8"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6ceac-boarding-geometry-at-390-zh-authenticated/task-5.5-connect-390-zh.png",
+          "crc32": 3081444873,
+          "bytes": 46099,
+          "sha256": "4330f3de676acea8044f0cbc49a95eb4fa98c33045f6fd84ff2b54b95a28e0c8"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8c2ed-boarding-geometry-at-390-en-authenticated/attachments/task-5-5-connect-390-en-e41d56679f9e1ba86be5982bc71dca3b5d792b01.png",
+          "crc32": 1560689438,
+          "bytes": 51315,
+          "sha256": "c3b976b134ca18568637b8d45f273f9364c7ab368f98beb0e0b44efa5e01b611"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8c2ed-boarding-geometry-at-390-en-authenticated/task-5.5-connect-390-en.png",
+          "crc32": 1560689438,
+          "bytes": 51315,
+          "sha256": "c3b976b134ca18568637b8d45f273f9364c7ab368f98beb0e0b44efa5e01b611"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8ef46-oarding-geometry-at-1920-en-authenticated/attachments/task-5-5-connect-1920-en-2acc5d9b0bb820d8d1525e4e0d5a1c9753903be2.png",
+          "crc32": 3121367427,
+          "bytes": 166553,
+          "sha256": "63828db1ec66a0a4dce58d2f0ba14004b78108d1f57c33054320db9adfafb9f5"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8ef46-oarding-geometry-at-1920-en-authenticated/task-5.5-connect-1920-en.png",
+          "crc32": 3121367427,
+          "bytes": 166553,
+          "sha256": "63828db1ec66a0a4dce58d2f0ba14004b78108d1f57c33054320db9adfafb9f5"
+        },
+        {
+          "path": "playwright/root-mixed/output/recovery-center-Recovery-C-50707-state-and-responsive-layout-authenticated/recovery-center.png",
+          "crc32": 647168830,
+          "bytes": 135109,
+          "sha256": "7ec12a9329126a24bed203f9c443f72caa5ecbd28b88c11ed01ff3e6cdcb17c0"
+        },
+        {
+          "path": "playwright/root-mixed/output/wecom-notifications-C2-登录--a79d8-深链、当前-Human-重鉴权、转发无权及网页故障回退-authenticated/c2-after-authorized-login.png",
+          "crc32": 3089628071,
+          "bytes": 123079,
+          "sha256": "97fbf0068ca321f7fe0dd81a7d03b394218ee4c06770ee370d3180096735fae3"
+        },
+        {
+          "path": "playwright/root-mixed/output/wecom-notifications-C2-登录--a79d8-深链、当前-Human-重鉴权、转发无权及网页故障回退-authenticated/c2-before-login.png",
+          "crc32": 1661800916,
+          "bytes": 33904,
+          "sha256": "7e84d15839e58a25b016f383bc61449499b9fc994fbf3d1d7bfeec9bb53dacc3"
+        },
+        {
+          "path": "playwright/root-mixed/output/wecom-notifications-C2-登录--a79d8-深链、当前-Human-重鉴权、转发无权及网页故障回退-authenticated/c2-forwarded-unauthorized.png",
+          "crc32": 938970191,
+          "bytes": 54204,
+          "sha256": "d419e3a08643c3d7485ca4ebc733dcac3749988c93a581c125f31906e2cc47fd"
+        },
+        {
+          "path": "prepare-s3.mjs",
+          "crc32": 2344195723,
+          "bytes": 820,
+          "sha256": "57aebf0f8c2217864c5e2dc334732fefd29b8ecd309cd63969812fac7315fd1e"
+        }
+      ]
+    }
+  ],
+  "cleanup": [
+    {
+      "run": "20261008T165543Z-057421",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T165543Z-057421",
+      "startedAt": "2026-10-08T17:11:47.480448+00:00",
+      "removed": true,
+      "worktreeRetained": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+      "historicalResultsUnchanged": true,
+      "archive": {
+        "path": "docs/reviews/c2/product/20261008T165543Z-057421/ui-evidence.zip",
+        "bytes": 589,
+        "sha256": "9cd737d23ef5a478a77d3a2f6ec1cf7ac3254617e63e31e7f510c1ef1d67ac79",
+        "crc": "通过",
+        "members": [
+          {
+            "path": "prepare-s3.mjs",
+            "bytes": 820,
+            "sha256": "57aebf0f8c2217864c5e2dc334732fefd29b8ecd309cd63969812fac7315fd1e"
+          }
+        ]
+      },
+      "excluded": [
+        {
+          "path": "node.exe",
+          "bytes": 85268464,
+          "sha256": "995a3fb3cefad590cd3f4b321532a4b9582fb9c6575320ed2e3e894caac3e362",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        }
+      ],
+      "processObservation": {
+        "startedAt": "2026-10-08T17:11:47.553681+00:00",
+        "finishedAt": "2026-10-08T17:11:48.292751+00:00",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "processStops": [],
+      "remove": {
+        "startedAt": "2026-10-08T17:11:48.292788+00:00",
+        "finishedAt": "2026-10-08T17:11:49.034752+00:00",
+        "exitCode": 0,
+        "stdout": "removed exact task directory after archive and activity verification",
+        "stderr": ""
+      },
+      "finishedAt": "2026-10-08T17:11:49.034771+00:00"
+    },
+    {
+      "run": "20261008T165614Z-311be3",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T165614Z-311be3",
+      "startedAt": "2026-10-08T17:11:49.036718+00:00",
+      "removed": true,
+      "worktreeRetained": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+      "historicalResultsUnchanged": true,
+      "archive": {
+        "path": "docs/reviews/c2/product/20261008T165614Z-311be3/ui-evidence.zip",
+        "bytes": 589,
+        "sha256": "b4dd1c937a9d33e4ebe57536bdccc33e9155548e1442995e4dc29794ebd7f874",
+        "crc": "通过",
+        "members": [
+          {
+            "path": "prepare-s3.mjs",
+            "bytes": 820,
+            "sha256": "57aebf0f8c2217864c5e2dc334732fefd29b8ecd309cd63969812fac7315fd1e"
+          }
+        ]
+      },
+      "excluded": [
+        {
+          "path": "node.exe",
+          "bytes": 85268464,
+          "sha256": "995a3fb3cefad590cd3f4b321532a4b9582fb9c6575320ed2e3e894caac3e362",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        }
+      ],
+      "processObservation": {
+        "startedAt": "2026-10-08T17:11:49.104144+00:00",
+        "finishedAt": "2026-10-08T17:11:49.814482+00:00",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "processStops": [],
+      "remove": {
+        "startedAt": "2026-10-08T17:11:49.814556+00:00",
+        "finishedAt": "2026-10-08T17:11:50.552397+00:00",
+        "exitCode": 0,
+        "stdout": "removed exact task directory after archive and activity verification",
+        "stderr": ""
+      },
+      "finishedAt": "2026-10-08T17:11:50.552419+00:00"
+    },
+    {
+      "run": "20261008T165652Z-58c2fe",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T165652Z-58c2fe",
+      "startedAt": "2026-10-08T17:11:50.556838+00:00",
+      "removed": true,
+      "worktreeRetained": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+      "historicalResultsUnchanged": true,
+      "archive": {
+        "path": "docs/reviews/c2/product/20261008T165652Z-58c2fe/ui-evidence.zip",
+        "bytes": 589,
+        "sha256": "fcc5593da049dfd6466987b35402c303934333ce09d152171017af304d9b878b",
+        "crc": "通过",
+        "members": [
+          {
+            "path": "prepare-s3.mjs",
+            "bytes": 820,
+            "sha256": "57aebf0f8c2217864c5e2dc334732fefd29b8ecd309cd63969812fac7315fd1e"
+          }
+        ]
+      },
+      "excluded": [
+        {
+          "path": "node.exe",
+          "bytes": 85268464,
+          "sha256": "995a3fb3cefad590cd3f4b321532a4b9582fb9c6575320ed2e3e894caac3e362",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        }
+      ],
+      "processObservation": {
+        "startedAt": "2026-10-08T17:11:50.657233+00:00",
+        "finishedAt": "2026-10-08T17:11:51.347037+00:00",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "processStops": [],
+      "remove": {
+        "startedAt": "2026-10-08T17:11:51.347089+00:00",
+        "finishedAt": "2026-10-08T17:11:52.120075+00:00",
+        "exitCode": 0,
+        "stdout": "removed exact task directory after archive and activity verification",
+        "stderr": ""
+      },
+      "finishedAt": "2026-10-08T17:11:52.120098+00:00"
+    },
+    {
+      "run": "20261008T165722Z-99576c",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T165722Z-99576c",
+      "startedAt": "2026-10-08T17:11:52.123225+00:00",
+      "removed": true,
+      "worktreeRetained": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+      "historicalResultsUnchanged": true,
+      "archive": {
+        "path": "docs/reviews/c2/product/20261008T165722Z-99576c/ui-evidence.zip",
+        "bytes": 589,
+        "sha256": "54c3e9ebd4ba2f6cd0b1e8a5f3d0e6942eee27bc85c211272402f83dd3df311d",
+        "crc": "通过",
+        "members": [
+          {
+            "path": "prepare-s3.mjs",
+            "bytes": 820,
+            "sha256": "57aebf0f8c2217864c5e2dc334732fefd29b8ecd309cd63969812fac7315fd1e"
+          }
+        ]
+      },
+      "excluded": [
+        {
+          "path": "node.exe",
+          "bytes": 85268464,
+          "sha256": "995a3fb3cefad590cd3f4b321532a4b9582fb9c6575320ed2e3e894caac3e362",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        }
+      ],
+      "processObservation": {
+        "startedAt": "2026-10-08T17:11:52.209354+00:00",
+        "finishedAt": "2026-10-08T17:11:52.917263+00:00",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "processStops": [],
+      "remove": {
+        "startedAt": "2026-10-08T17:11:52.917311+00:00",
+        "finishedAt": "2026-10-08T17:11:53.658545+00:00",
+        "exitCode": 0,
+        "stdout": "removed exact task directory after archive and activity verification",
+        "stderr": ""
+      },
+      "finishedAt": "2026-10-08T17:11:53.658574+00:00"
+    },
+    {
+      "run": "20261008T165750Z-622d5c",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T165750Z-622d5c",
+      "startedAt": "2026-10-08T17:11:53.661626+00:00",
+      "removed": true,
+      "worktreeRetained": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+      "historicalResultsUnchanged": true,
+      "archive": {
+        "path": "docs/reviews/c2/product/20261008T165750Z-622d5c/ui-evidence.zip",
+        "bytes": 22,
+        "sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+        "crc": "通过",
+        "members": []
+      },
+      "excluded": [],
+      "processObservation": {
+        "startedAt": "2026-10-08T17:11:53.670966+00:00",
+        "finishedAt": "2026-10-08T17:11:54.517086+00:00",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "processStops": [],
+      "remove": {
+        "startedAt": "2026-10-08T17:11:54.517140+00:00",
+        "finishedAt": "2026-10-08T17:11:55.275528+00:00",
+        "exitCode": 0,
+        "stdout": "removed exact task directory after archive and activity verification",
+        "stderr": ""
+      },
+      "finishedAt": "2026-10-08T17:11:55.275580+00:00"
+    },
+    {
+      "run": "20261008T165759Z-568467",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T165759Z-568467",
+      "startedAt": "2026-10-08T17:11:55.283975+00:00",
+      "removed": true,
+      "worktreeRetained": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+      "historicalResultsUnchanged": true,
+      "archive": {
+        "path": "docs/reviews/c2/product/20261008T165759Z-568467/ui-evidence.zip",
+        "bytes": 4208094,
+        "sha256": "0af0e8346501aa0b1c0e83d2562ada44b396755a3e262be5ff0d31aa44c0c74f",
+        "crc": "通过",
+        "members": [
+          {
+            "path": "playwright/root-mixed/html-report/data/14cf713a728cf670bcd36f6ab53dd62f9682d1a0.png",
+            "bytes": 127917,
+            "sha256": "e67aa5b2b8aabaef71a65e18f3689d379fd237c274807a760772291a4feda81b"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/2200047ac8ca6432207efc05c3d8f1086788bde5.png",
+            "bytes": 51315,
+            "sha256": "c3b976b134ca18568637b8d45f273f9364c7ab368f98beb0e0b44efa5e01b611"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/5396ec7c422d8953ecaebf6837e3f5cf86cf1ad1.png",
+            "bytes": 51445,
+            "sha256": "98ef384da3afccd5d89e03be0eee01c2c1b715b467071266e864363d25c2baed"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/63c232d241b5598b65436fc7cc8045d008850af7.png",
+            "bytes": 59395,
+            "sha256": "127542c99ae10cdc6ce5c8b88d38183eacbc938140d5ed005806fa2e45162a4e"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/65fb971a21e874708511b8c70954a90fb991462f.png",
+            "bytes": 203506,
+            "sha256": "8b6df08bb5d64f7cab18669e3b2421561b84d14924c1bbd94da1fd0f1682279c"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/7ac3a6d0b37bb640ad1f54879a3ffb1714513c7a.png",
+            "bytes": 166553,
+            "sha256": "63828db1ec66a0a4dce58d2f0ba14004b78108d1f57c33054320db9adfafb9f5"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/91d94bd1a18bdd7fe09e67e333f204a67da83118.png",
+            "bytes": 128914,
+            "sha256": "9464865caf41f3993be38099b40ac99701387d271cd68ef9ccc1785b9e5cdffb"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/98dabc03006aeaf08584c245d98bb73d8b657c11.png",
+            "bytes": 63750,
+            "sha256": "8173e938cac7544d6da4cf851235b6aaab52d8e01ea44eff7c3f7c26519eb8cd"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/a9a524370ecb2f055a582c73f9f526b31e052b1f.png",
+            "bytes": 119599,
+            "sha256": "0c3fc40edc61abe25331b851161c59be6824f43a3e333fbefb2baa6eb4999932"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/bd680225420eb0aa514ad9ffa603a32d0bdb4382.png",
+            "bytes": 199803,
+            "sha256": "de181a9932159e7fbe6be0275acb69ee843de3ee5555a7948219100adb00d434"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/c9efa842b44f8a22f45da9a574376a3fce215fd5.png",
+            "bytes": 46099,
+            "sha256": "4330f3de676acea8044f0cbc49a95eb4fa98c33045f6fd84ff2b54b95a28e0c8"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/cbbb6e16dcdb58a03ec5a5ee66191e9ac40f4e4e.png",
+            "bytes": 85341,
+            "sha256": "b85cdcb9859a4a93d1697d6769ff4b02e6400d09143a5b9265145a970aaad91a"
+          },
+          {
+            "path": "playwright/root-mixed/html-report/data/ebe0a371915b823a4afd17fa470fe22d23237f14.png",
+            "bytes": 184499,
+            "sha256": "9a4014e4ea70388d2d305b7a7efaaa229ae05c766458d98573e383544c426d26"
+          },
+          {
+            "path": "playwright/root-mixed/output/actionable-collaboration-q-9c8c8--URLs-and-responsive-layout-authenticated/actionable-collaboration-queues.png",
+            "bytes": 157188,
+            "sha256": "ce24cef6bb6976f50fd778c196cb53459b67558a8bb51e9bc36f01b2f0a5bd2b"
+          },
+          {
+            "path": "playwright/root-mixed/output/agent-governed-controls-im-1e9c5-d-requires-explicit-reissue-authenticated/governed-stop-stale-390.png",
+            "bytes": 57413,
+            "sha256": "bbf640ac3be6bb561c7fd47fca9942cce632a0869907c2aea2ee660b8ee14976"
+          },
+          {
+            "path": "playwright/root-mixed/output/agent-governed-controls-re-c473d-o-the-current-Plan-revision-authenticated/governed-steer-1440.png",
+            "bytes": 153727,
+            "sha256": "686ae39874248bcae7e2c9b8e6235eeee605014b8075723cf7de4c516d8a13f2"
+          },
+          {
+            "path": "playwright/root-mixed/output/agent-governed-controls-re-d819a-result-Session-exactly-once-authenticated/governed-retry-768.png",
+            "bytes": 101505,
+            "sha256": "b56eb6be615e736bba9e95eaf0c26978f48b5dc90feb084068af62ebebcbd674"
+          },
+          {
+            "path": "playwright/root-mixed/output/agent-run-timeline-Run-Tim-a5d4f-ory-and-responsive-evidence-authenticated/agent-run-timeline-390.png",
+            "bytes": 48905,
+            "sha256": "0bfe34417a761e75d66a869fb4cf369bc3a5332575338a0def0dcca921386160"
+          },
+          {
+            "path": "playwright/root-mixed/output/attention-center-Attention-0296e-s-and-blocks-stale-recovery-authenticated/attention-center.png",
+            "bytes": 112444,
+            "sha256": "88127edcdcf7b4c10f43cf5140807a041995f53eef298e80efff7946c6ca89a0"
+          },
+          {
+            "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-1440x1000-authenticated/attachments/project-rail-1440x1000-screenshot-cf8819a7e9dd171df25684d0d3da1ce55860688a.png",
+            "bytes": 199803,
+            "sha256": "de181a9932159e7fbe6be0275acb69ee843de3ee5555a7948219100adb00d434"
+          },
+          {
+            "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-1440x900-authenticated/attachments/project-rail-1440x900-screenshot-e4bbfa892b1c7853b64ff65ef081c899dc83c468.png",
+            "bytes": 184499,
+            "sha256": "9a4014e4ea70388d2d305b7a7efaaa229ae05c766458d98573e383544c426d26"
+          },
+          {
+            "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-1920x1080-authenticated/attachments/project-rail-1920x1080-screenshot-fa0f7e71ace5ef0ad7c5f9300937a02df59f3790.png",
+            "bytes": 203506,
+            "sha256": "8b6df08bb5d64f7cab18669e3b2421561b84d14924c1bbd94da1fd0f1682279c"
+          },
+          {
+            "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-320x800-authenticated/attachments/project-rail-320x800-screenshot-69ad9da8e58cceb47368569cf209f6af78a7eed6.png",
+            "bytes": 51445,
+            "sha256": "98ef384da3afccd5d89e03be0eee01c2c1b715b467071266e864363d25c2baed"
+          },
+          {
+            "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-375x812-authenticated/attachments/project-rail-375x812-screenshot-9a77f54a96e21aac7bee7336cb87c83946cb65ac.png",
+            "bytes": 59395,
+            "sha256": "127542c99ae10cdc6ce5c8b88d38183eacbc938140d5ed005806fa2e45162a4e"
+          },
+          {
+            "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-390x844-authenticated/attachments/project-rail-390x844-screenshot-fe940f3db6025dd600df8ae3938e007efe5617dc.png",
+            "bytes": 63750,
+            "sha256": "8173e938cac7544d6da4cf851235b6aaab52d8e01ea44eff7c3f7c26519eb8cd"
+          },
+          {
+            "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-760x900-authenticated/attachments/project-rail-760x900-screenshot-40b8954a42714834474bea85f455589e5ae98523.png",
+            "bytes": 85341,
+            "sha256": "b85cdcb9859a4a93d1697d6769ff4b02e6400d09143a5b9265145a970aaad91a"
+          },
+          {
+            "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-761x900-authenticated/attachments/project-rail-761x900-screenshot-4cef3d89f6e9575bd5d58b49a127c20047101e92.png",
+            "bytes": 119599,
+            "sha256": "0c3fc40edc61abe25331b851161c59be6824f43a3e333fbefb2baa6eb4999932"
+          },
+          {
+            "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-768x1024-authenticated/attachments/project-rail-768x1024-screenshot-e616266e7a75adaceb25948266949e1b115d11bf.png",
+            "bytes": 128914,
+            "sha256": "9464865caf41f3993be38099b40ac99701387d271cd68ef9ccc1785b9e5cdffb"
+          },
+          {
+            "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6117c-oarding-geometry-at-1440-en-authenticated/attachments/task-5-5-connect-1440-en-f2b448168faad4151a2e722cb55687d19bc844e3.png",
+            "bytes": 127917,
+            "sha256": "e67aa5b2b8aabaef71a65e18f3689d379fd237c274807a760772291a4feda81b"
+          },
+          {
+            "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6117c-oarding-geometry-at-1440-en-authenticated/task-5.5-connect-1440-en.png",
+            "bytes": 127917,
+            "sha256": "e67aa5b2b8aabaef71a65e18f3689d379fd237c274807a760772291a4feda81b"
+          },
+          {
+            "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6ceac-boarding-geometry-at-390-zh-authenticated/attachments/task-5-5-connect-390-zh-5270800605f617d9a70ec382a9177197e790b50b.png",
+            "bytes": 46099,
+            "sha256": "4330f3de676acea8044f0cbc49a95eb4fa98c33045f6fd84ff2b54b95a28e0c8"
+          },
+          {
+            "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6ceac-boarding-geometry-at-390-zh-authenticated/task-5.5-connect-390-zh.png",
+            "bytes": 46099,
+            "sha256": "4330f3de676acea8044f0cbc49a95eb4fa98c33045f6fd84ff2b54b95a28e0c8"
+          },
+          {
+            "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8c2ed-boarding-geometry-at-390-en-authenticated/attachments/task-5-5-connect-390-en-e41d56679f9e1ba86be5982bc71dca3b5d792b01.png",
+            "bytes": 51315,
+            "sha256": "c3b976b134ca18568637b8d45f273f9364c7ab368f98beb0e0b44efa5e01b611"
+          },
+          {
+            "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8c2ed-boarding-geometry-at-390-en-authenticated/task-5.5-connect-390-en.png",
+            "bytes": 51315,
+            "sha256": "c3b976b134ca18568637b8d45f273f9364c7ab368f98beb0e0b44efa5e01b611"
+          },
+          {
+            "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8ef46-oarding-geometry-at-1920-en-authenticated/attachments/task-5-5-connect-1920-en-2acc5d9b0bb820d8d1525e4e0d5a1c9753903be2.png",
+            "bytes": 166553,
+            "sha256": "63828db1ec66a0a4dce58d2f0ba14004b78108d1f57c33054320db9adfafb9f5"
+          },
+          {
+            "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8ef46-oarding-geometry-at-1920-en-authenticated/task-5.5-connect-1920-en.png",
+            "bytes": 166553,
+            "sha256": "63828db1ec66a0a4dce58d2f0ba14004b78108d1f57c33054320db9adfafb9f5"
+          },
+          {
+            "path": "playwright/root-mixed/output/recovery-center-Recovery-C-50707-state-and-responsive-layout-authenticated/recovery-center.png",
+            "bytes": 135109,
+            "sha256": "7ec12a9329126a24bed203f9c443f72caa5ecbd28b88c11ed01ff3e6cdcb17c0"
+          },
+          {
+            "path": "playwright/root-mixed/output/wecom-notifications-C2-登录--a79d8-深链、当前-Human-重鉴权、转发无权及网页故障回退-authenticated/c2-after-authorized-login.png",
+            "bytes": 123079,
+            "sha256": "97fbf0068ca321f7fe0dd81a7d03b394218ee4c06770ee370d3180096735fae3"
+          },
+          {
+            "path": "playwright/root-mixed/output/wecom-notifications-C2-登录--a79d8-深链、当前-Human-重鉴权、转发无权及网页故障回退-authenticated/c2-before-login.png",
+            "bytes": 33904,
+            "sha256": "7e84d15839e58a25b016f383bc61449499b9fc994fbf3d1d7bfeec9bb53dacc3"
+          },
+          {
+            "path": "playwright/root-mixed/output/wecom-notifications-C2-登录--a79d8-深链、当前-Human-重鉴权、转发无权及网页故障回退-authenticated/c2-forwarded-unauthorized.png",
+            "bytes": 54204,
+            "sha256": "d419e3a08643c3d7485ca4ebc733dcac3749988c93a581c125f31906e2cc47fd"
+          },
+          {
+            "path": "prepare-s3.mjs",
+            "bytes": 820,
+            "sha256": "57aebf0f8c2217864c5e2dc334732fefd29b8ecd309cd63969812fac7315fd1e"
+          }
+        ]
+      },
+      "excluded": [
+        {
+          "path": "node.exe",
+          "bytes": 85268464,
+          "sha256": "995a3fb3cefad590cd3f4b321532a4b9582fb9c6575320ed2e3e894caac3e362",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/.auth/admin.json",
+          "bytes": 1626,
+          "sha256": "54282e537170004ad692da8992155560d9169a3b847b58eb0e8e6777e2f8028f",
+          "reason": "测试会话/CSRF/请求 trace 可能含凭据，不提交原件；失败以已脱敏日志、截图及 error-context 保全"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/18a34cd38833ae0be22ff398e57536b5aa5375f1.json",
+          "bytes": 962,
+          "sha256": "038d7ff7be4209e539d4b863cdd60974cf2848700b1ffe6026341267df142b19",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/228a5cbfae04df34494a399dc3a7eafb08d50aba.json",
+          "bytes": 990,
+          "sha256": "1c27636fd0d1255bceb89e39d59670aa3f7abf4836223fd44b83d045c59e6858",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/27b8867b878f6c951bd0751ede9f16c3b89ac6bd.json",
+          "bytes": 989,
+          "sha256": "f32f4931c64a7e0011a428674f6b7dd0276ab7b4c45b1df5ca555610c5e65995",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/39a4d31947d590211f2665027846158e94400fb3.json",
+          "bytes": 3826,
+          "sha256": "33fe262b441ea21d9e3b3734bc9a3f5c0f0b9feb3967092d6e6ea61d1dba21c0",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/43a39e8dbc31adee8297b8634d775f455a96b99b.json",
+          "bytes": 3806,
+          "sha256": "3862981f311601824e772eec74e47b78a7eddbc633ecfc38f23c104632214315",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/5c1ce4fa36f96cdf016429b0b5492d5e1eb960fd.json",
+          "bytes": 564,
+          "sha256": "35debad1c5c0271d6ce7239fa176dc7aa35aa299b02fe77f4adb376ed45eaf75",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/6c852b69f690c12a133914707c7b229c77d72f94.json",
+          "bytes": 964,
+          "sha256": "4916d88535dcde179805ab5c2a885e15c404c62f2a8bedb0e9fdba2b742d097a",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/81382689766d52bfd45751258d7284cc0170540e.json",
+          "bytes": 3941,
+          "sha256": "0337da32631374fbe04292e05ee87223df01df65521daf424c4353e63eecfbdd",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/8fb2b5ed896c3e3bb1305d8b3e738cbc6bdcdfb9.json",
+          "bytes": 3918,
+          "sha256": "2a290643e4d11a14b0edd0e0d268127507af5e59deb76169ff34f357dbc623e4",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/b2fe17cc43169f4a901b533d039ef8d546a6b128.json",
+          "bytes": 3858,
+          "sha256": "af741f5e3e48b68ce7648e47859683eee651c283bc25a40b54e64adb04be2ba2",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/bd15de851c81516e601e193af2aacd56f37f5be8.json",
+          "bytes": 3836,
+          "sha256": "d96e0d1a79ad900b90b82e77ee823b7826e6d1bb576b268c3e8f6b183666cfc9",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/d529fd4f29f16f1622ba2ee64dd7d5bb2470db9b.json",
+          "bytes": 3941,
+          "sha256": "64fc7d9c41e8ef547cde4f97fd00812f8e5ad8ef8c689c165c74877694e10746",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/e1e6b6f229f9fb25dd5c500fc2cf3328d6b6e39b.json",
+          "bytes": 3941,
+          "sha256": "c133598499a7eb14020b4145f62931cbd8f13cbf996e55d10290c94f625e4a18",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/data/ed47d0dc0c341563e7f57e7f0d87fa0aaaa0b291.json",
+          "bytes": 3876,
+          "sha256": "4af4fbb579d396d68a232918473bfbd1185249414e495b8312aace52a213f9f3",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/html-report/index.html",
+          "bytes": 709242,
+          "sha256": "61a835b060d6d89b929b0e6c4e35636c9c8cdb1559fcbc592601b0cca2171e62",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/.last-run.json",
+          "bytes": 45,
+          "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-1440x1000-authenticated/attachments/project-rail-1440x1000-e25668c0e0133c7132a36215fe4d57e67e90058f.json",
+          "bytes": 3858,
+          "sha256": "af741f5e3e48b68ce7648e47859683eee651c283bc25a40b54e64adb04be2ba2",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-1440x900-authenticated/attachments/project-rail-1440x900-104637167dd9289e287b9f1bd38f6c8c44ec4191.json",
+          "bytes": 3836,
+          "sha256": "d96e0d1a79ad900b90b82e77ee823b7826e6d1bb576b268c3e8f6b183666cfc9",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-1920x1080-authenticated/attachments/project-rail-1920x1080-f7a20b7900d725eb2f68014cc913e1cb5c4ff236.json",
+          "bytes": 3876,
+          "sha256": "4af4fbb579d396d68a232918473bfbd1185249414e495b8312aace52a213f9f3",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-320x800-authenticated/attachments/project-rail-320x800-605c99c1354fb7abdbf3af7800fb79650f944d20.json",
+          "bytes": 3941,
+          "sha256": "c133598499a7eb14020b4145f62931cbd8f13cbf996e55d10290c94f625e4a18",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-375x812-authenticated/attachments/project-rail-375x812-0df9f2e38e0ec96be6292d136b991aa4bb76c4de.json",
+          "bytes": 3941,
+          "sha256": "64fc7d9c41e8ef547cde4f97fd00812f8e5ad8ef8c689c165c74877694e10746",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-390x844-authenticated/attachments/project-rail-390x844-7a93a3b6090554ec6c277e84dccde6648dea773c.json",
+          "bytes": 3941,
+          "sha256": "0337da32631374fbe04292e05ee87223df01df65521daf424c4353e63eecfbdd",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-760x900-authenticated/attachments/project-rail-760x900-32e591345a0a24cfb4a75de4b8d01e40df50c793.json",
+          "bytes": 3918,
+          "sha256": "2a290643e4d11a14b0edd0e0d268127507af5e59deb76169ff34f357dbc623e4",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-761x900-authenticated/attachments/project-rail-761x900-4d9105ac614faec1afd0decca2a6d42e1a177d2c.json",
+          "bytes": 3806,
+          "sha256": "3862981f311601824e772eec74e47b78a7eddbc633ecfc38f23c104632214315",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-768x1024-authenticated/attachments/project-rail-768x1024-85578c6b2cb9892b5398898429fd5ebd4c5190f0.json",
+          "bytes": 3826,
+          "sha256": "33fe262b441ea21d9e3b3734bc9a3f5c0f0b9feb3967092d6e6ea61d1dba21c0",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6117c-oarding-geometry-at-1440-en-authenticated/attachments/task-5-5-connect-1440-en-geometry-08bfb5571dddc8602db9c0ce5159a9d8dfe261d9.json",
+          "bytes": 989,
+          "sha256": "f32f4931c64a7e0011a428674f6b7dd0276ab7b4c45b1df5ca555610c5e65995",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6117c-oarding-geometry-at-1440-en-authenticated/task-5.5-connect-1440-en-geometry.json",
+          "bytes": 989,
+          "sha256": "f32f4931c64a7e0011a428674f6b7dd0276ab7b4c45b1df5ca555610c5e65995",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6ceac-boarding-geometry-at-390-zh-authenticated/attachments/task-5-5-connect-390-zh-geometry-12c7bd296a4730c59cc4bf0e3cce8e7d570f77cf.json",
+          "bytes": 964,
+          "sha256": "4916d88535dcde179805ab5c2a885e15c404c62f2a8bedb0e9fdba2b742d097a",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-6ceac-boarding-geometry-at-390-zh-authenticated/task-5.5-connect-390-zh-geometry.json",
+          "bytes": 964,
+          "sha256": "4916d88535dcde179805ab5c2a885e15c404c62f2a8bedb0e9fdba2b742d097a",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8c2ed-boarding-geometry-at-390-en-authenticated/attachments/task-5-5-connect-390-en-geometry-00a5d1c25b5e8e1697d67044881340ee84760b95.json",
+          "bytes": 962,
+          "sha256": "038d7ff7be4209e539d4b863cdd60974cf2848700b1ffe6026341267df142b19",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8c2ed-boarding-geometry-at-390-en-authenticated/task-5.5-connect-390-en-geometry.json",
+          "bytes": 962,
+          "sha256": "038d7ff7be4209e539d4b863cdd60974cf2848700b1ffe6026341267df142b19",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8ef46-oarding-geometry-at-1920-en-authenticated/attachments/task-5-5-connect-1920-en-geometry-ec4054a2d8b3c69daeec8c58eae1c845682fd5ec.json",
+          "bytes": 990,
+          "sha256": "1c27636fd0d1255bceb89e39d59670aa3f7abf4836223fd44b83d045c59e6858",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-keeps-delib-8ef46-oarding-geometry-at-1920-en-authenticated/task-5.5-connect-1920-en-geometry.json",
+          "bytes": 990,
+          "sha256": "1c27636fd0d1255bceb89e39d59670aa3f7abf4836223fd44b83d045c59e6858",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-uses-advert-12eb1-tions-local-and-secret-safe-authenticated/attachments/task-5-5-interaction-request-evidence-b177fe0bb54f7b4e7bf614585720d5c1ae4b79f7.json",
+          "bytes": 564,
+          "sha256": "35debad1c5c0271d6ce7239fa176dc7aa35aa299b02fe77f4adb376ed45eaf75",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        },
+        {
+          "path": "playwright/root-mixed/output/mcp-onboarding-uses-advert-12eb1-tions-local-and-secret-safe-authenticated/task-5.5-interaction-request-evidence.json",
+          "bytes": 564,
+          "sha256": "35debad1c5c0271d6ce7239fa176dc7aa35aa299b02fe77f4adb376ed45eaf75",
+          "reason": "生成运行产物可重建或已由日志/runtime 指纹保全，不提交二进制运行时和构建缓存"
+        }
+      ],
+      "processObservation": {
+        "startedAt": "2026-10-08T17:11:55.843428+00:00",
+        "finishedAt": "2026-10-08T17:11:56.536608+00:00",
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "processStops": [],
+      "remove": {
+        "startedAt": "2026-10-08T17:11:56.536656+00:00",
+        "finishedAt": "2026-10-08T17:11:57.361350+00:00",
+        "exitCode": 0,
+        "stdout": "removed exact task directory after archive and activity verification",
+        "stderr": ""
+      },
+      "finishedAt": "2026-10-08T17:11:57.361370+00:00"
+    }
+  ],
+  "history": "旧产品证据、原始 ZIP、源码指纹及逐路径回执保持不变；仅 runner、追加清理记录和当前修订指针可变",
+  "productScope": [
+    "apps/api/integration/wecom-notifications.integration.test.ts",
+    "apps/worker/src/wecom-notifications.ts"
+  ],
+  "finishedAt": "2026-10-08T17:12:22.838349+00:00",
+  "result": "通过；不替代独审/latest CI/actual main"
+}

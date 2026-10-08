@@ -1,0 +1,349 @@
+# WorkMesh 历史 worktree 与测试资源清理记录
+
+首版报告时间字段：2026-10-08 17:32（Asia/Shanghai；来源未独立核验，非操作时间）
+机器：DarkFlame（`6DOlLniZ0sqBYGHeIhRMq`），Windows，`tds 0.1.60`
+工作区根目录：`C:\Users\xurx\.tds\workspaces`
+项目：WorkMesh（`DzkLDn6UW-IbfoTJzN9Ro`）
+最新读取主线：`main` / `1078bbcd527550bfabee73093b7ffd0032d3fd24`
+
+## 清理结论
+
+- 只完整回收了已完成的 #2 P1 linked worktree。其 HEAD `735578d8d0733e04cae5640cedfaf0c6181391c7` 可从本轮新读取的主线到达，`git merge-base --is-ancestor` 退出码为 0；Todo 与会话记录均为已完成。清理前 `git status --porcelain --untracked-files=all` 为空；ignored 内容仅为 `node_modules`、`dist`、`.next`、`.turbo` 等可重建依赖和构建缓存。
+- #3 R1、#10 D0、#11 D1a、#18 G1 虽均已完成且各自 HEAD 都在最新主线历史中，但目录内仍有尚未逐项与主线证据对照的 ignored 测试截图、报告、诊断日志或归档材料，本轮保留目录并记录原因。未以 `done` 状态单独作为删除依据。
+- #3 与 #11 的 Playwright `test-results/.auth/admin.json` 是已完成构建留下的测试认证状态文件，各 1,625 字节；仅删除这两个确切文件，未读取、记录或归档其内容。截图和报告仍保留。
+- 按候选会话 ID 前缀查询 Docker 容器、卷和网络均无匹配项。未删 Docker 镜像，因为无法证明现有镜像属于某一候选任务而非共享缓存；共享服务、卷和网络均未触碰。
+- #5、#8、#15、#17 和 #21 当前/恢复工作区均仍存在。未删成功合并的远端分支。未清理主仓库、外部临时 worktree、tds 用户目录或本轮清理构建。
+
+## 逐项清单
+
+| Todo | 分支 HEAD | 绝对路径 | 清理前核验 | 结果 |
+|---|---|---|---|---|
+| #2 P1 `qJKk_SAxN29AdBHERBl7u` | `735578d8d0733e04cae5640cedfaf0c6181391c7` | `C:\Users\xurx\.tds\workspaces\01a115d0-83ff-7ee7-ba2e-eb7d5b10bdfe` | `done`；完成会话；主线祖先；Git 未跟踪/修改项 0；忽略项 51 个，均为依赖/构建缓存；清理前文件大小枚举 `942282752` 字节 | 已清理：正式 `git worktree remove` 注销登记；确认无剩余文件后，移除 1,918 个指向本目录内部的 junction 和 958 个空目录；最终路径和登记均不存在，分支保留 |
+| #10 D0 `MPhtZiff23B33m9i2equq` | `768bbd82fcc52a873168b39a8382d2f14c928abc` | `C:\Users\xurx\.tds\workspaces\01a115d0-87b0-78cd-921d-750713cdde51` | `done`；主线祖先；Git 未跟踪/修改项 0；`.tmp` 有 2,661 个文件、`250939918` 字节 | 保留；未逐项证明采集日志和诊断材料均已持久化 |
+| #18 G1 `Tws50k02Pi52R-RJEXP_N` | `c7a1af7d7b2e125368b29975867b4d392690fc38` | `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752` | `done`；PR200 合入记录；主线祖先；Git 未跟踪/修改项 0；`.tmp` 有 10,452 个文件、`348722219` 字节；另有 5 个干净且主线可达的嵌套 linked worktree | 保留；忽略目录含证据归档、日志和校验脚本，未逐项对照主线；嵌套 worktree 跟随父目录保留。授权根目录外的 `C:\Users\xurx\AppData\Local\Temp\workmesh-g1-verify-36c7709` 也保留 |
+| #3 R1 `q_1zKPuGsG-2ZRUwOwQx4` | `550dead055689154359a3406dfce4f0c91c1dad3` | `C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749` | `done`；完成会话；主线祖先；Git 未跟踪/修改项 0；Playwright 报告 `612374` 字节，截图结果原计 `134400` 字节 | 保留报告和截图；删除 `.auth/admin.json`（1,625 字节，退出码 0）；其余输出未逐一对照主线 |
+| #11 D1a `IJQA_DfxU0hF5e8L5Xb3v` | `7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f` | `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5` | `done`；PR204 合入记录；主线祖先；Git 未跟踪/修改项 0；`.tmp` 有 2,195 个文件、`142252299` 字节；Playwright 报告 `2224000` 字节、截图结果原计 `2692168` 字节 | 保留日志、归档、截图和报告；删除 `.auth/admin.json`（1,625 字节，退出码 0）；其余输出未逐一对照主线 |
+
+五个候选提交相对本轮抓取的 `FETCH_HEAD=1078bbcd527550bfabee73093b7ffd0032d3fd24` 的祖先检查均为真。平台任务 phase 与会话结尾记录作为构建活动状态依据；对保留项不依赖 `done` 单独授权删除。
+
+## 操作与空间记录
+
+- #2 执行：`git worktree remove <精确绝对路径>`，未用 `--force`。命令超过工具单次等待窗口，后续进程已结束，但工具没有返回该子进程退出码；机器清单将其记为 `null`，不伪报为 0。之后确认登记已注销、目录内文件数为 0，并逐个非递归移除内部 junction/空目录；该后续 PowerShell 命令退出码为 0。
+- #2 最终路径不存在，`git worktree list --porcelain` 无 #2 登记且无 `prunable` 项；`tds/conv-01a115d0-83ff-7ee7-ba2e-eb7d5b10bdfe` 本地分支仍保留。
+- 清理前 C 盘可用空间 `360104419328` 字节；最后观测 `360879202304` 字节，净增加 `774782976` 字节。期间其他任务的 Docker 服务仍活动，故此数值是卷级净变化，不将其冒称为 #2 的精确物理释放量。递归文件大小枚举仅作清理前工作区清单参考。
+- Docker 仅按五个候选会话 ID 前缀查询容器/卷/网络，结果均为空；没有运行 Docker 删除命令，也未执行 prune。无明确任务归属的镜像保留。
+- 未运行产品测试；本任务是本机资源运维。最终核验包括路径不存在、worktree 列表健康、保护目录仍在、P1 分支仍在、Docker 候选筛选为空及 `git status`。
+
+## 保留与排除项
+
+- #5、#8、#15、#17 的 phase 为 `building`，工作区分别为 `01a11ac2-a0a9-7ef6-bd48-3bb37c21a301`、`01a11ac2-7634-752e-8d81-764c9776f801`、`01a1187a-f0f0-76d8-8f5b-b954ee399cdc`、`01a11890-f4de-7106-b64d-e1b2c0d4608e`；均未删除。
+- #21 当前构建 `C:\Users\xurx\.tds\workspaces\01a11a93-c093-7565-9084-724b6bedcade` 与恢复首面 checkpoint `C:\Users\xurx\.tds\workspaces\01a1195f-55ab-7ee9-8baf-c115978d3aec`（`d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5`）均保留。
+- 共享 WorkMesh 容器/网络/卷、无法归属单任务的镜像、主仓库、外部临时路径、本轮构建目录、tds 安装/配置/用户目录和工作区根目录均未清理。
+
+机器可核对数据见同目录 `historical-worktrees-2026-10-08.json`。本轮没有产品代码、API、事件或数据库变更；无规格偏离。
+
+## 2026-10-08 审阅反馈后的审计修订（仅只读核对）
+
+本节修订先前续核记录中过度确定的结论。没有重新删除、恢复或改写任何 WorkMesh 工作目录、克隆、缓存、认证状态、Docker 资源或证据文件。时间只记录工具时钟观测，不把报告提交时间推作资源操作时间。
+
+### 时间来源与可复核边界
+
+- 旧文中的“18:10”记录时间撤回。机器清单旧字段 `followupCleanup.recordedAt=2026-10-08T09:56:54.0993686Z`（北京时间 17:56:54）；该字段来源无法独立核实，原值保存在 `timeSources`。本次修订报告记录时刻采用工具时钟 `2026-10-08T10:26:13Z`（北京时间 18:26:13），仅表示本次报告修订时间。
+- 前一版报告提交元数据为 `2026-10-08T18:05:04+08:00`，仅能证明提交时间，不能证明任何删除操作时间。删除操作实际时间、结束核验时间及前一版报告完成时间均未知；不以提交时间倒推。
+- 本次纠正审计的工具时钟开始读数为 `2026-10-08T10:17:10Z`（北京时间 18:17:10）；首次详细清单采样读数为 `10:19:43Z`。精确扫描完成时间及本次结束核验时间未单独采样，记为未知。
+- 旧的活动 Todo 状态是前次执行时的读取快照，本次只作文件/ Git 只读核对，没有重新读取平台活动任务或进程引用。当前引用状态未知，不据此授权任何删除。
+
+### 删除证据的限制
+
+原始执行记录位于 `C:\Users\xurx\.tds\codex-home\sessions\2026\10\08\rollout-2026-10-08T17-15-17-01a11acb-aa1d-7c20-9f0a-069bb121f67b.jsonl`（以下为 1 起始物理行号）。第 838/841 行，调用 ID `call_e95fbe2db386479f82ec0c6a72a42479`，是 Git blob 比较命令及其输出：D0 999、D1a 452、G1 555，共 2,006 个匹配候选；这是比较计数，不是删除回执。第 865/867 行，调用 ID `call_672d8a0fd0b34811bcc926014e24d880`，输入包含对匹配项执行 `Remove-Item` 的循环，但返回只有包装器完成信息和终端警告，没有删除计数或逐文件输出；因此 Git 批次实际删除总数无法由该返回独立确认。第 948/951 行，调用 ID `call_b697c362ad5b4a36a97c84632f8bf0a5`，是 ZIP 成员比较及删除调用；返回声称 `Planned=262`、`Removed=262`、`Bytes=77782835`、嵌套命令 `exit_code=0`，同时出现清理回执写入相关 PowerShell 属性错误。该返回支持聚合执行陈述，不提供逐文件持久映射。故此前 2,268 的总数只能视为旧清理报告的汇总陈述；没有可持久化的逐文件路径→blob/member 回执，逐项保全**不可独立复核**。不补造回执，也不重跑删除。
+
+前次记录中关于删除前活动引用、逐项解析绝对路径和 junction/链接安全检查的说明，属于当时的执行陈述；没有可独立读取的逐项记录，无法在本次审计重建验证。#2 和五个 G1 嵌套 worktree 的正式移除记录及退出码仍见下方机器清单，但机器清单本身不弥补批量文件映射缺失。
+
+### 独立浅克隆与逐项恢复依据
+
+在 G1 父工作区 `.tmp` 下发现并核实独立浅克隆：
+
+`C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout`
+
+它有独立 `.git` 目录，HEAD 为 `002c1d61a7fc5d529b2d480f4c48716971c4236d`，`--is-shallow-repository` 为 `true`，没有登记在父仓库 `git worktree list` 中。该路径位于 G1 构建 `.tmp` 内，只能支持路径归属关联；克隆来源和当前活动引用未能核实。其 Git porcelain 显示 143 个 tracked 删除，父 G1 根的干净状态不包含这个嵌套克隆。
+
+逐项检查显示，143 个删除路径在克隆 HEAD 对象库和当前本地 main 对象树中均有 blob；其中 140 个 blob 与 main 当前 blob ID 相同，另 3 个路径 blob 不同。逐路径相对名及两侧 blob ID 已写入 JSON。没有恢复这些路径；克隆因有未提交删除且活动引用未知而整体保留。
+
+四个候选**父 linked worktree**（#3/#10/#11/#18）本次读取时各自登记存在，且各自 `git status --porcelain=v1 --untracked-files=all` 为 0 行。该结果只描述四个父根，不覆盖上面的独立克隆。#5/#8/#15/#17/#21 五个受保护当前目录及 #21 旧 checkpoint 路径本次存在性检查均为真；不代表重新验证了它们的运行状态。
+
+### `.tmp` 文件清单与分类
+
+本次扫描三个 `.tmp` 根，按普通文件、不跟随链接枚举；这三个根中没有符号链接文件或 `node_modules` 文件。当前找到 4,892 个文件、359,739,034 字节：#10 D0 为 1,649 个 / 196,832,784 B；#18 G1 为 1,747 个 / 66,773,555 B（含浅克隆当前存在的 1,464 个 / 16,891,322 B；克隆以外 283 个 / 49,882,233 B）；#11 D1a 为 1,496 个 / 96,132,695 B。
+
+旧汇总为 4,919 个，较本次扫描多 27 个。由于没有前次逐文件清单，无法识别这 27 个路径，也无法确定差异原因或发生时间。JSON 的 `remainingTmpInventory` 含本次全部当前文件绝对路径、字节数、逐项比较分类和精确 main blob 路径；浅克隆当前文件在 `independentClone.currentTrackedFiles`，缺失的 143 个 tracked 文件在 `trackedDeletedPaths`。没有用摘要或文件名推断覆盖。
+
+原字节对比未匹配不等于文件唯一。在该次清单采样时，普通文件按 Git blob 与 CRLF→LF 归一化进行比较，共发现 1,446 个仅归一化后匹配 main 的文件；当时其余项逐文件标为“用途/映射未判明”，并列出所缺 manifest、归档成员映射或 owner 决定，不称为唯一。后续 D0 阶段已补六份日志映射；本次 D1a 阶段又补出 1,406 个与主线脱敏 ZIP 成员逐字节相同的文件。当前剩余具体文件及所缺证据见新机器清单 `d1a-trace-zip-mapping-2026-10-08.json` 和 `remainingTmpInventory`，不再将已映射项统一列作未知。
+
+### 保留的可重建缓存与其他材料
+
+四个候选根共盘点出 133 个忽略的 `.next`、`.turbo`、`dist` 目录，合计 2,355 个文件、1,337,637,407 B；全部保留，本次没有清理。#10 有 1 个 `.next`、18 个 `.turbo`、12 个 `dist`；#11 相同；#18 有 1 个 `.next`、18 个 `.turbo`、18 个 `dist`。#3 有 17 个 `.turbo` 和 17 个 `dist`。精确路径、逐目录文件数和大小在 JSON `generatedCachesRetained` 中。依赖目录 `node_modules` 未纳入该缓存枚举。
+
+D0 的采集日志、D1a 的 trace/patch、G1 的 HTML/Playwright 输出及其他未映射文件均保留；逐项绝对路径和缺少的证明输入已列在 JSON。无法判断它们是否可重建或是否为必要验收材料时，不以 raw-byte 不匹配作为删除依据。R1 截图/报告此前也因缺少逐项归档映射而保留；“唯一”未得到独立证明。
+
+### 本次结论
+
+这次修订仅补充审计。现有证据支持 #2 与五个 G1 嵌套 worktree 已移除、四个候选父 worktree 登记仍在、上述五个受保护当前 workspace 与 #21 checkpoint 路径仍存在；独立浅克隆另有 143 个 tracked 删除，不能用父目录 clean status 概括。此前批量文件的逐项保全和删除前运行引用无法独立复核，缓存、剩余测试材料和独立浅克隆均保留。没有新增空间释放，也没有运行产品测试或 Docker 清理。
+
+机器可核对的逐文件清单、blob 对照、目录大小、状态及时间来源见同目录 [`historical-worktrees-2026-10-08.json`](historical-worktrees-2026-10-08.json) 的 `followupCleanup.reviewerFollowupAudit`。
+
+## 2026-10-08 已合入构建缓存回收阶段
+
+本阶段按用户追加指示，只清理 #3 R1、#10 D0、#11 D1a、#18 G1 四个已合入父 worktree 内，经逐项确认的可重建忽略缓存；不删除父目录、独立 clone、未知测试材料或任何活动/恢复工作区。执行前重新读取全板 Todo：#5、#15、#17、#21 与本清理 #52 为 `building`，#8 为 `done`；#8 仍按原保护要求保留。另行复读 `building` 列表确认持续运行的任务，没有等待团队整体空闲或中断正常构建。机器读取为 DarkFlame（`6DOlLniZ0sqBYGHeIhRMq`），`tds status` 显示 daemon running、pid `59452`、v`0.1.60`。
+
+### 逐路径复核和执行
+
+- 在 `2026-10-08T10:46:05Z` 预检的 133 个精确目录分别属于 #3（34 项）、#10（31 项）、#11（31 项）、#18（37 项）；类型为 `.turbo`、`dist`、`.next`。预检共枚举 2,355 个文件、1,337,637,407 字节。
+- 每个实际删除前都重新检查绝对路径仍在指定 Todo 构建根下且位于 `C:\Users\xurx\.tds\workspaces`，解析路径与给定路径相同，路径链和目录内部没有 reparse/junction，Git 跟踪项数为 0、`git check-ignore` 命中忽略规则，并且没有命令行引用该精确路径或候选父根的进程。任一条失败则不执行；成功项用 PowerShell `Remove-Item -LiteralPath <精确路径> -Recurse -ErrorAction Stop` 单独移除并立即记录退出码与移除后存在性。
+- 共成功移除 133/133 项，实际逐目录枚举为 2,355 个文件、1,337,637,407 字节；每项退出码 0、移除后路径不存在。按 Todo 统计：#3 为 34 项 / 5,918,718 字节，#10 为 31 项 / 218,398,716 字节，#11 为 31 项 / 225,070,619 字节，#18 为 37 项 / 888,249,354 字节。详细绝对路径、逐项预检数据、命令、退出码、进程引用数与结果保存在机器清单 `followupCleanup.generatedCacheCleanup`。
+- 初次边界校验把这些同级构建目录误当作当前会话仓库的子目录，因此 10 次校验提前失败；这些尝试没有执行删除，退出码与删除结果记为空，并保存在机器清单 `nonMutatingValidatorAttempts`。之后改为按 workspaces 父目录校验，并在所有成功删除前再次完成整套复核。
+- C 盘未在本阶段开始前采样可用空间，因此不报卷级净释放量。1,337,637,407 字节是逐项目录删除时枚举的文件长度合计，不等同于 NTFS 实际物理释放；本轮的卷级空间观测受其他构建活动影响，不作本轮归因。
+
+### 清理后状态与保留项
+
+- 最终核对 133 个目标路径均不存在；四个父 linked worktree 均仍存在、Git 登记仍在、各自 `git status --porcelain --untracked-files=all` 为 0 项，HEAD 分别仍是 #3 `550dead055689154359a3406dfce4f0c91c1dad3`、#10 `768bbd82fcc52a873168b39a8382d2f14c928abc`、#11 `7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f`、#18 `c7a1af7d7b2e125368b29975867b4d392690fc38`。Git worktree 列表有 20 项、无 `prunable` 项。
+- #5、#8、#15、#17、#21 的当前/恢复路径及 #21 的旧 checkpoint `d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5` 均复核存在；只做了路径存在检查，没有读取或变更其内容。四个父 worktree 内其余未映射材料和独立浅克隆 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout` 继续保留；其 143 个 tracked 删除项、25 个未映射剩余文件以及来源/活动引用缺口沿用上一节限制，父目录干净状态不覆盖该 clone。
+- 本阶段未清 Docker 资源、未删除父 worktree 或分支、未打包未知材料，也未运行产品测试。旧历史阶段中逐项保全不可独立复核的限制继续有效；本轮缓存清理不表示整项历史资源清理全部完成。
+
+机器可核对的本阶段完整清单与核验值见同目录 `historical-worktrees-2026-10-08.json` 的 `followupCleanup.generatedCacheCleanup`。本阶段采样时间用 UTC；预检与删除前复核时间逐项保存，报告结束时刻以工具时钟读取 `2026-10-08T10:57:57Z` 记载。
+
+## 2026-10-08 后续材料核对与保留决定
+
+本阶段先刷新平台 Todo 列表，并将 WorkMesh `main` 更新至 `96e724858e692d262107c34db50b40c3ae7c122c`。读取时 #52 清理任务为 `building`；#5、#15 为 `building`，#17 为 `review`，#21 为 `implement_reviewing`，#9 为 `confirm`，#8 为 `done`。按用户指示，即使 #8 已完成仍保护其旧 dirty 材料；#5/#8/#9/#15/#17/#21 的当前与恢复目录均未作为候选。新增 #9 工作区 `C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe` 纳入保护清单。此次读取后没有对这些目录执行路径扫描、内容读取或删除。平台 Todo 刷新与机器列表读取的精确采样时刻未保存；本节结尾工具时钟读数为 `2026-10-08T11:21:50Z`，不将其倒推为 Todo 读取时刻。
+
+### 已映射的 CRLF 副本
+
+- #10 `.tmp` 中六份 D0 `upstream` 日志均有逐文件原始 SHA-256、字节数、D0 `upstream-scope-verification.json` 中对应命令/成功退出码/原始日志哈希，以及仅将 CRLF 转为 LF 后匹配的最新 main 路径与 Git blob ID。逐项值见 `docs/reviews/cleanup/.duplicate-evidence-stage-2026-10-08.json`。原始会话记录显示：删除前预检在第 2473/2477 行（调用 `call_649a530f1c5b4b88a33389796d5a9663`，`11:14:54.422Z`–`11:14:59.372Z`）；删除调用的输入/返回在第 2496/2498 行（调用 `call_5b40b1d9ba8a4b399bf78894b63e9bd9`，`11:15:45.689Z`/`11:15:45.796Z`）。返回原因为 `rejected: blocked by policy`：PowerShell 未启动、退出码 `null`、目标仍在，且没有换方式重试。清单中当前 `pathSafetyPreflight` 字段是在拒绝后才补存：第 2523/2526 行（调用 `call_96b6e92abbc94fe9a1cc1b1930395500`，`11:16:44.681Z`–`11:16:48.674Z`）；它只反映拒绝后的复核，不冒充拒绝前状态或之后的删除授权。原始记录路径和字段时序详见机器清单。
+- #18 `.tmp\g1-vitest-config-original`（752 字节）仅在 CRLF→LF 后匹配 `vitest.integration.config.ts`；原始 SHA-256 为 `ca9031eca23a729d89184c49246b8f1891c784382293cc91ac7ad25b58b3ccfe`，19 对 CRLF，未见独立 LF 或孤立 CR。文件名与内容不足以判定它是临时备份还是 G1 验证基线输入，因此保留。
+- 未为日志、配置或其他证据新建归档。D0 六份日志已有主线原文可恢复；其余失败/验收材料尚未逐项确认必要性、已有归档成员或安全脱敏方法。未将认证状态、trace 或未知材料打包进仓库。
+
+### 浅克隆复核及独立审查候选
+
+对精确路径 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout` 重新读取 Git 状态：独立浅克隆，HEAD `002c1d61a7fc5d529b2d480f4c48716971c4236d`，`--is-shallow-repository=true`。祖先方向是 clone HEAD → main：`git merge-base --is-ancestor 002c1d61a7fc5d529b2d480f4c48716971c4236d 96e724858e692d262107c34db50b40c3ae7c122c` 退出码 0；反向命令退出码 1；`git rev-list --left-right --count 96e724...002c1d6` 为 `26 0`。仅发现该构建分支及同值远端跟踪分支，没有本地独有提交；1,607 个 HEAD tracked 路径中，工作区状态恰为 143 个 tracked 删除、无修改、无未跟踪、无 ignored。文件映射显示 143 个删除路径均能从 clone HEAD blob 恢复，并均存在于 main 对象树（140 个 blob 相同、3 个不同）；clone 当前 1,464 个 tracked 文件可从其 HEAD 恢复，现存机器清单记录其中 1,439 个 CRLF→LF 可映射到 main、25 个未映射。由于工作区状态只含 143 个删除项，其余 1,464 个文件都与 clone HEAD 一致；25 个没有映射到当前 main 的文件仍由 clone HEAD 保全，不是独有源证据。旧清单保存了 143 条删除路径及两侧 blob，不曾恢复这些删除。此次测得克隆文件字节数为 33,477,910；未测卷级配对空间变化。
+
+G1 的 `g1-shallow-read.mjs` 将此目录设为隔离布局测试 cwd，main 中也有归档浅克隆验证记录；这是已知的独立测试用途。原始回执第 2548 行记载一次历史采样 `reparsePoints=0`、`processReferences=0`；本轮 `11:37:40Z` 当前命令行引用查询也为 0，路径解析与链接检查为 0。该查询不覆盖平台内部构建引用或之后的 fixture 用途，因此这些引用仍需在实际回收前重读。基于用途与剩余引用缺口，克隆按用户要求保留为独立审查候选，不以父 worktree 的干净状态覆盖其删除，也不执行去重或删除。精确路径、当前 Git 状态、143 条路径/对象映射仍在机器清单 `followupCleanup.reviewerFollowupAudit.independentClone`。
+
+### 其他剩余材料与阶段结果
+
+三个 `.tmp` 根的清单仍逐文件列有绝对路径、字节数、原字节/CRLF→LF 的 main blob 比较结果、分类和该文件缺少的具体输入。它们分别有 1,649（#10）、283（#18，排除独立克隆）和 1,496（#11）个普通文件。D1a 主线 `docs/reviews/d1a/artifact-manifest.json` 声明的主线脱敏 trace ZIP 经逐字节核验后，三处解包 trace 目录中 1,406 个文件、45,315,262 字节与 ZIP 成员完全相同；每项本地 SHA-256、成员路径/大小/SHA-256、ZIP 的 main blob `02c663b7dbdd3c39c891adb99a6908b33bef4ccd` 和 ZIP SHA-256 均见 `d1a-trace-zip-mapping-2026-10-08.json`。例如 `d1a-stage0-trace-env07-2\0-trace.network`（1,501 字节）与成员 `0-trace.network` 逐字节相同。此映射把这些文件列为**完成最新任务/构建引用与逐路径安全复核后**可回收候选；本轮未删除它们。
+
+D1a `.tmp` 总清单有 1,496 项；扣除上述 1,406 个精确映射后，余 90 项、50,817,433 字节，且对这些 90 项与 ZIP 再比对后没有额外的逐字节命中。机器映射 JSON 为每项保留路径、大小、SHA-256、已有 ZIP 同名成员信息、分类与 `neededInput`。其中 15 项位于三个解包目录但未与 ZIP 成员逐字节相同；4 个资源名在 `trace-redaction-report.json` 中逐项映射到脱敏后成员（8 份本地拷贝），报告还记录 ZIP CRC 已验证且剩余敏感字段/原始敏感值计数均为 0。其余 7 个 trace/network 文件虽有同名脱敏成员，仍缺逐文件脱敏变换映射，暂保留。其余 75 项在三个解包目录之外，按机器清单列明的具体冻结 manifest、归档成员或 owner 决定缺口保留。当前 `11:39:04Z` 对 1,406 个映射文件重新校验路径、字节数、SHA-256，全部一致且沿途无 reparse point；`11:40:26Z` 对父构建根的本地命令行引用查询为 0。该快照不替代删除当刻的引用和路径复核，也不覆盖平台内部构建引用。
+
+同批 Todo 刷新及紧邻工具时钟 `11:36:44Z` 显示 #5/#15/#17/#52 为 `building`、#9 为 `confirm`、#21 为 `review`；#11 为 `done`，#8 为 `done` 但仍按指示保护旧 dirty 材料。活动任务均未被中断，#9 及其余活跃/恢复工作区没有作为本轮清理对象。
+
+本阶段没有执行成功的文件删除、归档或 Docker 操作，新增释放量为 0 字节；D0 删除调用的自动审批拒绝已如实记录，没有绕行。四个父 linked worktree 均保留；未映射的 D0/D1a/G1 文件和独立浅克隆均保留。旧批 2,268 项的逐项保全不可独立复核限制不变，133 项缓存清理回执不变。由于仍有需独审的克隆回收依据和无法判定的具体材料，本报告只提交本阶段的审计结果，不表示整体清理完成。
+
+## 2026-10-08 D1a 精确归档副本回收阶段
+
+本节记录上述“后续材料核对”阶段之后的独立操作；前节的“未执行成功删除”仅描述当时审计阶段，不覆盖此后本节实际执行。独立审阅已确认 D1a 映射可作为回收候选，要求删除前重新核对最新任务、构建引用、逐路径安全和哈希。本阶段只删除 #11 D1a 构建 `.tmp` 中已在最新 main 脱敏 ZIP 逐字节保全的普通文件，不删除三个目录、父 linked worktree、分支、浅克隆、剩余 90 项或任何受保护 workspace。
+
+### 操作前刷新与逐项依据
+
+- 用只读 `git fetch origin main` 更新项目主线后，`FETCH_HEAD` 为 `96e724858e692d262107c34db50b40c3ae7c122c`；同一主线 ZIP `docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-sanitized.zip` 的 Git blob 为 `02c663b7dbdd3c39c891adb99a6908b33bef4ccd`，SHA-256 为 `00fe3854f1cb7de42482d2b9cab730af697fb115629719f0850df7d43aaa9ca5`，大小 14,776,952 B。它是本次 1,406 个候选文件逐字节匹配的保全来源。
+- #11 Todo（`IJQA_DfxU0hF5e8L5Xb3v`）刷新为 `done`。每批操作前刷新活动 Todo；执行期间 #5/#9/#15/#17/#21/#52 仍为活动项，均未暂停或中断。首个 10 项批次前读取了 Todo 和本机进程引用；随后在其余批次前及结束核验前查询活动构建对话，均未找到三个目标 trace 根的精确路径引用；本机进程命令行对三个根的查询也为 0。最后快照（`2026-10-08T12:01:08.8724587Z`）显示 #5 `building`、#9 `planning`、#15 `review`、#17 `building`、#21 `review`、#52 `building`；#8 虽为 `done` 仍按要求保护。
+- 目标的完整绝对根路径为：
+  - `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\.tmp\d1a-stage0-trace-env07-2`
+  - `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\.tmp\d1a-trace-07`
+  - `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\.tmp\d1a-trace-07-round2`
+- 操作前整组核对时刻为 `2026-10-08T11:52:38.7922077Z`：1,406/1,406 个精确映射路径仍存在，大小与 SHA-256 全匹配（45,315,262 B）；解析路径都在指定 WorkMesh workspaces 内，路径链 0 个 reparse point，三个根的进程命令行引用为 0。C 盘当时可用 357,786,767,360 B。
+- 每个文件操作前再次检查路径在其映射 sourceRoot 下、路径链无 reparse point、仍是同一普通文件、大小/SHA-256 仍等于归档成员，并能以独占只读方式打开。命令只作用于单个精确文件：`Remove-Item -LiteralPath <exact path> -ErrorAction Stop`，没有递归删除、`-Force`、通配或换 shell。
+
+### 操作、回执与结束核验
+
+- 1,406/1,406 个精确归档副本删除成功；每项 `Remove-Item` 退出码均为 0。删除文件原始枚举长度合计 45,315,262 B。每个文件的绝对路径、Todo #11/workspace 归属、resolved path、ZIP member path、SHA-256、操作结果、退出码和删除后存在性见 [`d1a-trace-cleanup-receipts-2026-10-08.json`](d1a-trace-cleanup-receipts-2026-10-08.json)；原始逐行回执和字段更正见同目录 `.jsonl` 与 `d1a-trace-cleanup-receipt-corrections-2026-10-08.json`。
+- 首 10 项的原始回执把操作后写入的时间字段误标为 `preflightAtUtc`。没有将其冒充为操作前时间：原始 JSONL 保留不改，规范清单将这 10 项逐项预检/操作时间记为未知，提供实际可观察的时间界限和更正表；其余 1,396 项记录了逐项预检、操作、结果写入的精确 UTC 时间。每项实际操作结果均由路径消失和退出码 0 确认。
+- 结束核验 `2026-10-08T11:59:23.5308402Z`：1,406 个映射路径全部不存在，回执 1,406 行、0 重复路径、0 异常；剩余 90 项（50,817,433 B）仍存在且逐项大小/SHA-256 与原清单相同。三个 trace 目录保留非精确匹配文件共 15 个，分别 7/7/1 个；其余未映射项及具体缺少的证据仍依原 mapping 清单保留。
+- 四个候选父 worktree #3/#10/#11/#18 在 `2026-10-08T12:02:12.0928747Z` 仍存在、仍登记在 Git，`git worktree list --porcelain` 返回 20 项且 0 项 `prunable`；四个父目录 `git status --porcelain=v1 --untracked-files=all` 都是 0 行。该检查证明本次 `.tmp` 文件删除没有移除父 worktree；#2 的父目录仍按之前已完成阶段记录为不存在。浅克隆 `g1-shallow-layout` 仍保留，未逐文件去重或删除。
+- #5/#8/#9/#15/#17/#21 及 #21 的旧 checkpoint workspace 本阶段均存在；没有读取或修改这些受保护目录。没有变更 Docker 容器/卷/网络/镜像，没有删除分支，也没有移除其他候选父 worktree。
+- C 盘可用空间样本：操作前 357,786,767,360 B（11:52:38Z），操作后 357,656,641,536 B（11:58:28Z），结束复核 357,750,951,936 B（11:59:23Z）。并行构建期间卷级空间净差为减少 35,815,424 B，无法归因于本次删除；只报告可核验的文件枚举长度 45,315,262 B，不声称这就是物理或净释放空间。
+
+本阶段没有运行产品测试。历史批次 2,268 项逐文件保全不可独立复核的限制不变；133 个缓存回收原始回执也不改写。剩余 90 项、四个父 worktree、浅克隆、D0 拒绝项及未知材料仍需各自的归属/用途/活动引用依据。本次只完成已逐字节保全的 D1a 重复副本回收，**整体历史清理仍未完成**。
+
+## 2026-10-08 剩余验收材料映射与 G1 浅克隆用途复核
+
+本阶段只补充证据，不删除文件、克隆或父 worktree。记录机器为 DarkFlame（`6DOlLniZ0sqBYGHeIhRMq`）；只读 fetch 后 main 为 `96e724858e692d262107c34db50b40c3ae7c122c`。末次可读 Todo 快照：#52 `building`、#5 `implement_reviewing`、#9 `planning`、#15/#17 `building`、#21 `review`；#11/#18 `done`。#8 虽为 `done` 仍受保护。受保护当前/恢复路径及四个父候选目录再次检查均存在，未读写其内容。
+
+### D1a 的 90 项剩余清单
+
+末次逐路径重核 90/90 个文件仍存在，大小和 SHA-256 与原清单一致，合计 50,817,433 B。机器补充清单 `remaining-materials-review-2026-10-08.json` 引用原逐路径清单 `d1a-trace-zip-mapping-2026-10-08.json#remainingD1aTmpInventory`；后者逐项保留 90 个绝对路径、大小、SHA-256、同名 ZIP 候选与 `neededInput`。
+
+- **8 份资源 JSON 副本**（4 个原名分别位于两个解包目录）已按当前 main 的 `trace-redaction-report.json` 逐项核对。每个本地资源与原始 ZIP 的对应成员字节相同，原始成员名到脱敏成员名的映射、源/目标大小及 SHA-256 都已落在机器清单。报告中的映射为：`0fc850b1775d3c97277a3def3ae5756cd44cf49f.json` → `a0eaa9aab07a906e34e1d14c1224957824da6afc.json`；`428d3ad4971b1acb104802eff03cfb3d45ef6306.json` → `2f350d735635dc137f0f2354c603e5c09ac856d3.json`；`b013c45627a222c7fa334f5ee3120f9cd7341c75.json` → `a0eaa9aab07a906e34e1d14c1224957824da6afc.json`；`bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json` → `8176e305fe436a5173990ad29d06e4893f7c57ba.json`。main 的脱敏报告 blob 为 `f06c182a55446c9c734176320efbc54c17d5d5e9`，SHA-256 为 `2dba2ed6cb6df230b0d7d092f94bc434059d0a579f34fb66e6b63b363c712d80`；报告标记 CRC 已验证、脱敏归档中敏感字段及捕获原值均为 0。两份 `.tmp` 原始 ZIP 副本也逐字节相同（各 14,795,293 B，SHA-256 `da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e`，491 个成员、CRC 正常）；按现存脱敏逻辑在内存重建的结果 SHA 与 main 脱敏 ZIP 相同。原始 ZIP 可能含敏感值，仍留在原路径，未复制到仓库、未删除。
+- **4 个 `.network` 文件**（两个来源各有相同字节副本）已用现存 `.tmp\sanitize-d1a-trace.py` 的脱敏逻辑及 main `trace-redaction-report.json` 中的资源重命名，在内存逐文件复算；四个结果均与 main 脱敏 ZIP 同名成员逐字节相等。来源 SHA-256 分别为 `1-trace.network` 的 `1b210fb6…`（569,068 B）与 `2-trace.network` 的 `78e4acab…`（166,758 B）；映射后 SHA-256 分别为 `e4735b4c…`、`919f88b0…`。脚本 SHA-256 为 `0e006dcca770f1b79cec36d62d83d853976751d6a3b9e0a70c959967e23595df`，脱敏报告 blob 为 `f06c182a55446c9c734176320efbc54c17d5d5e9`。这 4 个路径及 8 份资源 JSON 副本列为**条件回收候选**，须在实际删除前刷新任务/build 引用并做路径、链接和锁检查；本阶段没有删除。
+- **3 个 `1-trace.trace` 文件**源内容彼此逐字节相同（各 1,022,701 B，SHA-256 `17761d45…`）。同样应用脱敏及重命名后，结果为 1,022,617 B、SHA-256 `1d215abb…`，与 main ZIP 中 1,022,635 B、SHA-256 `f3f6c0c7…` 的成员有 2 处语义差异，均在行 85、87 的 `snapshot/html/.../__playwright_value_` 字段；值未复制到报告。最小保留量为 1 份原始 trace 作为精确快照证据，另外 2 份字节完全相同的副本仅可在重核活动引用和路径安全后作为条件重复项回收。原始敏感 ZIP 不归档入仓库。
+- **其他 75 项中，1 项已有历史 Git blob 保全证明**：`.tmp\d1a-git-evidence-audit.json`（316,012 B，SHA-256 `5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442`）与 main 可达提交 `58d59ed85002da637aaeaa6bf98915d4a6ba918c` 的 `docs/reviews/d1a/evidence/git-blob-hashes.json` 完全相同，blob 为 `414dfe920c54f68ca1a2f246f1fcdd82e43767bb`。复核时 main 已更新到 `5b9c76b5f79917697906520edcd6947bfbfa925f`；该历史提交是新 main 的祖先（`merge-base --is-ancestor` 退出码 0），原提交路径仍为上述 blob，而当前 main 同路径已变为 blob `69a5adba69600bc3d53bf9e8fef989823965ab67`。因此保留的是历史版本映射，不声称它与当前 main 路径内容相同。此单项列为条件回收候选。其余 **74 项**共 45,960,098 B 的逐项 main 对象比对仍是原 `96e7248` 审核快照（8,133 条可达对象），没有倒写为对新 main 的完整重扫结论；D1a manifest/index 与归档成员的逐路径缺口见机器清单。机器清单记录每项观察用途及所需输入：脚本需生产/调用记录及替代版本映射；Playwright 页面与截图需 run ID、用例/viewport 和验收附件索引；日志需命令、退出码及脱敏结论；patch 需 PR/base/head 与提交覆盖关系；索引/JSON 需冻结 manifest 和持久 blob/member 对照；剩余原始 ZIP 继续原地保留并需敏感数据处置依据。没有根据扩展名断言唯一或可重建，也没有把未知数据打包入 repo。
+
+### G1 独立浅克隆的用途与当前回收边界
+
+目标为 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout`，父任务 #18 G1 已 `done`，父 worktree HEAD `c7a1af7d7b2e125368b29975867b4d392690fc38` 且 `git status` 为 0 项。该目录有独立 `.git`，是 shallow clone，不是父仓库的 linked worktree。静态检查同目录夹具 `.tmp\g1-shallow-read.mjs`（2,457 B，SHA-256 `ef4c368b093f293ccbc77cd4f31e86492a1188f5b091ac0e0642719c39b84294`）将该 clone 设为 cwd，临时复制三项已提交输入，再检查 shallow 状态、旧日志 blob 不可用及归档读取结果；本轮没有运行夹具。三项输入均在 G1 worktree 与 main 上具有相同 Git blob：
+
+| 仓库路径 | 字节数 | 工作区 SHA-256 | main Git blob |
+| --- | ---: | --- | --- |
+| `scripts/verify-raw-evidence-archive.mjs` | 9,722 | `f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131` | `b32919f321b8d42913e7e476989f1c8f389327dd` |
+| `docs/evidence/build-input-reachability.current/raw-evidence.zip` | 2,339,178 | `58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b` | `1875e8935dee1d406616f6d5e799d4acc739041a` |
+| `docs/evidence/build-input-reachability.current/raw-evidence-index.json` | 140,663 | `cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162` | `f5c477c404645a070d5ae7e9aafb6c744da8decb` |
+
+当前 clone HEAD 仍为 `002c1d61a7fc5d529b2d480f4c48716971c4236d`；其 143 个 tracked 删除不构成独有源，已有审核记录表明 143 项可由 clone HEAD 恢复、其中 140 项 blob 与 main 相同、3 项不同；现存 1,464 个 tracked 文件也都可从 HEAD 恢复。本轮遵用户要求，不重做祖先方向核验，不恢复或逐文件去重。刷新后的可读活动 Todo 对话（#5/#9/#15/#17/#21 与 #52）没有命中该 clone/fixture 的精确路径；本机其他进程命令行引用为 0。绝对路径解析位于 WorkMesh workspaces 内，G1 根、`.tmp` 和 clone 本身均无 reparse point；clone 当前 143 项状态均为 tracked deletion，untracked/ignored 均为 0，只有一个本地 HEAD 分支。
+
+现有证据已足以将该 clone 列为**下一阶段条件回收候选**：它属于已完成的 G1 #18 历史 shallow-layout 夹具；夹具及 3 项输入有静态来源/主线 blob 对照；143 个删除路径可由 clone HEAD 恢复，25 个未匹配当前 main 的文件也存在于 clone HEAD，没有发现额外未跟踪文件或 local-only 分支/提交。可读 Todo/chat 与本机进程命令行当前未见此精确路径引用。`openfiles /query /fo csv /v` 退出码 1、`handle.exe` 不存在、`.git/index.lock` 不存在及无独立全局 registry 查询均为检查边界，不再作为硬门禁，也不表示已枚举全局句柄；四个父 worktree 仍保留。本阶段不执行 clone 删除。
+
+下一阶段若执行该候选，先刷新机器、Todo 与可读 build 引用；保存 clone 全部路径/大小/哈希及来源清单；再次解析绝对路径，确认严格位于指定 WorkMesh `.tmp\g1-shallow-layout`，逐段检查根目录、父项、clone 子树没有 root 误指向或 reparse/junction 跳转；对将删文件逐个做原生独占打开/锁状态和 ACL/删除权限检查。任一文件被占用、权限不足或路径/链接验证不通过，就保留相关项并记录原因；全部预检通过才用 PowerShell `Remove-Item -LiteralPath <已核验绝对路径> -Recurse -ErrorAction Stop`，不加 `-Force`。记录命令退出码、异常、每个残留路径和删除后根路径状态；失败不改用别的删除方式，不要求全部任务空闲，也不等待不存在的全局句柄接口。
+
+前一轮试图通过 `functions.exec → exec_command` 以 PowerShell 复合命令更新本 JSON 的 G1 决策字段；工具在进程创建阶段返回通用 `Rejected(... blocked by policy)`，显示回执截断了嵌入命令。原调用没有提供可见 call ID 或操作时间，故机器清单把这两项记为 `null`，不猜拒绝针对 shell 形式还是文档写入，也不推断具体风险。拒绝回执、精确目标、尝试用途和不可恢复字段已记入机器清单；之后只用专用 `apply_patch` 编辑器同步文档，没有重试 Shell。
+
+### 本阶段结果及保留边界
+
+本轮删除 0 个文件、未新建原始证据归档、Docker 未变更、未移除四个父 worktree、未移除浅克隆；新增可核释放量为 0 B，未运行产品测试。D1a 现有 13 个条件回收候选（8 资源副本、4 network 副本、1 个有历史 Git blob 保全的 audit JSON）和 2 个重复 trace 副本都须先重核引用/路径安全；3 个 trace 至少保留 1 份，另外 74 项按路径保留，两个原始 ZIP 原地保护。#5/#8/#9/#15/#17/#21 当前和恢复目录以及 #21 旧 checkpoint 继续保留；D0 六个已被策略拒绝的目标没有换方式重试。旧批 2,268 项逐项保全不可独立复核的限制、133 个缓存与 1,406 个精确副本的已审回执均不改写。四个父 worktree 仍留存；本报告不表示整项清理完成。
+
+机器可核对补充清单：[`remaining-materials-review-2026-10-08.json`](remaining-materials-review-2026-10-08.json)。原 D1a 90 项路径清单：[`d1a-trace-zip-mapping-2026-10-08.json`](d1a-trace-zip-mapping-2026-10-08.json)。
+
+## 2026-10-08 已审副本回收与 G1 浅克隆尝试
+
+本阶段按用户既有授权，只对独审已接受映射的 D1a 8 个 resource JSON 副本和 4 个 `.network` 副本执行回收，并在刷新引用与逐路径预检通过后尝试回收 G1 的独立浅克隆。四个父 worktree、未知材料、受保护工作区和 D1a trace/raw ZIP 均不在删除范围。本阶段结果不表示整项清理完成。
+
+### D1a：12 个已映射副本成功回收
+
+- 执行前刷新机器和 Todo：DarkFlame 在线、`tds status` 为 running v0.1.60；#11、#18、#15 为 `done`，#5/#21 为 `review`，#9/#16/#17 为 `building`，本清理 #52 为 `building`。#8、#15 等保护目录没有作为目标。可读的 #5/#9/#17/#21/#52 构建对话均未提到 G1 浅克隆的精确路径；此检查不是全局 build-path registry，也不宣称全局无引用。
+- 最新 main 为 `5b9c76b5f79917697906520edcd6947bfbfa925f`。原 D1a 脱敏 ZIP blob `02c663b7dbdd3c39c891adb99a6908b33bef4ccd` 及原逐文件映射仍为保全依据。逐项原生检查确认 12 个文件均在 D1a `.tmp` 根下、路径组件无 reparse point、文件内容与已审 SHA/大小一致；检查使用 `[IO.File]::Open(..., FileAccess.ReadWrite, FileShare.None)`，成功且未写入内容。这只证明当时可独占读写打开，不是 DELETE 权限/ACL 检查，也不证明删除权限。其他进程命令行引用为 0。
+- 对 8 个 resource JSON 与 4 个 network 文件分别使用 `Remove-Item -LiteralPath <exact path> -ErrorAction Stop`，12 项退出码均为 0，删除后均不存在；逻辑文件长度合计 `1,473,220 B`。两处 `resources` 目录仍在且为空。未测得可归因的卷级净释放量，不将逻辑字节数称为物理释放。
+- 删除后核对：12/12 目标不存在；3 个 `.trace` 仍存在；两份敏感 raw ZIP 原地存在，均为 `14,795,293 B`、SHA-256 `da1d1efc…13a27e`。另有 74 个未映射文件及 1 个已映射历史 audit JSON 仍保留。逐路径操作回执及原始调用行号、call ID、时间、执行 ID 和退出码位于 `remaining-materials-review-2026-10-08.json` 的 `d1a.cleanupExecution`；原始会话记录路径见该字段 `sourceReceipts.rawSessionFile`。
+
+### G1：浅克隆尝试失败并部分移除 Git 元数据
+
+- 精确目标为 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout`，确认是 #18 G1 完成构建 `.tmp` 下的**独立 shallow clone**，不是 linked worktree。父 worktree HEAD 为 `c7a1af7d7b2e125368b29975867b4d392690fc38`、状态 0 项，Git common dir 为 WorkMesh 主仓库 `.git`，父路径仍在登记列表中。
+- 最新 main 为 `5b9c76b5f79917697906520edcd6947bfbfa925f`。只读 `fetch origin main` 后，`git log --oneline --ancestry-path 002c1d61a7fc5d529b2d480f4c48716971c4236d..FETCH_HEAD -1` 输出 `5b9c76b Merge pull request #206 ...`；故 clone HEAD 是当前 main 祖先。完整前置机器清单 `g1-shallow-layout-inventory-2026-10-08.json` 为 1,491 个文件逐路径记录绝对路径、字节数、SHA-256 与来源；包含 HEAD blob ID。复核 1,464 个现存 tracked 文件均仅在 CRLF→LF 后匹配 HEAD blob，143 个 tracked deletion 可由该 HEAD 恢复、无未跟踪/ignored 文件；这些删除项没有恢复。
+- 删除前复核机器/Todo/可读活动对话、本机进程命令行、解析绝对路径与所有链接。对 1,763 个目标/目录路径的原生独占读打开和 DELETE 权限句柄检查均成功，未发现 reparse point；进程命令行引用数为 0。没有等待全团队空闲，也没有声称存在全局句柄或 build registry 枚举。
+- 对唯一解析路径执行普通 PowerShell `Remove-Item -LiteralPath <verified absolute path> -Recurse -ErrorAction Stop`，未使用 `-Force`。原始 PowerShell 错误为：“你没有足够的访问权限来执行此操作，或者该项目为隐藏项、系统项或只读项。”原始调用在会话记录 `rollout-2026-10-08T17-15-17-01a11acb-aa1d-7c20-9f0a-069bb121f67b.jsonl` 第 5174 行（call `call_5fd6c3363be54617bbbaf16fdc2b47e4`，`2026-10-08T13:11:10.349Z`）；完成事件第 5176 行（exec `exec-86b87620-dcfb-44d6-ae8d-1d586e5a53c0`，外层 exec 退出码 1，`13:11:11.388Z`），输出第 5177 行。逐项 Remove-Item 结构化 `toolExitCode` 未保存，仍为 `null`；外层退出码 1 不替代该缺失字段。错误未定位具体失败对象，不据此推断属性或 ACL 是原因。
+- 操作**部分发生**：原清单中 17 个文件消失、共 `27,428 B`，全部是 `.git/hooks` 示例、`.git/info/exclude` 与 `.git/logs` reflog 等 Git 元数据；未发现 tracked 源文件被移除。克隆根仍存在，后核有 1,474 个文件、264 个目录、`33,450,482 B`；Git 状态命令仍成功并显示原 143 个 tracked deletion。完整 17 路径、操作前后字节/hash、剩余逐文件清单和清理前后观察见 `g1-shallow-layout-inventory-2026-10-08.json`。
+- 部分删除的可恢复性已分开核验：剩余 10 个 `.git` 元数据文件存在；`git fsck --full` 退出码 0，标准输出和错误输出均为空。1,607 个 tracked 路径映射到 1,575 个唯一 HEAD blob，clone 与当前 main 均可读全数 blob；1,464 个当前文件及 143 个 tracked 删除项均可从 clone HEAD 恢复。17 个已删元数据中，14 个默认 hooks 示例和 `.git/info/exclude` 共 15 项，可从 `C:\Program Files\Git\mingw64\share\git-core\templates` 对应文件逐字节恢复（长度与 SHA-256 均相同）；两份 `.git/logs` reflog 只有删除前大小/SHA-256，没有原始内容或逐字节来源，不能据哈希恢复。机器清单列有 15 项的逐路径来源和 2 项 reflog 缺口。
+- 失败后的只读观察发现 clone 的 `.git` 目录带 `Hidden` 属性，三个 pack 文件带 `ReadOnly` 属性；这是观察到的状态，不证明它们导致前述错误。先前 DELETE-access 句柄探测成功也不保证 PowerShell 递归删除成功。部分移除仅影响 `.tmp\g1-shallow-layout` 这个嵌套独立 clone 的 Git 元数据；G1 父 worktree 和其他三个父 worktree均仍登记、HEAD 未变且状态干净，8 个保护/恢复 workspace 仍存在且其内容未读未改。可读活动构建对话中没有该 clone 精确路径，本机进程命令行引用为 0；未枚举全局句柄或平台全局 build registry。
+- 后续边界仅为只读审阅当前恢复材料与路径状态；不恢复两份 reflog，不重试删除，不使用 `-Force`，不改文件属性或 ACL，也不换删除方法。若未来另行评估，先保存此处逐路径清单与来源、刷新活动引用、绝对路径/链接检查并核对原生锁与权限；遇占用或权限失败则保留。当前未授权任何属性/权限改动或再次删除。部分消失的 Git 元数据逻辑字节不计为可确认物理释放。
+
+### 收尾核验与仍保留项
+
+- 四个父 linked worktree 均存在且仍登记，HEAD 未变，Git 状态各为 0 项；8 个受保护工作区仍存在。D1a 三个 `.trace`、两份 raw ZIP 仍在；D0 已被审批拒绝的目标保持不动。未清 Docker 资源，未删除任何父 worktree 或成功分支，未运行无关产品测试。
+- `2026-10-08T13:14:56Z` 的最后核验中，Git worktree 列表为 21 项且不含 `prunable`；四个父 worktree 均逐项确认存在、已登记、HEAD 不变并且状态 0 项。12 个 D1a 目标均不存在且 12 份回执退出码为 0；两处资源目录仍为空；三份 `.trace`、两份 raw ZIP 和 8 个受保护 workspace 均仍存在。G1 clone 根仍存在，当前可读 Git 状态退出码 0，1,474 个剩余文件均对应原始清单；其 1,464 个 tracked 源文件完整保留。
+- 本阶段确认从 D1a 精确副本中移除逻辑字节 `1,473,220 B`；G1 递归命令部分消失的元数据为 `27,428 B`，不计入净释放。卷级实际净空间未知。
+- 旧批 2,268 项不可逐项独立复核的限制、133 项缓存和前一阶段 1,406 项回执均未改写。74 项未映射材料、历史 audit JSON、3 个 trace、两份敏感 raw ZIP、四个父 worktree及当前/恢复目录继续保留；本阶段停于需要独审的完整清理结果，不将 todo 标为整体完成。
+
+## 2026-10-08 当前收尾盘点：D1a 保全映射、父目录和 G1 裁定
+
+本节是基于审核基点 `604c3e2f447f6ccb0a7d488c34870ca5108007e5` 的新增只读阶段记录。DarkFlame 此时 `tds status` 仍为 running v0.1.60；Todo #52 为 building；实读 `origin/main` 为 `18252ba8761aa810c3fd12d31ecae83e8b24d985`。Todo 快照为 #5/#9/#16 building、#8/#15/#17 done、#21 review。#16 的 C2 产品构建仍在进行；#17/C3 虽已 done 仍受保护。所有活动和恢复 workspace 保留。
+
+### 父 worktree 与材料分层
+
+四个父目录均仍是正式登记的 linked worktree。当前 `git worktree list --porcelain` 共 21 项、没有 `prunable` 项；四父的当前 HEAD 与 `git status --porcelain --untracked-files=all` 结果如下；`HEAD..FETCH_HEAD` 的 ancestry-path 查询均返回 `18252ba Merge pull request #207`，说明各父提交被本次读取的 main 包含。clean 状态只描述 Git 可见变更，不代表 `.tmp`、ignored 输出、嵌套仓库或未映射验收材料已保全。
+
+| Todo/材料 | 当前绝对路径 | HEAD | Git 登记与状态 | 单独盘点的忽略/临时内容 |
+| --- | --- | --- | --- | --- |
+| #3 R1 | `C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749` | `550dead055689154359a3406dfce4f0c91c1dad3` | linked、已登记、状态 0 项 | `.tmp` 不存在。仍留 `apps/web/playwright-report/index.html`（612,374 B）、`.last-run.json`（45 B）与 `recovery-center.png`（132,730 B）；缺精确 run/用例 viewport/归档附件映射，保留。原 SHA-256 和路径在机器清单。 |
+| #10 D0 | `C:\Users\xurx\.tds\workspaces\01a115d0-87b0-78cd-921d-750713cdde51` | `768bbd82fcc52a873168b39a8382d2f14c928abc` | linked、已登记、状态 0 项 | `.tmp` 现有 1,649 文件、196,832,784 B。六条已映射日志沿用既有 blob 对照；其余 capture、失败现场与诊断文件继续按旧逐路径清单保留。D0 六个已拒绝目标未重试。 |
+| #11 D1a | `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5` | `7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f` | linked、已登记、状态 0 项 | `.tmp` 现有 78 文件、49,344,213 B：74 个未映射项 45,960,098 B、3 份同字节 trace 共 3,068,103 B、历史 audit JSON 316,012 B。 |
+| #18 G1 | `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752` | `c7a1af7d7b2e125368b29975867b4d392690fc38` | linked、已登记、状态 0 项 | `.tmp` 以 `-Force` 枚举 1,757 文件、83,332,715 B；其中父临时文件 283 个/49,882,233 B，另有嵌套独立 clone 1,474 个/33,450,482 B。此前 1,747/66,773,555 B 的读数漏掉 10 个隐藏 Git 元数据文件/16,559,160 B；差额与当前仍存在的元数据相同，不是新产生文件。 |
+
+机器清单对 D1a 的 74 个精确路径再次检查了当前存在、字节数和 SHA-256：`74/74` 与上一份逐路径清单一致，总计 `45,960,098 B`；逐项角色、来源、未闭合的特定输入需求仍以原清单为准，没有因此把任何项判成“唯一”或可删除。R1、D0、G1 的剩余日志/截图/脚本/诊断文件同样按既有 inventory 的逐路径分类和缺口保留；没有因为名称、扩展名或父仓库 clean 而猜它们可重建。
+
+### D1a 三份 trace 的最小无秘密保全
+
+不新增 raw trace 或 ZIP 副本。main 已有脱敏归档 `docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-sanitized.zip`（Git blob `02c663b7dbdd3c39c891adb99a6908b33bef4ccd`），其中 `1-trace.trace` 为 `1,022,635 B`、SHA-256 `f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350`。将既有脱敏逻辑和资源重命名映射在内存复算，输出与该成员逐字节匹配。补充 manifest 列出三份原 trace 的精确路径、原字节数与 SHA；三份均 `1,022,701 B`、同 SHA `17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d`。它们仍在原位置，本轮没有删除。
+
+当前复算确认有两处 trace 敏感值需要从 raw 转为脱敏标记：line 1612 的字段 `csrf_token` 与 `csrfToken`；只记录路径和名称，不记录原值。旧 line 85/87 差异也已解释：两行的完整 JSON 路径分别为 `/snapshot/html/3/3/3/3/2/2/3/2/8/3/1/__playwright_value_`，各自位于 trace 行 85、87。原始归档的 `resources/bd8d6e80fe0bafec4eb1761ba8bcad1d3fcd55d0.json#/password` 与 `resources/428d3ad4971b1acb104802eff03cfb3d45ef6306.json#/password` 都是 19 B，分别对应这两处快照值。完整 RAW ZIP 资源集合转换时将它们加入脱敏集合，两处均替换为 10 B 的 `[REDACTED]`，相对保留值的结果总共少 18 B，得到旧输出 `1,022,617 B`、SHA `1d215abbf153aa2a2193c30d9a5ac63b86fc1242e1218444e657874c11b3f798`。
+
+两处 19 B 值都与本次指定 main `18252ba8761aa810c3fd12d31ecae83e8b24d985` 中 `apps/web/e2e/stage0.spec.ts` 第 185 行的固定 E2E install 测试夹具值相同；该源文件 blob 为 `e4c0ccadabec58a1e6651993a963bf4178764f5b`。它位于 Playwright Stage 0 浏览器验收流程，为 loopback 本地测试 workspace/user 填表，不是生产凭据。故 main 已有脱敏归档保留该确定性测试快照值有可审的测试源码依据；本记录不写出 literal。trace-only 脱敏不把资源值并入敏感集合，因此输出 `1,022,635 B`、SHA `f3f6c0c731c6989c03b8d87e29126421c83677cce626895c481bb5def51d8350`，正好匹配 main ZIP 成员。两种转换输入集合不同，现可解释旧结果与主线成员为何差 18 B。RAW ZIP 与原件保持原位，本轮没有重跑测试、删除或恢复。
+
+### #8/#15 候选与大目录扫描边界
+
+#8 A1（路径 `C:\Users\xurx\.tds\workspaces\01a11ac2-7634-752e-8d81-764c9776f801`，HEAD `07aa293c35100959caa08f73efcb6110e9aa92f4`）和 #15 C1（路径 `C:\Users\xurx\.tds\workspaces\01a1187a-f0f0-76d8-8f5b-b954ee399cdc`，HEAD `81090ec01bcbc84edbe101418d833840999a5326`）当前仍为 Git 登记目录。它们虽在 Todo 上显示 done，本阶段只列作以后逐项评估的候选，全部保留。
+
+既有顶层忽略观察在 #8 见 `.turbo`、`dist`、`node_modules`；#15 见 `.turbo`、`dist`、`node_modules`、`playwright-report`、`test-results`。Chief 报告这两个目录各约 38 万 ignored 项；本轮没有重新遍历这些内部文件，也未独立复数。分层理由是依赖/构建目录可按锁文件、忽略规则、构建脚本与输入判断可重建性，不需逐文件 hash；但这不等于已证明这些完整目录均安全清理。下一候选只能先核顶层归属、Git 忽略/锁文件/生成命令和当前 build 引用，把 report/test-results/未跟踪验收源与缓存拆开；没有精确引用或生成依据的项仍保留。不得以此扫描限制推断所有 ignored 内容是垃圾。
+
+### G1 浅克隆：部分元数据、reflog 价值与有限选择
+
+精确目标 `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout` 是 #18 `.tmp` 下的**独立 shallow clone**，不是父 worktree 登记项。现存 1,474 文件、33,450,482 B；原 143 个 tracked deletion 仍在 Git 状态中、无 untracked/ignored 文件，`git fsck --full` 退出码 0 且无输出。1,607 个 tracked 路径的 blob 可从 clone HEAD/current main 读到；现存 1,464 文件与 143 个删除路径均可从 clone HEAD 恢复。它们不是独有源码；fixture `g1-shallow-read.mjs` 和三个输入均有既有逐项来源。没有发现 local-only branch/commit；当前可读构建对话与本机进程命令行对精确 clone path 的引用数为 0。该引用观察不等于全局句柄或平台 build registry 枚举。
+
+部分失败后剩余 10 个 Git 元数据文件/16,559,160 B：`.git/HEAD`、`config`、`description`、`index`、pack 的 `.idx/.pack/.rev`、`packed-refs`、唯一本地 branch ref 和 `shallow`。两个 200 B reflog（`.git/logs/HEAD` 和 `.git/logs/refs/heads/tds/conv-01a116f7-1027-7c75-90df-32ebc5488752`）已经消失。只剩删除前 SHA，没有原文或可精确恢复源；不能通过 SHA 重建。reflog 记录本地 HEAD/branch 移动，可能有操作审计价值，但不是提交对象或本 fixture 输入。当前 fixture 静态读取未使用 reflog；没有找到活动任务引用该本地 reflog。当前 main、clone HEAD 与 branch 的对象源可用，因此不会为了缺少临时 reflog 而重造 Git 元数据，也不把 reflog 缺失作为要求重建整个 clone 的门禁。旧结构化 PowerShell 删除退出码仍是 `null`，外层 wrapper exit `1`，已删 17 元数据的历史回执保持不变。
+
+这里仅列两种后续决策，不执行其一：
+
+1. **保留精确 clone**：继续保有 1,474 文件/33,450,482 B、剩余对象和本地测试状态；代价是占用约 33.45 MB 逻辑空间，且两份 reflog 已知不可恢复。
+2. **只针对精确 clone 的 Force/属性方案**：若另行批准，可考虑对上面唯一绝对目标执行 PowerShell `Remove-Item -LiteralPath <精确目标> -Recurse -Force`，或先处理该目标的 `Hidden`/pack `ReadOnly` 属性再执行普通移除。潜在释放量仅为 33,450,482 B 逻辑内容，实际卷空间未知；前次错误未确定根因，任何方案仍可能继续部分移除，且会毁掉残留克隆元数据/现场。此路径当前未授权，禁止试跑、拆分、恢复文件、改属性/ACL或换方式重试。若 Chief 后续考虑批准，须先重新核活动引用、原生锁/路径条件和精确目标，并明确批准哪一种目标操作；不需要重建 reflog 才能作出选择。
+
+### 未执行的操作与停点
+
+本阶段删除 `0` 项、恢复 `0` 项、没有 Force/权限/属性改动、没有 Docker 变更、没有产品测试；未新增可测的磁盘释放。四个父 worktree、#8/#15 候选、#5/#9/#16/#17/#21 活动与历史恢复目录、D0 六个审批拒绝目标、C3 两个审批拒绝目标及两份 raw ZIP 均保持原样。没有枚举全局 handles/build registry；也没有因约 38 万个依赖缓存文件而逐个读取或 hash。旧批 2,268 项不可逐项独核、133 缓存和 1,406 文件既有回执、12 个 D1a 成功删除回执全部保留。
+
+机器核对文件：[`remaining-closeout-2026-10-08.json`](remaining-closeout-2026-10-08.json)、[`d1a-other74-current-check-2026-10-08.json`](d1a-other74-current-check-2026-10-08.json)、[`d1a-trace-minimum-preservation-2026-10-08.json`](d1a-trace-minimum-preservation-2026-10-08.json)。本阶段停在定向独立审查；整项清理仍未完成，不合并、不标记 todo done。
+
+## 2026-10-08 追加：两份重复 trace 的有限回收执行
+
+依据 22:28 定向独审和用户 22:28 的明确执行指令，本阶段仅针对以下两个普通文件；至少保留 `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\.tmp\d1a-stage0-trace-env07-2\1-trace.trace` 原件，不移除父目录：
+
+| 精确目标 | 删除前依据 | 本次状态 |
+| --- | --- | --- |
+| `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\.tmp\d1a-trace-07\1-trace.trace` | 1,022,701 B；SHA-256 `17761d45f04ee6de2aae26f06d4482bb2c27c05e7f4d344dec555d8095ad467d`；路径在 D1a 根下，0 个 reparse point；独占读写打开成功（不证明 DELETE 权限）。 | PowerShell `Remove-Item -LiteralPath <exact path> -ErrorAction Stop`，未使用 `-Force`；退出码 0；目标消失，父目录和保留原件仍在。 |
+| `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\.tmp\d1a-trace-07-round2\1-trace.trace` | 2026-10-08T14:35:24.5774176Z 重新预检：1,022,701 B、同一 SHA、普通 Archive 文件；目标以下 3 个路径组件无 reparse point；独占读写打开成功；排除本次查询 PowerShell 后，精确命令行引用数 0。保留原件仍为 1,022,701 B、同 SHA。两份 RAW ZIP 均仍为 14,795,293 B、SHA-256 `da1d1efca68c47db0c1e7de6c856294f3af2c03778e01556de2298484113a27e`。 | `2026-10-08T14:36:23.1867578Z` 以普通 `Remove-Item` 删除，未使用 `-Force`；退出码 0，目标消失，父目录仍在；保留原件与两 ZIP 复核通过。 |
+
+第二目标此前有一次**未执行删除的预检中止**：进程查询计数为 1，但命令行匹配项就是运行该查询的当前 `pwsh.exe`，因为查询脚本本身含完整目标路径；同时该次 `Get-Item` 使用的 RAW ZIP 路径并非清单中的真实路径并返回找不到路径。`Remove-Item` 未运行，目标未改变。随后在命令进程排除自身、使用清单准确归档路径后重查，得到上述 0 个其它进程命令行引用及两份 RAW ZIP 完整哈希一致的结果。两次观察分别保留于机器清单，不把自匹配误记为活动使用，也不声称枚举了全局 handles/build registry。
+
+机器回执为 [`d1a-duplicate-trace-cleanup-2026-10-08.json`](d1a-duplicate-trace-cleanup-2026-10-08.json)。其中 `originalOperationReceipts` 指向 [`original-operation-receipts-2026-10-08.json`](original-operation-receipts-2026-10-08.json)，保存了原始 JSONL 第 6851/6854 行和 6967/6970 行的完整调用输入、完整返回值、原始行、call ID 与 dispatch/return UTC。第二次删除前的中止预检、后续重检和最终健康核验分别仍由该机器回执的 `interruptedPreflightAttempt`、`secondTargetPreflight` 和 `postflight` 记录关联；第一目标独立操作时间未知，不能用派发或返回时间倒推。
+
+第二个目标于 `2026-10-08T14:36:23.1867578Z` 使用 `Remove-Item -LiteralPath <exact file path> -ErrorAction Stop` 删除，未使用 `-Force`，退出码 0。操作后目标不存在、其父目录仍在；保留 trace 原件仍为 1,022,701 B 且 SHA-256 不变，两份 RAW ZIP 各为 14,795,293 B 且 SHA-256 不变。D1a `.tmp` 当前为 76 个文件、47,298,811 B；之前两目标合计 2,045,402 B，此数仅为逻辑文件长度，不代表卷物理净释放。其余 74 个材料逐路径复核 `74/74` 字节数与 SHA 一致；D1a Git 状态退出码 0 且无变更，worktree 列表退出码 0、共 21 项，D1a 仍登记。物理磁盘净释放未测量。原始 RAW ZIP、保留 trace、其它 74 项、四父 worktree、G1 clone、D0/C3 被拒目标及所有活动/恢复目录均不在本次操作范围；整项清理仍未完成。
+
+## G1 独立浅克隆：已授权单次强制清理的删除前预检
+
+用户 22:38 对精确方案卡选择“仅此目录强制清理（推荐）”。本次授权只覆盖以下绝对路径的一次原生 PowerShell 调用，不延伸至 G1 父 worktree、其它 `.tmp`、D0/C3 拒绝目标、Docker 或其它 workspace：
+
+`C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout`
+
+2026-10-08T14:45:53Z 的删除前只读检查通过。目标是 #18 G1 已完成任务 `.tmp` 内的**独立 shallow clone**，不是 linked worktree。解析路径严格位于指定 `workspaces` 之下，非 workspace 根、G1 父目录或当前清理目录；被检查的 6 个祖先/目标路径节点及目标递归内容均无 reparse point。G1 父 worktree仍正式登记且 Git 状态 0 项；该独立 clone 不在父仓库的 worktree 注册列表。当前进程命令行对精确目标的非自引用数为 0；可读活动任务 #5/#9/#16/#21 对该路径的对话引用为 0，#18 当前状态 done，#52 为本清理任务。没有声称枚举平台全局 build 注册表或所有 OS handles。
+
+clone 当前有 1,474 个文件、264 个目录、33,450,482 B；它们逐路径与既有部分失败后清单中的 1,474 项完全相同（缺失、变化、新增均为 0），Git 状态仍是 143 个历史 tracked 删除、无 untracked/ignored 文件；`git fsck --full` 退出 0、无输出，`index.lock` 不存在。`.git` 当前有 Hidden 属性、三个 pack 文件为 ReadOnly；这些是当前观察，并非之前普通删除失败的已证根因。本次不改属性或 ACL。前次普通递归删除的结构化操作退出码保留为 `null`、外层退出码 1，错误原文和已移除 17 项的历史回执均沿用旧清单，不补造原因。
+
+当前 main 已在本轮重新 fetch，精确 SHA 为 `18252ba8761aa810c3fd12d31ecae83e8b24d985`。G1 HEAD `002c1d61a7fc5d529b2d480f4c48716971c4236d` 到本次 `FETCH_HEAD` 的 ancestry 查询退出码 0。既有 1,607 条 tracked 路径映射与 1,575 个唯一 blob 的逐项审计记录仍在；本轮再将 1,575 个 blob ID 对当前 main 执行 `git cat-file --batch-check`，全部以 blob 类型返回，退出码 0、缺项 0。1464 个当前 tracked 文件和 143 个 tracked 删除可由 G1 HEAD 对象恢复；25 项与当前 main 末端树不同，但没有发现 local-only branch/commit 或独有源码。此前已移除的 15 个 Git 默认模板元数据，在本轮重新核对的来源文件均 `15/15` 字节匹配。两份缺失 reflog 原字节没有准确恢复来源、也不能由 hash 重建；已确认 fixture 不读取 reflog，因此不恢复、不伪补这些历史。
+
+fixture `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-read.mjs` 位于删除目标外，当前 2,457 B/SHA-256 `ef4c368b093f293ccbc77cd4f31e86492a1188f5b091ac0e0642719c39b84294`。其三个输入都在目标外，当前 main 的 blob 分别为：`scripts/verify-raw-evidence-archive.mjs` → `b32919f321b8d42913e7e476989f1c8f389327dd`，`docs/evidence/build-input-reachability.current/raw-evidence.zip` → `1875e8935dee1d406616f6d5e799d4acc739041a`，`docs/evidence/build-input-reachability.current/raw-evidence-index.json` → `f5c477c404645a070d5ae7e9aafb6c744da8decb`；三份工作区字节、大小和 main blob 均吻合。该临时 fixture 若未来要重跑，需要从这些来源重建 clone；当前活动 build 对话没有引用它。
+
+8 个受保护 workspace 路径仍全部存在；本阶段 D1a 两份 trace 的既有回执/健康核验也已完成，至少一份原 trace 和两份 RAW ZIP 保留。机器清单 [`g1-shallow-layout-force-cleanup-2026-10-08.json`](g1-shallow-layout-force-cleanup-2026-10-08.json) 已先持久化上述预检、来源和唯一允许的命令。若单次操作失败、部分完成或被策略拒绝，将记录原始返回并停止，不再调用、不换方式、不恢复元数据、不改属性/ACL。成功后只读核对目标消失、父/Git worktree 仍健康、8 个保护路径仍在；逻辑字节与物理释放分开记录。
+
+### 单次操作结果：被策略拒绝
+
+本轮只提交了授权的单次命令：
+
+```powershell
+$ErrorActionPreference = 'Stop'
+Remove-Item -LiteralPath 'C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout' -Recurse -Force
+```
+
+执行器在创建 PowerShell 进程前返回拒绝，原文理由为 `rejected: blocked by policy`。因此 `Remove-Item` 实际调用次数为 0、PowerShell 未启动、结构化退出码为 `null`，不冒称文件已删或已释放空间。最后一次通过预检时目标仍存在（1,474 个文件/33,450,482 B）；按“拒绝后立即停止”的要求没有再读取目标，也没有第二次调用、替代删除方式、移动目标或修改属性/ACL。原始派发记录时间为 `2026-10-08T14:48:00.987Z`、拒绝返回时间为 `2026-10-08T14:48:01.072Z`；它们只是工具派发/返回时点，实际文件操作时间仍为 `null`，因为 PowerShell 未启动。原始输入、完整返回值、原始 JSONL 行及来源位置（第 7358/7360 行，调用 ID `call_389935a8bffb4040b7f914b311d06626`）已保存于 [`original-operation-receipts-2026-10-08.json`](original-operation-receipts-2026-10-08.json)，G1 机器清单也记录了相同定位。该单次授权动作到此停在策略拒绝，未重试。
+
+## 候选准备阶段快照与最小保全清单（2026-10-08）
+
+以下是候选清单冻结时的状态快照，不是随后执行操作的前置检查：当时刷新了 WorkMesh Todo、候选对话引用、Git worktree 登记及父目录 status，重新 fetch 的 main 为 `18252ba8761aa810c3fd12d31ecae83e8b24d985`。该快照中的 Todo：#5 `review`、#9 `building`、#16 `building`、#21 `review`、#52 `building`；#3/#8/#10/#11/#15/#17/#18 为 `done`。#5/#9/#16/#21 对 A1/C1 候选根路径的 build chat 命中数均为 0；此观察不代表检查 OS 进程、文件句柄或平台全局 build registry。候选冻结时机器 daemon 状态未刷新；实际删除前后的机器刷新与逐目标检查见下方回执和执行 JSON。四个历史父 worktree #3/#10/#11/#18 在该快照中仍登记，选定状态查询退出码 0、工作树/未跟踪状态行数为 0，HEAD 均为当时 main 的祖先；这不覆盖 ignored 文件、嵌套仓库或 `.tmp` 内容。
+
+| 分类 | 精确范围及现有证明 | 本阶段处理结论 |
+| --- | --- | --- |
+| 已完成且不重做 | D1a 八份 resource 与四份 `.network` 副本此前已按既有映射清理；两份重复 `1-trace.trace` 已无 Force 删除、退出码 0。 | 不再次查删。保留 `.tmp/d1a-stage0-trace-env07-2/1-trace.trace` 一份原件和两份敏感 RAW ZIP；物理净释放量仍未知。 |
+| D1a 普通审计文件 | `.tmp/d1a-git-evidence-audit.json`：执行前仍为 316,012 B、SHA-256 `5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442`，Git blob `414dfe920c54f68ca1a2f246f1fcdd82e43767bb` 与 main 可达提交 `58d59ed85002da637aaeaa6bf98915d4a6ba918c:docs/reviews/d1a/evidence/git-blob-hashes.json` 对应；源提交从执行时抓取后观察到的 FETCH_HEAD 对象 `18252ba8761aa810c3fd12d31ecae83e8b24d985` 可达；执行记录没有独立验证 remote `refs/heads/main`，因此不把该对象称为 main 引用证明。 | 已按精确路径 `C:\Users\xurx\.tds\workspaces\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\.tmp\d1a-git-evidence-audit.json` 执行一次普通 `Remove-Item -LiteralPath ... -ErrorAction Stop`，无 `-Force`；准备调用在 `15:48:13.324Z` 派发、`15:48:15.949Z` 返回（仅准备，未删除）；实际删除调用 `call_bffe25ecd99f4e939d7ab9e539a10857` 于 `15:48:20.267Z` 派发、`15:48:22.965Z` 返回，内部完成时间记为 `15:48:22.0561314Z`，实际开始时间未知（null）。命令无输出、退出码 0，操作后路径不存在；完整原始输入/输出见原始回执 JSON。父 D1a worktree 保持登记、HEAD 未变、Git 状态 0 项；316,012 B 是目标逻辑长度，不代表物理净释放。 |
+| A1 #8 / C1 #15 候选 | 两个 worktree HEAD `07aa293c35100959caa08f73efcb6110e9aa92f4`、`81090ec01bcbc84edbe101418d833840999a5326` 均登记、干净；当时祖先检查针对观察到的 FETCH_HEAD 对象，不是独立验证的 remote `refs/heads/main`。锁定依赖输入包括 `package.json`、`pnpm-lock.yaml`、`pnpm-workspace.yaml`、`.gitignore`、`turbo.json`、`apps/web/package.json`；版本 `pnpm@9.15.4`。28 个普通 `dist` 目录（#8 为 17 个，#15 为 11 个）共枚举 752 个文件、57 个目录（含各根）、9,838,798 B；重建依据为 `pnpm build` / `turbo run build` 的 `dist/**` 输出。38 个 `node_modules` 候选各 19 个。36 个 `.turbo` 含 lint/test/typecheck 日志，不能由 build 重建；两个 `apps/web/dist` 仅含 `tsconfig.tsbuildinfo`，属 typecheck 缓存。 | 已移除 28 个 `dist` 目录；逐项调用及结果见 [`ordinary-cleanup-execution-2026-10-08.json`](ordinary-cleanup-execution-2026-10-08.json)。38 个依赖目录仍存在，因本轮未能证明内部 junction/reparse 处理不会触及共享 pnpm store，故跳过。36 个 `.turbo` 和两个 typecheck 缓存仍在；不把目录名或父目录 Git clean 当作其日志/状态已保全证明。 |
+| C1 验收输出保留 | #15 的 `apps/web/playwright-report` 与 `apps/web/test-results` 当前可见；通用 `.gitignore` 规则不会证明它们可丢弃。 | 保留。仍缺精确 run、用例/输入、失败或验收附件索引映射。A1 #8 本次直接检查未见相应根或 `apps/*`、`packages/*` 子目录。 |
+| D1a 其余 74 项保留 | 45,960,098 B；既有逐路径清单分类为 47 个 `test-evidence-unmapped`（45,162,855 B）和 27 个 `test-output-unmapped`（797,243 B）。其精确路径、哈希、观察用途及缺少输入见 `remaining-materials-review-2026-10-08.json#d1a.other74.perPathAssessments`。本阶段不重算这些哈希。 | 原地保留，不称为唯一材料。仅补齐各路径对应冻结 run/manifest、命令与退出码、附件索引或确切 Git/ZIP 来源后再评估。 |
+| D0、R1、G1 父目录材料保留 | R1 #3 的 `.tmp` 旧清单为空，但 Playwright 报告/截图仍缺 run、用例、viewport 与附件双映射。D0 #10 的 `.tmp` 旧库存为 1,649 项 / 196,832,784 B，六个 `d0-upstream-*.log` 有主线映射但正是被拒的精确目标；其他 capture、失败现场和诊断材料仍留存。G1 #18 父 `.tmp`（排除独立 clone）旧库存为 283 项 / 49,882,233 B，仍有未映射证据。 | 均不整体移除；D0 六个拒绝目标不可重试，不能通过删除父目录绕过。其他文件按现有逐路径清单保留，Git clean 状态不作为 ignored/嵌套内容保全证明。 |
+| G1 独立 shallow clone 与 C3 拒绝范围 | G1 精确 clone `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout` 的单次强制派发被策略拒绝；PowerShell 未启动、调用 0 次、操作时间和退出码为 null，拒后未读。C3 旧/新拒绝目标沿用既有拒绝回执。 | 均继续保留并禁止重试；禁止改 ACL/属性、换工具、拆批、移动或借父目录删除绕过。 |
+
+候选准备阶段的清单曾记录“删除 0 项”；这是执行开始前的时间点快照，不是当前结果。随后按已审的精确清单逐项刷新机器、任务、目标路径、链接、权限和可恢复来源，并执行下述普通删除；不按目录名或父目录 Git clean 推定内部材料已保全，也未逐 hash 38 万个依赖/忽略文件。`openfiles /query /fo csv /v` 返回退出码 1、`ERROR: Access is denied.`，因此不声称全局 OS 句柄已枚举；逐目标还使用 Win32_Process 路径引用查询与独占读打开检查，遇失败应停项。完整逐目标预检、原命令、时间、PowerShell 返回和存在性核验见 [`ordinary-cleanup-execution-2026-10-08.json`](ordinary-cleanup-execution-2026-10-08.json)。
+
+### 本阶段普通缓存与审计文件清理回执
+
+执行时记录的是 `fetch origin main` 后对共享 `FETCH_HEAD` 执行 `rev-parse` 得到对象 SHA `18252ba8761aa810c3fd12d31ecae83e8b24d985`。原始执行窗口没有 `ls-remote` 或显式 `refs/heads/main` 查询，故该 SHA 仅是 FETCH_HEAD 观察值，不构成独立 main 引用证明；不以事后查询回填历史证明。清理前后刷新到的 DarkFlame `tds status` 均为在线 v0.1.60；Todo 面板快照显示本清理任务 #52 仍 building，#8/#15/#17/#11 done，#5/#21 review，#9/#16 building。活动任务 #5/#9/#16/#21 及 #8/#15 所有者对话均未提及 D1a audit 精确路径；这是对话引用观察，不替代进程/句柄证明。机器状态与对话引用见执行 JSON。逐批完整原脚本、工具返回、调用 ID、dispatch/return 时间及 28 个目标映射见 [`original-operation-receipts-ordinary-cleanup-2026-10-09.json`](original-operation-receipts-ordinary-cleanup-2026-10-09.json)；执行 JSON 记录其索引。原始回执中特别标记了首次脚本失败 `call_bc9e8f5906aa439ea7d145827e8892cf`（15:37:17.664Z 派发／15:37:19.713Z 返回，未调用删除）、空批次 `call_a16e583a21d04f3fa4d6e2a3fbd8a6e8`（15:44:58.990Z／15:45:00.989Z，0 个待处理目标），以及 audit 准备 `call_50df654bc4ff48eab9c24a4947116df3` 和实际删除 `call_bffe25ecd99f4e939d7ab9e539a10857`。
+
+- **已移除：** A1 #8、C1 #15 的 28 个精确普通 `dist` 目录，逻辑内容 9,838,798 B（752 文件、57 个目录，含目标根）；以及上述 D1a audit 普通文件 316,012 B。合计目标逻辑长度 10,154,810 B。每个目录使用逐项 `Remove-Item -LiteralPath '<精确路径>' -Recurse -ErrorAction Stop`；D1a audit 使用不带 `-Recurse` 的普通单文件调用。28 个目录调用及 audit 调用均退出码 0、无命令输出，删除后所有目标路径均不存在。七个四路径批次、首次脚本失败（未触发删除）、空批次（0 个待处理目标）及 audit 准备/删除调用均保留完整原始输入输出和来源行号，见原始回执 JSON；父 worktree 未移除。
+- **保留：** 38 个 `node_modules` 目录均仍存在。由于没有证明普通递归删除时不会遍历 junction/reparse 或触及共享 pnpm store，本轮跳过，不改用其它工具或路径。36 个 `.turbo` 日志目录、两个 `apps/web/dist` 类型检查缓存、D1a 剩余 74 项、至少一份原始 trace、两份敏感 RAW ZIP、报告和 test-results 均保留。G1/D0/C3 被策略拒绝目标及其父目录不重试/不整体删除；五项当前或恢复工作区继续保护。
+- **核验：** Git worktree 列表的 21 项登记均无 `prunable`；#3/#8/#10/#11/#15/#18 HEAD 对执行时观察到的 FETCH_HEAD 对象可达（不是独立验证的 remote main ref），`git status --porcelain --untracked-files=all` 退出码 0 且 0 项。28 个 `dist` 和 audit 目标缺失；38 个依赖目录、36 个 `.turbo`、2 个 typecheck cache、保留 trace 与 2 个 RAW ZIP 仍存在。D1a 父 worktree 仍在，HEAD 与操作前相同。
+- **空间与范围：** 10,154,810 B 是所删候选的操作前逻辑长度，不是已测得的磁盘物理净释放量；物理净释放未知。没有删除 Docker 资源、主工作区、父 worktree、分支、共享 pnpm store、任何 RAW 内容或清单外目标。未运行产品测试；本阶段至此停在独立结果审查，整项清理未标记完成。
+
+## PR 208 Required CI 修订记录
+
+原 PR head `d161bcce75ecea013aafb8421f1a6e87ec7f24ec` 的 run `37808292683`、job `113418244057` 中，`Select required jobs` 的 `git diff --check 1078bbcd527550bfabee73093b7ffd0032d3fd24 d161bcce75ecea013aafb8421f1a6e87ec7f24ec` 因本报告第 4–6 行 Markdown 硬换行尾空格以 status 2 失败；12 个测试成功，其余 7 个 job 因 Required CI 连带失败而跳过。原日志来源：artifact `changes-raw-37808292683-1`（ID `11562624946`）及 `required-ci-raw`（ID `11563519051`）。本次只移除这三处行尾空格并记录来源；未改回执或重做清理。

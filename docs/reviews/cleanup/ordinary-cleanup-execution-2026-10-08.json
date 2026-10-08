@@ -1,0 +1,3099 @@
+{
+  "schemaVersion": 1,
+  "stage": "2026-10-08 普通清理执行",
+  "recordedAtUtc": "2026-10-08T15:36:30Z",
+  "reviewBasis": "2b062c971036d3496db5a2e431f66c1f5f6cbb5e；23:27:45定向独审",
+  "preflightFile": "ordinary-cleanup-preflight-2026-10-08.json",
+  "machine": {
+    "id": "6DOlLniZ0sqBYGHeIhRMq",
+    "name": "DarkFlame",
+    "command": "tds status",
+    "observedAtUtc": "2026-10-08T15:36:05.7260697Z",
+    "exitCode": 0,
+    "rawOutput": [
+      "[tds] Daemon: running (pid 59452, v0.1.60, since 2026/10/8 17:04:54, started by tds start)",
+      "[tds] Workspaces: C:\\Users\\xurx\\.tds\\workspaces",
+      "[tds] Machine: DarkFlame (6DOlLniZ0sqBYGHeIhRMq)",
+      "[tds] Team: HSmBMOqAdoG9i4C6YLTbP",
+      "[tds] Agents: ylZRCk9jdHaXeh5AuWsvv, jxQOahMH5DRYdBG6-Nhs1, s4Fuf8WSJPTJUZS3ultDP, iuKoX-czTc8kH_ERctdlM, _oYMSdl7L0Y6M9c4IB-PD",
+      "[tds] Server: https://todos.dev"
+    ]
+  },
+  "todoBoard": {
+    "tool": "mcp__tds__todos phase=all limit=100 sort=updated",
+    "snapshotTimeUtc": null,
+    "timeKnown": false,
+    "phases": {
+      "#21": "review",
+      "#9": "building",
+      "#15": "done",
+      "#5": "review",
+      "#8": "done",
+      "#52": "building",
+      "#16": "building"
+    }
+  },
+  "activityChats": {
+    "activeTodoIds": [
+      "#5",
+      "#9",
+      "#16",
+      "#21"
+    ],
+    "exactA1C1RootsMentionCounts": {
+      "#5": 0,
+      "#16": 0,
+      "#21": 0,
+      "#9": 0
+    },
+    "exactD1aAuditPathMentionCounts": {
+      "#5": 0,
+      "#16": 0,
+      "#21": 0,
+      "#9": 0
+    },
+    "ownerTodoChats": [
+      {
+        "todo": "#8",
+        "cacheSpecificPathMentions": 0,
+        "workspaceBranchMentions": 5
+      },
+      {
+        "todo": "#15",
+        "cacheSpecificPathMentions": 0,
+        "workspaceBranchMentions": 2
+      }
+    ],
+    "noChatHitIsNotProcessProof": true
+  },
+  "targets": [
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "apps/agent-runner/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 32,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 120299,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "apps/api/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 96,
+        "directoryCountIncludingRoot": 12,
+        "logicalBytes": 1288054,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "apps/fake-agent/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 6,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 27096,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "apps/mcp/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 10,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 135334,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "apps/worker/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 58,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 465054,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/a2a-adapter/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 4,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 17627,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/agent-sdk/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 4,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 123073,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/artifact-storage/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 8,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 63131,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/config/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 8,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 53322,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/conformance/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 18,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 60481,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/contracts/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 14,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 1611008,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/db/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 82,
+        "directoryCountIncludingRoot": 4,
+        "logicalBytes": 1436860,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/domain/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 28,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 91776,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/git-provider/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 6,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 56019,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/observability/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 8,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 25028,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/recovery/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 20,
+        "directoryCountIncludingRoot": 3,
+        "logicalBytes": 72105,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 8,
+        "reviewedRelativePath": "packages/ui/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 82,
+        "directoryCountIncludingRoot": 5,
+        "logicalBytes": 269267,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/a2a-adapter/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 4,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 17627,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/agent-sdk/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 4,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 123073,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/artifact-storage/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 8,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 63131,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/config/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 8,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 53322,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/contracts/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 14,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 1623354,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/db/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 86,
+        "directoryCountIncludingRoot": 4,
+        "logicalBytes": 1527992,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/domain/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 28,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 92346,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/git-provider/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 6,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 56019,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/observability/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 8,
+        "directoryCountIncludingRoot": 1,
+        "logicalBytes": 25028,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/recovery/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 20,
+        "directoryCountIncludingRoot": 3,
+        "logicalBytes": 72105,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\dist",
+      "category": "build-output",
+      "preflightEligible": true,
+      "preflightPath": {
+        "todo": 15,
+        "reviewedRelativePath": "packages/ui/dist",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\dist",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\dist",
+        "insideWorkspace": true,
+        "workspacePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "itemIsDirectory": true,
+        "itemAttributes": "Directory",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "descendantReparseCount": 0,
+        "descendantReparse": [],
+        "recursiveEnumerationError": null,
+        "regularFileCount": 82,
+        "directoryCountIncludingRoot": 5,
+        "logicalBytes": 269267,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "canProceed": true
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0
+      }
+    },
+    {
+      "todo": 11,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json",
+      "category": "historical-audit-file",
+      "preflightEligible": true,
+      "preflightPath": {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json",
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json",
+        "insideWorkspace": true,
+        "exists": true,
+        "itemIsDirectory": false,
+        "length": 316012,
+        "sha256": "5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442",
+        "expectedSha256": "5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442",
+        "worktreeHeadBlob": "414dfe920c54f68ca1a2f246f1fcdd82e43767bb",
+        "expectedGitBlob": "414dfe920c54f68ca1a2f246f1fcdd82e43767bb",
+        "gitHashExitCode": 0,
+        "sourceBlobReadableExitCode": 0,
+        "sourceCommit": "58d59ed85002da637aaeaa6bf98915d4a6ba918c",
+        "pathChainNoReparse": true,
+        "pathChainReparse": [],
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": [],
+        "activityChatMentions": 0,
+        "activityChatSource": "Fresh #5/#9/#16/#21 conversation searches for exact D1a candidate path: zero; #8/#15 owner conversations also zero.",
+        "canProceed": true,
+        "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+        "sourceCommitAncestorOfObservedFetchHeadExitCode": 0
+      },
+      "state": "removed",
+      "result": {
+        "state": "removed",
+        "targetExistsAfter": false,
+        "cmdletExitCode": 0,
+        "output": "",
+        "operationRecord": "singleFileOperations[0]"
+      }
+    }
+  ],
+  "dependenciesSkipped": [
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\web\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\agent-runner\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\api\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\fake-agent\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\mcp\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\web\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\apps\\worker\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\conformance\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\node_modules",
+      "decision": "skipped before deletion: recursive junction/symlink topology and shared pnpm store boundary not proven in this pass"
+    }
+  ],
+  "openFilesCheck": {
+    "command": "openfiles /query /fo csv /v",
+    "exitCode": 1,
+    "rawOutput": "ERROR: Access is denied.",
+    "limitation": "未能从该接口核验OS文件句柄；不宣称全局无句柄。",
+    "policy": "路径引用检查依据Todo/build对话及Win32_Process命令行观察；普通操作失败即保留。"
+  },
+  "operations": [
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+      "preflightAtUtc": "2026-10-08T15:37:46.5581905Z",
+      "currentPreflight": {
+        "registered": true,
+        "worktreeHead": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "gitStatusExitCode": 0,
+        "gitStatusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 32,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 120299,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:37:46.5763564Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:37:46.599253Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+      "preflightAtUtc": "2026-10-08T15:37:46.6491248Z",
+      "currentPreflight": {
+        "registered": true,
+        "worktreeHead": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "gitStatusExitCode": 0,
+        "gitStatusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 96,
+        "directoriesIncludingRoot": 12,
+        "logicalBytes": 1288054,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:37:46.6530695Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:37:46.6866968Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+      "preflightAtUtc": "2026-10-08T15:37:46.7203508Z",
+      "currentPreflight": {
+        "registered": true,
+        "worktreeHead": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "gitStatusExitCode": 0,
+        "gitStatusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 6,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 27096,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:37:46.7234213Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:37:46.7331411Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+      "preflightAtUtc": "2026-10-08T15:37:46.7781273Z",
+      "currentPreflight": {
+        "registered": true,
+        "worktreeHead": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "gitStatusExitCode": 0,
+        "gitStatusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 10,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 135334,
+        "aclReadable": true,
+        "matchingProcessCommandLineRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:37:46.7834584Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:37:46.7966139Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+      "preflightAtUtc": "2026-10-08T15:38:52.7002849Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "gitStatusExitCode": 0,
+        "gitStatusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 58,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 465054,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:38:52.7231262Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:38:52.7724394Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist",
+      "preflightAtUtc": "2026-10-08T15:38:52.8328556Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "gitStatusExitCode": 0,
+        "gitStatusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 4,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 17627,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:38:52.8389228Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:38:52.8537506Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist",
+      "preflightAtUtc": "2026-10-08T15:38:52.9124525Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "gitStatusExitCode": 0,
+        "gitStatusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 4,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 123073,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:38:52.919732Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:38:52.9509333Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist",
+      "preflightAtUtc": "2026-10-08T15:38:52.9889367Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "gitStatusExitCode": 0,
+        "gitStatusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 8,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 63131,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:38:52.9933074Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:38:53.0027869Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\dist",
+      "preflightAtUtc": "2026-10-08T15:39:42.7301159Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 8,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 53322,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:39:42.7540365Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:39:42.7689612Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\dist",
+      "preflightAtUtc": "2026-10-08T15:39:42.8200636Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 18,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 60481,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:39:42.8255356Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:39:42.8536927Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\dist",
+      "preflightAtUtc": "2026-10-08T15:39:42.8989718Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 14,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 1611008,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:39:42.9056467Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:39:42.9307051Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\dist",
+      "preflightAtUtc": "2026-10-08T15:39:43.006583Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 82,
+        "directoriesIncludingRoot": 4,
+        "logicalBytes": 1436860,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:39:43.014978Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:39:43.0791603Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\dist",
+      "preflightAtUtc": "2026-10-08T15:40:34.1803496Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 28,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 91776,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:40:34.270971Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:40:34.3992369Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\dist",
+      "preflightAtUtc": "2026-10-08T15:40:34.709272Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 6,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 56019,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:40:34.7277291Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:40:34.8139138Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\dist",
+      "preflightAtUtc": "2026-10-08T15:40:35.125745Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 8,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 25028,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:40:35.1649987Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:40:35.2981187Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\dist",
+      "preflightAtUtc": "2026-10-08T15:40:35.6108102Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 20,
+        "directoriesIncludingRoot": 3,
+        "logicalBytes": 72105,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:40:35.6433952Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:40:35.8014552Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 8,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\dist",
+      "preflightAtUtc": "2026-10-08T15:41:37.876008Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 82,
+        "directoriesIncludingRoot": 5,
+        "logicalBytes": 269267,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:41:37.9631009Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:41:38.2628778Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+      "preflightAtUtc": "2026-10-08T15:41:39.1964466Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 4,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 17627,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:41:39.2306597Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:41:39.2834946Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+      "preflightAtUtc": "2026-10-08T15:41:40.0417968Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 4,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 123073,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:41:40.0679925Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:41:40.1380118Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+      "preflightAtUtc": "2026-10-08T15:41:41.0108145Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 8,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 63131,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:41:41.0467873Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:41:41.1120318Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+      "preflightAtUtc": "2026-10-08T15:43:00.5626136Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 8,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 53322,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:43:00.5854483Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:43:00.6032505Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+      "preflightAtUtc": "2026-10-08T15:43:00.8714572Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 14,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 1623354,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:43:00.8771214Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:43:00.9031418Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist",
+      "preflightAtUtc": "2026-10-08T15:43:01.2458397Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 86,
+        "directoriesIncludingRoot": 4,
+        "logicalBytes": 1527992,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:43:01.2514053Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:43:01.2940903Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist",
+      "preflightAtUtc": "2026-10-08T15:43:01.6043314Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 28,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 92346,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:43:01.6164635Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:43:01.647131Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\dist",
+      "preflightAtUtc": "2026-10-08T15:44:03.837661Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 6,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 56019,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:44:03.8631428Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:44:03.8896696Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\dist",
+      "preflightAtUtc": "2026-10-08T15:44:04.1722473Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 8,
+        "directoriesIncludingRoot": 1,
+        "logicalBytes": 25028,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:44:04.1778671Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:44:04.1868288Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\dist",
+      "preflightAtUtc": "2026-10-08T15:44:04.4574134Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 20,
+        "directoriesIncludingRoot": 3,
+        "logicalBytes": 72105,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:44:04.4629869Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:44:04.4786539Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    },
+    {
+      "todo": 15,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\dist",
+      "preflightAtUtc": "2026-10-08T15:44:04.8195881Z",
+      "currentPreflight": {
+        "registered": true,
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "statusExitCode": 0,
+        "statusLines": 0,
+        "resolvedPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\dist",
+        "pathChainReparsePoints": [],
+        "descendantReparseCount": 0,
+        "files": 82,
+        "directoriesIncludingRoot": 5,
+        "logicalBytes": 269267,
+        "aclReadable": true,
+        "processRefs": 0,
+        "ancestorOfObservedFetchHeadExitCode": 0
+      },
+      "invocationInput": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\dist' -Recurse -ErrorAction Stop",
+      "cmdletStartedAtUtc": "2026-10-08T15:44:04.8345901Z",
+      "cmdletCompletedAtUtc": "2026-10-08T15:44:04.9324655Z",
+      "cmdletExitCode": 0,
+      "rawOutput": [],
+      "rawError": null,
+      "targetExistsAfter": false,
+      "state": "removed"
+    }
+  ],
+  "physicalDiskRelease": "unknown",
+  "overallConclusion": "本阶段已普通删除 28 个 dist 目录和 1 个 D1a audit 普通文件；38 个 node_modules 因链接/共享 pnpm store 边界未证实而保留。保护缓存和 D1a 原件/RAW ZIP 仍在；物理净释放未知。历史受拒目标不重试，整项仍未完成。",
+  "postflightChecks": [
+    {
+      "observedAtUtc": "2026-10-08T15:38:27.8960863Z",
+      "todo": 8,
+      "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "registered": true,
+      "worktreeListExitCode": 0,
+      "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+      "headExitCode": 0,
+      "statusExitCode": 0,
+      "statusLines": 0,
+      "firstBatchTargetChecks": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+          "exists": false
+        }
+      ],
+      "allTargetsMissing": true
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:39:18.6574372Z",
+      "todo": 8,
+      "registered": true,
+      "worktreeListExitCode": 0,
+      "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+      "headExitCode": 0,
+      "statusExitCode": 0,
+      "statusLines": 0,
+      "targetChecks": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist",
+          "exists": false
+        }
+      ],
+      "allRemovedTargetsMissing": true,
+      "ancestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:40:08.5975271Z",
+      "todo": 8,
+      "registered": true,
+      "worktreeListExitCode": 0,
+      "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+      "headExitCode": 0,
+      "statusExitCode": 0,
+      "statusLines": 0,
+      "targetChecks": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\dist",
+          "exists": false
+        }
+      ],
+      "allRemovedTargetsMissing": true,
+      "ancestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:41:03.0428991Z",
+      "todo": 8,
+      "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "registered": true,
+      "worktreeListExitCode": 0,
+      "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+      "headExitCode": 0,
+      "statusExitCode": 0,
+      "statusLines": 0,
+      "removedTargetChecks": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\dist",
+          "exists": false
+        }
+      ],
+      "allRemovedTargetsMissing": true,
+      "ancestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:41:03.8659179Z",
+      "todo": 15,
+      "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+      "registered": true,
+      "worktreeListExitCode": 0,
+      "head": "81090ec01bcbc84edbe101418d833840999a5326",
+      "headExitCode": 0,
+      "statusExitCode": 0,
+      "statusLines": 0,
+      "removedTargetChecks": [],
+      "allRemovedTargetsMissing": true,
+      "ancestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:42:09.6540185Z",
+      "todo": 15,
+      "registered": true,
+      "worktreeListExitCode": 0,
+      "head": "81090ec01bcbc84edbe101418d833840999a5326",
+      "headExitCode": 0,
+      "statusExitCode": 0,
+      "statusLines": 0,
+      "targetChecks": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+          "exists": false
+        }
+      ],
+      "allRemovedTargetsMissing": true,
+      "ancestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:43:30.155694Z",
+      "todo": 15,
+      "registered": true,
+      "worktreeListExitCode": 0,
+      "head": "81090ec01bcbc84edbe101418d833840999a5326",
+      "headExitCode": 0,
+      "statusExitCode": 0,
+      "statusLines": 0,
+      "targetChecks": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist",
+          "exists": false
+        }
+      ],
+      "allRemovedTargetsMissing": true,
+      "ancestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:44:33.2785386Z",
+      "todo": 15,
+      "registered": true,
+      "worktreeListExitCode": 0,
+      "head": "81090ec01bcbc84edbe101418d833840999a5326",
+      "headExitCode": 0,
+      "statusExitCode": 0,
+      "statusLines": 0,
+      "targetChecks": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\dist",
+          "exists": false
+        }
+      ],
+      "allRemovedTargetsMissing": true,
+      "ancestorOfObservedFetchHeadExitCode": 0
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:45:27.5866504Z",
+      "todo": 15,
+      "registered": true,
+      "worktreeListExitCode": 0,
+      "head": "81090ec01bcbc84edbe101418d833840999a5326",
+      "headExitCode": 0,
+      "statusExitCode": 0,
+      "statusLines": 0,
+      "targetChecks": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\dist",
+          "exists": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\dist",
+          "exists": false
+        }
+      ],
+      "allRemovedTargetsMissing": true,
+      "ancestorOfObservedFetchHeadExitCode": 0
+    }
+  ],
+  "batchRefreshes": [
+    {
+      "observedAtUtc": "2026-10-08T15:38:06.234348Z",
+      "machineStatusExit": 0,
+      "machineStatus": [
+        "[tds] Daemon: running (pid 59452, v0.1.60, since 2026/10/8 17:04:54, started by tds start)",
+        "[tds] Workspaces: C:\\Users\\xurx\\.tds\\workspaces",
+        "[tds] Machine: DarkFlame (6DOlLniZ0sqBYGHeIhRMq)",
+        "[tds] Team: HSmBMOqAdoG9i4C6YLTbP",
+        "[tds] Agents: iuKoX-czTc8kH_ERctdlM, s4Fuf8WSJPTJUZS3ultDP, ylZRCk9jdHaXeh5AuWsvv, jxQOahMH5DRYdBG6-Nhs1, _oYMSdl7L0Y6M9c4IB-PD",
+        "[tds] Server: https://todos.dev"
+      ],
+      "todoPhases": {
+        "#9": "building",
+        "#8": "done",
+        "#21": "review",
+        "#15": "done",
+        "#5": "review",
+        "#16": "building",
+        "#52": "building"
+      },
+      "activeChatExactCandidateRefs": {
+        "#5": 0,
+        "#16": 0,
+        "#9": 0,
+        "#21": 0
+      },
+      "ownerChatCacheSpecificReferences": {
+        "#8": 0,
+        "#15": 0
+      },
+      "note": "A1/C1 root path mentions in done owner chats were branch/recovery references; no candidate cache path terms.",
+      "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:39:11.9644561Z",
+      "machineStatusExitCode": 0,
+      "machineStatus": [
+        "[tds] Daemon: running (pid 59452, v0.1.60, since 2026/10/8 17:04:54, started by tds start)",
+        "[tds] Workspaces: C:\\Users\\xurx\\.tds\\workspaces",
+        "[tds] Machine: DarkFlame (6DOlLniZ0sqBYGHeIhRMq)",
+        "[tds] Team: HSmBMOqAdoG9i4C6YLTbP",
+        "[tds] Agents: ylZRCk9jdHaXeh5AuWsvv, jxQOahMH5DRYdBG6-Nhs1, s4Fuf8WSJPTJUZS3ultDP, iuKoX-czTc8kH_ERctdlM, _oYMSdl7L0Y6M9c4IB-PD",
+        "[tds] Server: https://todos.dev"
+      ],
+      "todoPhases": {
+        "#21": "review",
+        "#16": "building",
+        "#8": "done",
+        "#5": "review",
+        "#15": "done",
+        "#52": "building",
+        "#9": "building"
+      },
+      "activeTaskChatTargetRefs": {
+        "#21": 0,
+        "#5": 0,
+        "#16": 0,
+        "#9": 0
+      },
+      "ownerCacheSpecificRefs": {
+        "#15": 0,
+        "#8": 0
+      },
+      "targetScope": "second small batch of A1 dist directories",
+      "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:39:58.1873667Z",
+      "machineStatusExitCode": 0,
+      "machineStatus": [
+        "[tds] Daemon: running (pid 59452, v0.1.60, since 2026/10/8 17:04:54, started by tds start)",
+        "[tds] Workspaces: C:\\Users\\xurx\\.tds\\workspaces",
+        "[tds] Machine: DarkFlame (6DOlLniZ0sqBYGHeIhRMq)",
+        "[tds] Team: HSmBMOqAdoG9i4C6YLTbP",
+        "[tds] Agents: ylZRCk9jdHaXeh5AuWsvv, jxQOahMH5DRYdBG6-Nhs1, s4Fuf8WSJPTJUZS3ultDP, iuKoX-czTc8kH_ERctdlM, _oYMSdl7L0Y6M9c4IB-PD",
+        "[tds] Server: https://todos.dev"
+      ],
+      "todoPhases": {
+        "#16": "building",
+        "#15": "done",
+        "#9": "building",
+        "#21": "review",
+        "#5": "review",
+        "#52": "building",
+        "#8": "done"
+      },
+      "activeTaskChatTargetRefs": {
+        "#5": 0,
+        "#16": 0,
+        "#9": 0,
+        "#21": 0
+      },
+      "ownerCacheSpecificRefs": {
+        "#8": 0,
+        "#15": 0
+      },
+      "targetScope": "third small batch: remaining A1 dist then C1 dist",
+      "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:40:53.6239787Z",
+      "machineStatusExitCode": 0,
+      "machineStatus": [
+        "[tds] Daemon: running (pid 59452, v0.1.60, since 2026/10/8 17:04:54, started by tds start)",
+        "[tds] Workspaces: C:\\Users\\xurx\\.tds\\workspaces",
+        "[tds] Machine: DarkFlame (6DOlLniZ0sqBYGHeIhRMq)",
+        "[tds] Team: HSmBMOqAdoG9i4C6YLTbP",
+        "[tds] Agents: ylZRCk9jdHaXeh5AuWsvv, jxQOahMH5DRYdBG6-Nhs1, s4Fuf8WSJPTJUZS3ultDP, iuKoX-czTc8kH_ERctdlM, _oYMSdl7L0Y6M9c4IB-PD",
+        "[tds] Server: https://todos.dev"
+      ],
+      "todoPhases": {
+        "#8": "done",
+        "#15": "done",
+        "#5": "review",
+        "#21": "review",
+        "#9": "building",
+        "#52": "building",
+        "#16": "building"
+      },
+      "activeTaskChatTargetRefs": {
+        "#9": 0,
+        "#21": 0,
+        "#5": 0,
+        "#16": 0
+      },
+      "ownerCacheSpecificRefs": {
+        "#8": 0,
+        "#15": 0
+      },
+      "targetScope": "remaining A1 dist and first C1 dist batch",
+      "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:41:58.5151435Z",
+      "machineStatusExitCode": 0,
+      "machineStatus": [
+        "[tds] Daemon: running (pid 59452, v0.1.60, since 2026/10/8 17:04:54, started by tds start)",
+        "[tds] Workspaces: C:\\Users\\xurx\\.tds\\workspaces",
+        "[tds] Machine: DarkFlame (6DOlLniZ0sqBYGHeIhRMq)",
+        "[tds] Team: HSmBMOqAdoG9i4C6YLTbP",
+        "[tds] Agents: ylZRCk9jdHaXeh5AuWsvv, jxQOahMH5DRYdBG6-Nhs1, s4Fuf8WSJPTJUZS3ultDP, iuKoX-czTc8kH_ERctdlM, _oYMSdl7L0Y6M9c4IB-PD",
+        "[tds] Server: https://todos.dev"
+      ],
+      "todoPhases": {
+        "#21": "review",
+        "#9": "building",
+        "#5": "review",
+        "#52": "building",
+        "#8": "done",
+        "#15": "done",
+        "#16": "building"
+      },
+      "activeTaskChatTargetRefs": {
+        "#16": 0,
+        "#21": 0,
+        "#5": 0,
+        "#9": 0
+      },
+      "ownerCacheSpecificRefs": {
+        "#8": 0,
+        "#15": 0
+      },
+      "targetScope": "C1 dist batch",
+      "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:43:22.8268088Z",
+      "machineStatusExitCode": 0,
+      "machineStatus": [
+        "[tds] Daemon: running (pid 59452, v0.1.60, since 2026/10/8 17:04:54, started by tds start)",
+        "[tds] Workspaces: C:\\Users\\xurx\\.tds\\workspaces",
+        "[tds] Machine: DarkFlame (6DOlLniZ0sqBYGHeIhRMq)",
+        "[tds] Team: HSmBMOqAdoG9i4C6YLTbP",
+        "[tds] Agents: ylZRCk9jdHaXeh5AuWsvv, jxQOahMH5DRYdBG6-Nhs1, s4Fuf8WSJPTJUZS3ultDP, iuKoX-czTc8kH_ERctdlM, _oYMSdl7L0Y6M9c4IB-PD",
+        "[tds] Server: https://todos.dev"
+      ],
+      "todoPhases": {
+        "#52": "building",
+        "#21": "review",
+        "#8": "done",
+        "#9": "building",
+        "#16": "building",
+        "#15": "done",
+        "#5": "review"
+      },
+      "activeTaskChatTargetRefs": {
+        "#16": 0,
+        "#21": 0,
+        "#5": 0,
+        "#9": 0
+      },
+      "ownerCacheSpecificRefs": {
+        "#15": 0,
+        "#8": 0
+      },
+      "targetScope": "C1 dist batch 2",
+      "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:44:24.6521276Z",
+      "machineStatusExitCode": 0,
+      "machineStatus": [
+        "[tds] Daemon: running (pid 59452, v0.1.60, since 2026/10/8 17:04:54, started by tds start)",
+        "[tds] Workspaces: C:\\Users\\xurx\\.tds\\workspaces",
+        "[tds] Machine: DarkFlame (6DOlLniZ0sqBYGHeIhRMq)",
+        "[tds] Team: HSmBMOqAdoG9i4C6YLTbP",
+        "[tds] Agents: ylZRCk9jdHaXeh5AuWsvv, jxQOahMH5DRYdBG6-Nhs1, s4Fuf8WSJPTJUZS3ultDP, iuKoX-czTc8kH_ERctdlM, _oYMSdl7L0Y6M9c4IB-PD",
+        "[tds] Server: https://todos.dev"
+      ],
+      "todoPhases": {
+        "#15": "done",
+        "#21": "review",
+        "#16": "building",
+        "#52": "building",
+        "#8": "done",
+        "#5": "review",
+        "#9": "building"
+      },
+      "activeTaskChatTargetRefs": {
+        "#21": 0,
+        "#5": 0,
+        "#16": 0,
+        "#9": 0
+      },
+      "ownerCacheSpecificRefs": {
+        "#15": 0,
+        "#8": 0
+      },
+      "targetScope": "C1 dist final batch and D1a audit preflight",
+      "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+    },
+    {
+      "observedAtUtc": "2026-10-08T15:48:00.1332975Z",
+      "machineId": "6DOlLniZ0sqBYGHeIhRMq",
+      "machineName": "DarkFlame",
+      "tdsStatusExit": 0,
+      "tdsStatusRaw": "[tds] Daemon: running (pid 59452, v0.1.60, since 2026/10/8 17:04:54, started by tds start); Workspaces: C:\\Users\\xurx\\.tds\\workspaces; Machine: DarkFlame (6DOlLniZ0sqBYGHeIhRMq)",
+      "todoBoardSnapshotTimeUtc": null,
+      "todoBoardTimeKnown": false,
+      "todoPhases": {
+        "#5": "review",
+        "#17": "done",
+        "#11": "done",
+        "#21": "review",
+        "#15": "done",
+        "#16": "building",
+        "#52": "building",
+        "#9": "building",
+        "#8": "done"
+      },
+      "exactPathConversationMentions": {
+        "#5": 0,
+        "#8": 0,
+        "#9": 0,
+        "#21": 0,
+        "#16": 0,
+        "#15": 0
+      },
+      "chatNoHitIsNotProcessProof": true,
+      "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "fetchOriginMainSucceeded": true
+    }
+  ],
+  "finalD1aAuditPreflight": {
+    "checkedAtUtc": "2026-10-08T15:48:00.1332975Z",
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json",
+    "pathWithinWorkspace": true,
+    "fileExists": true,
+    "isDirectory": false,
+    "length": 316012,
+    "sha256": "5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442",
+    "expectedSha256": "5c4f576f3386bafbfdfe7f85c5492740b17597ae116f1a902963e2ab85338442",
+    "gitBlob": "414dfe920c54f68ca1a2f246f1fcdd82e43767bb",
+    "expectedGitBlob": "414dfe920c54f68ca1a2f246f1fcdd82e43767bb",
+    "gitHashExit": 0,
+    "sourceCommit": "58d59ed85002da637aaeaa6bf98915d4a6ba918c",
+    "sourceBlobReadableExit": 0,
+    "parent": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+    "parentRegistered": true,
+    "worktreeListExit": 0,
+    "parentHead": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+    "parentHeadExit": 0,
+    "parentStatusExit": 0,
+    "parentStatusEntryCount": 0,
+    "aclReadable": true,
+    "exclusiveReadOpenSucceeded": true,
+    "exclusiveReadOpenError": null,
+    "matchingProcessCommandLineRefs": [],
+    "pathChain": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json",
+        "attributes": "Archive",
+        "reparse": false
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp",
+        "attributes": "Directory",
+        "reparse": false
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+        "attributes": "Directory",
+        "reparse": false
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces",
+        "attributes": "Directory",
+        "reparse": false
+      }
+    ],
+    "eligible": true,
+    "sourceCommitAncestorOfObservedFetchHeadExit": 0,
+    "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+  },
+  "singleFileOperations": [
+    {
+      "target": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json",
+      "command": "Remove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-git-evidence-audit.json' -ErrorAction Stop",
+      "startedAtUtc": null,
+      "completionAtUtc": "2026-10-08T15:48:22.0561314Z",
+      "rawOutput": "",
+      "exitCode": 0,
+      "targetExistsAfter": false,
+      "state": "removed",
+      "preparedAtUtc": "2026-10-08T15:48:14.9776428Z",
+      "actualStartedAtUtc": null,
+      "dispatchedAtUtc": "2026-10-08T15:48:20.267Z",
+      "returnedAtUtc": "2026-10-08T15:48:22.965Z",
+      "callId": "call_bffe25ecd99f4e939d7ab9e539a10857",
+      "rawReceiptRef": "original-operation-receipts-ordinary-cleanup-2026-10-09.json#auditDeletion",
+      "completionRecordedAtUtc": "2026-10-08T15:48:22.0561314Z",
+      "actualOperationStartKnown": false
+    }
+  ],
+  "finalPostflight": {
+    "verifiedAtUtc": "2026-10-08T15:52:23.7017345Z",
+    "approvedTargets": 29,
+    "distTargetsRemoved": 28,
+    "distTargetsPresentAfter": 0,
+    "auditExistsAfter": false,
+    "dependenciesSkipped": 38,
+    "dependenciesStillPresent": 38,
+    "turboProtected": 36,
+    "turboStillPresent": 36,
+    "typecheckCachesProtected": 2,
+    "typecheckCachesStillPresent": 2,
+    "preservedTraceExists": true,
+    "rawZipCopies": 2,
+    "rawZipCopiesStillPresent": 2,
+    "worktreeListExit": 0,
+    "worktreeCount": 21,
+    "prunableEntries": 0,
+    "parentWorktrees": [
+      {
+        "todo": 3,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+        "head": "550dead055689154359a3406dfce4f0c91c1dad3",
+        "headExit": 0,
+        "statusExit": 0,
+        "statusEntries": 0,
+        "registered": true,
+        "ancestorOfObservedFetchHeadExit": 0
+      },
+      {
+        "todo": 10,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+        "head": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+        "headExit": 0,
+        "statusExit": 0,
+        "statusEntries": 0,
+        "registered": true,
+        "ancestorOfObservedFetchHeadExit": 0
+      },
+      {
+        "todo": 11,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+        "head": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+        "headExit": 0,
+        "statusExit": 0,
+        "statusEntries": 0,
+        "registered": true,
+        "ancestorOfObservedFetchHeadExit": 0
+      },
+      {
+        "todo": 18,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+        "head": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+        "headExit": 0,
+        "statusExit": 0,
+        "statusEntries": 0,
+        "registered": true,
+        "ancestorOfObservedFetchHeadExit": 0
+      },
+      {
+        "todo": 8,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+        "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "headExit": 0,
+        "statusExit": 0,
+        "statusEntries": 0,
+        "registered": true,
+        "ancestorOfObservedFetchHeadExit": 0
+      },
+      {
+        "todo": 15,
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+        "head": "81090ec01bcbc84edbe101418d833840999a5326",
+        "headExit": 0,
+        "statusExit": 0,
+        "statusEntries": 0,
+        "registered": true,
+        "ancestorOfObservedFetchHeadExit": 0
+      }
+    ],
+    "physicalDiskRelease": "unknown",
+    "machineStatus": {
+      "machineId": "6DOlLniZ0sqBYGHeIhRMq",
+      "machineName": "DarkFlame",
+      "observedAtUtc": "2026-10-08T15:52:23.7017345Z",
+      "exitCode": 0,
+      "rawOutput": "[tds] Daemon:   running (pid 59452, v0.1.60, since 2026/10/8 17:04:54, started by tds start)\r\n[tds] Workspaces: C:\\Users\\xurx\\.tds\\workspaces\r\n[tds] Machine: DarkFlame (6DOlLniZ0sqBYGHeIhRMq)\r\n[tds] Team:     HSmBMOqAdoG9i4C6YLTbP\r\n[tds] Agents:   ylZRCk9jdHaXeh5AuWsvv, jxQOahMH5DRYdBG6-Nhs1, s4Fuf8WSJPTJUZS3ultDP, iuKoX-czTc8kH_ERctdlM, _oYMSdl7L0Y6M9c4IB-PD\r\n[tds] Server:   https://todos.dev"
+    },
+    "todoPhases": {
+      "#5": "review",
+      "#8": "done",
+      "#17": "done",
+      "#21": "review",
+      "#16": "building",
+      "#9": "building",
+      "#15": "done",
+      "#52": "building",
+      "#11": "done"
+    },
+    "activityChatsExactAuditMentions": {
+      "#9": 0,
+      "#15": 0,
+      "#8": 0,
+      "#5": 0,
+      "#16": 0,
+      "#21": 0
+    },
+    "mainSource": "fresh mcp__tds__git fetch origin main, rev-parse FETCH_HEAD",
+    "logicalBytesRemoved": 10154810,
+    "logicalBytesBreakdown": {
+      "distDirectories": 9838798,
+      "auditFile": 316012,
+      "distRegularFiles": 752,
+      "distDirectoriesIncludingRoot": 57
+    },
+    "globalOpenFilesEnumeration": "not available: openfiles exit 1, ERROR: Access is denied; no global handle-absence claim",
+    "protectedWorkspaceChecks": [
+      {
+        "todo": "#5",
+        "kind": "current",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+        "exists": true,
+        "registered": true
+      },
+      {
+        "todo": "#9",
+        "kind": "current",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+        "exists": true,
+        "registered": true
+      },
+      {
+        "todo": "#16",
+        "kind": "current",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+        "exists": true,
+        "registered": true
+      },
+      {
+        "todo": "#17",
+        "kind": "protected",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+        "exists": true,
+        "registered": true
+      },
+      {
+        "todo": "#21",
+        "kind": "current",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+        "exists": true,
+        "registered": true
+      },
+      {
+        "todo": "#21",
+        "kind": "old-checkpoint",
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+        "exists": true,
+        "registered": true
+      }
+    ],
+    "totalApprovedTargetsRemoved": 29,
+    "auditCommandOutput": "",
+    "observedFetchHeadSha": "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+  },
+  "observedFetchHeadObject": {
+    "sha": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "source": "mcp__tds__git fetch origin main; rev-parse FETCH_HEAD",
+    "fetchOriginMainSucceeded": true,
+    "independentRemoteMainRefProof": false,
+    "receiptFile": "original-operation-receipts-ordinary-cleanup-2026-10-09.json#mainSourceEvidence",
+    "interpretation": "execution-time FETCH_HEAD object observed after fetch origin main; not independently verified as remote refs/heads/main; no later evidence backfilled",
+    "shaFieldMeaning": "observedFetchHeadSha"
+  },
+  "originalOperationReceipts": {
+    "file": "original-operation-receipts-ordinary-cleanup-2026-10-09.json",
+    "source": {
+      "path": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T17-15-17-01a11acb-aa1d-7c20-9f0a-069bb121f67b.jsonl",
+      "executionWindowStartUtc": "2026-10-08T15:30:00Z",
+      "executionWindowEndUtc": "2026-10-08T15:49:00Z",
+      "recordsAreVerbatimJsonlEvents": true
+    },
+    "successfulDeletionBatches": [
+      {
+        "batch": 1,
+        "callId": "call_1cc025672848478c8be43f6d053e9f37",
+        "dispatchAtUtc": "2026-10-08T15:37:44.605Z",
+        "returnAtUtc": "2026-10-08T15:37:46.878Z",
+        "inputLine": 8434,
+        "returnLine": 8437,
+        "targetPaths": [
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist"
+        ],
+        "fullInputOutputStored": true
+      },
+      {
+        "batch": 2,
+        "callId": "call_5f1b554620ba43fba4fa18bd9c92e37b",
+        "dispatchAtUtc": "2026-10-08T15:38:50.56Z",
+        "returnAtUtc": "2026-10-08T15:38:53.093Z",
+        "inputLine": 8494,
+        "returnLine": 8497,
+        "targetPaths": [
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\a2a-adapter\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\agent-sdk\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\artifact-storage\\dist"
+        ],
+        "fullInputOutputStored": true
+      },
+      {
+        "batch": 3,
+        "callId": "call_a08bbdf6146c4031963e24593afba238",
+        "dispatchAtUtc": "2026-10-08T15:39:40.842Z",
+        "returnAtUtc": "2026-10-08T15:39:43.165Z",
+        "inputLine": 8533,
+        "returnLine": 8536,
+        "targetPaths": [
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\config\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\conformance\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\contracts\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\db\\dist"
+        ],
+        "fullInputOutputStored": true
+      },
+      {
+        "batch": 4,
+        "callId": "call_d8fd44cc54424e45ab9726cb38f12eb6",
+        "dispatchAtUtc": "2026-10-08T15:40:30.599Z",
+        "returnAtUtc": "2026-10-08T15:40:37.155Z",
+        "inputLine": 8574,
+        "returnLine": 8577,
+        "targetPaths": [
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\domain\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\git-provider\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\observability\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\recovery\\dist"
+        ],
+        "fullInputOutputStored": true
+      },
+      {
+        "batch": 5,
+        "callId": "call_76646f926b55403db5128bed7e30bd26",
+        "dispatchAtUtc": "2026-10-08T15:41:32.663Z",
+        "returnAtUtc": "2026-10-08T15:41:41.738Z",
+        "inputLine": 8613,
+        "returnLine": 8616,
+        "targetPaths": [
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\packages\\ui\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist"
+        ],
+        "fullInputOutputStored": true
+      },
+      {
+        "batch": 6,
+        "callId": "call_b62de3f80b1943d4b19ad3c5edd6e94c",
+        "dispatchAtUtc": "2026-10-08T15:42:58.414Z",
+        "returnAtUtc": "2026-10-08T15:43:01.802Z",
+        "inputLine": 8664,
+        "returnLine": 8667,
+        "targetPaths": [
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\db\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\domain\\dist"
+        ],
+        "fullInputOutputStored": true
+      },
+      {
+        "batch": 7,
+        "callId": "call_b4e5ff992c544031b89d8fc115e6eefa",
+        "dispatchAtUtc": "2026-10-08T15:44:01.453Z",
+        "returnAtUtc": "2026-10-08T15:44:05.087Z",
+        "inputLine": 8705,
+        "returnLine": 8708,
+        "targetPaths": [
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\git-provider\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\observability\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\recovery\\dist",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\ui\\dist"
+        ],
+        "fullInputOutputStored": true
+      }
+    ],
+    "firstFailedBatchAttempt": {
+      "callId": "call_bc9e8f5906aa439ea7d145827e8892cf",
+      "dispatchAtUtc": "2026-10-08T15:37:17.664Z",
+      "returnAtUtc": "2026-10-08T15:37:19.713Z",
+      "inputLine": 8419,
+      "returnLine": 8422,
+      "deletionCallReached": false,
+      "fullInputOutputStored": true
+    },
+    "emptyBatch": {
+      "callId": "call_a16e583a21d04f3fa4d6e2a3fbd8a6e8",
+      "dispatchAtUtc": "2026-10-08T15:44:58.99Z",
+      "returnAtUtc": "2026-10-08T15:45:00.989Z",
+      "inputLine": 8742,
+      "returnLine": 8745,
+      "pendingTargets": 0,
+      "deletionOperations": 0,
+      "fullInputOutputStored": true
+    },
+    "auditPreparation": {
+      "callId": "call_50df654bc4ff48eab9c24a4947116df3",
+      "dispatchAtUtc": "2026-10-08T15:48:13.324Z",
+      "returnAtUtc": "2026-10-08T15:48:15.949Z",
+      "inputLine": 8850,
+      "returnLine": 8853,
+      "deleted": false,
+      "fullInputOutputStored": true
+    },
+    "auditDeletion": {
+      "callId": "call_bffe25ecd99f4e939d7ab9e539a10857",
+      "dispatchAtUtc": "2026-10-08T15:48:20.267Z",
+      "returnAtUtc": "2026-10-08T15:48:22.965Z",
+      "inputLine": 8857,
+      "returnLine": 8860,
+      "fullInputOutputStored": true
+    }
+  },
+  "mainSource": "fetch origin main followed by rev-parse FETCH_HEAD; no independent remote refs/heads/main proof",
+  "independentRemoteMainRefProof": false
+}
