@@ -26,7 +26,13 @@
       "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
       "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
       "dirtyBefore": [],
-      "dirtyAfter": []
+      "dirtyAfter": [],
+      "archivedLog": {
+        "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+        "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-07/logs/theme-e2e.log",
+        "version": "source-run:reverification-environment-07@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+        "byteKind": "worktree"
+      }
     },
     {
       "id": "e2e-suite",
@@ -42,7 +48,13 @@
       "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
       "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
       "dirtyBefore": [],
-      "dirtyAfter": []
+      "dirtyAfter": [],
+      "archivedLog": {
+        "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+        "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-07/logs/e2e-suite.log",
+        "version": "source-run:reverification-environment-07@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+        "byteKind": "worktree"
+      }
     },
     {
       "id": "d0-baseline",
@@ -58,7 +70,31 @@
       "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
       "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
       "dirtyBefore": [],
-      "dirtyAfter": []
+      "dirtyAfter": [],
+      "archivedLog": {
+        "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+        "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-07/logs/d0-baseline.log",
+        "version": "source-run:reverification-environment-07@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+        "byteKind": "worktree"
+      }
     }
-  ]
+  ],
+  "archivedLogResolution": {
+    "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+    "sourceMap": "docs/reviews/d1a/evidence/ci385-raw-evidence/source-map.json",
+    "resolution": "historical log references add archivedLog {index, logicalPath, version, byteKind}; resolve the exact raw worktree snapshot tuple",
+    "aliases": 31
+  },
+  "setupTranscriptArchive": {
+    "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+    "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-07/setup-commands.log",
+    "version": "source-run:reverification-environment-07@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+    "byteKind": "worktree"
+  },
+  "cleanupTranscriptArchive": {
+    "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+    "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-07/cleanup-commands.log",
+    "version": "source-run:reverification-environment-07@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+    "byteKind": "worktree"
+  }
 }

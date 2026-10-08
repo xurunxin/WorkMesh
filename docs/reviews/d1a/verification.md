@@ -48,3 +48,15 @@
 ## 门禁状态
 
 本地 trace 脱敏、ZIP CRC 与 747 行 Git 记录回读均通过，审计 HEAD 为 `adab318497dcc78b23fe7e58fa46c2479efeed41`。GitHub 尚无该 HEAD 的 check run 或 workflow run；本轮证据修复提交后，仍须在新 HEAD 取得 `Required CI` 成功，再完成独立 R1 复核/合入及 Chief 确认。本机结果不替代该门禁。#21 继续负责逐面迁移、人工视觉评审及无旧消费后清理旧值。
+
+## CI 385 首败与无损归档
+
+PR 204 在 base `9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7` 与 head `58d59ed85002da637aaeaa6bf98915d4a6ba918c` 上触发 run `37715113983`。`Classify changes and validate CI selection`（job `113109704226`）在 `Select required jobs` 失败；`Required CI`（job `113109774717`）因 changes job 未生成 plan 而报 `Missing or invalid CI plan`，其余七个必需 job 被跳过。这不是 Node 版本警告导致的失败。
+
+CI 的原始 `changes-raw` artifact `11523640922`、job 原始日志及原始检查事实现集中在 [`ci385-raw-evidence/`](evidence/ci385-raw-evidence/)。GitHub artifact 成员及完整 job 日志按收到的字节保留；artifact 中的 `ci-plan.log` 和 job 日志中 Node 错误对象的显示内容自身已截断，未将其冒称完整 diff 输出。完整对照由同一 base/head Git 对象上的 `git diff --check` 只读重放提供，退出码 2，输出 116,418 字节，SHA-256 `33b813d62e7c9d2863a00279d14d736ffe6cce54286d46c55b4051125c85cf5f`。它定位到 38 份证据日志、共 970 条空白诊断：952 条为行尾空格、18 条为文件末尾多余空行。逐路径、行号、分类计数及 Git/worktree 字节哈希见 [`diff-check-findings.json`](evidence/ci385-raw-evidence/diff-check-findings.json)。
+
+为满足 GitHub 的 PR 空白硬门禁，没有修剪或改写任何原始日志。38 个原路径的 Git blob 与检出工作树字节均被独立封入 [`raw-evidence.zip`](evidence/ci385-raw-evidence/raw-evidence.zip)，并由 [`raw-evidence-index.json`](evidence/ci385-raw-evidence/raw-evidence-index.json) 及 [`source-map.json`](evidence/ci385-raw-evidence/source-map.json) 以原逻辑路径、来源版本、字节类型映射到 ZIP 成员。映射保留 audit commit `adab318497dcc78b23fe7e58fa46c2479efeed41`、PR head `58d59ed85002da637aaeaa6bf98915d4a6ba918c` 的原始 blob，以及独立读取的本机工作树字节；38/38 工作树字节经 UTF-8 BOM 移除与 CRLF→LF 规范化后与对应 Git blob 相同。压缩包 SHA-256 为 `d27fad0c27ca380466410f67bad289525282f0c1c6b45fe15e5d9da6a17a04f7`；按 main `72dbd5e` 的归档校验器格式复核了 149 个来源元组、78 个唯一成员、CRC、长度、内容哈希及 Git blob ID，均通过。另为 `check-index.json`、`reverification-index.json` 与历史 `run-binding.json` 中可在包内解析的日志及 setup/cleanup transcript 建立精确元组指针；不存在对应旧 Git blob 的历史运行日志以 `sourceCommit: null` 工作树快照归档，不虚称其当时已提交。原 run/source/environment 绑定记录保留；未声称恢复缺失的 `reverification-bound-02/service-setup.json`。
+
+上述归档变更不会更新、豁免或改变 CI 规则。新 HEAD 的 `Required CI`、独立复核及 Chief 门禁仍待本轮交付后实际检查；CI 385 和本机重放均不代替新 HEAD 的 GitHub CI 结果。
+
+归档后的候选树使用隔离的临时 Git index 按 base 重建并核验：`git diff --check <base> <candidate-tree>` 退出码 0、输出 0 字节；`scripts/ci-policy.mjs` 的 `planForEvent` 在相同 PR base 与候选树上选择 `full`，18 个受影响 workspace/test package 均纳入，七项 required checks 全为 `true`（source-gates、db-integration、api-integration、worker-integration、e2e、recovery-integration、agent-smoke）。这是提交前的本地选择预检；新提交后的实际 Required CI 结果仍须以 GitHub run 为准。
