@@ -1,0 +1,47 @@
+import { createHash } from 'node:crypto'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+
+const root = resolve(import.meta.dirname, '../../..')
+const json = path => JSON.parse(readFileSync(resolve(root, path), 'utf8').replace(/^\uFEFF/, ''))
+const write = (path, value) => writeFileSync(resolve(root, path), JSON.stringify(value, null, 2) + '\n')
+const mapPath = 'docs/reviews/a2/execution-map.json'
+const map = json(mapPath)
+for (const item of map.originalTests) {
+  item.result = item.id === 'todo-9-T6'
+    ? '仓库 E2E 中跳过；真实 Lite 运行见 execution-results.json，不以镜像构建或入口探针替代安装链路'
+    : 'a2-46fe0e21 完整浏览器及 a2-c2def680 关闭 Gitea 独立浏览器均通过；具体源码字节见 checked-source-binding.json'
+}
+for (const item of map.matrix) {
+  if (!item.applicable) continue
+  item.result = item.file.startsWith('apps/api/integration/')
+    ? 'a2-21cc8a38 对应参数化场景通过；根集成 a2-22323ec0 通过，相关 API/Worker/契约原字节不变'
+    : item.file.endsWith('.spec.ts')
+      ? 'a2-46fe0e21 完整浏览器通过；关闭 Gitea 的独立场景在 a2-c2def680 通过'
+      : 'a2-22323ec0 根单元检查通过；组件/契约受测字节不变，浏览器入口测试变化单列'
+}
+for (const item of map.repairs) item.result = item.file.startsWith('apps/api/integration/')
+  ? 'a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定'
+  : 'a2-46fe0e21 与 a2-c2def680 实际通过，未自动激活或发送'
+map.verification = { results: 'docs/reviews/a2/execution-results.json', source: 'docs/reviews/a2/checked-source-binding.json', visual: 'docs/reviews/a2/visual-review.md', latestCI: 'docs/reviews/a2/latest-ci-readback.json', status: '实现检查结果已绑定；Lite、视觉确认、独审、latest Required CI、actual main 单列，不标记完成' }
+write(mapPath, map)
+const coveragePath = 'docs/reviews/r1/test-coverage.json'
+const coverage = json(coveragePath)
+const feature = coverage.features.find(item => item.seqNum === 9)
+feature.actualExecutionMapping = map
+write(coveragePath, coverage)
+const indexPath = 'docs/plan/activation-task-specs/index.json'
+const index = json(indexPath)
+const task = index.tasks.find(item => item.seqNum === 9)
+task.specSha256 = createHash('sha256').update(readFileSync(resolve(root, task.path))).digest('hex')
+task.execution.status = '实现与检查结果已落盘，未标记整卡完成；等待实施独审及未验收项闭合'
+task.execution.sourceBinding = 'docs/reviews/a2/checked-source-binding.json'
+task.execution.latestCI = 'docs/reviews/a2/latest-ci-readback.json'
+write(indexPath, index)
+const sourcePath = 'docs/plan/a2-configuration-readiness/source.json'
+const source = json(sourcePath)
+source.execution.status = task.execution.status
+source.execution.sourceBinding = task.execution.sourceBinding
+source.execution.latestCI = task.execution.latestCI
+write(sourcePath, source)
+console.log(JSON.stringify({ testCount: map.originalTests.length, categories: map.matrix.length, repairs: map.repairs.length, planUntouched: true }))

@@ -81,9 +81,11 @@ try {
   image.id = await must('docker', ['image', 'inspect', '--format', '{{.Id}}', image.target]); save()
   const roleEnv = { ...env, DATABASE_URL: `postgres://workmesh:${secretValues[0]}@127.0.0.1:1/workmesh_a2_lite_test`,
     REDIS_URL: 'redis://127.0.0.1:1', S3_ENDPOINT: 'http://127.0.0.1:1', WEB_ORIGIN: 'http://127.0.0.1:3000', NEXT_API_UPSTREAM: 'http://127.0.0.1:1', HOSTNAME: '0.0.0.0', PORT: '3000' }
+  // Inherited team secrets do not belong in entrypoint probes.
+  const roleKeys = ['WORKMESH_BUILD_SHA', 'SESSION_SECRET', 'WORKMESH_MASTER_KEY', 'WORKMESH_BOOTSTRAP_TOKEN', 'PAGINATION_CURSOR_KEYS', 'PAGINATION_CURSOR_ACTIVE_KID', 'AUTH_RATE_LIMIT_HMAC_KEY', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY', 'S3_BUCKET', 'S3_REGION', 'WORKMESH_BETA_GITEA', 'DATABASE_URL', 'REDIS_URL', 'S3_ENDPOINT', 'WEB_ORIGIN', 'NEXT_API_UPSTREAM', 'HOSTNAME', 'PORT']
   for (const role of ['migrate', 'api', 'worker', 'web']) {
     const container = register('container', `${runId}-probe-${role}`)
-    container.id = await must('docker', ['run', '-d', '--name', container.target, '--label', `workmesh.task=${runId}`, '-e', `WORKMESH_SERVICE=${role}`, ...Object.keys(roleEnv).filter(key => /^(DATABASE_URL|REDIS_URL|S3_|WORKMESH_|SESSION_SECRET|PAGINATION_|AUTH_RATE_LIMIT_HMAC_KEY|WEB_ORIGIN|NEXT_API_UPSTREAM|HOSTNAME|PORT)/.test(key)).flatMap(key => ['-e', key]), image.target], { env: roleEnv })
+    container.id = await must('docker', ['run', '-d', '--name', container.target, '--label', `workmesh.task=${runId}`, '-e', `WORKMESH_SERVICE=${role}`, ...roleKeys.flatMap(key => ['-e', key]), image.target], { env: roleEnv })
     await pause(12000)
     const log = await must('docker', ['logs', container.id])
     if (!log.includes(`role=${role} `) || /Cannot find (module|package)|MODULE_NOT_FOUND|ENOENT/.test(log)) throw Error(`${role} 未成功加载入口`)
@@ -96,6 +98,16 @@ try {
   copyFileSync(resolve(root, 'docker-compose.lite.yml'), resolve(installDir, 'docker-compose.lite.yml'))
   const tls = resolve(installDir, 'tls'); mkdirSync(tls)
   await must('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', resolve(tls, 'key.pem'), '-out', resolve(tls, 'ca.pem'), '-days', '1', '-subj', '/CN=host.docker.internal', '-addext', 'subjectAltName=DNS:host.docker.internal,DNS:localhost,IP:127.0.0.1'])
+  // Copy only the public CA through Docker's API; do not change host file sharing.
+  const caVolume = register('volume', `${runId}-ca`)
+  const previousVolume = await command('docker', ['volume', 'inspect', caVolume.target])
+  if (previousVolume.code === 0 || !/no such (volume|object)/i.test(previousVolume.output)) throw Error('测试 CA 卷的不存在状态未确认；保留既有卷')
+  await must('docker', ['volume', 'create', '--label', `workmesh.task=${runId}`, caVolume.target]); caVolume.created = true; save()
+  if (await must('docker', ['volume', 'inspect', '--format', '{{ index .Labels "workmesh.task" }}', caVolume.target]) !== runId) throw Error('测试 CA 卷归属不符')
+  const caLoader = register('container', `${runId}-ca-loader`)
+  caLoader.id = await must('docker', ['create', '--name', caLoader.target, '--label', `workmesh.task=${runId}`, '--mount', `type=volume,source=${caVolume.target},target=/a2-ca`, '--entrypoint', 'node', image.target, '-e', "require('node:fs').readFileSync('/a2-ca/ca.pem'); console.log('test CA readable')"]); save()
+  await must('docker', ['cp', resolve(tls, 'ca.pem'), `${caLoader.id}:/a2-ca/ca.pem`])
+  await must('docker', ['start', '-a', caLoader.id])
   const providerPort = await port()
   provider = createServer({ key: readFileSync(resolve(tls, 'key.pem')), cert: readFileSync(resolve(tls, 'ca.pem')) }, (request, response) => {
     if (request.headers.authorization !== 'token a2-provider-placeholder') { response.writeHead(401).end(); return }
@@ -110,13 +122,14 @@ try {
   env.WEB_HOST_PORT = String(await port()); env.S3_HOST_PORT = String(await port())
   env.WEB_ORIGIN = `http://127.0.0.1:${env.WEB_HOST_PORT}`; env.S3_PUBLIC_ENDPOINT = `http://host.docker.internal:${env.S3_HOST_PORT}`
   // 仅追加本测试 CA 和 feature；不修正原 Lite RustFS 凭证映射或其他安装合同。
-  writeFileSync(resolve(installDir, 'provider.override.yml'), `services:\n  worker:\n    environment:\n      NODE_EXTRA_CA_CERTS: /a2-ca/ca.pem\n    volumes:\n      - type: bind\n        source: ./tls/ca.pem\n        target: /a2-ca/ca.pem\n        read_only: true\n`)
+  writeFileSync(resolve(installDir, 'provider.override.yml'), `services:\n  worker:\n    environment:\n      NODE_EXTRA_CA_CERTS: /a2-ca/ca.pem\n    volumes:\n      - a2-test-ca:/a2-ca:ro\nvolumes:\n  a2-test-ca:\n    external: true\n    name: ${caVolume.target}\n`)
   register('compose-project', runId); composeStarted = true
   await must('docker', [...composeArgs, 'up', '-d', '--wait', '--wait-timeout', '180'], { cwd: installDir })
   const containers = await must('docker', [...composeArgs, 'ps', '-q']); receipts.installationContainerIds = containers.split(/\r?\n/); save()
   for (const containerId of receipts.installationContainerIds) {
     const mounts = JSON.parse(await must('docker', ['inspect', '--format', '{{json .Mounts}}', containerId]))
-    if (mounts.some(mount => mount.Type === 'bind' && mount.Source !== resolve(tls, 'ca.pem') && !mount.Source.endsWith('/tls/ca.pem'))) throw Error('安装包含非 CA 绑定挂载')
+    if (mounts.some(mount => mount.Type === 'bind')) throw Error('无源码安装不得包含主机绑定挂载')
+    if (mounts.some(mount => mount.Destination === '/a2-ca' && (mount.Name !== caVolume.target || mount.RW))) throw Error('测试 CA 卷的归属或只读属性不符')
   }
   const located = spawnSync(process.platform === 'win32' ? 'where.exe' : 'which', ['pnpm'], { encoding: 'utf8', windowsHide: true }).stdout.trim().split(/\r?\n/)[0]
   const standalone = resolve(dirname(located), 'node_modules/pnpm/pnpm.exe')
@@ -162,6 +175,13 @@ finally {
       const owner = await command('docker', ['inspect', '--format', '{{ index .Config.Labels "workmesh.task" }}', resource.id])
       resource.preDelete = { owner: owner.output.trim(), code: owner.code, id: resource.id, at: new Date().toISOString() }; save()
       resource.cleanup = owner.code === 0 && owner.output.trim() === runId ? await command('docker', ['rm', '-f', '-v', resource.id]) : '归属未知，保留'; save()
+      if (typeof resource.cleanup !== 'object' || resource.cleanup.code !== 0) servicesStopped = false
+    }
+    if (resource.type === 'volume' && resource.created) {
+      const owner = await command('docker', ['volume', 'inspect', '--format', '{{ index .Labels "workmesh.task" }}', resource.target])
+      const references = await command('docker', ['ps', '-aq', '--filter', `volume=${resource.target}`])
+      resource.preDelete = { owner: owner.output.trim(), referenceIds: references.output.trim().split(/\r?\n/).filter(Boolean), activity: 'compose 已结束，CA 装载容器已清理；核对外部测试卷引用', at: new Date().toISOString() }; save()
+      resource.cleanup = servicesStopped && owner.code === 0 && owner.output.trim() === runId && references.code === 0 && !references.output.trim() ? await command('docker', ['volume', 'rm', resource.target]) : '归属或活动引用未确认，保留'; save()
       if (typeof resource.cleanup !== 'object' || resource.cleanup.code !== 0) servicesStopped = false
     }
     if (resource.type === 'image' && resource.id) {

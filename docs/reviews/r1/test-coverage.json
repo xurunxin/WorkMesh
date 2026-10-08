@@ -2728,37 +2728,37 @@
             "id": "todo-9-T1",
             "file": "apps/web/e2e/configuration-readiness.spec.ts",
             "caseName": "依赖深度排序",
-            "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+            "result": "a2-46fe0e21 完整浏览器及 a2-c2def680 关闭 Gitea 独立浏览器均通过；具体源码字节见 checked-source-binding.json"
           },
           {
             "id": "todo-9-T2",
             "file": "apps/web/e2e/configuration-readiness.spec.ts",
             "caseName": "逐项配置后 Back 重算并允许逆序解决",
-            "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+            "result": "a2-46fe0e21 完整浏览器及 a2-c2def680 关闭 Gitea 独立浏览器均通过；具体源码字节见 checked-source-binding.json"
           },
           {
             "id": "todo-9-T3",
             "file": "apps/web/e2e/configuration-readiness.spec.ts",
             "caseName": "可观察项全部满足时无横幅",
-            "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+            "result": "a2-46fe0e21 完整浏览器及 a2-c2def680 关闭 Gitea 独立浏览器均通过；具体源码字节见 checked-source-binding.json"
           },
           {
             "id": "todo-9-T4",
             "file": "apps/web/e2e/configuration-readiness.spec.ts",
             "caseName": "ready/unknown/not_applicable 及普通空列表不长主动作",
-            "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+            "result": "a2-46fe0e21 完整浏览器及 a2-c2def680 关闭 Gitea 独立浏览器均通过；具体源码字节见 checked-source-binding.json"
           },
           {
             "id": "todo-9-T5",
             "file": "apps/web/e2e/configuration-readiness.spec.ts",
             "caseName": "Back/Forward、键盘焦点、390px 窄屏、中英文和明暗回归",
-            "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+            "result": "a2-46fe0e21 完整浏览器及 a2-c2def680 关闭 Gitea 独立浏览器均通过；具体源码字节见 checked-source-binding.json"
           },
           {
             "id": "todo-9-T6",
             "file": "apps/web/e2e/configuration-readiness.spec.ts",
             "caseName": "Lite 安装后逐项补齐直到横幅消失 @lite",
-            "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+            "result": "仓库 E2E 中跳过；真实 Lite 运行见 execution-results.json，不以镜像构建或入口探针替代安装链路"
           }
         ],
         "matrix": [
@@ -2767,28 +2767,28 @@
             "applicable": true,
             "file": "apps/web/e2e/configuration-readiness.spec.ts",
             "caseName": "依赖深度排序",
-            "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+            "result": "a2-46fe0e21 完整浏览器通过；关闭 Gitea 的独立场景在 a2-c2def680 通过"
           },
           {
             "category": "unauthorized actor",
             "applicable": true,
             "file": "apps/web/e2e/configuration-readiness.spec.ts",
             "caseName": "部分撤权后项目配置只读，撤销 Team 后不回退或保留旧操作",
-            "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+            "result": "a2-46fe0e21 完整浏览器通过；关闭 Gitea 的独立场景在 a2-c2def680 通过"
           },
           {
             "category": "invalid state transition",
             "applicable": true,
             "file": "apps/web/features/projects/project-repository-configuration.test.tsx",
             "caseName": "POST 只进入等待状态，其他动作或旧上下文不能确认本次成功",
-            "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+            "result": "a2-22323ec0 根单元检查通过；组件/契约受测字节不变，浏览器入口测试变化单列"
           },
           {
             "category": "duplicate idempotency key",
             "applicable": true,
             "file": "apps/api/integration/stage3-delivery.integration.test.ts",
             "caseName": "连接同文重放与旧脱敏指纹拒绝降级",
-            "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+            "result": "a2-21cc8a38 对应参数化场景通过；根集成 a2-22323ec0 通过，相关 API/Worker/契约原字节不变"
           },
           {
             "category": "stale revision",
@@ -2802,21 +2802,21 @@
             "applicable": true,
             "file": "apps/api/integration/stage3-delivery.integration.test.ts",
             "caseName": "A2 配置事务失败无部分状态事件或outbox：%s",
-            "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+            "result": "a2-21cc8a38 对应参数化场景通过；根集成 a2-22323ec0 通过，相关 API/Worker/契约原字节不变"
           },
           {
             "category": "webhook/job replay",
             "applicable": true,
             "file": "apps/api/integration/stage3-delivery.integration.test.ts",
             "caseName": "A2 仓库解析重放仅产生一份上下文",
-            "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+            "result": "a2-21cc8a38 对应参数化场景通过；根集成 a2-22323ec0 通过，相关 API/Worker/契约原字节不变"
           },
           {
             "category": "concurrent request",
             "applicable": true,
             "file": "apps/api/integration/stage3-delivery.integration.test.ts",
             "caseName": "撤权与上下文落库按持锁顺序串行",
-            "result": "已实现；以 execution-results.json 的当前 source 实际结果为准",
+            "result": "a2-21cc8a38 对应参数化场景通过；根集成 a2-22323ec0 通过，相关 API/Worker/契约原字节不变",
             "additional": [
               {
                 "file": "apps/web/features/workbench/configuration-readiness.test.tsx",
@@ -2833,7 +2833,7 @@
             "applicable": true,
             "file": "apps/api/integration/stage3-delivery.integration.test.ts",
             "caseName": "checkpoint 后撤权重启无上下文发布：%s",
-            "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+            "result": "a2-21cc8a38 对应参数化场景通过；根集成 a2-22323ec0 通过，相关 API/Worker/契约原字节不变"
           }
         ],
         "repairs": [
@@ -2859,7 +2859,8 @@
               "拒绝事件与其 outbox 分开断言",
               "重复 tick 不重复事实",
               "拒绝事件绑定目标当前 Team，audience 仅原请求人，不混入旧 Team"
-            ]
+            ],
+            "result": "a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定"
           },
           {
             "issue": "B1",
@@ -2881,7 +2882,8 @@
               "重建 Worker，复用持久结果，不重读供应商",
               "失权不新增上下文/事件/outbox",
               "拒绝事件绑定目标当前 Team，audience 仅原请求人，不混入旧 Team"
-            ]
+            ],
+            "result": "a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定"
           },
           {
             "issue": "B1",
@@ -2892,7 +2894,8 @@
               "pg_blocking_pids 确认真实等待",
               "撤权先持锁则拒绝，发布先持锁则发布一次后撤权",
               "无逆序目标锁、无跨供应商请求锁"
-            ]
+            ],
+            "result": "a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定"
           },
           {
             "issue": "B2",
@@ -2907,7 +2910,8 @@
               "IDEMPOTENCY_KEY_REUSED",
               "领域行/账本/事件/outbox 不变",
               "捕获日志与事实扫描秘密哨兵"
-            ]
+            ],
+            "result": "a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定"
           },
           {
             "issue": "B2",
@@ -2918,7 +2922,8 @@
               "旧 REDACTED 账本拒绝同文与秘密变化，不覆盖账本",
               "原 conflict TTL 清理/重用语义",
               "缺主密钥失败关闭，无新增领域事实"
-            ]
+            ],
+            "result": "a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定"
           },
           {
             "issue": "B3",
@@ -2929,7 +2934,8 @@
               "其他 Team/不可用 provider 在 GitHub 前面",
               "23 条 GitHub，小页 SQL 筛选无重复遗漏",
               "UI 加载更多后实际 pin 与返回重算"
-            ]
+            ],
+            "result": "a2-46fe0e21 与 a2-c2def680 实际通过，未自动激活或发送"
           },
           {
             "issue": "B3",
@@ -2940,17 +2946,20 @@
               "相同 full_name 不同 id",
               "成员只读提示与跨 Team 拒绝",
               "旧无参数 feature 拒绝保留"
-            ]
+            ],
+            "result": "a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定"
           },
           {
             "issue": "B3",
             "file": "apps/api/integration/stage4-operations.integration.test.ts",
-            "caseName": "Human 仓库筛选游标绑定不允许换域续页"
+            "caseName": "Human 仓库筛选游标绑定不允许换域续页",
+            "result": "a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定"
           },
           {
             "issue": "B3",
             "file": "apps/api/integration/stage4-operations.integration.test.ts",
-            "caseName": "Agent 旧列表权限不变且拒绝 Human 新筛选参数"
+            "caseName": "Agent 旧列表权限不变且拒绝 Human 新筛选参数",
+            "result": "a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定"
           },
           {
             "issue": "C1",
@@ -2961,7 +2970,8 @@
               "pinned/outbox 同事务",
               "无通知 intent 扩张",
               "旧迁移兼容由根集成检查另验"
-            ]
+            ],
+            "result": "a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定"
           },
           {
             "issue": "B3",
@@ -2975,7 +2985,8 @@
               "预检后真实撤权，最终 SQL 返回空页",
               "缓存 workspace admin 不能绕过已降级角色",
               "不返回旧 items 或 nextCursor"
-            ]
+            ],
+            "result": "a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定"
           },
           {
             "issue": "配置入口",
@@ -2985,7 +2996,8 @@
               "真实 UI 创建连接、注册仓库和解析上下文",
               "提交后秘密清除且不进入 storage 或 URL",
               "不创建对话或委派，不自动发送"
-            ]
+            ],
+            "result": "a2-46fe0e21 与 a2-c2def680 实际通过，未自动激活或发送"
           }
         ],
         "DoD": "未满足项列表可用 + 全部交互断言通过 + 既有 IA 与导航无回归；原 DoD 与 Lite 未验收项保持",
@@ -2994,7 +3006,14 @@
           "真实低功耗设备/真实厂商未验收",
           "最终人工视觉、独审、latest Required CI、actual main 落地未完成"
         ],
-        "results": "docs/reviews/a2/execution-results.json"
+        "results": "docs/reviews/a2/execution-results.json",
+        "verification": {
+          "results": "docs/reviews/a2/execution-results.json",
+          "source": "docs/reviews/a2/checked-source-binding.json",
+          "visual": "docs/reviews/a2/visual-review.md",
+          "latestCI": "docs/reviews/a2/latest-ci-readback.json",
+          "status": "实现检查结果已绑定；Lite、视觉确认、独审、latest Required CI、actual main 单列，不标记完成"
+        }
       },
       "approvedPlanBinding": {
         "id": "FkfKZkAdoHUa-nr2Hq1mA",
