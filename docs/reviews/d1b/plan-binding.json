@@ -1,5 +1,5 @@
 {
-  "currentPlanID": "doc:-JciTypN4XStMNkYksSqi",
+  "currentPlanID": null,
   "sourcePlanID": "doc:-JciTypN4XStMNkYksSqi",
   "historyPlanIDs": [
     "doc:IWQ9v6xnjnFyVtXnYDUC6",
@@ -19,48 +19,49 @@
   "planVersion": null,
   "planVersionStatus": "现有 todos/conversation 响应及平台注入文本均未提供版本字段；未猜测",
   "source": {
-    "kind": "platform-injected-current-plan",
-    "bodyReadFrom": "最新用户消息提供的平台当前 saved copy 全文；本轮精确同步，不再次 edit_plan/save_plan",
-    "idConfirmedBy": "mcp__tds__conversation todoId=2j2sxT5wJ-l001efH_meJ；最新 plan 链接与用户确认一致",
+    "kind": "accepted-edit-plan-exact-replacement-snapshot",
+    "bodyReadFrom": "已提交/已审源码正文 + 本轮五次 edit_plan 原文精确替换；新正文已完整落盘，不冒称新平台 ID 已可读",
+    "idConfirmedBy": "conversation 仍为历史 doc:-JciTypN4XStMNkYksSqi；新 ID 未提供，currentPlanID=null",
     "independentDocumentAPIRead": false,
     "resourceReadAttempts": {
       "list": "tds resources/list: -32601 Method not found",
       "templates": "tds resources/templates/list: -32601 Method not found"
     },
     "exactSnapshotPolicy": "去除 <plan> 标签及标签边界换行；正文段落不修改；UTF-8 无 BOM、LF、末尾一个 LF。未声称取得平台数据库原始存储字节。",
-    "bodyBytes": 13090,
-    "bodyUtf8Sha256": "7dd6767f4938ac4313606b12275f46fc4a88ba6b3f82355cb1c7808106795c05",
-    "planUnchanged": true,
-    "newPlatformPlanSaved": false
+    "bodyBytes": 14344,
+    "bodyUtf8Sha256": "91a9eb7451ff2799754d4207863c67cff09112d1470b5ad1049066309f8dbdb8",
+    "planUnchanged": false,
+    "newPlatformPlanSaved": "pending-end-of-turn",
+    "editsAccepted": 5
   },
   "artifacts": [
     {
       "path": "docs/plan/d1b-token-consumer-migration.md",
-      "gitBlob": "ce3644f1db7a7cf54f17218873890723a48bdc5c",
-      "gitBytes": 13090,
-      "gitSha256": "7dd6767f4938ac4313606b12275f46fc4a88ba6b3f82355cb1c7808106795c05",
-      "worktreeBytes": 13090,
-      "worktreeSha256": "7dd6767f4938ac4313606b12275f46fc4a88ba6b3f82355cb1c7808106795c05",
+      "gitBlob": "2d5824ffd1593db1325287d4ec92613f5e3aef51",
+      "gitBytes": 14344,
+      "gitSha256": "91a9eb7451ff2799754d4207863c67cff09112d1470b5ad1049066309f8dbdb8",
+      "worktreeBytes": 14344,
+      "worktreeSha256": "91a9eb7451ff2799754d4207863c67cff09112d1470b5ad1049066309f8dbdb8",
       "bytesEqual": true,
       "gitObjectKind": "actual-staged-blob"
     },
     {
       "path": "docs/reviews/d1b/plan-source.json",
-      "gitBlob": "236b289fb9def26dad5c8e56a320065840711679",
-      "gitBytes": 44273,
-      "gitSha256": "46e191b73023d4a33e71a4d11aca856183071089ef15921c95bc20c8d6baa091",
-      "worktreeBytes": 44273,
-      "worktreeSha256": "46e191b73023d4a33e71a4d11aca856183071089ef15921c95bc20c8d6baa091",
+      "gitBlob": "138b04991c06dbb2a19ce909d0f8d03e5c78bc87",
+      "gitBytes": 21057,
+      "gitSha256": "1e888897a8efc68c8ee0e08b50f952b3460258f4632cb7ae65e16b3177ed981d",
+      "worktreeBytes": 21057,
+      "worktreeSha256": "1e888897a8efc68c8ee0e08b50f952b3460258f4632cb7ae65e16b3177ed981d",
       "bytesEqual": true,
       "gitObjectKind": "actual-staged-blob"
     },
     {
       "path": "docs/reviews/d1b/surface-matrix.json",
-      "gitBlob": "7cb46a6c6cb88628bcb0f79e36b20ab52089e498",
-      "gitBytes": 425943,
-      "gitSha256": "f894561af41587ea931cc5fe490436d9933966aed9977c3b043c91d821a34011",
-      "worktreeBytes": 425943,
-      "worktreeSha256": "f894561af41587ea931cc5fe490436d9933966aed9977c3b043c91d821a34011",
+      "gitBlob": "0d79f6356112aa7e818c50552a8d52718e9a57ff",
+      "gitBytes": 525319,
+      "gitSha256": "675de038fbeb28df4cbb5947f0404b45f08b3e0d10973154a601d911177c4680",
+      "worktreeBytes": 525319,
+      "worktreeSha256": "675de038fbeb28df4cbb5947f0404b45f08b3e0d10973154a601d911177c4680",
       "bytesEqual": true,
       "gitObjectKind": "actual-staged-blob"
     }
@@ -221,31 +222,50 @@
     "exactBody": "通过：工作区正文与 source.planBody 逐字节相同",
     "initialHashCollection": "首次 child_process 默认缓冲上限不足以读取完整测量 blob；该轮退出非零且没有写 binding，调大只读缓冲后重跑，不改来源字节",
     "currentSnapshot": {
+      "exactBodyFromFiveAcceptedEdits": true,
       "sourcePlanBodyEqualsWorktree": true,
-      "artifactGitAndWorktreeBytesEqual": true,
+      "gitWorktreeEqual": true,
       "coveredPageFiles": 12,
-      "localRows": 94,
-      "globalReplays": 94,
-      "viewportThemeVariants": 4,
-      "uniqueRowIDs": true,
-      "allReviewAndRuntimeStatusesPending": true,
-      "productChanges": false,
-      "method": "Node 字节/JSON/页面集合/行关联断言 + actual staged blob；只文档结构核验，不是 UI 或 Required CI"
+      "localRows": 115,
+      "globalReplays": 115,
+      "projectSurfaces": [
+        "overview",
+        "work",
+        "attention",
+        "runs"
+      ],
+      "noUnreachableOverviewWorkOrSheetRows": true,
+      "backlogTargetConsistent": true,
+      "allRuntimeAndHumanReviewPending": true,
+      "method": "仅文档/源码分支/关联/字节断言；未运行 UI、Playwright、Required CI"
+    },
+    "actualRouteFunctions": {
+      "command": "Node 内置 stripTypeScriptTypes 仅移除类型后导入现有 human-control-plane-navigation.ts，逐行实调用 readProjectControlRoute 和 projectControlHref",
+      "exitCode": 0,
+      "rows": 43,
+      "digestDrawerHrefVerified": true,
+      "runtime": "Node.js v24.20.0，纯路由函数；不是浏览器/UI验证",
+      "initialAttempt": {
+        "exitCode": 1,
+        "reason": "工作区无 typescript 包；未安装依赖，改用已存在 Node 内置类型移除能力，源码不变"
+      }
     }
   },
   "gates": {
     "readableFullSnapshot": "accepted-by-independent-review-and-chief",
     "historicalInputFingerprints": "accepted-15-inputs-unchanged",
     "versionMetadata": "null-source-limitation-accepted-closed",
-    "matrixAndScopeIndependentReview": "pending-targeted-platform-review",
+    "matrixAndScopeIndependentReview": "pending-targeted-review-of-rendering-and-fixtures",
     "chiefConfirmation": "pending-confirm",
     "productImplementation": "not-started",
     "implementationCI": "not-run",
-    "merge": "not-performed"
+    "merge": "not-performed",
+    "currentRevisionIDBinding": "pending-ID-readback-after-end-of-turn-save"
   },
   "limitations": [
-    "平台正文源为明确标为 saved copy 的注入全文；conversation 独立确认当前 ID，不提供版本字段；该来源限制已接受、不是本轮阻塞。",
-    "仅 matrix/作用域剩余定向独审；全部运行截图/属性/人工视觉意见待执行，产品实现未开始。"
+    "已接受全文/输入指纹/版本 null 限制不重开。",
+    "新平台 ID 在 edit_plan 本轮结束保存后生成；新正文不能冒绑旧 ID。修订快照及五处替换完整可读，待新 ID 实读绑定。",
+    "新增只读 fixture recipe 尚未实现/运行；全部视觉/焦点/导航及人工评审待执行，产品实现禁止。"
   ],
   "history": [
     {
@@ -276,9 +296,48 @@
         }
       ],
       "acceptedReview": "全文、15输入与 planVersion=null 来源限制已独审及 Chief 确认闭合，保留此提交，不改历史"
+    },
+    {
+      "commit": "16fcde5f8e3315b5d531bea98dcb5865574da2cc",
+      "planID": "doc:-JciTypN4XStMNkYksSqi",
+      "planBodyBytes": 13090,
+      "planBodyUtf8Sha256": "7dd6767f4938ac4313606b12275f46fc4a88ba6b3f82355cb1c7808106795c05",
+      "artifacts": [
+        {
+          "path": "docs/plan/d1b-token-consumer-migration.md",
+          "gitBlob": "ce3644f1db7a7cf54f17218873890723a48bdc5c",
+          "gitBytes": 13090,
+          "gitSha256": "7dd6767f4938ac4313606b12275f46fc4a88ba6b3f82355cb1c7808106795c05",
+          "worktreeBytes": 13090,
+          "worktreeSha256": "7dd6767f4938ac4313606b12275f46fc4a88ba6b3f82355cb1c7808106795c05",
+          "bytesEqual": true,
+          "gitObjectKind": "actual-staged-blob"
+        },
+        {
+          "path": "docs/reviews/d1b/plan-source.json",
+          "gitBlob": "236b289fb9def26dad5c8e56a320065840711679",
+          "gitBytes": 44273,
+          "gitSha256": "46e191b73023d4a33e71a4d11aca856183071089ef15921c95bc20c8d6baa091",
+          "worktreeBytes": 44273,
+          "worktreeSha256": "46e191b73023d4a33e71a4d11aca856183071089ef15921c95bc20c8d6baa091",
+          "bytesEqual": true,
+          "gitObjectKind": "actual-staged-blob"
+        },
+        {
+          "path": "docs/reviews/d1b/surface-matrix.json",
+          "gitBlob": "7cb46a6c6cb88628bcb0f79e36b20ab52089e498",
+          "gitBytes": 425943,
+          "gitSha256": "f894561af41587ea931cc5fe490436d9933966aed9977c3b043c91d821a34011",
+          "worktreeBytes": 425943,
+          "worktreeSha256": "f894561af41587ea931cc5fe490436d9933966aed9977c3b043c91d821a34011",
+          "bytesEqual": true,
+          "gitObjectKind": "actual-staged-blob"
+        }
+      ],
+      "reviewStatus": "全文/矩阵字节匹配已复算；矩阵渲染与夹具仍有两项 blocking，本轮定向修正，不冒称放行"
     }
   ],
-  "documentSourceCommit": "7f6ae163c4d4934626c64ecef5ce2f30776e6cc6",
+  "documentSourceCommit": "16fcde5f8e3315b5d531bea98dcb5865574da2cc",
   "matrixInputs": [
     {
       "path": "apps/web/app/page.tsx",
@@ -479,7 +538,78 @@
       "worktreeBytes": 11732,
       "worktreeSha256": "e6ff52152176b5628f67fa3f01372c08cf78b4a68c21ac7a63b65da0fbe5d546",
       "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/lib/human-control-plane-navigation.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "73001ca8d822d9313dafccd4b75e41899f918fb3",
+      "gitBytes": 2554,
+      "gitSha256": "d009d5f57f739f2dab77f84bbd817f02e86c722001f438c7bc4b9dc875adeb86",
+      "worktreeBytes": 2623,
+      "worktreeSha256": "2eff9e7d9ff4609f5a43bde278ca8334377be1ac528f4cb401dbc3c1f7bf1b81",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/project-control-center.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "70d2f9dabcb38001eeb3da66a41308aa371dbd01",
+      "gitBytes": 27813,
+      "gitSha256": "4175700e823cfe2dbf00a30989bf7c7347f6ba05f55480454f10d442def1a9cc",
+      "worktreeBytes": 28137,
+      "worktreeSha256": "904c62658367aaa55f494c4667dd2f91688f4f5393b9454d0828e97d9b3da0b9",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/project-workspace.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "cadf00864cb84ffbd86e201b692b945d6f58982d",
+      "gitBytes": 1258,
+      "gitSha256": "ccb7b92c25cc45dbe1abbb9c0c73ec8af463de630a3147d2ad1ab15e414f5d11",
+      "worktreeBytes": 1296,
+      "worktreeSha256": "1d175db5b901bb8f106a4ed1c95e78bdc4e24ba04a8a47d87e5d174071e76b6b",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/attention-center.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "ef27bbdcf2c02a1c8c8c3178523b74482cd51a43",
+      "gitBytes": 58118,
+      "gitSha256": "cfa044a68699679524fc80f363ada26b461fec9cf976f731e5d33e8134df1b3f",
+      "worktreeBytes": 59487,
+      "worktreeSha256": "9c851fbbbf2e4a085122f8707bb3daafa8c2cd1b05d767815999468e788ff281",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/attention-route-state.ts",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "364a2f1b131ae93541fc69ec774e905ce6b75741",
+      "gitBytes": 4638,
+      "gitSha256": "581f8b5bb4d2c42aa6b881d341169d25a000fc603dd15620a40fb899bd5755a6",
+      "worktreeBytes": 4788,
+      "worktreeSha256": "db6f5fbca3c950223855906782025f7fd2f1469642452211e17616ce624fc4fb",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/app/evidence-drawer.tsx",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "36c94408954bf7e56caa81056e5caa8ad2e067eb",
+      "gitBytes": 9368,
+      "gitSha256": "2ad5257427ced8a009ed1ae63fe9e4d5c1cb78afa4fe275b63690d708e5d95df",
+      "worktreeBytes": 9472,
+      "worktreeSha256": "d3c181d71ddef4dbe8442876c8e88ef65350eddd45d1d779b0f08ddfde6fe44e",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/e2e/project-work-preview-server.mjs",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "76dd14474a2bbee1b79f3bb8ef943ec652680589",
+      "gitBytes": 93490,
+      "gitSha256": "36a4ec4a361a0ea5cdbb5c5c2434e14182059aee220c8ddd55bb7b80fa3f4561",
+      "worktreeBytes": 95178,
+      "worktreeSha256": "f92f5b068eca0c21a6d3752df7f0268607734ac498babf9f34d8f9a6790ca9c3",
+      "bytesEqual": false
     }
   ],
-  "authorizedMutationScope": "仅当前计划 Markdown、plan-source.json、plan-binding.json、surface-matrix.json；无产品文件/历史D0修改"
+  "authorizedMutationScope": "仅当前计划 Markdown、plan-source.json、plan-binding.json、surface-matrix.json；无产品文件/历史D0修改",
+  "lastReadCurrentPlanID": "doc:-JciTypN4XStMNkYksSqi"
 }

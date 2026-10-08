@@ -14,7 +14,7 @@
 
 - 同一 token 文件中的暗色及派生声明：新槽直接绑定原暗色字面值，公式只引用新槽；分别保留 canvas/card/raised、hover/secondary、tertiary/dim 的暗色语义。主题与密度作用域重新声明受影响的 panel、border、gradient、focus-ring 公式，避免继承已在父级解析的结果。旧声明保留至最终清理门禁。
 
-- `packages/ui/src/layout/app-shell.tsx` 与各路由 shell 调用点：增加临时界面作用域标记，沿用 `AuthenticatedWorkspaceShell` 的既有属性传递。`apps/web/app/page.tsx` 按 `parseHomeScope`、`readProjectWorkspaceRoute`、`parseWorkSurfaceLayout` 和实际 `sheet/full_page` 模式识别区域；同一 AppShell 中的项目导航区、工作列表／看板、详情及浮层各设独立边界，不把整个 shell 标为已迁。共用侧栏、顶栏和跨面浮层归最后的全局阶段；页面专属浮层随所属面，兄弟区域和 body portal 不继承该面的标记。`apps/web/app/styles.css`、工作台和 Markdown 的 CSS Modules 只在获准区域切换，加载、错误及详情不可用状态保持相同边界，最终矩阵验收后才统一新槽并删除临时分支。
+- `packages/ui/src/layout/app-shell.tsx` 与各路由 shell 调用点：增加临时界面作用域标记，沿用 `AuthenticatedWorkspaceShell` 的既有属性传递。`apps/web/app/page.tsx` 按 `parseHomeScope`、`readProjectWorkspaceRoute`、`parseWorkSurfaceLayout` 和实际 `sheet/full_page` 模式识别区域，并复用 `apps/web/app/lib/human-control-plane-navigation.ts` 的 `readProjectControlRoute` 区分项目 `overview/work/attention/runs`；同一 AppShell 中的项目导航区、工作列表／看板、详情及浮层各设独立边界，不把整个 shell 标为已迁。共用侧栏、顶栏和跨面浮层归最后的全局阶段；页面专属浮层随所属面，兄弟区域和 body portal 不继承该面的标记。`apps/web/app/styles.css`、工作台和 Markdown 的 CSS Modules 只在获准区域切换，加载、错误及详情不可用状态保持相同边界，最终矩阵验收后才统一新槽并删除临时分支。
 
 - `apps/web/app/agents/agent-workspace.module.css`：迁移实际使用的非 `--wm-*` 变量与硬编码 fallback，例如 `--text-muted`、`--surface-raised`、`--border-subtle`、`--danger-text`，对应到明确的新语义槽，纳入扫描与明暗验证。
 
@@ -33,15 +33,15 @@
 1. 完成当前计划全文绑定、规格同步、全量映射、迁移矩阵和阶段断言设计，另一 agent 针对完整文档独审后由 Chief 确认；此时才允许产品编码。已提交的计划快照保留为历史；平台保存本次修订后再实读新 ID 与完整正文、落盘并核验哈希，不把旧 ID 写成当前，不为填 ID 再保存一轮。版本字段未提供时继续如实记为 `null`。迁移矩阵先核对全部 `app/**/page.tsx`、HomeScope、项目 tab 和实际布局／详情分支，完整行清单与评审停点必须先可读。
 2. 严格按工作台 → 看板 → 项目 → Agent 详情 → 工作项列表 → 工作项详情 → 设置推进。每面保留迁移前后证据，运行实际明暗属性、键盘焦点、返回和导航检查，并检查同屏及其他未迁区域没有被共享样式提前切换。提交 D0 expected/actual/diff 与差异理由；没有对应 D0 原图的布局、模式或路由先采迁移前截图，再按同条件采迁移后截图。每个矩阵组合经实际人工视觉评审后才进入下一面；切换实际布局不能把尚未获准的列表／看板提前切换。
 
-迁移矩阵固定以下归属，表内集合在 `surface-matrix.json` 中展开为独立行，资源 ID 使用实际夹具值，记录原请求与最终规范 URL，不能用 pathname 代替查询视图或用 URL 推测详情模式：
+迁移矩阵固定以下归属，表内集合在 `surface-matrix.json` 中展开为独立行，资源 ID 使用实际夹具值，记录原请求与最终规范 URL，不能用 pathname 代替查询视图或用 URL 推测详情模式。`final-tour` 的 `/?view=projects` 验证自动选首项及规范 URL；另用 D1b 专用只读空项目响应验证未选择／空态。D1b backlog 夹具新增 `work-d1b-backlog`，绑定既有 `final-state-backlog` 和 `project-1`，保持 `status_category=backlog`、无 active_assignment/active_executor；集合、详情及必要只读依赖一致，就绪与点击目标同步改用该 ID。保留原 `work-101`、D0 场景和证据；项目控制中心非空摘要、Attention 与其证据用独立契约有效只读夹具，选中 ID 取实际响应。修正所有派生详情及全局复验关联，不改产品路由或跳过不可达目标冒称验收：
 
 | 阶段 | 路径与查询组合 | 实际区域／模式及评审边界 |
 | --- | --- | --- |
 | 工作台 | `/workbench`；`/` 的既有跳转 | ConversationWorkbench 内容；裸根路径只验证跳转后工作台可达 |
-| 看板 | `/?view=projects&project=<id>&tab=board`；`/?view={my-work,active,backlog}&layout=board` | WorkSurfaces 的 board 区域；项目导航、shell 和未迁详情保持各自状态 |
-| 项目 | `/?view=projects`；带 `project=<id>`、`tab={overview,list,backlog,board}` | ProjectsWorkbench 导航区及 ProjectControlCenter；同屏 workSurface 按实际 board/list 的所属阶段独立隔离 |
+| 看板 | `/?view=projects&project=<id>&tab=board`，以及 `surface=work&tab=board`；`/?view={my-work,active,backlog}&layout=board` | 仅实际 work/board 区域；项目导航、shell 和未迁详情保持各自状态，backlog 使用匹配状态的专用只读记录 |
+| 项目 | `/?view=projects`；带 `project=<id>` 的缺省／`tab=overview`；`surface={overview,attention,runs,work}`，work 再分 `tab={list,backlog,board}`；保留省略 surface 的 work tab 入口 | ProjectsWorkbench 导航区及 ProjectControlCenter 的 overview/attention/runs、现有选中详情和专属证据浮层逐面取证；仅 work 挂载 WorkSurfaces，按 list/board 阶段隔离；点击“查看工作”记录真实变更后的 URL |
 | Agent 详情 | `/agents/<id>` | Agent 详情及其实际子面板，不涵盖 Agent 列表 |
-| 工作项列表 | `/?view={my-work,active,backlog}&layout=list`，包含省略 layout 的默认 list；项目 `tab={overview,list,backlog}` 下实际 list | WorkSurfaces 的 list 区域；active/backlog 保留归一为 my-work 与 statusCategory 的现有逻辑，阶段按实际布局判定 |
+| 工作项列表 | `/?view={my-work,active,backlog}&layout=list`，包含省略 layout 的默认 list；项目实际 work 子面的 `tab={list,backlog}`，含 `surface=work` 缺省 tab 的 list | WorkSurfaces 的 list 区域；overview 不设列表或点击 sheet 行，进入 work 后另按实际 URL 验证；active/backlog 保留归一与筛选逻辑，backlog 列表／看板／sheet 使用专用 backlog 记录 |
 | 工作项详情 | 各现有来源面打开工作项；根查询带 `workItem=<id>` 的深链 | `openItem` 实际产生的 sheet/full_page 分行；覆盖同屏背景、来源列表／看板、小节导航、关闭返回及不可用状态，不把背景一并标为已迁 |
 | 设置 | `/settings` 的实际 section／team 状态；`/settings/agent-workbench` | 常规设置与 Agent 工作台设置分行，各自保留前后截图与人工评审停点 |
 | 补齐查询视图 | `/?view={home,inbox,sessions,recovery,guidance}` | LandingScreen、ActionableCollaborationQueues、SessionScreen、RecoveryCenter、GuidancePanel 各独立一面，按表内顺序逐面评审 |
