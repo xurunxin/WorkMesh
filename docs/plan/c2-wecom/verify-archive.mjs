@@ -86,4 +86,5 @@ for (const file of manifest.files) {
   }
 }
 console.log(JSON.stringify({结果: '通过', 原始映射: index.entries.length, ZIP成员: archive.memberCount,
-  清单文件: manifest.files.length, 本地链接: links, 六原测试: 6, 九类: 9, 产品测试: '未实施/未运行' }));
+  清单文件: manifest.files.length, 本地链接: links, 六原测试: 6, 九类: 9,
+  历史规划矩阵: '未实施/未运行；保持冻结来源', 当前产品结果: '另见 docs/reviews/c2/product-review.md，不由本归档检查判定' }));

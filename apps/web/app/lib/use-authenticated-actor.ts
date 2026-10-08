@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ApiError, apiRequest, clearCsrfToken, saveCsrfToken } from './api'
 import type { AuthenticatedActor } from './actor'
+import { safeLoginReturnTo } from './canonical-route'
 
 type AuthMe = { actor: AuthenticatedActor; csrfToken: string }
 
@@ -28,7 +29,8 @@ export function useAuthenticatedActor(): { actor: AuthenticatedActor | null; loa
       if (reason instanceof ApiError && reason.status === 401) {
         setActor(null)
         clearCsrfToken()
-        window.location.assign('/login')
+        const returnTo = safeLoginReturnTo(`${window.location.pathname}${window.location.search}${window.location.hash}`, window.location.origin)
+        window.location.assign(`/login?${new URLSearchParams({ returnTo })}`)
         return
       }
       setError(reason instanceof Error ? reason.message : 'Unable to load session.')

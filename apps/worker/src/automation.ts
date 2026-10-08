@@ -12,6 +12,7 @@ import {
   type Stage4CommandMeta,
   withTx,
   claimChannelNotifications, prepareChannelSend, settleChannelSend,
+  findChannelNotificationCandidates, deferChannelNotification,
   type ChannelClaim, type ChannelContent,
 } from '@workmesh/db'
 import { automationRetry, shouldDeliverNotification } from '@workmesh/domain'
@@ -42,6 +43,7 @@ type ClaimedNotification = {
   id: string
   channelTargetId?: string
   channelClaim?: ChannelClaim
+  channelPermit?: ChannelPermit
   notificationId: string
   channel: 'in_app' | 'browser' | 'webhook'
   effectKey: string
@@ -64,9 +66,12 @@ type ClaimedNotification = {
   browserAuth: string | null
 }
 
-export type ChannelSendResult = { result: 'delivered' | 'failed' | 'unknown'; receipt?: string }
+export type ChannelPermit = { remainingMs: () => Promise<number>; finish: () => Promise<void> }
+export type ChannelAdmission = { reserve: (fingerprint: string) => Promise<{ permit?: ChannelPermit; retryAfterMs: number }> }
+export type ChannelSendResult = { result: 'delivered' | 'failed' | 'unknown'; receipt?: string; errorCode?: string }
 export type ChannelAdapter = {
-  send: (input: { provider: string; secretMaterial: string; content: ChannelContent; signal: AbortSignal }) => Promise<ChannelSendResult>
+  admission?: ChannelAdmission
+  send: (input: { provider: string; secretMaterial: string; content: ChannelContent; signal: AbortSignal; deadline?: number }) => Promise<ChannelSendResult>
 }
 
 export type AutomationExternalSink = {
@@ -733,8 +738,28 @@ export function createAutomationWorker({
   const claimNotifications = async (limit = 1, lockTimeoutSeconds = 60): Promise<ClaimedNotification[]> => {
     const legacy = await claimLegacyNotifications(limit, lockTimeoutSeconds)
     if (!features.WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS) return legacy
-    const channels = await withTx(db, tx => claimChannelNotifications(tx, workerId, Object.keys(channelAdapters), Math.max(0, limit - legacy.length), lockTimeoutSeconds))
+    const admission = channelAdapters.wecom?.admission
+    let permit: ChannelPermit | undefined
+    let channels: ChannelClaim[] = []
+    if (!admission) channels = await withTx(db, tx => claimChannelNotifications(tx, workerId, Object.keys(channelAdapters), Math.max(0, limit - legacy.length), lockTimeoutSeconds))
+    else {
+      // 即便频控不准入，也恢复已提交 checkpoint 的未知结果，不自动重送。
+      await withTx(db, tx => claimChannelNotifications(tx, workerId, [], 0, lockTimeoutSeconds))
+      if (legacy.length < limit) {
+        const candidates = await withTx(db, tx => findChannelNotificationCandidates(tx, ['wecom'], lockTimeoutSeconds))
+        for (const candidate of candidates) {
+          const reserved = await admission.reserve(candidate.endpointFingerprint)
+          if (!reserved.permit) { await withTx(db, tx => deferChannelNotification(tx, candidate.id, reserved.retryAfterMs)); continue }
+          permit = reserved.permit
+          try { channels = await withTx(db, tx => claimChannelNotifications(tx, workerId, ['wecom'], 1, lockTimeoutSeconds, candidate.id)) }
+          catch (error) { await permit.finish(); throw error }
+          if (channels.length) break
+          await permit.finish(); permit = undefined
+        }
+      }
+    }
     return [...legacy, ...channels.map(claim => ({
+      ...(permit ? { channelPermit: permit } : {}),
       ...claim, channelClaim: claim, notificationId: claim.intentId, channel: 'webhook' as const,
       priority: 'update' as const, minimumPriority: 'update' as const, mutedKinds: [],
       kind: '', title: '', body: '', sourceType: '', sourceId: claim.intentId, webhookUrl: null,
@@ -747,23 +772,42 @@ export function createAutomationWorker({
       if (!features.WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS) return
       const adapter = channelAdapters.wecom
       if (!adapter) return
-      const prepared = await withTx(db, tx => prepareChannelSend(tx, delivery.channelClaim!, workerId))
-      if (!prepared) return
+      const permit = delivery.channelPermit
+      let prepared: Awaited<ReturnType<typeof prepareChannelSend>>
+      try {
+        prepared = await withTx(db, tx => prepareChannelSend(tx, delivery.channelClaim!, workerId,
+          permit ? async () => await permit.remainingMs() > 100 : undefined))
+      } catch (error) {
+        if (permit) {
+          await permit.finish()
+          await withTx(db, tx => deferChannelNotification(tx, delivery.id, 1000, { workerId, fence: delivery.claimFence }))
+        }
+        throw error
+      }
+      if (!prepared) { await permit?.finish(); return }
       let result: ChannelSendResult
       const controller = new AbortController()
-      const remainingMs = delivery.channelClaim.leaseExpiresAt.getTime() - Date.now()
-      if (remainingMs <= 100) throw new Error('NOTIFICATION_CLAIM_LOST')
-      const timeout = setTimeout(() => controller.abort(), Math.min(5_000, remainingMs - 100))
+      const remainingMs = Math.min(delivery.channelClaim.leaseExpiresAt.getTime() - Date.now(), permit ? await permit.remainingMs() : Infinity)
+      if (remainingMs <= 100) {
+        await permit?.finish()
+        if (!permit) throw new Error('NOTIFICATION_CLAIM_LOST')
+        await withTx(db, tx => settleChannelSend(tx, delivery.channelClaim!, workerId, 'failed', undefined, 'WECOM_NOT_SENT'))
+        return
+      }
+      const requestBudget = Math.min(5_000, remainingMs - 100)
+      const deadline = performance.now() + requestBudget
+      const timeout = setTimeout(() => controller.abort(), requestBudget)
       try {
-        result = await Promise.race([
-          adapter.send({ ...prepared, signal: controller.signal }),
+        const sending = adapter.send({ ...prepared, signal: controller.signal, deadline })
+        result = permit ? await sending : await Promise.race([
+          sending,
           new Promise<ChannelSendResult>(resolve => controller.signal.addEventListener('abort', () => resolve({ result: 'unknown' }), { once: true })),
         ])
       } catch { result = { result: 'unknown' } }
-      finally { clearTimeout(timeout) }
+      finally { clearTimeout(timeout); await permit?.finish() }
       // Fault injection models a process crash: leave the committed send checkpoint for reclaim.
       await afterExternalDelivery?.(delivery.effectKey)
-      await withTx(db, tx => settleChannelSend(tx, delivery.channelClaim!, workerId, result.result, result.receipt))
+      await withTx(db, tx => settleChannelSend(tx, delivery.channelClaim!, workerId, result.result, result.receipt, result.errorCode))
       return
     }
     if (delivery.channel === 'webhook' && !features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS) return

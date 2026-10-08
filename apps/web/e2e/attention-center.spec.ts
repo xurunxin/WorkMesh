@@ -179,6 +179,8 @@ test('Attention Center preserves URL state, uses governed forms, retains partial
   await recoveryTrigger.click()
   await expect(center.getByRole('button', { name: 'retry', exact: true })).toBeDisabled()
   await page.keyboard.press('Escape')
+  await expect(center.locator('.attention-detail-heading')).toHaveCount(0)
+  await expect(page).not.toHaveURL(/attentionSelected=/)
   await expect(recoveryTrigger).toBeFocused()
 
   await center.getByRole('tab', { name: 'History' }).click()

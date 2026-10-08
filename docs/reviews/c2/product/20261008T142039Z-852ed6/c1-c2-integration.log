@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/apps/worker
+
+ ✓ integration/stage4-automation.integration.test.ts (56 tests) 17389ms
+   ✓ Stage 4 durable Automation and Loop runtime > runs the scheduled triage demo end to end and creates an auditable Session  342ms
+   ✓ Stage 4 durable Automation and Loop runtime > admits a durable domain-event trigger exactly once across replay  655ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > processes a full slow adapter batch without preclaiming waiting attempts and still schedules Loops  2905ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > persists a timed-out external call as uncertain without automatically retrying it  5112ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条  2096ms
+
+ Test Files  1 passed (1)
+      Tests  56 passed (56)
+   Start at  22:21:05
+   Duration  20.45s (transform 663ms, setup 0ms, collect 2.53s, tests 17.39s, environment 0ms, prepare 213ms)

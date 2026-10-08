@@ -1,0 +1,16 @@
+
+> workmesh@ ci:validate C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e
+> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs
+
+[ci:validate] OK: 9 jobs, 37 immutable action references, Node 22.19.0, pnpm@9.15.4
+Release workflow validation passed.
+file:///C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/scripts/validate-lite-compose.mjs:46
+  if (!condition) throw new Error(message)
+                        ^
+
+Error: WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS is read by the Lite compose but absent from .env.lite.example
+    at assert (file:///C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/scripts/validate-lite-compose.mjs:46:25)
+    at file:///C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/scripts/validate-lite-compose.mjs:221:3
+
+Node.js v24.20.0
+ ELIFECYCLE  Command failed with exit code 1.

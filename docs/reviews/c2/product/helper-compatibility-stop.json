@@ -1,0 +1,31 @@
+{
+  "reason": "恢复共用 helper 原有响应上限，避免将不同源码混作一次检查",
+  "run": "20261008T155756Z-fd0f13",
+  "activeCheck": {
+    "label": "web-unit-sequential",
+    "command": [
+      "pnpm.cmd",
+      "exec",
+      "turbo",
+      "run",
+      "test",
+      "--filter=@workmesh/web",
+      "--concurrency=1"
+    ],
+    "pid": 13744,
+    "startedAt": "2026-10-09T00:01:12.789822+08:00",
+    "sourceBefore": {
+      "path": "source-5572d6f12fd4643e480c7a4eb2b9cfac175d0375e2b4c6b3f3c65eaa8afc94ad.json",
+      "bytes": 277214,
+      "sha256": "5572d6f12fd4643e480c7a4eb2b9cfac175d0375e2b4c6b3f3c65eaa8afc94ad",
+      "files": 889
+    }
+  },
+  "processId": 13744,
+  "executable": "C:\\WINDOWS\\system32\\cmd.exe",
+  "creationTime": "2026-10-08T16:01:12.7964210Z",
+  "startedAt": "2026-10-08T16:04:25.5343474Z",
+  "exitCode": 0,
+  "output": "SUCCESS: The process with PID 45788 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 45724 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 16972 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 21052 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 62472 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 39916 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 61004 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 34584 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 57120 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 15388 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 44100 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 58996 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 42092 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 3696 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 50112 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 45760 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 46504 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 31788 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 36848 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 34824 (child process of PID 62668) has been terminated.\nSUCCESS: The process with PID 62668 (child process of PID 48408) has been terminated.\nSUCCESS: The process with PID 48408 (child process of PID 52136) has been terminated.\nSUCCESS: The process with PID 52136 (child process of PID 42876) has been terminated.\nSUCCESS: The process with PID 42876 (child process of PID 55424) has been terminated.\nSUCCESS: The process with PID 55424 (child process of PID 33888) has been terminated.\nSUCCESS: The process with PID 33888 (child process of PID 18740) has been terminated.\nSUCCESS: The process with PID 18740 (child process of PID 60236) has been terminated.\nSUCCESS: The process with PID 60236 (child process of PID 57752) has been terminated.\nSUCCESS: The process with PID 57752 (child process of PID 16184) has been terminated.\nSUCCESS: The process with PID 16184 (child process of PID 29904) has been terminated.\nSUCCESS: The process with PID 29904 (child process of PID 37860) has been terminated.\nSUCCESS: The process with PID 37860 (child process of PID 13744) has been terminated.\nSUCCESS: The process with PID 13744 (child process of PID 55272) has been terminated.",
+  "finishedAt": "2026-10-08T16:04:26.9533280Z"
+}

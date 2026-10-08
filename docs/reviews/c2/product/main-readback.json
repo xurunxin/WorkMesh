@@ -1,0 +1,20 @@
+{
+  "工具": "mcp__tds__git",
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "args": [
+    "ls-remote",
+    "origin",
+    "refs/heads/main"
+  ],
+  "readFinishedAt": "2026-10-08 15:40:24 UTC",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "18252ba8761aa810c3fd12d31ecae83e8b24d985\trefs/heads/main"
+      }
+    ]
+  },
+  "说明": "精确远端 ref；不以 FETCH_HEAD 或 origin/main 快照判断主线。产品未合入。",
+  "callId": null
+}

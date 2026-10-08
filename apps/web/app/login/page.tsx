@@ -7,6 +7,7 @@ import { ThemeToggle } from '../../features/navigation'
 import { LocaleToggle, useLocale } from '../lib/i18n'
 import { WorkMeshBrandIcon } from '../lib/brand'
 import { useWorkMeshDocumentTitle } from '../lib/document-title'
+import { safeLoginReturnTo } from '../lib/canonical-route'
 
 type LoginResponse = { csrfToken: string }
 type InstallStatus = { installed: boolean }
@@ -15,11 +16,13 @@ export default function LoginPage() {
   const { loginCopy: text, t } = useLocale()
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [ready, setReady] = useState(false)
   const textRef = useRef(text)
   textRef.current = text
   useWorkMeshDocumentTitle(text.title)
 
   useEffect(() => {
+    setReady(true)
     void publicRequest<InstallStatus>('/api/v1/install-status').then(status => {
       if (!status.installed) window.location.replace('/install')
     }).catch(reason => setError(reason instanceof Error ? reason.message : textRef.current.signInFailed))
@@ -37,7 +40,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email: form.get('email'), password: form.get('password') }),
       })
       saveCsrfToken(result.csrfToken)
-      window.location.assign('/')
+      window.location.assign(safeLoginReturnTo(new URLSearchParams(window.location.search).get('returnTo'), window.location.origin))
     } catch (reason) {
       setError(reason instanceof ApiError ? reason.message : text.signInFailed)
     } finally {
@@ -48,11 +51,11 @@ export default function LoginPage() {
   return <AppShell brandIcon={<WorkMeshBrandIcon />} productName="WorkMesh" contextLabel={text.title} navigation={[]} utilityNavigation={[]} headerActions={<div className="shell-action-cluster"><ThemeToggle /><LocaleToggle /></div>} skipLabel={t('skipToContent')}>
     <div className="auth-shell auth-shell-centered">
       <Card title={text.title} subtitle={text.subtitle} className="auth-card" headingLevel={1}>
-        <form onSubmit={submit} data-testid="login-form">
+        <form method="post" onSubmit={submit} data-testid="login-form">
           <label>{text.email}<input name="email" type="email" placeholder={text.emailPlaceholder} required /></label>
           <label>{text.password}<input name="password" type="password" placeholder={text.passwordPlaceholder} required /></label>
           {error && <p className="error" role="alert">{error}</p>}
-          <Button disabled={submitting} data-testid="login-submit" type="submit" variant="primary">{submitting ? text.signingIn : text.signIn}</Button>
+          <Button disabled={!ready || submitting} data-testid="login-submit" type="submit" variant="primary">{submitting ? text.signingIn : text.signIn}</Button>
         </form>
       </Card>
     </div>

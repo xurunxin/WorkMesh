@@ -1,0 +1,46 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/apps/worker
+
+ ✓ src/wecom-notifications.test.ts (41 tests) 17ms
+ ❯ src/agent-webhook.test.ts (9 tests | 1 failed) 95ms
+   ✓ C2 有界响应读取与 socket Abort > 固定 DNS transport：success 18ms
+   ✓ C2 有界响应读取与 socket Abort > 固定 DNS transport：oversize 6ms
+   × C2 有界响应读取与 socket Abort > 固定 DNS transport：abort 61ms
+     → expected false to be true // Object.is equality
+   ✓ agent webhook signing > signs exactly timestamp, dot, and the unmodified JSON body 0ms
+   ✓ agent webhook signing > decrypts AES-GCM webhook secrets only with the configured 32-byte key 1ms
+   ✓ agent webhook signing > uses bounded retry delays with deterministic jitter 0ms
+   ✓ agent webhook signing > rejects unsafe URL forms and private IPv4/IPv6 DNS answers by default 1ms
+   ✓ agent webhook signing > allows public DNS answers and explicitly enabled private self-hosted targets 1ms
+   ✓ agent webhook signing > pins the validated DNS answer for the actual self-hosted HTTP connection 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/agent-webhook.test.ts > C2 有界响应读取与 socket Abort > 固定 DNS transport：abort
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/agent-webhook.test.ts:38:20
+     36|       await new Promise<void>((resolve, reject) => server.close(error …
+     37|     }
+     38|     expect(closed).toBe(true)
+       |                    ^
+     39|   })
+     40| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 49 passed (50)
+   Start at  22:19:55
+   Duration  2.64s (transform 372ms, setup 0ms, collect 2.19s, tests 112ms, environment 0ms, prepare 780ms)
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\worker:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/wecom-notifications.test.ts src/agent-webhook.test.ts

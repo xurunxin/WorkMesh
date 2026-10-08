@@ -1,0 +1,133 @@
+2026-10-08T14:25:09.539Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:25:09.548Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:25:09.548Z pw:webserver Starting WebServer process pnpm --filter @workmesh/api exec tsx src/server.ts...
+2026-10-08T14:25:09.579Z pw:webserver Process started
+2026-10-08T14:25:09.579Z pw:webserver Waiting for availability...
+2026-10-08T14:25:09.579Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:25:09.584Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:25:09.584Z pw:webserver Waiting 100ms
+2026-10-08T14:25:09.697Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:25:09.698Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:25:09.698Z pw:webserver Waiting 250ms
+2026-10-08T14:25:09.952Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:25:09.953Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:25:09.953Z pw:webserver Waiting 500ms
+[WebServer] (node:36476) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:31524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T14:25:10.455Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:25:10.456Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:25:10.456Z pw:webserver Waiting 1000ms
+[WebServer] (node:42852) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T14:25:11.465Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:25:11.466Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:25:11.467Z pw:webserver Waiting 1000ms
+2026-10-08T14:25:12.470Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:25:12.471Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:25:12.471Z pw:webserver Waiting 1000ms
+[WebServer] {"level":30,"time":1791469513194,"pid":42852,"hostname":"DarkFlame","msg":"Server listening at http://127.0.0.1:3101"}
+[WebServer] {"level":30,"time":1791469513195,"pid":42852,"hostname":"DarkFlame","msg":"Server listening at http://100.77.217.65:3101"}
+[WebServer] {"level":30,"time":1791469513195,"pid":42852,"hostname":"DarkFlame","msg":"Server listening at http://172.24.64.1:3101"}
+[WebServer] {"level":30,"time":1791469513195,"pid":42852,"hostname":"DarkFlame","msg":"Server listening at http://192.168.31.186:3101"}
+[WebServer] {"level":30,"time":1791469513195,"pid":42852,"hostname":"DarkFlame","msg":"Server listening at http://10.173.185.137:3101"}
+2026-10-08T14:25:13.474Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+[WebServer] {"level":30,"time":1791469513477,"pid":42852,"hostname":"DarkFlame","reqId":"65ce8d22-2313-4d56-87a9-6ce52e2bd19a","req":{"method":"GET","url":"/health","host":"127.0.0.1:3101","remoteAddress":"127.0.0.1","remotePort":60033},"msg":"incoming request"}
+2026-10-08T14:25:13.502Z pw:webserver HTTP Status: 200
+2026-10-08T14:25:13.503Z pw:webserver WebServer available
+2026-10-08T14:25:13.503Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+[WebServer] {"level":30,"time":1791469513502,"pid":42852,"hostname":"DarkFlame","reqId":"65ce8d22-2313-4d56-87a9-6ce52e2bd19a","res":{"statusCode":200},"responseTime":24.621300000000247,"msg":"request completed"}
+2026-10-08T14:25:13.504Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T14:25:13.504Z pw:webserver Starting WebServer process pnpm --dir apps/web exec next dev --port 3100...
+2026-10-08T14:25:13.516Z pw:webserver Process started
+2026-10-08T14:25:13.516Z pw:webserver Waiting for availability...
+2026-10-08T14:25:13.516Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+2026-10-08T14:25:13.517Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T14:25:13.517Z pw:webserver Waiting 100ms
+2026-10-08T14:25:13.631Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+2026-10-08T14:25:13.633Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T14:25:13.633Z pw:webserver Waiting 250ms
+2026-10-08T14:25:13.886Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+2026-10-08T14:25:13.887Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T14:25:13.887Z pw:webserver Waiting 500ms
+[WebServer] (node:28396) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+2026-10-08T14:25:14.392Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+2026-10-08T14:25:14.393Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T14:25:14.393Z pw:webserver Waiting 1000ms
+[WebServer] (node:47628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T14:25:15.400Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+2026-10-08T14:25:15.401Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T14:25:15.401Z pw:webserver Waiting 1000ms
+[WebServer] (node:36924) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T14:25:16.408Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+[WebServer]    ▲ Next.js 15.5.22
+[WebServer]    - Local:        http://localhost:3100
+[WebServer]    - Network:      http://100.77.217.65:3100
+[WebServer]
+[WebServer]  ✓ Starting...
+[WebServer]  ✓ Ready in 4s
+[WebServer]  ○ Compiling / ...
+[WebServer]  ⚠ ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] Warning
+[WebServer]
+[WebServer] (1567:47) autoprefixer: end value has mixed support, consider using flex-end instead
+[WebServer]
+[WebServer] Import trace for requested module:
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] ./app/styles.css
+[WebServer]
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] Warning
+[WebServer]
+[WebServer] (1760:57) autoprefixer: end value has mixed support, consider using flex-end instead
+[WebServer]
+[WebServer] Import trace for requested module:
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] ./app/styles.css
+[WebServer]
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] Warning
+[WebServer]
+[WebServer] (1849:36) autoprefixer: end value has mixed support, consider using flex-end instead
+[WebServer]
+[WebServer] Import trace for requested module:
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] ./app/styles.css
+[WebServer]
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] Warning
+[WebServer]
+[WebServer] (1860:87) autoprefixer: start value has mixed support, consider using flex-start instead
+[WebServer]
+[WebServer] Import trace for requested module:
+[WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+[WebServer] ./app/styles.css
+2026-10-08T14:25:47.958Z pw:webserver HTTP Status: 200
+2026-10-08T14:25:47.958Z pw:webserver WebServer available
+Error: pnpm did not expose npm_execpath to Playwright global setup
+
+   at global-setup.ts:9
+
+   7 |   const pnpmCli = process.env.npm_execpath;
+   8 |   if (!pnpmCli) {
+>  9 |     throw new Error("pnpm did not expose npm_execpath to Playwright global setup");
+     |           ^
+  10 |   }
+  11 |   const pnpmScript = /\.(?:cjs|mjs|js)$/i.test(pnpmCli);
+  12 |   await execFileAsync(
+    at resetAcceptanceDatabase (C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\web\e2e\global-setup.ts:9:11)
+2026-10-08T14:25:48.052Z pw:webserver Terminating the WebServer
+[WebServer]  GET / 200 in 27881ms
+[WebServer] <w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\web\app\styles.css': No serializer registered for Warning
+[WebServer] <w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 4 items } -> webpack/lib/ModuleWarning -> Warning
+2026-10-08T14:25:48.833Z pw:webserver Terminated the WebServer
+2026-10-08T14:25:48.833Z pw:webserver Terminating the WebServer
+2026-10-08T14:25:49.574Z pw:webserver Terminated the WebServer
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test --config ../../playwright.config.ts e2e/wecom-notifications.spec.ts

@@ -427,3 +427,9 @@
 | webhook/job replay | 工具重试/平台job重放不伪ACK/等待模型，旧任命结果不重新路由 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-delivery |
 | concurrent request | F3/F4/F5联合恢复/三完成路径并发、Stop/撤权/换届按锁序收敛 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-integration（已验收输入：89f9yFnmIg4nszXIBCByh、YtFHUCHv8l4JZcYd1qHAU） |
 | server restart/outbox recovery | 消费已验收#27/#28后，恢复创建和根完成提交前后崩溃及checkpoint联合重放保留原归因和当前资格，REST/MCP重连可追溯 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-integration（已验收输入：89f9yFnmIg4nszXIBCByh、YtFHUCHv8l4JZcYd1qHAU） |
+
+<!-- C2-PRODUCT-REVIEW:BEGIN -->
+## C2 当前产品检查映射
+
+六原验收与九类的历史字段保持原义。当前已实现及真实运行结果见 [产品审阅入口](../c2/product-review.md) 和 test-coverage.json 中 C2 currentProductExecution。真实 Redis 竞态用例复用现有 API integration 夹具；C1 原 Worker 回归保留，无 CI 工作流/门禁修改。只出站不适用入站签名、绑定解绑、回调时窗；fake 不冒真实外发通过，独审/当前 CI/main 尚待验收。
+<!-- C2-PRODUCT-REVIEW:END -->

@@ -1,0 +1,2689 @@
+[
+  {
+    "run": "20261008T141924Z-08b193",
+    "path": "docs/reviews/c2/product/20261008T141924Z-08b193/raw-logs.zip",
+    "bytes": 5348,
+    "sha256": "d8b8a6db0e90c161a03b88fc14c300d51049e4605c29cee611825de67f3b91a2",
+    "members": [
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "10ead1fa7415957488be045e66969f7cc2b62eae273eea8bcd2068e7a63b575d"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "946c73ae52dc1327c6f065b73ef8f1934cef370ca0d6e5bcd20f9ff18c00f556"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "3f110468f7cdbe2b29015c32be012ce30f4382ab7c7c5ffd8e9a6b7510bffc39"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 1154,
+        "sha256": "09ce68b671c025b31d681a4671b2c36a2051a3c7435c8d9b4e0135dcdaf03f9a"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3228,
+        "sha256": "6aec076d9807aa6a17dc53eecd1a742fc9697a3f81df6b0a38fe4412fc863951"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "7e860fa41924ccbc3339f9af84c6e533ef31431a8c70d2a37e89c5f38268a3f5"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "10ead1fa7415957488be045e66969f7cc2b62eae273eea8bcd2068e7a63b575d"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "10ead1fa7415957488be045e66969f7cc2b62eae273eea8bcd2068e7a63b575d"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "341a369005097ca9d071e2ca34aff516b990a22809b9f3148f7e447451e915d7"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "32b4b70a501d83c5187cd0bdc9b24aa7cef1d12670c378175048b3ca0da1ad3f"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "946c73ae52dc1327c6f065b73ef8f1934cef370ca0d6e5bcd20f9ff18c00f556"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "946c73ae52dc1327c6f065b73ef8f1934cef370ca0d6e5bcd20f9ff18c00f556"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "d971ebf228490a2a14df849ab30ef01cf7d8617c0d8999608d38bc181c991fd4"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "3f110468f7cdbe2b29015c32be012ce30f4382ab7c7c5ffd8e9a6b7510bffc39"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "3f110468f7cdbe2b29015c32be012ce30f4382ab7c7c5ffd8e9a6b7510bffc39"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T141950Z-1c667a",
+    "path": "docs/reviews/c2/product/20261008T141950Z-1c667a/raw-logs.zip",
+    "bytes": 5993,
+    "sha256": "f361471aa5b4a6dbc787de4cbea059eda3bf32e72628df02170b7aaec4828e6c",
+    "members": [
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "114555f38927b0829c00f0022c1e680390a752126425a4e0039185774d4706d4"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "59076852b14b4d97f6b562e60b9dffc0efd89fe8998b7c637487090018dcbfa8"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "266a61ca0de83f1f70b9b7cc2c9105b44f63e02c20a32f4328c47c9715ef8f6f"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "unit.log",
+        "bytes": 2142,
+        "sha256": "ae629f30f2a9392bca703f0d7b07ff7d14af635d67eb4ca230e94999ae223f5c"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3311,
+        "sha256": "9ddf9d58e27aed699312f246da3809ff7d04b219ac47647f8e999be1a2cb3abb"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "cb273d7331049dfd2d4946fd2dd52e377ca295011df262b5506f0ebea8cff38d"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "114555f38927b0829c00f0022c1e680390a752126425a4e0039185774d4706d4"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "114555f38927b0829c00f0022c1e680390a752126425a4e0039185774d4706d4"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "269ddf77acd10117170504161734d48be2826c37aac5194e1fb720f83ceee44d"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "2a1050b7ecd2aaf1ac00ed168b10682c5d9b86d63eb137f214b153fe7e818218"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "59076852b14b4d97f6b562e60b9dffc0efd89fe8998b7c637487090018dcbfa8"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "59076852b14b4d97f6b562e60b9dffc0efd89fe8998b7c637487090018dcbfa8"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "492a1617c6576a595569c7d2503c7159c64f7a7d4cbe4c0c22c52c206cf77ffe"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "266a61ca0de83f1f70b9b7cc2c9105b44f63e02c20a32f4328c47c9715ef8f6f"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "266a61ca0de83f1f70b9b7cc2c9105b44f63e02c20a32f4328c47c9715ef8f6f"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T142039Z-852ed6",
+    "path": "docs/reviews/c2/product/20261008T142039Z-852ed6/raw-logs.zip",
+    "bytes": 11669,
+    "sha256": "7a6a6593908f854077a6ab314f8a63d152ecf8dfcfb3c0e69c75efe9b5c322fe",
+    "members": [
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "551bae9c1e293d2aeed081086208840c1ee8e0e0fea892cdba9bf3337d913e06"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "def22efbc5ff4fcb59832e24a0d6a2e771981b24202a80c1719a49d556eaa33d"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "7105e962a366d1583ce28c15087e03cab4af78e486c5df4f0b1d4e0fdc23a018"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "unit.log",
+        "bytes": 380,
+        "sha256": "01289bf451dc3dd8062337522d50e5bccb3b63c317df912601b9dcf77f27ea7c"
+      },
+      {
+        "name": "web-unit.log",
+        "bytes": 327,
+        "sha256": "fe47ebd2674ac01c262bbc628f2999fbe8617f25e0f68162e50c2a7a2055b1bd"
+      },
+      {
+        "name": "reset.log",
+        "bytes": 136,
+        "sha256": "785b2310c85420f49d93820c020a5e7c26737781f018671ae6b1e0f022b60de9"
+      },
+      {
+        "name": "c1-c2-integration.log",
+        "bytes": 1216,
+        "sha256": "d23127b8dce46d4fd5cacbecc34ea58f3317a02a992a6549f744197f949f001b"
+      },
+      {
+        "name": "api-config.log",
+        "bytes": 26730,
+        "sha256": "98ef13e6192c6c57483dd712bf7f662e16ff37404b0af20b99eda4c02f183954"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 5731,
+        "sha256": "0bcea366f8d8c9620caab332711c2b7a1f38d55a401f71e95dda8000e7f3868f"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "006a25e95127e663ab13349f3736ccbca4bb96aa8e392e54c1fb28cb6552af41"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "551bae9c1e293d2aeed081086208840c1ee8e0e0fea892cdba9bf3337d913e06"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "551bae9c1e293d2aeed081086208840c1ee8e0e0fea892cdba9bf3337d913e06"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "495587b2b93460f2a3b14be1b01507bca7cc5f467e5340405b6c9f3bc47e70b7"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "bf0a09233cf1064396c93a52a8c0f1073eb2f154be0337ba94b99c93c465938a"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "def22efbc5ff4fcb59832e24a0d6a2e771981b24202a80c1719a49d556eaa33d"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "def22efbc5ff4fcb59832e24a0d6a2e771981b24202a80c1719a49d556eaa33d"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "7b5ccc28572663d170c4cea0d6bbd92cbb800744d7ed1dc1ad2ac02cd4c3439b"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "7105e962a366d1583ce28c15087e03cab4af78e486c5df4f0b1d4e0fdc23a018"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "7105e962a366d1583ce28c15087e03cab4af78e486c5df4f0b1d4e0fdc23a018"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T142326Z-2635b7",
+    "path": "docs/reviews/c2/product/20261008T142326Z-2635b7/raw-logs.zip",
+    "bytes": 5833,
+    "sha256": "b84b1de83cdf7ce2c4cf9a73af0501ffb1b6b3b05fac268173c5e029a7804e6f",
+    "members": [
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "b60da36cb9f82e4a8e03c38a57beb6293edbdd64dc80a68a2161ef2be70db62b"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "e674e6d7dcebafb713e6b4ae58e2f050b78438838b84b3915436d50cf6b8194a"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "c761b9e920c9cbbd90a14a2816675b4e8a4d495896b5a95c6438f9c092f9a7c3"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "e2e-list.log",
+        "bytes": 503,
+        "sha256": "94420dc0ff1ecf4397aec142343beaceac39cd5a0a954926c640b640e272e0cd"
+      },
+      {
+        "name": "c2-e2e.log",
+        "bytes": 862,
+        "sha256": "65d613501af2d46a4d695b08557e2366d1d2d2d9cf0a0a839af2b73b3b03b556"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3228,
+        "sha256": "efa03b400625cee686ff7c8074ffb0b80b621ecbd5935e6ca8beaea0b3c3a37d"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "bddd77c9509bedbef4dc7a7e52ee14e99be191e6bc9a5dbfa8ac49cf3b3e198b"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "b60da36cb9f82e4a8e03c38a57beb6293edbdd64dc80a68a2161ef2be70db62b"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "b60da36cb9f82e4a8e03c38a57beb6293edbdd64dc80a68a2161ef2be70db62b"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "7de33943f076b0e7276de1a4bf6454c828b19254a0682c0f0b5df955cc1e2752"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "309782b84faa0e2ca3413b1fae1c91b298aa2df8d048b331db60d39230cadd5a"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "e674e6d7dcebafb713e6b4ae58e2f050b78438838b84b3915436d50cf6b8194a"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "e674e6d7dcebafb713e6b4ae58e2f050b78438838b84b3915436d50cf6b8194a"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "e6c9586947fe9877fccd1e9e0ff5b8b58a2f9e3800652b2718156e79967a2220"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "c761b9e920c9cbbd90a14a2816675b4e8a4d495896b5a95c6438f9c092f9a7c3"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "c761b9e920c9cbbd90a14a2816675b4e8a4d495896b5a95c6438f9c092f9a7c3"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T142422Z-800f88",
+    "path": "docs/reviews/c2/product/20261008T142422Z-800f88/raw-logs.zip",
+    "bytes": 6192,
+    "sha256": "48203292de9a8610cda2274a09a8020c0179ebde00c9fa066451cde778a917c0",
+    "members": [
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "cf9761db90a91809b53d63c47317f1ec2dc45a6bde6f65748204ef3486e0394a"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "13ab86bb8bc3eafa766168d20dcca0bc3e3de79b7320f913d2bb4642489251e6"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "d8b60e461913dab9ffa667c2f31e8e4d77a7e474d87171c809567f3e9f6d38ea"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "e2e-list.log",
+        "bytes": 503,
+        "sha256": "94420dc0ff1ecf4397aec142343beaceac39cd5a0a954926c640b640e272e0cd"
+      },
+      {
+        "name": "c2-e2e.log",
+        "bytes": 3196,
+        "sha256": "6ba0817193004d7aa054addbf8fd241f9524eacefbe30eb70b21848ec1f9f651"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3311,
+        "sha256": "e28d5fcfe0bb5086b4f4ae2f7275df2d2eb0067b00f6fcabf6213d7257b8ea5a"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "9315ab2f330155d9cc2a6e39d8c0ea3a5b963b076f8dcd4a21981e65bbe1af56"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "cf9761db90a91809b53d63c47317f1ec2dc45a6bde6f65748204ef3486e0394a"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "cf9761db90a91809b53d63c47317f1ec2dc45a6bde6f65748204ef3486e0394a"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "e94f2f453c03156bab7749c1f80f8a2a07c41a857113223e9f760369d36a8575"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "f14d83a943899f481607f7a02e7be9154da3cac1f82664101812915778537a86"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "13ab86bb8bc3eafa766168d20dcca0bc3e3de79b7320f913d2bb4642489251e6"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "13ab86bb8bc3eafa766168d20dcca0bc3e3de79b7320f913d2bb4642489251e6"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "e5db573e62bbd4671d76d25f075b1a9ce754570321972ef6f7583bdb7279c1eb"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "d8b60e461913dab9ffa667c2f31e8e4d77a7e474d87171c809567f3e9f6d38ea"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "d8b60e461913dab9ffa667c2f31e8e4d77a7e474d87171c809567f3e9f6d38ea"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T142501Z-23347d",
+    "path": "docs/reviews/c2/product/20261008T142501Z-23347d/raw-logs.zip",
+    "bytes": 7615,
+    "sha256": "d671f57d8bc0bf9718e9bf6ce2acc97a3c21bfcf0bccbff78a418ba21d9bdd2c",
+    "members": [
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "87d23d775fe0c9eca82885d05f815d19535b3df026edcd90291a676deb9a6cd3"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "2fa829575f1eba02e2474865c1953b63de83cb9af1ca56d811c3b5fb3256510c"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "5f909139c18c736c7695e6a574af0d67bc2ed70e4d0f3fe77992752647fb5bc5"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "e2e-list.log",
+        "bytes": 503,
+        "sha256": "94420dc0ff1ecf4397aec142343beaceac39cd5a0a954926c640b640e272e0cd"
+      },
+      {
+        "name": "c2-e2e.log",
+        "bytes": 14062,
+        "sha256": "3a404a33b470eac9eb16aec8e123123a45afe3ce412d063a3dc872deb2d2c951"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3311,
+        "sha256": "39410bac0ad728108f4bd9c429630e7db4a27a4f833054bc7c2ee585ea45789b"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "728f480bc4f50ac30cc3f084278fae8b8a4cde2db1703884a39ad7915c948f3b"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "87d23d775fe0c9eca82885d05f815d19535b3df026edcd90291a676deb9a6cd3"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "87d23d775fe0c9eca82885d05f815d19535b3df026edcd90291a676deb9a6cd3"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "c44420be050ddd70ce38c64342eec956e1099e2d74fdb0e20a1360e11ace57ea"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "7766f7d306075dc6c60dc3d39518d2b8787123ae89c96eb2809aafafece21868"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "2fa829575f1eba02e2474865c1953b63de83cb9af1ca56d811c3b5fb3256510c"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "2fa829575f1eba02e2474865c1953b63de83cb9af1ca56d811c3b5fb3256510c"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "6b24668313cc3d04a31af5743a5b01a69b683a4cb942156192fdbaa6071046ea"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "5f909139c18c736c7695e6a574af0d67bc2ed70e4d0f3fe77992752647fb5bc5"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "5f909139c18c736c7695e6a574af0d67bc2ed70e4d0f3fe77992752647fb5bc5"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T142623Z-6d6fcb",
+    "path": "docs/reviews/c2/product/20261008T142623Z-6d6fcb/raw-logs.zip",
+    "bytes": 34581,
+    "sha256": "0c3b523adb35814a71f4311f74c016c0abc1a74c5c69062fe9c7eb7644d8f6b0",
+    "members": [
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "d11e4177289b063c3bb5efdf0cd67a0e79d87968b8a3b612cbfd991ddd90c883"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "4ba3ca74b2aae4f1540f8cadefedd07111caf71b610784a5c6d6e7e204c86f70"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "8aaebad9c17e56db290c01be9bcf6971325bddf6f0ec0031b0c625a1a831a2f0"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "e2e-list.log",
+        "bytes": 503,
+        "sha256": "94420dc0ff1ecf4397aec142343beaceac39cd5a0a954926c640b640e272e0cd"
+      },
+      {
+        "name": "c2-e2e.log",
+        "bytes": 261756,
+        "sha256": "55f03ca605241a954c4d2ba0853cfb434113c0cb1f589fca5fe51edc576b2e8d"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3231,
+        "sha256": "bbf5971e846dffe9392e0190e97f14552c7cb6bbcfba718ff7fd1d9b76556a88"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "7a8758acdd3232aac9e785d4aa73dc9f8a5e06027909db0185c3ed218c044e8e"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "d11e4177289b063c3bb5efdf0cd67a0e79d87968b8a3b612cbfd991ddd90c883"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "d11e4177289b063c3bb5efdf0cd67a0e79d87968b8a3b612cbfd991ddd90c883"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "351ac5fd49954815ab5a25216a003736d295208064a02e916ddd2935fe471b3f"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "d2f5e1a3c35017008058ba94d4b386a59208f3cc8c4f399b3f96bee1ef49fa7a"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "4ba3ca74b2aae4f1540f8cadefedd07111caf71b610784a5c6d6e7e204c86f70"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "4ba3ca74b2aae4f1540f8cadefedd07111caf71b610784a5c6d6e7e204c86f70"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "42c0f5971667df01eac480de1ee1e11cb6c8e7e6fbbb550288db91c2bb229058"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "8aaebad9c17e56db290c01be9bcf6971325bddf6f0ec0031b0c625a1a831a2f0"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "8aaebad9c17e56db290c01be9bcf6971325bddf6f0ec0031b0c625a1a831a2f0"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T142845Z-d2da88",
+    "path": "docs/reviews/c2/product/20261008T142845Z-d2da88/raw-logs.zip",
+    "bytes": 12619,
+    "sha256": "864ebadaf299ed0044e81385cc02886f4378dcbd4228292283bf6823a1864066",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "a18ba454716b5449eabf6c34a4418c2678b600d8c81c01d5ca876f529ea4d626"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "8e7aa134523359c8035b687a10d13a8d0947d8896381d9a4c0ed8c3099f8825b"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "0a5686f53669277c49713b8934af9feecea997ee6e64284a0978bb97fddd0d61"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "11c36f3c5a71745b4ff704f5b1c92a7f1e7e01ed192ada2522546e33b083920f"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "unit.log",
+        "bytes": 380,
+        "sha256": "2d7f21e377a15846c63496d635f71c8b97e092d1d8d2b9f289c0533088771354"
+      },
+      {
+        "name": "web-unit.log",
+        "bytes": 327,
+        "sha256": "0d2c24027e184cf6548dfa9be88c1e4087cc583ea2f95ff6fd28abf8ddff9db5"
+      },
+      {
+        "name": "reset.log",
+        "bytes": 136,
+        "sha256": "785b2310c85420f49d93820c020a5e7c26737781f018671ae6b1e0f022b60de9"
+      },
+      {
+        "name": "c1-c2-integration.log",
+        "bytes": 14243,
+        "sha256": "dcdbfd26d4d5c673761fcfd47d274a3cad14318c81d12e1de9227a6f69095823"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 7128,
+        "sha256": "8cea7c706fa2773fd96e177aa0b5a7ecaf1f3b390e4c161899c973e24cecf1aa"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "355bd0b5e7b1be436767b09c55c7f59c9a26d24d873dbfd81bc29586095dd759"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "8e7aa134523359c8035b687a10d13a8d0947d8896381d9a4c0ed8c3099f8825b"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "8e7aa134523359c8035b687a10d13a8d0947d8896381d9a4c0ed8c3099f8825b"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "a488f1ee5986574afd43e3ec16534d17541ab7cdeaaee3a817b8c11035e3f675"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "8053658bacda9d877bc2f1bc364fa531810f84f397e0e982fc6d105fcac92718"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "0a5686f53669277c49713b8934af9feecea997ee6e64284a0978bb97fddd0d61"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "0a5686f53669277c49713b8934af9feecea997ee6e64284a0978bb97fddd0d61"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "d67f86cdbf609a54231caf60866f1925845f7b9c6c2b904361f25f4d85960438"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "11c36f3c5a71745b4ff704f5b1c92a7f1e7e01ed192ada2522546e33b083920f"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "11c36f3c5a71745b4ff704f5b1c92a7f1e7e01ed192ada2522546e33b083920f"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T143103Z-ea28b5",
+    "path": "docs/reviews/c2/product/20261008T143103Z-ea28b5/raw-logs.zip",
+    "bytes": 27316,
+    "sha256": "848321b638ac69ea0c3aa7c1d5b468a049c78d560c135e03f37ba5c381fc2ed1",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "a5d122821f3506b298f6ff4ea09792067942fbba6940b5f5631e7c46b35acd07"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "31f9980d6d7761ed6d9e76907d17f1bd357d450e2ef736860e92daa8e1c74d3d"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "e5011bee7d02173db177388cb23701868fa7051b3de7e4ed35c53182282b1c46"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "129a20ffac956eae7e0562289f3da67bcd2c5615d6d60654bae5446bcd9b8b77"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "lint.log",
+        "bytes": 5924,
+        "sha256": "490dcb59665eff90e902792571318154b46d9db4a1f4ef267a243fdb7d68c886"
+      },
+      {
+        "name": "typecheck.log",
+        "bytes": 6478,
+        "sha256": "649910931d3e3620f3cd06dc5e52a58eb1a82180fa1aa2b77111e604a630185a"
+      },
+      {
+        "name": "test.log",
+        "bytes": 82108,
+        "sha256": "b524a04c281089ab98a64c4a5f2bfb49b87b8d918570d5214688b25750c03d71"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3583,
+        "sha256": "6d20a0a22932bf50a4f66f8d51b6eea833043689539135af075500b977a2ca6e"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "840e0da151adbc6531d8de7b8798cfe1db6e527105d25c2a341a2f2e1663e1ea"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "31f9980d6d7761ed6d9e76907d17f1bd357d450e2ef736860e92daa8e1c74d3d"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "31f9980d6d7761ed6d9e76907d17f1bd357d450e2ef736860e92daa8e1c74d3d"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "4a43453f0e65265a70fc6ebbcd8c7fddc4965dd15a40608b804fad3bd66a303d"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "20e3bbdd36decb5ed24caaa965faf8dad853b85f97f1f974306ec3dfcddb884a"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "e5011bee7d02173db177388cb23701868fa7051b3de7e4ed35c53182282b1c46"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "e5011bee7d02173db177388cb23701868fa7051b3de7e4ed35c53182282b1c46"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "de84af88e1f0e7d50f2c88d39ac209896d3bba7b9bdf08c6de6774b531c1ae4e"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "129a20ffac956eae7e0562289f3da67bcd2c5615d6d60654bae5446bcd9b8b77"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "129a20ffac956eae7e0562289f3da67bcd2c5615d6d60654bae5446bcd9b8b77"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T144059Z-000dbc",
+    "path": "docs/reviews/c2/product/20261008T144059Z-000dbc/raw-logs.zip",
+    "bytes": 29119,
+    "sha256": "188c1853522f9cda4f14b4f2466454ed0058fd2d86e845bc6534f1f42cce34fc",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "2df3cc885cfced4a959ef590f94ba2809d9953da5635caa10dec7388ca9c3914"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "8085c0f80ae860043a2a9a08db612554d38f62b828c99c3bd383f755a175f232"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "71989348f7029b7122949f3f392dde985d3f4ffc51e56211b0cfe0ce92c42ff3"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "6c3ed5958978054969f86913339335211d74e697d4bf631e4237c7e457a540ae"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "lint.log",
+        "bytes": 5992,
+        "sha256": "b07d480111a41174cfe1751ca27f9a68c335cf54a5877ce09848df58f47a9306"
+      },
+      {
+        "name": "typecheck.log",
+        "bytes": 6547,
+        "sha256": "e9af6bc86ba69b19399a9419cf6ae642e6bc7a98a3181ffa2eeb8fe77272666b"
+      },
+      {
+        "name": "test.log",
+        "bytes": 117118,
+        "sha256": "d06ce46c38b4a125c226a5dc6d7241cf1ec09d73698bc3c7c04095ac6d376f4d"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3583,
+        "sha256": "3524e7d04001021ff73f1fc76e53eabcfedb059dd1a512d6ef6545d594d09254"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "504c6dd057927cf69f4f1c0ac2df9ea968d9673547c0a0a1f4e18004b282cc24"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "8085c0f80ae860043a2a9a08db612554d38f62b828c99c3bd383f755a175f232"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "8085c0f80ae860043a2a9a08db612554d38f62b828c99c3bd383f755a175f232"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "491e631b56e345b239848845d532fef09d64a88b2afbf0413acbaba675033d49"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "9218799bd3115f03ba77407b10276331dd23e7b6ffb186272209a6da09712918"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "71989348f7029b7122949f3f392dde985d3f4ffc51e56211b0cfe0ce92c42ff3"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "71989348f7029b7122949f3f392dde985d3f4ffc51e56211b0cfe0ce92c42ff3"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "f5718c514c9f5835530565bfdccd59050d2007fb49d6b61a5e369e32a3584ae3"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "6c3ed5958978054969f86913339335211d74e697d4bf631e4237c7e457a540ae"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "6c3ed5958978054969f86913339335211d74e697d4bf631e4237c7e457a540ae"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T145209Z-b49b85",
+    "path": "docs/reviews/c2/product/20261008T145209Z-b49b85/raw-logs.zip",
+    "bytes": 361639,
+    "sha256": "d88be4f0171479c9659efd844e8cb0f518a988022bc25ed4217d444c145f07e6",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "e5e5c367cbd8eae1537c3dbb3b89fd219c4ef29678e7c96943d17e1302f7a05e"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "ae1a975c48612319c051895baa66d2931a9b841216b2dd52a7fffb512c19abd4"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "aaf6597c1536be4c9988a5834660d1b4c310991a96dd7342d38de98e88eae7e1"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "bb6f5fab94d0daa95e587885864be869e61f132e2ec8e3d82b2f6dee7bf4b6bb"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "lint.log",
+        "bytes": 5987,
+        "sha256": "dc8d8a742c9f1becf11543c4d81458f1b0a891e4a94219a25d6f41370fe22315"
+      },
+      {
+        "name": "typecheck.log",
+        "bytes": 6538,
+        "sha256": "d86a83c77107aa1c79da41b102c3ab5fdb845f723263ecad5b18daa6c2e9a447"
+      },
+      {
+        "name": "test.log",
+        "bytes": 69541,
+        "sha256": "e485f5b95f775d6e10c16d91f95908b38b9ac60c51ea6f0462be549667283660"
+      },
+      {
+        "name": "test-integration.log",
+        "bytes": 1058738,
+        "sha256": "3afc49ea1c5f8937c778aeb4537ce590209e40e87bc1d9d25125addd96eaf395"
+      },
+      {
+        "name": "test-e2e.log",
+        "bytes": 1891458,
+        "sha256": "50ec631df1938151bb441e1f4ef5852da57ed0e3d8ef59a79dbbcc9458b1636f"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 76108,
+        "sha256": "d4372f171216c18654a27c5ee9f971b6bf0c27f577d6eee42fbef1b222f3b49e"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "40340106bdae72d2dae6d11d46bede0e405309e9a4ec301044dce1f887c31063"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "ae1a975c48612319c051895baa66d2931a9b841216b2dd52a7fffb512c19abd4"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "ae1a975c48612319c051895baa66d2931a9b841216b2dd52a7fffb512c19abd4"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 1291,
+        "sha256": "5b5f5a1c01ec7afc6b0172eba254cccc7a297addf1c039f98a5ae21585c346bc"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "888df9a2ddd587959e6a517a36496571539014a0c48e7cf852a10d45d513ad56"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "aaf6597c1536be4c9988a5834660d1b4c310991a96dd7342d38de98e88eae7e1"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "aaf6597c1536be4c9988a5834660d1b4c310991a96dd7342d38de98e88eae7e1"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "2b589252218219ffae1eb3a9a18018f788a547050c5c5ad4946f933d75719bae"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "bb6f5fab94d0daa95e587885864be869e61f132e2ec8e3d82b2f6dee7bf4b6bb"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "bb6f5fab94d0daa95e587885864be869e61f132e2ec8e3d82b2f6dee7bf4b6bb"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T150955Z-5f8e65",
+    "path": "docs/reviews/c2/product/20261008T150955Z-5f8e65/raw-logs.zip",
+    "bytes": 14776,
+    "sha256": "3769e48b0f4963c00372b310612872dae4df3254a4296b0c937c2c96eb332822",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "4bd5899fd19337918fb1ef9581d1e23ea704c485a90362c072e685bb0414bd96"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "9989cdfc36b2d2f3a8a3bb7259caf1440ef79bf2e5ddf282bd53b073ee9c10be"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "e76e503e6b0dd5240d644dfb57aeb034ac44deb841a0de2a87a8c5c1c2a99359"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "4f448a846c3305a8eaf4db3ec760e59c85c07833c1c5cb538afdbb24d0d05941"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "unit.log",
+        "bytes": 380,
+        "sha256": "9b997ffa94427d2a13f1fb826fdf3382a1849d8b88e49397d850b091f019873e"
+      },
+      {
+        "name": "web-unit.log",
+        "bytes": 327,
+        "sha256": "609b8b11a56a76e8401249a9d905fa98492588386e710b29f91f33b9aa19b60d"
+      },
+      {
+        "name": "reset.log",
+        "bytes": 136,
+        "sha256": "785b2310c85420f49d93820c020a5e7c26737781f018671ae6b1e0f022b60de9"
+      },
+      {
+        "name": "c1-c2-integration.log",
+        "bytes": 1495,
+        "sha256": "e1a5518b8d7f6f23193297478db5b5b0906bdfc79d31f68a4c48d4b826f5a9ec"
+      },
+      {
+        "name": "c2-redis-integration.log",
+        "bytes": 781,
+        "sha256": "75ee9cc89bfa473fb868f67e9dd114faf92323075873a0de893a13cdcf4bb323"
+      },
+      {
+        "name": "api-config.log",
+        "bytes": 26713,
+        "sha256": "a237645a21e50cbd98a7b19c1d6bb2c9d10cb48d7380438793430af8256f73d8"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 6126,
+        "sha256": "bcbdf569985a3c6286fd37b7b1aeca496f7a249ca6970bef951f9365e7a8242c"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "6dfb3df8e9b4ea53d156f1fd3250c1d0ea1486a1c5b8b6963a25e4a979d57321"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "9989cdfc36b2d2f3a8a3bb7259caf1440ef79bf2e5ddf282bd53b073ee9c10be"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "9989cdfc36b2d2f3a8a3bb7259caf1440ef79bf2e5ddf282bd53b073ee9c10be"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "e73c82e4296f6f3c28ff0f3cb5c5b4790c95273c4f5b5a6c517cb55e8809f7fc"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "1e71d955423e1ecefa195e9bb1bd95e65eef24883d58d5a2d8a063ab6e868e4b"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "e76e503e6b0dd5240d644dfb57aeb034ac44deb841a0de2a87a8c5c1c2a99359"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "e76e503e6b0dd5240d644dfb57aeb034ac44deb841a0de2a87a8c5c1c2a99359"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "ba93ac7764290b8ac05238c26f73ffb794287591f249a14d56051caa64fdc4d2"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "4f448a846c3305a8eaf4db3ec760e59c85c07833c1c5cb538afdbb24d0d05941"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "4f448a846c3305a8eaf4db3ec760e59c85c07833c1c5cb538afdbb24d0d05941"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T151344Z-0be08d",
+    "path": "docs/reviews/c2/product/20261008T151344Z-0be08d/raw-logs.zip",
+    "bytes": 7720,
+    "sha256": "584c63f798c50a52b7db0b7b646e166c2fa5953f8e2f9aee5b0405573b518549",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "ef8d15548022af2cac52c04279dab17e54a7ecbae5c9a8e2d23e2b122f2a3e51"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "77d794042eeeff4d21f01dc4bee06c35f4bde99a9b7b60ad5a4bdce9857886f9"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "3cd23f852d6a61acc1be40d57b555a824fdab78c97d49ca3ae17c26ab5550ef0"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "69b195f2d80c097eb9a4e3d03c7a8c170f19d769645568963cb105a39c02baca"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "baseline-ui.log",
+        "bytes": 612,
+        "sha256": "f205c5b0438d60ca1f2a3e211c6744b53797bef5ee3451dd63388bbb0614166f"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3311,
+        "sha256": "0e8d5348b3d9387e1ffc29616254a1acdab93a4dab2e3421e9968a2def0265fd"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "3e430982dcf1f524341606bb0d0c8ed4ca69e46112be136c03c6d57022debd60"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "77d794042eeeff4d21f01dc4bee06c35f4bde99a9b7b60ad5a4bdce9857886f9"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "77d794042eeeff4d21f01dc4bee06c35f4bde99a9b7b60ad5a4bdce9857886f9"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "67ee64196cfec087820806d46ef37e78fd2ef291cd653b0fa0e722e357450708"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "9fbf1c4262f3d4bcb9c3b25e1eac6ee7d84a83d3cf5e4b2472a9993443928dc2"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "3cd23f852d6a61acc1be40d57b555a824fdab78c97d49ca3ae17c26ab5550ef0"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "3cd23f852d6a61acc1be40d57b555a824fdab78c97d49ca3ae17c26ab5550ef0"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "43ff4b2413815e29d59c22c86df33c74b00d854440617e2ca5238d5939186953"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "69b195f2d80c097eb9a4e3d03c7a8c170f19d769645568963cb105a39c02baca"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "69b195f2d80c097eb9a4e3d03c7a8c170f19d769645568963cb105a39c02baca"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T151539Z-ce775c",
+    "path": "docs/reviews/c2/product/20261008T151539Z-ce775c/raw-logs.zip",
+    "bytes": 9127,
+    "sha256": "a9327c5ede2e63f20f1c5cb5e0ee7e6499c41a52c2c75cfccac7d569d1983f3c",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "0291a454c8bab5e659782ca349991d1c2df4c2233189449d9766af7f867cc1e9"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "d7ba3eb5f6175f276b6e6f76d2f1cb275ccc6f78d0773f01af188bcd83b85925"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "9ab3a447d9b16abbc0e3bc2825c7ced392bb40d709a9c49fefd96dfa980ea141"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "334bb325f93ab79d1078cc1f276980e886aac4c4bb9faa7bb8ff67d252c7dbd9"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "baseline-ui.log",
+        "bytes": 8033,
+        "sha256": "c768aa8ddf971a27e950065fbf7db4a2fd5511bd079895d2c0f591b8e4a2b11c"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3311,
+        "sha256": "efd9bf1210eeeddcb90431799d882fa52f4f537b0569fca4b5e543290e8730ba"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "f48c7b44fb06e5d8510847c97181886f342f3403cb0861b9e549bd4fc39d6a29"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "d7ba3eb5f6175f276b6e6f76d2f1cb275ccc6f78d0773f01af188bcd83b85925"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "d7ba3eb5f6175f276b6e6f76d2f1cb275ccc6f78d0773f01af188bcd83b85925"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "b8d378eaa8abb42d04e77e27525240d508190e770075aeae4b9961cb91572c07"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "d05993c12ce720ca52bc13017fbba8b8393808065a134d5016eb891a578d550d"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "9ab3a447d9b16abbc0e3bc2825c7ced392bb40d709a9c49fefd96dfa980ea141"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "9ab3a447d9b16abbc0e3bc2825c7ced392bb40d709a9c49fefd96dfa980ea141"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "d4ea1b8e81183f01e6eec8446f7e30a8711dcd3e8736226f8444c19c39ff801e"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "334bb325f93ab79d1078cc1f276980e886aac4c4bb9faa7bb8ff67d252c7dbd9"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "334bb325f93ab79d1078cc1f276980e886aac4c4bb9faa7bb8ff67d252c7dbd9"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T151639Z-481561",
+    "path": "docs/reviews/c2/product/20261008T151639Z-481561/raw-logs.zip",
+    "bytes": 7951,
+    "sha256": "10407ecc44f813df2804e173c3cef95fe9395f8ca409211332dd77e21f23e58f",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "f017c9d8668838f8005be98f87908f3f8c5d5f3398c205fa7f7396747178ae82"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "b64b91d5c9689a791e796d5dd496e8b6ec9e49a7cedf5b2de92ab8834c6d0ee8"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "1a8a69fdca74f3aa99d09a2231563319002fbd71f5c99350c31869f1dec9a3bd"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "34ea7459dc1a694629fd8ccd4c2d087d06e4a818f1eb9aca53754a9747734fb3"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "baseline-ui.log",
+        "bytes": 1525,
+        "sha256": "db36a5e8ee00f3b4987c4d039be14ec0a3a65db1b57841255f2960b636929201"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3311,
+        "sha256": "b47e23f133e21713f766fc93fd6750612fabccbc5174aa208e908f6cf6d83aed"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "1bb4ba6a7b401a3ad6cf3b550b0bd8a6cd46a4a053683150db99a53f2e9303fe"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "b64b91d5c9689a791e796d5dd496e8b6ec9e49a7cedf5b2de92ab8834c6d0ee8"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "b64b91d5c9689a791e796d5dd496e8b6ec9e49a7cedf5b2de92ab8834c6d0ee8"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "7ca885aa3549ec45a6e022dfb0ccd01d01dd689174d43ecb1a89aa03e5df59ba"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "28a6b73abb2d0fc0aee0347d16919963901e74b5ea685e23b8678a1219bff761"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "1a8a69fdca74f3aa99d09a2231563319002fbd71f5c99350c31869f1dec9a3bd"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "1a8a69fdca74f3aa99d09a2231563319002fbd71f5c99350c31869f1dec9a3bd"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "6cea85a7be6e649d8bef7b0cb1e2df9a786072a704d371a6feb0ee957e21323e"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "34ea7459dc1a694629fd8ccd4c2d087d06e4a818f1eb9aca53754a9747734fb3"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "34ea7459dc1a694629fd8ccd4c2d087d06e4a818f1eb9aca53754a9747734fb3"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T151908Z-604b0c",
+    "path": "docs/reviews/c2/product/20261008T151908Z-604b0c/raw-logs.zip",
+    "bytes": 30712,
+    "sha256": "258b7048ef7ea2a8e31362eae245aee75c83bfbd5e85ee2072f0566fd993fb37",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "b30a886c907187302ba56ebeb190e0b0528983d46b643a82b61d8c851db8928d"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "bd20fb6a535b7b4e800ad6c0fec64a19677282613ffa3f921087467e1343e409"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "29e7d476be2efb643e3359db799c0e4b8e5ac757dd620ac24700875293bb32cd"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "3f42b8f2cbd8e7bcfbaa8ec25a7212336d0837ab6b4866892cee837cb25552d6"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "baseline-ui.log",
+        "bytes": 208680,
+        "sha256": "396108c95876b3d09ac3862ebabda24e28044c9b362e738aa2660b5e45244bf1"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3311,
+        "sha256": "5e19e43dddbde8ff88582a38556edec7e6290de0a5ac9dddf18cbe264e01aeb8"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "5d76c25d5815b83ee9ef340c2157bccfeacae2b901611fe3aa25d136104aaf2c"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "bd20fb6a535b7b4e800ad6c0fec64a19677282613ffa3f921087467e1343e409"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "bd20fb6a535b7b4e800ad6c0fec64a19677282613ffa3f921087467e1343e409"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "b78e1f4b3c1dbad5d2bf6c17e1b4cfd801c756b3dd83745b5614d217039932e6"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "55a219c5cde0ee2e722fd30ed34eb335dd5a0115136e6e8cd94175192fae4438"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "29e7d476be2efb643e3359db799c0e4b8e5ac757dd620ac24700875293bb32cd"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "29e7d476be2efb643e3359db799c0e4b8e5ac757dd620ac24700875293bb32cd"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "b7db26f17405d33193c482e387ff44ea1509115f49e504e1c1dc3d437ea45c00"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "3f42b8f2cbd8e7bcfbaa8ec25a7212336d0837ab6b4866892cee837cb25552d6"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "3f42b8f2cbd8e7bcfbaa8ec25a7212336d0837ab6b4866892cee837cb25552d6"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T152058Z-16bf0f",
+    "path": "docs/reviews/c2/product/20261008T152058Z-16bf0f/raw-logs.zip",
+    "bytes": 8850,
+    "sha256": "ca8dc28462bed8ef62bba3dbb793d5565f34f9ce520f7152666fc8efdd148ac6",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "1c02c4e66fa21d3409333043f1efa5d80659a59451d037be81f5dc59209611f1"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "6bad72ede2ea8470862c311f0722aa2020ccec94c0ead6b70513ab74b48adce0"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "a024d0c2e64f7af13f414376c7cab4f742d0baee0e13ee0538ad8ba66ba1cb01"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "0251b00623fa2565534d7ea88446fed8e56eea06d178fd3e91162cd17b660ca3"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "lint.log",
+        "bytes": 7094,
+        "sha256": "8264b7a230ed99069182c3e53108858eee1037039a293a673f3ec3eec55c0448"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3311,
+        "sha256": "60d610a9341000774cae2064c5c6f030272336315359cab70b07b8bbf91c7010"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "714beb87bbbcb0c0977b06fc71add6d1883b1a1c08c58d375c555e4a53b750ab"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "6bad72ede2ea8470862c311f0722aa2020ccec94c0ead6b70513ab74b48adce0"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "6bad72ede2ea8470862c311f0722aa2020ccec94c0ead6b70513ab74b48adce0"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "7450a81979436ad9af8b5cfec1de1d20d5d405013c67958a0f1e5a582f65c2ad"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "c0877368a2ae1222743bdf77d98a06070b51e10f4e3ce33add7fe63cecc90dca"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "a024d0c2e64f7af13f414376c7cab4f742d0baee0e13ee0538ad8ba66ba1cb01"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "a024d0c2e64f7af13f414376c7cab4f742d0baee0e13ee0538ad8ba66ba1cb01"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "cd441776e5d54c1d6d02a88170f412fcd8f66f838860f22f9cf2a4e95f43979d"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "0251b00623fa2565534d7ea88446fed8e56eea06d178fd3e91162cd17b660ca3"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "0251b00623fa2565534d7ea88446fed8e56eea06d178fd3e91162cd17b660ca3"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T152237Z-75d17a",
+    "path": "docs/reviews/c2/product/20261008T152237Z-75d17a/raw-logs.zip",
+    "bytes": 28766,
+    "sha256": "30df24fd5a81f020beef2ed5ba556eee072d0cee4f9fe073ff9de1bd0cf25b26",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "2e367b08e131e1e2abfd396eb6aa39f68d75e22414eaa2dd5fd0fba45d461cf8"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "078cbaac4e5a69d76705122718bfb73ea7ffefd6cb4be9440312d2b31a5d8ea1"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "219d35caecad21a369c03c1ccf1adc53e22594ec23cb1a577158e21aacef5d18"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "6297425a474ad64683684371cd6dec0e24118f0822cd06aa1fa2a64e9df3aef3"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "lint.log",
+        "bytes": 5988,
+        "sha256": "44d7f09e2e7c66a646d97f76730e1078b13a073bf53215973fb3923c12ee57ab"
+      },
+      {
+        "name": "typecheck.log",
+        "bytes": 6539,
+        "sha256": "cf432b4d37583f0e7da9716175d1d02d6e0f94da8453805d660b5344088a5730"
+      },
+      {
+        "name": "test.log",
+        "bytes": 114068,
+        "sha256": "c0040f944119bd5a7b1fd3501a794ff610b1be387a5d33083afc087b406488ee"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3666,
+        "sha256": "234b3d7e445268cee37140e0cfe5f5d8a1958cf36cba172af0d0cca8392702cb"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "19602ab6c7a262359cc13f3955e571e20c46019040331c009f73762d0e137ab6"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "078cbaac4e5a69d76705122718bfb73ea7ffefd6cb4be9440312d2b31a5d8ea1"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "078cbaac4e5a69d76705122718bfb73ea7ffefd6cb4be9440312d2b31a5d8ea1"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "49d582c9ebbcc0c386612654616dc49e8c894f542b292b7316bcecfbabbbce1a"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "083b595d5ea954ff6d7a0f7a910816f918c5f636400e501eb36b53263cb51ea9"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "219d35caecad21a369c03c1ccf1adc53e22594ec23cb1a577158e21aacef5d18"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "219d35caecad21a369c03c1ccf1adc53e22594ec23cb1a577158e21aacef5d18"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "b69079dcbd78ce9b39157de07d8f70690d5f3f9d065a60b756570c3931962447"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "6297425a474ad64683684371cd6dec0e24118f0822cd06aa1fa2a64e9df3aef3"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "6297425a474ad64683684371cd6dec0e24118f0822cd06aa1fa2a64e9df3aef3"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T152932Z-28a255",
+    "path": "docs/reviews/c2/product/20261008T152932Z-28a255/raw-logs.zip",
+    "bytes": 25617,
+    "sha256": "9b3e9ef59507e23f37c2c6abe0188181ce24abd67ec665dd6909ebc2f303e965",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "f084b32c890f1ccc6b3dee82609a0fc3a2bf5a40205cce7fc5bf64995f916dcb"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "438b8c6f57c7503fae185507a686c1a82b4f55356119447db466c73523009da4"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "2cf264416a9eeabd5a7aff0a030249546c5218893e961b353fff67f88c6977b9"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "27eaf99e8abc0b9f0ef094d51c5e18e25bb90e95844fae197960d4fac47cca87"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "lint.log",
+        "bytes": 6008,
+        "sha256": "3c687104357100a03813f4a12d335ad5cf198e80dc61747d18a82e127a6f16d4"
+      },
+      {
+        "name": "typecheck.log",
+        "bytes": 6563,
+        "sha256": "27109883e3acebdb97ca49aec48b8e41b7332f4c9febea26d83fa659d3c77fcf"
+      },
+      {
+        "name": "test.log",
+        "bytes": 71912,
+        "sha256": "a0099244814873a1cecf2258defb00f0ac4fc80bb8109dc358a233afce920376"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3666,
+        "sha256": "7d0eecb303946eff31dc27f650e136edbad1cbad0a25f97ead56f56404282e7e"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "f99c7fed1ff99d04511fd28a239743a9ba6b73f154370cc8f3b0211f7d1ba663"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "438b8c6f57c7503fae185507a686c1a82b4f55356119447db466c73523009da4"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "438b8c6f57c7503fae185507a686c1a82b4f55356119447db466c73523009da4"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "0e31bdd19b2e8a44037916d61afbd60e94eac18a618bbf18e9ca5c29b0b8dba7"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "6bb550a5ec1c89912bb1f52cfdd8835191adc0c09b9a435302e2d9e589b29298"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "2cf264416a9eeabd5a7aff0a030249546c5218893e961b353fff67f88c6977b9"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "2cf264416a9eeabd5a7aff0a030249546c5218893e961b353fff67f88c6977b9"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "39ef2d9467f06e4d5ffd7ab6798f1e638633d690c81afb72a84536fe582e849c"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "27eaf99e8abc0b9f0ef094d51c5e18e25bb90e95844fae197960d4fac47cca87"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "27eaf99e8abc0b9f0ef094d51c5e18e25bb90e95844fae197960d4fac47cca87"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T153826Z-31123a",
+    "path": "docs/reviews/c2/product/20261008T153826Z-31123a/raw-logs.zip",
+    "bytes": 362997,
+    "sha256": "5de9ff15689f492d11631343d01f03b4ff9522a2b2212cc93530d51f7ca1b004",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "2796caf341742a5a658a13b735e962e1df93b5bb61c56e5970ddb921a6892832"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "dc6a8153a28044f17876d3ced68742c8a3683a09ffed9dcca2d8debbbcd7d78f"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "540003fd62fefc62cc30590f43ef69220e0b11b40bf5ba371e81f5f39e2f6765"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "e1aa67cc922f50fe0058a7530e1faf0ffade9ef00eb083d769aadfcdde732319"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "lint.log",
+        "bytes": 6008,
+        "sha256": "e0cb8b5baf7fce9397e8531184b84b5b5e3f219eafd4dcce299557c31b2642cb"
+      },
+      {
+        "name": "typecheck.log",
+        "bytes": 6563,
+        "sha256": "1c399ff48b36352473fc98e22a9a21800d16ecfff2a5ce8619be995424bc4c98"
+      },
+      {
+        "name": "api-unit-sequential.log",
+        "bytes": 6638,
+        "sha256": "f19d06388540d073789cc9b10fbb73b5929567078dc351bdfdd94ec84006d90b"
+      },
+      {
+        "name": "web-unit-sequential.log",
+        "bytes": 31361,
+        "sha256": "0de788b89fae62dc280956ba44fd38bc28d10a8c2261779c97400c91aa73ba9d"
+      },
+      {
+        "name": "test.log",
+        "bytes": 63616,
+        "sha256": "42e60c6132dfcdca1fc1b4d22104c5390aa3e63191a2088eeb118f7fbf2b3268"
+      },
+      {
+        "name": "test-integration.log",
+        "bytes": 1061957,
+        "sha256": "f65ec39dde6a96b1d208e566f0d902960ded6185f221eed233b3db8c5fb9d933"
+      },
+      {
+        "name": "test-e2e.log",
+        "bytes": 1792547,
+        "sha256": "ac995bd400b29d444a11bb3ed0c1e3741595f56dfad2dfe401cb08c415d33789"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 76832,
+        "sha256": "cd5d1bfe814ecd5ea2441628d950b8631dcc399968b1705a2d1c81fd689d95ed"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "33323afda8f4322e7434b89ec24bcb9015b8bbf82489c06982ed431b6c3a49c3"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "dc6a8153a28044f17876d3ced68742c8a3683a09ffed9dcca2d8debbbcd7d78f"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "dc6a8153a28044f17876d3ced68742c8a3683a09ffed9dcca2d8debbbcd7d78f"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 1637,
+        "sha256": "b4b6033ff252532a7491b5b852b7e93704ea35e302a9ce7b6c5c37daca5d997c"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "fd453c5da80fdcd376ba7576f5c5096bc447137091ca5f3310e4a20af7318546"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "540003fd62fefc62cc30590f43ef69220e0b11b40bf5ba371e81f5f39e2f6765"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "540003fd62fefc62cc30590f43ef69220e0b11b40bf5ba371e81f5f39e2f6765"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "b0f0cfd4c69164ca924862d741b35a64bcaeb6e79d46ac49661fb1287567555f"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "e1aa67cc922f50fe0058a7530e1faf0ffade9ef00eb083d769aadfcdde732319"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "e1aa67cc922f50fe0058a7530e1faf0ffade9ef00eb083d769aadfcdde732319"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T155756Z-fd0f13",
+    "path": "docs/reviews/c2/product/20261008T155756Z-fd0f13/raw-logs.zip",
+    "bytes": 18417,
+    "sha256": "694ade3832c7c9157a75e5db86ac8e803c5147011204ecaf841a0f715c1c0965",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "9e966bc7d1c89235c538e16068a2463532cd9be08d0d09c5bb6538a1156c2468"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "2bd1fc75bac5d924835cc980f78711965688bedd9c4f9f99d62140bf9e3b4c93"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "e1a7f6b337aa7132d094a4fee6b2afe46ae302028efa60454f9f19679fbf844e"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "801980da1870a599f87a743c571ad8e91b56347cbfc862e5ea326698a27c0bda"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "lint.log",
+        "bytes": 5992,
+        "sha256": "253df3de127461d53d9099c90da888fc38b57de2605609e92fa44520a567ed6d"
+      },
+      {
+        "name": "typecheck.log",
+        "bytes": 6547,
+        "sha256": "06aea1ccdc6e0b8972f941ebdd89f7a2d7ef42ca31dfbb4c01c3d7a403ea34d7"
+      },
+      {
+        "name": "api-unit-sequential.log",
+        "bytes": 7046,
+        "sha256": "033699b359511677a47eecec2be997e80b2a8cc5394f245bf1942cced06ff8ac"
+      },
+      {
+        "name": "web-unit-sequential.log",
+        "bytes": 24753,
+        "sha256": "8d7a5e5c441a876490d718c4ff0ce403f3af7a12d46fdfec5fdce12f38f39fd2"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3583,
+        "sha256": "93d98c0cad2bd80e08675e75fd54629e395f53c029f557b9eea8db1b97e57687"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "55429eb8ab1603637b77ee27c12ef182ab8bdb2a12294c7e0aa32bf6a2173cad"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "2bd1fc75bac5d924835cc980f78711965688bedd9c4f9f99d62140bf9e3b4c93"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "2bd1fc75bac5d924835cc980f78711965688bedd9c4f9f99d62140bf9e3b4c93"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 599,
+        "sha256": "546e58da1204f0f9c6140f4db1600ba355578aca8013db055f1a04aa239cfba6"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "24d0974a730e10845287a5a2c6358b9bea0a42b6d3a4a6c80e07e66ccbd11cd1"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "e1a7f6b337aa7132d094a4fee6b2afe46ae302028efa60454f9f19679fbf844e"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "e1a7f6b337aa7132d094a4fee6b2afe46ae302028efa60454f9f19679fbf844e"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "276046d59f1d0ee2f81d2b822995369106dc2f2e1657098128c397fce90a2404"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "801980da1870a599f87a743c571ad8e91b56347cbfc862e5ea326698a27c0bda"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "801980da1870a599f87a743c571ad8e91b56347cbfc862e5ea326698a27c0bda"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T160516Z-c88908",
+    "path": "docs/reviews/c2/product/20261008T160516Z-c88908/raw-logs.zip",
+    "bytes": 187004,
+    "sha256": "9da0d50c7121d250a4b27a4f0c345b816f6a3d1d2ef14e8d9114f8fbe3acb4b5",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "5d99fdaf9c9f16c279a41bf47fdbaefeb52d44b2edef02a1354a9804b47e48ef"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "eaf1d27d2523d8774947caa21c26774be40b9257bf2f28c0c0284cf985c7e7cf"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "eb7fcf5f1308ebd83f8e244b5df57019d4e1496b08a1f9f066a9e721e839166c"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "3429782d7a73ff1e90f79f89e34e244c48b80a89b381bb38746e564eef414ebf"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "lint.log",
+        "bytes": 5992,
+        "sha256": "20b7d1ab87f7eff813c8833a60fa51fc25c75c5f50d5e28e01a3a039eb8c270d"
+      },
+      {
+        "name": "typecheck.log",
+        "bytes": 6539,
+        "sha256": "15dc3ae9eaf4b3a3b2c8e7a8422e83b8c442a93e52f82bdee4a3affae0d54de5"
+      },
+      {
+        "name": "api-unit-sequential.log",
+        "bytes": 7044,
+        "sha256": "c6356383421d9fe737946b0575a67ee287243aa85575d270edeeeb1482020841"
+      },
+      {
+        "name": "web-unit-sequential.log",
+        "bytes": 33645,
+        "sha256": "eb5058d16a619fdf54f40fb926e7125e2a12c48bc0e126d008d67eb9c8d07d01"
+      },
+      {
+        "name": "test.log",
+        "bytes": 66685,
+        "sha256": "10a99fd87840eb656ee71972bb22002fd6b3bee99a510ae08e23bff8e4ba64b1"
+      },
+      {
+        "name": "test-integration.log",
+        "bytes": 1063481,
+        "sha256": "e49999577d87c6b4f942ce5f8c1c325be0e0cc8a25a2958cf723c1627e58566a"
+      },
+      {
+        "name": "test-e2e.log",
+        "bytes": 1854,
+        "sha256": "0e9c74929f5497e8045d59935042db113761f26b77647b40aa1b769f1f01b126"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 76083,
+        "sha256": "ac0765dadbad162b30f8b61bc122db54881b307cdb82e8a407fa21ce1bb30b3d"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "314d2779fffee10a12a1a685cd1187c3b2503e7cf3dc2a4f6eb94a4e09165b53"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "eaf1d27d2523d8774947caa21c26774be40b9257bf2f28c0c0284cf985c7e7cf"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "eaf1d27d2523d8774947caa21c26774be40b9257bf2f28c0c0284cf985c7e7cf"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 945,
+        "sha256": "3f78abee14b9eb8b1ff63c707df395ca381ca3c473845e9b58c3fc4a58902952"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "b68ab0cc5d7ecd6eebd2f526a20940d81906f313eecb676e167805f81fc9f920"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "eb7fcf5f1308ebd83f8e244b5df57019d4e1496b08a1f9f066a9e721e839166c"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "eb7fcf5f1308ebd83f8e244b5df57019d4e1496b08a1f9f066a9e721e839166c"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "3c0af1ffc15ea96a9ed368c1da275627f7a4cf0c4fb6e1b5c76f6cb2a471fabb"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "3429782d7a73ff1e90f79f89e34e244c48b80a89b381bb38746e564eef414ebf"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "3429782d7a73ff1e90f79f89e34e244c48b80a89b381bb38746e564eef414ebf"
+      }
+    ],
+    "crc": "通过"
+  },
+  {
+    "run": "20261008T162342Z-55df46",
+    "path": "docs/reviews/c2/product/20261008T162342Z-55df46/raw-logs.zip",
+    "bytes": 175208,
+    "sha256": "201b03257d7278d1b2c750446104e0917df30620ae58a4ebfe6aa545a54aa2c0",
+    "members": [
+      {
+        "name": "official-node-SHASUMS256.txt",
+        "bytes": 3777,
+        "sha256": "de2602986573174f8815e5c66a157950132166113edddd9124c30784303ede31"
+      },
+      {
+        "name": "node-version.log",
+        "bytes": 10,
+        "sha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9"
+      },
+      {
+        "name": "pnpm-version.log",
+        "bytes": 7,
+        "sha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684"
+      },
+      {
+        "name": "pnpm-child-runtime.log",
+        "bytes": 160,
+        "sha256": "0a9ca0eede267b428172e6cbc1fd611ed014efcf23908d31001822cc443d73ec"
+      },
+      {
+        "name": "start-pg.log",
+        "bytes": 65,
+        "sha256": "bc82fea39c1881ec36cc394b253ff9f808344d78896859adf868c51c196da80a"
+      },
+      {
+        "name": "start-redis.log",
+        "bytes": 65,
+        "sha256": "1f4d0da99bfa0da708fa18e98912d85c937d20d066676c65cf07f02859c3fd37"
+      },
+      {
+        "name": "start-s3.log",
+        "bytes": 65,
+        "sha256": "11a6632a4c1de6ec25318f96477ccb86a5f95171688d6e332460c8844d658cec"
+      },
+      {
+        "name": "prepare-s3.log",
+        "bytes": 48,
+        "sha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584"
+      },
+      {
+        "name": "test-e2e.log",
+        "bytes": 1679936,
+        "sha256": "0543e06fad69aa5250fd5cbacf141f85fb30a057fb7999d02e74cefb02911030"
+      },
+      {
+        "name": "service-log-pg.log",
+        "bytes": 3293,
+        "sha256": "d3abf3d29a6ea04be22bad39c3fc8759b7e7b739220c34f7565705994cee80e2"
+      },
+      {
+        "name": "inspect-pg.log",
+        "bytes": 247,
+        "sha256": "6cf62ee3c02a16933742b16c5597d7d5662c37f7899f891a5b6d09b503200bf0"
+      },
+      {
+        "name": "stop-pg.log",
+        "bytes": 65,
+        "sha256": "bc82fea39c1881ec36cc394b253ff9f808344d78896859adf868c51c196da80a"
+      },
+      {
+        "name": "remove-pg.log",
+        "bytes": 65,
+        "sha256": "bc82fea39c1881ec36cc394b253ff9f808344d78896859adf868c51c196da80a"
+      },
+      {
+        "name": "service-log-redis.log",
+        "bytes": 945,
+        "sha256": "abce38c62afbc169866687ae72c160e6aea4baf655534fdcb7d292987f63c08a"
+      },
+      {
+        "name": "inspect-redis.log",
+        "bytes": 247,
+        "sha256": "3d1c43163ab0eb63790b4c9dc0d9efbef3705bbd0f11f80e44334d2bfffa2417"
+      },
+      {
+        "name": "stop-redis.log",
+        "bytes": 65,
+        "sha256": "1f4d0da99bfa0da708fa18e98912d85c937d20d066676c65cf07f02859c3fd37"
+      },
+      {
+        "name": "remove-redis.log",
+        "bytes": 65,
+        "sha256": "1f4d0da99bfa0da708fa18e98912d85c937d20d066676c65cf07f02859c3fd37"
+      },
+      {
+        "name": "service-log-s3.log",
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      {
+        "name": "inspect-s3.log",
+        "bytes": 1079,
+        "sha256": "449601d85ca92df0f50db0da175394fac92b347c0923c306b56a96f9c531e9fb"
+      },
+      {
+        "name": "stop-s3.log",
+        "bytes": 65,
+        "sha256": "11a6632a4c1de6ec25318f96477ccb86a5f95171688d6e332460c8844d658cec"
+      },
+      {
+        "name": "remove-s3.log",
+        "bytes": 65,
+        "sha256": "11a6632a4c1de6ec25318f96477ccb86a5f95171688d6e332460c8844d658cec"
+      }
+    ],
+    "crc": "通过"
+  }
+]

@@ -313,3 +313,11 @@ C1 未实现真实企业微信发送、卡片审批、账号身份桥接或模�
 ### C2 当前产品执行阶段
 
 Chief 已按独审方案明确放行产品实现，同 todo、同分支正常整合 C3 main。当前完整规格和输入见 docs/reviews/c2/product-spec.md 与 product-input.json；历史仅文档限制保留原含义。适配器、安全登录返回及 fake 验收按已审 product-design.md 实施，产品成果仍须独审、当前 Required CI 和 actual main，不将本许可冒作产品验收；不真实外发。
+
+<!-- C2-PRODUCT-REVIEW:BEGIN -->
+### C2 产品成果记录
+
+单一企业微信只提醒适配器与 canonical 安全登录返回已实现，沿用 C1 的当前授权线性化、workspace 前置锁/完整锁序、发送 checkpoint、fence 和 unknown 对账。Redis 额度与 serial token 分离，额度至少 D+60 秒或可信完成+60 秒，丢失状态共同冷却 120 秒；DNS 后再次核单调截止，已发出后 timeout/断连为 unknown。登录页 hydration 完成前禁用提交并使用 POST，当前 Human 重新读取权限与焦点，无权转发拒绝。
+
+实际六原验收/九类、必需本机检查、前后 UI、配置与资源证据见 [产品审阅入口](../reviews/c2/product-review.md)。复用已有 API integration Redis 夹具，C1 Worker 回归与 CI 策略保留。没有迁移、新 API 或决策事件/身份桥接，不改变本 ADR 其它 Proposed 范围；产品独审、视觉停点、当前 Required CI 和实际 main 落地仍为后续门禁。
+<!-- C2-PRODUCT-REVIEW:END -->

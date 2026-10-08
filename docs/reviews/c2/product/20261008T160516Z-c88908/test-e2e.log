@@ -1,0 +1,37 @@
+
+> workmesh@ test:e2e C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e
+> turbo run test:e2e --filter=@workmesh/web
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/web
+   • Running test:e2e in 1 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/contracts:build: cache miss, executing e7e4cfc1a297db9d
+@workmesh/ui:build: cache miss, executing 7fd463ae6028dbc9
+@workmesh/contracts:build:
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build:
+@workmesh/ui:build:
+@workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\ui
+@workmesh/ui:build: > tsc -p tsconfig.json
+@workmesh/ui:build:
+@workmesh/web:test:e2e: cache bypass, force executing 5c23170d3ebe873c
+@workmesh/web:test:e2e:
+@workmesh/web:test:e2e: > @workmesh/web@ test:e2e C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\web
+@workmesh/web:test:e2e: > playwright test --config ../../playwright.config.ts
+@workmesh/web:test:e2e:
+@workmesh/web:test:e2e: Error: http://127.0.0.1:3101/health is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer.
+@workmesh/web:test:e2e:
+@workmesh/web:test:e2e:  ELIFECYCLE  Command failed with exit code 1.
+@workmesh/web#test:e2e:  ERROR  command (C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\web) C:\nvm4w\nodejs\pnpm.cmd run test:e2e exited (1)
+
+ Tasks:    2 successful, 3 total
+Cached:    0 cached, 3 total
+  Time:    7.391s
+Failed:    @workmesh/web#test:e2e
+
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Command failed with exit code 1.
