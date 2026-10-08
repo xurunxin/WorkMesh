@@ -1,9 +1,11 @@
 import { randomUUID } from 'node:crypto'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import {
   admitAutomationOccurrence,
   admitLoopRun,
   admitNotification,
+  admitChannelEvent, createChannelTarget, updateChannelTarget, claimChannelNotifications, prepareChannelSend, settleChannelSend, reconcileChannelSend,
+
   appendEvent,
   applyMigrations,
   createDb,
@@ -11,6 +13,8 @@ import {
   withTx,
 } from '@workmesh/db'
 import { loadFeatureConfig } from '@workmesh/config'
+import { createSessionLifecycleWorker } from '../src/session-lifecycle.js'
+import { createOutboxWorker } from '../src/index.js'
 import { createAutomationWorker as createBaseAutomationWorker } from '../src/automation.js'
 
 const enabledFeatures = loadFeatureConfig({
@@ -1157,5 +1161,234 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
        WHERE run.rule_id=ANY($1::uuid[])`,
       [ruleIds],
     )).rowCount).toBe(0)
+  })
+
+  describe('C1 channel delivery contract', () => {
+    const features = loadFeatureConfig({ WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS: 'true' })
+    const target = (name = 'C1 target') => withTx(db, tx => createChannelTarget(tx, meta('channel-target'), { name, provider: 'wecom', enabled: true, secretMaterial: 'https://channel.example.test/hook?key=' + randomUUID() }))
+    const source = async () => withTx(db, async tx => {
+      const row = (await tx.query<{id:string}>(`INSERT INTO inbox_items(workspace_id,recipient_human_actor_id,team_id,kind,source_type,source_id,payload)
+        VALUES($1,$2,$3,'ask','activity',$4,'{"summary":"Private source content must never leave WorkMesh"}') RETURNING id`, [fixture.workspaceId,fixture.humanId,fixture.teamId,randomUUID()])).rows[0]!
+      const eventId = await appendEvent(tx, { ...meta('channel-source'), type: 'inbox.item.created', aggregateType: 'inbox_item', aggregateId: row.id, revision: 1 })
+      return {id:row.id,eventId}
+    })
+    const claim = (worker: string, limit = 25) => withTx(db, tx => claimChannelNotifications(tx, worker, ['wecom'], limit, 60))
+    const expire = (id: string) => db.query(`UPDATE notification_deliveries SET claimed_at=now()-interval '61 seconds' WHERE id=$1`,[id])
+    const state = async (id: string) => (await db.query<{status:string;outcome:string;revision:number;effect_key:string;attempt_count:number;claim_fence:number}>(`SELECT status,outcome,revision,effect_key,attempt_count,claim_fence FROM notification_deliveries WHERE id=$1`,[id])).rows[0]!
+    beforeEach(async () => {
+      await db.query(`UPDATE notification_deliveries SET status='dead',outcome='failed',claimed_at=NULL,claimed_by=NULL WHERE intent_id IS NOT NULL`)
+      await db.query(`UPDATE notification_channel_targets SET enabled=false`)
+      await db.query(`UPDATE outbox_events SET status='delivered',locked_at=NULL,locked_by=NULL`)
+      await db.query(`UPDATE actors SET is_active=true,workspace_role='admin' WHERE id=$1`, [fixture.humanId])
+    })
+    it('admits only exact assigned Human targets and deduplicates concurrent source replay and fan-out', async () => {
+      const one=await target('one'),two=await target('two'),item=await source()
+      await Promise.all([withTx(db,tx=>admitChannelEvent(tx,item.eventId)),withTx(db,tx=>admitChannelEvent(tx,item.eventId))])
+      const rows=(await db.query(`SELECT delivery.* FROM notification_deliveries delivery JOIN notification_intents intent ON intent.id=delivery.intent_id WHERE intent.source_event_id=$1`,[item.eventId])).rows
+      expect(rows).toHaveLength(2)
+      expect(new Set(rows.map(row=>row.channel_target_id))).toEqual(new Set([one.id,two.id]))
+      expect(new Set(rows.map(row=>row.recipient_actor_id))).toEqual(new Set([fixture.humanId]))
+      await target('later')
+      await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      expect((await db.query('SELECT 1 FROM notification_intents WHERE source_event_id=$1',[item.eventId])).rowCount).toBe(1)
+      expect((await db.query('SELECT 1 FROM notification_source_checkpoints WHERE source_event_id=$1',[item.eventId])).rowCount).toBe(1)
+      await expect(db.query(`INSERT INTO notification_deliveries(workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key)
+        SELECT workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key FROM notification_deliveries WHERE id=$1`,[rows[0].id])).rejects.toThrow()
+      await db.query(`UPDATE domain_events SET payload=payload||'{"conflict":true}'::jsonb WHERE id=$1`,[item.eventId])
+      await expect(withTx(db,tx=>admitChannelEvent(tx,item.eventId))).rejects.toMatchObject({code:'IDEMPOTENCY_KEY_REUSED'})
+    })
+    it('does not notify unassigned sources or all readable Team members',async()=>{
+      await target()
+      const previous=(await db.query<{project_id:string|null}>('SELECT project_id FROM work_items WHERE id=$1',[fixture.workItemId])).rows[0]!
+      const project=(await db.query<{id:string}>(`INSERT INTO projects(workspace_id,team_id,name,lead_actor_id) VALUES($1,$2,'C1 project lead',$3) RETURNING id`,[fixture.workspaceId,fixture.teamId,fixture.humanId])).rows[0]!
+      await db.query('UPDATE work_items SET responsible_human_actor_id=NULL,project_id=$2 WHERE id=$1',[fixture.workItemId,project.id])
+      try {
+        const event=await withTx(db,async tx=>{
+          const decision=(await tx.query<{id:string}>(`INSERT INTO decisions(workspace_id,work_item_id,proposed_by_actor_id,title,rationale) VALUES($1,$2,$3,'No responsible Human','Read visibility is not delivery authority') RETURNING id`,[fixture.workspaceId,fixture.workItemId,fixture.humanId])).rows[0]!
+          return appendEvent(tx,{...meta('unassigned'),type:'decision.recorded',aggregateType:'decision',aggregateId:decision.id})
+        })
+        await withTx(db,tx=>admitChannelEvent(tx,event))
+        expect((await db.query('SELECT 1 FROM notification_intents WHERE source_event_id=$1',[event])).rowCount).toBe(0)
+        expect((await db.query('SELECT result FROM notification_source_checkpoints WHERE source_event_id=$1',[event])).rows[0]).toEqual({result:'suppressed'})
+      } finally {await db.query('UPDATE work_items SET responsible_human_actor_id=$2,project_id=$3 WHERE id=$1',[fixture.workItemId,fixture.humanId,previous.project_id])}
+      const projectEvent=await withTx(db,async tx=>{
+        const decision=(await tx.query<{id:string}>(`INSERT INTO decisions(workspace_id,project_id,proposed_by_actor_id,title,rationale) VALUES($1,$2,$3,'Project-only decision','Only the explicit lead receives this') RETURNING id`,[fixture.workspaceId,project.id,fixture.humanId])).rows[0]!
+        return appendEvent(tx,{...meta('project-only'),type:'decision.recorded',aggregateType:'decision',aggregateId:decision.id})
+      })
+      await withTx(db,tx=>admitChannelEvent(tx,projectEvent))
+      expect((await db.query('SELECT recipient_actor_id FROM notification_intents WHERE source_event_id=$1',[projectEvent])).rows).toEqual([{recipient_actor_id:fixture.humanId}])
+    })
+    it('processes a lower cursor that commits after a higher cursor checkpoint',async()=>{
+      await target();const delayed=await db.connect()
+      try {
+        await delayed.query('BEGIN')
+        const item=(await delayed.query<{id:string}>(`INSERT INTO inbox_items(workspace_id,recipient_human_actor_id,team_id,kind,source_type,source_id) VALUES($1,$2,$3,'ask','activity',$4) RETURNING id`,[fixture.workspaceId,fixture.humanId,fixture.teamId,randomUUID()])).rows[0]!
+        const lower=await appendEvent(delayed,{...meta('late-commit'),type:'inbox.item.created',aggregateType:'inbox_item',aggregateId:item.id})
+        const higher=await source();await withTx(db,tx=>admitChannelEvent(tx,higher.eventId))
+        await expect(withTx(db,tx=>admitChannelEvent(tx,lower))).rejects.toMatchObject({code:'NOT_FOUND'})
+        await delayed.query('COMMIT');await withTx(db,tx=>admitChannelEvent(tx,lower))
+        const checkpoints=(await db.query<{source_event_id:string;source_cursor:string}>('SELECT source_event_id,source_cursor::text FROM notification_source_checkpoints WHERE source_event_id=ANY($1::uuid[]) ORDER BY source_cursor',[[lower,higher.eventId]])).rows
+        expect(checkpoints.map(row=>row.source_event_id)).toEqual([lower,higher.eventId])
+        expect((await db.query('SELECT 1 FROM notification_intents WHERE source_event_id=ANY($1::uuid[])',[[lower,higher.eventId]])).rowCount).toBe(2)
+      } finally {await delayed.query('ROLLBACK');delayed.release()}
+    })
+    it('recovers source commit, admission rollback and checkpoint commit without partial fan-out', async () => {
+      await target();const item=await source()
+      await expect(withTx(db,async tx=>{await admitChannelEvent(tx,item.eventId);throw new Error('CRASH_BEFORE_CHECKPOINT_COMMIT')})).rejects.toThrow('CRASH_BEFORE')
+      expect((await db.query('SELECT 1 FROM notification_intents WHERE source_event_id=$1',[item.eventId])).rowCount).toBe(0)
+      expect((await db.query('SELECT 1 FROM notification_source_checkpoints WHERE source_event_id=$1',[item.eventId])).rowCount).toBe(0)
+      await withTx(db,tx=>admitChannelEvent(tx,item.eventId)); await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      expect((await db.query('SELECT 1 FROM notification_intents WHERE source_event_id=$1',[item.eventId])).rowCount).toBe(1)
+    })
+    it('maps committed activity events to their exact Inbox recipient without Team fan-out', async () => {
+      await target()
+      const created=await withTx(db,async tx=>{
+        const session=(await tx.query<{id:string}>('SELECT id FROM agent_sessions WHERE workspace_id=$1 LIMIT 1',[fixture.workspaceId])).rows[0]!
+        const activity=(await tx.query<{id:string}>(`INSERT INTO agent_activities(session_id,actor_id,sequence,kind,summary) SELECT $1,$2,coalesce(max(sequence),0)+1,'question','Private question' FROM agent_activities WHERE session_id=$1 RETURNING id`,[session.id,fixture.agentActorId])).rows[0]!
+        const item=(await tx.query<{id:string}>(`INSERT INTO inbox_items(workspace_id,recipient_human_actor_id,team_id,session_id,kind,source_type,source_id) VALUES($1,$2,$3,$4,'waiting_input','activity',$5) RETURNING id`,[fixture.workspaceId,fixture.humanId,fixture.teamId,session.id,activity.id])).rows[0]!
+        const eventId=await appendEvent(tx,{...meta('activity-source'),type:'agent.activity.appended',aggregateType:'agent_activity',aggregateId:activity.id})
+        return {item,eventId}
+      })
+      await withTx(db,tx=>admitChannelEvent(tx,created.eventId))
+      const intents=(await db.query('SELECT source_type,source_id,recipient_actor_id FROM notification_intents WHERE source_event_id=$1',[created.eventId])).rows
+      expect(intents).toEqual([{source_type:'inbox_item',source_id:created.item.id,recipient_actor_id:fixture.humanId}])
+    })
+    it('allows one current holder, rejects stale prepare/ack and preserves one logical attempt', async () => {
+      await target();const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      const competed=await Promise.all([claim('c1-a',1),claim('c1-b',1)]);expect(competed.flat()).toHaveLength(1)
+      const old=competed.flat()[0]!, oldWorker=competed[0]!.length?'c1-a':'c1-b'
+      await expire(old.id);const fresh=(await claim('c1-new',1))[0]!
+      expect(fresh.id).toBe(old.id);expect(fresh.effectKey).toBe(old.effectKey);expect(fresh.claimFence).toBeGreaterThan(old.claimFence)
+      await expect(withTx(db,tx=>prepareChannelSend(tx,old,oldWorker))).rejects.toMatchObject({code:'NOTIFICATION_CLAIM_LOST'})
+      await expect(withTx(db,tx=>settleChannelSend(tx,old,oldWorker,'delivered'))).rejects.toMatchObject({code:'NOTIFICATION_CLAIM_LOST'})
+      await expect(withTx(db,tx=>prepareChannelSend(tx,{...fresh,effectKey:'different-job'},'c1-new'))).rejects.toMatchObject({code:'IDEMPOTENCY_KEY_REUSED'})
+      await withTx(db,tx=>prepareChannelSend(tx,fresh,'c1-new'))
+      await withTx(db,tx=>settleChannelSend(tx,fresh,'c1-new','delivered','receipt'))
+      await withTx(db,tx=>settleChannelSend(tx,fresh,'c1-new','delivered','receipt'))
+      await expect(withTx(db,tx=>settleChannelSend(tx,fresh,'c1-new','delivered','different'))).rejects.toMatchObject({code:'IDEMPOTENCY_KEY_REUSED'})
+    })
+    it('isolates target failure and retries only the failed target with its original effectKey', async () => {
+      await target('success');await target('failure');const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      const claims=await claim('c1-isolation');expect(claims).toHaveLength(2)
+      for(const entry of claims)await withTx(db,tx=>prepareChannelSend(tx,entry,'c1-isolation'))
+      await withTx(db,tx=>settleChannelSend(tx,claims[0]!,'c1-isolation','delivered'))
+      await withTx(db,tx=>settleChannelSend(tx,claims[1]!,'c1-isolation','failed'))
+      await withTx(db,tx=>settleChannelSend(tx,claims[1]!,'c1-isolation','failed'))
+      await db.query(`UPDATE notification_deliveries SET available_at=now() WHERE id=$1`,[claims[1]!.id])
+      const next=await claim('c1-retry');expect(next).toHaveLength(1);expect(next[0]!.id).toBe(claims[1]!.id)
+      expect(next[0]!.effectKey).toBe(claims[1]!.effectKey);expect((await state(claims[0]!.id)).status).toBe('delivered')
+    })
+    it('persists a timed-out external call as uncertain without automatically retrying it',async()=>{
+      await target();const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      let sends=0,aborted=false
+      const worker=createBaseAutomationWorker({db,features,workerId:'c1-timeout',channelAdapters:{wecom:{send:async({signal})=>{
+        sends++;signal.addEventListener('abort',()=>{aborted=true},{once:true})
+        return new Promise<never>(()=>{})
+      }}}})
+      const delivery=(await worker.claimNotifications()).find(row=>row.channelClaim)!
+      await worker.deliverNotification(delivery)
+      expect(sends).toBe(1);expect(aborted).toBe(true)
+      expect(await state(delivery.id)).toMatchObject({status:'failed',outcome:'uncertain'})
+      expect(await claim('c1-after-timeout')).toHaveLength(0)
+    })
+    it('rolls back a send checkpoint before commit and reclaims without any external send', async () => {
+      await target();const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId));const old=(await claim('c1-checkpoint'))[0]!
+      await expect(withTx(db,async tx=>{await prepareChannelSend(tx,old,'c1-checkpoint');throw new Error('CRASH_CHECKPOINT')})).rejects.toThrow('CRASH_CHECKPOINT')
+      expect((await state(old.id)).outcome).toBe('not_sent')
+      await expire(old.id);const next=(await claim('c1-restart'))[0]!
+      expect(await withTx(db,tx=>prepareChannelSend(tx,next,'c1-restart'))).not.toBeNull()
+    })
+    it.each(['checkpoint','send','ack'] as const)('recovers a crash after %s as uncertain and requires explicit reconciliation', async boundary => {
+      await target();const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      let sends=0
+      const worker=createBaseAutomationWorker({db,features,workerId:'c1-crash',channelAdapters:{wecom:{send:async()=>{sends++;return {result:'delivered'}}}},afterExternalDelivery:async()=>{throw new Error('PROCESS_CRASH')}})
+      const delivery=(await worker.claimNotifications()).find(row=>row.channelClaim)!
+      if(boundary==='checkpoint') await withTx(db,tx=>prepareChannelSend(tx,delivery.channelClaim!,'c1-crash'))
+      else if(boundary==='send')await expect(worker.deliverNotification(delivery)).rejects.toThrow('PROCESS_CRASH')
+      else {
+        await withTx(db,tx=>prepareChannelSend(tx,delivery.channelClaim!,'c1-crash'));sends++
+        await expect(withTx(db,async tx=>{await settleChannelSend(tx,delivery.channelClaim!,'c1-crash','delivered');throw new Error('ACK_COMMIT_CRASH')})).rejects.toThrow('ACK_COMMIT_CRASH')
+      }
+      await expire(delivery.id);expect(await claim('c1-after-crash')).toHaveLength(0)
+      const uncertain=await state(delivery.id);expect(uncertain.outcome).toBe('uncertain');expect(sends).toBe(boundary==='checkpoint'?0:1)
+      await expect(withTx(db,tx=>settleChannelSend(tx,delivery.channelClaim!,'c1-crash','delivered'))).rejects.toMatchObject({code:'NOTIFICATION_CLAIM_LOST'})
+      await withTx(db,tx=>reconcileChannelSend(tx,meta('reconcile'),delivery.id,uncertain.revision,'retry'))
+      const retry=(await claim('c1-reconciled'))[0]!;expect(retry.effectKey).toBe(delivery.effectKey);expect(retry.id).toBe(delivery.id)
+      expect(retry.attemptCount).toBe(2)
+    })
+    it.each(['disabled','changed','inactive','membership'] as const)('suppresses %s after enqueue with zero external calls', async change => {
+      const entry=await target();const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      let sends=0;const worker=createBaseAutomationWorker({db,features,workerId:'c1-suppression',channelAdapters:{wecom:{send:async()=>{sends++;return {result:'delivered'}}}}})
+      const delivery=(await worker.claimNotifications()).find(row=>row.channelClaim)!
+      if(change==='disabled'||change==='changed')await withTx(db,tx=>updateChannelTarget(tx,meta('disable'),entry.id,entry.revision,change==='disabled'?{enabled:false}:{secretMaterial:'https://changed.example.test/hook'}))
+      if(change==='inactive')await db.query('UPDATE actors SET is_active=false WHERE id=$1',[fixture.humanId])
+      if(change==='membership'){
+        await db.query(`UPDATE actors SET workspace_role='member' WHERE id=$1`,[fixture.humanId])
+        await db.query('DELETE FROM memberships WHERE team_id=$1 AND actor_id=$2',[fixture.teamId,fixture.humanId])
+      }
+      try {await worker.deliverNotification(delivery);expect(sends).toBe(0);expect((await state(delivery.id)).status).toBe('suppressed')}
+      finally {
+        await db.query(`UPDATE actors SET is_active=true,workspace_role='admin' WHERE id=$1`,[fixture.humanId])
+        if(change==='membership')await db.query(`INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'admin') ON CONFLICT DO NOTHING`,[fixture.workspaceId,fixture.teamId,fixture.humanId])
+      }
+    })
+
+    it.each(['ack_timeout','heartbeat_timeout'] as const)('captures the committed stale Inbox before the %s event and admits its exact Human',async(reason)=>{
+      await target()
+      const work=(await db.query<{id:string}>(`INSERT INTO work_items(workspace_id,team_id,number,title,status_id,responsible_human_actor_id) SELECT workspace_id,team_id,(SELECT coalesce(max(number),0)+1 FROM work_items WHERE team_id=$2),'C1 lifecycle',status_id,$3 FROM work_items WHERE id=$1 RETURNING id`,[fixture.workItemId,fixture.teamId,fixture.humanId])).rows[0]!
+      const delegation=(await db.query<{id:string}>(`INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,ARRAY['work:read','work:write'],$7) RETURNING id`,[fixture.workspaceId,fixture.teamId,fixture.agentId,fixture.agentActorId,fixture.humanId,work.id,{teamIds:[fixture.teamId],workItemIds:[work.id]}])).rows[0]!
+      const session=(await db.query<{id:string}>(`INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,state,created_at,acknowledged_at,last_heartbeat_at) VALUES($1,$2,$3,$4,$5,$6,$7,now()-interval '1 hour',now()-interval '1 hour',now()-interval '1 hour') RETURNING id`,[fixture.workspaceId,fixture.teamId,fixture.agentId,fixture.agentActorId,delegation.id,work.id,reason==='ack_timeout'?'queued':'executing'])).rows[0]!
+      const lifecycle=createSessionLifecycleWorker({db,workerId:'c1-source-order',ackTimeoutSeconds:30,heartbeatStaleAfterSeconds:60})
+      if(reason==='ack_timeout')await lifecycle.expireAckDeadlines();else await lifecycle.reconcileHeartbeatLiveness()
+      const inbox=(await db.query<{id:string}>(`SELECT id FROM inbox_items WHERE source_id=$1 AND kind='session_stale'`,[session.id])).rows[0]!
+      expect(inbox).toBeDefined()
+      const event=(await db.query<{id:string;payload:unknown;notification_sources:unknown}>(`SELECT id,payload,notification_sources FROM domain_events WHERE aggregate_id=$1 AND event_type='agent.session.stale'`,[session.id])).rows[0]!
+      expect(event.notification_sources).toEqual([{source_type:'inbox_item',source_id:inbox.id,source_revision:1}])
+      expect(event.payload).not.toHaveProperty('notificationSources')
+      await withTx(db,tx=>admitChannelEvent(tx,event.id))
+      const row=(await claim('c1-real-stale'))[0]!
+      expect(row.recipientActorId).toBe(fixture.humanId)
+      expect(await withTx(db,tx=>prepareChannelSend(tx,row,'c1-real-stale'))).not.toBeNull()
+    })
+    it('rechecks Approval Team grants immediately before sending and suppresses revoked authority',async()=>{
+      await target()
+      const event=await withTx(db,async tx=>{
+        const item=(await tx.query<{id:string}>(`INSERT INTO work_items(workspace_id,team_id,number,title,status_id,responsible_human_actor_id) SELECT workspace_id,team_id,(SELECT coalesce(max(number),0)+1 FROM work_items WHERE team_id=$2),'C1 approval',status_id,$3 FROM work_items WHERE id=$1 RETURNING id`,[fixture.workItemId,fixture.teamId,fixture.humanId])).rows[0]!
+        const delegation=(await tx.query<{id:string}>(`INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,ARRAY['work:read','work:write'],$7) RETURNING id`,[fixture.workspaceId,fixture.teamId,fixture.agentId,fixture.agentActorId,fixture.humanId,item.id,{teamIds:[fixture.teamId],workItemIds:[item.id]}])).rows[0]!
+        const session=(await tx.query<{id:string}>(`INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,state) VALUES($1,$2,$3,$4,$5,$6,'awaiting_approval') RETURNING id`,[fixture.workspaceId,fixture.teamId,fixture.agentId,fixture.agentActorId,delegation.id,item.id])).rows[0]!
+        const approval=(await tx.query<{id:string}>(`INSERT INTO approvals(workspace_id,session_id,requested_by_actor_id,approval_type,action_name,action_payload_sanitized,action_payload_hash,risk_level,rationale_summary,expires_at) VALUES($1,$2,$3,'protected_action','test_c1','{}',$4,'high','Private rationale',now()+interval '1 hour') RETURNING id`,[fixture.workspaceId,session.id,fixture.agentActorId,'sha256:'+'a'.repeat(64)])).rows[0]!
+        return appendEvent(tx,{...meta('approval-source'),type:'approval.requested',aggregateType:'approval',aggregateId:approval.id,revision:1})
+      })
+      await withTx(db,tx=>admitChannelEvent(tx,event));const row=(await claim('c1-approval'))[0]!
+      expect(row).toBeDefined()
+      await db.query('UPDATE agent_team_access SET revoked_at=now() WHERE agent_id=$1 AND team_id=$2',[fixture.agentId,fixture.teamId])
+      try {expect(await withTx(db,tx=>prepareChannelSend(tx,row,'c1-approval'))).toBeNull();expect((await state(row.id)).status).toBe('suppressed')}
+      finally {await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2',[fixture.agentId,fixture.teamId])}
+    })
+    it('keeps stale revisions as generic deep links and never writes decision content', async () => {
+      await target();const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      await db.query('UPDATE inbox_items SET revision=revision+1 WHERE id=$1',[item.id])
+      const claimed=(await claim('c1-stale'))[0]!,prepared=await withTx(db,tx=>prepareChannelSend(tx,claimed,'c1-stale'))
+      expect(prepared!.content.sourceRevision).toBe(1);expect(prepared!.content.body).not.toContain('Private source')
+      expect(prepared!.content.url).toContain(encodeURIComponent('v1:inbox_item:'+item.id))
+      expect(Object.keys(prepared!.content)).toEqual(['effectKey','title','body','url','sourceRevision'])
+    })
+    it('recovers the final claim to dead and explicitly rejects noRedis while missing adapters consume no attempts', async () => {
+      await target();const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      const missing=createBaseAutomationWorker({db,features});expect((await missing.claimNotifications()).filter(row=>row.channelClaim)).toHaveLength(0)
+      expect(()=>createBaseAutomationWorker({db,features,channelRuntimeProfile:'noRedis'})).toThrow('CHANNEL_NO_REDIS_UNSUPPORTED')
+      const row=(await claim('c1-final'))[0]!
+      await db.query(`UPDATE notification_deliveries SET attempt_count=8,claimed_at=now()-interval '61 seconds' WHERE id=$1`,[row.id])
+      expect(await claim('c1-last-recovery')).toHaveLength(0);expect((await state(row.id)).status).toBe('dead')
+    })
+    it('replays outbox after intent commit without duplicate attempts or notification event recursion', async () => {
+      await target();const item=await source()
+      let fail=true;const outbox=createOutboxWorker({db,features,workerId:'c1-outbox',sink:{deliver:async event=>{if(event.eventId===item.eventId&&fail){fail=false;throw new Error('CRASH_AFTER_INTENT_COMMIT')}}}})
+      await outbox.tick()
+      await db.query(`UPDATE outbox_events SET available_at=now() WHERE domain_event_id=$1`,[item.eventId]);await outbox.tick()
+      expect((await db.query('SELECT 1 FROM notification_intents WHERE source_event_id=$1',[item.eventId])).rowCount).toBe(1)
+      expect((await db.query(`SELECT 1 FROM notification_source_checkpoints checkpoint JOIN domain_events event ON event.id=checkpoint.source_event_id WHERE event.event_type LIKE 'notification.%'`)).rowCount).toBe(0)
+      await outbox.close()
+    })
   })
 })

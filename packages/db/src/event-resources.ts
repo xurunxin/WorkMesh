@@ -77,6 +77,7 @@ export const supportedEventAggregateTypes = [
   'workbench_runner_attempt',
   'agent_enrollment_policy',
   'browser_push_subscription',
+  'notification_channel_target',
   'delegation',
   'agent_activity',
   'agent_plan_version',
@@ -156,6 +157,7 @@ export const privateEventAudienceForms = [
   'aggregate:session',
   'aggregate:saved_view',
   'aggregate:notification',
+  'aggregate:notification_channel_target',
   'aggregate:advanced_saved_view:private',
   'aggregate:browser_push_subscription',
   'aggregate:workbench_llm_connection:personal',
@@ -272,6 +274,8 @@ export const aggregateSeedSql: Readonly<Record<string, string>> = {
   agent_enrollment_policy:
     `SELECT 'team'::text AS resource_type,team_id AS resource_id
        FROM agent_enrollment_policies WHERE id=$1 AND workspace_id=$2`,
+  notification_channel_target:
+    `SELECT 'workspace'::text AS resource_type,workspace_id AS resource_id FROM notification_channel_targets WHERE id=$1 AND workspace_id=$2`,
   browser_push_subscription:
     `SELECT 'workspace'::text AS resource_type,workspace_id AS resource_id
        FROM browser_push_subscriptions WHERE id=$1 AND workspace_id=$2`,
@@ -646,6 +650,12 @@ export const authoritySql: Readonly<Record<EventResourceType, string>> = {
             NULL::uuid,NULL::uuid,NULL::uuid,delivery.id
        FROM notification_deliveries delivery
        JOIN notifications notification ON notification.id=delivery.notification_id
+      WHERE delivery.id=$1
+     UNION ALL
+     SELECT intent.workspace_id,NULL::uuid,NULL::uuid,NULL::uuid,
+            NULL::uuid,NULL::uuid,NULL::uuid,delivery.id
+       FROM notification_deliveries delivery
+       JOIN notification_intents intent ON intent.id=delivery.intent_id
       WHERE delivery.id=$1`,
 }
 
@@ -737,6 +747,8 @@ async function resolveAudienceActorId(
     privateAudienceSql =
       `SELECT recipient_actor_id AS audience_actor_id,true AS is_private
          FROM notifications WHERE id=$1 AND workspace_id=$2`
+  } else if (input.aggregateType === 'notification_channel_target') {
+    privateAudienceSql = `SELECT owner_actor_id AS audience_actor_id,true AS is_private FROM notification_channel_targets WHERE id=$1 AND workspace_id=$2`
   } else if (input.aggregateType === 'browser_push_subscription') {
     privateAudienceSql =
       `SELECT actor_id AS audience_actor_id,true AS is_private

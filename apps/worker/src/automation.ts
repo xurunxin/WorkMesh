@@ -11,6 +11,8 @@ import {
   type Db,
   type Stage4CommandMeta,
   withTx,
+  claimChannelNotifications, prepareChannelSend, settleChannelSend,
+  type ChannelClaim, type ChannelContent,
 } from '@workmesh/db'
 import { automationRetry, shouldDeliverNotification } from '@workmesh/domain'
 import {
@@ -38,6 +40,8 @@ type ClaimedEffect = {
 
 type ClaimedNotification = {
   id: string
+  channelTargetId?: string
+  channelClaim?: ChannelClaim
   notificationId: string
   channel: 'in_app' | 'browser' | 'webhook'
   effectKey: string
@@ -58,6 +62,11 @@ type ClaimedNotification = {
   browserEndpoint: string | null
   browserP256dh: string | null
   browserAuth: string | null
+}
+
+export type ChannelSendResult = { result: 'delivered' | 'failed' | 'unknown'; receipt?: string }
+export type ChannelAdapter = {
+  send: (input: { provider: string; secretMaterial: string; content: ChannelContent; signal: AbortSignal }) => Promise<ChannelSendResult>
 }
 
 export type AutomationExternalSink = {
@@ -196,6 +205,8 @@ export function createAutomationWorker({
   sink,
   dnsLookup = systemWebhookDnsLookup,
   afterExternalDelivery,
+  channelAdapters = {},
+  channelRuntimeProfile = 'redis',
   now = () => new Date(),
   features = loadFeatureConfig(),
 }: {
@@ -204,9 +215,13 @@ export function createAutomationWorker({
   sink?: AutomationExternalSink
   dnsLookup?: WebhookDnsLookup
   afterExternalDelivery?: (effectKey: string) => Promise<void>
+  channelAdapters?: Readonly<Record<string, ChannelAdapter>>
+  channelRuntimeProfile?: 'redis' | 'noRedis'
   now?: () => Date
   features?: FeatureConfig
 }) {
+  if (features.WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS && channelRuntimeProfile === 'noRedis')
+    throw new Error('CHANNEL_NO_REDIS_UNSUPPORTED')
   const externalSink = sink ?? createDefaultSink(dnsLookup)
   const notificationChannels: ReadonlyArray<'in_app' | 'browser' | 'webhook'> =
     !features.WORKMESH_BETA_PLANNING
@@ -674,11 +689,11 @@ export function createAutomationWorker({
     }
   }
 
-  const claimNotifications = async (limit = 25, lockTimeoutSeconds = 60): Promise<ClaimedNotification[]> =>
+  const claimLegacyNotifications = async (limit = 25, lockTimeoutSeconds = 60): Promise<ClaimedNotification[]> =>
     withTx(db, async tx => (await tx.query<ClaimedNotification>(
       `WITH candidates AS (
         SELECT delivery.id FROM notification_deliveries delivery
-        WHERE delivery.attempt_count<8 AND (
+        WHERE delivery.notification_id IS NOT NULL AND delivery.attempt_count<8 AND (
           (delivery.status IN ('pending','failed') AND delivery.available_at<=now())
           OR (delivery.status='claimed' AND delivery.claimed_at<now()-($2::text || ' seconds')::interval)
         )
@@ -715,7 +730,42 @@ export function createAutomationWorker({
       [limit, lockTimeoutSeconds, workerId, features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS],
     )).rows)
 
+  const claimNotifications = async (limit = 25, lockTimeoutSeconds = 60): Promise<ClaimedNotification[]> => {
+    const legacy = await claimLegacyNotifications(limit, lockTimeoutSeconds)
+    if (!features.WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS) return legacy
+    const channels = await withTx(db, tx => claimChannelNotifications(tx, workerId, Object.keys(channelAdapters), Math.max(0, limit - legacy.length), lockTimeoutSeconds))
+    return [...legacy, ...channels.map(claim => ({
+      ...claim, channelClaim: claim, notificationId: claim.intentId, channel: 'webhook' as const,
+      priority: 'update' as const, minimumPriority: 'update' as const, mutedKinds: [],
+      kind: '', title: '', body: '', sourceType: '', sourceId: claim.intentId, webhookUrl: null,
+      browserPushSubscriptionId: null, browserEndpoint: null, browserP256dh: null, browserAuth: null,
+    }))]
+  }
+
   const deliverNotification = async (delivery: ClaimedNotification): Promise<void> => {
+    if (delivery.channelClaim) {
+      if (!features.WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS) return
+      const adapter = channelAdapters.wecom
+      if (!adapter) return
+      const prepared = await withTx(db, tx => prepareChannelSend(tx, delivery.channelClaim!, workerId))
+      if (!prepared) return
+      let result: ChannelSendResult
+      const controller = new AbortController()
+      const remainingMs = delivery.channelClaim.leaseExpiresAt.getTime() - Date.now()
+      if (remainingMs <= 100) throw new Error('NOTIFICATION_CLAIM_LOST')
+      const timeout = setTimeout(() => controller.abort(), Math.min(5_000, remainingMs - 100))
+      try {
+        result = await Promise.race([
+          adapter.send({ ...prepared, signal: controller.signal }),
+          new Promise<ChannelSendResult>(resolve => controller.signal.addEventListener('abort', () => resolve({ result: 'unknown' }), { once: true })),
+        ])
+      } catch { result = { result: 'unknown' } }
+      finally { clearTimeout(timeout) }
+      // Fault injection models a process crash: leave the committed send checkpoint for reclaim.
+      await afterExternalDelivery?.(delivery.effectKey)
+      await withTx(db, tx => settleChannelSend(tx, delivery.channelClaim!, workerId, result.result, result.receipt))
+      return
+    }
     if (delivery.channel === 'webhook' && !features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS) return
     try {
       if (!shouldDeliverNotification(delivery)) {

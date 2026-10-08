@@ -24,3 +24,5 @@
 
 \ir packages/db/migrations/v1/0011_versioned_documents.sql
 \ir packages/db/migrations/v1/0013_work_item_board_rank.sql
+
+\ir packages/db/migrations/v1/0014_channel_delivery_contract.sql

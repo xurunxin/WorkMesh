@@ -1,5 +1,12 @@
 // Checked-in REST bindings consumed by the serializable route policy manifest.
 export const routeOperationBindings = [
+  {"method":"GET","path":"/api/v1/notification-channel-targets/config","operationId":"getNotificationChannelConfig"},
+  {"method":"GET","path":"/api/v1/notification-channel-targets","operationId":"listNotificationChannelTargets"},
+  {"method":"POST","path":"/api/v1/notification-channel-targets","operationId":"createNotificationChannelTarget"},
+  {"method":"PATCH","path":"/api/v1/notification-channel-targets/{id}","operationId":"updateNotificationChannelTarget"},
+  {"method":"DELETE","path":"/api/v1/notification-channel-targets/{id}","operationId":"revokeNotificationChannelTarget"},
+  {"method":"GET","path":"/api/v1/channel-notification-deliveries","operationId":"listChannelNotificationDeliveries"},
+  {"method":"POST","path":"/api/v1/channel-notification-deliveries/{id}/reconcile","operationId":"reconcileChannelNotificationDelivery"},
   {
     "method": "GET",
     "path": "/livez",

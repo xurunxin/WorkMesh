@@ -61,6 +61,7 @@ export const v1MigrationManifest = [
   { version: '0011_versioned_documents', file: 'v1/0011_versioned_documents.sql', checksumSha256: 'b647d04ded7720ee3b993721f72097c3a2e642bb0c0010bb4b764a9dcb4384b6' },
   { version: '0012_workbench_turn_lineage_and_tools', file: 'v1/0012_workbench_turn_lineage_and_tools.sql', checksumSha256: 'ca928f0cbd79cb608ad355a4fc60b96a4f418cb3d6a70698876ede53631865d3' },
   { version: '0013_work_item_board_rank', file: 'v1/0013_work_item_board_rank.sql', checksumSha256: '2649c369972cd710097923956f42c03e7db663d58cb458dfe7b8fa325ed406fb' },
+  { version: '0014_channel_delivery_contract', file: 'v1/0014_channel_delivery_contract.sql', checksumSha256: '1f8d766b5215c3bbade32c4f52ac790edb004d30a586034df2518cf2794247e7' },
 ] as const satisfies readonly MigrationManifestEntry[]
 
 export const legacyUpgradeBundleManifest = [

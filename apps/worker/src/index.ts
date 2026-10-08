@@ -5,7 +5,7 @@ import {
   loadRealtimeRedisHintConfig,
   loadRetentionConfig,
 } from '@workmesh/config'
-import { createDb, type Db, withTx } from '@workmesh/db'
+import { createDb, type Db, withTx, admitChannelEvent } from '@workmesh/db'
 import { createAgentWebhookWorker } from './agent-webhook.js'
 import { createSessionLifecycleWorker } from './session-lifecycle.js'
 import { createProviderActionWorker, validateUploadedChecksum } from './provider-actions.js'
@@ -279,10 +279,12 @@ export function createOutboxWorker({
   db,
   workerId = `worker-${randomUUID()}`,
   sink,
+  features = loadFeatureConfig(),
 }: {
   db?: Db
   workerId?: string
   sink?: DeliverySink
+  features?: ReturnType<typeof loadFeatureConfig>
 } = {}): OutboxWorker {
   const ownsDb = !db
   const activeDb = db ?? createDb()
@@ -321,6 +323,8 @@ export function createOutboxWorker({
   }
 
   const deliver = async (event: ClaimedEvent): Promise<void> => {
+    if (features.WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS)
+      await withTx(activeDb, tx => admitChannelEvent(tx, event.eventId))
     await activeSink.deliver(event)
     await markDelivered(event)
   }

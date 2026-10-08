@@ -197,6 +197,7 @@ export const authIdempotencyRecords = pgTable('auth_idempotency_records', {
   replayWipedAt: timestamp('replay_wiped_at', { withTimezone: true }),
 })
 export const domainEvents = pgTable('domain_events', {
+  notificationSources: jsonb('notification_sources').notNull().default([]),
   cursor: bigint('cursor', { mode: 'bigint' }).primaryKey(), id: uuid('id').notNull(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), audienceActorId: uuid('audience_actor_id'),
   eventType: text('event_type').notNull(), eventVersion: integer('event_version').notNull(), aggregateType: text('aggregate_type').notNull(), aggregateId: uuid('aggregate_id').notNull(), aggregateRevision: integer('aggregate_revision'),
   actorId: uuid('actor_id').notNull(), correlationId: text('correlation_id').notNull(), idempotencyKey: text('idempotency_key'), sessionId: uuid('session_id'), sessionSequence: bigint('session_sequence', { mode: 'number' }), causationId: uuid('causation_id'), payload: jsonb('payload').notNull(), occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
@@ -532,12 +533,31 @@ export const notifications = pgTable('notifications', {
   readAt: timestamp('read_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const notificationDeliveries = pgTable('notification_deliveries', {
-  id: uuid('id').primaryKey(), notificationId: uuid('notification_id').notNull(), channel: notificationChannel('channel').notNull(),
+  id: uuid('id').primaryKey(), notificationId: uuid('notification_id'), channel: notificationChannel('channel').notNull(),
+  workspaceId: uuid('workspace_id'), intentId: uuid('intent_id'), channelTargetId: uuid('channel_target_id'), recipientActorId: uuid('recipient_actor_id'),
+  targetRevision: integer('target_revision'), requestHash: text('request_hash'), sendStartedAt: timestamp('send_started_at', { withTimezone: true }),
+  retryBudgetStart: integer('retry_budget_start').notNull(), outcome: text('outcome').notNull(), checkpoint: jsonb('checkpoint'), revision: integer('revision').notNull(),
   status: notificationDeliveryStatus('status').notNull(), attemptCount: integer('attempt_count').notNull(),
   availableAt: timestamp('available_at', { withTimezone: true }).notNull(), claimedAt: timestamp('claimed_at', { withTimezone: true }),
   claimedBy: text('claimed_by'), claimFence: integer('claim_fence').notNull(), effectKey: text('effect_key').notNull(),
   effectCompletedAt: timestamp('effect_completed_at', { withTimezone: true }), deliveredAt: timestamp('delivered_at', { withTimezone: true }),
   lastError: text('last_error'), browserPushSubscriptionId: uuid('browser_push_subscription_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const notificationChannelTargets = pgTable('notification_channel_targets', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), ownerActorId: uuid('owner_actor_id').notNull(),
+  provider: text('provider').notNull(), name: text('name').notNull(), enabled: boolean('enabled').notNull(), status: text('status').notNull(),
+  secretCiphertext: binary('secret_ciphertext').notNull(), endpointFingerprint: text('endpoint_fingerprint').notNull(), revision: integer('revision').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const notificationIntents = pgTable('notification_intents', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), sourceEventId: uuid('source_event_id').notNull(),
+  sourceCursor: bigint('source_cursor', { mode: 'bigint' }).notNull(), sourceType: text('source_type').notNull(), sourceId: uuid('source_id').notNull(),
+  sourceRevision: integer('source_revision').notNull(), recipientActorId: uuid('recipient_actor_id').notNull(), intentHash: text('intent_hash').notNull(),
+  targetSnapshot: jsonb('target_snapshot').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const notificationSourceCheckpoints = pgTable('notification_source_checkpoints', {
+  workspaceId: uuid('workspace_id').notNull(), sourceEventId: uuid('source_event_id').notNull(), sourceCursor: bigint('source_cursor', { mode: 'bigint' }).notNull(),
+  requestHash: text('request_hash').notNull(), result: text('result').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const browserPushSubscriptions = pgTable('browser_push_subscriptions', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), actorId: uuid('actor_id').notNull(), deviceId: text('device_id').notNull(), endpoint: text('endpoint').notNull(), endpointHash: text('endpoint_hash').notNull(), p256dh: text('p256dh').notNull(), authSecret: text('auth_secret').notNull(), userAgent: text('user_agent'), status: browserPushSubscriptionStatus('status').notNull(), revision: integer('revision').notNull(), lastDeliveredAt: timestamp('last_delivered_at', { withTimezone: true }), lastFailureAt: timestamp('last_failure_at', { withTimezone: true }), lastFailureCode: text('last_failure_code'), revokedAt: timestamp('revoked_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
