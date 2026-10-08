@@ -46287,5 +46287,456 @@
     "physicalOrNetDiskRelease": null,
     "dockerChanges": 0,
     "overallCleanupComplete": false
+  },
+  "postFailureReadOnlyInspection": {
+    "observedBy": "PowerShell/Get-ChildItem and read-only Git object commands",
+    "inspectedAtUtc": "2026-10-08T13:29:28Z (tool-clock bracket; individual command timestamps remain in session record)",
+    "gitVersion": "git version 2.55.0.windows.3",
+    "gitDirectory": {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git",
+      "attributes": "Hidden, Directory",
+      "remainingMetadataFileCount": 10,
+      "remainingMetadataFiles": [
+        {
+          "relativePath": ".git\\HEAD",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\HEAD",
+          "bytes": 62,
+          "sha256": "ae7c17eb5bfbe0997b0a0761b3bf839eed783d1a2c4c39e1bd6800dd92bae6b7",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\config",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\config",
+          "bytes": 495,
+          "sha256": "2a699f9afbafbcbd86b5fde780fe870f45a7cb0226b9d828554564683d585aa3",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\description",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\description",
+          "bytes": 73,
+          "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\index",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\index",
+          "bytes": 204671,
+          "sha256": "f1abc55cb67cbc672eb1d98101344b4dcc57b27f5b4d9fbed65e3c68d39819d5",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.idx",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.idx",
+          "bytes": 52396,
+          "sha256": "756608cb0c2c60ddf3d2386c7675626c94544015404b60dd695237306ce649e7",
+          "hidden": false,
+          "readOnly": true
+        },
+        {
+          "relativePath": ".git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.pack",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.pack",
+          "bytes": 16293844,
+          "sha256": "7fd8a7589e3e0a1cb430d8e3e37f4787b8da8f711e5f69b86cb94aaf43cbb110",
+          "hidden": false,
+          "readOnly": true
+        },
+        {
+          "relativePath": ".git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.rev",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.rev",
+          "bytes": 7384,
+          "sha256": "26c442a2d5dab282a62fba6d24fb4d14b8a8df764d25158580659950ddd5c6cc",
+          "hidden": false,
+          "readOnly": true
+        },
+        {
+          "relativePath": ".git\\packed-refs",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\packed-refs",
+          "bytes": 153,
+          "sha256": "93106060747c142a49ab68201e827b9b0657203173b9ac695ccffe810725118a",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\refs\\heads\\tds\\conv-01a116f7-1027-7c75-90df-32ebc5488752",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\refs\\heads\\tds\\conv-01a116f7-1027-7c75-90df-32ebc5488752",
+          "bytes": 41,
+          "sha256": "7d67819032532bddfb6ba641836315b0b51a6577de2ab50f0a054d8e862e0f32",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\shallow",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\shallow",
+          "bytes": 41,
+          "sha256": "7d67819032532bddfb6ba641836315b0b51a6577de2ab50f0a054d8e862e0f32",
+          "hidden": false,
+          "readOnly": false
+        }
+      ],
+      "objectPackFiles": [
+        {
+          "relativePath": ".git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.idx",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.idx",
+          "bytes": 52396,
+          "sha256": "756608cb0c2c60ddf3d2386c7675626c94544015404b60dd695237306ce649e7",
+          "hidden": false,
+          "readOnly": true
+        },
+        {
+          "relativePath": ".git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.pack",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.pack",
+          "bytes": 16293844,
+          "sha256": "7fd8a7589e3e0a1cb430d8e3e37f4787b8da8f711e5f69b86cb94aaf43cbb110",
+          "hidden": false,
+          "readOnly": true
+        },
+        {
+          "relativePath": ".git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.rev",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.rev",
+          "bytes": 7384,
+          "sha256": "26c442a2d5dab282a62fba6d24fb4d14b8a8df764d25158580659950ddd5c6cc",
+          "hidden": false,
+          "readOnly": true
+        }
+      ]
+    },
+    "objectDatabaseIntegrity": {
+      "command": "git -C <clonePath> fsck --full",
+      "exitCode": 0,
+      "stdout": "empty",
+      "stderr": "empty"
+    },
+    "trackedPathRecovery": {
+      "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+      "currentMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "headIsAncestorOfCurrentMain": true,
+      "pathToBlobMappingCount": 1607,
+      "currentTrackedPathCount": 1464,
+      "workingTreeDeletedTrackedPathCount": 143,
+      "uniqueBlobCount": 1575,
+      "objectReadability": {
+        "trackedPathMappingCount": 1607,
+        "uniqueHeadBlobCount": 1575,
+        "clone": {
+          "responses": 1575,
+          "missingCount": 0,
+          "nonBlobCount": 0
+        },
+        "currentMainRepo": {
+          "responses": 1575,
+          "missingCount": 0,
+          "nonBlobCount": 0
+        }
+      },
+      "allPathBlobsReadableInCloneAndCurrentMain": true,
+      "recoveryConclusion": "All 1,607 tracked path-to-blob mappings and 1,575 unique blobs are readable from the clone and current main; 1,464 current tracked files and 143 tracked deletions can be restored from clone HEAD. This does not restore the two reflogs; the 15 default-template metadata files are byte-identical to the listed local template files."
+    },
+    "deletedMetadataRecovery": {
+      "exactlyByteIdenticalFromCurrentGitTemplates": 15,
+      "templateComparisons": [
+        {
+          "relativePath": ".git/hooks/applypatch-msg.sample",
+          "bytesBefore": 478,
+          "sha256Before": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\applypatch-msg.sample",
+          "sourceBytes": 478,
+          "sourceSha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/commit-msg.sample",
+          "bytesBefore": 1972,
+          "sha256Before": "efc1401b0e99d1ff51494d154d98b46c1e99059bcd8bf9f73cecde19fd3eb23b",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\commit-msg.sample",
+          "sourceBytes": 1972,
+          "sourceSha256": "efc1401b0e99d1ff51494d154d98b46c1e99059bcd8bf9f73cecde19fd3eb23b",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/fsmonitor-watchman.sample",
+          "bytesBefore": 4611,
+          "sha256Before": "9159720099ad5595b8e66645cbfd47763c1e920f46e0b50ae75e642bbec57ef0",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\fsmonitor-watchman.sample",
+          "sourceBytes": 4611,
+          "sourceSha256": "9159720099ad5595b8e66645cbfd47763c1e920f46e0b50ae75e642bbec57ef0",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/post-update.sample",
+          "bytesBefore": 189,
+          "sha256Before": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\post-update.sample",
+          "sourceBytes": 189,
+          "sourceSha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/pre-applypatch.sample",
+          "bytesBefore": 424,
+          "sha256Before": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\pre-applypatch.sample",
+          "sourceBytes": 424,
+          "sourceSha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/pre-commit.sample",
+          "bytesBefore": 1649,
+          "sha256Before": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\pre-commit.sample",
+          "sourceBytes": 1649,
+          "sourceSha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/pre-merge-commit.sample",
+          "bytesBefore": 416,
+          "sha256Before": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\pre-merge-commit.sample",
+          "sourceBytes": 416,
+          "sourceSha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/pre-push.sample",
+          "bytesBefore": 1374,
+          "sha256Before": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\pre-push.sample",
+          "sourceBytes": 1374,
+          "sourceSha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/pre-rebase.sample",
+          "bytesBefore": 4898,
+          "sha256Before": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\pre-rebase.sample",
+          "sourceBytes": 4898,
+          "sourceSha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/pre-receive.sample",
+          "bytesBefore": 544,
+          "sha256Before": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\pre-receive.sample",
+          "sourceBytes": 544,
+          "sourceSha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/prepare-commit-msg.sample",
+          "bytesBefore": 1492,
+          "sha256Before": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\prepare-commit-msg.sample",
+          "sourceBytes": 1492,
+          "sourceSha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/push-to-checkout.sample",
+          "bytesBefore": 2783,
+          "sha256Before": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\push-to-checkout.sample",
+          "sourceBytes": 2783,
+          "sourceSha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/sendemail-validate.sample",
+          "bytesBefore": 2308,
+          "sha256Before": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\sendemail-validate.sample",
+          "sourceBytes": 2308,
+          "sourceSha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/hooks/update.sample",
+          "bytesBefore": 3650,
+          "sha256Before": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\hooks\\update.sample",
+          "sourceBytes": 3650,
+          "sourceSha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        },
+        {
+          "relativePath": ".git/info/exclude",
+          "bytesBefore": 240,
+          "sha256Before": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+          "sourcePath": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates\\info\\exclude",
+          "sourceBytes": 240,
+          "sourceSha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+          "byteIdentical": true,
+          "basis": "current Git for Windows default template; source bytes read and SHA-256/length compared"
+        }
+      ],
+      "reflogFinding": "The two removed .git/logs files have only pre-delete size/SHA in the inventory; no original content archive or byte-identical source was found. SHA-256 alone cannot restore bytes; exact restoration is unproven.",
+      "noRestoreOrRetryPerformed": true,
+      "templateSourceRoot": "C:\\Program Files\\Git\\mingw64\\share\\git-core\\templates",
+      "notByteRecoverableFromReviewedSources": [
+        {
+          "relativePath": ".git/logs/HEAD",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\logs\\HEAD",
+          "bytesBefore": 200,
+          "sha256Before": "ec930c46a209a5d9e8c8cd9b81be758545d7c83edd398540e02d4c182a48f95c",
+          "source": "shallow clone Git metadata",
+          "gitHeadBlob": null
+        },
+        {
+          "relativePath": ".git/logs/refs/heads/tds/conv-01a116f7-1027-7c75-90df-32ebc5488752",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\logs\\refs\\heads\\tds\\conv-01a116f7-1027-7c75-90df-32ebc5488752",
+          "bytesBefore": 200,
+          "sha256Before": "ec930c46a209a5d9e8c8cd9b81be758545d7c83edd398540e02d4c182a48f95c",
+          "source": "shallow clone Git metadata",
+          "gitHeadBlob": null
+        }
+      ],
+      "remainingMetadataFilesAfterPartialRemoval": [
+        {
+          "relativePath": ".git\\HEAD",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\HEAD",
+          "bytes": 62,
+          "sha256": "ae7c17eb5bfbe0997b0a0761b3bf839eed783d1a2c4c39e1bd6800dd92bae6b7",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\config",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\config",
+          "bytes": 495,
+          "sha256": "2a699f9afbafbcbd86b5fde780fe870f45a7cb0226b9d828554564683d585aa3",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\description",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\description",
+          "bytes": 73,
+          "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\index",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\index",
+          "bytes": 204671,
+          "sha256": "f1abc55cb67cbc672eb1d98101344b4dcc57b27f5b4d9fbed65e3c68d39819d5",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.idx",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.idx",
+          "bytes": 52396,
+          "sha256": "756608cb0c2c60ddf3d2386c7675626c94544015404b60dd695237306ce649e7",
+          "hidden": false,
+          "readOnly": true
+        },
+        {
+          "relativePath": ".git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.pack",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.pack",
+          "bytes": 16293844,
+          "sha256": "7fd8a7589e3e0a1cb430d8e3e37f4787b8da8f711e5f69b86cb94aaf43cbb110",
+          "hidden": false,
+          "readOnly": true
+        },
+        {
+          "relativePath": ".git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.rev",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\objects\\pack\\pack-951239e8f3f2b96a4db626e2bfcd7328c8260f9b.rev",
+          "bytes": 7384,
+          "sha256": "26c442a2d5dab282a62fba6d24fb4d14b8a8df764d25158580659950ddd5c6cc",
+          "hidden": false,
+          "readOnly": true
+        },
+        {
+          "relativePath": ".git\\packed-refs",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\packed-refs",
+          "bytes": 153,
+          "sha256": "93106060747c142a49ab68201e827b9b0657203173b9ac695ccffe810725118a",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\refs\\heads\\tds\\conv-01a116f7-1027-7c75-90df-32ebc5488752",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\refs\\heads\\tds\\conv-01a116f7-1027-7c75-90df-32ebc5488752",
+          "bytes": 41,
+          "sha256": "7d67819032532bddfb6ba641836315b0b51a6577de2ab50f0a054d8e862e0f32",
+          "hidden": false,
+          "readOnly": false
+        },
+        {
+          "relativePath": ".git\\shallow",
+          "absolutePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout\\.git\\shallow",
+          "bytes": 41,
+          "sha256": "7d67819032532bddfb6ba641836315b0b51a6577de2ab50f0a054d8e862e0f32",
+          "hidden": false,
+          "readOnly": false
+        }
+      ],
+      "remainingMetadataCountAfterPartialRemoval": 10,
+      "objectDatabaseIntegrityCommand": "git -C <clonePath> fsck --full",
+      "objectDatabaseIntegrityExitCode": 0,
+      "objectDatabaseIntegrityResult": "git fsck --full succeeded with empty stdout and stderr; this verifies current object database consistency, not restoration of removed reflog bytes"
+    },
+    "attributeFinding": {
+      "hiddenGitDirectory": true,
+      "readOnlyPackFileCount": 3,
+      "removeItemFailureCause": "the prior error did not identify which item caused failure; these current attributes are observed facts, not a proven causal diagnosis",
+      "deleteHandleProbeCaveat": "A successful DELETE-access handle probe did not guarantee PowerShell recursive removal. The .git directory is observed Hidden and three pack files are observed ReadOnly; the error did not identify these attributes as the cause. No attribute or ACL changes were made.",
+      "remainingGitMetadataCount": 10,
+      "remainingPackFilesReadOnly": 3
+    },
+    "scopeImpact": {
+      "parentG1WorktreeRemainsRegisteredAndClean": true,
+      "otherThreeParentWorktreesRemainRegisteredAndClean": true,
+      "eightProtectedWorkspacePathsExist": true,
+      "exactPathMentionsInReadableActiveBuildChats": {
+        "#5": 0,
+        "#9": 0,
+        "#17": 0,
+        "#21": 0,
+        "#52": 0
+      },
+      "otherProcessCommandLineReferencesBeforeAttempt": 0,
+      "globalBuildRegistryOrAllHandlesEnumerated": false,
+      "g1FixtureScriptRemainsBesideClone": true,
+      "fixtureRerunAfterPartialMetadataRemoval": false,
+      "noProtectedWorkspaceContentWasReadOrChanged": true,
+      "fourParentWorktrees": "All four candidate parent linked worktrees remained present, registered, HEAD-stable and clean; the nested independent clone metadata partial deletion did not remove or alter their contents.",
+      "protectedRecoveryInputs": "Eight protected workspace paths were confirmed present; their contents were not read or changed. No product/source files in the G1 parent or protected/recovery workspaces were modified by this attempt."
+    },
+    "nextActionBoundary": "Read-only review only. Do not retry or restore. The 15 removed hooks/exclude files are byte-recoverable from exact local templates; two reflogs are not. The clone .git directory is Hidden and three pack files are ReadOnly, while the previous DELETE-handle probe did not ensure recursive deletion. No Force, attribute/ACL modification, alternate deletion method, restoration, move, or retry is authorized; any later deletion decision must first account for these exact recovery limits and pass a newly reviewed, read-only preflight.",
+    "sourceReceipts": {
+      "rawSessionFile": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\08\\rollout-2026-10-08T17-15-17-01a11acb-aa1d-7c20-9f0a-069bb121f67b.jsonl",
+      "invocationInputLine": 5174,
+      "invocationCallId": "call_5fd6c3363be54617bbbaf16fdc2b47e4",
+      "invocationTimeUtc": "2026-10-08T13:11:10.349Z",
+      "completionEventLine": 5176,
+      "completionExecId": "exec-86b87620-dcfb-44d6-ae8d-1d586e5a53c0",
+      "outerExecExitCode": 1,
+      "completionTimeUtc": "2026-10-08T13:11:11.388Z",
+      "returnedOutputLine": 5177,
+      "distinction": "The shell/exec wrapper reports exit code 1. The operation-specific structured PowerShell toolExitCode was not persisted and remains null; do not conflate these fields."
+    }
   }
 }
