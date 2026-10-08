@@ -1,0 +1,42 @@
+{
+  "kind": "workmesh.d1b.document-preflight-check",
+  "runtime": "v24.20.0",
+  "checks": [
+    {
+      "name": "原175条声明与115槽完整覆盖，不允许重名覆盖",
+      "result": "通过"
+    },
+    {
+      "name": "实际原测量字节与 SOURCE-MANIFEST 一致，JSON指针可解析",
+      "result": "通过"
+    },
+    {
+      "name": "设计图的全部依赖有目标定义，各作用域无循环且暗色同值",
+      "result": "通过"
+    },
+    {
+      "name": "三个运行时生产者及实际未声明依赖一致，非wm fallback 纳入",
+      "result": "通过"
+    },
+    {
+      "name": "生产源码前后指纹不变，工作区与 Git 字节分别核对",
+      "result": "通过"
+    },
+    {
+      "name": "已审计划四件原字节保留，当前未实读的doc不冒填",
+      "result": "通过"
+    },
+    {
+      "name": "115矩阵行和115全局复验保留待运行/评审，清旧不放行",
+      "result": "通过"
+    },
+    {
+      "name": "原五测试、DoD和九类适用性完整承接，后续责任保留",
+      "result": "通过"
+    }
+  ],
+  "result": "仅文档静态核验通过；不代表阶段扫描、界面运行、视觉批准或最终验收",
+  "sourceFingerprint": "afa463b68fff7ac9490b1f0a3e59e083b46c3d20724a4a72c44d1d929e11463d",
+  "skip": [],
+  "servicesStarted": false
+}

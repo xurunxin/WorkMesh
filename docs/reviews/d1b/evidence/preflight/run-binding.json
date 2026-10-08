@@ -1,0 +1,58 @@
+{
+  "kind": "workmesh.d1b.preflight-run",
+  "commands": [
+    {
+      "label": "document-static-check",
+      "command": [
+        "node",
+        "docs/reviews/d1b/verify-preflight.mjs"
+      ],
+      "startedAt": "2026-10-08T08:26:06.455052+00:00",
+      "endedAt": "2026-10-08T08:27:00.839286+00:00",
+      "exitCode": 0,
+      "stdout": {
+        "path": "docs/reviews/d1b/evidence/preflight/document-static-check.stdout.json",
+        "bytes": 1348,
+        "sha256": "8c2dc9c509d80ae9b28d802002018561c27860edbf2511860a9a346156565ee0"
+      },
+      "stderr": {
+        "path": "docs/reviews/d1b/evidence/preflight/document-static-check.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runtime": "v24.20.0",
+      "skip": []
+    },
+    {
+      "label": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "startedAt": "2026-10-08T08:27:01.311028+00:00",
+      "endedAt": "2026-10-08T08:27:01.498089+00:00",
+      "exitCode": 0,
+      "stdout": {
+        "path": "docs/reviews/d1b/evidence/preflight/diff-check.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "docs/reviews/d1b/evidence/preflight/diff-check.stderr.log",
+        "bytes": 162,
+        "sha256": "665a1b64722ec34e5376496a8560beae01c5907ee8f538c66d5ab7cfb2675a2d"
+      },
+      "runtime": "v24.20.0",
+      "skip": []
+    }
+  ],
+  "sourceBefore": "source-before.json",
+  "sourceAfter": "source-after.json",
+  "sourceFingerprintBefore": "af38752781e09d91ea3a7a86375b8c7cec30365d424bf1d8267b6508bb73143b",
+  "sourceFingerprintAfter": "af38752781e09d91ea3a7a86375b8c7cec30365d424bf1d8267b6508bb73143b",
+  "sourceUnchanged": true,
+  "scope": "离线文档/映射静态验证，非界面/服务运行",
+  "servicesStarted": false,
+  "cleanup": "未创建任何服务/数据库，未修改shell环境，无恢复操作"
+}

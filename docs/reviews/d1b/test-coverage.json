@@ -1,0 +1,248 @@
+{
+  "kind": "workmesh.d1b.acceptance-map",
+  "historicalSource": "docs/reviews/r1/test-coverage.json",
+  "feature": {
+    "seqNum": 21,
+    "id": "2j2sxT5wJ-l001efH_meJ",
+    "owner": "D1b 执行者",
+    "originalTests": [
+      {
+        "id": "todo-21-T1",
+        "text": "旧 token 仍有消费方时禁止删除，静态断言守住。",
+        "originalChecked": false,
+        "target": 21,
+        "testFile": "apps/web/features/navigation/theme.test.tsx",
+        "caseName": "有消费时删除必失败；阶段账本覆盖未知引用与缺失定义",
+        "status": "待阶段实现/运行及实际评审；本轮文档静态核验不替代功能验收",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理"
+        ],
+        "owner": "D1b 执行者",
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
+        "historicalTarget": "apps/web/e2e/theme-unification.spec.ts"
+      },
+      {
+        "id": "todo-21-T2",
+        "text": "每个面迁移后与 D0 基线做 diff 并评审，保留变更前后证据。",
+        "originalChecked": false,
+        "target": 21,
+        "testFile": "apps/web/e2e/mocked/d1b-token-migration.mocked.spec.ts",
+        "caseName": "矩阵每行四个明暗视口及适用状态，前后图、固定 D0 diff、人工评审",
+        "status": "待阶段实现/运行及实际评审；本轮文档静态核验不替代功能验收",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理"
+        ],
+        "owner": "D1b 执行者",
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
+        "historicalTarget": "apps/web/e2e/theme-unification.spec.ts"
+      },
+      {
+        "id": "todo-21-T3",
+        "text": "既有 theme-unification.spec.ts 全绿。",
+        "originalChecked": false,
+        "target": 21,
+        "testFile": "apps/web/e2e/theme-unification.spec.ts",
+        "caseName": "保留原测试并加入真实明暗/子树/compact/派生样式和往返",
+        "status": "待阶段实现/运行及实际评审；本轮文档静态核验不替代功能验收",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理"
+        ],
+        "owner": "D1b 执行者",
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
+        "historicalTarget": "apps/web/e2e/theme-unification.spec.ts"
+      },
+      {
+        "id": "todo-21-T4",
+        "text": "色彩位移在 ADR 中有可辩护且可追溯的理由。",
+        "originalChecked": false,
+        "target": 21,
+        "testFile": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+        "caseName": "实际逐槽来源、设计理由与每面差异审查",
+        "status": "待阶段实现/运行及实际评审；本轮文档静态核验不替代功能验收",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理"
+        ],
+        "owner": "D1b 执行者",
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
+        "historicalTarget": "apps/web/e2e/theme-unification.spec.ts"
+      },
+      {
+        "id": "todo-21-T5",
+        "text": "旧值删除后无残留消费方，必需回归检查通过。",
+        "originalChecked": false,
+        "target": 21,
+        "testFile": "apps/web/features/navigation/theme.test.tsx",
+        "caseName": "全扫描零旧消费及依赖再删；清理后全矩阵和五项必需检查",
+        "status": "待阶段实现/运行及实际评审；本轮文档静态核验不替代功能验收",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理"
+        ],
+        "owner": "D1b 执行者",
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
+        "historicalTarget": "apps/web/e2e/theme-unification.spec.ts"
+      }
+    ],
+    "originalDoD": [
+      {
+        "text": "## DoD 与依赖\n原 D1 的最终 DoD 保留：全部界面迁移完成、旧值已删且无残留消费方、回归全绿；token 映射、视觉 diff 与验证证据提交仓库。D1a 的完成不能替代本项最终验收。\n依赖：G1、P1、R1、D0、D1a；blocks D2。\n\n",
+        "sha256": "b83080e40c46f27ffc937400083ef2c50ae20b729a26317450fdd36ddf31f04e",
+        "target": 21,
+        "owner": "D1b 执行者",
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
+        "acceptance": "原DoD保留，所有合法测试迁移到originalTests；矛盾旧要求按legacy处置和本任务共同契约撤换，不以历史绿灯放行"
+      }
+    ],
+    "matrix": [
+      {
+        "category": "happy path",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理",
+        "file": "apps/web/e2e/theme-unification.spec.ts",
+        "caseName": "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理",
+        "owner": "D1b 执行者",
+        "fileState": "现有文件，待本feature扩展具体用例",
+        "result": "待实现任务运行；本轮不预填功能成功"
+      },
+      {
+        "category": "unauthorized actor",
+        "applicable": false,
+        "reason": "仅新增样式/映射与消费迁移，不新增身份命令、领域状态机或持久写入。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "D1b 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "invalid state transition",
+        "applicable": false,
+        "reason": "仅新增样式/映射与消费迁移，不新增身份命令、领域状态机或持久写入。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "D1b 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "duplicate idempotency key",
+        "applicable": false,
+        "reason": "仅新增样式/映射与消费迁移，不新增身份命令、领域状态机或持久写入。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "D1b 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "stale revision",
+        "applicable": false,
+        "reason": "仅新增样式/映射与消费迁移，不新增身份命令、领域状态机或持久写入。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "D1b 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "transaction failure",
+        "applicable": false,
+        "reason": "仅新增样式/映射与消费迁移，不新增身份命令、领域状态机或持久写入。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "D1b 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "webhook/job replay",
+        "applicable": false,
+        "reason": "仅新增样式/映射与消费迁移，不新增身份命令、领域状态机或持久写入。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "D1b 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "concurrent request",
+        "applicable": false,
+        "reason": "逐面迁移不是并发领域命令。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "D1b 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "server restart/outbox recovery",
+        "applicable": false,
+        "reason": "仅CSS消费改动，服务器重启/outbox不参与。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "D1b 执行者",
+        "fileState": null,
+        "result": "不适用"
+      }
+    ]
+  },
+  "stageContract": "docs/reviews/d1b/stage-assertion-design.md",
+  "surfaceMatrix": "docs/reviews/d1b/surface-matrix.json",
+  "requiredChecks": [
+    {
+      "command": "pnpm lint",
+      "status": "未运行；本轮仅文档前置，不冒充完成"
+    },
+    {
+      "command": "pnpm typecheck",
+      "status": "未运行；本轮仅文档前置，不冒充完成"
+    },
+    {
+      "command": "pnpm test",
+      "status": "未运行；本轮仅文档前置，不冒充完成"
+    },
+    {
+      "command": "pnpm test:integration",
+      "status": "未运行；本轮仅文档前置，不冒充完成"
+    },
+    {
+      "command": "pnpm test:e2e",
+      "status": "未运行；本轮仅文档前置，不冒充完成"
+    }
+  ],
+  "followups": [
+    {
+      "seqNum": 12,
+      "responsibility": "卡片结构、Attention 单暖色及真实状态断言",
+      "status": "未放行；本轮仅同步方向条款"
+    },
+    {
+      "seqNum": 13,
+      "responsibility": "三栏布局、分隔线、持久化与导航",
+      "status": "未放行；本轮仅同步方向条款"
+    },
+    {
+      "seqNum": 14,
+      "responsibility": "状态化菜单、受治理命令及确认",
+      "status": "未放行；本轮仅同步方向条款"
+    },
+    {
+      "seqNum": 22,
+      "responsibility": "拖拽、多选逐项恢复与本地草稿",
+      "status": "未放行；本轮仅同步方向条款"
+    }
+  ]
+}
