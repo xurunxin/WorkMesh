@@ -336,9 +336,39 @@
   "migrationsAdded": 0,
   "domainEventsAdded": 0,
   "apiAdded": "公开只读 GET /api/v1/workbench/model-presets，默认功能关闭",
-  "independentReview": "待 Chief 安排；包括完整计划、当前产品与额外模拟回归失败",
+  "independentReview": "本轮补齐完整五组模拟浏览器基点/产品提交对照，待独审补核；历史审查意见保持历史含义",
   "latestCI": "待本轮提交后平台运行；本地结果不代替最新提交 CI",
   "chiefConfirmation": "待确认",
   "completionClaim": "实现与定向验收已落盘，不声称整套模拟回归全绿或最终 DoD/合入已完成",
-  "sourceSetSha256": "8386f12ae614caec6dfe72b227bd3db303f7bc180c342fac6be39819c351e37a"
+  "sourceSetSha256": "8386f12ae614caec6dfe72b227bd3db303f7bc180c342fac6be39819c351e37a",
+  "mockedRegressionComparison": {
+    "baselineCommit": "8aee051c23eca1fc7653f688d6570c5808c0011d",
+    "productCommit": "c0bb931bf5dbf5c297835ee321b4de69f47e7695",
+    "baseline": {
+      "total": 47,
+      "passed": 15,
+      "failed": 32,
+      "skipped": 0,
+      "flaky": 0,
+      "exitCode": 1
+    },
+    "product": {
+      "total": 47,
+      "passed": 15,
+      "failed": 32,
+      "skipped": 0,
+      "flaky": 0,
+      "exitCode": 1
+    },
+    "newRegressions": 0,
+    "unknownClassification": 0,
+    "productChangedInFollowup": false,
+    "evidence": "mocked-regression-comparison.md",
+    "sourceBinding": "mocked-regression-sources.json",
+    "archive": "mocked-regression-evidence.zip",
+    "verification": "fixtures/verify-regression-evidence.py；221 个成员、1373 个 Git blob 与 47 项逐项对照核验通过",
+    "result": "分类已补齐；模拟套件仍失败，不把既有失败计成通过。独立审核与最新提交 CI 待完成。",
+    "verificationReceipt": "mocked-regression-verification.json",
+    "resources": "mocked-regression-resources.json"
+  }
 }

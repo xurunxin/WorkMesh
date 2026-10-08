@@ -31,7 +31,11 @@
 | 路由策略、CI 配置、双语文案校验与 API 构建 | 均成功 |
 | 部署产物与只读卷 | 加载器、目录 JSON、契约字节一致；两次启动各五次读取、完整替换、禁用过滤及文件字节不变均通过 |
 
-额外运行的五组模拟浏览器回归有 **15 通过、32 失败**，不声称全套绿。失败清单、原始控制台、DOM 和截图已保全。Accessibility Agent 夹具与实施前内容相同，未变更契约同样拒绝其缺少的十个字段，见 [baseline-agent-comparison.json](baseline-agent-comparison.json)；没有在旧提交运行整套浏览器测试，其余失败原因尚未逐项证实。此次未扩大到 Agents、Settings 或其他产品修复，须交独审核对。
+已在精确实施前提交 `8aee051c23eca1fc7653f688d6570c5808c0011d` 与产品提交 `c0bb931bf5dbf5c297835ee321b4de69f47e7695` 的独立源码副本、同一环境下各执行全部 **47 项**模拟浏览器回归：两者均 **15 通过、32 失败**，零跳过、零 flaky。原报告 32 项已逐项对应，47 项状态、逐用例 timeout 与全部失败指纹一致；本组未发现新增回归，未分类项为零。模拟套件仍失败，相同首个失败后未执行的步骤不计通过。
+
+逐项原因、实际断言及源码绑定见 [mocked-regression-comparison.md](mocked-regression-comparison.md)、[mocked-regression-comparison.json](mocked-regression-comparison.json)。Settings 旧路由、Operations 选择器、溢出、sticky、焦点及 Home URL 时序分别有可执行对照，不再以单个 Agent 夹具解释全部失败。本轮只追加审查证据；未修改产品、删除断言或增加超时，也未使用正式 E2E 的历史通过替代这部分验收。原报告和失败原件保留，仍交独立复核与最新 CI 门禁。
+
+本轮原始报告、日志、DOM、截图及几何附件见 [mocked-regression-evidence.zip](mocked-regression-evidence.zip)，无损字节与 CRC 索引见 [mocked-regression-evidence-index.json](mocked-regression-evidence-index.json)。Git blob 与 Windows 归档副本的 CRLF 字节分别绑定于 [mocked-regression-sources.json](mocked-regression-sources.json)，可运行 `python -X utf8 docs/reviews/c3/fixtures/verify-regression-evidence.py` 独立核验；不混称 Git 字节与运行字节。
 
 日志及大小/哈希索引见 [execution-logs.zip](execution-logs.zip)、[execution-log-index.json](execution-log-index.json)；浏览器失败原件见 [browser-failures.zip](browser-failures.zip)、[browser-failure-index.json](browser-failure-index.json)。测试秘密与认证状态不进入提交，原始 trace 的保留边界写入索引。早期状态码预期、注册表数量、部署硬链接误改、挂载/链接准备失败、超时及 Machine offline 中断均留档，不以最后成功覆盖历史失败。
 
@@ -40,5 +44,7 @@
 ## 资源收尾
 
 本任务资源归属、完整 ID/路径、操作与结果见 [resources.json](resources.json)。必要脱敏证据保存后，已逐项移除本任务五个命名测试容器及五个专用测试卷；临时验证容器由 `--rm` 自动移除。没有创建专用镜像或网络，共享基础镜像未删除，未使用 global prune。服务和临时路径的最终清理结果以该登记为准。
+
+独审返修新增资源的实际 ID、测试副本路径及清理结果另见 [mocked-regression-resources.json](mocked-regression-resources.json)；保留历史资源登记，不覆盖上轮清理记录。
 
 当前 dirty 工作区、源码与已归档证据保留。测试端口已被其他工作区复用的服务未操作；仅凭端口不判断资源归属。旧 worktree 未满足实际合入、成果保全且无人引用条件，本次不删除。临时配置只进入测试子进程；部署准备误改的包声明已恢复，产品配置示例保留为本次正式改动。
