@@ -44,6 +44,3 @@
 已清理本轮新建的 `apps/web/.next`、`C:\Users\xurx\AppData\Local\Temp\workmesh-c1-review-01a1187a`；Playwright 自行移除本轮 `playwright_chromiumdev_profile-iGH5mK`，存在性检查均为不存在。目录操作前实核绝对边界、无 reparse point、无活动引用，以单一明确路径、无 force 的 PowerShell 命令删除。认证状态及 trace 不提交；最终 E2E 运行摘要和必要原 stdout 已保全。只清本轮资源，当前工作树、依赖、其他构建服务保留；旧工作树未满足实际 main 合入及成果保全条件，保留。配置仅注入测试子进程，结束自动恢复；不改系统环境或真实部署配置。
 
 复核入口：先运行本目录 `verify-evidence.mjs`，核验本轮归档和当前源码，同时按原审核 head 核验历史受测 blob 与计划正文；再检查本轮实际五项命令、失败恢复、适用 skip 和各条锁序。修复提交待平台生成，证据不自引用未知最终提交，不提前宣称远端可见、独审或 Chief 已通过。
-
-
-
