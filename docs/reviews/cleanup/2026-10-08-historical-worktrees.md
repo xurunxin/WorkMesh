@@ -318,3 +318,19 @@ Remove-Item -LiteralPath 'C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-
 ```
 
 执行器在创建 PowerShell 进程前返回拒绝，原文理由为 `rejected: blocked by policy`。因此 `Remove-Item` 实际调用次数为 0、PowerShell 未启动、结构化退出码为 `null`，不冒称文件已删或已释放空间。最后一次通过预检时目标仍存在（1,474 个文件/33,450,482 B）；按“拒绝后立即停止”的要求没有再读取目标，也没有第二次调用、替代删除方式、移动目标或修改属性/ACL。原始派发记录时间为 `2026-10-08T14:48:00.987Z`、拒绝返回时间为 `2026-10-08T14:48:01.072Z`；它们只是工具派发/返回时点，实际文件操作时间仍为 `null`，因为 PowerShell 未启动。原始输入、完整返回值、原始 JSONL 行及来源位置（第 7358/7360 行，调用 ID `call_389935a8bffb4040b7f914b311d06626`）已保存于 [`original-operation-receipts-2026-10-08.json`](original-operation-receipts-2026-10-08.json)，G1 机器清单也记录了相同定位。该单次授权动作到此停在策略拒绝，未重试。
+
+## 剩余候选与最小保全清单（2026-10-08）
+
+本阶段只读刷新了 WorkMesh Todo 状态、候选对话路径引用、Git worktree 登记及父目录 status；重新 fetch 的 main 精确为 `18252ba8761aa810c3fd12d31ecae83e8b24d985`。当前 Todo：#5 `review`、#9 `building`、#16 `building`、#21 `review`、#52 `building`；#3/#8/#10/#11/#15/#17/#18 为 `done`。#5/#9/#16/#21 对 A1/C1 候选根路径的当前 build chat 命中数均为 0；此观察不代表检查了 OS 进程、文件句柄或平台全局 build registry。机器 daemon 状态本阶段未刷新。四个历史父 worktree #3/#10/#11/#18 当前均仍登记，选定状态查询退出码 0、工作树/未跟踪状态行数为 0，HEAD 均是本轮 main 的祖先；这不覆盖 ignored 文件、嵌套仓库或 `.tmp` 内容。
+
+| 分类 | 精确范围及现有证明 | 本阶段处理结论 |
+| --- | --- | --- |
+| 已完成且不重做 | D1a 八份 resource 与四份 `.network` 副本此前已按既有映射清理；两份重复 `1-trace.trace` 已无 Force 删除、退出码 0。 | 不再次查删。保留 `.tmp/d1a-stage0-trace-env07-2/1-trace.trace` 一份原件和两份敏感 RAW ZIP；物理净释放量仍未知。 |
+| D1a 可继续评审的普通文件候选 | `.tmp/d1a-git-evidence-audit.json`：既有清单记录 316,012 B、SHA-256 `5c4f576f…`、blob `414dfe920c54f68ca1a2f246f1fcdd82e43767bb`，来自 main 可达提交 `58d59ed85002da637aaeaa6bf98915d4a6ba918c` 的 `docs/reviews/d1a/evidence/git-blob-hashes.json`。本轮以当前 main 验证该提交祖先退出码 0，当前 main 同路径 blob 是 `69a5adba69600bc3d53bf9e8fef989823965ab67`。 | 精确路径当前存在性、进程引用及锁未在本阶段复查；作为单文件、无 Force 的条件候选提交独审。无需另复制归档。 |
+| A1 #8 / C1 #15 可重建目录候选 | 两个 worktree HEAD 分别为 `07aa293c35100959caa08f73efcb6110e9aa92f4`、`81090ec01bcbc84edbe101418d833840999a5326`，均登记、干净且为当前 main 祖先。锁定输入为 `package.json`、`pnpm-lock.yaml`、`pnpm-workspace.yaml`、`.gitignore`、`turbo.json`、`apps/web/package.json`；package manager 是 `pnpm@9.15.4`，依赖重建命令 `pnpm install --frozen-lockfile`，构建命令 `pnpm build`（`turbo run build`），Turbo 声明 `dist/**` 与 `.next/**` 为 build 输出。机器清单列出直接观察到的每个精确目录：#8 共 55 项（18 个 `.turbo`、18 个 `dist`、19 个根/包 `node_modules`）；#15 共 49 项（18 个 `.turbo`、12 个 `dist`、19 个根/包 `node_modules`）。 | 仅列为下一批条件缓存候选，未递归扫描内容或测量逻辑字节；当前 build 对话未命中候选根，但 OS 进程和路径内 junction/link 尚未检查。先逐路径刷新，再逐目录普通非 Force 操作；不清 pnpm 全局 store。 |
+| C1 验收输出保留 | #15 的 `apps/web/playwright-report` 与 `apps/web/test-results` 当前可见；通用 `.gitignore` 规则不会证明它们可丢弃。 | 保留。仍缺精确 run、用例/输入、失败或验收附件索引映射。A1 #8 本次直接检查未见相应根或 `apps/*`、`packages/*` 子目录。 |
+| D1a 其余 74 项保留 | 45,960,098 B；既有逐路径清单分类为 47 个 `test-evidence-unmapped`（45,162,855 B）和 27 个 `test-output-unmapped`（797,243 B）。其精确路径、哈希、观察用途及缺少输入见 `remaining-materials-review-2026-10-08.json#d1a.other74.perPathAssessments`。本阶段不重算这些哈希。 | 原地保留，不称为唯一材料。仅补齐各路径对应冻结 run/manifest、命令与退出码、附件索引或确切 Git/ZIP 来源后再评估。 |
+| D0、R1、G1 父目录材料保留 | R1 #3 的 `.tmp` 旧清单为空，但 Playwright 报告/截图仍缺 run、用例、viewport 与附件双映射。D0 #10 的 `.tmp` 旧库存为 1,649 项 / 196,832,784 B，六个 `d0-upstream-*.log` 有主线映射但正是被拒的精确目标；其他 capture、失败现场和诊断材料仍留存。G1 #18 父 `.tmp`（排除独立 clone）旧库存为 283 项 / 49,882,233 B，仍有未映射证据。 | 均不整体移除；D0 六个拒绝目标不可重试，不能通过删除父目录绕过。其他文件按现有逐路径清单保留，Git clean 状态不作为 ignored/嵌套内容保全证明。 |
+| G1 独立 shallow clone 与 C3 拒绝范围 | G1 精确 clone `C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout` 的单次强制派发被策略拒绝；PowerShell 未启动、调用 0 次、操作时间和退出码为 null，拒后未读。C3 旧/新拒绝目标沿用既有拒绝回执。 | 均继续保留并禁止重试；禁止改 ACL/属性、换工具、拆批、移动或借父目录删除绕过。 |
+
+对缓存目录的直接层级观察只确认了路径存在，不含目录内部逐文件统计；未复数用户报告的约 38 万忽略项。删除前对每个精确目录重新确认当前活动引用、解析路径和所有链接/重解析点、文件占用及权限。任何占用、越界、链接目标不明或策略/权限拒绝都停止该项并保留；不设置全团队 idle 门槛。完整路径数组、来源 blob、缓存类别、观察边界、已完成/拒绝/保留分类及逐项前置条件见 [`final-cleanup-candidates-2026-10-08.json`](final-cleanup-candidates-2026-10-08.json)。本阶段删除 0 项、恢复 0 项、未运行产品检查；整项清理仍未完成，停在独立审查。
