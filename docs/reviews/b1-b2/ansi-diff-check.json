@@ -1,0 +1,23 @@
+{
+  "recordedAt": "2026-10-08T12:14:53.923Z",
+  "fullDiff": {
+    "args": [
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exitCode": 2,
+    "output": "docs/reviews/c1/review-fixes/README.md:47: new blank line at EOF."
+  },
+  "ownDiff": {
+    "args": [
+      "diff",
+      "--cached",
+      "76369131ef6de844813fe40a8df519c8fbbf29ed",
+      "--check"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  "note": "保留未落地 C1 原证据；不冒整体检查全绿"
+}

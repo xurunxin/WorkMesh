@@ -19,6 +19,7 @@ import { useToast } from '../lib/use-toast'
 import { useRealtimeSubscription, type RealtimeResource } from '../lib/realtime'
 import { readSettingsRoute, type SettingsRoute, writeSettingsRoute } from './route-state'
 import { resolveTeamSelection } from './team-resolution'
+import { NotificationChannelSettings } from './notification-channel-settings'
 import { DeleteTeamDialog, type DeleteTeamSnapshot } from './delete-team-dialog'
 import {
   CUSTOM_WORKFLOW_COLOR,
@@ -586,6 +587,7 @@ function SettingsPageScope({
                 </SettingsCard>
                 </>}
               </SettingsGrid>
+              <NotificationChannelSettings scopeKey={authorityScopeKey} />
               <SettingsCard aria-labelledby="agent-workbench-service-heading" className="workbench-llm-settings" kicker="Agent workbench" title={<span id="agent-workbench-service-heading">{text.workbenchServiceTitle}</span>} wide>
                 <p>{text.workbenchServiceDescription}</p>
                 <a className="wm-button" href="/settings/agent-workbench">{text.workbenchServiceOpen}</a>

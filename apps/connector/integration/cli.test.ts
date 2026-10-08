@@ -1,6 +1,7 @@
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { once } from 'node:events'
+import { stripVTControlCharacters } from 'node:util'
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { expect, it } from 'vitest'
@@ -49,7 +50,9 @@ it('实际 CLI 单次完整验证、系统存储、无秘密片段与启动注�
     child.stdout.on('data', bytes => { stdout += bytes.toString() }); child.stderr.on('data', bytes => { stderr += bytes.toString() })
     child.stdin.end(input)
     const [code] = await once(child, 'close')
-    expect((stdout + stderr).includes(f.token) || (stdout + stderr).includes(pairingCode)).toBe(false)
+    // 先做布尔比较，再断言，失败也不把真实系统凭据印进日志。
+    const rendered = stripVTControlCharacters(stdout + stderr)
+    expect(rendered.includes(f.token) || rendered.includes(pairingCode)).toBe(false)
     return { code, stdout, stderr }
   }
   try {
@@ -64,12 +67,16 @@ it('实际 CLI 单次完整验证、系统存储、无秘密片段与启动注�
     const config = parseJson(configurationSchema, raw.toString()); reference = config.secretReference
     expect(await store.get(reference) === f.token).toBe(true)
     expect(raw.includes(f.token) || raw.includes(pairingCode)).toBe(false)
-    const program = "const t=process.env.WORKMESH_INSTALLATION_TOKEN;if(require('node:crypto').createHash('sha256').update(t).digest('hex')!==process.env.WM_TEST_DIGEST)process.exit(1);process.stdout.write('injected\\n'+t.slice(0,20));process.stdout.write(t.slice(20));process.stderr.write(t);"
+    const program = "const t=process.env.WORKMESH_INSTALLATION_TOKEN;if(require('node:crypto').createHash('sha256').update(t).digest('hex')!==process.env.WM_TEST_DIGEST)process.exit(1);process.stdout.write('injected\\n'+t.slice(0,20)+'\\x1b[');setTimeout(()=>{process.stdout.write('31m'+t.slice(20)+'\\x1b[0m');process.stderr.write(t.slice(0,12)+'\\x1b[32m'+t.slice(12)+'\\x1b[0m')},10);"
     const started = await cli(['run', '--', process.execPath, '-e', program])
     expect(started.code).toBe(0); expect(started.stdout).toContain('injected')
+    expect(stripVTControlCharacters(started.stderr)).toBe('[已隐藏]')
     const interactive = await cli([], '', 'test-support/terminal-driver.ts')
     expect(interactive.code, interactive.stderr).toBe(0)
     expect(interactive.stdout).toContain('"tty":true')
+    const redirected = await cli([], '', 'test-support/stderr-driver.ts')
+    expect(redirected.code).toBe(0)
+    expect(redirected.stdout).toContain('"stderrRedirected":true')
     const repeated = await cli(['connect', '--expect', expected], pairingCode + '\n')
     expect(repeated.code).toBe(0); expect((await readFile(join(directory, 'config.json'))).equals(raw)).toBe(true)
     f.context.profileVersion = '2.0'

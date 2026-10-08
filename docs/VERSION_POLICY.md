@@ -136,3 +136,5 @@ a disabled child capability, the entire scheduled, event, manual, or dry-run
 occurrence is rejected or skipped before occurrence, run, and effect creation.
 Planning notifications enable in-app and browser delivery; webhook notification
 delivery additionally requires External Webhooks.
+
+C1 的个人渠道投递契约使用 `WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS=false`，属于默认关闭的 Experimental 范围。要求 Redis；无 Redis 不支持且不静默降级。provider adapter 由后续渠道实现注册，当前无 adapter 时保留意图而不 claim 新目标，不执行真实外发。

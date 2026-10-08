@@ -275,6 +275,16 @@ export function shouldDeliverNotification(input: {
     && priorityRank[input.priority] >= priorityRank[input.minimumPriority]
 }
 
+export function notificationRecipient(input: {
+  sourceType: string; recipientActorId: string | null; responsibleHumanActorId: string | null
+}): string | null {
+  return input.sourceType === 'inbox_item' ? input.recipientActorId : input.responsibleHumanActorId
+}
+
+export function notificationSendOutcome(result: 'delivered' | 'failed' | 'unknown') {
+  return result === 'unknown' ? 'uncertain' : result
+}
+
 export type ForecastSource = {
   id: string
   kind: string

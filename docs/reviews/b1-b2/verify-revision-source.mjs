@@ -4,7 +4,11 @@ import { execFileSync } from 'node:child_process'
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 
-const root = process.cwd(), base = 'docs/reviews/b1-b2/', main = '96e724858e692d262107c34db50b40c3ae7c122c'
+const root = process.cwd(), base = 'docs/reviews/b1-b2/'
+const ansi = process.argv.includes('--ansi')
+const main = '96e724858e692d262107c34db50b40c3ae7c122c'
+const combinedHead = ansi ? '76369131ef6de844813fe40a8df519c8fbbf29ed' : main
+const manifest = base + (ansi ? 'ansi-source.json' : 'revision-source.json')
 const hash = bytes => createHash('sha256').update(bytes).digest('hex')
 const read = path => readFileSync(resolve(root, path))
 const json = path => JSON.parse(read(path).toString())
@@ -55,14 +59,16 @@ if (process.argv.includes('--capture')) {
         scope: '历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告' })
     }
   }
-  writeFileSync(resolve(root, base + 'revision-source.json'), JSON.stringify({ capturedAt: new Date().toISOString(),
-    historicalProductCommit: '903573a873538613c054a4f9732c321587b0a45e', integratedMain: main,
+  writeFileSync(resolve(root, manifest), JSON.stringify({ capturedAt: new Date().toISOString(),
+    historicalProductCommit: ansi ? '375990f10d73679f3c0724d21e8d7c58b3d8bd9b' : '903573a873538613c054a4f9732c321587b0a45e', integratedMain: main,
+    ...(ansi ? { unlandedCombination: { head: combinedHead, owner: '#15 C1', mainProof: false,
+      commonAncestor: main, reason: '共享缓存 FETCH_HEAD 被误判为 main；Chief 已纠正，跨分支组合保全，不冒主线落地或 CI 成功' } } : {}),
     bytePolicy: '运行工作树与实际暂存 Git blob 分开；先 stage 再 capture；审查证据更新不引发产品重测',
     runtimeSourceId: hash(Buffer.from(JSON.stringify(files))), files, bindings,
     gates: { threeOSCI: '未闭合', windowsSecondUser: '本机缺夹具，失败', macOS: '未运行', requiredCI: '未取得修订提交成功结果',
       resultReview: '待本轮复审', actualMain: '连接器尚未合入' } }, null, 2) + '\n')
 }
-const source = json(base + 'revision-source.json'), gitOnly = process.argv.includes('--git-only')
+const source = json(manifest), gitOnly = process.argv.includes('--git-only')
 for (const file of source.files) {
   const actual = row(file.path)
   if (gitOnly) for (const key of ['gitBlobId', 'gitBlobBytes', 'gitBlobSha256']) assert.equal(actual[key], file[key], file.path)
@@ -73,7 +79,8 @@ for (const name of ['current-source.json', 'current-spec.md', 'current-spec-sour
   const path = base + name
   assert.ok(git('cat-file', 'blob', row(path).gitBlobId).equals(git('show', `903573a873538613c054a4f9732c321587b0a45e:${path}`)))
 }
-assert.equal(git('diff', main, '--', 'SCHEMA.sql', 'packages/db', 'apps/api/src', 'apps/mcp/src', 'packages/contracts/src').length, 0)
+assert.equal(git('diff', combinedHead, '--', 'SCHEMA.sql', 'packages/db', 'apps/api/src', 'apps/mcp/src', 'packages/contracts/src').length, 0)
 console.log(JSON.stringify({ runtimeSourceId: source.runtimeSourceId, files: source.files.length,
-  mode: gitOnly ? 'Git blob' : '工作树与 Git blob', zeroSchemaChanges: true, mainSafetyPreserved: true, historicalEvidenceUnchanged: true,
+  mode: gitOnly ? 'Git blob' : '工作树与 Git blob', zeroOwnSchemaChanges: true, mainSafetyPreserved: true, historicalEvidenceUnchanged: true,
+  actualMain: main, unlandedCombination: ansi ? combinedHead : null,
   finalSourceRuns: source.bindings.filter(row => row.finalSource).map(row => row.run), gates: source.gates }, null, 2))

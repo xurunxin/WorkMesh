@@ -29,6 +29,8 @@ MCP 和 Skill 可以位于清单明确批准的不同 HTTPS origin。兑换与 d
 
 ## 验证入口与边界
 
+`run` 只有在 stdin/stdout/stderr 均为终端时采用 PTY；`2>errors.log` 等重定向进入分流管道，stderr 保持原归属及退出码。输出脱敏跨 chunk 和 ANSI 控制序列匹配凭据，保留完整安全提示及控制序列；控制载荷也脱敏，异常未完成或过长的控制序列保守隐藏。
+
 `pnpm --filter @workmesh/connector test` 验证并发、强制终止、协议拒绝与补偿；`test:platform` 实测原生后端、权限、跨用户拒绝及实际 CLI。平台夹具缺失会失败，不将跳过冒充通过。Linux CI 使用独有 Secret Service 并验证 daemon 重启持久性；Windows CI 创建临时第二用户，收尾删除用户和临时目录。测试资源创建与清理写入无秘密日志。
 
 源码中的测试内存 store 只用于确定性故障注入，不是产品后备存储。平台矩阵、成果独审、最新 Required CI 和实际 main 落地仍是验收门禁；本地通过不代表已发布或已合入。

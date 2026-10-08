@@ -14,7 +14,7 @@ const logRoot = join(evidence, 'logs'); mkdirSync(logRoot, { recursive: true })
 const env = { ...process.env }
 const secrets = []
 const random = (n = 32) => { const value = randomBytes(n).toString('hex'); secrets.push(value); return value }
-const results = [], resources = []
+const results = [], resources = [], processes = []
 let activeChild
 const stop = () => {
   if (activeChild?.pid) {
@@ -56,13 +56,15 @@ async function check(name, args) {
   const code = await new Promise((resolveCode, reject) => {
     const child = spawn(pnpm.endsWith('.exe') ? pnpm : process.execPath, pnpm.endsWith('.exe') ? args : [pnpm, ...args], { cwd: root, env, windowsHide: true })
     activeChild = child
+    const processRecord = { name, pid: child.pid, startedAt, exited: false }
+    processes.push(processRecord); save('processes.json', processes)
     const pulse = setInterval(() => {
       writeFileSync(join(logRoot, `${name}.log`), safe(output.slice(0, Math.max(0, output.length - 200))))
       console.log(`${name}: 仍在运行，已收集 ${output.length} 字符日志`)
     }, 30_000)
     child.stdout.on('data', bytes => { output += bytes.toString() }); child.stderr.on('data', bytes => { output += bytes.toString() })
     child.on('error', error => { clearInterval(pulse); activeChild = undefined; reject(error) })
-    child.on('close', code => { clearInterval(pulse); activeChild = undefined; resolveCode(code) })
+    child.on('close', code => { clearInterval(pulse); activeChild = undefined; processRecord.exited = true; save('processes.json', processes); resolveCode(code) })
   })
   const log = safe(output); writeFileSync(join(logRoot, `${name}.log`), log)
   save(`${name}-source-after.json`, source())
@@ -112,6 +114,9 @@ try {
     await check('connector-build', ['--filter', '@workmesh/connector', 'build'])
     await check('lint', ['lint']); await check('typecheck', ['typecheck']); await check('unit', ['test'])
     await check('ci-validate', ['ci:validate']); await check('route-policy', ['check:route-policy']); await check('skill-pin', ['check:workmesh-skill'])
+  } else if (mode === 'connector-build') {
+    await check('connector-build', ['--filter', '@workmesh/connector', 'build'])
+    await check('connector-lint', ['--filter', '@workmesh/connector', 'lint'])
   } else if (mode === 'connector') {
     await check('connector-typecheck', ['--filter', '@workmesh/connector', 'typecheck'])
     await check('connector-unit', ['--filter', '@workmesh/connector', 'test'])

@@ -2,25 +2,12 @@ import { spawn } from 'node:child_process'
 import { once } from 'node:events'
 import { StringDecoder } from 'node:string_decoder'
 import * as pty from 'node-pty'
-
-// 只扣留能组成凭据的后缀；提示、换行及终端控制序列立即输出。
-export function redactChildOutput(write: (text: string) => void) {
-  let pending = ''
-  const prefix = /(?:w(?:m(?:[ip](?:_[A-Za-z0-9_-]{0,42})?)?)?)$/
-  return {
-    push(text: string) {
-      pending = (pending + text).replace(/(?:wmi_|wmp_)[A-Za-z0-9_-]{43}/g, '[已隐藏]')
-      const suffix = prefix.exec(pending)?.[0] ?? ''
-      write(pending.slice(0, pending.length - suffix.length))
-      pending = suffix
-    },
-    finish() { write(/^(?:wmi_|wmp_)/.test(pending) ? '[已隐藏]' : pending); pending = '' },
-  }
-}
+import { redactChildOutput } from './output-redaction.js'
+export { redactChildOutput } from './output-redaction.js'
 
 export async function launchClient(command: string, args: string[], token: string): Promise<number> {
   const env = { ...process.env, WORKMESH_INSTALLATION_TOKEN: token }
-  if (process.stdin.isTTY && process.stdout.isTTY) {
+  if (process.stdin.isTTY && process.stdout.isTTY && process.stderr.isTTY) {
     const child = pty.spawn(command, args, { env, cwd: process.cwd(), name: process.env.TERM ?? 'xterm-256color',
       cols: process.stdout.columns || 80, rows: process.stdout.rows || 24, useConptyDll: process.platform === 'win32' })
     const sink = redactChildOutput(text => process.stdout.write(text))

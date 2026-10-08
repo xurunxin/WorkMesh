@@ -320,7 +320,12 @@ describe("Stage 4 planning and operations API", () => {
     const deploymentFlags = registry.json<{
       features: Array<{ key: string; tier: string; enabled: boolean }>;
     }>().features;
-    expect(deploymentFlags).toHaveLength(11);
+    expect(deploymentFlags).toHaveLength(12);
+    expect(deploymentFlags).toContainEqual({
+      key: "WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS",
+      tier: "experimental",
+      enabled: false,
+    });
     for (const feature of deploymentFlags)
       expect(Object.keys(feature).sort()).toEqual(["enabled", "key", "tier"]);
   });
