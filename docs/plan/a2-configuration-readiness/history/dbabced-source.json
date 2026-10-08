@@ -1,0 +1,301 @@
+{
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "todoId": "0BkezbmWV6k8vwrlSNuF_",
+  "agentId": "iuKoX-czTc8kH_ERctdlM",
+  "branch": "tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe",
+  "currentID": null,
+  "version": null,
+  "currentIDSource": "本轮conversation没有已保存plan引用；计划由本回合final保存后，独审前从conversation实读补绑，禁止把Question doc ID当计划ID",
+  "bindingStatus": "当前todo/branch/question card/规格来源已绑定；plan ID尚未生成",
+  "questionCardId": "q-g078qrLdME6hTbM58dvfx",
+  "plan": {
+    "path": "docs/plan/a2-configuration-readiness.md",
+    "sha256": "5dde5f9af0a1e7ab9aab1a5e5ae7a84bcc7a7367148b437f2ea3175c9292a1e6",
+    "bytes": 10093,
+    "source": "本回合拟提交的完整plan正文，与final的plan body相同；不是已保存后端doc",
+    "extraction": "UTF-8无BOM，不加末尾换行；外围plan标签及边界换行不属于正文"
+  },
+  "spec": {
+    "todoId": "0BkezbmWV6k8vwrlSNuF_",
+    "updatedAt": "2026-10-08T11:46:28.872Z",
+    "sha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
+    "snapshotPath": "docs/plan/a2-configuration-readiness/current-spec.md",
+    "source": "mcp__tds__todos(id) 本轮完整 Spec 段",
+    "questionCardId": "q-g078qrLdME6hTbM58dvfx",
+    "approvalReadback": "docs/plan/a2-configuration-readiness/platform-readback.json",
+    "planPath": "docs/plan/a2-configuration-readiness.md",
+    "bytes": 11509,
+    "historicalSourceSha256": "130e16687029a7950d13ebe964a9d230bfa1892e811d77bbfbe050e9201b0286"
+  },
+  "approvalSource": "platform-readback.json内原问题卡三答及本会话Chief追加指令；最新完整Todos规格已纠正历史限制",
+  "history": {
+    "specPath": "docs/plan/a2-configuration-readiness/historical-spec.md",
+    "specSha256": "a6a9fdd5b76c1e68769e87e255d645b01de81acb4cd30ce227ba34c091437ba2",
+    "mappingPath": "docs/plan/a2-configuration-readiness/historical-mapping.json",
+    "originalsBeforeSynchronization": {
+      "docs/plan/activation-task-specs/index.json": "57055023db51d6a04faccaca19bafc7eb36b7b3d3b25be1dbd24f7195c71ad0b",
+      "docs/reviews/r1/test-coverage.json": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41",
+      "docs/plan/activation-task-specs/09.md": "a6a9fdd5b76c1e68769e87e255d645b01de81acb4cd30ce227ba34c091437ba2",
+      "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md": "05213dbd480f35024326dd080b1c684ddebfbe7a555de7f43d5423701e5991c8"
+    },
+    "byteKind": "工作树原字节；原历史source字段含义不改；execution-inputs.json未改"
+  },
+  "inputGit": {
+    "worktreeHead": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "remoteRef": "refs/heads/main",
+    "remoteMainSha": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "fetchedMain": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "observedCacheHead": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "observedFetchHead": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "remote": "https://github.com/xurunxin/WorkMesh.git",
+    "verificationPath": "docs/plan/a2-configuration-readiness/main-ref-verification.json",
+    "historicalObservationPath": "docs/plan/a2-configuration-readiness/historical-git-observation.json",
+    "impact": "本轮按refs/heads/main精确SHA核验与A1 worktree一致，合同存在；撤回未锁定共享FETCH_HEAD的分叉推断，不新增开工门禁，不推测远端历史原因",
+    "observationWindow": {
+      "tool": "mcp__tds__git",
+      "args": [
+        "ls-remote",
+        "origin",
+        "refs/heads/main"
+      ],
+      "before": {
+        "current_time": "2026-10-08 12:04:00 UTC"
+      },
+      "after": {
+        "current_time": "2026-10-08 12:04:02 UTC"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "96e724858e692d262107c34db50b40c3ae7c122c\trefs/heads/main"
+          }
+        ]
+      }
+    },
+    "mergedThisTurn": false
+  },
+  "sourceFiles": [
+    {
+      "path": "CONTEXT.md",
+      "sha256": "49474d310dde6fee0cb423164830cc6ebc823bed1314acddcf8ddbc171a18841",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "02d5eb28c56658f7e016cd779822eda8661999cbc983c544598bc031acd2f650"
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "sha256": "d7601e8d5fae33dcc7a2c231fd20379ec6f52f7c12d721cde9782700127d26d7",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "cd197da780ae7678ba4f5a2f3b5d88fc979e17685b3525b391f346bc1d4a5c59"
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "sha256": "cbf90eb2173b0f2df865e1b813e52d59c3ead0e9e80e85ea6c1fa419d719477b",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "0e76166f9b5432947aeceb4acb9607a9895c8cb200f524aa8481e26d763d733b"
+    },
+    {
+      "path": "SCHEMA.sql",
+      "sha256": "776d6d24f0a66ac9d45c1901fe9c25b9d2a7c2ecf78fcc5c8f5fcb4bf03bf141",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "9575ee2ad4619ccc316c57d1003b940d9d16f3999b77ae440009478ca3ef7007"
+    },
+    {
+      "path": "docs/adr/0052-human-control-plane-information-architecture.md",
+      "sha256": "586b2c3b6e5e9de023c025c8861ac7f2e21f26060fb7f6d3f978f87eb8d2a389",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "debe5a00cdd57beeb523453b5299d69ad60840fcbf5af766119b553e5bc013a4"
+    },
+    {
+      "path": "docs/adr/0059-canonical-navigation-and-evidence-drawer.md",
+      "sha256": "6533a5ecf9e9ca63d93b3690486a86d7efbca12f6061245b7ff3f03ed48d7552",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "26b22fd8f3a620fee0399ae1d8f76dd580769a67e209ec1c2dbbad4e9ae24ec8"
+    },
+    {
+      "path": "docs/adr/0064-unified-human-control-plane-web-experience.md",
+      "sha256": "fa88f734564ed3e8d5286474eb66223cac487c2d6c928a2dea8b42edbc3bdbea",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "35af6982572c2dd13537de1ed84a079480504b48b8a58e50d8d9eec48322e070"
+    },
+    {
+      "path": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+      "sha256": "ffbd824bf6e6bf502e251c41f5d77abd027f100528f60f27d6d9f7f15ff6ad5b",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "6655db75d8c1e38a3ec38db44621ae0dac777980ed27e512934eb56e327da5ba"
+    },
+    {
+      "path": "docs/reviews/r1/execution-inputs.json",
+      "sha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c"
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.json",
+      "sha256": "e9d36e15b88ad64a8e64f9412cfaa7ab6ae3e6bfb6387790c6fd5e4769193bb3",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/index.json",
+      "sha256": "7551c1d9e8a72c014d554aaae5a35dabe9d4fee29224dee3e43c8b5ce4ebaed2",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "57055023db51d6a04faccaca19bafc7eb36b7b3d3b25be1dbd24f7195c71ad0b"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/09.md",
+      "sha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "a6a9fdd5b76c1e68769e87e255d645b01de81acb4cd30ce227ba34c091437ba2"
+    },
+    {
+      "path": "packages/contracts/src/configuration-readiness-contracts.ts",
+      "sha256": "463688074b1e798dd7f311df7e3e7c2330570a36acc6944dd661c09e4484b638",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "a0da8f69b998dc9bb70eaf01f61f0644013e9ef19db3db1ac0f9aba286c8a75a"
+    },
+    {
+      "path": "apps/api/src/configuration-readiness.ts",
+      "sha256": "d3780191894fe301644fd3b943f1366e012d7e38327f3dfcca9a3dfec99fb483",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "60289833f1b1f9804bb638603a16ca79c9edb503ca4d9da6d8fd6f25abf15799"
+    },
+    {
+      "path": "apps/api/src/delivery/routes.ts",
+      "sha256": "21c1488035209ad881fb98891811f7a2f8a586af512eee41189c2337746f1038",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "71bca1ffd3225f8a5165a2fc952571cd9c2f048317c125dfab586dcf43457626"
+    },
+    {
+      "path": "apps/worker/src/provider-actions.ts",
+      "sha256": "c84611a05f7515926f02f22b3f72eb990fb1ed7fe1a796b3a1477f5577fdd871",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "5b224445917efe29f1234ddf1e233c149951834e19f34c454ccec31bdf4707f7"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.tsx",
+      "sha256": "50dc6bfa1cb6765ea87310971ac6bb4c496c398b3e4cad544ca4de6f1b5693dc",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "130d6283253e79dcc650775d6cf0d08647fbc3123df7d8a3e53c366be5fc1ff9"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.module.css",
+      "sha256": "26318e154f3e3209df8ec886599acc536c6cbbe77fb54a5d95896d80ae1aeac6",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "e4357629e73e5d1d202d097d08016fabfeb395c3ad092b87844602e46ec73da5"
+    },
+    {
+      "path": "apps/web/app/lib/human-control-plane-navigation.ts",
+      "sha256": "2eff9e7d9ff4609f5a43bde278ca8334377be1ac528f4cb401dbc3c1f7bf1b81",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "d009d5f57f739f2dab77f84bbd817f02e86c722001f438c7bc4b9dc875adeb86"
+    },
+    {
+      "path": "apps/web/app/lib/project-work.ts",
+      "sha256": "f9fa0bc5681b8934ed2273707848dd4e3a91170d24b16a3966f0ebbee33484f9",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "bbb6cf1403146c48216751e0c97cac7e866c667df1ac23e35f70a867d8417ebd"
+    },
+    {
+      "path": "packages/ui/src/tokens.css",
+      "sha256": "36502dd86013f37aafceb56971f6347dd3f0920ad2f9381edb2da0f8b93373d8",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "e1dae43b076c0142ac5fadabc9ed75a821e5b37900b9c58807360e3015bade5f"
+    },
+    {
+      "path": "docs/references/todos-analysis/ui-inventory.md",
+      "sha256": "8ff1cfab8c473651454976849f2d713f4e7203ff4f8e2377dc4338562bc21bfd",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "8ff1cfab8c473651454976849f2d713f4e7203ff4f8e2377dc4338562bc21bfd"
+    },
+    {
+      "path": "docs/references/todos-analysis/screenshots/26-workbench-restored.png",
+      "sha256": "ea4370f169b49454e457ed6e8411ae753cd24a4f00cf012dc1244a687fc63624",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "ea4370f169b49454e457ed6e8411ae753cd24a4f00cf012dc1244a687fc63624"
+    },
+    {
+      "path": "apps/web/e2e/baselines/d0/README.md",
+      "sha256": "cd9afe96071ccda348696850c2ec4df35a69ad296107cc435f49501ac8651e6b",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "003d36a74dbebc3b4b0d038e54b08b9ccb9496fe74aa3f9a971a5201651ba88f"
+    },
+    {
+      "path": "deploy/lite/README.md",
+      "sha256": "015ad0e13fb83aab608a7f0b601a28c0dcba0fdcac57c6301fa3c432ac88e776",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "6a3927f67d5dc03529cfde6a3ebec8be31b62c5546ecbc054f381bd0b39d1a3b"
+    },
+    {
+      "path": "docker-compose.lite.yml",
+      "sha256": "2c084f2bc6e7a93867ebd802b47da77f29fb1ae64ca719246e6d8a787b9e6d3f",
+      "byteKind": "工作树原字节",
+      "headGitBlobSha256": "5894f09b4111f3ba5b44a98558d74cbab69aad720ba14ab5b1ede5727dba0819"
+    }
+  ],
+  "gate": {
+    "phaseObserved": "planning",
+    "requestedStop": "confirm",
+    "productImplementationAuthorized": false,
+    "independentReview": "等待另一执行者独审，blocking/high闭合后Chief确认",
+    "realWorkMeshRecordsCreated": false
+  },
+  "tests": {
+    "productTestsRun": false,
+    "originalTests": 6,
+    "nineCategories": 9,
+    "liteResult": "未运行、未验收；RustFS凭证映射静态风险另记",
+    "mappingPath": "docs/plan/a2-configuration-readiness/review-map.md"
+  },
+  "hashPolicy": "plan/current-spec以UTF-8原文为准；sourceFiles是本轮工作树字节，HEAD Git blob单列。提交时对归档与索引再核验Git blob。source.json不自引用自己的哈希。",
+  "supplementalFileHashes": [
+    {
+      "path": "docs/plan/a2-configuration-readiness.md",
+      "sha256": "5dde5f9af0a1e7ab9aab1a5e5ae7a84bcc7a7367148b437f2ea3175c9292a1e6",
+      "bytes": 10093
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/current-spec.md",
+      "sha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
+      "bytes": 11509
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/platform-readback.json",
+      "sha256": "3e58a043acbfa17f8fb3744a608aa0a9a5f3d1c4e3ce280faed9b128fa9aba17",
+      "bytes": 19401
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/review-map.md",
+      "sha256": "e8959c6a6864c2d21c45ed4b81a51eeedaa6cae97c90f0804575d5b51142ab98",
+      "bytes": 21013
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/historical-spec.md",
+      "sha256": "a6a9fdd5b76c1e68769e87e255d645b01de81acb4cd30ce227ba34c091437ba2",
+      "bytes": 3590
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/historical-mapping.json",
+      "sha256": "4328a672b58b28d49fbc497757d1a152320d5c21d844179dc5f5fed3ce3fdd87",
+      "bytes": 12287
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/historical-git-observation.json",
+      "sha256": "c50c00cad78a50ae5fda91902d8bed2b9d2974a13ed9610fe3c492b8c75dcc84",
+      "bytes": 962
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/main-ref-verification.json",
+      "sha256": "ebe50afd4eaace59ad16776cbdac26d13f226442b1669314cede3550720d5563",
+      "bytes": 4082
+    }
+  ],
+  "latestReadWindow": {
+    "before": {
+      "current_time": "2026-10-08 12:05:12 UTC"
+    },
+    "after": {
+      "current_time": "2026-10-08 12:05:15 UTC"
+    }
+  }
+}

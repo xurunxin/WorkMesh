@@ -174,20 +174,6 @@ Runner 始终 unknown；完成配置不自动触发执行。
 及 [验收映射](../plan/a2-configuration-readiness/review-map.md)。
 这些内容记录用户已确认范围与待独审实施方案，不改变本 ADR 的 Proposed 状态，不宣告产品完成。
 
-### A2 独审要求的最小命令与读取修补
-
-本节按实读C1当前main更新，仍是待独审实施决定，不改变Proposed状态、不声明已修复。
-
-- `apps/api/src/delivery/repository-configuration.ts`、`apps/api/src/delivery/routes.ts`：封装仓库读取投影，按当前 workspace admin、Team admin/maintainer 派生操作提示。A2 以 `teamId=T&availableOnly=true` 请求：校验当前 Team 可读，在 SQL 中先限制 Team、active 仓库/连接与已启用 provider，再执行既有 Paginator 的游标排序和 `limit+1`，不在分页后筛选。新筛选分支将 Team、`availableOnly` 值及仅在 true 时生效的排序后 provider 集合放进 Paginator `filters`，沿用 actor/workspace/route、`full_name,id` 排序和 `limit+1`；切 Team/筛选/feature 导致 `PAGINATION_CURSOR_MISMATCH`，丢弃游标从首屏重读。`availableOnly=false` 或未传时不隐藏禁用 provider，保留原 feature 拒绝；显式 `teamId` 仍在 SQL 分页前限制范围，无新参数的旧分支保持 `filters={}`。无新参数的 Human/Agent 请求保留旧分支、分页信封、既有字段及 feature 拒绝语义，仅附加已规划的操作提示字段；Agent 携带新 Human 筛选参数返回 `VALIDATION_ERROR`，不扩张 Session/Delegation 范围。上下文直接读取和 POST 仍执行 `requireProviderFeature`。
-
-- `apps/api/src/delivery/routes.ts` 的连接创建：新增局部 `providerConnectionFingerprint`，复用 `workbench-llm-connections.ts` 的 `createHmac('sha256', masterKey())` 模式，以 UTF-8 `workmesh:provider-connection-idempotency\0` 为用途域，追加字段名、NUL 分隔及秘密原字符串字节，分别计算 `webhookSecret`、`privateKey`、`accessToken` 的摘要；未提供字段用 `null`，已提供字段用带算法标记的摘要，不 trim 或重写秘密；只将公共字段、明确的缺省标记和这些摘要交给 `h.meta`，继续由 `mutate` 比较最终 `request_hash`。同 key 同正文重放，仅改任一秘密字段返回 `IDEMPOTENCY_KEY_REUSED`；不采用秘密明文或无密钥散列。旧脱敏账本无法证明正文相同，按指纹不匹配拒绝，不降级旧算法、不改历史账本、不自动换 key 重提；提示先核对已有连接，显式提交才可使用新请求身份；合法的新同文重试保持 key，账本保留原 TTL/过期清理语义，主密钥缺失失败关闭，不用随机盐破坏稳定重试。秘密仅按现有加密存储进入连接表，不进入账本、事件、响应或日志。
-
-- `apps/worker/src/provider-actions.ts`：把 `authorizeRepositoryContextResolution` 的事务内检查抽成接收 `PoolClient` 的 helper，在外部读取前和 `finishAction` 的 context 插入前复用；正常返回和 `action.result` checkpoint 恢复统一经过后者。采用当前 C1 `lockChannelAuthority` 的模式：无锁 locator 只找 ID；先对 workspace 取 `FOR KEY SHARE` 防止 Team 删除与事件 FK 锁倒置，保留 action 的 `FOR UPDATE`，再以 `lockAgentAuthorityPlan` 一次取得完整目标资源锁计划。Session 目标定位其 definition/grant/delegation 及关联 WorkItem/Project，遵守 helper 全局顺序与同类 ID 排序；这些锁不成为新的 Human 配置授权条件。随后对连接/仓库、Team、Human、具体 membership 行取 `FOR SHARE`，锁后重读全部 locator 绑定及现行 Human/角色/active/非删除目标权限，不新增逆序目标锁、不嵌套事务、不用 `EXISTS` 或 `FOR KEY SHARE` 替代授权行锁。锁持有至 context、pinned 与 outbox 提交；失权同事务 action dead 并复用 `provider.action.authorization_revoked`，不新增 context/guidance、pinned 或其 outbox，拒绝事实自身 outbox 单列。撤权先持锁则等待后拒绝；发布先持锁则撤权等待其提交。供应商读取期间不持数据库锁，C1 `appendEvent` 的迁移兼容与内部通知快照机制保留。
-
-- `packages/db/src/agent-lock-order-manifest.ts`：登记 Worker 新增的资源锁消费符号及受影响 SQL statement；沿用既有清单生成与 `agent-lock-order-inventory.test.ts` 校验，不修改 `agentLockRanks` 或锁 helper，逐 statement 复核而不以行号变化当安全证明。
-
-复用workspace兼容FK锁、完整资源plan、授权行锁的现行顺序；不改C1通知锁helper/受众/内部快照/迁移。旧脱敏幂等键fail-closed，新同文稳定，旧无参数仓库权限及filters={}不变。13条精确三修/整合场景、原六验收及DoD见review-fixes.json与review-map.md；所有产品结果未实现、未运行。
-
 ## Alternatives
 
 - **A four-fact "can this team run" gate.** Rejected: three of the four facts are

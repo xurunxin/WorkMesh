@@ -10,8 +10,8 @@
   "questionCardId": "q-g078qrLdME6hTbM58dvfx",
   "plan": {
     "path": "docs/plan/a2-configuration-readiness.md",
-    "sha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
-    "bytes": 17436,
+    "sha256": "2b8d834ec0568f3ff6602950744c82f3090b319012e71b7bf096b43e5935ba6a",
+    "bytes": 16802,
     "source": "本轮authoritative saved PjUM完整注入正文加本轮成功edit_plan逐段变更；不是PjUM已保存正文，不声称完整读取截断后端doc",
     "extraction": "UTF-8无BOM，无末尾换行，不含外围plan标签"
   },
@@ -135,28 +135,22 @@
         "path": "docs/plan/activation-task-specs/09.md",
         "observation": "dbabced原Git文件含“研究映��”；本轮todos完整Spec为“研究映射”。最新字节哈希另算，旧原件保持。"
       }
-    ],
-    "beforeC1Draft": {
-      "path": "docs/plan/a2-configuration-readiness/history/before-c1-plan.md",
-      "sha256": "2b8d834ec0568f3ff6602950744c82f3090b319012e71b7bf096b43e5935ba6a",
-      "kind": "本轮未保存的中间草稿，不赋予平台ID",
-      "sourceSnapshot": "docs/plan/a2-configuration-readiness/history/before-c1-source.json"
-    }
+    ]
   },
   "inputGit": {
     "worktreeHead": "dbabcedbadc5ca4ecd290ebbebd5a79f186e1698",
     "remoteRef": "refs/heads/main",
-    "remoteMainSha": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+    "remoteMainSha": "96e724858e692d262107c34db50b40c3ae7c122c",
     "fetchedMain": null,
-    "observedCacheHead": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-    "observedFetchHead": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+    "observedCacheHead": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "observedFetchHead": "b737da5df420cf0b5401235b54690b0facc54792",
     "remote": "https://github.com/xurunxin/WorkMesh.git",
-    "verificationPath": "docs/plan/a2-configuration-readiness/c1-compatibility.json",
+    "verificationPath": "docs/plan/a2-configuration-readiness/main-ref-verification.json",
     "historicalObservationPath": "docs/plan/a2-configuration-readiness/historical-git-observation.json",
-    "impact": "本轮main更新C1；workspace/完整资源plan/授权行锁序和appendEvent内部快照兼容已纳入，原Worker/路由/A1合同不变。旧观察保留，未整合产品代码，不新增门禁",
+    "impact": "精确remote main仍为A1，工作树仅叠加docs；共享cache FETCH_HEAD不同，不推测远端移动、不新增门禁",
     "observationWindow": {
       "before": {
-        "current_time": "2026-10-08 12:40:04 UTC"
+        "current_time": "2026-10-08 12:27:04 UTC"
       },
       "args": [
         "ls-remote",
@@ -167,16 +161,15 @@
         "content": [
           {
             "type": "text",
-            "text": "5b9c76b5f79917697906520edcd6947bfbfa925f\trefs/heads/main"
+            "text": "Local clone of xurunxin/WorkMesh at C:\\Users\\xurx\\.tds\\workspaces\\DzkLDn6UW-IbfoTJzN9Ro\\repo (default branch main checked out, read-only): read it with read/grep/find like any folder; never edit it or run git writes there. Other refs: [\"fetch\", \"origin\", \"<ref>\"] here, then read FETCH_HEAD.\n\n96e724858e692d262107c34db50b40c3ae7c122c\trefs/heads/main"
           }
         ]
       },
       "after": {
-        "current_time": "2026-10-08 12:40:06 UTC"
+        "current_time": "2026-10-08 12:27:10 UTC"
       }
     },
-    "mergedThisTurn": false,
-    "cacheReadbackPath": "docs/plan/a2-configuration-readiness/c1-cache-readback.json"
+    "mergedThisTurn": false
   },
   "sourceFiles": [
     {
@@ -230,7 +223,7 @@
     },
     {
       "path": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
-      "sha256": "bf88d54242dda453970d330100c35f2a770f9132aaae9084bbb1981c528911df",
+      "sha256": "f1e8ac91dcdfa742ea02db56c49e83af332edf5fc5d8925ba70a2d289541a175",
       "byteKind": "本轮工作树原字节",
       "headGitBlobSha256": "4732a4c301d88e078f8d04d7c3a853cd9341140f78f9088fdba0616ada9e17ac",
       "headGitBlobSource": "dbabcedbadc5ca4ecd290ebbebd5a79f186e1698"
@@ -244,14 +237,14 @@
     },
     {
       "path": "docs/reviews/r1/test-coverage.json",
-      "sha256": "767f4ffe72d24d479bc2fad3b0ceec06d695df793934083cc186095b0ef51ab0",
+      "sha256": "c1ebef40b3e0a068308712cd8c0107d4e020998792b076230b0b8758e6a46df9",
       "byteKind": "本轮工作树原字节",
       "headGitBlobSha256": "e9d36e15b88ad64a8e64f9412cfaa7ab6ae3e6bfb6387790c6fd5e4769193bb3",
       "headGitBlobSource": "dbabcedbadc5ca4ecd290ebbebd5a79f186e1698"
     },
     {
       "path": "docs/plan/activation-task-specs/index.json",
-      "sha256": "67fb55fbe8ff36c5dab6648c8d138bef88521ce3b026d75754f6d2ace09abc9a",
+      "sha256": "83f5724a57b165b2843f549395aaf69be77769a98ceb96233205ceec70a77d83",
       "byteKind": "本轮工作树原字节",
       "headGitBlobSha256": "7551c1d9e8a72c014d554aaae5a35dabe9d4fee29224dee3e43c8b5ce4ebaed2",
       "headGitBlobSource": "dbabcedbadc5ca4ecd290ebbebd5a79f186e1698"
@@ -438,35 +431,19 @@
     "nineCategories": 9,
     "liteResult": "未运行、未验收；RustFS凭证映射静态风险另记",
     "mappingPath": "docs/plan/a2-configuration-readiness/review-map.md",
-    "reviewBlockingStatus": "三修已纳入规划与精确矩阵，等待独审；未实施/未运行，不冒闭合",
-    "reviewFixCases": 13
+    "reviewBlockingStatus": "三修已纳入规划与精确矩阵，等待独审；未实施/未运行，不冒闭合"
   },
   "hashPolicy": "plan/current-spec以UTF-8原文为准；sourceFiles是本轮工作树字节，HEAD Git blob单列。提交时对归档与索引再核验Git blob。source.json不自引用自己的哈希。",
   "supplementalFileHashes": [
     {
       "path": "docs/plan/a2-configuration-readiness.md",
-      "sha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
-      "bytes": 17436
-    },
-    {
-      "path": "docs/plan/a2-configuration-readiness/c1-cache-readback.json",
-      "sha256": "81e4129e0490f2d11084cb8f623671becd587171b1e58146cd922f866befc050",
-      "bytes": 366
-    },
-    {
-      "path": "docs/plan/a2-configuration-readiness/c1-compatibility.json",
-      "sha256": "592253d9bc78dab15e66424d4c1906441e5554cba6086b64080729676e48ddad",
-      "bytes": 7361
-    },
-    {
-      "path": "docs/plan/a2-configuration-readiness/c1-inputs.json",
-      "sha256": "7f65ec4a627479434b339f9e4e661c00c60777c9fea962d6a37e67405c213969",
-      "bytes": 5277
+      "sha256": "2b8d834ec0568f3ff6602950744c82f3090b319012e71b7bf096b43e5935ba6a",
+      "bytes": 16802
     },
     {
       "path": "docs/plan/a2-configuration-readiness/current-binding.json",
-      "sha256": "d996b187a0737a111c63ea7fb1b565799e81d0e90a9effb470ea60bec1f84ce3",
-      "bytes": 1251
+      "sha256": "c83e13832a1c1110d53ef7eaaea1379867398246687db714ee4e0311b3204250",
+      "bytes": 1189
     },
     {
       "path": "docs/plan/a2-configuration-readiness/current-spec.md",
@@ -487,26 +464,6 @@
       "path": "docs/plan/a2-configuration-readiness/historical-spec.md",
       "sha256": "a6a9fdd5b76c1e68769e87e255d645b01de81acb4cd30ce227ba34c091437ba2",
       "bytes": 3590
-    },
-    {
-      "path": "docs/plan/a2-configuration-readiness/history/before-c1-main-ref-verification.json",
-      "sha256": "e86249c8e13f79579a19e0f91a06b6935d8d2ba3d5a38404134e8fb54d2eeca0",
-      "bytes": 4309
-    },
-    {
-      "path": "docs/plan/a2-configuration-readiness/history/before-c1-plan.md",
-      "sha256": "2b8d834ec0568f3ff6602950744c82f3090b319012e71b7bf096b43e5935ba6a",
-      "bytes": 16802
-    },
-    {
-      "path": "docs/plan/a2-configuration-readiness/history/before-c1-revision-binding.json",
-      "sha256": "0fa4b5814b84977550bb61bc7870c63633f4bfef173b1abbdeb5e06599628bf3",
-      "bytes": 5265
-    },
-    {
-      "path": "docs/plan/a2-configuration-readiness/history/before-c1-source.json",
-      "sha256": "b208b76ada3caeb1c1790d787beae47d1c6f34635c4c4ecd9b268e1bdbd70d3f",
-      "bytes": 28450
     },
     {
       "path": "docs/plan/a2-configuration-readiness/history/dbabced-09.md",
@@ -585,31 +542,31 @@
     },
     {
       "path": "docs/plan/a2-configuration-readiness/review-fixes.json",
-      "sha256": "fe8bfc21f96fd56822d31f3a1501f0913ca1b0ed6ab5815bbd839a9fa08e0c43",
-      "bytes": 8908
+      "sha256": "b8c6839d9f3e2fe61e9707f9eef2c98216aac2adcb76b4012c8d660b8ea72670",
+      "bytes": 8073
     },
     {
       "path": "docs/plan/a2-configuration-readiness/review-map.md",
-      "sha256": "f782a4d1b8bb55a063e55cda1ebcaa722b5ecc0e1b20be36eb3dfb9bedb100a7",
-      "bytes": 33065
+      "sha256": "e2241b1af4d31ddc8badc1a2e676b0889dfab24d771fa830bb879616e163a849",
+      "bytes": 31954
     },
     {
       "path": "docs/plan/a2-configuration-readiness/revision-binding.json",
-      "sha256": "623087bf7e66b8e5ca3780d011e38e3c65af7fa32ce67a6dbb08bb804daa992e",
-      "bytes": 5325
+      "sha256": "0fa4b5814b84977550bb61bc7870c63633f4bfef173b1abbdeb5e06599628bf3",
+      "bytes": 5265
     },
     {
       "path": "docs/plan/a2-configuration-readiness/revision-inputs.json",
-      "sha256": "95deef6ab09c36f9a6aa4e8cb34e5478e5b381131cbd66ce9fa2bac6e2906905",
-      "bytes": 92662
+      "sha256": "fbde137b83ac81fd91e9cec0aea8df9435b2fc679edfbe6a7edb7b9709d6cbc5",
+      "bytes": 87751
     }
   ],
   "latestReadWindow": {
     "before": {
-      "current_time": "2026-10-08 12:40:04 UTC"
+      "current_time": "2026-10-08 12:27:04 UTC"
     },
     "after": {
-      "current_time": "2026-10-08 12:45:45 UTC"
+      "current_time": "2026-10-08 12:29:00 UTC"
     }
   },
   "revisionInputPlan": {
@@ -619,159 +576,5 @@
     "bytes": 14469,
     "path": "docs/plan/a2-configuration-readiness/history/PjUM-plan.md",
     "source": "本轮用户注入的authoritative saved plan完整正文；mcp__tds__todos的Saved plan截断，不声称读全后端doc；conversation实读ID"
-  },
-  "latestMainInput": {
-    "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-    "receiptPath": "docs/plan/a2-configuration-readiness/c1-compatibility.json",
-    "sourceFiles": [
-      {
-        "path": "apps/worker/src/provider-actions.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "5b224445917efe29f1234ddf1e233c149951834e19f34c454ccec31bdf4707f7",
-        "bytes": 70418,
-        "unchangedFromA1": true
-      },
-      {
-        "path": "apps/api/src/delivery/routes.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "71bca1ffd3225f8a5165a2fc952571cd9c2f048317c125dfab586dcf43457626",
-        "bytes": 94927,
-        "unchangedFromA1": true
-      },
-      {
-        "path": "apps/api/src/pagination.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "29bb52a0fb0c75f66e1b586a0802dd8e0b3ae7ff95b01d6b7b3c58808e5a7fd3",
-        "bytes": 9760,
-        "unchangedFromA1": true
-      },
-      {
-        "path": "apps/api/src/workbench-llm-connections.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "e8a91e6e169bc7f2d9dcd2080cc050ebee87d73d6b768f729fe81d4f5ccc3ba0",
-        "bytes": 19485,
-        "unchangedFromA1": true
-      },
-      {
-        "path": "packages/db/src/agent-locks.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "d732f393e102d08134535a589bd13f97651c2d9c4ac10aa14487b8d1142c0eb6",
-        "bytes": 3806,
-        "unchangedFromA1": true
-      },
-      {
-        "path": "packages/db/src/agent-lock-order-manifest.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "3d64b5abc187a6775f0e9399325f4b40c26420c598d2d2a887e81bc1d152115a",
-        "bytes": 27268,
-        "unchangedFromA1": true
-      },
-      {
-        "path": "packages/contracts/src/configuration-readiness-contracts.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "a0da8f69b998dc9bb70eaf01f61f0644013e9ef19db3db1ac0f9aba286c8a75a",
-        "bytes": 1606,
-        "unchangedFromA1": true
-      },
-      {
-        "path": "apps/api/src/configuration-readiness.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "60289833f1b1f9804bb638603a16ca79c9edb503ca4d9da6d8fd6f25abf15799",
-        "bytes": 5623,
-        "unchangedFromA1": true
-      },
-      {
-        "path": "OPENAPI.yaml",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "8b684aaebea15dfb7ea9c68536978a7db19f4c79263618e7d5c0e8e84a133f4f",
-        "bytes": 503229,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "SCHEMA.sql",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "9682e88fb26f7c82452ad383ea5618ad7e150d149c44f44d578fd665feab35d2",
-        "bytes": 1531,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "apps/api/src/server.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "e7a649ab7a2422e4a998a3cff9708e141835ec94f4ad7ac67c340ecc3fa5bb22",
-        "bytes": 72836,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "packages/contracts/src/index.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "4e3e12aa53aacbb20206ab04bb2676c7312c5ced0873ec9847b7ca73ba0cd340",
-        "bytes": 185438,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "apps/api/integration/stage4-operations.integration.test.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "4b3489d0484a1a30b5cd1aa27b971e2efb39520cf237a8072fb1b99e485eeea2",
-        "bytes": 70001,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "packages/db/src/index.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "f3153cd8fde2db27ed209a6e0ab83aa963791ba7e1aba51161982f982ead8bee",
-        "bytes": 6607,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "packages/db/src/events.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "d4cf2eeb2736651c71ce46be3092a22d90d6a726a720f7effebbe932e62e2015",
-        "bytes": 6835,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "packages/db/src/event-resources.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "b3e035cb948c4a468b25c1323c16c05a9b3089021bf2d5a312a900b0e5bc78cd",
-        "bytes": 35858,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "packages/db/src/channel-notifications.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "7333d1040f73e63de71f77d31fb54119fe9e2af64b25824d5208da37f1b0ef4a",
-        "bytes": 31862,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "packages/db/src/human-attention-sources.ts",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "4ac967adda4daba404789c5c4f86fad7acafc80097460451ca1aa6aa5083066e",
-        "bytes": 10960,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "packages/db/migrations/v1/0014_channel_delivery_contract.sql",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "1f8d766b5215c3bbade32c4f52ac790edb004d30a586034df2518cf2794247e7",
-        "bytes": 5557,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "packages/db/migrations/v1/0015_channel_notification_kind.sql",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "632dbc4eb356f6b032cc405a1960cbf006cced66c950763f165f87bd9f4191e5",
-        "bytes": 749,
-        "unchangedFromA1": false
-      },
-      {
-        "path": "packages/db/migrations/v1/0016_approval_notification_kind.sql",
-        "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
-        "gitBlobSha256": "01fa357c187faf980e7e1344ccd12de5af3826029d45744732041fc5b56d72e4",
-        "bytes": 345,
-        "unchangedFromA1": false
-      }
-    ],
-    "byteKind": "精确main Git blob；与未整合产品的当前工作树字节单列"
   }
 }

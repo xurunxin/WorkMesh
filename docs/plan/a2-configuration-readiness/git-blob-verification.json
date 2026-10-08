@@ -1,128 +1,283 @@
 {
   "result": "通过",
-  "source": "本轮当前暂存区git show :path；工作树原字节单列",
+  "source": "本轮暂存区git show :path，工作树原字节单列",
   "entries": [
     {
       "path": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
-      "worktreeBytes": 16333,
-      "worktreeSha256": "ffbd824bf6e6bf502e251c41f5d77abd027f100528f60f27d6d9f7f15ff6ad5b",
-      "gitBlobBytes": 16099,
-      "gitBlobSha256": "4732a4c301d88e078f8d04d7c3a853cd9341140f78f9088fdba0616ada9e17ac",
+      "worktreeSha256": "bf88d54242dda453970d330100c35f2a770f9132aaae9084bbb1981c528911df",
+      "worktreeBytes": 20952,
+      "gitBlobSha256": "9a14c640d5a856c74cec4cc9e314995596a7d5f448d8fc9d440ef5e7de2f7b95",
+      "gitBlobBytes": 20718,
       "identical": false
     },
     {
       "path": "docs/plan/a2-configuration-readiness.md",
-      "worktreeBytes": 10093,
-      "worktreeSha256": "5dde5f9af0a1e7ab9aab1a5e5ae7a84bcc7a7367148b437f2ea3175c9292a1e6",
-      "gitBlobBytes": 10093,
-      "gitBlobSha256": "5dde5f9af0a1e7ab9aab1a5e5ae7a84bcc7a7367148b437f2ea3175c9292a1e6",
+      "worktreeSha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
+      "worktreeBytes": 17436,
+      "gitBlobSha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
+      "gitBlobBytes": 17436,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/c1-cache-readback.json",
+      "worktreeSha256": "81e4129e0490f2d11084cb8f623671becd587171b1e58146cd922f866befc050",
+      "worktreeBytes": 366,
+      "gitBlobSha256": "81e4129e0490f2d11084cb8f623671becd587171b1e58146cd922f866befc050",
+      "gitBlobBytes": 366,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/c1-compatibility.json",
+      "worktreeSha256": "592253d9bc78dab15e66424d4c1906441e5554cba6086b64080729676e48ddad",
+      "worktreeBytes": 7361,
+      "gitBlobSha256": "592253d9bc78dab15e66424d4c1906441e5554cba6086b64080729676e48ddad",
+      "gitBlobBytes": 7361,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/c1-inputs.json",
+      "worktreeSha256": "7f65ec4a627479434b339f9e4e661c00c60777c9fea962d6a37e67405c213969",
+      "worktreeBytes": 5277,
+      "gitBlobSha256": "7f65ec4a627479434b339f9e4e661c00c60777c9fea962d6a37e67405c213969",
+      "gitBlobBytes": 5277,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/current-binding.json",
+      "worktreeSha256": "d996b187a0737a111c63ea7fb1b565799e81d0e90a9effb470ea60bec1f84ce3",
+      "worktreeBytes": 1251,
+      "gitBlobSha256": "d996b187a0737a111c63ea7fb1b565799e81d0e90a9effb470ea60bec1f84ce3",
+      "gitBlobBytes": 1251,
       "identical": true
     },
     {
       "path": "docs/plan/a2-configuration-readiness/current-spec.md",
-      "worktreeBytes": 11509,
+      "worktreeSha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+      "worktreeBytes": 11506,
+      "gitBlobSha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+      "gitBlobBytes": 11506,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/DXua-git-plan.md",
+      "worktreeSha256": "5dde5f9af0a1e7ab9aab1a5e5ae7a84bcc7a7367148b437f2ea3175c9292a1e6",
+      "worktreeBytes": 10093,
+      "gitBlobSha256": "5dde5f9af0a1e7ab9aab1a5e5ae7a84bcc7a7367148b437f2ea3175c9292a1e6",
+      "gitBlobBytes": 10093,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/PjUM-plan.md",
+      "worktreeSha256": "77d0d8ef2d1090644b0e691a49457afc81495c398f9abef179bb60d5d0d5aeba",
+      "worktreeBytes": 14469,
+      "gitBlobSha256": "77d0d8ef2d1090644b0e691a49457afc81495c398f9abef179bb60d5d0d5aeba",
+      "gitBlobBytes": 14469,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/before-c1-main-ref-verification.json",
+      "worktreeSha256": "e86249c8e13f79579a19e0f91a06b6935d8d2ba3d5a38404134e8fb54d2eeca0",
+      "worktreeBytes": 4309,
+      "gitBlobSha256": "e86249c8e13f79579a19e0f91a06b6935d8d2ba3d5a38404134e8fb54d2eeca0",
+      "gitBlobBytes": 4309,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/before-c1-plan.md",
+      "worktreeSha256": "2b8d834ec0568f3ff6602950744c82f3090b319012e71b7bf096b43e5935ba6a",
+      "worktreeBytes": 16802,
+      "gitBlobSha256": "2b8d834ec0568f3ff6602950744c82f3090b319012e71b7bf096b43e5935ba6a",
+      "gitBlobBytes": 16802,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/before-c1-revision-binding.json",
+      "worktreeSha256": "0fa4b5814b84977550bb61bc7870c63633f4bfef173b1abbdeb5e06599628bf3",
+      "worktreeBytes": 5265,
+      "gitBlobSha256": "0fa4b5814b84977550bb61bc7870c63633f4bfef173b1abbdeb5e06599628bf3",
+      "gitBlobBytes": 5265,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/before-c1-source.json",
+      "worktreeSha256": "b208b76ada3caeb1c1790d787beae47d1c6f34635c4c4ecd9b268e1bdbd70d3f",
+      "worktreeBytes": 28450,
+      "gitBlobSha256": "b208b76ada3caeb1c1790d787beae47d1c6f34635c4c4ecd9b268e1bdbd70d3f",
+      "gitBlobBytes": 28450,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/dbabced-09.md",
       "worktreeSha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
-      "gitBlobBytes": 11509,
+      "worktreeBytes": 11509,
       "gitBlobSha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
+      "gitBlobBytes": 11509,
       "identical": true
     },
     {
-      "path": "docs/plan/a2-configuration-readiness/historical-git-observation.json",
-      "worktreeBytes": 962,
-      "worktreeSha256": "c50c00cad78a50ae5fda91902d8bed2b9d2974a13ed9610fe3c492b8c75dcc84",
-      "gitBlobBytes": 962,
-      "gitBlobSha256": "c50c00cad78a50ae5fda91902d8bed2b9d2974a13ed9610fe3c492b8c75dcc84",
+      "path": "docs/plan/a2-configuration-readiness/history/dbabced-adr.md",
+      "worktreeSha256": "4732a4c301d88e078f8d04d7c3a853cd9341140f78f9088fdba0616ada9e17ac",
+      "worktreeBytes": 16099,
+      "gitBlobSha256": "4732a4c301d88e078f8d04d7c3a853cd9341140f78f9088fdba0616ada9e17ac",
+      "gitBlobBytes": 16099,
       "identical": true
     },
     {
-      "path": "docs/plan/a2-configuration-readiness/historical-mapping.json",
-      "worktreeBytes": 12287,
-      "worktreeSha256": "4328a672b58b28d49fbc497757d1a152320d5c21d844179dc5f5fed3ce3fdd87",
-      "gitBlobBytes": 12287,
-      "gitBlobSha256": "4328a672b58b28d49fbc497757d1a152320d5c21d844179dc5f5fed3ce3fdd87",
+      "path": "docs/plan/a2-configuration-readiness/history/dbabced-coverage.json",
+      "worktreeSha256": "e9d36e15b88ad64a8e64f9412cfaa7ab6ae3e6bfb6387790c6fd5e4769193bb3",
+      "worktreeBytes": 327477,
+      "gitBlobSha256": "e9d36e15b88ad64a8e64f9412cfaa7ab6ae3e6bfb6387790c6fd5e4769193bb3",
+      "gitBlobBytes": 327477,
       "identical": true
     },
     {
-      "path": "docs/plan/a2-configuration-readiness/historical-spec.md",
-      "worktreeBytes": 3590,
-      "worktreeSha256": "a6a9fdd5b76c1e68769e87e255d645b01de81acb4cd30ce227ba34c091437ba2",
-      "gitBlobBytes": 3590,
-      "gitBlobSha256": "a6a9fdd5b76c1e68769e87e255d645b01de81acb4cd30ce227ba34c091437ba2",
+      "path": "docs/plan/a2-configuration-readiness/history/dbabced-git-blob-verification.json",
+      "worktreeSha256": "b7efdac970f0cbc2977ff778a5b031810c32b35eb5ff4e6dadec6e10594e9757",
+      "worktreeBytes": 5462,
+      "gitBlobSha256": "b7efdac970f0cbc2977ff778a5b031810c32b35eb5ff4e6dadec6e10594e9757",
+      "gitBlobBytes": 5462,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/dbabced-index.json",
+      "worktreeSha256": "7551c1d9e8a72c014d554aaae5a35dabe9d4fee29224dee3e43c8b5ce4ebaed2",
+      "worktreeBytes": 101218,
+      "gitBlobSha256": "7551c1d9e8a72c014d554aaae5a35dabe9d4fee29224dee3e43c8b5ce4ebaed2",
+      "gitBlobBytes": 101218,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/dbabced-main-ref-verification.json",
+      "worktreeSha256": "ebe50afd4eaace59ad16776cbdac26d13f226442b1669314cede3550720d5563",
+      "worktreeBytes": 4082,
+      "gitBlobSha256": "ebe50afd4eaace59ad16776cbdac26d13f226442b1669314cede3550720d5563",
+      "gitBlobBytes": 4082,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/dbabced-planning-verification.json",
+      "worktreeSha256": "7e8a2de0be7074f2ff953ea764cccb8291796240f00a9e3bd96cfd7721c6dfb0",
+      "worktreeBytes": 1750,
+      "gitBlobSha256": "7e8a2de0be7074f2ff953ea764cccb8291796240f00a9e3bd96cfd7721c6dfb0",
+      "gitBlobBytes": 1750,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/dbabced-platform-readback.json",
+      "worktreeSha256": "3e58a043acbfa17f8fb3744a608aa0a9a5f3d1c4e3ce280faed9b128fa9aba17",
+      "worktreeBytes": 19401,
+      "gitBlobSha256": "3e58a043acbfa17f8fb3744a608aa0a9a5f3d1c4e3ce280faed9b128fa9aba17",
+      "gitBlobBytes": 19401,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/dbabced-review-map.md",
+      "worktreeSha256": "e8959c6a6864c2d21c45ed4b81a51eeedaa6cae97c90f0804575d5b51142ab98",
+      "worktreeBytes": 21013,
+      "gitBlobSha256": "e8959c6a6864c2d21c45ed4b81a51eeedaa6cae97c90f0804575d5b51142ab98",
+      "gitBlobBytes": 21013,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/history/dbabced-source.json",
+      "worktreeSha256": "6146d92d250ac9a5f0a68f5bad898ab95458dbedd5aee44478748ff3612c94c0",
+      "worktreeBytes": 13964,
+      "gitBlobSha256": "6146d92d250ac9a5f0a68f5bad898ab95458dbedd5aee44478748ff3612c94c0",
+      "gitBlobBytes": 13964,
       "identical": true
     },
     {
       "path": "docs/plan/a2-configuration-readiness/main-ref-verification.json",
-      "worktreeBytes": 4082,
-      "worktreeSha256": "ebe50afd4eaace59ad16776cbdac26d13f226442b1669314cede3550720d5563",
-      "gitBlobBytes": 4082,
-      "gitBlobSha256": "ebe50afd4eaace59ad16776cbdac26d13f226442b1669314cede3550720d5563",
+      "worktreeSha256": "e86249c8e13f79579a19e0f91a06b6935d8d2ba3d5a38404134e8fb54d2eeca0",
+      "worktreeBytes": 4309,
+      "gitBlobSha256": "e86249c8e13f79579a19e0f91a06b6935d8d2ba3d5a38404134e8fb54d2eeca0",
+      "gitBlobBytes": 4309,
       "identical": true
     },
     {
       "path": "docs/plan/a2-configuration-readiness/planning-verification.json",
-      "worktreeBytes": 1750,
-      "worktreeSha256": "7e8a2de0be7074f2ff953ea764cccb8291796240f00a9e3bd96cfd7721c6dfb0",
-      "gitBlobBytes": 1750,
-      "gitBlobSha256": "7e8a2de0be7074f2ff953ea764cccb8291796240f00a9e3bd96cfd7721c6dfb0",
+      "worktreeSha256": "140432c64ecc83d2d0dc47bc7f49d21ef356c3ee39fb3ca4351a0e3f9430837d",
+      "worktreeBytes": 3547,
+      "gitBlobSha256": "140432c64ecc83d2d0dc47bc7f49d21ef356c3ee39fb3ca4351a0e3f9430837d",
+      "gitBlobBytes": 3547,
       "identical": true
     },
     {
       "path": "docs/plan/a2-configuration-readiness/platform-readback.json",
-      "worktreeBytes": 19401,
-      "worktreeSha256": "3e58a043acbfa17f8fb3744a608aa0a9a5f3d1c4e3ce280faed9b128fa9aba17",
-      "gitBlobBytes": 19401,
-      "gitBlobSha256": "3e58a043acbfa17f8fb3744a608aa0a9a5f3d1c4e3ce280faed9b128fa9aba17",
+      "worktreeSha256": "0dec220ca56e325bc3508732dc3f641f7ed55ffd71f85bafa8d6dff1283d346b",
+      "worktreeBytes": 29533,
+      "gitBlobSha256": "0dec220ca56e325bc3508732dc3f641f7ed55ffd71f85bafa8d6dff1283d346b",
+      "gitBlobBytes": 29533,
       "identical": true
     },
     {
-      "path": "docs/plan/a2-configuration-readiness/resources.json",
-      "worktreeBytes": 679,
-      "worktreeSha256": "769d13b30dba3311fa2c73489d6ef478e5f2f05a619a03e5d3c57bb8ff91cb27",
-      "gitBlobBytes": 679,
-      "gitBlobSha256": "769d13b30dba3311fa2c73489d6ef478e5f2f05a619a03e5d3c57bb8ff91cb27",
+      "path": "docs/plan/a2-configuration-readiness/review-fixes.json",
+      "worktreeSha256": "fe8bfc21f96fd56822d31f3a1501f0913ca1b0ed6ab5815bbd839a9fa08e0c43",
+      "worktreeBytes": 8908,
+      "gitBlobSha256": "fe8bfc21f96fd56822d31f3a1501f0913ca1b0ed6ab5815bbd839a9fa08e0c43",
+      "gitBlobBytes": 8908,
       "identical": true
     },
     {
       "path": "docs/plan/a2-configuration-readiness/review-map.md",
-      "worktreeBytes": 21013,
-      "worktreeSha256": "e8959c6a6864c2d21c45ed4b81a51eeedaa6cae97c90f0804575d5b51142ab98",
-      "gitBlobBytes": 21013,
-      "gitBlobSha256": "e8959c6a6864c2d21c45ed4b81a51eeedaa6cae97c90f0804575d5b51142ab98",
+      "worktreeSha256": "f782a4d1b8bb55a063e55cda1ebcaa722b5ecc0e1b20be36eb3dfb9bedb100a7",
+      "worktreeBytes": 33065,
+      "gitBlobSha256": "f782a4d1b8bb55a063e55cda1ebcaa722b5ecc0e1b20be36eb3dfb9bedb100a7",
+      "gitBlobBytes": 33065,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/revision-binding.json",
+      "worktreeSha256": "623087bf7e66b8e5ca3780d011e38e3c65af7fa32ce67a6dbb08bb804daa992e",
+      "worktreeBytes": 5325,
+      "gitBlobSha256": "623087bf7e66b8e5ca3780d011e38e3c65af7fa32ce67a6dbb08bb804daa992e",
+      "gitBlobBytes": 5325,
+      "identical": true
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/revision-inputs.json",
+      "worktreeSha256": "95deef6ab09c36f9a6aa4e8cb34e5478e5b381131cbd66ce9fa2bac6e2906905",
+      "worktreeBytes": 92662,
+      "gitBlobSha256": "95deef6ab09c36f9a6aa4e8cb34e5478e5b381131cbd66ce9fa2bac6e2906905",
+      "gitBlobBytes": 92662,
       "identical": true
     },
     {
       "path": "docs/plan/a2-configuration-readiness/source.json",
-      "worktreeBytes": 13964,
-      "worktreeSha256": "6146d92d250ac9a5f0a68f5bad898ab95458dbedd5aee44478748ff3612c94c0",
-      "gitBlobBytes": 13964,
-      "gitBlobSha256": "6146d92d250ac9a5f0a68f5bad898ab95458dbedd5aee44478748ff3612c94c0",
+      "worktreeSha256": "7d9eafa34459f0ef95277352806e7177e44800978357d86d01fd195f31336b27",
+      "worktreeBytes": 36359,
+      "gitBlobSha256": "7d9eafa34459f0ef95277352806e7177e44800978357d86d01fd195f31336b27",
+      "gitBlobBytes": 36359,
       "identical": true
     },
     {
       "path": "docs/plan/activation-task-specs/09.md",
-      "worktreeBytes": 11509,
-      "worktreeSha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
-      "gitBlobBytes": 11509,
-      "gitBlobSha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
+      "worktreeSha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+      "worktreeBytes": 11506,
+      "gitBlobSha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+      "gitBlobBytes": 11506,
       "identical": true
     },
     {
       "path": "docs/plan/activation-task-specs/index.json",
-      "worktreeBytes": 101218,
-      "worktreeSha256": "7551c1d9e8a72c014d554aaae5a35dabe9d4fee29224dee3e43c8b5ce4ebaed2",
-      "gitBlobBytes": 101218,
-      "gitBlobSha256": "7551c1d9e8a72c014d554aaae5a35dabe9d4fee29224dee3e43c8b5ce4ebaed2",
+      "worktreeSha256": "67fb55fbe8ff36c5dab6648c8d138bef88521ce3b026d75754f6d2ace09abc9a",
+      "worktreeBytes": 102357,
+      "gitBlobSha256": "67fb55fbe8ff36c5dab6648c8d138bef88521ce3b026d75754f6d2ace09abc9a",
+      "gitBlobBytes": 102357,
       "identical": true
     },
     {
       "path": "docs/reviews/r1/test-coverage.json",
-      "worktreeBytes": 327477,
-      "worktreeSha256": "e9d36e15b88ad64a8e64f9412cfaa7ab6ae3e6bfb6387790c6fd5e4769193bb3",
-      "gitBlobBytes": 327477,
-      "gitBlobSha256": "e9d36e15b88ad64a8e64f9412cfaa7ab6ae3e6bfb6387790c6fd5e4769193bb3",
+      "worktreeSha256": "767f4ffe72d24d479bc2fad3b0ceec06d695df793934083cc186095b0ef51ab0",
+      "worktreeBytes": 348037,
+      "gitBlobSha256": "767f4ffe72d24d479bc2fad3b0ceec06d695df793934083cc186095b0ef51ab0",
+      "gitBlobBytes": 348037,
       "identical": true
     }
   ],
-  "planAndCurrentSpecExact": true,
-  "scope": "仅规划文档；此回执自身不自引用"
+  "exactCurrentPlan": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
+  "exactCurrentSpec": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+  "exactInputPjUM": "77d0d8ef2d1090644b0e691a49457afc81495c398f9abef179bb60d5d0d5aeba",
+  "historyExact": true,
+  "scope": "仅规划文档，不自引用此回执"
 }

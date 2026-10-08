@@ -513,7 +513,7 @@
       "sourceUpdatedAt": "2026-10-07T15:23:25.992Z",
       "sourceSha256": "130e16687029a7950d13ebe964a9d230bfa1892e811d77bbfbe050e9201b0286",
       "path": "docs/plan/activation-task-specs/09.md",
-      "specSha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+      "specSha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
       "phase": "todo",
       "owner": "A2 执行者",
       "withPlan": true,
@@ -526,10 +526,10 @@
       ],
       "acceptanceRequires": [],
       "blocks": [],
-      "syncStatus": "本轮仅同步完整当前规格、修订计划和三项独审方案；旧source字段保留历史；未实施产品",
+      "syncStatus": "当前平台完整规格已同步到仓库09.md；旧源字段保留历史含义；未创建真实WorkMesh记录",
       "gate": "按依赖与审查门禁",
-      "latestSourceUpdatedAt": "2026-10-08T12:26:24.989Z",
-      "latestSourceSha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+      "latestSourceUpdatedAt": "2026-10-08T11:46:28.872Z",
+      "latestSourceSha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
       "latestSourcePhase": "planning",
       "requiresTodoIds": [
         "reEr9xXt9JXN26e5SbC7Z",
@@ -545,7 +545,7 @@
           "id": "9-contract",
           "owner": "A2 执行者",
           "input": "已审R1完整规格、指定base及全部requires已验收产物；执行者先给出精确plan/head",
-          "output": "URL明确工作类型；有序未满足列表、三个固定WorkMesh提示和canonical页面链接；项目内复用已有仓库注册/上下文及必要连接命令，保留真实权限、幂等和并发，不新增wizard/seen/可编辑设置。A2独立验收，A2+D4组合归#13。 三修方案包含Worker落库/恢复授权锁、连接秘密HMAC幂等、Human作用域/provider分页；待实现/未运行。",
+          "output": "URL明确工作类型；有序未满足列表、三个固定WorkMesh提示和canonical页面链接；项目内复用已有仓库注册/上下文及必要连接命令，保留真实权限、幂等和并发，不新增wizard/seen/可编辑设置。A2独立验收，A2+D4组合归#13。",
           "acceptance": "方案/变更关口通过，未建测试文件按coverage指定owner创建",
           "testMapping": "docs/reviews/r1/test-coverage.json"
         },
@@ -591,14 +591,13 @@
       ],
       "currentSource": {
         "todoId": "0BkezbmWV6k8vwrlSNuF_",
-        "updatedAt": "2026-10-08T12:26:24.989Z",
-        "sha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+        "updatedAt": "2026-10-08T11:46:28.872Z",
+        "sha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
         "snapshotPath": "docs/plan/a2-configuration-readiness/current-spec.md",
-        "source": "本轮mcp__tds__todos的完整Spec段；Saved plan单独截断，不混用",
+        "source": "mcp__tds__todos(id) 本轮完整 Spec 段",
         "questionCardId": "q-g078qrLdME6hTbM58dvfx",
-        "approvalReadback": "docs/plan/a2-configuration-readiness/revision-inputs.json",
-        "planPath": "docs/plan/a2-configuration-readiness.md",
-        "version": null
+        "approvalReadback": "docs/plan/a2-configuration-readiness/platform-readback.json",
+        "planPath": "docs/plan/a2-configuration-readiness.md"
       },
       "approvedScope": [
         "URL明确workKind，不推断",
@@ -606,21 +605,7 @@
         "项目内复用已有仓库配置API，真实闭合缺口"
       ],
       "currentPlanPath": "docs/plan/a2-configuration-readiness.md",
-      "testMapping": "docs/plan/a2-configuration-readiness/review-map.md",
-      "currentPlanBinding": {
-        "inputPlanId": "PjUMm3PTb-SjwgK6vrEgZ",
-        "inputVersion": null,
-        "inputPlanSha256": "77d0d8ef2d1090644b0e691a49457afc81495c398f9abef179bb60d5d0d5aeba",
-        "inputPlanPath": "docs/plan/a2-configuration-readiness/history/PjUM-plan.md",
-        "outputPlanId": null,
-        "outputVersion": null,
-        "outputPlanSha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
-        "outputPlanPath": "docs/plan/a2-configuration-readiness.md",
-        "idTiming": "PjUM已实读为修订输入；当前输出由本回合edit_plan结束后生成，ID如实null，不为自引用新建计划",
-        "actualMain": "5b9c76b5f79917697906520edcd6947bfbfa925f"
-      },
-      "reviewFixes": "docs/plan/a2-configuration-readiness/review-fixes.json",
-      "latestMainImpact": "C1现行锁顺序及appendEvent内部快照兼容已纳入；三修及原验收保持，未实施产品"
+      "testMapping": "docs/plan/a2-configuration-readiness/review-map.md"
     },
     {
       "seqNum": 10,

@@ -6,7 +6,7 @@
 
 当前授权来自平台完整规格、原问题卡三答及 Chief 本会话追加指令。旧 `execution-inputs.json`、原 sourceSha256 与历史规格只证明历史输入。本轮当前规格见 `current-spec.md`，原始读回见 `platform-readback.json`；精确平台 ID、当前更新时间、UTF-8 哈希、工作树与 Git blob 字节策略见 `source.json`。
 
-当前工作树HEAD为dbabced文档提交，产品代码含A1合同与修复，产品基点为 `96e724858e692d262107c34db50b40c3ae7c122c`。历史纠正后的remote读取为平台git `ls-remote origin refs/heads/main`，返回同一 SHA；随后明确 `fetch origin refs/heads/main`，并以该 SHA 做 `show`，确认 A1 合同存在。旧时点读回保留历史；本轮remote精确SHA不变，但cache FETCH_HEAD为另一SHA、工作树叠加规划文档，不将它们当同一ref。精确工具参数、原始结果和前后 UTC 观察时间见 `main-ref-verification.json`。先前多调用间的共享 FETCH_HEAD 读回不能被当成远端 main，原分叉推断已撤回；错误观察原样另存 `historical-git-observation.json`，其未独立记录的时间字段为 null，不编造远端曾回滚或移动。此纠正不新增开工门禁，本轮不做代码合并。实施与交付前仍以准确 remote ref 固定新 main SHA，检查实际增量并按既有授权整合，不由 stale refs 推测 PR 状态。
+当前 worktree 含 A1 合同与修复，基点为 `96e724858e692d262107c34db50b40c3ae7c122c`。纠正后的 remote 读取为平台 git `ls-remote origin refs/heads/main`，返回同一 SHA；随后明确 `fetch origin refs/heads/main`，并以该 SHA 做 `show`，确认 A1 合同存在。本次时点的 cache HEAD、FETCH_HEAD、工作树 HEAD 与 remote URL 也核对一致。精确工具参数、原始结果和前后 UTC 观察时间见 `main-ref-verification.json`。先前多调用间的共享 FETCH_HEAD 读回不能被当成远端 main，原分叉推断已撤回；错误观察原样另存 `historical-git-observation.json`，其未独立记录的时间字段为 null，不编造远端曾回滚或移动。此纠正不新增开工门禁，本轮不做代码合并。实施与交付前仍以准确 remote ref 固定新 main SHA，检查实际增量并按既有授权整合，不由 stale refs 推测 PR 状态。
 
 ## 已选实现细节
 
@@ -54,7 +54,7 @@
 | 普通 Human member | 只读；无写入按钮；缺口显示同一 unmet，不泄露他人个人配置 |
 | Agent/Service | 不能使用 Human 页面；新增读提示不授予写权限 |
 
-没有可见仓库且当前用户不可注册时显示联系管理员说明，不显示虚假的可操作主按钮。仓库列表以teamId与availableOnly=true在服务端SQL分页前限制当前Team、active仓库/连接和启用provider；不能以第一页没找到就宣称资源不存在。读取/权限变更时清除旧表单操作；403/404 后更新角色/作用域，不自动重放旧提交。
+没有可见仓库且当前用户不可注册时显示联系管理员说明，不显示虚假的可操作主按钮。仓库列表分页加载，显示当前 Team 且 active 的条目；不能以第一页没找到就宣称资源不存在。读取/权限变更时清除旧表单操作；403/404 后更新角色/作用域，不自动重放旧提交。
 
 Provider 连接表单使用原 `providerConnectionInputSchema`：GitHub 输入 external account、display name、installation ID、app ID、private key、webhook secret；Gitea 输入 external account、display name、HTTPS base URL、access token、webhook secret。读取现有 featureRegistryResponseSchema，Gitea 未启用不显示创建动作；生产表单不提供 fake provider 选项。已存在 connectionId 可直接用于注册。凭证字段为秘密输入，不写 sessionStorage、draft、URL、活动或测试日志；apiMutation 仅存哈希请求身份和 key。失败或结束清除秘密字段，重输相同秘密的同正文重试保持 key，编辑正文建立新 key。
 
@@ -66,37 +66,7 @@ Provider 连接表单使用原 `providerConnectionInputSchema`：GitHub 输入 e
 
 同一表单 in-flight 禁止重复 submit；操作 key 按 Actor/workspace/Team/目标/仓库/命令区分；网络丢响应、408/425/429/5xx 保留同一 key。修改内容产生新身份，不能把一次注册连带视为一次 pin。提交前重读上下文，发现基线已变则要求加载并检查，保留非秘密草稿；这是前端防误操作，不冒数据库 CAS。不同操作者合法并发仍按已有追加事实语义，列表以服务器时间及稳定 ID 显示最新上下文，不能将 own action 已完成冒称当前配置永远属于自己。
 
-这些创建/追加 POST 没有 If-Match 参数，不新增虚构 revision；现有 ProjectEditor 编辑等 revisioned mutation 保留自己的 If-Match 和错误处理。既有Worker的checkpoint和最终落库授权缺口须按本次三修方案补齐，不能把旧实现当作已满足；事件/动作失败不被变成前端已完成。所有配置动作均不创建 Agent Session、委派、激活或发送消息。
-
-## 三项独审修补与精确场景
-
-完整Spec/授权/源PjUM读回见revision-inputs.json，主线C1增量见c1-inputs.json与c1-compatibility.json；源计划快照和旧文档保持历史，当前输出ID按生成时序null。
-
-- `apps/api/src/delivery/repository-configuration.ts`、`apps/api/src/delivery/routes.ts`：封装仓库读取投影，按当前 workspace admin、Team admin/maintainer 派生操作提示。A2 以 `teamId=T&availableOnly=true` 请求：校验当前 Team 可读，在 SQL 中先限制 Team、active 仓库/连接与已启用 provider，再执行既有 Paginator 的游标排序和 `limit+1`，不在分页后筛选。新筛选分支将 Team、`availableOnly` 值及仅在 true 时生效的排序后 provider 集合放进 Paginator `filters`，沿用 actor/workspace/route、`full_name,id` 排序和 `limit+1`；切 Team/筛选/feature 导致 `PAGINATION_CURSOR_MISMATCH`，丢弃游标从首屏重读。`availableOnly=false` 或未传时不隐藏禁用 provider，保留原 feature 拒绝；显式 `teamId` 仍在 SQL 分页前限制范围，无新参数的旧分支保持 `filters={}`。无新参数的 Human/Agent 请求保留旧分支、分页信封、既有字段及 feature 拒绝语义，仅附加已规划的操作提示字段；Agent 携带新 Human 筛选参数返回 `VALIDATION_ERROR`，不扩张 Session/Delegation 范围。上下文直接读取和 POST 仍执行 `requireProviderFeature`。
-
-- `apps/api/src/delivery/routes.ts` 的连接创建：新增局部 `providerConnectionFingerprint`，复用 `workbench-llm-connections.ts` 的 `createHmac('sha256', masterKey())` 模式，以 UTF-8 `workmesh:provider-connection-idempotency\0` 为用途域，追加字段名、NUL 分隔及秘密原字符串字节，分别计算 `webhookSecret`、`privateKey`、`accessToken` 的摘要；未提供字段用 `null`，已提供字段用带算法标记的摘要，不 trim 或重写秘密；只将公共字段、明确的缺省标记和这些摘要交给 `h.meta`，继续由 `mutate` 比较最终 `request_hash`。同 key 同正文重放，仅改任一秘密字段返回 `IDEMPOTENCY_KEY_REUSED`；不采用秘密明文或无密钥散列。旧脱敏账本无法证明正文相同，按指纹不匹配拒绝，不降级旧算法、不改历史账本、不自动换 key 重提；提示先核对已有连接，显式提交才可使用新请求身份；合法的新同文重试保持 key，账本保留原 TTL/过期清理语义，主密钥缺失失败关闭，不用随机盐破坏稳定重试。秘密仅按现有加密存储进入连接表，不进入账本、事件、响应或日志。
-
-- `apps/worker/src/provider-actions.ts`：把 `authorizeRepositoryContextResolution` 的事务内检查抽成接收 `PoolClient` 的 helper，在外部读取前和 `finishAction` 的 context 插入前复用；正常返回和 `action.result` checkpoint 恢复统一经过后者。采用当前 C1 `lockChannelAuthority` 的模式：无锁 locator 只找 ID；先对 workspace 取 `FOR KEY SHARE` 防止 Team 删除与事件 FK 锁倒置，保留 action 的 `FOR UPDATE`，再以 `lockAgentAuthorityPlan` 一次取得完整目标资源锁计划。Session 目标定位其 definition/grant/delegation 及关联 WorkItem/Project，遵守 helper 全局顺序与同类 ID 排序；这些锁不成为新的 Human 配置授权条件。随后对连接/仓库、Team、Human、具体 membership 行取 `FOR SHARE`，锁后重读全部 locator 绑定及现行 Human/角色/active/非删除目标权限，不新增逆序目标锁、不嵌套事务、不用 `EXISTS` 或 `FOR KEY SHARE` 替代授权行锁。锁持有至 context、pinned 与 outbox 提交；失权同事务 action dead 并复用 `provider.action.authorization_revoked`，不新增 context/guidance、pinned 或其 outbox，拒绝事实自身 outbox 单列。撤权先持锁则等待后拒绝；发布先持锁则撤权等待其提交。供应商读取期间不持数据库锁，C1 `appendEvent` 的迁移兼容与内部通知快照机制保留。
-
-- `packages/db/src/agent-lock-order-manifest.ts`：登记 Worker 新增的资源锁消费符号及受影响 SQL statement；沿用既有清单生成与 `agent-lock-order-inventory.test.ts` 校验，不修改 `agentLockRanks` 或锁 helper，逐 statement 复核而不以行号变化当安全证明。
-
-| 审查项 / 九类归属 | 测试文件 | 精确用例名 | 场景与断言 | 当前结果 |
-| --- | --- | --- | --- | --- |
-| B1 / unauthorized actor | apps/api/integration/stage3-delivery.integration.test.ts | 解析期间撤权后无上下文发布 | FakeGitProvider resolveRepositoryGuidance暂停；外部读取期间分别停用Human、撤销workspace admin且无有效maintainer、降级/删除membership、删除Team/目标或改变目标Team、停用仓库/连接；撤权提交后恢复读取。finishAction锁后重读拒绝，action dead；context/guidance、pinned事件及其outbox均无新增，authorization_revoked及其outbox另计。 | 未实现、未运行；规划不预填通过 |
-| B1 / server restart/outbox recovery | apps/api/integration/stage3-delivery.integration.test.ts | checkpoint 后撤权重启无上下文发布 | 用既有PROVIDER_INJECT_FAILURE_AFTER_RESULT_CHECKPOINT保存action.result并失败；逐类撤权后移除注入、重建Worker并重领同action。证明checkpoint恢复没有再次访问provider且仍重新授权，死信只记一次；无新增context/guidance/pinned及对应outbox。 | 未实现、未运行；规划不预填通过 |
-| B1 / concurrent request | apps/api/integration/stage3-delivery.integration.test.ts | 撤权与上下文落库按持锁顺序串行 | 两个控制连接加实际Worker事务，以pg_blocking_pids/pg_stat_activity确认：撤权UPDATE先持锁，Worker等待提交后拒绝；Worker先锁完整资源与Human/membership，在appendEvent的event_retention_state共享锁处由控制连接暂停，撤权UPDATE/DELETE阻塞，释放事件屏障后Worker发布一次并提交，随后撤权提交。持锁顺序采用当前C1模式，不能在目标资源锁处暂停却声称已持之后的Human锁；无deadlock/部分发布，既有pin不得冒称撤权后新增。 | 未实现、未运行；规划不预填通过 |
-| B1 / webhook/job replay | apps/api/integration/stage3-delivery.integration.test.ts | A2 仓库解析重放仅产生一份上下文 | 正常完成与重启后的action重复tick只有一份context/guidance/pinned/outbox；拒绝action重放也不重复authorization_revoked；不改变其他provider action kind的恢复语义。 | 未实现、未运行；规划不预填通过 |
-| B1 / transaction failure | apps/api/integration/stage3-delivery.integration.test.ts | A2 配置事务失败无部分状态事件或outbox | 授权锁后、context插入/事件/outbox不同位置注入事务失败；action、context/guidance、pinned与outbox全部回滚。重试仍重验当前权限，安全拒绝审计和authorization_revoked事实单独核对。 | 未实现、未运行；规划不预填通过 |
-| B2 / duplicate idempotency key | apps/api/integration/stage3-delivery.integration.test.ts | 连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突 | GitHub分别仅改webhookSecret、仅改privateKey；Gitea分别仅改webhookSecret、仅改accessToken（该测试实例启用feature）。其他字段与key均相同，返回IDEMPOTENCY_KEY_REUSED；连接/service actor/账本/事件/outbox与原成功状态相同，不重放旧成功响应。 | 未实现、未运行；规划不预填通过 |
-| B2 / duplicate idempotency key | apps/api/integration/stage3-delivery.integration.test.ts | 连接同文重放与旧脱敏指纹拒绝降级 | 新HMAC指纹同key同正文重放精确一次；不同key可显式提交独立命令；fixture按旧REDACTED+h.meta算法建立未过期旧账本，同文与仅改秘密均冲突，账本不变且UI不自动换key。已超过conflict TTL的键保持mutate原清理/重用规则；缺主密钥拒绝并无领域写入，不使用随机盐；另捕获API/Worker日志、账本response_body、事件和outbox全文扫描秘密哨兵，只允许连接密文字段保存及测试内解密核验。 | 未实现、未运行；规划不预填通过 |
-| B3 / happy path | apps/web/e2e/configuration-readiness.spec.ts | 关闭 Gitea 的混合 provider 跨 Team 分页仍可配置 GitHub | 至少两个Team，另一Team和本Team的Gitea仓库排在GitHub之前，limit=1分页；admin及本Team成员使用新参数，只见当前Team active/启用的GitHub，nextCursor无重复遗漏，maintainer完成上下文pin并Back重算；member只读、跨Team请求拒绝。 | 未实现、未运行；规划不预填通过 |
-| B3 / happy path | apps/api/integration/stage4-operations.integration.test.ts | Human 可用仓库筛选在分页前排除关闭 provider 与其他 Team | 混合Team/provider、多页、相同full_name不同id、inactive仓库/连接；availableOnly=true先SQL筛选再limit+1，不因原始前页全部不可用而返回伪空页。验证启用Gitea后条目可出现；false/未传保留feature拒绝；无新参数旧分页filters={}及信封/字段保持，附加操作提示不扩权。 | 未实现、未运行；规划不预填通过 |
-| B3 / unauthorized actor | apps/api/integration/stage4-operations.integration.test.ts | Agent 旧列表权限不变且拒绝 Human 新筛选参数 | 旧Agent列表仅返回当前Session/Delegation可见的context，不出现其他Team或未授权仓库；新teamId或availableOnly（包括false）返回VALIDATION_ERROR；旧无参数Gitea读取与直接GET context/POST仍FEATURE_DISABLED。Human可见性按当前Team membership复核，提示字段Agent固定false。 | 未实现、未运行；规划不预填通过 |
-| B3 / concurrent request | apps/api/integration/stage4-operations.integration.test.ts | Human 仓库筛选游标绑定不允许换域续页 | 改变Team、availableOnly或true分支的enabledProviders集合，用旧cursor返回PAGINATION_CURSOR_MISMATCH；其他Actor/workspace/route和排序伪改沿用现有拒绝。前端清旧列表、游标、操作与in-flight请求，首屏重读，旧响应不覆盖新作用域。无参数旧cursor仍按原filters={}、full_name/id排序验证。 | 未实现、未运行；规划不预填通过 |
-| B3 / happy path | packages/contracts/src/repository-configuration-contracts.test.ts | 仓库Human筛选参数与操作提示响应边界 | 可选teamId UUID、availableOnly只接受true/false字符串；非法、重复参数拒绝；新DTO严格解析context/action/连接安全字段，未知/无权限can_configure_context不被用于授权。 | 未实现、未运行；规划不预填通过 |
-| C1 compatibility / transaction failure | apps/api/integration/stage3-delivery.integration.test.ts | 仓库发布与 C1 事件快照共享事务兼容 | 当前main的appendEvent支持notification_sources；repository_context/provider_action不在notificationSourceAggregateTypes，pinned/拒绝各自event+outbox同事务，来源数组为空，无额外intent/delivery；失败回滚包括内部快照，旧迁移夹具无新增列时仍按兼容分支写事件。保留C1原通知受众/快照/迁移及stage4 feature registry新增项断言。 | 未实现、未运行；规划不预填通过 |
-
-原六项、DoD、九类适用性与Lite缺口不删除；不改C1 helper或迁移，锁消费仍由原库存检查复核。
+这些创建/追加 POST 没有 If-Match 参数，不新增虚构 revision；现有 ProjectEditor 编辑等 revisioned mutation 保留自己的 If-Match 和错误处理。既有 Worker 在外部请求前重读授权，失权无新上下文；事件/动作失败不被变成前端已完成。所有配置动作均不创建 Agent Session、委派、激活或发送消息。
 
 ## 原六项测试逐项映射
 
@@ -148,5 +118,3 @@ Provider 连接表单使用原 `providerConnectionInputSchema`：GitHub 输入 e
 每次先登记容器/镜像/卷/网络/进程/临时目录的精确归属；证据含脱敏必要日志和首败，按原始字节登记 SHA-256，Git blob 另核验。结束和失败路径使用 finally 有归属地清理并记录逐 ID/path 依据、活动引用、退出码和结果；共享资源、当前 worktree 和需要恢复的未提交成果保留。Windows 用原生 PowerShell，递归前核绝对路径和 reparse point，避免跨 shell 拼接删除；旧 worktree 仅在 actual main/保全/无活动引用满足后正式移除，不 force。
 
 规划文档先提交，平台保存计划后补 currentID/null version 绑定，另一执行者独审。blocking/high 闭合与 Chief confirm 前没有产品编码。实施验收需当次完整检查、独审、latest Required CI、actual main 落地证据；平台/GitHub 的当前 PR 状态应实读，不由 stale remote refs 推断。
-
-本轮最新精确main已为5b9c76b5f79917697906520edcd6947bfbfa925f；旧96/dbabced/PjUM观察各自保留，不倒改。C1没有改A1/仓库路由/指纹/Paginator/资源锁helper，但新lockChannelAuthority的workspace→完整资源plan→Team/Human/membership顺序要求A2对应调整；appendEvent新快照按原helper保留。产品实施再正常整合实际main，本轮不合入产品代码。

@@ -1726,76 +1726,27 @@
           "category": "happy path",
           "applicable": true,
           "reason": "包含用户新增固定提示与既有配置命令的完整happy path",
-          "assertion": "列表深度/计数/三态适用性；三个提示只填草稿；项目仓库配置实际闭合缺口；三修精确场景见additionalCases与review-fixes.json",
+          "assertion": "列表深度/计数/三态适用性；三个提示只填草稿；项目仓库配置实际闭合缺口",
           "file": "apps/web/e2e/configuration-readiness.spec.ts",
           "caseName": "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确",
           "owner": "A2 执行者",
           "fileState": "待创建；归本feature执行者",
           "result": "未实现、未运行；规划不预填通过",
           "stageId": "9-delivery",
-          "inputTodoIds": [],
-          "additionalCases": [
-            {
-              "issue": "B3",
-              "category": "happy path",
-              "file": "apps/web/e2e/configuration-readiness.spec.ts",
-              "caseName": "关闭 Gitea 的混合 provider 跨 Team 分页仍可配置 GitHub",
-              "scenario": "至少两个Team，另一Team和本Team的Gitea仓库排在GitHub之前，limit=1分页；admin及本Team成员使用新参数，只见当前Team active/启用的GitHub，nextCursor无重复遗漏，maintainer完成上下文pin并Back重算；member只读、跨Team请求拒绝。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            },
-            {
-              "issue": "B3",
-              "category": "happy path",
-              "file": "apps/api/integration/stage4-operations.integration.test.ts",
-              "caseName": "Human 可用仓库筛选在分页前排除关闭 provider 与其他 Team",
-              "scenario": "混合Team/provider、多页、相同full_name不同id、inactive仓库/连接；availableOnly=true先SQL筛选再limit+1，不因原始前页全部不可用而返回伪空页。验证启用Gitea后条目可出现；false/未传保留feature拒绝；无新参数旧分页filters={}及信封/字段保持，附加操作提示不扩权。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            },
-            {
-              "issue": "B3",
-              "category": "happy path",
-              "file": "packages/contracts/src/repository-configuration-contracts.test.ts",
-              "caseName": "仓库Human筛选参数与操作提示响应边界",
-              "scenario": "可选teamId UUID、availableOnly只接受true/false字符串；非法、重复参数拒绝；新DTO严格解析context/action/连接安全字段，未知/无权限can_configure_context不被用于授权。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            }
-          ]
+          "inputTodoIds": []
         },
         {
           "category": "unauthorized actor",
           "applicable": true,
           "reason": "查询和新增命令必须各自验证实时权限",
-          "assertion": "角色操作提示、personal/Team/workspace隔离；GET/POST/Worker撤权；旧投影与秘密输入清除；三修精确场景见additionalCases与review-fixes.json",
+          "assertion": "角色操作提示、personal/Team/workspace隔离；GET/POST/Worker撤权；旧投影与秘密输入清除",
           "file": "apps/web/e2e/configuration-readiness.spec.ts",
           "caseName": "R1-9-2 当前用户不可见配置不渲染为可操作项；失权重读清除旧行",
           "owner": "A2 执行者",
           "fileState": "待创建；归本feature执行者",
           "result": "未实现、未运行；规划不预填通过",
           "stageId": "9-delivery",
-          "inputTodoIds": [],
-          "additionalCases": [
-            {
-              "issue": "B1",
-              "category": "unauthorized actor",
-              "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-              "caseName": "解析期间撤权后无上下文发布",
-              "scenario": "FakeGitProvider resolveRepositoryGuidance暂停；外部读取期间分别停用Human、撤销workspace admin且无有效maintainer、降级/删除membership、删除Team/目标或改变目标Team、停用仓库/连接；撤权提交后恢复读取。finishAction锁后重读拒绝，action dead；context/guidance、pinned事件及其outbox均无新增，authorization_revoked及其outbox另计。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            },
-            {
-              "issue": "B3",
-              "category": "unauthorized actor",
-              "file": "apps/api/integration/stage4-operations.integration.test.ts",
-              "caseName": "Agent 旧列表权限不变且拒绝 Human 新筛选参数",
-              "scenario": "旧Agent列表仅返回当前Session/Delegation可见的context，不出现其他Team或未授权仓库；新teamId或availableOnly（包括false）返回VALIDATION_ERROR；旧无参数Gitea读取与直接GET context/POST仍FEATURE_DISABLED。Human可见性按当前Team membership复核，提示字段Agent固定false。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            }
-          ]
+          "inputTodoIds": []
         },
         {
           "category": "invalid state transition",
@@ -1808,41 +1759,20 @@
           "fileState": "现有文件待扩展本卡断言",
           "result": "未实现、未运行；规划不预填通过",
           "stageId": "9-delivery",
-          "inputTodoIds": [],
-          "additionalCases": []
+          "inputTodoIds": []
         },
         {
           "category": "duplicate idempotency key",
           "applicable": true,
           "reason": "新增UI调用既有配置写命令，原不适用结论已失效",
-          "assertion": "同key同正文单仓库/action/receipt/event；异文拒绝，响应丢失稳定重试，改文新身份；三修精确场景见additionalCases与review-fixes.json",
+          "assertion": "同key同正文单仓库/action/receipt/event；异文拒绝，响应丢失稳定重试，改文新身份",
           "file": "apps/api/integration/stage3-delivery.integration.test.ts",
           "caseName": "A2 配置注册与解析幂等重放",
           "owner": "A2 执行者",
           "fileState": "现有文件待扩展本卡断言",
           "result": "未实现、未运行；规划不预填通过",
           "stageId": "9-delivery",
-          "inputTodoIds": [],
-          "additionalCases": [
-            {
-              "issue": "B2",
-              "category": "duplicate idempotency key",
-              "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-              "caseName": "连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突",
-              "scenario": "GitHub分别仅改webhookSecret、仅改privateKey；Gitea分别仅改webhookSecret、仅改accessToken（该测试实例启用feature）。其他字段与key均相同，返回IDEMPOTENCY_KEY_REUSED；连接/service actor/账本/事件/outbox与原成功状态相同，不重放旧成功响应。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            },
-            {
-              "issue": "B2",
-              "category": "duplicate idempotency key",
-              "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-              "caseName": "连接同文重放与旧脱敏指纹拒绝降级",
-              "scenario": "新HMAC指纹同key同正文重放精确一次；不同key可显式提交独立命令；fixture按旧REDACTED+h.meta算法建立未过期旧账本，同文与仅改秘密均冲突，账本不变且UI不自动换key。已超过conflict TTL的键保持mutate原清理/重用规则；缺主密钥拒绝并无领域写入，不使用随机盐；另捕获API/Worker日志、账本response_body、事件和outbox全文扫描秘密哨兵，只允许连接密文字段保存及测试内解密核验。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            }
-          ]
+          "inputTodoIds": []
         },
         {
           "category": "stale revision",
@@ -1853,134 +1783,70 @@
           "caseName": null,
           "owner": "A2 执行者",
           "fileState": null,
-          "result": "不适用",
-          "additionalCases": []
+          "result": "不适用"
         },
         {
           "category": "transaction failure",
           "applicable": true,
           "reason": "新增配置写命令使事务失败验证适用",
-          "assertion": "事务失败逐表核对repository/provider_action/receipt/event/outbox；安全拒绝审计独列；三修精确场景见additionalCases与review-fixes.json",
+          "assertion": "事务失败逐表核对repository/provider_action/receipt/event/outbox；安全拒绝审计独列",
           "file": "apps/api/integration/stage3-delivery.integration.test.ts",
           "caseName": "A2 配置事务失败无部分状态事件或outbox",
           "owner": "A2 执行者",
           "fileState": "现有文件待扩展本卡断言",
           "result": "未实现、未运行；规划不预填通过",
           "stageId": "9-delivery",
-          "inputTodoIds": [],
-          "additionalCases": [
-            {
-              "issue": "B1",
-              "category": "transaction failure",
-              "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-              "caseName": "A2 配置事务失败无部分状态事件或outbox",
-              "scenario": "授权锁后、context插入/事件/outbox不同位置注入事务失败；action、context/guidance、pinned与outbox全部回滚。重试仍重验当前权限，安全拒绝审计和authorization_revoked事实单独核对。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            },
-            {
-              "issue": "C1 compatibility",
-              "category": "transaction failure",
-              "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-              "caseName": "仓库发布与 C1 事件快照共享事务兼容",
-              "scenario": "当前main的appendEvent支持notification_sources；repository_context/provider_action不在notificationSourceAggregateTypes，pinned/拒绝各自event+outbox同事务，来源数组为空，无额外intent/delivery；失败回滚包括内部快照，旧迁移夹具无新增列时仍按兼容分支写事件。保留C1原通知受众/快照/迁移及stage4 feature registry新增项断言。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            }
-          ]
+          "inputTodoIds": []
         },
         {
           "category": "webhook/job replay",
           "applicable": true,
           "reason": "适用job重放；没有新增webhook消费者",
-          "assertion": "Worker重复tick保持精确一次；SSE重放/resync只重读不重提；三修精确场景见additionalCases与review-fixes.json",
+          "assertion": "Worker重复tick保持精确一次；SSE重放/resync只重读不重提",
           "file": "apps/api/integration/stage3-delivery.integration.test.ts",
           "caseName": "A2 仓库解析重放仅产生一份上下文",
           "owner": "A2 执行者",
           "fileState": "现有文件待扩展本卡断言",
           "result": "未实现、未运行；规划不预填通过",
           "stageId": "9-delivery",
-          "inputTodoIds": [],
-          "additionalCases": [
-            {
-              "issue": "B1",
-              "category": "webhook/job replay",
-              "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-              "caseName": "A2 仓库解析重放仅产生一份上下文",
-              "scenario": "正常完成与重启后的action重复tick只有一份context/guidance/pinned/outbox；拒绝action重放也不重复authorization_revoked；不改变其他provider action kind的恢复语义。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            }
-          ]
+          "inputTodoIds": []
         },
         {
           "category": "concurrent request",
           "applicable": true,
           "reason": "新增写命令并发与A2自身读取竞态均本卡验收",
-          "assertion": "上下文请求乱序、双击/丢响应、不同Human合法并发追加事实、旧基线重新检查；三修精确场景见additionalCases与review-fixes.json",
+          "assertion": "上下文请求乱序、双击/丢响应、不同Human合法并发追加事实、旧基线重新检查",
           "file": "apps/web/e2e/configuration-readiness.spec.ts",
           "caseName": "R1-9-8 A2自身异步Team切换不落旧投影，canonical返回/焦点/窄屏列表独立可达，不等待D4",
           "owner": "A2 执行者",
           "fileState": "待创建；归本feature执行者",
           "result": "未实现、未运行；规划不预填通过",
           "stageId": "9-delivery",
-          "inputTodoIds": [],
-          "additionalCases": [
-            {
-              "issue": "B1",
-              "category": "concurrent request",
-              "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-              "caseName": "撤权与上下文落库按持锁顺序串行",
-              "scenario": "两个控制连接加实际Worker事务，以pg_blocking_pids/pg_stat_activity确认：撤权UPDATE先持锁，Worker等待提交后拒绝；Worker先锁完整资源与Human/membership，在appendEvent的event_retention_state共享锁处由控制连接暂停，撤权UPDATE/DELETE阻塞，释放事件屏障后Worker发布一次并提交，随后撤权提交。持锁顺序采用当前C1模式，不能在目标资源锁处暂停却声称已持之后的Human锁；无deadlock/部分发布，既有pin不得冒称撤权后新增。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            },
-            {
-              "issue": "B3",
-              "category": "concurrent request",
-              "file": "apps/api/integration/stage4-operations.integration.test.ts",
-              "caseName": "Human 仓库筛选游标绑定不允许换域续页",
-              "scenario": "改变Team、availableOnly或true分支的enabledProviders集合，用旧cursor返回PAGINATION_CURSOR_MISMATCH；其他Actor/workspace/route和排序伪改沿用现有拒绝。前端清旧列表、游标、操作与in-flight请求，首屏重读，旧响应不覆盖新作用域。无参数旧cursor仍按原filters={}、full_name/id排序验证。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            }
-          ]
+          "inputTodoIds": []
         },
         {
           "category": "server restart/outbox recovery",
           "applicable": true,
           "reason": "新增异步写入使server restart/outbox recovery适用",
-          "assertion": "重建API/Worker后durable action/outbox完成精确一次，浏览器reload不自动重提；三修精确场景见additionalCases与review-fixes.json",
+          "assertion": "重建API/Worker后durable action/outbox完成精确一次，浏览器reload不自动重提",
           "file": "apps/api/integration/stage3-delivery.integration.test.ts",
           "caseName": "A2 已提交仓库解析在服务重启后恢复",
           "owner": "A2 执行者",
           "fileState": "现有文件待扩展本卡断言",
           "result": "未实现、未运行；规划不预填通过",
           "stageId": "9-delivery",
-          "inputTodoIds": [],
-          "additionalCases": [
-            {
-              "issue": "B1",
-              "category": "server restart/outbox recovery",
-              "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-              "caseName": "checkpoint 后撤权重启无上下文发布",
-              "scenario": "用既有PROVIDER_INJECT_FAILURE_AFTER_RESULT_CHECKPOINT保存action.result并失败；逐类撤权后移除注入、重建Worker并重领同action。证明checkpoint恢复没有再次访问provider且仍重新授权，死信只记一次；无新增context/guidance/pinned及对应outbox。",
-              "owner": "A2 执行者",
-              "result": "未实现、未运行；规划不预填通过"
-            }
-          ]
+          "inputTodoIds": []
         }
       ],
       "currentSource": {
         "todoId": "0BkezbmWV6k8vwrlSNuF_",
-        "updatedAt": "2026-10-08T12:26:24.989Z",
-        "sha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+        "updatedAt": "2026-10-08T11:46:28.872Z",
+        "sha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
         "snapshotPath": "docs/plan/a2-configuration-readiness/current-spec.md",
-        "source": "本轮mcp__tds__todos的完整Spec段；Saved plan单独截断，不混用",
+        "source": "mcp__tds__todos(id) 本轮完整 Spec 段",
         "questionCardId": "q-g078qrLdME6hTbM58dvfx",
-        "approvalReadback": "docs/plan/a2-configuration-readiness/revision-inputs.json",
-        "planPath": "docs/plan/a2-configuration-readiness.md",
-        "version": null
+        "approvalReadback": "docs/plan/a2-configuration-readiness/platform-readback.json",
+        "planPath": "docs/plan/a2-configuration-readiness.md"
       },
       "currentPlanPath": "docs/plan/a2-configuration-readiness.md",
       "detailedMappingPath": "docs/plan/a2-configuration-readiness/review-map.md",
@@ -2026,138 +1892,8 @@
           "caseName": "A2 并发配置保持追加事实与最新读取",
           "owner": "A2 执行者",
           "result": "未实现、未运行"
-        },
-        {
-          "issue": "B1",
-          "category": "unauthorized actor",
-          "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-          "caseName": "解析期间撤权后无上下文发布",
-          "scenario": "FakeGitProvider resolveRepositoryGuidance暂停；外部读取期间分别停用Human、撤销workspace admin且无有效maintainer、降级/删除membership、删除Team/目标或改变目标Team、停用仓库/连接；撤权提交后恢复读取。finishAction锁后重读拒绝，action dead；context/guidance、pinned事件及其outbox均无新增，authorization_revoked及其outbox另计。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B1",
-          "category": "server restart/outbox recovery",
-          "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-          "caseName": "checkpoint 后撤权重启无上下文发布",
-          "scenario": "用既有PROVIDER_INJECT_FAILURE_AFTER_RESULT_CHECKPOINT保存action.result并失败；逐类撤权后移除注入、重建Worker并重领同action。证明checkpoint恢复没有再次访问provider且仍重新授权，死信只记一次；无新增context/guidance/pinned及对应outbox。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B1",
-          "category": "concurrent request",
-          "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-          "caseName": "撤权与上下文落库按持锁顺序串行",
-          "scenario": "两个控制连接加实际Worker事务，以pg_blocking_pids/pg_stat_activity确认：撤权UPDATE先持锁，Worker等待提交后拒绝；Worker先锁完整资源与Human/membership，在appendEvent的event_retention_state共享锁处由控制连接暂停，撤权UPDATE/DELETE阻塞，释放事件屏障后Worker发布一次并提交，随后撤权提交。持锁顺序采用当前C1模式，不能在目标资源锁处暂停却声称已持之后的Human锁；无deadlock/部分发布，既有pin不得冒称撤权后新增。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B1",
-          "category": "webhook/job replay",
-          "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-          "caseName": "A2 仓库解析重放仅产生一份上下文",
-          "scenario": "正常完成与重启后的action重复tick只有一份context/guidance/pinned/outbox；拒绝action重放也不重复authorization_revoked；不改变其他provider action kind的恢复语义。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B1",
-          "category": "transaction failure",
-          "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-          "caseName": "A2 配置事务失败无部分状态事件或outbox",
-          "scenario": "授权锁后、context插入/事件/outbox不同位置注入事务失败；action、context/guidance、pinned与outbox全部回滚。重试仍重验当前权限，安全拒绝审计和authorization_revoked事实单独核对。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B2",
-          "category": "duplicate idempotency key",
-          "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-          "caseName": "连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突",
-          "scenario": "GitHub分别仅改webhookSecret、仅改privateKey；Gitea分别仅改webhookSecret、仅改accessToken（该测试实例启用feature）。其他字段与key均相同，返回IDEMPOTENCY_KEY_REUSED；连接/service actor/账本/事件/outbox与原成功状态相同，不重放旧成功响应。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B2",
-          "category": "duplicate idempotency key",
-          "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-          "caseName": "连接同文重放与旧脱敏指纹拒绝降级",
-          "scenario": "新HMAC指纹同key同正文重放精确一次；不同key可显式提交独立命令；fixture按旧REDACTED+h.meta算法建立未过期旧账本，同文与仅改秘密均冲突，账本不变且UI不自动换key。已超过conflict TTL的键保持mutate原清理/重用规则；缺主密钥拒绝并无领域写入，不使用随机盐；另捕获API/Worker日志、账本response_body、事件和outbox全文扫描秘密哨兵，只允许连接密文字段保存及测试内解密核验。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B3",
-          "category": "happy path",
-          "file": "apps/web/e2e/configuration-readiness.spec.ts",
-          "caseName": "关闭 Gitea 的混合 provider 跨 Team 分页仍可配置 GitHub",
-          "scenario": "至少两个Team，另一Team和本Team的Gitea仓库排在GitHub之前，limit=1分页；admin及本Team成员使用新参数，只见当前Team active/启用的GitHub，nextCursor无重复遗漏，maintainer完成上下文pin并Back重算；member只读、跨Team请求拒绝。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B3",
-          "category": "happy path",
-          "file": "apps/api/integration/stage4-operations.integration.test.ts",
-          "caseName": "Human 可用仓库筛选在分页前排除关闭 provider 与其他 Team",
-          "scenario": "混合Team/provider、多页、相同full_name不同id、inactive仓库/连接；availableOnly=true先SQL筛选再limit+1，不因原始前页全部不可用而返回伪空页。验证启用Gitea后条目可出现；false/未传保留feature拒绝；无新参数旧分页filters={}及信封/字段保持，附加操作提示不扩权。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B3",
-          "category": "unauthorized actor",
-          "file": "apps/api/integration/stage4-operations.integration.test.ts",
-          "caseName": "Agent 旧列表权限不变且拒绝 Human 新筛选参数",
-          "scenario": "旧Agent列表仅返回当前Session/Delegation可见的context，不出现其他Team或未授权仓库；新teamId或availableOnly（包括false）返回VALIDATION_ERROR；旧无参数Gitea读取与直接GET context/POST仍FEATURE_DISABLED。Human可见性按当前Team membership复核，提示字段Agent固定false。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B3",
-          "category": "concurrent request",
-          "file": "apps/api/integration/stage4-operations.integration.test.ts",
-          "caseName": "Human 仓库筛选游标绑定不允许换域续页",
-          "scenario": "改变Team、availableOnly或true分支的enabledProviders集合，用旧cursor返回PAGINATION_CURSOR_MISMATCH；其他Actor/workspace/route和排序伪改沿用现有拒绝。前端清旧列表、游标、操作与in-flight请求，首屏重读，旧响应不覆盖新作用域。无参数旧cursor仍按原filters={}、full_name/id排序验证。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "B3",
-          "category": "happy path",
-          "file": "packages/contracts/src/repository-configuration-contracts.test.ts",
-          "caseName": "仓库Human筛选参数与操作提示响应边界",
-          "scenario": "可选teamId UUID、availableOnly只接受true/false字符串；非法、重复参数拒绝；新DTO严格解析context/action/连接安全字段，未知/无权限can_configure_context不被用于授权。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
-        },
-        {
-          "issue": "C1 compatibility",
-          "category": "transaction failure",
-          "file": "apps/api/integration/stage3-delivery.integration.test.ts",
-          "caseName": "仓库发布与 C1 事件快照共享事务兼容",
-          "scenario": "当前main的appendEvent支持notification_sources；repository_context/provider_action不在notificationSourceAggregateTypes，pinned/拒绝各自event+outbox同事务，来源数组为空，无额外intent/delivery；失败回滚包括内部快照，旧迁移夹具无新增列时仍按兼容分支写事件。保留C1原通知受众/快照/迁移及stage4 feature registry新增项断言。",
-          "owner": "A2 执行者",
-          "result": "未实现、未运行；规划不预填通过"
         }
-      ],
-      "currentPlanBinding": {
-        "inputPlanId": "PjUMm3PTb-SjwgK6vrEgZ",
-        "inputVersion": null,
-        "inputPlanSha256": "77d0d8ef2d1090644b0e691a49457afc81495c398f9abef179bb60d5d0d5aeba",
-        "inputPlanPath": "docs/plan/a2-configuration-readiness/history/PjUM-plan.md",
-        "outputPlanId": null,
-        "outputVersion": null,
-        "outputPlanSha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
-        "outputPlanPath": "docs/plan/a2-configuration-readiness.md",
-        "idTiming": "PjUM已实读为修订输入；当前输出由本回合edit_plan结束后生成，ID如实null，不为自引用新建计划",
-        "actualMain": "5b9c76b5f79917697906520edcd6947bfbfa925f"
-      },
-      "reviewFixesPath": "docs/plan/a2-configuration-readiness/review-fixes.json"
+      ]
     },
     {
       "seqNum": 10,

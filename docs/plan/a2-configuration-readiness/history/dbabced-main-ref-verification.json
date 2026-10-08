@@ -1,0 +1,78 @@
+{
+  "lsRemote": {
+    "tool": "mcp__tds__git",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "before": {
+      "current_time": "2026-10-08 12:04:00 UTC"
+    },
+    "after": {
+      "current_time": "2026-10-08 12:04:02 UTC"
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "96e724858e692d262107c34db50b40c3ae7c122c\trefs/heads/main"
+        }
+      ]
+    }
+  },
+  "fetch": {
+    "tool": "mcp__tds__git",
+    "args": [
+      "fetch",
+      "origin",
+      "refs/heads/main"
+    ],
+    "before": {
+      "current_time": "2026-10-08 12:04:07 UTC"
+    },
+    "after": {
+      "current_time": "2026-10-08 12:04:08 UTC"
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Fetched refs/heads/main — reference it as FETCH_HEAD, e.g. [\"log\", \"--oneline\", \"-10\", \"FETCH_HEAD\"]."
+        }
+      ]
+    }
+  },
+  "exactVerification": {
+    "before": {
+      "current_time": "2026-10-08 12:04:17 UTC"
+    },
+    "after": {
+      "current_time": "2026-10-08 12:04:19 UTC"
+    },
+    "results": [
+      {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "type": "text",
+              "text": "96e724858e692d262107c34db50b40c3ae7c122c 1078bbcd527550bfabee73093b7ffd0032d3fd24 07aa293c35100959caa08f73efcb6110e9aa92f4 Merge pull request #205 from xurunxin/tds/conv-01a11ac2-7634-752e-8d81-764c9776f801"
+            }
+          ]
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "14bc0b",
+          "wall_time_seconds": 0.9328488,
+          "exit_code": 0,
+          "original_token_count": 484,
+          "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n96e724858e692d262107c34db50b40c3ae7c122c\nrefs/heads/tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe\nhttps://github.com/xurunxin/WorkMesh.git\n96e724858e692d262107c34db50b40c3ae7c122c\n96e724858e692d262107c34db50b40c3ae7c122c\nhttps://github.com/xurunxin/WorkMesh.git\nimport { z } from 'zod'\n\nexport const configurationReadinessQuerySchema = z.object({\n  teamId: z.string().uuid(),\n  workKind: z.enum(['repository', 'non_repository']),\n  projectId: z.string().uuid().optional(),\n  workItemId: z.string().uuid().optional(),\n}).strict()\n\nexport const configurationReadinessStateSchema = z.enum(['ready', 'blocked', 'unknown'])\n\nconst applicableCheck = z.discriminatedUnion('state', [\n  z.object({ applicability: z.literal('applicable'), state: z.literal('ready'), reasonCode: z.literal('configured') }).strict(),\n  z.object({ applicability: z.literal('applicable'), state: z.literal('blocked'), reasonCode: z.literal('unmet') }).strict(),\n  z.object({ applicability: z.literal('applicable'), state: z.literal('unknown'), reasonCode: z.literal('not_observable') }).strict(),\n])\n\n// 适用性与就绪状态分开；未知 Runner 不能被解释为缺少配置或运行许可。\nexport const configurationReadinessResponseSchema = z.object({\n  checks: z.object({\n    model: applicableCheck,\n    agent: applicableCheck,\n    repository: z.union([applicableCheck, z.object({\n      applicability: z.literal('not_applicable'), state: z.null(), reasonCode: z.literal('non_repository_work'),\n    }).strict()]),\n    runner: z.object({\n      applicability: z.literal('applicable'), state: z.literal('unknown'), reasonCode: z.literal('not_observable'),\n    }).strict(),\n  }).strict(),\n}).strict()\n\nexport type ConfigurationReadinessQuery = z.infer<typeof configurationReadinessQuerySchema>\nexport type ConfigurationReadinessResponse = z.infer<typeof configurationReadinessResponseSchema>\n"
+        }
+      }
+    ]
+  },
+  "note": "先前FETCH_HEAD跨调用读回没有绑定refs/heads/main，不能证明远端main分叉。当前按ls-remote精确SHA核验，远端/工作树/本次缓存HEAD及FETCH_HEAD均为96e724858e692d262107c34db50b40c3ae7c122c，A1合同存在；撤回原分叉判断，不推测旧FETCH_HEAD变化原因，不新增门禁。"
+}

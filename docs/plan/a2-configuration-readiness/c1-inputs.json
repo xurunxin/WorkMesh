@@ -1,0 +1,59 @@
+{
+  "lsRemote": {
+    "before": {
+      "current_time": "2026-10-08 12:40:04 UTC"
+    },
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "5b9c76b5f79917697906520edcd6947bfbfa925f\trefs/heads/main"
+        }
+      ]
+    },
+    "after": {
+      "current_time": "2026-10-08 12:40:06 UTC"
+    }
+  },
+  "fetch": {
+    "args": [
+      "fetch",
+      "origin",
+      "refs/heads/main"
+    ],
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Fetched refs/heads/main — reference it as FETCH_HEAD, e.g. [\"log\", \"--oneline\", \"-10\", \"FETCH_HEAD\"]."
+        }
+      ]
+    },
+    "after": {
+      "current_time": "2026-10-08 12:40:08 UTC"
+    }
+  },
+  "edits": [
+    {
+      "old": "- `apps/worker/src/provider-actions.ts`：把 `authorizeRepositoryContextResolution` 的事务内检查抽成接收 `PoolClient` 的 helper，在外部读取前和 `finishAction` 的 context 插入前复用；正常返回和 `action.result` checkpoint 恢复统一经过后者。先定位不可授予权限的 ID，落库事务保留 action 的 `FOR UPDATE`；按 actors→teams→memberships→provider_connections→repositories 取 `FOR SHARE`，再用现有 `lockAgentAuthorityPlan` 对唯一目标取锁，遵守 `agent_sessions→work_items→projects` 的资源顺序和同类 ID 排序，不新增反向锁或在 helper 内重开事务。具体 membership 行先锁后验，不以 `EXISTS` 或 `FOR KEY SHARE` 代替角色/active 行锁；锁后重读 Human、workspace/Team 角色、非删除 Team、连接/仓库状态与准确目标绑定，直到 context、pinned 事件和 outbox 提交才释放。失权在同事务标记 action dead 并复用既有 `provider.action.authorization_revoked`，不新增 context/guidance、pinned 事件或其 outbox；拒绝事件自己的 outbox 单独断言。撤权先持锁时 Worker 等其提交后拒绝，Worker 先持锁时撤权等发布事务结束，不跨供应商请求持数据库锁。",
+      "new": "- `apps/worker/src/provider-actions.ts`：把 `authorizeRepositoryContextResolution` 的事务内检查抽成接收 `PoolClient` 的 helper，在外部读取前和 `finishAction` 的 context 插入前复用；正常返回和 `action.result` checkpoint 恢复统一经过后者。采用当前 C1 `lockChannelAuthority` 的模式：无锁 locator 只找 ID；先对 workspace 取 `FOR KEY SHARE` 防止 Team 删除与事件 FK 锁倒置，保留 action 的 `FOR UPDATE`，再以 `lockAgentAuthorityPlan` 一次取得完整目标资源锁计划。Session 目标定位其 definition/grant/delegation 及关联 WorkItem/Project，遵守 helper 全局顺序与同类 ID 排序；这些锁不成为新的 Human 配置授权条件。随后对连接/仓库、Team、Human、具体 membership 行取 `FOR SHARE`，锁后重读全部 locator 绑定及现行 Human/角色/active/非删除目标权限，不新增逆序目标锁、不嵌套事务、不用 `EXISTS` 或 `FOR KEY SHARE` 替代授权行锁。锁持有至 context、pinned 与 outbox 提交；失权同事务 action dead 并复用 `provider.action.authorization_revoked`，不新增 context/guidance、pinned 或其 outbox，拒绝事实自身 outbox 单列。撤权先持锁则等待后拒绝；发布先持锁则撤权等待其提交。供应商读取期间不持数据库锁，C1 `appendEvent` 的迁移兼容与内部通知快照机制保留。"
+    },
+    {
+      "old": "本轮远端仍为 A1 基点，工作树只叠加已提交规划文档；来源记录保存精确 ref/SHA、参数、观察时间及共享 `FETCH_HEAD` 与远端 ref 不同的实际读回，保留先前误判纠正，不新增开工门禁。",
+      "new": "本轮精确远端已合入 C1，旧 A1/dbabced/PjUM 观察保留历史；仓库 Worker、配置路由和 A1 合同无增量，C1 的 workspace/资源/授权锁顺序及 `appendEvent` 内部快照兼容已纳入。实施时正常整合实际 main，保留新增 feature 注册、通知合同及迁移，定向重验共享 server/contracts、锁序和事件事务；本轮只更新文档，不把共享 `FETCH_HEAD` 当 main，不新增开工门禁。"
+    },
+    {
+      "old": "各字段独立参数化，核对连接/service actor/账本/事件/outbox 数量与捕获日志，明文仅允许加密连接存储。",
+      "new": "各字段独立参数化，核对连接/service actor/账本/事件/outbox 数量与捕获日志，明文仅允许加密连接存储。 增加“仓库发布与 C1 事件快照共享事务兼容”，验证新 schema 与旧迁移夹具的 `appendEvent` 路径不丢 pinned/outbox、不从仓库事件产生通知来源或重复投递；沿用 C1 收件人授权与快照边界，不改其 helper 或迁移。"
+    }
+  ],
+  "chiefSteer": "Chief实读main已为5b9c76b5f79917697906520edcd6947bfbfa925f，C1 PR206合入；CI391十项成功属于用户提供状态，本轮不冒称自己执行产品检查。仍只改规划文档，保留历史、完整仓库交付后复审。",
+  "actualMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "oldMain": "96e724858e692d262107c34db50b40c3ae7c122c",
+  "worktreeHead": "dbabcedbadc5ca4ecd290ebbebd5a79f186e1698"
+}
