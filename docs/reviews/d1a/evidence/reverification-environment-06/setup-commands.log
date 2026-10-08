@@ -1,0 +1,24 @@
+COMMAND: docker run postgres:16-alpine on 127.0.0.1:25442 (password redacted)
+EXIT: 0
+3ee72258ad8cfbfbb55aec0797afc01f7abe6397eee5eea77799cc621c8c3e12
+
+COMMAND: docker run redis:7-alpine on 127.0.0.1:26389
+EXIT: 0
+68d32fb0ce0428bd7f02b99e8fafbc19fd252d2edaf3925901c0fdc14cc5634d
+
+COMMAND: docker run rustfs/rustfs:1.0.0 on 127.0.0.1:29010 (credentials redacted)
+EXIT: 0
+342cd014ef1edda8101daef334e8529aa62a0d47571df5e61b4bc4b6bc0ba0d3
+
+COMMAND: docker exec pg_isready / redis-cli ping / GET http://127.0.0.1:29010/health/ready
+EXIT: 0
+postgres: accepting connections; redis: PONG; rustfs readiness endpoint: HTTP 200
+
+COMMAND: PostgreSQL container initialization created POSTGRES_DB=workmesh_d1a_theme_e2e_test
+EXIT: 0
+Database readiness verified by pg_isready against the named test database
+
+COMMAND: create and verify isolated S3 bucket through RustFS (credentials redacted)
+EXIT: 0
+Created and verified isolated bucket workmesh-artifacts
+

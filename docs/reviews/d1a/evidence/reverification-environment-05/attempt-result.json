@@ -1,0 +1,11 @@
+{
+  "id": "reverification-environment-05-setup",
+  "status": "setup failed before test execution",
+  "cause": "The named database was already created by the PostgreSQL container's POSTGRES_DB initialization; an additional createdb command failed with exit code 1.",
+  "evidence": ["setup-commands.log", "setup-error.txt", "cleanup-commands.log", "cleanup.json"],
+  "testExecuted": false,
+  "containersDestroyed": true,
+  "containerDestroyCommandsExitCode": 0,
+  "environmentRestored": true,
+  "verificationUse": "diagnostic failure only; not accepted as a test result"
+}

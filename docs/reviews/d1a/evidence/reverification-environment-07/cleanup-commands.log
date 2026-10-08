@@ -1,0 +1,16 @@
+COMMAND: docker rm --force wm-d1a-env07-pg
+EXIT: 0
+wm-d1a-env07-pg
+
+COMMAND: docker rm --force wm-d1a-env07-redis
+EXIT: 0
+wm-d1a-env07-redis
+
+COMMAND: docker rm --force wm-d1a-env07-rustfs
+EXIT: 0
+wm-d1a-env07-rustfs
+
+COMMAND: docker ps -a --filter name=wm-d1a-env07- --format {{.Names}}
+EXIT: 0
+
+

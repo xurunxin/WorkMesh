@@ -1,0 +1,116 @@
+{
+  "id": "reverification-environment-08",
+  "head": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+  "tree": "d4af6349be64d011d97a8b63281f8cf110332f96",
+  "initialFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+  "finalFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+  "runtime": {
+    "playwright": "Version 1.61.1",
+    "architecture": "X64",
+    "pnpm": "9.15.4",
+    "os": "Microsoft Windows 10.0.26300",
+    "node": "v24.20.0"
+  },
+  "checks": [
+    {
+      "id": "theme-e2e",
+      "command": "pnpm --filter @workmesh/web test:e2e e2e/theme-unification.spec.ts",
+      "exitCode": 0,
+      "log": "logs/theme-e2e.log",
+      "logBytes": 207257,
+      "logSha256": "d1bf13ef3887746832a001eea98c0d0266141a1b0f8da1bd374fb7e67465d31c",
+      "sourceBeforeFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+      "sourceAfterFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+      "headBefore": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "headAfter": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "dirtyBefore": [
+        " M apps/web/e2e/stage0.spec.ts"
+      ],
+      "dirtyAfter": [
+        " M apps/web/e2e/stage0.spec.ts"
+      ]
+    },
+    {
+      "id": "e2e-suite",
+      "command": "pnpm test:e2e",
+      "exitCode": 0,
+      "log": "logs/e2e-suite.log",
+      "logBytes": 1651727,
+      "logSha256": "69ff4ccba6f5420ae840c9a94236648d8f1734061161bb43bf4e1d82249ef1a3",
+      "sourceBeforeFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+      "sourceAfterFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+      "headBefore": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "headAfter": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "dirtyBefore": [
+        " M apps/web/e2e/stage0.spec.ts"
+      ],
+      "dirtyAfter": [
+        " M apps/web/e2e/stage0.spec.ts"
+      ]
+    },
+    {
+      "id": "d0-baseline",
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --update-snapshots=none",
+      "exitCode": 0,
+      "log": "logs/d0-baseline.log",
+      "logBytes": 7057,
+      "logSha256": "072aa5d0216e2ea88ccccbda0c73962451a8805c32aef433761801275da65f7d",
+      "sourceBeforeFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+      "sourceAfterFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+      "headBefore": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "headAfter": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "dirtyBefore": [
+        " M apps/web/e2e/stage0.spec.ts"
+      ],
+      "dirtyAfter": [
+        " M apps/web/e2e/stage0.spec.ts"
+      ]
+    },
+    {
+      "id": "lint",
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "log": "logs/lint.log",
+      "logBytes": 6113,
+      "logSha256": "4d1c78a1cac6995f715eefb6cae6ab802a343a3088ceb09b185ba1c4da1004ab",
+      "sourceBeforeFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+      "sourceAfterFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+      "headBefore": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "headAfter": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "dirtyBefore": [
+        " M apps/web/e2e/stage0.spec.ts"
+      ],
+      "dirtyAfter": [
+        " M apps/web/e2e/stage0.spec.ts"
+      ]
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "logs/typecheck.log",
+      "logBytes": 6651,
+      "logSha256": "8163e77c3a4244fba38fc24a320327ac1dd8f60922035be463e1fb35f04ef867",
+      "sourceBeforeFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+      "sourceAfterFingerprint": "89a2d3ba350e56b74302061a96ac793fbda6f631208b589fc6afd2b4b8e50c0e",
+      "headBefore": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "headAfter": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "dirtyBefore": [
+        " M apps/web/e2e/stage0.spec.ts"
+      ],
+      "dirtyAfter": [
+        " M apps/web/e2e/stage0.spec.ts"
+      ]
+    }
+  ]
+}

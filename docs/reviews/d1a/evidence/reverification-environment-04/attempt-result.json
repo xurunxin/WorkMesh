@@ -1,0 +1,11 @@
+{
+  "id": "reverification-environment-04-setup-debug",
+  "status": "aborted before service setup and before test execution",
+  "cause": "PowerShell function parameter named args was shadowed by the automatic $args variable; the captured commands invoked Docker without subcommands and returned Docker help with exit code 0.",
+  "evidence": "setup-commands.log",
+  "testExecuted": false,
+  "containersCreated": false,
+  "environmentMutation": false,
+  "processInterruptedAfterReadinessProbesRemainedFalse": true,
+  "verificationUse": "diagnostic failure only; not accepted as a test result"
+}
