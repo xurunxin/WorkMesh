@@ -4,7 +4,7 @@
 
 ## 来源与实际改动
 
-整合前 HEAD 为 `19cca3577ad3c4ec3dc4969ba335d191d1cbc148`。本轮经 `tds git fetch origin main` 及 `ls-remote origin refs/heads/main` 实读指定主线 `96e724858e692d262107c34db50b40c3ae7c122c`；共同基点为 `1078bbcd527550bfabee73093b7ffd0032d3fd24`。候选 index tree 与环境见 [input.json](input.json)；平台正常提交后的组合 commit 实读另见 `delivery-readback.json`，不存在时不冒称已提交。
+整合前 HEAD 为 `19cca3577ad3c4ec3dc4969ba335d191d1cbc148`。本轮经 `tds git fetch origin main` 及 `ls-remote origin refs/heads/main` 实读指定主线 `96e724858e692d262107c34db50b40c3ae7c122c`；共同基点为 `1078bbcd527550bfabee73093b7ffd0032d3fd24`。平台已正常提交双 parent 组合 `840d0ea4d1f6def602d2be5a1ef356ccc9d3e82e` 并推送原分支，远端本轮实读相同，HEAD 字节核验成功。完整实读见 [delivery-readback.json](delivery-readback.json)，运行前候选 index tree 与环境仍见 [input.json](input.json)；随后仅追加这份提交绑定证据，不改变已验收组合源码。
 
 八个重叠路径、三个冲突及解决方式见 [merge-resolution.json](merge-resolution.json)。`OPENAPI.yaml`、`packages/contracts/src/index.ts` 保留双方新增定义，路由矩阵由 `pnpm generate:route-policy` 重建；`route-policy.test.ts` 总数调整为 270。`server.ts` 自动合并；A1 的 InstallationToken 提前拒绝块及 `authz/authorize.ts` 与指定主线完全一致，拒绝先于 `resolveCoordinationIdentity`，没有回退安全修订。
 
@@ -25,7 +25,7 @@
 
 原始命令、环境覆盖、退出码、源码前后摘要见 [checks.json](checks.json)、[retry/checks.json](retry/checks.json)、[accepted/checks.json](accepted/checks.json)、[browser/checks.json](browser/checks.json)。完整 DB/Worker/recovery、历史只读 Docker 挂载、旧 mocked 套件没有重跑，不计本轮通过：这些路径及 C3 不重叠产品源码未变化，本轮风险集中在契约、路由和 API 鉴权组合。
 
-两轮 API 夹具失败各为 56 失败、6 通过、110 跳过：主密钥生成长度不满足 `auth-idempotency.ts` 解码后 32 字节要求，安装失败又引发缺失 CSRF 与限流连带失败；首轮 RustFS 默认 tmpfs 权限使容器退出。保留原件后修正独有服务的 tmpfs 权限、密钥编码及 CI 已有的测试 burst/Runner token；没有修改产品默认值、安全规则、测试断言或超时。详见 [preparation-failures.json](preparation-failures.json)。首次浏览器启动遇到 3100/3101 已占用，零用例执行；进程详情读取时已退出，未取得其具体工作区归属，未操作这些未登记进程。
+两轮 API 夹具失败各为 56 失败、6 通过、110 跳过：主密钥生成长度不满足 `auth-idempotency.ts` 解码后 32 字节要求，安装失败又引发缺失 CSRF 与限流连带失败；首轮 RustFS 默认 tmpfs 权限使容器退出。保留原件后修正独有服务的 tmpfs 权限、密钥编码及 CI 已有的测试 burst/Runner token；没有修改产品默认值、安全规则、测试断言或超时。详见 [preparation-failures.json](preparation-failures.json)。首次浏览器启动遇到 3100/3101 已占用，零用例执行；进程详情读取时已退出，未取得其具体工作区归属，未操作这些未登记进程，实际端口盘点见 [occupied-browser-ports.json](occupied-browser-ports.json)。
 
 浏览器复验仅在临时副本替换两个端口及测试副本路径；生产文件未改，模型设置用例字节完全相同。原始配置、运行副本及逐文件哈希见 [browser/runtime-copies.json](browser/runtime-copies.json)。核验器能仅按登记调整重建运行文件，未修改断言或超时。
 

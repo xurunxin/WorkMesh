@@ -47,5 +47,7 @@
   "historicalReuse": "未变化的 DB/Worker/recovery、只读 Docker 挂载与旧 mocked 对照保留原提交验收含义，未重跑、不计本轮通过",
   "review": "本轮主线整合与新增边界断言待独审；上一 blocking 的独审通过不冒本轮组合审查",
   "requiredCi": "尚无 PR；待 Chief 经标准 merge_builds 建立最新 PR 必需 CI 门禁",
-  "mergeStatus": "候选正常整合尚待平台提交；不声称合入 main"
+  "mergeStatus": "平台正常双 parent 合并提交已推送原分支，远端本轮实读相同；尚未合入 main",
+  "combinationCommit": "840d0ea4d1f6def602d2be5a1ef356ccc9d3e82e",
+  "headVerificationExitCode": 0
 }

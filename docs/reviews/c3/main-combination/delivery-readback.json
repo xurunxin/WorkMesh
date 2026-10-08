@@ -1,0 +1,22 @@
+{
+  "readAt": "2026-10-08T11:59:54.836284+00:00",
+  "combinationCommit": "840d0ea4d1f6def602d2be5a1ef356ccc9d3e82e",
+  "parents": [
+    "19cca3577ad3c4ec3dc4969ba335d191d1cbc148",
+    "96e724858e692d262107c34db50b40c3ae7c122c"
+  ],
+  "tree": "4aad29d4af0cac67210ffb2733acd71d1847d258",
+  "commitAndPushMethod": "平台 push_branch，正常双 parent 合并；本工作区未运行 git commit",
+  "remoteReadMethod": "本轮 tds git ls-remote origin refs/heads/tds/conv-01a11890-f4de-7106-b64d-e1b2c0d4608e",
+  "remoteBranchHead": "840d0ea4d1f6def602d2be5a1ef356ccc9d3e82e",
+  "sourceDigest": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+  "headVerification": {
+    "command": "python -X utf8 docs/reviews/c3/main-combination/verify-combination.py",
+    "exitCode": 0,
+    "sourceFiles": 1382,
+    "historicalEvidenceFiles": 31,
+    "archiveMembers": 89
+  },
+  "nextCheckpoint": "本文件及交接正文追加为纯证据检查点；不改变该组合产品源码，不把下一次平台提交 ID 预填为已读",
+  "reviewStatus": "本轮组合回交独审；不代替最新 PR required CI、Chief 确认或 actual main 合入"
+}
