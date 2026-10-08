@@ -24,7 +24,7 @@ for (const item of map.matrix) {
 for (const item of map.repairs) item.result = item.id === 'lite-build-proxy' ? liteResult : item.file.startsWith('apps/api/integration/')
   ? 'a2-21cc8a38 实际通过，参数和断言保持；受测原字节与提交 blob 分列绑定'
   : 'a2-46fe0e21 与 a2-c2def680 实际通过，未自动激活或发送'
-map.verification = { results: 'docs/reviews/a2/execution-results.json', source: 'docs/reviews/a2/checked-source-binding.json', visual: 'docs/reviews/a2/visual-review.md', latestCI: 'docs/reviews/a2/latest-ci-readback.json', status: '实现检查结果已绑定；Lite、视觉确认、独审、latest Required CI、actual main 单列，不标记完成' }
+map.verification = { results: 'docs/reviews/a2/execution-results.json', source: 'docs/reviews/a2/checked-source-binding.json', visual: 'docs/reviews/a2/visual-review.md', latestCI: 'docs/reviews/a2/latest-ci-readback.json', status: '实现检查结果已绑定；Lite 以独立运行结果为准，真实设备/厂商、视觉确认、独审、latest Required CI、actual main 单列，不标记完成' }
 write(mapPath, map)
 const coveragePath = 'docs/reviews/r1/test-coverage.json'
 const coverage = json(coveragePath)
@@ -38,12 +38,18 @@ task.specSha256 = createHash('sha256').update(readFileSync(resolve(root, task.pa
 task.execution.status = '实现与检查结果已落盘，未标记整卡完成；等待实施独审及未验收项闭合'
 task.execution.sourceBinding = 'docs/reviews/a2/checked-source-binding.json'
 task.execution.latestCI = 'docs/reviews/a2/latest-ci-readback.json'
+task.execution.originalIntegratedMain ??= task.execution.main
+task.execution.main = map.main
+task.execution.inputMainSource = 'docs/reviews/a2/late-main-input.json'
 write(indexPath, index)
 const sourcePath = 'docs/plan/a2-configuration-readiness/source.json'
 const source = json(sourcePath)
 source.execution.status = task.execution.status
 source.execution.sourceBinding = task.execution.sourceBinding
 source.execution.latestCI = task.execution.latestCI
+source.execution.originalIntegratedMain ??= source.execution.main
+source.execution.main = map.main
+source.execution.inputMainSource = task.execution.inputMainSource
 source.execution.currentMainInput = map.main
 source.execution.liteProxyRepair = 'docs/reviews/a2/lite-proxy-repair.md'
 write(sourcePath, source)

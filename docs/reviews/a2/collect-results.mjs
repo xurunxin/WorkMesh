@@ -15,6 +15,8 @@ const runs = readdirSync(runsRoot).sort().filter(name => existsSync(resolve(runs
   const receipt = json(resolve(directory, 'receipts.json'))
   const before = source(resolve(directory, 'source-before.json'))
   const after = source(resolve(directory, 'source-after.json'))
+  const liteBefore = source(resolve(directory, 'source-before-browser.json'))
+  const liteAfter = source(resolve(directory, 'source-after-install.json'))
   const drift = before && after ? [...new Set([...before.files.map(item => item.path), ...after.files.map(item => item.path)])]
     .filter(path => before.files.find(item => item.path === path)?.sha256 !== after.files.find(item => item.path === path)?.sha256) : null
   return {
@@ -23,7 +25,8 @@ const runs = readdirSync(runsRoot).sort().filter(name => existsSync(resolve(runs
     outcome: receipt.outcome ?? null, sourceBefore: before ? relative(resolve(directory, 'source-before.json')) : null,
     sourceAfter: after ? relative(resolve(directory, 'source-after.json')) : null,
     sourceHead: before?.head ?? receipt.sha ?? null, changedDuringRun: drift,
-    sourceLimitation: before ? '保存 HEAD 加本轮未提交运行源码原字节；Git blob 与工作树换行另核。' : '早期运行未完整捕获前后源码；不以该通过替代当前整合验收。',
+    sourceLimitation: before ? '保存 HEAD 加本轮未提交运行源码原字节；Git blob 与工作树换行另核。' : receipt.sha ? '镜像由精确 SHA 的 Git archive 构建；宿主测试与 Compose 输入另见专用前后绑定，不冒作进程启动时快照。' : '早期运行未完整捕获前后源码；不以该通过替代当前整合验收。',
+    liteSourceBinding: liteBefore && liteAfter ? { before: relative(resolve(directory, 'source-before-browser.json')), after: relative(resolve(directory, 'source-after-install.json')), unchanged: liteAfter.files.every(item => item.matchesBeforeBrowser), compiledProxy: receipt.compiledProxy, preInstallProxy: receipt.preInstallProxy } : null,
     commands: receipt.results.map(result => {
       const logPath = resolve(directory, result.log)
       const log = hasEvidence(logPath) ? readEvidence(logPath).toString('utf8') : ''

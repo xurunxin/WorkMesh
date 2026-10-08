@@ -513,7 +513,7 @@
       "sourceUpdatedAt": "2026-10-07T15:23:25.992Z",
       "sourceSha256": "130e16687029a7950d13ebe964a9d230bfa1892e811d77bbfbe050e9201b0286",
       "path": "docs/plan/activation-task-specs/09.md",
-      "specSha256": "7f4cbdbffbe3cea5ccc566744c9ab7b857c94cc5b49a23893d0399bf00b14139",
+      "specSha256": "205f141ce3c21dca5d19fc44bcfcf48ee68de661f8217c76439ad1d15578b4ad",
       "phase": "todo",
       "owner": "A2 执行者",
       "withPlan": true,
@@ -629,15 +629,16 @@
         "readback": "docs/reviews/a2/approved-plan-readback.json"
       },
       "execution": {
-        "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
-        "inputMainSource": "docs/reviews/a2/c3-integration/input.json",
+        "main": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+        "inputMainSource": "docs/reviews/a2/late-main-input.json",
         "planReadback": "docs/reviews/a2/approved-plan-readback.json",
         "record": "docs/reviews/a2/implementation.md",
         "matrix": "docs/reviews/a2/execution-map.json",
         "results": "docs/reviews/a2/execution-results.json",
         "status": "实现与检查结果已落盘，未标记整卡完成；等待实施独审及未验收项闭合",
         "sourceBinding": "docs/reviews/a2/checked-source-binding.json",
-        "latestCI": "docs/reviews/a2/latest-ci-readback.json"
+        "latestCI": "docs/reviews/a2/latest-ci-readback.json",
+        "originalIntegratedMain": "18252ba8761aa810c3fd12d31ecae83e8b24d985"
       }
     },
     {

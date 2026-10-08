@@ -8,6 +8,8 @@
 
 开工输入 `5b9c76b5f79917697906520edcd6947bfbfa925f` 的观察留在 `execution-input.json`。C3 更新前成果保存在 `22a27a9fe5184a5eb9ba13c8d8ec94652962a24b`；最新观察及共享影响见 `c3-integration/input.json`。同分支正常整合精确 main `18252ba8761aa810c3fd12d31ecae83e8b24d985`，整合提交为 `ca5daf4c0f024ce1b42f8c940125d824ebfcfe03`。两个冲突原件分别保全；同时保留 A2 DTO 和 C3 预置合同、测试开关。主线判断来自远端精确 ref，未把共享 `FETCH_HEAD` 当 main。
 
+其后实际 main 为 `74f247f9240eaf21e74ef248f71a445c1d4276d7`，只有历史清理文档增量；Lite 第二轮结束后同分支整合为 `5f052960325c92154486eab6d1c93689d4489899`。精确 ref 原读回、实际 diff 和整合证据见 `late-main-input.json`、`late-main-final-readback.json`。旧输入观察保留历史含义，没有因清理文档重跑无变化产品，也没有清理 C3 目录。
+
 ## 实现与兼容
 
 - 工作台消费 A1 三态投影，按仓库、模型、Agent 依赖深度排列；只有 applicable/blocked/unmet 被计数。Runner 始终说明未知。刷新、失败、上下文切换和撤权屏蔽旧操作；URL 不合法或与当前会话不匹配时不发投影查询。
@@ -35,7 +37,9 @@
 
 浏览器和集成首败均保留。trace 和认证存储按 `sanitize-evidence.ps1` 脱敏或移除，逐路径/归档项记录原哈希、最终哈希及原因；脱敏副本不冒作秘密原字节。D0 原图及固定比较参数保持；新增 UI 的预期视觉差异与真正回归分别记录，自动截图不能冒称人类视觉审批。
 
-Lite 入口从精确提交构建并 save/load，目标服务不挂载源码，使用独有 compose 项目及 HTTPS Gitea 夹具。沿用原始 Lite 安装合同，保留 RustFS 凭证映射风险；本机实际安装、真实设备和真实供应商联通分别记结果，普通仓库 E2E 的 Lite skip 不计通过。
+Lite 入口从精确提交构建并 save/load，目标服务不挂载源码，使用独有 compose 项目及 HTTPS Gitea 夹具。第一轮 `a2-lite-c4424791` 因主机 CA 文件共享失败；第二轮 `a2-lite-9b8957e6` 的命名 CA 卷、Compose 和角色加载成功，但 Web 固化了 `localhost:3001` 上游，真实安装失败。两轮失败不计通过，原件与收尾回执保留。按既有部署合同，在 Lite 构建阶段绑定内部 `http://api:3001`，不改变通用 Next 默认、认证、TLS 或只读镜像，具体根因见 [修补说明](lite-proxy-repair.md)。新镜像同时检查真实编译 manifest 与经 Web 的安装状态，再运行原安装用例；真实设备和真实供应商联通分别记结果。
+
+原始日志、源码快照、冲突原件及失败上下文采用逐文件无损 gzip，完整映射、工作树与历史 Git blob 字节、解压核验及未压缩副本清理回执在 `raw-evidence-archives.json`。用 `read-evidence-bytes.mjs` 读取原字节；查看归档 HTML 报告前须按其原相对路径解压数据文件。脱敏 trace 的前后摘要另列，不冒作秘密原字节，不通过格式化日志或忽略 CI 掩盖检查。
 
 ## 验收与收尾
 
@@ -50,13 +54,18 @@ Lite 入口从精确提交构建并 save/load，目标服务不挂载源码，�
 | `pnpm test:e2e` | `a2-46fe0e21`，78 项通过、2 项跳过，退出 0；Lite 与关闭 Gitea 场景分别验收 |
 | 关闭 Gitea 的 A2 浏览器 | `a2-c2def680`，11 项通过、1 项 Lite 跳过，退出 0 |
 | `pnpm ci:validate`、Web build | `a2-c2def680` 两条均退出 0 |
+| Lite 代理修补配置检查 | `a2-proxy-a5b51ab5`，配置包测试、Compose 校验及 16 反例、脚本语法、`ci:validate` 均退出 0；前后源码不变 |
 | 锁清单生成与验证 | `lock-inventory-check.json`，生成后去掉更新变量再验证，均 8 项通过 |
 | 全站 i18n | 最新静态轮退出 1，21 条均位于未修改的 C1 `notification-channel-settings.tsx`；A2 新文案无诊断，不加忽略规则 |
 | D0 原截图比较 | `a2-6f596da7`，8 通过、6 失败；五项设计差异仍失败并待人工确认，详情页网络首败单独原用例重跑 `a2-40208d29` 1 项通过；详见 `visual-review.md` |
-| Lite 无源码安装 | 独立镜像与安装入口已实现；以稍后的精确提交运行记录为准，普通 E2E 跳过不计通过 |
+| Lite 无源码安装 | `a2-lite-333f7614`，精确 `bb86b1fe31e9b23f6e91171b526c860a0a0fcb22` 镜像；四角色/save-load、编译 manifest、无源码 Compose 和经 Web 的安装状态均通过；原 `@lite` 用例实际 1 项通过（10.7s），退出 0 |
 
 早期首败未覆盖或删除。`a2-24d1b785` 的记录器因 Windows 活动日志占用异常退出，浏览器最终码缺失，不计产品通过；异常及单独归属收尾回执保留，日志写入器已加入有界重试。其三个容器已逐 ID 清理并确认不存在，认证材料脱敏成功。
 
+第三轮 Lite 的真实安装、认证、Agent/模型显式 API 配置、Projects 仓库表单与生产 Worker HTTPS 解析完成，Back 后横幅消失；没有对运行许可或自动激活作推断。`source-before-browser.json` 与 `source-after-install.json` 证明关键宿主测试/Compose 输入在浏览器前后不变，镜像源码绑定精确提交，五条编译规则见实际 image ID 回执。第三轮 Compose 的容器/卷/网络、四角色 probe、CA 装载容器及卷、专用镜像和安装目录均清理退出 0，HTTPS 服务关闭，逐路径结果均不存在。真实低功耗设备与真实厂商未验收。
+
+代理修补后应用/API/Worker/契约与共享锁序没有代码变化，原必需检查只复用于这些真实未变输入；Docker 的新编译上游由新镜像构建和实际安装用例重新验证，不冒用旧通过。唯一组件测试文件改动是末尾空行清理，原 6 项已独立重跑通过，原字节及工具回执在 `test-eof-check.json`。
+
 原六项、九类适用性、DoD 和三安全修补的实际用例绑定见 `execution-map.json`，规划矩阵仍保留历史要求。不因文档存在、旧 source 通过或主线历史 CI 标记本次通过。最终独审、最新 Required CI、实际 main 落地及人类视觉确认仍单列；本记录不标记整卡完成。
 
-只清理登记归属本任务的测试资源，并保存逐 ID/path 检查和操作回执；共享镜像、默认网络、当前 worktree 保留。C3 的拒绝/违规审计及其新旧目录不修改、不删除，旧 worktree 未满足合入/保全/无活动引用条件时不清理。
+只清理登记归属本任务的测试资源，并保存逐 ID/path 检查和操作回执；汇总及原件入口见 [收尾报告](cleanup-report.md)。共享镜像、默认网络、当前 worktree 保留。C3 的拒绝/违规审计及其新旧目录不修改、不删除，旧 worktree 未满足合入/保全/无活动引用条件时不清理。

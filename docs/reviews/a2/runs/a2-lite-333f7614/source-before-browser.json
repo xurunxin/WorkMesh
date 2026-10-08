@@ -1,0 +1,98 @@
+{
+  "observedAt": "2026-10-08T17:15:53.760Z",
+  "phase": "镜像构建正常进行；真实浏览器启动前外部读回，不伪补进程启动时快照",
+  "head": "bb86b1fe31e9b23f6e91171b526c860a0a0fcb22",
+  "files": [
+    {
+      "path": "infra/docker/lite.Dockerfile",
+      "worktree": {
+        "bytes": 5908,
+        "sha256": "ed12490b9f817cb5331d0be986594c93f70deb0b6433a89ec6d853008632ba01"
+      },
+      "gitBlob": {
+        "bytes": 5808,
+        "sha256": "cda11e2c6ee51cd7c4b499aa8e6f8f1b6e7d8f02138e74e93a6b100cd532c5ee"
+      },
+      "exact": false,
+      "onlyCRLF": true
+    },
+    {
+      "path": "docker-compose.lite.yml",
+      "worktree": {
+        "bytes": 14981,
+        "sha256": "6afd85d7af1b28da003fd4c26a123e2b9e7102a9b73b937b1c500621275e0edb"
+      },
+      "gitBlob": {
+        "bytes": 14650,
+        "sha256": "9d6679d8df506d4f0ad3b11faa051f5326aedef4341a6e5d6d6ffdfe95bf900e"
+      },
+      "exact": false,
+      "onlyCRLF": true
+    },
+    {
+      "path": "apps/web/next.config.ts",
+      "worktree": {
+        "bytes": 1920,
+        "sha256": "166dcbee4bbddfbdce41ee2b892ce586c61c6aaeb8b40318649f10246777e54f"
+      },
+      "gitBlob": {
+        "bytes": 1874,
+        "sha256": "a756406a9c3a61575fe676a3a93dcf3ebfc7ded07bff5a64ac6071bd07f888ed"
+      },
+      "exact": false,
+      "onlyCRLF": true
+    },
+    {
+      "path": "scripts/verify-a2-lite.mjs",
+      "worktree": {
+        "bytes": 21912,
+        "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32"
+      },
+      "gitBlob": {
+        "bytes": 21912,
+        "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32"
+      },
+      "exact": true,
+      "onlyCRLF": true
+    },
+    {
+      "path": "apps/web/playwright.a2-lite.config.ts",
+      "worktree": {
+        "bytes": 648,
+        "sha256": "4bc1c255350f561b927b8f9b85f511961645d802c74dc07534d51ab3eabcdf33"
+      },
+      "gitBlob": {
+        "bytes": 648,
+        "sha256": "4bc1c255350f561b927b8f9b85f511961645d802c74dc07534d51ab3eabcdf33"
+      },
+      "exact": true,
+      "onlyCRLF": true
+    },
+    {
+      "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+      "worktree": {
+        "bytes": 8443,
+        "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+      },
+      "gitBlob": {
+        "bytes": 8443,
+        "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+      },
+      "exact": true,
+      "onlyCRLF": true
+    },
+    {
+      "path": "apps/web/e2e/configuration-readiness.spec.ts",
+      "worktree": {
+        "bytes": 14745,
+        "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+      },
+      "gitBlob": {
+        "bytes": 14745,
+        "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+      },
+      "exact": true,
+      "onlyCRLF": true
+    }
+  ]
+}

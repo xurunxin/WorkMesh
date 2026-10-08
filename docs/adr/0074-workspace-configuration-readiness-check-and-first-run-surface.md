@@ -278,6 +278,8 @@ Worker 正常解析和 checkpoint 恢复均在最终落库事务内重验 Human�
 
 仓库列表新增 Human 专用 Team/可用 provider 筛选，在 SQL 分页前执行并绑定游标；旧无参数 Human/Agent 的范围、排序、分页信封及 200 条上限保持，Agent 拒绝新增筛选。C1 事件快照兼容及 C3 模型预置默认关闭、读取/草稿零保存出站的行为保留。无新实体、端点、事件类型或迁移；实施与实际验收记录在 `docs/reviews/a2/`，未通过 Lite、人类视觉及最终 CI 的项目不记通过。
 
+Lite 原安装验收包含真实镜像无源码安装与逐项配置闭环。其构建阶段必须将既有 Compose 内部 `api:3001` 地址固化进 Next 五条代理规则，运行时声明不能重建 rewrites；修补及前两轮首败见 `docs/reviews/a2/lite-proxy-repair.md`。不改变外部同源地址、认证、TLS、四角色或只读镜像合同，也不将真实设备和厂商兼容冒作本机安装结果。
+
 - `OPENAPI.yaml` declares the readiness route, its three states per check
   (`ready` / `blocked` / `unknown`；`not_applicable` 另属适用性), and the fact that it
   is a query with no write counterpart.

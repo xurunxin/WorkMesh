@@ -1,6 +1,6 @@
 {
-  "observedAt": "2026-10-08T16:34:34.528Z",
-  "currentHead": "3a30e30985b2de92d4dde90d566833297da94cde",
+  "observedAt": "2026-10-08T17:16:31.529Z",
+  "currentHead": "bb86b1fe31e9b23f6e91171b526c860a0a0fcb22",
   "byteRule": "原字节与 Git blob 分列；仅 CRLF 转换单独证明，不把不同源码或运行中变化冒作相同。",
   "records": [
     {
@@ -275,16 +275,16 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 6723,
-            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+            "bytes": 6721,
+            "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b"
           },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 6722,
-            "sha256": "bd9bf9a2ee3ef6f669792ba65ea963f3d539c555f296eedece9addf293af1297",
+            "bytes": 6721,
+            "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b",
             "matchesTested": false,
-            "matchesTestedExceptCRLF": true
+            "matchesTestedExceptCRLF": false
           }
         },
         {
@@ -495,14 +495,14 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 17976,
-            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32"
           },
           "currentMatchesTested": false,
           "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 17976,
-            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827",
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32",
             "matchesTested": false,
             "matchesTestedExceptCRLF": false
           }
@@ -513,6 +513,7 @@
         "apps/web/e2e/configuration-readiness.spec.ts",
         "apps/web/e2e/project-work-preview-server.mjs",
         "apps/web/e2e/stage0.spec.ts",
+        "apps/web/features/projects/project-repository-configuration.test.tsx",
         "scripts/verify-a2-lite.mjs"
       ]
     },
@@ -788,16 +789,16 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 6723,
-            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+            "bytes": 6721,
+            "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b"
           },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 6722,
-            "sha256": "bd9bf9a2ee3ef6f669792ba65ea963f3d539c555f296eedece9addf293af1297",
+            "bytes": 6721,
+            "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b",
             "matchesTested": false,
-            "matchesTestedExceptCRLF": true
+            "matchesTestedExceptCRLF": false
           }
         },
         {
@@ -1028,14 +1029,14 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 17976,
-            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32"
           },
           "currentMatchesTested": false,
           "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 17976,
-            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827",
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32",
             "matchesTested": false,
             "matchesTestedExceptCRLF": false
           }
@@ -1048,6 +1049,7 @@
       "currentDifferences": [
         "apps/web/e2e/configuration-readiness.spec.ts",
         "apps/web/e2e/stage0.spec.ts",
+        "apps/web/features/projects/project-repository-configuration.test.tsx",
         "playwright.config.ts",
         "scripts/verify-a2-lite.mjs"
       ]
@@ -1324,16 +1326,16 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 6723,
-            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+            "bytes": 6721,
+            "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b"
           },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 6722,
-            "sha256": "bd9bf9a2ee3ef6f669792ba65ea963f3d539c555f296eedece9addf293af1297",
+            "bytes": 6721,
+            "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b",
             "matchesTested": false,
-            "matchesTestedExceptCRLF": true
+            "matchesTestedExceptCRLF": false
           }
         },
         {
@@ -1564,14 +1566,14 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 17976,
-            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32"
           },
           "currentMatchesTested": false,
           "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 17976,
-            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827",
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32",
             "matchesTested": false,
             "matchesTestedExceptCRLF": false
           }
@@ -1579,6 +1581,7 @@
       ],
       "changedDuringRun": [],
       "currentDifferences": [
+        "apps/web/features/projects/project-repository-configuration.test.tsx",
         "scripts/verify-a2-lite.mjs"
       ]
     },
@@ -1854,16 +1857,16 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 6723,
-            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+            "bytes": 6721,
+            "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b"
           },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 6722,
-            "sha256": "bd9bf9a2ee3ef6f669792ba65ea963f3d539c555f296eedece9addf293af1297",
+            "bytes": 6721,
+            "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b",
             "matchesTested": false,
-            "matchesTestedExceptCRLF": true
+            "matchesTestedExceptCRLF": false
           }
         },
         {
@@ -2094,21 +2097,24 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 17976,
-            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32"
           },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 17976,
-            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827",
-            "matchesTested": true,
-            "matchesTestedExceptCRLF": true
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
           }
         }
       ],
       "changedDuringRun": [],
-      "currentDifferences": []
+      "currentDifferences": [
+        "apps/web/features/projects/project-repository-configuration.test.tsx",
+        "scripts/verify-a2-lite.mjs"
+      ]
     },
     {
       "runId": "a2-static-1791476564371",
@@ -2382,16 +2388,16 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 6723,
-            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+            "bytes": 6721,
+            "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b"
           },
-          "currentMatchesTested": true,
-          "currentMatchesTestedExceptCRLF": true,
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
           "headBlob": {
-            "bytes": 6722,
-            "sha256": "bd9bf9a2ee3ef6f669792ba65ea963f3d539c555f296eedece9addf293af1297",
+            "bytes": 6721,
+            "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b",
             "matchesTested": false,
-            "matchesTestedExceptCRLF": true
+            "matchesTestedExceptCRLF": false
           }
         },
         {
@@ -2622,15 +2628,226 @@
           },
           "beforeMatchesAfter": true,
           "current": {
-            "bytes": 17976,
-            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32"
+          },
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
+          "headBlob": {
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        }
+      ],
+      "changedDuringRun": [],
+      "currentDifferences": [
+        "apps/web/features/projects/project-repository-configuration.test.tsx",
+        "scripts/verify-a2-lite.mjs"
+      ]
+    },
+    {
+      "runId": "a2-proxy-a5b51ab5",
+      "testedHead": "5f052960325c92154486eab6d1c93689d4489899",
+      "files": [
+        {
+          "path": "infra/docker/lite.Dockerfile",
+          "tested": {
+            "bytes": 5908,
+            "sha256": "ed12490b9f817cb5331d0be986594c93f70deb0b6433a89ec6d853008632ba01"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5908,
+            "sha256": "ed12490b9f817cb5331d0be986594c93f70deb0b6433a89ec6d853008632ba01"
           },
           "currentMatchesTested": true,
           "currentMatchesTestedExceptCRLF": true,
           "headBlob": {
-            "bytes": 17976,
-            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827",
+            "bytes": 5808,
+            "sha256": "cda11e2c6ee51cd7c4b499aa8e6f8f1b6e7d8f02138e74e93a6b100cd532c5ee",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "docker-compose.lite.yml",
+          "tested": {
+            "bytes": 14981,
+            "sha256": "6afd85d7af1b28da003fd4c26a123e2b9e7102a9b73b937b1c500621275e0edb"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 14981,
+            "sha256": "6afd85d7af1b28da003fd4c26a123e2b9e7102a9b73b937b1c500621275e0edb"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 14650,
+            "sha256": "9d6679d8df506d4f0ad3b11faa051f5326aedef4341a6e5d6d6ffdfe95bf900e",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "apps/web/next.config.ts",
+          "tested": {
+            "bytes": 1920,
+            "sha256": "166dcbee4bbddfbdce41ee2b892ce586c61c6aaeb8b40318649f10246777e54f"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 1920,
+            "sha256": "166dcbee4bbddfbdce41ee2b892ce586c61c6aaeb8b40318649f10246777e54f"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 1874,
+            "sha256": "a756406a9c3a61575fe676a3a93dcf3ebfc7ded07bff5a64ac6071bd07f888ed",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "scripts/verify-a2-lite.mjs",
+          "tested": {
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 21912,
+            "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32",
             "matchesTested": true,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "packages/config/src/runtime-secrets.mjs",
+          "tested": {
+            "bytes": 8866,
+            "sha256": "87d95a5418231d3b0a096d91b1f9b2bea74a78d0ef3e6f5d951276716d41daed"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 8866,
+            "sha256": "87d95a5418231d3b0a096d91b1f9b2bea74a78d0ef3e6f5d951276716d41daed"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 8603,
+            "sha256": "2cc347be55ffa66daba2419c01bd251586a038e18db2a4bd2d4669ebec49d4c1",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "infra/docker/runtime-guard.mjs",
+          "tested": {
+            "bytes": 1440,
+            "sha256": "081bc78841a6e079cf13981d5d1822dca8bf106f5f4beb2280a1e70e41382d63"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 1440,
+            "sha256": "081bc78841a6e079cf13981d5d1822dca8bf106f5f4beb2280a1e70e41382d63"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 1401,
+            "sha256": "35ad273b92b71181c2461b64419bb032d3653f65c23e3cb5cdd6134ddb937cd6",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "apps/web/playwright.a2-lite.config.ts",
+          "tested": {
+            "bytes": 648,
+            "sha256": "4bc1c255350f561b927b8f9b85f511961645d802c74dc07534d51ab3eabcdf33"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 648,
+            "sha256": "4bc1c255350f561b927b8f9b85f511961645d802c74dc07534d51ab3eabcdf33"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 648,
+            "sha256": "4bc1c255350f561b927b8f9b85f511961645d802c74dc07534d51ab3eabcdf33",
+            "matchesTested": true,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+          "tested": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485",
+            "matchesTested": true,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "apps/web/e2e/configuration-readiness.spec.ts",
+          "tested": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c",
+            "matchesTested": true,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "tested": {
+            "bytes": 233344,
+            "sha256": "ed92a40f6dca083b5fe725c28a2b52571f2e695092b282936f65404f85d0429b"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 233344,
+            "sha256": "ed92a40f6dca083b5fe725c28a2b52571f2e695092b282936f65404f85d0429b"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 226336,
+            "sha256": "ee132beb6ad55a041faed36fb1da1bc7c855f83a1b461d5a16a4f6d64999584b",
+            "matchesTested": false,
             "matchesTestedExceptCRLF": true
           }
         }
