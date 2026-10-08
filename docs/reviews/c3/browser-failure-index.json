@@ -1,0 +1,714 @@
+{
+  "archive": "browser-failures.zip",
+  "archiveSha256": "805d48645fe03a04936d6ac45d1dff8c6240959a6983036a5409ffe37bfcd6a9",
+  "bytePolicy": "失败 DOM/source 上下文与截图的原字节无损保全；模拟服务器使用静态假身份。完整控制台见 execution-logs.zip。",
+  "files": [
+    {
+      "member": "mocked-dev/output/mocked-accessibility-keybo-1a450-es-layers-and-focus-restore/error-context.md",
+      "byteLength": 23313,
+      "sha256": "a535c7c684f53851457efa2c2ab739ffa273df023e6981368ac24e22f33ec5a9"
+    },
+    {
+      "member": "mocked-dev/output/mocked-accessibility-keybo-1a450-es-layers-and-focus-restore/test-failed-1.png",
+      "byteLength": 183044,
+      "sha256": "8bf0d341e8a6afbe15903069d43069561e33b827097befb541d2602658a40d7f"
+    },
+    {
+      "member": "mocked-dev/output/mocked-accessibility-keybo-1b203--top-layers-and-containment/error-context.md",
+      "byteLength": 20686,
+      "sha256": "182f6a0e09a319cb6f365a6d23f9e529e5eb44bef73012615c4cd89df4f06f81"
+    },
+    {
+      "member": "mocked-dev/output/mocked-accessibility-keybo-1b203--top-layers-and-containment/test-failed-1.png",
+      "byteLength": 91935,
+      "sha256": "48c60d8aef38014e0ae516c7d779b6b2b585c6607c210b0a96faa3e6d0ab571d"
+    },
+    {
+      "member": "mocked-dev/output/mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en/error-context.md",
+      "byteLength": 15985,
+      "sha256": "58884ec7bf4e9b068893647b863d7f1141e3b5d811b7deb247379e0b17a8904a"
+    },
+    {
+      "member": "mocked-dev/output/mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en/test-failed-1.png",
+      "byteLength": 159406,
+      "sha256": "c3ee8b1370942800aaed1c3f2877ccfd781dc0fac1c9b690b41bc99d9a5091b4"
+    },
+    {
+      "member": "mocked-dev/output/mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN/error-context.md",
+      "byteLength": 14884,
+      "sha256": "e29fbe3d9dee6e95e5f9db20aa8f244ab0f8f8251b60a8ac33d78b4a15b83730"
+    },
+    {
+      "member": "mocked-dev/output/mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN/test-failed-1.png",
+      "byteLength": 94175,
+      "sha256": "878584803db15306887b6fc2b0e443bae5da7b555534c622d1f9ef77825f36b0"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-01c54-nt-through-a-failed-refresh/error-context.md",
+      "byteLength": 21851,
+      "sha256": "9797d2e6ff4dadb4343d2b954d93e8b79b213e1eca78a2338bee1b56befd31a6"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-01c54-nt-through-a-failed-refresh/test-failed-1.png",
+      "byteLength": 178680,
+      "sha256": "16335b8c1ce303aa9997e8c9f0ccac203410ff53fdc0eda0fc924c891082eeb1"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island/error-context.md",
+      "byteLength": 22317,
+      "sha256": "ea9acbd4764a6e6ed9428a48d128950a991b8f3dbbb5567ecd5617adfaf99c4a"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island/test-failed-1.png",
+      "byteLength": 52134,
+      "sha256": "18d834742507d1386445dc93365fe7bf30091fae6589738887ce4bfb0afebbf9"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-21d4d-cus-through-refresh-failure/error-context.md",
+      "byteLength": 23913,
+      "sha256": "f721a786bd5c471f1f722dc5147cc1c9285be28fd33fcd2feda90151212ad193"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-21d4d-cus-through-refresh-failure/test-failed-1.png",
+      "byteLength": 123936,
+      "sha256": "14374fc11a539eb70018c582a3fda78e51230f7375cec75894e1bba75e6c3e7b"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-692a7-ace-through-refresh-failure/error-context.md",
+      "byteLength": 14020,
+      "sha256": "5f3b232197bb62aeb4060bfd9536b9cca39ab04485317254d234ca1276ae78b2"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-692a7-ace-through-refresh-failure/test-failed-1.png",
+      "byteLength": 17185,
+      "sha256": "06c99190c576c9143f75f2b87801f621de99b0cbc9e2579909bf5ae62b217c2f"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island/error-context.md",
+      "byteLength": 25417,
+      "sha256": "c8d58a2dfd495e9f75b86776634dd41ae8488cf369ec7e5e4d4d3aeac5834dc9"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island/test-failed-1.png",
+      "byteLength": 123403,
+      "sha256": "c6e9370ba5f46800eea6132ff37a63610133b3c0b20b8d393f92ff032f297f20"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-9a035-hout-focusable-placeholders/error-context.md",
+      "byteLength": 24025,
+      "sha256": "0be94e445915953b24aa0fc791ab23ea0884b2755a1e691948d8f7f31de2f4e2"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-9a035-hout-focusable-placeholders/test-failed-1.png",
+      "byteLength": 182882,
+      "sha256": "6e4bbb1b45fe463df44ec07e5b7c1324859011aee19ae83272000dcd0aed565b"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-a0ce2-hout-focusable-placeholders/error-context.md",
+      "byteLength": 24025,
+      "sha256": "6b18528d756a86d432614693f8daf3d65201cd69d11a696868d0985b1f9be46e"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-a0ce2-hout-focusable-placeholders/test-failed-1.png",
+      "byteLength": 178680,
+      "sha256": "16335b8c1ce303aa9997e8c9f0ccac203410ff53fdc0eda0fc924c891082eeb1"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-a18c7-y-and-null-downstream-paths/error-context.md",
+      "byteLength": 13951,
+      "sha256": "a8f7f5dc21c3863db51a9b5a26648295c99aaead204b9182976f468080e389aa"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-a18c7-y-and-null-downstream-paths/test-failed-1.png",
+      "byteLength": 17185,
+      "sha256": "06c99190c576c9143f75f2b87801f621de99b0cbc9e2579909bf5ae62b217c2f"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island/error-context.md",
+      "byteLength": 25417,
+      "sha256": "305138b9831344d4f8060f1989571524afd87d9a76f815fa7225cf4a2d99b2f7"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island/test-failed-1.png",
+      "byteLength": 136792,
+      "sha256": "6486e08e93eae67e924104d3640a1211cc67b4a54a744605df1ef468858d7a16"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-f2657-hout-focusable-placeholders/error-context.md",
+      "byteLength": 20785,
+      "sha256": "1ddfe9ff8331323e1b1fd575b46b996265a11e72214f767d6fc4f6d3906c7dfa"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-f2657-hout-focusable-placeholders/test-failed-1.png",
+      "byteLength": 97371,
+      "sha256": "9d16d5c4ddead38259db3985a5cdb86821856839ccc8a35ff49a489c7a81c1ed"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-f72b5-tates-without-stale-actions/error-context.md",
+      "byteLength": 17648,
+      "sha256": "30e65cfe72c4062fb89d701229e2aaeae8a3c73ea9630369d9739d9b407b2974"
+    },
+    {
+      "member": "mocked-dev/output/mocked-loading-states.mock-f72b5-tates-without-stale-actions/test-failed-1.png",
+      "byteLength": 209280,
+      "sha256": "b197bb410ab2946e84bc46978ec1c179bf961a65a86ce0a1712cb49fa8cd7929"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible/error-context.md",
+      "byteLength": 12503,
+      "sha256": "34b108255f9cbe7e5adc30e3cb793951272f192b1103c1abc4f8968ce8668b52"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible/test-failed-1.png",
+      "byteLength": 15418,
+      "sha256": "eb04c5e291609d96dc3a2ec3f31e301fedc392e452342346bdefcb9c0ec77e6f"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry/error-context.md",
+      "byteLength": 21125,
+      "sha256": "2e8b17c8981e9dc71e48b7351c575a8a0dad1ae86b7f204200c0907162436669"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry/test-failed-1.png",
+      "byteLength": 127591,
+      "sha256": "21df6ee87b118b406c47b9b7d9dfbf82f582752d061907cde4e5c9fd6f0a60b2"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-31d93-related-Operations-requests/error-context.md",
+      "byteLength": 11260,
+      "sha256": "578501fefe2925806629e1d419c2da5885f892372a1677e1dd35eeb73bbf82f1"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry/error-context.md",
+      "byteLength": 13959,
+      "sha256": "1681029b7796077aae81ba1b463cd9b59200585c4548dacbdf5be60a3f1d3c01"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry/test-failed-1.png",
+      "byteLength": 19699,
+      "sha256": "4ac32b8affb4ea01b0272fcdd9a6e8f8738f2257b7f9f399e000344fabb2b2eb"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-49e26-xt-after-committed-deletion/error-context.md",
+      "byteLength": 21708,
+      "sha256": "92effe7d0d3e27e936d4a08d92b9f455d018a1ae8947ee8db4f5664624f133db"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-49e26-xt-after-committed-deletion/test-failed-1.png",
+      "byteLength": 151135,
+      "sha256": "94206fdc0480a1208733825ef4a02016033bdd8683f4185bb3b8e8925597fba2"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths/error-context.md",
+      "byteLength": 9173,
+      "sha256": "e0d1011e6a1d816be1f4d52e41b69984839685f5ba6be4d43421e3c3f2a88b44"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths/test-failed-1.png",
+      "byteLength": 50855,
+      "sha256": "a8f35d16236d2e17e22b79e811c238137c876fdb8cb1cf87fa1a8ec52e5e3733"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings/error-context.md",
+      "byteLength": 33856,
+      "sha256": "6a1cf79610992e3b3c0b0ae7b2248f5e7d147eccc425fd3074fe8f0251656ca6"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings/test-failed-1.png",
+      "byteLength": 120032,
+      "sha256": "3c4d351cdd92ea999a605615225497be22a5ad5f1602a9f7ca9ff84f2ad3dd00"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths/error-context.md",
+      "byteLength": 30511,
+      "sha256": "5cd17b89dcb0b777196be7b56a7a9d623136fcea7899f843475443bf36b8b097"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths/test-failed-1.png",
+      "byteLength": 46347,
+      "sha256": "f763d17516e90f13b8362c1364166a7bcbb6e6df7be830362717982141d2010d"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL/error-context.md",
+      "byteLength": 13744,
+      "sha256": "c2c211590ca5a9c89e3b6e709dd1557a166d141c923e3d0de5b63ce72a4e92f2"
+    },
+    {
+      "member": "mocked-dev/output/mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL/test-failed-1.png",
+      "byteLength": 15418,
+      "sha256": "eb04c5e291609d96dc3a2ec3f31e301fedc392e452342346bdefcb9c0ec77e6f"
+    },
+    {
+      "member": "mocked-dev/output/mocked-overlay-contract.mo-497cf-urn-ownership-deterministic/error-context.md",
+      "byteLength": 17952,
+      "sha256": "ebc82c021dd3a1f8cab5f3e38f9d17869c91cae607e95d2012eea38d686eaada"
+    },
+    {
+      "member": "mocked-dev/output/mocked-overlay-contract.mo-497cf-urn-ownership-deterministic/test-failed-1.png",
+      "byteLength": 206534,
+      "sha256": "5fcd27cb1a844b2d11cc9c9f5f00db60712f9e595ca4eb3b52cd568a8db69137"
+    },
+    {
+      "member": "mocked-dev/output/mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic/error-context.md",
+      "byteLength": 16918,
+      "sha256": "b1f65c0016638c3f2afc5f51c8ee56fce16881365e324fb4692dc81959bce628"
+    },
+    {
+      "member": "mocked-dev/output/mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic/test-failed-1.png",
+      "byteLength": 92906,
+      "sha256": "0ad06a8b9271df462ee1f86de4264746769344d54c240b0f601cdf0ab998781c"
+    },
+    {
+      "member": "mocked-dev/output/mocked-overlay-contract.mo-85caf-background-after-completion/error-context.md",
+      "byteLength": 17632,
+      "sha256": "6020f4e7b75b3b8b14c093a30e192c8774fb11296926fdebf96a0704e567d408"
+    },
+    {
+      "member": "mocked-dev/output/mocked-overlay-contract.mo-85caf-background-after-completion/test-failed-1.png",
+      "byteLength": 32205,
+      "sha256": "f35ffe6be477f0c4f6bbb8326a9fe7583b3595c655767cd0ef0e7e7b32ee3b04"
+    },
+    {
+      "member": "mocked-dev/output/mocked-overlay-contract.mo-d1081-background-after-completion/error-context.md",
+      "byteLength": 18961,
+      "sha256": "7130f31616fdf82173767fe58714fbcd7a255b0ace171479797bd56682f57e19"
+    },
+    {
+      "member": "mocked-dev/output/mocked-overlay-contract.mo-d1081-background-after-completion/test-failed-1.png",
+      "byteLength": 104067,
+      "sha256": "38c8a52cdd4fdda7c53d272df307fbb0f768ce2746dccbe0776a64e29924b8bc"
+    },
+    {
+      "member": "mocked-dev/output/mocked-page-hotkeys.mocked-0b345--approval-state-independent/error-context.md",
+      "byteLength": 17870,
+      "sha256": "3c73fc95d6cb2051469580dcf026fbc17d16e2e6c94a3930c0a617d50ea6b6e8"
+    },
+    {
+      "member": "mocked-dev/output/mocked-page-hotkeys.mocked-0b345--approval-state-independent/test-failed-1.png",
+      "byteLength": 158543,
+      "sha256": "a0701b4f2686690ec81997a290a4cd2ebf987fca3e9a5aa55086e52dbb4af40e"
+    },
+    {
+      "member": "mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/error-context.md",
+      "byteLength": 19159,
+      "sha256": "b55139079097b452126ca1c6181d6faff90279b9e47fbe92e4ce5043c798bd1e"
+    },
+    {
+      "member": "mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/test-failed-1.png",
+      "byteLength": 77384,
+      "sha256": "cfbfb2cb813b541e91d9075291fc436385621c01ce0fbb3606f8b2fd0a4b93a9"
+    },
+    {
+      "member": "mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/error-context.md",
+      "byteLength": 15893,
+      "sha256": "118770701cbe45f3997665ea036c7c0322d34f36f328afd61e3a874956082fdd"
+    },
+    {
+      "member": "mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/test-failed-1.png",
+      "byteLength": 37163,
+      "sha256": "e45b324fc768773f8597c72b70c4bd0672e8ac0b56da896e8c241996bdf380a9"
+    },
+    {
+      "member": "mocked-dev/output/mocked-page-hotkeys.mocked-92a88--approval-state-independent/error-context.md",
+      "byteLength": 14632,
+      "sha256": "6413725ccafd372a176c220ae14157cdaff4c2c82a362a3ef3eb83b0fd87e7a8"
+    },
+    {
+      "member": "mocked-dev/output/mocked-page-hotkeys.mocked-92a88--approval-state-independent/test-failed-1.png",
+      "byteLength": 71893,
+      "sha256": "4e1eb73369367a94c24f1d166198c612351b8e846b556bc0de8ec92558970208"
+    }
+  ],
+  "excludedPrivateArtifacts": [
+    {
+      "path": "mocked-dev/html-report/data/05711cbf495b4b919eaa87d45afe1c9932155b21.zip",
+      "byteLength": 812567,
+      "sha256": "7782a83177c71130f775fefdac9cf50a8219273b8d1bf539eb58f13220a61eaa",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/06c80c120b432f8bea32b07f4e9a5cb61585a456.zip",
+      "byteLength": 277989,
+      "sha256": "e55fd0bd45d5968c36e2fbb8694a59cf00c471246a6dadcb75e9a24134308013",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/10c596f865e886a445a9721edfae4acd319d2cbf.zip",
+      "byteLength": 390130,
+      "sha256": "a52c526ad2a885d93a073bcee26ebb7a3b3b9def3af2cc05f63982d2ba33fca2",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/17fe6b7d6e9d8f6ac1374972b31466d5df182adb.zip",
+      "byteLength": 359726,
+      "sha256": "5e2ccf9c50aeb37068b0ec2cbc8b7247f035128b5e00b99f1cb829b55e53f55f",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/1ee28ffa3cbec811697e799f2e5b7d54b0cf7d4e.zip",
+      "byteLength": 2651581,
+      "sha256": "90c3285097adc5bfb22c9c655d11e3e9091f1bf2288e527f6c6aa574dfe058f5",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/21778fb83965944e3bd60ce32d73b4d326f7e9c5.zip",
+      "byteLength": 133911,
+      "sha256": "2c4095d7c1a0a714ef591b2ff4e5266b49da6eee34f60c235d9772a83cad980f",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/234f29640a9c023f833fa111c2f691fc60222ae2.zip",
+      "byteLength": 1550461,
+      "sha256": "c30b4818b1817c296ae40af6927ff39c8525a97c0e7f362cba300a2b9c8bf77a",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/2b6503e9c0da246d3ee7f69fa18f16524260dbd6.zip",
+      "byteLength": 1112529,
+      "sha256": "a0fc39b4fd08319a59386788de4ffeba6bc17263f0be4f05420c6b67dadb3e56",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/2da43261865e577d345aaa1e4ff13f6209c8a384.zip",
+      "byteLength": 753802,
+      "sha256": "b3cce80a9670d944c399394956bfea8b57a68eeea41ba81d9b3d8aa95a6ac52b",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/3588af107995bbe472051f4b9b4ae57ebd118c69.zip",
+      "byteLength": 1701013,
+      "sha256": "c01892254ac77b49bbed8e79d4880c24357644dacec2a096b0130e78e1c3f87d",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/3c1c8db2d0627087223913498ea2e399e72c8de9.zip",
+      "byteLength": 10825487,
+      "sha256": "f2cfecd14363dc809c02b2284c87e3958494410005c1635b650c0f8f4a135558",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/4c945b02cc2a7d468ff666ff32ffe98c6063e6e8.zip",
+      "byteLength": 3356126,
+      "sha256": "663cc2cb4476c8ffc595a8fb88b35dd121a87b64d90e388c4001c0a4ebabd8cf",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/4fbe94e120c7c74df80fee583f0989d53a04a2cf.zip",
+      "byteLength": 1003919,
+      "sha256": "4039c7b2cbaf62fbe7b1c51d056813a2ac50bee4880cd2f289aa49c9fe472875",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/55c457c526623d79312f980adb0e95fe1a8ba0aa.zip",
+      "byteLength": 470268,
+      "sha256": "31ce7f78131605615a199dc867d3a9fd0c9bf9dea0144fecb84c4a6b745b6c05",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/5bd4c9744df8588fed65f07c188136f71e5bf80f.zip",
+      "byteLength": 331919,
+      "sha256": "07e1fac3b666c6c2ceaa88719954e7c2ce25dbbd3d375442ad2bff9e108bf174",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/64d92f347138a70825ed8f73003da5d054a12fb3.zip",
+      "byteLength": 127423,
+      "sha256": "92460697a6ab900d0c2cfa1cd3eee288113137351fc51aececfce9fcf955e168",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/736ac2c69d7321555f0611c6553c66ecb15decf4.zip",
+      "byteLength": 569661,
+      "sha256": "fa7aa7cd5396a54f38ece0693b7703c99c1b7e0ad338ed8ccc462fa47ead8f3a",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/80ab4da768466d43f7ffab45c4ab85dcb183db24.zip",
+      "byteLength": 414959,
+      "sha256": "9fe48ccc32deff296568129835b1aa821e528ea30ab3833cbfc9e2f5ff948051",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/9061266d390d8fc9e248ddc89a415d35516e0b77.zip",
+      "byteLength": 911545,
+      "sha256": "628ebe2c173eba79b4bb57efe033f69526af3ac3098b0f96f6e99c4761d42276",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/9e25eeaad76cc01045cc0181c4f63a3dac988f8a.zip",
+      "byteLength": 764322,
+      "sha256": "bf85fa3d6b0a35f1de16fc0de94247b077c271def6d589708658a2f7d54e0ec5",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/9e6534138ef822f7b03e89b0eb7d7c4dc3a900ea.zip",
+      "byteLength": 481986,
+      "sha256": "5dc6dd392dd5e4fccd6b42f94a914cfcbdb12fb4fe22ee6c6242c00acbec4929",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/b128868ef7b8071f2c944bbe6533cbc9b62e72d8.zip",
+      "byteLength": 407719,
+      "sha256": "8b381dd82fa9a367290068b913fb1afcf311772a2cb7bbd7a77c73b86475f7e2",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/b28056a9660c3c7413530a7e082b3c50264b0d0c.zip",
+      "byteLength": 309465,
+      "sha256": "022f55c09a1eb9422b8c724ca693d7113750a7e79aac372d0a6b27ae73027649",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/b3f285e6dc6bc993b6d1541a44dd9d1901a8f7b6.zip",
+      "byteLength": 2830187,
+      "sha256": "9e01c8bbd33aac3f469d76f0143b905a831fad69616db8cd601a0e1d8d3a3640",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/be1a3f44c99ee9b75c3ac43dab0b9b677689aab4.zip",
+      "byteLength": 417355,
+      "sha256": "5a671cabbe890415ba32c25f9815a96b1f73f0477cdc3b3debe0139bf18ed01d",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/c0b51b5e922512b5a0215cbcbb11816e7c086baf.zip",
+      "byteLength": 1507154,
+      "sha256": "67fa4ba8eb209d5225e994c5f7f9a8f217b133b18f7e2c38ff4c3f00141b0fbc",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/c36dc4b1a3101546405b1b176599f06cdc4003e9.zip",
+      "byteLength": 1654852,
+      "sha256": "f955cc8e116f1492e9179be056c34c797bbf4eac25625592580a5a413d511d07",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/c6fe6ba6e297fa490f8cff20afc21bef9d6a1f59.zip",
+      "byteLength": 1208892,
+      "sha256": "9e2e915f142450665f942db9e29b81fdb5faa9185038e04fbabc17b164365bf9",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/d83df8adefc9db46c93d36faa532ff2b0761d028.zip",
+      "byteLength": 938432,
+      "sha256": "258f99c58d7b8736384e96c1571eb7ae18c8c0714435520a6215db10a353ac4a",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/e777adf7ea7b82857be6dbedfce29d0b72b2328e.zip",
+      "byteLength": 135423,
+      "sha256": "7aa7ea5877b11bbfe5690c1d85792fbc256dd3e85b435dd74708d3ecf86d602b",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/edab0b4cec03be9677914abc1df4be620f79800e.zip",
+      "byteLength": 320749,
+      "sha256": "951bde5b6568d82e69ad48b93d96c85631f6693b3e46115e61a81494c02f3c34",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/html-report/data/f59059663c362a457776f011025c39f67a601b5a.zip",
+      "byteLength": 2344968,
+      "sha256": "16388fae11180114ba3bca8b883666f448560fb430706efc751037f988087930",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-accessibility-keybo-1a450-es-layers-and-focus-restore/trace.zip",
+      "byteLength": 2830187,
+      "sha256": "9e01c8bbd33aac3f469d76f0143b905a831fad69616db8cd601a0e1d8d3a3640",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-accessibility-keybo-1b203--top-layers-and-containment/trace.zip",
+      "byteLength": 3356126,
+      "sha256": "663cc2cb4476c8ffc595a8fb88b35dd121a87b64d90e388c4001c0a4ebabd8cf",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-accessibility-keybo-d2e8f-semantic-smoke-at-1920px-en/trace.zip",
+      "byteLength": 417355,
+      "sha256": "5a671cabbe890415ba32c25f9815a96b1f73f0477cdc3b3debe0139bf18ed01d",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-accessibility-keybo-d3da6-mantic-smoke-at-390px-zh-CN/trace.zip",
+      "byteLength": 390130,
+      "sha256": "a52c526ad2a885d93a073bcee26ebb7a3b3b9def3af2cc05f63982d2ba33fca2",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-01c54-nt-through-a-failed-refresh/trace.zip",
+      "byteLength": 764322,
+      "sha256": "bf85fa3d6b0a35f1de16fc0de94247b077c271def6d589708658a2f7d54e0ec5",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-1dd8b-ut-a-narrow-skeleton-island/trace.zip",
+      "byteLength": 2344968,
+      "sha256": "16388fae11180114ba3bca8b883666f448560fb430706efc751037f988087930",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-21d4d-cus-through-refresh-failure/trace.zip",
+      "byteLength": 938432,
+      "sha256": "258f99c58d7b8736384e96c1571eb7ae18c8c0714435520a6215db10a353ac4a",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-692a7-ace-through-refresh-failure/trace.zip",
+      "byteLength": 133911,
+      "sha256": "2c4095d7c1a0a714ef591b2ff4e5266b49da6eee34f60c235d9772a83cad980f",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-89f13-ut-a-narrow-skeleton-island/trace.zip",
+      "byteLength": 1654852,
+      "sha256": "f955cc8e116f1492e9179be056c34c797bbf4eac25625592580a5a413d511d07",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-9a035-hout-focusable-placeholders/trace.zip",
+      "byteLength": 1507154,
+      "sha256": "67fa4ba8eb209d5225e994c5f7f9a8f217b133b18f7e2c38ff4c3f00141b0fbc",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-a0ce2-hout-focusable-placeholders/trace.zip",
+      "byteLength": 911545,
+      "sha256": "628ebe2c173eba79b4bb57efe033f69526af3ac3098b0f96f6e99c4761d42276",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-a18c7-y-and-null-downstream-paths/trace.zip",
+      "byteLength": 2651581,
+      "sha256": "90c3285097adc5bfb22c9c655d11e3e9091f1bf2288e527f6c6aa574dfe058f5",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-c7941-ut-a-narrow-skeleton-island/trace.zip",
+      "byteLength": 1208892,
+      "sha256": "9e2e915f142450665f942db9e29b81fdb5faa9185038e04fbabc17b164365bf9",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-f2657-hout-focusable-placeholders/trace.zip",
+      "byteLength": 812567,
+      "sha256": "7782a83177c71130f775fefdac9cf50a8219273b8d1bf539eb58f13220a61eaa",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-loading-states.mock-f72b5-tates-without-stale-actions/trace.zip",
+      "byteLength": 10825487,
+      "sha256": "f2cfecd14363dc809c02b2284c87e3958494410005c1635b650c0f8f4a135558",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-operations-ux.mocke-0302c-ettings-tab-becomes-visible/trace.zip",
+      "byteLength": 135423,
+      "sha256": "7aa7ea5877b11bbfe5690c1d85792fbc256dd3e85b435dd74708d3ecf86d602b",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-operations-ux.mocke-0c3a7-and-dense-390-1920-geometry/trace.zip",
+      "byteLength": 320749,
+      "sha256": "951bde5b6568d82e69ad48b93d96c85631f6693b3e46115e61a81494c02f3c34",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-operations-ux.mocke-31d93-related-Operations-requests/trace.zip",
+      "byteLength": 414959,
+      "sha256": "9fe48ccc32deff296568129835b1aa821e528ea30ab3833cbfc9e2f5ff948051",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-operations-ux.mocke-39352-and-dense-390-1920-geometry/trace.zip",
+      "byteLength": 127423,
+      "sha256": "92460697a6ab900d0c2cfa1cd3eee288113137351fc51aececfce9fcf955e168",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-operations-ux.mocke-49e26-xt-after-committed-deletion/trace.zip",
+      "byteLength": 407719,
+      "sha256": "8b381dd82fa9a367290068b913fb1afcf311772a2cb7bbd7a77c73b86475f7e2",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-operations-ux.mocke-75cc8-s-at-narrow-and-wide-widths/trace.zip",
+      "byteLength": 277989,
+      "sha256": "e55fd0bd45d5968c36e2fbb8694a59cf00c471246a6dadcb75e9a24134308013",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-operations-ux.mocke-7bee8-ed-and-shared-with-Settings/trace.zip",
+      "byteLength": 569661,
+      "sha256": "fa7aa7cd5396a54f38ece0693b7703c99c1b7e0ad338ed8ccc462fa47ead8f3a",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-operations-ux.mocke-e6989-e-at-narrow-and-wide-widths/trace.zip",
+      "byteLength": 331919,
+      "sha256": "07e1fac3b666c6c2ceaa88719954e7c2ce25dbbd3d375442ad2bff9e108bf174",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-operations-ux.mocke-f302c-d-restores-the-same-tab-URL/trace.zip",
+      "byteLength": 1550461,
+      "sha256": "c30b4818b1817c296ae40af6927ff39c8525a97c0e7f362cba300a2b9c8bf77a",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-overlay-contract.mo-497cf-urn-ownership-deterministic/trace.zip",
+      "byteLength": 481986,
+      "sha256": "5dc6dd392dd5e4fccd6b42f94a914cfcbdb12fb4fe22ee6c6242c00acbec4929",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-overlay-contract.mo-6cf2e-urn-ownership-deterministic/trace.zip",
+      "byteLength": 470268,
+      "sha256": "31ce7f78131605615a199dc867d3a9fd0c9bf9dea0144fecb84c4a6b745b6c05",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-overlay-contract.mo-85caf-background-after-completion/trace.zip",
+      "byteLength": 309465,
+      "sha256": "022f55c09a1eb9422b8c724ca693d7113750a7e79aac372d0a6b27ae73027649",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-overlay-contract.mo-d1081-background-after-completion/trace.zip",
+      "byteLength": 359726,
+      "sha256": "5e2ccf9c50aeb37068b0ec2cbc8b7247f035128b5e00b99f1cb829b55e53f55f",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-page-hotkeys.mocked-0b345--approval-state-independent/trace.zip",
+      "byteLength": 1003919,
+      "sha256": "4039c7b2cbaf62fbe7b1c51d056813a2ac50bee4880cd2f289aa49c9fe472875",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-page-hotkeys.mocked-6d884-ter-ownership-deterministic/trace.zip",
+      "byteLength": 1112529,
+      "sha256": "a0fc39b4fd08319a59386788de4ffeba6bc17263f0be4f05420c6b67dadb3e56",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-page-hotkeys.mocked-7d401-ter-ownership-deterministic/trace.zip",
+      "byteLength": 753802,
+      "sha256": "b3cce80a9670d944c399394956bfea8b57a68eeea41ba81d9b3d8aa95a6ac52b",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "mocked-dev/output/mocked-page-hotkeys.mocked-92a88--approval-state-independent/trace.zip",
+      "byteLength": 1701013,
+      "sha256": "c01892254ac77b49bbed8e79d4880c24357644dacec2a096b0130e78e1c3f87d",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    },
+    {
+      "path": "root-mixed/.auth/admin.json",
+      "byteLength": 1624,
+      "sha256": "31bc35c57c45466228fb85a2268b7ce2435889f7608c93a6d6b6f4c1d45c28a9",
+      "reason": "认证状态或原始 trace 可能含测试会话秘密，不进入提交；失败控制台、DOM 和截图另行保全"
+    }
+  ]
+}

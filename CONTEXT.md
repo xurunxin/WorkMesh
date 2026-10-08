@@ -1,5 +1,9 @@
 # WorkMesh domain language
 
+## Preset
+
+Preset 是版本化、带官方出处的只读模型配置目录，不是领域聚合。选择仅填充可编辑的连接和模型草稿；预置不验证凭据，保存不验证可达性或兼容性。首次包含八家国内提供方及 OpenAI，地区与账号条件随条目展示。部署文件整体替换内置目录，功能禁用优先，条目禁用随后生效；目录不建表、不提供 CRUD、不在请求中写回。
+
 ## Human
 
 A person represented by a Human Actor. A Human may be responsible for work, make decisions and grant authority through explicit platform mechanisms.

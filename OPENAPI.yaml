@@ -12,6 +12,26 @@ servers:
 security:
   - SessionCookie: []
 paths:
+  /api/v1/workbench/model-presets:
+    get:
+      x-workmesh-policy-id: route.listModelPresets
+      x-workmesh-actor-kinds: []
+      x-workmesh-feature-key: WORKMESH_BETA_MODEL_PRESETS
+      x-workmesh-feature-tier: beta
+      security: []
+      operationId: listModelPresets
+      description: 公开只读目录。预置不验证凭据、可达性或兼容性；选择仅填可编辑草稿。
+      responses:
+        "200":
+          description: 启动时加载并应用禁用清单后的目录。
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ModelPresetCatalog" }
+        "403":
+          description: 功能关闭，错误代码为 FEATURE_DISABLED。
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
   /livez:
     get:
       x-workmesh-policy-id: route.live
@@ -3562,6 +3582,36 @@ components:
     GuidanceDiff:
       { description: Authorized line diff between two immutable Guidance revisions., content: { application/json: { schema: { $ref: "#/components/schemas/GuidanceDiff" } } } }
   schemas:
+    ModelPresetCatalog:
+      type: object
+      additionalProperties: false
+      required: [version, entries, disabledIds]
+      properties:
+        version: { type: string, minLength: 1, maxLength: 500 }
+        entries:
+          type: array
+          maxItems: 1000
+          items: { $ref: "#/components/schemas/ModelPreset" }
+        disabledIds:
+          type: array
+          maxItems: 1000
+          uniqueItems: true
+          items: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,79}$' }
+    ModelPreset:
+      type: object
+      additionalProperties: false
+      required: [id, provider, region, apiType, baseUrl, modelId, sourceUrl, checkedAt, confirmationMethod, notes]
+      properties:
+        id: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,79}$' }
+        provider: { type: string, minLength: 1, maxLength: 500 }
+        region: { type: string, minLength: 1, maxLength: 500 }
+        apiType: { type: string, enum: [openai-completions, openai-responses] }
+        baseUrl: { type: string, format: uri, maxLength: 2048, description: HTTPS 地址，不含凭据、查询或片段；保存仍受 normalizeLlmBaseUrl 校验。 }
+        modelId: { type: string, minLength: 1, maxLength: 500 }
+        sourceUrl: { type: string, format: uri, maxLength: 2048, description: 官方 HTTPS 资料，不含凭据、查询或片段。 }
+        checkedAt: { type: string, format: date }
+        confirmationMethod: { type: string, enum: [machine, human] }
+        notes: { type: string, minLength: 1, maxLength: 2000 }
     WorkbenchRunnerCredential:
       type: object
       description: Runner-only response. The apiKey and fenceToken must never be persisted in client state, logs, activities, events, or artifacts.

@@ -1,0 +1,344 @@
+{
+  "checks": [
+    {
+      "command": "pnpm lint",
+      "receipt": "c3-lint-delivery-result.json",
+      "log": "c3-lint-delivery.log",
+      "exitCode": 0,
+      "result": "通过",
+      "evidence": "execution-logs.zip/c3-lint-delivery.log"
+    },
+    {
+      "command": "pnpm typecheck",
+      "receipt": "c3-typecheck-delivery-result.json",
+      "log": "c3-typecheck-delivery.log",
+      "exitCode": 0,
+      "result": "通过",
+      "evidence": "execution-logs.zip/c3-typecheck-delivery.log"
+    },
+    {
+      "command": "pnpm run test -- --maxWorkers=2",
+      "receipt": "c3-test-resource-bounded-final-result.json",
+      "log": "c3-test-resource-bounded-final.log",
+      "passed": 1675,
+      "skipped": 2,
+      "packageResults": [
+        {
+          "package": "@workmesh/artifact-storage",
+          "passed": 22,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/git-provider",
+          "passed": 13,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/contracts",
+          "passed": 181,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/observability",
+          "passed": 16,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/ui",
+          "passed": 50,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/agent-sdk",
+          "passed": 33,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/domain",
+          "passed": 65,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/a2a-adapter",
+          "passed": 4,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/config",
+          "passed": 34,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/agent-runner",
+          "passed": 48,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/db",
+          "passed": 28,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/conformance",
+          "passed": 1,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/fake-agent",
+          "passed": 4,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/mcp",
+          "passed": 38,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/worker",
+          "passed": 163,
+          "skipped": 2
+        },
+        {
+          "package": "@workmesh/recovery",
+          "passed": 7,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/api",
+          "passed": 179,
+          "skipped": 0
+        },
+        {
+          "package": "@workmesh/web",
+          "passed": 789,
+          "skipped": 0
+        }
+      ],
+      "scope": "完整根测试集合，限制 worker 数；未改变超时、断言或测试包含范围",
+      "exitCode": 0,
+      "result": "通过",
+      "evidence": "execution-logs.zip/c3-test-resource-bounded-final.log"
+    },
+    {
+      "command": "pnpm test:integration",
+      "receipt": "c3-integration-final-result-01.json",
+      "log": "c3-integration-final-01.log",
+      "passed": 313,
+      "skipped": 2,
+      "suiteResults": [
+        {
+          "package": "db",
+          "passed": 77,
+          "skipped": 0
+        },
+        {
+          "package": "api",
+          "passed": 157,
+          "skipped": 1
+        },
+        {
+          "package": "worker",
+          "passed": 78,
+          "skipped": 1
+        },
+        {
+          "package": "recovery",
+          "passed": 1,
+          "skipped": 0
+        }
+      ],
+      "scope": "专用测试数据库、Redis、S3；恢复集成显式启用，fsync 与同步提交开启",
+      "exitCode": 0,
+      "result": "通过",
+      "evidence": "execution-logs.zip/c3-integration-final-01.log"
+    },
+    {
+      "command": "pnpm test:e2e",
+      "receipt": "c3-e2e-full-result-01.json",
+      "log": "c3-e2e-full-01.log",
+      "passed": 68,
+      "skipped": 0,
+      "listLog": "c3-e2e-full-list.log",
+      "exitCode": 0,
+      "result": "通过",
+      "evidence": "execution-logs.zip/c3-e2e-full-01.log"
+    },
+    {
+      "command": "pnpm --filter @workmesh/web run test:e2e e2e/workbench-llm-settings.spec.ts",
+      "receipt": "c3-e2e-focused-result-03.json",
+      "log": "c3-e2e-focused-03.log",
+      "passed": 3,
+      "skipped": 0,
+      "listLog": "c3-e2e-focused-run-list.log",
+      "exitCode": 0,
+      "result": "通过",
+      "evidence": "execution-logs.zip/c3-e2e-focused-03.log"
+    },
+    {
+      "command": "pnpm check:route-policy",
+      "receipt": "c3-route-check-final-result.json",
+      "log": "c3-route-check-final.log",
+      "exitCode": 0,
+      "result": "通过",
+      "evidence": "execution-logs.zip/c3-route-check-final.log"
+    },
+    {
+      "command": "pnpm ci:validate",
+      "receipt": "c3-ci-validate-result.json",
+      "log": "c3-ci-validate.log",
+      "exitCode": 0,
+      "result": "通过",
+      "evidence": "execution-logs.zip/c3-ci-validate.log"
+    },
+    {
+      "command": "pnpm --filter @workmesh/web check:i18n",
+      "receipt": "c3-i18n-result.json",
+      "log": "c3-i18n-check.log",
+      "exitCode": 0,
+      "result": "通过",
+      "evidence": "execution-logs.zip/c3-i18n-check.log"
+    },
+    {
+      "command": "pnpm --filter @workmesh/api... build",
+      "receipt": "c3-api-build-result.json",
+      "log": "c3-api-build.log",
+      "exitCode": 0,
+      "result": "通过",
+      "evidence": "execution-logs.zip/c3-api-build.log"
+    }
+  ],
+  "deployment": {
+    "result": "通过",
+    "evidence": [
+      "c3-deploy-volume-first-final.log",
+      "c3-deploy-volume-next-final.log",
+      "c3-deployed-bytes-result.json"
+    ],
+    "scope": "生产 deploy 产物的加载器、JSON 与契约字节一致；Linux 非 root 进程从只读卷加载，完整替换、禁用、五次并发读与重启读取新目录均通过。测试副本将 Windows Junction 转成包内相对链接，未发布新镜像。"
+  },
+  "additionalMockedRegression": {
+    "result": "失败，保留待审",
+    "passed": 15,
+    "failed": 32,
+    "exitCode": 1,
+    "listLog": "c3-mocked-list.log",
+    "evidence": "execution-logs.zip/c3-mocked-01.log",
+    "failureArtifacts": "browser-failures.zip",
+    "failures": [
+      "e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:368:3 › Task 6.6 desktop English keyboard and semantic journey › covers Home detail, Agents, Settings, Operations, tabs, tables, layers, and focus restore",
+      "e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:511:3 › Task 6.6 phone Chinese keyboard and semantic journey › covers compact selectors, mobile navigation, local table scrolling, top layers, and containment",
+      "e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:623:3 › Agent and Session deep-link semantic smoke at 1920px en",
+      "e2e\\mocked\\accessibility-keyboard.mocked.spec.ts:623:3 › Agent and Session deep-link semantic smoke at 390px zh-CN",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:452:3 › Task 6.4 Home loading authority › distinguishes initial durable failure, real Team empty, and null downstream paths",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:489:3 › Task 6.4 Agents loading authority › keeps Registry authority and focus independent through a failed refresh",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:539:3 › Task 6.4 Agent secondary surfaces › owns Sessions, Diagnostics, Connections and Approval states without stale actions",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:622:3 › Task 6.4 Settings loading authority › separates Team and State initialization and retains the State surface through refresh failure",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:691:3 › Task 6.4 Operations loading authority › uses real pending owners, resolves independently, and retains focus through refresh failure",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:771:5 › Task 6.4 loading geometry at 390px › fills real Operations, Settings and Board panels without a narrow skeleton island",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:916:5 › Task 6.4 loading geometry at 390px › matches real Registry, Sessions and Connections grids without focusable placeholders",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:771:5 › Task 6.4 loading geometry at 1440px › fills real Operations, Settings and Board panels without a narrow skeleton island",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:916:5 › Task 6.4 loading geometry at 1440px › matches real Registry, Sessions and Connections grids without focusable placeholders",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:771:5 › Task 6.4 loading geometry at 1920px › fills real Operations, Settings and Board panels without a narrow skeleton island",
+      "e2e\\mocked\\loading-states.mocked.spec.ts:916:5 › Task 6.4 loading geometry at 1920px › matches real Registry, Sessions and Connections grids without focusable placeholders",
+      "e2e\\mocked\\operations-ux.mocked.spec.ts:579:1 › proves all eight feature sets on standalone and embedded surfaces without unrelated Operations requests",
+      "e2e\\mocked\\operations-ux.mocked.spec.ts:741:1 › restores embedded current state without taking focus when the real Settings tab becomes visible",
+      "e2e\\mocked\\operations-ux.mocked.spec.ts:832:1 › keeps Settings route history, shared responsive semantics, and dense 390/1920 geometry",
+      "e2e\\mocked\\operations-ux.mocked.spec.ts:927:1 › scopes Team resolution to Workspace with serial deep-link pagination and dense 390/1920 geometry",
+      "e2e\\mocked\\operations-ux.mocked.spec.ts:1137:1 › blocks busy destructive interaction and focuses a surviving context after committed deletion",
+      "e2e\\mocked\\operations-ux.mocked.spec.ts:1275:1 › keeps all-enabled navigation wide, sticky, focus-owned, and shared with Settings",
+      "e2e\\mocked\\operations-ux.mocked.spec.ts:1345:1 › filters only loaded localized values, keeps metrics and pagination, and restores the same-tab URL",
+      "e2e\\mocked\\operations-ux.mocked.spec.ts:1527:1 › keeps Recent runs semantic, linked, and locally scrollable at narrow and wide widths",
+      "e2e\\mocked\\operations-ux.mocked.spec.ts:1624:1 › projects precise aggregate metrics without charts at narrow and wide widths",
+      "e2e\\mocked\\overlay-contract.mocked.spec.ts:328:5 › overlay contract at 390x844 › keeps Agent Peek and Team Access focus, scroll, containment, and return ownership deterministic",
+      "e2e\\mocked\\overlay-contract.mocked.spec.ts:424:5 › overlay contract at 390x844 › keeps busy delete nondismissible and restores the exact background after completion",
+      "e2e\\mocked\\overlay-contract.mocked.spec.ts:328:5 › overlay contract at 1920x1080 › keeps Agent Peek and Team Access focus, scroll, containment, and return ownership deterministic",
+      "e2e\\mocked\\overlay-contract.mocked.spec.ts:424:5 › overlay contract at 1920x1080 › keeps busy delete nondismissible and restores the exact background after completion",
+      "e2e\\mocked\\page-hotkeys.mocked.spec.ts:166:5 › page hotkeys at 390px › keeps global navigation, one visible filter, no-filter surfaces and command-center ownership deterministic",
+      "e2e\\mocked\\page-hotkeys.mocked.spec.ts:279:5 › page hotkeys at 390px › wraps Agent links, preserves native controls and keeps focus, Peek and approval state independent",
+      "e2e\\mocked\\page-hotkeys.mocked.spec.ts:166:5 › page hotkeys at 1920px › keeps global navigation, one visible filter, no-filter surfaces and command-center ownership deterministic",
+      "e2e\\mocked\\page-hotkeys.mocked.spec.ts:279:5 › page hotkeys at 1920px › wraps Agent links, preserves native controls and keeps focus, Peek and approval state independent"
+    ],
+    "analysis": "Accessibility Agent 夹具与实施前数据完全一致，未变更的 Agent 契约同样拒绝缺少十个字段的数据，见 baseline-agent-comparison.json；其余失败尚未逐项证实原因，不概括为历史失败。未改变产品校验、断言或扩大到 Agents/Settings 产品修复。"
+  },
+  "skips": [
+    {
+      "scope": "单元",
+      "count": 2,
+      "reason": "Windows 不执行 Linux 专属 retention soak 锁与正式启动验证"
+    },
+    {
+      "scope": "API 集成",
+      "count": 1,
+      "reason": "真实 MiniMax 调用被跳过；本任务禁止付费服务探测"
+    },
+    {
+      "scope": "Worker 集成",
+      "count": 1,
+      "reason": "可选 retention upgrade barrier 未启用；本任务无迁移或保留策略变更"
+    }
+  ],
+  "retainedFailures": [
+    {
+      "evidence": "c3-integration-focused.log",
+      "reason": "首轮预期状态码错误；私有主机拒绝为 403、未登记写路由为 403。只修测试预期，安全策略未修改。"
+    },
+    {
+      "evidence": "c3-integration.log",
+      "reason": "旧 feature flags 数量硬编码；改用实际注册表长度，后续完整集成通过。"
+    },
+    {
+      "evidence": [
+        "c3-lint-02.log",
+        "c3-integration-02.log"
+      ],
+      "reason": "Windows pnpm deploy 的 package.json 硬链接导致测试准备脚本误改工作区 exports；仅恢复受影响包声明，未修改产品实现，后续静态检查和完整集成通过。"
+    },
+    {
+      "evidence": [
+        "c3-deploy-probe-first.log",
+        "c3-deploy-volume-first.log",
+        "c3-deploy-volume-first-02.log",
+        "c3-deploy-volume-first-03.log"
+      ],
+      "reason": "Windows 路径挂载与测试副本 Junction/权限准备失败；改用本任务专用只读卷，非 root 读取及字节核对通过。"
+    },
+    {
+      "evidence": [
+        "c3-integration-03.log",
+        "c3-integration-abort-03.json"
+      ],
+      "reason": "Machine offline 中断，无结束结果，不计通过。后续使用新专用临时数据库完整重跑，未关闭 fsync 或同步提交。"
+    },
+    {
+      "evidence": [
+        "c3-test-final.log",
+        "c3-test-final-02.log",
+        "c3-test-turbo-sequential.log"
+      ],
+      "reason": "并行运行触发既有 API 初始化与大列表测试超时；独立 API 通过，限制 worker 的完整根测试通过。未放宽超时。"
+    },
+    {
+      "evidence": [
+        "c3-test-sequential-final.log",
+        "c3-test-sequential-final-02.log"
+      ],
+      "reason": "并发参数入口不受 pnpm/Turbo 接受，尚未执行测试；最终使用根脚本向 Vitest 传 maxWorkers。"
+    },
+    {
+      "evidence": [
+        "c3-e2e-focused-01.log",
+        "c3-e2e-focused-02.log"
+      ],
+      "reason": "环境 NODE_ENV=test 令 API CLI 跳过启动；pnpm exec 未提供 npm_execpath。修正仅限测试环境/入口，后续定向及完整 E2E 通过。"
+    }
+  ],
+  "providerRequestsPerformed": false,
+  "migrationsAdded": 0,
+  "domainEventsAdded": 0,
+  "apiAdded": "公开只读 GET /api/v1/workbench/model-presets，默认功能关闭",
+  "independentReview": "待 Chief 安排；包括完整计划、当前产品与额外模拟回归失败",
+  "latestCI": "待本轮提交后平台运行；本地结果不代替最新提交 CI",
+  "chiefConfirmation": "待确认",
+  "completionClaim": "实现与定向验收已落盘，不声称整套模拟回归全绿或最终 DoD/合入已完成",
+  "sourceSetSha256": "8386f12ae614caec6dfe72b227bd3db303f7bc180c342fac6be39819c351e37a"
+}

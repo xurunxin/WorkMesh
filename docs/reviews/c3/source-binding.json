@@ -1,0 +1,377 @@
+{
+  "preImplementationHead": "8aee051c23eca1fc7653f688d6570c5808c0011d",
+  "branch": "tds/conv-01a11890-f4de-7106-b64d-e1b2c0d4608e",
+  "hashPolicy": "工作区与暂存 Git blob 分别对原字节计算 SHA-256；不把未生成的产品提交或未来 CI 视为已验收。自引用的结果、日志、资源清理和本绑定文件不进入产品/输入集合。",
+  "sourceSetSha256": "8386f12ae614caec6dfe72b227bd3db303f7bc180c342fac6be39819c351e37a",
+  "files": [
+    {
+      "path": ".env.example",
+      "worktreeByteLength": 7040,
+      "worktreeSha256": "8b5fcb95ef4b07f0bb6fe27dc20c0181bbc62fa0533621be0806c0a2ffede71e",
+      "indexBlobId": "7ab6b6bed4df4909ad63e48e3fccf35d0c9c78a2",
+      "indexByteLength": 7040,
+      "indexSha256": "8b5fcb95ef4b07f0bb6fe27dc20c0181bbc62fa0533621be0806c0a2ffede71e",
+      "byteIdentical": true
+    },
+    {
+      "path": ".env.lite.example",
+      "worktreeByteLength": 6367,
+      "worktreeSha256": "5194ab7e5bc12c78f2374cd37ecc59666868befe4f232cfdd12c2e8f91b88f43",
+      "indexBlobId": "e2d4e1cac8d9783f18be9639f429e796ff2e11af",
+      "indexByteLength": 6367,
+      "indexSha256": "5194ab7e5bc12c78f2374cd37ecc59666868befe4f232cfdd12c2e8f91b88f43",
+      "byteIdentical": true
+    },
+    {
+      "path": "CONTEXT.md",
+      "worktreeByteLength": 4618,
+      "worktreeSha256": "db6aa1351498b887b8f2c1b509da223474ef9d390c3e4cc1e7de07ac7901bf14",
+      "indexBlobId": "b4d44758891dadaa9906dd2ac7d940621627cdc3",
+      "indexByteLength": 4526,
+      "indexSha256": "3b8282137c99a0cc684da33de8bd5fe065f22f24248215948660d46a835acafa",
+      "byteIdentical": false
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "worktreeByteLength": 497752,
+      "worktreeSha256": "c3d64fa66d26d5e2f322e4b47ac00b3c29c806befdb9e2fca74396a45bdd879a",
+      "indexBlobId": "175aa1cf31b97a3ce06ea18684119e97b90c7af1",
+      "indexByteLength": 491480,
+      "indexSha256": "5ffaf9d17a8ea0d61f1bbce663702508a1f792e31724ffa082c323726b50ee36",
+      "byteIdentical": false
+    },
+    {
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "worktreeByteLength": 72020,
+      "worktreeSha256": "2457b3244eb4d987c7871823c642d60b040f0d3a0f4e6ef8fe493a3933f10f42",
+      "indexBlobId": "883d2f6d191a37d2257ceb54d784bbe15d4869fb",
+      "indexByteLength": 69921,
+      "indexSha256": "dec25e13ca7d52b8dafece51a36859551ae0bd6449c13ea5df6c5de13a014c1a",
+      "byteIdentical": false
+    },
+    {
+      "path": "apps/api/integration/workbench-llm-connections.integration.test.ts",
+      "worktreeByteLength": 17574,
+      "worktreeSha256": "8ec86e2fbcaca26cfb5970a346d7c2f1770f96a09ec2f0869ada3c0f313ea91c",
+      "indexBlobId": "82aec7e18f9438194755ba7a39705c1d33f1c751",
+      "indexByteLength": 17388,
+      "indexSha256": "db2151752fe6536e4cb88000968c85ee9526f114f135d8d419c2ceb73f2813ab",
+      "byteIdentical": false
+    },
+    {
+      "path": "apps/api/src/data/model-presets.json",
+      "worktreeByteLength": 5160,
+      "worktreeSha256": "16ed2fd70b1d4e863344a7200269f3a2bde2e6797e2ffa180a3fd0a881798ad7",
+      "indexBlobId": "58e94cf1624c13a35d489b4a1063b9a4ef5d8c90",
+      "indexByteLength": 5160,
+      "indexSha256": "16ed2fd70b1d4e863344a7200269f3a2bde2e6797e2ffa180a3fd0a881798ad7",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/api/src/model-presets.test.ts",
+      "worktreeByteLength": 2947,
+      "worktreeSha256": "e50cc84507ad07d88abf04bacb4e90b51cd9579926d72ac429b74689fe33f65c",
+      "indexBlobId": "25213a11f5dea247d71559d40f8929e415989eba",
+      "indexByteLength": 2947,
+      "indexSha256": "e50cc84507ad07d88abf04bacb4e90b51cd9579926d72ac429b74689fe33f65c",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/api/src/model-presets.ts",
+      "worktreeByteLength": 1355,
+      "worktreeSha256": "0225c43f45bb76446ea1a5871d74a29ecb40e8416c03ef257f56bddda8c93f76",
+      "indexBlobId": "4689affd58a96d3dcada9a628eff7abfbd73963e",
+      "indexByteLength": 1355,
+      "indexSha256": "0225c43f45bb76446ea1a5871d74a29ecb40e8416c03ef257f56bddda8c93f76",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "worktreeByteLength": 74012,
+      "worktreeSha256": "4ce36951a7aca127e8aa3ca15164e1f2ac18c8669be45619ace565ee622db056",
+      "indexBlobId": "e74287dbd333d3a2f06c3a72abddafa9d4b0a694",
+      "indexByteLength": 72274,
+      "indexSha256": "d80e57e6b50a2387b8444f16005741250edd0dca0c9b4019dba75264226c847e",
+      "byteIdentical": false
+    },
+    {
+      "path": "apps/web/app/lib/i18n.tsx",
+      "worktreeByteLength": 194042,
+      "worktreeSha256": "9770071191879ea9e965240388d51a37591716da648aab35b548b31ea2dfcdc4",
+      "indexBlobId": "8ec86edb59832b623c1f449a515783c9968aadd2",
+      "indexByteLength": 194042,
+      "indexSha256": "9770071191879ea9e965240388d51a37591716da648aab35b548b31ea2dfcdc4",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/web/app/lib/model-presets.test.ts",
+      "worktreeByteLength": 4020,
+      "worktreeSha256": "ab034b326c8cb8e84aef685f7cee3b8e72c8e4172a48524806056a229f56f0a9",
+      "indexBlobId": "03495bf7cdf6380826aec1e1218168447b08d9fb",
+      "indexByteLength": 4020,
+      "indexSha256": "ab034b326c8cb8e84aef685f7cee3b8e72c8e4172a48524806056a229f56f0a9",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/web/app/lib/model-presets.ts",
+      "worktreeByteLength": 493,
+      "worktreeSha256": "cbfd22773f2ef06ef727a76a5eceae87ee0b5ca2419a2c3937865ef2b199c949",
+      "indexBlobId": "b4a8113c4e15b273a460d4f9c453d43e6e28c2e9",
+      "indexByteLength": 493,
+      "indexSha256": "cbfd22773f2ef06ef727a76a5eceae87ee0b5ca2419a2c3937865ef2b199c949",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/web/app/operations-content.test.tsx",
+      "worktreeByteLength": 46840,
+      "worktreeSha256": "af717f3b8eeb293161b1327c31efd98a1a05e2f4161a18bc761bbf9b157a2994",
+      "indexBlobId": "54c812d58783a185ca0562711495cf78ad30e4cf",
+      "indexByteLength": 46840,
+      "indexSha256": "af717f3b8eeb293161b1327c31efd98a1a05e2f4161a18bc761bbf9b157a2994",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/web/app/settings/workbench-llm-settings.test.tsx",
+      "worktreeByteLength": 8653,
+      "worktreeSha256": "211c0b4a5d81c5315307cbd325115f3831325352051059e6f34c67c2322636cd",
+      "indexBlobId": "0cd0d54b2b8f2eb7edf98030354bfda378399648",
+      "indexByteLength": 8589,
+      "indexSha256": "ef46ed1b845de8891f7ed7b5acf03d4d89b5f3e50ab62fb58258e251c5da8ced",
+      "byteIdentical": false
+    },
+    {
+      "path": "apps/web/app/settings/workbench-llm-settings.tsx",
+      "worktreeByteLength": 16693,
+      "worktreeSha256": "f8e76e5ba8eaeec7870e7ea95d68a469abad7ef64a8646741a4a1314850c9873",
+      "indexBlobId": "068fa24a62c2955cc04f5a296ec3860c759fe136",
+      "indexByteLength": 16482,
+      "indexSha256": "63208f6728a76bbc1877c01aab3b4ba0868688dbec18af922c685febeee56619",
+      "byteIdentical": false
+    },
+    {
+      "path": "apps/web/e2e/mocked/accessibility-fixtures.ts",
+      "worktreeByteLength": 23253,
+      "worktreeSha256": "0c2c8e08edf5902f73b142b408bdc30e7c00ce75880c600132b68ab367d2d066",
+      "indexBlobId": "907fbabfdcba481fbe8a9e3246d947bdca0422ff",
+      "indexByteLength": 22732,
+      "indexSha256": "e5319072cda6a4b9729ed33571d40d971bea622d73dbc1c8ce225c04757a2aaf",
+      "byteIdentical": false
+    },
+    {
+      "path": "apps/web/e2e/mocked/loading-states.mocked.spec.ts",
+      "worktreeByteLength": 56601,
+      "worktreeSha256": "48d77d0b062bc658b2d877c1514ed950d23377b205fd1e279f5ccc7cea9ccc7e",
+      "indexBlobId": "031670982a15d4ba83cbf6049939def5ebe54d95",
+      "indexByteLength": 56601,
+      "indexSha256": "48d77d0b062bc658b2d877c1514ed950d23377b205fd1e279f5ccc7cea9ccc7e",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/web/e2e/mocked/operations-ux.mocked.spec.ts",
+      "worktreeByteLength": 87490,
+      "worktreeSha256": "707bc058d8abce9cf43a432d989c36faab91356298cc2178c007435cfbbc625b",
+      "indexBlobId": "cd6c340e2ce7901697c0d9c91bbf82f9207b2886",
+      "indexByteLength": 87490,
+      "indexSha256": "707bc058d8abce9cf43a432d989c36faab91356298cc2178c007435cfbbc625b",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/web/e2e/mocked/overlay-contract.mocked.spec.ts",
+      "worktreeByteLength": 23108,
+      "worktreeSha256": "d554f9887dc7a32e169190148165f5aef1795ca3c4cc5d3b663da99cf6d587a9",
+      "indexBlobId": "d9a65a722e12a44041e55d7f72f93b1ef701235c",
+      "indexByteLength": 23108,
+      "indexSha256": "d554f9887dc7a32e169190148165f5aef1795ca3c4cc5d3b663da99cf6d587a9",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/web/e2e/mocked/page-hotkeys.mocked.spec.ts",
+      "worktreeByteLength": 16932,
+      "worktreeSha256": "1a658b07afc118501ab788141358c4ef9d85d3dc49530099771e1de810e495c0",
+      "indexBlobId": "e2f0fd91ac313fd5b3f28478c7d7f2093f47d423",
+      "indexByteLength": 16932,
+      "indexSha256": "1a658b07afc118501ab788141358c4ef9d85d3dc49530099771e1de810e495c0",
+      "byteIdentical": true
+    },
+    {
+      "path": "apps/web/e2e/workbench-llm-settings.spec.ts",
+      "worktreeByteLength": 5087,
+      "worktreeSha256": "c8307e2c1c668c239e0d747595af6db38b9bdfde09dbf7ff6618a659de5a4396",
+      "indexBlobId": "30609bdcfe58a455cb26f46b6e3f5a2981c069fa",
+      "indexByteLength": 5049,
+      "indexSha256": "fa240a50ff9f5bef3aa8046b30d62796d3875885da10aee69c45c1e2cdf468b3",
+      "byteIdentical": false
+    },
+    {
+      "path": "docker-compose.lite.yml",
+      "worktreeByteLength": 14550,
+      "worktreeSha256": "ffdc07c0102ab9f0ea18264f25e6d70d58c963d78f9b58ea04bdb7caa6ef66b8",
+      "indexBlobId": "11fd99e944ab664170bdb25361c8f889c69e7d56",
+      "indexByteLength": 14550,
+      "indexSha256": "ffdc07c0102ab9f0ea18264f25e6d70d58c963d78f9b58ea04bdb7caa6ef66b8",
+      "byteIdentical": true
+    },
+    {
+      "path": "docker-compose.production.yml",
+      "worktreeByteLength": 13168,
+      "worktreeSha256": "b3da975ccc71cf2a0614238727c944aca013d4b976cdcf243d05bf3665844b39",
+      "indexBlobId": "f7ad26942e326a497d53aa1a8aa97d34004951e1",
+      "indexByteLength": 13168,
+      "indexSha256": "b3da975ccc71cf2a0614238727c944aca013d4b976cdcf243d05bf3665844b39",
+      "byteIdentical": true
+    },
+    {
+      "path": "docker-compose.yml",
+      "worktreeByteLength": 14097,
+      "worktreeSha256": "8c1a30c938b627e56cc5851104b7799c465beeace30d77fd9eb2d68b7ea2368d",
+      "indexBlobId": "e1300582c457052c66d6501893971f5f429a07f8",
+      "indexByteLength": 14097,
+      "indexSha256": "8c1a30c938b627e56cc5851104b7799c465beeace30d77fd9eb2d68b7ea2368d",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/VERSION_POLICY.md",
+      "worktreeByteLength": 10081,
+      "worktreeSha256": "73f630360ed377bc30eaccaac075418a6b1a79cabaf05f4fb19eff8d8906764c",
+      "indexBlobId": "72a09c1ecc3ddfd68774b12a63aa4964d7d828f4",
+      "indexByteLength": 9944,
+      "indexSha256": "089104736ecbb0f23167fe381dadd49f4d2709189daeb98a6eb23c454e6b4a84",
+      "byteIdentical": false
+    },
+    {
+      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "worktreeByteLength": 17322,
+      "worktreeSha256": "03a46ca341c7a5201f409858b486eac1e8495c06042229a933c8b29bf096b674",
+      "indexBlobId": "b0bddc01884e46165630c20361abb8ed27372428",
+      "indexByteLength": 17068,
+      "indexSha256": "587cbde4be9e1524fcfe7c4752150fa536e357d03376573f141637287fe2aad7",
+      "byteIdentical": false
+    },
+    {
+      "path": "docs/plan/c3-model-presets.md",
+      "worktreeByteLength": 7039,
+      "worktreeSha256": "873a976342b0143a5cc8ae0b8dfe84ec33c1becbcef81158057e12e4d28c2011",
+      "indexBlobId": "5a8c4764c3f9e9a63de01895980100d955e2dd4c",
+      "indexByteLength": 7039,
+      "indexSha256": "873a976342b0143a5cc8ae0b8dfe84ec33c1becbcef81158057e12e4d28c2011",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/production-deployment.md",
+      "worktreeByteLength": 25862,
+      "worktreeSha256": "62ae36ace979f0219bac4d31818c0cb1ec9f22e5bc325a2d83fb48e17b6e556d",
+      "indexBlobId": "70a9f25cbfd58a39be50300eb266374f73c84840",
+      "indexByteLength": 25862,
+      "indexSha256": "62ae36ace979f0219bac4d31818c0cb1ec9f22e5bc325a2d83fb48e17b6e556d",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/reviews/c3/current-spec.md",
+      "worktreeByteLength": 7441,
+      "worktreeSha256": "2cdd6ce4123ad62fbf06ff43fb568d7baee0d29d22789c8b4f7f546d52949934",
+      "indexBlobId": "78be3ebe0186abf65d98c990ad0cd9c4c85e1c93",
+      "indexByteLength": 7441,
+      "indexSha256": "2cdd6ce4123ad62fbf06ff43fb568d7baee0d29d22789c8b4f7f546d52949934",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/reviews/c3/official-source-review.md",
+      "worktreeByteLength": 4397,
+      "worktreeSha256": "11a605009b1cb073cdda983b38b6652a57b18e9815ace73650abd05b10c2f6f9",
+      "indexBlobId": "b8b0c0a11e47f569ca200b5bb2142519ef94f998",
+      "indexByteLength": 4397,
+      "indexSha256": "11a605009b1cb073cdda983b38b6652a57b18e9815ace73650abd05b10c2f6f9",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/reviews/c3/official-sources.json",
+      "worktreeByteLength": 10353,
+      "worktreeSha256": "2b5dc21dfa3504d5bde45c016cd5cbe93920a47b5fc4a7b77d5cca83ccf497da",
+      "indexBlobId": "29c3b024f7c1cb733f84a950db2c385e36ac80f8",
+      "indexByteLength": 10161,
+      "indexSha256": "17b136bcde2e806efbfece0023e3d8c36442e8e6761cb0aebaa708ec6514b299",
+      "byteIdentical": false
+    },
+    {
+      "path": "docs/route-policy-matrix.md",
+      "worktreeByteLength": 45472,
+      "worktreeSha256": "b6e2d4d0d6522024d37e4d0228e3920a7e2cb58ccb5fd669a820ee960924c458",
+      "indexBlobId": "384a267915f01534d5dcb816cc972ace2d4c6198",
+      "indexByteLength": 45472,
+      "indexSha256": "b6e2d4d0d6522024d37e4d0228e3920a7e2cb58ccb5fd669a820ee960924c458",
+      "byteIdentical": true
+    },
+    {
+      "path": "packages/config/src/index.test.ts",
+      "worktreeByteLength": 17066,
+      "worktreeSha256": "fabe3c19acc75fd0957ee7c788a9bb9b44f5065f4b5b545012921365cb620967",
+      "indexBlobId": "7a1d29b85f5d45c84799b8b2b6a1ce91daf7a3d6",
+      "indexByteLength": 16608,
+      "indexSha256": "15d6be2ad5fda466d7b18e83491714c803b18ae6a389156c96093357e4d271d5",
+      "byteIdentical": false
+    },
+    {
+      "path": "packages/config/src/index.ts",
+      "worktreeByteLength": 16798,
+      "worktreeSha256": "690bd65002cd0b88579fbacd182a9241d1a9d401f6ae13cd450e14e3b1f85021",
+      "indexBlobId": "74b3a7851ec11809570cd2610b97e41acfd8df80",
+      "indexByteLength": 16393,
+      "indexSha256": "c4390eb2002686d0251f79d83346af57a74384ed8f28a50b9ca862107a23da84",
+      "byteIdentical": false
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "worktreeByteLength": 185984,
+      "worktreeSha256": "d730824844fcf7a0f8986f89c6d298c7cc6fd9cbf1aebf8f6fcd77fa3b39aa50",
+      "indexBlobId": "7090ac854529c71d64bfd286c30088b22711c82b",
+      "indexByteLength": 182881,
+      "indexSha256": "106187f6564dc1dc89f2edbe096bac6a3c5a22ad6e6cb976965cd27bfc7d3374",
+      "byteIdentical": false
+    },
+    {
+      "path": "packages/contracts/src/model-presets.ts",
+      "worktreeByteLength": 1880,
+      "worktreeSha256": "97327983f4e13f607f5b6d1ba84c2792ac4dc6513658a1b3a3f10149670908ed",
+      "indexBlobId": "cfa6b0e325db2488cd747f41bfa25ddb6c5545ad",
+      "indexByteLength": 1880,
+      "indexSha256": "97327983f4e13f607f5b6d1ba84c2792ac4dc6513658a1b3a3f10149670908ed",
+      "byteIdentical": true
+    },
+    {
+      "path": "packages/contracts/src/route-policy-bindings.ts",
+      "worktreeByteLength": 32276,
+      "worktreeSha256": "4c19ed3463429c62b65107860bf06307155b4fad94e26237e34a218294b693c6",
+      "indexBlobId": "26f933d80c670668b7497ca3c0213a1691cba707",
+      "indexByteLength": 31074,
+      "indexSha256": "e7bd0e7f9b98153315a19bfcb48c736da2a656c0651ec5933ddbc6e04b688891",
+      "byteIdentical": false
+    },
+    {
+      "path": "packages/contracts/src/route-policy.test.ts",
+      "worktreeByteLength": 15021,
+      "worktreeSha256": "e224cffc986ce34fd0be39e1f9e95e010469fd67bdf1a2349b190b54f5ce9d58",
+      "indexBlobId": "f762b34a0fd62de8e508fb006811f30a382d3371",
+      "indexByteLength": 15021,
+      "indexSha256": "e224cffc986ce34fd0be39e1f9e95e010469fd67bdf1a2349b190b54f5ce9d58",
+      "byteIdentical": true
+    },
+    {
+      "path": "packages/contracts/src/route-policy.ts",
+      "worktreeByteLength": 24429,
+      "worktreeSha256": "45143585b218b92033c5cc15b80d34b71461b0346e78c81ecbbfb920e8acd44d",
+      "indexBlobId": "95ca0992a4c8241d608f25d68e670da8534009fc",
+      "indexByteLength": 23784,
+      "indexSha256": "ef7fc2f5245d38867e72267e1b084abc4b69ba2157207b415b755f53007535c9",
+      "byteIdentical": false
+    },
+    {
+      "path": "playwright.config.ts",
+      "worktreeByteLength": 4916,
+      "worktreeSha256": "8106a57e3e13fa8ad4cf9b91cedfe7c1d20f8d3fe7b6533e34f37bafa0b50ce6",
+      "indexBlobId": "c17ce2b4667f916eccaae558991453ddd67fb678",
+      "indexByteLength": 4916,
+      "indexSha256": "8106a57e3e13fa8ad4cf9b91cedfe7c1d20f8d3fe7b6533e34f37bafa0b50ce6",
+      "byteIdentical": true
+    }
+  ]
+}

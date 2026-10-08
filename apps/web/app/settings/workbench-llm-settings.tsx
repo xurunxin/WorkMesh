@@ -4,6 +4,8 @@ import { type FormEvent, useEffect, useState } from 'react'
 import { Button, Eyebrow, SettingsCard, SettingsForm } from '@workmesh/ui'
 import { apiRequest, json, type ListResponse } from '../lib/api'
 import { useLocale } from '../lib/i18n'
+import { modelPresetDraft, readModelPresets } from '../lib/model-presets'
+import type { ModelPresetCatalog } from '@workmesh/contracts'
 
 type Connection = {
   id: string; scope: 'personal' | 'team' | 'workspace'; scope_id: string | null
@@ -29,6 +31,21 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [confirmRevoke, setConfirmRevoke] = useState(false)
+  const [catalog, setCatalog] = useState<ModelPresetCatalog | null>(null)
+  const [catalogError, setCatalogError] = useState(false)
+  const [presetId, setPresetId] = useState('')
+  const [draft, setDraft] = useState({ name: '', apiType: 'openai-completions', baseUrl: '', modelId: '' })
+  const [modelDraft, setModelDraft] = useState({ connectionId: '', modelId: '', displayName: '' })
+  const selectedPreset = catalog?.entries.find(entry => entry.id === presetId)
+  const refreshCatalog = async () => {
+    try { setCatalog(await readModelPresets()); setCatalogError(false) }
+    catch { setCatalog(null); setCatalogError(true) }
+  }
+  useEffect(() => { let mounted = true
+    void readModelPresets().then(value => { if (mounted) setCatalog(value) })
+      .catch(() => { if (mounted) setCatalogError(true) })
+    return () => { mounted = false }
+  }, [])
 
   const refresh = async () => {
     const response = await apiRequest<ListResponse<Connection>>(root)
@@ -46,6 +63,7 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
     return () => { mounted = false }
   }, [])
   useEffect(() => {
+    setModelDraft(current => current.connectionId === selectedId ? current : { connectionId: '', modelId: '', displayName: '' })
     if (!selectedId) { setDetail(null); return }
     let mounted = true
     setDetail(null)
@@ -59,6 +77,7 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
     const form = event.currentTarget
     const fields = new FormData(form)
     const scope = String(fields.get('scope'))
+    const pendingModel = String(fields.get('presetModelId') ?? '').trim()
     setBusy(true); setError(''); setNotice('')
     try {
       const created = await apiRequest<Connection>(root, {
@@ -73,6 +92,9 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
       form.reset()
       await refresh()
       setSelectedId(created.id)
+      setDraft({ name: '', apiType: 'openai-completions', baseUrl: '', modelId: '' })
+      setPresetId('')
+      setModelDraft({ connectionId: created.id, modelId: pendingModel, displayName: pendingModel })
       setNotice(text.connectionSavedNotice)
     } catch (reason) { setError(errorText(reason)) }
     finally { setBusy(false) }
@@ -81,7 +103,8 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
   const update = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!detail) return
-    const fields = new FormData(event.currentTarget)
+    const form = event.currentTarget
+    const fields = new FormData(form)
     const secret = String(fields.get('secretMaterial') ?? '')
     setBusy(true); setError(''); setNotice('')
     try {
@@ -96,7 +119,7 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
       await refresh()
       setDetail(current => current ? { ...current, ...updated } : null)
       setNotice(text.connectionUpdatedNotice)
-      event.currentTarget.reset()
+      form.reset()
     } catch (reason) { setError(errorText(reason)) }
     finally { setBusy(false) }
   }
@@ -123,6 +146,7 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
       })
       setDetail(await apiRequest<Detail>(`${root}/${detail.id}`))
       form.reset()
+      setModelDraft({ connectionId: detail.id, modelId: '', displayName: '' })
       setNotice(text.modelAddedNotice)
     } catch (reason) { setError(errorText(reason)) }
     finally { setBusy(false) }
@@ -174,22 +198,36 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
       <div className="workbench-llm-list" role="group" aria-label={text.configuredServicesLabel}>
         {connections.map(connection => <Button
           aria-pressed={selectedId === connection.id} key={connection.id}
-          onClick={() => { setSelectedId(connection.id); setConfirmRevoke(false) }}
+          disabled={busy} onClick={() => { setSelectedId(connection.id); setConfirmRevoke(false) }}
           type="button" variant={selectedId === connection.id ? 'primary' : 'ghost'}
         >{connection.name} · {connection.api_type === 'openai-completions' ? text.protocolChat : text.protocolResponses} · {connection.status}</Button>)}
         {connections.length === 0 && <p>{text.noServices}</p>}
       </div>
       <SettingsForm onSubmit={create}>
         <h3>{text.addServiceHeading}</h3>
-        <label>{text.nameLabel}<input maxLength={120} name="name" required /></label>
+        <p>{text.presetDisclaimer}</p>
+        {(catalogError || catalog?.entries.length === 0) && <p>{text.presetUnavailable}</p>}
+        {catalog && <>
+          <p>{text.presetVersion}: {catalog.version}</p>
+          <label>{text.presetLabel}<select name="presetId" value={presetId} onChange={event => {
+            const id = event.target.value
+            setPresetId(id)
+            const entry = catalog.entries.find(item => item.id === id)
+            if (entry) setDraft(modelPresetDraft(entry))
+          }}><option value="">{text.presetManual}</option>{catalog.entries.map(entry => <option key={entry.id} value={entry.id}>{entry.provider} · {entry.region} · {entry.modelId}</option>)}</select></label>
+          {selectedPreset && <p>{selectedPreset.region} · <code>{selectedPreset.modelId}</code> · <a href={selectedPreset.sourceUrl} target="_blank" rel="noreferrer">{text.presetSource}</a> · {selectedPreset.checkedAt} · {selectedPreset.confirmationMethod === 'machine' ? text.presetMachine : text.presetHuman}<br />{selectedPreset.notes}</p>}
+        </>}
+        <Button type="button" onClick={() => void refreshCatalog()}>{text.presetRefresh}</Button>
+        <label>{text.nameLabel}<input maxLength={120} name="name" required value={draft.name} onChange={event => setDraft(current => ({ ...current, name: event.target.value }))} /></label>
         <label>{text.scopeLabel}<select defaultValue="personal" name="scope">
           <option value="personal">{text.scopePersonal}</option>
           {teams.length > 0 && <option value="team">{text.scopeTeam}</option>}
           {canManageWorkspace && <option value="workspace">{text.scopeWorkspace}</option>}
         </select></label>
         {teams.length > 0 && <label>{text.teamScopeLabel}<select name="teamId"><option value="">{text.selectTeamOption}</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name}</option>)}</select></label>}
-        <label>{text.apiProtocolLabel}<select name="apiType"><option value="openai-completions">{text.apiProtocolChatCompletions}</option><option value="openai-responses">{text.apiProtocolResponses}</option></select></label>
-        <label>{text.baseUrlLabel}<input autoComplete="url" name="baseUrl" placeholder={text.baseUrlPlaceholder} required type="url" /></label>
+        <label>{text.apiProtocolLabel}<select name="apiType" value={draft.apiType} onChange={event => setDraft(current => ({ ...current, apiType: event.target.value }))}><option value="openai-completions">{text.apiProtocolChatCompletions}</option><option value="openai-responses">{text.apiProtocolResponses}</option></select></label>
+        <label>{text.baseUrlLabel}<input autoComplete="url" name="baseUrl" placeholder={text.baseUrlPlaceholder} required type="url" value={draft.baseUrl} onChange={event => setDraft(current => ({ ...current, baseUrl: event.target.value }))} /></label>
+        <label>{text.presetModelDraft}<input name="presetModelId" value={draft.modelId} onChange={event => setDraft(current => ({ ...current, modelId: event.target.value }))} /></label>
         <label>{text.apiKeyLabel}<input autoComplete="new-password" name="secretMaterial" required type="password" /></label>
         <Button disabled={busy} type="submit" variant="primary">{text.saveService}</Button>
       </SettingsForm>
@@ -215,9 +253,9 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
           <label>{text.replaceKeyLabel}<input autoComplete="new-password" name="secretMaterial" type="password" /></label>
           <Button disabled={busy} type="submit">{text.saveChanges}</Button>
         </SettingsForm>
-        <SettingsForm onSubmit={addModel}>
-          <label>{text.modelIdLabel}<input name="modelId" placeholder={text.modelIdPlaceholder} required /></label>
-          <label>{text.displayNameLabel}<input name="displayName" placeholder={text.displayNamePlaceholder} required /></label>
+        <SettingsForm key={detail.id} onSubmit={addModel}>
+          <label>{text.modelIdLabel}<input name="modelId" placeholder={text.modelIdPlaceholder} required value={modelDraft.modelId} onChange={event => setModelDraft({ ...modelDraft, connectionId: detail.id, modelId: event.target.value })} /></label>
+          <label>{text.displayNameLabel}<input name="displayName" placeholder={text.displayNamePlaceholder} required value={modelDraft.displayName} onChange={event => setModelDraft({ ...modelDraft, connectionId: detail.id, displayName: event.target.value })} /></label>
           <label>{text.contextLimitLabel}<input min={1} name="contextWindowTokens" required type="number" /></label>
           <label>{text.outputLimitLabel}<input min={1} name="maxOutputTokens" required type="number" /></label>
           <label><input name="toolCalling" type="checkbox" />{text.toolCallingLabel}</label>

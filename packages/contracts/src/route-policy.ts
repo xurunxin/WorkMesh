@@ -98,6 +98,7 @@ export type RoutePolicyFeatureResolver = (
 ) => Readonly<{ key: string; tier: RoutePolicyFeatureTier }> | undefined
 
 const publicOperations = new Set([
+  'listModelPresets',
   'live',
   'ready',
   'health',
