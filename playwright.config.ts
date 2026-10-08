@@ -108,6 +108,7 @@ export default defineConfig({
         WORKMESH_BETA_TEMPLATES: "true",
         WORKMESH_BETA_COSTS: "true",
         WORKMESH_BETA_GITEA: process.env.WORKMESH_A2_DISABLE_GITEA === "1" ? "false" : "true",
+        WORKMESH_BETA_MODEL_PRESETS: "true",
         WORKMESH_BETA_OPERATIONS_UI: "true",
         WORKMESH_EXPERIMENTAL_AUTOMATION: "true",
         WORKMESH_EXPERIMENTAL_AGENT_LOOPS: "true",

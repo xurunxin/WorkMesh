@@ -1,0 +1,20 @@
+{
+  "command": "same Agent fixture against unchanged contract",
+  "exitCode": 0,
+  "baselineHead": "8aee051c23eca1fc7653f688d6570c5808c0011d",
+  "payloadIdentical": true,
+  "issuesIdentical": true,
+  "missingFields": [
+    "icon",
+    "endpoint_url",
+    "output_artifact_types",
+    "metadata",
+    "lifecycle_status",
+    "archived_at",
+    "archived_by_actor_id",
+    "archived_reason",
+    "created_at",
+    "updated_at"
+  ],
+  "scope": "仅证明 Accessibility Agent DTO 缺字段在实施前已存在；未在旧提交运行整套浏览器测试，不据此推断其他失败。"
+}

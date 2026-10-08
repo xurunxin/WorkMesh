@@ -912,6 +912,17 @@ export type SettingsCopy = {
  * provider identifiers, so both locales carry the same literal.
  */
 export type LlmSettingsCopy = {
+  presetLabel: string
+  presetManual: string
+  presetVersion: string
+  presetSource: string
+  presetMachine: string
+  presetHuman: string
+  presetRefresh: string
+  presetModelDraft: string
+  presetUnavailable: string
+  presetDisclaimer: string
+
   routeLoading: string
   routeAccountError: string
   pageTitle: string
@@ -985,6 +996,16 @@ const settingsCopies: Record<Locale, SettingsCopy & LlmSettingsCopy> = {
     workspace: '工作区',
     subtitle: '工作区管理与日常规划保持分离。',
     workbenchServiceTitle: '模型服务接入',
+    presetLabel: "模型预置",
+    presetManual: "手工配置",
+    presetVersion: "目录版本",
+    presetSource: "官方出处",
+    presetMachine: "机器确认",
+    presetHuman: "人工确认",
+    presetRefresh: "刷新目录",
+    presetModelDraft: "待登记模型草稿（保存连接后仍须显式登记）",
+    presetUnavailable: "预置目录未启用、为空或暂不可用，可以继续手工配置。",
+    presetDisclaimer: "预置不验证凭据。保存不验证可达性或兼容性；地区、模型开通及账号条件请核对官方资料。",
     workbenchServiceDescription: '管理 Chat Completions 与 Responses 模型服务、凭据和模型目录。',
     workbenchServiceOpen: '打开接入设置',
     reviewOnly: '你可以查看团队设置；工作区管理员负责管理团队和工作流状态。',
@@ -1114,6 +1135,16 @@ const settingsCopies: Record<Locale, SettingsCopy & LlmSettingsCopy> = {
     workspace: 'Workspace',
     subtitle: 'Workspace administration stays separate from daily planning.',
     workbenchServiceTitle: 'Model service connections',
+    presetLabel: "Model preset",
+    presetManual: "Manual configuration",
+    presetVersion: "Catalog version",
+    presetSource: "Official source",
+    presetMachine: "Machine review",
+    presetHuman: "Human review",
+    presetRefresh: "Refresh catalog",
+    presetModelDraft: "Model draft (register explicitly after saving the connection)",
+    presetUnavailable: "Presets are disabled, empty, or unavailable. Manual configuration remains available.",
+    presetDisclaimer: "Presets do not validate credentials. Saving does not verify reachability or compatibility; check official regional, model access, and account requirements.",
     workbenchServiceDescription: 'Manage Chat Completions and Responses providers, credentials, and models.',
     workbenchServiceOpen: 'Open connection settings',
     reviewOnly: 'You can review team settings. Workspace admins manage teams and workflow states.',

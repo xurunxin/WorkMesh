@@ -1,0 +1,65 @@
+{
+  "recordedAt": "2026-10-08T12:57:23.741462+00:00",
+  "main": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "inputHead": "7a86ecc46e8fb79f8cf177749f9fef21bd410d0b",
+  "sourceDigest": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+  "sourceFiles": 1391,
+  "allCheckSourcesUnchanged": true,
+  "checkCount": 15,
+  "unit": {
+    "passed": 1680,
+    "skipped": 2,
+    "tasksSuccessful": 29,
+    "cached": 0,
+    "skipReason": "两个 Worker Linux 专属入口，Windows 不适用，不计通过"
+  },
+  "integration": {
+    "api-integration": {
+      "passed": 180,
+      "skipped": 1
+    },
+    "worker-channels": {
+      "passed": 49,
+      "skipped": 0
+    },
+    "migration-baseline": {
+      "passed": 22,
+      "skipped": 0
+    }
+  },
+  "apiSkipReason": "RUN_WORKBENCH_LIVE=0，真实 MiniMax 用例不运行",
+  "formalE2e": {
+    "listed": 4,
+    "passed": 4,
+    "skipped": 0,
+    "fullSuiteRerun": false,
+    "runtimeOnlyChanges": "两个服务端口和测试副本路径；C1/C3 用例原字节不改，断言和 timeout不改"
+  },
+  "routeCount": 277,
+  "lintAndTypecheck": "各18任务成功，零缓存",
+  "apiBuildExitCode": 0,
+  "ciValidateExitCode": 0,
+  "archiveMembers": 56,
+  "archivedOriginalBytesVerified": true,
+  "C1EarlyDenials": 63,
+  "A1AndC3OriginalEarlyDenials": 18,
+  "C3PublicReadSnapshots": 9,
+  "validIdentityPositiveControls": 3,
+  "productChange": "正常整合 C1；仅冲突路由数量/生成产物/功能开关夹具及新增边界回归调整，C1锁/fence/静音/逐条claim和A1提前拒绝均未回退",
+  "historicalReuse": "92 份旧 C3 审查及审批原件字节保持，旧47对照和153审计成员不重新运行测试或重绑定为当前源码",
+  "liveCallsOrPublication": false,
+  "requiredCi": "本轮 PR RequiredCI 尚未建立或运行；C1 CI391 不代 C3 门禁",
+  "review": "当前 C1+A1+C3 组合、冲突解决及新增断言待定向独审，旧独审通过不冒新组合通过",
+  "mergeStatus": "平台已正常双 parent 合并并推送原分支，远端本轮实读匹配；没有合入 main",
+  "cleanup": {
+    "containersRemoved": 3,
+    "temporaryTargetsRetainedBecauseRejected": 2,
+    "complete": false,
+    "rejectedTargetChangedMethodOrDeletedOrMovedOrRestored": false,
+    "refusalEvidence": "cleanup-audit/refusal.json 与 config-refusal.json"
+  },
+  "postValidationMetadataDifference": "只添加本轮精确 Git 忽略规则，独立绑定，不改旧15命令源码摘要",
+  "combinationCommit": "9f4ff863611af7027314ae1783f898f704643863",
+  "headVerificationExitCode": 0,
+  "postValidationCiExitCode": 0
+}

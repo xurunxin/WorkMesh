@@ -8,6 +8,8 @@ coverage
 playwright-report
 test-results
 .tmp/
+# 审批拒绝后保留的本轮临时配置；原字节已在 C3 组合证据中归档。
+/playwright.c3-c1-combination.config.ts
 *.tsbuildinfo
 .evidence
 .recovery

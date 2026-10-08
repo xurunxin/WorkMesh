@@ -1,0 +1,49 @@
+{
+  "runs": {
+    "first": {
+      "summary": [
+        "Test Files  22 failed | 1 passed (23)",
+        "Tests  56 failed | 6 passed | 110 skipped (172)"
+      ],
+      "installReplayErrorOccurrences": 34,
+      "rateLimitOccurrences": 32,
+      "missingCsrfHeaderOccurrences": 14,
+      "productionSourceDigest": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+      "result": "失败，未计通过；失败 hook 后跳过的用例不计真实执行通过"
+    },
+    "retry": {
+      "summary": [
+        "Test Files  22 failed | 1 passed (23)",
+        "Tests  56 failed | 6 passed | 110 skipped (172)"
+      ],
+      "installReplayErrorOccurrences": 40,
+      "rateLimitOccurrences": 26,
+      "missingCsrfHeaderOccurrences": 14,
+      "productionSourceDigest": "e5ceb6a5bedbb3efae9c5472017a3d1096c08bcf4c4332d3e694da23dc05f7a4",
+      "result": "失败，未计通过；失败 hook 后跳过的用例不计真实执行通过"
+    }
+  },
+  "rootPreparationIssues": [
+    {
+      "file": "apps/api/src/auth-idempotency.ts",
+      "function": "masterKey",
+      "requirement": "解码后必须恰好 32 字节",
+      "firstAndRetryFixture": "48 字节随机值，编码为 base64url，未满足该函数契约",
+      "fix": "32 字节随机值的 64 个 hex 字符，仅测试子进程"
+    },
+    {
+      "resource": "本轮 RustFS /data tmpfs",
+      "observed": "容器 exit 1，Permission denied；S3 准备命令 ECONNREFUSED",
+      "fix": "本轮 tmpfs 显式 mode=0777，创建并 HeadBucket 验证测试 bucket"
+    },
+    {
+      "resource": "认证限流测试配置",
+      "observed": "安装失败后出现默认阈值 AUTH_RATE_LIMITED；缺少 runner 夹具 token",
+      "fix": "沿用 .github/workflows/ci.yml 的 API/E2E 夹具 burst，随机 runner token；不改产品配置默认或安全代码"
+    }
+  ],
+  "preservation": "两份完整原字节日志、命令结果、前后摘要及服务日志保存于本轮归档；fixture 脚本各运行原件也保留",
+  "assertionOrTimeoutChanges": false,
+  "productionChangesAfterFailure": false,
+  "acceptance": "同一组合源码、原断言和原超时：API 全量 171 通过/1 个真实模型用例跳过；正式定向浏览器 3/3 通过。旧失败保持独立记录，不覆盖或计通过。"
+}

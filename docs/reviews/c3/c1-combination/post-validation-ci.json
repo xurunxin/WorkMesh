@@ -1,0 +1,14 @@
+{
+  "callID": "call_b71c1605a6974a42babea450d68663c9",
+  "outerInputTime": "2026-10-08T13:06:10.395Z",
+  "outerOutputTime": "2026-10-08T13:06:13.768Z",
+  "actualCommand": [
+    "pnpm.cmd",
+    "ci:validate"
+  ],
+  "chunkID": "493e51",
+  "exitCode": 0,
+  "stdoutAsReturned": "\n> workmesh@ ci:validate C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\n> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs\n\n[ci:validate] OK: 9 jobs, 37 immutable action references, Node 22.19.0, pnpm@9.15.4\nRelease workflow validation passed.\nLite compose validation passed (8 services; 4 roles from one image; 53 documented variables; published: minio, web)\n✔ 无Git/网络依赖读取双字节，精确旧路径/版本映射 (2.6191ms)\n✔ 相同字节共用member，所有逻辑版本保留 (0.5469ms)\n✔ 拒绝规范化后重复逻辑元组 (0.5006ms)\n✔ 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符 (0.1676ms)\n✔ 拒绝规范化后重复ZIP member (0.2184ms)\n✔ 拒绝索引缺项/多项 (0.6288ms)\n✔ 拒绝索引重复元组 (0.3407ms)\n✔ 拒绝归档hash不符 (0.229ms)\n✔ 拒绝伪造来源blob ID (0.4398ms)\n✔ 拒绝member bytes/hash不符 (0.3273ms)\n✔ 拒绝软链接 (0.3809ms)\n✔ 拒绝目录 (0.2304ms)\n✔ 拒绝设备 (0.3373ms)\n✔ 拒绝extra元数据/硬链接信息与加密flags (0.3298ms)\n✔ 拒绝本地路径不一致、重叠与解压超额 (0.3852ms)\nℹ tests 15\nℹ suites 0\nℹ pass 15\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 118.7187\n{\"entries\":280,\"members\":61,\"bytes\":21268498,\"errors\":[]}\n",
+  "sourceStage": "post-validation-metadata，非原15命令受测摘要",
+  "refusalTargetOperations": []
+}

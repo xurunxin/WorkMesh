@@ -8,6 +8,7 @@ import {
 } from "@workmesh/db";
 import { FakeA2AAgent } from "@workmesh/a2a-adapter";
 import { loadFeatureConfig } from "@workmesh/config";
+import { featureDefinitions } from "@workmesh/contracts";
 import { buildApp } from "../src/server.js";
 import { seedAgentSessionBearer } from "./agent-session-test-credentials.js";
 
@@ -391,7 +392,7 @@ describe("Stage 4 planning and operations API", () => {
     const deploymentFlags = registry.json<{
       features: Array<{ key: string; tier: string; enabled: boolean }>;
     }>().features;
-    expect(deploymentFlags).toHaveLength(12);
+    expect(deploymentFlags).toHaveLength(featureDefinitions.length);
     expect(deploymentFlags).toContainEqual({
       key: "WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS",
       tier: "experimental",

@@ -17,6 +17,7 @@ const canonicalFeatures = [
   { key: 'WORKMESH_BETA_GITEA', tier: 'beta' },
   { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta' },
   { key: 'WORKMESH_BETA_COORDINATION_MCP', tier: 'beta' },
+  { key: 'WORKMESH_BETA_MODEL_PRESETS', tier: 'beta' },
   { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental' },
   { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental' },
   { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental' },
@@ -577,7 +578,7 @@ test('matches each child feature to only its owned anchors', async ({ page }) =>
 
 test('proves all eight feature sets on standalone and embedded surfaces without unrelated Operations requests', async ({ context }) => {
   test.slow()
-  expect(canonicalFeatures).toHaveLength(11)
+  expect(canonicalFeatures).toHaveLength(12)
 
   const relevantDataPaths = ['/api/v1/usage-summary', ...collectionPaths] as const
   const relevantDataPathSet = new Set<string>(relevantDataPaths)
@@ -1275,7 +1276,7 @@ test('keeps all-enabled navigation wide, sticky, focus-owned, and shared with Se
   test.info().annotations.push({ type: 'viewport', description: '1920x1080 wide-PC acceptance' })
   await page.setViewportSize({ width: 1920, height: 1080 })
   await installOperationsRoutes(page, () => allOperationsFeatures)
-  expect(canonicalFeatures).toHaveLength(11)
+  expect(canonicalFeatures).toHaveLength(12)
 
   await page.goto('/operations')
   await expectWideNavigation(page)

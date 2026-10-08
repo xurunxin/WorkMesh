@@ -66,6 +66,17 @@ describe('production runtime secrets', () => {
 })
 
 describe('release and feature configuration', () => {
+  it('模型预置只允许本地文件路径', () => {
+    for (const path of ['/etc/workmesh/presets.json', './presets.json', 'C:\\workmesh\\presets.json']) {
+      expect(loadConfig({ ...baseEnvironment, WORKMESH_MODEL_PRESETS_FILE: path }).WORKMESH_MODEL_PRESETS_FILE).toBe(path)
+    }
+    for (const path of ['https://example.com/presets.json', 'file:///catalog.json', 'https:catalog.json', '\\\\server\\catalog.json', '//server/catalog.json']) {
+      expect(() => loadConfig({ ...baseEnvironment, WORKMESH_MODEL_PRESETS_FILE: path })).toThrow()
+    }
+    expect(loadConfig({ ...baseEnvironment, WORKMESH_MODEL_PRESETS_FILE: '' }).WORKMESH_MODEL_PRESETS_FILE).toBeUndefined()
+    expect(loadConfig({ ...baseEnvironment, WORKMESH_MODEL_PRESETS_FILE: ' ./presets.json ' }).WORKMESH_MODEL_PRESETS_FILE).toBe('./presets.json')
+    expect(() => loadConfig({ ...baseEnvironment, WORKMESH_MODEL_PRESETS_FILE: ' https://example.com/catalog.json ' })).toThrow()
+  })
   it('defaults every non-stable feature to disabled', () => {
     const features = loadFeatureConfig({})
     expect(Object.keys(features)).toEqual(featureDefinitions.map((feature) => feature.key))

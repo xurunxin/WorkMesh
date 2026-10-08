@@ -1,0 +1,228 @@
+{
+  "purpose": "仅规划前置官方资料核对记录，非产品目录",
+  "retrievalIsAtomic": false,
+  "fullPagesArchived": false,
+  "hashPolicy": "哈希只绑定本地记录字节，不表示完整远端页面快照。sourceUrl 指向实际官方资料；只保存短摘录和自行归纳的字段。",
+  "providers": [
+    {
+      "provider": "MiniMax",
+      "sourceUrl": "https://platform.minimax.cn/docs/api-reference/text-openai-api",
+      "requestedUrl": "https://platform.minimaxi.com/docs/api-reference/text-openai-api",
+      "readStatus": "正文已读取",
+      "baseUrlEvidence": "https://api.minimax.cn/v1",
+      "apiTypeEvidence": "openai-completions",
+      "modelEvidence": [
+        "MiniMax-M3.1-Flash-Preview",
+        "MiniMax-M3"
+      ],
+      "conditions": "正文明确预览模型仅经 M Plan 与 MiniMax Code 提供。入门示例不能直接当标准按量条目；标准 API 选型与账号条件尚待单独核对。",
+      "excerpt": "export OPENAI_BASE_URL=https://api.minimax.cn/v1",
+      "evidenceLocator": "配置环境变量；支持的模型；正文开头的预览模型条件",
+      "remaining": [
+        "标准按量模型及对应调用说明交叉核对"
+      ],
+      "candidateFinalized": false,
+      "confirmationMethod": "机器确认",
+      "checkedAt": "2026-10-08T05:46:33Z",
+      "compatibilityVerified": false,
+      "credentialVerified": false,
+      "networkReachabilityVerified": false
+    },
+    {
+      "provider": "DashScope",
+      "sourceUrl": "https://help.aliyun.com/zh/model-studio/compatibility-of-openai-with-dashscope",
+      "readStatus": "正文已读取",
+      "baseUrlEvidence": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "apiTypeEvidence": "openai-completions",
+      "modelEvidence": [
+        "qwen3.8-max"
+      ],
+      "conditions": "北京等地区已推荐业务空间专属域名，文档说明原域名继续使用；业务空间域名需部署方真实 WorkspaceId。Key 按地区绑定。固定北京域名及所选模型需实施前复核，不生成示例 WorkspaceId。",
+      "excerpt": "https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+      "evidenceLocator": "BASE_URL 与跨地域调用；Python 非流式示例",
+      "secondaryUrl": "https://help.aliyun.com/zh/model-studio/models",
+      "secondaryReadStatus": "正文已读取，模型页列出 qwen3.8-max",
+      "remaining": [
+        "实施前复核固定域名、模型地域和开通条件"
+      ],
+      "candidateFinalized": false,
+      "confirmationMethod": "机器确认",
+      "checkedAt": "2026-10-08T05:46:33Z",
+      "compatibilityVerified": false,
+      "credentialVerified": false,
+      "networkReachabilityVerified": false
+    },
+    {
+      "provider": "智谱",
+      "sourceUrl": "https://docs.bigmodel.cn/cn/guide/start/model-overview",
+      "readStatus": "模型概览正文已读取，调用说明读取失败",
+      "baseUrlEvidence": null,
+      "apiTypeEvidence": null,
+      "modelEvidence": [
+        "GLM-5.3",
+        "GLM-4.7"
+      ],
+      "conditions": "模型概览不足以确定标准调用 URL 和现有 apiType；不能从概览营销文案推出 WorkMesh 兼容性。",
+      "excerpt": "GLM-5.3",
+      "evidenceLocator": "最新模型与文本模型表",
+      "failedUrls": [
+        "https://docs.bigmodel.cn/cn/guide/develop/openai/introduction",
+        "https://docs.bigmodel.cn/cn/guide/start/quick-start",
+        "https://docs.bigmodel.cn/api-reference/llm/chat-completion"
+      ],
+      "remaining": [
+        "重读官方标准 API 调用说明，确定 URL、协议与精确模型 ID"
+      ],
+      "candidateFinalized": false,
+      "confirmationMethod": "机器确认",
+      "checkedAt": "2026-10-08T05:46:33Z",
+      "compatibilityVerified": false,
+      "credentialVerified": false,
+      "networkReachabilityVerified": false
+    },
+    {
+      "provider": "Moonshot·Kimi",
+      "sourceUrl": "https://platform.kimi.com/docs/get-api-key",
+      "requestedUrl": "https://platform.kimi.com/docs/guide/start-using-kimi-api",
+      "readStatus": "入门和模型列表正文已读取",
+      "baseUrlEvidence": "https://api.moonshot.cn/v1",
+      "apiTypeEvidence": "openai-completions",
+      "modelEvidence": [
+        "kimi-k3"
+      ],
+      "conditions": "记录中国站端点和使用该平台 Key 的要求；不加入国际区。模型能力和示例额外参数不自动填入配置。",
+      "excerpt": "base_url=\"https://api.moonshot.cn/v1\"",
+      "evidenceLocator": "发起第一次调用；Python 与 HTTP 示例",
+      "secondaryUrl": "https://platform.kimi.com/docs/models",
+      "remaining": [
+        "实施前核对所选模型的精确字段及标准计费入口"
+      ],
+      "candidateFinalized": false,
+      "confirmationMethod": "机器确认",
+      "checkedAt": "2026-10-08T05:46:33Z",
+      "compatibilityVerified": false,
+      "credentialVerified": false,
+      "networkReachabilityVerified": false
+    },
+    {
+      "provider": "DeepSeek",
+      "sourceUrl": "https://api-docs.deepseek.com/zh-cn/",
+      "readStatus": "入门正文已读取，模型价格页读取失败",
+      "baseUrlEvidence": "https://api.deepseek.com",
+      "apiTypeEvidence": "openai-completions",
+      "modelEvidence": [
+        "deepseek-flash",
+        "deepseek-v4-pro"
+      ],
+      "conditions": "官方示例使用无额外路径的 base URL。旧模型别名的服务变化仅作出处维护依据，不沿用本机探测结论。",
+      "excerpt": "base_url=\"https://api.deepseek.com\"",
+      "evidenceLocator": "PARAM 表；Python 与 HTTP 示例",
+      "failedUrls": [
+        "https://api-docs.deepseek.com/zh-cn/quick_start/pricing"
+      ],
+      "remaining": [
+        "补读当前模型列表，交叉核对最终 modelId"
+      ],
+      "candidateFinalized": false,
+      "confirmationMethod": "机器确认",
+      "checkedAt": "2026-10-08T05:46:33Z",
+      "compatibilityVerified": false,
+      "credentialVerified": false,
+      "networkReachabilityVerified": false
+    },
+    {
+      "provider": "火山",
+      "sourceUrl": "https://docs.volcengine.com/docs/ark/quick-start?lang=zh",
+      "readStatus": "快速入门正文已读取，认证说明页未取得有效正文",
+      "baseUrlEvidence": "https://ark.cn-beijing.volces.com/api/v3",
+      "apiTypeEvidence": "openai-responses",
+      "modelEvidence": [
+        "doubao-seed-2-1-pro-260628"
+      ],
+      "conditions": "北京地区，示例使用标准模型 ID；不填虚构 ep 接入点。账号开通与认证条件仍须完整复核。",
+      "excerpt": "base_url='https://ark.cn-beijing.volces.com/api/v3'",
+      "evidenceLocator": "文本示例中的 OpenAI SDK 与 responses.create",
+      "failedUrls": [
+        "https://docs.volcengine.com/docs/ark/base-url-and-authentication?lang=zh"
+      ],
+      "remaining": [
+        "补读官方认证和模型列表、确认标准调用开通条件"
+      ],
+      "candidateFinalized": false,
+      "confirmationMethod": "机器确认",
+      "checkedAt": "2026-10-08T05:46:33Z",
+      "compatibilityVerified": false,
+      "credentialVerified": false,
+      "networkReachabilityVerified": false
+    },
+    {
+      "provider": "SiliconFlow",
+      "sourceUrl": "https://docs.siliconflow.cn/docs/userguide/quickstart",
+      "readStatus": "入门正文已读取",
+      "baseUrlEvidence": "https://api.siliconflow.cn/v1",
+      "apiTypeEvidence": "openai-completions",
+      "modelEvidence": [
+        "Pro/deepseek-ai/DeepSeek-R1"
+      ],
+      "conditions": "中国站示例，modelId 中的 Pro/ 和供应方路径须原样保留；控制台模型列表未登录读取，不声称当前账号已开通。",
+      "excerpt": "base_url=\"https://api.siliconflow.cn/v1\"",
+      "evidenceLocator": "Call via OpenAI interface",
+      "remaining": [
+        "从可读官方模型资料交叉核对示例模型的当前状态"
+      ],
+      "candidateFinalized": false,
+      "confirmationMethod": "机器确认",
+      "checkedAt": "2026-10-08T05:46:33Z",
+      "compatibilityVerified": false,
+      "credentialVerified": false,
+      "networkReachabilityVerified": false
+    },
+    {
+      "provider": "百度千帆",
+      "sourceUrl": "https://cloud.baidu.com/doc/qianfan-docs/s/Fm9l6ocai",
+      "readStatus": "SDK 说明和模型列表页面已读取；列表返回正文范围未确认精确模型项",
+      "baseUrlEvidence": "https://qianfan.baidubce.com/v2",
+      "apiTypeEvidence": "openai-completions",
+      "modelEvidence": [
+        "deepseek-r1-distill-qwen-32b"
+      ],
+      "conditions": "示例为 API Key 调用；不把管理 API 的 AK/SK 鉴权混入配置。modelId 为正文示例，还需与当前列表精确交叉核对。",
+      "excerpt": "base_url=\"https://qianfan.baidubce.com/v2\"",
+      "evidenceLocator": "非流式 Python 示例",
+      "secondaryUrl": "https://cloud.baidu.com/doc/qianfan-docs/s/7m95lyy43",
+      "remaining": [
+        "确认当前模型列表中精确条目及地区条件"
+      ],
+      "candidateFinalized": false,
+      "confirmationMethod": "机器确认",
+      "checkedAt": "2026-10-08T05:46:33Z",
+      "compatibilityVerified": false,
+      "credentialVerified": false,
+      "networkReachabilityVerified": false
+    },
+    {
+      "provider": "OpenAI",
+      "sourceUrl": "https://developers.openai.com/api/docs/quickstart",
+      "readStatus": "入门、模型列表和支持地区正文已读取",
+      "baseUrlEvidence": "https://api.openai.com/v1",
+      "apiTypeEvidence": "openai-responses",
+      "modelEvidence": [
+        "gpt-6-astra"
+      ],
+      "conditions": "全球条目按官方支持地区使用；支持地区页面没有列入中国大陆，不能写中国大陆可达。账号、模型权限与部署网络均未经验证。",
+      "excerpt": "model: \"gpt-6-astra\"",
+      "evidenceLocator": "基础 Responses 请求；HTTP 示例",
+      "secondaryUrl": "https://developers.openai.com/api/docs/models",
+      "regionSourceUrl": "https://developers.openai.com/api/docs/supported-countries",
+      "remaining": [
+        "实施前再次确认支持地区和精确模型条目"
+      ],
+      "candidateFinalized": false,
+      "confirmationMethod": "机器确认",
+      "checkedAt": "2026-10-08T05:46:33Z",
+      "compatibilityVerified": false,
+      "credentialVerified": false,
+      "networkReachabilityVerified": false
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "unit": "根 pnpm test，验证共享 contracts 的消费方",
+  "api": "完整 API 集成，含 C1 目标权限、C3 九条零出站、A1 三种有效 token；新增覆盖全部七个 C1 Human-only 路由提前拒绝并逐表核对",
+  "worker": "stage4-automation 单文件：真锁竞争、fence、静音、逐条 claim 与 Loop，fake adapter 无真实外发",
+  "db": "migration-baseline 单文件：C1 clean/upgrade/transaction/replay",
+  "e2e": "stage0 前置+C3 模型设置+C1 通知设置，先核实际 --list；副本仅端口/路径变化，断言/timeout不变",
+  "status": "尚未运行",
+  "omitted": "未变化历史47 mocked对照、审批审计153成员执行、只读 Docker 挂载不重跑、不计当前通过；不探测提供方",
+  "resources": {
+    "owner": "c3-c1-combination-01a11890",
+    "paths": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\.tmp\\c3-c1-combination-01a11890",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e\\playwright.c3-c1-combination.config.ts"
+    ],
+    "ports": [
+      25589,
+      26589,
+      27589,
+      35100,
+      35101
+    ],
+    "preflightListeners": [],
+    "cleanup": "容器finally按精确归属ID；临时路径先保全，后单一明确绝对目标清理；若被拒即停，不换工具/命令/拆分/移动/恢复",
+    "preserved": "原被拒六路径、全部历史原件、当前和旧恢复工作区、共享基础镜像/网络和其他任务资源"
+  }
+}

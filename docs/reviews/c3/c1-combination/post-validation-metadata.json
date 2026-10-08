@@ -1,0 +1,21 @@
+{
+  "recordedAt": "2026-10-08T13:04:05.050902+00:00",
+  "purpose": "被拒绝的临时配置保留原位置，根 .gitignore 仅增加精确根路径，避免平台全量提交时收录运行副本；不改被拒文件或目录，不改共享 Git config",
+  "files": {
+    ".gitignore": {
+      "gitBlob": "6bed455229c44bdbc1f9ec38d69c11ca7f06e75e",
+      "sha256": "5a3f772cff06116e21d06a443bc840e9b927aef928c39c10d8d8b86e6e7fa62a",
+      "testedGitBlob": "472be399b01fc545f83551d0ed6b87ae90921f83",
+      "testedWorktreeSha256": "9f0fa7968d5699a3d9d0a785ccb4ee5d50c8bbd302cf9c8e1bc9f063daf55418",
+      "gitBytes": 388,
+      "gitSha256": "9f7003feb40a3ba607bb2814a1739bd403bbdb428d062f4043336bbea78d5f03"
+    }
+  },
+  "diffFromTestedSource": "仅 .gitignore 新增注释和精确路径 /playwright.c3-c1-combination.config.ts；所有运行产品代码及原件不变",
+  "testMeaning": "原15命令始终保持测试时74eb55摘要，不将其改写为最终忽略规则版本；此元数据差异无运行行为变更",
+  "sourceFilesAfterMetadataChange": 1391,
+  "ignoredTarget": "playwright.c3-c1-combination.config.ts",
+  "targetOperationsAfterRefusal": [],
+  "testedSourceDigest": "74eb55f0e00c87ad8013e76cb234b58eb3c7e6f906642d2bf92705218294bf54",
+  "finalSourceDigest": "623566f58959b49f27945b28b6d4a50e04e532acd4359be2cdd289859eed3280"
+}
