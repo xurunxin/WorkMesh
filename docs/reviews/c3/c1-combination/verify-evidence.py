@@ -45,6 +45,11 @@ for path, row in binding['files'].items():
         assert path == '.gitignore' and final['testedGitBlob'] == row['gitBlob']
     assert current_blobs[path] == final['gitBlob'], path
     assert digest((root / path).read_bytes()) == final['sha256'], path
+if metadata['files']:
+    final_rows = {path: {key: row[key] for key in ['bytes', 'sha256', 'gitBlob']} for path, row in binding['files'].items()}
+    for path, row in metadata['files'].items():
+        final_rows[path] = {'bytes': (root / path).stat().st_size, 'sha256': row['sha256'], 'gitBlob': row['gitBlob']}
+    assert digest(json.dumps(final_rows, sort_keys=True, separators=(',', ':')).encode()) == metadata['finalSourceDigest']
 history = read('historical-evidence.json')
 for path, row in history['files'].items():
     assert digest((root / path).read_bytes()) == row['sha256'], path

@@ -36,7 +36,7 @@
     "runtimeOnlyChanges": "两个服务端口和测试副本路径；C1/C3 用例原字节不改，断言和 timeout不改"
   },
   "routeCount": 277,
-  "lintAndTypecheck": "两项成功，实际任务/缓存数量见原日志",
+  "lintAndTypecheck": "各18任务成功，零缓存",
   "apiBuildExitCode": 0,
   "ciValidateExitCode": 0,
   "archiveMembers": 56,
@@ -50,7 +50,7 @@
   "liveCallsOrPublication": false,
   "requiredCi": "本轮 PR RequiredCI 尚未建立或运行；C1 CI391 不代 C3 门禁",
   "review": "当前 C1+A1+C3 组合、冲突解决及新增断言待定向独审，旧独审通过不冒新组合通过",
-  "mergeStatus": "候选正常 merge，待平台提交并实读绑定；没有合入 main",
+  "mergeStatus": "平台已正常双 parent 合并并推送原分支，远端本轮实读匹配；没有合入 main",
   "cleanup": {
     "containersRemoved": 3,
     "temporaryTargetsRetainedBecauseRejected": 2,
@@ -58,5 +58,8 @@
     "rejectedTargetChangedMethodOrDeletedOrMovedOrRestored": false,
     "refusalEvidence": "cleanup-audit/refusal.json 与 config-refusal.json"
   },
-  "postValidationMetadataDifference": "只添加本轮精确 Git 忽略规则，独立绑定，不改旧15命令源码摘要"
+  "postValidationMetadataDifference": "只添加本轮精确 Git 忽略规则，独立绑定，不改旧15命令源码摘要",
+  "combinationCommit": "9f4ff863611af7027314ae1783f898f704643863",
+  "headVerificationExitCode": 0,
+  "postValidationCiExitCode": 0
 }

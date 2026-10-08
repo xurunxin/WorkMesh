@@ -1,6 +1,6 @@
 # C3 整合 C1 主线的组合交接
 
-本轮在原 todo、原工作区和原会话分支正常整合 C1 已落地主线。输入 HEAD 为 `7a86ecc46e8fb79f8cf177749f9fef21bd410d0b`；本轮 `tds git ls-remote origin refs/heads/main` 实读 `5b9c76b5f79917697906520edcd6947bfbfa925f`，fetch 后同工具读回一致。整合固定完整主线 SHA，没有把本工作树的 `FETCH_HEAD` 当 main。主线 parents 为 `96e724858e692d262107c34db50b40c3ae7c122c` 和 `81090ec01bcbc84edbe101418d833840999a5326`，tree 与后者一致。完整来源和重叠路径见 [input.json](input.json)。最终提交绑定由平台提交后实读，不猜未知提交；候选 index tree 见 [runtime-input.json](runtime-input.json)。
+本轮在原 todo、原工作区和原会话分支正常整合 C1 已落地主线。输入 HEAD 为 `7a86ecc46e8fb79f8cf177749f9fef21bd410d0b`；本轮 `tds git ls-remote origin refs/heads/main` 实读 `5b9c76b5f79917697906520edcd6947bfbfa925f`，fetch 后同工具读回一致。整合固定完整主线 SHA，没有把本工作树的 `FETCH_HEAD` 当 main。主线 parents 为 `96e724858e692d262107c34db50b40c3ae7c122c` 和 `81090ec01bcbc84edbe101418d833840999a5326`，tree 与后者一致。完整来源和重叠路径见 [input.json](input.json)。平台正常提交并推送双 parent 组合 `9f4ff863611af7027314ae1783f898f704643863`，parents 恰为输入 HEAD 与指定 main；同一工具实读远端分支相同，main 仍为 `5b9c76b`。完整实读见 [delivery-readback.json](delivery-readback.json)，候选 index tree 仍见 [runtime-input.json](runtime-input.json)。提交后 HEAD 核验成功，随后仅追加这些提交绑定文档，不改变受测产品或后续 Git 忽略规则；没有合入 main。
 
 ## 实际整合与边界
 
