@@ -288,7 +288,7 @@ D1a `.tmp` 总清单有 1,496 项；扣除上述 1,406 个精确映射后，余 
 
 第二目标此前有一次**未执行删除的预检中止**：进程查询计数为 1，但命令行匹配项就是运行该查询的当前 `pwsh.exe`，因为查询脚本本身含完整目标路径；同时该次 `Get-Item` 使用的 RAW ZIP 路径并非清单中的真实路径并返回找不到路径。`Remove-Item` 未运行，目标未改变。随后在命令进程排除自身、使用清单准确归档路径后重查，得到上述 0 个其它进程命令行引用及两份 RAW ZIP 完整哈希一致的结果。两次观察分别保留于机器清单，不把自匹配误记为活动使用，也不声称枚举了全局 handles/build registry。
 
-机器回执为 [`d1a-duplicate-trace-cleanup-2026-10-08.json`](d1a-duplicate-trace-cleanup-2026-10-08.json)。
+机器回执为 [`d1a-duplicate-trace-cleanup-2026-10-08.json`](d1a-duplicate-trace-cleanup-2026-10-08.json)。其中 `originalOperationReceipts` 指向 [`original-operation-receipts-2026-10-08.json`](original-operation-receipts-2026-10-08.json)，保存了原始 JSONL 第 6851/6854 行和 6967/6970 行的完整调用输入、完整返回值、原始行、call ID 与 dispatch/return UTC。第二次删除前的中止预检、后续重检和最终健康核验分别仍由该机器回执的 `interruptedPreflightAttempt`、`secondTargetPreflight` 和 `postflight` 记录关联；第一目标独立操作时间未知，不能用派发或返回时间倒推。
 
 第二个目标于 `2026-10-08T14:36:23.1867578Z` 使用 `Remove-Item -LiteralPath <exact file path> -ErrorAction Stop` 删除，未使用 `-Force`，退出码 0。操作后目标不存在、其父目录仍在；保留 trace 原件仍为 1,022,701 B 且 SHA-256 不变，两份 RAW ZIP 各为 14,795,293 B 且 SHA-256 不变。D1a `.tmp` 当前为 76 个文件、47,298,811 B；之前两目标合计 2,045,402 B，此数仅为逻辑文件长度，不代表卷物理净释放。其余 74 个材料逐路径复核 `74/74` 字节数与 SHA 一致；D1a Git 状态退出码 0 且无变更，worktree 列表退出码 0、共 21 项，D1a 仍登记。物理磁盘净释放未测量。原始 RAW ZIP、保留 trace、其它 74 项、四父 worktree、G1 clone、D0/C3 被拒目标及所有活动/恢复目录均不在本次操作范围；整项清理仍未完成。
 
@@ -317,4 +317,4 @@ $ErrorActionPreference = 'Stop'
 Remove-Item -LiteralPath 'C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-shallow-layout' -Recurse -Force
 ```
 
-执行器在创建 PowerShell 进程前返回拒绝，原文理由为 `rejected: blocked by policy`。因此 `Remove-Item` 实际调用次数为 0、PowerShell 未启动、结构化退出码为 `null`，不冒称文件已删或已释放空间。最后一次通过预检时目标仍存在（1,474 个文件/33,450,482 B）；按“拒绝后立即停止”的要求没有再读取目标，也没有第二次调用、替代删除方式、移动目标或修改属性/ACL。该单次授权动作到此停在策略拒绝，待定向审查。
+执行器在创建 PowerShell 进程前返回拒绝，原文理由为 `rejected: blocked by policy`。因此 `Remove-Item` 实际调用次数为 0、PowerShell 未启动、结构化退出码为 `null`，不冒称文件已删或已释放空间。最后一次通过预检时目标仍存在（1,474 个文件/33,450,482 B）；按“拒绝后立即停止”的要求没有再读取目标，也没有第二次调用、替代删除方式、移动目标或修改属性/ACL。原始派发记录时间为 `2026-10-08T14:48:00.987Z`、拒绝返回时间为 `2026-10-08T14:48:01.072Z`；它们只是工具派发/返回时点，实际文件操作时间仍为 `null`，因为 PowerShell 未启动。原始输入、完整返回值、原始 JSONL 行及来源位置（第 7358/7360 行，调用 ID `call_389935a8bffb4040b7f914b311d06626`）已保存于 [`original-operation-receipts-2026-10-08.json`](original-operation-receipts-2026-10-08.json)，G1 机器清单也记录了相同定位。该单次授权动作到此停在策略拒绝，未重试。

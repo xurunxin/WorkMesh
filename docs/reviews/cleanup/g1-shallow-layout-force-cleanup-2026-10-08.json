@@ -186,7 +186,18 @@
     "toolErrorClass": "CreateProcess rejected before launching PowerShell",
     "exactCommandInput": "$ErrorActionPreference = 'Stop'\nRemove-Item -LiteralPath 'C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-shallow-layout' -Recurse -Force",
     "targetState": "The last preflight showed target present with 1,474 files/33,450,482 B. No post-rejection filesystem read was performed; no retry or alternate method was attempted.",
-    "result": "policy-rejected; stopped immediately"
+    "result": "policy-rejected; stopped immediately",
+    "originalDispatchReceipt": {
+      "file": "original-operation-receipts-2026-10-08.json",
+      "receipt": "g1ForcePolicyRejected",
+      "callId": "call_389935a8bffb4040b7f914b311d06626",
+      "sourceLine": 7358,
+      "returnLine": 7360,
+      "dispatchAtUtc": "2026-10-08T14:48:00.987Z",
+      "returnAtUtc": "2026-10-08T14:48:01.072Z",
+      "operationAtUtc": null,
+      "note": "dispatch/return 时点不是文件系统操作时间；PowerShell 未启动，Remove-Item 调用 0 次，操作时间与退出码均未知/null。拒绝后未读取目标文件系统。"
+    }
   },
   "postflight": null,
   "space": {
