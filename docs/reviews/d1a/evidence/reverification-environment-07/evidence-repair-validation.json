@@ -7,9 +7,13 @@
     "password": 2
   },
   "verifiedRedactedFieldCountsByName": {
+    "password": 2,
     "csrf_token": 1,
-    "csrfToken": 1,
-    "password": 2
+    "csrfToken": 1
+  },
+  "verifiedRedactedSerializedFieldCountsByName": {
+    "csrf_token": 1,
+    "csrfToken": 1
   },
   "renamedResourceTargetsPresent": {
     "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json": true,
@@ -17,18 +21,20 @@
     "resources/8176e305fe436a5173990ad29d06e4893f7c57ba.json": true
   },
   "remainingSensitiveJsonFields": 0,
+  "remainingSensitiveSerializedFields": 0,
+  "originalSensitiveValuesRemaining": 0,
   "zipCopiesIdentical": true,
-  "traceArchiveSha256": "2686087a12f26b8d0ff2afb40f95e0f4f21cecf417153bddab6da089323beb47",
+  "traceArchiveSha256": "00fe3854f1cb7de42482d2b9cab730af697fb115629719f0850df7d43aaa9ca5",
   "zipChecks": {
     "directTrace": {
       "crcVerified": true,
       "entries": 490,
-      "bytes": 14776984
+      "bytes": 14776952
     },
     "htmlReportAttachment": {
       "crcVerified": true,
       "entries": 490,
-      "bytes": 14776984
+      "bytes": 14776952
     }
   },
   "dynamicImports": {

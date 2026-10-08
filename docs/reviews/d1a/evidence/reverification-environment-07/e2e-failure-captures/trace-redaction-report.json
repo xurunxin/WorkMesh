@@ -1,10 +1,14 @@
 {
-  "sourceArchiveSha256": "2686087a12f26b8d0ff2afb40f95e0f4f21cecf417153bddab6da089323beb47",
-  "archiveBytes": 14776984,
+  "sourceArchiveSha256": "00fe3854f1cb7de42482d2b9cab730af697fb115629719f0850df7d43aaa9ca5",
+  "archiveBytes": 14776952,
   "redactedFieldCountsByName": {
     "csrf_token": 2,
     "csrfToken": 2,
     "password": 2
+  },
+  "redactedSerializedFieldCountsByName": {
+    "csrf_token": 1,
+    "csrfToken": 1
   },
   "resourceRenames": {
     "resources/0fc850b1775d3c97277a3def3ae5756cd44cf49f.json": "resources/a0eaa9aab07a906e34e1d14c1224957824da6afc.json",
@@ -14,6 +18,7 @@
   },
   "crcVerified": true,
   "sensitiveResourceFieldsRemaining": 0,
+  "originalSensitiveValuesRemaining": 0,
   "updatedCopies": [
     "docs/reviews/d1a/evidence/reverification-environment-07/e2e-failure-captures/trace-sanitized.zip",
     "docs/reviews/d1a/evidence/reverification-environment-07/e2e-html-report/data/d69f056ec411e76e5d9f9e4664b013966ee3cc75.zip"
