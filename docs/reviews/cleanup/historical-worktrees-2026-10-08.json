@@ -1,0 +1,266 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-08T09:31:53Z",
+  "machine": {
+    "name": "DarkFlame",
+    "machineId": "6DOlLniZ0sqBYGHeIhRMq",
+    "os": "Windows",
+    "tdsVersion": "0.1.60",
+    "workspacesRoot": "C:\\Users\\xurx\\.tds\\workspaces"
+  },
+  "project": {
+    "name": "WorkMesh",
+    "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+    "defaultBranch": "main",
+    "fetchedMain": "1078bbcd527550bfabee73093b7ffd0032d3fd24"
+  },
+  "candidates": [
+    {
+      "todoNumber": 2,
+      "todoId": "qJKk_SAxN29AdBHERBl7u",
+      "title": "P1 核实 16 条代码事实断言",
+      "phase": "done",
+      "branch": "tds/conv-01a115d0-83ff-7ee7-ba2e-eb7d5b10bdfe",
+      "head": "735578d8d0733e04cae5640cedfaf0c6181391c7",
+      "headAncestorOfFetchedMain": true,
+      "ancestorCheckExitCode": 0,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-83ff-7ee7-ba2e-eb7d5b10bdfe",
+      "worktreeKind": "linked",
+      "preCleanup": {
+        "trackedOrUntrackedChanges": 0,
+        "ignoredTopLevelEntries": 51,
+        "enumeratedFileBytes": 942282752,
+        "ignoredCategories": [
+          "node_modules",
+          "dist",
+          ".next",
+          ".turbo"
+        ]
+      },
+      "action": "removed",
+      "operations": [
+        {
+          "command": "git worktree remove <exact-path> (without --force)",
+          "exitCode": null,
+          "exitCodeNote": "The command exceeded the initial tool wait window; completion code was not returned. The process later ended and the worktree registration disappeared."
+        },
+        {
+          "command": "Delete internal junctions and empty directories individually with non-recursive Directory.Delete(path, false)",
+          "exitCode": 0,
+          "targetResolvedAndValidated": true,
+          "residualFilesBeforeOperation": 0,
+          "internalJunctionsRemoved": 1918,
+          "emptyDirectoriesRemoved": 958
+        }
+      ],
+      "postCleanup": {
+        "pathExists": false,
+        "worktreeRegistrationExists": false,
+        "branchRetained": true
+      }
+    },
+    {
+      "todoNumber": 10,
+      "todoId": "MPhtZiff23B33m9i2equq",
+      "title": "D0 视觉基线采集",
+      "phase": "done",
+      "branch": "tds/conv-01a115d0-87b0-78cd-921d-750713cdde51",
+      "head": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+      "headAncestorOfFetchedMain": true,
+      "ancestorCheckExitCode": 0,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+      "worktreeKind": "linked",
+      "preCleanup": {
+        "trackedOrUntrackedChanges": 0,
+        "ignoredTmpFiles": 2661,
+        "ignoredTmpBytes": 250939918,
+        "enumeratedWorkspaceBytes": 1179390006
+      },
+      "action": "kept",
+      "reason": "Ignored .tmp contains capture logs and diagnostics not individually reconciled against persisted main evidence."
+    },
+    {
+      "todoNumber": 18,
+      "todoId": "Tws50k02Pi52R-RJEXP_N",
+      "title": "G1 输入可达性",
+      "phase": "done",
+      "branch": "tds/conv-01a116f7-1027-7c75-90df-32ebc5488752",
+      "head": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+      "headAncestorOfFetchedMain": true,
+      "ancestorCheckExitCode": 0,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+      "worktreeKind": "linked",
+      "preCleanup": {
+        "trackedOrUntrackedChanges": 0,
+        "ignoredTmpFiles": 10452,
+        "ignoredTmpBytes": 348722219,
+        "nestedWorktrees": [
+          {
+            "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-3cdfb9e",
+            "head": "3cdfb9ea02496261a3f68369167165b76d953afa",
+            "statusCount": 0,
+            "mainAncestor": true,
+            "enumeratedBytes": 31234372
+          },
+          {
+            "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-70199df",
+            "head": "70199df743da754068831d709a1ae8c428bd2bb0",
+            "statusCount": 0,
+            "mainAncestor": true,
+            "enumeratedBytes": 31287704
+          },
+          {
+            "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-dcf3557",
+            "head": "dcf355735341bc6daac4101b8c7d0efbaabbe764",
+            "statusCount": 0,
+            "mainAncestor": true,
+            "enumeratedBytes": 31120312
+          },
+          {
+            "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-dde2a1a",
+            "head": "dde2a1a6926040c35e9d85d89fed6238572f0f25",
+            "statusCount": 0,
+            "mainAncestor": true,
+            "enumeratedBytes": 31126670
+          },
+          {
+            "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-f4e5915",
+            "head": "f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9",
+            "statusCount": 0,
+            "mainAncestor": true,
+            "enumeratedBytes": 31266275
+          }
+        ],
+        "outsideTempWorktree": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-g1-verify-36c7709",
+        "outsideTempWorktreeRemoved": false
+      },
+      "action": "kept",
+      "reason": "Ignored evidence archives, diagnostics and verification scripts were not individually reconciled."
+    },
+    {
+      "todoNumber": 3,
+      "todoId": "q_1zKPuGsG-2ZRUwOwQx4",
+      "title": "R1 独立规格审查",
+      "phase": "done",
+      "branch": "tds/conv-01a116f8-8172-7082-8d61-867bd9f0b749",
+      "head": "550dead055689154359a3406dfce4f0c91c1dad3",
+      "headAncestorOfFetchedMain": true,
+      "ancestorCheckExitCode": 0,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+      "worktreeKind": "linked",
+      "preCleanup": {
+        "trackedOrUntrackedChanges": 0,
+        "playwrightReportBytes": 612374,
+        "testResultsFiles": 3,
+        "testResultsBytesBeforeAuthRemoval": 134400
+      },
+      "action": "partially-cleaned",
+      "removedFiles": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\web\\test-results\\.auth\\admin.json",
+          "bytes": 1625,
+          "exitCode": 0,
+          "existsAfter": false
+        }
+      ],
+      "reason": "Retained Playwright report and screenshots because their full evidence correspondence was not checked."
+    },
+    {
+      "todoNumber": 11,
+      "todoId": "IJQA_DfxU0hF5e8L5Xb3v",
+      "title": "D1a 并存语义 token",
+      "phase": "done",
+      "branch": "tds/conv-01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "head": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+      "headAncestorOfFetchedMain": true,
+      "ancestorCheckExitCode": 0,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "worktreeKind": "linked",
+      "preCleanup": {
+        "trackedOrUntrackedChanges": 0,
+        "ignoredTmpFiles": 2195,
+        "ignoredTmpBytes": 142252299,
+        "playwrightReportFiles": 28,
+        "playwrightReportBytes": 2224000,
+        "testResultsFilesBeforeAuthRemoval": 45,
+        "testResultsBytesBeforeAuthRemoval": 2692168
+      },
+      "action": "partially-cleaned",
+      "removedFiles": [
+        {
+          "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\apps\\web\\test-results\\.auth\\admin.json",
+          "bytes": 1625,
+          "exitCode": 0,
+          "existsAfter": false
+        }
+      ],
+      "reason": "Retained ignored diagnostics, screenshots and Playwright reports because their full evidence correspondence was not checked."
+    }
+  ],
+  "protectedWorkspaces": [
+    {
+      "todoNumber": 5,
+      "todoId": "ti53hOGbvnBNrvjXXveGO",
+      "workspaceId": "01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+      "existsAfter": true
+    },
+    {
+      "todoNumber": 8,
+      "todoId": "Hxr1xIdh4poZp3F5laGrT",
+      "workspaceId": "01a11ac2-7634-752e-8d81-764c9776f801",
+      "existsAfter": true
+    },
+    {
+      "todoNumber": 15,
+      "todoId": "kkG9VeT3_uTzREhjnX2ve",
+      "workspaceId": "01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+      "existsAfter": true
+    },
+    {
+      "todoNumber": 17,
+      "todoId": "4DlyrPrDMMtK5JTmFm1t_",
+      "workspaceId": "01a11890-f4de-7106-b64d-e1b2c0d4608e",
+      "existsAfter": true
+    },
+    {
+      "todoNumber": 21,
+      "todoId": "2j2sxT5wJ-l001efH_meJ",
+      "workspaceId": "01a11a93-c093-7565-9084-724b6bedcade",
+      "checkpointWorkspaceId": "01a1195f-55ab-7ee9-8baf-c115978d3aec",
+      "checkpointHead": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5",
+      "currentExistsAfter": true,
+      "checkpointExistsAfter": true
+    }
+  ],
+  "docker": {
+    "candidateIdPrefixSearch": true,
+    "matchingContainers": [],
+    "matchingVolumes": [],
+    "matchingNetworks": [],
+    "imagesRemoved": [],
+    "imageReason": "No candidate-specific ownership was provable; shared images/caches were retained.",
+    "globalPruneRun": false
+  },
+  "disk": {
+    "volume": "C:",
+    "freeBytesBefore": 360104419328,
+    "freeBytesAfter": 360879202304,
+    "netFreeSpaceIncreaseBytes": 774782976,
+    "attribution": "Net volume change while other WorkMesh task containers were active; not an exact per-worktree physical release measurement.",
+    "p1EnumeratedWorkspaceFileBytes": 942282752
+  },
+  "finalChecks": {
+    "p1PathExists": false,
+    "p1WorktreeRegistrationExists": false,
+    "p1BranchRetained": true,
+    "worktreeListHasPrunableEntries": false,
+    "currentCleanupWorktreePreserved": true,
+    "protectedWorkspacesPreserved": true,
+    "productTestsRun": false
+  },
+  "limitations": [
+    "Platform MCP exposes todo status and conversations but no machine-level active-build-reference endpoint; phase and completion transcripts were used for active-reference gating.",
+    "The git worktree remove process exit code was not returned after the execution wrapper wait window; final path and registration state were checked independently.",
+    "The top-level disk-free delta includes concurrent machine activity and is not an exact per-worktree release measurement."
+  ]
+}
