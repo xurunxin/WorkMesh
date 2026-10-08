@@ -131,6 +131,7 @@ const requiredJobs = [
   'e2e',
   'recovery-integration',
   'agent-smoke',
+  'connector-platform',
   'required-ci',
 ]
 requireCondition(
@@ -147,6 +148,7 @@ const rawArtifacts = new Map([
   ['e2e', 'e2e-raw-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['recovery-integration', 'recovery-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['agent-smoke', 'agent-smoke-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
+  ['connector-platform', 'connector-platform-raw-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['required-ci', 'required-ci-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
 ])
 for (const jobId of requiredJobs) {

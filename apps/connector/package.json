@@ -1,0 +1,23 @@
+{
+  "name": "@workmesh/connector",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/connect.ts" },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:platform": "vitest run --config vitest.platform.config.ts",
+    "connect": "tsx src/cli.ts connect",
+    "start": "node dist/cli.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "@napi-rs/keyring": "2.1.0",
+    "@workmesh/contracts": "workspace:*",
+    "koffi": "3.3.2",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": { "@types/node": "^22.15.2", "tsx": "^4.19.3", "vitest": "^3.1.3" }
+}

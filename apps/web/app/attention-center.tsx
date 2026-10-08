@@ -446,6 +446,15 @@ export function AttentionCenter({
   const [approvalDetailError, setApprovalDetailError] = useState("");
   const responsePreparationIdRef = useRef(0);
   const responseDraftItemIdRef = useRef<string | null>(null);
+  const approvalRefreshTimerRef = useRef<number | null>(null);
+  const mountedRef = useRef(false);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      if (approvalRefreshTimerRef.current !== null) window.clearTimeout(approvalRefreshTimerRef.current);
+    };
+  }, []);
   const [preview, setPreview] = useState<ActionPreview | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [error, setError] = useState("");
@@ -628,7 +637,13 @@ export function AttentionCenter({
         quorum: result.quorum,
       });
       setApplying(copy.applying);
-      window.setTimeout(() => void refresh(route), 1200);
+      if (mountedRef.current) {
+        if (approvalRefreshTimerRef.current !== null) window.clearTimeout(approvalRefreshTimerRef.current);
+        approvalRefreshTimerRef.current = window.setTimeout(() => {
+          approvalRefreshTimerRef.current = null;
+          void refresh(route);
+        }, 1200);
+      }
       return true;
     } catch (reason) {
       const failure = classifyApprovalDecisionFailure(reason);

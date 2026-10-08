@@ -1,0 +1,52 @@
+[
+  {
+    "name": "connector-build",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "build"
+    ],
+    "startedAt": "2026-10-08T09:41:07.719Z",
+    "endedAt": "2026-10-08T09:41:11.531Z",
+    "exitCode": 0,
+    "log": "logs/connector-build.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "lint",
+    "command": [
+      "pnpm",
+      "lint"
+    ],
+    "startedAt": "2026-10-08T09:41:11.532Z",
+    "endedAt": "2026-10-08T09:42:12.322Z",
+    "exitCode": 0,
+    "log": "logs/lint.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "typecheck",
+    "command": [
+      "pnpm",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-08T09:42:12.323Z",
+    "endedAt": "2026-10-08T09:43:10.163Z",
+    "exitCode": 0,
+    "log": "logs/typecheck.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "unit",
+    "command": [
+      "pnpm",
+      "test"
+    ],
+    "startedAt": "2026-10-08T09:43:10.163Z",
+    "endedAt": "2026-10-08T09:46:22.210Z",
+    "exitCode": 1,
+    "log": "logs/unit.log",
+    "secretRedaction": true
+  }
+]

@@ -9,3 +9,8 @@ docs/references/todos-analysis/SOURCE-MANIFEST.json text eol=lf
 # theirs with sed at build time, and a host-side script has no such step.
 infra/docker/*.sh text eol=lf
 infra/lite/*.sh text eol=lf
+scripts/test-connector-linux.sh text eol=lf
+
+# Exact connector plan/spec snapshots keep their approved UTF-8/LF bytes.
+docs/plan/connector-recovery.md text eol=lf
+docs/reviews/b1-b2/current-spec.md text eol=lf

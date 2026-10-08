@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { testConsumers } from './ci-test-inputs.mjs'
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration', 'agent-smoke']
+export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration', 'agent-smoke', 'connector-platform']
 
 export function readWorkspaces(directory = root) {
   return ['apps', 'packages'].flatMap(parent => readdirSync(resolve(directory, parent), { withFileTypes: true })
@@ -49,6 +49,7 @@ export function classifyChanges(paths, workspaces, { forceFull = false, mainPush
   const has = name => affected.has(`@workmesh/${name}`)
   const checks = {
     'source-gates': full || runtime.length > 0,
+    'connector-platform': full || has('connector'),
     'db-integration': full || has('db'),
     // API integration imports worker implementations directly in its fixtures.
     'api-integration': full || has('api') || has('worker'),

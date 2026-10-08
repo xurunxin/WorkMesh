@@ -1,0 +1,16 @@
+[
+  {
+    "name": "windows-platform",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "test:platform"
+    ],
+    "startedAt": "2026-10-08T10:03:15.756Z",
+    "endedAt": "2026-10-08T10:03:23.443Z",
+    "exitCode": 1,
+    "log": "logs/windows-platform.log",
+    "secretRedaction": true
+  }
+]

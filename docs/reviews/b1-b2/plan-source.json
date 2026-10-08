@@ -1,0 +1,256 @@
+{
+  "todoId": "ti53hOGbvnBNrvjXXveGO",
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "currentPlan": {
+    "id": "m7WeSHWZt1Bv3FZwYlnlv",
+    "reference": "doc:m7WeSHWZt1Bv3FZwYlnlv",
+    "version": null,
+    "createdAt": null,
+    "updatedAt": null,
+    "newIdCreated": false,
+    "sourceKind": "platform_full_plan_injection",
+    "sourceArtifact": "docs/reviews/b1-b2/source-snapshot.json",
+    "sourceBodySha256": "72e6fcb9d46a3f433291db4b1db3e351c243bc38202fdc884d463f5d50341230",
+    "sourceBodyUtf8Bytes": 9654,
+    "extraction": "提取 <plan> 内从首个标题到末句的完整正文，保留行内字符、段落、空白行空格；标签与标签邻接换行不属于正文",
+    "readableFile": "docs/plan/connector-recovery.md",
+    "readableFileSha256": "71a0e7845b205f60ecc29b91e66bea2f2086004c16212c03034a51fcbb5b6352",
+    "readableFileUtf8Bytes": 9645,
+    "displayTransform": "仅删除空白行上的空格或制表符，并添加文件末尾 LF；不修改文字/段落/代码/链接",
+    "displayWhitespaceOnlyLines": 5,
+    "toolFullReadback": false,
+    "toolVisiblePrefixUtf8Bytes": 5600,
+    "toolVisiblePrefixSha256": "a1c784831d271a01d52e9fdd0aba1f68456ce0309e41f32b416f20530f217338",
+    "toolVisiblePrefixMatches": true
+  },
+  "toolLimitations": [
+    "mcp__tds__todos 当前卡回读最多返回部分 Saved plan，末尾明确 …(truncated)；没有 doc 正文读取工具，不冒称完整工具读回",
+    "工具没有提供计划版本及时间字段，均记录 null；不将卡片 updatedAt 当计划版本时间",
+    "任务卡回读不包含最终完整计划的独立 doc 读取回执；完整源来自实际平台注入，二者来源分别标识"
+  ],
+  "authorization": {
+    "implementationConfirmedByUser": true,
+    "choicesConfirmedByUser": [
+      "系统秘密存储",
+      "本地预期清单",
+      "连接器自有配置"
+    ],
+    "currentScope": "仅完成文档前置并停review供独立方案审查，尚不开始产品改动",
+    "independentPlanReview": "待审",
+    "chiefRelease": null,
+    "productChanges": [],
+    "postImplementationChecks": "未运行；文档前置阶段无需运行全套产品检查",
+    "actualControlPlane": "Todos＋仓库；本批例外，未创建真实WorkMesh Project/WorkItem"
+  },
+  "repository": {
+    "branch": "tds/conv-01a1187a-f0f1-74d9-a5e7-0022c903a6e6",
+    "worktreeHead": "9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7",
+    "latestMain": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "mainSource": "本轮 mcp__tds__git fetch origin main 后 rev-parse FETCH_HEAD",
+    "mainInputDelta": "对 apps/api、apps/mcp、packages/contracts、当前卡冻结spec、AGENT_PROTOCOL.md、OPENAPI.yaml、SCHEMA.sql 的 HEAD..FETCH_HEAD 文件差异为空；最新主线已增加 D1a，其余未据此冒称已整合到本工作树",
+    "integratedMain": false
+  },
+  "taskSource": {
+    "tool": "mcp__tds__todos",
+    "atomicSnapshot": false,
+    "current": {
+      "id": "ti53hOGbvnBNrvjXXveGO",
+      "phase": "building",
+      "updatedAt": "2026-10-08T05:46:09.094Z",
+      "toolTruncated": true,
+      "rawToolText": "#5 [B1/B2] 可恢复连接器：稳定请求身份与完整协议验证（零迁移） (id: ti53hOGbvnBNrvjXXveGO)\nProject: WorkMesh\nPhase: building\nCreated: 2026-10-07T08:52:51.209Z by RunXin Xu (user)\nUpdated: 2026-10-08T05:46:09.094Z\nAssigned agent: iuKoX-czTc8kH_ERctdlM (thinking: high)\nHas a build — conversation(todoId) for its transcript. Branch: tds/conv-01a1187a-f0f1-74d9-a5e7-0022c903a6e6. Files on its branch: https://todos.dev/app/project/DzkLDn6UW-IbfoTJzN9Ro/files?ref=tds%2Fconv-01a1187a-f0f1-74d9-a5e7-0022c903a6e6 — append &path=<repo-relative file> whenever the link text names one file, or it opens on the branch root with nothing selected\nIts code: git with projectId DzkLDn6UW-IbfoTJzN9Ro, [\"fetch\", \"origin\", \"tds/conv-01a1187a-f0f1-74d9-a5e7-0022c903a6e6\"], then read FETCH_HEAD.\n\nSpec:\n# [B1/B2] 可恢复连接器：稳定请求身份与完整协议验证（零迁移）\n\n来源卡：[#5](todo:ti53hOGbvnBNrvjXXveGO)；来源 updatedAt：2026-10-07T15:23:22.528Z；原文 UTF-8 SHA-256：`84a93568e1b56cb16a6a2c3957b004188558d01266fc96396eec1d609afafebd`。完整原文与读取来源见 execution-inputs.json，非事务快照。\n\nwithPlan: true；owner：B1/B2 执行者；源状态：todo；同步：待Chief读回核验。\n\n本批仅用 Todos 编排与仓库保存规格及证据，替代真实WorkMesh双轨记录；其余领域/安全/测试规则不变。当前G1已done，最新主线含最终证据；每次开工仍核验最新main与输入差异。R1完成独审、必需检查及合入后才由Chief放行受影响实现，不能以本文件存在当成功。\n\n## 冻结接口与阶段\n\n同一纵向交付吸收 #6：敏感 pending 完整保留 wmp_ 配对码，发送前独占建立身份，POSIX0600/Windows 当前用户 ACL 实测。全部 discovery、指纹、Skill 原始字节/哈希/签名及 initialize→verify_connection→get_workmesh_context 身份、能力、authenticated_credential/current-credential 验证通过后才秘密存储和正式配置原子替换；失败保留旧配置并补偿新增秘密。重放不承诺重新验证撤权。\n\n## 定向验收责任\n\n断网/丢响应/发送前后崩溃与两进程竞争均同 key/body/context；同 key 异体拒绝；陌生 claimant 无令牌；窗口外/密文擦除拒绝；服务端/客户端重启同响应；错误 Team/principal/profile/Skill/能力/过期/撤权/overlap 零正式写入；提交阶段崩溃和秘密写入/rename 失败补偿；stdout/stderr/config 无明文令牌，pending 允许配对码但 ACL 正确。\n\n测试目标：`apps/connector/src/connect.test.ts`（待创建）。九类适用性、全部原测试/DoD去向见 test-coverage.json；未运行不填通过。\n\n## 完整任务正文\n\n## 来源与目标\n来源：原 #5 B1、#6 B2 及 #19 F01 的已批准修订。用户批准合并为一个可执行连接器纵向任务，内部保留持久化与协议校验检查点；旧的 B1 可独立单发、pending 不含秘密、两项校验后先写正式配置等互相冲突条款已撤换。\n服务端已有加密重放/擦除与稳定身份匹配；事实位置来源原 P1，实施以审核冻结后的 P1 表为准。不新增服务端重放表或第二套 pairing 密文表。\n\n## 交付物与提交顺序\n1. 首次网络发送前，在配置目录原子持久化随机 Idempotency-Key、包含完整配对码的精确请求 body、origin、user-agent；并发启动取得同一 pending 身份，后续运行原样重放。\n2. pending 是敏感材料，不含安装令牌，不入库、不进日志/工件。POSIX 0600；Windows 明确定义并验证当前用户专用 ACL，不能只用 mode=0600 自称安全。先临时文件再原子替换，崩溃不留半记录。\n3. 收到安装令牌后先验证指纹；在内存中完成 discovery、Skill 原始字节/LF/哈希/签名，以及 initialize→verify_connection→get_workmesh_context，精确校验 Team、principal、profile、Skill、capabilities、authenticated_credential，拒绝误用旧 overlap 凭据。\n4. 全部验证通过才写客户端秘密存储；正式配置仅保存秘密引用。定义秘密存储与配置原子替换的失败补偿，任何失败保留原配置与原引用。\n5. 一个可执行命令承担原七步中全部校验，用户流程收敛为两步；输出可粘贴的无秘密客户端配置。配对码使用直接输入/扫码，不用 URL fragment，不削弱 bearer 熵。\n\n## 边界\n服务端不加列、不改凭据生命周期/重放窗口，换新 key 仍被拒；不改限流架构。stdout/stderr/普通配置/工件不含明文安装令牌，秘密存储是令牌唯一持久化落点；配对码只在受保护 pending 中。无源码 Lite 设备的版本化分发与安装由 [#20](todo:JfGwKk3prfIie6X2u2J51) 负责，本条不假称仓库 pnpm 命令等同发布。\n既有重放命中可返回旧密文令牌且不重新检查撤销；验收是当前身份验证拒绝已撤销/过期凭据并绝不写新配置，不要求服务端重放凭空改变行为。\n\n## 合并后的完整测试清单\n- [ ] 发送前崩溃、发送后崩溃及服务端/客户端重启后，同 pending 身份在有效窗口可拿到同一凭据。\n- [ ] 同 key 改 body 冲突；新 key 仍按既有规则拒绝；另一 claimant 仅持原配对码与公开 connection id 不得取令牌。\n- [ ] 窗口外/过期密文擦除后拒绝；并发启动只产生同一 pending 身份；崩溃不留半份记录。\n- [ ] 既有 stage5-agent-connections.integration.test.ts 的重放同体断言不回归。\n- [ ] 黄金路径完整端到端，两步流程可用且协议校验一步不减。\n- [ ] 指纹不符、签名错、Skill 字节篡改、错误 Team/principal/profile/capabilities/authenticated_credential、误用 overlap 凭据均拒绝且不写配置。\n- [ ] 已撤销/过期凭据的当前身份验证拒绝，绝不写入新配置。\n- [ ] 配置替换中途被杀或秘密存储/配置写入失败，既有配置及秘密引用完好。\n- [ ] 明文令牌仅落秘密存储；配对码仅落受保护 pending；stdout/stderr/普通配置/工件无秘密；POSIX 权限和 Windows 实际 ACL 验证。\n- [ ] 同配对码再次运行复用 pending，合法重放幂等；直接输入/扫码不削弱熵。\n\n## DoD 与依赖\n上述断言全绿、零 schema 变更、pnpm lint/typecheck/test/test:integration/test:e2e 全绿，ADR 0043/0046 实质要求未削弱；规范、测试映射与证据提交仓库。原 B1/B2 的可执行收益在同一命令中验收。\n依赖：P0、G1、P1、R1；blocks #7 B3，进而 [#20](todo:JfGwKk3prfIie6X2u2J51)。\n\n## 执行依赖与放行\n\nrequires：#1、#2、#18、#3；最终验收 additionally requires：无。\n\n本todo原问题已有用户13:34–13:36明确答复，详见末尾同步；依赖及审查门禁保持。\n\nDoD：上面完整源DoD与定向断言全部满足，适用必需检查成功，证据落盘、独立复核及Chief确认；不得以接口存在或历史CI冒称新组合已验收。阶段owner由Chief派发前落实到实际执行者，角色不冒称已任命某agent。\n\n## 总管同步与当前门禁（2026-10-08，Asia/Shanghai）\n\n来源：已独审并合入的 PR203，main `9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7`，第二 parent 为审核 head `550dead055689154359a3406dfce4f0c91c1dad3`，两者 tree 一致；该 head CI383 十项检查全部成功。G1/P1/D0/R1 已完成，本卡仍按上文 requires、阶段验收及授权边界执行。正文中的源状态、待同步说明是文件生成时的历史元数据，不代表当前门禁仍关闭。\n本卡完整规格来自 `docs/plan/activation-task-specs/05.md`；完整原文快照为 `docs/reviews/r1/execution-inputs.json`，逐类测试/原测试与 DoD 去向为 `docs/reviews/r1/test-coverage.json`，阶段和依赖映射为 `docs/plan/activation-task-specs/index.json`。总管同步前复读本卡全文与源哈希一致；仓库索引的 syncStatus 保留生成时状态，不声称已写回仓库或真实 WorkMesh。新增范围、真实方案分歧、权限或仓库外发布仍须另批。\n\n## 用户原问题答复同步（2026-10-08 13:39，Asia/Shanghai）\n\n来源：本todo原问题卡13:36用户答复：「系统秘密存储（推荐）」「本地预期清单（推荐）」「连接器自有配置（推荐）」。按原卡选项说明采用Windows Credential Manager/macOS Keychain/Linux Secret Service，缺后端须失败、不回退明文或仅内存store；无秘密的本地预期清单用于校验Team/principal/capabilities/profile/Skill；正式配置由连接器自有且只存秘密引用，启动注入和无秘密客户端片段。全部协议/身份验证仍在秘密及原子正式写入之前，崩溃补偿与旧配置保留测试不削弱。系统秘密存储的目标平台实际验证与无源码分发责任按#20已定设备矩阵执行，未定矩阵不冒完成。\n\n本卡源SHA/PR203同步状态保留历史，不冒当前全文哈希或仓库已同步。当前main包含D1a actual1078bbc，开工再复读最新main影响，正常整合已落地增量。独审前须提供完整中文计划文件和当前savedplan来源/精确正文hash供另一agent读取，仅平台doc链接不能代可审全文；允许仅计划文档前置提交，产品编码仍须规划独审及Chief确认。实施前同步受影响ADR/仓库spec、保留历史源与完整验收，未提供的平台版本字段如实null不猜、不为自引用重复存新计划。\n\nSaved plan:\n## 上下文\n\n服务端已有 `authIdempotentTransaction` 加密重放及到期擦除，缺口在客户端丢失请求身份和过早提交配置。本次新增 `apps/connector`，按“持久化请求身份 → 完整协议验证 → 秘密存储与配置提交”执行，保留现有重放窗口、凭据生命周期和新 key 拒绝规则。\n\n执行前复读最新 `main`、本卡依赖及冻结规格，记录差异。内部保留持久化与协议验证两个检查点，作为同一纵向交付验收；继续使用 Todos＋仓库记录，完成后交独立复核与 Chief 确认。\n\n## 已确定的约定\n\n- 管理员提供无秘密的本地 JSON 预期清单；完整 `wmp_` 配对码通过隐藏输入或扫码设备输入的原始文本读取，不接收 URL fragment、命令行秘密参数。\n- 默认配置目录位于当前用户的系统配置目录。正式配置、Skill 和提交记录均由连接器管理；客户端配置输出沿用现有环境变量引用格式，由启动入口读取秘密并注入子进程。\n- 系统秘密存储不可用或锁定时明确失败。发布、无源码设备安装、网页清单生成、Enrollment 恢复及服务端错误元数据扩展不在本卡范围。\n\n## 文件改动与恢复规则\n\n- **`apps/connector/package.json`、`tsconfig.json`、`tsconfig.build.json`、`pnpm-lock.yaml`**：建立 `@workmesh/connector` workspace，提供构建、静态检查、单元测试、平台测试及 CLI 脚本。复用仓库已采用的 MCP SDK 和 `@workmesh/contracts`；新增并锁定 `@napi-rs/keyring`、`koffi`。\n\n- **`apps/connector/src/config.ts`**：定义严格 Zod 清单、pending、提交记录和正式配置。清单明确绑定部署、MCP/Skill URL、Connection、Agent、Team、principal、client、profile、Skill pin 和能力集合；正式配置仅保存秘密引用、已验证的非秘密事实及完成记录。重试必须匹配原清单和请求，不能覆盖未决身份。\n\n- **`apps/connector/src/platform-security.ts`**：通过 Koffi 调用 POSIX `flock` 和 Windows `LockFileEx`，锁定固定文件并覆盖恢复、身份建立、验证和提交全过程；锁文件不删除，句柄不继承给子进程。进程死亡后由系统释放锁，等待者重新读取状态。[Windows 锁语义](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-lockfileex)\n  \n  POSIX 目录使用并验证 `0700`、敏感文件使用并验证 `0600`；Windows 在写入敏感字节前设置当前用户 SID 为所有者、禁用继承且仅保留该 SID 的允许权限，再读取实际安全描述符验证。拒绝不安全权限、符号链接及重解析点。\n\n- **`apps/connector/src/pending.ts`**：在首次网络请求前，独占生成随机 Idempotency-Key，保存完整配对码所在的精确请求字符串、目标、origin 和 user-agent。临时文件采用同等保护，写入并同步后同目录原子替换；所有重试直接使用保存的字符串和上下文。\n  \n  断网、丢响应或崩溃保留 pending；损坏记录拒绝自动重建身份。未完成临时文件只在持锁且确认未发送时清理。pending 不保存兑换响应或安装令牌。\n\n- **`apps/connector/src/protocol.ts`**：复用 `agentWellKnownResponseSchema`、`agentConnectionRedeemResponseSchema`、`agentConnectionCurrentIdentitySchema`，验证 discovery 与清单一致；兑换后立即核对令牌指纹。下载 Skill 原始字节，拒绝非规范 UTF-8/LF，计算 SHA-256 并验证 Ed25519 签名，不先做文本归一化。\n  \n  使用 MCP SDK 执行 `initialize → verify_connection → get_workmesh_context`，逐项对照清单、兑换结果和实时响应中的身份、profile、Skill、能力集合及 Coordination Session。必须确认 `authenticated_credential` 为当前 active 凭据且指纹匹配；撤销、过期和 overlap 均禁止提交。只访问清单批准的端点，拒绝重定向，安装令牌仅发送到批准的 MCP URL。\n\n- **`apps/connector/assets/workmesh-public-key.pem`**：携带与 `skills/workmesh/public-key.pem` 一致的可信公钥，并用测试约束二者一致；不从兑换响应取得信任根，不需要签名私钥。\n\n- **`apps/connector/src/secret-store.ts`**：封装新增、读取、读回验证和删除。使用 Windows Credential Manager、macOS Keychain、Linux Secret Service；Linux 显式设置 `store: 'secret-service'`，禁用默认 keyutils 回退。[上游后端选择接口](https://github.com/Brooooooklyn/keyring-node#linux-backend-selection)\n  \n  每次提交使用独有秘密引用，不覆盖旧秘密；后端异常转为无秘密错误，不输出原始异常对象或令牌。\n\n- **`apps/connector/src/commit.ts`**：全部验证成功后才进入提交。先持久化受保护的提交记录，包含旧配置原字节、新配置摘要、独有秘密引用和阶段；然后新增秘密并读回核对、暂存已验证 Skill、最后原子替换正式配置。所有暂存内容在替换前完成同步，POSIX 同步目录，Windows 使用对应原生替换与刷新机制。\n  \n  配置替换是提交点：替换前失败或重启时保留旧配置，删除本次新增秘密与暂存文件；替换后崩溃依据新配置摘要完成收尾，保留其秘密引用。补偿删除失败则保留记录并阻止新提交，绝不删除旧引用。完整提交后清理 pending；完成记录只含配对码摘要等非秘密元数据，使并发等待者和成功后同码重跑识别已提交操作，重新验证当前身份后幂等返回。\n\n- **`apps/connector/src/connect.ts`**：串联\n…(truncated)"
+    },
+    "note": "rawToolText保留原始截断标记；不以原 frozen specSha256冒充当前全文哈希",
+    "entries": [
+      {
+        "id": "ti53hOGbvnBNrvjXXveGO",
+        "phase": "building",
+        "updatedAt": "2026-10-08T05:46:09.094Z",
+        "toolTruncated": true,
+        "rawToolTextUtf8Sha256": "f6b06aec5b931981a69997585d1dd8b89a54ec7efdd8452c85e4a3ff80da78b7"
+      },
+      {
+        "id": "reEr9xXt9JXN26e5SbC7Z",
+        "phase": "done",
+        "updatedAt": "2026-10-07T10:49:31.806Z",
+        "toolTruncated": false,
+        "rawToolTextUtf8Sha256": "935a06094b2ac0cccc17829677d4dbd1cb067d14e2ca8cb080486fbe3121f231"
+      },
+      {
+        "id": "qJKk_SAxN29AdBHERBl7u",
+        "phase": "done",
+        "updatedAt": "2026-10-07T11:57:01.334Z",
+        "toolTruncated": false,
+        "rawToolTextUtf8Sha256": "d8a650c5b20f54bb01066de107a3aa9dd692fa18be0f2e08522fd01b202d97ed"
+      },
+      {
+        "id": "q_1zKPuGsG-2ZRUwOwQx4",
+        "phase": "done",
+        "updatedAt": "2026-10-07T22:22:43.330Z",
+        "toolTruncated": true,
+        "rawToolTextUtf8Sha256": "1bd38c602ef8ad524bbf29093652472b30b0f9643790043931dd1fa07fc7c7ca"
+      },
+      {
+        "id": "Tws50k02Pi52R-RJEXP_N",
+        "phase": "done",
+        "updatedAt": "2026-10-07T19:03:26.743Z",
+        "toolTruncated": false,
+        "rawToolTextUtf8Sha256": "e96c29f5241e0f8322d6c11a68f11056ea5445c43f678f75cd5526dbd3ca230e"
+      },
+      {
+        "id": "JfGwKk3prfIie6X2u2J51",
+        "phase": "todo",
+        "updatedAt": "2026-10-07T22:26:16.079Z",
+        "toolTruncated": false,
+        "rawToolTextUtf8Sha256": "7fcd2e624d84f1f60b7d3dda5fabb52405991983b3cf45b1bba4fcca0997a205"
+      }
+    ]
+  },
+  "frozenInputHashes": [
+    {
+      "path": "AGENTS.md",
+      "worktreeBytes": 9306,
+      "worktreeSha256": "a3eb6f9d3e9ebe6db6887f561f400db76207645d3478a84d83ae4332af20cf96",
+      "baseBlobId": "fe9114d161ce694a5fa3d0b4ba0efbf2c8ab1642",
+      "baseBlobBytes": 9050,
+      "baseBlobSha256": "25a0c33887733812dd1fc7f488cea57ef2e38a6436c788b5814562f22a88bb25"
+    },
+    {
+      "path": "CONTEXT.md",
+      "worktreeBytes": 4173,
+      "worktreeSha256": "cc6be739e37ba59e711d1bbaa84624fd78ff127c7dbe2bebe9f6811589fb9f7f",
+      "baseBlobId": "a6fb11c386e837eed2b8e95b35f41a667c87a201",
+      "baseBlobBytes": 4080,
+      "baseBlobSha256": "3398da2c42aa004d61e0e1202f7dccb0847859ce8b8f859217d6c17fc6d8839e"
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "worktreeBytes": 70190,
+      "worktreeSha256": "7c4427ce03ad19b37ec0e3d6c3474af4b7afb42425eba75e62824ed2db0eb2a3",
+      "baseBlobId": "5a1336db65c7f39fb603c39e3e6a311c6c740f95",
+      "baseBlobBytes": 68415,
+      "baseBlobSha256": "809f309cb179d62b06d3b26ad569aaad0d1cbf794d4061ea829c5777dcfa96e9"
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "worktreeBytes": 495916,
+      "worktreeSha256": "b98891984df512c409a1bc4c6198311eac72cdfc41d9a4fc47ac58cd3c90869b",
+      "baseBlobId": "91a12aedee454d8d89a7c31c4993664c78972849",
+      "baseBlobBytes": 489123,
+      "baseBlobSha256": "18e6ce9f67d9cfbb90931be74f4593725296d9e98e2070085d99d486a44f7968"
+    },
+    {
+      "path": "SCHEMA.sql",
+      "worktreeBytes": 1360,
+      "worktreeSha256": "776d6d24f0a66ac9d45c1901fe9c25b9d2a7c2ecf78fcc5c8f5fcb4bf03bf141",
+      "baseBlobId": "7d1aed0714dd7d3b74e81ae2493baab7d13a4d0f",
+      "baseBlobBytes": 1334,
+      "baseBlobSha256": "9575ee2ad4619ccc316c57d1003b940d9d16f3999b77ae440009478ca3ef7007"
+    },
+    {
+      "path": "docs/adr/0043-agent-connection-and-coordination-mcp.md",
+      "worktreeBytes": 24440,
+      "worktreeSha256": "7f4ebf52f4a07b414468e9caa5f136d8c6bf291f40d2a08e8a49474b0ac3ab73",
+      "baseBlobId": "c57ff2216307a7c21940dd9fc0278954489f30cf",
+      "baseBlobBytes": 23937,
+      "baseBlobSha256": "b15dd4f6068b27520afbe55909c1323da0b5038d9e3cda4b038f834ff2cca938"
+    },
+    {
+      "path": "docs/adr/0046-agent-connection-recovery-and-execution-capacity.md",
+      "worktreeBytes": 7702,
+      "worktreeSha256": "db6a991b6562f41ca59846fb109a416d7cca90ee33bb5f92566c95f30005e7e4",
+      "baseBlobId": "81f20d769bc2040f8d7de986bc91a5bc0f12d8e5",
+      "baseBlobBytes": 7620,
+      "baseBlobSha256": "85594be22b5deb306b36ab061af7767b549ea4f126a7f79a8f7f10e2be8fce14"
+    },
+    {
+      "path": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+      "worktreeBytes": 17253,
+      "worktreeSha256": "37faae9a63d424f768b513ae34dba9a841c0c573b0d3b3c1479632b43974e368",
+      "baseBlobId": "b0bc283a676fbd80eea302bf0b0600102db309a0",
+      "baseBlobBytes": 17002,
+      "baseBlobSha256": "f978c11ce175c7a34b0b177ef4155cd4713d1d6cf19959ececf82f29314616ae"
+    },
+    {
+      "path": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+      "worktreeBytes": 29418,
+      "worktreeSha256": "64cc7d6ad0d2bbd7ed1a70a895174d2ec9dd1d9c97b637eba3228d5608b04b80",
+      "baseBlobId": "eb1a9e813ebfd127327a3796c4d49f1502890338",
+      "baseBlobBytes": 29217,
+      "baseBlobSha256": "f83b6881e97def5dc0f116920f431f3a4f824d55a017571958e12d0fd0979b68"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/05.md",
+      "worktreeBytes": 6215,
+      "worktreeSha256": "45a03091c6a80df7d73229c33af6e15d40432bb882123db91225a9f354e24698",
+      "baseBlobId": "38883b7a58f32b23b75477f195d855cadc14d6fa",
+      "baseBlobBytes": 6215,
+      "baseBlobSha256": "45a03091c6a80df7d73229c33af6e15d40432bb882123db91225a9f354e24698"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/index.json",
+      "worktreeBytes": 100195,
+      "worktreeSha256": "57055023db51d6a04faccaca19bafc7eb36b7b3d3b25be1dbd24f7195c71ad0b",
+      "baseBlobId": "2f8c6163b0d3b5d18e13bca79302edf6390c2601",
+      "baseBlobBytes": 100195,
+      "baseBlobSha256": "57055023db51d6a04faccaca19bafc7eb36b7b3d3b25be1dbd24f7195c71ad0b"
+    },
+    {
+      "path": "docs/reviews/r1/execution-inputs.json",
+      "worktreeBytes": 328288,
+      "worktreeSha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c",
+      "baseBlobId": "2ce665d39931c383c22dc1605ac15580c468107f",
+      "baseBlobBytes": 328288,
+      "baseBlobSha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c"
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.json",
+      "worktreeBytes": 322807,
+      "worktreeSha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41",
+      "baseBlobId": "7679db400761ac1f4ed46ca79f62e56fa923ceff",
+      "baseBlobBytes": 322807,
+      "baseBlobSha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41"
+    },
+    {
+      "path": "docs/reviews/r1/legacy-requirements.json",
+      "worktreeBytes": 55208,
+      "worktreeSha256": "e549ae50c3c27b076de8ad1c5fd22239bcbd9f1aabb1c7cb53db3d9ad5914ff5",
+      "baseBlobId": "94c072065e3ab0aa448c5c0005b0e571df53796b",
+      "baseBlobBytes": 55208,
+      "baseBlobSha256": "e549ae50c3c27b076de8ad1c5fd22239bcbd9f1aabb1c7cb53db3d9ad5914ff5"
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/plan/connector-recovery.md",
+      "bytes": 9645,
+      "sha256": "71a0e7845b205f60ecc29b91e66bea2f2086004c16212c03034a51fcbb5b6352"
+    },
+    {
+      "path": "docs/reviews/b1-b2/source-snapshot.json",
+      "bytes": 25740,
+      "sha256": "049a053a3d98a1edc011b80590c8ae1f44223d9f8aad83b01a4ebc47d884a370"
+    },
+    {
+      "path": "docs/reviews/b1-b2/todo-inputs.json",
+      "bytes": 60545,
+      "sha256": "d39737ed9d6c3aa86210a89bb2d4da6394fd12e4e962360f01d66f7a00830365"
+    },
+    {
+      "path": "docs/reviews/b1-b2/test-coverage.json",
+      "bytes": 67653,
+      "sha256": "c85191959eefcfa6ab51ce0b580e7166abc3126cef09745c4dfe603fe6a4fe77"
+    },
+    {
+      "path": "docs/reviews/b1-b2/review-guide.md",
+      "bytes": 7441,
+      "sha256": "023bed2d1713f63b78a5b6ea4601292508ce5100bb23f922dea52c4a0f7ca76b"
+    },
+    {
+      "path": "docs/reviews/b1-b2/verify-plan.mjs",
+      "bytes": 8888,
+      "sha256": "ec1a274fe142a5394d6c8d496ad16626791d671ae6725ff956fff23da0ca7d8c"
+    }
+  ],
+  "hashPolicy": "SHA-256和bytes是捕获时本工作树原字节；计划原始正文哈希另对source-snapshot.json中planBody解码后的UTF-8计算；Git blob按基点和提交后另核对。plan-source.json不把自身加入files，避免自引用哈希。"
+}

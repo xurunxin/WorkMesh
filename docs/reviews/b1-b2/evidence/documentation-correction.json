@@ -1,0 +1,9 @@
+{
+  "kind": "对已观察工具失败的事后摘要，不是原始 stdout 文件",
+  "check": "清单样例 schema 与 Skill pin 一致性",
+  "firstExitCode": 1,
+  "reason": "手工样例 SHA-256 中 db16bdb5 字母顺序错误；共享 manifest 是 db16dbb5",
+  "correctedFile": "apps/connector/examples/expectation.json",
+  "reverification": "documentation-01/checks.json",
+  "sourceBoundary": "仅样例数据修正，产品和集成夹具不变；原工具回执保留于本轮对话。"
+}

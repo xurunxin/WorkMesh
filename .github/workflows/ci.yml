@@ -37,6 +37,7 @@ jobs:
       e2e: ${{ steps.scope.outputs.e2e }}
       recovery-integration: ${{ steps.scope.outputs.recovery-integration }}
       agent-smoke: ${{ steps.scope.outputs.agent-smoke }}
+      connector-platform: ${{ steps.scope.outputs.connector-platform }}
     steps:
       - name: Check out comparison history
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -763,9 +764,70 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  connector-platform:
+    name: Connector native storage (${{ matrix.os }})
+    needs: changes
+    if: ${{ needs.changes.outputs.connector-platform == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: |
+          mkdir -p ci-logs
+          set -o pipefail
+          pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
+      - name: Prepare Linux Secret Service
+        if: ${{ runner.os == 'Linux' }}
+        run: sudo apt-get update && sudo apt-get install -y gnome-keyring dbus-x11
+      - name: Validate Linux native storage
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          set -o pipefail
+          dbus-run-session -- bash scripts/test-connector-linux.sh 2>&1 | tee ci-logs/connector-platform.log
+      - name: Validate macOS native storage
+        if: ${{ runner.os == 'macOS' }}
+        run: |
+          set -o pipefail
+          pnpm --filter @workmesh/connector test:platform 2>&1 | tee ci-logs/connector-platform.log
+          pnpm --filter @workmesh/connector test 2>&1 | tee ci-logs/connector-unit.log
+      - name: Validate Windows native storage with temporary user
+        if: ${{ runner.os == 'Windows' }}
+        shell: pwsh
+        run: ./scripts/test-connector-windows.ps1
+      - name: Upload raw connector logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: connector-platform-raw-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+
   required-ci:
     name: Required CI
-    needs: [changes, source-gates, db-integration, api-integration, worker-integration, e2e, recovery-integration, agent-smoke]
+    needs: [changes, source-gates, db-integration, api-integration, worker-integration, e2e, recovery-integration, agent-smoke, connector-platform]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5

@@ -6,6 +6,17 @@ const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
 const results = plan => Object.fromEntries(['changes', ...checkIds].map(id => [id, { result: id === 'changes' || plan.checks[id] ? 'success' : 'skipped' }]))
 
+test('连接器改动必须实际运行平台矩阵，失败/跳过不能放行', () => {
+  const plan = classify(['apps/connector/src/connect.ts'])
+  assert.equal(plan.checks['connector-platform'], true)
+  assert.equal(plan.checks['api-integration'], true)
+  for (const result of ['skipped', 'failure', 'cancelled']) {
+    const needs = results(plan)
+    needs['connector-platform'].result = result
+    assert.ok(evaluateResults(plan, needs).length > 0)
+  }
+})
+
 test('known prose on PR and main avoids every install/service/test job', () => {
   for (const options of [{}, { mainPush: true }]) {
     const plan = classify(['docs/adr/0078-review.md', 'docs/plan/design.md', 'README.md', 'AGENTS.md'], options)

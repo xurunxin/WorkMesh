@@ -1,0 +1,31 @@
+[
+  {
+    "kind": "pg",
+    "image": "postgres:16-alpine",
+    "name": "b1b2-01a11ac2-pg-f8a69792",
+    "id": "505647a3ca02382e8a60e5700cbc51fe9a602baa5fd6a2dd42b2849f135f79b7",
+    "address": "127.0.0.1:60168",
+    "cleaned": true
+  },
+  {
+    "kind": "redis",
+    "image": "redis:7-alpine",
+    "name": "b1b2-01a11ac2-redis-f8a69792",
+    "id": "a06257b131ac1ee81c8a5610b9ec797bfb3766606e49c042a9d058ede0ce55d7",
+    "address": "127.0.0.1:60173",
+    "cleaned": true
+  },
+  {
+    "kind": "s3",
+    "image": "rustfs/rustfs:1.0.0",
+    "name": "b1b2-01a11ac2-s3-f8a69792",
+    "id": "a6350194da9f7beb1b1242cb43350ee99b401843120f2e25595f09d7179bd4ed",
+    "address": "127.0.0.1:60176",
+    "cleaned": true
+  },
+  {
+    "kind": "temporaryPath",
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301\\docs\\reviews\\b1-b2\\evidence\\e2e-01\\playwright-runtime",
+    "cleaned": true
+  }
+]
