@@ -1,0 +1,52 @@
+[
+    [
+        {
+            "path":  "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-fe69f607\\playwright\\root-mixed\\.auth\\admin.json",
+            "originalSha256":  "b9aca1e33b558665a1791a56680d98910fd2fc0008fb9028975f10814491c028",
+            "reason":  "本任务已停止的浏览器认证状态；不提交 cookie",
+            "activity":  "本 run 的 Docker 夹具已结束；没有仍引用此状态的浏览器",
+            "result":  {
+                           "completedAt":  "2026-10-08T15:14:39.4047509Z",
+                           "exists":  false
+                       }
+        },
+        {
+            "path":  "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-fe69f607\\playwright\\root-mixed\\html-report\\data\\7bc37a3259041d8d8ecf38eb8dcd51de26187ae4.zip",
+            "policy":  "a2-secrets-3",
+            "originalSha256":  "092b401a890d07f3994fb7b86a59c1babc7d200063bf5afe7d71ee40b055ec56",
+            "reason":  "Playwright trace 中认证材料及其 DOM 副本脱敏，含嵌套转义的 JSON；保留前次脱敏记录，此副本不冒原字节",
+            "changedEntries":  [
+                                   "test.trace",
+                                   "0-trace.trace",
+                                   "0-trace.network",
+                                   "resources/5da54445b891ead5ff48ae28c38589be01ffb6d2.json",
+                                   "resources/15b68b438ddb346ecae646f00dbb5bebbbbc6fb4.json",
+                                   "resources/53f578afa5758801e751174a3681374539a533cd.json",
+                                   "resources/e8534503884818aad25a6ef9a032879c3fc89f68.json",
+                                   "resources/cce5dc942a5bfc4512c58bd81326240c7feaac6d.json",
+                                   "resources/7a6400282b7bc897478f7faf54c690bdc79d09a6.json"
+                               ],
+            "result":  "已扫描并脱敏",
+            "finalSha256":  "fbf18e7020c5c1d854599a1983e636c12e04a87712b276d06628a491f5885e5a"
+        },
+        {
+            "path":  "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-fe69f607\\playwright\\root-mixed\\output\\configuration-readiness-部分撤权后项目配置只读，撤销-Team-后不回退或保留旧操作-authenticated\\trace.zip",
+            "policy":  "a2-secrets-3",
+            "originalSha256":  "092b401a890d07f3994fb7b86a59c1babc7d200063bf5afe7d71ee40b055ec56",
+            "reason":  "Playwright trace 中认证材料及其 DOM 副本脱敏，含嵌套转义的 JSON；保留前次脱敏记录，此副本不冒原字节",
+            "changedEntries":  [
+                                   "test.trace",
+                                   "0-trace.trace",
+                                   "0-trace.network",
+                                   "resources/5da54445b891ead5ff48ae28c38589be01ffb6d2.json",
+                                   "resources/15b68b438ddb346ecae646f00dbb5bebbbbc6fb4.json",
+                                   "resources/53f578afa5758801e751174a3681374539a533cd.json",
+                                   "resources/e8534503884818aad25a6ef9a032879c3fc89f68.json",
+                                   "resources/cce5dc942a5bfc4512c58bd81326240c7feaac6d.json",
+                                   "resources/7a6400282b7bc897478f7faf54c690bdc79d09a6.json"
+                               ],
+            "result":  "已扫描并脱敏",
+            "finalSha256":  "fbf18e7020c5c1d854599a1983e636c12e04a87712b276d06628a491f5885e5a"
+        }
+    ]
+]

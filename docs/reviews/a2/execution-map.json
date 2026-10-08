@@ -1,0 +1,278 @@
+{
+  "todoId": "0BkezbmWV6k8vwrlSNuF_",
+  "planId": "FkfKZkAdoHUa-nr2Hq1mA",
+  "version": null,
+  "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "originalTests": [
+    {
+      "id": "todo-9-T1",
+      "file": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "依赖深度排序",
+      "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    },
+    {
+      "id": "todo-9-T2",
+      "file": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "逐项配置后 Back 重算并允许逆序解决",
+      "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    },
+    {
+      "id": "todo-9-T3",
+      "file": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "可观察项全部满足时无横幅",
+      "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    },
+    {
+      "id": "todo-9-T4",
+      "file": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "ready/unknown/not_applicable 及普通空列表不长主动作",
+      "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    },
+    {
+      "id": "todo-9-T5",
+      "file": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "Back/Forward、键盘焦点、390px 窄屏、中英文和明暗回归",
+      "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    },
+    {
+      "id": "todo-9-T6",
+      "file": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "Lite 安装后逐项补齐直到横幅消失 @lite",
+      "result": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    }
+  ],
+  "matrix": [
+    {
+      "category": "happy path",
+      "applicable": true,
+      "file": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "依赖深度排序",
+      "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+    },
+    {
+      "category": "unauthorized actor",
+      "applicable": true,
+      "file": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "部分撤权后项目配置只读，撤销 Team 后不回退或保留旧操作",
+      "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+    },
+    {
+      "category": "invalid state transition",
+      "applicable": true,
+      "file": "apps/web/features/projects/project-repository-configuration.test.tsx",
+      "caseName": "POST 只进入等待状态，其他动作或旧上下文不能确认本次成功",
+      "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+    },
+    {
+      "category": "duplicate idempotency key",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "连接同文重放与旧脱敏指纹拒绝降级",
+      "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+    },
+    {
+      "category": "stale revision",
+      "applicable": false,
+      "file": null,
+      "caseName": null,
+      "result": "新增追加 POST 无 If-Match；不适用，不新增虚构 revision 用例"
+    },
+    {
+      "category": "transaction failure",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "A2 配置事务失败无部分状态事件或outbox：%s",
+      "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+    },
+    {
+      "category": "webhook/job replay",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "A2 仓库解析重放仅产生一份上下文",
+      "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+    },
+    {
+      "category": "concurrent request",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "撤权与上下文落库按持锁顺序串行",
+      "result": "已实现；以 execution-results.json 的当前 source 实际结果为准",
+      "additional": [
+        {
+          "file": "apps/web/features/workbench/configuration-readiness.test.tsx",
+          "caseName": "换 Team 后丢弃乱序旧响应，全部满足移除横幅"
+        },
+        {
+          "file": "apps/web/features/projects/project-repository-configuration.test.tsx",
+          "caseName": "提交前发现并发新上下文，保留输入并要求核对后显式重提"
+        }
+      ]
+    },
+    {
+      "category": "server restart/outbox recovery",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "checkpoint 后撤权重启无上下文发布：%s",
+      "result": "已实现；以 execution-results.json 的当前 source 实际结果为准"
+    }
+  ],
+  "repairs": [
+    {
+      "issue": "B1",
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "解析期间撤权后无上下文发布：%s",
+      "parameters": [
+        "actor",
+        "workspace-role",
+        "membership-role",
+        "membership-delete",
+        "target-delete",
+        "target-team",
+        "team-delete",
+        "repository",
+        "repository-connection",
+        "connection"
+      ],
+      "assertions": [
+        "context/guidance 无新增",
+        "repository.context.pinned 及对应 outbox 无新增",
+        "拒绝事件与其 outbox 分开断言",
+        "重复 tick 不重复事实",
+        "拒绝事件绑定目标当前 Team，audience 仅原请求人，不混入旧 Team"
+      ]
+    },
+    {
+      "issue": "B1",
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "checkpoint 后撤权重启无上下文发布：%s",
+      "parameters": [
+        "actor",
+        "workspace-role",
+        "membership-role",
+        "membership-delete",
+        "target-delete",
+        "target-team",
+        "team-delete",
+        "repository",
+        "repository-connection",
+        "connection"
+      ],
+      "assertions": [
+        "重建 Worker，复用持久结果，不重读供应商",
+        "失权不新增上下文/事件/outbox",
+        "拒绝事件绑定目标当前 Team，audience 仅原请求人，不混入旧 Team"
+      ]
+    },
+    {
+      "issue": "B1",
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "撤权与上下文落库按持锁顺序串行",
+      "assertions": [
+        "两个实际数据库控制连接",
+        "pg_blocking_pids 确认真实等待",
+        "撤权先持锁则拒绝，发布先持锁则发布一次后撤权",
+        "无逆序目标锁、无跨供应商请求锁"
+      ]
+    },
+    {
+      "issue": "B2",
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突：%s",
+      "parameters": [
+        "webhookSecret",
+        "privateKey",
+        "accessToken"
+      ],
+      "assertions": [
+        "IDEMPOTENCY_KEY_REUSED",
+        "领域行/账本/事件/outbox 不变",
+        "捕获日志与事实扫描秘密哨兵"
+      ]
+    },
+    {
+      "issue": "B2",
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "连接同文重放与旧脱敏指纹拒绝降级",
+      "assertions": [
+        "同文稳定重放",
+        "旧 REDACTED 账本拒绝同文与秘密变化，不覆盖账本",
+        "原 conflict TTL 清理/重用语义",
+        "缺主密钥失败关闭，无新增领域事实"
+      ]
+    },
+    {
+      "issue": "B3",
+      "file": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "关闭 Gitea 的混合 provider 跨 Team 分页仍可配置 GitHub",
+      "assertions": [
+        "独立服务实际关闭 Gitea",
+        "其他 Team/不可用 provider 在 GitHub 前面",
+        "23 条 GitHub，小页 SQL 筛选无重复遗漏",
+        "UI 加载更多后实际 pin 与返回重算"
+      ]
+    },
+    {
+      "issue": "B3",
+      "file": "apps/api/integration/stage4-operations.integration.test.ts",
+      "caseName": "Human 可用仓库筛选在分页前排除关闭 provider 与其他 Team",
+      "assertions": [
+        "inactive 仓库/连接",
+        "相同 full_name 不同 id",
+        "成员只读提示与跨 Team 拒绝",
+        "旧无参数 feature 拒绝保留"
+      ]
+    },
+    {
+      "issue": "B3",
+      "file": "apps/api/integration/stage4-operations.integration.test.ts",
+      "caseName": "Human 仓库筛选游标绑定不允许换域续页"
+    },
+    {
+      "issue": "B3",
+      "file": "apps/api/integration/stage4-operations.integration.test.ts",
+      "caseName": "Agent 旧列表权限不变且拒绝 Human 新筛选参数"
+    },
+    {
+      "issue": "C1",
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "仓库发布与 C1 事件快照共享事务兼容",
+      "assertions": [
+        "notification_sources 空",
+        "pinned/outbox 同事务",
+        "无通知 intent 扩张",
+        "旧迁移兼容由根集成检查另验"
+      ]
+    },
+    {
+      "issue": "B3",
+      "file": "apps/api/integration/stage4-operations.integration.test.ts",
+      "caseName": "Human 仓库分页最终 SQL 重验预检后的撤权：%s",
+      "parameters": [
+        "membership",
+        "team"
+      ],
+      "assertions": [
+        "预检后真实撤权，最终 SQL 返回空页",
+        "缓存 workspace admin 不能绕过已降级角色",
+        "不返回旧 items 或 nextCursor"
+      ]
+    },
+    {
+      "issue": "配置入口",
+      "file": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "项目内创建连接并注册仓库，凭证清除且不自动激活",
+      "assertions": [
+        "真实 UI 创建连接、注册仓库和解析上下文",
+        "提交后秘密清除且不进入 storage 或 URL",
+        "不创建对话或委派，不自动发送"
+      ]
+    }
+  ],
+  "DoD": "未满足项列表可用 + 全部交互断言通过 + 既有 IA 与导航无回归；原 DoD 与 Lite 未验收项保持",
+  "knownGaps": [
+    "Lite 原安装合同的实际链路必须单独运行",
+    "真实低功耗设备/真实厂商未验收",
+    "最终人工视觉、独审、latest Required CI、actual main 落地未完成"
+  ],
+  "results": "docs/reviews/a2/execution-results.json"
+}

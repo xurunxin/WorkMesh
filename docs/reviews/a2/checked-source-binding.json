@@ -1,0 +1,2642 @@
+{
+  "observedAt": "2026-10-08T16:30:12.894Z",
+  "currentHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+  "byteRule": "原字节与 Git blob 分列；仅 CRLF 转换单独证明，不把不同源码或运行中变化冒作相同。",
+  "records": [
+    {
+      "runId": "a2-21cc8a38",
+      "testedHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+      "files": [
+        {
+          "path": "OPENAPI.yaml",
+          "tested": {
+            "bytes": 518324,
+            "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 518324,
+            "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 510944,
+            "sha256": "0a25454cbd287f97e56675ab44a53906a642f76985de35f9bb6c35a448c6c498",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/integration/stage3-delivery.integration.test.ts",
+          "tested": {
+            "bytes": 88291,
+            "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 88291,
+            "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 84389,
+            "sha256": "57e971aea1fc7a6d663817fcc7ca6c996cec83cf272ac6dc7f908abb41fa25f5",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/integration/stage4-operations.integration.test.ts",
+          "tested": {
+            "bytes": 80095,
+            "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 80095,
+            "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 76548,
+            "sha256": "0e63036a70a327dafb6f510dc70078134f83edd55339aa6052190a9d5316d52a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/src/delivery/repository-configuration.ts",
+          "tested": {
+            "bytes": 3447,
+            "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 3447,
+            "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 3234,
+            "sha256": "c340908d2f0588c8c9ac76ec06fe70d7d9e931ce9f55847cc3ff1d53f2bb9a51",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/lib/i18n.test.ts",
+          "tested": {
+            "bytes": 28482,
+            "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 28482,
+            "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 27973,
+            "sha256": "97a4a0967b5a61b2ff9385d3b065fb9ef28e5f90102cf627e06b0114f77daf38",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/lib/i18n.tsx",
+          "tested": {
+            "bytes": 206563,
+            "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 206563,
+            "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 200145,
+            "sha256": "96b9df1ad9d2932bf4f8cdc28f5110096f0830878fe8bbd2313be90e4c717c7d",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/workbench/page.test.tsx",
+          "tested": {
+            "bytes": 2734,
+            "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 2734,
+            "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 2436,
+            "sha256": "9b9c402df89e48be3be2be7abce9ddf0c6f31ee77ce453420954255b0bd89615",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/workbench/page.tsx",
+          "tested": {
+            "bytes": 3211,
+            "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 3211,
+            "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 3074,
+            "sha256": "22468414c5c72e14f3002b91664dde2c869715dd443aad82db950104c31e70fc",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/configuration-readiness.spec.ts",
+          "tested": {
+            "bytes": 14724,
+            "sha256": "1da5d6424a746ea21077fcbd92d19d9159ce91982a9be9446cf13afe8fe5cace"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+          },
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
+          "headBlob": {
+            "bytes": 10341,
+            "sha256": "e60300d8729aeb3f9e002754a6f8098b70bea69969c4dbcbbab6fd61fa2e9e66",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+          "tested": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 8358,
+            "sha256": "cc2c98e0ebf9937153f99894d3642b3d5d425f9fdc89d9e5dbf90d56bc90453a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/human-reflow.spec.ts",
+          "tested": {
+            "bytes": 13620,
+            "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 13620,
+            "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 13208,
+            "sha256": "2fa2867a8f317a06a1ae6207e5982b60e5d2ee98332d059220af272614b6eb78",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/project-work-preview-server.mjs",
+          "tested": {
+            "bytes": 95433,
+            "sha256": "a916e9d6cfc10a68abc9ff80c55e33f7dd964371e34756cf549520a89ca0f04c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 95552,
+            "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e"
+          },
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
+          "headBlob": {
+            "bytes": 93490,
+            "sha256": "36a4ec4a361a0ea5cdbb5c5c2434e14182059aee220c8ddd55bb7b80fa3f4561",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/stage0.spec.ts",
+          "tested": {
+            "bytes": 23011,
+            "sha256": "690d05ea67787cd38fdeca99f5b5a00faf2ad142c43db94186c746a04aaded88"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 23010,
+            "sha256": "57bdaebb503492e796439580bd4584e725367f7c2313469bca3b13376b9af6d7"
+          },
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 22301,
+            "sha256": "751fca56e6ee622c9095e3d964ddda9988011736517fd907ccd60345efd486b8",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
+          "tested": {
+            "bytes": 6723,
+            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 6723,
+            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5131,
+            "sha256": "e5640247cab86b5aaf6905b70c3ea56e68c406aa1a176b534d86cc2f6619a992",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/projects/project-repository-configuration.tsx",
+          "tested": {
+            "bytes": 19833,
+            "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 19833,
+            "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 17285,
+            "sha256": "b03025c785f20bce4b58e8c0b70d75af9740c84a3f69727c64027e00f6191ba4",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/configuration-readiness.module.css",
+          "tested": {
+            "bytes": 886,
+            "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 886,
+            "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 723,
+            "sha256": "f7b41c96c362852e2046379584fb4ae92468fbd1d977a520b1e1337f7409cf07",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/configuration-readiness.tsx",
+          "tested": {
+            "bytes": 5620,
+            "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5620,
+            "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5533,
+            "sha256": "34a54b07f8322bd031045327eb295a081480ad15b9ed480cd9be6e7470ed6934",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/conversation-workbench.module.css",
+          "tested": {
+            "bytes": 11581,
+            "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 11581,
+            "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 11451,
+            "sha256": "9687e96b8fcff740ccbc7d60fd92b17f3c4a88ef3f420c58b192a3419defdce5",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/conversation-workbench.tsx",
+          "tested": {
+            "bytes": 35220,
+            "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 35220,
+            "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 34512,
+            "sha256": "881a4f68fc5c567d7fd2942007fd5e2760d05f371ff6091319bc7e0f137d0834",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/scripts/check-i18n.mjs",
+          "tested": {
+            "bytes": 36439,
+            "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 36439,
+            "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 35673,
+            "sha256": "c9523e5522ddfc74282a97746fe9461a92d225c9896f5152e94f12ebe5ae64ed",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/worker/src/provider-actions.ts",
+          "tested": {
+            "bytes": 75721,
+            "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 75721,
+            "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 74203,
+            "sha256": "10c64aa29faa035849f8d99d829edcac57acf712896a13a5faf102b3ae06b13a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/pagination-contract.test.ts",
+          "tested": {
+            "bytes": 5049,
+            "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5049,
+            "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 4883,
+            "sha256": "9723425c2e85dcbe1566df71c0297e5321e3870219750780110a8b0cc3082429",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/repository-configuration-contracts.test.ts",
+          "tested": {
+            "bytes": 1243,
+            "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 1243,
+            "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 1147,
+            "sha256": "b3f99db0acfe0561ee1ea8640d2e98862f4ef22f16ae372dbdca7526d4b57bce",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/repository-configuration-contracts.ts",
+          "tested": {
+            "bytes": 2465,
+            "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 2465,
+            "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 2465,
+            "sha256": "5bcaa01eeaaf2f5b576972fe185d8ae24a7e3029b77c98b87b9a83877008b316",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "scripts/verify-a2-lite.mjs",
+          "tested": {
+            "bytes": 16615,
+            "sha256": "11bd2dcf023f425ac205b599d3cd0c9a73cd6be3978f6699eb2dd2f3d84dd83f"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 17976,
+            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+          },
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
+          "headBlob": {
+            "bytes": 13314,
+            "sha256": "bf62ae7cf42da7de6037a3e8dfdf8d60543cae3b0ac250719361a9bc888223aa",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        }
+      ],
+      "changedDuringRun": [],
+      "currentDifferences": [
+        "apps/web/e2e/configuration-readiness.spec.ts",
+        "apps/web/e2e/project-work-preview-server.mjs",
+        "apps/web/e2e/stage0.spec.ts",
+        "scripts/verify-a2-lite.mjs"
+      ]
+    },
+    {
+      "runId": "a2-22323ec0",
+      "testedHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+      "files": [
+        {
+          "path": "OPENAPI.yaml",
+          "tested": {
+            "bytes": 518324,
+            "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 518324,
+            "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 510944,
+            "sha256": "0a25454cbd287f97e56675ab44a53906a642f76985de35f9bb6c35a448c6c498",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/integration/stage3-delivery.integration.test.ts",
+          "tested": {
+            "bytes": 88291,
+            "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 88291,
+            "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 84389,
+            "sha256": "57e971aea1fc7a6d663817fcc7ca6c996cec83cf272ac6dc7f908abb41fa25f5",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/integration/stage4-operations.integration.test.ts",
+          "tested": {
+            "bytes": 80095,
+            "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 80095,
+            "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 76548,
+            "sha256": "0e63036a70a327dafb6f510dc70078134f83edd55339aa6052190a9d5316d52a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/src/delivery/repository-configuration.ts",
+          "tested": {
+            "bytes": 3447,
+            "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 3447,
+            "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 3234,
+            "sha256": "c340908d2f0588c8c9ac76ec06fe70d7d9e931ce9f55847cc3ff1d53f2bb9a51",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/lib/i18n.test.ts",
+          "tested": {
+            "bytes": 28482,
+            "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 28482,
+            "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 27973,
+            "sha256": "97a4a0967b5a61b2ff9385d3b065fb9ef28e5f90102cf627e06b0114f77daf38",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/lib/i18n.tsx",
+          "tested": {
+            "bytes": 206563,
+            "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 206563,
+            "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 200145,
+            "sha256": "96b9df1ad9d2932bf4f8cdc28f5110096f0830878fe8bbd2313be90e4c717c7d",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/workbench/page.test.tsx",
+          "tested": {
+            "bytes": 2734,
+            "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 2734,
+            "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 2436,
+            "sha256": "9b9c402df89e48be3be2be7abce9ddf0c6f31ee77ce453420954255b0bd89615",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/workbench/page.tsx",
+          "tested": {
+            "bytes": 3211,
+            "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 3211,
+            "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 3074,
+            "sha256": "22468414c5c72e14f3002b91664dde2c869715dd443aad82db950104c31e70fc",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/configuration-readiness.spec.ts",
+          "tested": {
+            "bytes": 14724,
+            "sha256": "1da5d6424a746ea21077fcbd92d19d9159ce91982a9be9446cf13afe8fe5cace"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+          },
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
+          "headBlob": {
+            "bytes": 10341,
+            "sha256": "e60300d8729aeb3f9e002754a6f8098b70bea69969c4dbcbbab6fd61fa2e9e66",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+          "tested": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 8358,
+            "sha256": "cc2c98e0ebf9937153f99894d3642b3d5d425f9fdc89d9e5dbf90d56bc90453a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/human-reflow.spec.ts",
+          "tested": {
+            "bytes": 13620,
+            "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 13620,
+            "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 13208,
+            "sha256": "2fa2867a8f317a06a1ae6207e5982b60e5d2ee98332d059220af272614b6eb78",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/project-work-preview-server.mjs",
+          "tested": {
+            "bytes": 95552,
+            "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 95552,
+            "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 93490,
+            "sha256": "36a4ec4a361a0ea5cdbb5c5c2434e14182059aee220c8ddd55bb7b80fa3f4561",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/stage0.spec.ts",
+          "tested": {
+            "bytes": 23080,
+            "sha256": "dd2f7b9c29e191f6c01118ffa13d98e467cffd71a3b7e7d6db4621e05b717ec6"
+          },
+          "beforeMatchesAfter": false,
+          "current": {
+            "bytes": 23010,
+            "sha256": "57bdaebb503492e796439580bd4584e725367f7c2313469bca3b13376b9af6d7"
+          },
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
+          "headBlob": {
+            "bytes": 22301,
+            "sha256": "751fca56e6ee622c9095e3d964ddda9988011736517fd907ccd60345efd486b8",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
+          "tested": {
+            "bytes": 6723,
+            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 6723,
+            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5131,
+            "sha256": "e5640247cab86b5aaf6905b70c3ea56e68c406aa1a176b534d86cc2f6619a992",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/projects/project-repository-configuration.tsx",
+          "tested": {
+            "bytes": 19833,
+            "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 19833,
+            "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 17285,
+            "sha256": "b03025c785f20bce4b58e8c0b70d75af9740c84a3f69727c64027e00f6191ba4",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/configuration-readiness.module.css",
+          "tested": {
+            "bytes": 886,
+            "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 886,
+            "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 723,
+            "sha256": "f7b41c96c362852e2046379584fb4ae92468fbd1d977a520b1e1337f7409cf07",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/configuration-readiness.tsx",
+          "tested": {
+            "bytes": 5620,
+            "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5620,
+            "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5533,
+            "sha256": "34a54b07f8322bd031045327eb295a081480ad15b9ed480cd9be6e7470ed6934",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/conversation-workbench.module.css",
+          "tested": {
+            "bytes": 11581,
+            "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 11581,
+            "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 11451,
+            "sha256": "9687e96b8fcff740ccbc7d60fd92b17f3c4a88ef3f420c58b192a3419defdce5",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/conversation-workbench.tsx",
+          "tested": {
+            "bytes": 35220,
+            "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 35220,
+            "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 34512,
+            "sha256": "881a4f68fc5c567d7fd2942007fd5e2760d05f371ff6091319bc7e0f137d0834",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/scripts/check-i18n.mjs",
+          "tested": {
+            "bytes": 36439,
+            "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 36439,
+            "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 35673,
+            "sha256": "c9523e5522ddfc74282a97746fe9461a92d225c9896f5152e94f12ebe5ae64ed",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/worker/src/provider-actions.ts",
+          "tested": {
+            "bytes": 75721,
+            "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 75721,
+            "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 74203,
+            "sha256": "10c64aa29faa035849f8d99d829edcac57acf712896a13a5faf102b3ae06b13a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/pagination-contract.test.ts",
+          "tested": {
+            "bytes": 5049,
+            "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5049,
+            "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 4883,
+            "sha256": "9723425c2e85dcbe1566df71c0297e5321e3870219750780110a8b0cc3082429",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/repository-configuration-contracts.test.ts",
+          "tested": {
+            "bytes": 1243,
+            "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 1243,
+            "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 1147,
+            "sha256": "b3f99db0acfe0561ee1ea8640d2e98862f4ef22f16ae372dbdca7526d4b57bce",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/repository-configuration-contracts.ts",
+          "tested": {
+            "bytes": 2465,
+            "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 2465,
+            "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 2465,
+            "sha256": "5bcaa01eeaaf2f5b576972fe185d8ae24a7e3029b77c98b87b9a83877008b316",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "playwright.config.ts",
+          "tested": {
+            "bytes": 5243,
+            "sha256": "18bc232d81d0f44af64931c1be96a8ca13c7e8b519766e0b82aaf8c2107e50b0"
+          },
+          "beforeMatchesAfter": false,
+          "current": {
+            "bytes": 5173,
+            "sha256": "19c63f20302ce46d59baa2d79e96bb6fe9ca8c5bc70d0ae070fe0367900dc25b"
+          },
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
+          "headBlob": {
+            "bytes": 5035,
+            "sha256": "b8f533c5f88331915df4502c8fc19919611280cd5b5565fdfd0c892564b38cf2",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "scripts/verify-a2-lite.mjs",
+          "tested": {
+            "bytes": 16615,
+            "sha256": "11bd2dcf023f425ac205b599d3cd0c9a73cd6be3978f6699eb2dd2f3d84dd83f"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 17976,
+            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+          },
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
+          "headBlob": {
+            "bytes": 13314,
+            "sha256": "bf62ae7cf42da7de6037a3e8dfdf8d60543cae3b0ac250719361a9bc888223aa",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        }
+      ],
+      "changedDuringRun": [
+        "apps/web/e2e/stage0.spec.ts",
+        "playwright.config.ts"
+      ],
+      "currentDifferences": [
+        "apps/web/e2e/configuration-readiness.spec.ts",
+        "apps/web/e2e/stage0.spec.ts",
+        "playwright.config.ts",
+        "scripts/verify-a2-lite.mjs"
+      ]
+    },
+    {
+      "runId": "a2-46fe0e21",
+      "testedHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+      "files": [
+        {
+          "path": "OPENAPI.yaml",
+          "tested": {
+            "bytes": 518324,
+            "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 518324,
+            "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 510944,
+            "sha256": "0a25454cbd287f97e56675ab44a53906a642f76985de35f9bb6c35a448c6c498",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/integration/stage3-delivery.integration.test.ts",
+          "tested": {
+            "bytes": 88291,
+            "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 88291,
+            "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 84389,
+            "sha256": "57e971aea1fc7a6d663817fcc7ca6c996cec83cf272ac6dc7f908abb41fa25f5",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/integration/stage4-operations.integration.test.ts",
+          "tested": {
+            "bytes": 80095,
+            "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 80095,
+            "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 76548,
+            "sha256": "0e63036a70a327dafb6f510dc70078134f83edd55339aa6052190a9d5316d52a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/src/delivery/repository-configuration.ts",
+          "tested": {
+            "bytes": 3447,
+            "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 3447,
+            "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 3234,
+            "sha256": "c340908d2f0588c8c9ac76ec06fe70d7d9e931ce9f55847cc3ff1d53f2bb9a51",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/lib/i18n.test.ts",
+          "tested": {
+            "bytes": 28482,
+            "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 28482,
+            "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 27973,
+            "sha256": "97a4a0967b5a61b2ff9385d3b065fb9ef28e5f90102cf627e06b0114f77daf38",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/lib/i18n.tsx",
+          "tested": {
+            "bytes": 206563,
+            "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 206563,
+            "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 200145,
+            "sha256": "96b9df1ad9d2932bf4f8cdc28f5110096f0830878fe8bbd2313be90e4c717c7d",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/workbench/page.test.tsx",
+          "tested": {
+            "bytes": 2734,
+            "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 2734,
+            "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 2436,
+            "sha256": "9b9c402df89e48be3be2be7abce9ddf0c6f31ee77ce453420954255b0bd89615",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/workbench/page.tsx",
+          "tested": {
+            "bytes": 3211,
+            "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 3211,
+            "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 3074,
+            "sha256": "22468414c5c72e14f3002b91664dde2c869715dd443aad82db950104c31e70fc",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/configuration-readiness.spec.ts",
+          "tested": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 10341,
+            "sha256": "e60300d8729aeb3f9e002754a6f8098b70bea69969c4dbcbbab6fd61fa2e9e66",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+          "tested": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 8358,
+            "sha256": "cc2c98e0ebf9937153f99894d3642b3d5d425f9fdc89d9e5dbf90d56bc90453a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/human-reflow.spec.ts",
+          "tested": {
+            "bytes": 13620,
+            "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 13620,
+            "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 13208,
+            "sha256": "2fa2867a8f317a06a1ae6207e5982b60e5d2ee98332d059220af272614b6eb78",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/project-work-preview-server.mjs",
+          "tested": {
+            "bytes": 95552,
+            "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 95552,
+            "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 93490,
+            "sha256": "36a4ec4a361a0ea5cdbb5c5c2434e14182059aee220c8ddd55bb7b80fa3f4561",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/stage0.spec.ts",
+          "tested": {
+            "bytes": 23010,
+            "sha256": "57bdaebb503492e796439580bd4584e725367f7c2313469bca3b13376b9af6d7"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 23010,
+            "sha256": "57bdaebb503492e796439580bd4584e725367f7c2313469bca3b13376b9af6d7"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 22301,
+            "sha256": "751fca56e6ee622c9095e3d964ddda9988011736517fd907ccd60345efd486b8",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
+          "tested": {
+            "bytes": 6723,
+            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 6723,
+            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5131,
+            "sha256": "e5640247cab86b5aaf6905b70c3ea56e68c406aa1a176b534d86cc2f6619a992",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/projects/project-repository-configuration.tsx",
+          "tested": {
+            "bytes": 19833,
+            "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 19833,
+            "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 17285,
+            "sha256": "b03025c785f20bce4b58e8c0b70d75af9740c84a3f69727c64027e00f6191ba4",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/configuration-readiness.module.css",
+          "tested": {
+            "bytes": 886,
+            "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 886,
+            "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 723,
+            "sha256": "f7b41c96c362852e2046379584fb4ae92468fbd1d977a520b1e1337f7409cf07",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/configuration-readiness.tsx",
+          "tested": {
+            "bytes": 5620,
+            "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5620,
+            "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5533,
+            "sha256": "34a54b07f8322bd031045327eb295a081480ad15b9ed480cd9be6e7470ed6934",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/conversation-workbench.module.css",
+          "tested": {
+            "bytes": 11581,
+            "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 11581,
+            "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 11451,
+            "sha256": "9687e96b8fcff740ccbc7d60fd92b17f3c4a88ef3f420c58b192a3419defdce5",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/conversation-workbench.tsx",
+          "tested": {
+            "bytes": 35220,
+            "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 35220,
+            "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 34512,
+            "sha256": "881a4f68fc5c567d7fd2942007fd5e2760d05f371ff6091319bc7e0f137d0834",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/scripts/check-i18n.mjs",
+          "tested": {
+            "bytes": 36439,
+            "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 36439,
+            "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 35673,
+            "sha256": "c9523e5522ddfc74282a97746fe9461a92d225c9896f5152e94f12ebe5ae64ed",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/worker/src/provider-actions.ts",
+          "tested": {
+            "bytes": 75721,
+            "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 75721,
+            "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 74203,
+            "sha256": "10c64aa29faa035849f8d99d829edcac57acf712896a13a5faf102b3ae06b13a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/pagination-contract.test.ts",
+          "tested": {
+            "bytes": 5049,
+            "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5049,
+            "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 4883,
+            "sha256": "9723425c2e85dcbe1566df71c0297e5321e3870219750780110a8b0cc3082429",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/repository-configuration-contracts.test.ts",
+          "tested": {
+            "bytes": 1243,
+            "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 1243,
+            "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 1147,
+            "sha256": "b3f99db0acfe0561ee1ea8640d2e98862f4ef22f16ae372dbdca7526d4b57bce",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/repository-configuration-contracts.ts",
+          "tested": {
+            "bytes": 2465,
+            "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 2465,
+            "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 2465,
+            "sha256": "5bcaa01eeaaf2f5b576972fe185d8ae24a7e3029b77c98b87b9a83877008b316",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "playwright.config.ts",
+          "tested": {
+            "bytes": 5173,
+            "sha256": "19c63f20302ce46d59baa2d79e96bb6fe9ca8c5bc70d0ae070fe0367900dc25b"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5173,
+            "sha256": "19c63f20302ce46d59baa2d79e96bb6fe9ca8c5bc70d0ae070fe0367900dc25b"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5035,
+            "sha256": "b8f533c5f88331915df4502c8fc19919611280cd5b5565fdfd0c892564b38cf2",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "scripts/verify-a2-lite.mjs",
+          "tested": {
+            "bytes": 17552,
+            "sha256": "eaa41b5afea2a5fdc38f30ec29dec30373443c5ffdb5bf38adc00a0fcbe5ed12"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 17976,
+            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+          },
+          "currentMatchesTested": false,
+          "currentMatchesTestedExceptCRLF": false,
+          "headBlob": {
+            "bytes": 13314,
+            "sha256": "bf62ae7cf42da7de6037a3e8dfdf8d60543cae3b0ac250719361a9bc888223aa",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        }
+      ],
+      "changedDuringRun": [],
+      "currentDifferences": [
+        "scripts/verify-a2-lite.mjs"
+      ]
+    },
+    {
+      "runId": "a2-c2def680",
+      "testedHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+      "files": [
+        {
+          "path": "OPENAPI.yaml",
+          "tested": {
+            "bytes": 518324,
+            "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 518324,
+            "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 510944,
+            "sha256": "0a25454cbd287f97e56675ab44a53906a642f76985de35f9bb6c35a448c6c498",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/integration/stage3-delivery.integration.test.ts",
+          "tested": {
+            "bytes": 88291,
+            "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 88291,
+            "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 84389,
+            "sha256": "57e971aea1fc7a6d663817fcc7ca6c996cec83cf272ac6dc7f908abb41fa25f5",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/integration/stage4-operations.integration.test.ts",
+          "tested": {
+            "bytes": 80095,
+            "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 80095,
+            "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 76548,
+            "sha256": "0e63036a70a327dafb6f510dc70078134f83edd55339aa6052190a9d5316d52a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/src/delivery/repository-configuration.ts",
+          "tested": {
+            "bytes": 3447,
+            "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 3447,
+            "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 3234,
+            "sha256": "c340908d2f0588c8c9ac76ec06fe70d7d9e931ce9f55847cc3ff1d53f2bb9a51",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/lib/i18n.test.ts",
+          "tested": {
+            "bytes": 28482,
+            "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 28482,
+            "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 27973,
+            "sha256": "97a4a0967b5a61b2ff9385d3b065fb9ef28e5f90102cf627e06b0114f77daf38",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/lib/i18n.tsx",
+          "tested": {
+            "bytes": 206563,
+            "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 206563,
+            "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 200145,
+            "sha256": "96b9df1ad9d2932bf4f8cdc28f5110096f0830878fe8bbd2313be90e4c717c7d",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/workbench/page.test.tsx",
+          "tested": {
+            "bytes": 2734,
+            "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 2734,
+            "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 2436,
+            "sha256": "9b9c402df89e48be3be2be7abce9ddf0c6f31ee77ce453420954255b0bd89615",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/workbench/page.tsx",
+          "tested": {
+            "bytes": 3211,
+            "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 3211,
+            "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 3074,
+            "sha256": "22468414c5c72e14f3002b91664dde2c869715dd443aad82db950104c31e70fc",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/configuration-readiness.spec.ts",
+          "tested": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 10341,
+            "sha256": "e60300d8729aeb3f9e002754a6f8098b70bea69969c4dbcbbab6fd61fa2e9e66",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+          "tested": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 8358,
+            "sha256": "cc2c98e0ebf9937153f99894d3642b3d5d425f9fdc89d9e5dbf90d56bc90453a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/human-reflow.spec.ts",
+          "tested": {
+            "bytes": 13620,
+            "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 13620,
+            "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 13208,
+            "sha256": "2fa2867a8f317a06a1ae6207e5982b60e5d2ee98332d059220af272614b6eb78",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/project-work-preview-server.mjs",
+          "tested": {
+            "bytes": 95552,
+            "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 95552,
+            "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 93490,
+            "sha256": "36a4ec4a361a0ea5cdbb5c5c2434e14182059aee220c8ddd55bb7b80fa3f4561",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/stage0.spec.ts",
+          "tested": {
+            "bytes": 23010,
+            "sha256": "57bdaebb503492e796439580bd4584e725367f7c2313469bca3b13376b9af6d7"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 23010,
+            "sha256": "57bdaebb503492e796439580bd4584e725367f7c2313469bca3b13376b9af6d7"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 22301,
+            "sha256": "751fca56e6ee622c9095e3d964ddda9988011736517fd907ccd60345efd486b8",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
+          "tested": {
+            "bytes": 6723,
+            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 6723,
+            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5131,
+            "sha256": "e5640247cab86b5aaf6905b70c3ea56e68c406aa1a176b534d86cc2f6619a992",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/projects/project-repository-configuration.tsx",
+          "tested": {
+            "bytes": 19833,
+            "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 19833,
+            "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 17285,
+            "sha256": "b03025c785f20bce4b58e8c0b70d75af9740c84a3f69727c64027e00f6191ba4",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/configuration-readiness.module.css",
+          "tested": {
+            "bytes": 886,
+            "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 886,
+            "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 723,
+            "sha256": "f7b41c96c362852e2046379584fb4ae92468fbd1d977a520b1e1337f7409cf07",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/configuration-readiness.tsx",
+          "tested": {
+            "bytes": 5620,
+            "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5620,
+            "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5533,
+            "sha256": "34a54b07f8322bd031045327eb295a081480ad15b9ed480cd9be6e7470ed6934",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/conversation-workbench.module.css",
+          "tested": {
+            "bytes": 11581,
+            "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 11581,
+            "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 11451,
+            "sha256": "9687e96b8fcff740ccbc7d60fd92b17f3c4a88ef3f420c58b192a3419defdce5",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/conversation-workbench.tsx",
+          "tested": {
+            "bytes": 35220,
+            "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 35220,
+            "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 34512,
+            "sha256": "881a4f68fc5c567d7fd2942007fd5e2760d05f371ff6091319bc7e0f137d0834",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/scripts/check-i18n.mjs",
+          "tested": {
+            "bytes": 36439,
+            "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 36439,
+            "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 35673,
+            "sha256": "c9523e5522ddfc74282a97746fe9461a92d225c9896f5152e94f12ebe5ae64ed",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/worker/src/provider-actions.ts",
+          "tested": {
+            "bytes": 75721,
+            "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 75721,
+            "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 74203,
+            "sha256": "10c64aa29faa035849f8d99d829edcac57acf712896a13a5faf102b3ae06b13a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/pagination-contract.test.ts",
+          "tested": {
+            "bytes": 5049,
+            "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5049,
+            "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 4883,
+            "sha256": "9723425c2e85dcbe1566df71c0297e5321e3870219750780110a8b0cc3082429",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/repository-configuration-contracts.test.ts",
+          "tested": {
+            "bytes": 1243,
+            "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 1243,
+            "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 1147,
+            "sha256": "b3f99db0acfe0561ee1ea8640d2e98862f4ef22f16ae372dbdca7526d4b57bce",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/repository-configuration-contracts.ts",
+          "tested": {
+            "bytes": 2465,
+            "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 2465,
+            "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 2465,
+            "sha256": "5bcaa01eeaaf2f5b576972fe185d8ae24a7e3029b77c98b87b9a83877008b316",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "playwright.config.ts",
+          "tested": {
+            "bytes": 5173,
+            "sha256": "19c63f20302ce46d59baa2d79e96bb6fe9ca8c5bc70d0ae070fe0367900dc25b"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5173,
+            "sha256": "19c63f20302ce46d59baa2d79e96bb6fe9ca8c5bc70d0ae070fe0367900dc25b"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5035,
+            "sha256": "b8f533c5f88331915df4502c8fc19919611280cd5b5565fdfd0c892564b38cf2",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "scripts/verify-a2-lite.mjs",
+          "tested": {
+            "bytes": 17976,
+            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 17976,
+            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 13314,
+            "sha256": "bf62ae7cf42da7de6037a3e8dfdf8d60543cae3b0ac250719361a9bc888223aa",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        }
+      ],
+      "changedDuringRun": [],
+      "currentDifferences": []
+    },
+    {
+      "runId": "a2-static-1791476564371",
+      "testedHead": "ca5daf4c0f024ce1b42f8c940125d824ebfcfe03",
+      "files": [
+        {
+          "path": "OPENAPI.yaml",
+          "tested": {
+            "bytes": 518324,
+            "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 518324,
+            "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 510944,
+            "sha256": "0a25454cbd287f97e56675ab44a53906a642f76985de35f9bb6c35a448c6c498",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/integration/stage3-delivery.integration.test.ts",
+          "tested": {
+            "bytes": 88291,
+            "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 88291,
+            "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 84389,
+            "sha256": "57e971aea1fc7a6d663817fcc7ca6c996cec83cf272ac6dc7f908abb41fa25f5",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/integration/stage4-operations.integration.test.ts",
+          "tested": {
+            "bytes": 80095,
+            "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 80095,
+            "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 76548,
+            "sha256": "0e63036a70a327dafb6f510dc70078134f83edd55339aa6052190a9d5316d52a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/api/src/delivery/repository-configuration.ts",
+          "tested": {
+            "bytes": 3447,
+            "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 3447,
+            "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 3234,
+            "sha256": "c340908d2f0588c8c9ac76ec06fe70d7d9e931ce9f55847cc3ff1d53f2bb9a51",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/lib/i18n.test.ts",
+          "tested": {
+            "bytes": 28482,
+            "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 28482,
+            "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 27973,
+            "sha256": "97a4a0967b5a61b2ff9385d3b065fb9ef28e5f90102cf627e06b0114f77daf38",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/lib/i18n.tsx",
+          "tested": {
+            "bytes": 206563,
+            "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 206563,
+            "sha256": "513c0ee4fef2c210babc429eea5c1c9ac56f6bf1a92593740d3c2e15f58f9eb2"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 200145,
+            "sha256": "96b9df1ad9d2932bf4f8cdc28f5110096f0830878fe8bbd2313be90e4c717c7d",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/workbench/page.test.tsx",
+          "tested": {
+            "bytes": 2734,
+            "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 2734,
+            "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 2436,
+            "sha256": "9b9c402df89e48be3be2be7abce9ddf0c6f31ee77ce453420954255b0bd89615",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/app/workbench/page.tsx",
+          "tested": {
+            "bytes": 3211,
+            "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 3211,
+            "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 3074,
+            "sha256": "22468414c5c72e14f3002b91664dde2c869715dd443aad82db950104c31e70fc",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/configuration-readiness.spec.ts",
+          "tested": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 14745,
+            "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 10341,
+            "sha256": "e60300d8729aeb3f9e002754a6f8098b70bea69969c4dbcbbab6fd61fa2e9e66",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+          "tested": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 8443,
+            "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 8358,
+            "sha256": "cc2c98e0ebf9937153f99894d3642b3d5d425f9fdc89d9e5dbf90d56bc90453a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/human-reflow.spec.ts",
+          "tested": {
+            "bytes": 13620,
+            "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 13620,
+            "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 13208,
+            "sha256": "2fa2867a8f317a06a1ae6207e5982b60e5d2ee98332d059220af272614b6eb78",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/project-work-preview-server.mjs",
+          "tested": {
+            "bytes": 95552,
+            "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 95552,
+            "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 93490,
+            "sha256": "36a4ec4a361a0ea5cdbb5c5c2434e14182059aee220c8ddd55bb7b80fa3f4561",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/e2e/stage0.spec.ts",
+          "tested": {
+            "bytes": 23010,
+            "sha256": "57bdaebb503492e796439580bd4584e725367f7c2313469bca3b13376b9af6d7"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 23010,
+            "sha256": "57bdaebb503492e796439580bd4584e725367f7c2313469bca3b13376b9af6d7"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 22301,
+            "sha256": "751fca56e6ee622c9095e3d964ddda9988011736517fd907ccd60345efd486b8",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
+          "tested": {
+            "bytes": 6723,
+            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 6723,
+            "sha256": "0fbb72ef8bb3f699534c8870e9204d39ec4f57f9bca67ded1c646635adb1b982"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5131,
+            "sha256": "e5640247cab86b5aaf6905b70c3ea56e68c406aa1a176b534d86cc2f6619a992",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/projects/project-repository-configuration.tsx",
+          "tested": {
+            "bytes": 19833,
+            "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 19833,
+            "sha256": "d3c3447f56e93e0456da070a7731cf71c50c967815f88f8af632cd9b1cb1712b"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 17285,
+            "sha256": "b03025c785f20bce4b58e8c0b70d75af9740c84a3f69727c64027e00f6191ba4",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/configuration-readiness.module.css",
+          "tested": {
+            "bytes": 886,
+            "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 886,
+            "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 723,
+            "sha256": "f7b41c96c362852e2046379584fb4ae92468fbd1d977a520b1e1337f7409cf07",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/configuration-readiness.tsx",
+          "tested": {
+            "bytes": 5620,
+            "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5620,
+            "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5533,
+            "sha256": "34a54b07f8322bd031045327eb295a081480ad15b9ed480cd9be6e7470ed6934",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/conversation-workbench.module.css",
+          "tested": {
+            "bytes": 11581,
+            "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 11581,
+            "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 11451,
+            "sha256": "9687e96b8fcff740ccbc7d60fd92b17f3c4a88ef3f420c58b192a3419defdce5",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/features/workbench/conversation-workbench.tsx",
+          "tested": {
+            "bytes": 35220,
+            "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 35220,
+            "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 34512,
+            "sha256": "881a4f68fc5c567d7fd2942007fd5e2760d05f371ff6091319bc7e0f137d0834",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/web/scripts/check-i18n.mjs",
+          "tested": {
+            "bytes": 36439,
+            "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 36439,
+            "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 35673,
+            "sha256": "c9523e5522ddfc74282a97746fe9461a92d225c9896f5152e94f12ebe5ae64ed",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "apps/worker/src/provider-actions.ts",
+          "tested": {
+            "bytes": 75721,
+            "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 75721,
+            "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 74203,
+            "sha256": "10c64aa29faa035849f8d99d829edcac57acf712896a13a5faf102b3ae06b13a",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/pagination-contract.test.ts",
+          "tested": {
+            "bytes": 5049,
+            "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5049,
+            "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 4883,
+            "sha256": "9723425c2e85dcbe1566df71c0297e5321e3870219750780110a8b0cc3082429",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/repository-configuration-contracts.test.ts",
+          "tested": {
+            "bytes": 1243,
+            "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 1243,
+            "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 1147,
+            "sha256": "b3f99db0acfe0561ee1ea8640d2e98862f4ef22f16ae372dbdca7526d4b57bce",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "packages/contracts/src/repository-configuration-contracts.ts",
+          "tested": {
+            "bytes": 2465,
+            "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 2465,
+            "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 2465,
+            "sha256": "5bcaa01eeaaf2f5b576972fe185d8ae24a7e3029b77c98b87b9a83877008b316",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        },
+        {
+          "path": "playwright.config.ts",
+          "tested": {
+            "bytes": 5173,
+            "sha256": "19c63f20302ce46d59baa2d79e96bb6fe9ca8c5bc70d0ae070fe0367900dc25b"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 5173,
+            "sha256": "19c63f20302ce46d59baa2d79e96bb6fe9ca8c5bc70d0ae070fe0367900dc25b"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 5035,
+            "sha256": "b8f533c5f88331915df4502c8fc19919611280cd5b5565fdfd0c892564b38cf2",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": true
+          }
+        },
+        {
+          "path": "scripts/verify-a2-lite.mjs",
+          "tested": {
+            "bytes": 17976,
+            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+          },
+          "beforeMatchesAfter": true,
+          "current": {
+            "bytes": 17976,
+            "sha256": "70bb2ef1850c5406923d7b140bbf88a1d9e658e8f7a94e314e13fd305f1db827"
+          },
+          "currentMatchesTested": true,
+          "currentMatchesTestedExceptCRLF": true,
+          "headBlob": {
+            "bytes": 13314,
+            "sha256": "bf62ae7cf42da7de6037a3e8dfdf8d60543cae3b0ac250719361a9bc888223aa",
+            "matchesTested": false,
+            "matchesTestedExceptCRLF": false
+          }
+        }
+      ],
+      "changedDuringRun": [],
+      "currentDifferences": []
+    }
+  ]
+}

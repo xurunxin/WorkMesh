@@ -1,0 +1,31 @@
+
+> workmesh@ ci:validate C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe
+> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs
+
+[ci:validate] OK: 9 jobs, 37 immutable action references, Node 22.19.0, pnpm@9.15.4
+Release workflow validation passed.
+Lite compose validation passed (8 services; 4 roles from one image; 53 documented variables; published: minio, web)
+✔ 无Git/网络依赖读取双字节，精确旧路径/版本映射 (2.8432ms)
+✔ 相同字节共用member，所有逻辑版本保留 (0.6124ms)
+✔ 拒绝规范化后重复逻辑元组 (0.3836ms)
+✔ 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符 (0.1939ms)
+✔ 拒绝规范化后重复ZIP member (0.1892ms)
+✔ 拒绝索引缺项/多项 (0.6574ms)
+✔ 拒绝索引重复元组 (0.2934ms)
+✔ 拒绝归档hash不符 (0.2241ms)
+✔ 拒绝伪造来源blob ID (0.3183ms)
+✔ 拒绝member bytes/hash不符 (0.6782ms)
+✔ 拒绝软链接 (0.3544ms)
+✔ 拒绝目录 (0.2355ms)
+✔ 拒绝设备 (0.4678ms)
+✔ 拒绝extra元数据/硬链接信息与加密flags (0.3136ms)
+✔ 拒绝本地路径不一致、重叠与解压超额 (0.6586ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 141.7258
+{"entries":280,"members":61,"bytes":21268498,"errors":[]}

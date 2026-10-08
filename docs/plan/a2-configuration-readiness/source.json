@@ -3,10 +3,10 @@
   "todoId": "0BkezbmWV6k8vwrlSNuF_",
   "agentId": "iuKoX-czTc8kH_ERctdlM",
   "branch": "tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe",
-  "currentID": null,
+  "currentID": "FkfKZkAdoHUa-nr2Hq1mA",
   "version": null,
-  "currentIDSource": "本轮输出ID在edit_plan结束后生成，当前null；PjUM为实读修订输入，不冒称它绑定本轮不同正文。后续只读回补证据，不为自引用再edit_plan。",
-  "bindingStatus": "todo/branch/完整当前Spec/PjUM输入ID/本轮正文哈希已绑定；输出ID按生成时序待只读补绑",
+  "currentIDSource": "docs/reviews/a2/approved-plan-readback.json 的实际 doc 引用；不新建自引用计划",
+  "bindingStatus": "已确认实施；批准正文保持原字节，历史源绑定另存 history/source-before-implementation.json",
   "questionCardId": "q-g078qrLdME6hTbM58dvfx",
   "plan": {
     "path": "docs/plan/a2-configuration-readiness.md",
@@ -773,5 +773,14 @@
       }
     ],
     "byteKind": "精确main Git blob；与未整合产品的当前工作树字节单列"
+  },
+  "execution": {
+    "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "inputMainSource": "docs/reviews/a2/c3-integration/input.json",
+    "planReadback": "docs/reviews/a2/approved-plan-readback.json",
+    "record": "docs/reviews/a2/implementation.md",
+    "matrix": "docs/reviews/a2/execution-map.json",
+    "results": "docs/reviews/a2/execution-results.json",
+    "status": "实施中，实际验收结果独立记录；未标记完成"
   }
 }

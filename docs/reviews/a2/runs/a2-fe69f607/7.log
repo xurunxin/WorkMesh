@@ -1,0 +1,261 @@
+
+> @workmesh/web@ test C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web
+> vitest run
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11b27-cfac-7ea4-a461-8eef51b750fe/apps/web
+
+ ✓ app/landing-screen.test.tsx (5 tests) 2800ms
+   ✓ LandingScreen > reads three independent sources, each capped, and links the attention section to its own surface  2432ms
+stderr | features/work-items/work-item-adaptive.test.tsx > WorkItemAdaptiveCollection persistent DOM > keeps the exact 300 card and five column nodes across list-board-list while preserving boundary focus
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+
+ ✓ features/work-items/work-item-adaptive.test.tsx (7 tests) 2271ms
+   ✓ WorkItemAdaptiveCollection persistent DOM > keeps the exact 300 card and five column nodes across list-board-list while preserving boundary focus  1898ms
+ ✓ app/settings/workbench-llm-settings.test.tsx (6 tests) 1960ms
+   ✓ Agent workbench model service settings > 选择预置只填草稿并显示出处  541ms
+   ✓ Agent workbench model service settings > 模型草稿绑定新连接且显式登记  374ms
+   ✓ Agent workbench model service settings > lets a manager disable a model with the current connection revision and preserves its capabilities  409ms
+ ✓ app/ui-overlay-contract.test.tsx (21 tests) 2407ms
+ ✓ features/projects/project-repository-configuration.test.tsx (6 tests) 2619ms
+   ✓ 项目仓库配置 > 只读成员不出现上下文写入口，服务端分页前筛选始终带 Team  581ms
+   ✓ 项目仓库配置 > POST 只进入等待状态，其他动作或旧上下文不能确认本次成功  760ms
+   ✓ 项目仓库配置 > 失权刷新移除旧写入口并清空凭证，非秘密校验输入保留  377ms
+   ✓ 项目仓库配置 > 提交前发现并发新上下文，保留输入并要求核对后显式重提  408ms
+   ✓ 项目仓库配置 > 丢响应动作已落地时，同文重试仍关联原动作并确认精确结果  403ms
+ ✓ features/workbench/conversation-workbench.test.tsx (8 tests) 2805ms
+   ✓ ConversationWorkbench > 固定提示仅追加未发送草稿并聚焦，点击不自动发送或激活  1126ms
+   ✓ ConversationWorkbench > sends a Markdown turn with the current conversation revision and keeps the bound session on the server  329ms
+   ✓ ConversationWorkbench > keeps the newly selected conversation draft when the previous send returns late  422ms
+ ✓ app/operations-content.test.tsx (43 tests) 5699ms
+   ✓ OperationsContent section navigation > keeps the page header stable while feature authority resolves without exposing dependent anchors  699ms
+   ✓ OperationsContent section navigation > hydrates hash state, gives one link current-location ownership, and focuses on a same-hash click  307ms
+   ✓ OperationsContent loaded-record search > matches localized rendered values and dates but not hidden raw enums or full identifiers  365ms
+ ✓ app/agents/[id]/page.test.tsx (4 tests) 1990ms
+   ✓ Agent detail route > renders validated definition facts and the authoritative empty Team Access projection  1352ms
+   ✓ Agent detail route > renders not-found and general errors inside AppShell  378ms
+ ✓ app/operations/usage-metrics.test.tsx (24 tests) 2315ms
+   ✓ UsageMetrics > fails a null root payload closed as unavailable  493ms
+   ✓ UsageMetrics > formats supported minor-unit currencies exactly and keeps unsupported and case-distinct buckets raw  418ms
+ ✓ features/navigation/theme.test.tsx (10 tests) 1358ms
+   ✓ coexisting reference token contract > preserves every base token declaration, scope, value, and existing CSS consumer  1069ms
+ ✓ app/connect/page.test.tsx (4 tests) 2046ms
+   ✓ ConnectPage MCP client state > atomically selects the first normalized advertised client without ever mounting a Codex guide  1084ms
+   ✓ ConnectPage MCP client state > keeps Config and Link copied states distinct while client switches stay local  697ms
+ ✓ app/settings/delete-team-dialog.test.tsx (7 tests) 1351ms
+   ✓ DeleteTeamDialog > cancels without confirmation and confirms the frozen Team snapshot once  674ms
+ ✓ features/command-center/keyboard.test.tsx (5 tests) 1390ms
+   ✓ GlobalCommandCenter keyboard ownership > opens once for slash and Ctrl/Meta+K while preserving interactive contexts  1006ms
+ ✓ app/agents/approvals-table.test.tsx (18 tests) 2953ms
+   ✓ ApprovalsTable > shows direct decisions on every actionable row before any bulk selection  729ms
+stderr | features/work-items/work-surfaces-pagination.test.tsx > WorkSurfaces pagination ownership > does not install an observer or load another page while pagination is loading
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+
+ ✓ app/attention-center-bulk.test.tsx (5 tests) 1736ms
+   ✓ Human Attention bulk approval recovery > uses stable default reason and retains a retryable error per item  967ms
+   ✓ Human Attention bulk approval recovery > does not expose retry for forbidden decisions and asks for reconfirmation after a conflict  345ms
+ ✓ app/attention-center-approval.test.tsx (4 tests) 2701ms
+   ✓ Human Attention inline approval > offers direct decisions without a required text field  1293ms
+   ✓ Human Attention inline approval > sends approve-with-requirements as the immutable approval reason  651ms
+   ✓ Human Attention inline approval > keeps decisions fail-closed until the complete Approval scope is loaded  431ms
+   ✓ Human Attention inline approval > keeps decisions disabled and offers retry when the full Approval read fails  325ms
+ ✓ app/agent-connections-panel.test.tsx (11 tests) 2470ms
+   ✓ AgentConnectionsPanel collection authority > uses the active locale for the Agent name placeholder  752ms
+   ✓ AgentConnectionsPanel collection authority > keeps a just-created result after refresh failure, then rebuilds detail without its one-time URL in a new authority scope  420ms
+ ✓ features/work-items/detail/work-item-detail-focus.test.tsx (10 tests) 2027ms
+   ✓ WorkItemDetail focus on revision conflict > moves focus to the Save button when a revision conflict is reported  820ms
+ ✓ app/project-control-center.test.tsx (7 tests) 2561ms
+   ✓ Project Control Center > keeps a long Project description available without overwhelming the overview  564ms
+   ✓ Project Control Center > loads one bounded projection and renders the complete Run digest  325ms
+   ✓ Project Control Center > paginates a collection independently and restores focus after closing detail  553ms
+   ✓ Project Control Center > keeps an unapplied filter draft when the projection refreshes with new data  518ms
+   ✓ Project Control Center > owns server-side filters in the URL and projection request  437ms
+ ✓ app/agent-control-dialog.test.tsx (2 tests) 1649ms
+   ✓ AgentControlDialog > binds the Human reason and selected stop mode to the preview revision  1136ms
+   ✓ AgentControlDialog > preserves the draft and reloads consequences after a stale revision  507ms
+ ✓ app/agent-session-detail.test.tsx (4 tests) 1339ms
+ ✓ app/page.test.tsx (9 tests) 4463ms
+   ✓ Home default landing > sends a bare / to the Agent workbench  336ms
+   ✓ Home project strip keyboard contract > updates the Work Surface layout URL without a duplicate HomePage render and reuses the latest layout on the next query render  837ms
+   ✓ Home project strip keyboard contract > restores the latest presentation layout from popstate and saved views  592ms
+   ✓ Home project strip keyboard contract > localizes the release build and schema labels  503ms
+   ✓ Home project strip keyboard contract > uses the Guidance copy contract for editor and preview chrome  711ms
+   ✓ Home project strip keyboard contract > exposes a named project rail with ordinary project activation  500ms
+   ✓ Home full-page WorkItem semantics > exposes only the active detail h1 and removes the obscured page content from semantics  366ms
+   ✓ Home full-page WorkItem semantics > keeps Agent executions selected when the automatic agent projection refreshes  439ms
+stderr | features/work-items/work-surfaces-loading.test.tsx > WorkSurfaces authenticated collection loading > retains exact row DOM and focus through refresh and ordinary failure, then revokes on 403
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+
+ ✓ features/work-items/work-surfaces-loading.test.tsx (5 tests) 1115ms
+   ✓ WorkSurfaces authenticated collection loading > gives initial loading exactly one named busy owner and decorative cells  569ms
+ ✓ app/page-outcomes.test.tsx (13 tests) 6683ms
+   ✓ Home mutation outcomes > retries a URL-owned Project after authority invalidates the in-flight request  655ms
+   ✓ Home mutation outcomes > synchronously retires actor-owned dialog state when authenticated authority changes  1116ms
+   ✓ Home mutation outcomes > keeps the exact open detail and focus when auth refresh returns a new actor object for the same authority  793ms
+   ✓ Home mutation outcomes > ignores a completed A-authority create after switching to B without toast, refresh, URL, or focus side effects  928ms
+   ✓ Home mutation outcomes > keeps the exact Team selector and focused action while same-scope Team refresh is busy  343ms
+   ✓ Home mutation outcomes > emits exactly one localized success toast while the authorized page remains rendered  707ms
+   ✓ Home mutation outcomes > keeps a structured conflict in the top modal, preserves the form, emits no toast, and clears it on reopen  911ms
+ ✓ app/settings/page.test.tsx (27 tests) 14037ms
+   ✓ SettingsPage routed shared Tabs > synchronously retires actor-owned destructive state when authenticated authority changes  1435ms
+   ✓ SettingsPage routed shared Tabs > ignores an A-authority Team create that resolves after switching to B  593ms
+   ✓ SettingsPage routed shared Tabs > retains the exact Settings action and focus during authenticated actor refresh  478ms
+   ✓ SettingsPage routed shared Tabs > gives workflow States an independent initialized authority and retains exact rows and focus on ordinary refresh failure  531ms
+   ✓ SettingsPage routed shared Tabs > retains initialized empty Team authority through refresh and ordinary failure, then revokes it on 403  421ms
+   ✓ SettingsPage routed shared Tabs > retains a resolved Team and exact selector on ordinary refresh failure but revokes it on 403  455ms
+   ✓ SettingsPage routed shared Tabs > retains the exact states scope and focused Team control while refreshing, then corrects a removed Team after success  347ms
+   ✓ SettingsPage routed shared Tabs > refreshes the authorized Team collection before routing to a newly created Team  439ms
+   ✓ SettingsPage routed shared Tabs > keeps create validation and update revision failures contextual without duplicating a toast  614ms
+   ✓ SettingsPage routed shared Tabs > posts only the selected stable preset color and reports success even when refresh has no new row  599ms
+   ✓ SettingsPage routed shared Tabs > renders and focuses the native custom color control only for Custom, preserving it after failure  611ms
+   ✓ SettingsPage routed shared Tabs > resets Custom to its UI-only initial color after a successful create  644ms
+   ✓ SettingsPage routed shared Tabs > keeps every idle dialog dismissal path mutation-free and restores trigger focus  969ms
+   ✓ SettingsPage routed shared Tabs > guards rapid confirmation and sends the exact encoded snapshot mutation without a body  699ms
+   ✓ SettingsPage routed shared Tabs > maps destructive conflicts locally, keeps the snapshot, and performs no refresh on failure  1024ms
+   ✓ SettingsPage routed shared Tabs > commits the close before one independent refresh and never relabels a refresh failure  600ms
+   ✓ SettingsPage routed shared Tabs > waits for post-delete Team resolution before moving focus once  716ms
+   ✓ SettingsPage routed shared Tabs > retains one post-delete focus intent across refresh failure until Team retry reconciliation completes  806ms
+   ✓ SettingsPage routed shared Tabs > preserves a newer Team route and never resumes deleted-Team states after an in-flight delete  680ms
+ ✓ app/workbench/page.test.tsx (2 tests) 883ms
+   ✓ WorkbenchPage > keeps the shell footer contract and theme control  630ms
+ ✓ features/work-items/work-surfaces-pagination.test.tsx (9 tests) 12829ms
+   ✓ WorkSurfaces pagination ownership > reuses one normalized item projection for layout-only changes  626ms
+   ✓ WorkSurfaces pagination ownership > keeps all 300 card renders stable when a layout callback rerenders the parent with new inline handlers  11571ms
+ ✓ features/work-items/work-item-filters.test.tsx (9 tests) 725ms
+   ✓ WorkItemFilters compact mode > renders the More filters toggle when compact is true  313ms
+ ✓ app/agents/page-outcomes.test.tsx (24 tests) 14876ms
+   ✓ Agents bulk approval outcomes > owns all Agent surface aria labels in the active locale  545ms
+   ✓ Agents bulk approval outcomes > synchronously clears actor-owned approval selection when authenticated authority changes  592ms
+   ✓ Agents bulk approval outcomes > revokes every A-authority Agent projection and open surface before B collections resolve  1415ms
+   ✓ Agents bulk approval outcomes > ignores an A-authority bulk decision that settles after switching to B  605ms
+   ✓ Agents bulk approval outcomes > retains the exact AppShell action and focus during an authenticated actor refresh  437ms
+   ✓ Agents bulk approval outcomes > keeps 300 stable Agent cards out of Peek and four-keystroke filter rerenders  4254ms
+   ✓ Agents bulk approval outcomes > closes a filtered Peek and transfers orphaned roving focus to the first visible Agent link  559ms
+   ✓ Agents bulk approval outcomes > counts and renders only server-projected Human Attention items  519ms
+   ✓ Agents bulk approval outcomes > submits a direct approval without bulk selection and reports success on that row  513ms
+   ✓ Agents bulk approval outcomes > shows a safe per-row revision conflict and refreshes instead of replaying the decision  571ms
+   ✓ Agents bulk approval outcomes > keeps a quorum-pending decision visible as waiting for other reviewers  604ms
+   ✓ Agents bulk approval outcomes > emits one localized success toast only after every selected decision succeeds  566ms
+   ✓ Agents bulk approval outcomes > keeps network-only partial aggregate detail contextual, retains only failed selection, and emits no toast  661ms
+   ✓ Agents bulk approval outcomes > keeps mixed conflict and network aggregate detail contextual, retains only failed selection, and emits no toast  588ms
+   ✓ Agents bulk approval outcomes > keeps all failed rows selected with safe contextual copy and no raw or toast output  642ms
+   ✓ Agents bulk approval outcomes > does not relabel a committed success when the post-commit refresh fails  530ms
+ ✓ app/evidence-drawer.test.tsx (2 tests) 857ms
+   ✓ EvidenceDrawer > renders rich provenance, canonical relationships, exact-head drift, and technical IDs  785ms
+ ✓ app/collaboration-queues.test.tsx (3 tests) 1437ms
+   ✓ ActionableCollaborationQueues > separates governed responses from informational messages and restores selection in the URL  841ms
+   ✓ ActionableCollaborationQueues > preserves the reply draft when optimistic concurrency reports a conflict  359ms
+ ✓ app/agents/team-access-drawer.test.tsx (8 tests) 1257ms
+   ✓ TeamAccessDrawer > renders the Sheet with the team access list when an agent is selected and open is true  560ms
+ ✓ app/agents/approval-history-table.test.tsx (8 tests) 661ms
+   ✓ ApprovalHistoryTable > renders only the selected terminal status and links to the source Session  481ms
+ ✓ features/rich-content/artifacts.test.tsx (4 tests) 583ms
+   ✓ WorkItemArtifacts localized copy > renders its complete empty-state and input labels from copy  345ms
+ ✓ features/rich-content/rich-content.test.ts (28 tests) 1531ms
+   ✓ rich-content safety boundary > collapses only oversized compact content and exposes an accessible toggle  363ms
+ ✓ features/work-items/detail/work-item-execution-workspace.test.tsx (3 tests) 1133ms
+   ✓ WorkItemExecutionWorkspace > renders responsibility, live execution, Human attention, and verified evidence from server projections  939ms
+ ✓ app/connect/client-picker.test.tsx (2 tests) 846ms
+   ✓ ClientPicker > renders only the normalized advertised subset in server order  728ms
+ ✓ app/lib/toast-viewport.test.tsx (4 tests) 1199ms
+   ✓ ToastViewport > renders no viewport while empty and one atomic live role per toast with unique localized close names  706ms
+ ✓ app/operations/runs-table.test.tsx (4 tests) 860ms
+   ✓ RunsTable > renders a captioned six-column table and associates a historical error detail with its run  749ms
+ ✓ app/lib/page-header.test.tsx (2 tests) 670ms
+   ✓ PageHeader > renders title, description, and actions  615ms
+ ✓ app/agents/agent-peek.test.tsx (1 test) 757ms
+   ✓ AgentPeek > uses the shared Sheet, loaded list projection, and restores trigger focus on close  756ms
+ ✓ features/workbench/configuration-readiness.test.tsx (3 tests) 744ms
+   ✓ 配置投影 > 刷新期间清除旧动作，失败不冒称未配置  645ms
+ ✓ app/lib/use-hotkeys.test.ts (5 tests) 381ms
+ ✓ app/lib/skeleton-list.test.tsx (1 test) 485ms
+   ✓ SkeletonList > owns one localized busy status while every requested cell is decorative  484ms
+ ✓ app/lib/use-toast.test.ts (9 tests) 699ms
+   ✓ toastStore > replaces an explicit dedupe key, resets its timer, and adopts the latest valid focus origin  376ms
+ ✓ app/operations/page.test.tsx (4 tests) 736ms
+ ✓ features/work-items/work-item-card.test.tsx (32 tests) 482ms
+ ✓ app/agents/agent-detail-panel.test.tsx (3 tests) 212ms
+ ✓ app/recovery-center.test.tsx (2 tests) 1565ms
+   ✓ RecoveryCenter > distinguishes terminal-only assignment and opens preserved recovery context  1358ms
+ ✓ app/app-shell-anatomy.test.tsx (6 tests) 239ms
+ ✓ app/ui-unification-contract.test.ts (2 tests) 136ms
+ ✓ e2e/playwright-config-contract.test.ts (2 tests) 1535ms
+   ✓ Playwright topology configs > preserves the mocked local list reporter when no run root is set  1409ms
+ ✓ app/lib/agents.test.ts (23 tests) 147ms
+ ✓ app/ui-layout-contract.test.ts (14 tests) 59ms
+ ✓ app/lib/api.test.ts (16 tests) 26ms
+ ✓ features/command-center/integration.test.ts (6 tests) 19ms
+ ✓ app/lib/realtime.test.ts (10 tests) 25ms
+ ✓ app/agents/approval-route-state.test.ts (9 tests) 28ms
+ ✓ app/lib/workflow-state-patch.test.ts (2 tests) 4ms
+ ✓ app/lib/i18n.test.ts (3 tests) 169ms
+ ✓ app/lib/model-presets.test.ts (7 tests) 15ms
+ ✓ features/collaboration/view-model.test.ts (3 tests) 10ms
+ ✓ app/lib/use-board-column-widths.test.tsx (12 tests) 20ms
+ ✓ app/lib/use-current-team.test.ts (6 tests) 57ms
+ ✓ app/lib/use-authenticated-actor.test.ts (5 tests) 32ms
+ ✓ app/lib/list-interactions.test.ts (3 tests) 24ms
+ ✓ app/brand-assets.test.ts (3 tests) 7ms
+ ✓ e2e/human-control-plane-acceptance.test.ts (3 tests) 6ms
+ ✓ app/lib/use-media-query.test.ts (3 tests) 24ms
+ ✓ app/agents/filters.test.ts (9 tests) 4ms
+ ✓ features/work-items/detail/detail.test.ts (4 tests) 7ms
+ ✓ app/ui-foundation.test.ts (8 tests) 23ms
+ ✓ app/lib/configuration-readiness-navigation.test.ts (3 tests) 5ms
+ ✓ app/work-item-conflict-placement.test.ts (1 test) 5ms
+ ✓ e2e/mocked/final-tour-server-contract.test.ts (5 tests) 4ms
+ ✓ app/lib/mcp-onboarding.test.ts (8 tests) 5ms
+ ✓ app/lib/workspace-navigation.test.ts (4 tests) 8ms
+ ✓ app/agents/agent-workspace.test.tsx (2 tests) 207ms
+ ✓ e2e/playwright-run-directory.test.ts (5 tests) 4ms
+ ✓ app/health-routes.test.ts (1 test) 5ms
+ ✓ app/lib/product-telemetry.test.ts (3 tests) 4ms
+ ✓ app/agents/agent-detail-return.test.ts (4 tests) 6ms
+ ✓ app/run-timeline-route-state.test.ts (2 tests) 3ms
+ ✓ app/settings/team-resolution.test.ts (6 tests) 4ms
+ ✓ app/lib/canonical-route.test.ts (4 tests) 3ms
+ ✓ app/attention-route-state.test.ts (2 tests) 4ms
+ ✓ app/lib/human-control-plane-navigation.test.ts (4 tests) 4ms
+ ✓ app/lib/room.test.ts (2 tests) 3ms
+ ✓ features/work-items/view-model.test.ts (4 tests) 3ms
+ ✓ app/lib/shortcut-scope.test.ts (20 tests) 4ms
+ ✓ app/lib/project-work.test.ts (4 tests) 3ms
+ ✓ app/recovery-route.test.ts (2 tests) 3ms
+ ✓ app/settings/route-state.test.ts (2 tests) 3ms
+ ✓ app/lib/project-work-preview-query.test.ts (2 tests) 3ms
+ ✓ app/operations/sections.test.ts (7 tests) 3ms
+ ✓ app/lib/optional-integration-boundary.test.ts (2 tests) 4ms
+ ✓ app/operations/filter.test.ts (5 tests) 3ms
+ ✓ app/realtime-refresh.test.ts (4 tests) 4ms
+ ✓ app/collaboration-queue-route.test.ts (2 tests) 4ms
+ ✓ app/settings/workflow-color-presets.test.ts (2 tests) 2ms
+ ✓ app/lib/collection-authority.test.ts (7 tests) 2ms
+ ✓ app/lib/connection-diagnostics.test.ts (3 tests) 3ms
+ ✓ app/lib/navigation.test.ts (2 tests) 3ms
+ ✓ app/lib/latest-request.test.ts (2 tests) 6ms
+ ✓ app/lib/actor.test.ts (1 test) 3ms
+ ✓ app/lib/document-title.test.ts (2 tests) 2ms
+ ✓ app/lib/settings-permissions.test.ts (1 test) 2ms
+ ✓ app/agents/agent-registry-card.test.tsx (7 tests) 749ms
+   ✓ AgentRegistryCard > uses an ordinary article, a stable encoded link, and a sibling management button  442ms
+ ✓ app/agent-work-panel.test.tsx (10 tests) 614ms
+ ✓ app/lib/pagination.test.tsx (14 tests) 1199ms
+ ✓ features/command-center/registry.test.ts (10 tests) 212ms
+ ✓ app/page-hotkeys.test.tsx (8 tests) 270ms
+ ✓ features/work-items/work-surfaces-filters.test.tsx (5 tests) 9ms
+ ✓ features/work-items/work-items.test.ts (15 tests) 9ms
+ ✓ features/command-center/queries.test.ts (4 tests) 17ms
+ ✓ app/attention-center.test.ts (3 tests) 9ms
+ ✓ app/work-room.test.ts (1 test) 5ms
+
+ Test Files  117 passed (117)
+      Tests  803 passed (803)
+   Start at  23:09:21
+   Duration  134.80s (transform 27.97s, setup 186.28s, collect 1354.02s, tests 127.20s, environment 471.32s, prepare 67.63s)
+

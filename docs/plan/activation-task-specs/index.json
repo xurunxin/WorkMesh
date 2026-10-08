@@ -513,7 +513,7 @@
       "sourceUpdatedAt": "2026-10-07T15:23:25.992Z",
       "sourceSha256": "130e16687029a7950d13ebe964a9d230bfa1892e811d77bbfbe050e9201b0286",
       "path": "docs/plan/activation-task-specs/09.md",
-      "specSha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+      "specSha256": "7f4cbdbffbe3cea5ccc566744c9ab7b857c94cc5b49a23893d0399bf00b14139",
       "phase": "todo",
       "owner": "A2 执行者",
       "withPlan": true,
@@ -526,7 +526,7 @@
       ],
       "acceptanceRequires": [],
       "blocks": [],
-      "syncStatus": "本轮仅同步完整当前规格、修订计划和三项独审方案；旧source字段保留历史；未实施产品",
+      "syncStatus": "已批准实施并同步当前代码/执行文档；未写真实 WorkMesh，不标记整卡完成",
       "gate": "按依赖与审查门禁",
       "latestSourceUpdatedAt": "2026-10-08T12:26:24.989Z",
       "latestSourceSha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
@@ -620,7 +620,23 @@
         "actualMain": "5b9c76b5f79917697906520edcd6947bfbfa925f"
       },
       "reviewFixes": "docs/plan/a2-configuration-readiness/review-fixes.json",
-      "latestMainImpact": "C1现行锁顺序及appendEvent内部快照兼容已纳入；三修及原验收保持，未实施产品"
+      "latestMainImpact": "已正常整合 C3 精确 main，保留模型预置默认关闭/零保存出站与 A1/C1/仓库三安全修补；当前结果及未验收项见 execution-results.json",
+      "approvedPlanBinding": {
+        "id": "FkfKZkAdoHUa-nr2Hq1mA",
+        "version": null,
+        "sha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
+        "bytes": 17436,
+        "readback": "docs/reviews/a2/approved-plan-readback.json"
+      },
+      "execution": {
+        "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+        "inputMainSource": "docs/reviews/a2/c3-integration/input.json",
+        "planReadback": "docs/reviews/a2/approved-plan-readback.json",
+        "record": "docs/reviews/a2/implementation.md",
+        "matrix": "docs/reviews/a2/execution-map.json",
+        "results": "docs/reviews/a2/execution-results.json",
+        "status": "实施中，实际验收结果独立记录；未标记完成"
+      }
     },
     {
       "seqNum": 10,

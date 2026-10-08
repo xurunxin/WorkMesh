@@ -264,6 +264,20 @@ numbers alone, because `statementId` covers the owner and a canonical SQL hash
 
 ## Spec changes
 
+### A2 已批准表面与配置入口
+
+工作类型只来自 URL 的唯一合法 `workKind=repository|non_repository`，缺失、重复或非法参数不查询、不从 Team/对话/工作项推断。A1 投影及权限边界不变；非仓库工作仍为 `not_applicable`，Runner 恒 `unknown`，不能作为执行许可。
+
+工作台按依赖深度排列可任意顺序解决的 unmet，固定起始提示采用三个新增中英文 WorkMesh 文案；点击只追加未发送草稿、聚焦或展开现有创建表单。仓库缺口使用 Projects canonical 页面及固定锚点，模型/Agent 使用已有 canonical 路由，浏览器往返重新查询并恢复焦点。
+
+用户已批准项目内复用现有 provider connection、仓库注册和异步上下文 POST；只读投影自身仍无写入副作用。配置命令不自动创建 Session、委派或激活，追加 POST 没有 If-Match。新增 DTO 的 `provider_action_id` 仅用于把精确上下文结果关联至已完成动作，历史未关联结果为 null。`can_configure_context` 是提示，命令和 Worker 各自核验当前权限。
+
+Worker 正常解析和 checkpoint 恢复均在最终落库事务内重验 Human、Team/目标作用域及资源状态，复用既有 workspace 前置锁和资源锁序，授权锁持有至事实/event/outbox 提交；不跨供应商请求持锁。连接秘密按独立用途域和字段名参加稳定 HMAC 指纹，账本不存明文；旧脱敏账本无法证明正文相同，拒绝重放且保留原 TTL 语义，不自动换键。
+
+目标变更 Team 后，拒绝事件沿用既有解析器解析目标当前作用域，并限定原请求人的 audience，同时保留当前资源授权过滤；动作历史目标不改写，不能为了记录拒绝而降低事件作用域校验。分页最终 SQL 重验当前角色、membership 与 Team 删除状态，预检缓存不授予读取范围。
+
+仓库列表新增 Human 专用 Team/可用 provider 筛选，在 SQL 分页前执行并绑定游标；旧无参数 Human/Agent 的范围、排序、分页信封及 200 条上限保持，Agent 拒绝新增筛选。C1 事件快照兼容及 C3 模型预置默认关闭、读取/草稿零保存出站的行为保留。无新实体、端点、事件类型或迁移；实施与实际验收记录在 `docs/reviews/a2/`，未通过 Lite、人类视觉及最终 CI 的项目不记通过。
+
 - `OPENAPI.yaml` declares the readiness route, its three states per check
   (`ready` / `blocked` / `unknown`；`not_applicable` 另属适用性), and the fact that it
   is a query with no write counterpart.

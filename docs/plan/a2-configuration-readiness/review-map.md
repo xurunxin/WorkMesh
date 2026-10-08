@@ -1,5 +1,7 @@
 # A2 实施与验收映射
 
+本页保留批准规划时的完整要求、历史观察和场景名；下方“未实现/未运行/本轮仅规划”均属于该历史输入。用户已确认实施后的真实文件、精确用例名、源码绑定及实际结果另见 `../../reviews/a2/implementation.md`、`../../reviews/a2/execution-map.json` 和 `../../reviews/a2/execution-results.json`。不以规划名替代真实用例，也不把 Lite skip 或历史 CI 转写为通过。
+
 本文件与 `../a2-configuration-readiness.md` 组成完整可审方案。所有产品用例均待实现、未运行；测试名是执行者必须创建或扩展的真实用例名，不能用本文件存在、历史 CI 或接口已存在替代结果。
 
 ## 当前范围与来源

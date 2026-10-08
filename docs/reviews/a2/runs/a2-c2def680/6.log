@@ -1,0 +1,86 @@
+
+> @workmesh/web@ build C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web
+> next build
+
+   ▲ Next.js 15.5.22
+
+   Creating an optimized production build ...
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web\app\styles.css': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 4 items } -> webpack/lib/ModuleWarning -> Warning
+ ⚠ Compiled with warnings in 33.9s
+
+./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+Warning
+
+(1567:47) autoprefixer: end value has mixed support, consider using flex-end instead
+
+Import trace for requested module:
+./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+./app/styles.css
+
+./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+Warning
+
+(1760:57) autoprefixer: end value has mixed support, consider using flex-end instead
+
+Import trace for requested module:
+./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+./app/styles.css
+
+./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+Warning
+
+(1849:36) autoprefixer: end value has mixed support, consider using flex-end instead
+
+Import trace for requested module:
+./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+./app/styles.css
+
+./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+Warning
+
+(1860:87) autoprefixer: start value has mixed support, consider using flex-start instead
+
+Import trace for requested module:
+./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+./app/styles.css
+
+   Linting and checking validity of types ...
+
+ ⚠ The Next.js plugin was not detected in your ESLint configuration. See https://nextjs.org/docs/app/api-reference/config/eslint#migrating-existing-config
+   Collecting page data ...
+   Generating static pages (0/16) ...
+   Generating static pages (4/16) 
+   Generating static pages (8/16) 
+   Generating static pages (12/16) 
+ ✓ Generating static pages (16/16)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    80.5 kB         401 kB
+├ ○ /_not-found                            131 B         103 kB
+├ ƒ /agent-sessions/[id]                   992 B         282 kB
+├ ○ /agents                              27.6 kB         241 kB
+├ ƒ /agents/[id]                         6.04 kB         288 kB
+├ ○ /apple-icon.png                          0 B            0 B
+├ ○ /connect                             13.1 kB         192 kB
+├ ○ /icon.png                                0 B            0 B
+├ ○ /install                             6.21 kB         185 kB
+├ ƒ /livez                                 131 B         103 kB
+├ ○ /login                               5.99 kB         185 kB
+├ ○ /operations                          9.96 kB         203 kB
+├ ƒ /readyz                                131 B         103 kB
+├ ○ /settings                            14.6 kB         199 kB
+├ ○ /settings/agent-workbench            9.78 kB         234 kB
+├ ○ /ui-catalog                          3.09 kB         182 kB
+└ ○ /workbench                           13.5 kB         306 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/202-579a6ac7273e6498.js       46.5 kB
+  ├ chunks/a1e4b416-8dc067520d41ca1a.js  54.2 kB
+  └ other shared chunks (total)          2.02 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

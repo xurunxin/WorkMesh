@@ -1,0 +1,299 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: stage0.spec.ts >> Stage 0 browser acceptance >> installs, manages work, synchronizes drag and mentions over SSE, and rejects child writes after team deletion
+- Location: e2e\stage0.spec.ts:156:3
+
+# Error details
+
+```
+Test timeout of 180000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - alert [ref=e11]
+  - generic [ref=e12]:
+    - link "Skip to content" [ref=e13] [cursor=pointer]:
+      - /url: "#workmesh-main"
+    - complementary "Main navigation" [ref=e14]:
+      - generic [ref=e15]:
+        - strong [ref=e17]: WorkMesh
+        - generic [ref=e18]: Alice
+      - button "Collapse sidebar" [expanded] [ref=e19] [cursor=pointer]:
+        - img [ref=e20]
+        - generic [ref=e22]: Collapse sidebar
+      - generic [ref=e24]:
+        - text: Team
+        - combobox "Current team" [ref=e25]:
+          - option "No team" [disabled]
+          - option "General (GEN)"
+          - option "Stage 0 delivery edited (ACC)" [selected]
+      - navigation "Workspace navigation" [ref=e26]:
+        - generic [ref=e27]:
+          - paragraph [ref=e28]: Workbench
+          - link "Workbench" [ref=e29] [cursor=pointer]:
+            - /url: /workbench
+            - img [ref=e31]
+            - generic [ref=e33]: Workbench
+          - link "My work" [ref=e34] [cursor=pointer]:
+            - /url: /?view=home
+            - img [ref=e36]
+            - generic [ref=e38]: My work
+          - link "Issues" [ref=e39] [cursor=pointer]:
+            - /url: /?view=my-work
+            - img [ref=e41]
+            - generic [ref=e43]: Issues
+            - generic [ref=e44]: "1"
+          - link "Guidance" [ref=e45] [cursor=pointer]:
+            - /url: /?view=guidance
+            - img [ref=e47]
+            - generic [ref=e49]: Guidance
+        - generic [ref=e50]:
+          - paragraph [ref=e51]: Governance
+          - link "Needs You" [ref=e52] [cursor=pointer]:
+            - /url: /?view=inbox
+            - img [ref=e54]
+            - generic [ref=e56]: Needs You
+          - link "Session" [ref=e57] [cursor=pointer]:
+            - /url: /?view=sessions
+            - img [ref=e59]
+            - generic [ref=e61]: Session
+          - link "Recovery" [ref=e62] [cursor=pointer]:
+            - /url: /?view=recovery
+            - img [ref=e64]
+            - generic [ref=e66]: Recovery
+          - link "Projects" [ref=e67] [cursor=pointer]:
+            - /url: /?view=projects
+            - img [ref=e69]
+            - generic [ref=e71]: Projects
+            - generic [ref=e72]: "1"
+          - link "Agents" [ref=e73] [cursor=pointer]:
+            - /url: /agents
+            - img [ref=e75]
+            - generic [ref=e77]: Agents
+        - generic [ref=e78]:
+          - paragraph [ref=e79]: Operations
+          - link "Operations" [ref=e80] [cursor=pointer]:
+            - /url: /operations
+            - img [ref=e82]
+            - generic [ref=e84]: Operations
+      - navigation "Administration navigation" [ref=e85]:
+        - link "Settings" [ref=e86] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e88]
+          - generic [ref=e90]: Settings
+      - generic [ref=e92]:
+        - button "Sign out" [ref=e93] [cursor=pointer]:
+          - img [ref=e95]
+          - generic [ref=e97]: Sign out
+        - generic [ref=e98]: v1.0.0 · build unknown · schema 1
+    - generic [ref=e99]:
+      - banner [ref=e100]:
+        - paragraph [ref=e101]:
+          - generic [ref=e102]: Projects
+        - button "Search" [ref=e104] [cursor=pointer]:
+          - img [ref=e106]
+          - generic [ref=e108]:
+            - generic [ref=e109]: Search
+            - generic [ref=e110]: Ctrl K
+        - generic [ref=e111]:
+          - button "Switch to the light theme" [ref=e112]:
+            - img [ref=e113]
+          - generic [ref=e115]:
+            - group "Language" [ref=e116]:
+              - button "中" [ref=e117]
+              - button "EN" [pressed] [ref=e118]
+            - generic "Live" [ref=e119]:
+              - generic [ref=e120]: Live
+      - main [ref=e121]:
+        - generic [ref=e122]:
+          - generic [ref=e123]:
+            - complementary "Projects" [ref=e124]:
+              - generic [ref=e125]:
+                - generic [ref=e126]:
+                  - text: Workspace
+                  - heading "Projects" [level=1] [ref=e127]
+                - button "New project" [ref=e128] [cursor=pointer]:
+                  - img [ref=e130]
+              - button "planned Acceptance project Created in the browser acceptance flow Target date · —" [ref=e133] [cursor=pointer]:
+                - generic [ref=e134]: planned
+                - strong [ref=e136]: Acceptance project
+                - generic [ref=e137]: Created in the browser acceptance flow
+                - time [ref=e138]: Target date · —
+            - generic [ref=e141]:
+              - generic [ref=e142]:
+                - generic [ref=e143]:
+                  - generic [ref=e144]:
+                    - heading "Acceptance project" [level=1] [ref=e145]
+                    - 'generic "Freshness: Updated just now" [ref=e146]': Updated just now
+                  - paragraph [ref=e147]: Created in the browser acceptance flow
+                - generic [ref=e148]:
+                  - button "Edit project" [ref=e149] [cursor=pointer]:
+                    - generic [ref=e150]: Edit project
+                  - button "Milestones" [ref=e151] [cursor=pointer]:
+                    - generic [ref=e152]: Milestones
+                  - button "Documents" [ref=e153] [cursor=pointer]:
+                    - generic [ref=e154]: Documents
+                  - button "New issue" [ref=e155] [cursor=pointer]:
+                    - img [ref=e157]
+                    - generic [ref=e159]: New issue
+                  - button "View Work" [ref=e160] [cursor=pointer]:
+                    - img [ref=e162]
+                    - generic [ref=e164]: View Work
+              - generic [ref=e165]:
+                - generic [ref=e166]:
+                  - term [ref=e167]: Project status
+                  - definition [ref=e168]: planned
+                - generic [ref=e169]:
+                  - term [ref=e170]: Responsible Human
+                  - definition [ref=e171]: No responsible Human
+                - generic [ref=e172]:
+                  - term [ref=e173]: Target date
+                  - definition [ref=e174]: "-"
+                - generic [ref=e175]:
+                  - term [ref=e176]: Freshness
+                  - definition [ref=e177]: rev 1
+              - generic [ref=e178]:
+                - generic [ref=e179]:
+                  - strong [ref=e180]: 0%
+                  - generic [ref=e181]: 0/3 Issues completed
+                - progressbar "Project Issue completion progress" [ref=e182]
+              - tablist "Project navigation" [ref=e183]:
+                - tab "Overview" [ref=e184]:
+                  - generic [ref=e185]: Overview
+                - tab "Work" [selected] [ref=e186]:
+                  - generic [ref=e187]: Work
+                - tab "Attention" [ref=e188]:
+                  - generic [ref=e189]: Attention
+                - tab "Runs" [ref=e190]:
+                  - generic [ref=e191]: Runs
+              - generic [ref=e193]:
+                - tablist "Work" [ref=e194]:
+                  - tab "List" [ref=e195]:
+                    - generic [ref=e196]: List
+                  - tab "Board" [selected] [ref=e197]:
+                    - generic [ref=e198]: Board
+                  - tab "Backlog 0" [ref=e199]:
+                    - generic [ref=e200]: Backlog
+                    - generic [ref=e201]: "0"
+                - region "Work surfaces" [ref=e203]:
+                  - region "Issue filters" [ref=e204]:
+                    - generic [ref=e205]:
+                      - generic [ref=e206]:
+                        - text: Search
+                        - textbox "Search" [ref=e207]:
+                          - /placeholder: Search Issue title or number
+                      - generic [ref=e208]:
+                        - text: Status
+                        - combobox "Status" [ref=e209]:
+                          - option "All statuses" [selected]
+                          - option "Ready"
+                          - option "In Progress"
+                      - generic [ref=e210]:
+                        - text: Priority
+                        - combobox "Priority" [ref=e211]:
+                          - option "All priorities" [selected]
+                          - option "no priority"
+                          - option "urgent"
+                          - option "high"
+                          - option "medium"
+                          - option "low"
+                      - generic [ref=e212]:
+                        - text: Responsible Human
+                        - combobox "Responsible Human" [ref=e213]:
+                          - option "All responsible" [selected]
+                          - option "Alice"
+                      - generic [ref=e214]:
+                        - text: Project
+                        - combobox "Project" [ref=e215]:
+                          - option "All projects"
+                          - option "Acceptance project" [selected]
+                      - generic [ref=e216]:
+                        - text: Milestone
+                        - combobox "Milestone" [ref=e217]:
+                          - option "All milestones" [selected]
+                      - generic [ref=e218]:
+                        - text: Label
+                        - textbox "Label" [ref=e219]: focus
+                      - button "Clear filters" [ref=e220] [cursor=pointer]:
+                        - img [ref=e222]
+                        - generic [ref=e224]: Clear filters
+                    - generic [ref=e225]:
+                      - generic [ref=e226]:
+                        - text: Saved view
+                        - combobox "Saved view" [ref=e227]:
+                          - option "Saved view" [selected]
+                          - option "Active"
+                          - option "Backlog"
+                          - option "My Work"
+                          - option "Focused board"
+                      - generic [ref=e228]:
+                        - generic [ref=e229]: Save view name
+                        - textbox "Save view name" [ref=e230]:
+                          - /placeholder: Save view
+                        - button "Save view" [ref=e231] [cursor=pointer]:
+                          - img [ref=e233]
+                          - generic [ref=e235]: Save view
+                  - generic "Issue layout" [ref=e236]:
+                    - button "List" [active] [ref=e237] [cursor=pointer]:
+                      - img [ref=e239]
+                      - generic [ref=e241]: List
+                    - button "Board" [pressed] [ref=e242] [cursor=pointer]:
+                      - img [ref=e244]
+                      - generic [ref=e246]: Board
+                    - button "Issue density" [ref=e247] [cursor=pointer]:
+                      - generic [ref=e248]: Compact
+                  - region "Issue board" [ref=e250]:
+                    - region "Issue board columns" [ref=e251]:
+                      - group "Ready column" [ref=e252]:
+                        - generic [ref=e253]:
+                          - heading "Ready" [level=3] [ref=e255]
+                          - generic "1 items" [ref=e256]: "1"
+                        - generic [ref=e257]: Hold Control with Left or Right Arrow to move an Issue to the adjacent column.
+                        - 'article "ACC-1: Focus issue delivered through the real API" [ref=e260]':
+                          - generic [ref=e261]:
+                            - generic [ref=e262]: ACC-1
+                            - generic [ref=e263]: Ready
+                            - generic [ref=e264]: high
+                          - button "Focus issue delivered through the real API" [ref=e269] [cursor=pointer]
+                          - button "Open project Acceptance project" [ref=e271]:
+                            - img [ref=e272]
+                            - generic [ref=e274]: Acceptance project
+                          - generic [ref=e275]:
+                            - generic [ref=e276]:
+                              - generic [ref=e277]: AL
+                              - text: Alice
+                            - generic [ref=e278]:
+                              - img [ref=e279]
+                              - text: No running agent
+                          - generic [ref=e282]:
+                            - generic [ref=e283] [cursor=pointer]: acceptance
+                            - generic [ref=e284] [cursor=pointer]: focus
+                      - group "In Progress column" [ref=e287]:
+                        - generic [ref=e288]:
+                          - heading "In Progress" [level=3] [ref=e290]
+                          - generic "0 items" [ref=e291]: "0"
+                        - generic [ref=e292]: Hold Control with Left or Right Arrow to move an Issue to the adjacent column.
+                        - paragraph [ref=e293]: Drop Issue here
+          - region "Repository configuration" [ref=e296]:
+            - generic [ref=e297]:
+              - heading "Repository configuration" [level=2] [ref=e298]
+              - button "Refresh" [ref=e299] [cursor=pointer]:
+                - generic [ref=e300]: Refresh
+            - paragraph [ref=e301]: No available repositories in this Team.
+            - group [ref=e302]:
+              - generic "Register repository" [ref=e303] [cursor=pointer]
+            - group [ref=e304]:
+              - generic "Create provider connection" [ref=e305] [cursor=pointer]
+              - option "GitHub" [selected]
+```

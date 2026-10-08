@@ -1,0 +1,407 @@
+[WebServer] (node:4136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] project-work-preview-api:3201
+[WebServer] (node:50280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:54020) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:19220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]    ▲ Next.js 15.5.22
+[WebServer]    - Local:        http://localhost:3200
+[WebServer]    - Network:      http://100.77.217.65:3200
+[WebServer] 
+[WebServer]  ✓ Starting...
+[WebServer]  ✓ Ready in 7.3s
+[WebServer]  ○ Compiling / ...
+[WebServer]  ✓ Compiled / in 13.7s (10534 modules)
+
+Running 14 tests using 1 worker
+
+[WebServer]  GET / 200 in 15155ms
+(node:59520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  ○ Compiling /workbench ...
+[WebServer]  ✓ Compiled /workbench in 3.9s (10553 modules)
+[WebServer]  GET /workbench 200 in 4545ms
+[WebServer]  ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+  ✘   1 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 (7.7s)
+(node:44956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /?view=projects&project=project-1&tab=board 200 in 245ms
+  ✘   2 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (4.5s)
+(node:59272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /?view=projects&project=project-1 200 in 175ms
+  ✘   3 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 项目总览：覆盖、两次采集一致、D1 可直接比对 (4.3s)
+(node:61724) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  ○ Compiling /agents/[id] ...
+[WebServer]  ✓ Compiled /agents/[id] in 5.5s (10581 modules)
+[WebServer] (node:53504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /agents/agent%2F1 200 in 7548ms
+[WebServer]  GET /agents/agent%2F1 200 in 173ms
+[WebServer] (node:39556) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › Agent 详情：覆盖、两次采集一致、D1 可直接比对 (12.3s)
+[WebServer]  GET /?view=my-work 200 in 361ms
+[WebServer]  GET /?view=my-work 200 in 120ms
+  ✓   5 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项列表：覆盖、两次采集一致、D1 可直接比对 (6.8s)
+[WebServer]  GET /?view=my-work&workItem=work-101 200 in 133ms
+  ✘   6 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (2.7s)
+(node:57140) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  ○ Compiling /settings ...
+[WebServer]  ✓ Compiled /settings in 2.3s (10590 modules)
+[WebServer]  GET /settings?team=team-page-2 200 in 2777ms
+[WebServer]  GET /settings?team=team-page-2 200 in 147ms
+  ✓   7 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 设置：覆盖、两次采集一致、D1 可直接比对 (8.2s)
+(node:52948) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /workbench 200 in 387ms
+  ✘   8 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 (2.3s)
+(node:30940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /?view=projects&project=project-1&tab=board 200 in 399ms
+  ✘   9 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (3.5s)
+(node:63056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /?view=projects&project=project-1 200 in 113ms
+[WebServer]  GET /?view=projects&project=project-1 200 in 138ms
+  ✓  10 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 项目总览：覆盖、两次采集一致、D1 可直接比对 (6.4s)
+[WebServer]  GET /agents/agent%2F1 200 in 280ms
+[WebServer] (node:8400) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /agents/agent%2F1 200 in 170ms
+[WebServer] (node:3248) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › Agent 详情：覆盖、两次采集一致、D1 可直接比对 (3.9s)
+[WebServer]  GET /?view=my-work 200 in 110ms
+[WebServer]  GET /?view=my-work 200 in 117ms
+  ✓  12 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项列表：覆盖、两次采集一致、D1 可直接比对 (4.8s)
+[WebServer]  GET /?view=my-work&workItem=work-101 200 in 116ms
+[WebServer]  GET /?view=my-work&workItem=work-101 200 in 134ms
+  ✓  13 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (6.1s)
+[WebServer]  GET /settings?team=team-page-2 200 in 92ms
+[WebServer]  GET /settings?team=team-page-2 200 in 91ms
+  ✓  14 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 设置：覆盖、两次采集一致、D1 可直接比对 (4.3s)
+
+
+  1) [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 
+
+    Error: expect(page).toHaveScreenshot(expected) failed
+
+      258407 pixels (ratio 0.18 of all image pixels) are different.
+
+      Snapshot: workbench.png
+
+    Call log:
+      - Expect "toHaveScreenshot(workbench.png)" with timeout 15000ms
+        - verifying given screenshot expectation
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - 258407 pixels (ratio 0.18 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - captured a stable screenshot
+      - 258407 pixels (ratio 0.18 of all image pixels) are different.
+
+
+      138 |           await readyPage(page, surface)
+      139 |           await page.addStyleTag({ path: screenshotStylePath })
+    > 140 |           await expect(page).toHaveScreenshot(`${surface.slug}.png`, screenshotOptions)
+          |                              ^
+      141 |           const bytes = await page.screenshot(screenshotOptions)
+      142 |           if (surface.slug === 'board') scrollPositions.push(await page.evaluate(() => ({
+      143 |             window: { x: scrollX, y: scrollY },
+        at C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web\e2e\mocked\d0-visual-baseline.mocked.spec.ts:140:30
+
+    attachment #1: workbench (image/png) ───────────────────────────────────────────────────────────
+    Expected: e2e\baselines\d0\win32\desktop-1440x1000\workbench.png
+    Received: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\workbench-actual.png
+    Diff:     ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\workbench-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 
+
+    Error: expect(page).toHaveScreenshot(expected) failed
+
+      672164 pixels (ratio 0.47 of all image pixels) are different.
+
+      Snapshot: board.png
+
+    Call log:
+      - Expect "toHaveScreenshot(board.png)" with timeout 15000ms
+        - verifying given screenshot expectation
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - 672164 pixels (ratio 0.47 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - captured a stable screenshot
+      - 672164 pixels (ratio 0.47 of all image pixels) are different.
+
+
+      138 |           await readyPage(page, surface)
+      139 |           await page.addStyleTag({ path: screenshotStylePath })
+    > 140 |           await expect(page).toHaveScreenshot(`${surface.slug}.png`, screenshotOptions)
+          |                              ^
+      141 |           const bytes = await page.screenshot(screenshotOptions)
+      142 |           if (surface.slug === 'board') scrollPositions.push(await page.evaluate(() => ({
+      143 |             window: { x: scrollX, y: scrollY },
+        at C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web\e2e\mocked\d0-visual-baseline.mocked.spec.ts:140:30
+
+    attachment #1: board (image/png) ───────────────────────────────────────────────────────────────
+    Expected: e2e\baselines\d0\win32\desktop-1440x1000\board.png
+    Received: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\board-actual.png
+    Diff:     ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\board-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 项目总览：覆盖、两次采集一致、D1 可直接比对 
+
+    Error: expect(page).toHaveScreenshot(expected) failed
+
+      124067 pixels (ratio 0.09 of all image pixels) are different.
+
+      Snapshot: project.png
+
+    Call log:
+      - Expect "toHaveScreenshot(project.png)" with timeout 15000ms
+        - verifying given screenshot expectation
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - 124067 pixels (ratio 0.09 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - captured a stable screenshot
+      - 124067 pixels (ratio 0.09 of all image pixels) are different.
+
+
+      138 |           await readyPage(page, surface)
+      139 |           await page.addStyleTag({ path: screenshotStylePath })
+    > 140 |           await expect(page).toHaveScreenshot(`${surface.slug}.png`, screenshotOptions)
+          |                              ^
+      141 |           const bytes = await page.screenshot(screenshotOptions)
+      142 |           if (surface.slug === 'board') scrollPositions.push(await page.evaluate(() => ({
+      143 |             window: { x: scrollX, y: scrollY },
+        at C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web\e2e\mocked\d0-visual-baseline.mocked.spec.ts:140:30
+
+    attachment #1: project (image/png) ─────────────────────────────────────────────────────────────
+    Expected: e2e\baselines\d0\win32\desktop-1440x1000\project.png
+    Received: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\project-actual.png
+    Diff:     ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\project-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-13f92-觉基线-项目总览：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 
+
+    Error: page.goto: net::ERR_NO_BUFFER_SPACE at http://127.0.0.1:3200/?view=my-work&workItem=work-101
+    Call log:
+      - navigating to "http://127.0.0.1:3200/?view=my-work&workItem=work-101", waiting until "networkidle"
+
+
+      63 | async function readyPage(page: Page, surface: typeof surfaces[number]): Promise<void> {
+      64 |   await page.clock.setFixedTime(new Date(fixedTime))
+    > 65 |   await page.goto(surface.route, { waitUntil: 'networkidle' })
+         |              ^
+      66 |   await expect(page.locator(surface.ready)).toBeVisible()
+      67 |   await expect(page.locator(surface.ready)).toContainText(surface.text)
+      68 |   if (surface.slug === 'board') {
+        at readyPage (C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web\e2e\mocked\d0-visual-baseline.mocked.spec.ts:65:14)
+        at C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web\e2e\mocked\d0-visual-baseline.mocked.spec.ts:138:11
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-ec6d8-基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-ec6d8-基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-ec6d8-基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-ec6d8-基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-ec6d8-基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 
+
+    Error: expect(page).toHaveScreenshot(expected) failed
+
+      81210 pixels (ratio 0.25 of all image pixels) are different.
+
+      Snapshot: workbench.png
+
+    Call log:
+      - Expect "toHaveScreenshot(workbench.png)" with timeout 15000ms
+        - verifying given screenshot expectation
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - 81210 pixels (ratio 0.25 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - captured a stable screenshot
+      - 81210 pixels (ratio 0.25 of all image pixels) are different.
+
+
+      138 |           await readyPage(page, surface)
+      139 |           await page.addStyleTag({ path: screenshotStylePath })
+    > 140 |           await expect(page).toHaveScreenshot(`${surface.slug}.png`, screenshotOptions)
+          |                              ^
+      141 |           const bytes = await page.screenshot(screenshotOptions)
+      142 |           if (surface.slug === 'board') scrollPositions.push(await page.evaluate(() => ({
+      143 |             window: { x: scrollX, y: scrollY },
+        at C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web\e2e\mocked\d0-visual-baseline.mocked.spec.ts:140:30
+
+    attachment #1: workbench (image/png) ───────────────────────────────────────────────────────────
+    Expected: e2e\baselines\d0\win32\mobile-390x844\workbench.png
+    Received: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\workbench-actual.png
+    Diff:     ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\workbench-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-3b825-视觉基线-工作台：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 
+
+    Error: expect(page).toHaveScreenshot(expected) failed
+
+      188957 pixels (ratio 0.55 of all image pixels) are different.
+
+      Snapshot: board.png
+
+    Call log:
+      - Expect "toHaveScreenshot(board.png)" with timeout 15000ms
+        - verifying given screenshot expectation
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - 188957 pixels (ratio 0.55 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - captured a stable screenshot
+      - 188957 pixels (ratio 0.55 of all image pixels) are different.
+
+
+      138 |           await readyPage(page, surface)
+      139 |           await page.addStyleTag({ path: screenshotStylePath })
+    > 140 |           await expect(page).toHaveScreenshot(`${surface.slug}.png`, screenshotOptions)
+          |                              ^
+      141 |           const bytes = await page.screenshot(screenshotOptions)
+      142 |           if (surface.slug === 'board') scrollPositions.push(await page.evaluate(() => ({
+      143 |             window: { x: scrollX, y: scrollY },
+        at C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web\e2e\mocked\d0-visual-baseline.mocked.spec.ts:140:30
+
+    attachment #1: board (image/png) ───────────────────────────────────────────────────────────────
+    Expected: e2e\baselines\d0\win32\mobile-390x844\board.png
+    Received: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\board-actual.png
+    Diff:     ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\board-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\docs\reviews\a2\runs\a2-6f596da7\playwright\mocked-dev\output\mocked-d0-visual-baseline.-82704-色视觉基线-看板：覆盖、两次采集一致、D1-可直接比对-mobile-390x844\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6 failed
+    [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 
+    [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 
+    [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 项目总览：覆盖、两次采集一致、D1 可直接比对 
+    [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 
+    [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 
+    [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 
+  8 passed (1.9m)
+undefined
+C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\apps\web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test --config playwright.d0.config.ts
