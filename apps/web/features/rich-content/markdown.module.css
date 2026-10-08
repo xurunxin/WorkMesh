@@ -243,3 +243,91 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* D1b 工作台局部分支；其他 RichContent 调用仍消费历史槽 */
+
+:global([data-wm-token-surface="workbench"]) .root {
+  color: var(--wm-ref-text-primary);
+}
+
+:global([data-wm-token-surface="workbench"]) .root :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--wm-ref-text-primary);
+}
+
+:global([data-wm-token-surface="workbench"]) .root blockquote {
+  color: var(--wm-ref-text-secondary);
+  border-left: 3px solid var(--wm-ref-border-strong);
+}
+
+:global([data-wm-token-surface="workbench"]) .root hr {
+  border-top: 1px solid var(--wm-ref-border-default);
+}
+
+:global([data-wm-token-surface="workbench"]) .root a {
+  color: var(--wm-ref-focus);
+}
+
+:global([data-wm-token-surface="workbench"]) .root img {
+  border-radius: var(--wm-ref-radius-control);
+}
+
+:global([data-wm-token-surface="workbench"]) .root :not(pre) > code {
+  font-family: var(--wm-ref-font-mono);
+  background: var(--wm-ref-surface-secondary);
+  border: 1px solid var(--wm-ref-border-default);
+}
+
+:global([data-wm-token-surface="workbench"]) .codeFrame {
+  background: var(--wm-ref-surface-secondary);
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-md);
+}
+
+:global([data-wm-token-surface="workbench"]) .codeHeader {
+  color: var(--wm-ref-text-secondary);
+  border-bottom: 1px solid var(--wm-ref-border-default);
+  font-family: var(--wm-ref-font-sans);
+}
+
+:global([data-wm-token-surface="workbench"]) .codeCopy,
+:global([data-wm-token-surface="workbench"]) .overflowToggle {
+  color: var(--wm-ref-text-primary);
+  background: var(--wm-ref-surface-card);
+  border: 1px solid var(--wm-ref-border-strong);
+  border-radius: var(--wm-ref-radius-control);
+}
+
+:global([data-wm-token-surface="workbench"]) .codeCopy:hover,
+:global([data-wm-token-surface="workbench"]) .overflowToggle:hover { background: var(--wm-ref-surface-hover);
+}
+
+:global([data-wm-token-surface="workbench"]) .codeCopy:focus-visible,
+:global([data-wm-token-surface="workbench"]) .overflowToggle:focus-visible {
+  box-shadow: var(--wm-ref-focus-ring);
+}
+
+:global([data-wm-token-surface="workbench"]) .codePre {
+  color: var(--wm-ref-text-primary);
+  font-family: var(--wm-ref-font-mono);
+}
+
+:global([data-wm-token-surface="workbench"]) .tableFrame {
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-control);
+}
+
+:global([data-wm-token-surface="workbench"]) .tableFrame :where(th, td) {
+  border-bottom: 1px solid var(--wm-ref-border-default);
+}
+
+:global([data-wm-token-surface="workbench"]) .tableFrame th {
+  background: var(--wm-ref-surface-secondary);
+}
+
+:global([data-wm-token-surface="workbench"]) .collapsed::after {
+  background: linear-gradient(to bottom, transparent, var(--wm-ref-surface-card));
+}
+
+:global([data-wm-token-surface="workbench"]) .imageFallback {
+  color: var(--wm-ref-text-secondary);
+}

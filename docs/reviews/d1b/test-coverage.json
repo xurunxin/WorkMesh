@@ -1,7 +1,8 @@
 {
-  "kind": "workmesh.d1b.acceptance-map",
-  "historicalSource": "docs/reviews/r1/test-coverage.json",
-  "feature": {
+  "currentPlanID": "doc:nnchKV-O25SWiYsj3hXgm",
+  "source": "docs/reviews/r1/test-coverage.json",
+  "sourceSha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41",
+  "historicalAcceptance": {
     "seqNum": 21,
     "id": "2j2sxT5wJ-l001efH_meJ",
     "owner": "D1b 执行者",
@@ -11,32 +12,30 @@
         "text": "旧 token 仍有消费方时禁止删除，静态断言守住。",
         "originalChecked": false,
         "target": 21,
-        "testFile": "apps/web/features/navigation/theme.test.tsx",
-        "caseName": "有消费时删除必失败；阶段账本覆盖未知引用与缺失定义",
-        "status": "待阶段实现/运行及实际评审；本轮文档静态核验不替代功能验收",
+        "testFile": "apps/web/e2e/theme-unification.spec.ts",
+        "caseName": "#21 原验收1：旧 token 仍有消费方时禁止删除，静态断言守住。",
+        "status": "待执行者新增/扩展断言，未实现",
         "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
         "matrixCases": [
           "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理"
         ],
         "owner": "D1b 执行者",
-        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
-        "historicalTarget": "apps/web/e2e/theme-unification.spec.ts"
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ"
       },
       {
         "id": "todo-21-T2",
         "text": "每个面迁移后与 D0 基线做 diff 并评审，保留变更前后证据。",
         "originalChecked": false,
         "target": 21,
-        "testFile": "apps/web/e2e/mocked/d1b-token-migration.mocked.spec.ts",
-        "caseName": "矩阵每行四个明暗视口及适用状态，前后图、固定 D0 diff、人工评审",
-        "status": "待阶段实现/运行及实际评审；本轮文档静态核验不替代功能验收",
+        "testFile": "apps/web/e2e/theme-unification.spec.ts",
+        "caseName": "#21 原验收2：每个面迁移后与 D0 基线做 diff 并评审，保留变更前后证据。",
+        "status": "待执行者新增/扩展断言，未实现",
         "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
         "matrixCases": [
           "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理"
         ],
         "owner": "D1b 执行者",
-        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
-        "historicalTarget": "apps/web/e2e/theme-unification.spec.ts"
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ"
       },
       {
         "id": "todo-21-T3",
@@ -44,47 +43,44 @@
         "originalChecked": false,
         "target": 21,
         "testFile": "apps/web/e2e/theme-unification.spec.ts",
-        "caseName": "保留原测试并加入真实明暗/子树/compact/派生样式和往返",
-        "status": "待阶段实现/运行及实际评审；本轮文档静态核验不替代功能验收",
+        "caseName": "#21 原验收3：既有 theme-unification.spec.ts 全绿。",
+        "status": "待执行者新增/扩展断言，未实现",
         "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
         "matrixCases": [
           "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理"
         ],
         "owner": "D1b 执行者",
-        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
-        "historicalTarget": "apps/web/e2e/theme-unification.spec.ts"
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ"
       },
       {
         "id": "todo-21-T4",
         "text": "色彩位移在 ADR 中有可辩护且可追溯的理由。",
         "originalChecked": false,
         "target": 21,
-        "testFile": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
-        "caseName": "实际逐槽来源、设计理由与每面差异审查",
-        "status": "待阶段实现/运行及实际评审；本轮文档静态核验不替代功能验收",
+        "testFile": "apps/web/e2e/theme-unification.spec.ts",
+        "caseName": "#21 原验收4：色彩位移在 ADR 中有可辩护且可追溯的理由。",
+        "status": "待执行者新增/扩展断言，未实现",
         "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
         "matrixCases": [
           "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理"
         ],
         "owner": "D1b 执行者",
-        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
-        "historicalTarget": "apps/web/e2e/theme-unification.spec.ts"
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ"
       },
       {
         "id": "todo-21-T5",
         "text": "旧值删除后无残留消费方，必需回归检查通过。",
         "originalChecked": false,
         "target": 21,
-        "testFile": "apps/web/features/navigation/theme.test.tsx",
-        "caseName": "全扫描零旧消费及依赖再删；清理后全矩阵和五项必需检查",
-        "status": "待阶段实现/运行及实际评审；本轮文档静态核验不替代功能验收",
+        "testFile": "apps/web/e2e/theme-unification.spec.ts",
+        "caseName": "#21 原验收5：旧值删除后无残留消费方，必需回归检查通过。",
+        "status": "待执行者新增/扩展断言，未实现",
         "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
         "matrixCases": [
           "R1-21-1 七类界面逐面D0 diff和人工评审、明暗切换/computed消费都通过；旧消费非零禁止清理"
         ],
         "owner": "D1b 执行者",
-        "targetTodoId": "2j2sxT5wJ-l001efH_meJ",
-        "historicalTarget": "apps/web/e2e/theme-unification.spec.ts"
+        "targetTodoId": "2j2sxT5wJ-l001efH_meJ"
       }
     ],
     "originalDoD": [
@@ -199,50 +195,93 @@
       }
     ]
   },
-  "stageContract": "docs/reviews/d1b/stage-assertion-design.md",
-  "surfaceMatrix": "docs/reviews/d1b/surface-matrix.json",
+  "nineCategories": [
+    "happy path",
+    "unauthorized actor",
+    "invalid state transition",
+    "duplicate idempotency key",
+    "stale revision",
+    "transaction failure",
+    "webhook/job replay",
+    "concurrent request",
+    "server restart/outbox recovery"
+  ],
+  "currentTests": [
+    {
+      "id": "todo-21-T1",
+      "text": "旧 token 仍有消费方时禁止删除，静态断言守住。",
+      "targets": [
+        "apps/web/features/navigation/theme.test.tsx",
+        "docs/reviews/d1b/phase-protection.md"
+      ],
+      "result": "未实现/未运行",
+      "humanReview": "按阶段独审"
+    },
+    {
+      "id": "todo-21-T2",
+      "text": "每个面迁移后与 D0 基线做 diff 并评审，保留变更前后证据。",
+      "targets": [
+        "apps/web/e2e/theme-unification.spec.ts",
+        "docs/reviews/d1b/surface-matrix.json"
+      ],
+      "result": "未实现/未运行",
+      "humanReview": "所有适用矩阵行逐面实际视觉评审"
+    },
+    {
+      "id": "todo-21-T3",
+      "text": "既有 theme-unification.spec.ts 全绿。",
+      "targets": [
+        "apps/web/e2e/theme-unification.spec.ts"
+      ],
+      "result": "未实现/未运行",
+      "humanReview": "按阶段独审"
+    },
+    {
+      "id": "todo-21-T4",
+      "text": "色彩位移在 ADR 中有可辩护且可追溯的理由。",
+      "targets": [
+        "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+        "apps/web/features/navigation/theme-token-migration.json"
+      ],
+      "result": "未实现/未运行",
+      "humanReview": "按阶段独审"
+    },
+    {
+      "id": "todo-21-T5",
+      "text": "旧值删除后无残留消费方，必需回归检查通过。",
+      "targets": [
+        "apps/web/features/navigation/theme.test.tsx",
+        "apps/web/e2e/theme-unification.spec.ts"
+      ],
+      "result": "未实现/未运行",
+      "humanReview": "按阶段独审"
+    }
+  ],
+  "directions": {
+    "visual": "D0 为固定参数历史对比；设计差异保留并实际评审，不要求重构零差异",
+    "security": "九类适用性沿用；授权 UI 可见性和真实状态仍需既有回归，不能因无新领域命令跳过",
+    "scope": "不移入后续任务业务功能"
+  },
   "requiredChecks": [
     {
       "command": "pnpm lint",
-      "status": "未运行；本轮仅文档前置，不冒充完成"
+      "result": "未运行"
     },
     {
       "command": "pnpm typecheck",
-      "status": "未运行；本轮仅文档前置，不冒充完成"
+      "result": "未运行"
     },
     {
       "command": "pnpm test",
-      "status": "未运行；本轮仅文档前置，不冒充完成"
+      "result": "未运行"
     },
     {
       "command": "pnpm test:integration",
-      "status": "未运行；本轮仅文档前置，不冒充完成"
+      "result": "未运行"
     },
     {
       "command": "pnpm test:e2e",
-      "status": "未运行；本轮仅文档前置，不冒充完成"
-    }
-  ],
-  "followups": [
-    {
-      "seqNum": 12,
-      "responsibility": "卡片结构、Attention 单暖色及真实状态断言",
-      "status": "未放行；本轮仅同步方向条款"
-    },
-    {
-      "seqNum": 13,
-      "responsibility": "三栏布局、分隔线、持久化与导航",
-      "status": "未放行；本轮仅同步方向条款"
-    },
-    {
-      "seqNum": 14,
-      "responsibility": "状态化菜单、受治理命令及确认",
-      "status": "未放行；本轮仅同步方向条款"
-    },
-    {
-      "seqNum": 22,
-      "responsibility": "拖拽、多选逐项恢复与本地草稿",
-      "status": "未放行；本轮仅同步方向条款"
+      "result": "未运行"
     }
   ]
 }

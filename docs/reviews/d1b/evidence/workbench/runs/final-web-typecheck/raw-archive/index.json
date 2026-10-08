@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "archive": {
+    "path": "raw.zip",
+    "bytes": 350,
+    "sha256": "a0845bf7f5029385370111e861102b658ef2a72ad01fd37cad9728a26ddc4c93"
+  },
+  "entries": [
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/workbench/runs/final-web-typecheck/stdout.log",
+      "version": "final-web-typecheck",
+      "byteKind": "worktree",
+      "bytes": 120,
+      "sha256": "437ffb9240a68a3e663c35bcbe209e1c42fa4eeb0a1d0b4ea0c38410f1af1d90",
+      "member": "bytes/437ffb9240a68a3e663c35bcbe209e1c42fa4eeb0a1d0b4ea0c38410f1af1d90",
+      "sourceCommit": null,
+      "sourceBlobId": "d29135ac8a58f3f2a817e6775e00c41fbd9abd4a",
+      "provenance": "真实运行原件；Git blob 已实际写入并逐字节读回，来源提交尚未产生"
+    }
+  ],
+  "policy": "不 trim、无损、自包含；逻辑原路径按 version/byteKind 解析；空原件留在原路径"
+}

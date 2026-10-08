@@ -1,51 +1,91 @@
-# D1b 实施前置交接
+# D1b 工作台首面恢复交付
 
-本轮完成已审计划第 1 步的可审前置包，尚未进行界面迁移或清旧。
-按计划第 1 步“另一 agent 针对完整文档独审后由 Chief 确认；此时才允许产品编码”停在此关口。
-12:31 的规划放行持续有效；该放行不代表本轮全量映射、规格同步和阶段保护设计已完成审查。
+当前只交付工作台首面，停在本 todo 的平台独立阶段审查与人工视觉评审。
+未推进看板或其他面，未清旧，未放行 #12，未将整项合入 main。
 
-## 精确输入与计划绑定
+## 历史、授权与本轮整合
 
-本轮 `mcp__tds__git ls-remote origin refs/heads/main` 实读 main 为
-`1078bbcd527550bfabee73093b7ffd0032d3fd24`，与工作树基点相同，未发现新增主线输入。
-已审提交 `40cc065edabdc2a6fbdc72f728fd72259e58811c` 对该基点仅增加四份规划文件；
-本轮按该提交 Git blob 原字节恢复计划、历史绑定、来源和 115 行矩阵，保留其历史字段。
-当前执行绑定单列在 [execution-binding.json](execution-binding.json)。
+本轮实读远端 main 仍为 `1078bbcd527550bfabee73093b7ffd0032d3fd24`，
+旧分支 checkpoint 为 `d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5`，父为已独审前置
+`0ebb986ee963e69473a3be2779717d0e7a1da948`。
+用户确认 13:02 前置三项 blocking 已闭合、13:03 工作台首面已放行，本轮继承这些授权。
 
-本轮 `todos(id)` 完整规格返回 Chief 的交接计划 ID `doc:nnchKV-O25SWiYsj3hXgm`；
-`conversation(id)` 仅返回本次新构建消息，没有 savedplan 字段或计划全文。
-`currentPlanID` 保留 null，`handoffPlanID` 标明交接来源；没有把交接链接冒充后端文档全文读取。
-计划正文仍精确对应已审 Git blob，未修改计划或另存新版本；需 Chief 对当前平台 ID/正文绑定复核。
+当前分支从 `4067ecd3573d392114c8adb51534bcdb3a52dfb4` 正常 merge checkpoint，
+保留历史关系；14 个重叠路径、12 个文档/映射冲突已解决。
+活动实现、映射和账本恢复 checkpoint；前置绑定继承已独审 0ebb986，首面成果尚待独审；
+4067ecd 新增的来源指针、断言设计和历史执行记录保留，补充证据中的 accent 漏项与门禁循环已修正。
+精确决议见 [integration.json](recovery/integration.json)。
+这是本地待平台提交/推送的整合，不声称远端已更新或 main 已合入。
 
-## 本轮范围和文件
+已审完整计划 `40cc065edabdc2a6fbdc72f728fd72259e58811c` 的正文不变，
+UTF-8 SHA-256 为 `91a9eb7451ff2799754d4207863c67cff09112d1470b5ad1049066309f8dbdb8`。
+本轮 conversation 没有返回当前 savedplan 字段，执行绑定如实保留 currentPlanID=null，
+继承已审正文、交接 ID 和授权，不重新保存或重新确认。
+[execution-binding.json](execution-binding.json) 是当前绑定；
+plan-binding/plan-source 保留前置时的历史字段，旧冻结前置脚本不作为当前产品阶段验收。
 
-- [theme-token-migration.json](../../../apps/web/features/navigation/theme-token-migration.json)：
-  115 旧槽、175 历史声明的显式目标/作用域/来源/依赖；114 目标，唯一合并为 muted/text-muted。
-  增补候选→正式 danger、独立 dim、六种非 wm 变量迁移和三个实例变量。
-- [consumer-inventory.json](consumer-inventory.json)：生产源码词法引用及 Git/工作区双字节指纹。
-  共 8 个有引用文件、2,079 个引用，包含 token 文件内部组件和声明依赖；不是 AST 扫描已通过。
-- [stage-assertion-design.md](stage-assertion-design.md)：阶段账本身份、作用域隔离、依赖解析和负向断言设计。
-- [test-coverage.json](test-coverage.json)：五项原测试、原 DoD、九类适用性及后续卡责任。
-- ADR 0077 与规格 12/13/14/21/22：同步三项裁定和大胆重构方向；保留原历史来源及后续功能责任。
-- [verify-preflight.mjs](verify-preflight.mjs)：可重新运行的离线文档校验；不替代功能测试。
+## 首面实现和材料
 
-普通 card 的暖色是对参考 elevated 值的设计应用，危险色是用户采纳候选；
-映射均给出准确来源，不声称参考普通卡片或错误态实测。暗色同值重绑定的设计图
-保留原值；新公式只依赖新名称。该映射尚未导入产品或改动 token CSS。
+工作台局部消费迁入新槽；仅本面使用受控共享和 Markdown 分支。
+并存槽、暗色同值重绑定与主题/密度派生公式已恢复；旧声明仍保留。
+执行账本有 2,316 项、320 个受控新增项、1,854 个剩余旧依赖表达式；
+清旧和下一面门禁均为 false。这些是表达式数，不冒作最终消费清零。
 
-## 验证与门禁
+当前观察与证据关联见 [current-stage.json](recovery/current-stage.json)。
+[视觉评审页](workbench-visual-review.html) 提供 32 组原始前后图和 30 组固定比较器差异，
+含桌面/移动、明暗、根跳转、就绪/创建/加载/错误/空态/富文本/portal。
+在变更评审中点击该 HTML 文件的预览按钮即可查看。
+D0 原件保留；threshold=0.005、maxDiffPixels=0 未放宽。
+比较器结果和技术检查均不代表人工颜色接受，所有人工意见仍待实际评审。
 
-静态校验命令：`node docs/reviews/d1b/verify-preflight.mjs`。
-实际结果和执行绑定将归档到 `evidence/preflight/`；独审意见另列，未记录的检查不填通过。
+## 证据审计及实际验证
 
-`pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:e2e`
-本轮未运行。产品代码未变，本轮只做相称的文档/映射静态核验；最终五项检查、
-实际明暗与 D0 前后 diff、人工视觉评审、latest Required CI、成果独审、合入和 Chief 确认均待实施。
-无服务启动，无数据库/凭据操作，无服务恢复或清理；无 migration、API 或事件变更。
+[historical-run-audit.json](recovery/historical-run-audit.json) 核对 14 次历史运行、
+372 份 checkpoint 证据（156 PNG、19 ZIP）、11 个既有原始归档及 stdout/stderr 哈希。
+原 Git blob 和本轮检出工作区字节分别记录在
+[checkpoint-artifacts.json](recovery/checkpoint-artifacts.json)。
 
-## 评审入口与后续动作
+原 source 归档脚本对混合 CRLF/LF 恢复失败；本轮只读原工作树，
+逐项与运行记录的字节数/SHA-256 精确匹配后归档，共 10,946 个源码字节版本、
+774 个唯一成员，实际缺失对象/字节为 0。新 [源码索引](recovery/source-inputs-index.json)
+与 ZIP 自包含，不伪称 checkpoint 原已有该包。
+15 个原始日志/上下文路径另以 Git/工作区双字节无损包装，
+[raw-evidence-index.json](recovery/raw-evidence-index.json) 精确映射旧路径/版本/byteKind；
+没有 trim 原件或改 CI。失败 PNG/trace 原件仍保留。
 
-在变更评审中点击本文件的预览按钮可查看本包。先审完整映射、阶段断言设计、
-规格与精确计划绑定；Chief 确认后才新增并存定义与扫描器，并从工作台的全部矩阵组合开始。
-每面真实明暗、导航/焦点、前后图和人工评审完成后才进入下一面。
-旧值清理门禁全为 false；D1b 尚未验收，D2 等后续卡尚未放行。
+| 检查 | 实际结果与边界 |
+| --- | --- |
+| 本轮主题单测 | 11/11 通过，执行前后输入相同；最终运行见 recovery-theme-unit-final/execution.json |
+| 本轮阶段账本自检 | 7 类负例拒绝，清旧/下一面均不放行；同时由上述单测覆盖 |
+| 本轮恢复核验 | 372 证据、双字节源码包、32 比较和原 D0 哈希通过 |
+| 历史 before-capture-c / after-capture | 各 32/32；不是本轮新采集，前两次 before 首败保留 |
+| 历史 final-stage | 52/52：含首面 32 项与桌面原主题 20 项；移动原主题被阶段配置排除，不能证明旧失败已修 |
+| 历史 lint/typecheck/unit | 均退出 0；单测 1,658 通过、2 个 Windows 条件跳过，不冒本轮新组合验收 |
+| 历史 theme-contract | 32 通过、8 失败，退出 1；完整失败仍保留 |
+| integration / 全量 E2E / latest Required CI | 本轮未运行，后置；不得声明 D1b 已完成 |
+
+8 个原主题失败中，6 个在第 84 行的首个文本 locator 可见性断言失败；
+2 个在第 94 行点击移动端隐藏 theme-toggle 超时。
+移动 CSS 已隐藏 wm-shell-actions，支持后者定位；六项的逐元素原因未重新运行确认。
+这属于现有套件移动使用假设与隐藏控件/文本的冲突，保持未解决状态，
+未改断言、超时或产品路由去伪造通过。证据精确位置见 raw-source-map。
+
+本轮产品相对 checkpoint 只删除 fixture、Markdown CSS 与 tokens.css 末尾各一个空行，
+没有更改样式值、表达式或功能；因此补验相称的账本/主题单测与归档，
+没有重复采图或把历史完整回归重算为当前通过。运行留证器对已归档原件改为
+绑定归档 ZIP/索引；未知缺失输入仍拒绝，不丢弃历史输入保护。
+无 migration、API 或事件改变，也没有新增 TA 实现或开工前置。
+
+## 资源收尾与复核入口
+
+本轮没有创建 Docker 容器、镜像或测试服务；3200/3201 未发现监听。
+五个临时脚本及一个诊断目录的原字节先归档再按精确路径删除，
+未使用 global prune。测试子进程结束，宿主配置未改变。
+当前与旧工作树、锁文件依赖继续保留；旧工作树须实际合入 main、证据保全且无人运行后再清理，
+不 force 抹 dirty。逐路径结果见 [resource-cleanup.json](recovery/resource-cleanup.json)。
+
+可运行 `node docs/reviews/d1b/recovery/verify-recovery.mjs` 复核归档，
+以及 `node docs/reviews/d1b/stage-ledger.mjs --self-test` 复核阶段保护。
+当前范围与历史检查的限制如上；下一步仅平台独立阶段审查和实际人工视觉评审。
+
+最终定向补验：`recovery-theme-unit-final` 于 2026-10-08T09:18:05.425Z 完成，退出码 0、11/11 通过、无 skip、运行前后源码指纹一致；stdout 无损 ZIP 与自包含索引保存于该 run 的 `raw-archive/`。恢复验证器另逐项检查本轮受测产品源码、映射及阶段断言与运行记录的 Git blob / 工作区字节，报告补齐不冒作新视觉执行。

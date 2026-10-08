@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "archive": {
+    "path": "temporary-evidence.zip",
+    "bytes": 18025,
+    "sha256": "087b7ed83aecd278ca9b589e748c8025ceebf9bc4312928cb811e93d71487b6c"
+  },
+  "entries": [
+    {
+      "logicalPath": ".tmp/d1b-package-raw.mjs",
+      "version": "recovery-temporary-snapshot",
+      "byteKind": "worktree",
+      "bytes": 2770,
+      "sha256": "26008e24a694a9bdc470ff42dea8abbeb6f7d5278b05de9b0e9d09ec86605712",
+      "member": "bytes/26008e24a694a9bdc470ff42dea8abbeb6f7d5278b05de9b0e9d09ec86605712",
+      "sourceCommit": null,
+      "sourceBlobId": "fa5cbef2ab2ea79696db84228a5cca754beb8a31",
+      "provenance": "清理前临时脚本/诊断原字节；实际写入及读回Git对象，未trim"
+    },
+    {
+      "logicalPath": ".tmp/d1b-package-temporaries.mjs",
+      "version": "recovery-temporary-snapshot",
+      "byteKind": "worktree",
+      "bytes": 1810,
+      "sha256": "fc48ee7b48a1b9751db8ac073d602101189db4dd20f0cc4d4eb46e808e6b80b8",
+      "member": "bytes/fc48ee7b48a1b9751db8ac073d602101189db4dd20f0cc4d4eb46e808e6b80b8",
+      "sourceCommit": null,
+      "sourceBlobId": "e553ff786a667ee24c7aa73fdaf65f81ed05bdd3",
+      "provenance": "清理前临时脚本/诊断原字节；实际写入及读回Git对象，未trim"
+    },
+    {
+      "logicalPath": ".tmp/d1b-preflight.py",
+      "version": "recovery-temporary-snapshot",
+      "byteKind": "worktree",
+      "bytes": 19871,
+      "sha256": "5777597160545ce2497ed5bef0f6b548010884e7db1f62e60e6db8c8a5da68cd",
+      "member": "bytes/5777597160545ce2497ed5bef0f6b548010884e7db1f62e60e6db8c8a5da68cd",
+      "sourceCommit": null,
+      "sourceBlobId": "975613a3420cf372454b2594ac0020a7450bcadc",
+      "provenance": "清理前临时脚本/诊断原字节；实际写入及读回Git对象，未trim"
+    },
+    {
+      "logicalPath": ".tmp/d1b-recover-evidence.mjs",
+      "version": "recovery-temporary-snapshot",
+      "byteKind": "worktree",
+      "bytes": 6564,
+      "sha256": "4132194fad4fbdf38227ae294d41a4af1ba401dd959e38a2b8d8be2603305591",
+      "member": "bytes/4132194fad4fbdf38227ae294d41a4af1ba401dd959e38a2b8d8be2603305591",
+      "sourceCommit": null,
+      "sourceBlobId": "833fc239207d759ebdd1cbdcf7e387f11927f831",
+      "provenance": "清理前临时脚本/诊断原字节；实际写入及读回Git对象，未trim"
+    },
+    {
+      "logicalPath": ".tmp/d1b-run-preflight.py",
+      "version": "recovery-temporary-snapshot",
+      "byteKind": "worktree",
+      "bytes": 2564,
+      "sha256": "747096590053d6d34a89088db0ff22bb731a08a5b31d03c8eddfc535fcb8c7ca",
+      "member": "bytes/747096590053d6d34a89088db0ff22bb731a08a5b31d03c8eddfc535fcb8c7ca",
+      "sourceCommit": null,
+      "sourceBlobId": "4db870797ffb3274ed234ee31571c2a60fc7c33f",
+      "provenance": "清理前临时脚本/诊断原字节；实际写入及读回Git对象，未trim"
+    },
+    {
+      "logicalPath": ".tmp/d1b-recovery/diff-check-candidate.stdout",
+      "version": "recovery-temporary-snapshot",
+      "byteKind": "worktree",
+      "bytes": 19769,
+      "sha256": "5b42767408a294c41d70c7318c977a447089b83e9d7679e866c485d3022a3e95",
+      "member": "bytes/5b42767408a294c41d70c7318c977a447089b83e9d7679e866c485d3022a3e95",
+      "sourceCommit": null,
+      "sourceBlobId": "17ba7888b6fb7d92c3289a79482d8075511452eb",
+      "provenance": "清理前临时脚本/诊断原字节；实际写入及读回Git对象，未trim"
+    },
+    {
+      "logicalPath": ".tmp/d1b-recovery/diff-check-original.stdout",
+      "version": "recovery-temporary-snapshot",
+      "byteKind": "worktree",
+      "bytes": 19769,
+      "sha256": "5b42767408a294c41d70c7318c977a447089b83e9d7679e866c485d3022a3e95",
+      "member": "bytes/5b42767408a294c41d70c7318c977a447089b83e9d7679e866c485d3022a3e95",
+      "sourceCommit": null,
+      "sourceBlobId": "17ba7888b6fb7d92c3289a79482d8075511452eb",
+      "provenance": "清理前临时脚本/诊断原字节；实际写入及读回Git对象，未trim"
+    }
+  ],
+  "policy": "收尾清理前保全临时实现脚本/初始diff诊断，无凭据或服务环境"
+}

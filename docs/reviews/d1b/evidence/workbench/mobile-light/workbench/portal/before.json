@@ -1,0 +1,354 @@
+{
+  "derived": null,
+  "phase": "before",
+  "row": "workbench",
+  "state": "portal",
+  "actualURL": "http://127.0.0.1:3200/workbench",
+  "theme": "light",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "fixedTime": "2026-08-22T09:30:00.000Z",
+  "browserVersion": "149.0.7827.55",
+  "launchArguments": [
+    "--disable-gpu",
+    "--disable-skia-runtime-opts",
+    "--force-color-profile=srgb",
+    "--disable-partial-raster"
+  ],
+  "screenshot": {
+    "sha256": "90483c092bba05db30c7267b3fc861edaceb6e1e7dc93908d53aa71a8c49bdcc",
+    "bytes": 31651
+  },
+  "styles": {
+    "html": {
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(0, 0, 0)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(0, 0, 0) none 3px",
+      "gradient": "none",
+      "display": "block",
+      "gridColumns": "none",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "top": 0,
+        "right": 390,
+        "bottom": 844,
+        "left": 0
+      }
+    },
+    "body": {
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(0, 0, 0)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(0, 0, 0) none 3px",
+      "gradient": "none",
+      "display": "block",
+      "gridColumns": "none",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "top": 0,
+        "right": 390,
+        "bottom": 844,
+        "left": 0
+      }
+    },
+    ".app-sidebar": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgb(242, 242, 239)",
+      "border": "rgb(37, 37, 34) rgb(227, 227, 223) rgb(37, 37, 34) rgb(37, 37, 34)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "gradient": "none",
+      "display": "none",
+      "gridColumns": "none",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
+    },
+    ".wm-shell-header": {
+      "color": "rgb(37, 37, 34)",
+      "background": "color(srgb 0.968627 0.968627 0.960784 / 0.92)",
+      "border": "rgb(37, 37, 34) rgb(37, 37, 34) rgb(227, 227, 223)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "gradient": "none",
+      "display": "flex",
+      "gridColumns": "none",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 66.78125,
+        "top": 0,
+        "right": 390,
+        "bottom": 66.78125,
+        "left": 0
+      }
+    },
+    ".workbench-page": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(37, 37, 34)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "gradient": "none",
+      "display": "grid",
+      "gridColumns": "390px",
+      "rect": {
+        "x": 0,
+        "y": 66.78125,
+        "width": 390,
+        "height": 1303.46875,
+        "top": 66.78125,
+        "right": 390,
+        "bottom": 1370.25,
+        "left": 0
+      }
+    },
+    "[data-testid=\"conversation-workbench\"]": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgb(247, 247, 245)",
+      "border": "rgb(37, 37, 34)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "gradient": "none",
+      "display": "flex",
+      "gridColumns": "minmax(210px, 250px) minmax(0px, 1fr)",
+      "rect": {
+        "x": 0,
+        "y": 66.78125,
+        "width": 390,
+        "height": 1303.46875,
+        "top": 66.78125,
+        "right": 390,
+        "bottom": 1370.25,
+        "left": 0
+      }
+    },
+    "[data-testid=\"conversation-workbench\"] > aside": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgb(242, 242, 239)",
+      "border": "rgb(37, 37, 34) rgb(37, 37, 34) rgb(227, 227, 223)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "gradient": "none",
+      "display": "flex",
+      "gridColumns": "none",
+      "rect": {
+        "x": 0,
+        "y": 66.78125,
+        "width": 390,
+        "height": 336.359375,
+        "top": 66.78125,
+        "right": 390,
+        "bottom": 403.140625,
+        "left": 0
+      }
+    },
+    "[aria-controls=\"workbench-create-form\"]": {
+      "color": "rgb(255, 255, 255)",
+      "background": "rgb(37, 99, 235)",
+      "border": "rgba(0, 0, 0, 0)",
+      "radius": "9px",
+      "shadow": "none",
+      "outline": "rgb(255, 255, 255) none 3px",
+      "gradient": "linear-gradient(135deg, rgb(37, 99, 235), rgb(120, 57, 238))",
+      "display": "flex",
+      "gridColumns": "none",
+      "rect": {
+        "x": 14.390625,
+        "y": 155.375,
+        "width": 361.21875,
+        "height": 44,
+        "top": 155.375,
+        "right": 375.609375,
+        "bottom": 199.375,
+        "left": 14.390625
+      }
+    },
+    "[data-testid=\"rich-markdown\"]": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(37, 37, 34)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "gradient": "none",
+      "display": "block",
+      "gridColumns": "none",
+      "rect": {
+        "x": 32.984375,
+        "y": 547.296875,
+        "width": 324.03125,
+        "height": 22.75,
+        "top": 547.296875,
+        "right": 357.015625,
+        "bottom": 570.046875,
+        "left": 32.984375
+      }
+    },
+    "[role=\"alert\"]": null,
+    ".wm-dialog": {
+      "color": "rgb(37, 37, 34)",
+      "background": "rgb(255, 255, 255)",
+      "border": "rgb(37, 37, 34)",
+      "radius": "0px",
+      "shadow": "rgba(17, 17, 17, 0.08) 0px 8px 28px 0px, rgba(17, 17, 17, 0.14) 0px 32px 80px 0px",
+      "outline": "rgb(37, 37, 34) none 3px",
+      "gradient": "none",
+      "display": "block",
+      "gridColumns": "none",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "top": 0,
+        "right": 390,
+        "bottom": 844,
+        "left": 0
+      }
+    },
+    ".wm-overlay": {
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(17, 17, 17, 0.4)",
+      "border": "rgb(0, 0, 0)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(0, 0, 0) none 3px",
+      "gradient": "none",
+      "display": "grid",
+      "gridColumns": "390px",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "top": 0,
+        "right": 390,
+        "bottom": 844,
+        "left": 0
+      }
+    },
+    ".wm-toast-viewport": null
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agent-sessions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/conversations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agent-sessions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/llm-connections",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/conversations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/llm-connections",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/llm-connections/llm-d0",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/conversations/conversation-d0",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/conversations/conversation-d0/messages",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/conversations/conversation-d0/turns",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agent-sessions/session-1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/llm-connections/llm-d0",
+      "status": 200
+    }
+  ],
+  "failures": [],
+  "humanReview": "待人工视觉评审",
+  "checks": {
+    "screenshot": true,
+    "readyOrState": true,
+    "keyboardCreate": false,
+    "errorRecovery": false,
+    "themeNavigation": false,
+    "portalCloseAndFocus": true,
+    "derived": false
+  },
+  "finalURL": "http://127.0.0.1:3200/workbench",
+  "finalTheme": "light"
+}

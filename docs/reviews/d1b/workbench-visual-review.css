@@ -1,0 +1,21 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #faf7f2; color: #1c1917; font: 16px/1.55 system-ui, sans-serif; }
+header, main { max-width: 1800px; margin: auto; padding: 24px; }
+header { border-bottom: 1px solid #e2dbd1; }
+h1 { margin: 4px 0 12px; font-size: 32px; }
+p { margin: 8px 0; }
+a { color: #4f46e5; }
+.controls { position: sticky; top: 0; background: #faf7f2; border-bottom: 1px solid #e2dbd1; padding: 12px 0; z-index: 1; }
+label { display: grid; gap: 6px; max-width: 720px; font-weight: 600; }
+select { padding: 9px; color: #1c1917; border: 1px solid #cec6bb; border-radius: 6px; background: #fdfaf6; font: inherit; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+figure { margin: 20px 0; border: 1px solid #e2dbd1; background: #fdfaf6; }
+figcaption { padding: 10px; font-weight: 600; }
+figure img { display: block; width: 100%; height: auto; }
+figure a { display: block; }
+details, .notes { padding: 18px; margin: 18px 0; background: #fdfaf6; border: 1px solid #e2dbd1; border-radius: 8px; }
+summary { cursor: pointer; font-weight: 600; }
+#diff { display: block; max-width: 100%; margin-top: 12px; }
+#diff[hidden] { display: none; }
+:focus-visible { outline: 3px solid #6366f1; outline-offset: 3px; }
+@media (max-width: 760px) { .pair { grid-template-columns: 1fr; } header, main { padding: 16px; } }

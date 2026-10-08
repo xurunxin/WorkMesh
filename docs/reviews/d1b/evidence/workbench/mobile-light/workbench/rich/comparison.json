@@ -1,0 +1,32 @@
+{
+  "variant": "mobile-light",
+  "rowID": "workbench",
+  "state": "rich",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/workbench/mobile-light/workbench/rich/before.png",
+      "bytes": 45898,
+      "sha256": "7fc66c7e0dc3a22c0d4f05b4b67f328d9baa69545690e714120874e1e907142e"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/workbench/mobile-light/workbench/rich/after.png",
+      "bytes": 49203,
+      "sha256": "e486483e48091e745eb7554d66f45784277d9f278e0538ca34aec7fa29b833ec"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "276652 pixels (ratio 0.85 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/workbench/mobile-light/workbench/rich/diff.png",
+      "bytes": 25888,
+      "sha256": "3b08e53142d2cd3143ea0328c4d371ab9c06ef34feac491bc7f1558c63be2d7d"
+    }
+  },
+  "historical": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/workbench/mobile-light/workbench/rich/before.json",
+    "after": "docs/reviews/d1b/evidence/workbench/mobile-light/workbench/rich/after.json"
+  },
+  "humanReview": "待人工视觉评审",
+  "disposition": "保留真实设计差异；比较器结果不代表颜色验收"
+}

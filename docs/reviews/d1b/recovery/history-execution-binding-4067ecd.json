@@ -1,0 +1,241 @@
+{
+  "taskTodoID": "2j2sxT5wJ-l001efH_meJ",
+  "projectID": "DzkLDn6UW-IbfoTJzN9Ro",
+  "branch": "tds/conv-01a11a93-c093-7565-9084-724b6bedcade",
+  "baseCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+  "latestMain": {
+    "commit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "readMethod": "本轮 mcp__tds__git ls-remote origin refs/heads/main",
+    "matchesBase": true
+  },
+  "reviewedPlanCommit": "40cc065edabdc2a6fbdc72f728fd72259e58811c",
+  "reviewedPlanBody": {
+    "path": "docs/plan/d1b-token-consumer-migration.md",
+    "sourceCommit": "40cc065edabdc2a6fbdc72f728fd72259e58811c",
+    "gitBlob": "2d5824ffd1593db1325287d4ec92613f5e3aef51",
+    "gitBytes": 14344,
+    "gitSha256": "91a9eb7451ff2799754d4207863c67cff09112d1470b5ad1049066309f8dbdb8",
+    "worktreeBytes": 14344,
+    "worktreeSha256": "91a9eb7451ff2799754d4207863c67cff09112d1470b5ad1049066309f8dbdb8",
+    "bytesEqual": true
+  },
+  "currentPlanID": null,
+  "handoffPlanID": "doc:nnchKV-O25SWiYsj3hXgm",
+  "planVersion": null,
+  "planIDStatus": "本轮 todos(id) 的完整 Spec 实读到 Chief 的 12:31 交接 ID；conversation(id) 仅返回本次新构建的两条消息，没有 savedplan 字段或全文。未冒称当前后端 doc 已读，currentPlanID 保留 null，等待 Chief 绑定核验。",
+  "historicalBindingPolicy": "plan-binding.json / plan-source.json / surface-matrix.json 保留已审提交原字节及历史字段；当前执行绑定在本文件，不循环另存计划。",
+  "stage": "实施前置文档，未产品编码",
+  "gate": "前置独审及 Chief 确认待闭合；计划审查通过不等于本次全量映射与规格前置已批准",
+  "protocolScope": "仅文档/映射，不改 API、事件、数据库或 WorkMesh 控制面",
+  "servicePreparation": "无服务启动、无数据库/外部调用；无恢复/清理操作",
+  "runtime": {
+    "node": "v24.20.0",
+    "git": "git version 2.55.0.windows.3",
+    "python": "仅用于本轮离线生成，产品无新增依赖"
+  },
+  "reviewedArtifacts": [
+    {
+      "path": "docs/reviews/d1b/plan-binding.json",
+      "sourceCommit": "40cc065edabdc2a6fbdc72f728fd72259e58811c",
+      "gitBlob": "90359faf400a29bd9d8c48ccf01e077c91435d93",
+      "gitBytes": 28149,
+      "gitSha256": "894f87fa04750e3ab91d369d7b556af232c11506d5f8abd99879e270d09c306e",
+      "worktreeBytes": 28149,
+      "worktreeSha256": "894f87fa04750e3ab91d369d7b556af232c11506d5f8abd99879e270d09c306e",
+      "bytesEqual": true
+    },
+    {
+      "path": "docs/reviews/d1b/plan-source.json",
+      "sourceCommit": "40cc065edabdc2a6fbdc72f728fd72259e58811c",
+      "gitBlob": "138b04991c06dbb2a19ce909d0f8d03e5c78bc87",
+      "gitBytes": 21057,
+      "gitSha256": "1e888897a8efc68c8ee0e08b50f952b3460258f4632cb7ae65e16b3177ed981d",
+      "worktreeBytes": 21057,
+      "worktreeSha256": "1e888897a8efc68c8ee0e08b50f952b3460258f4632cb7ae65e16b3177ed981d",
+      "bytesEqual": true
+    },
+    {
+      "path": "docs/reviews/d1b/surface-matrix.json",
+      "sourceCommit": "40cc065edabdc2a6fbdc72f728fd72259e58811c",
+      "gitBlob": "0d79f6356112aa7e818c50552a8d52718e9a57ff",
+      "gitBytes": 525319,
+      "gitSha256": "675de038fbeb28df4cbb5947f0404b45f08b3e0d10973154a601d911177c4680",
+      "worktreeBytes": 525319,
+      "worktreeSha256": "675de038fbeb28df4cbb5947f0404b45f08b3e0d10973154a601d911177c4680",
+      "bytesEqual": true
+    }
+  ],
+  "sourceInputs": [
+    {
+      "path": "CONTEXT.md",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "a6fb11c386e837eed2b8e95b35f41a667c87a201",
+      "gitBytes": 4080,
+      "gitSha256": "3398da2c42aa004d61e0e1202f7dccb0847859ce8b8f859217d6c17fc6d8839e",
+      "worktreeBytes": 4173,
+      "worktreeSha256": "cc6be739e37ba59e711d1bbaa84624fd78ff127c7dbe2bebe9f6811589fb9f7f",
+      "bytesEqual": false
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "5a1336db65c7f39fb603c39e3e6a311c6c740f95",
+      "gitBytes": 68415,
+      "gitSha256": "809f309cb179d62b06d3b26ad569aaad0d1cbf794d4061ea829c5777dcfa96e9",
+      "worktreeBytes": 70190,
+      "worktreeSha256": "7c4427ce03ad19b37ec0e3d6c3474af4b7afb42425eba75e62824ed2db0eb2a3",
+      "bytesEqual": false
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "91a12aedee454d8d89a7c31c4993664c78972849",
+      "gitBytes": 489123,
+      "gitSha256": "18e6ce9f67d9cfbb90931be74f4593725296d9e98e2070085d99d486a44f7968",
+      "worktreeBytes": 495916,
+      "worktreeSha256": "b98891984df512c409a1bc4c6198311eac72cdfc41d9a4fc47ac58cd3c90869b",
+      "bytesEqual": false
+    },
+    {
+      "path": "SCHEMA.sql",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "7d1aed0714dd7d3b74e81ae2493baab7d13a4d0f",
+      "gitBytes": 1334,
+      "gitSha256": "9575ee2ad4619ccc316c57d1003b940d9d16f3999b77ae440009478ca3ef7007",
+      "worktreeBytes": 1360,
+      "worktreeSha256": "776d6d24f0a66ac9d45c1901fe9c25b9d2a7c2ecf78fcc5c8f5fcb4bf03bf141",
+      "bytesEqual": false
+    },
+    {
+      "path": "packages/ui/src/tokens.css",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "933d961bedff4a892af472da9b5c08062bd42a91",
+      "gitBytes": 71756,
+      "gitSha256": "e1dae43b076c0142ac5fadabc9ed75a821e5b37900b9c58807360e3015bade5f",
+      "worktreeBytes": 72806,
+      "worktreeSha256": "36502dd86013f37aafceb56971f6347dd3f0920ad2f9381edb2da0f8b93373d8",
+      "bytesEqual": false
+    },
+    {
+      "path": "docs/plan/d1a-coexisting-theme-tokens.md",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "9cd028f17bddd42bc91034bee2f84773e36c5cfa",
+      "gitBytes": 7555,
+      "gitSha256": "1cf9303d4317ed9ca3f4839b2258965bdd78825a3c72c9796466fa7e7f99f93b",
+      "worktreeBytes": 7594,
+      "worktreeSha256": "7ee6801ea30832b64bb80c840a1939bbfd59e25540ae5f32314a939d2090282c",
+      "bytesEqual": false
+    },
+    {
+      "path": "docs/reviews/d1a/verification.md",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "46baeb1413d93d5f4abed4ab5d1933d256e6e6be",
+      "gitBytes": 14665,
+      "gitSha256": "1ef2a1c4c40cff172e0c42c046665c4201c47eb9891b9b967a8a0fef230bd832",
+      "worktreeBytes": 14727,
+      "worktreeSha256": "e8ac25a8f4bb4eb04a8e4ab8d65ce35090e7a9fdc8e2b0c8eba4d6106acb733c",
+      "bytesEqual": false
+    },
+    {
+      "path": "apps/web/e2e/baselines/d0/README.md",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "6c215ef1e22f1ea1f2b85094a4153b98b0e00b01",
+      "gitBytes": 5510,
+      "gitSha256": "003d36a74dbebc3b4b0d038e54b08b9ccb9496fe74aa3f9a971a5201651ba88f",
+      "worktreeBytes": 5550,
+      "worktreeSha256": "cd9afe96071ccda348696850c2ec4df35a69ad296107cc435f49501ac8651e6b",
+      "bytesEqual": false
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.json",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "7679db400761ac1f4ed46ca79f62e56fa923ceff",
+      "gitBytes": 322807,
+      "gitSha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41",
+      "worktreeBytes": 322807,
+      "worktreeSha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41",
+      "bytesEqual": true
+    },
+    {
+      "path": "docs/references/todos-analysis/design-tokens.md",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "c66a054c2679bd6ca39a555fc9594d41ad1e6dc4",
+      "gitBytes": 13406,
+      "gitSha256": "4861fdbb3babde65a64f3de55936fdd53b1ba63498e4ca90c87471404c9e8c9b",
+      "worktreeBytes": 13406,
+      "worktreeSha256": "4861fdbb3babde65a64f3de55936fdd53b1ba63498e4ca90c87471404c9e8c9b",
+      "bytesEqual": true
+    },
+    {
+      "path": "docs/references/todos-analysis/design-observations.json",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "f70a0f62022db197334739b1512b4a98c3c4d7b5",
+      "gitBytes": 1533975,
+      "gitSha256": "cdb7b2479d9a863bc17080f7e3ad4a8226bbcb380c09f9bd58535b971eca8888",
+      "worktreeBytes": 1533975,
+      "worktreeSha256": "cdb7b2479d9a863bc17080f7e3ad4a8226bbcb380c09f9bd58535b971eca8888",
+      "bytesEqual": true
+    },
+    {
+      "path": "docs/references/todos-analysis/css-evidence.json",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "b8b53e9dc54c7013912baa4c3c5e310fb4e13de9",
+      "gitBytes": 334624,
+      "gitSha256": "eee8b725d4b48f12cb89f72b050700e3d6c4ee2905e96e875e45376830b7e199",
+      "worktreeBytes": 334624,
+      "worktreeSha256": "eee8b725d4b48f12cb89f72b050700e3d6c4ee2905e96e875e45376830b7e199",
+      "bytesEqual": true
+    },
+    {
+      "path": "docs/references/todos-analysis/SOURCE-MANIFEST.json",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "b5c9bec0892d526d02cd36a14b2ad6c2e17d3e68",
+      "gitBytes": 10338,
+      "gitSha256": "e49b4c29207521117257cfff788f763392e7a493b50cde9daaed994ad1c38ccd",
+      "worktreeBytes": 10338,
+      "worktreeSha256": "e49b4c29207521117257cfff788f763392e7a493b50cde9daaed994ad1c38ccd",
+      "bytesEqual": true
+    },
+    {
+      "path": "docs/adr/0028-kaneo-frontend-architecture-and-dependency-policy.md",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "62b990aac7d68e0737a7ca4f23b6d5c2939ea7e8",
+      "gitBytes": 8037,
+      "gitSha256": "0d3f856506fe32cfe26cd88b9ad07acb4aab7e1a8e0d8ddffb13718fbfa731b3",
+      "worktreeBytes": 8116,
+      "worktreeSha256": "261fe3bdc7a5c71351074123646355e1c071273e4be75830ddf4d8e271bf840e",
+      "bytesEqual": false
+    },
+    {
+      "path": "docs/adr/0028-declarative-route-policy-and-event-audience.md",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "250f6580b7a536196c8560d7d98899484a91696e",
+      "gitBytes": 4661,
+      "gitSha256": "c45e1c3474a101c933fc2b888a8804859a4a871acd6c58236076fcacbcb4dd64",
+      "worktreeBytes": 4751,
+      "worktreeSha256": "5ef48f79774654d882a11c4044371419975ef4c3ea95802cdf0c757b34880871",
+      "bytesEqual": false
+    },
+    {
+      "path": "docs/adr/0052-human-control-plane-information-architecture.md",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "cecf4709f229b60bdc171a82a13ad5add21198b3",
+      "gitBytes": 4739,
+      "gitSha256": "debe5a00cdd57beeb523453b5299d69ad60840fcbf5af766119b553e5bc013a4",
+      "worktreeBytes": 4837,
+      "worktreeSha256": "586b2c3b6e5e9de023c025c8861ac7f2e21f26060fb7f6d3f978f87eb8d2a389",
+      "bytesEqual": false
+    },
+    {
+      "path": "docs/adr/0064-unified-human-control-plane-web-experience.md",
+      "sourceCommit": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "gitBlob": "de55fdb6653a9a223bd991be5ae8348957a09a15",
+      "gitBytes": 4877,
+      "gitSha256": "35af6982572c2dd13537de1ed84a079480504b48b8a58e50d8d9eec48322e070",
+      "worktreeBytes": 4976,
+      "worktreeSha256": "fa88f734564ed3e8d5286474eb66223cac487c2d6c928a2dea8b42edbc3bdbea",
+      "bytesEqual": false
+    }
+  ],
+  "inputDifference": "latest main 与输入基点一致；唯一前置成果为新增映射/文档及规格同步，历史证据与生产源未修改"
+}

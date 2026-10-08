@@ -1,0 +1,28 @@
+{
+  "variant": "mobile-dark",
+  "rowID": "workbench",
+  "state": "portal",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/workbench/mobile-dark/workbench/portal/before.png",
+      "bytes": 33581,
+      "sha256": "6bc9578e61f8eea4e935863892bc4db2ef18f067dc8e65d098f046dff4535f9e"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/workbench/mobile-dark/workbench/portal/after.png",
+      "bytes": 33581,
+      "sha256": "6bc9578e61f8eea4e935863892bc4db2ef18f067dc8e65d098f046dff4535f9e"
+    },
+    "rawBytesEqual": true,
+    "comparatorPassed": true,
+    "message": "固定比较器未发现超过阈值的变化",
+    "diff": null
+  },
+  "historical": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/workbench/mobile-dark/workbench/portal/before.json",
+    "after": "docs/reviews/d1b/evidence/workbench/mobile-dark/workbench/portal/after.json"
+  },
+  "humanReview": "待人工视觉评审",
+  "disposition": "保留真实设计差异；比较器结果不代表颜色验收"
+}

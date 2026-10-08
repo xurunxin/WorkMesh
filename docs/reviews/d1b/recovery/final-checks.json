@@ -1,0 +1,105 @@
+{
+  "recordedAt": "2026-10-08T09:22:33.142Z",
+  "runtime": "v24.20.0",
+  "checks": [
+    {
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "docs/reviews/d1b/recovery/verify-recovery.mjs"
+      ],
+      "startedAt": "2026-10-08T09:22:02.032Z",
+      "finishedAt": "2026-10-08T09:22:31.393Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "stdout": {
+        "bytes": 402,
+        "sha256": "2025a87485c5aa067faad1e4d6f20852e49f17ae11a0aea399f133fe5d944190",
+        "utf8": "{\n  \"result\": \"恢复证据核验通过，非人工视觉批准\",\n  \"checkpointArtifacts\": 372,\n  \"png\": 156,\n  \"zip\": 19,\n  \"historicalRuns\": 14,\n  \"sourceInputRecords\": 10946,\n  \"sourceInputMembers\": 774,\n  \"rawRecords\": 30,\n  \"sourceInputGaps\": 0,\n  \"comparisons\": 32,\n  \"changed\": 30,\n  \"currentThemeUnit\": \"11/11\",\n  \"nextStageAllowed\": false,\n  \"cleanupAllowed\": false,\n  \"runtime\": \"v24.20.0\"\n}\n"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "utf8": ""
+      }
+    },
+    {
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "docs/reviews/d1b/stage-ledger.mjs",
+        "--self-test"
+      ],
+      "startedAt": "2026-10-08T09:22:31.393Z",
+      "finishedAt": "2026-10-08T09:22:32.710Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "stdout": {
+        "bytes": 596,
+        "sha256": "fbf673debde1539ec7e0cdf17f4a13a06f0bd0cf74b1b5541d8f5088f69bec6d",
+        "utf8": "{\n  \"phase\": \"workbench\",\n  \"ledgerEntries\": 2316,\n  \"scopedAdditions\": 320,\n  \"remainingLegacyExpressions\": 1854,\n  \"runtime\": [\n    \"--wm-status-color\",\n    \"--wm-dismissal-depth\",\n    \"--wm-overlay-depth\"\n  ],\n  \"cleanupAllowed\": false,\n  \"visualReview\": \"待人工视觉评审\",\n  \"nextStageAllowed\": false,\n  \"negativeCases\": [\n    \"旧声明有消费时禁止删除\",\n    \"未迁共享消费禁止无条件替换\",\n    \"嵌套 fallback 未知依赖失败\",\n    \"新分支边界删除失败\",\n    \"已迁项回退失败\",\n    \"循环依赖失败\",\n    \"运行时生产者缺失失败\"\n  ]\n}\n"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "utf8": ""
+      }
+    },
+    {
+      "executable": "git",
+      "args": [
+        "diff",
+        "--cached",
+        "--check",
+        "1078bbcd527550bfabee73093b7ffd0032d3fd24"
+      ],
+      "startedAt": "2026-10-08T09:22:32.710Z",
+      "finishedAt": "2026-10-08T09:22:33.020Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "utf8": ""
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "utf8": ""
+      }
+    },
+    {
+      "executable": "git",
+      "args": [
+        "diff",
+        "--name-only",
+        "--diff-filter=U"
+      ],
+      "startedAt": "2026-10-08T09:22:33.020Z",
+      "finishedAt": "2026-10-08T09:22:33.142Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "utf8": ""
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "utf8": ""
+      }
+    }
+  ],
+  "policy": "stdout/stderr原字节UTF-8无损保存于JSON字符串，不trim；本地暂存检查，非Required CI或人工视觉接受",
+  "finalDocumentationCheck": {
+    "startedAt": "2026-10-08T09:23:02.640Z",
+    "finishedAt": "2026-10-08T09:23:03.235Z",
+    "command": "git diff --cached --check 1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "exitCode": 0,
+    "stdoutBytes": 0,
+    "policy": "仅修正checkpoint尚未独审的文字边界；不改变受测产品源码"
+  }
+}

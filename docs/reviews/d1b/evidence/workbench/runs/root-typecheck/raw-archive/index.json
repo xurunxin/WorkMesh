@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "archive": {
+    "path": "raw.zip",
+    "bytes": 1543,
+    "sha256": "3cc010b9d5f0a3734a4eafc6690b5bf847111204078322e67dcfa3669eda934f"
+  },
+  "entries": [
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/workbench/runs/root-typecheck/stderr.log",
+      "version": "root-typecheck",
+      "byteKind": "worktree",
+      "bytes": 17,
+      "sha256": "884eff4c2cecee914bad9401be4297f8878ee164fa14500831cee50614bfc59d",
+      "member": "bytes/884eff4c2cecee914bad9401be4297f8878ee164fa14500831cee50614bfc59d",
+      "sourceCommit": null,
+      "sourceBlobId": "24c0d05d0064ec3ffac3355d0dbc822918675753",
+      "provenance": "真实运行原件；Git blob 已实际写入并逐字节读回，来源提交尚未产生"
+    },
+    {
+      "logicalPath": "docs/reviews/d1b/evidence/workbench/runs/root-typecheck/stdout.log",
+      "version": "root-typecheck",
+      "byteKind": "worktree",
+      "bytes": 6522,
+      "sha256": "0c89e17e93920546d6ffedcb65b140cf3ade494f24c36573807908653504bbe2",
+      "member": "bytes/0c89e17e93920546d6ffedcb65b140cf3ade494f24c36573807908653504bbe2",
+      "sourceCommit": null,
+      "sourceBlobId": "fb91e46f205ff578ef3ae5314cd068f9d3d252f0",
+      "provenance": "真实运行原件；Git blob 已实际写入并逐字节读回，来源提交尚未产生"
+    }
+  ],
+  "policy": "不 trim、无损、自包含；逻辑原路径按 version/byteKind 解析；空原件留在原路径"
+}

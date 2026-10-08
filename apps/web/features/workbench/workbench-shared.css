@@ -1,0 +1,91 @@
+/* 由 D1b 显式映射生成；共享原件保留至全矩阵验收。 */
+[data-wm-token-surface="workbench"] { color: var(--wm-ref-text-primary); background: var(--wm-ref-surface); font-family: var(--wm-ref-font-sans)
+}
+.wm-theme :where(a, button, input, textarea, select, summary):focus-visible:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { box-shadow: var(--wm-ref-focus-ring)
+}
+.wm-button:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { min-height: var(--wm-ref-control-h-md); color: var(--wm-ref-text-primary); background: var(--wm-ref-surface-secondary); border: 1px solid var(--wm-ref-border-default); border-radius: var(--wm-ref-radius-control); transition: background var(--wm-ref-motion-fast) var(--wm-ref-ease-out), border-color var(--wm-ref-motion-fast) var(--wm-ref-ease-out), color var(--wm-ref-motion-fast) var(--wm-ref-ease-out)
+}
+.wm-button:hover:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { background: var(--wm-ref-surface-hover); border-color: var(--wm-ref-border-strong)
+}
+.wm-button:active:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { background: var(--wm-ref-surface-active)
+}
+.wm-button-sm:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { min-height: var(--wm-ref-control-h-sm); font-size: var(--wm-ref-text-xs)
+}
+.wm-button-lg:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { min-height: var(--wm-ref-control-h-lg)
+}
+.wm-button-primary:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-accent-fg); background: var(--wm-ref-accent); background-image: var(--wm-ref-grad-accent)
+}
+.wm-button-primary:active:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { background: var(--wm-ref-accent); background-image: var(--wm-ref-grad-accent)
+}
+.wm-button-danger:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-danger-fg); background: var(--wm-ref-danger); border-color: var(--wm-ref-danger)
+}
+.wm-button-ghost:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-text-secondary)
+}
+.wm-button-ghost:hover:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-text-primary); background: var(--wm-ref-surface-secondary)
+}
+.wm-data-table-frame:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) {
+  border: 1px solid var(--wm-ref-border-default);
+  border-radius: var(--wm-ref-radius-md)
+}
+.wm-data-table-frame:focus-visible:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { box-shadow: var(--wm-ref-focus-ring)
+}
+.wm-tool-chip:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-text-secondary); background: var(--wm-ref-surface-secondary); border: 1px solid var(--wm-ref-border-default); border-radius: var(--wm-ref-radius-pill); font-size: var(--wm-ref-text-xs)
+}
+.wm-tool-chip-glyph:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-text-tertiary)
+}
+.wm-tool-chip-label:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { font-family: var(--wm-ref-font-mono)
+}
+.wm-tool-chip-count:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *),
+.wm-tool-chip-stat:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-text-tertiary)
+}
+.wm-tool-chip-dot:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { border-radius: var(--wm-ref-radius-pill); background: var(--wm-ref-text-tertiary)
+}
+.wm-tool-chip.is-done:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-text-primary)
+}
+.wm-tool-chip.is-done .wm-tool-chip-dot:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { background: var(--wm-ref-status-done)
+}
+.wm-tool-chip.is-failed:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-text-primary)
+}
+.wm-tool-chip.is-failed .wm-tool-chip-dot:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { background: var(--wm-ref-danger)
+}
+.app-shell button:not([class*="wm-"]):is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) {
+  color: var(--wm-ref-text-primary);
+  background: var(--wm-ref-surface-secondary);
+  border: 1px solid var(--wm-ref-border-default)
+}
+.app-shell button:not([class*="wm-"]):hover:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *),
+.app-shell button:not([class*="wm-"]).selected:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { background: var(--wm-ref-surface-hover)
+}
+.app-shell .wm-button:focus-visible:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { outline: 3px solid color-mix(in srgb, var(--wm-ref-focus) 24%, transparent)
+}
+.app-shell input:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *),
+.app-shell textarea:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *),
+.app-shell select:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) {
+  color: var(--wm-ref-text-primary);
+  background: var(--wm-ref-surface-card);
+  border: 1px solid var(--wm-ref-border-strong)
+}
+.rich-editor-toolbar:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { background: var(--wm-ref-surface-secondary); border: 1px solid var(--wm-ref-border-default); border-radius: var(--wm-ref-radius-md)
+}
+.rich-editor-toolbar .rich-editor-tool:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-text-secondary)
+}
+.rich-editor-toolbar .rich-editor-tool:hover:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-text-primary); background: var(--wm-ref-surface-card); border-color: var(--wm-ref-border-default)
+}
+.rich-editor-toolbar .rich-editor-tool:focus-visible:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { outline: 2px solid color-mix(in srgb, var(--wm-ref-focus) 44%, transparent)
+}
+.rich-editor-tool-separator:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { background: var(--wm-ref-border-default)
+}
+.rich-editor-saved:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-text-secondary)
+}
+.rich-editor-saved[data-state='save-failed']:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-danger)
+}
+.rich-editor-saved[data-state='version-conflict']:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { color: var(--wm-ref-status-needs-human)
+}
+.rich-editor-preview-pane:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { background: var(--wm-ref-surface-card); border: 1px solid var(--wm-ref-border-default); border-radius: var(--wm-ref-radius-md)
+}
+.rich-editor--comment:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { border-left: 3px solid var(--wm-ref-accent)
+}
+.rich-editor--reply:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { border-left: 3px solid var(--wm-ref-status-done)
+}
+.rich-editor--description:is([data-wm-token-surface="workbench"], [data-wm-token-surface="workbench"] *) { border-left: 3px solid var(--wm-ref-status-needs-human)
+}

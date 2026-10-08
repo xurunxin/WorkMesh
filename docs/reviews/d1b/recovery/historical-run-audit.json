@@ -1,0 +1,469 @@
+{
+  "runs": [
+    {
+      "id": "after-capture",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d1b.config.ts",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 392,
+      "recoveredWorktree": 392,
+      "raw": {
+        "stdout": {
+          "bytes": 8364,
+          "sha256": "54535528f47a86e1c16abca384aba2d21d1882cb882f9e60142221374a210c28",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [
+          "32 passed (1.8m)"
+        ],
+        "stderr": {
+          "bytes": 1721,
+          "sha256": "94916f2f05b7a192894fc9429affa4a761ca167a4229394fb9a7eb2cc3bebfbd",
+          "readFrom": "validated-existing-archive"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "before-capture",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d1b.config.ts",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 387,
+      "recoveredWorktree": 387,
+      "raw": {
+        "stdout": {
+          "bytes": 30144,
+          "sha256": "23755056bce23f47f27024a68a25961ce09b7b628f08350237349b9fb0e5fd37",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [
+          "8 failed",
+          "20 passed (10.5m)"
+        ],
+        "stderr": {
+          "bytes": 14290,
+          "sha256": "cb33d8f7385b8ea4c7951cb16a0c7bb4ee634196a7ab37bab122a8673656b1dc",
+          "readFrom": "validated-existing-archive"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "before-capture-b",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d1b.config.ts",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 387,
+      "recoveredWorktree": 387,
+      "raw": {
+        "stdout": {
+          "bytes": 21089,
+          "sha256": "2afbe05a8bdba5169f2b229b07ee1693ea0ba9ba3f8f7c865b55d9ca20f34bd9",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [
+          "4 failed",
+          "28 passed (2.7m)"
+        ],
+        "stderr": {
+          "bytes": 2379,
+          "sha256": "2a9a9192a6803d8b0ebaec412084a6daeb030981efdec81cdadba1044bfab0a2",
+          "readFrom": "validated-existing-archive"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "before-capture-c",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d1b.config.ts",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 388,
+      "recoveredWorktree": 388,
+      "raw": {
+        "stdout": {
+          "bytes": 8354,
+          "sha256": "52c67b8421dc3bd223650b40013dc07b19010b854576905008ae8d038ad3263b",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [
+          "32 passed (1.6m)"
+        ],
+        "stderr": {
+          "bytes": 1723,
+          "sha256": "455d3d484ed43523363ac6a414fa693a4832c8ea364890160699d32a29d3791a",
+          "readFrom": "validated-existing-archive"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "before-list-a",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d1b.config.ts --list",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 387,
+      "recoveredWorktree": 387,
+      "raw": {
+        "stdout": {
+          "bytes": 3705,
+          "sha256": "f9c66ccfefe923d93d400183825a49791b796165dc0f069130a28933447bae3e",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [],
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "readFrom": "current-worktree"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "final-list",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d1b.config.ts --list",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 392,
+      "recoveredWorktree": 392,
+      "raw": {
+        "stdout": {
+          "bytes": 9614,
+          "sha256": "aa399e860b6ee8ad47269415c9f69a6381754208d390b380bdc8458a4164b896",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [],
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "readFrom": "current-worktree"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "final-stage",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d1b.config.ts",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 394,
+      "recoveredWorktree": 394,
+      "raw": {
+        "stdout": {
+          "bytes": 12806,
+          "sha256": "c26685fdbfb2ae9e574a362779a8a5baff093820a4bdd3a71dcd726a659448f9",
+          "readFrom": "checkpoint-actual-git-blob"
+        },
+        "summary": [
+          "52 passed (2.3m)"
+        ],
+        "stderr": {
+          "bytes": 1722,
+          "sha256": "c2cb2c5b560694cc9388e777425bba1f077f765a636e581d34144e70836938c5",
+          "readFrom": "checkpoint-actual-git-blob"
+        }
+      },
+      "archiveValidated": false,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "final-web-typecheck",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm --filter @workmesh/web typecheck",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 392,
+      "recoveredWorktree": 392,
+      "raw": {
+        "stdout": {
+          "bytes": 120,
+          "sha256": "437ffb9240a68a3e663c35bcbe209e1c42fa4eeb0a1d0b4ea0c38410f1af1d90",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [],
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "readFrom": "current-worktree"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "focused-unit",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm --filter @workmesh/web exec vitest run features/navigation/theme.test.tsx features/workbench/conversation-workbench.test.tsx features/rich-content/markdown.test.tsx features/command-center/keyboard.test.tsx",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 392,
+      "recoveredWorktree": 392,
+      "raw": {
+        "stdout": {
+          "bytes": 614,
+          "sha256": "76be234d8163293d8eba935bf3a028746ddaeba2fd85458c8928c0de2375d2c2",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [
+          "Test Files  3 passed (3)",
+          "Tests  22 passed (22)"
+        ],
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "readFrom": "current-worktree"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "phase-guards",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm exec node docs/reviews/d1b/stage-ledger.mjs --self-test",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 394,
+      "recoveredWorktree": 394,
+      "raw": {
+        "stdout": {
+          "bytes": 596,
+          "sha256": "fbf673debde1539ec7e0cdf17f4a13a06f0bd0cf74b1b5541d8f5088f69bec6d",
+          "readFrom": "checkpoint-actual-git-blob"
+        },
+        "summary": [],
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "readFrom": "current-worktree"
+        }
+      },
+      "archiveValidated": false,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "root-lint",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm lint",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 392,
+      "recoveredWorktree": 392,
+      "raw": {
+        "stdout": {
+          "bytes": 5971,
+          "sha256": "a0a23ffa1d7b83db50d1d82774309c5926476ae26e268d7b5ad37efb62f0c330",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [
+          "Tasks:    18 successful, 18 total"
+        ],
+        "stderr": {
+          "bytes": 17,
+          "sha256": "884eff4c2cecee914bad9401be4297f8878ee164fa14500831cee50614bfc59d",
+          "readFrom": "validated-existing-archive"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "root-test",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm test",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 392,
+      "recoveredWorktree": 392,
+      "raw": {
+        "stdout": {
+          "bytes": 57417,
+          "sha256": "13f3ff3bf521d1cb8c4e50b5acd187d0109decbe0a9f2a05759c8ebe543b97e2",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [
+          "@workmesh/contracts:test:  Test Files  23 passed (23)",
+          "@workmesh/contracts:test:       Tests  180 passed (180)",
+          "@workmesh/ui:test:  Test Files  4 passed (4)",
+          "@workmesh/ui:test:       Tests  50 passed (50)",
+          "@workmesh/observability:test:  Test Files  2 passed (2)",
+          "@workmesh/observability:test:       Tests  16 passed (16)",
+          "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+          "@workmesh/git-provider:test:       Tests  13 passed (13)",
+          "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+          "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+          "@workmesh/agent-sdk:test:  Test Files  1 passed (1)",
+          "@workmesh/agent-sdk:test:       Tests  33 passed (33)",
+          "@workmesh/domain:test:  Test Files  9 passed (9)",
+          "@workmesh/domain:test:       Tests  65 passed (65)",
+          "@workmesh/config:test:  Test Files  2 passed (2)",
+          "@workmesh/config:test:       Tests  33 passed (33)",
+          "@workmesh/agent-runner:test:  Test Files  9 passed (9)",
+          "@workmesh/agent-runner:test:       Tests  48 passed (48)",
+          "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+          "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+          "@workmesh/mcp:test:  Test Files  2 passed (2)",
+          "@workmesh/mcp:test:       Tests  38 passed (38)",
+          "@workmesh/conformance:test:  Test Files  1 passed (1)",
+          "@workmesh/conformance:test:       Tests  1 passed (1)",
+          "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+          "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+          "@workmesh/db:test:  Test Files  8 passed (8)",
+          "@workmesh/db:test:       Tests  28 passed (28)",
+          "@workmesh/worker:test:  ✓ src/retention-soak-lock.test.ts (10 tests | 1 skipped) 6ms",
+          "@workmesh/worker:test:  ✓ src/retention-soak-formal-launch.test.ts (2 tests | 1 skipped) 2ms",
+          "@workmesh/worker:test:  Test Files  23 passed (23)",
+          "@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)",
+          "@workmesh/recovery:test:  Test Files  1 passed (1)",
+          "@workmesh/recovery:test:       Tests  7 passed (7)",
+          "@workmesh/web:test:  Test Files  113 passed (113)",
+          "@workmesh/web:test:       Tests  779 passed (779)",
+          "@workmesh/api:test:  Test Files  33 passed (33)",
+          "@workmesh/api:test:       Tests  174 passed (174)",
+          "Tasks:    29 successful, 29 total"
+        ],
+        "stderr": {
+          "bytes": 2067,
+          "sha256": "a5e54e8c0f49232afa3f2f09da9ab7ccfa6265be72117b85edddb6c6b6655fa0",
+          "readFrom": "validated-existing-archive"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "root-typecheck",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "command": "pnpm typecheck",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 392,
+      "recoveredWorktree": 392,
+      "raw": {
+        "stdout": {
+          "bytes": 6522,
+          "sha256": "0c89e17e93920546d6ffedcb65b140cf3ade494f24c36573807908653504bbe2",
+          "readFrom": "validated-existing-archive"
+        },
+        "summary": [
+          "Tasks:    18 successful, 18 total"
+        ],
+        "stderr": {
+          "bytes": 17,
+          "sha256": "884eff4c2cecee914bad9401be4297f8878ee164fa14500831cee50614bfc59d",
+          "readFrom": "validated-existing-archive"
+        }
+      },
+      "archiveValidated": true,
+      "status": "历史实际运行；不是本轮新运行"
+    },
+    {
+      "id": "theme-contract",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d1b.config.ts e2e/theme-unification.spec.ts",
+      "runtime": {
+        "node": "v24.20.0",
+        "platform": "win32",
+        "arch": "x64"
+      },
+      "inputs": 392,
+      "recoveredWorktree": 392,
+      "raw": {
+        "stdout": {
+          "bytes": 31389,
+          "sha256": "6f6d153624783b2135f134441fe0ba9dfe16d8c72059c4b5204786d6a9578aca",
+          "readFrom": "checkpoint-actual-git-blob"
+        },
+        "summary": [
+          "8 failed",
+          "32 passed (6.7m)"
+        ],
+        "stderr": {
+          "bytes": 3035,
+          "sha256": "ac7cf66f0f94a22fc73fbbec1c851f41e96e7ae922268f7626f60f89b08157b5",
+          "readFrom": "checkpoint-actual-git-blob"
+        }
+      },
+      "archiveValidated": false,
+      "status": "历史实际运行；不是本轮新运行"
+    }
+  ],
+  "sourceInputGaps": [],
+  "missingObjects": [],
+  "archivesValidated": 11,
+  "checkpointArtifacts": 372,
+  "checkpointPng": 156,
+  "checkpointZip": 19,
+  "inputArchive": {
+    "records": 10946,
+    "members": 774,
+    "bytes": 2556502
+  }
+}

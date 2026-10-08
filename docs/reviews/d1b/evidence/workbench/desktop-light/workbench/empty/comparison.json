@@ -1,0 +1,32 @@
+{
+  "variant": "desktop-light",
+  "rowID": "workbench",
+  "state": "empty",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/workbench/desktop-light/workbench/empty/before.png",
+      "bytes": 54365,
+      "sha256": "9c7907973fcd39b721a6d92c81eae20ea6d34af436a96f54fb300fb7922b6f39"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/workbench/desktop-light/workbench/empty/after.png",
+      "bytes": 55305,
+      "sha256": "484650a33d992ce07464e66d6c9aa2073e554bbdd7508991dba78170b4fe4273"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "1125149 pixels (ratio 0.79 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/workbench/desktop-light/workbench/empty/diff.png",
+      "bytes": 41716,
+      "sha256": "597b1a72b6476e2c1bf5aa771df465e663016222987b8d5b44530558cd449c19"
+    }
+  },
+  "historical": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/workbench/desktop-light/workbench/empty/before.json",
+    "after": "docs/reviews/d1b/evidence/workbench/desktop-light/workbench/empty/after.json"
+  },
+  "humanReview": "待人工视觉评审",
+  "disposition": "保留真实设计差异；比较器结果不代表颜色验收"
+}

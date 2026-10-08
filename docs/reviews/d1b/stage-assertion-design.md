@@ -1,5 +1,10 @@
 # D1b 阶段保护设计
 
+恢复说明：下文为 4067ecd 保存的前置设计草案，保留作为补充，不代表当前尚未实施。
+已审 0ebb986 前置及 d2e1a65 工作台首面现已正常整合；当前执行采用
+`phase-protection.md`、`stage-ledger.mjs`、`workbench-ledger.json`，实际状态见
+`recovery/current-stage.json`。不把此草案重新设为开工前置，未完阶段要求仍保留。
+
 本文件落实已审计划第 1 步的断言设计，尚未修改 `theme.test.tsx` 或执行界面迁移。
 历史 `theme-token-baseline.json` 保持原件；175 条声明、132 消费组、1,476 引用仍描述
 D1a 的冻结阶段，不把它们当作 D1b 全部生产消费。补充清单在 `consumer-inventory.json`。

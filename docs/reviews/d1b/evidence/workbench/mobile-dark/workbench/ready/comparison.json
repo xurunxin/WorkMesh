@@ -1,0 +1,32 @@
+{
+  "variant": "mobile-dark",
+  "rowID": "workbench",
+  "state": "ready",
+  "comparison": {
+    "expected": {
+      "path": "docs/reviews/d1b/evidence/workbench/mobile-dark/workbench/ready/before.png",
+      "bytes": 56032,
+      "sha256": "9e2c8d788f640cc394731820caf725a4bab48f9c65c45695768f67bd1612af70"
+    },
+    "actual": {
+      "path": "docs/reviews/d1b/evidence/workbench/mobile-dark/workbench/ready/after.png",
+      "bytes": 55724,
+      "sha256": "c62fbc4e641020053ae5bcceaaeea42afefc96a37381344d9e57f99f4c784882"
+    },
+    "rawBytesEqual": false,
+    "comparatorPassed": false,
+    "message": "79301 pixels (ratio 0.25 of all image pixels) are different.",
+    "diff": {
+      "path": "docs/reviews/d1b/evidence/workbench/mobile-dark/workbench/ready/diff.png",
+      "bytes": 55594,
+      "sha256": "23e4319d7d837a3a7356b5a54e52d5b158a090dd26ba7b01e3beb7d0c51dc877"
+    }
+  },
+  "historical": null,
+  "runtime": {
+    "before": "docs/reviews/d1b/evidence/workbench/mobile-dark/workbench/ready/before.json",
+    "after": "docs/reviews/d1b/evidence/workbench/mobile-dark/workbench/ready/after.json"
+  },
+  "humanReview": "待人工视觉评审",
+  "disposition": "保留真实设计差异；比较器结果不代表颜色验收"
+}

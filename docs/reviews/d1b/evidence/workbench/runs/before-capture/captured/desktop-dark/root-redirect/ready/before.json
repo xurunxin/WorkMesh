@@ -1,0 +1,399 @@
+{
+  "phase": "before",
+  "row": "root-redirect",
+  "state": "ready",
+  "actualURL": "http://127.0.0.1:3200/workbench",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "fixedTime": "2026-08-22T09:30:00.000Z",
+  "browserVersion": "149.0.7827.55",
+  "launchArguments": [
+    "--disable-gpu",
+    "--disable-skia-runtime-opts",
+    "--force-color-profile=srgb",
+    "--disable-partial-raster"
+  ],
+  "screenshot": {
+    "sha256": "1dd5baca38cf09c7dcaf154fc0fc24c22ac0f85c076b38377c923d9cdbedefa3",
+    "bytes": 118972
+  },
+  "styles": {
+    "html": {
+      "color": "rgb(255, 255, 255)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(255, 255, 255)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(255, 255, 255) none 3px",
+      "gradient": "none",
+      "display": "block",
+      "gridColumns": "none",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 1000,
+        "top": 0,
+        "right": 1440,
+        "bottom": 1000,
+        "left": 0
+      }
+    },
+    "body": {
+      "color": "rgb(255, 255, 255)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(255, 255, 255)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(255, 255, 255) none 3px",
+      "gradient": "none",
+      "display": "block",
+      "gridColumns": "none",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 1000,
+        "top": 0,
+        "right": 1440,
+        "bottom": 1000,
+        "left": 0
+      }
+    },
+    ".app-sidebar": {
+      "color": "rgb(230, 232, 235)",
+      "background": "rgb(31, 34, 38)",
+      "border": "rgb(230, 232, 235) rgb(36, 40, 45) rgb(230, 232, 235) rgb(230, 232, 235)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "gradient": "none",
+      "display": "flex",
+      "gridColumns": "none",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 248,
+        "height": 1000,
+        "top": 0,
+        "right": 248,
+        "bottom": 1000,
+        "left": 0
+      }
+    },
+    ".app-header": null,
+    ".workbench-page": {
+      "color": "rgb(230, 232, 235)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(230, 232, 235)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "gradient": "none",
+      "display": "grid",
+      "gridColumns": "1192px",
+      "rect": {
+        "x": 248,
+        "y": 52,
+        "width": 1192,
+        "height": 948,
+        "top": 52,
+        "right": 1440,
+        "bottom": 1000,
+        "left": 248
+      }
+    },
+    "[data-testid=\"conversation-workbench\"]": {
+      "color": "rgb(230, 232, 235)",
+      "background": "rgb(11, 12, 14)",
+      "border": "rgb(230, 232, 235)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "gradient": "none",
+      "display": "grid",
+      "gridColumns": "288px 656px 248px",
+      "rect": {
+        "x": 248,
+        "y": 52,
+        "width": 1192,
+        "height": 948,
+        "top": 52,
+        "right": 1440,
+        "bottom": 1000,
+        "left": 248
+      }
+    },
+    "[data-testid=\"conversation-workbench\"] > aside": {
+      "color": "rgb(230, 232, 235)",
+      "background": "rgb(31, 34, 38)",
+      "border": "rgb(230, 232, 235) rgb(36, 40, 45) rgb(230, 232, 235) rgb(230, 232, 235)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "gradient": "none",
+      "display": "flex",
+      "gridColumns": "none",
+      "rect": {
+        "x": 248,
+        "y": 52,
+        "width": 288,
+        "height": 948,
+        "top": 52,
+        "right": 536,
+        "bottom": 1000,
+        "left": 248
+      }
+    },
+    "[aria-controls=\"workbench-create-form\"]": {
+      "color": "rgb(11, 12, 14)",
+      "background": "rgb(76, 141, 255)",
+      "border": "rgba(0, 0, 0, 0)",
+      "radius": "9px",
+      "shadow": "none",
+      "outline": "rgb(11, 12, 14) none 3px",
+      "gradient": "linear-gradient(135deg, rgb(76, 141, 255), rgb(167, 139, 250))",
+      "display": "flex",
+      "gridColumns": "none",
+      "rect": {
+        "x": 262.390625,
+        "y": 140.59375,
+        "width": 258.21875,
+        "height": 32,
+        "top": 140.59375,
+        "right": 520.609375,
+        "bottom": 172.59375,
+        "left": 262.390625
+      }
+    },
+    "[data-testid=\"rich-markdown\"]": {
+      "color": "rgb(230, 232, 235)",
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(230, 232, 235)",
+      "radius": "0px",
+      "shadow": "none",
+      "outline": "rgb(230, 232, 235) none 3px",
+      "gradient": "none",
+      "display": "block",
+      "gridColumns": "none",
+      "rect": {
+        "x": 837.015625,
+        "y": 180.15625,
+        "width": 322,
+        "height": 22.75,
+        "top": 180.15625,
+        "right": 1159.015625,
+        "bottom": 202.90625,
+        "left": 837.015625
+      }
+    },
+    "[role=\"alert\"]": null
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/install-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/actors/humans",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/install-status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/views",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teams/team-1/states",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/actors/humans",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/work-items",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/views",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/events/stream",
+      "status": 204
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/info",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agent-sessions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agent-sessions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/conversations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/llm-connections",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/conversations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/llm-connections",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/llm-connections/llm-d0",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/conversations/conversation-d0",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/conversations/conversation-d0/messages",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/conversations/conversation-d0/turns",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agent-sessions/session-1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workbench/llm-connections/llm-d0",
+      "status": 200
+    }
+  ],
+  "failures": [],
+  "humanReview": "待人工视觉评审"
+}

@@ -1,0 +1,183 @@
+{
+  "currentBeforeMerge": "4067ecd3573d392114c8adb51534bcdb3a52dfb4",
+  "checkpoint": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5",
+  "checkpointParent": "0ebb986ee963e69473a3be2779717d0e7a1da948",
+  "mergeBase": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+  "method": "git merge --no-ff --no-commit；由平台 turn-end 提交，MERGE_HEAD 保留正常历史关系；未合入main",
+  "overlapCount": 14,
+  "conflictsResolved": 12,
+  "rows": [
+    {
+      "path": "apps/web/features/navigation/theme-token-migration.json",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/12.md",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/13.md",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/14.md",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/21.md",
+      "overlap": true,
+      "equal": true,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/22.md",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/plan/d1b-token-consumer-migration.md",
+      "overlap": true,
+      "equal": true,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/reviews/d1b/consumer-inventory.json",
+      "overlap": false,
+      "equal": false,
+      "resolution": "保留本分支新增历史清单/断言设计/执行绑定，不作为重新开工门禁"
+    },
+    {
+      "path": "docs/reviews/d1b/evidence/preflight/diff-check.stderr.log",
+      "overlap": false,
+      "equal": false,
+      "resolution": "保留本分支新增历史清单/断言设计/执行绑定，不作为重新开工门禁"
+    },
+    {
+      "path": "docs/reviews/d1b/evidence/preflight/diff-check.stdout.log",
+      "overlap": false,
+      "equal": false,
+      "resolution": "保留本分支新增历史清单/断言设计/执行绑定，不作为重新开工门禁"
+    },
+    {
+      "path": "docs/reviews/d1b/evidence/preflight/document-static-check.stderr.log",
+      "overlap": false,
+      "equal": false,
+      "resolution": "保留本分支新增历史清单/断言设计/执行绑定，不作为重新开工门禁"
+    },
+    {
+      "path": "docs/reviews/d1b/evidence/preflight/document-static-check.stdout.json",
+      "overlap": false,
+      "equal": false,
+      "resolution": "保留本分支新增历史清单/断言设计/执行绑定，不作为重新开工门禁"
+    },
+    {
+      "path": "docs/reviews/d1b/evidence/preflight/run-binding.json",
+      "overlap": false,
+      "equal": false,
+      "resolution": "保留本分支新增历史清单/断言设计/执行绑定，不作为重新开工门禁"
+    },
+    {
+      "path": "docs/reviews/d1b/evidence/preflight/source-after.json",
+      "overlap": false,
+      "equal": false,
+      "resolution": "保留本分支新增历史清单/断言设计/执行绑定，不作为重新开工门禁"
+    },
+    {
+      "path": "docs/reviews/d1b/evidence/preflight/source-before.json",
+      "overlap": false,
+      "equal": false,
+      "resolution": "保留本分支新增历史清单/断言设计/执行绑定，不作为重新开工门禁"
+    },
+    {
+      "path": "docs/reviews/d1b/execution-binding.json",
+      "overlap": false,
+      "equal": false,
+      "resolution": "保留本分支新增历史清单/断言设计/执行绑定，不作为重新开工门禁"
+    },
+    {
+      "path": "docs/reviews/d1b/plan-binding.json",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/reviews/d1b/plan-source.json",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/reviews/d1b/stage-assertion-design.md",
+      "overlap": false,
+      "equal": false,
+      "resolution": "保留本分支新增历史清单/断言设计/执行绑定，不作为重新开工门禁"
+    },
+    {
+      "path": "docs/reviews/d1b/surface-matrix.json",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/reviews/d1b/test-coverage.json",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/reviews/d1b/verification.md",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    },
+    {
+      "path": "docs/reviews/d1b/verify-preflight.mjs",
+      "overlap": true,
+      "equal": false,
+      "resolution": "恢复checkpoint对应版本；仅0ebb前置已独审，首面成果待独审；当前分支的来源指针补充另存"
+    }
+  ],
+  "productDifferenceFromCheckpoint": [
+    {
+      "path": "apps/web/e2e/mocked/d1b-workbench-fixture.ts",
+      "change": "仅删除新增EOF空行，AST/样式值不变"
+    },
+    {
+      "path": "apps/web/features/rich-content/markdown.module.css",
+      "change": "仅删除新增EOF空行，AST/样式值不变"
+    },
+    {
+      "path": "packages/ui/src/tokens.css",
+      "change": "仅删除新增EOF空行，AST/样式值不变"
+    }
+  ],
+  "authorizations": {
+    "preflight": "用户反馈确认13:02平台独审已闭合；本轮不重审该前置",
+    "workbench": "用户反馈确认13:03首面放行",
+    "nextSurface": false,
+    "cleanup": false,
+    "mergeMain": false
+  },
+  "sourceSupplement": "source-evidence-supplement.json",
+  "supplementChanges": [
+    "补齐checkpoint已登记的--accent",
+    "分离cleanup与finalAcceptance避免循环",
+    "保留--columns生产者；--work-depth实际无生产者且有0 fallback"
+  ],
+  "runnerDifference": "executionInputPaths 将已归档历史原路径映射到经校验ZIP及索引；未登记缺失仍失败"
+}

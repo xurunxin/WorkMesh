@@ -73,10 +73,11 @@ WorkMesh adopts the reference's **measurements and structural patterns** into th
 mechanism ADR 0028 and 0045 already chose. It does not adopt its framework, its
 classnames, or its colour mechanism.
 
-### Values move into the existing token namespace
+### Values move into semantic reference slots
 
-保留单一语义 token 与 authored CSS 机制；D1b 按已批准映射逐面迁名、迁移消费方，
-依赖清零后删除旧名称。参考实测、用户采纳候选与 WorkMesh 沿用值分别登记，不把全部值称为实测：
+单一语义 token 源继续采用 authored CSS custom properties。D1a 新增并存的 `--wm-ref-*`
+槽，D1b 补齐映射并逐面迁移全部消费，最后删除旧名称及兼容分支；旧名称不是永久兼容接口。
+下面列出采用的参考实测尺度，完整声明、暗色同值重绑定及来源指针另见 D1b 映射：
 
 | Slot | WorkMesh today | Reference measured | Adopt |
 | --- | --- | --- | --- |
@@ -100,6 +101,7 @@ D0 固定亮色取样不是删除暗色的许可。
 
 ### D1a coexistence mapping
 
+以下记录已完成 D1a 的历史边界，不约束获准的 D1b 消费迁移与最终清旧。
 D1a adds parallel `--wm-ref-*` slots only. It does not change the declarations or
 consumers of the existing slots; #21 owns consumer migration and eventual cleanup.
 The light values below are transcribed from the controlled measurement source
@@ -128,6 +130,39 @@ reference reports the same light value for hover and secondary surface, while th
 existing dark values differ (`#262A2F` and `#1F2226`). Each slot therefore aliases
 its own prior dark token, preserving #21's migration boundary. The danger value is
 not evidence of a rendered error state. The rounded values do not vary by theme.
+
+### D1b 消费迁移与获准设计
+
+用户已批准补齐映射后完整清旧、暗色同值重绑定、候选用于真实危险语义，并允许大胆替换
+旧 UI 设计、样式和组件呈现。本项迁移暖色表面、分层文字、独立 hover/secondary 和语义
+状态槽；不引入 Tailwind，不实现后续卡片结构、Attention 策略、分隔线、菜单或拖拽功能。
+业务、真实授权／状态、导航和焦点能力继续成立。
+
+完整退役表为 [`theme-token-migration.json`](../../apps/web/features/navigation/theme-token-migration.json)：
+覆盖全部旧槽与声明作用域，区分参考实测、用户授权设计、用户采纳候选、产品沿用和已有
+别名合并。表面／文字取原始 `design-observations.json` 的 `/12/custom/*`，状态、动作和
+圆角引用 `css-evidence.json` 的实际规则指针；每个原件记录 Git blob 与工作区双字节哈希。
+未实测槽使用明确标注的 WorkMesh 原值／公式，字体、间距、动效和层叠参数只同值迁名，
+不能把产品沿用写成参考实测。
+
+普通 `--wm-surface` 迁到独立 card 槽，亮色采用实测 elevated 的 `#fdfaf6`，暗色保留
+原 card 的 `#141619`；canvas 和 elevated 不因此合并。`--wm-muted` 消费合并到 secondary，
+声明只由 text-muted 的目标负责，避免生成自引用。亮色危险语义采用用户明确批准的
+`#ef4444`；原始证据只是 `/rules/904` 的 `.bg-red-500` CSS 候选，未主动实测错误态。
+正式名称为 `--wm-ref-danger`，旧 candidate 名随最终清理退役。
+
+暗色 ref 原别名按原产品语义值直接重绑定；保持 canvas/card/elevated、hover/secondary、
+tertiary/dim 的独立值。派生 panel、border、gradient、focus-ring 在主题及密度边界重声明，
+用实际背景、边框、渐变和焦点环验证嵌套继承，不只检查依赖图。实例 status-color 和
+dismissal-depth 保留生产者、消费及正确 fallback，不覆盖自定义工作流颜色。
+
+D0 是固定环境和固定比较参数下的历史前后证据，重构不要求像素零差异；预期差异必须
+留存并实际视觉评审，不能调宽比较器或以技术通过替代用户颜色判断。无 D0 原图的组合
+先采迁前截图，原 D0 PNG 和 D1a／R1 历史证据不修改。按完整
+[`surface-matrix.json`](../reviews/d1b/surface-matrix.json) 顺序逐面验收，局部区域隔离、
+共享 chrome 与 portal 最后迁移；全部适用行及全局复验获准、零旧消费／别名依赖后才清旧。
+阶段保护设计见 [`phase-protection.md`](../reviews/d1b/phase-protection.md)，最终验收仍须
+本轮必需回归、最新 Required CI、独审、实际合入及 Chief 确认。
 
 ### The card becomes a structural contract
 
@@ -276,45 +311,3 @@ required by this ADR, because presentation owns no locked row.
   dark follow-up, and which were rejected as mechanism.
 - The board gains a card-structure test and the one-warm-colour invariant test
   described above.
-
-## D1b 已授权 UI 方向同步（2026-10-08）
-
-来源为 #21 平台完整规格中的 11:32 三项裁定、11:33 UI 方向及 12:31 实施交接；
-历史来源哈希与 R1 原始快照仍保留，不能把这些后续授权冒作原始测量。
-
-允许大胆替换或删除旧布局、组件设计、样式和 token；旧像素或旧结构不是兼容目标。
-补齐来源映射后完整迁移并清旧，暗色允许同值重绑定并删除旧名称，保留切换与值；
-参考暗色重新选值仍未授权。危险语义采用用户批准的 #ef4444 CSS 候选，
-明确它不是参考错误态实测。D0 原件与固定比较参数保持，仅作为历史前后证据；
-预期设计差异必须实际评审，不要求伪造零差异。
-
-旧条款中要求保留旧结构、禁止一切暗色迁名或遇到既定方向内取舍都重新裁决的部分，
-以本段授权为准。功能、真实领域状态、权限、导航与键盘可达、事务命令与审查 CI 门禁保持。
-本卡的原测试和 DoD 不因 UI 重构而删除；本卡独有功能责任、依赖和放行门禁保持。
-后续实现须记录新 token 的实际 computed style、明暗、焦点、导航及历史视觉差异；
-它们不能以 #21 的文档或 token 检查替代自己的功能验收。
-验收映射见 `docs/reviews/d1b/test-coverage.json`；原始映射保留在 `docs/reviews/r1/test-coverage.json`。
-
-### D1b 全量映射与设计理由
-
-完整机器可审映射位于 `apps/web/features/navigation/theme-token-migration.json`，
-覆盖 175 条历史声明及 115 个旧槽的作用域、目标值、公式依赖和来源。它是待独审的
-迁移定义；本次未修改 token CSS 或产品消费。D1a 的历史表仍描述当时并存状态。
-
-普通卡片新槽 `--wm-ref-surface-card` 亮色取 #fdfaf6，是将参考 elevated 观测值
-用于 WorkMesh 卡片的设计应用；不是参考普通卡片实测。暗色保留 #141619，
-与 canvas #0B0C0E、raised #1A1D21 分开。hover 与 secondary、tertiary 与 dim
-各自保留独立的暗色语义。危险候选转 `--wm-ref-danger`，并存期候选不提前删除。
-`--wm-muted` 合并到 secondary；其他未映射文字、语义 bg/border/fg、阴影、字体、
-间距、尺寸、层叠和动效全部同值迁名（公式引用改为新槽），不伪称新增实测。
-间距虽有参考观测刻度，本阶段保持当前产品刻度；组件所需改变在逐面方案中说明并评审。
-
-根/暗色/compact 的新槽必须能在实际子树切换，panel/border/gradient/focus 公式
-在切换边界重声明，避免父级解析值错误继承。暗色最终不依赖任何旧名。
-实例 `--wm-status-color`、`--wm-dismissal-depth`、`--wm-overlay-depth` 保留生产者和
-fallback 能力；自定义工作流色仍来自服务端，不把 Attention 色映射为工作流权威。
-AgentWorkspace 未定义的普通变量及硬编码 fallback 转为对应语义槽，作为该面可见差异评审。
-
-每面评审包含文字可读性、焦点、hover/active、危险动作和真实明暗计算样式；
-按钮/状态配对的 bg/fg 不能仅因 token 有定义就视为视觉通过。卡片三区、单暖色 Attention、
-三栏布局和拖拽等后续功能由 #12/#13/#14/#22 原卡验收，未随此次映射提前实施。

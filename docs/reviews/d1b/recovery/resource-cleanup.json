@@ -1,0 +1,191 @@
+{
+  "recordedAt": "2026-10-08T09:15:09.710Z",
+  "ownedDockerContainers": [],
+  "ownedImages": [],
+  "ownedTestServices": [],
+  "createdResources": "本轮未创建Docker资源或测试服务；3200/3201检查无监听。pnpm install及单测子进程已结束。",
+  "temporaryEvidence": "temporary-evidence-index.json",
+  "cleaned": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\.tmp\\d1b-preflight.py",
+      "result": "已按精确LiteralPath清理，原字节已存temporary-evidence.zip；无recursive force",
+      "stillAbsent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\.tmp\\d1b-run-preflight.py",
+      "result": "已按精确LiteralPath清理，原字节已存temporary-evidence.zip；无recursive force",
+      "stillAbsent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\.tmp\\d1b-recover-evidence.mjs",
+      "result": "已按精确LiteralPath清理，原字节已存temporary-evidence.zip；无recursive force",
+      "stillAbsent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\.tmp\\d1b-package-raw.mjs",
+      "result": "已按精确LiteralPath清理，原字节已存temporary-evidence.zip；无recursive force",
+      "stillAbsent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\.tmp\\d1b-package-temporaries.mjs",
+      "result": "已按精确LiteralPath清理，原字节已存temporary-evidence.zip；无recursive force",
+      "stillAbsent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\.tmp\\d1b-recovery",
+      "result": "已按精确LiteralPath清理，原字节已存temporary-evidence.zip；无recursive force",
+      "stillAbsent": true
+    }
+  ],
+  "retained": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+      "reason": "当前构建，待平台提交/推送与阶段评审"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+      "reason": "已只读提取证据，但未合入main及确认无人运行，不正式清理、不force抹dirty"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade\\node_modules",
+      "reason": "锁文件依赖用于当前构建和后续验证"
+    }
+  ],
+  "configRestore": "未修改宿主环境或配置；环境仅注入测试子进程，退出即恢复",
+  "globalPrune": false,
+  "pnpmRunDirectory": {
+    "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-recovery-theme-unit",
+    "existed": false,
+    "result": "单测未创建，无需删除"
+  },
+  "deferredCondition": "旧worktree待实际合入main、证据保全且无人运行后正式清理",
+  "finalCheckedAt": "2026-10-08T09:20:39.863Z",
+  "finalUnitRunDirectory": {
+    "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-d1b-recovery-theme-unit-final",
+    "existed": false,
+    "result": "最终单测未创建测试服务目录，无需删除"
+  },
+  "dockerReadOnlyInventory": [
+    {
+      "args": [
+        "ps",
+        "-a",
+        "--format",
+        "{{.ID}}\t{{.Names}}\t{{.Status}}"
+      ],
+      "checkedAt": "2026-10-08T09:23:38.152Z",
+      "exitCode": 0,
+      "rows": [
+        "1ef0f704ed47\tc3test-postgres-memory-01a11890\tUp 39 minutes",
+        "d89ca9b336d3\tc3test-artifact-01a11890\tCreated",
+        "6823d546606c\tc3test-s3-01a11890\tUp About an hour",
+        "8e96573c493f\tc3test-redis-01a11890\tUp About an hour",
+        "37fa16dcc8d1\tc3test-postgres-01a11890\tExited (0) 11 minutes ago",
+        "88251e3399a6\tworkmesh-c1-s3\tUp About an hour",
+        "752795a3f22f\tworkmesh-c1-redis\tUp About an hour",
+        "c32da4297855\tworkmesh-c1-postgres\tUp About an hour",
+        "286b8ad409ef\twm-a1-01a1187a-s3\tUp About an hour",
+        "d504e8bb89f3\twm-a1-01a1187a-redis\tUp About an hour",
+        "b669ac6e6d65\twm-a1-01a1187a-pg\tUp About an hour",
+        "8955a6225785\tr1ci381d-rustfs-test\tExited (0) 12 hours ago",
+        "fdbfaf96fc4b\tr1ci381d-redis-test\tExited (0) 12 hours ago",
+        "afb321d3ab88\tr1ci381d-postgres-test\tExited (0) 12 hours ago",
+        "42c1f96772b6\tr1ci381c-rustfs-test\tExited (0) 12 hours ago",
+        "16d965766d2c\tr1ci381c-redis-test\tExited (0) 12 hours ago",
+        "567c5c781c26\tr1ci381c-postgres-test\tExited (0) 12 hours ago",
+        "bb6b39f0959d\tr1ci381b-rustfs-test\tExited (0) 12 hours ago",
+        "1244d5e4667d\tr1ci381b-redis-test\tExited (0) 12 hours ago",
+        "4d8e4c20dc84\tr1ci381b-postgres-test\tExited (0) 12 hours ago",
+        "959f0cabf5d6\tr1ci381-rustfs-test\tExited (0) 12 hours ago",
+        "f3359d7c72a7\tr1ci381-redis-test\tExited (0) 12 hours ago",
+        "4b9d5cc52acd\tr1ci381-postgres-test\tExited (0) 12 hours ago",
+        "54f147c18124\tr1i-rustfs-test\tExited (0) 13 hours ago",
+        "ebf6f15a199e\tr1i-redis-test\tExited (0) 13 hours ago",
+        "2709a753abeb\tr1i-postgres-test\tExited (0) 13 hours ago",
+        "39acded25c5f\tr1h-rustfs-test\tExited (0) 13 hours ago",
+        "446d990bae3d\tr1h-redis-test\tExited (0) 13 hours ago",
+        "1aa94d42b532\tr1h-postgres-test\tExited (0) 13 hours ago",
+        "885491d285b0\tr1g-rustfs-test\tExited (0) 13 hours ago",
+        "88d7597271c3\tr1g-redis-test\tExited (0) 13 hours ago",
+        "68ddd591771d\tr1g-postgres-test\tExited (0) 13 hours ago",
+        "accb377d0f75\tr1f-rustfs-test\tExited (0) 13 hours ago",
+        "95612d167478\tr1f-redis-test\tExited (0) 13 hours ago",
+        "666b8a945f4e\tr1f-postgres-test\tExited (0) 13 hours ago",
+        "6572b97faee7\tr1e-rustfs-test\tExited (0) 14 hours ago",
+        "d74db6d52c21\tr1e-redis-test\tExited (0) 14 hours ago",
+        "25a235596355\tr1e-postgres-test\tExited (0) 14 hours ago",
+        "a31c79775de3\tr1d-rustfs-test\tExited (0) 14 hours ago",
+        "cef8749bbce4\tr1d-redis-test\tExited (0) 14 hours ago",
+        "16bd2b3e9824\tr1d-postgres-test\tExited (0) 14 hours ago",
+        "d89c37d3a22e\tr1c-rustfs-test\tExited (0) 14 hours ago",
+        "1da14d685015\tr1c-redis-test\tExited (0) 14 hours ago",
+        "a4173ad93c5a\tr1c-postgres-test\tExited (0) 14 hours ago",
+        "fb305d53eee0\tr1b-rustfs-test\tExited (0) 13 hours ago",
+        "8be4c0b2f3b2\tr1b-redis-test\tExited (0) 13 hours ago",
+        "3ac7b4978d97\tr1b-postgres-test\tExited (0) 13 hours ago",
+        "a016713d06d3\tr1-rustfs-test\tExited (0) 14 hours ago",
+        "7a1f3fad0cc9\tr1-redis-test\tExited (0) 14 hours ago",
+        "557e9b8f1cab\tr1-postgres-test\tExited (0) 14 hours ago",
+        "00f4596dc354\tworkmesh-postgres-1\tUp 20 hours (healthy)",
+        "16feb81cf9d2\tworkmesh-redis-1\tUp 20 hours (healthy)",
+        "34820cf2e25e\tworkmesh-web-1\tExited (255) 7 days ago",
+        "a3b6f726f524\tworkmesh-api-1\tExited (255) 7 days ago",
+        "951afd926067\tworkmesh-worker-1\tExited (255) 8 days ago",
+        "70078a3028a6\tworkmesh-migrate-1\tExited (0) 8 days ago",
+        "f8b614913c4e\tworkmesh-minio-init-1\tExited (0) 39 hours ago",
+        "ed7ebe27231e\tworkmesh-minio-1\tUp 20 hours (healthy)"
+      ]
+    },
+    {
+      "args": [
+        "images",
+        "--format",
+        "{{.ID}}\t{{.Repository}}:{{.Tag}}"
+      ],
+      "checkedAt": "2026-10-08T09:23:38.423Z",
+      "exitCode": 0,
+      "rows": [
+        "010e618a8aae\tstoryboard-pi:2a809c0c9173c3c4e68b70c90c0b7e6da2e1bba7",
+        "a90bbd6002ca\tneochat/neochat-web:088a13c2e91e-lite",
+        "0f60f6c52585\tneochat/neochat-app:088a13c2e91e-lite",
+        "fb03ca8b9fb0\tneochat-release-validation:20261008",
+        "cb0fcd0b00a7\tneochat-release-candidate:20261008",
+        "6383acbeef81\tworkbuddy2api:54603b83506a0e8ad847941ea2e21a1e057769b9",
+        "6383acbeef81\tghcr.io/xurunxin/workbuddy2api:54603b83506a0e8ad847941ea2e21a1e057769b9",
+        "7903dfebb56e\tghcr.io/xurunxin/workbuddy2api:a281629ab340996b10d408ccdcc653cadefb10c4",
+        "cb3085d7795b\tworkmesh-web:01a098ac21ea20bba22e6a0eee110c4f4f4f7f95",
+        "1cd79acb3e43\tworkmesh-mcp:01a098ac21ea20bba22e6a0eee110c4f4f4f7f95",
+        "ce603241d408\tworkmesh-worker:01a098ac21ea20bba22e6a0eee110c4f4f4f7f95",
+        "26d782888fd2\tworkmesh-api:01a098ac21ea20bba22e6a0eee110c4f4f4f7f95",
+        "9cbdcf4bafaf\tworkmesh-lite:local",
+        "71163693aed2\tworkmesh-web:latest",
+        "b38cd256155f\tdigital-human-gateway:departments-20260930",
+        "fd482c2c1305\tdigital-human-gateway:diagnostics-export-20260930",
+        "f1f0f45c1c05\tworkmesh-api:latest",
+        "f5c3fcf4fa3d\tdigital-human-gateway:departments-20260929-r2",
+        "448f8f1d7fda\tstoryboard-pi:b68f7a885b1707587846806f642c0c1833a86e13",
+        "dd402b7fc29d\tstoryboard-pi:4e98d42b4c318e3ba6759d4764de655928a71d45",
+        "8e4b13b8c4fd\tstoryboard-pi:1fea02f6a9dc5088c01c9d1236153fe80a01cc21",
+        "31762183f81b\tstoryboard-pi:eed3765e78e152ff341fe636455ec3f45a9ae572",
+        "13116b66e4b0\tstoryboard-pi:04c869712816397b23e5e40d341d5b203ce522d9",
+        "9fb519669dc4\tstoryboard-pi:8d535a02de5481a12688a4b32240cfd93af06e6b",
+        "1cbe164518cd\tstoryboard-pi:89ba9bb4599f664bc0e9582ee603ac23648d625e",
+        "a1554391d7c0\tstoryboard-pi:24033535f9a547f682a1789d9f8e413ec62b8592",
+        "07fc65dc0700\tdigital-human-gateway:departments-20260929",
+        "dfdbd9c71b6e\tstoryboard-pi:9ef96aba5677d3f86cf18e2d708bfd624ac1b39c",
+        "78dd7ed7a06a\tstoryboard-pi:7b027ed48dcbf7862e9a440f9295ada20314bf5d",
+        "807d5195ee19\tworkmesh-migrate:latest",
+        "878953cb9908\tworkmesh-worker:latest",
+        "858f009f9709\tredis:7-alpine",
+        "721873c34ceb\tpostgres:16-alpine",
+        "77f585114c32\tpostgres:18-alpine",
+        "8cc980175544\trustfs/rustfs:1.0.0",
+        "58adaa4e8dca\tcurlimages/curl:latest",
+        "8f693eaa7e0a\tnode:20",
+        "1cf6c45ba39d\tgolang:1.22"
+      ]
+    }
+  ],
+  "dockerRetentionReason": "现场未见可归属D1b/当前或旧conversation的专用容器/镜像；其他C3/C1/A1/R1及共享WorkMesh资源保留，未操作持久数据或global prune。名称不是删除授权。",
+  "dockerOwnedCandidates": []
+}
