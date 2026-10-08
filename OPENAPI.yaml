@@ -2236,6 +2236,32 @@ paths:
       parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchConversationContextPinsUpdateInput" } } } }
       responses: { "200": { description: Conversation with replaced context pins, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchConversation" } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+  /api/v1/workbench/configuration-readiness:
+    get:
+      x-workmesh-policy-id: route.getConfigurationReadiness
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: getConfigurationReadiness
+      summary: 按当前 Human、Team 和工作意图查询配置就绪投影
+      description: >-
+        纯查询，不产生领域状态、Session、receipt、event 或 outbox；鉴权拒绝保留既有 authorization_denials 安全审计。
+        配置就绪不构成激活或执行许可。Runner 恒 unknown，不使用 Session heartbeat 推断活性。
+        指定 projectId/workItemId 时只检查当前上下文，无资源参数时检查 Team 的 Project。
+        隐藏配置与缺失配置使用同一 unmet 原因。响应 Cache-Control 为 no-store。
+      parameters:
+        - { name: teamId, in: query, required: true, schema: { type: string, format: uuid } }
+        - { name: workKind, in: query, required: true, schema: { type: string, enum: [repository, non_repository] } }
+        - { name: projectId, in: query, schema: { type: string, format: uuid } }
+        - { name: workItemId, in: query, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: 独立配置检查；无总体运行许可, content: { application/json: { schema: { $ref: "#/components/schemas/ConfigurationReadiness" } } } }
+        "400": { description: 参数不合法, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "401": { description: Human 会话无效, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "403": { description: 调用者不允许访问, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "404": { description: Team 或上下文不存在、不可见或不匹配, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "500": { description: 查询失败；不转换为就绪状态, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
   /api/v1/workbench/llm-connections:
     get:
       x-workmesh-policy-id: route.listWorkbenchLlmConnections
@@ -3692,6 +3718,28 @@ components:
     GuidanceDiff:
       { description: Authorized line diff between two immutable Guidance revisions., content: { application/json: { schema: { $ref: "#/components/schemas/GuidanceDiff" } } } }
   schemas:
+    ConfigurationReadinessApplicableCheck:
+      oneOf:
+        - { type: object, additionalProperties: false, required: [applicability, state, reasonCode], properties: { applicability: { const: applicable }, state: { const: ready }, reasonCode: { const: configured } } }
+        - { type: object, additionalProperties: false, required: [applicability, state, reasonCode], properties: { applicability: { const: applicable }, state: { const: blocked }, reasonCode: { const: unmet } } }
+        - { type: object, additionalProperties: false, required: [applicability, state, reasonCode], properties: { applicability: { const: applicable }, state: { const: unknown }, reasonCode: { const: not_observable } } }
+    ConfigurationReadiness:
+      type: object
+      additionalProperties: false
+      required: [checks]
+      properties:
+        checks:
+          type: object
+          additionalProperties: false
+          required: [model, agent, repository, runner]
+          properties:
+            model: { $ref: "#/components/schemas/ConfigurationReadinessApplicableCheck" }
+            agent: { $ref: "#/components/schemas/ConfigurationReadinessApplicableCheck" }
+            repository:
+              oneOf:
+                - { $ref: "#/components/schemas/ConfigurationReadinessApplicableCheck" }
+                - { type: object, additionalProperties: false, required: [applicability, state, reasonCode], properties: { applicability: { const: not_applicable }, state: { type: "null" }, reasonCode: { const: non_repository_work } } }
+            runner: { type: object, additionalProperties: false, required: [applicability, state, reasonCode], properties: { applicability: { const: applicable }, state: { const: unknown }, reasonCode: { const: not_observable } } }
     WorkbenchRunnerCredential:
       type: object
       description: Runner-only response. The apiKey and fenceToken must never be persisted in client state, logs, activities, events, or artifacts.

@@ -15,8 +15,10 @@
 
 只通知被指派 Human，管理员不能代管目标，也不按全 Team 查询可见性扇出。目标 admission 集合固定，配置 revision 改变后旧记录被抑制，不换地址发送。
 发送前重新读取当前权限与配置，内容仅通用提醒、原 source revision 和 canonical 相对深链，C2 使用部署的可信 Web origin 构造最终 URL。
+独审修复后，发送事务复用 `lockAgentAuthorityPlan` 锁定完整授权计划，再锁来源、Team、Human 和 membership，锁后重读。发送 checkpoint 提交为线性化边界：撤权先提交抑制外发；后提交不能召回在途调用。delivery 的 `notification_kind` 持久化兼容通知类型：Approval 统一 `approval.requested`（包括尚未达到 quorum 的决定事件），其他来源使用源事件类型；新增迁移补该类型元数据，不重投历史记录。
 业务事务提交前没有外部调用；发送 checkpoint 提交后中断进入未知结果，由本人显式对账。外部结果承诺至少一次，可重送，不承诺唯一键带来的外部恰好一次。
 每目标失败与退避独立；旧 fence 不能写 ack；最后一次 claim 崩溃必须恢复为未知结果或死信。
+tick 每次只领当前可处理的一条，最多处理 25 条；单条 claim 丢失不阻断其他投递或 Loop 工作。审核反馈、实际并发断言及新组合完整回归见 [独审修复证据](../reviews/c1/review-fixes/README.md)。
 
 ## 验证与交接
 

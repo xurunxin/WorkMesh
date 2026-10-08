@@ -1,0 +1,12 @@
+{
+  "scope": "本轮 C1 审核修复隔离夹具，fake 验证，不是发布或真实渠道验证",
+  "database": { "host": "127.0.0.1", "port": 55461, "name": "workmesh_c1_review_test", "destructiveTestsAllowed": "独立 test 数据库，非持久业务库" },
+  "redis": { "host": "127.0.0.1", "port": 56361 },
+  "s3": { "endpoint": "http://127.0.0.1:59061", "bucket": "workmesh-c1-review-artifacts", "objectLock": true, "region": "us-east-1", "forcePathStyle": true },
+  "fixtures": { "RUN_INTEGRATION": "1", "bootstrap": "各 check 子进程生成随机 32 bytes canonical base64url，不保存原值", "SESSION_SECRET": "仅本地测试，满足长度规则，不保存原值", "WORKMESH_MASTER_KEY": "仅本地测试，64 hex，不保存原值", "WORKMESH_RUNNER_SERVICE_TOKEN": "仅 fake runner 长 token，不保存原值" },
+  "authRateLimits": { "endpoint": 10000, "socket": 10000, "clientIp": 10000, "subject": 1000, "install": 100 },
+  "playwrightRunDirectory": "C:/Users/xurx/AppData/Local/Temp/workmesh-c1-review-01a1187a/playwright",
+  "configRestore": "只对子进程注入环境，未写系统变量、.env 或生产配置；退出即恢复",
+  "knownSkips": ["worker formal soak 单元入口", "worker formal lock 单元入口", "API external runner 可选集成", "worker retention upgrade barrier 可选集成", "recovery opt-in 灾备恢复集成"],
+  "skipPolicy": "跳过不计通过；本轮不扩大到形式 soak、真实灾备或真实外发"
+}

@@ -9,6 +9,11 @@ export const routeOperationBindings = [
   {"method":"POST","path":"/api/v1/channel-notification-deliveries/{id}/reconcile","operationId":"reconcileChannelNotificationDelivery"},
   {
     "method": "GET",
+    "path": "/api/v1/workbench/configuration-readiness",
+    "operationId": "getConfigurationReadiness"
+  },
+  {
+    "method": "GET",
     "path": "/livez",
     "operationId": "live"
   },

@@ -1180,6 +1180,124 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
       await db.query(`UPDATE notification_channel_targets SET enabled=false`)
       await db.query(`UPDATE outbox_events SET status='delivered',locked_at=NULL,locked_by=NULL`)
       await db.query(`UPDATE actors SET is_active=true,workspace_role='admin' WHERE id=$1`, [fixture.humanId])
+      await db.query('DELETE FROM notification_preferences WHERE workspace_id=$1 AND actor_id=$2', [fixture.workspaceId,fixture.humanId])
+      await db.query(`UPDATE loops SET state='paused',next_run_at=NULL`)
+    })
+    const approvalSource = () => withTx(db, async tx => {
+      const work=(await tx.query<{id:string}>(`INSERT INTO work_items(workspace_id,team_id,number,title,status_id,responsible_human_actor_id) SELECT workspace_id,team_id,(SELECT coalesce(max(number),0)+1 FROM work_items WHERE team_id=$2),'C1 concurrent approval',status_id,$3 FROM work_items WHERE id=$1 RETURNING id`,[fixture.workItemId,fixture.teamId,fixture.humanId])).rows[0]!
+      const delegation=(await tx.query<{id:string}>(`INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,ARRAY['work:read','work:write'],$7) RETURNING id`,[fixture.workspaceId,fixture.teamId,fixture.agentId,fixture.agentActorId,fixture.humanId,work.id,{teamIds:[fixture.teamId],workItemIds:[work.id]}])).rows[0]!
+      const session=(await tx.query<{id:string}>(`INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,state) VALUES($1,$2,$3,$4,$5,$6,'awaiting_approval') RETURNING id`,[fixture.workspaceId,fixture.teamId,fixture.agentId,fixture.agentActorId,delegation.id,work.id])).rows[0]!
+      const approval=(await tx.query<{id:string}>(`INSERT INTO approvals(workspace_id,session_id,requested_by_actor_id,approval_type,action_name,action_payload_sanitized,action_payload_hash,risk_level,rationale_summary,expires_at) VALUES($1,$2,$3,'protected_action','test_c1','{}',$4,'high','Private rationale',now()+interval '1 hour') RETURNING id`,[fixture.workspaceId,session.id,fixture.agentActorId,'sha256:'+'a'.repeat(64)])).rows[0]!
+      const eventId=await appendEvent(tx,{...meta('approval-race'),type:'approval.requested',aggregateType:'approval',aggregateId:approval.id,revision:1})
+      return {id:approval.id,eventId,sessionId:session.id,delegationId:delegation.id,workItemId:work.id}
+    })
+    const waitForBlockedTransaction = async (blocker: number) => {
+      const deadline=Date.now()+5_000
+      while(Date.now()<deadline){
+        if((await db.query<{blocked:boolean}>('SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))) AS blocked',[blocker])).rows[0]!.blocked)return
+        await new Promise(resolve=>setTimeout(resolve,20))
+      }
+      throw new Error('Expected a real PostgreSQL lock wait, not a sequential revocation')
+    }
+    it.each(['inactive','membership','assignment','grant','delegation','approval','team'] as const)('serializes %s revocation before the send checkpoint and makes zero adapter calls',async(change)=>{
+      await target();const item=await approvalSource();await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      if(change==='membership')await db.query(`UPDATE actors SET workspace_role='member' WHERE id=$1`,[fixture.humanId])
+      let sends=0
+      const worker=createBaseAutomationWorker({db,features,workerId:'c1-race',channelAdapters:{wecom:{send:async()=>{sends++;return {result:'delivered'}}}}})
+      const [delivery]=await worker.claimNotifications()
+      const revoke=await db.connect();let sending:Promise<void>|undefined
+      try {
+        await revoke.query('BEGIN')
+        const pid=(await revoke.query<{pid:number}>('SELECT pg_backend_pid() AS pid')).rows[0]!.pid
+        if(change==='inactive')await revoke.query('UPDATE actors SET is_active=false WHERE id=$1',[fixture.humanId])
+        if(change==='membership')await revoke.query('DELETE FROM memberships WHERE team_id=$1 AND actor_id=$2',[fixture.teamId,fixture.humanId])
+        if(change==='assignment')await revoke.query('UPDATE work_items SET responsible_human_actor_id=NULL WHERE id=$1',[item.workItemId])
+        if(change==='grant')await revoke.query('UPDATE agent_team_access SET revoked_at=now() WHERE agent_id=$1 AND team_id=$2',[fixture.agentId,fixture.teamId])
+        if(change==='delegation')await revoke.query(`UPDATE delegations SET status='revoked',revoked_at=now() WHERE id=$1`,[item.delegationId])
+        if(change==='approval')await revoke.query(`UPDATE approvals SET status='rejected' WHERE id=$1`,[item.id])
+        if(change==='team'){
+          await revoke.query('SELECT id FROM workspaces WHERE id=$1 FOR UPDATE',[fixture.workspaceId])
+          await revoke.query('UPDATE teams SET deleted_at=now() WHERE id=$1',[fixture.teamId])
+        }
+        sending=worker.deliverNotification(delivery!)
+        await waitForBlockedTransaction(pid)
+        expect(sends).toBe(0)
+        await revoke.query('COMMIT');await sending
+        expect(sends).toBe(0);expect((await state(delivery!.id)).status).toBe('suppressed')
+      } finally {
+        await revoke.query('ROLLBACK');revoke.release();await sending
+        await db.query(`UPDATE actors SET is_active=true,workspace_role='admin' WHERE id=$1`,[fixture.humanId])
+        await db.query(`INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'admin') ON CONFLICT DO NOTHING`,[fixture.workspaceId,fixture.teamId,fixture.humanId])
+        await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2',[fixture.agentId,fixture.teamId])
+        await db.query('UPDATE teams SET deleted_at=NULL WHERE id=$1',[fixture.teamId])
+      }
+    })
+    it('holds authorization through checkpoint commit and orders a later revocation after sending',async()=>{
+      await target();const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId))
+      const [delivery]=await claim('c1-send-first',1);const send=await db.connect();const revoke=await db.connect()
+      let revocation:Promise<unknown>|undefined
+      try{
+        await send.query('BEGIN');const pid=(await send.query<{pid:number}>('SELECT pg_backend_pid() AS pid')).rows[0]!.pid
+        expect(await prepareChannelSend(send,delivery!,'c1-send-first')).not.toBeNull()
+        await revoke.query('BEGIN');revocation=revoke.query('UPDATE actors SET is_active=false WHERE id=$1',[fixture.humanId])
+        await waitForBlockedTransaction(pid)
+        expect((await state(delivery!.id)).outcome).toBe('not_sent')
+        await send.query('COMMIT');await revocation;await revoke.query('COMMIT')
+        expect((await state(delivery!.id)).outcome).toBe('sending')
+      }finally{await send.query('ROLLBACK');send.release();await revocation;await revoke.query('ROLLBACK');revoke.release();await db.query('UPDATE actors SET is_active=true WHERE id=$1',[fixture.humanId])}
+    })
+    it.each(['approval.requested','approval.decision.recorded'])('persists the compatible approval kind for %s and rechecks a newly muted kind at send time',async(eventType)=>{
+      await target();const item=await approvalSource()
+      const eventId=eventType==='approval.requested'?item.eventId:await withTx(db,tx=>appendEvent(tx,{...meta('partial-quorum'),type:eventType,aggregateType:'approval',aggregateId:item.id,revision:1}))
+      await withTx(db,tx=>admitChannelEvent(tx,eventId))
+      let sends=0;const worker=createBaseAutomationWorker({db,features,workerId:'c1-muted',channelAdapters:{wecom:{send:async()=>{sends++;return {result:'delivered'}}}}})
+      const [delivery]=await worker.claimNotifications()
+      expect((await db.query('SELECT notification_kind FROM notification_deliveries WHERE id=$1',[delivery!.id])).rows[0]!.notification_kind).toBe('approval.requested')
+      await db.query(`INSERT INTO notification_preferences(workspace_id,actor_id,muted_kinds) VALUES($1,$2,ARRAY['approval.requested'])`,[fixture.workspaceId,fixture.humanId])
+      await worker.deliverNotification(delivery!);expect(sends).toBe(0);expect((await state(delivery!.id)).status).toBe('suppressed')
+    })
+    it('processes a full slow adapter batch without preclaiming waiting attempts and still schedules Loops',async()=>{
+      await target();const ids:string[]=[]
+      for(let i=0;i<25;i++){const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId));ids.push(item.id)}
+      // Remove unrelated legacy work so this tick tests the full 25 channel slots.
+      await db.query(`UPDATE notification_deliveries SET status='dead' WHERE notification_id IS NOT NULL`)
+      const loopId=await createLoop('c1-slow-batch')
+      await db.query(`UPDATE loops SET next_run_at=now()-interval '1 minute' WHERE id=$1`,[loopId])
+      let release!:()=>void;let started!:()=>void;let calls=0
+      const firstStarted=new Promise<void>(resolve=>{started=resolve})
+      const firstRelease=new Promise<void>(resolve=>{release=resolve})
+      const worker=createBaseAutomationWorker({db,features:loadFeatureConfig({WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS:'true',WORKMESH_EXPERIMENTAL_AGENT_LOOPS:'true'}),workerId:'c1-slow-batch',channelAdapters:{wecom:{send:async()=>{
+        calls++;if(calls===1){started();await firstRelease}
+        await new Promise(resolve=>setTimeout(resolve,25));return {result:'delivered'}
+      }}}})
+      const ticking=worker.tick()
+      try{await firstStarted
+        const waiting=(await db.query<{status:string;attempt_count:number}>(`SELECT delivery.status,delivery.attempt_count FROM notification_deliveries delivery JOIN notification_intents intent ON intent.id=delivery.intent_id WHERE intent.source_id=ANY($1::uuid[])`,[ids])).rows
+        expect(waiting.filter(row=>row.status==='claimed')).toHaveLength(1)
+        expect(waiting.filter(row=>row.status==='pending'&&row.attempt_count===0)).toHaveLength(24)
+      }finally{release();await ticking}
+      expect(calls).toBe(25)
+      expect((await db.query(`SELECT 1 FROM notification_deliveries delivery JOIN notification_intents intent ON intent.id=delivery.intent_id WHERE intent.source_id=ANY($1::uuid[]) AND delivery.status='delivered' AND delivery.attempt_count=1`,[ids])).rowCount).toBe(25)
+      expect((await db.query('SELECT 1 FROM automation_runs WHERE loop_id=$1',[loopId])).rowCount).toBeGreaterThan(0)
+    })
+    it.each(['prepare','ack'] as const)('isolates a lost %s claim and continues deliveries and Loop work',async(boundary)=>{
+      await target();const ids:string[]=[]
+      for(let i=0;i<2;i++){const item=await source();await withTx(db,tx=>admitChannelEvent(tx,item.eventId));ids.push(item.id)}
+      await db.query(`UPDATE notification_deliveries SET status='dead' WHERE notification_id IS NOT NULL`)
+      const loopId=await createLoop('c1-lost-claim');let calls=0;let lost=false
+      await db.query(`UPDATE loops SET next_run_at=now()-interval '1 minute' WHERE id=$1`,[loopId])
+      const worker=createBaseAutomationWorker({db,features:loadFeatureConfig({WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS:'true',WORKMESH_EXPERIMENTAL_AGENT_LOOPS:'true'}),workerId:'c1-lost-claim',channelAdapters:{wecom:{send:async({content})=>{
+        calls++;if(boundary==='ack'&&!lost){lost=true;await db.query(`UPDATE notification_deliveries SET claim_fence=claim_fence+1 WHERE effect_key=$1`,[content.effectKey])}
+        return {result:'delivered'}
+      }}}})
+      // A row trigger models lease theft after claim commit, before preparation.
+      if(boundary==='prepare')await db.query(`CREATE FUNCTION c1_steal_claim() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+        IF NEW.claimed_by='c1-lost-claim' AND OLD.status='pending' AND NEW.status='claimed' AND NOT EXISTS(SELECT 1 FROM notification_deliveries WHERE claimed_by='c1-stolen') THEN NEW.claimed_by='c1-stolen'; END IF; RETURN NEW; END $$;
+        CREATE TRIGGER c1_steal_claim BEFORE UPDATE ON notification_deliveries FOR EACH ROW EXECUTE FUNCTION c1_steal_claim()`)
+      try{await worker.tick()}finally{if(boundary==='prepare')await db.query('DROP TRIGGER c1_steal_claim ON notification_deliveries; DROP FUNCTION c1_steal_claim()')}
+      expect(calls).toBe(boundary==='prepare'?1:2)
+      expect((await db.query(`SELECT 1 FROM notification_deliveries delivery JOIN notification_intents intent ON intent.id=delivery.intent_id WHERE intent.source_id=ANY($1::uuid[]) AND delivery.status='delivered'`,[ids])).rowCount).toBe(1)
+      expect((await db.query('SELECT 1 FROM automation_runs WHERE loop_id=$1',[loopId])).rowCount).toBeGreaterThan(0)
     })
     it('admits only exact assigned Human targets and deduplicates concurrent source replay and fan-out', async () => {
       const one=await target('one'),two=await target('two'),item=await source()

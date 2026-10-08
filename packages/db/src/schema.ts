@@ -536,6 +536,7 @@ export const notificationDeliveries = pgTable('notification_deliveries', {
   id: uuid('id').primaryKey(), notificationId: uuid('notification_id'), channel: notificationChannel('channel').notNull(),
   workspaceId: uuid('workspace_id'), intentId: uuid('intent_id'), channelTargetId: uuid('channel_target_id'), recipientActorId: uuid('recipient_actor_id'),
   targetRevision: integer('target_revision'), requestHash: text('request_hash'), sendStartedAt: timestamp('send_started_at', { withTimezone: true }),
+  notificationKind: text('notification_kind'),
   retryBudgetStart: integer('retry_budget_start').notNull(), outcome: text('outcome').notNull(), checkpoint: jsonb('checkpoint'), revision: integer('revision').notNull(),
   status: notificationDeliveryStatus('status').notNull(), attemptCount: integer('attempt_count').notNull(),
   availableAt: timestamp('available_at', { withTimezone: true }).notNull(), claimedAt: timestamp('claimed_at', { withTimezone: true }),

@@ -1,0 +1,252 @@
+{
+  "seqNum": 8,
+  "id": "Hxr1xIdh4poZp3F5laGrT",
+  "owner": "A1 执行者",
+  "originalTests": [
+    {
+      "id": "todo-8-T1",
+      "text": "四项检查各自的 happy path",
+      "originalChecked": false,
+      "target": 8,
+      "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "caseName": "#8 原验收1：四项检查各自的 happy path",
+      "status": "本轮定向11项集成通过",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown"
+      ],
+      "owner": "A1 执行者",
+      "targetTodoId": "Hxr1xIdh4poZp3F5laGrT",
+      "evidence": "current-run/targeted.result.json"
+    },
+    {
+      "id": "todo-8-T2",
+      "text": "跨 Team 与他人个人模型**不泄露存在性**",
+      "originalChecked": false,
+      "target": 8,
+      "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "caseName": "#8 原验收2：跨 Team 与他人个人模型**不泄露存在性**",
+      "status": "本轮定向11项集成通过",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown",
+        "R1-8-2 跨workspace/Team及personal模型不可见，不泄漏存在性"
+      ],
+      "owner": "A1 执行者",
+      "targetTodoId": "Hxr1xIdh4poZp3F5laGrT",
+      "evidence": "current-run/targeted.result.json"
+    },
+    {
+      "id": "todo-8-T3",
+      "text": "**无 assignment 的空闲 Runner 不得被报成离线**（`unknown`）",
+      "originalChecked": false,
+      "target": 8,
+      "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "caseName": "#8 原验收3：**无 assignment 的空闲 Runner 不得被报成离线**（`unknown`）",
+      "status": "本轮定向11项集成通过",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown"
+      ],
+      "owner": "A1 执行者",
+      "targetTodoId": "Hxr1xIdh4poZp3F5laGrT",
+      "evidence": "current-run/targeted.result.json"
+    },
+    {
+      "id": "todo-8-T4",
+      "text": "模型 disabled → `blocked`；模型属于他人 → 对该调用者 `blocked` 且不泄露",
+      "originalChecked": false,
+      "target": 8,
+      "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "caseName": "#8 原验收4：模型 disabled → `blocked`；模型属于他人 → 对该调用者 `blocked` 且不泄露",
+      "status": "本轮定向11项集成通过",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown"
+      ],
+      "owner": "A1 执行者",
+      "targetTodoId": "Hxr1xIdh4poZp3F5laGrT",
+      "evidence": "current-run/targeted.result.json"
+    },
+    {
+      "id": "todo-8-T5",
+      "text": "非仓库工作 → `not_applicable` 而非 `blocked`",
+      "originalChecked": false,
+      "target": 8,
+      "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "caseName": "#8 原验收5：非仓库工作 → `not_applicable` 而非 `blocked`",
+      "status": "本轮定向11项集成通过",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown"
+      ],
+      "owner": "A1 执行者",
+      "targetTodoId": "Hxr1xIdh4poZp3F5laGrT",
+      "evidence": "current-run/targeted.result.json"
+    },
+    {
+      "id": "todo-8-T6",
+      "text": "断言**无状态/事件/outbox/receipt 写入**（不是「事务计数为 0」）",
+      "originalChecked": false,
+      "target": 8,
+      "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "caseName": "#8 原验收6：断言**无状态/事件/outbox/receipt 写入**（不是「事务计数为 0」）",
+      "status": "本轮定向11项集成通过",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown"
+      ],
+      "owner": "A1 执行者",
+      "targetTodoId": "Hxr1xIdh4poZp3F5laGrT",
+      "evidence": "current-run/targeted.result.json"
+    },
+    {
+      "id": "todo-8-T7",
+      "text": "路由策略矩阵用生成器重生成，不手改",
+      "originalChecked": false,
+      "target": 8,
+      "testFile": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "caseName": "#8 原验收7：路由策略矩阵用生成器重生成，不手改",
+      "status": "本轮定向11项集成通过",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown"
+      ],
+      "owner": "A1 执行者",
+      "targetTodoId": "Hxr1xIdh4poZp3F5laGrT",
+      "evidence": "current-run/targeted.result.json"
+    }
+  ],
+  "originalDoD": [
+    {
+      "text": "## DoD\n投影可用 + 全部作用域与三态断言通过 + 零 schema 变更 + 全量检查全绿。\n\n",
+      "sha256": "cda60aaba32650575b09b070ac08ad84a03c1cfe128d57693e754808532fa9b6",
+      "target": 8,
+      "owner": "A1 执行者",
+      "targetTodoId": "Hxr1xIdh4poZp3F5laGrT",
+      "acceptance": "原DoD保留，所有合法测试迁移到originalTests；矛盾旧要求按legacy处置和本任务共同契约撤换，不以历史绿灯放行"
+    }
+  ],
+  "matrix": [
+    {
+      "category": "happy path",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown",
+      "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "caseName": "R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown",
+      "owner": "A1 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "本轮定向集成通过",
+      "evidence": "current-run/targeted.result.json"
+    },
+    {
+      "category": "unauthorized actor",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "跨workspace/Team及personal模型不可见，不泄漏存在性",
+      "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "caseName": "R1-8-2 跨workspace/Team及personal模型不可见，不泄漏存在性",
+      "owner": "A1 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "本轮定向集成通过",
+      "evidence": "current-run/targeted.result.json"
+    },
+    {
+      "category": "invalid state transition",
+      "applicable": false,
+      "reason": "纯Query没有领域状态转换或写入协议。",
+      "assertion": null,
+      "file": null,
+      "caseName": null,
+      "owner": "A1 执行者",
+      "fileState": null,
+      "result": "不适用，不计通过",
+      "evidence": null
+    },
+    {
+      "category": "duplicate idempotency key",
+      "applicable": false,
+      "reason": "GET无幂等键；重复读断言零副作用。",
+      "assertion": null,
+      "file": null,
+      "caseName": null,
+      "owner": "A1 执行者",
+      "fileState": null,
+      "result": "不适用，不计通过",
+      "evidence": null
+    },
+    {
+      "category": "stale revision",
+      "applicable": false,
+      "reason": "GET没有If-Match或可修订就绪记录。",
+      "assertion": null,
+      "file": null,
+      "caseName": null,
+      "owner": "A1 执行者",
+      "fileState": null,
+      "result": "不适用，不计通过",
+      "evidence": null
+    },
+    {
+      "category": "transaction failure",
+      "applicable": false,
+      "reason": "零DB写入；查询失败另断言无Session/receipt/event/outbox。",
+      "assertion": null,
+      "file": null,
+      "caseName": null,
+      "owner": "A1 执行者",
+      "fileState": null,
+      "result": "不适用，不计通过",
+      "evidence": null
+    },
+    {
+      "category": "webhook/job replay",
+      "applicable": false,
+      "reason": "不消费job或写投递意图。",
+      "assertion": null,
+      "file": null,
+      "caseName": null,
+      "owner": "A1 执行者",
+      "fileState": null,
+      "result": "不适用，不计通过",
+      "evidence": null
+    },
+    {
+      "category": "concurrent request",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "两个Team并行查询不串投影；撤权后下一次读按实时授权收敛",
+      "file": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "caseName": "R1-8-8 两个Team并行查询不串投影；撤权后下一次读按实时授权收敛",
+      "owner": "A1 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "本轮定向集成通过",
+      "evidence": "current-run/targeted.result.json"
+    },
+    {
+      "category": "server restart/outbox recovery",
+      "applicable": false,
+      "reason": "只读投影无outbox/checkpoint；断线重读不创建副作用。",
+      "assertion": null,
+      "file": null,
+      "caseName": null,
+      "owner": "A1 执行者",
+      "fileState": null,
+      "result": "不适用，不计通过",
+      "evidence": null
+    }
+  ],
+  "currentAuditException": "用户已批准鉴权拒绝仅保留既有 authorization_denials；成功/重复/参数错误/SELECT故障全部public表行数和内容摘要不变。",
+  "currentDoD": {
+    "schema": "与1078bbc无差异",
+    "targeted": "11项通过",
+    "unit": "历史精确匹配证据复用",
+    "fullIntegration": "本轮pnpm test:integration成功：DB77/API165/Worker78，共320通过、3可选skip；首败历史保留，不以独立重跑代全套",
+    "fullE2e": "本轮67/67通过，0 skip，源码前后不变",
+    "independentReview": "待检查、绑定与清理完成",
+    "chiefConfirmation": "待最终确认",
+    "fullIntegrationEvidence": "current-run/integration.result.json",
+    "fullE2eEvidence": "current-run/e2e.result.json"
+  }
+}

@@ -730,7 +730,7 @@ export function createAutomationWorker({
       [limit, lockTimeoutSeconds, workerId, features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS],
     )).rows)
 
-  const claimNotifications = async (limit = 25, lockTimeoutSeconds = 60): Promise<ClaimedNotification[]> => {
+  const claimNotifications = async (limit = 1, lockTimeoutSeconds = 60): Promise<ClaimedNotification[]> => {
     const legacy = await claimLegacyNotifications(limit, lockTimeoutSeconds)
     if (!features.WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS) return legacy
     const channels = await withTx(db, tx => claimChannelNotifications(tx, workerId, Object.keys(channelAdapters), Math.max(0, limit - legacy.length), lockTimeoutSeconds))
@@ -880,7 +880,18 @@ export function createAutomationWorker({
       await scheduleDueRules()
       for (const effect of await claimEffects()) await executeEffect(effect)
     }
-    for (const notification of await claimNotifications()) await deliverNotification(notification)
+    // Claim only the item we can process now; waiting items keep their retry budget.
+    for (let processed = 0; processed < 25; processed++) {
+      const [notification] = await claimNotifications(1)
+      if (!notification) break
+      try { await deliverNotification(notification) }
+      catch (error) {
+        const lost = error instanceof Error && (error.message === 'NOTIFICATION_CLAIM_LOST'
+          || ('code' in error && error.code === 'NOTIFICATION_CLAIM_LOST'))
+        if (!lost) throw error
+        // A competing owner/reclaim owns recovery. Never acknowledge its fence.
+      }
+    }
     if (features.WORKMESH_EXPERIMENTAL_AGENT_LOOPS) {
       await scheduleDueLoops()
       await reconcileLoopRuns()

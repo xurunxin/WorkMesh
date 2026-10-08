@@ -9,6 +9,7 @@ import {
   shouldDeliverNotification,
 } from '@workmesh/domain'
 import { appendEvent } from './events.js'
+import { lockAgentAuthorityPlan } from './agent-locks.js'
 import {
   notificationSourceAggregateTypes,
   humanAttentionProjectionSql,
@@ -63,6 +64,8 @@ type Source = {
   kind: string
   team_id: string | null
   session_id: string | null
+  work_item_id: string | null
+  project_id: string | null
   recipient_actor_id: string | null
   responsible_human_actor_id: string | null
 }
@@ -268,6 +271,7 @@ async function authorizedRecipient(
   // Background delivery is independent of cookie lifetime, but never of durable authority.
   const human = await tx.query(
     `SELECT 1 FROM actors human WHERE human.workspace_id=$1 AND human.id=$2 AND human.kind='human' AND human.is_active
+    AND ($3::uuid IS NULL OR EXISTS(SELECT 1 FROM teams team WHERE team.workspace_id=$1 AND team.id=$3 AND team.deleted_at IS NULL))
     AND (human.workspace_role='admin' OR EXISTS(SELECT 1 FROM memberships member JOIN teams team ON team.id=member.team_id AND team.workspace_id=member.workspace_id AND team.deleted_at IS NULL
       WHERE member.workspace_id=$1 AND member.actor_id=human.id AND member.team_id=$3))`,
     [workspaceId, recipient, source.team_id],
@@ -294,6 +298,55 @@ async function authorizedRecipient(
     if (!live.rowCount) return false
   }
   return true
+}
+
+async function lockChannelAuthority(
+  tx: PoolClient,
+  workspaceId: string,
+  recipient: string,
+  source: Source,
+): Promise<Source | undefined> {
+  // Team removal takes the workspace mutex before its Team row. Acquire a
+  // compatible FK lock first so appendEvent cannot invert that order later.
+  await tx.query('SELECT id FROM workspaces WHERE id=$1 FOR KEY SHARE', [workspaceId])
+  // Unlocked reads discover routing only. Acquire the complete ranked plan before
+  // locking the source, Team, Human and membership; validate fresh facts afterwards.
+  const session = source.session_id ? (await tx.query<{
+    agent_id: string; delegation_id: string; team_id: string
+    work_item_id: string | null; project_id: string | null
+  }>('SELECT agent_id,delegation_id,team_id,work_item_id,project_id FROM agent_sessions WHERE workspace_id=$1 AND id=$2',
+    [workspaceId, source.session_id])).rows[0] : undefined
+  await lockAgentAuthorityPlan(tx, {
+    definitionIds: session ? [session.agent_id] : [],
+    teamGrants: session ? [{ workspaceId, agentId: session.agent_id, teamId: session.team_id }] : [],
+    delegationIds: session ? [session.delegation_id] : [],
+    sessionIds: source.session_id ? [source.session_id] : [],
+    workItemIds: [...new Set([source.work_item_id, session?.work_item_id].filter((id): id is string => Boolean(id)))],
+    projectIds: [...new Set([source.project_id, session?.project_id].filter((id): id is string => Boolean(id)))],
+  })
+  if (session) {
+    const currentSession = (await tx.query<typeof session>(
+      'SELECT agent_id,delegation_id,team_id,work_item_id,project_id FROM agent_sessions WHERE workspace_id=$1 AND id=$2',
+      [workspaceId, source.session_id],
+    )).rows[0]
+    if (!currentSession || Object.keys(session).some(key =>
+      currentSession[key as keyof typeof session] !== session[key as keyof typeof session])) return undefined
+  }
+  // The table is selected from a closed internal list, never transport input.
+  const tables: Record<string, string> = {
+    decision: 'decisions', approval: 'approvals', inbox_item: 'inbox_items',
+    completion_suggestion: 'completion_suggestions',
+  }
+  const table = tables[source.source_type]
+  if (table) await tx.query(`SELECT id FROM ${table} WHERE workspace_id=$1 AND id=$2 FOR SHARE`, [workspaceId, source.source_id])
+  await tx.query('SELECT id FROM teams WHERE workspace_id=$1 AND id=$2 FOR SHARE', [workspaceId, source.team_id])
+  await tx.query('SELECT id FROM actors WHERE workspace_id=$1 AND id=$2 FOR SHARE', [workspaceId, recipient])
+  await tx.query('SELECT actor_id FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3 FOR SHARE', [workspaceId, source.team_id, recipient])
+  const current = await sourceFor(tx, workspaceId, source.source_type, source.source_id)
+  // Changed routing must not authorise against a plan locked for different resources.
+  if (!current || ['session_id', 'team_id', 'work_item_id', 'project_id'].some(key =>
+    current[key as keyof Source] !== source[key as keyof Source])) return undefined
+  return current
 }
 
 const sourcePriority = (kind: string): NotificationPriority =>
@@ -414,8 +467,8 @@ export async function admitChannelEvent(
         ).rows[0]!
         for (const target of targets) {
           await tx.query(
-            `INSERT INTO notification_deliveries(workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key,available_at)
-          VALUES($1,$2,$3,$4,$5,'webhook',$6,now())`,
+            `INSERT INTO notification_deliveries(workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key,available_at,notification_kind)
+          VALUES($1,$2,$3,$4,$5,'webhook',$6,now(),$7)`,
             [
               event.workspace_id,
               intent.id,
@@ -423,6 +476,7 @@ export async function admitChannelEvent(
               recipient,
               target.revision,
               `notification:${intent.id}:target:${target.id}`,
+              snapshot.source_type === 'approval' ? 'approval.requested' : event.event_type,
             ],
           )
           await appendChannelEvent(
@@ -507,6 +561,12 @@ export async function prepareChannelSend(
   secretMaterial: string
   content: ChannelContent
 } | null> {
+  const locator = (await tx.query<{ source_type: string; source_id: string }>(
+    `SELECT intent.source_type,intent.source_id FROM notification_intents intent
+     WHERE intent.workspace_id=$1 AND intent.id=$2`, [claim.workspaceId, claim.intentId],
+  )).rows[0]
+  const discovered = locator && await sourceFor(tx, claim.workspaceId, locator.source_type, locator.source_id)
+  const source = discovered && await lockChannelAuthority(tx, claim.workspaceId, claim.recipientActorId, discovered)
   const row = (
     await tx.query<{
       target_revision: number
@@ -516,11 +576,12 @@ export async function prepareChannelSend(
       source_type: string
       source_id: string
       source_revision: number
+      notification_kind: string
     }>(
-      `SELECT delivery.target_revision,delivery.effect_key,delivery.outcome,delivery.request_hash,intent.source_type,intent.source_id,intent.source_revision
+      `SELECT delivery.target_revision,delivery.effect_key,delivery.outcome,delivery.request_hash,delivery.notification_kind,intent.source_type,intent.source_id,intent.source_revision
       FROM notification_deliveries delivery JOIN notification_intents intent ON intent.id=delivery.intent_id
       WHERE delivery.id=$1 AND delivery.status='claimed' AND delivery.claimed_by=$2 AND delivery.claim_fence=$3
-        AND $4::timestamptz>now() AND delivery.workspace_id=$5 AND delivery.intent_id=$6 AND delivery.channel_target_id=$7 AND delivery.recipient_actor_id=$8 FOR UPDATE OF delivery`,
+        AND $4::timestamptz>clock_timestamp() AND delivery.workspace_id=$5 AND delivery.intent_id=$6 AND delivery.channel_target_id=$7 AND delivery.recipient_actor_id=$8 FOR UPDATE OF delivery`,
       [
         claim.id,
         workerId,
@@ -549,18 +610,12 @@ export async function prepareChannelSend(
       [claim.workspaceId, claim.channelTargetId, claim.recipientActorId],
     )
   ).rows[0]
-  const source = await sourceFor(
-    tx,
-    claim.workspaceId,
-    row.source_type,
-    row.source_id,
-  )
   const preference = (
     await tx.query<{
       minimum_priority: NotificationPriority
       muted_kinds: string[]
     }>(
-      `SELECT minimum_priority,muted_kinds FROM notification_preferences WHERE workspace_id=$1 AND actor_id=$2`,
+      `SELECT minimum_priority,muted_kinds FROM notification_preferences WHERE workspace_id=$1 AND actor_id=$2 FOR SHARE`,
       [claim.workspaceId, claim.recipientActorId],
     )
   ).rows[0]
@@ -579,7 +634,7 @@ export async function prepareChannelSend(
     shouldDeliverNotification({
       priority: sourcePriority(source.kind),
       minimumPriority: preference?.minimum_priority ?? 'update',
-      kind: source.kind,
+      kind: row.notification_kind,
       mutedKinds: preference?.muted_kinds ?? [],
     })
   if (!allowed) {
@@ -616,10 +671,14 @@ export async function prepareChannelSend(
       [claim.channelTargetId, storageKey()],
     )
   ).rows[0]!.secret
-  await tx.query(
-    `UPDATE notification_deliveries SET outcome='sending',send_started_at=now(),request_hash=$4,revision=revision+1 WHERE id=$1 AND claimed_by=$2 AND claim_fence=$3`,
-    [claim.id, workerId, claim.claimFence, requestHash],
+  // Commit of this checkpoint linearises sending against the locked authority
+  // facts. A revocation committed first is observed above and suppresses sending.
+  // A revocation ordered after this commit cannot recall an in-flight external call.
+  const started = await tx.query(
+    `UPDATE notification_deliveries SET outcome='sending',send_started_at=now(),request_hash=$4,revision=revision+1 WHERE id=$1 AND claimed_by=$2 AND claim_fence=$3 AND $5::timestamptz>clock_timestamp()`,
+    [claim.id, workerId, claim.claimFence, requestHash, claim.leaseExpiresAt],
   )
+  if (started.rowCount !== 1) throw new DomainError('NOTIFICATION_CLAIM_LOST', 'Notification lease expired before the send checkpoint')
   await appendChannelEvent(
     tx,
     {
@@ -678,7 +737,7 @@ export async function settleChannelSend(
     delivered_at=CASE WHEN $4='delivered' THEN now() ELSE NULL END,effect_completed_at=CASE WHEN $4='delivered' THEN now() ELSE NULL END,
     claimed_at=NULL,claimed_by=NULL,revision=revision+1,last_error=CASE WHEN $4='delivered' THEN NULL WHEN $4='unknown' THEN 'CHANNEL_RESULT_UNKNOWN' ELSE 'CHANNEL_SEND_FAILED' END
     WHERE id=$1 AND workspace_id=$6 AND intent_id=$7 AND channel_target_id=$8 AND recipient_actor_id=$9
-      AND status='claimed' AND claimed_by=$2 AND claim_fence=$3 AND outcome='sending' AND $10::timestamptz>now()`,
+      AND status='claimed' AND claimed_by=$2 AND claim_fence=$3 AND outcome='sending' AND $10::timestamptz>clock_timestamp()`,
     [
       claim.id,
       workerId,

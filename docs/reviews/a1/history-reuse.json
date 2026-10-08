@@ -1,0 +1,311 @@
+{
+  "sourceEquivalence": "source-equivalence.json",
+  "checks": [
+    {
+      "check": "unit",
+      "command": "pnpm test",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/unit.log",
+          "bytes": 127652,
+          "sha256": "ca8934ec276268206b8b6b777aa2e4d560bd7a03f5342f63486aa1d5b65dbd3b"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/unit.result.json",
+          "bytes": 59,
+          "sha256": "68add2d6e7d0069248cff570f2210c9354ec3da005d0a00d97fb10bcc96e253e"
+        }
+      ],
+      "summaries": [
+        "Test Files  4 passed (4)",
+        "Tests  50 passed (50)",
+        "Test Files  24 passed (24)",
+        "Tests  184 passed (184)",
+        "Test Files  2 passed (2)",
+        "Tests  22 passed (22)",
+        "Test Files  2 passed (2)",
+        "Tests  13 passed (13)",
+        "Test Files  2 passed (2)",
+        "Tests  16 passed (16)",
+        "Test Files  2 passed (2)",
+        "Tests  33 passed (33)",
+        "Test Files  1 passed (1)",
+        "Tests  33 passed (33)",
+        "Test Files  9 passed (9)",
+        "Tests  65 passed (65)",
+        "Test Files  9 passed (9)",
+        "Tests  48 passed (48)",
+        "Test Files  1 passed (1)",
+        "Tests  4 passed (4)",
+        "Test Files  1 passed (1)",
+        "Tests  4 passed (4)",
+        "Test Files  1 passed (1)",
+        "Tests  1 passed (1)",
+        "Test Files  2 passed (2)",
+        "Tests  38 passed (38)",
+        "Test Files  8 passed (8)",
+        "Tests  28 passed (28)",
+        "Test Files  1 passed (1)",
+        "Tests  7 passed (7)",
+        "Test Files  113 passed (113)",
+        "Tests  778 passed (778)",
+        "Test Files  23 passed (23)",
+        "Tests  163 passed | 2 skipped (165)",
+        "Test Files  33 passed (33)",
+        "Tests  174 passed (174)",
+        "Tasks:    29 successful, 29 total",
+        "Cached:    0 cached, 29 total"
+      ],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    },
+    {
+      "check": "contracts",
+      "command": "pnpm --filter @workmesh/contracts exec vitest run src/configuration-readiness-contracts.test.ts",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/contracts.log",
+          "bytes": 722,
+          "sha256": "53f5b766610a6344f6a97525cdf11f6933508bee710a3f7d995145005248c1fb"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/contracts.result.json",
+          "bytes": 145,
+          "sha256": "f0778c379a003cb97a39e951d3052f0a7ea6074f4b81c19f9b306959af76ee44"
+        }
+      ],
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  4 passed (4)"
+      ],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    },
+    {
+      "check": "build",
+      "command": "pnpm ci:source build",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/build.log",
+          "bytes": 33392,
+          "sha256": "0c72a81a6fd52ae50a2380be3d0a9be5d6f573ff681b665a5a2a7a23fad0d052"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/build.result.json",
+          "bytes": 70,
+          "sha256": "752085161588bf8da2497386d87343445d6f316508ce15deae14cbc5043ba66d"
+        }
+      ],
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    0 cached, 18 total"
+      ],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    },
+    {
+      "check": "ci",
+      "command": "pnpm ci:validate",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/ci.log",
+          "bytes": 2344,
+          "sha256": "606a99f8dfea213e6e595094e53462a6659210a7edadc8fe4f83e593f9db02c8"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/ci.result.json",
+          "bytes": 66,
+          "sha256": "67ab115a8e09277f34ce3dec696c47a8bc6b5f512f93cc78e7c8ca283c9f0859"
+        }
+      ],
+      "summaries": [],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    },
+    {
+      "check": "ciPolicy",
+      "command": "pnpm ci:test",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/ciPolicy.log",
+          "bytes": 2782,
+          "sha256": "9ee0cae23dc6960441e4f7f8d7f04683a02126896c62e2af4e433b97039c7ae0"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/ciPolicy.result.json",
+          "bytes": 62,
+          "sha256": "412a546c59503bc0a11518fb910807103538943e0926d3cdb88ef7d0b7199647"
+        }
+      ],
+      "summaries": [],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    },
+    {
+      "check": "workmeshSkill",
+      "command": "pnpm check:workmesh-skill",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/workmeshSkill.log",
+          "bytes": 498,
+          "sha256": "9538c5adad2bdd433ae7e48afccf217965534125db37356583de6af484cf9e0f"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/workmeshSkill.result.json",
+          "bytes": 75,
+          "sha256": "ea156aeeda62af147f7e1feebb731c7e70c9c776bc49593fd05097e00a4e7809"
+        }
+      ],
+      "summaries": [],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    },
+    {
+      "check": "runnerSkill",
+      "command": "pnpm check:runner-skill",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/runnerSkill.log",
+          "bytes": 490,
+          "sha256": "a83fd3695b29314e380b230c6baa6b0029cea7c533382ca11e5c1c8d718ff430"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/runnerSkill.result.json",
+          "bytes": 73,
+          "sha256": "f685659181221c476df896a708c9545e9c1e0e6a28d040d62de553da98fc0146"
+        }
+      ],
+      "summaries": [],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    },
+    {
+      "check": "agentSmoke",
+      "command": "pnpm smoke:agents:ci",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/agentSmoke.log",
+          "bytes": 1106,
+          "sha256": "6d1a1d07dfe6b48b19d5db99be40491cf2dfbb2f7cda7864a99339bb63583322"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/agentSmoke.result.json",
+          "bytes": 70,
+          "sha256": "e4e3e6620c4f75b4b4aa040797eeed93d0cfb57a022fbfe19edc93724ed6aa0d"
+        }
+      ],
+      "summaries": [],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    },
+    {
+      "check": "conformance",
+      "command": "pnpm test:conformance",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/conformance.log",
+          "bytes": 964,
+          "sha256": "a8c5a50cc15bf4f301e04c0ff0e8ff12d1a3c50d95d8a4d5b1a7549eda9b861f"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/conformance.result.json",
+          "bytes": 71,
+          "sha256": "72b33f0a1ea0ea4740c1ea1bcd418d887d8a5246ae820285508f1b0b55789b35"
+        }
+      ],
+      "summaries": [],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    },
+    {
+      "check": "recovery",
+      "command": "pnpm --filter @workmesh/recovery test:integration",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/recovery.log",
+          "bytes": 1360,
+          "sha256": "de2f6cec0075e18154036ee9e2cbcd8e6f226dad45b6a880a41b2bc9cfe7faa2"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/recovery.result.json",
+          "bytes": 99,
+          "sha256": "3055772915468bb04c06106de055adb9533304a050bd55bea97230e04134d7f1"
+        }
+      ],
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed (1)"
+      ],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    },
+    {
+      "check": "runnerIntegration",
+      "command": "pnpm --filter @workmesh/api exec vitest run --config ../../vitest.integration.config.ts integration/workbench-runner.integration.test.ts",
+      "exitCode": 0,
+      "evidence": [
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/runnerIntegration.log",
+          "bytes": 4346,
+          "sha256": "dfa2de0e5c8bd8353a8c6f1d3d95da5c6253490197111eabd8fa9c472bbbb67a"
+        },
+        {
+          "archive": "previous-run.zip",
+          "member": "docs/reviews/a1/evidence/runnerIntegration.result.json",
+          "bytes": 186,
+          "sha256": "e4398aed2b1130d18be78382c35887b9659c4d90533c13cb8149cd50a0fce478"
+        }
+      ],
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  5 passed | 1 skipped (6)"
+      ],
+      "status": "历史运行，原清单精确匹配，恢复源码等价；不是当前分支重新运行"
+    }
+  ],
+  "conformanceRecoveredCopies": [
+    {
+      "missingOriginalPath": "packages/conformance/conformance-results/report.json",
+      "archiveMember": "docs/reviews/a1/evidence/conformance-results/report.json",
+      "bytes": 38936,
+      "sha256": "216e0de2f69056d5e69e9573c24cdcfc610c9c8f48dee1bcda0cedb1c97e0a1c",
+      "matchesOriginalManifest": true
+    },
+    {
+      "missingOriginalPath": "packages/conformance/conformance-results/junit.xml",
+      "archiveMember": "docs/reviews/a1/evidence/conformance-results/junit.xml",
+      "bytes": 10451,
+      "sha256": "328c6d2bf74e83e40a9a6134c07d8378d09da5ef640e97dd8e5196a0bc66f372",
+      "matchesOriginalManifest": true
+    },
+    {
+      "missingOriginalPath": "packages/conformance/conformance-results/transcript.md",
+      "archiveMember": "docs/reviews/a1/evidence/conformance-results/transcript.md",
+      "bytes": 13755,
+      "sha256": "a7fc7d1d595defbf651024547a809a606fa7a46e05433f18ef82b91b51092e06",
+      "matchesOriginalManifest": true
+    }
+  ],
+  "rule": "仅复用旧清单精确匹配的原件；首败和不匹配日志另存，Runner 独立重跑不替代 full integration，skip 不计通过。"
+}

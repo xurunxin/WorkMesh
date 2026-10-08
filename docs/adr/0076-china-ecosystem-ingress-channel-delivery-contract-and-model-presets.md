@@ -276,6 +276,8 @@ C1 扩展既有 notification delivery，不引入平行发送队列。`notificat
 变更配置、禁用、撤销或撤权的已排队记录被抑制。发送内容固定为低敏通用提醒和登录深链；陈旧来源 revision 不产生决策写入。
 
 发送 checkpoint 先提交，之后才调用 adapter。发送已开始而 ack 未提交的恢复记录进入 `uncertain`；不自动声称失败或已送达。
+该提交也是授权线性化边界：发送事务按既有 `lockAgentAuthorityPlan` 锁序锁授权计划，再锁来源、Team、Human、membership 并重读；锁保持至提交，撤权先提交时抑制外发，后提交不能召回在途调用。租期在等待锁之后以实际时钟复核。
+通知 kind 持久化兼容类型，Approval 统一沿用 `approval.requested`，包括尚未达到 quorum 的 `approval.decision.recorded`；其他来源使用源事件类型，不以 Attention 展示分类绕过 mutedKinds。tick 逐条即时领取，最多处理 25 条，等待中的记录不预先消耗 claim 次数；单条 claim 丢失与其他投递、Loop 隔离。
 本人按当前 revision 和幂等键显式确认已送达、允许重试或终止；重试复用原 effectKey，可能重送，承诺至少一次而非外部恰好一次。
 ack 同体重放不写入，异体冲突，旧 fence 不能更新任何 delivery 或事件。
 

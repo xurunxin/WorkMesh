@@ -15,6 +15,7 @@ import {
 
 export * from './route-policy.js'
 export * from './pi-workbench-contracts.js'
+export * from './configuration-readiness-contracts.js'
 export { workmeshSkillManifest } from './workmesh-skill-manifest.js'
 export {
   agentLifecycleStatusSchema,
@@ -508,6 +509,7 @@ export const stage0RouteManifest = [
   { method: 'POST', path: '/api/v1/views', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/events', authenticated: true },
   { method: 'GET', path: '/api/v1/events/stream', authenticated: true },
+  { method: 'GET', path: '/api/v1/workbench/configuration-readiness', authenticated: true },
   { method: 'GET', path: '/api/v1/workbench/llm-connections', authenticated: true },
   { method: 'GET', path: '/api/v1/workbench/conversations', authenticated: true },
   { method: 'POST', path: '/api/v1/workbench/conversations', authenticated: true, mutation: true },

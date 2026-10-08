@@ -1,0 +1,332 @@
+[
+  {
+    "name": "worker",
+    "command": "pnpm --filter @workmesh/worker exec vitest run --config ../../vitest.integration.config.ts integration/stage4-automation.integration.test.ts --maxWorkers=1",
+    "exitCode": 1,
+    "startedAt": "2026-10-08T10:56:34.954Z",
+    "endedAt": "2026-10-08T10:56:54.417Z",
+    "pid": 48832,
+    "log": "docs/reviews/c1/review-fixes/worker-first.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "lockupdate",
+    "command": "pnpm --filter @workmesh/db exec vitest run src/agent-lock-order-inventory.test.ts",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T10:57:03.430Z",
+    "endedAt": "2026-10-08T10:57:06.820Z",
+    "pid": 4324,
+    "log": "docs/reviews/c1/review-fixes/lockupdate-first.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "typecheck",
+    "command": "pnpm typecheck",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T10:57:12.249Z",
+    "endedAt": "2026-10-08T10:57:45.334Z",
+    "pid": 16360,
+    "log": "docs/reviews/c1/review-fixes/typecheck-first.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "lint",
+    "command": "pnpm lint",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T10:58:43.082Z",
+    "endedAt": "2026-10-08T10:59:13.721Z",
+    "pid": 37776,
+    "log": "docs/reviews/c1/review-fixes/lint-first.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "migration",
+    "command": "pnpm --filter @workmesh/db exec vitest run --config ../../vitest.integration.config.ts integration/migration-baseline.integration.test.ts --maxWorkers=1",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T10:57:45.465Z",
+    "endedAt": "2026-10-08T10:59:56.830Z",
+    "pid": 48476,
+    "log": "docs/reviews/c1/review-fixes/migration-first.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "route",
+    "command": "pnpm check:route-policy",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:00:18.371Z",
+    "endedAt": "2026-10-08T11:00:22.614Z",
+    "pid": 53328,
+    "log": "docs/reviews/c1/review-fixes/route-first.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "lock",
+    "command": "pnpm --filter @workmesh/db exec vitest run src/agent-lock-order-inventory.test.ts",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:00:23.468Z",
+    "endedAt": "2026-10-08T11:00:28.945Z",
+    "pid": 34768,
+    "log": "docs/reviews/c1/review-fixes/lock-first.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "unit",
+    "command": "pnpm test",
+    "exitCode": 1,
+    "startedAt": "2026-10-08T10:59:13.831Z",
+    "endedAt": "2026-10-08T11:00:56.943Z",
+    "pid": 4828,
+    "log": "docs/reviews/c1/review-fixes/unit-first.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "worker",
+    "command": "pnpm --filter @workmesh/worker exec vitest run --config ../../vitest.integration.config.ts integration/stage4-automation.integration.test.ts --maxWorkers=1",
+    "exitCode": 1,
+    "startedAt": "2026-10-08T11:00:40.422Z",
+    "endedAt": "2026-10-08T11:01:03.391Z",
+    "pid": 36192,
+    "log": "docs/reviews/c1/review-fixes/worker-corrected.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "worker",
+    "command": "pnpm --filter @workmesh/worker exec vitest run --config ../../vitest.integration.config.ts integration/stage4-automation.integration.test.ts --maxWorkers=1",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:01:39.849Z",
+    "endedAt": "2026-10-08T11:01:55.298Z",
+    "pid": 57516,
+    "log": "docs/reviews/c1/review-fixes/worker-final.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "lint",
+    "command": "pnpm lint",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:01:50.067Z",
+    "endedAt": "2026-10-08T11:02:12.330Z",
+    "pid": 34468,
+    "log": "docs/reviews/c1/review-fixes/lint-final.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "typecheck",
+    "command": "pnpm typecheck",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:02:12.472Z",
+    "endedAt": "2026-10-08T11:02:33.133Z",
+    "pid": 47976,
+    "log": "docs/reviews/c1/review-fixes/typecheck-final.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "ci",
+    "command": "pnpm ci:validate",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:04:49.370Z",
+    "endedAt": "2026-10-08T11:04:51.443Z",
+    "pid": 41216,
+    "log": "docs/reviews/c1/review-fixes/ci-first.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "unit",
+    "command": "pnpm test",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:02:33.233Z",
+    "endedAt": "2026-10-08T11:05:07.636Z",
+    "pid": 48600,
+    "log": "docs/reviews/c1/review-fixes/unit-final.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "integration",
+    "command": "pnpm test:integration",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:01:55.483Z",
+    "endedAt": "2026-10-08T11:08:04.800Z",
+    "pid": 48416,
+    "log": "docs/reviews/c1/review-fixes/integration-first.log",
+    "sourceBindingSha256": null
+  },
+  {
+    "name": "lint",
+    "command": "pnpm lint",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:08:44.131Z",
+    "endedAt": "2026-10-08T11:09:07.460Z",
+    "pid": 44444,
+    "log": "docs/reviews/c1/review-fixes/lint-checkpoint.log",
+    "sourceBindingSha256": "0f4d2e83c2630d49884913037f57adee3bba7cdda12078a790ba08ae1693ce0d"
+  },
+  {
+    "name": "typecheck",
+    "command": "pnpm typecheck",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:09:07.669Z",
+    "endedAt": "2026-10-08T11:09:36.538Z",
+    "pid": 51392,
+    "log": "docs/reviews/c1/review-fixes/typecheck-checkpoint.log",
+    "sourceBindingSha256": "0f4d2e83c2630d49884913037f57adee3bba7cdda12078a790ba08ae1693ce0d"
+  },
+  {
+    "name": "unit",
+    "command": "pnpm test",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:09:36.647Z",
+    "endedAt": "2026-10-08T11:12:12.831Z",
+    "pid": 39720,
+    "log": "docs/reviews/c1/review-fixes/unit-checkpoint.log",
+    "sourceBindingSha256": "0f4d2e83c2630d49884913037f57adee3bba7cdda12078a790ba08ae1693ce0d"
+  },
+  {
+    "name": "integration",
+    "command": "pnpm test:integration",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:08:52.739Z",
+    "endedAt": "2026-10-08T11:15:56.660Z",
+    "pid": 63144,
+    "log": "docs/reviews/c1/review-fixes/integration-checkpoint.log",
+    "sourceBindingSha256": "0f4d2e83c2630d49884913037f57adee3bba7cdda12078a790ba08ae1693ce0d"
+  },
+  {
+    "name": "lockupdate",
+    "command": "pnpm --filter @workmesh/db exec vitest run src/agent-lock-order-inventory.test.ts",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:16:33.699Z",
+    "endedAt": "2026-10-08T11:16:37.076Z",
+    "pid": 57596,
+    "sourceBindingSha256": null,
+    "log": "docs/reviews/c1/review-fixes/lockupdate-after-a1.log"
+  },
+  {
+    "name": "route",
+    "command": "pnpm check:route-policy",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:16:37.195Z",
+    "endedAt": "2026-10-08T11:16:38.790Z",
+    "pid": 53044,
+    "sourceBindingSha256": null,
+    "log": "docs/reviews/c1/review-fixes/route-after-a1.log"
+  },
+  {
+    "name": "lint",
+    "command": "pnpm lint",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:18:20.451Z",
+    "endedAt": "2026-10-08T11:18:51.365Z",
+    "pid": 55136,
+    "sourceBindingSha256": "6baaccda465f88c882b7ccb4de03090cb13a2e895b84524feb666c82d8950334",
+    "log": "docs/reviews/c1/review-fixes/lint-integrated.log"
+  },
+  {
+    "name": "typecheck",
+    "command": "pnpm typecheck",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:18:51.488Z",
+    "endedAt": "2026-10-08T11:19:20.263Z",
+    "pid": 52656,
+    "sourceBindingSha256": "6baaccda465f88c882b7ccb4de03090cb13a2e895b84524feb666c82d8950334",
+    "log": "docs/reviews/c1/review-fixes/typecheck-integrated.log"
+  },
+  {
+    "name": "unit",
+    "command": "pnpm test",
+    "exitCode": 1,
+    "startedAt": "2026-10-08T11:19:20.369Z",
+    "endedAt": "2026-10-08T11:21:21.620Z",
+    "pid": 49156,
+    "sourceBindingSha256": "6baaccda465f88c882b7ccb4de03090cb13a2e895b84524feb666c82d8950334",
+    "log": "docs/reviews/c1/review-fixes/unit-integrated.log"
+  },
+  {
+    "name": "lint",
+    "command": "pnpm lint",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:23:31.843Z",
+    "endedAt": "2026-10-08T11:23:53.399Z",
+    "pid": 52308,
+    "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+    "log": "docs/reviews/c1/review-fixes/lint-accepted-source.log"
+  },
+  {
+    "name": "typecheck",
+    "command": "pnpm typecheck",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:23:53.484Z",
+    "endedAt": "2026-10-08T11:24:15.613Z",
+    "pid": 42772,
+    "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+    "log": "docs/reviews/c1/review-fixes/typecheck-accepted-source.log"
+  },
+  {
+    "name": "unit",
+    "command": "pnpm test",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:24:15.749Z",
+    "endedAt": "2026-10-08T11:26:55.503Z",
+    "pid": 5644,
+    "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+    "log": "docs/reviews/c1/review-fixes/unit-accepted-source.log"
+  },
+  {
+    "name": "integration",
+    "command": "pnpm test:integration",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:26:55.665Z",
+    "endedAt": "2026-10-08T11:34:20.682Z",
+    "pid": 63028,
+    "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+    "log": "docs/reviews/c1/review-fixes/integration-accepted-source.log"
+  },
+  {
+    "name": "e2e",
+    "command": "pnpm test:e2e",
+    "exitCode": 1,
+    "startedAt": "2026-10-08T11:34:20.827Z",
+    "endedAt": "2026-10-08T11:34:27.858Z",
+    "pid": 10900,
+    "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+    "log": "docs/reviews/c1/review-fixes/e2e-accepted-source.log"
+  },
+  {
+    "name": "route",
+    "command": "pnpm check:route-policy",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:35:20.219Z",
+    "endedAt": "2026-10-08T11:35:22.267Z",
+    "pid": 53192,
+    "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+    "log": "docs/reviews/c1/review-fixes/route-accepted-source.log"
+  },
+  {
+    "name": "lock",
+    "command": "pnpm --filter @workmesh/db exec vitest run src/agent-lock-order-inventory.test.ts",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:35:22.396Z",
+    "endedAt": "2026-10-08T11:35:26.915Z",
+    "pid": 60880,
+    "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+    "log": "docs/reviews/c1/review-fixes/lock-accepted-source.log"
+  },
+  {
+    "name": "ci",
+    "command": "pnpm ci:validate",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:35:27.054Z",
+    "endedAt": "2026-10-08T11:35:29.323Z",
+    "pid": 32472,
+    "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+    "log": "docs/reviews/c1/review-fixes/ci-accepted-source.log"
+  },
+  {
+    "name": "e2e",
+    "command": "pnpm test:e2e",
+    "exitCode": 0,
+    "startedAt": "2026-10-08T11:42:08.375Z",
+    "endedAt": "2026-10-08T11:46:45.976Z",
+    "pid": 10520,
+    "sourceBindingSha256": "973c4b8490dc513809a5b96a1eb8a1b6e829572a3d19fb9fe113bd14a5c05aaf",
+    "log": "docs/reviews/c1/review-fixes/e2e-accepted-source-retry.log"
+  }
+]
