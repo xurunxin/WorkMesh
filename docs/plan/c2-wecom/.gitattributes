@@ -1,0 +1,9 @@
+# 源快照保留读取字节；平台正文中的空白行属于冻结输入。
+* text eol=lf
+official/** -text
+official/*.response.bin -diff
+official/*.body-source.txt -diff
+official/*.body.txt whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+savedplan-*.md -text whitespace=-blank-at-eol
+source-spec.md -text
+current-spec.md -text

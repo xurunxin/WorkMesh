@@ -1,0 +1,7 @@
+{
+  "说明": "差异段来自用户消息中对应的完整平台 saved copy，用于与共用未改段组合并校验三份冻结正文；没有从后端 doc 接口取得完整字节。",
+  "oldSource": "- `docs/plan/c2-wecom/` 中的来源快照与绑定文件：分别保存 R1 原始正文、当前完整 Todos spec、原九类矩阵和官方核实记录。记录准确 Git SHA、工作树及 Git blob 的字节数与 SHA-256、UTF-8 编码和换行差异；官方记录包含 URL、读取时间、读取方式、事实出处及浏览工具访问失败。归档平台 savedplan 正文与来源，未提供的 ID 或 version 写 `null`，按实际生成顺序补充一次，不制造自引用计划。",
+  "intermediateSource": "- `docs/plan/c2-wecom/` 中的来源快照与绑定文件：分别保存 R1 原始正文、当前完整 Todos spec、原九类矩阵，以及官方协议页和错误码页的完整正文来源快照；保留准确 URL、读取日期/时间、方法、原始响应与正文提取边界、字节数及 SHA-256。浏览工具失败与本机 HTTPS 取得正文分开记录；保留实际出处和部署前提缺口，不以第三方摘要补证。记录真实 main 精确 SHA 与实际源码输入，分别登记工作树和 Git blob 的 UTF-8 字节、哈希及换行差异。将平台本条注入的完整 savedplan `doc:G27jedfwL5ikAj9GiLO1R` 中文正文原样归档至 `savedplan-G27jedfwL5ikAj9GiLO1R.md`，配套 JSON 绑定正文哈希、来源和生成先后；version 与不可得的生成时间写 `null`，不推测。该原始 savedplan 保持不变，本轮修订另存 `implementation-plan.md` 并关联它；后续修订 ID 未生成时写 `null`，不为自引用反复存 plan，不改历史来源。",
+  "oldDeepLink": "  深链由 `WEB_ORIGIN` 与 C1 的 Attention 相对路由构造。冻结 `use-authenticated-actor.ts`、`login/page.tsx` 的安全 `returnTo` 修改：保留站内目的地，拒绝外域及协议相对地址；登录后按当前 Human 读取目标，复用 `canonicalObjectHref`、`safeInternalHref` 和既有返回、焦点行为。陈旧来源仅保留通用提醒；网页读取当前状态，渠道不写决策。",
+  "oldHandoff": "4. 文档提交后交另一 Agent 独审；blocking/high 闭合后由 Chief 按既有委托确认。当前阶段报告规划交付；C2 最终验收须另核当前 Required CI 和真实 main 落地。"
+}

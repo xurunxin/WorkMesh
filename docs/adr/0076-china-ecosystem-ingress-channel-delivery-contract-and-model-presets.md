@@ -292,3 +292,14 @@ C1 未实现真实企业微信发送、卡片审批、账号身份桥接或模�
 迁移新增目标、intent 和 source checkpoint，扩展既有 delivery 的来源关联、配置快照、发送结果和 revision；旧 delivery 行语义保持，不补发历史通知。
 空库、上一阶段升级、迁移事务失败与重启重复执行，以及原测试矩阵的实际结果见 `docs/reviews/c1/`。
 独立复核和 Chief 确认仍为最终验收门禁，fake 验证不代替真实渠道验证。
+
+
+### C2 出站协议与安全深链方案归档
+
+本节为文档方案，未实施企业微信产品。普通 markdown 群组消息推送 Webhook 的端点、4096 UTF-8 内容字节和 20 条/分钟上限已按官方完整正文核对；精确 URL、读取时间、正文边界和两个读取来源在 [C2 官方记录](../plan/c2-wecom/official/retrieval.json)，完整方案见 [product-design.md](../plan/c2-wecom/product-design.md)。当前 ADR 的其他 Proposed 范围不因本节变为已验收。
+
+发送仅沿 C1 intent/target/delivery/fence/checkpoint/unknown 链路，保留 workspace 前置锁、完整授权锁序、clock_timestamp() 租期复核、逐条 claim、mutedKinds 及八次失败预算；频控等待在 checkpoint 之前，不建重复队列。撤权先于 checkpoint 提交时零外发；后提交不能召回在途调用。ACK 丢失与网络未知不自动重送，本人显式对账后重试同 effectKey，承诺至少一次，不声称提供方恰好一次。
+
+消息只含通用提醒及 canonical 网页链接，不携带业务正文、人员、秘密或决策控件。目标归 Human 本人，群成员不授予身份。登录 returnTo 同源规范化且无开放重定向；返回后当前 Human 重读权限、数据与焦点，转发者无权不能查看或决定。只有出站，不存在回调签名、绑定解绑或回调时窗依赖；不建立假测试。
+
+六原测试、九类及 DoD 的逐项文件/场景映射见 [C2 test-coverage.json](../plan/c2-wecom/test-coverage.json)，产品检查全部未实施/未运行。文档推送后停止 review，另一 Agent 独审仓库完整产品方案并闭合 blocking/high，Chief 明确另行放行后才实现；最终验收仍要求适用必需检查、当前 Required CI 和 actual main，历史 CI 不代替新组合。

@@ -1,0 +1,98 @@
+{
+  "scope": "C2 文档归档；没有产品实现、迁移、API/events 修改或真实外发",
+  "executionPlanId": "8K46xBWutJwsqCy89K5Oq",
+  "version": null,
+  "generatedAt": null,
+  "stage": "review：当前完整 spec 的最新 Chief 确认要求，文档推送后停止；原计划中的 confirm 停止表述保留历史正文",
+  "productTests": {
+    "status": "未实施/未运行",
+    "commands": [
+      "pnpm lint",
+      "pnpm typecheck",
+      "pnpm test",
+      "pnpm test:integration",
+      "pnpm test:e2e"
+    ],
+    "reason": "本阶段只归档文档，不运行产品夹具；本轮不能宣称 C2 DoD 或当前 Required CI 成功"
+  },
+  "resources": {
+    "containers": [],
+    "dedicatedImages": [],
+    "volumes": [],
+    "networks": [],
+    "temporaryServices": [],
+    "temporaryPaths": [],
+    "taskPaths": [
+      "docs/plan/c2-wecom",
+      "docs/reviews/c2",
+      "docs/plan/c2-wecom/official"
+    ],
+    "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+    "cleanupOperations": [],
+    "retained": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+        "reason": "当前活动工作树，成果待审且未 main 落地，禁止删除"
+      },
+      {
+        "path": "docs/plan/c2-wecom",
+        "reason": "受控交付及完整来源证据，全部保留"
+      },
+      {
+        "path": "docs/reviews/c2",
+        "reason": "本阶段核验原件保留"
+      }
+    ],
+    "说明": "所有 shell 为短时读取/归档进程；仅登记已有执行结果，不创建 Docker、服务或临时测试目录。没有删除/移动/全局 prune，没有审批拒绝目标。"
+  },
+  "knownGaps": [
+    "早期计划回合 HTTPS 响应没有保存，时间/callID 不可得；本轮重新获取不可冒作早期原件",
+    "原始 backend doc 字节及 version/createdAt 不由工具提供；归档正文来自对应用户消息完整 saved copy",
+    "callID 未由工具返回；raw shell chunk_id 仅为输出块标识，不冒作 callID",
+    "平台 todos 的 Saved plan 尾部截断，当前完整 spec 未截断，完整正文以平台注入 saved copy 为来源"
+  ],
+  "checks": [
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0,
+      "result": "通过，完整原件见 archive-check-results.json"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "result": "通过，完整原件见 archive-check-results.json"
+    },
+    {
+      "command": "Node stdin 文档/来源/暂存 blob 校验",
+      "exitCode": 0,
+      "passed": 10,
+      "failed": 0,
+      "result": "通过，命令和原件见 archive-check-results.json"
+    },
+    {
+      "command": "MANIFEST 工作树/暂存 blob 哈希与 Markdown 链接核验",
+      "exitCode": 0,
+      "manifestFiles": 35,
+      "manifestMismatches": 0,
+      "localMarkdownLinksChecked": 33,
+      "result": "全部通过，原件见 final-check-results.json"
+    }
+  ],
+  "push": {
+    "status": "本文件在推送前生成，实际结果以本轮 push_branch 工具回执及最终报告为准",
+    "head": null,
+    "说明": "不为归档最终提交自身 SHA 循环造提交；已有执行输入 ID 8K46xBWutJwsqCy89K5Oq 已明确登记"
+  },
+  "readProbeFailures": [
+    {
+      "phase": "官方正文提取完成后的 rg 文件探查",
+      "exitCode": 1,
+      "reason": "Windows 下 rg 参数中的 *.txt 未展开；随后改用目录和 -g '*.body.txt' 完成读取",
+      "effect": "两个页面捕获和正文提取已成功；没有产品验证失败，没有删除操作"
+    }
+  ],
+  "firstFailure": {
+    "path": "first-whitespace-check.json",
+    "result": "首次 Git 空白检查报告冻结原文空白；后续只为源快照收窄 Git 空白展示属性，保留所有 source 字节；清理可编辑执行副本空白。原 shell 整体 exit=0，不冒作中间检查通过，中间退出码未逐项取得。"
+  }
+}

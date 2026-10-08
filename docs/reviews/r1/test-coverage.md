@@ -226,6 +226,24 @@
 | concurrent request | 多个目标及频控并行发送，旧fence不确认，失败目标独立重试 | apps/worker/src/wecom-notifications.test.ts（待创建；归本feature执行者）；C2 执行者 |
 | server restart/outbox recovery | 发送成功但ack丢失允许重送并对账；重启不依赖模型执行完成 | apps/worker/src/wecom-notifications.test.ts（待创建；归本feature执行者）；C2 执行者 |
 
+### C2 当前归档映射
+
+完整原六项及 DoD 保留在 JSON 的 originalTests/originalDoD，当前映射见 [C2 test-coverage.json](../../plan/c2-wecom/test-coverage.json)。以下为后续用例；全部未实施/未运行。
+
+| 类别 | 当前文件与命名场景 | 状态 |
+| --- | --- | --- |
+| happy path | `apps/worker/src/wecom-notifications.test.ts`：C2 协议：低敏 markdown 载荷与 canonical 绝对深链；`apps/worker/integration/stage4-automation.integration.test.ts`：C2 全链：已提交来源经 C1 intent、精确 Human target、fenced ACK；`apps/web/e2e/wecom-notifications.spec.ts`：C2 登录返回：当前 Human 打开受权 Attention 并聚焦详情 | 未实施/未运行 |
+| unauthorized actor | `apps/worker/integration/stage4-automation.integration.test.ts`：C2 授权竞争：禁用、撤销、离队、Stop、撤权先提交零外发；`apps/web/e2e/wecom-notifications.spec.ts`：C2 转发：不同当前 Human 无权内容不可见 | 未实施/未运行 |
+| invalid state transition | `apps/worker/src/wecom-notifications.test.ts`：C2 拒绝：端点、4096 字节边界、响应结构和安全错误分类；`apps/worker/integration/stage4-automation.integration.test.ts`：C2 渠道关闭或失效：不外发，网页仍保留事项 | 未实施/未运行 |
+| duplicate idempotency key | `apps/worker/integration/stage4-automation.integration.test.ts`：C2 重放：同 source、intent、target、job、ACK 只一逻辑 delivery | 未实施/未运行 |
+| stale revision | `apps/worker/integration/stage4-automation.integration.test.ts`：C2 陈旧：target revision 抑制、旧 fence 不确认、来源仅通用深链；`apps/web/e2e/wecom-notifications.spec.ts`：C2 陈旧转发：重新登录后读取当前状态与权限 | 未实施/未运行 |
+| transaction failure | `apps/worker/integration/stage4-automation.integration.test.ts`：C2 事务故障：source、fanout、checkpoint、ACK 失败各边界恢复 | 未实施/未运行 |
+| webhook/job replay | `apps/worker/integration/stage4-automation.integration.test.ts`：C2 job replay：旧 fence 与重复 outbox 不产生新的逻辑 attempt | 未实施/未运行 |
+| concurrent request | `apps/worker/src/wecom-notifications.test.ts`：C2 限流：同指纹滚动窗口与多个 target 隔离；`apps/worker/integration/stage4-automation.integration.test.ts`：C2 多 Worker：频控延期不消耗 claim 预算、不阻塞其他目标 | 未实施/未运行 |
+| server restart/outbox recovery | `apps/worker/integration/stage4-automation.integration.test.ts`：C2 重启：已发送 ACK 丢失进入 uncertain，显式对账才允许重送；`apps/web/e2e/wecom-notifications.spec.ts`：C2 渠道故障：网页可见及 C1 本人管理/未知对账仍可用 | 未实施/未运行 |
+
+仅出站无入站 handler、签名时窗或 binding/unbinding，三者不适用；job replay 仍按 C1 fence 覆盖，不新增假测试。深链补充负例、六原测试及 DoD 逐项去向在链接 JSON 中；旧表为历史分配，不以旧表的单元文件代替真实 DB/浏览器验收。
+
 ## #17 · C3 执行者
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |

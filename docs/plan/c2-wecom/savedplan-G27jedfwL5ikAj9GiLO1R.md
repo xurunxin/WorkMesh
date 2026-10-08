@@ -1,0 +1,44 @@
+## 上下文
+
+真实远端 `refs/heads/main` 为 `5b9c76b5f79917697906520edcd6947bfbfa925f`，当前工作树与其一致。C1 已提供目标管理、intent、逐目标 delivery、发送 checkpoint、fenced ACK 和未知结果对账。
+
+本阶段冻结可执行的 C2 方案及证据。仅变更规划与规格文档，不创建真实 WorkMesh 记录，不实现产品代码，不发送真实消息。
+
+## 已确定的选择
+
+采用官方“消息推送（原群机器人）”Webhook，发送 `msgtype: markdown`，内容仅含通用提醒和 canonical 网页链接。官方正文已通过本机 HTTPS 读取，确认 Markdown 内容上限为 4096 UTF-8 字节、每目标每分钟最多 20 条消息。[协议来源](https://developer.work.weixin.qq.com/document/path/91770)
+
+部署沿用 `WEB_ORIGIN` 和 C1 的 Redis 必需条件；生产深链使用可访问的 HTTPS 网页入口。目标由当前 Human 在既有个人设置中管理，部署说明要求目标企业允许该群组消息推送。群成员身份不参与 WorkMesh 授权。
+
+其他渠道、入站回调、账户绑定、决策按钮和真实外发验证均不在范围内。
+
+## 文档变更
+
+- `docs/plan/c2-wecom/implementation-plan.md`：保存完整中文实现方案和后续逐文件变更清单。适配器落在 `apps/worker/src/wecom-notifications.ts`，由 `apps/worker/src/index.ts` 注册到 `createAutomationWorker.channelAdapters`；复用 `claimNotifications`、`deliverNotification` 及 `packages/db/src/channel-notifications.ts` 的 `prepareChannelSend`、`settleChannelSend`、`reconcileChannelSend`，不新增 CRUD 或队列。保留 workspace 前置锁、`lockAgentAuthorityPlan` 锁序、锁后实际租期检查、静音 kind、逐条 claim 和八次重试预算。
+  
+  冻结端点白名单为 HTTPS `qyapi.weixin.qq.com/cgi-bin/webhook/send`，仅接受一个非空 `key`，拒绝凭据、额外参数、fragment 和重定向；复用 `resolveWebhookTarget` 的公共地址校验与 DNS 固定连接模式。现有 `fetchResolvedWebhook` 只返回 HTTP 状态，方案明确增加有界响应正文读取并用 Zod 校验提供方结果。仅有效成功响应记 delivered；明确拒绝记 failed；请求发出后的 timeout、断连、畸形响应或不确定结果进入 unknown。沿用五秒上限及 claim 剩余租期，不自动重送 uncertain，不保存原始 URL、key 或 `errmsg`。[错误码来源](https://developer.work.weixin.qq.com/document/path/90313)
+  
+  频控采用 Redis Lua，以秘密 HMAC 指纹区分实际目标，跨 Worker 和重复 target 配置共用滚动窗口及串行发送许可。频控等待发生在发送 checkpoint 之前；使用原 delivery 延后领取，不消耗失败重试预算，Redis 不可用时停止发送。许可过期必须重新取得许可并重新鉴权。
+  
+  深链由 `WEB_ORIGIN` 与 C1 的 Attention 相对路由构造。冻结 `use-authenticated-actor.ts`、`login/page.tsx` 的安全 `returnTo` 修改：保留站内目的地，拒绝外域及协议相对地址；登录后按当前 Human 读取目标，复用 `canonicalObjectHref`、`safeInternalHref` 和既有返回、焦点行为。陈旧来源仅保留通用提醒；网页读取当前状态，渠道不写决策。
+
+- `docs/plan/c2-wecom/` 中的来源快照与绑定文件：分别保存 R1 原始正文、当前完整 Todos spec、原九类矩阵和官方核实记录。记录准确 Git SHA、工作树及 Git blob 的字节数与 SHA-256、UTF-8 编码和换行差异；官方记录包含 URL、读取时间、读取方式、事实出处及浏览工具访问失败。归档平台 savedplan 正文与来源，未提供的 ID 或 version 写 `null`，按实际生成顺序补充一次，不制造自引用计划。
+
+- `docs/plan/activation-task-specs/16.md`：同步当前完整规格，追加已核实协议、C1 复用和阶段边界，保留历史来源记录及全部原验收。
+
+- `docs/plan/activation-task-specs/index.json`：只更新 C2 的当前输入、文件哈希、方案引用和审查状态，保留 requires、历史哈希和历史同步状态。
+
+- `docs/reviews/r1/test-coverage.json` 与同目录 `test-coverage.md`：保留六项原测试及 DoD，为每项补充实际文件、场景和用例。协议边界映射至 `apps/worker/src/wecom-notifications.test.ts`；事务、撤权竞争、fence、重启及 unknown 恢复映射至 `apps/worker/integration/stage4-automation.integration.test.ts`；登录、转发鉴权、返回焦点和故障后网页可见映射至 `apps/web/e2e/wecom-notifications.spec.ts`。九类逐项登记，回调签名、绑定和回调时窗记录具体不适用依据；未运行结果保持未运行。
+
+- `docs/reviews/r1/decisions.md`：追加本次官方核实结论和部署前提，保留原访问失败的历史记录。
+
+- `docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md`：追加 C2 协议与发送语义，不改变其他 Proposed 范围。明确撤权先于 checkpoint 提交时零外发，之后不能召回在途调用；至少一次及显式对账不等于外部恰好一次。
+
+- `docs/reviews/c2/verification.json`：登记文档检查、资源归属、真实退出结果与保留原因。本阶段不启动容器或测试服务；当前工作树保留。
+
+## 验证与交接
+
+1. 用平台 git 再读精确 `refs/heads/main`，按 SHA 比较输入；核对原始来源哈希、当前完整 spec、六项原测试、九类矩阵及 DoD 无遗漏。
+2. 执行 `git diff --check`，解析全部变更 JSON，核验链接、字节数、SHA-256 和 savedplan 生成顺序；确认差异仅含上述文档。
+3. 后续产品阶段按映射运行 fake provider、C1 集成及 Playwright 深链验收，覆盖字节边界、频控竞争、未知结果、撤权零外发、零决策事件/outbox 和网页可见性；执行 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:e2e`，保存首败和实际结果。
+4. 文档提交后交另一 Agent 独审；blocking/high 闭合后由 Chief 按既有委托确认。当前阶段报告规划交付；C2 最终验收须另核当前 Required CI 和真实 main 落地。

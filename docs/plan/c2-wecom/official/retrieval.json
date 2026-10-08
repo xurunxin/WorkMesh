@@ -1,0 +1,98 @@
+[
+  {
+    "id": "91770",
+    "url": "https://developer.work.weixin.qq.com/document/path/91770",
+    "startedAt": "2026-10-08T13:01:15.5806932Z",
+    "finishedAt": "2026-10-08T13:01:16.2282648Z",
+    "status": 200,
+    "responseHeaders": {
+      "Set-Cookie": "[REDACTED]",
+      "Connection": "keep-alive",
+      "X-W-No": "3",
+      "Content-Type": "text/html; charset=utf-8",
+      "Date": "Thu, 08 Oct 2026 13:01:16 GMT",
+      "ETag": "W/\"1b645f-fqz3cgEacDrPYluyJm0dTgH8h20\"",
+      "Vary": "Accept-Encoding",
+      "Server": "Wwebsvr",
+      "Transfer-Encoding": "chunked"
+    },
+    "rawPath": "official/91770.response.bin",
+    "bytes": 1795167,
+    "sha256": "f67b7d4f050b01f93dbd130eeb30534fec0b52860d46e11bb25f20f856629583",
+    "method": "PowerShell Invoke-WebRequest -UseBasicParsing HTTPS GET",
+    "retrievalExitCode": 0,
+    "bodyExtraction": {
+      "marker": "<div class=\"ep-doc-area-cherry cherry-markdown cherry-wecom\" id=\"js-ep-doc-cnt-md\">",
+      "beginCharacter": 157133,
+      "endCharacterExclusive": 236359,
+      "source": "official/91770.body-source.txt",
+      "text": "official/91770.body.txt",
+      "algorithm": "UTF-8 decode original response; balanced div boundary; source exact substring; readable text strips tags and decodes entities; source/raw are authoritative"
+    },
+    "headerRedaction": "Set-Cookie 未提交、只保留字段存在性；原始响应体不含 HTTP 响应头",
+    "rawBytesKind": "HTTP 实体响应体的客户端读取字节，不声称原始 TLS/HTTP wire 报文",
+    "response.bin": {
+      "path": "official/91770.response.bin",
+      "bytes": 1795167,
+      "sha256": "f67b7d4f050b01f93dbd130eeb30534fec0b52860d46e11bb25f20f856629583"
+    },
+    "body-source.txt": {
+      "path": "official/91770.body-source.txt",
+      "bytes": 86654,
+      "sha256": "914249fadb84586a845c2685ecd9892e81cf1dfbfa09bd7b2111f6d4bdc2d2a0"
+    },
+    "body.txt": {
+      "path": "official/91770.body.txt",
+      "bytes": 22525,
+      "sha256": "f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0"
+    }
+  },
+  {
+    "id": "90313",
+    "url": "https://developer.work.weixin.qq.com/document/path/90313",
+    "startedAt": "2026-10-08T13:01:16.2449613Z",
+    "finishedAt": "2026-10-08T13:01:16.8163684Z",
+    "status": 200,
+    "responseHeaders": {
+      "Set-Cookie": "[REDACTED]",
+      "Connection": "keep-alive",
+      "X-W-No": "3",
+      "Content-Type": "text/html; charset=utf-8",
+      "Date": "Thu, 08 Oct 2026 13:01:16 GMT",
+      "ETag": "W/\"1c8791-XYk3HQUbGEqg/skjhQ32ZBN6ZSo\"",
+      "Vary": "Accept-Encoding",
+      "Server": "Wwebsvr",
+      "Transfer-Encoding": "chunked"
+    },
+    "rawPath": "official/90313.response.bin",
+    "bytes": 1869713,
+    "sha256": "3d5441fc242768d77ee1721c5af87b016c20fffd3c233a6d85bc960b88290407",
+    "method": "PowerShell Invoke-WebRequest -UseBasicParsing HTTPS GET",
+    "retrievalExitCode": 0,
+    "bodyExtraction": {
+      "marker": "<div class=\"ep-doc-area-cherry cherry-markdown cherry-wecom\" id=\"js-ep-doc-cnt-md\">",
+      "beginCharacter": 120758,
+      "endCharacterExclusive": 259882,
+      "source": "official/90313.body-source.txt",
+      "text": "official/90313.body.txt",
+      "algorithm": "UTF-8 decode original response; balanced div boundary; source exact substring; readable text strips tags and decodes entities; source/raw are authoritative"
+    },
+    "headerRedaction": "Set-Cookie 未提交、只保留字段存在性；原始响应体不含 HTTP 响应头",
+    "rawBytesKind": "HTTP 实体响应体的客户端读取字节，不声称原始 TLS/HTTP wire 报文",
+    "response.bin": {
+      "path": "official/90313.response.bin",
+      "bytes": 1869713,
+      "sha256": "3d5441fc242768d77ee1721c5af87b016c20fffd3c233a6d85bc960b88290407"
+    },
+    "body-source.txt": {
+      "path": "official/90313.body-source.txt",
+      "bytes": 200512,
+      "sha256": "fe2508fca2521ee4b02a0bba5570d0bf228277ccda87e490af5b03eda8c5be5b"
+    },
+    "body.txt": {
+      "path": "official/90313.body.txt",
+      "bytes": 115870,
+      "sha256": "ba497fa2dabbda8af65888096126cab652e8c1babcc600299686d1fceb87c138"
+    }
+  }
+]

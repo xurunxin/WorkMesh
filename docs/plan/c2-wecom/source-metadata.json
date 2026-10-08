@@ -1,0 +1,675 @@
+{
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "todoId": "kjOs4t_DtMyrkHTBFmpQ5",
+  "branch": "tds/conv-01a11b85-41f9-74f5-b456-7083d4d83e5e",
+  "observedAt": "2026-10-08T13:12:43.144Z",
+  "actualMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "mainSource": {
+    "tool": "mcp__tds__git",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "raw": "platform-readbacks.json",
+    "说明": "不使用 FETCH_HEAD 或 origin/main 判断"
+  },
+  "atomicSnapshot": false,
+  "executionPlanId": "8K46xBWutJwsqCy89K5Oq",
+  "plans": [
+    {
+      "id": "G27jedfwL5ikAj9GiLO1R",
+      "version": null,
+      "generatedAt": null,
+      "messageTimestamp": "2026-10-08 12:43:51 UTC",
+      "path": "docs/plan/c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.md",
+      "bytes": 6174,
+      "sha256": "090e9b865c2a56bb1f686cd4c3f423bf57e021bee00ce07ef4ac313bfe76d84e",
+      "predecessor": null
+    },
+    {
+      "id": "vYxCwh0TMRC3mOrr6cU1K",
+      "version": null,
+      "generatedAt": null,
+      "messageTimestamp": "2026-10-08 12:50:03 UTC",
+      "path": "docs/plan/c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.md",
+      "bytes": 7587,
+      "sha256": "960ecc69474220020f62a3ca831a534d8df2756f744416952827ce4498cd22f8",
+      "predecessor": "G27jedfwL5ikAj9GiLO1R"
+    },
+    {
+      "id": "8K46xBWutJwsqCy89K5Oq",
+      "version": null,
+      "generatedAt": null,
+      "messageTimestamp": "2026-10-08 12:55:02 UTC",
+      "path": "docs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.md",
+      "bytes": 8184,
+      "sha256": "e414db43dd730f332ab85f92f42bc1f618bf1dd31fa07da1bbae350791d0e9cd",
+      "predecessor": "vYxCwh0TMRC3mOrr6cU1K"
+    }
+  ],
+  "originalSpec": {
+    "path": "source-spec.md",
+    "bytes": 4323,
+    "sha256": "d10a822ffae21cb94fcce3f9c7c198845bb3f3380358c5915ad5dea9673968fd",
+    "source": "docs/reviews/r1/execution-inputs.json cards[seqNum=16].spec"
+  },
+  "currentSpec": {
+    "path": "current-spec.md",
+    "bytes": 10633,
+    "sha256": "542a1d41013a9b06f256ed3dc5388a6bad20e7fff49fff18380b35cb7e67b82d",
+    "source": "本轮 todos 完整 Spec 段，未使用截断 Saved plan 尾部",
+    "updatedAt": "2026-10-08T12:59:49.019Z"
+  },
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 9050,
+        "sha256": "25a0c33887733812dd1fc7f488cea57ef2e38a6436c788b5814562f22a88bb25",
+        "oid": "fe9114d161ce694a5fa3d0b4ba0efbf2c8ab1642",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 9306,
+        "sha256": "a3eb6f9d3e9ebe6db6887f561f400db76207645d3478a84d83ae4332af20cf96",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 9306,
+        "sha256": "a3eb6f9d3e9ebe6db6887f561f400db76207645d3478a84d83ae4332af20cf96"
+      }
+    },
+    {
+      "path": "CONTEXT.md",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 4626,
+        "sha256": "02d5eb28c56658f7e016cd779822eda8661999cbc983c544598bc031acd2f650",
+        "oid": "9c0aad56d1fe64dfb45614c0ff81e2ee1b77e3c6",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 4727,
+        "sha256": "49474d310dde6fee0cb423164830cc6ebc823bed1314acddcf8ddbc171a18841",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 4727,
+        "sha256": "49474d310dde6fee0cb423164830cc6ebc823bed1314acddcf8ddbc171a18841"
+      }
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 69441,
+        "sha256": "cd197da780ae7678ba4f5a2f3b5d88fc979e17685b3525b391f346bc1d4a5c59",
+        "oid": "f40c57b74ca11e8b1e84b085a01550e430b5a7f6",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 71228,
+        "sha256": "d7601e8d5fae33dcc7a2c231fd20379ec6f52f7c12d721cde9782700127d26d7",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 71228,
+        "sha256": "d7601e8d5fae33dcc7a2c231fd20379ec6f52f7c12d721cde9782700127d26d7"
+      }
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 503229,
+        "sha256": "8b684aaebea15dfb7ea9c68536978a7db19f4c79263618e7d5c0e8e84a133f4f",
+        "oid": "6f7b79deb73f382d4f26bc7b095664c5a0c41480",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 510384,
+        "sha256": "061fac120f34ce6c4faa7dc5c55a5dbdabb65764a1d29c716d07bc313463baa3",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 510384,
+        "sha256": "061fac120f34ce6c4faa7dc5c55a5dbdabb65764a1d29c716d07bc313463baa3"
+      }
+    },
+    {
+      "path": "SCHEMA.sql",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 1531,
+        "sha256": "9682e88fb26f7c82452ad383ea5618ad7e150d149c44f44d578fd665feab35d2",
+        "oid": "7184e1fa7f52bd33ee960d6a370dccbe7dbb504b",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 1561,
+        "sha256": "4ba5c8a954907f2df8a75e0ec0ba6aacf24f0f5a4478d152baa5f30be7867a17",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 1561,
+        "sha256": "4ba5c8a954907f2df8a75e0ec0ba6aacf24f0f5a4478d152baa5f30be7867a17"
+      }
+    },
+    {
+      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 20241,
+        "sha256": "9826fa41f87685d8d7ee2b705b60f60abba0e3933c44106e924b4f155491a57c",
+        "oid": "c49ca7563e8751828b0bf0399d476f10fffd3a87",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 22351,
+        "sha256": "1d4d60488da3958e1abd7da83ecc4b47ad0184823c65b25a34f01043e85ac951",
+        "encoding": "UTF-8",
+        "phase": "文档同步后当前文件，不冒作修改前工作树字节",
+        "identity": "本轮文档改动"
+      },
+      "preEditWorktree": null
+    },
+    {
+      "path": "docs/adr/0059-canonical-navigation-and-evidence-drawer.md",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 1889,
+        "sha256": "26b22fd8f3a620fee0399ae1d8f76dd580769a67e209ec1c2dbbad4e9ae24ec8",
+        "oid": "77159f3bded074617f9ad6cb5f34e5f61414d180",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 1919,
+        "sha256": "6533a5ecf9e9ca63d93b3690486a86d7efbca12f6061245b7ff3f03ed48d7552",
+        "encoding": "UTF-8",
+        "phase": "文档同步后当前文件，不冒作修改前工作树字节",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": null
+    },
+    {
+      "path": "docs/reviews/r1/decisions.md",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 3668,
+        "sha256": "0428735d4012ad9fb58c1ea426e790e0d873e125f85e1866da87ed947c6fe4ea",
+        "oid": "fd62504364cd7ee2fea4e310dc2c845fb9679659",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 4632,
+        "sha256": "e9dc781f557b29660aa8285e767f0e906f74bbf5fd208a3a065e5e55bf857a31",
+        "encoding": "UTF-8",
+        "phase": "文档同步后当前文件，不冒作修改前工作树字节",
+        "identity": "本轮文档改动"
+      },
+      "preEditWorktree": null
+    },
+    {
+      "path": "docs/reviews/r1/execution-inputs.json",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 328288,
+        "sha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c",
+        "oid": "2ce665d39931c383c22dc1605ac15580c468107f",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 328288,
+        "sha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c",
+        "encoding": "UTF-8",
+        "phase": "文档同步后当前文件，不冒作修改前工作树字节",
+        "identity": "字节一致"
+      },
+      "preEditWorktree": null
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.json",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 322807,
+        "sha256": "dd705eb984c795500479b9989dba17325e2d0491f843da8dec80fb824b18ad41",
+        "oid": "7679db400761ac1f4ed46ca79f62e56fa923ceff",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 347264,
+        "sha256": "592e974f273da15d73854a09c732e3696453ae16ad4e92327c33469453448b3d",
+        "encoding": "UTF-8",
+        "phase": "文档同步后当前文件，不冒作修改前工作树字节",
+        "identity": "本轮文档改动"
+      },
+      "preEditWorktree": null
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.md",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 53051,
+        "sha256": "d0a7436646c18efa7d9aa6a35d93f95a169d10b44f9a149cb156cafc94bcee47",
+        "oid": "4aacd1b40fe3148c184bcff7c2a3c91ea27f9b4f",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 56146,
+        "sha256": "2ff9c0242e5b9235a04c1689d52d06571a3d2a71a2202fe2341f97983c7ace75",
+        "encoding": "UTF-8",
+        "phase": "文档同步后当前文件，不冒作修改前工作树字节",
+        "identity": "本轮文档改动"
+      },
+      "preEditWorktree": null
+    },
+    {
+      "path": "docs/plan/activation-task-specs/16.md",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 4311,
+        "sha256": "144e1ea0b336bf5b9fe210e45ddc2eff9b2a9f3f175d6519884578f1b246af5c",
+        "oid": "4758d61c14013143f09bca0180bc8017d397d59e",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 12631,
+        "sha256": "1ed2532b1aadb7c01861ac835be422a1ad66ffd00894d822a5f095d584d5b89a",
+        "encoding": "UTF-8",
+        "phase": "文档同步后当前文件，不冒作修改前工作树字节",
+        "identity": "本轮文档改动"
+      },
+      "preEditWorktree": null
+    },
+    {
+      "path": "docs/plan/activation-task-specs/index.json",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 100195,
+        "sha256": "57055023db51d6a04faccaca19bafc7eb36b7b3d3b25be1dbd24f7195c71ad0b",
+        "oid": "2f8c6163b0d3b5d18e13bca79302edf6390c2601",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 101119,
+        "sha256": "7fbc68aeefd57f30ba7b7f2aa0ec29f93d436012933a2de9c3a1dab61ced5680",
+        "encoding": "UTF-8",
+        "phase": "文档同步后当前文件，不冒作修改前工作树字节",
+        "identity": "本轮文档改动"
+      },
+      "preEditWorktree": null
+    },
+    {
+      "path": "packages/db/src/channel-notifications.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 31862,
+        "sha256": "7333d1040f73e63de71f77d31fb54119fe9e2af64b25824d5208da37f1b0ef4a",
+        "oid": "2ed38a67b7ef5c5a0686c0e86759d4c3fe39c176",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 32687,
+        "sha256": "7de5fd0e641d85d0de52d4bb59944e96150399c8ba9ae42f6952a4a1363ae02c",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 32687,
+        "sha256": "7de5fd0e641d85d0de52d4bb59944e96150399c8ba9ae42f6952a4a1363ae02c"
+      }
+    },
+    {
+      "path": "packages/db/src/agent-locks.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 3806,
+        "sha256": "d732f393e102d08134535a589bd13f97651c2d9c4ac10aa14487b8d1142c0eb6",
+        "oid": "cf734d13b36c61aa820a9b4b5df7e91fcd512994",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 3924,
+        "sha256": "6a138d80212402b172751868519075b3c6d755a221b1e442423259124860a142",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 3924,
+        "sha256": "6a138d80212402b172751868519075b3c6d755a221b1e442423259124860a142"
+      }
+    },
+    {
+      "path": "packages/db/src/events.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 6835,
+        "sha256": "d4cf2eeb2736651c71ce46be3092a22d90d6a726a720f7effebbe932e62e2015",
+        "oid": "38cafd7c618f89780e63c7f6f7dc8a43a33e2a43",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 7033,
+        "sha256": "be7b12c533b318b7bfe65ea9ab2e49308dac7e33b0b4117f174b2845c7507d79",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 7033,
+        "sha256": "be7b12c533b318b7bfe65ea9ab2e49308dac7e33b0b4117f174b2845c7507d79"
+      }
+    },
+    {
+      "path": "apps/worker/src/automation.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 40110,
+        "sha256": "52232b8d85f7418aa63266401a7ab79807dbd41e66c9c55e12b01870bb61f0ce",
+        "oid": "b1dbff240dbe61dd48694ba334e81cf755500a42",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 41023,
+        "sha256": "cddce21bb6e870da7bd61488adcfa7f90e29fdaa80372a330743797552558f56",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 41023,
+        "sha256": "cddce21bb6e870da7bd61488adcfa7f90e29fdaa80372a330743797552558f56"
+      }
+    },
+    {
+      "path": "apps/worker/src/index.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 19371,
+        "sha256": "01c6f431822613bd2a2946ab5708636e86a3afe5c38fd2dd82a826921ed76832",
+        "oid": "85050d1224601a17f6d16588c81ee95110722562",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 19920,
+        "sha256": "1e6d931ff7dd8868d256358faee1fbad680b56896e777f0dc49860a14733cf19",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 19920,
+        "sha256": "1e6d931ff7dd8868d256358faee1fbad680b56896e777f0dc49860a14733cf19"
+      }
+    },
+    {
+      "path": "apps/worker/src/agent-webhook.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 22022,
+        "sha256": "771f86bff4157c51f511e2d9376f66dbed3d8043a1413182899e15a12714f33f",
+        "oid": "18994ded105adf942638e3bd9070c2a470f91c1d",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 22530,
+        "sha256": "6b01a511696f5a063e7fbb0f848a6ce5ee4419243324e3d7c09998ece8c80ca2",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 22530,
+        "sha256": "6b01a511696f5a063e7fbb0f848a6ce5ee4419243324e3d7c09998ece8c80ca2"
+      }
+    },
+    {
+      "path": "apps/worker/integration/stage4-automation.integration.test.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 88811,
+        "sha256": "c2e08c4f146fd55a605d1387dbcd4d46b9d10b8d4f8ce44d06aee76d5a6c955a",
+        "oid": "c5c3aadf1908b8c60e2e7a9f053fee39beb1be63",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 90323,
+        "sha256": "b18ebfb0dd658f5e666db57b99644808bd73ec0d484219f2364e258f1f0f48e4",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 90323,
+        "sha256": "b18ebfb0dd658f5e666db57b99644808bd73ec0d484219f2364e258f1f0f48e4"
+      }
+    },
+    {
+      "path": "apps/api/src/notification-channels.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 9559,
+        "sha256": "a183cedc610871ae0f281f7fd2da0e27e6162d2382c7cbad986c142f0185034b",
+        "oid": "6f2a85a14e163e198ed2cf386ecbf0be8d723a04",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 9826,
+        "sha256": "0d32555ec7ff8d01767299d637bc5938a59f9a694663e58e34adb673aca2a465",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 9826,
+        "sha256": "0d32555ec7ff8d01767299d637bc5938a59f9a694663e58e34adb673aca2a465"
+      }
+    },
+    {
+      "path": "apps/api/integration/notification-channels.integration.test.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 20576,
+        "sha256": "166dd0565f045e246a2a8fbd3c4d424165d1dbe8c2036f9bc2cfa527065b14ad",
+        "oid": "84d96e21d517bc81ac8a1acbb69f64bb8055ebbd",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 21204,
+        "sha256": "d24598e8c74c64752c49a6619eec258448fe1edcf10e40c3683d456ad8633225",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 21204,
+        "sha256": "d24598e8c74c64752c49a6619eec258448fe1edcf10e40c3683d456ad8633225"
+      }
+    },
+    {
+      "path": "apps/web/app/lib/canonical-route.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 4459,
+        "sha256": "3a593854807e9dcf3d54f90aa07f09864db72bed6076423e900c9d5b5ef88e1a",
+        "oid": "737adba643d3b727ed22312ae6ad02acf6665acd",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 4533,
+        "sha256": "dfdde68a22a41f19163f46e96cbaa25c382f00e85f8185014aacb7deb9246f5c",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 4533,
+        "sha256": "dfdde68a22a41f19163f46e96cbaa25c382f00e85f8185014aacb7deb9246f5c"
+      }
+    },
+    {
+      "path": "apps/web/app/lib/use-authenticated-actor.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 1857,
+        "sha256": "fcf4295f4edab0707bc345066d4491ee21b24c00487b31df28027b3f27d38c56",
+        "oid": "6a28e743f1e41954df7e7b38edfbcfbafc6e7c35",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 1905,
+        "sha256": "6887e20784d1a41d4e9496feb32955360e7edff09649a8292dcd40520df5a6dc",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 1905,
+        "sha256": "6887e20784d1a41d4e9496feb32955360e7edff09649a8292dcd40520df5a6dc"
+      }
+    },
+    {
+      "path": "apps/web/app/login/page.tsx",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 2779,
+        "sha256": "78cb8ba0df14fd0e67481004e6d5612ce5ccdd78667c553537c7d87c7ba8da03",
+        "oid": "cbc067bb7f4aa7acda86dbe55c1853d1df4dfbae",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 2839,
+        "sha256": "582c65564390e4cdd86e17c430882007e4c6a2511fc72f28bf680bf823794286",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 2839,
+        "sha256": "582c65564390e4cdd86e17c430882007e4c6a2511fc72f28bf680bf823794286"
+      }
+    },
+    {
+      "path": "apps/web/app/settings/notification-channel-settings.tsx",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 8935,
+        "sha256": "d524f7eca11c490fe016d8250e3afcdd4e417bccca906fbeec782e2c9d7e3dba",
+        "oid": "7d44dc81e8b4b669429e4534198840bcf96825ae",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 9207,
+        "sha256": "d4d067419dc25d7a840d394296f36324d4afc62b7640a5b32d6e6406b8b92d59",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 9207,
+        "sha256": "d4d067419dc25d7a840d394296f36324d4afc62b7640a5b32d6e6406b8b92d59"
+      }
+    },
+    {
+      "path": "apps/web/e2e/notification-channels.spec.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 2259,
+        "sha256": "61d8b978079dd2f64e62146142feb5d820053fab6f90f8a7f45ed717713ae711",
+        "oid": "102756b9bffc38edec082371da2b6b639e7bde00",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 2309,
+        "sha256": "42e25a56d1f57c45fc2300e4ca8e515cbcabbdca5a41da90c765f5e6b4678ece",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 2309,
+        "sha256": "42e25a56d1f57c45fc2300e4ca8e515cbcabbdca5a41da90c765f5e6b4678ece"
+      }
+    },
+    {
+      "path": "packages/config/src/index.ts",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 16045,
+        "sha256": "79a264a3b098e3b6a999e8ef14432b1ce1b74d0024b5c68c64c9ea6e78d39cf9",
+        "oid": "8108b6c0f08771ce35db25709c206f2b1c96a1f0",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 16451,
+        "sha256": "bfd4c4611d8bab594f22ae23a989927c752290b23f3ce6947dce1e83cbae392e",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 16451,
+        "sha256": "bfd4c4611d8bab594f22ae23a989927c752290b23f3ce6947dce1e83cbae392e"
+      }
+    },
+    {
+      "path": "package.json",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 4611,
+        "sha256": "318bf89f75395b4316cb7b7bf18ffeef46266bd32f7a76e938fd1c24e0cec2bc",
+        "oid": "d2afc75c7a1e7eb188ba3ae65f673e5a35e476e9",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 4682,
+        "sha256": "2e06aa849c60f1db7f79c58a550781752570cce0ca68f53aadd3ca67138c62b2",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 4682,
+        "sha256": "2e06aa849c60f1db7f79c58a550781752570cce0ca68f53aadd3ca67138c62b2"
+      }
+    },
+    {
+      "path": "apps/worker/package.json",
+      "inputCommit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlob": {
+        "bytes": 898,
+        "sha256": "5b24a17ffa0a60c22331368807b38a0b79018708b60cdbd583f0e260a7467dd7",
+        "oid": "b739cae883f75a6dc10b95db5b2b2b056ce9f7fd",
+        "encoding": "UTF-8"
+      },
+      "observedWorktree": {
+        "bytes": 899,
+        "sha256": "119135a824d6249e87e90cefea2bbc8e05bd891424d8d6711a4631093c3bff28",
+        "encoding": "UTF-8",
+        "phase": "产品源码未改，实际实现输入",
+        "identity": "仅 CRLF/LF 差异"
+      },
+      "preEditWorktree": {
+        "bytes": 899,
+        "sha256": "119135a824d6249e87e90cefea2bbc8e05bd891424d8d6711a4631093c3bff28"
+      }
+    }
+  ],
+  "generatedOutputPlanId": null,
+  "generatedOutputPlanIdReason": "本轮没有写平台新计划；8K46 是已生成的执行输入，不为归档自引用生成新 ID",
+  "sourceGap": "backend doc version/createdAt 未提供，不由消息时间推算；修改前文档工作树原字节未全部单独捕获，Git 基点原字节均可核验"
+}
