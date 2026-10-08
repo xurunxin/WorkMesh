@@ -1,0 +1,36 @@
+{
+  "result": "通过",
+  "checks": [
+    "完整正文与当前规格UTF-8哈希一致",
+    "09.md与当前平台规格逐字节一致",
+    "其他任务索引/覆盖矩阵保持结构相同",
+    "A2原六项与DoD全部保留，九类逐项映射",
+    "历史规格与映射保留",
+    "所有变更仅docs，未改产品代码",
+    "计划无自写日期或外围标签",
+    "plan ID未生成如实null",
+    "精确main核验与撤回记录已归档"
+  ],
+  "planSha256": "5dde5f9af0a1e7ab9aab1a5e5ae7a84bcc7a7367148b437f2ea3175c9292a1e6",
+  "currentSpecSha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
+  "files": [
+    "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+    "docs/plan/a2-configuration-readiness.md",
+    "docs/plan/a2-configuration-readiness/current-spec.md",
+    "docs/plan/a2-configuration-readiness/historical-git-observation.json",
+    "docs/plan/a2-configuration-readiness/historical-mapping.json",
+    "docs/plan/a2-configuration-readiness/historical-spec.md",
+    "docs/plan/a2-configuration-readiness/main-ref-verification.json",
+    "docs/plan/a2-configuration-readiness/planning-verification.json",
+    "docs/plan/a2-configuration-readiness/platform-readback.json",
+    "docs/plan/a2-configuration-readiness/resources.json",
+    "docs/plan/a2-configuration-readiness/review-map.md",
+    "docs/plan/a2-configuration-readiness/source.json",
+    "docs/plan/activation-task-specs/09.md",
+    "docs/plan/activation-task-specs/index.json",
+    "docs/reviews/r1/test-coverage.json"
+  ],
+  "productTestsRun": false,
+  "productChanges": false,
+  "platformPlanBinding": "等待本回合final保存后独审前实读currentID补绑，不把null冒称已绑定"
+}

@@ -146,13 +146,33 @@ wizard is a second information architecture that can disagree with the first and
 strands anyone who arrived by another route. The list is order-derived but not
 order-enforced: resolve the Project first and the list simply shows fewer items.
 
-Starting prompts under an empty composer are **fixed copy in the existing i18n
-bundle**, not a workspace-editable setting. An editable setting would need its
-own command, permission, revision, idempotency, and event, and inventing that is
-out of scope for a first-run surface; a deployment that wants different copy
-forks the string. An earlier draft of this ADR proposed a workspace-level
-editable setting and a preset aggregate with a write path; both were withdrawn
-because no write contract was defined for them.
+起始提示新增三个固定 WorkMesh 字符串，仍放在现有类型化中英文 i18n 字典中，
+不提供 workspace 可编辑设置。三条内容及点击语义由 A2 完整计划冻结：点击只填未发送草稿并聚焦，
+没有对话时仅展开既有创建表单；Human 明确创建后才填草稿，不自动创建、发送、委派或激活。
+
+### A2 已确认的 URL 与项目配置范围
+
+workKind 仅从 URL 明确读取 repository/non_repository，不从 Team、Project、WorkItem、
+已有仓库或对话推断。缺失、重复或非法参数时不查询，显示普通上下文提示。
+显式失效上下文不回退到另一资源；Back/Forward 后重新查询当前权限与配置。
+
+仓库缺口的 canonical 深链必须抵达既有 Projects 页面中的真实配置区。
+该区允许复用既有 provider-connections、repositories、repositories/{id}/context 命令，
+补齐必要连接、注册和上下文入口，不新增 setup 页面或配置实体。
+workspace admin 管连接及注册，当前 Team admin/maintainer 配置既有仓库上下文，
+普通成员只读；界面操作提示不授予权限，POST 和 Worker 按既有规则重新核对授权。
+上下文命令只提交待处理 action，Worker 产生 repository.context.pinned 后才显示已配置。
+稳定请求身份、事务/event/outbox、并发追加事实、撤权、校验和秘密保护保持既有命令语义。
+新增 POST 没有 If-Match，不伪造 revision 防护；当前配置以服务器读取为准。
+
+仓库读取的 can_configure_context 是当前 caller 的无秘密 UI 提示，Agent 固定 false，
+不建立能力授予或新安全政策。A1 readiness 仍是只读合同，不因配置区新增命令而产生领域写入。
+Runner 始终 unknown；完成配置不自动触发执行。
+
+原六项验收与 Lite 安装链路保持；A2 独立验收，组合回归归原后续阶段。
+具体方案与逐类映射见 [A2 完整计划](../plan/a2-configuration-readiness.md)
+及 [验收映射](../plan/a2-configuration-readiness/review-map.md)。
+这些内容记录用户已确认范围与待独审实施方案，不改变本 ADR 的 Proposed 状态，不宣告产品完成。
 
 ## Alternatives
 

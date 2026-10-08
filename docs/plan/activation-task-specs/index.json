@@ -513,7 +513,7 @@
       "sourceUpdatedAt": "2026-10-07T15:23:25.992Z",
       "sourceSha256": "130e16687029a7950d13ebe964a9d230bfa1892e811d77bbfbe050e9201b0286",
       "path": "docs/plan/activation-task-specs/09.md",
-      "specSha256": "a6a9fdd5b76c1e68769e87e255d645b01de81acb4cd30ce227ba34c091437ba2",
+      "specSha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
       "phase": "todo",
       "owner": "A2 执行者",
       "withPlan": true,
@@ -526,11 +526,11 @@
       ],
       "acceptanceRequires": [],
       "blocks": [],
-      "syncStatus": "待Chief同步读回",
+      "syncStatus": "当前平台完整规格已同步到仓库09.md；旧源字段保留历史含义；未创建真实WorkMesh记录",
       "gate": "按依赖与审查门禁",
-      "latestSourceUpdatedAt": "2026-10-07T15:23:25.992Z",
-      "latestSourceSha256": "130e16687029a7950d13ebe964a9d230bfa1892e811d77bbfbe050e9201b0286",
-      "latestSourcePhase": "todo",
+      "latestSourceUpdatedAt": "2026-10-08T11:46:28.872Z",
+      "latestSourceSha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
+      "latestSourcePhase": "planning",
       "requiresTodoIds": [
         "reEr9xXt9JXN26e5SbC7Z",
         "qJKk_SAxN29AdBHERBl7u",
@@ -545,7 +545,7 @@
           "id": "9-contract",
           "owner": "A2 执行者",
           "input": "已审R1完整规格、指定base及全部requires已验收产物；执行者先给出精确plan/head",
-          "output": "有序未满足列表、既有 i18n 固定起始文案与 canonical 页面链接，不新增 wizard/seen/配置写入；未适用项不当故障，unknown 文案不冒称在线。A2 独立验收自己的面，不等待 D4；A2+D4 组合回归归 #13 的独立阶段，以本卡已验收产物为输入。",
+          "output": "URL明确工作类型；有序未满足列表、三个固定WorkMesh提示和canonical页面链接；项目内复用已有仓库注册/上下文及必要连接命令，保留真实权限、幂等和并发，不新增wizard/seen/可编辑设置。A2独立验收，A2+D4组合归#13。",
           "acceptance": "方案/变更关口通过，未建测试文件按coverage指定owner创建",
           "testMapping": "docs/reviews/r1/test-coverage.json"
         },
@@ -579,7 +579,7 @@
               "required": "可消费的已验收接口/产物及精确提交"
             }
           ],
-          "output": "空白/已配置/部分撤权/非仓库 Team、canonical 返回与焦点、窄屏列表可达；仅对应缺口有主动作；配置成功不自动激活；Lite 安装兼容待验证不得伪称已交付。",
+          "output": "空白/已配置/部分撤权/非仓库Team、canonical往返和焦点、窄屏/i18n/明暗；仅对应缺口有主动作；项目配置成功按Worker落地核验，不自动激活；原Lite真实安装链路未通过不记已交付。",
           "acceptance": "逐项用例/原DoD通过，实际适用required检查通过，另一agent独审；Chief确认后交付"
         }
       ],
@@ -588,7 +588,24 @@
       ],
       "acceptanceBlocksTodoIds": [
         "O2iz8mb_26RoIlnpfXwxV"
-      ]
+      ],
+      "currentSource": {
+        "todoId": "0BkezbmWV6k8vwrlSNuF_",
+        "updatedAt": "2026-10-08T11:46:28.872Z",
+        "sha256": "5c31b4ce6ff9674f8394977d22e64961c778018e3ef730f87286c02eaa4814ff",
+        "snapshotPath": "docs/plan/a2-configuration-readiness/current-spec.md",
+        "source": "mcp__tds__todos(id) 本轮完整 Spec 段",
+        "questionCardId": "q-g078qrLdME6hTbM58dvfx",
+        "approvalReadback": "docs/plan/a2-configuration-readiness/platform-readback.json",
+        "planPath": "docs/plan/a2-configuration-readiness.md"
+      },
+      "approvedScope": [
+        "URL明确workKind，不推断",
+        "三个固定WorkMesh提示，点击不自动创建或发送",
+        "项目内复用已有仓库配置API，真实闭合缺口"
+      ],
+      "currentPlanPath": "docs/plan/a2-configuration-readiness.md",
+      "testMapping": "docs/plan/a2-configuration-readiness/review-map.md"
     },
     {
       "seqNum": 10,
