@@ -51,7 +51,7 @@ const result = { observedAt: new Date().toISOString(), head, inputHead: input.in
   originalArchives: { count: before.entries.length, changed: oldChanged }, archives, history, approved, feedback,
   backendAndDeploymentChanged: backendDiff, oldRecoveryEvidenceChanged: oldEvidenceChanged, source,
   rule: '精确提交 Git blob；gzip 原字节与批准正文独立核验，旧证据只核不变，不重写历史，不预填后续文档提交。' }
-writeFileSync(resolve(root, directory, 'git-byte-proof.json'), JSON.stringify(result, null, 2) + '\n')
+if (!process.argv.includes('--check-only')) writeFileSync(resolve(root, directory, 'git-byte-proof.json'), JSON.stringify(result, null, 2) + '\n')
 if (oldChanged.length || oldEvidenceChanged.length || backendDiff || !feedback.matches || [...archives, ...history, ...approved].some(item => !item.matches) || source.some(item => !item.onlyCRLF)) throw Error('当前输入/提交字节未闭合')
 console.log(JSON.stringify({ head, archives: archives.length, oldArchivesUnchanged: before.entries.length,
   historyExact: history.length, approvedExact: approved.length, testedSourceExactExceptCRLF: source.length, backendUnchanged: true }))

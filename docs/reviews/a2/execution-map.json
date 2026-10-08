@@ -365,7 +365,7 @@
     "results": "docs/reviews/a2/execution-results.json",
     "source": "docs/reviews/a2/checked-source-binding.json",
     "visual": "docs/reviews/a2/visual-review.md",
-    "latestCI": "docs/reviews/a2/latest-ci-readback.json",
+    "latestCI": "docs/reviews/a2/context-read-generation/delivery-readback.json",
     "status": "实现检查结果已绑定；Lite 以独立运行结果为准，真实设备/厂商、视觉确认、独审、latest Required CI、actual main 单列，不标记完成"
   },
   "liteResult": "a2-lite-23646193：精确 380aad996489dbdabddd212be8f45edbcdda7209 镜像，真实四角色/save-load、无源码 Compose、Web 安装/认证及 HTTPS 生产 Worker；原 @lite 1 项通过，退出 0；真实设备与厂商未验收",

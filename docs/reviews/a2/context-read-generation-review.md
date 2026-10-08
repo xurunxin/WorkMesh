@@ -37,3 +37,7 @@ return null
 Lite 专用 Compose 容器/卷/网络、四角色 probe、CA loader/卷与专用镜像清理退出 0，HTTPS 服务已结束。七条临时路径回执均 `code=0, exists=false`；tar 的 resource.cleanup 为 null 时使用逐 path 回执证明，不伪填字段。创建前的镜像/CA 卷 inspect 退出 1 是负向检查；清理后的 inspect 退出 1 证明对象不存在，不当产品失败，也不修改真实退出码。具体资源 ID、预检和操作见新 run 的 receipts 及 cleanup-path-receipts；共享基础镜像、当前 worktree 与 C3 目录保留。
 
 `context-read-generation/git-byte-proof.json` 核精确提交的新增归档 gzip/解压原字节、3246 份旧归档无增量、七份历史 Git blob 与两份批准全文、完整反馈转录及两处受测源码。旧 API/Worker/契约/部署没有增量；`checked-source-binding.json` 对历史集成的前后/当前逐文件比较保留 Web 与部署脚本早期差异，不冒旧浏览器通过为当前源码通过。批准计划、旧恢复报告/原始回执均不改写，当前原六项、九类及十七项修补映射在 `execution-map.json` 与 A2 coverage 中。无迁移、API 或事件变化。
+
+完整材料提交 `7c732560d2ea1b14ba105e286f42a316eb655ee4` 后，实际 123 份新增归档 Git blob 及解压哈希一致，旧 3246 份归档未改；两处受测源码原字节与该提交 Git blob 完全一致。该提交的 `pnpm ci:validate` 退出 0，全 PR 空白及原始证据策略没有新豁免。十二项精确 label 只读检查为空，未进行额外删除；见 `context-read-generation/cleanup-readback.json`。精确远端 main 仍为 `74f247f9240eaf21e74ef248f71a445c1d4276d7`，本分支没有 workflow 记录，见 `context-read-generation/delivery-readback.json`。这个读回与 proof 记录的是捕获时提交，不伪填随后文档提交的自引用 ID；技术通过不代表人类视觉或最终门禁接受。
+
+后续只新增这次政策日志的无损归档及读回材料，归档清单当前共 3370 份；不重跑未变产品。最终提交后的无写入核验入口为 `node docs/reviews/a2/seal-context-read-generation.mjs a2-71164f40 --check-only`，会按当时 HEAD 逐项核新归档、历史及源码，而不再次为自引用改写 proof。批准正文、旧证明与第一批原件不变。

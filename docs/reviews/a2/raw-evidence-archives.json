@@ -99546,6 +99546,33 @@
         "bytes": 7686,
         "sha256": "c3a04f3e235a6d132baf7f9e9815f8ce8ce47223be5c4fcc6e4fc61e54898551"
       }
+    },
+    {
+      "originalPath": "docs/reviews/a2/context-read-generation/committed-ci.log",
+      "archivePath": "docs/reviews/a2/context-read-generation/committed-ci.log.gz",
+      "original": {
+        "bytes": 1513,
+        "sha256": "f046cdfcf90c1f8d10e2ab6007a1986b7a3269f2c3236c22a63abcbf7f47a56e"
+      },
+      "priorHead": "7c732560d2ea1b14ba105e286f42a316eb655ee4",
+      "priorGitBlob": null,
+      "reason": "完整保留原始日志、受测源码原字节和失败上下文；不格式化原件、不修改 CI 或忽略规则",
+      "activity": "本轮浏览器、Docker 镜像及安装作业已结束；原件读回与解压核验后仅清本任务闲置未压缩副本",
+      "plannedAt": "2026-10-08T19:11:32.593Z",
+      "roundTrip": {
+        "bytes": 1513,
+        "sha256": "f046cdfcf90c1f8d10e2ab6007a1986b7a3269f2c3236c22a63abcbf7f47a56e",
+        "exact": true,
+        "at": "2026-10-08T19:11:32.612Z"
+      },
+      "deleteResult": {
+        "exists": false,
+        "at": "2026-10-08T19:11:32.627Z"
+      },
+      "archive": {
+        "bytes": 935,
+        "sha256": "12deaba2b2c62be2e705cfd836501d97a4224325e100d2e136faa466c45a344e"
+      }
     }
   ]
 }

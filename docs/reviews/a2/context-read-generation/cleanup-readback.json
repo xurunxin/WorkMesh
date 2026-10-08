@@ -1,0 +1,160 @@
+{
+  "observedAt": "2026-10-08T19:10:31.602Z",
+  "source": "收尾后精确归属 label 只读观察，不新增删除",
+  "complete": true,
+  "results": [
+    {
+      "owner": "a2-71164f40",
+      "args": [
+        "ps",
+        "-aq",
+        "--filter",
+        "label=workmesh.task=a2-71164f40"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-71164f40",
+      "args": [
+        "ps",
+        "-aq",
+        "--filter",
+        "label=com.docker.compose.project=a2-71164f40"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-71164f40",
+      "args": [
+        "volume",
+        "ls",
+        "-q",
+        "--filter",
+        "label=com.docker.compose.project=a2-71164f40"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-71164f40",
+      "args": [
+        "volume",
+        "ls",
+        "-q",
+        "--filter",
+        "label=workmesh.task=a2-71164f40"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-71164f40",
+      "args": [
+        "network",
+        "ls",
+        "-q",
+        "--filter",
+        "label=com.docker.compose.project=a2-71164f40"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-71164f40",
+      "args": [
+        "image",
+        "ls",
+        "-q",
+        "--filter",
+        "label=workmesh.task=a2-71164f40"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-lite-23646193",
+      "args": [
+        "ps",
+        "-aq",
+        "--filter",
+        "label=workmesh.task=a2-lite-23646193"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-lite-23646193",
+      "args": [
+        "ps",
+        "-aq",
+        "--filter",
+        "label=com.docker.compose.project=a2-lite-23646193"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-lite-23646193",
+      "args": [
+        "volume",
+        "ls",
+        "-q",
+        "--filter",
+        "label=com.docker.compose.project=a2-lite-23646193"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-lite-23646193",
+      "args": [
+        "volume",
+        "ls",
+        "-q",
+        "--filter",
+        "label=workmesh.task=a2-lite-23646193"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-lite-23646193",
+      "args": [
+        "network",
+        "ls",
+        "-q",
+        "--filter",
+        "label=com.docker.compose.project=a2-lite-23646193"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "owner": "a2-lite-23646193",
+      "args": [
+        "image",
+        "ls",
+        "-q",
+        "--filter",
+        "label=workmesh.task=a2-lite-23646193"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "retained": "当前工作树、共享基础镜像/build cache 与 C3 新旧目录及审计保留；逐项操作仍以各 run 原回执为准"
+}

@@ -1,0 +1,57 @@
+{
+  "observedAt": "2026-10-08 19:09:46 UTC",
+  "head": "7c732560d2ea1b14ba105e286f42a316eb655ee4",
+  "testedProductHead": "380aad996489dbdabddd212be8f45edbcdda7209",
+  "productDifference": "已实读：产品、测试、API/Worker/契约及部署均无后续差异，只有本轮材料",
+  "mainRead": {
+    "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "74f247f9240eaf21e74ef248f71a445c1d4276d7\trefs/heads/main"
+        }
+      ]
+    },
+    "main": "74f247f9240eaf21e74ef248f71a445c1d4276d7"
+  },
+  "ciRead": {
+    "args": {
+      "branch": "tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe",
+      "limit": 5
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "No workflow runs in xurunxin/WorkMesh matching branch \"tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe\"."
+        }
+      ]
+    },
+    "status": "未找到本分支 workflow，latest Required CI 未验收"
+  },
+  "committedPolicy": {
+    "command": [
+      "pnpm",
+      "ci:validate"
+    ],
+    "head": "7c732560d2ea1b14ba105e286f42a316eb655ee4",
+    "exitCode": 0,
+    "log": "docs/reviews/a2/context-read-generation/committed-ci.log.gz",
+    "meaning": "全 PR 提交范围本地策略检查；不冒作远端 Required CI"
+  },
+  "gates": [
+    "本次实施独审",
+    "五项人工视觉差异接受",
+    "latest Required CI",
+    "actual main 落地"
+  ],
+  "version": null,
+  "outputPlanId": null,
+  "reason": "不新建 plan 或为证据自引用无限提交；该观察不预填后续文档 head"
+}
