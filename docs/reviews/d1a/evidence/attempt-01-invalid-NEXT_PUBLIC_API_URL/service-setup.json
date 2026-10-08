@@ -1,0 +1,77 @@
+{
+  "head": "40a51cc476aa1de1d9e313dfd9bdfbbb64ef5aeb",
+  "tree": "5126885a0a17b5871208ee34496639bd2dc99590",
+  "health": {
+    "rustfs": true,
+    "postgres": true,
+    "redis": true
+  },
+  "containers": {
+    "wm-d1a-reverify-40a51-pg": {
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "running": true,
+      "health": "no-healthcheck",
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "25432"
+          }
+        ]
+      }
+    },
+    "wm-d1a-reverify-40a51-rustfs": {
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "running": true,
+      "health": "no-healthcheck",
+      "ports": {
+        "9000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "29000"
+          }
+        ]
+      }
+    },
+    "wm-d1a-reverify-40a51-redis": {
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "running": true,
+      "health": "no-healthcheck",
+      "ports": {
+        "6379/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "26379"
+          }
+        ]
+      }
+    }
+  },
+  "testDatabases": [
+    "workmesh_d1a_integration_test",
+    "workmesh_d1a_recovery_source_test",
+    "workmesh_d1a_recovery_target_test"
+  ],
+  "buckets": [
+    "workmesh-artifacts",
+    "recovery-target-d1a-reverify",
+    "recovery-source-d1a-reverify (created in integration suite)"
+  ],
+  "envConfigured": {
+    "RUN_INTEGRATION": "1",
+    "RUN_RETENTION_UPGRADE_INTEGRATION": "1",
+    "S3_ENDPOINT": "http://127.0.0.1:29000",
+    "RUN_RECOVERY_INTEGRATION": "1",
+    "RECOVERY_SOURCE_DATABASE_URL": "127.0.0.1:25432/workmesh_d1a_recovery_source_test",
+    "RECOVERY_TARGET_DATABASE_URL": "127.0.0.1:25432/workmesh_d1a_recovery_target_test",
+    "REDIS_URL": "127.0.0.1:26379",
+    "WORKMESH_POSTGRES_TOOL_CONTAINER": "wm-d1a-reverify-40a51-pg",
+    "secrets": "random ephemeral values redacted",
+    "DATABASE_URL": "127.0.0.1:25432/workmesh_d1a_integration_test"
+  },
+  "bootstrapTokenGenerated": true,
+  "bootstrapTokenPrintedOrPersisted": false
+}

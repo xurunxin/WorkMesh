@@ -1,0 +1,100 @@
+{
+  "id": "reverification-environment-07",
+  "head": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+  "tree": "d4af6349be64d011d97a8b63281f8cf110332f96",
+  "initialFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+  "finalFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+  "runtime": {
+    "node": "v24.20.0",
+    "playwright": "Version 1.61.1",
+    "architecture": "X64",
+    "os": "Microsoft Windows 10.0.26300",
+    "pnpm": "9.15.4"
+  },
+  "checks": [
+    {
+      "id": "theme-e2e",
+      "command": "pnpm --filter @workmesh/web test:e2e e2e/theme-unification.spec.ts",
+      "exitCode": 0,
+      "log": "logs/theme-e2e.log",
+      "logBytes": 235679,
+      "logSha256": "5036538bf954d7d9ef93b99f6721fa9e698fc1993e7efa9fa6e011eb315db7c7",
+      "sourceBeforeFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+      "sourceAfterFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+      "headBefore": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "headAfter": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "dirtyBefore": [],
+      "dirtyAfter": [],
+      "archivedLog": {
+        "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+        "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-07/logs/theme-e2e.log",
+        "version": "source-run:reverification-environment-07@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+        "byteKind": "worktree"
+      }
+    },
+    {
+      "id": "e2e-suite",
+      "command": "pnpm test:e2e",
+      "exitCode": 1,
+      "log": "logs/e2e-suite.log",
+      "logBytes": 139163,
+      "logSha256": "6ecc68900fd9b8eaf9ca682448fda474aedcdcb81359612f8b1db79a6afd90cd",
+      "sourceBeforeFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+      "sourceAfterFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+      "headBefore": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "headAfter": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "dirtyBefore": [],
+      "dirtyAfter": [],
+      "archivedLog": {
+        "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+        "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-07/logs/e2e-suite.log",
+        "version": "source-run:reverification-environment-07@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+        "byteKind": "worktree"
+      }
+    },
+    {
+      "id": "d0-baseline",
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --update-snapshots=none",
+      "exitCode": 0,
+      "log": "logs/d0-baseline.log",
+      "logBytes": 7054,
+      "logSha256": "111f85772b45187aa5eea81321ba78d057a5bcbd784d717fd133a7910fbddc59",
+      "sourceBeforeFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+      "sourceAfterFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+      "headBefore": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "headAfter": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "dirtyBefore": [],
+      "dirtyAfter": [],
+      "archivedLog": {
+        "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+        "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-07/logs/d0-baseline.log",
+        "version": "source-run:reverification-environment-07@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+        "byteKind": "worktree"
+      }
+    }
+  ],
+  "archivedLogResolution": {
+    "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+    "sourceMap": "docs/reviews/d1a/evidence/ci385-raw-evidence/source-map.json",
+    "resolution": "historical log references add archivedLog {index, logicalPath, version, byteKind}; resolve the exact raw worktree snapshot tuple",
+    "aliases": 31
+  },
+  "setupTranscriptArchive": {
+    "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+    "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-07/setup-commands.log",
+    "version": "source-run:reverification-environment-07@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+    "byteKind": "worktree"
+  },
+  "cleanupTranscriptArchive": {
+    "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+    "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-07/cleanup-commands.log",
+    "version": "source-run:reverification-environment-07@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+    "byteKind": "worktree"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "provider": "GitHub Actions",
+  "repository": "xurunxin/WorkMesh",
+  "runId": 37715113983,
+  "runAttempt": 1,
+  "pr": 204,
+  "event": "pull_request",
+  "baseSha": "9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7",
+  "headSha": "58d59ed85002da637aaeaa6bf98915d4a6ba918c",
+  "mergeSha": "1631691b9b238185ad2ff6412b961fe4d9bec503",
+  "job": {
+    "id": 113109704226,
+    "name": "Classify changes and validate CI selection",
+    "conclusion": "failure"
+  },
+  "requiredCiJob": {
+    "id": 113109774717,
+    "conclusion": "failure",
+    "cause": "changes job failed; changes outputs.plan was absent, aggregate rejected Missing or invalid CI plan"
+  },
+  "artifact": {
+    "id": 11523640922,
+    "name": "changes-raw-37715113983-1",
+    "members": [
+      "changes-raw/ci-policy.log",
+      "changes-raw/ci-plan.log"
+    ],
+    "downloadedUsing": "gh run download"
+  },
+  "fullJobLog": {
+    "source": "gh run view 37715113983 --job 113109704226 --log",
+    "bytes": 103612,
+    "sha256": "2917c825afdac6b3bf47670eb49d027c46a6900bb78faa73dc67bac76dfd362e",
+    "capturedBytesAreRaw": true
+  },
+  "artifactPlanLog": {
+    "bytes": 24270,
+    "sha256": "619ef226d2a5ce20a9dffa8d07226c55816c9c50d3b4e7da93493b6f8a47a980",
+    "nodeErrorStackContainsTruncationMarker": true
+  },
+  "selectionTests": {
+    "artifactLog": "changes-raw/ci-policy.log",
+    "passed": 12,
+    "failed": 0
+  },
+  "classification": {
+    "phase": "Select required jobs",
+    "stepFailedBecause": "planForEvent runs git diff --check on exact base/head range and aborts before writing CI plan",
+    "effect": "Required CI aggregate reports changes=failure; 7 downstream required jobs are skipped"
+  },
+  "limitations": "GitHub job output preserved exactly as returned. The Node exception text in ci-plan.log includes a truncated rendering of git diff output; the complete independent output captured from the same immutable base/head git objects is diff-check-findings.json and its raw log member. This is a reproduction, not represented as the original CI process stream."
+}

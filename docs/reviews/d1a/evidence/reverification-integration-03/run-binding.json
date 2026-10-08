@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "head": "40a51cc476aa1de1d9e313dfd9bdfbbb64ef5aeb",
+  "tree": "5126885a0a17b5871208ee34496639bd2dc99590",
+  "initial": {
+    "head": "40a51cc476aa1de1d9e313dfd9bdfbbb64ef5aeb",
+    "tree": "5126885a0a17b5871208ee34496639bd2dc99590",
+    "fingerprint": "116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4",
+    "sourceDirty": [],
+    "files": [
+      {
+        "path": "packages/ui/src/tokens.css",
+        "gitBlob": "933d961bedff4a892af472da9b5c08062bd42a91",
+        "worktreeSha256": "d02d482a0098a1457954cd6467b998c63be4941abf2adefc2ab3a27ce4fd4a61"
+      },
+      {
+        "path": "apps/web/features/navigation/theme.test.tsx",
+        "gitBlob": "904a9d5beb5ef9331ec926b7be688e2b98d572c3",
+        "worktreeSha256": "e3cb557470b03059b94439a8fabdcebbacc96913ffa4e561eb1544eb39cfd9a8"
+      },
+      {
+        "path": "apps/web/features/navigation/theme-token-baseline.json",
+        "gitBlob": "af15b5e4cb5687c00931575b8e807177de70ee38",
+        "worktreeSha256": "524a7fbb1896010969348440b546f1a89af6a4abfd806fda51137a30685bdea3"
+      },
+      {
+        "path": "apps/web/e2e/theme-unification.spec.ts",
+        "gitBlob": "eb5decd839128055b81b6dbbcfd4953749aad985",
+        "worktreeSha256": "6ce8d7b23e3f1918bf782def0e8fea877c5a911dc473d72d648b2bedf6f35397"
+      }
+    ]
+  },
+  "final": {
+    "head": "40a51cc476aa1de1d9e313dfd9bdfbbb64ef5aeb",
+    "tree": "5126885a0a17b5871208ee34496639bd2dc99590",
+    "fingerprint": "116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4",
+    "sourceDirty": [],
+    "files": [
+      {
+        "path": "packages/ui/src/tokens.css",
+        "gitBlob": "933d961bedff4a892af472da9b5c08062bd42a91",
+        "worktreeSha256": "d02d482a0098a1457954cd6467b998c63be4941abf2adefc2ab3a27ce4fd4a61"
+      },
+      {
+        "path": "apps/web/features/navigation/theme.test.tsx",
+        "gitBlob": "904a9d5beb5ef9331ec926b7be688e2b98d572c3",
+        "worktreeSha256": "e3cb557470b03059b94439a8fabdcebbacc96913ffa4e561eb1544eb39cfd9a8"
+      },
+      {
+        "path": "apps/web/features/navigation/theme-token-baseline.json",
+        "gitBlob": "af15b5e4cb5687c00931575b8e807177de70ee38",
+        "worktreeSha256": "524a7fbb1896010969348440b546f1a89af6a4abfd806fda51137a30685bdea3"
+      },
+      {
+        "path": "apps/web/e2e/theme-unification.spec.ts",
+        "gitBlob": "eb5decd839128055b81b6dbbcfd4953749aad985",
+        "worktreeSha256": "6ce8d7b23e3f1918bf782def0e8fea877c5a911dc473d72d648b2bedf6f35397"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "integration-suite",
+      "command": "pnpm test:integration",
+      "exitCode": 0,
+      "sourceBefore": {
+        "head": "40a51cc476aa1de1d9e313dfd9bdfbbb64ef5aeb",
+        "tree": "5126885a0a17b5871208ee34496639bd2dc99590",
+        "fingerprint": "116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4",
+        "sourceDirty": [],
+        "files": [
+          {
+            "path": "packages/ui/src/tokens.css",
+            "gitBlob": "933d961bedff4a892af472da9b5c08062bd42a91",
+            "worktreeSha256": "d02d482a0098a1457954cd6467b998c63be4941abf2adefc2ab3a27ce4fd4a61"
+          },
+          {
+            "path": "apps/web/features/navigation/theme.test.tsx",
+            "gitBlob": "904a9d5beb5ef9331ec926b7be688e2b98d572c3",
+            "worktreeSha256": "e3cb557470b03059b94439a8fabdcebbacc96913ffa4e561eb1544eb39cfd9a8"
+          },
+          {
+            "path": "apps/web/features/navigation/theme-token-baseline.json",
+            "gitBlob": "af15b5e4cb5687c00931575b8e807177de70ee38",
+            "worktreeSha256": "524a7fbb1896010969348440b546f1a89af6a4abfd806fda51137a30685bdea3"
+          },
+          {
+            "path": "apps/web/e2e/theme-unification.spec.ts",
+            "gitBlob": "eb5decd839128055b81b6dbbcfd4953749aad985",
+            "worktreeSha256": "6ce8d7b23e3f1918bf782def0e8fea877c5a911dc473d72d648b2bedf6f35397"
+          }
+        ]
+      },
+      "sourceAfter": {
+        "head": "40a51cc476aa1de1d9e313dfd9bdfbbb64ef5aeb",
+        "tree": "5126885a0a17b5871208ee34496639bd2dc99590",
+        "fingerprint": "116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4",
+        "sourceDirty": [],
+        "files": [
+          {
+            "path": "packages/ui/src/tokens.css",
+            "gitBlob": "933d961bedff4a892af472da9b5c08062bd42a91",
+            "worktreeSha256": "d02d482a0098a1457954cd6467b998c63be4941abf2adefc2ab3a27ce4fd4a61"
+          },
+          {
+            "path": "apps/web/features/navigation/theme.test.tsx",
+            "gitBlob": "904a9d5beb5ef9331ec926b7be688e2b98d572c3",
+            "worktreeSha256": "e3cb557470b03059b94439a8fabdcebbacc96913ffa4e561eb1544eb39cfd9a8"
+          },
+          {
+            "path": "apps/web/features/navigation/theme-token-baseline.json",
+            "gitBlob": "af15b5e4cb5687c00931575b8e807177de70ee38",
+            "worktreeSha256": "524a7fbb1896010969348440b546f1a89af6a4abfd806fda51137a30685bdea3"
+          },
+          {
+            "path": "apps/web/e2e/theme-unification.spec.ts",
+            "gitBlob": "eb5decd839128055b81b6dbbcfd4953749aad985",
+            "worktreeSha256": "6ce8d7b23e3f1918bf782def0e8fea877c5a911dc473d72d648b2bedf6f35397"
+          }
+        ]
+      },
+      "log": "docs/reviews/d1a/evidence/reverification-integration-03/logs/integration-suite.log",
+      "logBytes": 1036611,
+      "logSha256": "ce85f5ecfe72e9f769d4a86a2782ff1766a41cde7fe28accff463eeb4c4050e6"
+    },
+    {
+      "id": "diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "sourceBefore": {
+        "head": "40a51cc476aa1de1d9e313dfd9bdfbbb64ef5aeb",
+        "tree": "5126885a0a17b5871208ee34496639bd2dc99590",
+        "fingerprint": "116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4",
+        "sourceDirty": [],
+        "files": [
+          {
+            "path": "packages/ui/src/tokens.css",
+            "gitBlob": "933d961bedff4a892af472da9b5c08062bd42a91",
+            "worktreeSha256": "d02d482a0098a1457954cd6467b998c63be4941abf2adefc2ab3a27ce4fd4a61"
+          },
+          {
+            "path": "apps/web/features/navigation/theme.test.tsx",
+            "gitBlob": "904a9d5beb5ef9331ec926b7be688e2b98d572c3",
+            "worktreeSha256": "e3cb557470b03059b94439a8fabdcebbacc96913ffa4e561eb1544eb39cfd9a8"
+          },
+          {
+            "path": "apps/web/features/navigation/theme-token-baseline.json",
+            "gitBlob": "af15b5e4cb5687c00931575b8e807177de70ee38",
+            "worktreeSha256": "524a7fbb1896010969348440b546f1a89af6a4abfd806fda51137a30685bdea3"
+          },
+          {
+            "path": "apps/web/e2e/theme-unification.spec.ts",
+            "gitBlob": "eb5decd839128055b81b6dbbcfd4953749aad985",
+            "worktreeSha256": "6ce8d7b23e3f1918bf782def0e8fea877c5a911dc473d72d648b2bedf6f35397"
+          }
+        ]
+      },
+      "sourceAfter": {
+        "head": "40a51cc476aa1de1d9e313dfd9bdfbbb64ef5aeb",
+        "tree": "5126885a0a17b5871208ee34496639bd2dc99590",
+        "fingerprint": "116293733d57055901c2daf1397090e55e7d440c2574c113c6d32af0539b2ca4",
+        "sourceDirty": [],
+        "files": [
+          {
+            "path": "packages/ui/src/tokens.css",
+            "gitBlob": "933d961bedff4a892af472da9b5c08062bd42a91",
+            "worktreeSha256": "d02d482a0098a1457954cd6467b998c63be4941abf2adefc2ab3a27ce4fd4a61"
+          },
+          {
+            "path": "apps/web/features/navigation/theme.test.tsx",
+            "gitBlob": "904a9d5beb5ef9331ec926b7be688e2b98d572c3",
+            "worktreeSha256": "e3cb557470b03059b94439a8fabdcebbacc96913ffa4e561eb1544eb39cfd9a8"
+          },
+          {
+            "path": "apps/web/features/navigation/theme-token-baseline.json",
+            "gitBlob": "af15b5e4cb5687c00931575b8e807177de70ee38",
+            "worktreeSha256": "524a7fbb1896010969348440b546f1a89af6a4abfd806fda51137a30685bdea3"
+          },
+          {
+            "path": "apps/web/e2e/theme-unification.spec.ts",
+            "gitBlob": "eb5decd839128055b81b6dbbcfd4953749aad985",
+            "worktreeSha256": "6ce8d7b23e3f1918bf782def0e8fea877c5a911dc473d72d648b2bedf6f35397"
+          }
+        ]
+      },
+      "log": "docs/reviews/d1a/evidence/reverification-integration-03/logs/diff-check.log",
+      "logBytes": 474,
+      "logSha256": "04d9743f98a625f1df590c7f01f2edfdc7613c17a7975d6b0c29496bfb10bc90"
+    }
+  ],
+  "runtime": {
+    "architecture": "X64",
+    "node": "v24.20.0",
+    "playwright": "Version 1.61.1",
+    "pnpm": "9.15.4",
+    "os": "Microsoft Windows 10.0.26300"
+  },
+  "archivedLogResolution": {
+    "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+    "sourceMap": "docs/reviews/d1a/evidence/ci385-raw-evidence/source-map.json",
+    "resolution": "historical log references add archivedLog {index, logicalPath, version, byteKind}; resolve the exact raw worktree snapshot tuple",
+    "aliases": 31
+  }
+}

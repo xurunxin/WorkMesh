@@ -1,0 +1,57 @@
+{
+  "id": "reverification-environment-06",
+  "head": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+  "tree": "d4af6349be64d011d97a8b63281f8cf110332f96",
+  "initialFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+  "finalFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+  "consoleLabelNote": "The captured PowerShell runner emitted environment-04 labels because its temporary script filename was reused; evidence paths and binding ID identify this independent run as environment-06.",
+  "runtime": {
+    "pnpm": "9.15.4",
+    "playwright": "Version 1.61.1",
+    "node": "v24.20.0",
+    "os": "Microsoft Windows 10.0.26300",
+    "architecture": "X64"
+  },
+  "checks": [
+    {
+      "id": "theme-e2e",
+      "command": "pnpm --filter @workmesh/web test:e2e e2e/theme-unification.spec.ts",
+      "exitCode": 0,
+      "log": "logs/theme-e2e.log",
+      "logBytes": 224741,
+      "logSha256": "fd23219057cfbd9cd39d3f5749187aa1fc41434e5c87f98df330641f02784548",
+      "sourceBeforeFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+      "sourceAfterFingerprint": "f64dfc223393ddaea493f4858d0d748ae855aedfe85eca88b62adacf77ea609a",
+      "headBefore": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "headAfter": "c48d8144bffb8aae85a0af2ea842c19bc994db70",
+      "treeBefore": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "treeAfter": "d4af6349be64d011d97a8b63281f8cf110332f96",
+      "dirtyBefore": [],
+      "dirtyAfter": [],
+      "archivedLog": {
+        "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+        "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-06/logs/theme-e2e.log",
+        "version": "source-run:reverification-environment-06@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+        "byteKind": "worktree"
+      }
+    }
+  ],
+  "archivedLogResolution": {
+    "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+    "sourceMap": "docs/reviews/d1a/evidence/ci385-raw-evidence/source-map.json",
+    "resolution": "historical log references add archivedLog {index, logicalPath, version, byteKind}; resolve the exact raw worktree snapshot tuple",
+    "aliases": 31
+  },
+  "setupTranscriptArchive": {
+    "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+    "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-06/setup-commands.log",
+    "version": "source-run:reverification-environment-06@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+    "byteKind": "worktree"
+  },
+  "cleanupTranscriptArchive": {
+    "index": "docs/reviews/d1a/evidence/ci385-raw-evidence/raw-evidence-index.json",
+    "logicalPath": "docs/reviews/d1a/evidence/reverification-environment-06/cleanup-commands.log",
+    "version": "source-run:reverification-environment-06@c48d8144bffb8aae85a0af2ea842c19bc994db70",
+    "byteKind": "worktree"
+  }
+}

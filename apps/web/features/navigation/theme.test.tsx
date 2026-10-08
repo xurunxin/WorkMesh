@@ -1,8 +1,46 @@
 // @vitest-environment jsdom
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { LocaleProvider } from '../../app/lib/i18n'
 import { applyTheme, currentTheme, defaultTheme, isThemeChoice, ThemeToggle, themeBootstrapScript, themeStorageKey } from './theme'
+
+type TokenBaseline = {
+  baseCommit: string
+  declarations: Array<{ selector: string; token: string; value: string }>
+  consumers: Array<{
+    file: string
+    token: string
+    count: number
+    references: Array<{ line: number; occurrence: number; text: string }>
+  }>
+}
+
+const tokenBaseline = JSON.parse(readFileSync(resolve(process.cwd(), 'features/navigation/theme-token-baseline.json'), 'utf8')) as TokenBaseline
+const tokenCssPath = resolve(process.cwd(), '../../packages/ui/src/tokens.css')
+const runtimeTokenDefinitions: Record<string, Array<{ file: string; marker: string }>> = {
+  '--wm-dismissal-depth': [{ file: 'packages/ui/src/internal/overlay.ts', marker: "setProperty('--wm-dismissal-depth'" }],
+  '--wm-status-color': [
+    { file: 'packages/ui/src/domain/workflow.tsx', marker: "'--wm-status-color':" },
+    { file: 'packages/ui/src/domain/work-item.tsx', marker: "'--wm-status-color':" },
+  ],
+}
+
+function parseTokenDeclarations(css: string) {
+  const declarations: Array<{ selector: string; token: string; value: string }> = []
+  for (const match of css.matchAll(/([^{}]+)\{([^{}]*)\}/gs)) {
+    const selector = match[1]!.replace(/\/\*[\s\S]*?\*\//g, '').trim().replace(/\s+/g, ' ')
+    for (const declaration of match[2]!.matchAll(/(--wm-[\w-]+)\s*:\s*([^;]+);/g)) {
+      declarations.push({ selector, token: declaration[1]!, value: declaration[2]!.trim() })
+    }
+  }
+  return declarations
+}
+
+function sourceWithoutComments(source: string): string {
+  return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1')
+}
 
 afterEach(() => {
   cleanup()
@@ -55,6 +93,99 @@ describe('theme state helpers', () => {
     expect(isThemeChoice('light')).toBe(true)
     expect(isThemeChoice('system')).toBe(false)
     expect(isThemeChoice(null)).toBe(false)
+  })
+})
+
+describe('coexisting reference token contract', () => {
+  it('preserves every base token declaration, scope, value, and existing CSS consumer', () => {
+    expect(tokenBaseline.baseCommit).toBe('9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7')
+    const css = readFileSync(tokenCssPath, 'utf8')
+    const currentDeclarations = parseTokenDeclarations(css)
+    const legacyDeclarations = currentDeclarations.filter(declaration => !declaration.token.startsWith('--wm-ref-'))
+    expect(legacyDeclarations).toEqual(tokenBaseline.declarations)
+
+    for (const consumer of tokenBaseline.consumers) {
+      const sourcePath = resolve(process.cwd(), '../../', consumer.file)
+      const originalSource = readFileSync(sourcePath, 'utf8')
+      const sourceLines = sourceWithoutComments(originalSource).split(/\r?\n/)
+      const originalLines = originalSource.split(/\r?\n/)
+      const tokenPattern = new RegExp(`var\\(\\s*${consumer.token}\\s*(?=[,)])`, 'g')
+      const actualReferences = sourceLines.flatMap((line, lineIndex) =>
+        [...line.matchAll(tokenPattern)].map((_, occurrenceIndex) => ({
+          line: lineIndex + 1,
+          occurrence: occurrenceIndex + 1,
+          text: originalLines[lineIndex]!.trim(),
+        })),
+      )
+      expect(actualReferences).toEqual(consumer.references)
+      expect(actualReferences).toHaveLength(consumer.count)
+      if (!currentDeclarations.some(declaration => declaration.token === consumer.token)) {
+        const definitions = runtimeTokenDefinitions[consumer.token] ?? []
+        expect(definitions.length, `missing definition source for ${consumer.token}`).toBeGreaterThan(0)
+        for (const definition of definitions) {
+          const definitionSource = readFileSync(resolve(process.cwd(), '../../', definition.file), 'utf8')
+          expect(definitionSource).toContain(definition.marker)
+        }
+      }
+    }
+  })
+
+  it('declares measured light slots and resolves dark slots through existing semantics', () => {
+    const css = readFileSync(tokenCssPath, 'utf8')
+    const lightSlots: Record<string, string> = {
+      '--wm-ref-surface': '#faf7f2',
+      '--wm-ref-surface-elevated': '#fdfaf6',
+      '--wm-ref-surface-hover': '#f2ede6',
+      '--wm-ref-surface-secondary': '#f2ede6',
+      '--wm-ref-surface-inset': '#f2ede6',
+      '--wm-ref-border-default': '#e2dbd1',
+      '--wm-ref-border-strong': '#cec6bb',
+      '--wm-ref-text-primary': '#1c1917',
+      '--wm-ref-text-secondary': '#57534e',
+      '--wm-ref-text-tertiary': '#78716c',
+      '--wm-ref-text-dim': '#a8a29e',
+      '--wm-ref-status-pending': '#9ca3af',
+      '--wm-ref-status-running': '#3b82f6',
+      '--wm-ref-status-needs-human': '#f59e0b',
+      '--wm-ref-status-done': '#22c55e',
+      '--wm-ref-danger-candidate': '#ef4444',
+      '--wm-ref-accent': '#4f46e5',
+      '--wm-ref-focus': '#6366f1',
+      '--wm-ref-radius-control': '6px',
+      '--wm-ref-radius-card': '8px',
+      '--wm-ref-radius-column': '12px',
+    }
+    const declarations = parseTokenDeclarations(css)
+    for (const [token, value] of Object.entries(lightSlots)) {
+      expect(declarations).toContainEqual({ selector: ':root', token, value })
+    }
+
+    const dark = declarations.filter(declaration => declaration.selector === "[data-wm-theme='dark']")
+    const darkAliases: Record<string, string> = {
+      '--wm-ref-surface': '--wm-canvas',
+      '--wm-ref-surface-elevated': '--wm-surface-raised',
+      '--wm-ref-surface-hover': '--wm-surface-hover',
+      '--wm-ref-surface-secondary': '--wm-surface-subtle',
+      '--wm-ref-surface-inset': '--wm-surface-inset',
+      '--wm-ref-border-default': '--wm-border',
+      '--wm-ref-border-strong': '--wm-border-strong',
+      '--wm-ref-text-primary': '--wm-text',
+      '--wm-ref-text-secondary': '--wm-text-muted',
+      '--wm-ref-text-tertiary': '--wm-text-subtle',
+      '--wm-ref-text-dim': '--wm-text-muted',
+      '--wm-ref-status-pending': '--wm-neutral',
+      '--wm-ref-status-running': '--wm-info',
+      '--wm-ref-status-needs-human': '--wm-warning',
+      '--wm-ref-status-done': '--wm-success',
+      '--wm-ref-danger-candidate': '--wm-danger',
+      '--wm-ref-accent': '--wm-accent',
+      '--wm-ref-focus': '--wm-focus',
+    }
+    for (const [token, value] of Object.entries(darkAliases)) {
+      expect(dark).toContainEqual({ selector: "[data-wm-theme='dark']", token, value: `var(${value})` })
+    }
+    expect(css).toContain('CSS candidate observed in utilities; this is not an observed error-state component.')
+    expect(css).toContain('D1a reference measurements coexist with shipped tokens until D1b migrates consumers.')
   })
 })
 

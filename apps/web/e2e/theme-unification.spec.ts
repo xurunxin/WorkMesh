@@ -22,6 +22,7 @@ test.describe('unified light theme', () => {
 
   for (const route of routes) {
     test(`renders ${route.path} on the unified light theme`, async ({ page }) => {
+      await page.addInitScript(() => window.localStorage.setItem('workmesh.theme', 'light'))
       await page.goto(route.path)
       // Some routes (e.g. /, /agents on a fresh install) redirect to /install
       // or /login. The original code raced the redirect: page.goto resolves
@@ -60,6 +61,7 @@ test.describe('unified light theme', () => {
         await page.waitForTimeout(150)
       }
       if (!bg && lastError) throw lastError
+      await expect(page.locator('html')).toHaveAttribute('data-wm-theme', 'light')
       for (const legacy of legacyDarkBackgrounds) {
         expect(bg, `body background should not be the legacy dark ${legacy}`).not.toBe(legacy)
       }
@@ -73,4 +75,73 @@ test.describe('unified light theme', () => {
       }).toBe(true)
     })
   }
+
+  test('keeps the dark default and toggles light/dark/light with persisted theme state', async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.removeItem('workmesh.theme'))
+    await page.goto('/login')
+    await expect(page.locator('html')).toHaveAttribute('data-wm-theme', 'dark')
+    const toggle = page.getByTestId('theme-toggle')
+    await expect(toggle).toHaveAttribute('aria-label', '切换到浅色主题')
+    await toggle.click()
+    await expect(page.locator('html')).toHaveAttribute('data-wm-theme', 'light')
+    await expect.poll(() => page.evaluate(() => window.localStorage.getItem('workmesh.theme'))).toBe('light')
+    await toggle.click()
+    await expect(page.locator('html')).toHaveAttribute('data-wm-theme', 'dark')
+    await expect.poll(() => page.evaluate(() => window.localStorage.getItem('workmesh.theme'))).toBe('dark')
+    await toggle.click()
+    await expect(page.locator('html')).toHaveAttribute('data-wm-theme', 'light')
+  })
+
+  test('resolves reference slots through root, inherited, and nested dark scopes', async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem('workmesh.theme', 'light'))
+    await page.goto('/login')
+    await expect(page.locator('html')).toHaveAttribute('data-wm-theme', 'light')
+
+    const resolved = await page.evaluate(() => {
+      const makeProbe = (scope: HTMLElement, label: string) => {
+        const probe = document.createElement('div')
+        probe.dataset.themeProbe = label
+        probe.style.backgroundColor = 'var(--wm-ref-surface)'
+        probe.style.border = '1px solid var(--wm-ref-border-default)'
+        probe.style.color = 'var(--wm-ref-text-primary)'
+        probe.style.borderRadius = 'var(--wm-ref-radius-card)'
+        scope.append(probe)
+        const style = getComputedStyle(probe)
+        return {
+          customSurface: style.getPropertyValue('--wm-ref-surface').trim(),
+          background: style.backgroundColor,
+          borderColor: style.borderTopColor,
+          color: style.color,
+          radius: style.borderTopLeftRadius,
+          legacyCanvas: style.getPropertyValue('--wm-canvas').trim(),
+          legacyBorder: style.getPropertyValue('--wm-border').trim(),
+          legacyText: style.getPropertyValue('--wm-text').trim(),
+        }
+      }
+      const inherited = document.createElement('div')
+      inherited.dataset.themeProbeParent = 'light'
+      document.body.append(inherited)
+      const nestedDark = document.createElement('section')
+      nestedDark.dataset.wmTheme = 'dark'
+      document.body.append(nestedDark)
+      return {
+        root: {
+          customSurface: getComputedStyle(document.documentElement).getPropertyValue('--wm-ref-surface').trim(),
+          legacyCanvas: getComputedStyle(document.documentElement).getPropertyValue('--wm-canvas').trim(),
+        },
+        inherited: makeProbe(inherited, 'inherited-light'),
+        dark: makeProbe(nestedDark, 'nested-dark'),
+      }
+    })
+
+    expect(resolved.root).toEqual({ customSurface: '#faf7f2', legacyCanvas: '#F7F7F5' })
+    expect(resolved.inherited).toEqual({
+      customSurface: '#faf7f2', background: 'rgb(250, 247, 242)', borderColor: 'rgb(226, 219, 209)',
+      color: 'rgb(28, 25, 23)', radius: '8px', legacyCanvas: '#F7F7F5', legacyBorder: '#E3E3DF', legacyText: '#252522',
+    })
+    expect(resolved.dark).toEqual({
+      customSurface: '#0B0C0E', background: 'rgb(11, 12, 14)', borderColor: 'rgb(36, 40, 45)',
+      color: 'rgb(230, 232, 235)', radius: '8px', legacyCanvas: '#0B0C0E', legacyBorder: '#24282D', legacyText: '#E6E8EB',
+    })
+  })
 })

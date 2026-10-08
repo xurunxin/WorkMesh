@@ -1,0 +1,148 @@
+{
+  "cleanupCommands": [
+    {
+      "command": "docker rm --force wm-d1a-env04-pg",
+      "exitCode": 0,
+      "output": [
+        "wm-d1a-env04-pg"
+      ]
+    },
+    {
+      "command": "docker rm --force wm-d1a-env04-redis",
+      "exitCode": 0,
+      "output": [
+        "wm-d1a-env04-redis"
+      ]
+    },
+    {
+      "command": "docker rm --force wm-d1a-env04-rustfs",
+      "exitCode": 0,
+      "output": [
+        "wm-d1a-env04-rustfs"
+      ]
+    },
+    {
+      "command": "docker ps -a --filter name=wm-d1a-env04- --format {{.Names}}",
+      "exitCode": 0,
+      "output": []
+    }
+  ],
+  "remainingTaskContainers": [],
+  "containersDestroyed": true,
+  "environmentRestoreOperations": [
+    {
+      "name": "RUN_INTEGRATION",
+      "operation": "Remove-Item Env:RUN_INTEGRATION",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "DATABASE_URL",
+      "operation": "Remove-Item Env:DATABASE_URL",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "REDIS_URL",
+      "operation": "Remove-Item Env:REDIS_URL",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "SESSION_SECRET",
+      "operation": "Remove-Item Env:SESSION_SECRET",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "WORKMESH_MASTER_KEY",
+      "operation": "Remove-Item Env:WORKMESH_MASTER_KEY",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "WORKMESH_BOOTSTRAP_TOKEN",
+      "operation": "Remove-Item Env:WORKMESH_BOOTSTRAP_TOKEN",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "WORKMESH_RUNNER_SERVICE_TOKEN",
+      "operation": "Remove-Item Env:WORKMESH_RUNNER_SERVICE_TOKEN",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "S3_ENDPOINT",
+      "operation": "Remove-Item Env:S3_ENDPOINT",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "S3_REGION",
+      "operation": "Remove-Item Env:S3_REGION",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "S3_BUCKET",
+      "operation": "Remove-Item Env:S3_BUCKET",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "S3_ACCESS_KEY_ID",
+      "operation": "Remove-Item Env:S3_ACCESS_KEY_ID",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "S3_SECRET_ACCESS_KEY",
+      "operation": "Remove-Item Env:S3_SECRET_ACCESS_KEY",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "S3_FORCE_PATH_STYLE",
+      "operation": "Remove-Item Env:S3_FORCE_PATH_STYLE",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "WEB_ORIGIN",
+      "operation": "Remove-Item Env:WEB_ORIGIN",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "NEXT_PUBLIC_API_URL",
+      "operation": "Remove-Item Env:NEXT_PUBLIC_API_URL",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    },
+    {
+      "name": "WORKMESH_PLAYWRIGHT_RUN_DIR",
+      "operation": "Remove-Item Env:WORKMESH_PLAYWRIGHT_RUN_DIR",
+      "wasSet": false,
+      "verified": true,
+      "exitCode": 0
+    }
+  ],
+  "environmentRestored": true,
+  "dedicatedDatabaseAndBucketDestroyedWithContainerFilesystems": true
+}
