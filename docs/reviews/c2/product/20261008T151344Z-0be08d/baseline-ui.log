@@ -1,0 +1,8 @@
+2026-10-08T15:13:55.776Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T15:13:55.784Z pw:webserver HTTP Status: 200
+2026-10-08T15:13:55.785Z pw:webserver WebServer is already available
+2026-10-08T15:13:55.785Z pw:webserver Terminating the WebServer
+2026-10-08T15:13:55.785Z pw:webserver Terminated the WebServer
+Error: http://127.0.0.1:3101/health is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer.
+2026-10-08T15:13:55.787Z pw:webserver Terminating the WebServer
+2026-10-08T15:13:55.787Z pw:webserver Terminated the WebServer

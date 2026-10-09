@@ -1,0 +1,46 @@
+{
+  "recordedAt": "2026-10-08 13:18:38 UTC",
+  "callId": null,
+  "checks": [
+    {
+      "command": "@'\nconst fs=require('node:fs'),cp=require('node:child_process'),crypto=require('node:crypto'),assert=require('node:assert/strict'),path=require('node:path');const hash=b=>crypto.createHash('sha256').update(b).digest('hex');const m=JSON.parse(fs.readFileSync('docs/plan/c2-wecom/MANIFEST.json','utf8'));for(const r of m.files){const w=fs.readFileSync(r.path),b=cp.execFileSync('git',['show',':'+r.path],{maxBuffer:12000000});assert.equal(w.length,r.worktree.bytes);assert.equal(hash(w),r.worktree.sha256);assert.equal(b.length,r.gitBlob.bytes);assert.equal(hash(b),r.gitBlob.sha256)}let links=0;for(const r of m.files.filter(x=>x.path.endsWith('.md'))){const s=fs.readFileSync(r.path,'utf8');for(const x of s.matchAll(/\\[[^\\]]*\\]\\(([^)]+)\\)/g)){const href=x[1];if(/^[a-z]+:|^#|^\\//i.test(href))continue;const target=path.resolve(path.dirname(r.path),href.split('#')[0]);assert(fs.existsSync(target),'broken link '+r.path+' -> '+href);links++}}console.log(JSON.stringify({manifestFiles:m.files.length,manifestMismatches:0,localMarkdownLinksChecked:links,productSourceChanges:0}));\n'@ | node",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "086bc6",
+          "wall_time_seconds": 4.1233451,
+          "exit_code": 0,
+          "original_token_count": 42,
+          "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n{\"manifestFiles\":35,\"manifestMismatches\":0,\"localMarkdownLinksChecked\":33,\"productSourceChanges\":0}\n"
+        }
+      }
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "c544ea",
+          "wall_time_seconds": 1.4755525999999999,
+          "exit_code": 0,
+          "original_token_count": 17,
+          "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n"
+        }
+      }
+    },
+    {
+      "command": "git diff --check",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "72ba05",
+          "wall_time_seconds": 1.4007485,
+          "exit_code": 0,
+          "original_token_count": 17,
+          "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n"
+        }
+      }
+    }
+  ],
+  "说明": "最后一组文档校验原件，不是产品测试。清单排除自身和随后生成的验证账本，所有文件仍通过 Git 交付。"
+}

@@ -1,0 +1,95 @@
+2026-10-08T15:15:51.070Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T15:15:51.076Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T15:15:51.076Z pw:webserver Starting WebServer process pnpm --filter @workmesh/api exec tsx src/server.ts...
+2026-10-08T15:15:51.087Z pw:webserver Process started
+2026-10-08T15:15:51.087Z pw:webserver Waiting for availability...
+2026-10-08T15:15:51.087Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T15:15:51.089Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T15:15:51.089Z pw:webserver Waiting 100ms
+2026-10-08T15:15:51.203Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T15:15:51.204Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T15:15:51.204Z pw:webserver Waiting 250ms
+2026-10-08T15:15:51.455Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T15:15:51.456Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T15:15:51.456Z pw:webserver Waiting 500ms
+[WebServer] (node:32096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:51684) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:51500) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:51500) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T15:15:51.961Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T15:15:51.962Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T15:15:51.962Z pw:webserver Waiting 1000ms
+2026-10-08T15:15:52.965Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T15:15:52.966Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T15:15:52.966Z pw:webserver Waiting 1000ms
+2026-10-08T15:15:53.973Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T15:15:53.976Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T15:15:53.976Z pw:webserver Waiting 1000ms
+[WebServer] {"level":30,"time":1791472554105,"pid":51500,"hostname":"DarkFlame","msg":"Server listening at http://127.0.0.1:3101"}
+[WebServer] {"level":30,"time":1791472554105,"pid":51500,"hostname":"DarkFlame","msg":"Server listening at http://100.77.217.65:3101"}
+[WebServer] {"level":30,"time":1791472554105,"pid":51500,"hostname":"DarkFlame","msg":"Server listening at http://172.24.64.1:3101"}
+[WebServer] {"level":30,"time":1791472554105,"pid":51500,"hostname":"DarkFlame","msg":"Server listening at http://192.168.31.186:3101"}
+[WebServer] {"level":30,"time":1791472554105,"pid":51500,"hostname":"DarkFlame","msg":"Server listening at http://10.173.185.137:3101"}
+2026-10-08T15:15:54.984Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+[WebServer] {"level":30,"time":1791472554987,"pid":51500,"hostname":"DarkFlame","reqId":"67aeb4e7-22bd-4ee7-9177-a639f7f887b2","req":{"method":"GET","url":"/health","host":"127.0.0.1:3101","remoteAddress":"127.0.0.1","remotePort":64247},"msg":"incoming request"}
+2026-10-08T15:15:55.010Z pw:webserver HTTP Status: 200
+2026-10-08T15:15:55.011Z pw:webserver WebServer available
+2026-10-08T15:15:55.011Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+[WebServer] {"level":30,"time":1791472555010,"pid":51500,"hostname":"DarkFlame","reqId":"67aeb4e7-22bd-4ee7-9177-a639f7f887b2","res":{"statusCode":200},"responseTime":22.282600000000002,"msg":"request completed"}
+2026-10-08T15:15:55.013Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T15:15:55.013Z pw:webserver Starting WebServer process pnpm --dir apps/web exec next dev --port 3100...
+2026-10-08T15:15:55.030Z pw:webserver Process started
+2026-10-08T15:15:55.030Z pw:webserver Waiting for availability...
+2026-10-08T15:15:55.031Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+2026-10-08T15:15:55.032Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T15:15:55.032Z pw:webserver Waiting 100ms
+2026-10-08T15:15:55.139Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+2026-10-08T15:15:55.141Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T15:15:55.141Z pw:webserver Waiting 250ms
+2026-10-08T15:15:55.392Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+2026-10-08T15:15:55.393Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T15:15:55.393Z pw:webserver Waiting 500ms
+[WebServer] (node:39044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:54960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T15:15:55.900Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+2026-10-08T15:15:55.902Z pw:webserver Error while checking if http://127.0.0.1:3100/ is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-08T15:15:55.902Z pw:webserver Waiting 1000ms
+[WebServer] (node:43172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T15:15:56.907Z pw:webserver HTTP GET: http://127.0.0.1:3100/
+[WebServer]    ▲ Next.js 15.5.22
+[WebServer]    - Local:        http://localhost:3100
+[WebServer]    - Network:      http://100.77.217.65:3100
+[WebServer]
+[WebServer]  ✓ Starting...
+[WebServer]  ✓ Ready in 4.2s
+[WebServer]  ○ Compiling / ...
+[WebServer]  ✓ Compiled / in 11.8s (10513 modules)
+2026-10-08T15:16:13.874Z pw:webserver HTTP Status: 200
+2026-10-08T15:16:13.875Z pw:webserver WebServer available
+[WebServer]  GET / 200 in 12883ms
+(node:55828) Warning: Failed to load the ES module: C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\db\src\migrations.ts. Make sure to set "type": "module" in the nearest package.json file or use the .mjs extension.
+(Use `node --trace-warnings ...` to show where the warning was created)
+SyntaxError: Cannot use 'import.meta' outside a module
+
+   at ..\..\..\packages\db\src\index.ts:13
+
+  11 | export * from './agent-lifecycle.js'
+  12 | import { appendEvent } from './events.js'
+> 13 | export { applyMigrations } from './migrations.js'
+     | ^
+  14 |
+  15 | // PostgreSQL DATE is a calendar value, not an instant. The pg default parser
+  16 | // creates a local-midnight Date whose JSON form can move to the previous day.
+    at Object.<anonymous> (C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\db\src\index.ts:13:1)
+    at Object.<anonymous> (C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\.tmp\c2-product-20261008T151539Z-ce775c\visual-specs\c2-baseline.spec.ts:3:1)
+2026-10-08T15:16:17.711Z pw:webserver Terminating the WebServer
+2026-10-08T15:16:18.445Z pw:webserver Terminated the WebServer
+2026-10-08T15:16:18.445Z pw:webserver Terminating the WebServer
+2026-10-08T15:16:19.190Z pw:webserver Terminated the WebServer

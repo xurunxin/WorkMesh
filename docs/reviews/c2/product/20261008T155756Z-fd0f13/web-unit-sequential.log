@@ -1,0 +1,202 @@
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/web
+   • Running test in 1 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/ui:build: cache miss, executing 86ab625a371255a3
+@workmesh/ui:build:
+@workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\ui
+@workmesh/ui:build: > tsc -p tsconfig.json
+@workmesh/ui:build:
+@workmesh/contracts:build: cache hit, replaying logs 5d1ae81eef37ea94
+@workmesh/contracts:build:
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build:
+@workmesh/web:test: cache miss, executing 5db7a341a8bdd267
+@workmesh/web:test:
+@workmesh/web:test: > @workmesh/web@ test C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\web
+@workmesh/web:test: > vitest run
+@workmesh/web:test:
+@workmesh/web:test:
+@workmesh/web:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/apps/web
+@workmesh/web:test:
+@workmesh/web:test:  ✓ app/operations/usage-metrics.test.tsx (24 tests) 1527ms
+@workmesh/web:test:  ❯ app/landing-screen.test.tsx (5 tests | 1 failed) 5587ms
+@workmesh/web:test:    × LandingScreen > reads three independent sources, each capped, and links the attention section to its own surface 5164ms
+@workmesh/web:test:      → Test timed out in 5000ms.
+@workmesh/web:test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+@workmesh/web:test:    ✓ LandingScreen > shows four run rows however many the projection returns 160ms
+@workmesh/web:test:    ✓ LandingScreen > states heartbeat but no meter when a run has no measurable budget 79ms
+@workmesh/web:test:    ✓ LandingScreen > renders the derived budget the server sent, without re-deriving it 88ms
+@workmesh/web:test:    ✓ LandingScreen > keeps the three sections readable when one source fails 87ms
+@workmesh/web:test: stderr | features/work-items/work-item-adaptive.test.tsx > WorkItemAdaptiveCollection persistent DOM > keeps the exact 300 card and five column nodes across list-board-list while preserving boundary focus
+@workmesh/web:test: Each child in a list should have a unique "key" prop.
+@workmesh/web:test:
+@workmesh/web:test: Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+@workmesh/web:test:
+@workmesh/web:test:  ✓ features/work-items/work-item-adaptive.test.tsx (7 tests) 3842ms
+@workmesh/web:test:    ✓ WorkItemAdaptiveCollection persistent DOM > keeps the exact 300 card and five column nodes across list-board-list while preserving boundary focus  3184ms
+@workmesh/web:test:  ✓ app/ui-overlay-contract.test.tsx (21 tests) 3998ms
+@workmesh/web:test:    ✓ shared modal stack > focuses close first, supports an explicit initial target, and wraps only eligible controls  462ms
+@workmesh/web:test:    ✓ shared dismissal stack > dismisses a sibling Work Item label menu before opening the next without leaking card drag pointerdown  477ms
+@workmesh/web:test:    ✓ shared dismissal stack > keeps a single editable label menu reachable by click, Enter, and Space without phantom open state  339ms
+@workmesh/web:test:    ✓ shared dismissal stack > retires a keyboard-replaced sibling exactly once when the same activation opens a child Dialog  342ms
+@workmesh/web:test:  ✓ app/settings/workbench-llm-settings.test.tsx (6 tests) 3727ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > 选择预置只填草稿并显示出处  970ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > 手工编辑不被刷新覆盖  526ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > 模型草稿绑定新连接且显式登记  609ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > keeps shared connections read-only for members and never renders the stored credential  340ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > lets a manager disable a model with the current connection revision and preserves its capabilities  989ms
+@workmesh/web:test:  ✓ features/workbench/conversation-workbench.test.tsx (6 tests) 4108ms
+@workmesh/web:test:    ✓ ConversationWorkbench > states the recorded tools for a settled turn and does not imply a count it does not have  498ms
+@workmesh/web:test:    ✓ ConversationWorkbench > sends a Markdown turn with the current conversation revision and keeps the bound session on the server  1293ms
+@workmesh/web:test:    ✓ ConversationWorkbench > uses the service and model selected for this turn in the actual request  648ms
+@workmesh/web:test:    ✓ ConversationWorkbench > shows a terminal bound session and prevents queuing a turn  512ms
+@workmesh/web:test:    ✓ ConversationWorkbench > keeps the newly selected conversation draft when the previous send returns late  1029ms
+@workmesh/web:test:  ✓ app/agents/[id]/page.test.tsx (4 tests) 2998ms
+@workmesh/web:test:    ✓ Agent detail route > renders validated definition facts and the authoritative empty Team Access projection  2300ms
+@workmesh/web:test:    ✓ Agent detail route > renders not-found and general errors inside AppShell  361ms
+@workmesh/web:test:  ✓ app/operations-content.test.tsx (43 tests) 10211ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > keeps the page header stable while feature authority resolves without exposing dependent anchors  1297ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > uses ordinary anchors and unique focusable targets in deterministic order  398ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > hydrates hash state, gives one link current-location ownership, and focuses on a same-hash click  540ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > reanchors a still-focused direct hash after initial collection layout growth only  500ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > synchronizes current location and focus on hashchange  337ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > clears stale current state when a refresh hides its target  439ms
+@workmesh/web:test:    ✓ OperationsContent loaded-record search > keeps '近期运行' pending, new failure, refresh retention, and revoked authority states independent  349ms
+@workmesh/web:test:    ✓ OperationsContent loaded-record search > retains exact collection controls and focus during refresh and ordinary failure, then revokes them on 403  309ms
+@workmesh/web:test:    ✓ OperationsContent loaded-record search > distinguishes initial loading, exhausted server-empty, and loaded no-match states  361ms
+@workmesh/web:test:    ✓ OperationsContent loaded-record search > matches localized rendered values and dates but not hidden raw enums or full identifiers  313ms
+@workmesh/web:test:  ✓ app/connect/page.test.tsx (4 tests) 2855ms
+@workmesh/web:test:    ✓ ConnectPage MCP client state > atomically selects the first normalized advertised client without ever mounting a Codex guide  1438ms
+@workmesh/web:test:    ✓ ConnectPage MCP client state > keeps Config and Link copied states distinct while client switches stay local  947ms
+@workmesh/web:test:  ✓ app/agent-session-detail.test.tsx (4 tests) 2081ms
+@workmesh/web:test:    ✓ agent-session-detail approval inbox > restores the per-approval card surface styles removed by 868478f  422ms
+@workmesh/web:test:  ✓ app/agent-control-dialog.test.tsx (2 tests) 2290ms
+@workmesh/web:test:    ✓ AgentControlDialog > binds the Human reason and selected stop mode to the preview revision  1795ms
+@workmesh/web:test:    ✓ AgentControlDialog > preserves the draft and reloads consequences after a stale revision  493ms
+@workmesh/web:test:  ✓ app/settings/delete-team-dialog.test.tsx (7 tests) 2259ms
+@workmesh/web:test:    ✓ DeleteTeamDialog > cancels without confirmation and confirms the frozen Team snapshot once  1135ms
+@workmesh/web:test:    ✓ DeleteTeamDialog > blocks dismissal, repeat activation, and Tab escape while busy  340ms
+@workmesh/web:test:  ✓ app/agents/approvals-table.test.tsx (18 tests) 3424ms
+@workmesh/web:test:    ✓ ApprovalsTable > shows direct decisions on every actionable row before any bulk selection  948ms
+@workmesh/web:test:  ✓ app/collaboration-queues.test.tsx (3 tests) 2026ms
+@workmesh/web:test:    ✓ ActionableCollaborationQueues > separates governed responses from informational messages and restores selection in the URL  1204ms
+@workmesh/web:test:    ✓ ActionableCollaborationQueues > keeps Agent delivery body-redacted and exposes only recipient, claim, and receipt facts  338ms
+@workmesh/web:test:    ✓ ActionableCollaborationQueues > preserves the reply draft when optimistic concurrency reports a conflict  482ms
+@workmesh/web:test: stderr | features/work-items/work-surfaces-pagination.test.tsx > WorkSurfaces pagination ownership > does not install an observer or load another page while pagination is loading
+@workmesh/web:test: Each child in a list should have a unique "key" prop.
+@workmesh/web:test:
+@workmesh/web:test: Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+@workmesh/web:test:
+@workmesh/web:test:  ✓ app/attention-center-approval.test.tsx (4 tests) 3263ms
+@workmesh/web:test:    ✓ Human Attention inline approval > offers direct decisions without a required text field  1501ms
+@workmesh/web:test:    ✓ Human Attention inline approval > sends approve-with-requirements as the immutable approval reason  692ms
+@workmesh/web:test:    ✓ Human Attention inline approval > keeps decisions fail-closed until the complete Approval scope is loaded  521ms
+@workmesh/web:test:    ✓ Human Attention inline approval > keeps decisions disabled and offers retry when the full Approval read fails  548ms
+@workmesh/web:test:  ✓ app/agent-connections-panel.test.tsx (11 tests) 4409ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > uses the active locale for the Agent name placeholder  1397ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > keeps a committed rotation result when its post-commit refresh fails  402ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > lets a newer successful list revision replace an older committed local mutation result  489ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > keeps a committed rotation confirmation when its post-commit refresh fails  355ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > keeps a committed revocation result when its post-commit refresh fails  321ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > keeps a just-created result after refresh failure, then rebuilds detail without its one-time URL in a new authority scope  667ms
+@workmesh/web:test:  ✓ features/work-items/detail/work-item-detail-focus.test.tsx (10 tests) 4252ms
+@workmesh/web:test:    ✓ WorkItemDetail focus on revision conflict > moves focus to the Save button when a revision conflict is reported  1831ms
+@workmesh/web:test:    ✓ WorkItemDetail focus on revision conflict > does not move focus to the Save button while no conflict is reported  344ms
+@workmesh/web:test:    ✓ WorkItemDetail tab continuity > keeps Agent executions selected when the same Issue receives a newer revision  476ms
+@workmesh/web:test:    ✓ WorkItemDetail tab continuity > keeps the owning Issue in the route when returning to Overview  334ms
+@workmesh/web:test:    ✓ WorkItemDetail tab continuity > resets the selected tab when the Issue changes or an explicit reset is requested  407ms
+@workmesh/web:test:    ✓ WorkItemDetail tab continuity > restores a URL-owned section after remount without coupling it to an internal reset counter  342ms
+@workmesh/web:test:  ✓ app/project-control-center.test.tsx (7 tests) 4903ms
+@workmesh/web:test:    ✓ Project Control Center > keeps a long Project description available without overwhelming the overview  1196ms
+@workmesh/web:test:    ✓ Project Control Center > loads one bounded projection and renders the complete Run digest  849ms
+@workmesh/web:test:    ✓ Project Control Center > paginates a collection independently and restores focus after closing detail  777ms
+@workmesh/web:test:    ✓ Project Control Center > keeps an unapplied filter draft when the projection refreshes with new data  826ms
+@workmesh/web:test:    ✓ Project Control Center > owns server-side filters in the URL and projection request  921ms
+@workmesh/web:test:  ✓ app/page.test.tsx (9 tests) 7031ms
+@workmesh/web:test:    ✓ Home default landing > sends a bare / to the Agent workbench  812ms
+@workmesh/web:test:    ✓ Home default landing > leaves an addressed route alone instead of bouncing it to the workbench  339ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > updates the Work Surface layout URL without a duplicate HomePage render and reuses the latest layout on the next query render  1361ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > restores the latest presentation layout from popstate and saved views  761ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > localizes the release build and schema labels  717ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > uses the Guidance copy contract for editor and preview chrome  1085ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > exposes a named project rail with ordinary project activation  626ms
+@workmesh/web:test:    ✓ Home full-page WorkItem semantics > exposes only the active detail h1 and removes the obscured page content from semantics  606ms
+@workmesh/web:test:    ✓ Home full-page WorkItem semantics > keeps Agent executions selected when the automatic agent projection refreshes  723ms
+@workmesh/web:test:  ✓ app/settings/page.test.tsx (27 tests) 21433ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > synchronously retires actor-owned destructive state when authenticated authority changes  1748ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > ignores an A-authority Team create that resolves after switching to B  777ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains the exact Settings action and focus during authenticated actor refresh  576ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > gives workflow States an independent initialized authority and retains exact rows and focus on ordinary refresh failure  798ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains initialized empty Team authority through refresh and ordinary failure, then revokes it on 403  674ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains a resolved Team and exact selector on ordinary refresh failure but revokes it on 403  680ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > serially drains Team pages until the requested Team resolves, then requests its states  420ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > corrects an unknown Team only after successful pagination exhaustion with replaceState  370ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > waits for first-page success before choosing the first authorized Team  341ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains the exact states scope and focused Team control while refreshing, then corrects a removed Team after success  597ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > shows a loading resolution state instead of inviting Team creation while pending  333ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > refreshes the authorized Team collection before routing to a newly created Team  664ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > keeps create validation and update revision failures contextual without duplicating a toast  1206ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > pushes a user Team change while preserving history state and unrelated URL state  395ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > posts only the selected stable preset color and reports success even when refresh has no new row  1098ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > renders and focuses the native custom color control only for Custom, preserving it after failure  1099ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > resets Custom to its UI-only initial color after a successful create  893ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > keeps every idle dialog dismissal path mutation-free and restores trigger focus  1175ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > guards rapid confirmation and sends the exact encoded snapshot mutation without a body  1227ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > maps destructive conflicts locally, keeps the snapshot, and performs no refresh on failure  1659ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > commits the close before one independent refresh and never relabels a refresh failure  911ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > waits for post-delete Team resolution before moving focus once  922ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains one post-delete focus intent across refresh failure until Team retry reconciliation completes  970ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > preserves a newer Team route and never resumes deleted-Team states after an in-flight delete  1101ms
+@workmesh/web:test:  ✓ app/page-outcomes.test.tsx (13 tests) 10211ms
+@workmesh/web:test:    ✓ Home mutation outcomes > retries a URL-owned Project after authority invalidates the in-flight request  1342ms
+@workmesh/web:test:    ✓ Home mutation outcomes > synchronously retires actor-owned dialog state when authenticated authority changes  1686ms
+@workmesh/web:test:    ✓ Home mutation outcomes > keeps the exact open detail and focus when auth refresh returns a new actor object for the same authority  1319ms
+@workmesh/web:test:    ✓ Home mutation outcomes > ignores a completed A-authority create after switching to B without toast, refresh, URL, or focus side effects  1208ms
+@workmesh/web:test:    ✓ Home mutation outcomes > keeps AppShell mounted and shows a Team skeleton while either Team authority is unresolved  400ms
+@workmesh/web:test:    ✓ Home mutation outcomes > shows the no-Team outcome only after both Team authorities resolve empty  309ms
+@workmesh/web:test:    ✓ Home mutation outcomes > retains the exact AppShell action and focus during an authenticated actor refresh  377ms
+@workmesh/web:test:    ✓ Home mutation outcomes > retains resolved Team content for a network refresh failure but revokes it for 403  342ms
+@workmesh/web:test:    ✓ Home mutation outcomes > keeps the exact Team selector and focused action while same-scope Team refresh is busy  486ms
+@workmesh/web:test:    ✓ Home mutation outcomes > emits exactly one localized success toast while the authorized page remains rendered  836ms
+@workmesh/web:test:    ✓ Home mutation outcomes > keeps a structured conflict in the top modal, preserves the form, emits no toast, and clears it on reopen  1388ms
+@workmesh/web:test:  ✓ features/work-items/work-surfaces-pagination.test.tsx (9 tests) 21168ms
+@workmesh/web:test:    ✓ WorkSurfaces pagination ownership > does not install an observer or load another page while pagination is loading  488ms
+@workmesh/web:test:    ✓ WorkSurfaces pagination ownership > reuses one normalized item projection for layout-only changes  1024ms
+@workmesh/web:test:    ✓ WorkSurfaces pagination ownership > keeps all 300 card renders stable when a layout callback rerenders the parent with new inline handlers  18973ms
+@workmesh/web:test:  ✓ app/agents/page-outcomes.test.tsx (24 tests) 23402ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > owns all Agent surface aria labels in the active locale  546ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > synchronously clears actor-owned approval selection when authenticated authority changes  653ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > revokes every A-authority Agent projection and open surface before B collections resolve  2140ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > ignores an A-authority bulk decision that settles after switching to B  1023ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > retains the exact AppShell action and focus during an authenticated actor refresh  679ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps 300 stable Agent cards out of Peek and four-keystroke filter rerenders  7558ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > closes a filtered Peek and transfers orphaned roving focus to the first visible Agent link  617ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > retains pending approvals for a network refresh failure but revokes them for 403  334ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > counts and renders only server-projected Human Attention items  1015ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > submits a direct approval without bulk selection and reports success on that row  958ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > shows a safe per-row revision conflict and refreshes instead of replaying the decision  979ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps a quorum-pending decision visible as waiting for other reviewers  772ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > emits one localized success toast only after every selected decision succeeds  720ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps network-only partial aggregate detail contextual, retains only failed selection, and emits no toast  801ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps mixed conflict and network aggregate detail contextual, retains only failed selection, and emits no toast  930ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps all failed rows selected with safe contextual copy and no raw or toast output  1023ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > does not relabel a committed success when the post-commit refresh fails  1277ms
+@workmesh/web:test:  ✓ app/workbench/page.test.tsx (2 tests) 1479ms
+@workmesh/web:test:    ✓ WorkbenchPage > renders inside the unified shell with the workbench as the only active destination  452ms
+@workmesh/web:test:    ✓ WorkbenchPage > keeps the shell footer contract and theme control  1025ms
+@workmesh/web:test:  ✓ app/lib/toast-viewport.test.tsx (4 tests) 1620ms
+@workmesh/web:test:    ✓ ToastViewport > renders no viewport while empty and one atomic live role per toast with unique localized close names  964ms
+@workmesh/web:test:    ✓ ToastViewport > moves focus only for a focused manual dismissal: next close, captured origin, then main fallback  320ms
+@workmesh/web:test:  ✓ features/work-items/work-item-filters.test.tsx (9 tests) 1487ms
+@workmesh/web:test:    ✓ WorkItemFilters compact mode > renders the More filters toggle when compact is true  595ms
+@workmesh/web:test:  ✓ app/attention-center-bulk.test.tsx (5 tests) 3331ms
+@workmesh/web:test:    ✓ Human Attention bulk approval recovery > uses stable default reason and retains a retryable error per item  1760ms
+@workmesh/web:test:    ✓ Human Attention bulk approval recovery > does not expose retry for forbidden decisions and asks for reconfirmation after a conflict  616ms
+@workmesh/web:test:    ✓ Human Attention bulk approval recovery > uses an authoritative Approval read instead of list absence to reconcile an uncertain commit  454ms
+@workmesh/web:test:    ✓ Human Attention bulk approval recovery > does not report another Human's concurrent terminal decision as this viewer's success  488ms
+@workmesh/web:test:  ✓ app/evidence-drawer.test.tsx (2 tests) 1897ms
+@workmesh/web:test:    ✓ EvidenceDrawer > renders rich provenance, canonical relationships, exact-head drift, and technical IDs  1798ms

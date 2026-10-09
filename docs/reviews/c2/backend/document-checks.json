@@ -1,0 +1,304 @@
+[
+  {
+    "command": [
+      "node",
+      "--version"
+    ],
+    "startedAt": "2026-10-09T04:43:05.934516+00:00",
+    "finishedAt": "2026-10-09T04:43:06.007804+00:00",
+    "exitCode": 0,
+    "stdout": "v24.20.0\r\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python",
+      "--version"
+    ],
+    "startedAt": "2026-10-09T04:43:06.008633+00:00",
+    "finishedAt": "2026-10-09T04:43:06.027069+00:00",
+    "exitCode": 0,
+    "stdout": "Python 3.13.15\r\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "c768e1e3db297d8b91b53dd68b60e723a8a40e7d"
+    ],
+    "startedAt": "2026-10-09T04:43:06.027719+00:00",
+    "finishedAt": "2026-10-09T04:43:06.229133+00:00",
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "5b9c76b5f79917697906520edcd6947bfbfa925f"
+    ],
+    "startedAt": "2026-10-09T04:43:06.229798+00:00",
+    "finishedAt": "2026-10-09T04:43:06.519344+00:00",
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python",
+      "docs/reviews/c2/backend/verify-candidate.py"
+    ],
+    "startedAt": "2026-10-09T04:43:06.520037+00:00",
+    "finishedAt": "2026-10-09T04:43:10.872709+00:00",
+    "exitCode": 0,
+    "stdout": "{\"Դ�� Git/������\": 889, \"ZIP CRC/�ֽ�\": 71, \"��ǰ main UI �ֽ�\": 7, \"������\": 5, \"��ԭ����\": 6, \"����\": 9, \"���\": \"ͨ��\"}\r\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "docs/plan/c2-wecom/verify-archive.mjs"
+    ],
+    "startedAt": "2026-10-09T04:43:10.873779+00:00",
+    "finishedAt": "2026-10-09T04:43:14.181536+00:00",
+    "exitCode": 0,
+    "stdout": "{\"结果\":\"通过\",\"原始映射\":26,\"ZIP成员\":13,\"清单文件\":34,\"本地链接\":41,\"六原测试\":6,\"九类\":9,\"历史规划矩阵\":\"未实施/未运行；保持冻结来源\",\"当前产品结果\":\"另见 docs/reviews/c2/product-review.md，不由本归档检查判定\"}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "scripts/validate-lite-compose.mjs"
+    ],
+    "startedAt": "2026-10-09T04:43:14.184470+00:00",
+    "finishedAt": "2026-10-09T04:43:14.362067+00:00",
+    "exitCode": 0,
+    "stdout": "Lite compose validation passed (8 services; 4 roles from one image; 54 documented variables; published: minio, web)\n",
+    "stderr": ""
+  },
+  {
+    "step": "变更 JSON 与当前复核入口本地链接",
+    "jsonFiles": [
+      "apps/worker/package.json",
+      "docs/plan/activation-task-specs/index.json",
+      "docs/plan/c2-wecom/MANIFEST.json",
+      "docs/plan/c2-wecom/current-spec-source.json",
+      "docs/plan/c2-wecom/official/protocol-evidence.json",
+      "docs/plan/c2-wecom/official/retrieval.json",
+      "docs/plan/c2-wecom/plan-source-spans.json",
+      "docs/plan/c2-wecom/platform-readbacks.json",
+      "docs/plan/c2-wecom/raw-evidence-index.json",
+      "docs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.json",
+      "docs/plan/c2-wecom/savedplan-G27jedfwL5ikAj9GiLO1R.json",
+      "docs/plan/c2-wecom/savedplan-vYxCwh0TMRC3mOrr6cU1K.json",
+      "docs/plan/c2-wecom/source-card.json",
+      "docs/plan/c2-wecom/source-metadata.json",
+      "docs/plan/c2-wecom/source-test-coverage.json",
+      "docs/plan/c2-wecom/test-coverage.json",
+      "docs/plan/c2-wecom/test-mapping-input.json",
+      "docs/reviews/c2/archive-check-results.json",
+      "docs/reviews/c2/backend/archive-integrity.json",
+      "docs/reviews/c2/backend/check-summaries.json",
+      "docs/reviews/c2/backend/coverage.json",
+      "docs/reviews/c2/backend/input-binding.json",
+      "docs/reviews/c2/backend/main-observations.json",
+      "docs/reviews/c2/backend/port-observation.json",
+      "docs/reviews/c2/backend/preservation.json",
+      "docs/reviews/c2/backend/tested-source-blobs.json",
+      "docs/reviews/c2/backend/verification.json",
+      "docs/reviews/c2/final-check-results.json",
+      "docs/reviews/c2/first-whitespace-check.json",
+      "docs/reviews/c2/latest-main-readback.json",
+      "docs/reviews/c2/product-input.json",
+      "docs/reviews/c2/product/20261008T141924Z-08b193/results.json",
+      "docs/reviews/c2/product/20261008T141950Z-1c667a/results.json",
+      "docs/reviews/c2/product/20261008T142039Z-852ed6/results.json",
+      "docs/reviews/c2/product/20261008T142326Z-2635b7/results.json",
+      "docs/reviews/c2/product/20261008T142326Z-2635b7/source-ae53e5996d466c01a43d3b1c9e1b63104da0f29a66d557e3fb956a95b017ee7f.json",
+      "docs/reviews/c2/product/20261008T142422Z-800f88/results.json",
+      "docs/reviews/c2/product/20261008T142422Z-800f88/source-af84021786b9c83166cefdef448c0c0d1c46a2b41613948d3d90f8ccf657cf32.json",
+      "docs/reviews/c2/product/20261008T142501Z-23347d/results.json",
+      "docs/reviews/c2/product/20261008T142501Z-23347d/source-fd17c663aad17abc5367a77407362b070f3909b2eaec2d81f84f7b3044b37446.json",
+      "docs/reviews/c2/product/20261008T142623Z-6d6fcb/results.json",
+      "docs/reviews/c2/product/20261008T142623Z-6d6fcb/source-fd17c663aad17abc5367a77407362b070f3909b2eaec2d81f84f7b3044b37446.json",
+      "docs/reviews/c2/product/20261008T142845Z-d2da88/results.json",
+      "docs/reviews/c2/product/20261008T142845Z-d2da88/source-3cce80ba8285b98db987050fbc22817567f9891fce84bb7ecc06ab24695fce7b.json",
+      "docs/reviews/c2/product/20261008T143103Z-ea28b5/results.json",
+      "docs/reviews/c2/product/20261008T143103Z-ea28b5/source-503ec2fd7df1621cb5b6b477551d08dd4b3a9bbecc793b5a46e3f7711a393104.json",
+      "docs/reviews/c2/product/20261008T144059Z-000dbc/results.json",
+      "docs/reviews/c2/product/20261008T144059Z-000dbc/source-d89152f5aa19e2b8014bdd591f6c3da8d8f4a322b5c9e8b9554703fa30bf80d4.json",
+      "docs/reviews/c2/product/20261008T145209Z-b49b85/results.json",
+      "docs/reviews/c2/product/20261008T145209Z-b49b85/source-ada93320d542bab28cf7a0f6b0cd0a772eece0f8514e10a883447f5d042f1b93.json",
+      "docs/reviews/c2/product/20261008T150955Z-5f8e65/results.json",
+      "docs/reviews/c2/product/20261008T150955Z-5f8e65/source-6f2cb4f92429198f47546e23967b3c7c8432d39cc6badf4d75bb400f40838e88.json",
+      "docs/reviews/c2/product/20261008T151344Z-0be08d/results.json",
+      "docs/reviews/c2/product/20261008T151344Z-0be08d/source-5dcfafd9becb22c314c816a33833c7fde6fc4a202dac7cc92580200118fdc0a4.json",
+      "docs/reviews/c2/product/20261008T151539Z-ce775c/results.json",
+      "docs/reviews/c2/product/20261008T151539Z-ce775c/source-5dcfafd9becb22c314c816a33833c7fde6fc4a202dac7cc92580200118fdc0a4.json",
+      "docs/reviews/c2/product/20261008T151639Z-481561/results.json",
+      "docs/reviews/c2/product/20261008T151639Z-481561/source-5dcfafd9becb22c314c816a33833c7fde6fc4a202dac7cc92580200118fdc0a4.json",
+      "docs/reviews/c2/product/20261008T151908Z-604b0c/results.json",
+      "docs/reviews/c2/product/20261008T151908Z-604b0c/source-c047f66ecf306103ce150288926904d052e206d3ef8fe8c6d0b91a3df5566cec.json",
+      "docs/reviews/c2/product/20261008T152058Z-16bf0f/results.json",
+      "docs/reviews/c2/product/20261008T152058Z-16bf0f/source-65fd82379a5097d75d404a49d083375faff883a5b34d578ddb097a91ba4d1616.json",
+      "docs/reviews/c2/product/20261008T152237Z-75d17a/results.json",
+      "docs/reviews/c2/product/20261008T152237Z-75d17a/source-e3dfc8350c5f872b14dfb764cab618cf96324421db874c358fd2791c984fa8f3.json",
+      "docs/reviews/c2/product/20261008T152932Z-28a255/results.json",
+      "docs/reviews/c2/product/20261008T152932Z-28a255/source-e3dfc8350c5f872b14dfb764cab618cf96324421db874c358fd2791c984fa8f3.json",
+      "docs/reviews/c2/product/20261008T153826Z-31123a/results.json",
+      "docs/reviews/c2/product/20261008T153826Z-31123a/source-e3dfc8350c5f872b14dfb764cab618cf96324421db874c358fd2791c984fa8f3.json",
+      "docs/reviews/c2/product/20261008T155756Z-fd0f13/results.json",
+      "docs/reviews/c2/product/20261008T155756Z-fd0f13/source-5572d6f12fd4643e480c7a4eb2b9cfac175d0375e2b4c6b3f3c65eaa8afc94ad.json",
+      "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+      "docs/reviews/c2/product/20261008T160516Z-c88908/source-29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd.json",
+      "docs/reviews/c2/product/20261008T162342Z-55df46/results.json",
+      "docs/reviews/c2/product/20261008T162342Z-55df46/source-29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd.json",
+      "docs/reviews/c2/product/20261008T165543Z-057421/results.json",
+      "docs/reviews/c2/product/20261008T165543Z-057421/source-b2602f5a04a5da183f4827513c612785e7903f6b2ef2fc632c560f7bb063d775.json",
+      "docs/reviews/c2/product/20261008T165614Z-311be3/results.json",
+      "docs/reviews/c2/product/20261008T165614Z-311be3/source-b29205d38a38c8d66fa4e4ccc447b84a8386267e56c9398e84a7cc00004e17ee.json",
+      "docs/reviews/c2/product/20261008T165652Z-58c2fe/results.json",
+      "docs/reviews/c2/product/20261008T165652Z-58c2fe/source-6c86a12fef1944a368f764c6b77f92cbc0a531cf83d66a3d52bfc7253b4ea706.json",
+      "docs/reviews/c2/product/20261008T165722Z-99576c/results.json",
+      "docs/reviews/c2/product/20261008T165722Z-99576c/source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+      "docs/reviews/c2/product/20261008T165750Z-622d5c/results.json",
+      "docs/reviews/c2/product/20261008T165759Z-568467/results.json",
+      "docs/reviews/c2/product/20261008T165759Z-568467/source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+      "docs/reviews/c2/product/20261009T041506Z-a82dea/results.json",
+      "docs/reviews/c2/product/20261009T041506Z-a82dea/source-68fce6868e27b69871daaddb8bc3729253d9df33f851b534e71f529fc54dda87.json",
+      "docs/reviews/c2/product/20261009T042025Z-82b489/results.json",
+      "docs/reviews/c2/product/20261009T042025Z-82b489/source-f45946420b70863e3e41bd3e7d59842c9e085fb1e1f09b1770bbe329d80b686f.json",
+      "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json",
+      "docs/reviews/c2/product/20261009T042235Z-6905bf/source-f45946420b70863e3e41bd3e7d59842c9e085fb1e1f09b1770bbe329d80b686f.json",
+      "docs/reviews/c2/product/20261009T043437Z-d26bba/results.json",
+      "docs/reviews/c2/product/20261009T043437Z-d26bba/source-f45946420b70863e3e41bd3e7d59842c9e085fb1e1f09b1770bbe329d80b686f.json",
+      "docs/reviews/c2/product/extra-checks.json",
+      "docs/reviews/c2/product/final-checks-first.json",
+      "docs/reviews/c2/product/final-checks.json",
+      "docs/reviews/c2/product/final-main-readback.json",
+      "docs/reviews/c2/product/final-source-index.json",
+      "docs/reviews/c2/product/generated-cache-cleanup.json",
+      "docs/reviews/c2/product/helper-compatibility-stop.json",
+      "docs/reviews/c2/product/log-archive-index.json",
+      "docs/reviews/c2/product/main-readback.json",
+      "docs/reviews/c2/product/readable-log-normalization.json",
+      "docs/reviews/c2/product/service-probe-race.json",
+      "docs/reviews/c2/product/temporary-cleanup.json",
+      "docs/reviews/c2/product/tested-source-git-bytes.json",
+      "docs/reviews/c2/product/ui-index.json",
+      "docs/reviews/c2/product/verification.json",
+      "docs/reviews/c2/quota-recovery/checks.json",
+      "docs/reviews/c2/quota-recovery/tested-source-git-bytes.json",
+      "docs/reviews/c2/quota-recovery/verification.json",
+      "docs/reviews/c2/review-fix-check-results.json",
+      "docs/reviews/c2/review-fix-range-results.json",
+      "docs/reviews/c2/review-fixes.json",
+      "docs/reviews/c2/verification.json",
+      "docs/reviews/r1/test-coverage.json"
+    ],
+    "links": [
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "current-spec.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "main-observations.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "input-binding.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "preservation.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "preserved-source.zip",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "verification.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "backend-candidate.zip",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "../product/20261009T042235Z-6905bf/results.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "check-summaries.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "coverage.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "tested-source-blobs.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "archive-integrity.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/review.md",
+        "href": "../product/temporary-cleanup.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/README.md",
+        "href": "current-spec.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/README.md",
+        "href": "historical-spec-chief.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/README.md",
+        "href": "preservation.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/README.md",
+        "href": "preserved-source.zip",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/README.md",
+        "href": "coverage.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/c2/backend/README.md",
+        "href": "review.md",
+        "exists": true
+      }
+    ],
+    "exitCode": 0
+  }
+]

@@ -511,12 +511,38 @@ export async function admitChannelEvent(
   )
 }
 
+export async function findChannelNotificationCandidates(tx: PoolClient, providers: string[], timeout: number) {
+  // 只定位，不授予发送权限。prepareChannelSend 仍在既有锁序下重新授权。
+  return (await tx.query<{ id: string; endpointFingerprint: string }>(
+    `SELECT delivery.id,target.endpoint_fingerprint AS "endpointFingerprint"
+     FROM notification_deliveries delivery JOIN notification_channel_targets target ON target.id=delivery.channel_target_id
+     WHERE delivery.intent_id IS NOT NULL AND delivery.outcome NOT IN ('sending','uncertain')
+       AND target.provider=ANY($1::text[]) AND delivery.attempt_count-delivery.retry_budget_start<8
+       AND ((delivery.status IN ('pending','failed') AND delivery.available_at<=now())
+         OR (delivery.status='claimed' AND delivery.claimed_at<now()-($2::text||' seconds')::interval))
+     ORDER BY delivery.available_at,delivery.id LIMIT 25`, [providers, timeout],
+  )).rows
+}
+
+export async function deferChannelNotification(tx: PoolClient, id: string, delayMs: number, claim?: { workerId: string; fence: number }) {
+  // 未发送延期保留累计 claim 次数；已领取时补回失败预算，旧 fence 不能延期新持有者。
+  await tx.query(`UPDATE notification_deliveries SET available_at=clock_timestamp()+($2::text||' milliseconds')::interval,
+    status=CASE WHEN $3::text IS NULL THEN status ELSE 'pending'::notification_delivery_status END,
+    claimed_at=CASE WHEN $3::text IS NULL THEN claimed_at ELSE NULL END,
+    claimed_by=CASE WHEN $3::text IS NULL THEN claimed_by ELSE NULL END,
+    retry_budget_start=retry_budget_start+CASE WHEN $3::text IS NULL THEN 0 ELSE 1 END,revision=revision+1
+    WHERE id=$1 AND intent_id IS NOT NULL AND outcome NOT IN ('sending','uncertain')
+      AND (($3::text IS NULL AND status IN ('pending','failed')) OR (status='claimed' AND claimed_by=$3 AND claim_fence=$4))`,
+  [id, Math.max(100, Math.min(120000, delayMs)), claim?.workerId ?? null, claim?.fence ?? null])
+}
+
 export async function claimChannelNotifications(
   tx: PoolClient,
   workerId: string,
   providers: string[],
   limit: number,
   timeout: number,
+  candidateId?: string,
 ): Promise<ChannelClaim[]> {
   const recovered = await tx.query<ChannelClaim>(
     `UPDATE notification_deliveries SET status=CASE WHEN outcome='sending' THEN 'failed'::notification_delivery_status ELSE 'dead'::notification_delivery_status END,
@@ -542,12 +568,13 @@ export async function claimChannelNotifications(
       `WITH candidates AS (
     SELECT delivery.id FROM notification_deliveries delivery JOIN notification_channel_targets target ON target.id=delivery.channel_target_id
     WHERE delivery.intent_id IS NOT NULL AND delivery.outcome NOT IN ('sending','uncertain') AND target.provider=ANY($4::text[]) AND delivery.attempt_count-delivery.retry_budget_start<8
+      AND ($5::uuid IS NULL OR delivery.id=$5)
       AND ((delivery.status IN ('pending','failed') AND delivery.available_at<=now()) OR (delivery.status='claimed' AND delivery.claimed_at<now()-($2::text||' seconds')::interval))
     ORDER BY delivery.available_at,delivery.id FOR UPDATE OF delivery SKIP LOCKED LIMIT $1
   ) UPDATE notification_deliveries delivery SET status='claimed',claimed_at=now(),claimed_by=$3,claim_fence=claim_fence+1,attempt_count=attempt_count+1,revision=revision+1
     FROM candidates WHERE delivery.id=candidates.id RETURNING delivery.id,delivery.workspace_id AS "workspaceId",delivery.recipient_actor_id AS "recipientActorId",
     delivery.channel_target_id AS "channelTargetId",delivery.intent_id AS "intentId",delivery.claim_fence AS "claimFence",delivery.effect_key AS "effectKey",delivery.attempt_count AS "attemptCount", delivery.claimed_at+($2::text||' seconds')::interval AS "leaseExpiresAt"`,
-      [limit, timeout, workerId, providers],
+      [limit, timeout, workerId, providers, candidateId ?? null],
     )
   ).rows
 }
@@ -556,6 +583,7 @@ export async function prepareChannelSend(
   tx: PoolClient,
   claim: ChannelClaim,
   workerId: string,
+  canSend?: () => Promise<boolean>,
 ): Promise<{
   provider: string
   secretMaterial: string
@@ -655,6 +683,7 @@ export async function prepareChannelSend(
     )
     return null
   }
+  if (canSend && !await canSend()) throw new DomainError('NOTIFICATION_CLAIM_LOST', 'Channel admission expired before checkpoint')
   const content: ChannelContent = {
     effectKey: claim.effectKey,
     title: 'WorkMesh 有待处理事项',
@@ -699,10 +728,12 @@ export async function settleChannelSend(
   workerId: string,
   result: 'delivered' | 'failed' | 'unknown',
   receipt?: string,
+  errorCode?: string,
 ): Promise<void> {
   const checkpoint = {
     result,
     ...(receipt ? { receiptHash: digest(receipt) } : {}),
+    ...(errorCode && /^WECOM_[A-Z0-9_]{1,48}$/.test(errorCode) ? { errorCode } : {}),
   }
   const previous = (
     await tx.query<{
@@ -735,7 +766,7 @@ export async function settleChannelSend(
     outcome=CASE WHEN $4='unknown' THEN 'uncertain' ELSE $4 END,checkpoint=$5,
     available_at=now()+($11::text||' seconds')::interval,
     delivered_at=CASE WHEN $4='delivered' THEN now() ELSE NULL END,effect_completed_at=CASE WHEN $4='delivered' THEN now() ELSE NULL END,
-    claimed_at=NULL,claimed_by=NULL,revision=revision+1,last_error=CASE WHEN $4='delivered' THEN NULL WHEN $4='unknown' THEN 'CHANNEL_RESULT_UNKNOWN' ELSE 'CHANNEL_SEND_FAILED' END
+    claimed_at=NULL,claimed_by=NULL,revision=revision+1,last_error=CASE WHEN $4='delivered' THEN NULL WHEN $4='unknown' THEN 'CHANNEL_RESULT_UNKNOWN' ELSE coalesce($12,'CHANNEL_SEND_FAILED') END
     WHERE id=$1 AND workspace_id=$6 AND intent_id=$7 AND channel_target_id=$8 AND recipient_actor_id=$9
       AND status='claimed' AND claimed_by=$2 AND claim_fence=$3 AND outcome='sending' AND $10::timestamptz>clock_timestamp()`,
     [
@@ -753,6 +784,7 @@ export async function settleChannelSend(
         (previous?.attempt_count ?? 0) - (previous?.retry_budget_start ?? 0),
         8,
       ).delaySeconds,
+      errorCode && /^WECOM_[A-Z0-9_]{1,48}$/.test(errorCode) ? errorCode : null,
     ],
   )
   if (updated.rowCount !== 1)

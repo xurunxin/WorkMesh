@@ -1,0 +1,219 @@
+{
+  "facts": [
+    {
+      "key": "endpoint",
+      "page": "91770",
+      "section": "如何使用消息推送",
+      "needle": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?",
+      "conclusion": "HTTPS POST，群组 Webhook、key 秘密，不需要本协议的 access_token 或入站回调",
+      "url": "https://developer.work.weixin.qq.com/document/path/91770",
+      "bodyPath": "official/91770.body.txt",
+      "characterOffset": 312,
+      "line": 18,
+      "readAt": "2026-10-08T13:01:16.2282648Z",
+      "originalLocation": {
+        "bodyPath": "official/91770.body.txt",
+        "characterOffset": 312,
+        "line": 18,
+        "rawEvidence": {
+          "archive": "raw-evidence.zip",
+          "index": "raw-evidence-index.json",
+          "logicalPath": "docs/plan/c2-wecom/official/91770.body.txt",
+          "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+          "byteKind": "worktree",
+          "member": "bytes/f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0",
+          "bytes": 22525,
+          "sha256": "f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0"
+        }
+      },
+      "locationKind": "可读副本位置；原正文位置见 originalLocation"
+    },
+    {
+      "key": "markdown",
+      "page": "91770",
+      "section": "markdown类型",
+      "needle": "最长不超过4096个字节",
+      "conclusion": "普通 markdown.content 最多 4096 UTF-8 字节；不是 JSON 总包上限",
+      "url": "https://developer.work.weixin.qq.com/document/path/91770",
+      "bodyPath": "official/91770.body.txt",
+      "characterOffset": 1808,
+      "line": 66,
+      "readAt": "2026-10-08T13:01:16.2282648Z",
+      "originalLocation": {
+        "bodyPath": "official/91770.body.txt",
+        "characterOffset": 1792,
+        "line": 66,
+        "rawEvidence": {
+          "archive": "raw-evidence.zip",
+          "index": "raw-evidence-index.json",
+          "logicalPath": "docs/plan/c2-wecom/official/91770.body.txt",
+          "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+          "byteKind": "worktree",
+          "member": "bytes/f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0",
+          "bytes": 22525,
+          "sha256": "f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0"
+        }
+      },
+      "locationKind": "可读副本位置；原正文位置见 originalLocation"
+    },
+    {
+      "key": "frequency",
+      "page": "91770",
+      "section": "消息发送频率限制",
+      "needle": "20条/分钟",
+      "conclusion": "每个消息推送最多 20 条/分钟；provider 对外部共享发送器的用量不可由 WorkMesh 推断",
+      "url": "https://developer.work.weixin.qq.com/document/path/91770",
+      "bodyPath": "official/91770.body.txt",
+      "characterOffset": 13755,
+      "line": 510,
+      "readAt": "2026-10-08T13:01:16.2282648Z",
+      "originalLocation": {
+        "bodyPath": "official/91770.body.txt",
+        "characterOffset": 13785,
+        "line": 510,
+        "rawEvidence": {
+          "archive": "raw-evidence.zip",
+          "index": "raw-evidence-index.json",
+          "logicalPath": "docs/plan/c2-wecom/official/91770.body.txt",
+          "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+          "byteKind": "worktree",
+          "member": "bytes/f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0",
+          "bytes": 22525,
+          "sha256": "f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0"
+        }
+      },
+      "locationKind": "可读副本位置；原正文位置见 originalLocation"
+    },
+    {
+      "key": "secret",
+      "page": "91770",
+      "section": "如何使用消息推送",
+      "needle": "保护好消息推送的webhook地址",
+      "conclusion": "地址是发送凭据，保密；网页链接与 Human 身份不能借此授权",
+      "url": "https://developer.work.weixin.qq.com/document/path/91770",
+      "bodyPath": "official/91770.body.txt",
+      "characterOffset": 413,
+      "line": 19,
+      "readAt": "2026-10-08T13:01:16.2282648Z",
+      "originalLocation": {
+        "bodyPath": "official/91770.body.txt",
+        "characterOffset": 413,
+        "line": 19,
+        "rawEvidence": {
+          "archive": "raw-evidence.zip",
+          "index": "raw-evidence-index.json",
+          "logicalPath": "docs/plan/c2-wecom/official/91770.body.txt",
+          "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+          "byteKind": "worktree",
+          "member": "bytes/f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0",
+          "bytes": 22525,
+          "sha256": "f68ea6f1721cf3daaec877827c871a3d90b1f9009feff1b1f9e870ab4e7910d0"
+        }
+      },
+      "locationKind": "可读副本位置；原正文位置见 originalLocation"
+    },
+    {
+      "key": "success",
+      "page": "90313",
+      "section": "全局返回码",
+      "needle": "0请求成功",
+      "conclusion": "按 errcode 判断；errmsg 会变化，不持久化原文",
+      "url": "https://developer.work.weixin.qq.com/document/path/90313",
+      "bodyPath": "official/90313.body.txt",
+      "characterOffset": 295,
+      "line": 8,
+      "readAt": "2026-10-08T13:01:16.8163684Z",
+      "originalLocation": {
+        "bodyPath": "official/90313.body.txt",
+        "characterOffset": 295,
+        "line": 8,
+        "rawEvidence": {
+          "archive": "raw-evidence.zip",
+          "index": "raw-evidence-index.json",
+          "logicalPath": "docs/plan/c2-wecom/official/90313.body.txt",
+          "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+          "byteKind": "worktree",
+          "member": "bytes/ba497fa2dabbda8af65888096126cab652e8c1babcc600299686d1fceb87c138",
+          "bytes": 115870,
+          "sha256": "ba497fa2dabbda8af65888096126cab652e8c1babcc600299686d1fceb87c138"
+        }
+      },
+      "locationKind": "可读副本位置；原正文位置见 originalLocation"
+    },
+    {
+      "key": "rate-error",
+      "page": "90313",
+      "section": "全局返回码",
+      "needle": "45009接口调用超过限制",
+      "conclusion": "明确非零失败，采用逐目标退避，非未知送达",
+      "url": "https://developer.work.weixin.qq.com/document/path/90313",
+      "bodyPath": "official/90313.body.txt",
+      "characterOffset": 7695,
+      "line": 261,
+      "readAt": "2026-10-08T13:01:16.8163684Z",
+      "originalLocation": {
+        "bodyPath": "official/90313.body.txt",
+        "characterOffset": 7695,
+        "line": 261,
+        "rawEvidence": {
+          "archive": "raw-evidence.zip",
+          "index": "raw-evidence-index.json",
+          "logicalPath": "docs/plan/c2-wecom/official/90313.body.txt",
+          "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+          "byteKind": "worktree",
+          "member": "bytes/ba497fa2dabbda8af65888096126cab652e8c1babcc600299686d1fceb87c138",
+          "bytes": 115870,
+          "sha256": "ba497fa2dabbda8af65888096126cab652e8c1babcc600299686d1fceb87c138"
+        }
+      },
+      "locationKind": "可读副本位置；原正文位置见 originalLocation"
+    },
+    {
+      "key": "target-errors",
+      "page": "90313",
+      "section": "全局返回码",
+      "needle": "93000消息推送",
+      "conclusion": "93000/93001/93004/93006/93008/93017/93019 按官方错误表映射；通用错误表不是群推送会返回每个错误的保证",
+      "url": "https://developer.work.weixin.qq.com/document/path/90313",
+      "bodyPath": "official/90313.body.txt",
+      "characterOffset": 21079,
+      "line": 820,
+      "readAt": "2026-10-08T13:01:16.8163684Z",
+      "originalLocation": {
+        "bodyPath": "official/90313.body.txt",
+        "characterOffset": 21079,
+        "line": 820,
+        "rawEvidence": {
+          "archive": "raw-evidence.zip",
+          "index": "raw-evidence-index.json",
+          "logicalPath": "docs/plan/c2-wecom/official/90313.body.txt",
+          "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+          "byteKind": "worktree",
+          "member": "bytes/ba497fa2dabbda8af65888096126cab652e8c1babcc600299686d1fceb87c138",
+          "bytes": 115870,
+          "sha256": "ba497fa2dabbda8af65888096126cab652e8c1babcc600299686d1fceb87c138"
+        }
+      },
+      "locationKind": "可读副本位置；原正文位置见 originalLocation"
+    }
+  ],
+  "operatorConditions": [
+    {
+      "condition": "企业/群允许消息推送、取得并保管 key",
+      "source": "91770 如何使用消息推送＋本卡部署范围",
+      "status": "本部署未实测"
+    },
+    {
+      "condition": "收件人可以访问 WEB_ORIGIN 并用已有 Human 登录",
+      "source": "本卡 canonical 登录深链范围",
+      "status": "本部署/真实客户端未实测"
+    },
+    {
+      "condition": "Worker 公共 DNS/TLS 出口、Redis、MASTER_KEY、feature flag",
+      "source": "实际 main 配置/发送链路",
+      "status": "无新部署或外发验证"
+    }
+  ],
+  "noCallback": "选择的协议只有出站 POST；没有 callback actor resolution 或账户 binding 系统，签名/时窗/绑定不适用",
+  "originalReadGap": "早期计划仅取得正文观察，未留完整响应；本轮快照为新获取来源，非早期原件"
+}

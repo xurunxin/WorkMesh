@@ -1,0 +1,257 @@
+{
+  "stage": "产品实现；未验收",
+  "observedAt": "2026-10-08T13:53:19.742Z",
+  "todoId": "kjOs4t_DtMyrkHTBFmpQ5",
+  "authorizedDesignHead": "178ac8cb297a78ea830f23845aa1d59972cca149",
+  "actualMain": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "mainRead": "平台 git ls-remote origin refs/heads/main，精确 SHA；正常 merge --no-commit --no-ff，无冲突",
+  "spec": {
+    "path": "docs/reviews/c2/product-spec.md",
+    "source": "本轮 todos(id) 完整 Spec；Saved plan 截断尾部未用作正文",
+    "bytes": 12736,
+    "sha256": "46f23f7c1e403fd9129a84d3e8c91fd4a624c2bc2f3b0f0e30cfa5ee7c5f3266"
+  },
+  "plans": [
+    "G27jedfwL5ikAj9GiLO1R",
+    "vYxCwh0TMRC3mOrr6cU1K",
+    "8K46xBWutJwsqCy89K5Oq"
+  ],
+  "version": null,
+  "generatedAt": null,
+  "files": [
+    {
+      "path": "CONTEXT.md",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "ec382a5cbaff07f16bd49acb4336f5d930c0eb23",
+      "gitBlob": {
+        "bytes": 5072,
+        "sha256": "30a05e460cc2bc337cf98f721b942804c58ff9cd9d1ab1690928e93d554d1499"
+      },
+      "worktree": {
+        "bytes": 5177,
+        "sha256": "f4c047a902dcac2b49631d2cc8013c3f8eca09cee29eb500ca60a2716dd2658f"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "f40c57b74ca11e8b1e84b085a01550e430b5a7f6",
+      "gitBlob": {
+        "bytes": 69441,
+        "sha256": "cd197da780ae7678ba4f5a2f3b5d88fc979e17685b3525b391f346bc1d4a5c59"
+      },
+      "worktree": {
+        "bytes": 71228,
+        "sha256": "d7601e8d5fae33dcc7a2c231fd20379ec6f52f7c12d721cde9782700127d26d7"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "b187c8dd41a9910bcc91d1bb088ede99708f9489",
+      "gitBlob": {
+        "bytes": 505586,
+        "sha256": "2a16e2efd6736308721b66852e76d3e008df0c87720d9c44c3cda2bf6276d03f"
+      },
+      "worktree": {
+        "bytes": 512791,
+        "sha256": "bb62408f1a57b2340962d9a02c2580534ec6c007fccfccf96452df65066afadf"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "SCHEMA.sql",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "7184e1fa7f52bd33ee960d6a370dccbe7dbb504b",
+      "gitBlob": {
+        "bytes": 1531,
+        "sha256": "9682e88fb26f7c82452ad383ea5618ad7e150d149c44f44d578fd665feab35d2"
+      },
+      "worktree": {
+        "bytes": 1561,
+        "sha256": "4ba5c8a954907f2df8a75e0ec0ba6aacf24f0f5a4478d152baa5f30be7867a17"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "a140747605d2628c24476bd644ca4b4deb646ac7",
+      "gitBlob": {
+        "bytes": 21300,
+        "sha256": "f41492546c9f782745c73b92295527a197a0049f43f4d58c1cc5a33362875e96"
+      },
+      "worktree": {
+        "bytes": 23863,
+        "sha256": "b04f9933613748a835ab4439e51abfb51243f0f5b93111190b121024fc035982"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "apps/worker/src/index.ts",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "85050d1224601a17f6d16588c81ee95110722562",
+      "gitBlob": {
+        "bytes": 19371,
+        "sha256": "01c6f431822613bd2a2946ab5708636e86a3afe5c38fd2dd82a826921ed76832"
+      },
+      "worktree": {
+        "bytes": 19920,
+        "sha256": "1e6d931ff7dd8868d256358faee1fbad680b56896e777f0dc49860a14733cf19"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "apps/worker/src/automation.ts",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "b1dbff240dbe61dd48694ba334e81cf755500a42",
+      "gitBlob": {
+        "bytes": 40110,
+        "sha256": "52232b8d85f7418aa63266401a7ab79807dbd41e66c9c55e12b01870bb61f0ce"
+      },
+      "worktree": {
+        "bytes": 41023,
+        "sha256": "cddce21bb6e870da7bd61488adcfa7f90e29fdaa80372a330743797552558f56"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "apps/worker/src/agent-webhook.ts",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "18994ded105adf942638e3bd9070c2a470f91c1d",
+      "gitBlob": {
+        "bytes": 22022,
+        "sha256": "771f86bff4157c51f511e2d9376f66dbed3d8043a1413182899e15a12714f33f"
+      },
+      "worktree": {
+        "bytes": 22530,
+        "sha256": "6b01a511696f5a063e7fbb0f848a6ce5ee4419243324e3d7c09998ece8c80ca2"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "packages/db/src/channel-notifications.ts",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "2ed38a67b7ef5c5a0686c0e86759d4c3fe39c176",
+      "gitBlob": {
+        "bytes": 31862,
+        "sha256": "7333d1040f73e63de71f77d31fb54119fe9e2af64b25824d5208da37f1b0ef4a"
+      },
+      "worktree": {
+        "bytes": 32687,
+        "sha256": "7de5fd0e641d85d0de52d4bb59944e96150399c8ba9ae42f6952a4a1363ae02c"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "apps/web/app/lib/canonical-route.ts",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "737adba643d3b727ed22312ae6ad02acf6665acd",
+      "gitBlob": {
+        "bytes": 4459,
+        "sha256": "3a593854807e9dcf3d54f90aa07f09864db72bed6076423e900c9d5b5ef88e1a"
+      },
+      "worktree": {
+        "bytes": 4533,
+        "sha256": "dfdde68a22a41f19163f46e96cbaa25c382f00e85f8185014aacb7deb9246f5c"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "apps/web/app/lib/use-authenticated-actor.ts",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "6a28e743f1e41954df7e7b38edfbcfbafc6e7c35",
+      "gitBlob": {
+        "bytes": 1857,
+        "sha256": "fcf4295f4edab0707bc345066d4491ee21b24c00487b31df28027b3f27d38c56"
+      },
+      "worktree": {
+        "bytes": 1905,
+        "sha256": "6887e20784d1a41d4e9496feb32955360e7edff09649a8292dcd40520df5a6dc"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "apps/web/app/login/page.tsx",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "cbc067bb7f4aa7acda86dbe55c1853d1df4dfbae",
+      "gitBlob": {
+        "bytes": 2779,
+        "sha256": "78cb8ba0df14fd0e67481004e6d5612ce5ccdd78667c553537c7d87c7ba8da03"
+      },
+      "worktree": {
+        "bytes": 2839,
+        "sha256": "582c65564390e4cdd86e17c430882007e4c6a2511fc72f28bf680bf823794286"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "apps/api/src/notification-channels.ts",
+      "inputCommit": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "6f2a85a14e163e198ed2cf386ecbf0be8d723a04",
+      "gitBlob": {
+        "bytes": 9559,
+        "sha256": "a183cedc610871ae0f281f7fd2da0e27e6162d2382c7cbad986c142f0185034b"
+      },
+      "worktree": {
+        "bytes": 9826,
+        "sha256": "0d32555ec7ff8d01767299d637bc5938a59f9a694663e58e34adb673aca2a465"
+      },
+      "identity": "分列工作树/输入 Git blob；ADR 已正常合并 C2 追加段与 C3 目录段，其余可为换行差异"
+    },
+    {
+      "path": "docs/plan/c2-wecom/product-design.md",
+      "inputCommit": "178ac8cb297a78ea830f23845aa1d59972cca149",
+      "oid": "b49373d810a672243e16e4752d4ad97b69aa7513",
+      "gitBlob": {
+        "bytes": 13891,
+        "sha256": "bb2e6a5eda2ac4fe893e10ebe3e7e6f1de839a719bf4fc1940dc7759ec34f0a5"
+      },
+      "worktree": {
+        "bytes": 13891,
+        "sha256": "bb2e6a5eda2ac4fe893e10ebe3e7e6f1de839a719bf4fc1940dc7759ec34f0a5"
+      },
+      "identity": "字节一致"
+    },
+    {
+      "path": "docs/plan/c2-wecom/implementation-plan.md",
+      "inputCommit": "178ac8cb297a78ea830f23845aa1d59972cca149",
+      "oid": "eea753564f8d4b23dc5a9a804086aa71fd1ce94b",
+      "gitBlob": {
+        "bytes": 9505,
+        "sha256": "8369303eb7aedffe3d289a97ce923951843f9629b9580288fc37c694061ceb55"
+      },
+      "worktree": {
+        "bytes": 9505,
+        "sha256": "8369303eb7aedffe3d289a97ce923951843f9629b9580288fc37c694061ceb55"
+      },
+      "identity": "字节一致"
+    },
+    {
+      "path": "docs/plan/c2-wecom/test-coverage.json",
+      "inputCommit": "178ac8cb297a78ea830f23845aa1d59972cca149",
+      "oid": "bf7a0acfa994511f9c7109eba2062d68db696bee",
+      "gitBlob": {
+        "bytes": 35225,
+        "sha256": "e595fb656452e6e5a676533e100beb25f29d0a36697631162182dbc244366b62"
+      },
+      "worktree": {
+        "bytes": 35225,
+        "sha256": "e595fb656452e6e5a676533e100beb25f29d0a36697631162182dbc244366b62"
+      },
+      "identity": "字节一致"
+    }
+  ],
+  "resources": {
+    "containers": [],
+    "dedicatedImages": [],
+    "volumes": [],
+    "networks": [],
+    "services": [],
+    "temporaryPaths": [],
+    "workspaceRetained": true
+  },
+  "historicalEvidence": "docs/plan/c2-wecom/raw-evidence.zip 与全部旧日志/时间/回执缺口保持不变"
+}

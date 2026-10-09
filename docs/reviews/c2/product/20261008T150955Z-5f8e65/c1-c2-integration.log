@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/apps/worker
+
+ ✓ integration/stage4-automation.integration.test.ts (49 tests) 19845ms
+   ✓ Stage 4 durable Automation and Loop runtime > deduplicates an event occurrence and produces exactly one action  567ms
+   ✓ Stage 4 durable Automation and Loop runtime > retries Automation Session admission after execution capacity becomes available  493ms
+   ✓ Stage 4 durable Automation and Loop runtime > serializes action ordinals across concurrent workers  581ms
+   ✓ Stage 4 durable Automation and Loop runtime > atomically enforces Loop overlap, budget cutoff, rollback, and revocation  644ms
+   ✓ Stage 4 durable Automation and Loop runtime > runs the scheduled triage demo end to end and creates an auditable Session  562ms
+   ✓ Stage 4 durable Automation and Loop runtime > admits a durable domain-event trigger exactly once across replay  1848ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > processes a full slow adapter batch without preclaiming waiting attempts and still schedules Loops  3105ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > persists a timed-out external call as uncertain without automatically retrying it  5109ms
+
+ Test Files  1 passed (1)
+      Tests  49 passed (49)
+   Start at  23:10:56
+   Duration  32.12s (transform 2.90s, setup 0ms, collect 11.14s, tests 19.84s, environment 0ms, prepare 556ms)

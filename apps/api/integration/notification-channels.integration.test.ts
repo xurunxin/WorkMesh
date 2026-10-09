@@ -204,7 +204,7 @@ describe('C1 target ownership, redaction and reconciliation', () => {
     expect(config).toEqual({
       redis_required: true,
       no_redis_supported: false,
-      configured_providers: [],
+      configured_providers: ['wecom'],
     })
   })
   it('requires current revision, deduplicates update and returns paginated redacted results', async () => {

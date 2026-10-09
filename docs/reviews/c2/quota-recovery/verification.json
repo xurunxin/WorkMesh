@@ -1,0 +1,223 @@
+{
+  "recordedAt": "2026-10-08T17:12:14.009051+00:00",
+  "inputHead": "61736fa2298279f76642309ee2e2478439258f80",
+  "actualMainInput": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+  "mainSource": {
+    "tool": "git",
+    "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "result": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+    "observationTime": null,
+    "说明": "本轮实读精确 ref；工具未提供响应时间，非 origin/main 或 FETCH_HEAD 推断"
+  },
+  "mainDifference": "相对 18252ba 仅新增 19 份清理证据，已正常整合；未变更 C3/A1/C1 产品语义",
+  "fix": "首次检测 state/quota 丢失时，在冷却提前返回之前原子恢复 quota sentinel；同一次丢失不再次改 epoch 或 ready。保留全局旧许可失效、D+60 与完成+60 额度语义。",
+  "file": "apps/worker/src/wecom-notifications.ts",
+  "case": {
+    "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+    "name": "quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效",
+    "matrixIds": [
+      "R1-16-1",
+      "R1-16-8",
+      "R1-16-9"
+    ],
+    "receipt": "docs/reviews/c2/product/20261008T165722Z-99576c/results.json",
+    "result": "真实 Redis Lua 通过；仅 TIME 替换为受控时钟，serial TTL 到期单独模拟；保留原生 Redis TIME 用例"
+  },
+  "requiredChecks": [
+    {
+      "label": "lint",
+      "command": [
+        "pnpm.cmd",
+        "lint"
+      ],
+      "pid": 26112,
+      "startedAt": "2026-10-08T16:58:08.489294+00:00",
+      "finishedAt": "2026-10-08T16:58:37.592096+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 5976,
+      "rawLogSha256": "5176d59662e16f70c9b079529174d81e8703cf0ee820bda12cb96759d3e2b690",
+      "sourceBefore": {
+        "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+        "bytes": 277214,
+        "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+        "files": 889
+      },
+      "sourceAfter": {
+        "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+        "bytes": 277214,
+        "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+        "files": 889
+      },
+      "receipt": "docs/reviews/c2/product/20261008T165759Z-568467/results.json"
+    },
+    {
+      "label": "typecheck",
+      "command": [
+        "pnpm.cmd",
+        "typecheck"
+      ],
+      "pid": 40276,
+      "startedAt": "2026-10-08T16:58:38.750978+00:00",
+      "finishedAt": "2026-10-08T16:59:04.458314+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 6531,
+      "rawLogSha256": "16206b8baed5a14f9ca42216cc3e3292385741691f23b81fcac9766ec15ba21a",
+      "sourceBefore": {
+        "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+        "bytes": 277214,
+        "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+        "files": 889
+      },
+      "sourceAfter": {
+        "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+        "bytes": 277214,
+        "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+        "files": 889
+      },
+      "receipt": "docs/reviews/c2/product/20261008T165759Z-568467/results.json"
+    },
+    {
+      "label": "test",
+      "command": [
+        "pnpm.cmd",
+        "test"
+      ],
+      "pid": 62408,
+      "startedAt": "2026-10-08T17:01:17.747169+00:00",
+      "finishedAt": "2026-10-08T17:01:56.403312+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 58169,
+      "rawLogSha256": "f949a79bb6d185e898d647cb98608e89827ce1c96c64ab63b73ff15eb1330a33",
+      "sourceBefore": {
+        "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+        "bytes": 277214,
+        "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+        "files": 889
+      },
+      "sourceAfter": {
+        "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+        "bytes": 277214,
+        "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+        "files": 889
+      },
+      "receipt": "docs/reviews/c2/product/20261008T165759Z-568467/results.json"
+    },
+    {
+      "label": "test-integration",
+      "command": [
+        "pnpm.cmd",
+        "test:integration"
+      ],
+      "pid": 9048,
+      "startedAt": "2026-10-08T17:01:57.391502+00:00",
+      "finishedAt": "2026-10-08T17:06:33.047749+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 1059371,
+      "rawLogSha256": "32d18a57756c9964d62575a95a850f8915c32a4dc1a52e5dac84346e7cdda7e1",
+      "sourceBefore": {
+        "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+        "bytes": 277214,
+        "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+        "files": 889
+      },
+      "sourceAfter": {
+        "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+        "bytes": 277214,
+        "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+        "files": 889
+      },
+      "receipt": "docs/reviews/c2/product/20261008T165759Z-568467/results.json"
+    },
+    {
+      "label": "test-e2e",
+      "command": [
+        "pnpm.cmd",
+        "test:e2e"
+      ],
+      "pid": 33888,
+      "startedAt": "2026-10-08T17:06:34.112211+00:00",
+      "finishedAt": "2026-10-08T17:11:06.729250+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 1870183,
+      "rawLogSha256": "b1bb1195eaeb182fd87e89e658d1fb0fef3595af0c3f4f46d672f64e9d10d895",
+      "sourceBefore": {
+        "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+        "bytes": 277214,
+        "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+        "files": 889
+      },
+      "sourceAfter": {
+        "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+        "bytes": 277214,
+        "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+        "files": 889
+      },
+      "receipt": "docs/reviews/c2/product/20261008T165759Z-568467/results.json"
+    }
+  ],
+  "summaries": {
+    "test-integration": [
+      "Test Files  17 passed (17)",
+      "Tests  80 passed (80)",
+      "Test Files  25 passed (25)",
+      "Tests  198 passed | 1 skipped (199)",
+      "Test Files  8 passed | 1 skipped (9)",
+      "Tests  113 passed | 1 skipped (114)",
+      "Test Files  1 skipped (1)",
+      "Tests  1 skipped (1)"
+    ],
+    "test-e2e": [
+      "@workmesh/web:test:e2e:   71 passed (4.4m)"
+    ]
+  },
+  "source": {
+    "path": "source-ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d.json",
+    "bytes": 277214,
+    "sha256": "ef2b698840c48de6e7ccaffdef8cfea357ad3f0ed77c7683dfcfea8298ca7f5d",
+    "files": 889
+  },
+  "failures": [
+    {
+      "receipt": "docs/reviews/c2/product/20261008T165543Z-057421/results.json",
+      "failure": "quota-regression failed",
+      "meaning": "原实现回归首败"
+    },
+    {
+      "receipt": "docs/reviews/c2/product/20261008T165614Z-311be3/results.json",
+      "failure": "quota-regression failed",
+      "meaning": "保留本轮真实失败，不算通过"
+    },
+    {
+      "receipt": "docs/reviews/c2/product/20261008T165652Z-58c2fe/results.json",
+      "failure": "quota-regression failed",
+      "meaning": "保留本轮真实失败，不算通过"
+    },
+    {
+      "receipt": "docs/reviews/c2/product/20261008T165750Z-622d5c/results.json",
+      "failure": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>",
+      "meaning": "保留本轮真实失败，不算通过"
+    }
+  ],
+  "assertionCorrections": "第二轮失败来自忽略既有 retryAfterMs 最小 100ms；第三轮失败来自 node-redis 将 inf score 解为 NaN。断言改为遵守最小退避、检查实际 sentinel 成员，许可余量验证包含往返耗时；所有原回执及受测指纹不改写。",
+  "history": "61736fa 的五项绿色、首败原件与归档缺口均为旧源码证据；不冒作本轮修订验收。已审产品方案原样保留。",
+  "scope": "仅频控恢复修复及补测；无迁移、新 API/事件、权限/CI 变更或真实外发。UI 产品文件未变，原视觉停点仍待 Chief。",
+  "gates": {
+    "independentReview": "待本轮成果复审",
+    "requiredCI": "待最新 PR 实际检查",
+    "actualMain": "尚未合入产品，不宣称整卡验收",
+    "chiefConfirmation": "待"
+  },
+  "runs": [
+    "docs/reviews/c2/product/20261008T165543Z-057421/results.json",
+    "docs/reviews/c2/product/20261008T165614Z-311be3/results.json",
+    "docs/reviews/c2/product/20261008T165652Z-58c2fe/results.json",
+    "docs/reviews/c2/product/20261008T165722Z-99576c/results.json",
+    "docs/reviews/c2/product/20261008T165750Z-622d5c/results.json",
+    "docs/reviews/c2/product/20261008T165759Z-568467/results.json"
+  ]
+}
