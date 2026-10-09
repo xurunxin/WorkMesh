@@ -1,0 +1,28 @@
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\conformance
+> vitest run --config vitest.integration.config.ts "-t" "真实 HTTP 旧消息排队"
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 HTTP 旧消息排队→作者撤权→合法 message→双 Worker/重启→唯一 Pi 续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"28697861-4ffa-4b87-aa1c-354d91f9d025","conversationId":"5dfa9813-f420-45b3-afd4-0106a3989d9c","attemptNo":1,"sessionId":"14639d68-dac6-4fe4-b93b-1fc11c322554","correlationId":"fe0d4963-d086-420c-a984-0955360e3e2f","status":"settled","outcome":"settled","queueWaitMs":2156,"dispatchLagMs":2098,"runDurationMs":350,"totalDurationMs":2506,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 HTTP 旧消息排队→作者撤权→合法 message→双 Worker/重启→唯一 Pi 续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"5d8d2570-09e8-4619-89de-0480c8c48e05","conversationId":"5dfa9813-f420-45b3-afd4-0106a3989d9c","attemptNo":1,"sessionId":"14639d68-dac6-4fe4-b93b-1fc11c322554","correlationId":"32d55a55-4ce1-4a26-a5f3-22ede3024712","status":"settled","outcome":"settled","queueWaitMs":2097,"dispatchLagMs":2036,"runDurationMs":299,"totalDurationMs":2396,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 HTTP 旧消息排队→作者撤权→合法 prompt→双 Worker/重启→唯一 Pi 续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"22ec4431-3dca-4f3b-af9a-a59368fc7800","conversationId":"a502d9cf-3c0f-423a-a6b8-d8518bcd2999","attemptNo":1,"sessionId":"cf035fd8-f4f8-43a1-bf8b-7541692b10c3","correlationId":"e1f63a7f-1a3c-41af-8fe9-1991010f12b6","status":"settled","outcome":"settled","queueWaitMs":2018,"dispatchLagMs":1965,"runDurationMs":297,"totalDurationMs":2315,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 HTTP 旧消息排队→作者撤权→合法 prompt→双 Worker/重启→唯一 Pi 续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"6d6f6f14-47b5-4957-9433-05b536dab1f3","conversationId":"a502d9cf-3c0f-423a-a6b8-d8518bcd2999","attemptNo":1,"sessionId":"cf035fd8-f4f8-43a1-bf8b-7541692b10c3","correlationId":"67d2af1c-ccb9-4344-9507-ae275702eb78","status":"settled","outcome":"settled","queueWaitMs":2053,"dispatchLagMs":1990,"runDurationMs":308,"totalDurationMs":2361,"totalTokens":null,"errorCode":null}
+
+ ✓ src/execution-recovery.conformance.test.ts (17 tests | 15 skipped) 12719ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 HTTP 旧消息排队→作者撤权→合法 message→双 Worker/重启→唯一 Pi 续接  5771ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 HTTP 旧消息排队→作者撤权→合法 prompt→双 Worker/重启→唯一 Pi 续接  5303ms
+ ↓ src/mcp-coverage.conformance.test.ts (12 tests | 12 skipped)
+
+ Test Files  1 passed | 1 skipped (2)
+      Tests  2 passed | 27 skipped (29)
+   Start at  01:44:35
+   Duration  17.37s (transform 1.16s, setup 0ms, collect 4.09s, tests 12.72s, environment 0ms, prepare 218ms)

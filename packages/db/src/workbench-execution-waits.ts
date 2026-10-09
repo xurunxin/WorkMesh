@@ -341,10 +341,27 @@ export async function reconcileWorkbenchExecutionWait(tx: PoolClient, input: {
     wait.trigger_kind = 'approval'; wait.trigger_approval_id = wait.approval_id
   } else if (!await selectValidWaitInput(tx, wait)) return 0
   if (!await validWaitTrigger(tx, wait)) return 0
-  const queued = (await tx.query<{ id: string; initiated_by_actor_id: string }>(`SELECT id,initiated_by_actor_id FROM workbench_turns
-    WHERE workspace_id=$1 AND conversation_id=$2 AND agent_session_id=$3 AND status='queued' ORDER BY sequence LIMIT 1 FOR UPDATE`,
-  [input.workspaceId, wait.conversation_id, wait.agent_session_id])).rows[0]
-  if (queued && !await humanCanReadConversation(tx, input.workspaceId, wait.conversation_id, queued.initiated_by_actor_id)) return 0
+  let queued: { id: string; initiated_by_actor_id: string; current_runner_attempt_id: string | null } | undefined
+  for (;;) {
+    queued = (await tx.query<NonNullable<typeof queued>>(`SELECT id,initiated_by_actor_id,current_runner_attempt_id FROM workbench_turns
+      WHERE workspace_id=$1 AND conversation_id=$2 AND agent_session_id=$3 AND status='queued' ORDER BY sequence LIMIT 1 FOR UPDATE`,
+    [input.workspaceId, wait.conversation_id, wait.agent_session_id])).rows[0]
+    if (!queued || await humanCanReadConversation(tx, input.workspaceId, wait.conversation_id, queued.initiated_by_actor_id)) break
+    // A revoked queued author must not block claim's active-predecessor gate.
+    // Settle the Turn with its public fact; never discard its message or create
+    // an Attempt. An unexpected queued Attempt remains closed for recovery.
+    if (queued.current_runner_attempt_id)
+      throw new DomainError('INVALID_STATE', 'Queued Turn unexpectedly has a Runner Attempt')
+    await tx.query(`UPDATE workbench_turns SET status='stopped',stop_reason='authority_revoked',
+      dispatch_requested_at=COALESCE(dispatch_requested_at,now()),settled_at=now(),updated_at=now()
+      WHERE workspace_id=$1 AND id=$2 AND status='queued'`, [input.workspaceId, queued.id])
+    await appendEvent(tx, { workspaceId: input.workspaceId, teamId: conversation.team_id ?? undefined,
+      audienceActorId: conversation.team_id ? undefined : conversation.responsible_human_actor_id,
+      actorId: input.actorId, correlationId: input.correlationId, sessionId: wait.agent_session_id,
+      type: 'workbench.turn.settled', aggregateType: 'workbench_turn', aggregateId: queued.id,
+      payload: { conversationId: wait.conversation_id, turnId: queued.id, runnerAttemptId: null,
+        outcome: 'stopped', stopReason: 'authority_revoked', errorCode: null, executionWaitId: wait.id } })
+  }
   const turnId = queued?.id ?? (await tx.query<{ id: string }>(`INSERT INTO workbench_turns
     (workspace_id,conversation_id,sequence,initiated_by_actor_id,agent_session_id,llm_connection_id,llm_model_id)
     VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING id`, [input.workspaceId, wait.conversation_id,

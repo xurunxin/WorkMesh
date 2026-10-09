@@ -4,6 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { WorkMeshClient } from '@workmesh/agent-sdk'
 import type { AgentSessionExecutionResult } from '@workmesh/contracts'
+import { turnResponseSchema, workbenchTurnSettledEventPayloadSchema } from '@workmesh/contracts'
 import { createSessionLifecycleWorker } from '../../../apps/worker/src/session-lifecycle.js'
 import { createExecutionRecoveryFixture, saveExecutionEvidence } from './execution-recovery.fixture.js'
 
@@ -309,6 +310,84 @@ describe('M1 真实 HTTP、MCP、Pi 执行与恢复', () => {
     expect(final.attempts.every(attempt => attempt.status === 'settled')).toBe(true)
     expect(await fixture.human('GET', `/api/v1/agent-sessions/${execution.sessionId}`)).toMatchObject({ state: 'completed' })
     saveExecutionEvidence(`review-invalid-input-${path}.json`, { obsoleteId, oldHuman, triggerId, final, captures: pi.captures })
+  })
+
+  it.each(['message', 'prompt'] as const)('真实 HTTP 旧消息排队→作者撤权→合法 %s→双 Worker/重启→唯一 Pi 续接', async trigger => {
+    const execution = await fixture.createExecution(`M1 revoked queued author ${trigger}`)
+    const pi = await fixture.createPi(execution, { state: 'awaiting_input', reason: 'Wait for a currently authorized Human' })
+    await pi.run('wait')
+    const workspaceId = (await fixture.db.query<{ workspace_id: string }>(
+      'SELECT workspace_id FROM agent_sessions WHERE id=$1', [execution.sessionId])).rows[0]!.workspace_id
+    const oldHuman = await fixture.createHumanMember(workspaceId)
+    const conversation = await fixture.human<{ revision: number }>('GET', `/api/v1/workbench/conversations/${pi.conversationId}`)
+    const oldResponse = await oldHuman.request('POST', `/api/v1/workbench/conversations/${pi.conversationId}/turns`,
+      { messageMarkdown: 'Previously authorized queued message.' }, conversation.revision)
+    expect(oldResponse.status).toBe(201)
+    const obsolete = await oldResponse.json() as { message: { id: string }; turn: { id: string; status: string } }
+    expect(obsolete.turn.status).toBe('queued')
+    // No public membership removal operation exists; simulate the committed
+    // revocation in this explicit privileged fixture, then prove HTTP denial.
+    await fixture.db.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',
+      [workspaceId, fixture.teamId, oldHuman.id])
+    expect((await oldHuman.request('GET', `/api/v1/workbench/conversations/${pi.conversationId}`)).status).toBe(403)
+    const first = createSessionLifecycleWorker({ db: fixture.db, workerId: `m1-queued-revoked-${randomUUID()}` })
+    const beforeTrigger = await snapshotWait(execution.sessionId)
+    expect(await first.reconcileWorkbenchWaits()).toBe(0)
+    expect(await snapshotWait(execution.sessionId)).toEqual(beforeTrigger)
+    const legalText = 'Currently authorized input after the old queued author lost access.'
+    let legalTurnId: string | undefined
+    if (trigger === 'message') {
+      const current = await fixture.human<{ revision: number }>('GET', `/api/v1/workbench/conversations/${pi.conversationId}`)
+      legalTurnId = (await fixture.human<{ turn: { id: string } }>('POST', `/api/v1/workbench/conversations/${pi.conversationId}/turns`,
+        { messageMarkdown: legalText }, current.revision)).turn.id
+    } else await fixture.human('POST', `/api/v1/agent-sessions/${execution.sessionId}/prompt`, { bodyMarkdown: legalText })
+    if (trigger === 'prompt') {
+      const beforeFailure = await snapshotWait(execution.sessionId)
+      const factsBeforeFailure = await fixture.facts()
+      await fixture.db.query(`CREATE FUNCTION m1_reject_queued_settlement() RETURNS trigger LANGUAGE plpgsql AS $$
+        BEGIN IF NEW.aggregate_id=TG_ARGV[0]::uuid THEN RAISE EXCEPTION 'M1 queued settlement rollback'; END IF; RETURN NEW; END $$`)
+      try {
+        await fixture.db.query(`CREATE TRIGGER m1_reject_queued_settlement BEFORE INSERT ON domain_events
+          FOR EACH ROW EXECUTE FUNCTION m1_reject_queued_settlement('${obsolete.turn.id}')`)
+        await expect(first.reconcileWorkbenchWaits()).rejects.toThrow('M1 queued settlement rollback')
+        expect(await snapshotWait(execution.sessionId)).toEqual(beforeFailure)
+        expect(await fixture.facts()).toEqual(factsBeforeFailure)
+      } finally {
+        await fixture.db.query('DROP TRIGGER IF EXISTS m1_reject_queued_settlement ON domain_events')
+        await fixture.db.query('DROP FUNCTION m1_reject_queued_settlement()')
+      }
+    }
+    const restarted = createSessionLifecycleWorker({ db: fixture.db, workerId: `m1-queued-restart-${randomUUID()}` })
+    expect((await Promise.all([first.reconcileWorkbenchWaits(), restarted.reconcileWorkbenchWaits()])).reduce((sum, count) => sum + count, 0)).toBe(1)
+    const resumed = await snapshotWait(execution.sessionId)
+    const continuedId = resumed.waits[0]!.continuation_turn_id!
+    if (legalTurnId) expect(continuedId).toBe(legalTurnId)
+    expect(continuedId).not.toBe(obsolete.turn.id)
+    expect(resumed.turns).toHaveLength(3); expect(resumed.attempts).toHaveLength(1)
+    const publicTurns = await fixture.human<{ items: unknown[] }>('GET', `/api/v1/workbench/conversations/${pi.conversationId}/turns`)
+    const stopped = publicTurns.items.map(item => turnResponseSchema.parse(item)).find(turn => turn.id === obsolete.turn.id)!
+    expect(stopped).toMatchObject({ status: 'stopped', stop_reason: 'authority_revoked', current_runner_attempt_id: null, started_at: null })
+    expect(stopped.dispatch_requested_at).not.toBeNull(); expect(stopped.settled_at).not.toBeNull()
+    const cancellation = (await fixture.db.query<{ id: string; payload: unknown }>(
+      "SELECT id,payload FROM domain_events WHERE aggregate_id=$1 AND event_type='workbench.turn.settled'", [obsolete.turn.id])).rows
+    expect(cancellation).toHaveLength(1)
+    expect(workbenchTurnSettledEventPayloadSchema.parse(cancellation[0]!.payload)).toMatchObject({
+      outcome: 'stopped', stopReason: 'authority_revoked', runnerAttemptId: null, executionWaitId: resumed.waits[0]!.id })
+    expect((await fixture.db.query('SELECT id FROM outbox_events WHERE domain_event_id=$1', [cancellation[0]!.id])).rowCount).toBe(1)
+    expect((await fixture.db.query('SELECT id FROM workbench_messages WHERE id=$1 AND turn_id=$2', [obsolete.message.id, obsolete.turn.id])).rowCount).toBe(1)
+    // The actual Runner claim/start traverses the unchanged predecessor gate.
+    await pi.run('continue')
+    expect(pi.captures.find(capture => capture.phase === 'continue')!.receivedMessages).toContain(legalText)
+    expect(await restarted.reconcileWorkbenchWaits()).toBe(0)
+    expect(await createSessionLifecycleWorker({ db: fixture.db, workerId: `m1-after-restart-${randomUUID()}` }).reconcileWorkbenchWaits()).toBe(0)
+    const final = await snapshotWait(execution.sessionId)
+    expect(final.turns).toHaveLength(3); expect(final.attempts).toHaveLength(2)
+    expect(final.turns.filter(turn => turn.status === 'settled')).toHaveLength(2)
+    expect(final.attempts.every(attempt => attempt.status === 'settled')).toBe(true)
+    expect((await fixture.db.query('SELECT id FROM workbench_runner_attempts WHERE turn_id=$1', [obsolete.turn.id])).rowCount).toBe(0)
+    expect((await fixture.db.query("SELECT id FROM domain_events WHERE aggregate_id=$1 AND event_type='workbench.turn.settled'", [obsolete.turn.id])).rowCount).toBe(1)
+    expect(await fixture.human('GET', `/api/v1/agent-sessions/${execution.sessionId}`)).toMatchObject({ state: 'completed' })
+    saveExecutionEvidence(`review-queued-author-${trigger}.json`, { obsolete, stopped, cancellation, resumed, final, captures: pi.captures })
   })
 
   it('真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接', async () => {

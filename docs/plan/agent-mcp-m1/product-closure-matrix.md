@@ -1,6 +1,6 @@
 # M1 产品九类 DoD 与兼容闭合矩阵
 
-本轮 queued 上下文、pending 公平扫描和失效输入三项成果独审修复的九类差分闭合、完整根入口实际 27 conformance / 120 Worker 结果见 [修复报告](product-review-repair-report.md)。以下原矩阵保留 `6e90926e…` 历史证明范围，新组合以本轮原回执为准。
+最新真实 `/turns` 失权作者排队路径、正式终态结算和 claim 前序门禁的九类差分见 [本轮修复报告](product-queued-author-repair-report.md)。前轮 [修复报告](product-review-repair-report.md) 的 27 conformance / 120 Worker 保留历史：第三项旧消息夹具没有覆盖同时创建 queued Turn 的路径；原前两项已由另一 Agent 确认闭合。以下原矩阵保留 `6e90926e…` 历史证明范围，新组合以本轮原回执为准。
 
 这是主执行 Agent 的产品证据索引，与冻结规划的未来测试清单分开。实际命令、退出、数量、skip、输入双字节和后来变化见 [运行索引](product-evidence/check-index.md)。下面以具名断言描述范围，不用“场景已接入”或工具数量代替运行结果；最终运行结论见 [主报告](product-report.md)。
 

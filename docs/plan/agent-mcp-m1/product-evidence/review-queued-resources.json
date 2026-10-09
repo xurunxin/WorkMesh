@@ -1,0 +1,347 @@
+{
+  "observedAt": "2026-10-09T17:56:41.376764+00:00",
+  "dockerObservation": {
+    "args": [
+      "docker",
+      "ps",
+      "-a",
+      "--no-trunc",
+      "--format",
+      "{{json .}}"
+    ],
+    "exitCode": 0
+  },
+  "registries": [
+    {
+      "path": "m1-21c7ca4bd324-resources.json",
+      "runId": "m1-21c7ca4bd324",
+      "resources": [
+        {
+          "role": "postgres",
+          "name": "m1-21c7ca4bd324-postgres",
+          "id": "25202feed393d040240008273de076e1a4b13fb20963985c677afb81d37263c8",
+          "image": "postgres:16-alpine",
+          "createdAt": "2026-10-09T17:45:25.992806+00:00",
+          "cleaned": true,
+          "hostPort": 51730,
+          "ready": true,
+          "cleanupAt": "2026-10-09T17:55:23.404573+00:00"
+        },
+        {
+          "role": "redis",
+          "name": "m1-21c7ca4bd324-redis",
+          "id": "71fde7e113387813416ecefcef5b50e649cedd7e82229783e5de0b9810d91627",
+          "image": "redis:7-alpine",
+          "createdAt": "2026-10-09T17:45:26.226550+00:00",
+          "cleaned": true,
+          "hostPort": 51731,
+          "ready": true,
+          "cleanupAt": "2026-10-09T17:55:22.677493+00:00"
+        },
+        {
+          "role": "rustfs",
+          "name": "m1-21c7ca4bd324-rustfs",
+          "id": "07b66368215433a97c17da30ac1fc116605306a9c012f883d640802412e17e59",
+          "image": "rustfs/rustfs:1.0.0",
+          "createdAt": "2026-10-09T17:45:26.457089+00:00",
+          "cleaned": true,
+          "hostPort": 51732,
+          "ready": true,
+          "cleanupAt": "2026-10-09T17:55:22.177945+00:00"
+        }
+      ]
+    },
+    {
+      "path": "m1-d237cec0ecba-resources.json",
+      "runId": "m1-d237cec0ecba",
+      "resources": [
+        {
+          "role": "postgres",
+          "name": "m1-d237cec0ecba-postgres",
+          "id": "5ac591be184b1804785e867c07bfb2911e23392c908c027ee8db1e8fb1cb0524",
+          "image": "postgres:16-alpine",
+          "createdAt": "2026-10-09T17:44:19.404341+00:00",
+          "cleaned": true,
+          "hostPort": 65477,
+          "ready": true,
+          "cleanupAt": "2026-10-09T17:44:54.268636+00:00"
+        },
+        {
+          "role": "redis",
+          "name": "m1-d237cec0ecba-redis",
+          "id": "8e5f4f1a41beda7222c95aba8a70ee93a2645d084493444ea82a545d66d86bf9",
+          "image": "redis:7-alpine",
+          "createdAt": "2026-10-09T17:44:19.818129+00:00",
+          "cleaned": true,
+          "hostPort": 65479,
+          "ready": true,
+          "cleanupAt": "2026-10-09T17:44:53.885786+00:00"
+        },
+        {
+          "role": "rustfs",
+          "name": "m1-d237cec0ecba-rustfs",
+          "id": "d2afbd68d3d5d460c15c6244e812a9611413622fafc0398ec9b57b7be3e9e4bf",
+          "image": "rustfs/rustfs:1.0.0",
+          "createdAt": "2026-10-09T17:44:20.150850+00:00",
+          "cleaned": true,
+          "hostPort": 65481,
+          "ready": true,
+          "cleanupAt": "2026-10-09T17:44:53.450191+00:00"
+        }
+      ]
+    }
+  ],
+  "remainingOwnedContainers": [],
+  "sharedContainersPreserved": [
+    {
+      "id": "8955a6225785bee60cd769ac3737635df6a8c6a53435ad6294d92435417fd52b",
+      "name": "r1ci381d-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "fdbfaf96fc4b7ae621bd07f221fbedd437526ba50f22683ef322d905baa0c376",
+      "name": "r1ci381d-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "afb321d3ab8803113c81dd79dd99c4be7fcb9a94a05b88ba53b4ee9604b3a507",
+      "name": "r1ci381d-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "42c1f96772b6b91e9175cbd40fe394efcb9756bca2ff483a4620ea4d1d5afb39",
+      "name": "r1ci381c-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "16d965766d2c75a3b4e53b5cf0df183ccfb70388cf752d4d813a5bf03a8f21ca",
+      "name": "r1ci381c-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "567c5c781c262f1cb2dc31b33a77cbc48b64b595cbbf822d3d0e45082ca844a0",
+      "name": "r1ci381c-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "bb6b39f0959dc975ebba12692e3de8aadea191fdf0596d184ce7bc08fab9f027",
+      "name": "r1ci381b-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "1244d5e4667d93ef394142c0bb18cb7a44eccdc7abc04a9278a7775c2df1f0dd",
+      "name": "r1ci381b-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "4d8e4c20dc847b9edeae08745328d208a6a6f7dac72e186c36f63ea2f3bbc434",
+      "name": "r1ci381b-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "959f0cabf5d696e3ce51871df90f1b568687eb9e0cc50c0a1e0f40896c37476b",
+      "name": "r1ci381-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "f3359d7c72a758eace150cb87c35e215a0b6f291061556f782caeeab39258a39",
+      "name": "r1ci381-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "4b9d5cc52acd838f691b711dadab09bc6aebb42ed567c67129308927044f3d01",
+      "name": "r1ci381-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "54f147c18124aa0e4664cb5d15e36244d7e2f32c020225b80ed48e86e8ff3d6e",
+      "name": "r1i-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "ebf6f15a199ee0b9d88c92242124cf6e39cc411457525fb95f434340d81b20a9",
+      "name": "r1i-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "2709a753abebe3bc0fd4961a81a05f0051468cb03bb831abdb41d4f5cfae3f0d",
+      "name": "r1i-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "39acded25c5fc47bbc59704fa6a63e504cb5a9adb4329d1712e7d2009210fd5d",
+      "name": "r1h-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "446d990bae3d184b8dc04c3faf0150834abb8f6c80a323c4fd2f5d3e8c86a76c",
+      "name": "r1h-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "1aa94d42b532791bc4946c34e8c83d7c613c9fa8c4b8f071f2f05a94f82cf3d7",
+      "name": "r1h-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "885491d285b034daaa3f48e4f3f91c8a96f422f7f591b62a5f6a7ad93a824ba0",
+      "name": "r1g-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "88d7597271c372a248f89d4bfe02e1cd796a5d65d34752d72661f2620efef724",
+      "name": "r1g-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "68ddd591771d178bc3052cadb356ffab1daf3cfeeff714cba60246251645d8b1",
+      "name": "r1g-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "accb377d0f75666bd9236f5e9f0fd773a6414c425c99dc17fe578ea63f4ec0a8",
+      "name": "r1f-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "95612d167478ff04dba11d79b7563eb6f7a7458440d9d56780898d3db34d309f",
+      "name": "r1f-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "666b8a945f4e3f073701b69d8409e87aa7d5fc4defd7e33a4d24a434f357f492",
+      "name": "r1f-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "6572b97faee7dbe4b1df1eee31623605ed21b589e66cae09421f796a76a73075",
+      "name": "r1e-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "d74db6d52c2161ed926ba031189ea8ef79ed212cf79752a172b28bbbd744d606",
+      "name": "r1e-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "25a2355963559e11c9ec2a717e6b4d0148f5eb7fdc0d8e3a0a6c61b474f9b0f3",
+      "name": "r1e-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "a31c79775de3b1ac268262fbd4e984bcdb38c3340cb73c66a7c0c1326c828bf1",
+      "name": "r1d-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "cef8749bbce413c24a9b13b712ec62de9f92f79df09601bf6191adcb29584289",
+      "name": "r1d-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "16bd2b3e98244acda74dfd797991b920a16dafece83caa4031dd91e232e35946",
+      "name": "r1d-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "d89c37d3a22e8beca1b294dc16db0a69c01664c7f8b3693a422ca6c3b421105e",
+      "name": "r1c-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "1da14d685015528a2c539646ba1ff6a29839656d7e186cea8028c4e37b84b13e",
+      "name": "r1c-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "a4173ad93c5a950bb76c9b0522bbc4d8487371ba651dbd52ce4cd0ab82dc64fa",
+      "name": "r1c-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "fb305d53eee075b81f091d76dd1ef6abb8678077459e6c22c0fff822908eca78",
+      "name": "r1b-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "8be4c0b2f3b233e1c560c9f368564e420d0cb94df6e7008ed9408fb2464c75c1",
+      "name": "r1b-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "3ac7b4978d975b63928f70b6c9365972ab309f1363b89e690f9af02b82198d3b",
+      "name": "r1b-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "a016713d06d3f11dfe2ee9533efd521946fb6077acceaf32d876a16206a17ac1",
+      "name": "r1-rustfs-test",
+      "state": "exited"
+    },
+    {
+      "id": "7a1f3fad0cc930f18dd57ce7c684a2265f0a06076fbb39782c1df8fcc3465366",
+      "name": "r1-redis-test",
+      "state": "exited"
+    },
+    {
+      "id": "557e9b8f1cabae46fbc219d4cabf1fed34955c23e1804fd5e021754226365fc2",
+      "name": "r1-postgres-test",
+      "state": "exited"
+    },
+    {
+      "id": "00f4596dc354a7096d54930f4786ca4e501f6d31371c317a95b36e289e9b5153",
+      "name": "workmesh-postgres-1",
+      "state": "exited"
+    },
+    {
+      "id": "16feb81cf9d2a48d111dcfbda161e7a472616a9c0ac58a83d0a201cfb0e05fc0",
+      "name": "workmesh-redis-1",
+      "state": "exited"
+    },
+    {
+      "id": "34820cf2e25e8dff19d42892bd67609cc316df2a1173d5403a9d52817fe72eee",
+      "name": "workmesh-web-1",
+      "state": "exited"
+    },
+    {
+      "id": "a3b6f726f524d99b34f5b2b97b1d2356ef3692ffdcac5392b7eab44791e45b6c",
+      "name": "workmesh-api-1",
+      "state": "exited"
+    },
+    {
+      "id": "951afd926067ecb9835f623429abf4d0411874ffbce132da76e8046f0b0227c2",
+      "name": "workmesh-worker-1",
+      "state": "exited"
+    },
+    {
+      "id": "70078a3028a6e09537f0890446759fb739244e33c4f1b6b7adf885a5811ff296",
+      "name": "workmesh-migrate-1",
+      "state": "exited"
+    },
+    {
+      "id": "f8b614913c4efea2e944686c9b4c855cb5e61167d9bad0e7e6f35c150b9d473c",
+      "name": "workmesh-minio-init-1",
+      "state": "exited"
+    },
+    {
+      "id": "ed7ebe27231e729a3176572704a99846a8b180d1742f62002add5a11b12179cd",
+      "name": "workmesh-minio-1",
+      "state": "exited"
+    }
+  ],
+  "recordedProcessIds": [
+    37012,
+    37636,
+    40144,
+    8844,
+    36084,
+    41756,
+    38316,
+    18464,
+    31832,
+    36860
+  ],
+  "currentMatchingProcesses": [],
+  "processObservationExitCode": 0,
+  "boundary": "日志及客户端 ZIP 已在 finally 保全；正常 stop/rm 成功退出经 helper 校验，原 helper 未分别记录 stdout，保留此限制。共享容器/镜像/默认网络、已拒目标、当前恢复工作树和 Node 运行时保留；没有额外删除。"
+}

@@ -1,0 +1,331 @@
+[
+  {
+    "name": "review-queued-build",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6\\node_modules\\.m1-runtime\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "build"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 87.37106989999984,
+    "inputArchive": "review-queued-build-inputs.zip",
+    "inputArchiveSha256": "becb6e116c8f723cdc62e4dd4769926ff46065faea070ceb7b2ef88da726e67b",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12031-e9de-75c4-ab40-b44affcd71f6\\\\node_modules\\\\.m1-runtime\\\\node.exe\"}",
+    "summaries": [
+      "Tasks:    18 successful, 18 total"
+    ],
+    "changedDuringRun": [],
+    "changedSinceRun": [
+      "docs/plan/agent-mcp-m1/product-queued-author-repair-report.md"
+    ],
+    "log": "review-queued-build.log"
+  },
+  {
+    "name": "review-queued-conformance-first",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6\\node_modules\\.m1-runtime\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "--filter",
+      "@workmesh/conformance",
+      "test:integration",
+      "-t",
+      "真实 HTTP 旧消息排队"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 18.621036300000014,
+    "inputArchive": "review-queued-conformance-first-inputs.zip",
+    "inputArchiveSha256": "3fec722620fda1d2d274e9de2bb94d1fd31123acae3be7e53b1a7e1038886b1e",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12031-e9de-75c4-ab40-b44affcd71f6\\\\node_modules\\\\.m1-runtime\\\\node.exe\"}",
+    "summaries": [
+      "Test Files  1 passed | 1 skipped (2)",
+      "Tests  2 passed | 27 skipped (29)"
+    ],
+    "changedDuringRun": [],
+    "changedSinceRun": [
+      "docs/plan/agent-mcp-m1/product-closure-matrix.md",
+      "docs/plan/agent-mcp-m1/product-report.md",
+      "packages/db/src/agent-lock-order-manifest.ts",
+      "packages/db/src/workbench-execution-waits.ts",
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "log": "review-queued-conformance-first.log"
+  },
+  {
+    "name": "review-queued-derived-types",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6\\node_modules\\.m1-runtime\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "--filter",
+      "@workmesh/db",
+      "typecheck"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 6.4339616000002025,
+    "inputArchive": "review-queued-derived-types-inputs.zip",
+    "inputArchiveSha256": "21e0c9966cdbab57c9d9120098cfd5f3e63cbfb9a9eadbfb3f345465393a7659",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12031-e9de-75c4-ab40-b44affcd71f6\\\\node_modules\\\\.m1-runtime\\\\node.exe\"}",
+    "summaries": [],
+    "changedDuringRun": [],
+    "changedSinceRun": [
+      "docs/plan/agent-mcp-m1/product-queued-author-repair-report.md"
+    ],
+    "log": "review-queued-derived-types.log"
+  },
+  {
+    "name": "review-queued-integration",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6\\node_modules\\.m1-runtime\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:integration"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 584.4955301999998,
+    "inputArchive": "review-queued-integration-inputs.zip",
+    "inputArchiveSha256": "526f1c59bc041332c9263a27a9e753e7c1a630010b7e60fde1d77107e44464b3",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12031-e9de-75c4-ab40-b44affcd71f6\\\\node_modules\\\\.m1-runtime\\\\node.exe\"}",
+    "summaries": [
+      "Test Files  17 passed (17)",
+      "Tests  81 passed (81)",
+      "Test Files  27 passed (27)",
+      "Tests  257 passed | 1 skipped (258)",
+      "Test Files  2 passed (2)",
+      "Tests  29 passed (29)",
+      "Test Files  8 passed | 1 skipped (9)",
+      "Tests  120 passed | 1 skipped (121)",
+      "Test Files  1 skipped (1)",
+      "Tests  1 skipped (1)"
+    ],
+    "changedDuringRun": [
+      "docs/plan/agent-mcp-m1/product-closure-matrix.md",
+      "docs/plan/agent-mcp-m1/product-report.md",
+      "packages/db/src/agent-lock-order-manifest.ts",
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "changedSinceRun": [
+      "docs/plan/agent-mcp-m1/product-closure-matrix.md",
+      "docs/plan/agent-mcp-m1/product-report.md",
+      "packages/db/src/agent-lock-order-manifest.ts",
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "log": "review-queued-integration.log"
+  },
+  {
+    "name": "review-queued-lint",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6\\node_modules\\.m1-runtime\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "lint"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 100.12757520000014,
+    "inputArchive": "review-queued-lint-inputs.zip",
+    "inputArchiveSha256": "23e2677ee3dd7f8055f3f9b07829e204f798732001d99963b0c442908c664696",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12031-e9de-75c4-ab40-b44affcd71f6\\\\node_modules\\\\.m1-runtime\\\\node.exe\"}",
+    "summaries": [
+      "Tasks:    18 successful, 18 total"
+    ],
+    "changedDuringRun": [
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "changedSinceRun": [
+      "docs/plan/agent-mcp-m1/product-closure-matrix.md",
+      "docs/plan/agent-mcp-m1/product-report.md",
+      "packages/db/src/agent-lock-order-manifest.ts",
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "log": "review-queued-lint.log"
+  },
+  {
+    "name": "review-queued-lock-generate",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6\\node_modules\\.m1-runtime\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "--filter",
+      "@workmesh/db",
+      "test",
+      "src/agent-lock-order-inventory.test.ts"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 3.7021365999999034,
+    "inputArchive": "review-queued-lock-generate-inputs.zip",
+    "inputArchiveSha256": "8c727ed1e2f4a2142e802662bbabf5ea0e1b8d02e3280f91ba3ae41408354f86",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12031-e9de-75c4-ab40-b44affcd71f6\\\\node_modules\\\\.m1-runtime\\\\node.exe\"}",
+    "summaries": [
+      "Test Files  1 passed (1)",
+      "Tests  8 passed (8)"
+    ],
+    "changedDuringRun": [
+      "packages/db/src/agent-lock-order-manifest.ts"
+    ],
+    "changedSinceRun": [
+      "docs/plan/agent-mcp-m1/product-closure-matrix.md",
+      "docs/plan/agent-mcp-m1/product-report.md",
+      "packages/db/src/agent-lock-order-manifest.ts",
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "log": "review-queued-lock-generate.log"
+  },
+  {
+    "name": "review-queued-typecheck",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6\\node_modules\\.m1-runtime\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "typecheck"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 60.12398600000006,
+    "inputArchive": "review-queued-typecheck-inputs.zip",
+    "inputArchiveSha256": "62769daecf0b535d0678a63f51a44d9551dce728b791afa0d2138f3c968e5f28",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12031-e9de-75c4-ab40-b44affcd71f6\\\\node_modules\\\\.m1-runtime\\\\node.exe\"}",
+    "summaries": [
+      "Tasks:    18 successful, 18 total"
+    ],
+    "changedDuringRun": [
+      "packages/db/src/workbench-execution-waits.ts"
+    ],
+    "changedSinceRun": [
+      "docs/plan/agent-mcp-m1/product-closure-matrix.md",
+      "docs/plan/agent-mcp-m1/product-report.md",
+      "packages/db/src/agent-lock-order-manifest.ts",
+      "packages/db/src/workbench-execution-waits.ts",
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "log": "review-queued-typecheck.log"
+  },
+  {
+    "name": "review-queued-types-final",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6\\node_modules\\.m1-runtime\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "typecheck"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 61.3834495000001,
+    "inputArchive": "review-queued-types-final-inputs.zip",
+    "inputArchiveSha256": "41bfd09139e633a2cb9ced198df6640af646434bc89ff7d1c1ceec3db8662e05",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12031-e9de-75c4-ab40-b44affcd71f6\\\\node_modules\\\\.m1-runtime\\\\node.exe\"}",
+    "summaries": [
+      "Tasks:    18 successful, 18 total"
+    ],
+    "changedDuringRun": [
+      "packages/db/src/agent-lock-order-manifest.ts"
+    ],
+    "changedSinceRun": [
+      "docs/plan/agent-mcp-m1/product-closure-matrix.md",
+      "docs/plan/agent-mcp-m1/product-report.md",
+      "packages/db/src/agent-lock-order-manifest.ts",
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "log": "review-queued-types-final.log"
+  },
+  {
+    "name": "review-queued-unit-fixed",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6\\node_modules\\.m1-runtime\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 136.6210033999996,
+    "inputArchive": "review-queued-unit-fixed-inputs.zip",
+    "inputArchiveSha256": "981fe1fc21e8319f3d1284950bea63b3bbba858bf887a8af00a2ebde6778979a",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12031-e9de-75c4-ab40-b44affcd71f6\\\\node_modules\\\\.m1-runtime\\\\node.exe\"}",
+    "summaries": [
+      "@workmesh/ui:test:  Test Files  4 passed (4)",
+      "@workmesh/ui:test:       Tests  50 passed (50)",
+      "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+      "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+      "@workmesh/observability:test:  Test Files  2 passed (2)",
+      "@workmesh/observability:test:       Tests  16 passed (16)",
+      "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+      "@workmesh/git-provider:test:       Tests  13 passed (13)",
+      "@workmesh/contracts:test:  Test Files  27 passed (27)",
+      "@workmesh/contracts:test:       Tests  207 passed (207)",
+      "@workmesh/domain:test:  Test Files  9 passed (9)",
+      "@workmesh/domain:test:       Tests  65 passed (65)",
+      "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+      "@workmesh/agent-sdk:test:       Tests  52 passed (52)",
+      "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+      "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+      "@workmesh/agent-runner:test:  Test Files  13 passed (13)",
+      "@workmesh/agent-runner:test:       Tests  67 passed (67)",
+      "@workmesh/config:test:  Test Files  2 passed (2)",
+      "@workmesh/config:test:       Tests  34 passed (34)",
+      "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+      "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+      "@workmesh/mcp:test:  Test Files  4 passed (4)",
+      "@workmesh/mcp:test:       Tests  50 passed (50)",
+      "@workmesh/db:test:  Test Files  8 passed (8)",
+      "@workmesh/db:test:       Tests  28 passed (28)",
+      "@workmesh/web:test:  Test Files  114 passed (114)",
+      "@workmesh/web:test:       Tests  789 passed (789)",
+      "@workmesh/recovery:test:  Test Files  1 passed (1)",
+      "@workmesh/recovery:test:       Tests  7 passed (7)",
+      "@workmesh/worker:test:  Test Files  24 passed (24)",
+      "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+      "@workmesh/conformance:test:  Test Files  1 passed (1)",
+      "@workmesh/conformance:test:       Tests  1 passed (1)",
+      "@workmesh/api:test:  Test Files  34 passed (34)",
+      "@workmesh/api:test:       Tests  180 passed (180)",
+      "Tasks:    32 successful, 32 total"
+    ],
+    "changedDuringRun": [
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "changedSinceRun": [
+      "docs/plan/agent-mcp-m1/product-closure-matrix.md",
+      "docs/plan/agent-mcp-m1/product-report.md",
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "log": "review-queued-unit-fixed.log"
+  },
+  {
+    "name": "review-queued-unit",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6\\node_modules\\.m1-runtime\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test"
+    ],
+    "exitCode": 1,
+    "runtimeSeconds": 82.58382859999983,
+    "inputArchive": "review-queued-unit-inputs.zip",
+    "inputArchiveSha256": "9b7c609d1a5bdd36546578ffc34763778aacc547f2881e62330d20b73d2f2a0a",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12031-e9de-75c4-ab40-b44affcd71f6\\\\node_modules\\\\.m1-runtime\\\\node.exe\"}",
+    "summaries": [
+      "@workmesh/observability:test:  Test Files  2 passed (2)",
+      "@workmesh/observability:test:       Tests  16 passed (16)",
+      "@workmesh/contracts:test:  Test Files  27 passed (27)",
+      "@workmesh/contracts:test:       Tests  207 passed (207)",
+      "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+      "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+      "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+      "@workmesh/git-provider:test:       Tests  13 passed (13)",
+      "@workmesh/ui:test:  Test Files  4 passed (4)",
+      "@workmesh/ui:test:       Tests  50 passed (50)",
+      "@workmesh/domain:test:  Test Files  9 passed (9)",
+      "@workmesh/domain:test:       Tests  65 passed (65)",
+      "@workmesh/agent-runner:test:  Test Files  13 passed (13)",
+      "@workmesh/agent-runner:test:       Tests  67 passed (67)",
+      "@workmesh/config:test:  Test Files  2 passed (2)",
+      "@workmesh/config:test:       Tests  34 passed (34)",
+      "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+      "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+      "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+      "@workmesh/agent-sdk:test:       Tests  52 passed (52)",
+      "@workmesh/db:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+      "@workmesh/db:test:  Test Files  1 failed | 7 passed (8)",
+      "@workmesh/db:test:       Tests  1 failed | 27 passed (28)",
+      "Tasks:    20 successful, 26 total"
+    ],
+    "changedDuringRun": [
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "changedSinceRun": [
+      "docs/plan/agent-mcp-m1/product-closure-matrix.md",
+      "docs/plan/agent-mcp-m1/product-report.md",
+      "packages/db/src/agent-lock-order-manifest.ts",
+      "scripts/m1-review-repair-evidence.py"
+    ],
+    "log": "review-queued-unit.log"
+  }
+]

@@ -1,0 +1,16 @@
+
+> @workmesh/db@ test C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\db
+> vitest run "src/agent-lock-order-inventory.test.ts"
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/db
+
+ ✓ src/agent-lock-order-inventory.test.ts (8 tests) 1239ms
+   ✓ Agent authority lock-order inventory > manifests every production file with ranked locking or writes  453ms
+   ✓ Agent authority lock-order inventory > manifests every ranked SQL statement with its transaction owner and rank sequence  315ms
+   ✓ Agent authority lock-order inventory > rejects unsafe production ordering and proves the negative fixtures  453ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  01:48:10
+   Duration  2.44s (transform 70ms, setup 0ms, collect 410ms, tests 1.24s, environment 0ms, prepare 164ms)

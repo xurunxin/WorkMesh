@@ -1,0 +1,634 @@
+[
+  {
+    "path": ".gitignore",
+    "worktreeBytes": 634,
+    "worktreeSha256": "29df6bd56af47f300348e3d2fe57e7440c8c51f0a7c5d75c188c7ebba5c25ff3",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 613,
+    "gitSha256": "79a24f08080a15dc4ac35d07801cf4b6feec2ffaa433c5943b5352679dee2256"
+  },
+  {
+    "path": "AGENT_PROTOCOL.md",
+    "worktreeBytes": 78031,
+    "worktreeSha256": "cc3b0769ee8c9cd8cfcd3212e43a250aa9c1c04b06ed4a2f8fcbfd0ae826d1a2",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 76199,
+    "gitSha256": "3731a12ce85c5ac5e06105ce5c602df4fbb94e135907f06db5a8e0851d6446db"
+  },
+  {
+    "path": "OPENAPI.yaml",
+    "worktreeBytes": 533733,
+    "worktreeSha256": "174789139d81f6010ebb7200d4ab2ff9c3ce4e338da3a0cdc931ff3fa8faffab",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 526174,
+    "gitSha256": "ded3806912420b9abd7e46dedea2f089322ec59d2148d251fdf3ee330b527f07"
+  },
+  {
+    "path": "SCHEMA.sql",
+    "worktreeBytes": 1630,
+    "worktreeSha256": "f5c265144a56b2974e32de5a301a4cb356693910a14f00dfb57ff13885a58987",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 1598,
+    "gitSha256": "3836495ed9355c19262de2eca2a0f0a02b9ca85e7d7bbc21b11aacd30784dd08"
+  },
+  {
+    "path": "apps/agent-runner/README.md",
+    "worktreeBytes": 2369,
+    "worktreeSha256": "6c575ad7b0cf336cff2a7326da5a06e018e21d6502662d0c8f36f14aa6bcc3cf",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 2357,
+    "gitSha256": "2e158d563ac7297855dec4f3cbfc574fae88be8d752da8725b02cb2ad51f3778"
+  },
+  {
+    "path": "apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+    "worktreeBytes": 5744,
+    "worktreeSha256": "16d7f21cbda51d9738217a52ccd8e2140612f9c61fd4cb3650bfd34689947054",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 5744,
+    "gitSha256": "16d7f21cbda51d9738217a52ccd8e2140612f9c61fd4cb3650bfd34689947054"
+  },
+  {
+    "path": "apps/agent-runner/src/execution-lifecycle.test.ts",
+    "worktreeBytes": 3794,
+    "worktreeSha256": "15b7c597606638a441c12c4925045d11c2ddace7b4191de7247b2bb0bad47d2f",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 3794,
+    "gitSha256": "15b7c597606638a441c12c4925045d11c2ddace7b4191de7247b2bb0bad47d2f"
+  },
+  {
+    "path": "apps/agent-runner/src/execution-lifecycle.ts",
+    "worktreeBytes": 2730,
+    "worktreeSha256": "a6fb523389fdb30b80a0230f0ea91ec05c0707013ce4ad24d14add3b7ce4ce6f",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 2730,
+    "gitSha256": "a6fb523389fdb30b80a0230f0ea91ec05c0707013ce4ad24d14add3b7ce4ce6f"
+  },
+  {
+    "path": "apps/agent-runner/src/permission-matrix.test.ts",
+    "worktreeBytes": 11710,
+    "worktreeSha256": "fe2682b90d18b4d33b2a839c0668fd948e141ea2c87a971d6448af29cc27b086",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 11514,
+    "gitSha256": "0ed048fa713c874533433859d793f39bc62846653ae68fc5512e666b015106a0"
+  },
+  {
+    "path": "apps/agent-runner/src/run-session-cleanup.test.ts",
+    "worktreeBytes": 5662,
+    "worktreeSha256": "e2c0fb11119f82f5b879f90db02ddc5766da7f7eda011c9fe4aa96ff499b8bee",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 5662,
+    "gitSha256": "e2c0fb11119f82f5b879f90db02ddc5766da7f7eda011c9fe4aa96ff499b8bee"
+  },
+  {
+    "path": "apps/agent-runner/src/run-session.ts",
+    "worktreeBytes": 36798,
+    "worktreeSha256": "f4ecec562ec7f7f607623103e03e3461ed8e228fa811bc3a504643029799eeb9",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 36470,
+    "gitSha256": "21a21bdaaba58e430736bca14ea920ea5978abf867d8263319f6ed555e95a44b"
+  },
+  {
+    "path": "apps/agent-runner/src/runner-api.test.ts",
+    "worktreeBytes": 3714,
+    "worktreeSha256": "e9e4b2978bb01072625213cc7b5cfe1d4df8665836dfb3c2dcf84934b84a83a0",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 3697,
+    "gitSha256": "8b17bac226dbd200f3376ed1fec8fa2e4baa4e8eaad8534bc70dbffee15d10af"
+  },
+  {
+    "path": "apps/agent-runner/src/wait-pi.test.ts",
+    "worktreeBytes": 4679,
+    "worktreeSha256": "0ecd4b5692efd47194d99cca747710a3ec458a8ea88dd812b3779cfa04f40a44",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 4679,
+    "gitSha256": "0ecd4b5692efd47194d99cca747710a3ec458a8ea88dd812b3779cfa04f40a44"
+  },
+  {
+    "path": "apps/agent-runner/src/workbench-skill-manifest.ts",
+    "worktreeBytes": 270,
+    "worktreeSha256": "2b52ba7080c3edb5de58dc5cc936c261d2d583fc88de1b9aca05efec97b40731",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 270,
+    "gitSha256": "2b52ba7080c3edb5de58dc5cc936c261d2d583fc88de1b9aca05efec97b40731"
+  },
+  {
+    "path": "apps/agent-runner/src/workmesh-tools.test.ts",
+    "worktreeBytes": 19925,
+    "worktreeSha256": "0e9979e606113f7680ef91faf897dd414f6a55d5cba4f80c65edeb2fbe53d3ee",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 19623,
+    "gitSha256": "9db149fe4995b52b5ecfbd082b80bb31b30afb91ab71c26b9e2c0f5c68595456"
+  },
+  {
+    "path": "apps/agent-runner/src/workmesh-tools.ts",
+    "worktreeBytes": 33224,
+    "worktreeSha256": "8181d24366eae9eba8b17fb02937bef092611295d9269aca349239bfb40feac9",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 32835,
+    "gitSha256": "a63999e96da621a588c6fa601d1802a5f4130f6a10adae8858e1482f0b22e3ff"
+  },
+  {
+    "path": "apps/api/integration/execution-result.integration.test.ts",
+    "worktreeBytes": 18362,
+    "worktreeSha256": "9d7a8e5953733dbf9b6c6ba61973b67a284a56bdcc657062a657191ed0456c42",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 18248,
+    "gitSha256": "98a98ec59cb0de6c08aab344c0bd2bb4ec359b657bf54bc73040053573b43839"
+  },
+  {
+    "path": "apps/api/integration/execution-waits.integration.test.ts",
+    "worktreeBytes": 31969,
+    "worktreeSha256": "633cdf28d65cab0e068bd343495097b4406e7cd974c106923391fea2522b8179",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 31969,
+    "gitSha256": "633cdf28d65cab0e068bd343495097b4406e7cd974c106923391fea2522b8179"
+  },
+  {
+    "path": "apps/api/src/agent-connections.ts",
+    "worktreeBytes": 68015,
+    "worktreeSha256": "d64b8556a4212e85591ed9021f9e7139896f3dd6333df32dc5989c6915b8b8dc",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 66675,
+    "gitSha256": "9007cf9e5efff8dcbec4c2d6c60ef614e7bc35e63fdfea39661fd3c8c44316ba"
+  },
+  {
+    "path": "apps/api/src/agent/commands.test.ts",
+    "worktreeBytes": 9462,
+    "worktreeSha256": "b3071acd7816698dd9f3e777d7961bc29fdbcd2a3b283b6f005747cf43628a87",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 9175,
+    "gitSha256": "f3db8e9f6bcecad7f213dff8b3c8b6df1487e231d7bdef268aae53634a16ce8e"
+  },
+  {
+    "path": "apps/api/src/agent/commands.ts",
+    "worktreeBytes": 182509,
+    "worktreeSha256": "b0035aceb47d26b54fa464707cf7ca2ce113cef06c7b3a6c6bed4c8340f7ff4d",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 179295,
+    "gitSha256": "09b0776e32ddb5ed98842d843827f2e8dee5c5047a1655961e373b9857e32e0b"
+  },
+  {
+    "path": "apps/api/src/agent/execution-origin.ts",
+    "worktreeBytes": 5962,
+    "worktreeSha256": "6297802574b5bd8ff564d1636479dbaeba68aa5f35bafd6e692bb5ca1daf9d3d",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 5870,
+    "gitSha256": "3342cbe3f7117a87885a13b5679459fd525c0c35ecdf5f9a6ad40c48c5d87d70"
+  },
+  {
+    "path": "apps/api/src/agent/execution-result.ts",
+    "worktreeBytes": 13571,
+    "worktreeSha256": "75afb68145de0e6e9214a2f6d86ec3aea8eb7d112b54ff2aa04a8112fb6aa4ef",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 13412,
+    "gitSha256": "0b8ee35548a17f1cde8d854288473a3132bea956dc7a4a3e81cc900e249b67b0"
+  },
+  {
+    "path": "apps/api/src/agent/routes.ts",
+    "worktreeBytes": 32175,
+    "worktreeSha256": "2da41186c540f8cb50568f73e0e05e1a917f86068fe39d417b1576b5ecc07077",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 31795,
+    "gitSha256": "258358caf55b4f6f0805b7701a3f273a773d83e11b67f5406888bcebb11f98e7"
+  },
+  {
+    "path": "apps/api/src/authz/authorize.ts",
+    "worktreeBytes": 26458,
+    "worktreeSha256": "6a3455fb4c88be10aa049b15878070b43814bf90eeea7fd6bee859e9ddea68b9",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 25847,
+    "gitSha256": "fa4dc84cb649fe3f73eacea1393804dae5709fbb16e9e4e80d932f4f438ca52e"
+  },
+  {
+    "path": "apps/api/src/commands-lock-order.test.ts",
+    "worktreeBytes": 5180,
+    "worktreeSha256": "1273f145d5dde4eac323a1c231af95aac75be7bd819c7b1a8788c007e5715fa1",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 5043,
+    "gitSha256": "35d2db39c6771f1243d00bbe1500151d57311495c43ec7a0b450f5d1c35d46f0"
+  },
+  {
+    "path": "apps/api/src/commands.ts",
+    "worktreeBytes": 40974,
+    "worktreeSha256": "f1d6ddbdae44851d5690d03e57b3aaeadc2487f3c6a34dfa7848ed4f3f5770a2",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 39827,
+    "gitSha256": "3934ccd1565b3de1a91a17db82a073ff4bd8b0fb6fd5a87a8582743997a0bb82"
+  },
+  {
+    "path": "apps/api/src/connection-installation-token.ts",
+    "worktreeBytes": 2554,
+    "worktreeSha256": "b3957697f36dc47f05f6315d5efaead6c25f77b05157b994dddc6d4f13dc4cc0",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 2506,
+    "gitSha256": "5c14cfd26be79dc392f5294681c7477f65c67e483621529197eeb66ac5a684a1"
+  },
+  {
+    "path": "apps/api/src/server.ts",
+    "worktreeBytes": 75788,
+    "worktreeSha256": "60ca84c3c2c6997fb60063257932c09a77b1ad938938181a09a1c75259e5de06",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 74016,
+    "gitSha256": "4286b2e50429790bb445792c5d6be6ec50162abaea54d51377db42c97c9c2c27"
+  },
+  {
+    "path": "apps/api/src/workbench-runner.ts",
+    "worktreeBytes": 34172,
+    "worktreeSha256": "f0c957f80e896218693cc2d54b285ba6f28915c899ec620d49f94104e85759af",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 33808,
+    "gitSha256": "aac0c668feb9ae355f7d3f1513d8e27ecd06e1f1ae68ef51d9a500058e78e97f"
+  },
+  {
+    "path": "apps/mcp/src/discovery.ts",
+    "worktreeBytes": 15650,
+    "worktreeSha256": "dd4894764cc5a18294320cd78a44f180e006077fbc9823cf5e0b482e5bab422e",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 15496,
+    "gitSha256": "c01e43a719a3d1822402f6fcdfbd34577a6094b81c47104105474a6b80e4dcc3"
+  },
+  {
+    "path": "apps/mcp/src/execution-adapters.test.ts",
+    "worktreeBytes": 7563,
+    "worktreeSha256": "814be4664a34d8cf3e63873bac7ecc1dc69a100642ace0dee5a0600933f4c448",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 7563,
+    "gitSha256": "814be4664a34d8cf3e63873bac7ecc1dc69a100642ace0dee5a0600933f4c448"
+  },
+  {
+    "path": "apps/mcp/src/index.test.ts",
+    "worktreeBytes": 67488,
+    "worktreeSha256": "42e25f9fcd6ee2b2c45f161da0700340c1902a90467616d2213f844f8d81645b",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 66129,
+    "gitSha256": "d8a730e79557d61c23b1003dade256ca5fe6502391042db30ffea24e2453812a"
+  },
+  {
+    "path": "apps/mcp/src/index.ts",
+    "worktreeBytes": 70735,
+    "worktreeSha256": "d7ddca5a559b92c33f31b796beef65992d6c63535fe890039e9338efec125367",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 70347,
+    "gitSha256": "7854d4cc93d1b86ad7aae39937930bbb49223eaf47eb00b21cf062f299da8ef8"
+  },
+  {
+    "path": "apps/mcp/src/recovery.test.ts",
+    "worktreeBytes": 10689,
+    "worktreeSha256": "4667163ddae15ec14da4a2f03ff6c476cda83eedb2ad93e1271aefbaa6f62993",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 10601,
+    "gitSha256": "67471822f84e4be143a0df9591e5862675e17a8e71dd3f65e64e8d74e128c02f"
+  },
+  {
+    "path": "apps/worker/integration/stage1-lifecycle.integration.test.ts",
+    "worktreeBytes": 51771,
+    "worktreeSha256": "06f7f929a8e4ceeb133b0f763d3cac0183f84b903bc8b58cfe27b4304828743f",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 50950,
+    "gitSha256": "74caf41af10488eaa801d904137e87dac065333c40db5adf02da470039bdb79c"
+  },
+  {
+    "path": "apps/worker/src/session-lifecycle.ts",
+    "worktreeBytes": 41918,
+    "worktreeSha256": "52b56ff55f62c7e359a80063979f6c519d9db5121de30c915d0742d77e0c98f0",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 41109,
+    "gitSha256": "1eed074f1c8c68c5763ed5d55e6ccd26b7f80610abbdbbeca2a1d105f76968d3"
+  },
+  {
+    "path": "docs/AGENT_COLLABORATION_CLIENT_PROFILE.md",
+    "worktreeBytes": 15662,
+    "worktreeSha256": "ce7c670a3be843aa3f8fc413a48e3ff2a77b02918e6f60cc77b17bab145e1d97",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 15501,
+    "gitSha256": "1c52b5dcecd7da10c8fa11cfe80512801d59d9bf15b8564729b0053de11dd046"
+  },
+  {
+    "path": "docs/adr/0080-exact-session-execution-result-confirmation.md",
+    "worktreeBytes": 4016,
+    "worktreeSha256": "121be6acc7e51aebb82c71d3f386fb18ac79a30c04b381481b833c35725d58f0",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 4016,
+    "gitSha256": "121be6acc7e51aebb82c71d3f386fb18ac79a30c04b381481b833c35725d58f0"
+  },
+  {
+    "path": "docs/adr/0081-pi-execution-wait-continuation.md",
+    "worktreeBytes": 4358,
+    "worktreeSha256": "359b828acbe51984e996a0b511c9df6823c949dd920eb97350f0898fbc6e33c6",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 4358,
+    "gitSha256": "359b828acbe51984e996a0b511c9df6823c949dd920eb97350f0898fbc6e33c6"
+  },
+  {
+    "path": "docs/agent-integration.md",
+    "worktreeBytes": 17660,
+    "worktreeSha256": "cefe166815887dc4ff9bd77f3e58baca60daa6bde94a1d36224389d247b23e51",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 17525,
+    "gitSha256": "ac31cabf1a51e3d1594328055ee9fee3978b0738327fa1cc192fc775d0602009"
+  },
+  {
+    "path": "docs/route-policy-matrix.md",
+    "worktreeBytes": 47476,
+    "worktreeSha256": "131c103a858cdf8bfd8053d71c3170ca0b7088e0465cd6d3bc29ef6d8433937f",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 47476,
+    "gitSha256": "131c103a858cdf8bfd8053d71c3170ca0b7088e0465cd6d3bc29ef6d8433937f"
+  },
+  {
+    "path": "packages/agent-sdk/src/execution-adapters.test.ts",
+    "worktreeBytes": 8197,
+    "worktreeSha256": "2e4cab3c3b6cbcc66d631e22ad6786c738220e6cd53543e5cb4e7a5677a91da2",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 8197,
+    "gitSha256": "2e4cab3c3b6cbcc66d631e22ad6786c738220e6cd53543e5cb4e7a5677a91da2"
+  },
+  {
+    "path": "packages/agent-sdk/src/index.ts",
+    "worktreeBytes": 79071,
+    "worktreeSha256": "bcb1d8de6269f06d1e22c86edb89c786fb2e17e7afa68bd84d5fcb0b70e72957",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 78208,
+    "gitSha256": "5eaf5e73fc7a1627c516701d981f7c35c112e590a023583dea91b42730b5eb56"
+  },
+  {
+    "path": "packages/conformance/src/execution-recovery.conformance.test.ts",
+    "worktreeBytes": 43278,
+    "worktreeSha256": "8b16415bba8526e79e41eaa88e0311a9be4b1a4eb5788a2e5d0be5f7c96a964d",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 36380,
+    "gitSha256": "50901a782b397a59fee096b14306ddbb87c12550e35db3463db8dc0a779b72b2"
+  },
+  {
+    "path": "packages/conformance/src/execution-recovery.fixture.ts",
+    "worktreeBytes": 14169,
+    "worktreeSha256": "cd138bb3a66158285df99ee218d54508577304732c2ab3a212cf3b7250502861",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 12423,
+    "gitSha256": "afe194370e5ae0c81551061d780f17a95e364dbe407daeb7a9761c12e8d0d444"
+  },
+  {
+    "path": "packages/conformance/tsconfig.build.json",
+    "worktreeBytes": 212,
+    "worktreeSha256": "45271204c00bffd45a5cf38401eab5ae913337b3e16c03b08287572d3cbdb236",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 203,
+    "gitSha256": "f5cee7898e81c8f6dc0759d2eed22d9f542d6ed71b35181029be5e1e632e2f6f"
+  },
+  {
+    "path": "packages/conformance/vitest.integration.config.ts",
+    "worktreeBytes": 318,
+    "worktreeSha256": "459d80170ee9a7c28c001e4d8b75b2bfe270c0e031fbc83a8a07e961b0194388",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 312,
+    "gitSha256": "13cd8ee169130d57826efd1ac1a3bab525e5f288065765959208d0cada10fbef"
+  },
+  {
+    "path": "packages/contracts/src/agent-discovery-rules.ts",
+    "worktreeBytes": 249143,
+    "worktreeSha256": "3cc266a5e3486639b64cf9a49e9aa92e29e326a66df2ccc8009a52c3d89fc6fa",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 249143,
+    "gitSha256": "3cc266a5e3486639b64cf9a49e9aa92e29e326a66df2ccc8009a52c3d89fc6fa"
+  },
+  {
+    "path": "packages/contracts/src/agent-discovery.ts",
+    "worktreeBytes": 12359,
+    "worktreeSha256": "722624a98c0898a4a67076ff7aa9c98016788edcc11d1f69fe1d7433e6823a9f",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 12181,
+    "gitSha256": "e0dc4a87c19f39c16c20a5b41c49ebf11180a66b290519e61b9b1018dc94ce4b"
+  },
+  {
+    "path": "packages/contracts/src/execution-contracts.ts",
+    "worktreeBytes": 3543,
+    "worktreeSha256": "0e36c8818171043f71c086bc55576aa0284743dc5ca544c85922faf3c6d08025",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 3492,
+    "gitSha256": "476408dac614d8a6d8e62170fc58257fd166f1db065d758304a0c74655476309"
+  },
+  {
+    "path": "packages/contracts/src/execution-waits.test.ts",
+    "worktreeBytes": 4156,
+    "worktreeSha256": "75fcb3092d05d48142a493f8160e4363b135c073bc686b5fb0e1ba690a9e71d3",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 4156,
+    "gitSha256": "75fcb3092d05d48142a493f8160e4363b135c073bc686b5fb0e1ba690a9e71d3"
+  },
+  {
+    "path": "packages/contracts/src/index.ts",
+    "worktreeBytes": 190663,
+    "worktreeSha256": "5c9bc25fea6eee7bb7766b1345794bd62466a22fbfa85a31f709fc815905e227",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 187486,
+    "gitSha256": "86e1df459f7e4f27318aae59ead96f07c87f58f60758d09f54c56db771595899"
+  },
+  {
+    "path": "packages/contracts/src/pi-workbench-contracts.ts",
+    "worktreeBytes": 28754,
+    "worktreeSha256": "ea7f9807e29d48079cd49af0c33caa3e6baeaeaf1f7fbbca4342452fd9f14dbc",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 28159,
+    "gitSha256": "8b5cc44fd3cbcadbbdfbb2620ec249f988b76d4376e34d162e5fc297b5a20d73"
+  },
+  {
+    "path": "packages/contracts/src/route-policy-bindings.ts",
+    "worktreeBytes": 33393,
+    "worktreeSha256": "db84c0287455e801fce31faaca620af3b542875fb73da30da20982656fbf1b69",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 32176,
+    "gitSha256": "767f35831121c014bc2592d96855cbf11c172343488f491419d7a60851390b1e"
+  },
+  {
+    "path": "packages/contracts/src/route-policy.test.ts",
+    "worktreeBytes": 16176,
+    "worktreeSha256": "6fdccae476e848e5960f5154e0b8b22917208f4993c0e79cc0fa9d566f71071e",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 15771,
+    "gitSha256": "edfaf943caad86de61bc3a2797b7a3d73afcff4663d2770a32fd325125bb7026"
+  },
+  {
+    "path": "packages/contracts/src/route-policy.ts",
+    "worktreeBytes": 25869,
+    "worktreeSha256": "bd32078822c4838a5c73fd37c80974e284b6ae53afbde981fccdc114155857f8",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 25196,
+    "gitSha256": "07b133aaccaa261dd8869bce2f777e1ee7a1b10e3a277984b0aa8247b7570058"
+  },
+  {
+    "path": "packages/db/integration/migration-baseline.integration.test.ts",
+    "worktreeBytes": 22897,
+    "worktreeSha256": "96929311d9d7e26bde842d897b10c8bfc56a6f82569c6f829432a82f31a4a8db",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 22556,
+    "gitSha256": "ea842a738fa6effe5037ecd6e8759a1397a61f07ff7e7528b70e049fc19084fd"
+  },
+  {
+    "path": "packages/db/migrations/v1/0017_execution_origin_and_waits.sql",
+    "worktreeBytes": 8409,
+    "worktreeSha256": "554c98a97f1e26db87ce71fb3415ba935a8ec12639dd8b11fd5625cb6ac098d0",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 8266,
+    "gitSha256": "757b8f0eae9df9a35e424456630a1bc8eb4885d5d566d255107579dee1d4040d"
+  },
+  {
+    "path": "packages/db/src/agent-lock-order-manifest.ts",
+    "worktreeBytes": 28397,
+    "worktreeSha256": "bbae21d6eb1261194481c37a8555aa68c938a9b38c5fb4de6c90d60599ca0a4a",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 28136,
+    "gitSha256": "6c6aba41d7a578fbe08ca59360be0f309ec329c44804d0c4907f8132b792c2dc"
+  },
+  {
+    "path": "packages/db/src/index.ts",
+    "worktreeBytes": 6780,
+    "worktreeSha256": "567c0cd7dfdd27f773c29f6e4cd3c2fb5814e18cbdd5ef9e3b7b13ed2c520c3c",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 6654,
+    "gitSha256": "ff4e51c90443a62a66ef7b937beb3dd3ca8bae714be502cfe94e4422719c6eca"
+  },
+  {
+    "path": "packages/db/src/migration-manifest.ts",
+    "worktreeBytes": 11642,
+    "worktreeSha256": "c0926c0d7a471c3346727a23c1fac9c599c05a75986996ea0208006463f24f22",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 11642,
+    "gitSha256": "c0926c0d7a471c3346727a23c1fac9c599c05a75986996ea0208006463f24f22"
+  },
+  {
+    "path": "packages/db/src/migrations.test.ts",
+    "worktreeBytes": 2736,
+    "worktreeSha256": "86f658791b8462314ee671ee87edd5ca52cdd8d506d42abc7bd72a6950568cc7",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 2679,
+    "gitSha256": "060c49132a2a97be030ad856419eeb67178d3e6d8991c5f5065f52bb3658ad1c"
+  },
+  {
+    "path": "packages/db/src/schema.ts",
+    "worktreeBytes": 92168,
+    "worktreeSha256": "985ecbc95d8a2c237f6f5a054465eebf6b0b6e54dbcb452e47e1eb9a92ca647c",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 91521,
+    "gitSha256": "ea3ffdb43264576b5bf938815b7d6418843bca207b2a24705f536d790d75bc08"
+  },
+  {
+    "path": "packages/db/src/workbench-execution-waits.ts",
+    "worktreeBytes": 33986,
+    "worktreeSha256": "7ccfdde4832bb61223aec3728381ee18cf873a75e9738637392d73160389355f",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 32585,
+    "gitSha256": "9dddac45a41211488331c35e64f0f05b0e6e5d1a399f5379c8cf1c9c1f49bd39"
+  },
+  {
+    "path": "scripts/ci-policy.mjs",
+    "worktreeBytes": 11686,
+    "worktreeSha256": "66a41418020fe7ca5a88b8ebd5a5b736c8ec3aa660e1745fe902314b05ccc06f",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 11527,
+    "gitSha256": "5b158516e92044b13d3f3a73509c54c048b549329b10e00563dd349932068b68"
+  },
+  {
+    "path": "scripts/ci-policy.test.mjs",
+    "worktreeBytes": 13155,
+    "worktreeSha256": "4060371d37d26d7a4b5dcadd771ec2dc30797aa184d010d4ffd3c3943f16f047",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 12941,
+    "gitSha256": "0d33dab2227b6577aa75d0706d19a4767002ad5aa1491460eb3587ca5c2dc356"
+  },
+  {
+    "path": "scripts/generate-agent-discovery.py",
+    "worktreeBytes": 5859,
+    "worktreeSha256": "a0f6724e646b7a29980d4ae7c682186e2a13750bf19dd2c16a4358b6ecf1ce20",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 5818,
+    "gitSha256": "145244a3b8df30cfda9b25da3a07f495a521bf47a24c8eab99b20a46e72d5520"
+  },
+  {
+    "path": "scripts/generate-route-policy-artifacts.mts",
+    "worktreeBytes": 9305,
+    "worktreeSha256": "e37f7b39f0ff11daeab57f35d0f7b5007a1dd1428c8f1f62f973b58f0796ca25",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 9112,
+    "gitSha256": "29a66c26374c07814a05aa3ee7a9098110b64ff0bfe3b6cbdf4d253d29a15907"
+  },
+  {
+    "path": "scripts/m1-clean-build-spill.ps1",
+    "worktreeBytes": 5872,
+    "worktreeSha256": "8f6a54ba151c44c856faa32ebd53b61a06db94e159f89d79213ed6ec4faca22a",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 5872,
+    "gitSha256": "8f6a54ba151c44c856faa32ebd53b61a06db94e159f89d79213ed6ec4faca22a"
+  },
+  {
+    "path": "scripts/m1-clean-interrupted.py",
+    "worktreeBytes": 3977,
+    "worktreeSha256": "5f82e9ee8d6687924e74aaafd8ceac8884507c4eb72cb28c96e2b901b53abac9",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 3977,
+    "gitSha256": "5f82e9ee8d6687924e74aaafd8ceac8884507c4eb72cb28c96e2b901b53abac9"
+  },
+  {
+    "path": "scripts/m1-product-evidence.py",
+    "worktreeBytes": 10185,
+    "worktreeSha256": "99a11796b5e26143b04101ea912ddc4d771a72d419a1c5d0281243f340750a82",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 10185,
+    "gitSha256": "99a11796b5e26143b04101ea912ddc4d771a72d419a1c5d0281243f340750a82"
+  },
+  {
+    "path": "scripts/m1-product-mapping.mts",
+    "worktreeBytes": 7241,
+    "worktreeSha256": "4ce1ce1c456a1b574b42392ff1ee1fe3f867ab642fdda5684ea301ef338c9c36",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 7241,
+    "gitSha256": "4ce1ce1c456a1b574b42392ff1ee1fe3f867ab642fdda5684ea301ef338c9c36"
+  },
+  {
+    "path": "scripts/m1-product-resources.py",
+    "worktreeBytes": 6569,
+    "worktreeSha256": "784a19767daaf5ed8829e800bff299c2bed336b0878d4a90e011cb3637158ea2",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 6569,
+    "gitSha256": "784a19767daaf5ed8829e800bff299c2bed336b0878d4a90e011cb3637158ea2"
+  },
+  {
+    "path": "scripts/m1-product-verify.py",
+    "worktreeBytes": 3774,
+    "worktreeSha256": "abb10d295a6d267ef88b3ed4e0c4aa1684c1640284247faa02651dab3683542e",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 3774,
+    "gitSha256": "abb10d295a6d267ef88b3ed4e0c4aa1684c1640284247faa02651dab3683542e"
+  },
+  {
+    "path": "scripts/m1-review-repair-evidence.py",
+    "worktreeBytes": 11288,
+    "worktreeSha256": "4bdd729a8c762d1d9b20c0be2bf428fb9665e93692c9bbb7c0631a2ef8c43dfa",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 8824,
+    "gitSha256": "51fbb5569dd4cf58774af6dc17d40e03ae38ba6380bae25c41c1ac7270aae306"
+  },
+  {
+    "path": "scripts/m1-run-check.py",
+    "worktreeBytes": 5523,
+    "worktreeSha256": "ad6f32eb6fedd9b4ed7cc75be7b72501372b9ef124b8d85dfccbeec3e0a48575",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 5457,
+    "gitSha256": "0176902f4e1661b58fbe9b8c650b8a99d3ed38817fac0e9831362f6e87db4e73"
+  },
+  {
+    "path": "scripts/m1-run-services.py",
+    "worktreeBytes": 7371,
+    "worktreeSha256": "812ceb048c047828eeb96136467c22c106c7819e2836784a8ca76476ded5e118",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 7276,
+    "gitSha256": "c8c8645114bcd98d79b913b8e2acc1cd3006260da3d0c84b25a335ae65778a21"
+  },
+  {
+    "path": "vitest.config.ts",
+    "worktreeBytes": 1575,
+    "worktreeSha256": "5212fc049cbe08b68fdaabb2625e040d63b6f57c57ae5a9b6872c034ab25284c",
+    "gitSourceHead": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+    "gitBytes": 1544,
+    "gitSha256": "30eeacc02f8fb0e77e850acf6c21f776eeda13902c11ac3af231e1958ddb42cf"
+  }
+]

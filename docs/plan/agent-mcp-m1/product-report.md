@@ -1,6 +1,6 @@
 # M1 主执行 Agent 产品成果候选
 
-当前候选在原 `6e90926e…` 成果独审后修复三项阻塞；最新改动、完整根集成结果、九类差分矩阵、真实首败及最终双字节/清理证据见 [成果独审修复报告](product-review-repair-report.md)。下列主体保留原候选的历史结果与限制，不能替代本轮新受测组合；本轮仍停另一 Agent 成果复审，未合入。
+最新修复针对 `420aa…` 复审尚余的真实失权 queued Turn 阻塞，代码、真实 HTTP/Pi、九类差分与本轮证据见 [失权排队续接修复报告](product-queued-author-repair-report.md)。前轮 [修复报告](product-review-repair-report.md) 保留历史：原前两项已由另一 Agent 确认闭合，第三项的直接消息夹具没有覆盖真实 `/turns`。下列主体保留原候选结果与限制，不能替代本轮新受测组合；仍停平台成果复审，未合入。
 
 本卡已按已审方案实现执行、Lease、Stop 恢复和精确原动作只读确认，并完成本机适用检查及真实 HTTP/MCP/Pi 验证。本报告是主执行 Agent 对整卡的汇总，不以内部子任务结束或 checkpoint 代替交付。当前停在**平台另一 Agent 完整成果独审**；最新 PR Required CI、实际 main 合入和 todo Done 尚未完成，不能据本报告称整卡已验收。
 

@@ -5,11 +5,14 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 import zipfile
 
 root = Path(__file__).resolve().parent.parent
 evidence = root / 'docs/plan/agent-mcp-m1/product-evidence'
-base = '6e90926e768290c85863c35c400aa6866e4d1f12'
+prefix = sys.argv[1] if len(sys.argv) > 1 else 'review-repair'
+base = sys.argv[2] if len(sys.argv) > 2 else '6e90926e768290c85863c35c400aa6866e4d1f12'
+assert re.fullmatch(r'[a-z0-9-]+', prefix) and re.fullmatch(r'[a-f0-9]{40}', base)
 digest = lambda value: hashlib.sha256(value).hexdigest()
 def git(*args):
     return subprocess.check_output(['git', *args], cwd=root, stderr=subprocess.DEVNULL)
@@ -19,13 +22,13 @@ def save(name, value):
 historical = set(git('ls-tree', '-r', '--name-only', base).decode().splitlines())
 new_logs = [path for path in evidence.glob('*.log') if path.relative_to(root).as_posix() not in historical]
 previous_raw = {}
-raw_path = evidence / 'review-repair-raw-logs.zip'
+raw_path = evidence / f'{prefix}-raw-logs.zip'
 if raw_path.exists():
     with zipfile.ZipFile(raw_path) as saved:
         previous_raw = {row['path']: saved.read(row['member']) for row in json.loads(saved.read('index.json'))}
 raw = []
 members = set()
-with zipfile.ZipFile(evidence / 'review-repair-raw-logs.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
+with zipfile.ZipFile(raw_path, 'w', zipfile.ZIP_DEFLATED) as archive:
     for path in sorted(new_logs):
         data = previous_raw.get(path.name, path.read_bytes())
         normalized = ('\n'.join(line.rstrip() for line in data.decode('utf8').splitlines()).rstrip() + '\n').encode()
@@ -37,10 +40,10 @@ with zipfile.ZipFile(evidence / 'review-repair-raw-logs.zip', 'w', zipfile.ZIP_D
         raw.append(dict(path=path.name, member=member, bytes=len(data), sha256=digest(data)))
         path.write_text('\n'.join(line.rstrip() for line in data.decode('utf8').splitlines()).rstrip() + '\n', encoding='utf8', newline='\n')
     archive.writestr('index.json', json.dumps(raw, ensure_ascii=False, indent=2))
-save('review-repair-raw-log-index.json', dict(archive='review-repair-raw-logs.zip', entries=raw))
+save(f'{prefix}-raw-log-index.json', dict(archive=raw_path.name, entries=raw))
 
 checks = []
-for path in sorted(evidence.glob('review-repair-*.json')):
+for path in sorted(evidence.glob(f'{prefix}-*.json')):
     receipt = json.loads(path.read_text(encoding='utf8'))
     if 'command' not in receipt:
         continue
@@ -66,17 +69,17 @@ for path in sorted(evidence.glob('review-repair-*.json')):
         runtimeSeconds=receipt['runtimeSeconds'], inputArchive=receipt['inputArchive'],
         inputArchiveSha256=receipt['inputArchiveSha256'], node=receipt['node'], summaries=summaries,
         changedDuringRun=during, changedSinceRun=differences, log=path.stem + '.log'))
-save('review-repair-check-index.json', checks)
+save(f'{prefix}-check-index.json', checks)
 lines = ['# 本轮独审修复实际检查', '', '退出与运行时只取原回执；定向筛选的 skip 不计完整套件通过。前后变化逐路径列在 JSON，生成器的派生清单写入与真实产品代码变化分别解释。', '', '| 命令回执 | 退出 / 秒 | 原数量 |', '| --- | --- | --- |']
 for row in checks:
     lines.append(f'| [{row["name"]}]({row["name"]}.json) | {row["exitCode"]} / {row["runtimeSeconds"]:.3f} | {"<br>".join(row["summaries"])} |')
-(evidence / 'review-repair-check-index.md').write_text('\n'.join(lines) + '\n', encoding='utf8')
+(evidence / f'{prefix}-check-index.md').write_text('\n'.join(lines) + '\n', encoding='utf8')
 
 sources = []
 original_sources = {row['path'] for row in json.loads((evidence / 'product-source-index.json').read_text(encoding='utf8'))}
 paths = git('diff', '--name-only', 'e49eda142d61bdd248ddc42ec16f5563abd4bbc6', '--').decode().splitlines()
 paths += git('ls-files', '--others', '--exclude-standard').decode().splitlines()
-with zipfile.ZipFile(evidence / 'review-repair-source.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
+with zipfile.ZipFile(evidence / f'{prefix}-source.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
     for relative in sorted(set(paths)):
         path = root / relative
         if not path.is_file() or not (relative in original_sources or relative.startswith(('apps/', 'packages/', 'scripts/'))):
@@ -90,7 +93,7 @@ with zipfile.ZipFile(evidence / 'review-repair-source.zip', 'w', zipfile.ZIP_DEF
             gitSourceHead=base, gitBytes=len(previous.stdout) if previous.returncode == 0 else None,
             gitSha256=digest(previous.stdout) if previous.returncode == 0 else None))
     archive.writestr('source-index.json', json.dumps(sources, ensure_ascii=False, indent=2))
-save('review-repair-source-index.json', sources)
+save(f'{prefix}-source-index.json', sources)
 
 docker_args = ['docker', 'ps', '-a', '--no-trunc', '--format', '{{json .}}']
 observation = subprocess.run(docker_args, capture_output=True, text=True, encoding='utf8')
@@ -113,7 +116,7 @@ processes = json.loads(process_observation.stdout) if process_observation.stdout
 if isinstance(processes, dict):
     processes = [processes]
 assert not any(row['sameWorkspace'] for row in processes), '本轮受测进程仍活动'
-save('review-repair-resources.json', dict(observedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+save(f'{prefix}-resources.json', dict(observedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     dockerObservation=dict(args=docker_args, exitCode=observation.returncode), registries=registries,
     remainingOwnedContainers=owned, sharedContainersPreserved=[dict(id=row['ID'], name=row['Names'], state=row['State']) for row in containers],
     recordedProcessIds=process_ids, currentMatchingProcesses=processes, processObservationExitCode=process_observation.returncode,
@@ -125,5 +128,37 @@ for path in sorted(evidence.glob('*.zip')):
     with zipfile.ZipFile(path) as archive:
         assert archive.testzip() is None, path.name
     archives.append(dict(path=path.name, bytes=path.stat().st_size, sha256=digest(path.read_bytes()), crcVerified=True))
-save('review-repair-archive-index.json', archives)
+save(f'{prefix}-archive-index.json', archives)
+if '--verify' in sys.argv[3:]:
+    commands = []
+    for args in [['git', 'add', '--all'], ['git', 'diff', '--cached', '--check',
+                  'e49eda142d61bdd248ddc42ec16f5563abd4bbc6', '--']]:
+        result = subprocess.run(args, cwd=root, capture_output=True)
+        commands.append(dict(args=args, exitCode=result.returncode,
+                             stdout=result.stdout.decode('utf8'), stderr=result.stderr.decode('utf8')))
+        assert result.returncode == 0, args
+    frozen = []
+    for name in ['savedplan.md', 'implementation.md', 'operation-decisions.json', 'schema-proposal.sql',
+                 'wait-dto-proposal.json', 'source-snapshot.zip', 'source-manifest.json']:
+        relative = 'docs/plan/agent-mcp-m1/' + name
+        original = git('rev-parse', '938f67f88c4f6889cbd49a3fd9b81fbd62aa60f6:' + relative).decode().strip()
+        assert original == git('rev-parse', ':' + relative).decode().strip(), relative
+        frozen.append(dict(path=relative, gitObjectId=original))
+    bindings = []
+    for row in sources:
+        staged = git('show', ':' + row['path'])
+        assert staged.replace(b'\r\n', b'\n') == (root / row['path']).read_bytes().replace(b'\r\n', b'\n')
+        bindings.append(dict(path=row['path'], stagedGitBytes=len(staged), stagedGitSha256=digest(staged),
+                             worktreeBytes=row['worktreeBytes'], worktreeSha256=row['worktreeSha256']))
+    for row in archives:
+        assert digest(git('show', ':docs/plan/agent-mcp-m1/product-evidence/' + row['path'])) == row['sha256']
+    mapping = 'docs/plan/agent-mcp-m1/product-operation-matrix.json'
+    assert git('show', ':' + mapping) == git('show', base + ':' + mapping)
+    assert len(json.loads((root / mapping).read_text(encoding='utf8'))['operations']) == 43
+    changes = git('diff', '--cached', '--name-only', base, '--').decode().splitlines()
+    assert not any(path in historical and path.startswith('docs/plan/agent-mcp-m1/product-evidence/') for path in changes)
+    assert not git('ls-files', '--others', '--exclude-standard', 'apps', 'packages').strip()
+    save(f'{prefix}-static.json', dict(result='passed', candidateParent=base, commands=commands,
+        frozenPlan=frozen, sourceBindings=bindings, archiveCount=len(archives), operations=43,
+        oldEvidenceUnchanged=True, actualSqlOrServicesRun=False))
 print(json.dumps(dict(checks=len(checks), sourceFiles=len(sources), newArchives=len(archives), newOwnedResources=sum(len(row['resources']) for row in registries), remainingOwned=len(owned))))

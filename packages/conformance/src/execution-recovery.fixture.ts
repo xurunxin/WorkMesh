@@ -6,6 +6,7 @@ import { resolve } from 'node:path'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { WorkMeshClient } from '@workmesh/agent-sdk'
+import { hashPassword } from '@workmesh/db'
 import { createMcpCoverageFixture, type Execution } from './mcp-coverage.fixture.js'
 
 const execFileAsync = promisify(execFile)
@@ -19,6 +20,30 @@ const redact = (value: string) => value.replace(/wm[ips]_[A-Za-z0-9_-]+/g, '[cre
 export async function createExecutionRecoveryFixture() {
   const fixture = await createMcpCoverageFixture()
   const ownedModels: ReturnType<typeof createServer>[] = []
+  const createHumanMember = async (workspaceId: string) => {
+    // Membership administration has no public endpoint. Only actor/membership
+    // setup is privileged; login, posting a queued Turn and read denial use HTTP.
+    const email = `${randomUUID()}@m1.test`, password = randomBytes(24).toString('hex')
+    const id = (await fixture.db.query<{ id: string }>(`INSERT INTO actors
+      (workspace_id,kind,display_name,email,password_hash,workspace_role)
+      VALUES($1,'human','Queued input author',$2,$3,'member') RETURNING id`,
+    [workspaceId, email, await hashPassword(password)])).rows[0]!.id
+    await fixture.db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'member')",
+      [workspaceId, fixture.teamId, id])
+    const login = await fetch(fixture.baseUrl + '/api/v1/auth/login', { method: 'POST',
+      headers: { 'content-type': 'application/json', 'idempotency-key': randomUUID() },
+      body: JSON.stringify({ email, password }) })
+    if (!login.ok) throw new Error(`Queued Human login failed: ${login.status}`)
+    const cookie = login.headers.get('set-cookie')!.split(';')[0]!
+    const csrf = (await login.json() as { csrfToken: string }).csrfToken
+    const request = async (method: string, path: string, body?: unknown, revision?: number) => fetch(fixture.baseUrl + path, {
+      method, headers: { cookie, 'x-csrf-token': csrf, 'idempotency-key': randomUUID(),
+        ...(body === undefined ? {} : { 'content-type': 'application/json' }),
+        ...(revision ? { 'if-match': `"revision-${revision}"` } : {}) },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    })
+    return { id, request }
+  }
   // Public pairing allows one agentSlug per Team. This explicit privileged
   // adversarial fixture preserves real Agent/principal/Team authority while
   // giving another Connection an independently valid credential and alias.
@@ -138,7 +163,7 @@ export async function createExecutionRecoveryFixture() {
     }
     return { captures, conversationId, turnId, run }
   }
-  return { ...fixture, pairSameAgent, nativeInstallation, refreshExecution, facts, createPi,
+  return { ...fixture, pairSameAgent, nativeInstallation, refreshExecution, facts, createPi, createHumanMember,
     close: async () => {
       for (const model of ownedModels) { model.closeAllConnections(); if (model.listening) await new Promise<void>((done, reject) => model.close(error => error ? reject(error) : done())) }
       await fixture.close()
