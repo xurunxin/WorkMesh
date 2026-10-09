@@ -10,48 +10,48 @@
 
 @workmesh/git-provider:build: cache miss, executing 3da6ee4a3a6df9a0
 @workmesh/observability:test: cache miss, executing 1236060aefe32be6
-@workmesh/git-provider:build: 
+@workmesh/git-provider:build:
 @workmesh/git-provider:build: > @workmesh/git-provider@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\git-provider
 @workmesh/git-provider:build: > tsc -p tsconfig.json
-@workmesh/git-provider:build: 
-@workmesh/observability:test: 
+@workmesh/git-provider:build:
+@workmesh/observability:test:
 @workmesh/observability:test: > @workmesh/observability@ test C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\observability
 @workmesh/observability:test: > vitest run
-@workmesh/observability:test: 
-@workmesh/observability:test: 
+@workmesh/observability:test:
+@workmesh/observability:test:
 @workmesh/observability:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/observability
-@workmesh/observability:test: 
+@workmesh/observability:test:
 @workmesh/observability:build: cache miss, executing b6dc72e1ac9f4caa
 @workmesh/observability:test:  ✓ src/index.test.ts (3 tests) 6ms
 @workmesh/observability:test:  ✓ src/workbench-slo.test.ts (13 tests) 6ms
-@workmesh/observability:test: 
+@workmesh/observability:test:
 @workmesh/observability:test:  Test Files  2 passed (2)
 @workmesh/observability:test:       Tests  16 passed (16)
 @workmesh/observability:test:    Start at  22:24:04
 @workmesh/observability:test:    Duration  1.18s (transform 78ms, setup 0ms, collect 131ms, tests 12ms, environment 0ms, prepare 455ms)
-@workmesh/observability:test: 
-@workmesh/observability:build: 
+@workmesh/observability:test:
+@workmesh/observability:build:
 @workmesh/observability:build: > @workmesh/observability@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\observability
 @workmesh/observability:build: > tsc -p tsconfig.json
-@workmesh/observability:build: 
+@workmesh/observability:build:
 @workmesh/artifact-storage:build: cache miss, executing 4593dda9d490ee8a
-@workmesh/artifact-storage:build: 
+@workmesh/artifact-storage:build:
 @workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\artifact-storage
 @workmesh/artifact-storage:build: > tsc -p tsconfig.json
-@workmesh/artifact-storage:build: 
+@workmesh/artifact-storage:build:
 @workmesh/contracts:test: cache miss, executing 20fc900d24a6737a
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test: > @workmesh/contracts@ test C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\contracts
 @workmesh/contracts:test: > vitest run
-@workmesh/contracts:test: 
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
+@workmesh/contracts:test:
 @workmesh/contracts:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/contracts
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/ui:build: cache miss, executing 30c25aafa20b4691
-@workmesh/ui:build: 
+@workmesh/ui:build:
 @workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\ui
 @workmesh/ui:build: > tsc -p tsconfig.json
-@workmesh/ui:build: 
+@workmesh/ui:build:
 @workmesh/contracts:test:  ✓ src/execution-waits.test.ts (3 tests) 9ms
 @workmesh/contracts:test:  ✓ src/stage2-contracts.test.ts (4 tests) 25ms
 @workmesh/contracts:test:  ✓ src/human-attention-contract.test.ts (3 tests) 9ms
@@ -105,34 +105,34 @@
 @workmesh/contracts:test:    ✓ routePolicyManifest > keeps the generated Markdown matrix in parity 14ms
 @workmesh/contracts:test:  ✓ src/recovery-contract.test.ts (2 tests) 316ms
 @workmesh/contracts:test:    ✓ Recovery Center public contract > publishes list/detail operations and resolvable Recovery schemas  309ms
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test:  FAIL  src/route-policy.test.ts > routePolicyManifest > is the unique serializable declaration for every runtime route
 @workmesh/contracts:test: AssertionError: expected [ { method: 'GET', …(17) }, …(277) ] to have a length of 277 but got 278
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test: - Expected
 @workmesh/contracts:test: + Received
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test: - 277
 @workmesh/contracts:test: + 278
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test:  ❯ src/route-policy.test.ts:73:33
 @workmesh/contracts:test:      71|     const legacyRoutes = agentRouteManifest.map(keyOf)
-@workmesh/contracts:test:      72| 
+@workmesh/contracts:test:      72|
 @workmesh/contracts:test:      73|     expect(routePolicyManifest).toHaveLength(277)
 @workmesh/contracts:test:        |                                 ^
 @workmesh/contracts:test:      74|     expect(new Set(policyRoutes).size).toBe(routePolicyManifest.length)
 @workmesh/contracts:test:      75|     expect(new Set(routePolicyManifest.map(route => route.operationId)…
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
-@workmesh/contracts:test: 
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
+@workmesh/contracts:test:
 @workmesh/contracts:test:  Test Files  1 failed | 26 passed (27)
 @workmesh/contracts:test:       Tests  1 failed | 205 passed (206)
 @workmesh/contracts:test:    Start at  22:24:08
 @workmesh/contracts:test:    Duration  5.75s (transform 2.01s, setup 0ms, collect 18.25s, tests 11.01s, environment 5ms, prepare 20.86s)
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test:  ELIFECYCLE  Test failed. See above for more details.
 @workmesh/contracts:build: cache miss, executing 443bafc082fd77ef
 @workmesh/ui:test: cache miss, executing 175a1be6f08f04ae
@@ -142,7 +142,7 @@
 
  Tasks:    4 successful, 10 total
 Cached:    0 cached, 10 total
-  Time:    14.427s 
+  Time:    14.427s
 Failed:    @workmesh/contracts#test
 
  WARNING  no output files found for task @workmesh/observability#test. Please check your `outputs` key in `turbo.json`

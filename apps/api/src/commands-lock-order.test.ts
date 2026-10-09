@@ -18,12 +18,13 @@ const context: CommandContext = {
 };
 
 describe("command coordination lock order", () => {
-  it("runs cross-resource coordination before idempotency foreign-key locks", async () => {
+  it.each([false, true])("runs coordination before reservation with execution-origin schema=%s", async present => {
     const calls: string[] = [];
     const tx = {
       query: vi.fn(async (sql: string) => {
         const normalized = sql.replaceAll(/\s+/g, " ").trim();
         calls.push(normalized);
+        if (normalized.includes("FROM pg_attribute")) return { rowCount: 1, rows: [{ present }] };
         return {
           rowCount: normalized.startsWith("INSERT INTO api_idempotency_keys")
             ? 1
@@ -56,11 +57,15 @@ describe("command coordination lock order", () => {
     expect(calls).toEqual([
       "BEGIN",
       "SELECT pg_advisory_xact_lock(1)",
+      expect.stringMatching(/^SELECT EXISTS\(SELECT 1 FROM pg_attribute/),
       expect.stringMatching(/^INSERT INTO api_idempotency_keys/),
       "HANDLER",
       expect.stringMatching(/^UPDATE api_idempotency_keys/),
       "COMMIT",
     ]);
+    const reservation = calls.find(sql => sql.startsWith("INSERT INTO api_idempotency_keys"))!;
+    expect(reservation.includes("execution_source_kind=NULL")).toBe(present);
+    expect(reservation.includes("execution_connection_id=NULL")).toBe(present);
     expect(authorizeReplay).not.toHaveBeenCalled();
     expect(tx.release).toHaveBeenCalledOnce();
   });
@@ -103,6 +108,7 @@ describe("command coordination lock order", () => {
     expect(handler).not.toHaveBeenCalled();
     expect(calls).toEqual([
       "BEGIN",
+      expect.stringMatching(/^SELECT EXISTS\(SELECT 1 FROM pg_attribute/),
       expect.stringMatching(/^INSERT INTO api_idempotency_keys/),
       expect.stringMatching(/^SELECT operation,request_hash/),
       "AUTHORIZE_REPLAY",

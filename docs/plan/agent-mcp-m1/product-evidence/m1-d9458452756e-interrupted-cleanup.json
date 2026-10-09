@@ -1,0 +1,89 @@
+{
+  "runId": "m1-d9458452756e",
+  "reason": "turn interrupted; final command output/exit were not retained",
+  "exitCode": null,
+  "resources": [
+    {
+      "id": "e51a643d7b1e0584c98d5a51254fc796296d6058f29b23c1b253ecf50b012f5b",
+      "name": "m1-d9458452756e-postgres",
+      "ownerVerified": true,
+      "cleanup": [
+        {
+          "args": [
+            "stop",
+            "--time",
+            "10",
+            "e51a643d7b1e0584c98d5a51254fc796296d6058f29b23c1b253ecf50b012f5b"
+          ],
+          "exitCode": 0,
+          "stdout": "Flag --time has been deprecated, use --timeout instead\ne51a643d7b1e0584c98d5a51254fc796296d6058f29b23c1b253ecf50b012f5b\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "rm",
+            "e51a643d7b1e0584c98d5a51254fc796296d6058f29b23c1b253ecf50b012f5b"
+          ],
+          "exitCode": 0,
+          "stdout": "e51a643d7b1e0584c98d5a51254fc796296d6058f29b23c1b253ecf50b012f5b\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "db5b69e95775062c7218bf5491a75a266947b17f0fb3a23a7a403e3292371026",
+      "name": "m1-d9458452756e-redis",
+      "ownerVerified": true,
+      "cleanup": [
+        {
+          "args": [
+            "stop",
+            "--time",
+            "10",
+            "db5b69e95775062c7218bf5491a75a266947b17f0fb3a23a7a403e3292371026"
+          ],
+          "exitCode": 0,
+          "stdout": "Flag --time has been deprecated, use --timeout instead\ndb5b69e95775062c7218bf5491a75a266947b17f0fb3a23a7a403e3292371026\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "rm",
+            "db5b69e95775062c7218bf5491a75a266947b17f0fb3a23a7a403e3292371026"
+          ],
+          "exitCode": 0,
+          "stdout": "db5b69e95775062c7218bf5491a75a266947b17f0fb3a23a7a403e3292371026\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "8978f17862a31326bbd28766fcb72bff336d703b16fb2399c2e4228125bc1107",
+      "name": "m1-d9458452756e-rustfs",
+      "ownerVerified": true,
+      "cleanup": [
+        {
+          "args": [
+            "stop",
+            "--time",
+            "10",
+            "8978f17862a31326bbd28766fcb72bff336d703b16fb2399c2e4228125bc1107"
+          ],
+          "exitCode": 0,
+          "stdout": "Flag --time has been deprecated, use --timeout instead\n8978f17862a31326bbd28766fcb72bff336d703b16fb2399c2e4228125bc1107\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "rm",
+            "8978f17862a31326bbd28766fcb72bff336d703b16fb2399c2e4228125bc1107"
+          ],
+          "exitCode": 0,
+          "stdout": "8978f17862a31326bbd28766fcb72bff336d703b16fb2399c2e4228125bc1107\n",
+          "stderr": ""
+        }
+      ]
+    }
+  ],
+  "observedAt": "2026-10-09T14:52:11.161978+00:00"
+}

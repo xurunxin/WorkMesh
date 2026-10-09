@@ -1,0 +1,1941 @@
+{
+  "observedAt": "2026-10-09T15:58:18.557822+00:00",
+  "dockerObservation": {
+    "args": [
+      "docker",
+      "ps",
+      "-a",
+      "--no-trunc",
+      "--format",
+      "{{json .}}"
+    ],
+    "exitCode": 0
+  },
+  "registeredResources": [
+    {
+      "runId": "m1-05e6bbc4f2f2",
+      "id": "32fedcd52ef36b7f5f394c48023fbf4d2d7c8cea1c42d2d752c9877ca7578a91",
+      "name": "m1-05e6bbc4f2f2-postgres",
+      "registry": "m1-05e6bbc4f2f2-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-05e6bbc4f2f2",
+      "id": "e3aef6b607c2cfaddf7e27329960838f15d7292f88b22d25c852f3d004cb20c8",
+      "name": "m1-05e6bbc4f2f2-redis",
+      "registry": "m1-05e6bbc4f2f2-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-05e6bbc4f2f2",
+      "id": "48289fd942090259ce28a58caf98193c11d14f6f67394a5ccaf08fc7e8094235",
+      "name": "m1-05e6bbc4f2f2-rustfs",
+      "registry": "m1-05e6bbc4f2f2-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-2651090bce93",
+      "id": "2069c50a88bbe8d478861db55bbbd0f1d51756e55b70e68a73feb89ab6cafd96",
+      "name": "m1-2651090bce93-postgres",
+      "registry": "m1-2651090bce93-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-2651090bce93",
+      "id": "b8916049f901d4bd7d48889380dc0d40877fe2425f6189b69d8028b1b81887c4",
+      "name": "m1-2651090bce93-redis",
+      "registry": "m1-2651090bce93-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-2651090bce93",
+      "id": "8ade25729b10d4dad7b79cbc83531aa20700d0a68831f898025564fa03bf1f47",
+      "name": "m1-2651090bce93-rustfs",
+      "registry": "m1-2651090bce93-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-32f1f4c4ba0f",
+      "id": "bfebc0ae95827bac730b81e8a927dd8c62f42eedec81c4c434ddf5ae718ba936",
+      "name": "m1-32f1f4c4ba0f-postgres",
+      "registry": "m1-32f1f4c4ba0f-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-32f1f4c4ba0f",
+      "id": "42043cd617912248370949119df565dd3ab0b395714da4df23d9c851c21ee497",
+      "name": "m1-32f1f4c4ba0f-redis",
+      "registry": "m1-32f1f4c4ba0f-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-32f1f4c4ba0f",
+      "id": "521c719495579c8e71665b9231a0c698dd8623339837f0d421c293db378f8d82",
+      "name": "m1-32f1f4c4ba0f-rustfs",
+      "registry": "m1-32f1f4c4ba0f-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-3dfa2f93ff11",
+      "id": "c34dfd43636282a2d86471691e8f1c793c6e3a4b4cd44e01678d069581201714",
+      "name": "m1-3dfa2f93ff11-postgres",
+      "registry": "m1-3dfa2f93ff11-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-3dfa2f93ff11",
+      "id": "3d94c29e8825dea6d0c5775fffe90e624be65182e94454953957070fad129e71",
+      "name": "m1-3dfa2f93ff11-redis",
+      "registry": "m1-3dfa2f93ff11-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-3dfa2f93ff11",
+      "id": "43c28dc02b21b6ef8a1f4a195da8fe69d6e810325c0a7f0326e91c8090f22937",
+      "name": "m1-3dfa2f93ff11-rustfs",
+      "registry": "m1-3dfa2f93ff11-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-5d990a5cbf81",
+      "id": "5f9306530ab9e7748a4c87c7730deaf3a0d133f5af4d68caa4856a003c8a85f1",
+      "name": "m1-5d990a5cbf81-postgres",
+      "registry": "m1-5d990a5cbf81-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-5d990a5cbf81",
+      "id": "3c304e5d2bdcadc559172eca7f8f6d33999558f9d45d32a560913e2d4d0cfa85",
+      "name": "m1-5d990a5cbf81-redis",
+      "registry": "m1-5d990a5cbf81-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-5d990a5cbf81",
+      "id": "1401df2b65d5ba98f4a537393ecc032ac2b4ffdce88073153ff108321a95271e",
+      "name": "m1-5d990a5cbf81-rustfs",
+      "registry": "m1-5d990a5cbf81-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-610952fddbc1",
+      "id": "88e7decdc599e5a30d48998cf730c26cce0e82e680d0a367075cced2f4db65b0",
+      "name": "m1-610952fddbc1-postgres",
+      "registry": "m1-610952fddbc1-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-610952fddbc1",
+      "id": "aa3f5a4f2e8da2b870471d1a1998e5c8a462b9c07a2d9694ffd1238179b4dc4c",
+      "name": "m1-610952fddbc1-redis",
+      "registry": "m1-610952fddbc1-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-610952fddbc1",
+      "id": "2e225e69b29d17033a456e23cb11155b72ef5ab2c4950d49af65c74950fd9d61",
+      "name": "m1-610952fddbc1-rustfs",
+      "registry": "m1-610952fddbc1-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-6e8e6f214790",
+      "id": "a1dfe0dac6f1fa3fe0e238894a8ab68d0555813fe994d36111136a03f29a47bb",
+      "name": "m1-6e8e6f214790-postgres",
+      "registry": "m1-6e8e6f214790-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-6e8e6f214790-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-6e8e6f214790",
+      "id": "a42127c6288cc61fe428b8168fa6106ea4a3bac78cd11257d67fa7077a6e2f71",
+      "name": "m1-6e8e6f214790-redis",
+      "registry": "m1-6e8e6f214790-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-6e8e6f214790-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-6e8e6f214790",
+      "id": "40d4748f3343688d54700a2d2901f6bf9ae67b8b72d9a8ae74e6013fb7f82119",
+      "name": "m1-6e8e6f214790-rustfs",
+      "registry": "m1-6e8e6f214790-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-6e8e6f214790-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-7ac935c9155c",
+      "id": "519d3ef4f5166dd38d98847655f10ca6d49f868146c4759394be8c34a5438d97",
+      "name": "m1-7ac935c9155c-postgres",
+      "registry": "m1-7ac935c9155c-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-7ac935c9155c",
+      "id": "53f2b5c63fb27acd4d25f445bd2fdf90cf6f4d71dbf86cce15a427a3ca19aa57",
+      "name": "m1-7ac935c9155c-redis",
+      "registry": "m1-7ac935c9155c-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-7ac935c9155c",
+      "id": "13edd835c7a7f3fe7b094816ca27ff77a16c89f407fe215459471340e34cbf79",
+      "name": "m1-7ac935c9155c-rustfs",
+      "registry": "m1-7ac935c9155c-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-7e5e7375cc57",
+      "id": "1887d66f788cab926db3abeb4264f21469777eba1e0f92d8c979acdbdbfa037c",
+      "name": "m1-7e5e7375cc57-postgres",
+      "registry": "m1-7e5e7375cc57-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-7e5e7375cc57",
+      "id": "2b390987265755e5ae98d4e71bd483d7efe8b19f36174beaac26b99a12f7a15b",
+      "name": "m1-7e5e7375cc57-redis",
+      "registry": "m1-7e5e7375cc57-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-7e5e7375cc57",
+      "id": "da4813ea4bc357af75f96cce37ac5d4b934b4f3491bd57351fa732cca4f4457a",
+      "name": "m1-7e5e7375cc57-rustfs",
+      "registry": "m1-7e5e7375cc57-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-86a5b73f4cbe",
+      "id": "d4800d67223c8a6cc7c74f6b67c0c6f4795fa5a9163b01ab25c29ade0a0f0595",
+      "name": "m1-86a5b73f4cbe-postgres",
+      "registry": "m1-86a5b73f4cbe-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-86a5b73f4cbe",
+      "id": "c60a2d39ab4256fc4a99e709814c901c8327935322b6c7decb603f80832a3c82",
+      "name": "m1-86a5b73f4cbe-redis",
+      "registry": "m1-86a5b73f4cbe-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-86a5b73f4cbe",
+      "id": "11718de811e3b13517f9c01929dadd7705576de0b78a21d69991dc66c1024092",
+      "name": "m1-86a5b73f4cbe-rustfs",
+      "registry": "m1-86a5b73f4cbe-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-895b1be30efd",
+      "id": "2ff51c84fb08a5e7a63ac602795f6f1081d7ab92ac5cf273c7763c6f62dd7688",
+      "name": "m1-895b1be30efd-postgres",
+      "registry": "m1-895b1be30efd-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-895b1be30efd",
+      "id": "d48ac173e6cbb479c00eaf5b1a54671073420d5c1b2cf2a9c20f0fe408c29d68",
+      "name": "m1-895b1be30efd-redis",
+      "registry": "m1-895b1be30efd-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-895b1be30efd",
+      "id": "2d631a39e7bb995e1f10c474a13abc2b4a40a5ad975113331c7fd3b70490bad6",
+      "name": "m1-895b1be30efd-rustfs",
+      "registry": "m1-895b1be30efd-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-89d8c4db9e78",
+      "id": "d8e0f672ae412bf7207cf9451f9027d05db88a6243eaaee7102b67f45d1c0fa1",
+      "name": "m1-89d8c4db9e78-postgres",
+      "registry": "m1-89d8c4db9e78-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-89d8c4db9e78",
+      "id": "328f48f2186d34bd5bf4a186a0dd383b8c019ad89059db11fab9f0ec898888ba",
+      "name": "m1-89d8c4db9e78-redis",
+      "registry": "m1-89d8c4db9e78-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-89d8c4db9e78",
+      "id": "1aa17ffdfe94bf76070f3958a4ce5b239c850035cc1a6353878684e01463c78f",
+      "name": "m1-89d8c4db9e78-rustfs",
+      "registry": "m1-89d8c4db9e78-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-8f919364cdd8",
+      "id": "604b256377d682f587d0a78700fe4ff4a5c4a467d950601cae6fcb8c04ce3f39",
+      "name": "m1-8f919364cdd8-postgres",
+      "registry": "m1-8f919364cdd8-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-8f919364cdd8-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-8f919364cdd8",
+      "id": "c51b93eeed5d1c975db051e4b2847157ee435611b4aad126a719e51998d63b54",
+      "name": "m1-8f919364cdd8-redis",
+      "registry": "m1-8f919364cdd8-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-8f919364cdd8-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-8f919364cdd8",
+      "id": "5f97288eb2cd361f847a1af4b1bc984de8e3ef82758a74f990d9de84f22619df",
+      "name": "m1-8f919364cdd8-rustfs",
+      "registry": "m1-8f919364cdd8-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-8f919364cdd8-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-951a400c74c6",
+      "id": "f9a75b70be19d714737b6428bd1d7f7405d278a465b94f422e9362c286d7cc3c",
+      "name": "m1-951a400c74c6-postgres",
+      "registry": "m1-951a400c74c6-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-951a400c74c6-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-951a400c74c6",
+      "id": "79fdae2eaba90fc5ab377a305b46ca0f574977a1f2647cc7094c7208fc359b57",
+      "name": "m1-951a400c74c6-redis",
+      "registry": "m1-951a400c74c6-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-951a400c74c6-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-951a400c74c6",
+      "id": "a9eb0c7441fc9063f76fa3541d659474b5ba0e7063685c2a41d5f9775888cb6c",
+      "name": "m1-951a400c74c6-rustfs",
+      "registry": "m1-951a400c74c6-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-951a400c74c6-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-9ec8e3debf17",
+      "id": "c4c0c39b36375915275235fa60b72f3ab7431273a35bc53be73c00468704ebc3",
+      "name": "m1-9ec8e3debf17-postgres",
+      "registry": "m1-9ec8e3debf17-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-9ec8e3debf17",
+      "id": "6dd1809b2890e8c142418f4f510d0f6103d09ccef80457af4d5ec908a09036b9",
+      "name": "m1-9ec8e3debf17-redis",
+      "registry": "m1-9ec8e3debf17-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-9ec8e3debf17",
+      "id": "dcc1b3c5cd17733ce4be8fee6f64daf098fbfa01e14b22963d6b5d11a458a348",
+      "name": "m1-9ec8e3debf17-rustfs",
+      "registry": "m1-9ec8e3debf17-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-a609b9b0f88c",
+      "id": "47aa106083a403916eb359ee483c2029ccc1aff0121081532bdae85926330093",
+      "name": "m1-a609b9b0f88c-postgres",
+      "registry": "m1-a609b9b0f88c-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-a609b9b0f88c",
+      "id": "c8d12e23f3f6c2380dcc7e2e115d0ad1b6c4015a3a510609b2f45e4221032da3",
+      "name": "m1-a609b9b0f88c-redis",
+      "registry": "m1-a609b9b0f88c-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-a609b9b0f88c",
+      "id": "0faa7dd5e691fb41ef98bb7cb451221212fa59d40adba5871db2a8d7b9294622",
+      "name": "m1-a609b9b0f88c-rustfs",
+      "registry": "m1-a609b9b0f88c-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-bb374da076b8",
+      "id": "d72bb8b30d4e9df13f0d1b6a98751ec935eda7ac1e47d67e1376eb6a67adbbfb",
+      "name": "m1-bb374da076b8-postgres",
+      "registry": "m1-bb374da076b8-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-bb374da076b8",
+      "id": "9d590bd8eda57f9430016a5edb8fa9977f8f9d9e866f77f4849d2acee95a5e6e",
+      "name": "m1-bb374da076b8-redis",
+      "registry": "m1-bb374da076b8-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-bb374da076b8",
+      "id": "8d50ceb87d031d918119b241ba9124401e1fd22bedca968822a90d01692b9787",
+      "name": "m1-bb374da076b8-rustfs",
+      "registry": "m1-bb374da076b8-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-ce05e55a9e95",
+      "id": "cb8290ad31010a99bb77f3180d1fdf738fa2b8add3a0634b54dd09a16e25605b",
+      "name": "m1-ce05e55a9e95-postgres",
+      "registry": "m1-ce05e55a9e95-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-ce05e55a9e95",
+      "id": "412a61f014ac6701402215aed505c46b998e7e6235311b968e45e7519c574c45",
+      "name": "m1-ce05e55a9e95-redis",
+      "registry": "m1-ce05e55a9e95-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-ce05e55a9e95",
+      "id": "6d22bd00e6380e6726073526b5dafe07b154932aa73aeeb5dabd7f7381a5ec75",
+      "name": "m1-ce05e55a9e95-rustfs",
+      "registry": "m1-ce05e55a9e95-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-ceffa526f57a",
+      "id": "1d17d02e830403ec141396e86314e38da0d3de1ef6b63769ed62e8f461227a87",
+      "name": "m1-ceffa526f57a-postgres",
+      "registry": "m1-ceffa526f57a-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-ceffa526f57a",
+      "id": "8884c11ae3fbb6a2e4a83745cef515b401afe8781aafeb9a37870f0911fd2d1d",
+      "name": "m1-ceffa526f57a-redis",
+      "registry": "m1-ceffa526f57a-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-ceffa526f57a",
+      "id": "9bacf9093e912d8d2a0352a68e933d8392a669a29758bab1d229bef8e2929d7d",
+      "name": "m1-ceffa526f57a-rustfs",
+      "registry": "m1-ceffa526f57a-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-cfde65a2e9a4",
+      "id": "019a17c56ee6caae9cf934584436a21c852e9c7b4bf3ccc8d62dad071c6ca8d1",
+      "name": "m1-cfde65a2e9a4-postgres",
+      "registry": "m1-cfde65a2e9a4-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-cfde65a2e9a4",
+      "id": "f1800d4b27bdd8d701ad361533e1695ae4f2996cc41bf4aebb21819abdabe70c",
+      "name": "m1-cfde65a2e9a4-redis",
+      "registry": "m1-cfde65a2e9a4-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-cfde65a2e9a4",
+      "id": "71f20d7dfee8db00fc464412b0f59a35773b0be6574c9521220af17c33708085",
+      "name": "m1-cfde65a2e9a4-rustfs",
+      "registry": "m1-cfde65a2e9a4-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-d31ae441e899",
+      "id": "e56278981b5a52c8e63a4b704a6fe92ebbac23369969ef1e1c23de69c649542e",
+      "name": "m1-d31ae441e899-postgres",
+      "registry": "m1-d31ae441e899-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-d31ae441e899",
+      "id": "7a62ba08d6fe5973c25735eff5c56ed427ed155270765d386683a8a5d7dd2c57",
+      "name": "m1-d31ae441e899-redis",
+      "registry": "m1-d31ae441e899-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-d31ae441e899",
+      "id": "41318db2c5210f95b4a900e1b57517d5ee98c91cfe58524a22e8c810ca63ff38",
+      "name": "m1-d31ae441e899-rustfs",
+      "registry": "m1-d31ae441e899-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-d574abe7362b",
+      "id": "1efa3e3437d5654eab26f78b60c3cbcc3833b44cf3c9452da00f5d80dc7ab0a2",
+      "name": "m1-d574abe7362b-postgres",
+      "registry": "m1-d574abe7362b-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-d574abe7362b",
+      "id": "080d2549134f5bf34b3af5a44c2d99174b45410d3a5d0930ba7bd97ff1f30979",
+      "name": "m1-d574abe7362b-redis",
+      "registry": "m1-d574abe7362b-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-d574abe7362b",
+      "id": "7e156b8557f2eeec939fdb9d1f6e16920af97cfb33034322fc26d81f70950a2b",
+      "name": "m1-d574abe7362b-rustfs",
+      "registry": "m1-d574abe7362b-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-d9458452756e",
+      "id": "e51a643d7b1e0584c98d5a51254fc796296d6058f29b23c1b253ecf50b012f5b",
+      "name": "m1-d9458452756e-postgres",
+      "registry": "m1-d9458452756e-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-d9458452756e-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-d9458452756e",
+      "id": "db5b69e95775062c7218bf5491a75a266947b17f0fb3a23a7a403e3292371026",
+      "name": "m1-d9458452756e-redis",
+      "registry": "m1-d9458452756e-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-d9458452756e-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-d9458452756e",
+      "id": "8978f17862a31326bbd28766fcb72bff336d703b16fb2399c2e4228125bc1107",
+      "name": "m1-d9458452756e-rustfs",
+      "registry": "m1-d9458452756e-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-d9458452756e-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-e3ae74575637",
+      "id": "f24038f96256ac0cc8f36ff51c46eb5f9315fff4ed29343279e3a32d2a51c86b",
+      "name": "m1-e3ae74575637-postgres",
+      "registry": "m1-e3ae74575637-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-e3ae74575637",
+      "id": "cefbd8a207d4a8dff1ff3b5c61078f83c0adbbe634768323b1a1df8787afdd16",
+      "name": "m1-e3ae74575637-redis",
+      "registry": "m1-e3ae74575637-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-e3ae74575637",
+      "id": "1cf32367da195e17464dc5eb78509273764e5c6ff818e6b36fae9fee6533a195",
+      "name": "m1-e3ae74575637-rustfs",
+      "registry": "m1-e3ae74575637-resources.json",
+      "originallyRecordedCleaned": true,
+      "interruptedCleanup": null,
+      "currentlyPresent": false,
+      "logExists": true,
+      "interruptedLogExists": false
+    },
+    {
+      "runId": "m1-eb4c5b46a8d1",
+      "id": "828b829614ed1064fa265e1721a789bee59e84fe54902978599cc4e2690a9e8d",
+      "name": "m1-eb4c5b46a8d1-postgres",
+      "registry": "m1-eb4c5b46a8d1-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-eb4c5b46a8d1-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-eb4c5b46a8d1",
+      "id": "0b9e214bd5e5f411daa4789ad484b796e31643e3a1baf348fc46846358bc6f09",
+      "name": "m1-eb4c5b46a8d1-redis",
+      "registry": "m1-eb4c5b46a8d1-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-eb4c5b46a8d1-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    },
+    {
+      "runId": "m1-eb4c5b46a8d1",
+      "id": "19edf06513bd3ce4468dd69a3c082d4ff38146c71fe1ab6f1af341e0781f0478",
+      "name": "m1-eb4c5b46a8d1-rustfs",
+      "registry": "m1-eb4c5b46a8d1-resources.json",
+      "originallyRecordedCleaned": false,
+      "interruptedCleanup": "m1-eb4c5b46a8d1-interrupted-cleanup.json",
+      "currentlyPresent": false,
+      "logExists": false,
+      "interruptedLogExists": true
+    }
+  ],
+  "remainingOwnedContainers": [],
+  "sharedContainersPreserved": [
+    {
+      "id": "00f4596dc354a7096d54930f4786ca4e501f6d31371c317a95b36e289e9b5153",
+      "name": "workmesh-postgres-1",
+      "state": "running"
+    },
+    {
+      "id": "16feb81cf9d2a48d111dcfbda161e7a472616a9c0ac58a83d0a201cfb0e05fc0",
+      "name": "workmesh-redis-1",
+      "state": "running"
+    },
+    {
+      "id": "34820cf2e25e8dff19d42892bd67609cc316df2a1173d5403a9d52817fe72eee",
+      "name": "workmesh-web-1",
+      "state": "exited"
+    },
+    {
+      "id": "a3b6f726f524d99b34f5b2b97b1d2356ef3692ffdcac5392b7eab44791e45b6c",
+      "name": "workmesh-api-1",
+      "state": "exited"
+    },
+    {
+      "id": "951afd926067ecb9835f623429abf4d0411874ffbce132da76e8046f0b0227c2",
+      "name": "workmesh-worker-1",
+      "state": "exited"
+    },
+    {
+      "id": "70078a3028a6e09537f0890446759fb739244e33c4f1b6b7adf885a5811ff296",
+      "name": "workmesh-migrate-1",
+      "state": "exited"
+    },
+    {
+      "id": "f8b614913c4efea2e944686c9b4c855cb5e61167d9bad0e7e6f35c150b9d473c",
+      "name": "workmesh-minio-init-1",
+      "state": "exited"
+    },
+    {
+      "id": "ed7ebe27231e729a3176572704a99846a8b180d1742f62002add5a11b12179cd",
+      "name": "workmesh-minio-1",
+      "state": "running"
+    }
+  ],
+  "recordedProcesses": [
+    {
+      "name": "agent-smoke-complete",
+      "processId": 38708,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "api-fourth",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "api-m1-first",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "api-m1-second",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "api-m1-third",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "api-types",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "atomicity-capability-fixed",
+      "processId": 40560,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "atomicity-supplement",
+      "processId": 62564,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "build-clean-source",
+      "processId": 54224,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "build-complete",
+      "processId": 57184,
+      "recorderPid": null,
+      "exitCode": 2
+    },
+    {
+      "name": "build-fixture-fixed",
+      "processId": 9192,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "build-spill-removal-fixed",
+      "processId": 22176,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "build-spill-removal-verified",
+      "processId": 42448,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "build-spill-removal",
+      "processId": 63100,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "changed-api-tests-lint",
+      "processId": 54924,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "changed-api-tests-types",
+      "processId": 51872,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "changed-test-types",
+      "processId": 7188,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "ci-test-second",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "ci-validate-final",
+      "processId": 60568,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "client-finish-types",
+      "processId": 36632,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "conformance-final",
+      "processId": 55252,
+      "recorderPid": 57688,
+      "exitCode": null
+    },
+    {
+      "name": "conformance-first",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "conformance-revoke-fixed",
+      "processId": 59988,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "conformance-second",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "conformance-test-types",
+      "processId": 44692,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "conformance-tests-lint",
+      "processId": 28412,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "db-integration-first",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "e2e-complete",
+      "processId": 47368,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "e2e-second",
+      "processId": 38708,
+      "recorderPid": 50952,
+      "exitCode": null
+    },
+    {
+      "name": "evidence-index-first",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "integration-complete",
+      "processId": 43552,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "integration-fixed",
+      "processId": 31812,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "integration-stable",
+      "processId": 15584,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "lint-complete",
+      "processId": 39548,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "lint-first",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 2
+    },
+    {
+      "name": "locks-final-generate",
+      "processId": 32764,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "locks-generate",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "migration-generate",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "product-mapping-modules",
+      "processId": 30436,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "product-mapping",
+      "processId": 38952,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "recovery-complete",
+      "processId": 19068,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-real",
+      "processId": 17240,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "resource-audit-first",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "route-policy-final",
+      "processId": 40388,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "route-policy-generate",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "runner-repair-test-second",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "runner-repair-test",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "runner-repair-types-second",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "runner-repair-types",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 2
+    },
+    {
+      "name": "runner-skill-final",
+      "processId": 57612,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "sdk-second",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "types-final",
+      "processId": 57164,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "types-first",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 2
+    },
+    {
+      "name": "types-second",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "unit-after-manifest",
+      "processId": 6456,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "unit-complete",
+      "processId": 29424,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "unit-first",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "unit-fixed",
+      "processId": 55988,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "unit-reservation-fixed",
+      "processId": 41924,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "unit-second",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 2
+    },
+    {
+      "name": "wait-contract-types",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "worker-complete",
+      "processId": 24168,
+      "recorderPid": null,
+      "exitCode": 0
+    },
+    {
+      "name": "worker-first",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "worker-second",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 1
+    },
+    {
+      "name": "worker-third",
+      "processId": null,
+      "recorderPid": null,
+      "exitCode": 0
+    }
+  ],
+  "currentlyMatchingPids": [],
+  "archives": [
+    {
+      "path": "agent-smoke-complete-inputs.zip",
+      "bytes": 2283533,
+      "sha256": "82c872b139415134a16a51cbad154cc2beab7df289fe8e3621fa1424850694f6",
+      "members": 226,
+      "crcVerified": true
+    },
+    {
+      "path": "api-fourth-inputs.zip",
+      "bytes": 2134865,
+      "sha256": "4b9b08c567a81d1492678abe1718eca5a2508f6b8a52626c2ac02608c43db80a",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "api-m1-first-inputs.zip",
+      "bytes": 1910995,
+      "sha256": "698671030f5c9786d71968eb071bd99988d94ed70644fc8261ae58de863e94eb",
+      "members": 175,
+      "crcVerified": true
+    },
+    {
+      "path": "api-m1-second-inputs.zip",
+      "bytes": 2025763,
+      "sha256": "acb1452737f4812a1f3ec92d9ed17a6d3b2f1b8d5b6d2405433ac96516e5aa15",
+      "members": 184,
+      "crcVerified": true
+    },
+    {
+      "path": "api-m1-third-inputs.zip",
+      "bytes": 2025911,
+      "sha256": "97148049aaabbf417184350be49dac137f7efa803ea4ec5ef069d0f565c16e07",
+      "members": 184,
+      "crcVerified": true
+    },
+    {
+      "path": "api-types-inputs.zip",
+      "bytes": 1817379,
+      "sha256": "5739c8d3dccdf6bc86969f33f38ee50cb8e16541ddc31d41b2f26bf8bc8943b2",
+      "members": 149,
+      "crcVerified": true
+    },
+    {
+      "path": "atomicity-capability-fixed-inputs.zip",
+      "bytes": 2192363,
+      "sha256": "50d7c553fd1836e9d14f1c638d32e2344bf96b469ca30b3cefa9b919bedd9f4b",
+      "members": 220,
+      "crcVerified": true
+    },
+    {
+      "path": "atomicity-supplement-inputs.zip",
+      "bytes": 2184356,
+      "sha256": "992ee5cd25fb57f1718b84eb9276587e8908457d9b8a4162ebae64f1ef41b84f",
+      "members": 216,
+      "crcVerified": true
+    },
+    {
+      "path": "build-clean-source-inputs.zip",
+      "bytes": 2286584,
+      "sha256": "06a4cbe5da8bb3817042474baaf4b27fb6a5986b46178c6782a399021340116e",
+      "members": 229,
+      "crcVerified": true
+    },
+    {
+      "path": "build-complete-inputs.zip",
+      "bytes": 2283533,
+      "sha256": "cc8f2dc5b46e7bead71f34d15c859653856b066ab64082b4f35cd1aaab63384d",
+      "members": 226,
+      "crcVerified": true
+    },
+    {
+      "path": "build-fixture-fixed-inputs.zip",
+      "bytes": 2620903,
+      "sha256": "957a515670ef7850127ef0112db8f0686dcb2bccfbf6a494ad931b11396dbc64",
+      "members": 342,
+      "crcVerified": true
+    },
+    {
+      "path": "build-spill-originals.zip",
+      "bytes": 328420,
+      "sha256": "abe4af9eea7f62d7d55acc0c3bbc912e028a2b2780442bcebc4f619a58ed83e5",
+      "members": 114,
+      "crcVerified": true
+    },
+    {
+      "path": "build-spill-removal-fixed-inputs.zip",
+      "bytes": 2623203,
+      "sha256": "3d902845e6c851c1d3c0eff8141b0a01e5447c448a500f5c855ee43c3f7bfdab",
+      "members": 343,
+      "crcVerified": true
+    },
+    {
+      "path": "build-spill-removal-inputs.zip",
+      "bytes": 2623120,
+      "sha256": "9d6e7bf6883d90797dc030b035c7f1ae96965e03b39e340b8a69d35e9bc331fa",
+      "members": 343,
+      "crcVerified": true
+    },
+    {
+      "path": "build-spill-removal-verified-inputs.zip",
+      "bytes": 2623220,
+      "sha256": "5df99d685b1dc3e764a8ab9f04eb59f143c3a383411616eb8078926ddd64260f",
+      "members": 343,
+      "crcVerified": true
+    },
+    {
+      "path": "changed-api-tests-lint-inputs.zip",
+      "bytes": 2192363,
+      "sha256": "418651f3351edb213720b635a5488e61e108219a3f1e9a2d966c5caf29ef1fde",
+      "members": 220,
+      "crcVerified": true
+    },
+    {
+      "path": "changed-api-tests-types-inputs.zip",
+      "bytes": 2192363,
+      "sha256": "e1ed7daf51dc3c51eb5f67f572cda3f4129a22700242863ab8baf603e30b21d7",
+      "members": 220,
+      "crcVerified": true
+    },
+    {
+      "path": "changed-test-types-inputs.zip",
+      "bytes": 2183539,
+      "sha256": "51d57b9b453d16f09e978e24760819a59f88df72065207f4a6ee75cbbcd75bbc",
+      "members": 216,
+      "crcVerified": true
+    },
+    {
+      "path": "ci-test-second-inputs.zip",
+      "bytes": 2135854,
+      "sha256": "a9668823434b9a27f6fdc44efd82f2eacef64973ec1c24d87ca0923613ca89a9",
+      "members": 214,
+      "crcVerified": true
+    },
+    {
+      "path": "ci-validate-final-inputs.zip",
+      "bytes": 2192363,
+      "sha256": "5283cd9eb15e1c8be932e155649d9dad5b90ad48e3a52eb3a8b3ab649bd1effd",
+      "members": 220,
+      "crcVerified": true
+    },
+    {
+      "path": "client-finish-types-inputs.zip",
+      "bytes": 2173127,
+      "sha256": "9231a2e11050c91128613a8cb0c3656ae1fd1fea43b6e65562082c48cf090cd0",
+      "members": 212,
+      "crcVerified": true
+    },
+    {
+      "path": "conformance-final-inputs.zip",
+      "bytes": 2173166,
+      "sha256": "8ffe8781271050aa1fff2411430a9ce5d6cc7f4cd86b2bc086d312df5fcfc867",
+      "members": 212,
+      "crcVerified": true
+    },
+    {
+      "path": "conformance-first-inputs.zip",
+      "bytes": 2051147,
+      "sha256": "b2e0b9008064363ea7b6753b8d7e0721907c8e73ac8c8a548f034c05e0d5e83c",
+      "members": 186,
+      "crcVerified": true
+    },
+    {
+      "path": "conformance-revoke-fixed-inputs.zip",
+      "bytes": 2270042,
+      "sha256": "360ac441c92603e44407964be12ef1ae14f0fa426557f0dc21bba5cbc13d09c8",
+      "members": 224,
+      "crcVerified": true
+    },
+    {
+      "path": "conformance-second-inputs.zip",
+      "bytes": 2134865,
+      "sha256": "73e5fb0bfefc25c689b01d014c9c2a28e759f250d0acedf156be27029fe772db",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "conformance-test-types-inputs.zip",
+      "bytes": 2270513,
+      "sha256": "c1d7892005665cecfabbe113a61f4362487a4452196211240f5486c778dbc505",
+      "members": 224,
+      "crcVerified": true
+    },
+    {
+      "path": "conformance-tests-lint-inputs.zip",
+      "bytes": 2270513,
+      "sha256": "7d0a63318ffddf537eeeb3dc856d8bcfb8fbfa05595a3f44b6bb1d61e32653f6",
+      "members": 224,
+      "crcVerified": true
+    },
+    {
+      "path": "db-integration-first-inputs.zip",
+      "bytes": 1864876,
+      "sha256": "ee9c3a3790466bd14f2d54aec4fe61732e4774098a2cbbd0ef43a21a086c333d",
+      "members": 167,
+      "crcVerified": true
+    },
+    {
+      "path": "e2e-complete-inputs.zip",
+      "bytes": 2178181,
+      "sha256": "949998db93b79c148b36d63d416f32604c3e8d51187ce9174a182db462dd6beb",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "e2e-first-inputs.zip",
+      "bytes": 2157925,
+      "sha256": "e91ed1f1eb4ec0d77a659d8512a493ec3d78c47d27333a9df8cc7dde9c336840",
+      "members": 218,
+      "crcVerified": true
+    },
+    {
+      "path": "e2e-second-inputs.zip",
+      "bytes": 2173127,
+      "sha256": "70f079da8f2fa6b1e7db170337121fc97a6cb53baec6859a726014510d474d25",
+      "members": 212,
+      "crcVerified": true
+    },
+    {
+      "path": "final-product-source.zip",
+      "bytes": 1030367,
+      "sha256": "01a3409812f604a8bdfdf05f7cc063c05041b2ecc89d481b468e7a056c71f840",
+      "members": 152,
+      "crcVerified": true
+    },
+    {
+      "path": "integration-complete-inputs.zip",
+      "bytes": 2178181,
+      "sha256": "25af0b3d42e25632235b38e14592d643f0bd8ace2151fcf89895a627f83a9f01",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "integration-final-inputs.zip",
+      "bytes": 2129560,
+      "sha256": "8a0fc8d607dc71ca319d58879ff757f017e4adf77abe98cd5a14b9dcfe32b7a9",
+      "members": null,
+      "crcVerified": false,
+      "limitation": "历史中断留下未闭合 ZIP；原字节保留，不能计作完整输入原件或通过绑定"
+    },
+    {
+      "path": "integration-fixed-inputs.zip",
+      "bytes": 2183539,
+      "sha256": "486571269705245d51b8b49da7270066519e58e82af473e2a1fae241ed12b238",
+      "members": 216,
+      "crcVerified": true
+    },
+    {
+      "path": "integration-stable-inputs.zip",
+      "bytes": 2192363,
+      "sha256": "886a4821b95fc47073f0c1c48fdb7e23a364af7105664df9b825c3146c556151",
+      "members": 220,
+      "crcVerified": true
+    },
+    {
+      "path": "interrupted-client-artifacts-5c9952033afd.zip",
+      "bytes": 88485,
+      "sha256": "6d3399fcf54db4ee87b38b2896c12f111b64772896d560314b2c3962559e1baa",
+      "members": 36,
+      "crcVerified": true
+    },
+    {
+      "path": "interrupted-client-artifacts.zip",
+      "bytes": 62236,
+      "sha256": "6c8bae8345d96e5972b97b6e55f1a02fd200fe25922d323ad637be5ac4609dc5",
+      "members": 31,
+      "crcVerified": true
+    },
+    {
+      "path": "lint-complete-inputs.zip",
+      "bytes": 2178181,
+      "sha256": "457d3cfc13c030931c633bd5ccc372a5bc6b0d6bf7ab4b141ba63273869aa04d",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "lint-final-inputs.zip",
+      "bytes": 498161,
+      "sha256": "e70e6aa0bdc238e4e543c2d6e0dc86ba58668bb226ef3fcb99432c816d33b39a",
+      "members": null,
+      "crcVerified": false,
+      "limitation": "历史中断留下未闭合 ZIP；原字节保留，不能计作完整输入原件或通过绑定"
+    },
+    {
+      "path": "lint-first-inputs.zip",
+      "bytes": 2155823,
+      "sha256": "8ecda141ebba301f872889022d993fbcfc81b754f476efd858ed2e8b3aba7f55",
+      "members": 218,
+      "crcVerified": true
+    },
+    {
+      "path": "locks-final-generate-inputs.zip",
+      "bytes": 2178181,
+      "sha256": "3f3105cc3d606a56522e377e4395b8199d606ec1755012f5c827cb79f341b3db",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "locks-generate-inputs.zip",
+      "bytes": 2025643,
+      "sha256": "43bbfd06f55325567855f1656600e83ff647a4b9cfc1a951130485476e64a511",
+      "members": 184,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-05e6bbc4f2f2-client-evidence.zip",
+      "bytes": 102186,
+      "sha256": "517b505f86b940effe57fdd9b6ef78d13bb2bde0174e989c44d7a26b305c4f01",
+      "members": 51,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-2651090bce93-client-evidence.zip",
+      "bytes": 87909,
+      "sha256": "3499fdf7d2f4b3173851c8c89db2b27bfff0e729de66b9eed579b99001173d95",
+      "members": 36,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-32f1f4c4ba0f-client-evidence.zip",
+      "bytes": 87909,
+      "sha256": "bb858f1a8775db3aabde34f8f95b1787a33db1859d87d0563aee20c0115d641d",
+      "members": 36,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-3dfa2f93ff11-client-evidence.zip",
+      "bytes": 43375,
+      "sha256": "424fbdcea0f6e59613e18ae7dbce0c0f74f3bf1695c2778b3450cfd027e4543d",
+      "members": 15,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-610952fddbc1-client-evidence.zip",
+      "bytes": 87909,
+      "sha256": "e6a7ffefe9381edac2e169bff53348a66586af7b928ef3948cdc8227cb063da4",
+      "members": 36,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-7ac935c9155c-client-evidence.zip",
+      "bytes": 43784,
+      "sha256": "dadd68e11638cedb99df50ef15acbd9310406cc9fecc2d0a2adc0564535aaa95",
+      "members": 15,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-7e5e7375cc57-client-evidence.zip",
+      "bytes": 102387,
+      "sha256": "b1d0938cfe9dcd619c723525db7d7d126ef3e39a8f59d23fbbd8cb92000f8b71",
+      "members": 51,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-86a5b73f4cbe-client-evidence.zip",
+      "bytes": 102186,
+      "sha256": "c179aade4f56cebfdb6df3b0097b24411a648ef0dd77acafd6ef1393ccb02359",
+      "members": 51,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-89d8c4db9e78-client-evidence.zip",
+      "bytes": 87909,
+      "sha256": "f880741e034bf258adf35854851b230150b2738c615a4f099f3f83c49f2c92ca",
+      "members": 36,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-9ec8e3debf17-client-evidence.zip",
+      "bytes": 61740,
+      "sha256": "b781ef4f261410e747f8f45cbbc350c4ffa348f796d2c6ecc7bc0b468f9380e9",
+      "members": 31,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-a609b9b0f88c-client-evidence.zip",
+      "bytes": 109845,
+      "sha256": "79e04bb1fc8146e314598bc22e941c8bb4ea2bbf2374f48eb9e7e219b13f5273",
+      "members": 59,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-ce05e55a9e95-client-evidence.zip",
+      "bytes": 43784,
+      "sha256": "229e32d4656736a9a230308305d94d124c4d231ccf23f02ab536b7a3b46f3a1a",
+      "members": 15,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-ceffa526f57a-client-evidence.zip",
+      "bytes": 87909,
+      "sha256": "faeb2644af57aa81e972fcd0a796d16eb353ea319adf321192686d7b8d2bee4b",
+      "members": 36,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-cfde65a2e9a4-client-evidence.zip",
+      "bytes": 43375,
+      "sha256": "629e7f2eb38ad92aa966cbd516675a53e7cfe8722105f9e1440a1f50463f804c",
+      "members": 15,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-d31ae441e899-client-evidence.zip",
+      "bytes": 43375,
+      "sha256": "32d4b266b22b672bd77c5ffcca39ea056de8d617035b56c60b6c5ae6b3ce8a8a",
+      "members": 15,
+      "crcVerified": true
+    },
+    {
+      "path": "m1-e3ae74575637-client-evidence.zip",
+      "bytes": 99438,
+      "sha256": "ebe6f15a3e61feb6e718598d35aa35235f5d47c005152e2574b40cecb1edcf93",
+      "members": 48,
+      "crcVerified": true
+    },
+    {
+      "path": "migration-generate-inputs.zip",
+      "bytes": 1818575,
+      "sha256": "efa8770d105ce9bd2a14a50b59bdeefacc316c5f6de4262386b9cca172779795",
+      "members": 150,
+      "crcVerified": true
+    },
+    {
+      "path": "product-mapping-inputs.zip",
+      "bytes": 2195695,
+      "sha256": "aed772902a1c0054a8580b379c72b00684b421675d0f19d165aa06dd2ca336db",
+      "members": 221,
+      "crcVerified": true
+    },
+    {
+      "path": "product-mapping-modules-inputs.zip",
+      "bytes": 2195737,
+      "sha256": "571d54278d37b056b80f2f4a5c7b755651d03e0377a79d09159662e4c8373807",
+      "members": 221,
+      "crcVerified": true
+    },
+    {
+      "path": "raw-logs-38110de0d27cce68.zip",
+      "bytes": 1324672,
+      "sha256": "fcc06312a7c36b5508a7c5abd218088c6200b02082e37d42e90c412f70b75634",
+      "members": 140,
+      "crcVerified": true
+    },
+    {
+      "path": "raw-logs-776d03c8b4297be0.zip",
+      "bytes": 1324660,
+      "sha256": "4eb9096ec4cad8098a7acf9828e73a975738c565def151f4d85401926e3950b0",
+      "members": 140,
+      "crcVerified": true
+    },
+    {
+      "path": "raw-logs-d18866873989e059.zip",
+      "bytes": 1171090,
+      "sha256": "9fab53bd6067a5ebbd0c8792e09dd1908d5e64784e2210f187182284458c03a1",
+      "members": 146,
+      "crcVerified": true
+    },
+    {
+      "path": "recovery-complete-inputs.zip",
+      "bytes": 2270042,
+      "sha256": "041ba07c559b736143793b1c235a9e02f425015bc3916f9c651b6d956ae677d8",
+      "members": 224,
+      "crcVerified": true
+    },
+    {
+      "path": "recovery-real-inputs.zip",
+      "bytes": 2270513,
+      "sha256": "b4325949d9791fa93dbb2bb840e396fdc8493d841c623192515c189fdd93e565",
+      "members": 224,
+      "crcVerified": true
+    },
+    {
+      "path": "route-policy-final-inputs.zip",
+      "bytes": 2178180,
+      "sha256": "88fe4be864967166a3c6047c0f84d61d01a30c91a8719d356b61b0b173956a29",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "route-policy-generate-inputs.zip",
+      "bytes": 1875610,
+      "sha256": "4d50c7c22ae1e5c4f775666d80e7eacaa2859577d4037cc8fd0ed8fdfee0d504",
+      "members": 169,
+      "crcVerified": true
+    },
+    {
+      "path": "runner-legacy-logs.zip",
+      "bytes": 8591,
+      "sha256": "fd40c7f06287053adf31c3dad77928d838b3562441c8e745fde6ded6f5f4f96e",
+      "members": 9,
+      "crcVerified": true
+    },
+    {
+      "path": "runner-repair-test-inputs.zip",
+      "bytes": 2141905,
+      "sha256": "8dd04756d132ef293c3748f23b0b02923f89e38fb4d35f8903b8e265508d7ef1",
+      "members": 218,
+      "crcVerified": true
+    },
+    {
+      "path": "runner-repair-test-second-inputs.zip",
+      "bytes": 2156392,
+      "sha256": "d4d9de1e681fa9b5e01dd86ca5212f29eca0c471ae732a6a3fce51eb2e4151ae",
+      "members": 218,
+      "crcVerified": true
+    },
+    {
+      "path": "runner-repair-types-inputs.zip",
+      "bytes": 2158346,
+      "sha256": "d6856dee17371400f5d97185399bf45605c93fa03d456a249fa8a35299e8009f",
+      "members": 220,
+      "crcVerified": true
+    },
+    {
+      "path": "runner-repair-types-second-inputs.zip",
+      "bytes": 2156392,
+      "sha256": "4bd4582003816b91b42b34f5114c019474f1a1a99325d03b567336f48ffaec20",
+      "members": 218,
+      "crcVerified": true
+    },
+    {
+      "path": "runner-skill-final-inputs.zip",
+      "bytes": 2178180,
+      "sha256": "c9b35389942e98ac042b11170b08ac3b1592cb334e48c32e7cefc52abdc2e884",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "sdk-second-inputs.zip",
+      "bytes": 2158346,
+      "sha256": "ee5cc280d68d7b805a68977d047aa20c59b4fb8e3a93c4a71fddf870d7031d25",
+      "members": 220,
+      "crcVerified": true
+    },
+    {
+      "path": "types-final-inputs.zip",
+      "bytes": 2158553,
+      "sha256": "a337fae311fdb5cd0b0761879ea61d9b6ba77682824c6c35959bcbcb137ae3d3",
+      "members": 210,
+      "crcVerified": true
+    },
+    {
+      "path": "types-first-inputs.zip",
+      "bytes": 1928365,
+      "sha256": "6ad8941e8ab9841f006eeedb9f4a27fefa34690bfba9f681a08f8003b10f4a5b",
+      "members": 177,
+      "crcVerified": true
+    },
+    {
+      "path": "types-second-inputs.zip",
+      "bytes": 2007234,
+      "sha256": "5fb02e9eac6cc0b30679ad8c158aff233291e83b3515d41077018bc86241959d",
+      "members": 182,
+      "crcVerified": true
+    },
+    {
+      "path": "types-third-inputs.zip",
+      "bytes": 2157925,
+      "sha256": "17e2f1c6f642524a61276eab9f02d7aca55767eff2bf0100efd2ce2d1fea5bca",
+      "members": 218,
+      "crcVerified": true
+    },
+    {
+      "path": "unit-after-manifest-inputs.zip",
+      "bytes": 2178180,
+      "sha256": "f55caad94dd8f697a197f6c03fe789fa5d3ee424d921f3ac3c6eefb0d2828d2a",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "unit-complete-inputs.zip",
+      "bytes": 2178181,
+      "sha256": "ef5abd8ee48b019fb1345ca332d8ec88dc6a6bbc7a6cce373999502d867739b5",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "unit-first-inputs.zip",
+      "bytes": 2051147,
+      "sha256": "3c413cc94cc01f24db9895a79241369480b90783b2d58bdd754b4cd630b64e6c",
+      "members": 186,
+      "crcVerified": true
+    },
+    {
+      "path": "unit-fixed-inputs.zip",
+      "bytes": 2183539,
+      "sha256": "76eddf71ced9d9c7209b10026b3354ab19a0cccecd4349c7f84a22370a667ce6",
+      "members": 216,
+      "crcVerified": true
+    },
+    {
+      "path": "unit-reservation-fixed-inputs.zip",
+      "bytes": 2192347,
+      "sha256": "f8764ea8c53935521c915ec5aaacfac32e3542240a40cad146d80cfa06f46ad6",
+      "members": 220,
+      "crcVerified": true
+    },
+    {
+      "path": "unit-second-inputs.zip",
+      "bytes": 2142439,
+      "sha256": "db6ef9fdcc7a7992bb036e23c43b8ccc1c6a90dc1e895d2cbba312a20ce8d0a0",
+      "members": 218,
+      "crcVerified": true
+    },
+    {
+      "path": "unit-third-inputs.zip",
+      "bytes": 2157925,
+      "sha256": "e195e21f12243f89ab6e9f218366642dc745f382b5b22f42aaeb5f9521736ee1",
+      "members": 218,
+      "crcVerified": true
+    },
+    {
+      "path": "wait-contract-types-inputs.zip",
+      "bytes": 2157925,
+      "sha256": "2bc15e741b2c03220e875cbb23bbb8d0a84259d5dd04e3f01a05846ad9e24cef",
+      "members": 218,
+      "crcVerified": true
+    },
+    {
+      "path": "wait-ddl-first-inputs.zip",
+      "bytes": 591568,
+      "sha256": "4fec8bab23e596e1e24191bbd07e66181325f5961894af4bf65f9530af8b68df",
+      "members": null,
+      "crcVerified": false,
+      "limitation": "历史中断留下未闭合 ZIP；原字节保留，不能计作完整输入原件或通过绑定"
+    },
+    {
+      "path": "worker-complete-inputs.zip",
+      "bytes": 2270042,
+      "sha256": "de17571632307652df81449e5c66ed463befa7380dfe14e10b7a61f4aa921329",
+      "members": 224,
+      "crcVerified": true
+    },
+    {
+      "path": "worker-first-inputs.zip",
+      "bytes": 2134537,
+      "sha256": "eebe53b3d8003282e1f23663ef21c6b3d521bfcb9f1ea1b1696419f2717c32a9",
+      "members": 213,
+      "crcVerified": true
+    },
+    {
+      "path": "worker-second-inputs.zip",
+      "bytes": 2139139,
+      "sha256": "eeae30188ae9825dac0bf35df2a5ad02275b7ab1fc2f2cc774035d4e129d0157",
+      "members": 217,
+      "crcVerified": true
+    },
+    {
+      "path": "worker-third-inputs.zip",
+      "bytes": 2155907,
+      "sha256": "493220d185c6a7f675991e2430932e03073299a96b5a08cd05cfbee0861e0d0b",
+      "members": 218,
+      "crcVerified": true
+    }
+  ],
+  "cleanupBoundary": "本脚本仅观察；原正常清理见 registry，原中断清理见逐命令回执。不存在不代替历史批准或退出码。",
+  "retainedPaths": [
+    "node_modules/.m1-runtime",
+    "ci-logs/mcp-coverage",
+    "ci-logs/execution-recovery",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6"
+  ],
+  "retainedReason": "Node 测试运行时与当前恢复工作树保留供复核；临时日志和客户端事实已独立归档。未删除共享 store、已拒 G1D0C3 目标或其他服务。"
+}

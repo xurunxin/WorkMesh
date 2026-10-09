@@ -1,0 +1,7 @@
+Get-FileHash : The term 'Get-FileHash' is not recognized as the name of a cmdlet, function, script file, or operable pr
+ogram. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\scripts\m1-clean-build-spill.ps1:39 char:94
++ ...  absolutePath=$full; bytes=$file.Length; sha256=(Get-FileHash -Litera ...
++                                                      ~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (Get-FileHash:String) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : CommandNotFoundException

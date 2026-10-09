@@ -4,6 +4,8 @@
 
 Proposed。用户已裁定“结算等待，自动继续”；本 ADR 的wire/数据/锁序仍待另一 Agent 独审，不表示产品确认或验收。
 
+以上描述冻结规划阶段。方案合同已经平台独审及 Chief 实施确认；当前持久等待、唯一续接、Stop/撤权取消和实际运行见 [M1 产品报告](../plan/agent-mcp-m1/product-report.md)。不以本说明代产品成果独审、Required CI 或 main 合入。
+
 ## Context
 
 当前runPi在非executing状态abort，executeTurn遇RUNNER_ABORTED跳settle；assignment只接queued/acknowledged/executing。直接加等待态工具会悬挂Turn。等待批准或输入可能超过单模型Turn时限，不能长占旧Attempt或擅自resume/pause。

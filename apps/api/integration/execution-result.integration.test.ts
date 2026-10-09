@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb, opaqueToken, tokenHash } from '@workmesh/db'
 import { buildApp } from '../src/server.js'
@@ -14,7 +14,7 @@ const human = (method: 'GET' | 'POST' | 'PUT', path: string, body?: object, revi
   method, url: path, payload: body, headers: { cookie, 'x-csrf-token': csrf, 'idempotency-key': randomUUID(),
     ...(revision ? { 'if-match': `"revision-${revision}"` } : {}) },
 })
-const agent = (token: string, method: 'GET' | 'POST', path: string, body?: object, revision?: number, key = randomUUID()) => app.inject({
+const agent = (token: string, method: 'GET' | 'POST' | 'PUT', path: string, body?: object, revision?: number, key = randomUUID()) => app.inject({
   method, url: path, payload: body, headers: { authorization: `Bearer ${token}`, 'idempotency-key': key,
     ...(revision ? { 'if-match': `"revision-${revision}"` } : {}) },
 })
@@ -22,7 +22,7 @@ async function start() {
   const work = await human('POST', '/api/v1/work-items', { teamId, title: 'Exact result', statusId: readyId, responsibleHumanActorId: humanId })
   expect(work.statusCode).toBe(200)
   const item = work.json<{ id: string; revision: number }>()
-  const started = await human('POST', `/api/v1/work-items/${item.id}/agent-session`, { agentId, principalHumanActorId: humanId, role: 'executor', requestedCapabilities: ['work:read','work:write'], initialPrompt: 'Result test', budget: {} }, item.revision)
+  const started = await human('POST', `/api/v1/work-items/${item.id}/agent-session`, { agentId, principalHumanActorId: humanId, role: 'executor', requestedCapabilities: ['work:read','work:write','plan:write'], initialPrompt: 'Result test', budget: {} }, item.revision)
   expect(started.statusCode).toBe(200)
   const { session } = started.json<{ session: { id: string; revision: number } }>()
   const token = await seedAgentSessionBearer(db, session.id, agentId)
@@ -30,7 +30,7 @@ async function start() {
   expect(ack.statusCode).toBe(200)
   const executed = await agent(token, 'POST', `/api/v1/agent-sessions/${session.id}/state`, { state: 'executing', reason: 'Execute' }, ack.json<{ revision: number }>().revision)
   expect(executed.statusCode).toBe(200)
-  return { sessionId: session.id, token, revision: executed.json<{ revision: number }>().revision }
+  return { sessionId: session.id, workItemId: item.id, token, revision: executed.json<{ revision: number }>().revision }
 }
 const confirmation = (sessionId: string, key: string, action = 'complete') => `/api/v1/agent-sessions/${sessionId}/execution-result?action=${action}&operationKey=${encodeURIComponent(key)}`
 const businessTables = ['agent_installation_tokens', 'agent_connection_credentials', 'agent_coordination_sessions', 'agent_session_tokens',
@@ -59,11 +59,11 @@ describe('exact execution confirmation', () => {
     teamId = (await human('GET', '/api/v1/teams')).json<{ items: { id: string }[] }>().items[0]!.id
     readyId = (await human('GET', `/api/v1/teams/${teamId}/states`)).json<{ items: { id: string; name: string }[] }>().items.find(x => x.name === 'Ready')!.id
     const registered = await human('POST', '/api/v1/agents/register', { name: 'Result Agent', slug: 'result-agent', provider: 'fake', version: '1',
-      supportedProtocols: ['native_http'], requestedCapabilities: ['work:read', 'work:write'], approvedCapabilities: ['work:read', 'work:write'], maxConcurrency: 16 })
+      supportedProtocols: ['native_http'], requestedCapabilities: ['work:read', 'work:write', 'plan:write'], approvedCapabilities: ['work:read', 'work:write', 'plan:write'], maxConcurrency: 16 })
     expect(registered.statusCode).toBe(200)
     const definition = registered.json<{ id: string; installation_token: string }>()
     agentId = definition.id; installation = definition.installation_token
-    expect((await human('PUT', `/api/v1/agents/${agentId}/team-access/${teamId}`, { approvedCapabilities: ['work:read', 'work:write'] })).statusCode).toBe(200)
+    expect((await human('PUT', `/api/v1/agents/${agentId}/team-access/${teamId}`, { approvedCapabilities: ['work:read', 'work:write', 'plan:write'] })).statusCode).toBe(200)
   })
   afterAll(async () => { await app.close(); await db.end() })
 
@@ -121,6 +121,48 @@ describe('exact execution confirmation', () => {
       expect(await fingerprint()).toEqual(before)
     } finally { await db.query('DROP TRIGGER m1_origin_failure ON api_idempotency_keys; DROP FUNCTION m1_reject_origin()') }
   })
+
+  it.each(['plan', 'lease', 'approval', 'complete', 'stop_ack'] as const)(
+    'rolls back %s state, receipt, event and outbox on each durable boundary failure', async operation => {
+      const execution = await start()
+      let revision = execution.revision
+      if (operation === 'stop_ack') {
+        const stopped = await human('POST', `/api/v1/agent-sessions/${execution.sessionId}/signals`,
+          { signal: 'stop', reason: 'Atomic Stop acknowledgement' }, revision)
+        expect(stopped.statusCode, stopped.body).toBe(200)
+        revision = stopped.json<{ revision: number }>().revision
+      }
+      const payload = { action: 'Atomic approval request' }
+      const method = operation === 'plan' ? 'PUT' : 'POST'
+      const path = operation === 'plan' ? `/api/v1/agent-sessions/${execution.sessionId}/plan`
+        : operation === 'lease' ? '/api/v1/leases' : operation === 'approval' ? '/api/v1/approvals'
+        : `/api/v1/agent-sessions/${execution.sessionId}/${operation === 'stop_ack' ? 'stop-ack' : 'complete'}`
+      const body = operation === 'plan' ? { changeSummary: 'Atomic plan', steps: [{ id: randomUUID(), title: 'Atomic step',
+        status: 'pending', ordinal: 0, dependsOn: [], acceptanceCriteria: [], expectedArtifacts: [] }] }
+        : operation === 'lease' ? { sessionId: execution.sessionId, resourceType: 'work_item',
+          resourceId: execution.workItemId, ttlSeconds: 300, reason: 'Atomic lease' }
+        : operation === 'approval' ? { sessionId: execution.sessionId, approvalType: 'manual_gate', actionName: 'atomic',
+          actionPayloadSanitized: payload, actionPayloadHash: `sha256:${createHash('sha256').update(JSON.stringify(payload)).digest('hex')}`,
+          riskLevel: 'low', rationaleSummary: 'Atomic approval', expiresAt: new Date(Date.now()+600_000).toISOString() }
+        : operation === 'stop_ack' ? { cleanupSummary: 'Owned resources cleared', residualRisks: [] } : completion
+      for (const table of ['domain_events', 'outbox_events'] as const) {
+        const before = await fingerprint(), name = `m1_atomic_${randomUUID().replaceAll('-', '')}`
+        await db.query(`CREATE FUNCTION ${name}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+          RAISE EXCEPTION 'M1_ATOMIC_BOUNDARY_FAILURE'; END $$`)
+        await db.query(`CREATE TRIGGER ${name} BEFORE INSERT ON ${table} FOR EACH ROW EXECUTE FUNCTION ${name}()`)
+        try {
+          const failed = await agent(execution.token, method, path, body, revision)
+          expect(failed.statusCode, failed.body).toBe(500)
+          expect(await fingerprint()).toEqual(before)
+        } finally {
+          await db.query(`DROP TRIGGER ${name} ON ${table}; DROP FUNCTION ${name}()`)
+        }
+      }
+      // A successful control proves the injected errors reached an otherwise valid command.
+      const accepted = await agent(execution.token, method, path, body, revision)
+      expect(accepted.statusCode, accepted.body).toBe(200)
+    }, 120_000,
+  )
 
   it('rechecks principal, grant, exact scope and installation on every confirmation, with concurrent reads producing zero facts', async () => {
     const execution = await start(), key = randomUUID()

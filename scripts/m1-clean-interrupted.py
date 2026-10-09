@@ -1,5 +1,6 @@
 """核归属和无活动引用后，保全中断现场，只清精确登记的本人闲置容器。"""
 import datetime
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -47,7 +48,8 @@ for run_id in sys.argv[1:]:
     (evidence / f'{run_id}-interrupted-cleanup.json').write_text(json.dumps(record, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
 # Preserve current client artifacts from this interrupted combination, including
 # already tracked historical files, before later runs can replace their names.
-with zipfile.ZipFile(evidence / 'interrupted-client-artifacts.zip', 'w', zipfile.ZIP_DEFLATED) as saved:
+archive_name = 'interrupted-client-artifacts-' + hashlib.sha256('|'.join(sys.argv[1:]).encode()).hexdigest()[:12] + '.zip'
+with zipfile.ZipFile(evidence / archive_name, 'w', zipfile.ZIP_DEFLATED) as saved:
     for directory in ['ci-logs/mcp-coverage', 'ci-logs/execution-recovery']:
         for path in (root / directory).rglob('*'):
             if path.is_file():

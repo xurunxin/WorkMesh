@@ -1,0 +1,46 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api
+
+ ❯ integration/execution-result.integration.test.ts (10 tests | 1 failed) 4132ms
+   ✓ exact execution confirmation > confirms a committed direct completion after lost response; terminal E and wrong origin stay closed, without business writes  344ms
+   ✓ exact execution confirmation > confirms only the exact Stop cleanup, and rechecks live authority after token retention changes 265ms
+   ✓ exact execution confirmation > rolls back state and all execution facts when provenance persistence fails 179ms
+   × exact execution confirmation > rolls back plan state, receipt, event and outbox on each durable boundary failure 187ms
+     → {"error":{"code":"CAPABILITY_DENIED","message":"The live capability intersection does not permit this operation","details":{"authorizationStage":"capability","policyId":"route.publishAgentPlan"},"correlationId":"cfaa01c1-5cec-4d8e-b2c5-9fbd18bb3f93"}}: expected 403 to be 500 // Object.is equality
+   ✓ exact execution confirmation > rolls back lease state, receipt, event and outbox on each durable boundary failure 260ms
+   ✓ exact execution confirmation > rolls back approval state, receipt, event and outbox on each durable boundary failure 282ms
+   ✓ exact execution confirmation > rolls back complete state, receipt, event and outbox on each durable boundary failure 280ms
+   ✓ exact execution confirmation > rolls back stop_ack state, receipt, event and outbox on each durable boundary failure 294ms
+   ✓ exact execution confirmation > rechecks principal, grant, exact scope and installation on every confirmation, with concurrent reads producing zero facts  384ms
+   ✓ exact execution confirmation > clears retained provenance when a rolling old producer reoccupies an expired key, while ordinary response updates keep proof 268ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/execution-result.integration.test.ts > exact execution confirmation > rolls back plan state, receipt, event and outbox on each durable boundary failure
+AssertionError: {"error":{"code":"CAPABILITY_DENIED","message":"The live capability intersection does not permit this operation","details":{"authorizationStage":"capability","policyId":"route.publishAgentPlan"},"correlationId":"cfaa01c1-5cec-4d8e-b2c5-9fbd18bb3f93"}}: expected 403 to be 500 // Object.is equality
+
+- Expected
++ Received
+
+- 500
++ 403
+
+ ❯ integration/execution-result.integration.test.ts:155:50
+    153|         try {
+    154|           const failed = await agent(execution.token, method, path, bo…
+    155|           expect(failed.statusCode, failed.body).toBe(500)
+       |                                                  ^
+    156|           expect(await fingerprint()).toEqual(before)
+    157|         } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  23:08:20
+   Duration  7.16s (transform 936ms, setup 0ms, collect 2.65s, tests 4.13s, environment 0ms, prepare 127ms)
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config ../../vitest.integration.config.ts integration/execution-result.integration.test.ts

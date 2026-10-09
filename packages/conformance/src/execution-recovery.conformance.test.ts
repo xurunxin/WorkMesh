@@ -257,11 +257,16 @@ describe('M1 真实 HTTP、MCP、Pi 执行与恢复', () => {
     expect(closed.turns).toEqual([{ id: pi.turnId, status: 'settled' }])
     expect(closed.attempts).toHaveLength(1)
     expect(closed.attempts[0]?.status).toBe('settled')
-    await expect(execution.client.getSession(execution.sessionId)).rejects.toMatchObject({ code: 'DELEGATION_NOT_ACTIVE' })
+    // The public revoke command also revokes issued E Tokens in its transaction;
+    // this request therefore fails at authentication before the delegation gate.
+    expect((await fixture.db.query<{ revoked: boolean }>(
+      'SELECT bool_and(revoked_at IS NOT NULL) AS revoked FROM agent_session_tokens WHERE session_id=$1',
+      [execution.sessionId])).rows[0]!.revoked).toBe(true)
+    await expect(execution.client.getSession(execution.sessionId)).rejects.toMatchObject({ code: 'UNAUTHENTICATED' })
     const mcp = await fixture.connect('read-only', execution)
     const rejected = await mcp.callTool({ name: 'get_agent_session', arguments: { id: execution.sessionId } })
     expect(rejected.isError).toBe(true)
-    expect(JSON.stringify(rejected.structuredContent)).toContain('DELEGATION_NOT_ACTIVE')
+    expect(rejected.structuredContent).toMatchObject({ error: { code: 'UNAUTHENTICATED' } })
     expect(pi.captures).toHaveLength(1)
     expect(await snapshotWait(execution.sessionId)).toEqual(closed)
     saveExecutionEvidence('pi-wait-revoked.json', { sessionId: execution.sessionId, closed, captures: pi.captures, rejected: rejected.structuredContent })

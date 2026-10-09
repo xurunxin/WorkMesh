@@ -4,6 +4,8 @@
 
 Proposed。本轮为方案修订，未产品实施，须平台另一 Agent 完整独审两项 blocking 并由 Chief confirm。旧候选在 docs/plan/agent-mcp-m1/history 保全，旧错误证明不再作为当前合同。
 
+以上描述冻结规划阶段。该方案已由平台另一 Agent 独审并获 Chief 实施确认；当前实现和真实检查见 [M1 产品报告](../plan/agent-mcp-m1/product-report.md)。产品成果仍待独审/Required CI/main 门禁，未以规划通过冒产品验收。
+
 ## Context
 
 停止/完成原请求已提交而响应丢失时，普通终态 E 不允许重新写或普通读取。用户已选准确归属只读确认。现行 resolveCoordinationIdentity 会写 usage、创建/续 C Session，不能用于纯查询；现行 refreshAgentToken 能让另一 Connection 为同 Session 取得 Token，幂等回执只有 actor/operation/key/body，没有原提交凭据来源，因此“曾有历史Token”不能证明原动作。

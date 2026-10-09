@@ -1,5 +1,13 @@
 # M1 受控方案入口
 
+## 产品候选审查入口
+
+已审方案与下文规划历史保持原义。Chief 已确认实施；产品候选、完整实际检查、首败和运行双字节由 [主执行报告](product-report.md)、[九类 DoD](product-closure-matrix.md)、[43 操作映射](product-operation-matrix.md) 和 [受测组合索引](product-evidence/check-index.md) 单独交付。进入平台另一 Agent 成果独审前仍不表示 Required CI 或 main 合入、整卡验收通过。
+
+## 方案归档时的历史说明
+
+以下“本轮仅方案/未产品实施/未运行”指已审规划归档当时，保持原文历史；当前产品状态以以上主报告为准。
+
 本轮仅方案文档修订，未产品实施。平台计划保持不变，当前doc:3OqOjIiQK-CWC5I9F6_SC注入全文两份一致；按明确反馈同步同 todo/会话分支。终态恢复采用精确原动作来源只读确认，等待采用“结算等待，自动继续”；原来源方案层面已闭、等待路径已明确；本轮只交hash/prompt FK两合同项给平台另一 Agent 定向复审闭合、Chief confirm 才实施。文档提交或合入不表示整卡完成。
 
 ## 完整独审入口

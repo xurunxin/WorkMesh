@@ -10,19 +10,19 @@
 
 @workmesh/contracts:build: cache miss, executing 4b67152e03869cad
 @workmesh/ui:build: cache miss, executing c3492dc05c193e97
-@workmesh/contracts:build: 
+@workmesh/contracts:build:
 @workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\contracts
 @workmesh/contracts:build: > tsc -p tsconfig.build.json
-@workmesh/contracts:build: 
-@workmesh/ui:build: 
+@workmesh/contracts:build:
+@workmesh/ui:build:
 @workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\ui
 @workmesh/ui:build: > tsc -p tsconfig.json
-@workmesh/ui:build: 
+@workmesh/ui:build:
 @workmesh/web:test:e2e: cache bypass, force executing 168d5fe81be3c70f
-@workmesh/web:test:e2e: 
+@workmesh/web:test:e2e:
 @workmesh/web:test:e2e: > @workmesh/web@ test:e2e C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\web
 @workmesh/web:test:e2e: > playwright test --config ../../playwright.config.ts
-@workmesh/web:test:e2e: 
+@workmesh/web:test:e2e:
 @workmesh/web:test:e2e: [WebServer] (node:62792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 @workmesh/web:test:e2e: [WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
 @workmesh/web:test:e2e: [WebServer] (node:54880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
@@ -47,87 +47,87 @@
 @workmesh/web:test:e2e: [WebServer]    ▲ Next.js 15.5.22
 @workmesh/web:test:e2e: [WebServer]    - Local:        http://localhost:3100
 @workmesh/web:test:e2e: [WebServer]    - Network:      http://100.77.217.65:3100
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer]  ✓ Starting...
 @workmesh/web:test:e2e: [WebServer]  ✓ Ready in 3.9s
 @workmesh/web:test:e2e: [WebServer]  ○ Compiling / ...
 @workmesh/web:test:e2e: [WebServer]  ⚠ ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] Warning
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] (1567:47) autoprefixer: end value has mixed support, consider using flex-end instead
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] Import trace for requested module:
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] Warning
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] (1760:57) autoprefixer: end value has mixed support, consider using flex-end instead
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] Import trace for requested module:
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] Warning
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] (1849:36) autoprefixer: end value has mixed support, consider using flex-end instead
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] Import trace for requested module:
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] Warning
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] (1860:87) autoprefixer: start value has mixed support, consider using flex-start instead
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] Import trace for requested module:
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css
 @workmesh/web:test:e2e: [WebServer]  GET / 200 in 27958ms
 @workmesh/web:test:e2e: [WebServer] <w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\web\app\styles.css': No serializer registered for Warning
 @workmesh/web:test:e2e: [WebServer] <w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 4 items } -> webpack/lib/ModuleWarning -> Warning
-@workmesh/web:test:e2e: 
+@workmesh/web:test:e2e:
 @workmesh/web:test:e2e: Running 70 tests using 1 worker
-@workmesh/web:test:e2e: 
+@workmesh/web:test:e2e:
 @workmesh/web:test:e2e: (node:36324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 @workmesh/web:test:e2e: (Use `node --trace-warnings ...` to show where the warning was created)
 @workmesh/web:test:e2e: [WebServer] {"level":30,"time":1791557375400,"pid":40636,"hostname":"DarkFlame","reqId":"dcf45b99-c55f-4231-a77d-76f623e474d1","req":{"method":"POST","url":"/api/v1/test/reset-install","host":"127.0.0.1:3101","remoteAddress":"127.0.0.1","remotePort":62583},"msg":"incoming request"}
 @workmesh/web:test:e2e: [WebServer] {"level":30,"time":1791557377008,"pid":40636,"hostname":"DarkFlame","reqId":"dcf45b99-c55f-4231-a77d-76f623e474d1","res":{"statusCode":200},"responseTime":1608.3902999999991,"msg":"request completed"}
 @workmesh/web:test:e2e: [WebServer]  ⚠ ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] Warning
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] (1567:47) autoprefixer: end value has mixed support, consider using flex-end instead
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] Import trace for requested module:
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] Warning
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] (1760:57) autoprefixer: end value has mixed support, consider using flex-end instead
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] Import trace for requested module:
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] Warning
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] (1849:36) autoprefixer: end value has mixed support, consider using flex-end instead
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] Import trace for requested module:
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] Warning
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] (1860:87) autoprefixer: start value has mixed support, consider using flex-start instead
-@workmesh/web:test:e2e: [WebServer] 
+@workmesh/web:test:e2e: [WebServer]
 @workmesh/web:test:e2e: [WebServer] Import trace for requested module:
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
 @workmesh/web:test:e2e: [WebServer] ./app/styles.css

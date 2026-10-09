@@ -307,12 +307,13 @@ describe('persisted execution wait and Worker continuation', () => {
       SELECT (jsonb_populate_record(NULL::workbench_execution_waits,to_jsonb(source)||$2::jsonb)).*
       FROM workbench_execution_waits source WHERE id=$1`, [waitId, JSON.stringify({ id: randomUUID(), ...patch })])
     const canceled = { status: 'canceled', resolved_at: new Date().toISOString(), terminal_reason: 'DDL probe' }
-    await expect(clone({ ...canceled, source_attempt_id: other.attemptId })).rejects.toMatchObject({ code: '23505',
+    // Keep the other source unique so each probe exercises exactly one constraint.
+    const unusedSource = await sessionFixture()
+    await expect(clone({ ...canceled, source_attempt_id: unusedSource.attemptId })).rejects.toMatchObject({ code: '23505',
       constraint: 'workbench_execution_waits_workspace_id_source_turn_id_key' })
-    await expect(clone({ ...canceled, source_turn_id: other.turnId })).rejects.toMatchObject({ code: '23505',
+    await expect(clone({ ...canceled, source_turn_id: unusedSource.turnId })).rejects.toMatchObject({ code: '23505',
       constraint: 'workbench_execution_waits_workspace_id_source_attempt_id_key' })
     // Use source facts with no wait so the earlier source UNIQUE constraints cannot mask this index.
-    const unusedSource = await sessionFixture()
     await expect(clone({ source_turn_id: unusedSource.turnId, source_attempt_id: unusedSource.attemptId })).rejects.toMatchObject({ code: '23505',
       constraint: 'workbench_wait_one_pending_session' })
     await db.query("UPDATE workbench_execution_waits SET status='canceled',resolved_at=now(),terminal_reason='DDL probe' WHERE id=$1", [otherWaitId])

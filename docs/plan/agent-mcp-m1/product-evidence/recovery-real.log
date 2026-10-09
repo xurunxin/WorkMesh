@@ -1,0 +1,18 @@
+
+> workmesh@ test:integration:recovery C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/recovery test:integration
+
+
+> @workmesh/recovery@ test:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\recovery
+> vitest run --config ../../vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/recovery
+
+ ✓ integration/recovery.integration.test.ts (1 test) 3982ms
+   ✓ complete WorkMesh recovery bundle > backs up, safely resumes an interrupted empty-target restore, and verifies all state  2446ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  23:24:16
+   Duration  5.60s (transform 480ms, setup 0ms, collect 1.23s, tests 3.98s, environment 0ms, prepare 124ms)

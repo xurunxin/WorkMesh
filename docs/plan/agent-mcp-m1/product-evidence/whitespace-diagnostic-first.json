@@ -1,0 +1,8 @@
+{
+  "gitCommand": ["git", "-c", "core.safecrlf=false", "-c", "core.autocrlf=false", "diff", "--check", "e49eda142d61bdd248ddc42ec16f5563abd4bbc6", "--"],
+  "combinedToolExitCode": 0,
+  "gitExitCode": null,
+  "reason": "诊断时临时禁用了 Windows 实际 autocrlf，导致大量 CRLF 工作树行被错误当尾随 CR；后接 Python 成功掩盖了原 Git 退出码",
+  "stdoutRetention": "工具显示约三 MB 输出并截断，未另存完整 stdout；缺口不重建为原件",
+  "disposition": "不将组合工具 exit 0 计 Git 通过，不更改全局配置/attributes/CI；后续以实际 Git 暂存对象及正常配置执行完整 main 范围检查并保存独立退出"
+}

@@ -69,6 +69,21 @@ try:
     env.update(DATABASE_URL=f'postgres://workmesh:{password}@127.0.0.1:{postgres_port}/workmesh_m1_test',
                REDIS_URL=f'redis://127.0.0.1:{redis_port}', S3_ENDPOINT=f'http://127.0.0.1:{storage_port}',
                S3_BUCKET=bucket, S3_REGION='us-east-1', S3_ACCESS_KEY_ID=access, S3_SECRET_ACCESS_KEY=secret, S3_FORCE_PATH_STYLE='true')
+    if sys.argv[1].startswith('recovery-real'):
+        # The generic root entry deliberately skips disaster recovery unless its
+        # separate source/target fixtures are configured, exactly as Required CI.
+        for database_name in ['workmesh_recovery_source_test', 'workmesh_recovery_target_test']:
+            docker('exec', postgres, 'createdb', '-U', 'workmesh', database_name)
+        env.update(RUN_RECOVERY_INTEGRATION='1', RECOVERY_TEST_SUFFIX=run_id,
+                   RECOVERY_SOURCE_DATABASE_URL=f'postgres://workmesh:{password}@127.0.0.1:{postgres_port}/workmesh_recovery_source_test',
+                   RECOVERY_TARGET_DATABASE_URL=f'postgres://workmesh:{password}@127.0.0.1:{postgres_port}/workmesh_recovery_target_test',
+                   RECOVERY_TEST_S3_ENDPOINT=env['S3_ENDPOINT'], RECOVERY_TEST_S3_ACCESS_KEY_ID=access,
+                   RECOVERY_TEST_S3_SECRET_ACCESS_KEY=secret,
+                   RECOVERY_SOURCE_S3_BUCKET=run_id+'-source', RECOVERY_TARGET_S3_BUCKET=run_id+'-target',
+                   WORKMESH_POSTGRES_TOOL_CONTAINER=postgres, WORKMESH_POSTGRES_TOOL_HOST='127.0.0.1',
+                   WORKMESH_POSTGRES_TOOL_PORT='5432', RECOVERY_TEST_REPORT_PATH=str(evidence / (run_id+'-recovery-report.json')))
+        resources[0]['databasesCreated'] = ['workmesh_recovery_source_test', 'workmesh_recovery_target_test']
+        resources[-1]['testBuckets'] = [run_id+'-source', run_id+'-target']
     for item in resources:
         item['ready'] = True
     save()
