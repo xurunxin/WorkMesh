@@ -132,6 +132,38 @@ async function validWaitTrigger(tx: PoolClient, wait: ExecutionWait): Promise<bo
   }
   return false
 }
+async function selectValidWaitInput(tx: PoolClient, wait: ExecutionWait): Promise<boolean> {
+  // Advance past rejected authors instead of letting an old input hide every
+  // later input. Reuse the live trigger predicate under the authority locks.
+  let eventCursor = wait.input_event_cursor
+  for (;;) {
+    const prompts = (await tx.query<{ id: string; cursor: string }>(`SELECT prompt.id,event.cursor::text AS cursor
+      FROM agent_session_prompts prompt JOIN domain_events event
+        ON event.session_id=prompt.session_id AND event.event_type='agent.session.prompted'
+          AND event.payload->>'promptId'=prompt.id::text
+      WHERE prompt.session_id=$1 AND event.workspace_id=$2 AND event.cursor>$3
+      ORDER BY event.cursor LIMIT 100`, [wait.agent_session_id, wait.workspace_id, eventCursor])).rows
+    for (const prompt of prompts) {
+      wait.trigger_kind = 'prompt'; wait.trigger_prompt_id = prompt.id
+      if (await validWaitTrigger(tx, wait)) return true
+      eventCursor = prompt.cursor
+    }
+    if (prompts.length < 100) break
+  }
+  wait.trigger_prompt_id = null
+  let messageSequence = (wait.input_message_sequence ?? 1) - 1
+  for (;;) {
+    const messages = (await tx.query<{ id: string; sequence: number }>(`SELECT id,sequence FROM workbench_messages
+      WHERE workspace_id=$1 AND conversation_id=$2 AND role='user' AND sequence>$3
+      ORDER BY sequence LIMIT 100`, [wait.workspace_id, wait.conversation_id, messageSequence])).rows
+    for (const message of messages) {
+      wait.trigger_kind = 'message'; wait.trigger_message_id = message.id
+      if (await validWaitTrigger(tx, wait)) return true
+      messageSequence = message.sequence
+    }
+    if (messages.length < 100) return false
+  }
+}
 export async function createWorkbenchExecutionWait(tx: PoolClient, input: {
   workspaceId: string; sessionId: string; actorId: string; credentialHash: string
   turnId: string; attemptId: string; conversationId: string; correlationId: string; idempotencyKey: string
@@ -307,19 +339,7 @@ export async function reconcileWorkbenchExecutionWait(tx: PoolClient, input: {
   [input.workspaceId, sourceTurn.llm_connection_id, sourceTurn.llm_model_id, wait.requested_by_human_actor_id, conversation.team_id])).rowCount) return 0
   if (wait.wait_state === 'awaiting_approval') {
     wait.trigger_kind = 'approval'; wait.trigger_approval_id = wait.approval_id
-  } else {
-    const prompt = (await tx.query<{ id: string }>(`SELECT prompt.id FROM agent_session_prompts prompt
-      JOIN domain_events event ON event.session_id=prompt.session_id AND event.event_type='agent.session.prompted'
-        AND event.payload->>'promptId'=prompt.id::text WHERE prompt.session_id=$1 AND event.workspace_id=$2
-        AND event.cursor>$3 ORDER BY event.cursor LIMIT 1`, [wait.agent_session_id, input.workspaceId, wait.input_event_cursor])).rows[0]
-    if (prompt) { wait.trigger_kind = 'prompt'; wait.trigger_prompt_id = prompt.id }
-    else {
-      const message = (await tx.query<{ id: string }>(`SELECT id FROM workbench_messages WHERE workspace_id=$1
-        AND conversation_id=$2 AND role='user' AND sequence>=$3 ORDER BY sequence LIMIT 1`,
-      [input.workspaceId, wait.conversation_id, wait.input_message_sequence])).rows[0]
-      if (message) { wait.trigger_kind = 'message'; wait.trigger_message_id = message.id }
-    }
-  }
+  } else if (!await selectValidWaitInput(tx, wait)) return 0
   if (!await validWaitTrigger(tx, wait)) return 0
   const queued = (await tx.query<{ id: string; initiated_by_actor_id: string }>(`SELECT id,initiated_by_actor_id FROM workbench_turns
     WHERE workspace_id=$1 AND conversation_id=$2 AND agent_session_id=$3 AND status='queued' ORDER BY sequence LIMIT 1 FOR UPDATE`,
@@ -330,7 +350,9 @@ export async function reconcileWorkbenchExecutionWait(tx: PoolClient, input: {
     VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING id`, [input.workspaceId, wait.conversation_id,
     conversation.next_turn_sequence, wait.requested_by_human_actor_id, wait.agent_session_id,
     sourceTurn.llm_connection_id, sourceTurn.llm_model_id])).rows[0]!.id
-  if (!queued) {
+  // Both reused and new Turns need a message after the settled waiting reply:
+  // Runner credentials read through this Turn's maximum message sequence.
+  {
     let triggerSummary = 'The exact action was approved by its authorized Human.'
     if (wait.trigger_kind === 'prompt') triggerSummary = (await tx.query<{ body_markdown: string }>(
       'SELECT body_markdown FROM agent_session_prompts WHERE session_id=$1 AND id=$2',
@@ -343,15 +365,15 @@ export async function reconcileWorkbenchExecutionWait(tx: PoolClient, input: {
       VALUES($1,$2,$3,$4,'system',$5,$6) RETURNING id`, [input.workspaceId, wait.conversation_id, turnId,
       conversation.next_message_sequence, input.actorId,
       `Automatic continuation of waiting Turn ${wait.source_turn_id}; ${wait.trigger_kind} ${wait.trigger_approval_id ?? wait.trigger_prompt_id ?? wait.trigger_message_id}.\n${triggerSummary.slice(0, 49_000)}`])).rows[0]!
-    await tx.query(`UPDATE workbench_conversations SET next_turn_sequence=next_turn_sequence+1,
+    await tx.query(`UPDATE workbench_conversations SET next_turn_sequence=next_turn_sequence+$3,
       next_message_sequence=next_message_sequence+1,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND id=$2`,
-    [input.workspaceId, wait.conversation_id])
+    [input.workspaceId, wait.conversation_id, queued ? 0 : 1])
     await appendEvent(tx, { workspaceId: input.workspaceId, teamId: conversation.team_id ?? undefined,
       audienceActorId: conversation.team_id ? undefined : conversation.responsible_human_actor_id,
       actorId: input.actorId, correlationId: input.correlationId, sessionId: wait.agent_session_id,
       type: 'workbench.message.appended', aggregateType: 'workbench_message', aggregateId: message.id,
       payload: { conversationId: wait.conversation_id, messageId: message.id, turnId, role: 'system', sequence: conversation.next_message_sequence } })
-    await appendEvent(tx, { workspaceId: input.workspaceId, teamId: conversation.team_id ?? undefined,
+    if (!queued) await appendEvent(tx, { workspaceId: input.workspaceId, teamId: conversation.team_id ?? undefined,
       audienceActorId: conversation.team_id ? undefined : conversation.responsible_human_actor_id,
       actorId: input.actorId, correlationId: input.correlationId, sessionId: wait.agent_session_id,
       type: 'workbench.turn.queued', aggregateType: 'workbench_turn', aggregateId: turnId,

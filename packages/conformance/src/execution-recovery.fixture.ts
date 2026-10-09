@@ -64,14 +64,16 @@ export async function createExecutionRecoveryFixture() {
       `SELECT count(*)::text AS count,md5(coalesce(string_agg(to_jsonb(fact)::text,'' ORDER BY to_jsonb(fact)::text),'')) AS fingerprint FROM ${table} fact`)).rows[0]!
     return result
   }
-  const createPi = async (execution: Execution, wait: { state: 'awaiting_approval' | 'awaiting_input' | 'blocked'; reason: string; approval?: { id: string; actionPayloadHash: string } } | null) => {
+  const createPi = async (execution: Execution, wait: { state: 'awaiting_approval' | 'awaiting_input' | 'blocked'; reason: string; approval?: { id: string; actionPayloadHash: string } } | null,
+    beforeWaitTool?: (conversationId: string) => Promise<void>) => {
     let phase: 'wait' | 'continue' | 'stop' = wait ? 'wait' : 'continue'
     let phaseCalls = 0
-    const captures: Array<{ phase: string; tools: string[]; returnedToolCalls: string[]; receivedToolResults: string[] }> = []
+    const captures: Array<{ phase: string; tools: string[]; returnedToolCalls: string[]; receivedToolResults: string[]; receivedMessages: string }> = []
     const model = createServer({ key: readFileSync(new URL('./fixtures/model-test-key.pem', import.meta.url)), cert: readFileSync(new URL('./fixtures/model-test-ca.pem', import.meta.url)) }, async (request, response) => {
       let body = ''; for await (const chunk of request) body += String(chunk)
       const input = JSON.parse(body) as { tools: Array<{ function: { name: string } }>; messages: Array<{ role: string; content?: unknown }> }
       const call = phaseCalls++
+      if (phase === 'wait' && call === 0 && beforeWaitTool) await beforeWaitTool(conversationId)
       const consumeFirst = phase === 'continue' && wait?.approval !== undefined
       let name: string | null = phase === 'wait' && call === 0 ? 'workmesh_wait'
         : phase === 'continue' && call === 0 && consumeFirst ? 'workmesh_consume_approval'
@@ -85,6 +87,7 @@ export async function createExecutionRecoveryFixture() {
         args = { ifMatch: state.revision, summary: 'M1 continuation completed after its verified Human trigger', noArtifactReason: 'Deterministic lifecycle conformance; no product artifact was produced.' }
       }
       captures.push({ phase, tools: input.tools.map(tool => tool.function.name), returnedToolCalls: phase === 'stop' ? [] : name ? [name] : [],
+        receivedMessages: redact(JSON.stringify(input.messages)),
         receivedToolResults: input.messages.filter(message => message.role === 'tool').map(message => redact(JSON.stringify(message.content))) })
       if (phase === 'stop') {
         const current = await execution.client.getSession<{ revision: number }>(execution.sessionId)

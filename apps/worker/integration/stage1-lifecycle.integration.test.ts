@@ -108,7 +108,10 @@ describe('stage 1 worker durability', () => {
     { sourceKind: 'native', closure: null }, { sourceKind: 'connection', closure: null },
     { sourceKind: 'native', closure: 'stop' }, { sourceKind: 'connection', closure: 'stop' },
     { sourceKind: 'native', closure: 'revoke' }, { sourceKind: 'connection', closure: 'revoke' },
-  ] as const)('reconciles $sourceKind waits with $closure priority without duplicate execution', async ({ sourceKind, closure }) => {
+    { sourceKind: 'native', closure: null, scanPrefix: 100 },
+  ] as const)('reconciles $sourceKind waits with $closure priority without duplicate execution ($scanPrefix older waits)', async testCase => {
+    const { sourceKind, closure } = testCase
+    const scanPrefix = ('scanPrefix' in testCase ? testCase.scanPrefix : 0) ?? 0
     const previousWaitsEnabled = process.env.WORKMESH_EXECUTION_WAITS_ENABLED
     process.env.WORKMESH_EXECUTION_WAITS_ENABLED = 'true'
     try {
@@ -217,11 +220,41 @@ describe('stage 1 worker durability', () => {
       await db.query("INSERT INTO agent_connection_credentials(connection_id,token_hash,fingerprint_prefix,status) VALUES($1,$2,'rotated-prefix','active')", [sourceConnectionId, rotatedHash])
       await db.query("INSERT INTO agent_installation_tokens(agent_id,token_hash,origin_kind,origin_connection_id) VALUES($1,$2,'connection',$3)", [data.agentId, rotatedHash, sourceConnectionId])
     }
+    if (scanPrefix > 0) {
+      // Real persisted, unready waits fill the entire first page. Clone the
+      // explicit database fixture, retaining exact Session/Turn/Attempt links.
+      for (let ordinal = 0; ordinal < scanPrefix; ordinal++) {
+        const ids = { session: randomUUID(), conversation: randomUUID(), turn: randomUUID(), attempt: randomUUID(), wait: randomUUID() }
+        await db.query(`INSERT INTO agent_sessions SELECT (jsonb_populate_record(NULL::agent_sessions,
+          to_jsonb(source)||$2::jsonb)).* FROM agent_sessions source WHERE id=$1`,
+        [sessionId, { id: ids.session, state: 'paused' }])
+        await db.query(`INSERT INTO workbench_conversations SELECT (jsonb_populate_record(NULL::workbench_conversations,
+          to_jsonb(source)||$2::jsonb)).* FROM workbench_conversations source WHERE id=$1`,
+        [conversation, { id: ids.conversation, agent_session_id: ids.session }])
+        await db.query(`INSERT INTO workbench_turns SELECT (jsonb_populate_record(NULL::workbench_turns,
+          to_jsonb(source)||$2::jsonb)).* FROM workbench_turns source WHERE id=$1`,
+        [turn, { id: ids.turn, conversation_id: ids.conversation, agent_session_id: ids.session, current_runner_attempt_id: null }])
+        await db.query(`INSERT INTO workbench_runner_attempts SELECT (jsonb_populate_record(NULL::workbench_runner_attempts,
+          to_jsonb(source)||$2::jsonb)).* FROM workbench_runner_attempts source WHERE id=$1`,
+        [attempt, { id: ids.attempt, conversation_id: ids.conversation, agent_session_id: ids.session, turn_id: ids.turn, fence_token: randomUUID() }])
+        await db.query('UPDATE workbench_turns SET current_runner_attempt_id=$2 WHERE id=$1', [ids.turn, ids.attempt])
+        await db.query(`INSERT INTO workbench_execution_waits SELECT (jsonb_populate_record(NULL::workbench_execution_waits,
+          to_jsonb(source)||$2::jsonb||jsonb_build_object('created_at',source.created_at-interval '1 day'))).* FROM workbench_execution_waits source WHERE id=$1`,
+        [wait, { id: ids.wait, agent_session_id: ids.session, conversation_id: ids.conversation, source_turn_id: ids.turn, source_attempt_id: ids.attempt }])
+      }
+      expect((await db.query("SELECT id FROM workbench_execution_waits WHERE status='pending'")).rowCount).toBe(101)
+    }
     const second = createSessionLifecycleWorker({ db, workerId: 'wait-restart' })
     expect((await Promise.all([first.reconcileWorkbenchWaits(), second.reconcileWorkbenchWaits()])).reduce((sum, count) => sum+count, 0)).toBe(1)
     expect(await second.reconcileWorkbenchWaits()).toBe(0)
     const result = (await db.query<{ status: string; continuation_turn_id: string }>('SELECT status,continuation_turn_id FROM workbench_execution_waits WHERE id=$1', [wait])).rows[0]!
     expect(result.status).toBe('continued')
+    if (scanPrefix > 0) {
+      expect((await db.query("SELECT id FROM workbench_execution_waits WHERE status='pending'")).rowCount).toBe(100)
+      // Reinstantiation does not lose progress or emit a second continuation.
+      expect(await createSessionLifecycleWorker({ db, workerId: 'wait-second-restart' }).reconcileWorkbenchWaits()).toBe(0)
+      expect((await db.query("SELECT id FROM workbench_execution_waits WHERE status='continued'")).rowCount).toBe(1)
+    }
     expect((await db.query<{ source_installation_token_id: string }>('SELECT source_installation_token_id FROM workbench_execution_waits WHERE id=$1', [wait])).rows[0]!.source_installation_token_id).toBe(installation)
     expect((await db.query('SELECT id FROM workbench_runner_attempts WHERE turn_id=$1', [result.continuation_turn_id])).rowCount).toBe(0)
     expect((await db.query<{ state: string }>('SELECT state FROM agent_sessions WHERE id=$1', [sessionId])).rows[0]!.state).toBe('executing')

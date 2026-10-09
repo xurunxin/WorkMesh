@@ -1,0 +1,106 @@
+
+> workmesh@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6
+> turbo run lint
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running lint in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/ui:lint: cache miss, executing ee0df08f007507c7
+@workmesh/git-provider:lint: cache miss, executing 3677e8f4f0c4b89a
+@workmesh/artifact-storage:lint: cache miss, executing 9039b7d9a6a7852f
+@workmesh/observability:lint: cache miss, executing 76e890d1e4e10e79
+@workmesh/contracts:lint: cache miss, executing bcb670ff4b2d77a4
+@workmesh/ui:lint:
+@workmesh/ui:lint: > @workmesh/ui@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\ui
+@workmesh/ui:lint: > tsc --noEmit
+@workmesh/ui:lint:
+@workmesh/git-provider:lint:
+@workmesh/git-provider:lint: > @workmesh/git-provider@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\git-provider
+@workmesh/git-provider:lint: > tsc --noEmit
+@workmesh/git-provider:lint:
+@workmesh/artifact-storage:lint:
+@workmesh/artifact-storage:lint: > @workmesh/artifact-storage@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\artifact-storage
+@workmesh/artifact-storage:lint: > tsc --noEmit
+@workmesh/artifact-storage:lint:
+@workmesh/contracts:lint:
+@workmesh/contracts:lint: > @workmesh/contracts@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\contracts
+@workmesh/contracts:lint: > tsc --noEmit
+@workmesh/contracts:lint:
+@workmesh/observability:lint:
+@workmesh/observability:lint: > @workmesh/observability@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\observability
+@workmesh/observability:lint: > tsc --noEmit
+@workmesh/observability:lint:
+@workmesh/agent-sdk:lint: cache miss, executing 717affa458f07a2e
+@workmesh/config:lint: cache miss, executing e5a8af9f68a99dcb
+@workmesh/agent-runner:lint: cache miss, executing d850cf9d8d09b3fb
+@workmesh/a2a-adapter:lint: cache miss, executing a337f83a9a47d682
+@workmesh/domain:lint: cache miss, executing 6f82e965bd564e14
+@workmesh/web:lint: cache miss, executing d69f240050803a2a
+@workmesh/agent-sdk:lint:
+@workmesh/agent-sdk:lint: > @workmesh/agent-sdk@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\agent-sdk
+@workmesh/agent-sdk:lint: > tsc --noEmit
+@workmesh/agent-sdk:lint:
+@workmesh/agent-runner:lint:
+@workmesh/agent-runner:lint: > @workmesh/agent-runner@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\agent-runner
+@workmesh/agent-runner:lint: > tsc --noEmit
+@workmesh/agent-runner:lint:
+@workmesh/config:lint:
+@workmesh/config:lint: > @workmesh/config@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\config
+@workmesh/config:lint: > tsc --noEmit
+@workmesh/config:lint:
+@workmesh/a2a-adapter:lint:
+@workmesh/a2a-adapter:lint: > @workmesh/a2a-adapter@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\a2a-adapter
+@workmesh/a2a-adapter:lint: > tsc --noEmit
+@workmesh/a2a-adapter:lint:
+@workmesh/domain:lint:
+@workmesh/domain:lint: > @workmesh/domain@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\domain
+@workmesh/domain:lint: > tsc --noEmit
+@workmesh/domain:lint:
+@workmesh/web:lint:
+@workmesh/web:lint: > @workmesh/web@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\web
+@workmesh/web:lint: > tsc --noEmit
+@workmesh/web:lint:
+@workmesh/db:lint: cache miss, executing 83132a73808e7052
+@workmesh/db:lint:
+@workmesh/db:lint: > @workmesh/db@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\db
+@workmesh/db:lint: > tsc --noEmit
+@workmesh/db:lint:
+@workmesh/mcp:lint: cache miss, executing c6bc5101cdbf7c20
+@workmesh/fake-agent:lint: cache miss, executing 90feed5e2d3fa90c
+@workmesh/mcp:lint:
+@workmesh/mcp:lint: > @workmesh/mcp@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\mcp
+@workmesh/mcp:lint: > tsc --noEmit
+@workmesh/mcp:lint:
+@workmesh/fake-agent:lint:
+@workmesh/fake-agent:lint: > @workmesh/fake-agent@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\fake-agent
+@workmesh/fake-agent:lint: > tsc --noEmit
+@workmesh/fake-agent:lint:
+@workmesh/worker:lint: cache miss, executing c3f7d623934ec924
+@workmesh/recovery:lint: cache miss, executing cdec825f43e65ab3
+@workmesh/worker:lint:
+@workmesh/worker:lint: > @workmesh/worker@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\worker
+@workmesh/worker:lint: > tsc --noEmit
+@workmesh/worker:lint:
+@workmesh/recovery:lint:
+@workmesh/recovery:lint: > @workmesh/recovery@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\recovery
+@workmesh/recovery:lint: > tsc --noEmit
+@workmesh/recovery:lint:
+@workmesh/api:lint: cache miss, executing 4ae9ebeaff544efb
+@workmesh/api:lint:
+@workmesh/api:lint: > @workmesh/api@ lint C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\api
+@workmesh/api:lint: > tsc --noEmit
+@workmesh/api:lint:
+@workmesh/worker:lint: integration/stage1-lifecycle.integration.test.ts(225,39): error TS18048: 'testCase.scanPrefix' is possibly 'undefined'.
+@workmesh/worker:lint:  ELIFECYCLE  Command failed with exit code 2.
+@workmesh/worker#lint:  ERROR  command (C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\worker) C:\nvm4w\nodejs\pnpm.cmd run lint exited (2)
+
+ Tasks:    15 successful, 17 total
+Cached:    0 cached, 17 total
+  Time:    1m19.968s
+Failed:    @workmesh/worker#lint
+
+ ERROR  run failed: command  exited (2)
+ ELIFECYCLE  Command failed with exit code 2.

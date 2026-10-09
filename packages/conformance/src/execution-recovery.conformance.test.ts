@@ -216,6 +216,101 @@ describe('M1 真实 HTTP、MCP、Pi 执行与恢复', () => {
     saveExecutionEvidence(`pi-wait-${state}.json`, { sessionId: execution.sessionId, waiting, resumed, final, captures: pi.captures, completion: completed, usedOriginalReturnedApprovalHash: approval?.actionPayloadHash ?? null })
   })
 
+  it.each(['prompt', 'approval'] as const)('真实 Pi 提前排队→等待→%s→复用 Turn 获得完整上下文并完成', async trigger => {
+    const execution = await fixture.createExecution(`M1 queued continuation ${trigger}`)
+    let approval: { id: string; actionPayloadHash: string } | undefined
+    if (trigger === 'approval') {
+      const payload = { action: 'queued-continuation' }
+      const actual = await execution.client.requestApproval({ sessionId: execution.sessionId, approvalType: 'm1_fixture',
+        actionName: 'queued-continuation', actionPayloadSanitized: payload,
+        actionPayloadHash: `sha256:${createHash('sha256').update(JSON.stringify(payload)).digest('hex')}`,
+        riskLevel: 'low', rationaleSummary: 'Queued Turn continuation', expiresAt: new Date(Date.now() + 600_000).toISOString() },
+      { idempotencyKey: randomUUID() }) as unknown as { id: string; action_payload_hash: string }
+      approval = { id: actual.id, actionPayloadHash: actual.action_payload_hash }
+    }
+    let queuedId = ''
+    const pi = await fixture.createPi(execution, { state: approval ? 'awaiting_approval' : 'awaiting_input', reason: 'Wait after early queued input', approval }, async conversationId => {
+      expect((await snapshotWait(execution.sessionId)).turns[0]?.status).toBe('running')
+      const conversation = await fixture.human<{ revision: number }>('GET', `/api/v1/workbench/conversations/${conversationId}`)
+      const queued = await fixture.human<{ turn: { id: string } }>('POST', `/api/v1/workbench/conversations/${conversationId}/turns`,
+        { messageMarkdown: 'Early queued user request before waiting.' }, conversation.revision)
+      queuedId = queued.turn.id
+    })
+    await pi.run('wait')
+    const waiting = await snapshotWait(execution.sessionId)
+    expect(waiting.turns).toHaveLength(2)
+    const publicReply = (await fixture.db.query<{ content_markdown: string }>(
+      "SELECT content_markdown FROM workbench_messages WHERE turn_id=$1 AND role='assistant'", [pi.turnId])).rows[0]!.content_markdown
+    const worker = createSessionLifecycleWorker({ db: fixture.db, workerId: `m1-queued-${randomUUID()}` })
+    expect(await worker.reconcileWorkbenchWaits()).toBe(0)
+    const triggerText = 'Accurate later prompt for queued continuation.'
+    if (approval) {
+      const current = await execution.client.getApproval(approval.id)
+      await fixture.human('POST', `/api/v1/approvals/${approval.id}/decide`, { decision: 'approved', reason: 'Approve exact queued continuation' }, current.revision)
+    } else await fixture.human('POST', `/api/v1/agent-sessions/${execution.sessionId}/prompt`, { bodyMarkdown: triggerText })
+    expect((await Promise.all([worker.reconcileWorkbenchWaits(), worker.reconcileWorkbenchWaits()])).reduce((sum, count) => sum + count, 0)).toBe(1)
+    expect((await snapshotWait(execution.sessionId)).waits[0]?.continuation_turn_id).toBe(queuedId)
+    expect((await snapshotWait(execution.sessionId)).turns).toHaveLength(2)
+    expect((await fixture.db.query("SELECT id FROM domain_events WHERE aggregate_id=$1 AND event_type='workbench.turn.queued'", [queuedId])).rowCount).toBe(1)
+    await pi.run('continue')
+    const received = pi.captures.find(capture => capture.phase === 'continue')!.receivedMessages
+    expect(received).toContain(publicReply)
+    expect(received).toContain(approval ? approval.id : triggerText)
+    const final = await snapshotWait(execution.sessionId)
+    expect(final.turns).toHaveLength(2); expect(final.attempts).toHaveLength(2)
+    expect(final.turns.every(turn => turn.status === 'settled')).toBe(true)
+    expect(final.attempts.every(attempt => attempt.status === 'settled')).toBe(true)
+    expect(await fixture.human('GET', `/api/v1/agent-sessions/${execution.sessionId}`)).toMatchObject({ state: 'completed' })
+    saveExecutionEvidence(`review-queued-${trigger}.json`, { waiting, final, queuedId, captures: pi.captures })
+  })
+
+  it.each(['prompt-to-prompt', 'prompt-to-message', 'message-to-message'] as const)('失效旧输入 %s 不遮挡另一合法 Human 的真实 Pi 唯一续接', async path => {
+    const execution = await fixture.createExecution(`M1 revoked input ${path}`)
+    const pi = await fixture.createPi(execution, { state: 'awaiting_input', reason: 'Wait for authorized input' })
+    await pi.run('wait')
+    const workspaceId = (await fixture.db.query<{ workspace_id: string }>('SELECT workspace_id FROM agent_sessions WHERE id=$1', [execution.sessionId])).rows[0]!.workspace_id
+    // Explicit privileged adversarial setup: the old author was a legal Team
+    // member when posting, then loses membership before reconciliation.
+    const oldHuman = (await fixture.db.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name,email,password_hash,workspace_role) VALUES($1,'human','Old input author',$2,'fixture-only','member') RETURNING id", [workspaceId, `${randomUUID()}@m1.test`])).rows[0]!.id
+    await fixture.db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'member')", [workspaceId, fixture.teamId, oldHuman])
+    let obsoleteId: string
+    if (path.startsWith('prompt')) {
+      obsoleteId = (await fixture.db.query<{ id: string }>('INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3) RETURNING id', [execution.sessionId, oldHuman, 'Obsolete prompt.'])).rows[0]!.id
+      await fixture.db.query(`INSERT INTO domain_events(workspace_id,team_id,event_type,aggregate_type,aggregate_id,actor_id,correlation_id,session_id,payload)
+        VALUES($1,$2,'agent.session.prompted','agent_session',$3,$4,$5,$3,$6)`,
+      [workspaceId, fixture.teamId, execution.sessionId, oldHuman, randomUUID(), { promptId: obsoleteId }])
+    } else {
+      obsoleteId = (await fixture.db.query<{ id: string }>(`INSERT INTO workbench_messages(workspace_id,conversation_id,sequence,role,author_actor_id,content_markdown)
+        SELECT workspace_id,id,next_message_sequence,'user',$2,'Obsolete message.' FROM workbench_conversations WHERE id=$1 RETURNING id`, [pi.conversationId, oldHuman])).rows[0]!.id
+      await fixture.db.query('UPDATE workbench_conversations SET next_message_sequence=next_message_sequence+1 WHERE id=$1', [pi.conversationId])
+    }
+    await fixture.db.query('DELETE FROM memberships WHERE actor_id=$1', [oldHuman])
+    const first = createSessionLifecycleWorker({ db: fixture.db, workerId: `m1-input-${randomUUID()}` })
+    expect(await first.reconcileWorkbenchWaits()).toBe(0)
+    let triggerId: string
+    const legalText = 'Later input by a currently authorized Human.'
+    if (path.endsWith('prompt')) {
+      await fixture.human('POST', `/api/v1/agent-sessions/${execution.sessionId}/prompt`, { bodyMarkdown: legalText })
+      triggerId = (await fixture.db.query<{ id: string }>('SELECT id FROM agent_session_prompts WHERE session_id=$1 AND body_markdown=$2', [execution.sessionId, legalText])).rows[0]!.id
+    } else {
+      const conversation = await fixture.human<{ revision: number }>('GET', `/api/v1/workbench/conversations/${pi.conversationId}`)
+      await fixture.human('POST', `/api/v1/workbench/conversations/${pi.conversationId}/turns`, { messageMarkdown: legalText }, conversation.revision)
+      triggerId = (await fixture.db.query<{ id: string }>('SELECT id FROM workbench_messages WHERE conversation_id=$1 AND content_markdown=$2', [pi.conversationId, legalText])).rows[0]!.id
+    }
+    const restarted = createSessionLifecycleWorker({ db: fixture.db, workerId: `m1-input-restart-${randomUUID()}` })
+    expect((await Promise.all([first.reconcileWorkbenchWaits(), restarted.reconcileWorkbenchWaits()])).reduce((sum, count) => sum + count, 0)).toBe(1)
+    const resumed = await snapshotWait(execution.sessionId)
+    expect(resumed.waits[0]).toMatchObject(path.endsWith('prompt') ? { trigger_prompt_id: triggerId, trigger_message_id: null } : { trigger_message_id: triggerId, trigger_prompt_id: null })
+    await pi.run('continue')
+    expect(pi.captures.find(capture => capture.phase === 'continue')!.receivedMessages).toContain(legalText)
+    expect(await restarted.reconcileWorkbenchWaits()).toBe(0)
+    const final = await snapshotWait(execution.sessionId)
+    expect(final.turns).toHaveLength(2); expect(final.attempts).toHaveLength(2)
+    expect(final.attempts.every(attempt => attempt.status === 'settled')).toBe(true)
+    expect(await fixture.human('GET', `/api/v1/agent-sessions/${execution.sessionId}`)).toMatchObject({ state: 'completed' })
+    saveExecutionEvidence(`review-invalid-input-${path}.json`, { obsoleteId, oldHuman, triggerId, final, captures: pi.captures })
+  })
+
   it('真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接', async () => {
     const execution = await fixture.createExecution('M1 wait pause Stop')
     const pi = await fixture.createPi(execution, { state: 'blocked', reason: 'M1 needs Human input' })

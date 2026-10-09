@@ -780,13 +780,29 @@ export function createSessionLifecycleWorker({
 
   const reconcileWorkbenchWaits = async (limit = 100): Promise<number> => {
     if (!executionWaitsEnabled() || !await executionWaitSchemaAvailable(db)) return 0
-    const pending = await db.query<{ id: string; workspace_id: string }>(
-      "SELECT id,workspace_id FROM workbench_execution_waits WHERE status='pending' ORDER BY created_at,id LIMIT $1",
-      [Math.max(1, Math.min(100, limit))])
+    type Candidate = { id: string; workspace_id: string; scan_created_at: string }
+    // A fixed upper boundary makes each tick finite. Keyset pages visit every
+    // existing pending wait, even when the oldest page cannot continue. No
+    // in-memory cursor is required for fairness after a Worker restart.
+    const upper = (await db.query<Candidate>(`SELECT id,created_at::text AS scan_created_at
+      FROM workbench_execution_waits WHERE status='pending' ORDER BY created_at DESC,id DESC LIMIT 1`)).rows[0]
+    if (!upper) return 0
+    const pageSize = Math.max(1, Math.min(100, limit))
+    let cursor: Candidate | undefined
     let changed = 0
-    for (const candidate of pending.rows) changed += await withTx(db, async tx =>
-      reconcileWorkbenchExecutionWait(tx, { workspaceId: candidate.workspace_id, waitId: candidate.id,
-        actorId: await systemActorId(tx, candidate.workspace_id), correlationId: `${workerId}:wait:${candidate.id}` }))
+    for (;;) {
+      const pending = await db.query<Candidate>(`SELECT id,workspace_id,created_at::text AS scan_created_at
+        FROM workbench_execution_waits WHERE status='pending'
+          AND (created_at,id)<=($2::timestamptz,$3::uuid)
+          AND ($4::timestamptz IS NULL OR (created_at,id)>($4::timestamptz,$5::uuid))
+        ORDER BY created_at,id LIMIT $1`,
+      [pageSize, upper.scan_created_at, upper.id, cursor?.scan_created_at ?? null, cursor?.id ?? null])
+      for (const candidate of pending.rows) changed += await withTx(db, async tx =>
+        reconcileWorkbenchExecutionWait(tx, { workspaceId: candidate.workspace_id, waitId: candidate.id,
+          actorId: await systemActorId(tx, candidate.workspace_id), correlationId: `${workerId}:wait:${candidate.id}` }))
+      if (pending.rows.length < pageSize) break
+      cursor = pending.rows.at(-1)
+    }
     return changed
   }
 
