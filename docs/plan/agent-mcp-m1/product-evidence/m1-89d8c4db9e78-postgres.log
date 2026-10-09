@@ -1,0 +1,124 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-09 15:09:37.130 UTC [42] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-09 15:09:37.131 UTC [42] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-09 15:09:37.132 UTC [45] LOG:  database system was shut down at 2026-10-09 15:09:37 UTC
+2026-10-09 15:09:37.134 UTC [42] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down...2026-10-09 15:09:37.259 UTC [42] LOG:  received fast shutdown request
+.2026-10-09 15:09:37.259 UTC [42] LOG:  aborting any active transactions
+2026-10-09 15:09:37.262 UTC [42] LOG:  background worker "logical replication launcher" (PID 48) exited with exit code 1
+2026-10-09 15:09:37.264 UTC [43] LOG:  shutting down
+2026-10-09 15:09:37.264 UTC [43] LOG:  checkpoint starting: shutdown immediate
+2026-10-09 15:09:37.271 UTC [43] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.001 s, total=0.007 s; sync files=301, longest=0.001 s, average=0.001 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-09 15:09:37.280 UTC [42] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-09 15:09:36.762 UTC [36] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-09 15:09:37.372 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-09 15:09:37.372 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-09 15:09:37.372 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-09 15:09:37.373 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-09 15:09:37.374 UTC [58] LOG:  database system was shut down at 2026-10-09 15:09:37 UTC
+2026-10-09 15:09:37.377 UTC [1] LOG:  database system is ready to accept connections
+2026-10-09 15:09:56.969 UTC [70] ERROR:  M1_ORIGIN_WRITE_FAILURE
+2026-10-09 15:09:56.969 UTC [70] CONTEXT:  PL/pgSQL function m1_reject_origin() line 2 at RAISE
+2026-10-09 15:09:56.969 UTC [70] STATEMENT:  UPDATE api_idempotency_keys SET
+	     execution_source_kind=$4,execution_session_id=$5,execution_session_token_id=$6,
+	     execution_installation_token_id=$7,execution_connection_id=$8
+	     WHERE workspace_id=$1 AND actor_id=$2 AND idempotency_key=$3
+2026-10-09 15:09:57.131 UTC [70] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-09 15:09:57.131 UTC [70] CONTEXT:  PL/pgSQL function m1_atomic_797fe0d75412455ca4ad0043b0c55459() line 2 at RAISE
+2026-10-09 15:09:57.131 UTC [70] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-09 15:09:57.176 UTC [70] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-09 15:09:57.176 UTC [70] CONTEXT:  PL/pgSQL function m1_atomic_21bdd50fdea94c2ebe1c956764a89014() line 2 at RAISE
+2026-10-09 15:09:57.176 UTC [70] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-09 15:09:57.352 UTC [70] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-09 15:09:57.352 UTC [70] CONTEXT:  PL/pgSQL function m1_atomic_5edd535bbb4d4c3d9cc4000cbca211ff() line 2 at RAISE
+2026-10-09 15:09:57.352 UTC [70] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-09 15:09:57.399 UTC [70] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-09 15:09:57.399 UTC [70] CONTEXT:  PL/pgSQL function m1_atomic_390492886fa6459fb63e3b021cf04658() line 2 at RAISE
+2026-10-09 15:09:57.399 UTC [70] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-09 15:09:57.589 UTC [70] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-09 15:09:57.589 UTC [70] CONTEXT:  PL/pgSQL function m1_atomic_87616c3188e3443ea5a9845cc40f64b9() line 2 at RAISE
+2026-10-09 15:09:57.589 UTC [70] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-09 15:09:57.641 UTC [70] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-09 15:09:57.641 UTC [70] CONTEXT:  PL/pgSQL function m1_atomic_2aba779251cb47819bdc6f5140cdb972() line 2 at RAISE
+2026-10-09 15:09:57.641 UTC [70] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-09 15:09:57.831 UTC [70] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-09 15:09:57.831 UTC [70] CONTEXT:  PL/pgSQL function m1_atomic_8acc04d3dc6e4b96be2d81f32a9a8a11() line 2 at RAISE
+2026-10-09 15:09:57.831 UTC [70] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-09 15:09:57.885 UTC [70] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-09 15:09:57.885 UTC [70] CONTEXT:  PL/pgSQL function m1_atomic_5e302889435847c5abb5c3d0534f118b() line 2 at RAISE
+2026-10-09 15:09:57.885 UTC [70] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-09 15:09:58.134 UTC [70] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-09 15:09:58.134 UTC [70] CONTEXT:  PL/pgSQL function m1_atomic_3bf7dcc8addf4c1082a8460e9e202300() line 2 at RAISE
+2026-10-09 15:09:58.134 UTC [70] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-09 15:09:58.192 UTC [70] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-09 15:09:58.192 UTC [70] CONTEXT:  PL/pgSQL function m1_atomic_fb09a50843c543aa8bad0c30379a2a18() line 2 at RAISE
+2026-10-09 15:09:58.192 UTC [70] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)

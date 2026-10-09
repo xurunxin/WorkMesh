@@ -1,0 +1,9 @@
+{
+  "command": ["python", "-X", "utf8", "scripts/m1-product-evidence.py"],
+  "exitCode": 1,
+  "runtimeSeconds": 0.6323903,
+  "stage": "Python parse; no archive/log changes executed",
+  "error": "SyntaxError: unmatched ')' at line 69",
+  "source": "实际工具完整控制台错误；未另存原 stdout，不冒独立原日志",
+  "disposition": "修正索引脚本多余括号，独立重跑静态归档；不涉及产品断言或检查 skip"
+}

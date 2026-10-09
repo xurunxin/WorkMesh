@@ -26,6 +26,9 @@ import {
   durableEventCursorSchema,
   eventEnvelopeSchema,
   routePolicyManifest,
+  agentSessionResponseSchema, listResponseSchema, planVersionHistoryResponseSchema,
+  approvalResponseSchema, recoveryItemSchema, recoveryListResponseSchema,
+  leaseResponseSchema, agentSessionExecutionResultQuerySchema, agentSessionExecutionResultResponseSchema,
 } from '@workmesh/contracts'
 export { releaseMetadata } from '@workmesh/contracts'
 
@@ -132,6 +135,8 @@ export interface WorkMeshClientOptions {
 }
 export interface RequestOptions { signal?: AbortSignal; idempotencyKey?: string; ifMatch?: number | string; correlationId?: string; profileVersion?: string }
 export interface PageRequestOptions extends RequestOptions { cursor?: string; limit?: number }
+export interface SessionListFilters { teamId?: string; workItemId?: string; agentId?: string; principalHumanActorId?: string; state?: AgentSessionState }
+export interface RecoveryListFilters { lifecycle?: 'active' | 'resolved'; condition?: import('@workmesh/contracts').RecoveryCondition; severity?: 'info' | 'low' | 'medium' | 'high' | 'critical'; projectId?: string; workItemId?: string; sessionId?: string }
 export interface HumanAttentionListFilters {
   kind?: HumanAttentionKind
   status?: HumanAttentionStatus
@@ -380,6 +385,39 @@ export class WorkMeshClient {
   }
 
   getSession<T = unknown>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}`, undefined, { ...options, refreshSessionId: sessionId }) }
+  async listSessions(filters: SessionListFilters = {}, options: PageRequestOptions = {}) {
+    return this.validateResponse(listResponseSchema(agentSessionResponseSchema), await this.request('GET', pagedPath('/api/v1/agent-sessions', { ...filters }, options), undefined, options))
+  }
+  async listPlanVersions(sessionId: string, options: PageRequestOptions = {}) {
+    return this.validateResponse(planVersionHistoryResponseSchema, await this.request('GET', pagedPath(`/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/plans`, {}, options), undefined, { ...options, refreshSessionId: sessionId }))
+  }
+  async listApprovals(filters: { sessionId?: string; status?: string } = {}, options: PageRequestOptions = {}) {
+    return this.validateResponse(listResponseSchema(approvalResponseSchema), await this.request('GET', pagedPath('/api/v1/approvals', filters, options), undefined, { ...options, refreshSessionId: filters.sessionId }))
+  }
+  async getApproval(approvalId: string, options: RequestOptions = {}) {
+    return this.validateResponse(approvalResponseSchema, await this.request('GET', `/api/v1/approvals/${encodeURIComponent(approvalId)}`, undefined, options))
+  }
+  async listLeases(options: PageRequestOptions = {}) {
+    return this.validateResponse(listResponseSchema(leaseResponseSchema), await this.request('GET', pagedPath('/api/v1/leases', {}, options), undefined, options))
+  }
+  async listRecoveryItems(filters: RecoveryListFilters = {}, options: PageRequestOptions = {}) {
+    return this.validateResponse(recoveryListResponseSchema, await this.request('GET', pagedPath('/api/v1/recovery-items', { ...filters }, options), undefined, { ...options, refreshSessionId: filters.sessionId }))
+  }
+  async getRecoveryItem(recoveryId: string, options: RequestOptions = {}) {
+    return this.validateResponse(recoveryItemSchema, await this.request('GET', `/api/v1/recovery-items/${encodeURIComponent(recoveryId)}`, undefined, options))
+  }
+  /** 确认只用安装用途凭据；不刷新 E、不读取 manifest、不修改共享 Token。 */
+  async getSessionExecutionResult(sessionId: string, input: { action: 'complete' | 'stop_ack'; operationKey: string }, options: RequestOptions = {}) {
+    if (!this.installationToken) throw new WorkMeshSdkError('An installation token is required to confirm an execution result', { code: 'INSTALLATION_TOKEN_REQUIRED' })
+    const query = agentSessionExecutionResultQuerySchema.parse(input)
+    const result = this.validateResponse(agentSessionExecutionResultResponseSchema, await this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/execution-result?${new URLSearchParams(query)}`, undefined, {
+      signal: options.signal, correlationId: options.correlationId, profileVersion: options.profileVersion,
+      authorizationToken: this.installationToken, skipTokenRefresh: true,
+    }))
+    if (result.session.id !== sessionId || result.action.kind !== input.action || result.action.operationKey !== input.operationKey)
+      throw new WorkMeshSdkError('Execution confirmation does not match the requested action', { code: 'MALFORMED_RESPONSE' })
+    return result
+  }
   getSessionContext<T = unknown>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/context`, undefined, { ...options, refreshSessionId: sessionId }) }
   getPlan<T = unknown>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/plan`, undefined, { ...options, refreshSessionId: sessionId }) }
   getActivities<T = unknown>(sessionId: string, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath(`/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/activities`, {}, options), undefined, { ...options, refreshSessionId: sessionId }) }
@@ -405,6 +443,15 @@ export class WorkMeshClient {
   createReviewDelegation<T = unknown>(sessionId: string, input: ReviewDelegationInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/review-delegations`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, `review-delegation:${input.planStepId}`), refreshSessionId: sessionId }) }
   acquireLease<T = unknown>(input: LeaseInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/leases', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, 'lease'), refreshSessionId: input.sessionId }) }
   mutateLease<T = unknown>(leaseId: string, action: 'heartbeat' | 'renew' | 'release' | 'force-release', input: { ttlSeconds?: number; reason?: string } = {}, options: RequestOptions & { sessionId?: string } = {}): Promise<T> { return this.request('POST', `/api/v1/leases/${encodeURIComponent(leaseId)}/${action}`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(leaseId, action), refreshSessionId: options.sessionId }) }
+  async heartbeatLease(leaseId: string, options: RequestOptions & { sessionId?: string } = {}) {
+    return this.validateResponse(leaseResponseSchema, await this.mutateLease(leaseId, 'heartbeat', {}, { ...options, ifMatch: undefined }))
+  }
+  async renewLease(leaseId: string, input: { ttlSeconds?: number; reason?: string }, options: RequestOptions & { sessionId?: string; ifMatch: number | string }) {
+    return this.validateResponse(leaseResponseSchema, await this.mutateLease(leaseId, 'renew', input, options))
+  }
+  async releaseLease(leaseId: string, input: { reason?: string }, options: RequestOptions & { sessionId?: string; ifMatch: number | string }) {
+    return this.validateResponse(leaseResponseSchema, await this.mutateLease(leaseId, 'release', input, options))
+  }
   offerHandoff<T = unknown>(input: HandoffInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/handoffs', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.fromSessionId, 'handoff-offer'), refreshSessionId: input.fromSessionId }) }
   inspectPendingHandoff<T = unknown>(handoffId: string, installationToken = this.installationToken, options: RequestOptions = {}): Promise<T> {
     if (!installationToken) throw new WorkMeshSdkError('An installation token is required to inspect a pending handoff', { code: 'INSTALLATION_TOKEN_REQUIRED' })
@@ -584,7 +631,13 @@ export class WorkMeshClient {
   askQuestion(sessionId: string, question: string, options: RequestOptions = {}): Promise<ApiCommand> { return this.appendActivity(sessionId, { kind: 'question', summary: question, detailsMarkdown: question }, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, 'question') }) }
   publishPlan(sessionId: string, input: { changeSummary: string; steps: PlanStepInput[]; approvalId?: string; approvalPayloadHash?: string }, options: RequestOptions = {}): Promise<ApiCommand> { return this.mutate('PUT', sessionId, 'plan', input, options, true) }
   sendSignal(sessionId: string, signal: 'stop' | 'pause' | 'resume', reason: string, options: RequestOptions = {}): Promise<ApiCommand> { return this.mutate('POST', sessionId, 'signals', { signal, reason }, options, true) }
-  stopAcknowledgement(sessionId: string, input: { cleanupSummary: string; residualRisks?: string[] }, options: RequestOptions = {}): Promise<ApiCommand> { return this.mutate('POST', sessionId, 'stop-ack', input, options, true) }
+  stopAcknowledgement(sessionId: string, input: { cleanupSummary: string; residualRisks?: string[] }, options: RequestOptions = {}): Promise<ApiCommand> {
+    if (!this.sessionToken) throw new WorkMeshSdkError('Stop acknowledgement requires the original execution token', { code: 'AGENT_SESSION_TOKEN_REQUIRED' })
+    return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/stop-ack`, input, {
+      ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, 'stop-ack'),
+      authorizationToken: this.sessionToken, skipTokenRefresh: true,
+    })
+  }
   complete(sessionId: string, input: CompleteAgentSessionInput, options: RequestOptions = {}): Promise<ApiCommand> { return this.mutate('POST', sessionId, 'complete', input, options, true) }
   fail(sessionId: string, input: { code: string; summary: string; retryable?: boolean; evidence?: string[] }, options: RequestOptions = {}): Promise<ApiCommand> { return this.mutate('POST', sessionId, 'fail', input, options, true) }
   retrySession<T = unknown>(sessionId: string, input: { reason: string; initialPrompt?: string; reuseContext?: boolean }, options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/retry`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, 'retry'), refreshSessionId: sessionId }) }
@@ -608,6 +661,12 @@ export class WorkMeshClient {
   publishProjectUpdate<T = unknown>(projectId: string, updateId: string, options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('POST', `/api/v1/projects/${encodeURIComponent(projectId)}/updates/${encodeURIComponent(updateId)}/publish`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(updateId, 'publish-project-update') }) }
   suggestCompletion<T = unknown>(projectId: string, input: { workItemId: string; pullRequestId?: string; rationale: string; evidenceArtifactIds?: string[] }, options: RequestOptions & { sessionId: string }): Promise<T> { return this.request('POST', `/api/v1/projects/${encodeURIComponent(projectId)}/completion-suggestions`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(options.sessionId, `completion-suggestion:${input.workItemId}`), refreshSessionId: options.sessionId }) }
   decideCompletionSuggestion<T = unknown>(suggestionId: string, decision: 'accepted' | 'dismissed', options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('POST', `/api/v1/completion-suggestions/${encodeURIComponent(suggestionId)}/decision`, { decision }, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(suggestionId, `completion-suggestion-${decision}`) }) }
+
+  private validateResponse<T>(schema: { safeParse(value: unknown): { success: true; data: T } | { success: false } }, response: unknown): T {
+    const parsed = schema.safeParse(response)
+    if (!parsed.success) throw new WorkMeshSdkError('Invalid execution response', { code: 'MALFORMED_RESPONSE' })
+    return parsed.data
+  }
 
   private mutate(method: 'POST' | 'PUT', sessionId: string, operation: string, input: unknown, options: RequestOptions, revisioned = false): Promise<ApiCommand> {
     return this.request(method, `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/${operation}`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, operation), ifMatch: revisioned ? options.ifMatch : undefined, refreshSessionId: sessionId })

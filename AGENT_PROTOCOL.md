@@ -1807,3 +1807,26 @@ Human-only 旧工具保持名称与输入 schema，发现时隐藏，缓存调�
 `ack_agent_session` 与 `heartbeat` 保留既有凭据调用路径，不先读取普通 qualified manifest；服务端仍校验准确 Session、有效 Token、live grant 和 capability。ACK 在 `acknowledged` 是 `ackReceiptReplayOnly` 条件入口，同 key/body 重放返回原回执，新 key 仍被命令拒绝。stale ACK 可恢复；stopping/terminal heartbeat 仅诊断，不恢复执行、读取权限或授权。readonly 仍拒缓存写调用；其他 binding 不使用该例外，受保护 401/403 不刷新或重发。
 
 安装交接 `inspect_pending_handoff`、`reject_handoff` 按 binding 的安装用途槽使用 null Session/Delegation/manifest 身份和安装 Bearer，不借 C/E manifest 判安装资格。准确 handoff 目标与 live 授权仍由 REST 核验，缺安装凭据明确拒绝。SDK 原 `rejectHandoff` 保留 Session 兼容分支，MCP 安装 binding 使用显式 `rejectPendingHandoff`。
+
+
+## 执行结果确认、等待与停止恢复
+
+直接 complete 或 stopAck 已提交却失去响应时，使用具名 `getSessionExecutionResult` /
+`get_session_execution_result`，携准确 Session、原 action 和 operationKey。此入口只接受
+当前合法原 Connection 的安装身份、原生安装身份或原 Human 合法读取；重新核实时授权与
+原事务保存的来源快照，返回当前状态、原 revision/结果引用和对应清理概要。它不签 Token、
+续 Session、更新 usage 或追加业务事实；普通终态 E 门禁保持。未知来源与旧 null 回执对
+Agent 隐藏拒绝，unavailable 不证明未提交。Pi 内部 completion 无独立 complete 回执，
+继续使用原外层 settle key/body 的既有原子重放协议。
+
+Runner 等待工具仅形成意图；模型及在途工具静止、外部效果已核实后，公开回复与
+Session 等待态、Turn/Attempt 结算、持久等待条件在同一事务提交。部署开关
+`WORKMESH_EXECUTION_WAITS_ENABLED=true` 且持久 claim 的 `executionWaits=true` 才启用。
+Worker 对准确批准 ID 和完整 `sha256:` hash 或等待边界后的合法输入核实时权限，
+唯一生成/复用后续 Turn。新 Attempt 经普通 claim/start 准入，重新取得 Lease；旧消费者
+默认不接续 Turn。等待不长占模型 Attempt 或续租；Human pause 保持暂停，只有 Human
+resume 后再重验。Stop、撤权、无效触发不会启动模型。
+
+Stop 后关闭所有模型工具与 steering，受控 finally 持原 E Token，以独立有界 signal
+提交 stopAck 的 cleanupSummary/residualRisks；不先写 Activity，不刷新停止 Token，
+不拿普通 Lease release 替代 Stop。强杀或未知清理失败保留残留，不能复活执行。

@@ -1,0 +1,147 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_approval publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"26fe0ce4-1271-4af5-977e-85db8ca443d1","conversationId":"519128a2-43d9-4dfe-9141-ba5601295986","attemptNo":1,"sessionId":"396bc4ac-c749-4027-b983-1ba0a82499f6","correlationId":"46437b95-e610-47ee-a3ab-aa1eb532be13","status":"settled","outcome":"settled","queueWaitMs":76,"dispatchLagMs":23,"runDurationMs":67,"totalDurationMs":143,"totalTokens":null,"errorCode":null}
+
+ ❯ integration/execution-waits.integration.test.ts (4 tests | 4 failed) 1890ms
+   × persisted execution wait and Worker continuation > settles awaiting_approval publicly and resumes exactly once through live admission 407ms
+     → expected '{"status":"settled","turnId":"26fe0ce…' to be '{"runnerAttemptId":"d28904f7-dc23-4e7…' // Object.is equality
+   × persisted execution wait and Worker continuation > settles awaiting_input publicly and resumes exactly once through live admission 30ms
+     → {"error":{"code":"AGENT_CONCURRENCY_LIMIT","message":"Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.","details":{"maxConcurrency":1,"activeExecutionSessionCount":1,"countedSessionKinds":["execution"],"countedSessionStates":["queued","acknowledged","planning","executing","awaiting_input","awaiting_approval","blocked","paused","stopping","stale"],"activeExecutionSessionsByState":{"awaiting_approval":1}},"correlationId":"43709a07-f0ca-48ed-a0e9-285c2375d6b0"}}: expected 409 to be 200 // Object.is equality
+   × persisted execution wait and Worker continuation > settles blocked publicly and resumes exactly once through live admission 26ms
+     → {"error":{"code":"AGENT_CONCURRENCY_LIMIT","message":"Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.","details":{"maxConcurrency":1,"activeExecutionSessionCount":1,"countedSessionKinds":["execution"],"countedSessionStates":["queued","acknowledged","planning","executing","awaiting_input","awaiting_approval","blocked","paused","stopping","stale"],"activeExecutionSessionsByState":{"awaiting_approval":1}},"correlationId":"f66b1990-a1b4-4fa5-935a-453f2cf9c476"}}: expected 409 to be 200 // Object.is equality
+   × persisted execution wait and Worker continuation > keeps pause ahead of a real prompt and only resumes after the Human control command 30ms
+     → {"error":{"code":"AGENT_CONCURRENCY_LIMIT","message":"Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.","details":{"maxConcurrency":1,"activeExecutionSessionCount":1,"countedSessionKinds":["execution"],"countedSessionStates":["queued","acknowledged","planning","executing","awaiting_input","awaiting_approval","blocked","paused","stopping","stale"],"activeExecutionSessionsByState":{"awaiting_approval":1}},"correlationId":"bae17e8f-e789-4a42-bc6e-7f1f006d2eea"}}: expected 409 to be 200 // Object.is equality
+ ❯ integration/execution-result.integration.test.ts (3 tests | 2 failed) 951ms
+   × exact execution confirmation > confirms a committed direct completion after lost response; terminal E and wrong origin stay closed, without business writes 236ms
+     → expected 500 to be 200 // Object.is equality
+   × exact execution confirmation > confirms only the exact Stop cleanup, and rechecks live authority after token retention changes 108ms
+     → expected 403 to be 200 // Object.is equality
+   ✓ exact execution confirmation > rolls back state and all execution facts when provenance persistence fails 162ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/execution-result.integration.test.ts > exact execution confirmation > confirms a committed direct completion after lost response; terminal E and wrong origin stay closed, without business writes
+AssertionError: expected 500 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 500
+
+ ❯ integration/execution-result.integration.test.ts:75:31
+     73|     const before = await fingerprint()
+     74|     const result = await agent(installation, 'GET', confirmation(execu…
+     75|     expect(result.statusCode).toBe(200)
+       |                               ^
+     76|     expect(result.json()).toMatchObject({ action: { confirmation: 'con…
+     77|     expect((await agent(execution.token, 'GET', confirmation(execution…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  integration/execution-result.integration.test.ts > exact execution confirmation > confirms only the exact Stop cleanup, and rechecks live authority after token retention changes
+AssertionError: expected 403 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 403
+
+ ❯ integration/execution-result.integration.test.ts:96:33
+     94|       WHERE token_hash=$1`, [tokenHash(execution.token), tokenHash(ins…
+     95|     const stopping = await human('POST', `/api/v1/agent-sessions/${exe…
+     96|     expect(stopping.statusCode).toBe(200)
+       |                                 ^
+     97|     expect((await agent(execution.token, 'POST', `/api/v1/agent-sessio…
+     98|       { cleanupSummary: 'Owned resources cleared', residualRisks: ['Ex…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_approval publicly and resumes exactly once through live admission
+AssertionError: expected '{"status":"settled","turnId":"26fe0ce…' to be '{"runnerAttemptId":"d28904f7-dc23-4e7…' // Object.is equality
+
+Expected: "{"runnerAttemptId":"d28904f7-dc23-4e77-89c1-3397daabb259","turnId":"26fe0ce4-1271-4af5-977e-85db8ca443d1","status":"settled","sessionCompletion":"not_requested","executionWait":{"id":"b478b899-9965-45c8-bc3d-1ae1366ba091","state":"awaiting_approval"}}"
+Received: "{"status":"settled","turnId":"26fe0ce4-1271-4af5-977e-85db8ca443d1","executionWait":{"id":"b478b899-9965-45c8-bc3d-1ae1366ba091","state":"awaiting_approval"},"runnerAttemptId":"d28904f7-dc23-4e77-89c1-3397daabb259","sessionCompletion":"not_requested"}"
+
+ ❯ integration/execution-waits.integration.test.ts:106:142
+    104|     const settled = await agent(f.token, 'POST', `/api/v1/workbench/ru…
+    105|     expect(settled.statusCode, settled.body).toBe(200)
+    106|     expect((await agent(f.token, 'POST', `/api/v1/workbench/runner-att…
+       |                                                                                                                                              ^
+    107|     const waitId = settled.json<{ executionWait: { id: string } }>().e…
+    108|     expect((await db.query('SELECT id FROM workbench_runner_attempts W…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_input publicly and resumes exactly once through live admission
+AssertionError: {"error":{"code":"AGENT_CONCURRENCY_LIMIT","message":"Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.","details":{"maxConcurrency":1,"activeExecutionSessionCount":1,"countedSessionKinds":["execution"],"countedSessionStates":["queued","acknowledged","planning","executing","awaiting_input","awaiting_approval","blocked","paused","stopping","stale"],"activeExecutionSessionsByState":{"awaiting_approval":1}},"correlationId":"43709a07-f0ca-48ed-a0e9-285c2375d6b0"}}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ sessionFixture integration/execution-waits.integration.test.ts:30:44
+     28|   const started = await human('POST', `/api/v1/work-items/${workId}/ag…
+     29|     role: 'executor', requestedCapabilities: ['work:read','work:write'…
+     30|   expect(started.statusCode, started.body).toBe(200)
+       |                                            ^
+     31|   const sessionId = started.json<{ session: { id: string } }>().sessio…
+     32|   const token = await seedAgentSessionBearer(db, sessionId, agentId)
+ ❯ integration/execution-waits.integration.test.ts:86:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles blocked publicly and resumes exactly once through live admission
+AssertionError: {"error":{"code":"AGENT_CONCURRENCY_LIMIT","message":"Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.","details":{"maxConcurrency":1,"activeExecutionSessionCount":1,"countedSessionKinds":["execution"],"countedSessionStates":["queued","acknowledged","planning","executing","awaiting_input","awaiting_approval","blocked","paused","stopping","stale"],"activeExecutionSessionsByState":{"awaiting_approval":1}},"correlationId":"f66b1990-a1b4-4fa5-935a-453f2cf9c476"}}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ sessionFixture integration/execution-waits.integration.test.ts:30:44
+     28|   const started = await human('POST', `/api/v1/work-items/${workId}/ag…
+     29|     role: 'executor', requestedCapabilities: ['work:read','work:write'…
+     30|   expect(started.statusCode, started.body).toBe(200)
+       |                                            ^
+     31|   const sessionId = started.json<{ session: { id: string } }>().sessio…
+     32|   const token = await seedAgentSessionBearer(db, sessionId, agentId)
+ ❯ integration/execution-waits.integration.test.ts:86:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > keeps pause ahead of a real prompt and only resumes after the Human control command
+AssertionError: {"error":{"code":"AGENT_CONCURRENCY_LIMIT","message":"Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.","details":{"maxConcurrency":1,"activeExecutionSessionCount":1,"countedSessionKinds":["execution"],"countedSessionStates":["queued","acknowledged","planning","executing","awaiting_input","awaiting_approval","blocked","paused","stopping","stale"],"activeExecutionSessionsByState":{"awaiting_approval":1}},"correlationId":"bae17e8f-e789-4a42-bc6e-7f1f006d2eea"}}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ sessionFixture integration/execution-waits.integration.test.ts:30:44
+     28|   const started = await human('POST', `/api/v1/work-items/${workId}/ag…
+     29|     role: 'executor', requestedCapabilities: ['work:read','work:write'…
+     30|   expect(started.statusCode, started.body).toBe(200)
+       |                                            ^
+     31|   const sessionId = started.json<{ session: { id: string } }>().sessio…
+     32|   const token = await seedAgentSessionBearer(db, sessionId, agentId)
+ ❯ integration/execution-waits.integration.test.ts:142:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 1 passed (7)
+   Start at  22:14:26
+   Duration  8.19s (transform 959ms, setup 0ms, collect 4.62s, tests 2.84s, environment 0ms, prepare 263ms)
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config ../../vitest.integration.config.ts integration/execution-result.integration.test.ts integration/execution-waits.integration.test.ts

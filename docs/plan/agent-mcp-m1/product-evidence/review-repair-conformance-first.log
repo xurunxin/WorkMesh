@@ -1,0 +1,49 @@
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\conformance
+> vitest run --config vitest.integration.config.ts "-t" "提前排队|失效旧输入"
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 提前排队→等待→prompt→复用 Turn 获得完整上下文并完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"3f4c30f9-e311-414f-97f2-ad12fc689fa5","conversationId":"253ea744-11f7-46b5-be4a-ceacbab02a0e","attemptNo":1,"sessionId":"fce256ee-cb8f-4dd2-a939-466936f1e676","correlationId":"882dce20-400e-4e17-a741-06e628d4192e","status":"settled","outcome":"settled","queueWaitMs":2738,"dispatchLagMs":2678,"runDurationMs":419,"totalDurationMs":3157,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 提前排队→等待→prompt→复用 Turn 获得完整上下文并完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"b7d3c750-96d5-46d6-a42f-647cf15f0341","conversationId":"253ea744-11f7-46b5-be4a-ceacbab02a0e","attemptNo":1,"sessionId":"fce256ee-cb8f-4dd2-a939-466936f1e676","correlationId":"fb4b6b13-4b53-4798-841b-4a83b496c567","status":"settled","outcome":"settled","queueWaitMs":2329,"dispatchLagMs":2256,"runDurationMs":295,"totalDurationMs":2624,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 提前排队→等待→approval→复用 Turn 获得完整上下文并完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"f3489e03-bae2-45b5-a396-f65573056f62","conversationId":"effceba3-f1f1-4656-a04f-c3d7247f700b","attemptNo":1,"sessionId":"f62122f6-23bb-4863-a2d5-67a109c290a7","correlationId":"d2508d85-4eb7-46d3-b3e6-d7746b0e151f","status":"settled","outcome":"settled","queueWaitMs":1981,"dispatchLagMs":1924,"runDurationMs":337,"totalDurationMs":2318,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 提前排队→等待→approval→复用 Turn 获得完整上下文并完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"04e34c7e-e5b9-4c36-a4e8-c2217ccb0974","conversationId":"effceba3-f1f1-4656-a04f-c3d7247f700b","attemptNo":1,"sessionId":"f62122f6-23bb-4863-a2d5-67a109c290a7","correlationId":"bd7a2693-c3a8-4df7-b6ea-d0b3265302e4","status":"settled","outcome":"settled","queueWaitMs":2287,"dispatchLagMs":2222,"runDurationMs":390,"totalDurationMs":2677,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 失效旧输入 prompt-to-prompt 不遮挡另一合法 Human 的真实 Pi 唯一续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"00800615-16a0-40ab-ba68-a5bcf3fabae2","conversationId":"31421d79-4a81-4ff3-86ee-c2502e61d0d9","attemptNo":1,"sessionId":"ea650187-5de1-4bca-8b59-2ae6dbc927f3","correlationId":"4e7bfe46-9de6-452a-87e3-f88defe39e71","status":"settled","outcome":"settled","queueWaitMs":2698,"dispatchLagMs":2625,"runDurationMs":381,"totalDurationMs":3079,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 失效旧输入 prompt-to-prompt 不遮挡另一合法 Human 的真实 Pi 唯一续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"17b6c07f-e2ff-4939-929f-67a5e9c22cdf","conversationId":"31421d79-4a81-4ff3-86ee-c2502e61d0d9","attemptNo":1,"sessionId":"ea650187-5de1-4bca-8b59-2ae6dbc927f3","correlationId":"b7e6a2ea-3f9d-43e9-868c-9a28bb497905","status":"settled","outcome":"settled","queueWaitMs":3018,"dispatchLagMs":2927,"runDurationMs":525,"totalDurationMs":3543,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 失效旧输入 prompt-to-message 不遮挡另一合法 Human 的真实 Pi 唯一续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"3fdeaa2a-aa01-4883-b1aa-b90091161a98","conversationId":"340eaad8-9f88-4de8-b9d9-da2cb594ac3a","attemptNo":1,"sessionId":"d3aff442-bdd2-4923-a761-384dfb566333","correlationId":"f4e6c662-5914-40db-bd8e-b79bb47fe8f1","status":"settled","outcome":"settled","queueWaitMs":5310,"dispatchLagMs":5187,"runDurationMs":607,"totalDurationMs":5917,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 失效旧输入 prompt-to-message 不遮挡另一合法 Human 的真实 Pi 唯一续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"58fbffd1-c755-41ab-9664-c7d1469fc1bc","conversationId":"340eaad8-9f88-4de8-b9d9-da2cb594ac3a","attemptNo":1,"sessionId":"d3aff442-bdd2-4923-a761-384dfb566333","correlationId":"9fe85976-c791-4e32-84b5-f4dd86fdd3ce","status":"settled","outcome":"settled","queueWaitMs":2691,"dispatchLagMs":2595,"runDurationMs":367,"totalDurationMs":3058,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 失效旧输入 message-to-message 不遮挡另一合法 Human 的真实 Pi 唯一续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"4afdd433-7306-4347-a90f-4e4917eb698f","conversationId":"5a4e6564-1f0c-4d41-8ff1-f48e136fef62","attemptNo":1,"sessionId":"c5ed6cb5-8a8f-4992-8288-8b6ea3222e31","correlationId":"7bd6277e-a959-4623-947b-8e1076191c31","status":"settled","outcome":"settled","queueWaitMs":5174,"dispatchLagMs":5082,"runDurationMs":574,"totalDurationMs":5748,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 失效旧输入 message-to-message 不遮挡另一合法 Human 的真实 Pi 唯一续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"992779ee-99d9-42fd-b9ff-578d9d24a771","conversationId":"5a4e6564-1f0c-4d41-8ff1-f48e136fef62","attemptNo":1,"sessionId":"c5ed6cb5-8a8f-4992-8288-8b6ea3222e31","correlationId":"ea1fb27d-cdb1-484b-8c98-abe03d70d338","status":"settled","outcome":"settled","queueWaitMs":3127,"dispatchLagMs":3017,"runDurationMs":909,"totalDurationMs":4036,"totalTokens":null,"errorCode":null}
+
+ ✓ src/execution-recovery.conformance.test.ts (15 tests | 10 skipped) 40684ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 提前排队→等待→prompt→复用 Turn 获得完整上下文并完成  6185ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 提前排队→等待→approval→复用 Turn 获得完整上下文并完成  5302ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 失效旧输入 prompt-to-prompt 不遮挡另一合法 Human 的真实 Pi 唯一续接  7195ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 失效旧输入 prompt-to-message 不遮挡另一合法 Human 的真实 Pi 唯一续接  9579ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 失效旧输入 message-to-message 不遮挡另一合法 Human 的真实 Pi 唯一续接  10940ms
+ ↓ src/mcp-coverage.conformance.test.ts (12 tests | 12 skipped)
+
+ Test Files  1 passed | 1 skipped (2)
+      Tests  5 passed | 22 skipped (27)
+   Start at  01:15:48
+   Duration  50.58s (transform 1.14s, setup 0ms, collect 8.21s, tests 40.68s, environment 0ms, prepare 670ms)

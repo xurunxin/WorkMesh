@@ -1,0 +1,9 @@
+
+> @workmesh/agent-runner@ typecheck C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\agent-runner
+> tsc --noEmit
+
+src/workmesh-tools.test.ts(33,62): error TS7006: Parameter 'method' implicitly has an 'any' type.
+src/workmesh-tools.test.ts(33,70): error TS7006: Parameter 'path' implicitly has an 'any' type.
+C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\agent-runner:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/agent-runner@ typecheck: `tsc --noEmit`
+Exit status 2

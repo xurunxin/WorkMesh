@@ -434,6 +434,13 @@ export async function authorizeRequest(
       policyId: policy.policyId,
     })
   }
+  if (policy.authentication === 'human_or_installation_target') {
+    if (actor.kind === 'agent' && actor.authentication !== 'installation_target')
+      throw new DomainError('UNAUTHENTICATED', 'Installation credentials are required');
+    // The application projection revalidates live identity, target and provenance
+    // together in one read-only snapshot. Ordinary terminal E gates are unchanged.
+    return
+  }
   const teamResolution = await resolveTeam(
     db,
     request,

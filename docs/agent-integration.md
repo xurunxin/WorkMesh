@@ -126,7 +126,7 @@ Human-only 旧工具保持名称与输入 schema，发现时隐藏，缓存调�
 
 错误保留 `code/message/details/correlationId` 以及可用的 `currentRevision`。受保护 401/403、撤权、Stop、角色拒绝和冲突不刷新、不重发、不盲写。请求前已知到期刷新仍经 live 授权；显式 stale ACK 保留既有 refresh→ACK 恢复，不先读取拒 stale 的 qualified manifest。Stop ACK 以仍有效的准确 E Token、当前 If-Match 和稳定 key 调用；Stop 后禁止 installation refresh，M0 不新增 MCP 清理 bridge。manifest不可读时保留原拒绝，不使用缓存降级。
 
-调用前持久化显式 Idempotency-Key；丢响应、重连和传输重试保持同 key/body。异正文或另一个逻辑新动作使用新 key。复合 import 保持内容 hash、逐命令部分提交及各命令 key；相同内容再次导入仍受原 hash 身份限制，不能冒作另一个新动作。发现/resource读取不新增业务 receipt/outbox。后续 M1–M5 的缺入口仅披露归属。
+调用前持久化显式 Idempotency-Key；丢响应、重连和传输重试保持同 key/body。异正文或另一个逻辑新动作使用新 key。复合 import 保持内容 hash、逐命令部分提交及各命令 key；相同内容再次导入仍受原 hash 身份限制，不能冒作另一个新动作。发现/resource读取不新增业务 receipt/outbox。后续批次的缺入口按受控操作映射披露归属。
 
 真实本机 conformance 使用现有安全配对、真实 API/MCP、两种 mode 与直接 E；Pi 连接本机 HTTPS 假模型，核模型实收工具、真实调用和持久 Turn/Document/工具活动。根 `pnpm test:conformance:integration` 与现有 Required `api-integration` 执行该套件；内存 conformance 独立报告。上述语义决策见 `docs/adr/0079-qualified-agent-discovery-and-recovery.md`，状态保持 Proposed，最终成果须独立审查与最新 Required CI。
 
@@ -135,3 +135,17 @@ Human-only 旧工具保持名称与输入 schema，发现时隐藏，缓存调�
 旧 MCP `ack_agent_session`、`heartbeat` 调用不先要求普通 qualified manifest。直接 E 凭有效自身 Token 到 REST；stale ACK 可恢复，acknowledged 同 key/body 可重放回执，新 key ACK 拒绝。stopping/terminal 心跳只诊断，不恢复普通写权限或 manifest 读取。其他工具没有此例外，readonly 缓存写调用仍拒绝，受保护 401/403 不换身份重试。
 
 `inspect_pending_handoff`、`reject_handoff` 按独立 null 安装身份披露条件入口，调用明确使用安装 Bearer；准确 handoffId 的归属与 live 授权由 REST 检查。SDK `rejectPendingHandoff` 专用于该安装用途，原 `rejectHandoff` 的 Session 兼容行为保留；仅 Session Token 的 E 没有安装工具资格。
+
+### 执行、等待与精确终态确认
+
+SDK 增加 `listSessions`、`listPlanVersions`、`listApprovals/getApproval`、`listLeases`、`listRecoveryItems/getRecoveryItem`，MCP 对应 `list_agent_sessions`、`list_session_plan_versions`、`list_approvals/get_approval`、`list_leases`、`list_recovery_items/get_recovery_item`。列表保留完整分页信封；Session 的 PostgreSQL bigint sequence 只在安全整数范围规范化，非法或会丢精度的响应拒绝。Plan/context 的既有读取名称和 resource URI 保留。
+
+`heartbeatLease/renewLease/releaseLease` 对应 `heartbeat_lease/renew_lease/release_lease`。heartbeat 不要求 If-Match，也不追加普通工具 Activity；renew/release 使用 Lease 的准确 version。Lease 不授予权限，普通 release 不等价于 Stop。Human force-release、批准决定和 pause/resume/stop/retry 不转授 Agent。
+
+`stop_ack` 必须由客户端仍持有的原准确 E Token 提交 cleanupSummary/residualRisks，绕过普通 manifest 前置读取，同时保留只读模式拒绝。HTTP MCP 每请求重建 client，C 停止后不能 refresh 新 E，也不能假定仍持有前次 E；需由持有原 Token 的受控 Runner 生命周期处理。Runner 观察 Stop 后关闭模型和新工具，等待在途工具静止，清理本人资源，再用独立有界 signal 提交 Stop 协议；清理失败保留残留风险。
+
+已提交 complete/stopAck 丢响应后，普通终态 E 重放仍拒绝。SDK `getSessionExecutionResult` 和 MCP `get_session_execution_result` 使用独立安装用途凭据，调用 `GET /api/v1/agent-sessions/{id}/execution-result?action=complete|stop_ack&operationKey=<原key>`；不刷新 E、不签 Token、不续 Session、不写业务 receipt/event/outbox。查询核 live 权限及原提交事务保存的准确 E/安装/Connection 来源，仅返回状态/revision、原结果引用和对应清理概要。同 Agent 的其他 Connection 曾提前 refresh 仍不能读取原来源结果；旧 null/unproven 来源失败关闭。Human 沿原合法读取规则；Pi 内层 completion 没有独立 complete receipt，不能据此假确认。
+
+Pi `workmesh_wait` 停止当前模型并公开结算等待回复、Turn/Attempt 和持久条件，不让一个 Attempt 跨原模型时限长占。批准 hash 完整保留真实 `requestApproval` 返回的 `sha256:` 前缀；输入绑定准确 Session prompt 或同 Conversation 合法 Human 消息。Worker 重验 live 权限和真实条件后唯一生成后续 Turn，新 Runner opt-in 再 claim/start；等待期间释放 Lease，继续时重新获取。重复触发、重启和并发不能重复 Attempt；pause 不自动解除，Stop/撤权优先。旧 Runner 默认不领取自动续接。
+
+真实执行与恢复套件接入 `pnpm test:conformance:integration`，同时保留 M0 套件。实现和验证的实际通过范围以 [M1 产品报告](plan/agent-mcp-m1/product-report.md) 为准；工具数量不代表全系统验收。

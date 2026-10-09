@@ -1,0 +1,24 @@
+{
+  "observedAt": "2026-10-09T17:54:47Z",
+  "tool": "mcp__tds__git",
+  "arguments": {
+    "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ]
+  },
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6\trefs/heads/main"
+      }
+    ]
+  },
+  "explicitNativeExitCode": null,
+  "actualMain": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+  "candidateParent": "420aa1844d43c82ddadeb7af09dfe6acb40173b1",
+  "boundary": "平台只读工具原文返回精确 ref；未提供 native exitCode，不能补码；origin/main 与 FETCH_HEAD 不作当前主线证明。"
+}

@@ -17,6 +17,56 @@ async function connect(api: WorkMeshClient, mode: 'read-only' | 'read-write' = '
 }
 
 describe('MCP 既有恢复与安装用途调用边界', () => {
+  it('stop_ack 使用原 E，停止后没有 manifest/refresh/Activity，撤权拒绝不换身份', async () => {
+    let revoked = false
+    const fetcher = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      expect(String(url)).toBe(`http://api.test/api/v1/agent-sessions/${id}/stop-ack`)
+      const headers = new Headers(init?.headers)
+      expect(headers.get('authorization')).toBe('Bearer original-e')
+      expect(headers.get('if-match')).toBe('"revision-7"')
+      expect(headers.get('idempotency-key')).toBe('stop-key')
+      expect(JSON.parse(String(init?.body))).toEqual({ cleanupSummary: 'Owned resources cleared', residualRisks: ['Unknown residue'] })
+      return revoked ? response({ error: { code: 'FORBIDDEN', message: 'Revoked', correlationId: 'stop-revoked' } }, 403) : response({ id, state: 'canceled' })
+    })
+    const api = new WorkMeshClient({ baseUrl: 'http://api.test', sessionToken: 'original-e', coordinationToken: 'c', installationToken: 'installation', fetch: fetcher })
+    const mcp = await connect(api)
+    const args = { sessionId: id, revision: 7, cleanupSummary: 'Owned resources cleared', residualRisks: ['Unknown residue'], idempotencyKey: 'stop-key' }
+    try {
+      expect((await mcp.client.callTool({ name: 'stop_ack', arguments: args })).isError).not.toBe(true)
+      revoked = true
+      expect(await mcp.client.callTool({ name: 'stop_ack', arguments: args })).toMatchObject({ isError: true, structuredContent: { error: { code: 'FORBIDDEN', correlationId: 'stop-revoked' } } })
+      expect(fetcher).toHaveBeenCalledTimes(2)
+    } finally { await mcp.close() }
+    for (const [mode, sessionToken, expectedCode] of [['read-only', 'original-e', 'FORBIDDEN'], ['read-write', undefined, 'AGENT_SESSION_TOKEN_REQUIRED']] as const) {
+      const denied = await connect(new WorkMeshClient({ baseUrl: 'http://api.test', sessionToken, coordinationToken: 'c', installationToken: 'installation', fetch: fetcher }), mode)
+      try { expect(await denied.client.callTool({ name: 'stop_ack', arguments: args })).toMatchObject({ isError: true, structuredContent: { error: { code: expectedCode } } }) }
+      finally { await denied.close() }
+    }
+    expect(fetcher).toHaveBeenCalledTimes(2)
+  })
+
+  it('执行确认直接用安装用途身份，readonly可用，错目标拒绝且没有 manifest 或刷新', async () => {
+    const key = 'original/key?&'
+    const fetcher = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      const address = new URL(String(url))
+      expect(new Headers(init?.headers).get('authorization')).toBe('Bearer exact-installation')
+      expect(address.searchParams.get('operationKey')).toBe(key)
+      expect(address.pathname.endsWith('/execution-result')).toBe(true)
+      expect(new Headers(init?.headers).has('idempotency-key')).toBe(false)
+      if (address.pathname.includes(foreign)) return response({ error: { code: 'NOT_FOUND', message: 'Unavailable', correlationId: 'wrong-origin' } }, 404)
+      return response({ session: { id, state: 'canceled', revision: 8 },
+        action: { kind: 'stop_ack', operationKey: key, confirmation: 'confirmed', unavailableReason: null },
+        originalResult: { operationId: 'acknowledgeAgentSessionStop', sessionId: id, revision: 7, state: 'canceled', resultReference: { type: 'agent_session', id, revision: 7 }, eventReference: null },
+        cleanup: { cleanupSummary: 'Cleared', residualRisks: [] } })
+    })
+    const mcp = await connect(new WorkMeshClient({ baseUrl: 'http://api.test', sessionToken: 'must-not-use-e', coordinationToken: 'must-not-use-c', installationToken: 'exact-installation', fetch: fetcher }), 'read-only')
+    try {
+      const args = { sessionId: id, action: 'stop_ack', operationKey: key }
+      expect(await mcp.client.callTool({ name: 'get_session_execution_result', arguments: args })).toMatchObject({ structuredContent: { data: { originalResult: { revision: 7 }, session: { revision: 8 } } } })
+      expect(await mcp.client.callTool({ name: 'get_session_execution_result', arguments: { ...args, sessionId: foreign } })).toMatchObject({ isError: true, structuredContent: { error: { code: 'NOT_FOUND', correlationId: 'wrong-origin' } } })
+      expect(fetcher).toHaveBeenCalledTimes(2)
+    } finally { await mcp.close() }
+  })
   it('直接 E 的 ACK 丢响应后同 key 重放到 REST，新 key 仍拒绝', async () => {
     let committedKey: string | null = null
     const fetcher = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {

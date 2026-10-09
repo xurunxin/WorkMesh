@@ -1,0 +1,442 @@
+
+> workmesh@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6
+> turbo run build
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running build in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/git-provider:build: cache miss, executing ee02257873addc5a
+@workmesh/observability:build: cache miss, executing 0bf8f6161b7a332b
+@workmesh/ui:build: cache miss, executing 5f89089cac5a6cbc
+@workmesh/artifact-storage:build: cache miss, executing ea1d5264d5ce188e
+@workmesh/contracts:build: cache miss, executing 50ddc3076c1a0828
+@workmesh/git-provider:build:
+@workmesh/git-provider:build: > @workmesh/git-provider@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\git-provider
+@workmesh/git-provider:build: > tsc -p tsconfig.json
+@workmesh/git-provider:build:
+@workmesh/ui:build:
+@workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\ui
+@workmesh/ui:build: > tsc -p tsconfig.json
+@workmesh/ui:build:
+@workmesh/artifact-storage:build:
+@workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\artifact-storage
+@workmesh/artifact-storage:build: > tsc -p tsconfig.json
+@workmesh/artifact-storage:build:
+@workmesh/contracts:build:
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build:
+@workmesh/observability:build:
+@workmesh/observability:build: > @workmesh/observability@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\observability
+@workmesh/observability:build: > tsc -p tsconfig.json
+@workmesh/observability:build:
+@workmesh/config:build: cache miss, executing f373ef4fe704b337
+@workmesh/agent-runner:build: cache miss, executing 0979d1e5fa1683eb
+@workmesh/domain:build: cache miss, executing ea18e1b91f87d093
+@workmesh/agent-sdk:build: cache miss, executing a22a03a63ce2b34b
+@workmesh/a2a-adapter:build: cache miss, executing 534f3346c954324d
+@workmesh/web:build: cache miss, executing 57b4f22b2e4eb92c
+@workmesh/config:build:
+@workmesh/config:build: > @workmesh/config@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\config
+@workmesh/config:build: > tsc -p tsconfig.json
+@workmesh/config:build:
+@workmesh/agent-runner:build:
+@workmesh/agent-runner:build: > @workmesh/agent-runner@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\agent-runner
+@workmesh/agent-runner:build: > tsc -p tsconfig.json
+@workmesh/agent-runner:build:
+@workmesh/domain:build:
+@workmesh/domain:build: > @workmesh/domain@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\domain
+@workmesh/domain:build: > tsc -p tsconfig.json
+@workmesh/domain:build:
+@workmesh/agent-sdk:build:
+@workmesh/agent-sdk:build: > @workmesh/agent-sdk@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\agent-sdk
+@workmesh/agent-sdk:build: > tsc -p tsconfig.json
+@workmesh/agent-sdk:build:
+@workmesh/web:build:
+@workmesh/web:build: > @workmesh/web@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\web
+@workmesh/web:build: > next build
+@workmesh/web:build:
+@workmesh/a2a-adapter:build:
+@workmesh/a2a-adapter:build: > @workmesh/a2a-adapter@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\a2a-adapter
+@workmesh/a2a-adapter:build: > tsc -p tsconfig.json
+@workmesh/a2a-adapter:build:
+@workmesh/web:build:    ▲ Next.js 15.5.22
+@workmesh/web:build:
+@workmesh/web:build:    Creating an optimized production build ...
+@workmesh/db:build: cache miss, executing aedbf23db814d8d3
+@workmesh/fake-agent:build: cache miss, executing 99b6fc51c5c962bf
+@workmesh/mcp:build: cache miss, executing 9616e7ca872ffb1f
+@workmesh/db:build:
+@workmesh/db:build: > @workmesh/db@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\db
+@workmesh/db:build: > tsc -p tsconfig.json
+@workmesh/db:build:
+@workmesh/fake-agent:build:
+@workmesh/fake-agent:build: > @workmesh/fake-agent@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\fake-agent
+@workmesh/fake-agent:build: > tsc -p tsconfig.json
+@workmesh/fake-agent:build:
+@workmesh/mcp:build:
+@workmesh/mcp:build: > @workmesh/mcp@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\mcp
+@workmesh/mcp:build: > tsc -p tsconfig.build.json
+@workmesh/mcp:build:
+@workmesh/worker:build: cache miss, executing 876752e7c7c444da
+@workmesh/recovery:build: cache miss, executing 8ee0864830c076b9
+@workmesh/worker:build:
+@workmesh/worker:build: > @workmesh/worker@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\worker
+@workmesh/worker:build: > tsc -p tsconfig.build.json
+@workmesh/worker:build:
+@workmesh/recovery:build:
+@workmesh/recovery:build: > @workmesh/recovery@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\recovery
+@workmesh/recovery:build: > tsc -p tsconfig.build.json
+@workmesh/recovery:build:
+@workmesh/api:build: cache miss, executing 3ec401dcbdf231db
+@workmesh/api:build:
+@workmesh/api:build: > @workmesh/api@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\api
+@workmesh/api:build: > tsc -p tsconfig.build.json
+@workmesh/api:build:
+@workmesh/conformance:build: cache miss, executing e0b4081664f70004
+@workmesh/conformance:build:
+@workmesh/conformance:build: > @workmesh/conformance@ build C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\conformance
+@workmesh/conformance:build: > tsc -p tsconfig.build.json
+@workmesh/conformance:build:
+@workmesh/web:build: <w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\node_modules\.pnpm\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\web\app\styles.css': No serializer registered for Warning
+@workmesh/web:build: <w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 4 items } -> webpack/lib/ModuleWarning -> Warning
+@workmesh/web:build:  ⚠ Compiled with warnings in 35.7s
+@workmesh/web:build:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: Warning
+@workmesh/web:build:
+@workmesh/web:build: (1567:47) autoprefixer: end value has mixed support, consider using flex-end instead
+@workmesh/web:build:
+@workmesh/web:build: Import trace for requested module:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: ./app/styles.css
+@workmesh/web:build:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: Warning
+@workmesh/web:build:
+@workmesh/web:build: (1760:57) autoprefixer: end value has mixed support, consider using flex-end instead
+@workmesh/web:build:
+@workmesh/web:build: Import trace for requested module:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: ./app/styles.css
+@workmesh/web:build:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: Warning
+@workmesh/web:build:
+@workmesh/web:build: (1849:36) autoprefixer: end value has mixed support, consider using flex-end instead
+@workmesh/web:build:
+@workmesh/web:build: Import trace for requested module:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: ./app/styles.css
+@workmesh/web:build:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: Warning
+@workmesh/web:build:
+@workmesh/web:build: (1860:87) autoprefixer: start value has mixed support, consider using flex-start instead
+@workmesh/web:build:
+@workmesh/web:build: Import trace for requested module:
+@workmesh/web:build: ./app/styles.css.webpack[javascript/auto]!=!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!../../node_modules/.pnpm/next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/styles.css
+@workmesh/web:build: ./app/styles.css
+@workmesh/web:build:
+@workmesh/web:build:    Linting and checking validity of types ...
+@workmesh/web:build:
+@workmesh/web:build:  ⚠ The Next.js plugin was not detected in your ESLint configuration. See https://nextjs.org/docs/app/api-reference/config/eslint#migrating-existing-config
+@workmesh/conformance:build: ../../apps/api/src/agent/commands.ts(27,43): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-idempotency.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "../auth-idempotency.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/commands.ts'
+@workmesh/conformance:build:     Imported via "../auth-idempotency.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts'
+@workmesh/conformance:build:     Imported via "./auth-idempotency.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:     Imported via './auth-idempotency.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent-connections.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/agent/commands.ts(28,55): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/heartbeat-idempotency.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "../heartbeat-idempotency.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/commands.ts'
+@workmesh/conformance:build:     Imported via '../heartbeat-idempotency.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/routes.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/agent/commands.ts(31,51): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/guidance.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "../guidance.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/commands.ts'
+@workmesh/conformance:build:     Imported via "../guidance.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts'
+@workmesh/conformance:build:     Imported via '../guidance.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/routes.ts'
+@workmesh/conformance:build:     Imported via "./guidance.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/agent/commands.ts(35,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/connection-installation-token.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "../connection-installation-token.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/commands.ts'
+@workmesh/conformance:build:     Imported via './connection-installation-token.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent-connections.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/agent/commands.ts(36,69): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/approval-projection.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "./approval-projection.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/commands.ts'
+@workmesh/conformance:build:     Imported via "./approval-projection.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts'
+@workmesh/conformance:build:     Imported via '../agent/approval-projection.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/human-attention/routes.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/agent/execution-origin.ts(4,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/guard.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via './guard.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/execution-origin.ts'
+@workmesh/conformance:build:     Imported via "./guard.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/commands.ts'
+@workmesh/conformance:build:     Imported via './agent/guard.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/documents.ts'
+@workmesh/conformance:build:     Imported via '../agent/guard.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/routes.ts'
+@workmesh/conformance:build:     Imported via "../agent/guard.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/inbox/routes.ts'
+@workmesh/conformance:build:     Imported via '../agent/guard.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/delivery/routes.ts'
+@workmesh/conformance:build:     Imported via '../agent/guard.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/operations/routes.ts'
+@workmesh/conformance:build:     Imported via './agent/guard.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-runner.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/agent/execution-result.ts(5,31): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/types.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via './types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/execution-result.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/live-read-authorization.ts'
+@workmesh/conformance:build:     Imported via "./types.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/guard.ts'
+@workmesh/conformance:build:     Imported via './types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/execution-origin.ts'
+@workmesh/conformance:build:     Imported via "./agent/types.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/commands.ts'
+@workmesh/conformance:build:     Imported via "./types.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/commands.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/guidance.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/documents.ts'
+@workmesh/conformance:build:     Imported via './types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/approval-projection.ts'
+@workmesh/conformance:build:     Imported via "./types.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/routes.ts'
+@workmesh/conformance:build:     Imported via "../agent/types.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/inbox/routes.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/human-attention/routes.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/queue-counts.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/control-center/routes.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/recovery/routes.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/delivery/routes.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/delivery/repository-configuration.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/operations/routes.ts'
+@workmesh/conformance:build:     Imported via "./agent/types.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/admin-retention.ts'
+@workmesh/conformance:build:     Imported via "./agent/types.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/authz/authorize.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/client-profile.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/event-reader.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/authz/event-audience.ts'
+@workmesh/conformance:build:     Imported via '../agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/routes.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent-connections.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/autonomous-control-plane.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/notification-channels.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-llm-connections.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-conversations.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-runner.ts'
+@workmesh/conformance:build:     Imported via './agent/types.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/configuration-readiness.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/agent/execution-result.ts(6,44): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/live-read-authorization.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via '../live-read-authorization.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/execution-result.ts'
+@workmesh/conformance:build:     Imported via "../live-read-authorization.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts'
+@workmesh/conformance:build:     Imported via '../live-read-authorization.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/routes.ts'
+@workmesh/conformance:build:     Imported via "../live-read-authorization.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/inbox/routes.ts'
+@workmesh/conformance:build:     Imported via '../live-read-authorization.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/human-attention/routes.ts'
+@workmesh/conformance:build:     Imported via '../live-read-authorization.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/queue-counts.ts'
+@workmesh/conformance:build:     Imported via '../live-read-authorization.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/control-center/routes.ts'
+@workmesh/conformance:build:     Imported via '../live-read-authorization.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/recovery/routes.ts'
+@workmesh/conformance:build:     Imported via '../live-read-authorization.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/delivery/routes.ts'
+@workmesh/conformance:build:     Imported via '../live-read-authorization.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/operations/routes.ts'
+@workmesh/conformance:build:     Imported via "./live-read-authorization.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:     Imported via './live-read-authorization.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/configuration-readiness.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/agent/routes.ts(15,27): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/commands.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "./commands.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts'
+@workmesh/conformance:build:     Imported via './agent/commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/guidance.ts'
+@workmesh/conformance:build:     Imported via './agent/commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/documents.ts'
+@workmesh/conformance:build:     Imported via '../agent/commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/routes.ts'
+@workmesh/conformance:build:     Imported via "../agent/commands.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/inbox/routes.ts'
+@workmesh/conformance:build:     Imported via '../agent/commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/delivery/routes.ts'
+@workmesh/conformance:build:     Imported via './agent/commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-runner.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/agent/routes.ts(18,32): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/pagination.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "../pagination.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts'
+@workmesh/conformance:build:     Imported via '../pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/routes.ts'
+@workmesh/conformance:build:     Imported via "../pagination.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/inbox/routes.ts'
+@workmesh/conformance:build:     Imported via '../pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/human-attention/routes.ts'
+@workmesh/conformance:build:     Imported via '../pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/control-center/routes.ts'
+@workmesh/conformance:build:     Imported via '../pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/recovery/routes.ts'
+@workmesh/conformance:build:     Imported via '../pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/delivery/routes.ts'
+@workmesh/conformance:build:     Imported via '../pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/delivery/repository-configuration.ts'
+@workmesh/conformance:build:     Imported via '../pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/operations/routes.ts'
+@workmesh/conformance:build:     Imported via "./pagination.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:     Imported via './pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent-connections.ts'
+@workmesh/conformance:build:     Imported via './pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/notification-channels.ts'
+@workmesh/conformance:build:     Imported via './pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-llm-connections.ts'
+@workmesh/conformance:build:     Imported via './pagination.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-conversations.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/agent/routes.ts(20,41): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/work-item-executors.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "../work-item-executors.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts'
+@workmesh/conformance:build:     Imported via "./work-item-executors.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/auth-rate-limit/limiter.ts(8,41): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/redis-store.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "./redis-store.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/limiter.ts'
+@workmesh/conformance:build:     Imported via "./redis-store.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/plugin.ts'
+@workmesh/conformance:build:     Imported via "./auth-rate-limit/redis-store.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/auth-rate-limit/plugin.ts(7,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/inventory.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "./inventory.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/plugin.ts'
+@workmesh/conformance:build:     Imported via "./inventory.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/limiter.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/auth-rate-limit/plugin.ts(8,40): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/client-ip.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "./client-ip.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/plugin.ts'
+@workmesh/conformance:build:     Imported via './auth-rate-limit/client-ip.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/bootstrap-auth.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/auth-rate-limit/plugin.ts(13,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/limiter.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "./limiter.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/plugin.ts'
+@workmesh/conformance:build:     Imported via "./auth-rate-limit/limiter.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/collaboration/queue-counts.ts(4,54): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/human-attention/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via '../human-attention/routes.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/queue-counts.ts'
+@workmesh/conformance:build:     Imported via "./human-attention/routes.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:     Imported via '../human-attention/routes.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/control-center/routes.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/commands.ts(1,36): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/execution-origin.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via './agent/execution-origin.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/commands.ts'
+@workmesh/conformance:build:     Imported via './execution-origin.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/commands.ts'
+@workmesh/conformance:build:     Imported via './agent/execution-origin.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/connection-installation-token.ts'
+@workmesh/conformance:build:     Imported via './agent/execution-origin.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-runner.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/delivery/routes.ts(46,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/delivery/repository-configuration.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/guidance.ts(20,37): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/documents.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via './documents.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/guidance.ts'
+@workmesh/conformance:build:     Imported via "../documents.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts'
+@workmesh/conformance:build:     Imported via "./documents.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/human-attention/routes.ts(23,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/human-attention/projection.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via './projection.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/human-attention/routes.ts'
+@workmesh/conformance:build:     Imported via '../human-attention/projection.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/queue-counts.ts'
+@workmesh/conformance:build:     Imported via '../human-attention/projection.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/control-center/routes.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/realtime/coordinator.ts(6,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/wake-source.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via './wake-source.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/coordinator.ts'
+@workmesh/conformance:build:     Imported via "./realtime/wake-source.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/realtime/event-reader.ts(11,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/authz/event-audience.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/realtime/event-reader.ts(12,59): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/cursor.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via './cursor.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/event-reader.ts'
+@workmesh/conformance:build:     Imported via './cursor.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/wake-source.ts'
+@workmesh/conformance:build:     Imported via './cursor.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/coordinator.ts'
+@workmesh/conformance:build:     Imported via './cursor.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/routes.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/recovery/routes.ts(20,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/recovery/projection.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(1,48): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/execution-result.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via './agent/execution-result.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:     Imported via './execution-result.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(55,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/commands.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "./commands.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:     Imported via './commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/guidance.ts'
+@workmesh/conformance:build:     Imported via './commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/documents.ts'
+@workmesh/conformance:build:     Imported via '../commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/routes.ts'
+@workmesh/conformance:build:     Imported via "../commands.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/inbox/routes.ts'
+@workmesh/conformance:build:     Imported via '../commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/delivery/routes.ts'
+@workmesh/conformance:build:     Imported via '../commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/operations/routes.ts'
+@workmesh/conformance:build:     Imported via './commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent-connections.ts'
+@workmesh/conformance:build:     Imported via './commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/autonomous-control-plane.ts'
+@workmesh/conformance:build:     Imported via './commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/notification-channels.ts'
+@workmesh/conformance:build:     Imported via './commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-llm-connections.ts'
+@workmesh/conformance:build:     Imported via './commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-conversations.ts'
+@workmesh/conformance:build:     Imported via './commands.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-runner.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(56,37): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "./agent/routes.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:     Imported via '../agent/routes.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/operations/routes.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(57,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(58,37): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/inbox/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(59,55): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/collaboration/queue-counts.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(61,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/control-center/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(62,40): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/recovery/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(63,40): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/delivery/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(64,42): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/operations/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(65,46): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/admin-retention.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(67,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/authz/route-policy.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(72,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/authz/authorize.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(73,47): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/authz/request-metadata.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(74,38): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/auth-rate-limit/plugin.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(85,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/bootstrap-auth.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(90,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/client-profile.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(95,35): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/event-reader.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "./realtime/event-reader.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:     Imported via './event-reader.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/routes.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(98,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/coordinator.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via "./realtime/coordinator.js" from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts'
+@workmesh/conformance:build:     Imported via './coordinator.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/routes.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(104,40): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/realtime/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(109,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/agent-connections.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(111,54): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/autonomous-control-plane.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(112,51): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/notification-channels.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(113,54): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-llm-connections.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(114,61): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/model-presets.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(115,53): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-conversations.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(116,47): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/workbench-runner.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/api/src/server.ts(117,54): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/configuration-readiness.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/mcp/src/coordination-product.ts(4,40): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/src/discovery.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via './discovery.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/src/coordination-product.ts'
+@workmesh/conformance:build:     Imported via './discovery.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/src/index.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/mcp/src/http.ts(5,55): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/src/index.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   The file is in the program because:
+@workmesh/conformance:build:     Imported via './index.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/src/http.ts'
+@workmesh/conformance:build:     Imported via '../../../apps/mcp/src/index.js' from file 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src/mcp-coverage.fixture.ts'
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/package.json' has field "type" with value "module"
+@workmesh/conformance:build: ../../apps/mcp/src/index.ts(10,144): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/src/coordination-product.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/package.json' has field "type" with value "module"
+@workmesh/conformance:build: src/mcp-coverage.fixture.ts(15,26): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/src/server.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api/package.json' has field "type" with value "module"
+@workmesh/conformance:build: src/mcp-coverage.fixture.ts(16,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/src/http.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance/src'. 'rootDir' is expected to contain all source files.
+@workmesh/conformance:build:   File is ECMAScript module because 'C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/mcp/package.json' has field "type" with value "module"
+@workmesh/conformance:build:  ELIFECYCLE  Command failed with exit code 2.
+@workmesh/conformance#build:  ERROR  command (C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\conformance) C:\nvm4w\nodejs\pnpm.cmd run build exited (2)
+
+ Tasks:    16 successful, 18 total
+Cached:    0 cached, 18 total
+  Time:    55.702s
+Failed:    @workmesh/conformance#build
+
+ ERROR  run failed: command  exited (2)
+ ELIFECYCLE  Command failed with exit code 2.

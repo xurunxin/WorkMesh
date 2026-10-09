@@ -1,0 +1,6 @@
+{
+  "command": ["python", "docs/plan/agent-mcp-m1/static-check.py", "--prepare-bindings", "--record"],
+  "actualExitCode": 1,
+  "stdout": {"status":"failed","exitCode":1,"runtimeSeconds":0.004,"error":"完整Spec来源一致","checks":[{"name":"plan字节一致","passed":true,"detail":null},{"name":"spec字节一致","passed":true,"detail":null},{"name":"平台前缀非全文","passed":true,"detail":null},{"name":"完整Spec来源一致","passed":false,"detail":null}]},
+  "meaning": "真实首败；未计通过。后续诊断区分工具段落分隔与正文末LF，不修改平台原文。"
+}

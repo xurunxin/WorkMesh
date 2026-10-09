@@ -12,6 +12,28 @@ servers:
 security:
   - SessionCookie: []
 paths:
+  /api/v1/agent-sessions/{id}/execution-result:
+    get:
+      x-workmesh-policy-id: route.getAgentSessionExecutionResult
+      x-workmesh-actor-kinds: [human, agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }, { AgentInstallationToken: [] }, { AgentConnectionInstallationToken: [] }]
+      operationId: getAgentSessionExecutionResult
+      summary: Confirm one exact committed execution action without mutations
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: action, in: query, required: true, schema: { type: string, enum: [complete, stop_ack] } }
+        - { name: operationKey, in: query, required: true, schema: { type: string, minLength: 1, maxLength: 200 } }
+      responses:
+        '200':
+          description: Exact retained result or explicit unavailable confirmation; no tokens or ordinary terminal writes
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSessionExecutionResult' }
+        '400': { description: Invalid strict query }
+        '401': { description: Invalid installation identity or E credential }
+        '404': { description: Exact target or action provenance is not visible }
   /api/v1/workbench/model-presets:
     get:
       x-workmesh-policy-id: route.listModelPresets
@@ -2083,8 +2105,27 @@ paths:
       x-workmesh-feature-tier: stable
       security: [{ AgentInstallationToken: [] }]
       operationId: listWorkbenchRunnerAssignments
+      parameters: [{ name: executionWaits, in: query, schema: { type: boolean, default: false }, description: Opt in to source-bound waiting monitors and unique continuation Turns }]
       description: Runner discovery for one active Agent installation; requires the deployment Runner credential as well.
-      responses: { "200": { description: Owned sessions awaiting ACK or ready for workbench turns, content: { application/json: { schema: { type: object, properties: { items: { type: array, items: { type: object, properties: { sessionId: { type: string, format: uuid }, state: { type: string, enum: [queued, acknowledged, executing] } } } } } } } } } }
+      responses:
+        "200":
+          description: Owned sessions awaiting ACK, ready to execute, or source-bound passive waiting monitors when executionWaits=true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required: [sessionId, state]
+                      properties:
+                        sessionId: { type: string, format: uuid }
+                        state: { type: string, enum: [queued, acknowledged, executing, awaiting_approval, awaiting_input, blocked, paused] }
+                        purpose: { type: string, enum: [execute, monitor], description: Emitted only for executionWaits opt-in }
+                        waitId: { type: string, format: uuid, description: Present only for a source-bound monitor; it grants no execution admission }
   /api/v1/agent-sessions/{id}/workbench-turns:
     get:
       x-workmesh-policy-id: route.listAgentWorkbenchTurns
@@ -2094,7 +2135,7 @@ paths:
       security: [{ AgentSessionToken: [] }]
       operationId: listAgentWorkbenchTurns
       description: Exact Agent Session and deployment Runner credential are both required.
-      parameters: [{ $ref: "#/components/parameters/Id" }]
+      parameters: [{ $ref: "#/components/parameters/Id" }, { name: executionWaits, in: query, schema: { type: boolean, default: false } }]
       responses: { "200": { description: Queued bound turns, content: { application/json: { schema: { type: object, properties: { items: { type: array, items: { type: object, properties: { turnId: { type: string, format: uuid }, conversationId: { type: string, format: uuid } } } } } } } } } }
   /api/v1/workbench/turns/{id}/claim:
     post:
@@ -2106,6 +2147,7 @@ paths:
       operationId: claimWorkbenchTurn
       description: Single-writer claim; the deployment Runner credential is required in addition to the exact Agent Session credential.
       parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: false, content: { application/json: { schema: { type: object, additionalProperties: false, properties: { executionWaits: { type: boolean, default: false } } } } } }
       responses: { "200": { description: Attempt identifier; fence and model credential are available only through the guarded credential endpoint, content: { application/json: { schema: { type: object, properties: { runnerAttemptId: { type: string, format: uuid }, turnId: { type: string, format: uuid } } } } } } }
   /api/v1/workbench/runner-attempts/{id}/credential:
     get:
@@ -3748,6 +3790,59 @@ components:
     GuidanceDiff:
       { description: Authorized line diff between two immutable Guidance revisions., content: { application/json: { schema: { $ref: "#/components/schemas/GuidanceDiff" } } } }
   schemas:
+    AgentSessionExecutionResult:
+      type: object
+      additionalProperties: false
+      required: [session, action, originalResult, cleanup]
+      properties:
+        session:
+          type: object
+          additionalProperties: false
+          required: [id, state, revision]
+          properties:
+            id: { type: string, format: uuid }
+            state: { type: string, enum: [queued, acknowledged, planning, executing, awaiting_input, awaiting_approval, blocked, paused, stopping, stale, completed, failed, canceled] }
+            revision: { type: integer, minimum: 1 }
+        action:
+          type: object
+          additionalProperties: false
+          required: [kind, operationKey, confirmation, unavailableReason]
+          properties:
+            kind: { type: string, enum: [complete, stop_ack] }
+            operationKey: { type: string, minLength: 1, maxLength: 200 }
+            confirmation: { type: string, enum: [confirmed, unavailable] }
+            unavailableReason: { type: [string, 'null'], enum: [receipt_missing, receipt_expired, result_unavailable, null] }
+        originalResult:
+          type: [object, 'null']
+          additionalProperties: false
+          required: [operationId, sessionId, revision, state, resultReference, eventReference]
+          properties:
+            operationId: { type: string, enum: [completeAgentSession, acknowledgeAgentSessionStop] }
+            sessionId: { type: string, format: uuid }
+            revision: { type: integer, minimum: 1 }
+            state: { type: string, enum: [completed, canceled] }
+            resultReference:
+              type: object
+              additionalProperties: false
+              required: [type, id, revision]
+              properties:
+                type: { type: string, enum: [agent_session] }
+                id: { type: string, format: uuid }
+                revision: { type: integer, minimum: 1 }
+            eventReference:
+              type: [object, 'null']
+              additionalProperties: false
+              required: [id, cursor]
+              properties:
+                id: { type: string, format: uuid }
+                cursor: { type: string, pattern: '^\d+$' }
+        cleanup:
+          type: [object, 'null']
+          additionalProperties: false
+          required: [cleanupSummary, residualRisks]
+          properties:
+            cleanupSummary: { type: string, minLength: 1, maxLength: 10000 }
+            residualRisks: { type: array, maxItems: 50, items: { type: string, minLength: 1, maxLength: 1000 } }
     RepositoryConfiguration:
       type: object
       additionalProperties: false
@@ -3886,6 +3981,22 @@ components:
       description: Runner-only response. The apiKey and fenceToken must never be persisted in client state, logs, activities, events, or artifacts.
       required: [runnerAttemptId, fenceToken, baseUrl, apiType, apiKey, modelId, modelName, capabilities, connectionRevision, modelRevision, messages]
       properties:
+        executionWaitsEnabled: { type: boolean, default: false }
+        continuation:
+          type: object
+          additionalProperties: false
+          required: [waitId, sourceTurnId, sourceAttemptId, trigger]
+          properties:
+            waitId: { type: string, format: uuid }
+            sourceTurnId: { type: string, format: uuid }
+            sourceAttemptId: { type: string, format: uuid }
+            trigger:
+              type: object
+              additionalProperties: false
+              required: [kind, id]
+              properties:
+                kind: { type: string, enum: [approval, prompt, message] }
+                id: { type: string, format: uuid }
         runnerAttemptId: { type: string, format: uuid }
         fenceToken: { type: string }
         baseUrl: { type: string, format: uri }
@@ -3900,9 +4011,30 @@ components:
     WorkbenchRunnerSettleInput:
       type: object
       required: [fenceToken, settlement]
+      description: sessionWait and sessionCompletion are mutually exclusive. Waiting requires a settled public reply and externalEffectsReconciled=true.
+      not: { required: [sessionWait, sessionCompletion] }
       properties:
         fenceToken: { type: string, minLength: 16, maxLength: 128 }
         assistantMessageMarkdown: { type: string, minLength: 1, maxLength: 50000 }
+        sessionWait:
+          type: object
+          additionalProperties: false
+          required: [ifMatch, state, reason]
+          properties:
+            ifMatch: { type: integer, minimum: 1 }
+            state: { type: string, enum: [awaiting_approval, awaiting_input, blocked] }
+            reason: { type: string, minLength: 1, maxLength: 2000 }
+            approval:
+              type: object
+              additionalProperties: false
+              required: [id, actionPayloadHash]
+              properties:
+                id: { type: string, format: uuid }
+                actionPayloadHash: { type: string, pattern: '^sha256:[a-f0-9]{64}$' }
+          allOf:
+            - if: { properties: { state: { const: awaiting_approval } } }
+              then: { required: [approval] }
+              else: { not: { required: [approval] } }
         sessionCompletion:
           type: object
           description: Available only for a settled Turn with a public assistant message; the exact Agent Session completion is committed in the same database transaction.
@@ -4364,7 +4496,7 @@ components:
             properties:
               operationId: { type: string }
               policyId: { type: string }
-              authentication: { type: string, enum: [agent_session, human_or_agent_session, human_or_coordination_connection, coordination_connection, installation_target] }
+              authentication: { type: string, enum: [agent_session, human_or_agent_session, human_or_coordination_connection, coordination_connection, installation_target, human_or_installation_target] }
               transports:
                 type: object
                 additionalProperties: false
@@ -4454,7 +4586,7 @@ components:
             properties:
               operationId: { type: string }
               policyId: { type: string }
-              authentication: { type: string, enum: [agent_session, human_or_agent_session, human_or_coordination_connection, coordination_connection, installation_target] }
+              authentication: { type: string, enum: [agent_session, human_or_agent_session, human_or_coordination_connection, coordination_connection, installation_target, human_or_installation_target] }
               transports:
                 type: object
                 additionalProperties: false

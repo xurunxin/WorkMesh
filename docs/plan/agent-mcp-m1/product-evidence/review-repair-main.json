@@ -1,0 +1,21 @@
+{
+  "tool": "mcp__tds__git",
+  "arguments": {
+    "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ]
+  },
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6\trefs/heads/main"
+      }
+    ]
+  },
+  "exitCode": null,
+  "note": "工具实读 refs/heads/main；未返回原生退出字段，记 null；不用 FETCH_HEAD 或 origin/main 判合入。"
+}

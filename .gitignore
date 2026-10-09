@@ -10,6 +10,8 @@ test-results
 .tmp/
 # M0真实客户端运行输出；逐次原件存入受控product-evidence ZIP。
 /ci-logs/mcp-coverage/
+# M1真实客户端运行输出；每轮双目录原件存入受控product-evidence ZIP。
+/ci-logs/execution-recovery/
 # 审批拒绝后保留的本轮临时配置；原字节已在 C3 组合证据中归档。
 /playwright.c3-c1-combination.config.ts
 *.tsbuildinfo

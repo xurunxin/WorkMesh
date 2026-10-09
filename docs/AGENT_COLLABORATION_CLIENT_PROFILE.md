@@ -160,3 +160,13 @@ Human-only 旧工具保持名称与输入 schema，发现时隐藏，缓存调�
 普通 qualified manifest 不可读时，旧 `ack_agent_session`、`heartbeat` 名称和输入仍可调用。直接 E 使用自身有效 Token；ACK 在 stale 恢复，在 acknowledged 只允许同 key/body 的回执重放，新 key 拒绝。stopping/terminal 的 heartbeat 仅更新诊断投影，不恢复执行；REST 仍核准确 Session、live grant 和 capability。只读部署仍拒写，受保护 401/403 不刷新、不重发，其余工具继续受普通发现门禁。
 
 安装交接工具 `inspect_pending_handoff`、`reject_handoff` 使用配置的安装 Bearer 和 null 安装身份；不先获取 C/E manifest，不由 Session 角色代替安装资格。提供准确 handoffId 后 REST 判断目标与 live 授权；无安装凭据明确拒绝。MCP reject 使用 `rejectPendingHandoff`，SDK 原 `rejectHandoff` 的 Session 入口保留兼容。
+
+### 执行生命周期、等待续接与原动作确认
+
+SDK 具名读取 `listSessions`、`listPlanVersions`、`listApprovals`、`getApproval`、`listLeases`、`listRecoveryItems`、`getRecoveryItem` 与既有 Session/context/Plan 读取共用服务器角色、scope 和分页合同。MCP 对应 `list_agent_sessions`、`list_session_plan_versions`、`list_approvals`、`get_approval`、`list_leases`、`list_recovery_items`、`get_recovery_item`；发现资格不能替代实际资源授权。`heartbeatLease`/`heartbeat_lease` 不新增普通 Activity，`renewLease`/`renew_lease` 和 `releaseLease`/`release_lease` 使用准确 Lease version；Lease 永远不是权限，普通 release 不能代替 Stop。
+
+`stop_ack` 和 SDK `stopAcknowledgement` 必须持有原准确 E Token。Runner 观察 Stop 后关闭模型、新工具和 steering，等待 idle、清理本人 scratch，再用独立有界 signal 提交 cleanupSummary/residualRisks。HTTP MCP 每请求重建客户端，C 停止后不能刷新 E，因此无原 E Token 的 C 客户端不能代为提交 stopAck。撤权、强杀、Token 到期或未知外部残留仍需原 Human 恢复流程。
+
+`getSessionExecutionResult`/`get_session_execution_result` 使用原安装身份或同一 Connection 的当前 live 安装身份；只读受限解析不创建或续 C Session、不更新 usage、不签 E、不写业务 receipt/event/outbox。query 必须为准确 Session、`action=complete|stop_ack` 和原 operationKey；服务器按原提交事务的 E Token/安装/Connection 来源快照和当前 grant/Delegation/scope 校验，其他 Connection 或同 Agent 的其他 native 安装均拒绝。旧来源 null/unproven 不推测回填。普通终态 E 不恢复读取/写入；Pi 内部 completion 没有独立 complete 回执，继续使用外层 settle 同 key/body 恢复，不能把内部 completion key 当成功确认。
+
+Pi 的 `workmesh_wait` 只产生等待意图：模型与在途工具静止且外部效果已对账后，公开回复、Turn/Attempt 结算、Session 等待态和持久条件同事务提交。等待不占旧 Attempt 或 Lease，也不跨越单模型 Turn 原时限。API/Worker 同时升级并开启内部等待配置后，Runner 显式 opt-in；Worker 精确批准 ID/原 `sha256:` hash 或 Session prompt/会话 Human 输入满足时创建唯一续 Turn，随后 claim/credential/start 再核 live 权限。默认未 opt-in 的旧消费者不领取续 Turn。Human pause 必须显式 resume；Stop、撤权、拒批或过期优先，不自动启动模型。

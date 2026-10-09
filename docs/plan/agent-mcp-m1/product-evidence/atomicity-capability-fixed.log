@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api
+
+ ✓ integration/execution-result.integration.test.ts (10 tests) 3878ms
+   ✓ exact execution confirmation > confirms a committed direct completion after lost response; terminal E and wrong origin stay closed, without business writes  338ms
+   ✓ exact execution confirmation > rolls back stop_ack state, receipt, event and outbox on each durable boundary failure  309ms
+   ✓ exact execution confirmation > rechecks principal, grant, exact scope and installation on every confirmation, with concurrent reads producing zero facts  368ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  23:09:52
+   Duration  6.90s (transform 950ms, setup 0ms, collect 2.66s, tests 3.88s, environment 0ms, prepare 124ms)

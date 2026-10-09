@@ -1,0 +1,46 @@
+
+> workmesh@ typecheck C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6
+> turbo run typecheck
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running typecheck in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/observability:typecheck: cache miss, executing 86a1a815e9bcbabf
+@workmesh/git-provider:typecheck: cache miss, executing f300d40cb3411462
+@workmesh/contracts:typecheck: cache miss, executing df843c0594ff9f32
+@workmesh/ui:typecheck: cache miss, executing 8aa9fd4ff661697d
+@workmesh/artifact-storage:typecheck: cache miss, executing f34a7d44cda1c80e
+@workmesh/git-provider:typecheck:
+@workmesh/git-provider:typecheck: > @workmesh/git-provider@ typecheck C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\git-provider
+@workmesh/git-provider:typecheck: > tsc --noEmit
+@workmesh/git-provider:typecheck:
+@workmesh/contracts:typecheck:
+@workmesh/contracts:typecheck: > @workmesh/contracts@ typecheck C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\contracts
+@workmesh/contracts:typecheck: > tsc --noEmit
+@workmesh/contracts:typecheck:
+@workmesh/observability:typecheck:
+@workmesh/observability:typecheck: > @workmesh/observability@ typecheck C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\observability
+@workmesh/observability:typecheck: > tsc --noEmit
+@workmesh/observability:typecheck:
+@workmesh/ui:typecheck:
+@workmesh/ui:typecheck: > @workmesh/ui@ typecheck C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\ui
+@workmesh/ui:typecheck: > tsc --noEmit
+@workmesh/ui:typecheck:
+@workmesh/artifact-storage:typecheck:
+@workmesh/artifact-storage:typecheck: > @workmesh/artifact-storage@ typecheck C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\artifact-storage
+@workmesh/artifact-storage:typecheck: > tsc --noEmit
+@workmesh/artifact-storage:typecheck:
+@workmesh/contracts:typecheck: src/route-policy.test.ts(19,4): error TS2366: Function lacks ending return statement and return type does not include 'undefined'.
+@workmesh/contracts:typecheck:  ELIFECYCLE  Command failed with exit code 2.
+@workmesh/contracts#typecheck:  ERROR  command (C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\contracts) C:\nvm4w\nodejs\pnpm.cmd run typecheck exited (2)
+
+ Tasks:    4 successful, 5 total
+Cached:    0 cached, 5 total
+  Time:    5.967s
+Failed:    @workmesh/contracts#typecheck
+
+ ERROR  run failed: command  exited (2)
+ ELIFECYCLE  Command failed with exit code 2.

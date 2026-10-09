@@ -144,7 +144,8 @@ export function projectAdapterDiscovery(identity: AdapterDiscoveryIdentity, inpu
     const evaluate = (variant: DiscoveryBindingRule['identityVariants'][number]): DiscoveryEligibility => {
       if (variant.installationBridgeRequired && !inputs.installationBridge) return eligibility('blocked', ['ADAPTER_NOT_IMPLEMENTED'])
       if (bindingIdentity.kind === 'installation_target') return inputs.installationBridge
-        ? eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], ['exact_installation_target'])
+        ? eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], rule.operationIds.includes('getAgentSessionExecutionResult')
+          ? ['exact_execution_origin', 'live_target_authority', 'exact_session_action_key'] : ['exact_installation_target'])
         : eligibility('blocked', ['INSTALLATION_TOKEN_REQUIRED'])
       if (variant.variant === 'target_execution' && !inputs.targetQualification) {
         const disabled = rule.operationIds.some(operationId => bindingIdentity.qualification.operations.find(item => item.operationId === operationId && item.variant === rule.variant)?.eligibility.reasons.includes('FEATURE_DISABLED'))

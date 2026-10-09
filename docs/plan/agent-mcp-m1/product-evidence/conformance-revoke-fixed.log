@@ -1,0 +1,69 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_approval 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"dbc3f9e2-46cf-479b-bc4e-ba2de2f38b3e","conversationId":"8b71b070-c83b-41f6-b31e-e6b8943565d0","attemptNo":1,"sessionId":"92681078-c54c-417a-b468-d684850bb184","correlationId":"7a6eff68-8950-46c8-9156-f62f3db59bf1","status":"settled","outcome":"settled","queueWaitMs":2705,"dispatchLagMs":2622,"runDurationMs":453,"totalDurationMs":3158,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_approval 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"1d44f88f-46c6-4083-ba29-64c1a92438ba","conversationId":"8b71b070-c83b-41f6-b31e-e6b8943565d0","attemptNo":1,"sessionId":"92681078-c54c-417a-b468-d684850bb184","correlationId":"282a4944-9a9d-4556-b4f5-a0f1822cafba","status":"settled","outcome":"settled","queueWaitMs":2705,"dispatchLagMs":2619,"runDurationMs":453,"totalDurationMs":3158,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_input 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"a60c57bd-c3b8-44d5-a1c3-05c268ccbfb9","conversationId":"48fa2ab8-bafe-447c-9684-82e15365092a","attemptNo":1,"sessionId":"cbfa4595-576e-4a9e-9017-0b910173da01","correlationId":"cd0b35f6-5d34-40b3-ae51-0bd28c920c03","status":"settled","outcome":"settled","queueWaitMs":2768,"dispatchLagMs":2705,"runDurationMs":399,"totalDurationMs":3167,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_input 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"80ea5edb-f73e-48a4-83cd-30182085a538","conversationId":"48fa2ab8-bafe-447c-9684-82e15365092a","attemptNo":1,"sessionId":"cbfa4595-576e-4a9e-9017-0b910173da01","correlationId":"d7733d1d-db8d-4a4a-81d0-b937d1241fa8","status":"settled","outcome":"settled","queueWaitMs":2918,"dispatchLagMs":2832,"runDurationMs":386,"totalDurationMs":3304,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi blocked 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"2a106c57-7981-4680-a9ab-429091898ec6","conversationId":"359a7ffc-6a10-4368-a65d-a7e9998bb8df","attemptNo":1,"sessionId":"6365113d-d7b5-40d2-8da6-75ff978b7ab4","correlationId":"eef09a42-bb81-4c10-b2b5-a2c9459b3fa5","status":"settled","outcome":"settled","queueWaitMs":2327,"dispatchLagMs":2273,"runDurationMs":360,"totalDurationMs":2687,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi blocked 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"e3e7c5c1-08af-4a0c-a255-846af0b24b9d","conversationId":"359a7ffc-6a10-4368-a65d-a7e9998bb8df","attemptNo":1,"sessionId":"6365113d-d7b5-40d2-8da6-75ff978b7ab4","correlationId":"fb4fada7-aeb5-42e2-8869-f96bc9485c47","status":"settled","outcome":"settled","queueWaitMs":2437,"dispatchLagMs":2368,"runDurationMs":325,"totalDurationMs":2762,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"767e22ce-1594-4600-abe3-95836a9f615f","conversationId":"7b5edccc-1db4-41ad-a523-5a9c474761cb","attemptNo":1,"sessionId":"53532ce4-4b64-460d-a7ca-f87ac65f4a5a","correlationId":"6a600615-1a36-4ba1-a5c9-8c37283d138a","status":"settled","outcome":"settled","queueWaitMs":2282,"dispatchLagMs":2230,"runDurationMs":347,"totalDurationMs":2629,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 等待后准确输入已到达，Human 撤 Delegation 优先且不创建续 Turn/Attempt
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"d290c90a-0345-45ec-b862-f84fb7185c44","conversationId":"bd5ed84d-cc3c-46d3-b3dc-7fc8ec44c948","attemptNo":1,"sessionId":"231789c1-6617-4918-b9bf-700db5cfcee0","correlationId":"af0a939b-e0b7-4bf4-9c92-abd32f6cfd39","status":"settled","outcome":"settled","queueWaitMs":2384,"dispatchLagMs":2326,"runDurationMs":356,"totalDurationMs":2740,"totalTokens":null,"errorCode":null}
+
+ ✓ src/execution-recovery.conformance.test.ts (10 tests) 162467ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 具名 SDK/MCP 读取 Plan/context/批准/恢复，Lease 心跳续租释放保持准确 version  1416ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > complete 丢响应后普通终态 E 拒绝，原 Connection 确认零事实，提前 refresh 的其他 Connection 拒绝  1184ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > stop_ack 丢响应后普通终态 E 拒绝，原 Connection 确认零事实，提前 refresh 的其他 Connection 拒绝  1108ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 同 Agent 双 native 安装只允许实际原 E 来源，旧 null/unproven 和撤权均关闭  528ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_approval 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成  7309ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_input 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成  131047ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi blocked 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成  6212ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接  5540ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 等待后准确输入已到达，Human 撤 Delegation 优先且不创建续 Turn/Attempt  3256ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 模型运行期间 Stop 关闭模型与工具，finally 专用 stopAck 保存清理事实  3930ms
+stdout | src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"3123b1eb-6be4-4e08-aaf6-fca9ad27d447","conversationId":"b367e5a4-0f73-4e94-b6d3-d3e38edff018","attemptNo":1,"sessionId":"a9e1900f-3328-4859-a1a5-82bcd901f825","correlationId":"3355e78c-e6e6-4c0d-bda7-b1bba4132c3b","status":"settled","outcome":"settled","queueWaitMs":2436,"dispatchLagMs":2370,"runDurationMs":456,"totalDurationMs":2892,"totalTokens":null,"errorCode":null}
+
+ ✓ src/mcp-coverage.conformance.test.ts (12 tests) 11080ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 同一C分别发现两种mode，Context与同次投影一致，verify无需目标参数  644ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取  1108ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C  1008ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision  730ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox  937ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实  3353ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走  513ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > queued只握手；paused/stopping/terminal拒普通发现，stale保留明确ACK恢复  441ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > stale ACK及stopping/terminal诊断heartbeat经MCP到REST，撤Delegation仍拒绝  773ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 安装交接准确目标可inspect/reject，另一真实Agent和无安装E拒绝  592ms
+
+ Test Files  2 passed (2)
+      Tests  22 passed (22)
+   Start at  23:21:56
+   Duration  181.57s (transform 2.12s, setup 0ms, collect 7.19s, tests 173.55s, environment 0ms, prepare 259ms)

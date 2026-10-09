@@ -159,6 +159,29 @@ describe.sequential('atomic checksummed v1 migration baseline', () => {
     cleanSchemaInventory = await readSchemaInventory()
   }, 120_000)
 
+  it('upgrades execution provenance from the immediately previous schema atomically and keeps old proof absent', async () => {
+    await installDeployedV1Through0007('0016_approval_notification_kind')
+    const seeded = await seedLegacyRows()
+    await db.query(`INSERT INTO api_idempotency_keys(workspace_id,actor_id,idempotency_key,operation,request_hash,replay_expires_at,conflict_expires_at)
+      VALUES($1,$2,'old-proof','old-operation','old-hash',now()+interval '1 hour',now()+interval '1 day')`, [seeded.workspaceId, seeded.actorId])
+    await expect(applyMigrations(db, { failureInjector: (phase, context) => {
+      if (context.version === '0017_execution_origin_and_waits' && phase === 'after_sql') throw new Error('EXECUTION_ORIGIN_MIGRATION_ROLLBACK')
+    } })).rejects.toThrow('EXECUTION_ORIGIN_MIGRATION_ROLLBACK')
+    expect((await db.query(`SELECT to_regclass('public.workbench_execution_waits') AS relation`)).rows[0]!.relation).toBeNull()
+    expect((await db.query(`SELECT 1 FROM information_schema.columns WHERE table_name='agent_installation_tokens' AND column_name='origin_kind'`)).rowCount).toBe(0)
+    await applyMigrations(db)
+    await applyMigrations(db)
+    expect((await db.query(`SELECT execution_source_kind,execution_session_id,execution_session_token_id,execution_installation_token_id,execution_connection_id
+      FROM api_idempotency_keys WHERE idempotency_key='old-proof'`)).rows[0]).toEqual({ execution_source_kind: null, execution_session_id: null,
+      execution_session_token_id: null, execution_installation_token_id: null, execution_connection_id: null })
+    const promptKeys = (await db.query<{ definition: string }>(`SELECT pg_get_constraintdef(oid) AS definition FROM pg_constraint
+      WHERE conrelid='workbench_execution_waits'::regclass AND confrelid='agent_session_prompts'::regclass`)).rows
+    expect(promptKeys).toHaveLength(1)
+    expect(promptKeys[0]!.definition).toContain('FOREIGN KEY (agent_session_id, trigger_prompt_id) REFERENCES agent_session_prompts(session_id, id)')
+    expect(promptKeys[0]!.definition).toContain('ON DELETE RESTRICT')
+    expect(await readSchemaInventory()).toEqual(cleanSchemaInventory)
+  }, 180_000)
+
   it('upgrades an already-deployed v1 database through 0007 without baseline checksum drift', async () => {
     await installDeployedV1Through0007()
     await applyMigrations(db)

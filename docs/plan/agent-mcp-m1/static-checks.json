@@ -1,0 +1,5771 @@
+{
+  "status": "passed",
+  "kind": "真实静态文档/源码规则与变异核验；未执行SQL/Zod/Worker或产品服务",
+  "command": [
+    "python",
+    "docs/plan/agent-mcp-m1/static-check.py",
+    "--staged",
+    "--record"
+  ],
+  "exitCode": 0,
+  "runtimeSeconds": 39.489,
+  "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+  "pythonExecPath": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+  "yaml": "6.0.3",
+  "sourceMain": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+  "sourceMembers": 217,
+  "existingOperations": 42,
+  "proposedOperations": 1,
+  "checkCount": 1030,
+  "failed": 0,
+  "skipped": 0,
+  "productTests": "未运行",
+  "requiredCI": "未运行/未查询本PR",
+  "platformIndependentReview": "原来源方案层面已闭、等待恢复路径已明确；当前hash/prompt FK两合同项待平台定向复审",
+  "chiefConfirm": "未收到",
+  "ciClassification": {
+    "runtime": "v24.20.0",
+    "execPath": "C:\\nvm4w\\nodejs\\node.exe",
+    "selection": {
+      "mode": "full",
+      "packages": [
+        "@workmesh/a2a-adapter",
+        "@workmesh/agent-runner",
+        "@workmesh/agent-sdk",
+        "@workmesh/api",
+        "@workmesh/artifact-storage",
+        "@workmesh/config",
+        "@workmesh/conformance",
+        "@workmesh/contracts",
+        "@workmesh/db",
+        "@workmesh/domain",
+        "@workmesh/fake-agent",
+        "@workmesh/git-provider",
+        "@workmesh/mcp",
+        "@workmesh/observability",
+        "@workmesh/recovery",
+        "@workmesh/ui",
+        "@workmesh/web",
+        "@workmesh/worker"
+      ],
+      "testPackages": [
+        "@workmesh/a2a-adapter",
+        "@workmesh/agent-runner",
+        "@workmesh/agent-sdk",
+        "@workmesh/api",
+        "@workmesh/artifact-storage",
+        "@workmesh/config",
+        "@workmesh/conformance",
+        "@workmesh/contracts",
+        "@workmesh/db",
+        "@workmesh/domain",
+        "@workmesh/fake-agent",
+        "@workmesh/git-provider",
+        "@workmesh/mcp",
+        "@workmesh/observability",
+        "@workmesh/recovery",
+        "@workmesh/ui",
+        "@workmesh/web",
+        "@workmesh/worker"
+      ],
+      "checks": {
+        "source-gates": true,
+        "db-integration": true,
+        "api-integration": true,
+        "worker-integration": true,
+        "e2e": true,
+        "recovery-integration": true,
+        "agent-smoke": true
+      }
+    }
+  },
+  "checks": [
+    {
+      "name": "plan字节一致",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "spec字节一致",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "平台前缀非全文",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "完整Spec来源一致",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文绑定准确",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "真正main观察",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史ZIP原字节",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史ZIP完整成员",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/adr/0080-exact-session-execution-result-confirmation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/adr/0080-exact-session-execution-result-confirmation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/adr/0080-exact-session-execution-result-confirmation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/build-operation-map.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/build-operation-map.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/build-operation-map.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/capture-sources.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/capture-sources.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/capture-sources.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/compatibility.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/compatibility.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/compatibility.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/current-spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/current-spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/current-spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/frozen-M1.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/frozen-M1.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/frozen-M1.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/implementation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/implementation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/implementation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/lifecycle.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/lifecycle.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/lifecycle.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/main-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/main-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/main-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/operation-decisions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/operation-decisions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/operation-decisions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/plan-fulltext-binding.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/plan-fulltext-binding.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/plan-fulltext-binding.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/platform-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/platform-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/platform-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/savedplan.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/savedplan.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/savedplan.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/security-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/security-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/security-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/source-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/source-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/source-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/source-snapshot.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/source-snapshot.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/source-snapshot.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/static-check.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/static-check.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/static-check.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/static-checks.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/static-checks.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/static-checks.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/static-first-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/static-first-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/static-first-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/static-link-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/static-link-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/static-link-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/steering.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/steering.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/steering.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史Git:docs/plan/agent-mcp-m1/verification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:git:docs/plan/agent-mcp-m1/verification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "历史独立指纹:worktree:docs/plan/agent-mcp-m1/verification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "旧首败/返回不改:static-first-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "旧首败/返回不改:static-link-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "旧首败/返回不改:platform-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史ZIP原字节",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史完整成员",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/adr/0080-exact-session-execution-result-confirmation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/adr/0080-exact-session-execution-result-confirmation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/adr/0080-exact-session-execution-result-confirmation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/adr/0081-pi-execution-wait-continuation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/adr/0081-pi-execution-wait-continuation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/adr/0081-pi-execution-wait-continuation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/build-operation-map.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/build-operation-map.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/build-operation-map.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/capture-sources.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/capture-sources.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/capture-sources.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/compatibility.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/compatibility.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/compatibility.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/current-spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/current-spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/current-spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/exploration-failures.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/exploration-failures.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/exploration-failures.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/frozen-M1.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/frozen-M1.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/frozen-M1.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/implementation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/implementation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/implementation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/lifecycle.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/lifecycle.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/lifecycle.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/main-observation-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/main-observation-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/main-observation-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/main-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/main-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/main-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/migration-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/migration-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/migration-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/operation-decisions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/operation-decisions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/operation-decisions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/plan-fulltext-binding.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/plan-fulltext-binding.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/plan-fulltext-binding.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/platform-observation-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/platform-observation-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/platform-observation-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/platform-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/platform-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/platform-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/savedplan.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/savedplan.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/savedplan.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/schema-proposal.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/schema-proposal.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/schema-proposal.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/security-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/security-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/security-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/source-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/source-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/source-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/source-snapshot.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/source-snapshot.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/source-snapshot.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/static-check.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/static-check.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/static-check.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/static-checks.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/static-checks.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/static-checks.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/static-failure-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/static-failure-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/static-failure-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/static-first-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/static-first-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/static-first-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/static-link-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/static-link-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/static-link-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/steering.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/steering.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/steering.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/verification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/verification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/verification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史Git:docs/plan/agent-mcp-m1/wait-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:git:docs/plan/agent-mcp-m1/wait-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554历史独立指纹:worktree:docs/plan/agent-mcp-m1/wait-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "004554首静态失败不改",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "commit对象:e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "commit对象:c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "commit对象:69085317c88d84b702af727dc0ac7152589626d8",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "commit对象:883d279d3b5978680672a6c1d7364d421d0afd10",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "M0双父及同tree",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ZIP自身hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "成员完整且唯一",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/.gitattributes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:.gitattributes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/.github/workflows/ci.yml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:.github/workflows/ci.yml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/.node-version",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:.node-version",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/AGENTS.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:AGENTS.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/AGENT_PROTOCOL.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:AGENT_PROTOCOL.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/CONTEXT.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:CONTEXT.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/OPENAPI.yaml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:OPENAPI.yaml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/SCHEMA.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:SCHEMA.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/permission-matrix.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/agent-runner/src/permission-matrix.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/run-session.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/agent-runner/src/run-session.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/runner-api.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/agent-runner/src/runner-api.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/workbench-skill-manifest.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/agent-runner/src/workbench-skill-manifest.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/workmesh-tools.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/agent-runner/src/workmesh-tools.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/workmesh-tools.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/agent-runner/src/workmesh-tools.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/integration/stage1.integration.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/integration/stage1.integration.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/integration/stage2-collaboration.integration.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/integration/stage2-collaboration.integration.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/integration/workbench-runner.integration.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/integration/workbench-runner.integration.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent-connections.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/agent-connections.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent/approval-projection.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/agent/approval-projection.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/agent/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent/types.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/agent/types.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/authz/route-policy.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/authz/route-policy.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/client-profile.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/client-profile.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/collaboration/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/collaboration/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/connection-installation-token.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/connection-installation-token.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/heartbeat-idempotency.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/heartbeat-idempotency.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/live-read-authorization.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/live-read-authorization.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/recovery/projection.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/recovery/projection.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/recovery/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/recovery/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/server.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/server.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/workbench-conversations.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/workbench-conversations.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/workbench-runner.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/api/src/workbench-runner.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/discovery.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/mcp/src/discovery.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/http.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/mcp/src/http.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/http.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/mcp/src/http.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/index.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/mcp/src/index.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/mcp/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/recovery.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/mcp/src/recovery.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/worker/integration/stage1-lifecycle.integration.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/worker/integration/stage1-lifecycle.integration.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/worker/src/session-lifecycle.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:apps/worker/src/session-lifecycle.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0001-monorepo-runtime-split.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0001-monorepo-runtime-split.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0002-rest-sse.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0002-rest-sse.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0003-postgresql-transaction-outbox.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0003-postgresql-transaction-outbox.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0004-actor-model.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0004-actor-model.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0005-authentication-choice.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0005-authentication-choice.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0006-stage0-authorization-and-event-scope.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0006-stage0-authorization-and-event-scope.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0007-redis-outbox-delivery.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0007-redis-outbox-delivery.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0008-agent-session-token-revocation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0008-agent-session-token-revocation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0009-agent-session-transition-table.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0009-agent-session-transition-table.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0010-agent-activity-immutability-and-redaction.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0010-agent-activity-immutability-and-redaction.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0011-agent-plan-versioning-and-conflict.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0011-agent-plan-versioning-and-conflict.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0012-mcp-domain-boundary.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0012-mcp-domain-boundary.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0013-lease-semantics.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0013-lease-semantics.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0014-handoff-transaction.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0014-handoff-transaction.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0015-agent-routing.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0015-agent-routing.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0016-work-room-projection.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0016-work-room-projection.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0017-parent-child-completion-policy.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0017-parent-child-completion-policy.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0018-provider-abstraction-webhook-recovery.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0018-provider-abstraction-webhook-recovery.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0019-repository-context-and-agents-scope.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0019-repository-context-and-agents-scope.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0020-exact-head-pull-request-approval.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0020-exact-head-pull-request-approval.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0021-artifact-upload-and-provenance.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0021-artifact-upload-and-provenance.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0022-completion-suggestion-and-project-progress.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0022-completion-suggestion-and-project-progress.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0023-automation-versioning-and-effect-execution.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0023-automation-versioning-and-effect-execution.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0024-loop-admission-overlap-and-retry.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0024-loop-admission-overlap-and-retry.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0025-source-linked-project-forecast.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0025-source-linked-project-forecast.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0026-usage-and-cost-normalization.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0026-usage-and-cost-normalization.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0027-a2a-version-boundary.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0027-a2a-version-boundary.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0028-declarative-route-policy-and-event-audience.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0028-declarative-route-policy-and-event-audience.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0028-kaneo-frontend-architecture-and-dependency-policy.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0028-kaneo-frontend-architecture-and-dependency-policy.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0029-rich-content-sanitization-and-editor-boundary.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0029-rich-content-sanitization-and-editor-boundary.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0029-secret-aware-authentication-idempotency.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0029-secret-aware-authentication-idempotency.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0030-shared-authentication-rate-limits.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0030-shared-authentication-rate-limits.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0031-authenticated-single-use-bootstrap.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0031-authenticated-single-use-bootstrap.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0032-signed-keyset-pagination.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0032-signed-keyset-pagination.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0033-postgres-authoritative-realtime-replay.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0033-postgres-authoritative-realtime-replay.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0034-production-runtime-images.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0034-production-runtime-images.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0035-retention-archive-and-heartbeat-projections.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0035-retention-archive-and-heartbeat-projections.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0036-exact-archive-membership.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0036-exact-archive-membership.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0037-agent-inbox-recipients-claims-and-receipts.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0037-agent-inbox-recipients-claims-and-receipts.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0038-atomic-checksummed-v1-migrations.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0038-atomic-checksummed-v1-migrations.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0039-authenticated-complete-recovery-bundles.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0039-authenticated-complete-recovery-bundles.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0040-transactional-active-executor-projection.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0040-transactional-active-executor-projection.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0041-versioned-guidance-and-context-pinning.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0041-versioned-guidance-and-context-pinning.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0042-agent-client-profile-and-derived-capability-manifest.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0042-agent-client-profile-and-derived-capability-manifest.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0043-agent-connection-and-coordination-mcp.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0043-agent-connection-and-coordination-mcp.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0044-structured-planning-domain-parity.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0044-structured-planning-domain-parity.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0045-webui-redesign-i18n-theme-unification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0045-webui-redesign-i18n-theme-unification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0046-agent-connection-recovery-and-execution-capacity.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0046-agent-connection-recovery-and-execution-capacity.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0047-agent-task-admission-and-forced-delegation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0047-agent-task-admission-and-forced-delegation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0048-stale-self-claim-recovery.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0048-stale-self-claim-recovery.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0049-terminal-only-self-claim-recovery.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0049-terminal-only-self-claim-recovery.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0050-human-attention-authorized-projection.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0050-human-attention-authorized-projection.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0051-human-control-plane-read-models.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0051-human-control-plane-read-models.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0052-human-control-plane-information-architecture.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0052-human-control-plane-information-architecture.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0053-human-attention-governed-responses.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0053-human-attention-governed-responses.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0054-causal-agent-run-explanation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0054-causal-agent-run-explanation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0055-governed-agent-session-controls.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0055-governed-agent-session-controls.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0056-work-item-execution-workspace.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0056-work-item-execution-workspace.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0057-actionable-collaboration-queues.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0057-actionable-collaboration-queues.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0058-authorized-recovery-and-freshness-projection.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0058-authorized-recovery-and-freshness-projection.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0059-canonical-navigation-and-evidence-drawer.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0059-canonical-navigation-and-evidence-drawer.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0060-optional-graph-integration-boundary.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0060-optional-graph-integration-boundary.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0061-human-control-plane-final-acceptance-and-telemetry.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0061-human-control-plane-final-acceptance-and-telemetry.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0063-multica-inspired-authority-first-human-agent-workspace.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0063-multica-inspired-authority-first-human-agent-workspace.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0064-unified-human-control-plane-web-experience.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0064-unified-human-control-plane-web-experience.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0066-versioned-project-and-issue-documents.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0066-versioned-project-and-issue-documents.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0067-governed-pi-workmesh-tools.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0067-governed-pi-workmesh-tools.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0068-atomic-workbench-turn-session-completion.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0068-atomic-workbench-turn-session-completion.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0069-embedded-pi-workbench-skill-pin.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0069-embedded-pi-workbench-skill-pin.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0070-artifact-storage-on-rustfs-and-header-signed-uploads.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0070-artifact-storage-on-rustfs-and-header-signed-uploads.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0071-lite-single-node-self-hosted-deployment.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0071-lite-single-node-self-hosted-deployment.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0072-redis-free-and-object-store-free-runtime-profiles.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0072-redis-free-and-object-store-free-runtime-profiles.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0073-human-ordered-position-within-a-status-column.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0073-human-ordered-position-within-a-status-column.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0078-review-round2.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0078-review-round2.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0078-review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0078-review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0079-qualified-agent-discovery-and-recovery.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/0079-qualified-agent-discovery-and-recovery.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/adr/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/ci-integration.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/ci-integration.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/compatibility.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/compatibility.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/discovery-contract-draft.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/discovery-contract-draft.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/domain-audit.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/domain-audit.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/domain-rules.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/domain-rules.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/implementation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/implementation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/operation-decisions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/operation-decisions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-ci407-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-ci407-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/ci407-clean-receipt.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-evidence/ci407-clean-receipt.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-checks.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-evidence/review3-checks.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-delivery-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-evidence/review3-delivery-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-e2e.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-evidence/review3-e2e.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-historical-archive-bindings.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-evidence/review3-historical-archive-bindings.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-integration-final.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-evidence/review3-integration-final.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-real-first.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-evidence/review3-real-first.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-unit-final.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-evidence/review3-unit-final.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-recovery-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-recovery-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/product-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/savedplan.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/savedplan.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/verification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/agent-mcp-m0/verification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/backend-agent-mcp-priority/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/branch-separation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/backend-agent-mcp-priority/branch-separation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/coverage-matrix.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/backend-agent-mcp-priority/coverage-matrix.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/backend-agent-mcp-priority/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/backend-agent-mcp-priority/review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:docs/plan/backend-agent-mcp-priority/sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/package.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:package.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/agent-sdk/src/discovery.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/agent-sdk/src/discovery.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/agent-sdk/src/index.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/agent-sdk/src/index.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/agent-sdk/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/agent-sdk/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/conformance/package.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/conformance/package.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/conformance/src/mcp-coverage.conformance.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/conformance/src/mcp-coverage.conformance.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/conformance/src/mcp-coverage.fixture.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/conformance/src/mcp-coverage.fixture.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/conformance/vitest.integration.config.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/conformance/vitest.integration.config.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/agent-discovery-rules.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/contracts/src/agent-discovery-rules.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/agent-discovery.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/contracts/src/agent-discovery.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/contracts/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/pi-workbench-contracts.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/contracts/src/pi-workbench-contracts.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/route-policy-bindings.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/contracts/src/route-policy-bindings.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/route-policy.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/contracts/src/route-policy.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/integration/migration-baseline.integration.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/integration/migration-baseline.integration.test.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0001_v1_baseline.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0001_v1_baseline.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0002_active_executor_projection.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0002_active_executor_projection.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0003_versioned_guidance.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0003_versioned_guidance.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0004_agent_connections.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0004_agent_connections.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0005_planning_domain_parity.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0005_planning_domain_parity.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0006_human_attachments.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0006_human_attachments.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0007_active_milestone_name_uniqueness.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0007_active_milestone_name_uniqueness.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0008_autonomous_control_push_enrollment.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0008_autonomous_control_push_enrollment.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0009_workbench_llm_connections.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0009_workbench_llm_connections.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0010_workbench_conversations.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0010_workbench_conversations.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0011_versioned_documents.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0011_versioned_documents.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0012_workbench_turn_lineage_and_tools.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0012_workbench_turn_lineage_and_tools.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0013_work_item_board_rank.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0013_work_item_board_rank.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0014_channel_delivery_contract.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0014_channel_delivery_contract.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0015_channel_notification_kind.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0015_channel_notification_kind.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0016_approval_notification_kind.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/migrations/v1/0016_approval_notification_kind.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/package.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/package.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/scripts/generate-v1-baseline.mts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/scripts/generate-v1-baseline.mts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/src/agent-lock-order-manifest.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/src/agent-lock-order-manifest.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/src/agent-locks.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/src/agent-locks.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/src/migration-manifest.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/src/migration-manifest.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/src/migrations.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/src/migrations.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/src/schema.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/db/src/schema.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/domain/src/authorization.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/domain/src/authorization.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/domain/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:packages/domain/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/pnpm-lock.yaml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:pnpm-lock.yaml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/ci-policy.mjs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:scripts/ci-policy.mjs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/ci-policy.test.mjs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:scripts/ci-policy.test.mjs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/generate-agent-discovery.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:scripts/generate-agent-discovery.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/generate-route-policy-artifacts.mts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:scripts/generate-route-policy-artifacts.mts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/generate-runner-skill-manifest.mjs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:scripts/generate-runner-skill-manifest.mjs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/m0-run-check.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:scripts/m0-run-check.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/m0-run-services.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:scripts/m0-run-services.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/require-integration-env.mjs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:scripts/require-integration-env.mjs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/validate-ci.mjs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:scripts/validate-ci.mjs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:e49eda142d61bdd248ddc42ec16f5563abd4bbc6/vitest.config.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "产品原字节未改:vitest.config.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/branch-separation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/coverage-matrix.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全文:c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "冻结M1原节字节",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "冻结M1精确全文",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "hash源生产者保前缀",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "hash当前Zod与消费同格式",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "hash提案沿实际源格式",
+      "passed": true,
+      "detail": {
+        "sourcePatterns": {
+          "requestApprovalInputSchema": "^sha256:[a-f0-9]{64}$",
+          "consumeApprovalInputSchema": "^sha256:[a-f0-9]{64}$"
+        },
+        "ddlPattern": "^sha256:[a-f0-9]{64}$"
+      }
+    },
+    {
+      "name": "hashWorker提案完整相等",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "hash格式正拒：源格式静态样本",
+      "passed": true,
+      "detail": {
+        "expectedAccepted": true,
+        "kind": "源码规则静态样本；非真实批准"
+      }
+    },
+    {
+      "name": "hash格式正拒：裸hex",
+      "passed": true,
+      "detail": {
+        "expectedAccepted": false,
+        "kind": "源码规则静态样本；非真实批准"
+      }
+    },
+    {
+      "name": "hash格式正拒：错误前缀",
+      "passed": true,
+      "detail": {
+        "expectedAccepted": false,
+        "kind": "源码规则静态样本；非真实批准"
+      }
+    },
+    {
+      "name": "hash格式正拒：大小写错误",
+      "passed": true,
+      "detail": {
+        "expectedAccepted": false,
+        "kind": "源码规则静态样本；非真实批准"
+      }
+    },
+    {
+      "name": "hash格式正拒：长度错误",
+      "passed": true,
+      "detail": {
+        "expectedAccepted": false,
+        "kind": "源码规则静态样本；非真实批准"
+      }
+    },
+    {
+      "name": "格式合法但异hash按源完整比较拒绝",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "旧裸hex CHECK真实变异拒绝",
+      "passed": true,
+      "detail": {
+        "mutatedPattern": "^[a-f0-9]{64}$"
+      }
+    },
+    {
+      "name": "strip前缀真实变异拒绝",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "prompt源列无workspace且有Session/id",
+      "passed": true,
+      "detail": {
+        "sourceColumns": [
+          "author_actor_id",
+          "body_markdown",
+          "created_at",
+          "id",
+          "plan_revision",
+          "session_id",
+          "work_item_revision"
+        ]
+      }
+    },
+    {
+      "name": "旧prompt主键使新复合唯一无历史重复",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "prompt提案FK按源列和新unique顺序",
+      "passed": true,
+      "detail": "源列存在、Session准确、先唯一约束后FK、删除RESTRICT"
+    },
+    {
+      "name": "旧workspace FK真实变异拒绝",
+      "passed": true,
+      "detail": "目标引用不存在的列：workspace_id"
+    },
+    {
+      "name": "去新unique真实变异拒绝",
+      "passed": true,
+      "detail": "FK之前没有匹配新唯一约束"
+    },
+    {
+      "name": "仅prompt id跨Session漏洞变异拒绝",
+      "passed": true,
+      "detail": "没有绑定准确Session"
+    },
+    {
+      "name": "准确Session prompt静态关系正例",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "其他Session prompt静态关系拒例",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "DTO与DDL准确引用一致:agent_session_id,trigger_prompt_id",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "DTO与DDL准确引用一致:session_id,id",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "wait保留workspace到Session源FK",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "源增量未后补prompt workspace列",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "wait的workspace Session FK目标确实存在",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "源authority查询按actor workspace限定Session",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "workspace授权合同单列不由prompt列伪造",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前42及新增1唯一",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:listAgentSessions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listAgentSessions:apps/api/src/agent/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listAgentSessions:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listAgentSessions:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:listAgentSessions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:listAgentSessions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:getAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSession:apps/api/src/agent/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSession:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSession:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:getAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:getAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:getAgentSessionContext",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSessionContext:apps/api/src/agent/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSessionContext:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSessionContext:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:getAgentSessionContext",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:getAgentSessionContext",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:getAgentPlan",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentPlan:apps/api/src/agent/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentPlan:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentPlan:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:getAgentPlan",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:getAgentPlan",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:listAgentPlanVersions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listAgentPlanVersions:apps/api/src/agent/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listAgentPlanVersions:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listAgentPlanVersions:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:listAgentPlanVersions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:listAgentPlanVersions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:listApprovals",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listApprovals:apps/api/src/agent/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listApprovals:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listApprovals:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:listApprovals",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:listApprovals",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:getApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getApproval:apps/api/src/agent/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getApproval:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getApproval:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:getApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:getApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:listLeases",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listLeases:apps/api/src/collaboration/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listLeases:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listLeases:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:listLeases",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:listLeases",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:heartbeatLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:heartbeatLease:apps/api/src/collaboration/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:heartbeatLease:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:heartbeatLease:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:heartbeatLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:heartbeatLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:renewLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:renewLease:apps/api/src/collaboration/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:renewLease:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:renewLease:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:renewLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:renewLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:releaseLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:releaseLease:apps/api/src/collaboration/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:releaseLease:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:releaseLease:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:releaseLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:releaseLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:listRecoveryItems",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listRecoveryItems:apps/api/src/recovery/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listRecoveryItems:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listRecoveryItems:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:listRecoveryItems",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:listRecoveryItems",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:getRecoveryItem",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getRecoveryItem:apps/api/src/recovery/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getRecoveryItem:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getRecoveryItem:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:getRecoveryItem",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:getRecoveryItem",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:acknowledgeAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acknowledgeAgentSession:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acknowledgeAgentSession:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acknowledgeAgentSession:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:acknowledgeAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:acknowledgeAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:transitionAgentSessionState",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:transitionAgentSessionState:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:transitionAgentSessionState:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:transitionAgentSessionState:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:transitionAgentSessionState",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:transitionAgentSessionState",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:heartbeatAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:heartbeatAgentSession:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:heartbeatAgentSession:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:heartbeatAgentSession:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:heartbeatAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:heartbeatAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:publishAgentPlan",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:publishAgentPlan:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:publishAgentPlan:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:publishAgentPlan:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:publishAgentPlan",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:publishAgentPlan",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:requestApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:requestApproval:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:requestApproval:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:requestApproval:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:requestApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:requestApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:consumeApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:consumeApproval:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:consumeApproval:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:consumeApproval:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:consumeApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:consumeApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:acquireLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acquireLease:apps/api/src/collaboration/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acquireLease:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acquireLease:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:acquireLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:acquireLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:completeAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:completeAgentSession:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:completeAgentSession:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:completeAgentSession:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:completeAgentSession:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:completeAgentSession:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:completeAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:completeAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:failAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:failAgentSession:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:failAgentSession:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:failAgentSession:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:failAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:failAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:acknowledgeAgentSessionStop",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acknowledgeAgentSessionStop:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acknowledgeAgentSessionStop:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acknowledgeAgentSessionStop:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acknowledgeAgentSessionStop:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:acknowledgeAgentSessionStop:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:acknowledgeAgentSessionStop",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:acknowledgeAgentSessionStop",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:publishArtifact",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:publishArtifact:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:publishArtifact:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:publishArtifact:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:publishArtifact",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:publishArtifact",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:signalAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:signalAgentSession:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:signalAgentSession:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:signalAgentSession:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:signalAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:signalAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:retryAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:retryAgentSession:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:retryAgentSession:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:retryAgentSession:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:retryAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:retryAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:decideApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:decideApproval:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:decideApproval:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:decideApproval:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:decideApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:decideApproval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:forceReleaseLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:forceReleaseLease:apps/api/src/collaboration/routes.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:forceReleaseLease:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:forceReleaseLease:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:forceReleaseLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:forceReleaseLease",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:exchangeAgentSessionToken",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:exchangeAgentSessionToken:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:exchangeAgentSessionToken:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:exchangeAgentSessionToken:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:exchangeAgentSessionToken",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:exchangeAgentSessionToken",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:refreshAgentSessionToken",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:refreshAgentSessionToken:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:refreshAgentSessionToken:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:refreshAgentSessionToken:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:refreshAgentSessionToken",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:refreshAgentSessionToken",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:claimWorkItem",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:claimWorkItem:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:claimWorkItem:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:claimWorkItem:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:claimWorkItem",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:claimWorkItem",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:delegateAndStartAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:delegateAndStartAgentSession:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:delegateAndStartAgentSession:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:delegateAndStartAgentSession:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:delegateAndStartAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:delegateAndStartAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:settleWorkbenchAttempt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:settleWorkbenchAttempt:apps/api/src/workbench-runner.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:settleWorkbenchAttempt:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:settleWorkbenchAttempt:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:settleWorkbenchAttempt:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:settleWorkbenchAttempt:packages/contracts/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:settleWorkbenchAttempt:packages/contracts/src/index.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:settleWorkbenchAttempt:packages/db/migrations/v1/0001_v1_baseline.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:settleWorkbenchAttempt:apps/agent-runner/src/run-session.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:settleWorkbenchAttempt:apps/worker/src/session-lifecycle.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:settleWorkbenchAttempt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:settleWorkbenchAttempt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:listWorkbenchRunnerAssignments",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listWorkbenchRunnerAssignments:apps/api/src/workbench-runner.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listWorkbenchRunnerAssignments:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listWorkbenchRunnerAssignments:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:listWorkbenchRunnerAssignments",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:listWorkbenchRunnerAssignments",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:listAgentWorkbenchTurns",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listAgentWorkbenchTurns:apps/api/src/workbench-runner.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listAgentWorkbenchTurns:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:listAgentWorkbenchTurns:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:listAgentWorkbenchTurns",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:listAgentWorkbenchTurns",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:claimWorkbenchTurn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:claimWorkbenchTurn:apps/api/src/workbench-runner.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:claimWorkbenchTurn:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:claimWorkbenchTurn:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:claimWorkbenchTurn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:claimWorkbenchTurn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:getWorkbenchAttemptCredential",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getWorkbenchAttemptCredential:apps/api/src/workbench-runner.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getWorkbenchAttemptCredential:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getWorkbenchAttemptCredential:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:getWorkbenchAttemptCredential",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:getWorkbenchAttemptCredential",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:startWorkbenchAttempt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:startWorkbenchAttempt:apps/api/src/workbench-runner.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:startWorkbenchAttempt:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:startWorkbenchAttempt:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:startWorkbenchAttempt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:startWorkbenchAttempt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:getWorkbenchAttemptStatus",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getWorkbenchAttemptStatus:apps/api/src/workbench-runner.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getWorkbenchAttemptStatus:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getWorkbenchAttemptStatus:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:getWorkbenchAttemptStatus",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:getWorkbenchAttemptStatus",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:queueWorkbenchTurn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:queueWorkbenchTurn:apps/api/src/workbench-conversations.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:queueWorkbenchTurn:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:queueWorkbenchTurn:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:queueWorkbenchTurn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:queueWorkbenchTurn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:followupWorkbenchTurn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:followupWorkbenchTurn:apps/api/src/workbench-conversations.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:followupWorkbenchTurn:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:followupWorkbenchTurn:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:followupWorkbenchTurn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:followupWorkbenchTurn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:promptAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:promptAgentSession:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:promptAgentSession:apps/api/src/authz/authorize.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:promptAgentSession:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "当前operationId:promptAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "全参数响应:promptAgentSession",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "九类适用性:getAgentSessionExecutionResult",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSessionExecutionResult:apps/api/src/agent-connections.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSessionExecutionResult:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSessionExecutionResult:apps/api/src/server.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSessionExecutionResult:apps/api/src/agent/commands.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "准确源码锚点:getAgentSessionExecutionResult:apps/api/src/agent/guard.ts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "新增合同未冒已有",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "完整M1操作范围",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Proposed ADR未冒验收",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "等待Proposed ADR未冒验收",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "不再任意Token证明或零迁移",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "来源在原事务与Pi内层分离",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SQL仅提案且结构具体",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "等待完整状态/失败合同",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "两个block真实正拒/恢复用例映射",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:0080-exact-session-execution-result-confirmation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:0081-pi-execution-wait-continuation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:build-operation-map.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:capture-sources.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:check-wait-contract-source.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:compatibility.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:current-spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:exploration-failures.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:frozen-M1.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:candidate-004554-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:candidate-69-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:implementation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:lifecycle.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:main-observation-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:main-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:migration-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:operation-decisions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:plan-fulltext-binding.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:platform-observation-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:platform-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:review-feedback-contracts.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:savedplan.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:schema-proposal.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:security-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:source-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:static-check.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:static-checks.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:static-failure-current-2.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:static-failure-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:static-first-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:static-link-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:static-patch-failure-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:steering.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:verification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:wait-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "空白:wait-dto-proposal.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "相对文档链接",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "仅文档边界",
+      "passed": true,
+      "detail": [
+        "docs/adr/0080-exact-session-execution-result-confirmation.md",
+        "docs/adr/0081-pi-execution-wait-continuation.md",
+        "docs/plan/agent-mcp-m1/README.md",
+        "docs/plan/agent-mcp-m1/build-operation-map.py",
+        "docs/plan/agent-mcp-m1/capture-sources.py",
+        "docs/plan/agent-mcp-m1/check-wait-contract-source.py",
+        "docs/plan/agent-mcp-m1/compatibility.md",
+        "docs/plan/agent-mcp-m1/current-spec.md",
+        "docs/plan/agent-mcp-m1/exploration-failures.json",
+        "docs/plan/agent-mcp-m1/frozen-M1.md",
+        "docs/plan/agent-mcp-m1/history/candidate-004554-manifest.json",
+        "docs/plan/agent-mcp-m1/history/candidate-004554.zip",
+        "docs/plan/agent-mcp-m1/history/candidate-69-manifest.json",
+        "docs/plan/agent-mcp-m1/history/candidate-69.zip",
+        "docs/plan/agent-mcp-m1/implementation.md",
+        "docs/plan/agent-mcp-m1/lifecycle.md",
+        "docs/plan/agent-mcp-m1/main-observation-current.json",
+        "docs/plan/agent-mcp-m1/main-observation.json",
+        "docs/plan/agent-mcp-m1/migration-contract.md",
+        "docs/plan/agent-mcp-m1/operation-decisions.json",
+        "docs/plan/agent-mcp-m1/operation-index.md",
+        "docs/plan/agent-mcp-m1/plan-fulltext-binding.json",
+        "docs/plan/agent-mcp-m1/platform-observation-current.json",
+        "docs/plan/agent-mcp-m1/platform-observation.json",
+        "docs/plan/agent-mcp-m1/review-feedback-contracts.md",
+        "docs/plan/agent-mcp-m1/review.md",
+        "docs/plan/agent-mcp-m1/savedplan.md",
+        "docs/plan/agent-mcp-m1/schema-proposal.sql",
+        "docs/plan/agent-mcp-m1/security-contract.md",
+        "docs/plan/agent-mcp-m1/source-manifest.json",
+        "docs/plan/agent-mcp-m1/source-snapshot.zip",
+        "docs/plan/agent-mcp-m1/sources.md",
+        "docs/plan/agent-mcp-m1/spec.md",
+        "docs/plan/agent-mcp-m1/static-check.py",
+        "docs/plan/agent-mcp-m1/static-checks.json",
+        "docs/plan/agent-mcp-m1/static-failure-current-2.json",
+        "docs/plan/agent-mcp-m1/static-failure-current.json",
+        "docs/plan/agent-mcp-m1/static-first-failure.json",
+        "docs/plan/agent-mcp-m1/static-link-failure.json",
+        "docs/plan/agent-mcp-m1/static-patch-failure-current.json",
+        "docs/plan/agent-mcp-m1/steering.md",
+        "docs/plan/agent-mcp-m1/verification.md",
+        "docs/plan/agent-mcp-m1/wait-contract.md",
+        "docs/plan/agent-mcp-m1/wait-dto-proposal.json"
+      ]
+    },
+    {
+      "name": "CI实际full且全部必需",
+      "passed": true,
+      "detail": {
+        "runtime": "v24.20.0",
+        "execPath": "C:\\nvm4w\\nodejs\\node.exe",
+        "selection": {
+          "mode": "full",
+          "packages": [
+            "@workmesh/a2a-adapter",
+            "@workmesh/agent-runner",
+            "@workmesh/agent-sdk",
+            "@workmesh/api",
+            "@workmesh/artifact-storage",
+            "@workmesh/config",
+            "@workmesh/conformance",
+            "@workmesh/contracts",
+            "@workmesh/db",
+            "@workmesh/domain",
+            "@workmesh/fake-agent",
+            "@workmesh/git-provider",
+            "@workmesh/mcp",
+            "@workmesh/observability",
+            "@workmesh/recovery",
+            "@workmesh/ui",
+            "@workmesh/web",
+            "@workmesh/worker"
+          ],
+          "testPackages": [
+            "@workmesh/a2a-adapter",
+            "@workmesh/agent-runner",
+            "@workmesh/agent-sdk",
+            "@workmesh/api",
+            "@workmesh/artifact-storage",
+            "@workmesh/config",
+            "@workmesh/conformance",
+            "@workmesh/contracts",
+            "@workmesh/db",
+            "@workmesh/domain",
+            "@workmesh/fake-agent",
+            "@workmesh/git-provider",
+            "@workmesh/mcp",
+            "@workmesh/observability",
+            "@workmesh/recovery",
+            "@workmesh/ui",
+            "@workmesh/web",
+            "@workmesh/worker"
+          ],
+          "checks": {
+            "source-gates": true,
+            "db-integration": true,
+            "api-integration": true,
+            "worker-integration": true,
+            "e2e": true,
+            "recovery-integration": true,
+            "agent-smoke": true
+          }
+        }
+      }
+    },
+    {
+      "name": "非服务静态环境",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/adr/0080-exact-session-execution-result-confirmation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/adr/0081-pi-execution-wait-continuation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/build-operation-map.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/capture-sources.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/check-wait-contract-source.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/compatibility.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/current-spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/exploration-failures.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/frozen-M1.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/history/candidate-004554-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/history/candidate-004554.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/history/candidate-69-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/history/candidate-69.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/implementation.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/lifecycle.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/main-observation-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/main-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/migration-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/operation-decisions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/operation-index.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/plan-fulltext-binding.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/platform-observation-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/platform-observation.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/review-feedback-contracts.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/review.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/savedplan.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/schema-proposal.sql",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/security-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/source-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/source-snapshot.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/sources.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/spec.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/static-check.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/static-failure-current-2.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/static-failure-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/static-first-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/static-link-failure.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/static-patch-failure-current.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/steering.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/verification.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/wait-contract.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "受测与Git字节:docs/plan/agent-mcp-m1/wait-dto-proposal.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "暂存diff空白",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "testedFiles": [
+    {
+      "path": "docs/adr/0080-exact-session-execution-result-confirmation.md",
+      "workingTreeBytes": 3735,
+      "workingTreeSha256": "ab4acabb7282ed5e188d272a1860989265ae93ded19392b9893b714d38ca7b24",
+      "gitBlobOid": "e0dc0c40ec19b97c29f86493fb0cdf89b3807240",
+      "gitBlobBytes": 3735,
+      "gitBlobSha256": "ab4acabb7282ed5e188d272a1860989265ae93ded19392b9893b714d38ca7b24",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/adr/0081-pi-execution-wait-continuation.md",
+      "workingTreeBytes": 4067,
+      "workingTreeSha256": "a05549b53df265dda6f8ba743c19dd2f9cf12a526d30eedbe73ee5e096e1b1bc",
+      "gitBlobOid": "075ffba59f52b587ff793e791d36b78ed4a6f57f",
+      "gitBlobBytes": 4067,
+      "gitBlobSha256": "a05549b53df265dda6f8ba743c19dd2f9cf12a526d30eedbe73ee5e096e1b1bc",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/build-operation-map.py",
+      "workingTreeBytes": 23431,
+      "workingTreeSha256": "cc9da5e2a236c01d7d035a932764212bb1750c81729d430b296ca1b9e588210b",
+      "gitBlobOid": "f20d50717ad01f83eb302ec580a7781cd2917fe4",
+      "gitBlobBytes": 23431,
+      "gitBlobSha256": "cc9da5e2a236c01d7d035a932764212bb1750c81729d430b296ca1b9e588210b",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/capture-sources.py",
+      "workingTreeBytes": 8075,
+      "workingTreeSha256": "5ac2d542bba73f5e53d09967321ac6d644bd115ddeba450519a41a989b5ba983",
+      "gitBlobOid": "ca1ffe298c38e236ac130194086dfa759c2f2a3d",
+      "gitBlobBytes": 8075,
+      "gitBlobSha256": "5ac2d542bba73f5e53d09967321ac6d644bd115ddeba450519a41a989b5ba983",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/check-wait-contract-source.py",
+      "workingTreeBytes": 9297,
+      "workingTreeSha256": "b180f748e2793b1b204e5566549be794b68cacf44bc8ce4c703a1fe7d6cc939a",
+      "gitBlobOid": "3755bd82f04a6a4fb8372acbcf0a92a1a9f493c1",
+      "gitBlobBytes": 9297,
+      "gitBlobSha256": "b180f748e2793b1b204e5566549be794b68cacf44bc8ce4c703a1fe7d6cc939a",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/compatibility.md",
+      "workingTreeBytes": 4426,
+      "workingTreeSha256": "2bce7074e35c3cac010cd1c861ecfa4160645909faf7cc3ff29b2a6bb3dad254",
+      "gitBlobOid": "3d7783fb3f9e14504c32512ed36df406bfef4620",
+      "gitBlobBytes": 4426,
+      "gitBlobSha256": "2bce7074e35c3cac010cd1c861ecfa4160645909faf7cc3ff29b2a6bb3dad254",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/current-spec.md",
+      "workingTreeBytes": 8248,
+      "workingTreeSha256": "1ec226626bb48f9e260fad0210f412275c8581d82284e677bcaebc7eca55ea55",
+      "gitBlobOid": "0f9c7868ed79930db96f13869cd8956a3a2310fb",
+      "gitBlobBytes": 8248,
+      "gitBlobSha256": "1ec226626bb48f9e260fad0210f412275c8581d82284e677bcaebc7eca55ea55",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/exploration-failures.json",
+      "workingTreeBytes": 1026,
+      "workingTreeSha256": "e85d1daf6f64b156d481743218621d29b2ca2fea21fa248b8ac46292d571e498",
+      "gitBlobOid": "a54dd2dcd211c1e9a90b2b9b6a630e4923cd1f29",
+      "gitBlobBytes": 1026,
+      "gitBlobSha256": "e85d1daf6f64b156d481743218621d29b2ca2fea21fa248b8ac46292d571e498",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/frozen-M1.md",
+      "workingTreeBytes": 5893,
+      "workingTreeSha256": "017cec9f175f2f36794a31d6e27d5df1dcc7f27061d8a964ee0caf6794c2dadb",
+      "gitBlobOid": "8de38a99687b631f5f594bbcb949cd6a330ca95b",
+      "gitBlobBytes": 5893,
+      "gitBlobSha256": "017cec9f175f2f36794a31d6e27d5df1dcc7f27061d8a964ee0caf6794c2dadb",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/history/candidate-004554-manifest.json",
+      "workingTreeBytes": 19742,
+      "workingTreeSha256": "799b35ff79da22e939ee00d64bcce73ef7e20712aacdda03c03e5e69a7c9de89",
+      "gitBlobOid": "902b8a80ba96ec13212bb777f35f23dafa4ec57f",
+      "gitBlobBytes": 19742,
+      "gitBlobSha256": "799b35ff79da22e939ee00d64bcce73ef7e20712aacdda03c03e5e69a7c9de89",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/history/candidate-004554.zip",
+      "workingTreeBytes": 5778466,
+      "workingTreeSha256": "3a00e4d58e6c46f740198f7aa704b4a7d2746c4957e410ea23e2fa4571a6c4c7",
+      "gitBlobOid": "76f3ffaec8e781ccdfa1ba1dc6846d776517efc6",
+      "gitBlobBytes": 5778466,
+      "gitBlobSha256": "3a00e4d58e6c46f740198f7aa704b4a7d2746c4957e410ea23e2fa4571a6c4c7",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/history/candidate-69-manifest.json",
+      "workingTreeBytes": 15084,
+      "workingTreeSha256": "c4a12f1dac9c1df00acd4e16965ec9c8cdf30286675faaece6527716e051009d",
+      "gitBlobOid": "644759ae91f98e62dba6632eddcd05193e46c514",
+      "gitBlobBytes": 15084,
+      "gitBlobSha256": "c4a12f1dac9c1df00acd4e16965ec9c8cdf30286675faaece6527716e051009d",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/history/candidate-69.zip",
+      "workingTreeBytes": 5415432,
+      "workingTreeSha256": "4aee147031bdc59c9fb4b07ba28edab0820dca7015530615b8c9c9ab6dc8c40c",
+      "gitBlobOid": "0e509320cd7b80e6ee7c60e9914045d7863767fe",
+      "gitBlobBytes": 5415432,
+      "gitBlobSha256": "4aee147031bdc59c9fb4b07ba28edab0820dca7015530615b8c9c9ab6dc8c40c",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/implementation.md",
+      "workingTreeBytes": 15259,
+      "workingTreeSha256": "4b1c9d6a4fd3e47985f23782451115f595cc4ac681af7f581e2609fec1a7d958",
+      "gitBlobOid": "cca602e82b34cf68f41efb7aecef50e83ad245f7",
+      "gitBlobBytes": 15259,
+      "gitBlobSha256": "4b1c9d6a4fd3e47985f23782451115f595cc4ac681af7f581e2609fec1a7d958",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/lifecycle.md",
+      "workingTreeBytes": 8525,
+      "workingTreeSha256": "087a0749fa5203a5d32bf677db58bbde3f14cf8c7244a7c79665fd95a7f2b887",
+      "gitBlobOid": "a68180da5bd169868c3d7b81e2ec15c02f6af15a",
+      "gitBlobBytes": 8525,
+      "gitBlobSha256": "087a0749fa5203a5d32bf677db58bbde3f14cf8c7244a7c79665fd95a7f2b887",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/main-observation-current.json",
+      "workingTreeBytes": 801,
+      "workingTreeSha256": "2ef5f8c3b5d73b9e90548c678f78f6f5b8c7618c45dc53ec6dd10ffd4f79d5d4",
+      "gitBlobOid": "a3264873c4b3f09025598bcf6167301028071696",
+      "gitBlobBytes": 801,
+      "gitBlobSha256": "2ef5f8c3b5d73b9e90548c678f78f6f5b8c7618c45dc53ec6dd10ffd4f79d5d4",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/main-observation.json",
+      "workingTreeBytes": 508,
+      "workingTreeSha256": "246016f0ab8b842f88c95477627a64725c011d321c4e6948c9659006572de4f1",
+      "gitBlobOid": "e6729677b9175fd5183154209dd2161bda4aa87c",
+      "gitBlobBytes": 508,
+      "gitBlobSha256": "246016f0ab8b842f88c95477627a64725c011d321c4e6948c9659006572de4f1",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/migration-contract.md",
+      "workingTreeBytes": 9224,
+      "workingTreeSha256": "80546f148d6cb71449f5d63b264c7797143e88ca787cc39191058a7fd48fac25",
+      "gitBlobOid": "95113340b160354395842cb1b8d2969c470ac68b",
+      "gitBlobBytes": 9224,
+      "gitBlobSha256": "80546f148d6cb71449f5d63b264c7797143e88ca787cc39191058a7fd48fac25",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/operation-decisions.json",
+      "workingTreeBytes": 3149396,
+      "workingTreeSha256": "adff5d07149fb1f1f6625d9e6bd79c5c2fe0acc542823d798c1fa7bb045e5a99",
+      "gitBlobOid": "b0d0fa0d988bee7bef3e0399126213fb16281836",
+      "gitBlobBytes": 3149396,
+      "gitBlobSha256": "adff5d07149fb1f1f6625d9e6bd79c5c2fe0acc542823d798c1fa7bb045e5a99",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/operation-index.md",
+      "workingTreeBytes": 13199,
+      "workingTreeSha256": "437d415395b71ab4f2c14e3481586d966445363a813415b7e5eb70c1c6a47267",
+      "gitBlobOid": "0be51f93160f5262cb2d20ac95d10be2eb9360d9",
+      "gitBlobBytes": 13199,
+      "gitBlobSha256": "437d415395b71ab4f2c14e3481586d966445363a813415b7e5eb70c1c6a47267",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/plan-fulltext-binding.json",
+      "workingTreeBytes": 1855,
+      "workingTreeSha256": "de0d3086d4d4f6c6af7575624919fcfacaf618aef31a8bb53fc444d3c3627c9e",
+      "gitBlobOid": "59750a4fcd2ecfcc164220a60ea26397a64de62d",
+      "gitBlobBytes": 1855,
+      "gitBlobSha256": "de0d3086d4d4f6c6af7575624919fcfacaf618aef31a8bb53fc444d3c3627c9e",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/platform-observation-current.json",
+      "workingTreeBytes": 19133,
+      "workingTreeSha256": "61dfc239c7375d8573fa787d0e1cf0f494a8310a6a57487851b3fc0f14b223b2",
+      "gitBlobOid": "d3794303205a89e7843df11e2671e62b6ecc33fb",
+      "gitBlobBytes": 19133,
+      "gitBlobSha256": "61dfc239c7375d8573fa787d0e1cf0f494a8310a6a57487851b3fc0f14b223b2",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/platform-observation.json",
+      "workingTreeBytes": 20589,
+      "workingTreeSha256": "4611575517793efa548c17a825a66ad2b371bf9c255a81ec67b597b8053ff24b",
+      "gitBlobOid": "b924b9fdea3b38b33c7cd6e559da3552d7c12935",
+      "gitBlobBytes": 20589,
+      "gitBlobSha256": "4611575517793efa548c17a825a66ad2b371bf9c255a81ec67b597b8053ff24b",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/README.md",
+      "workingTreeBytes": 3550,
+      "workingTreeSha256": "ce486e6971f0565fd7d7e4554a413b2bc0c1658d297cd42458f53e74f3d9ebec",
+      "gitBlobOid": "da4a3ca8162ae62ed706428d03dc50c426ba234b",
+      "gitBlobBytes": 3550,
+      "gitBlobSha256": "ce486e6971f0565fd7d7e4554a413b2bc0c1658d297cd42458f53e74f3d9ebec",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/review-feedback-contracts.md",
+      "workingTreeBytes": 2313,
+      "workingTreeSha256": "4a8d054d7596c9ce99f870b37d994a8a30cf95920559d3a0018e6a73b12e024b",
+      "gitBlobOid": "6e0c15c2ba4acb84404928af85065862338b4ece",
+      "gitBlobBytes": 2313,
+      "gitBlobSha256": "4a8d054d7596c9ce99f870b37d994a8a30cf95920559d3a0018e6a73b12e024b",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/review.md",
+      "workingTreeBytes": 4053,
+      "workingTreeSha256": "b9905addbbbf43dee62072d4ebc3fe5129ccb7b257ef3d6ff8114880b59d830a",
+      "gitBlobOid": "80694ebf6c48a01a8668bec9d9c3c433e5bc07a2",
+      "gitBlobBytes": 4053,
+      "gitBlobSha256": "b9905addbbbf43dee62072d4ebc3fe5129ccb7b257ef3d6ff8114880b59d830a",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/savedplan.md",
+      "workingTreeBytes": 15259,
+      "workingTreeSha256": "4b1c9d6a4fd3e47985f23782451115f595cc4ac681af7f581e2609fec1a7d958",
+      "gitBlobOid": "cca602e82b34cf68f41efb7aecef50e83ad245f7",
+      "gitBlobBytes": 15259,
+      "gitBlobSha256": "4b1c9d6a4fd3e47985f23782451115f595cc4ac681af7f581e2609fec1a7d958",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/schema-proposal.sql",
+      "workingTreeBytes": 8291,
+      "workingTreeSha256": "f843b064699f9bf57a5a2e50e2f9a9398af1ebbe93a37c5486e3e2a3364cdc2d",
+      "gitBlobOid": "6d20a168a460abd645d498809d9be61dbb40671f",
+      "gitBlobBytes": 8291,
+      "gitBlobSha256": "f843b064699f9bf57a5a2e50e2f9a9398af1ebbe93a37c5486e3e2a3364cdc2d",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/security-contract.md",
+      "workingTreeBytes": 11168,
+      "workingTreeSha256": "9e7ba87c4befbfea55d78fb2ee8b714d2ae61b3ed0efa7df56edbecd2f334851",
+      "gitBlobOid": "9d59f2c9ccadfb2798f9db096ad04285476b9805",
+      "gitBlobBytes": 11168,
+      "gitBlobSha256": "9e7ba87c4befbfea55d78fb2ee8b714d2ae61b3ed0efa7df56edbecd2f334851",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/source-manifest.json",
+      "workingTreeBytes": 126004,
+      "workingTreeSha256": "56785c4c718df2e848727eae53d8c934fc773d50bcb9a3ee0c03b4741c7e6020",
+      "gitBlobOid": "352e244559b4199b7eaba7291a7b580d9f565519",
+      "gitBlobBytes": 126004,
+      "gitBlobSha256": "56785c4c718df2e848727eae53d8c934fc773d50bcb9a3ee0c03b4741c7e6020",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/source-snapshot.zip",
+      "workingTreeBytes": 2397709,
+      "workingTreeSha256": "cefaf6a3e84598a1c77ccabdbb9890d26c58885771e17b726366b303527a383a",
+      "gitBlobOid": "b6fedbcf4e08a8b42ade23d3ffdf00558a7f88e5",
+      "gitBlobBytes": 2397709,
+      "gitBlobSha256": "cefaf6a3e84598a1c77ccabdbb9890d26c58885771e17b726366b303527a383a",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/sources.md",
+      "workingTreeBytes": 5106,
+      "workingTreeSha256": "0287074df5cf37def742c6ecf7d5901d224b417791ae7517e934fe5e8476f043",
+      "gitBlobOid": "c4e4089f43ffea4a9877ce6c5fe32a8e86a746f4",
+      "gitBlobBytes": 5106,
+      "gitBlobSha256": "0287074df5cf37def742c6ecf7d5901d224b417791ae7517e934fe5e8476f043",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/spec.md",
+      "workingTreeBytes": 8248,
+      "workingTreeSha256": "1ec226626bb48f9e260fad0210f412275c8581d82284e677bcaebc7eca55ea55",
+      "gitBlobOid": "0f9c7868ed79930db96f13869cd8956a3a2310fb",
+      "gitBlobBytes": 8248,
+      "gitBlobSha256": "1ec226626bb48f9e260fad0210f412275c8581d82284e677bcaebc7eca55ea55",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/static-check.py",
+      "workingTreeBytes": 17904,
+      "workingTreeSha256": "e299b527055affce7321445c51e4df411fc737b0bcfc16e0391007f463c72549",
+      "gitBlobOid": "5d800f2fb9a771d28067e56ccb61472f260d7a1e",
+      "gitBlobBytes": 17904,
+      "gitBlobSha256": "e299b527055affce7321445c51e4df411fc737b0bcfc16e0391007f463c72549",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/static-failure-current-2.json",
+      "workingTreeBytes": 98253,
+      "workingTreeSha256": "acf08a063a92b5e3faa4db9bc90c086b848946b956ac20b39899550b288b24f4",
+      "gitBlobOid": "c5e45b6e7c1aeb4cfa48c915928723c807ebe860",
+      "gitBlobBytes": 98253,
+      "gitBlobSha256": "acf08a063a92b5e3faa4db9bc90c086b848946b956ac20b39899550b288b24f4",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/static-failure-current.json",
+      "workingTreeBytes": 105420,
+      "workingTreeSha256": "f0d302a5e0f80b3b88551ff70f0b62c20c1050f337a19809dbaada66bcb0c0a6",
+      "gitBlobOid": "9b79011b2d320cc0d4c029e6250e842717a9428a",
+      "gitBlobBytes": 105420,
+      "gitBlobSha256": "f0d302a5e0f80b3b88551ff70f0b62c20c1050f337a19809dbaada66bcb0c0a6",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/static-first-failure.json",
+      "workingTreeBytes": 600,
+      "workingTreeSha256": "188e4b50fc42568d68d0354cd8a8d0110613fbd55703c107a6a2bcc9f24dee38",
+      "gitBlobOid": "b57cafc9b4937948dc8f6ef262433a644e55514c",
+      "gitBlobBytes": 600,
+      "gitBlobSha256": "188e4b50fc42568d68d0354cd8a8d0110613fbd55703c107a6a2bcc9f24dee38",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/static-link-failure.json",
+      "workingTreeBytes": 608,
+      "workingTreeSha256": "83238b6b105d046d98e54d7ae097bf7436e1f5a3926cd9c8529cd86cd46acbb1",
+      "gitBlobOid": "3574a201e49f30d647a0d1686ba4087c2c0abb7e",
+      "gitBlobBytes": 608,
+      "gitBlobSha256": "83238b6b105d046d98e54d7ae097bf7436e1f5a3926cd9c8529cd86cd46acbb1",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/static-patch-failure-current.json",
+      "workingTreeBytes": 595,
+      "workingTreeSha256": "11087092c88777d574b923b5a2f664f527774db57ce9ee1d58d8b88fad7cee04",
+      "gitBlobOid": "466debdb34637b52796a3801eee8874ac7a01b23",
+      "gitBlobBytes": 595,
+      "gitBlobSha256": "11087092c88777d574b923b5a2f664f527774db57ce9ee1d58d8b88fad7cee04",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/steering.md",
+      "workingTreeBytes": 6016,
+      "workingTreeSha256": "097812aa0f8defa46d6eeef5b9168db3dc131d889c743ed9ce6fc76e944ae586",
+      "gitBlobOid": "53ea115a7962d34f82f548cb08e48e03f4682a1b",
+      "gitBlobBytes": 6016,
+      "gitBlobSha256": "097812aa0f8defa46d6eeef5b9168db3dc131d889c743ed9ce6fc76e944ae586",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/verification.md",
+      "workingTreeBytes": 18871,
+      "workingTreeSha256": "78ee1d9eef047f4f53fc0b9f8926329d5319c637ae9c5766c2d143e07385bc5a",
+      "gitBlobOid": "ae5dad23c46c3e9692e1685799bbe812374d8bee",
+      "gitBlobBytes": 18871,
+      "gitBlobSha256": "78ee1d9eef047f4f53fc0b9f8926329d5319c637ae9c5766c2d143e07385bc5a",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/wait-contract.md",
+      "workingTreeBytes": 6695,
+      "workingTreeSha256": "a66ca7586bc2afdbf87200e63ae152f492d2163778089b080e6a5bdab85da93c",
+      "gitBlobOid": "9ce80f0ffb7c3fc098ef35fe42ccc027b935861c",
+      "gitBlobBytes": 6695,
+      "gitBlobSha256": "a66ca7586bc2afdbf87200e63ae152f492d2163778089b080e6a5bdab85da93c",
+      "relation": "identical"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/wait-dto-proposal.json",
+      "workingTreeBytes": 1483,
+      "workingTreeSha256": "37c87371ad0fc07a8faa245e9f8814e95a7c479e4b879a3edfbe8a79c32d4ff6",
+      "gitBlobOid": "8ef60bbedb5c586e6fd8f5a14e17fbb839f05125",
+      "gitBlobBytes": 1483,
+      "gitBlobSha256": "37c87371ad0fc07a8faa245e9f8814e95a7c479e4b879a3edfbe8a79c32d4ff6",
+      "relation": "identical"
+    }
+  ],
+  "reportSelfHash": "不参与；提交后单独核回执blob一致",
+  "resources": {
+    "containers": [],
+    "images": [],
+    "volumes": [],
+    "networks": [],
+    "services": [],
+    "backgroundProcesses": [],
+    "retainedPaths": [
+      "docs/plan/agent-mcp-m1/",
+      "docs/adr/0080-exact-session-execution-result-confirmation.md",
+      "docs/adr/0081-pi-execution-wait-continuation.md"
+    ],
+    "cleanupActions": []
+  }
+}

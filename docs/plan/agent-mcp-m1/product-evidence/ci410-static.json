@@ -1,0 +1,79 @@
+{
+  "observedAt": "2026-10-09T18:25:02.339553+00:00",
+  "result": "passed",
+  "parent": "394401880cb687d1a682b56d57b1342a86531c5c",
+  "productChanges": [],
+  "commands": [
+    {
+      "command": [
+        "git",
+        "add",
+        "--",
+        "docs/plan/agent-mcp-m1/product-ci410-report.md",
+        "docs/plan/agent-mcp-m1/product-evidence/ci410-original-index.json",
+        "docs/plan/agent-mcp-m1/product-evidence/ci410-originals.zip",
+        "docs/plan/agent-mcp-m1/product-evidence/ci410-test-summaries.json"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'docs/plan/agent-mcp-m1/product-ci410-report.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m1/product-evidence/ci410-original-index.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m1/product-evidence/ci410-test-summaries.json', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+        "--"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only",
+        "394401880cb687d1a682b56d57b1342a86531c5c",
+        "--"
+      ],
+      "exitCode": 0,
+      "stdout": "docs/plan/agent-mcp-m1/product-ci410-report.md\ndocs/plan/agent-mcp-m1/product-evidence/ci410-original-index.json\ndocs/plan/agent-mcp-m1/product-evidence/ci410-originals.zip\ndocs/plan/agent-mcp-m1/product-evidence/ci410-test-summaries.json\n",
+      "stderr": ""
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/plan/agent-mcp-m1/product-ci410-report.md",
+      "worktreeBytes": 6801,
+      "worktreeSha256": "bc7ecf1536901c8363aaac23ca296adc1a62bde6764fcdf566cf17b0f61b7317",
+      "stagedBytes": 6801,
+      "stagedSha256": "bc7ecf1536901c8363aaac23ca296adc1a62bde6764fcdf566cf17b0f61b7317"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/product-evidence/ci410-original-index.json",
+      "worktreeBytes": 24351,
+      "worktreeSha256": "cf44e519b2b148d0b2d5f29699bf60d26fb9bbcbb02f7d7b83a7cf98a54e6883",
+      "stagedBytes": 24351,
+      "stagedSha256": "cf44e519b2b148d0b2d5f29699bf60d26fb9bbcbb02f7d7b83a7cf98a54e6883"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/product-evidence/ci410-originals.zip",
+      "worktreeBytes": 8284443,
+      "worktreeSha256": "c6b7097439ec7be727042080c9eaeb6cf4e75a9dc1bb5435fd5a4472a43bf943",
+      "stagedBytes": 8284443,
+      "stagedSha256": "c6b7097439ec7be727042080c9eaeb6cf4e75a9dc1bb5435fd5a4472a43bf943"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/product-evidence/ci410-test-summaries.json",
+      "worktreeBytes": 9049,
+      "worktreeSha256": "38ba20342d2c64197e703f456b9c20aef37516afd9f830beb162f03782f7d0aa",
+      "stagedBytes": 9049,
+      "stagedSha256": "38ba20342d2c64197e703f456b9c20aef37516afd9f830beb162f03782f7d0aa"
+    }
+  ],
+  "limitation": "Pre-push staged and worktree bytes; final commit identity must be observed after push."
+}

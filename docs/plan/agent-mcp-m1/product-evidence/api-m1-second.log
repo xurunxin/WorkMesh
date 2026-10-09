@@ -1,0 +1,122 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_approval publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"d57e602d-f904-444e-921e-6e6bc2d00fd7","conversationId":"6198fd2c-e21e-4810-a957-90591a953c50","attemptNo":1,"sessionId":"7d95b794-5d87-4752-974c-d5fd49ea20aa","correlationId":"5409f946-0c49-4650-a5b2-f79bd465db54","status":"settled","outcome":"settled","queueWaitMs":90,"dispatchLagMs":30,"runDurationMs":71,"totalDurationMs":161,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_approval publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"236263bd-5baa-4494-996b-271cd68eef0d","conversationId":"6198fd2c-e21e-4810-a957-90591a953c50","attemptNo":1,"sessionId":"7d95b794-5d87-4752-974c-d5fd49ea20aa","correlationId":"dd230188-5437-4716-8cee-d855c81440e7","status":"settled","outcome":"settled","queueWaitMs":196,"dispatchLagMs":121,"runDurationMs":38,"totalDurationMs":234,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_input publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"c46ec582-c958-4c49-8bdd-ac8990abc9a6","conversationId":"c10c9b6e-8b8f-4ae4-98a6-ceaf53c819ed","attemptNo":1,"sessionId":"075c0f2e-44dd-4681-8e91-2a446bb94126","correlationId":"1b15ba34-a81c-42cc-9147-9d5aaa2ed5e3","status":"settled","outcome":"settled","queueWaitMs":75,"dispatchLagMs":23,"runDurationMs":27,"totalDurationMs":102,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_input publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"3ed2c79e-c966-413f-b25f-ad00d0f1b838","conversationId":"c10c9b6e-8b8f-4ae4-98a6-ceaf53c819ed","attemptNo":1,"sessionId":"075c0f2e-44dd-4681-8e91-2a446bb94126","correlationId":"a854bc0e-bf3c-4dfd-9dc9-cd211e5e9606","status":"settled","outcome":"settled","queueWaitMs":146,"dispatchLagMs":82,"runDurationMs":33,"totalDurationMs":179,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles blocked publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"3755f8e8-c387-4cd1-8906-181db0a44273","conversationId":"06f28323-eb2e-47a1-9e13-bb34fa196bc5","attemptNo":1,"sessionId":"f68aa67c-632a-44ac-8b34-2bf8839aed1d","correlationId":"384f7249-292a-4ecc-9904-27fec4308127","status":"settled","outcome":"settled","queueWaitMs":63,"dispatchLagMs":20,"runDurationMs":30,"totalDurationMs":93,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles blocked publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"e15ece88-2df9-4a71-b12b-add8882c5c17","conversationId":"06f28323-eb2e-47a1-9e13-bb34fa196bc5","attemptNo":1,"sessionId":"f68aa67c-632a-44ac-8b34-2bf8839aed1d","correlationId":"fc1f253c-991c-416b-bfc6-0264cee6cf0a","status":"settled","outcome":"settled","queueWaitMs":175,"dispatchLagMs":106,"runDurationMs":33,"totalDurationMs":208,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > keeps pause ahead of a real prompt and only resumes after the Human control command
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"697713ca-9a40-482e-bda8-be3070505fbb","conversationId":"e81619ec-1b77-4d9b-a14c-5c3054682663","attemptNo":1,"sessionId":"8c874479-3fb3-4e49-a874-beadba411971","correlationId":"7a800434-29c3-4e96-baf1-1ccb097cbd10","status":"settled","outcome":"settled","queueWaitMs":73,"dispatchLagMs":22,"runDurationMs":31,"totalDurationMs":104,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > keeps stop ahead of a matching input trigger
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"926b452c-e463-4543-bc4e-3180498d9cef","conversationId":"2a745571-0c0d-4522-9d2c-71e413586343","attemptNo":1,"sessionId":"11141f38-6bf4-43c2-a095-77c37d9f4f6c","correlationId":"5261cd55-4ae1-47e3-a549-eef42a1e779e","status":"settled","outcome":"settled","queueWaitMs":77,"dispatchLagMs":21,"runDurationMs":33,"totalDurationMs":110,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > keeps revoke ahead of a matching input trigger
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"3a85294c-a99e-421a-9858-0f72bf27bfc1","conversationId":"ecfee1df-ad1b-4962-a587-824cb2f2afcf","attemptNo":1,"sessionId":"85864cdb-37b5-41ae-92eb-838941822ec8","correlationId":"fbbb486d-f5af-430f-8e16-e65d4e75d062","status":"settled","outcome":"settled","queueWaitMs":76,"dispatchLagMs":23,"runDurationMs":30,"totalDurationMs":106,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > rejects another Session prompt, then accepts only the exact target prompt
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"9a164fe5-ac61-4599-9456-4e376342792f","conversationId":"b48b9ac6-3b3f-4392-bd43-b0822f9b619e","attemptNo":1,"sessionId":"a0a9d1e1-7dc0-4962-a4f8-9a6a958c6428","correlationId":"62275b26-7ede-4c1a-af12-0e6642f70b90","status":"settled","outcome":"settled","queueWaitMs":58,"dispatchLagMs":17,"runDurationMs":25,"totalDurationMs":83,"totalTokens":null,"errorCode":null}
+
+ ✓ integration/execution-waits.integration.test.ts (9 tests) 5851ms
+   ✓ persisted execution wait and Worker continuation > settles awaiting_approval publicly and resumes exactly once through live admission  820ms
+   ✓ persisted execution wait and Worker continuation > settles awaiting_input publicly and resumes exactly once through live admission  592ms
+   ✓ persisted execution wait and Worker continuation > settles blocked publicly and resumes exactly once through live admission  564ms
+   ✓ persisted execution wait and Worker continuation > keeps pause ahead of a real prompt and only resumes after the Human control command  384ms
+   ✓ persisted execution wait and Worker continuation > keeps stop ahead of a matching input trigger  350ms
+   ✓ persisted execution wait and Worker continuation > keeps revoke ahead of a matching input trigger  342ms
+   ✓ persisted execution wait and Worker continuation > rejects another Session prompt, then accepts only the exact target prompt  705ms
+   ✓ persisted execution wait and Worker continuation > refuses a different well-formed approval hash without partially settling the Turn  417ms
+ ❯ integration/execution-result.integration.test.ts (3 tests | 2 failed) 1064ms
+   × exact execution confirmation > confirms a committed direct completion after lost response; terminal E and wrong origin stay closed, without business writes 266ms
+     → expected { session: { …(3) }, …(3) } to match object { …(2) }
+(8 matching properties omitted from actual)
+   × exact execution confirmation > confirms only the exact Stop cleanup, and rechecks live authority after token retention changes 216ms
+     → expected { session: { …(3) }, …(3) } to match object { …(2) }
+(8 matching properties omitted from actual)
+   ✓ exact execution confirmation > rolls back state and all execution facts when provenance persistence fails 163ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/execution-result.integration.test.ts > exact execution confirmation > confirms a committed direct completion after lost response; terminal E and wrong origin stay closed, without business writes
+AssertionError: expected { session: { …(3) }, …(3) } to match object { …(2) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "action": {
+-     "confirmation": "confirmed",
+-   },
+-   "originalResult": {
+-     "sessionId": "b71c7376-0d1f-4617-af41-2b3437323e8d",
+-     "state": "completed",
++     "confirmation": "unavailable",
+    },
++   "originalResult": null,
+  }
+
+ ❯ integration/execution-result.integration.test.ts:76:27
+     74|     const result = await agent(installation, 'GET', confirmation(execu…
+     75|     expect(result.statusCode, result.body).toBe(200)
+     76|     expect(result.json()).toMatchObject({ action: { confirmation: 'con…
+       |                           ^
+     77|     expect((await agent(execution.token, 'GET', confirmation(execution…
+     78|     expect((await agent(execution.token, 'GET', `/api/v1/agent-session…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  integration/execution-result.integration.test.ts > exact execution confirmation > confirms only the exact Stop cleanup, and rechecks live authority after token retention changes
+AssertionError: expected { session: { …(3) }, …(3) } to match object { …(2) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "action": {
+-     "confirmation": "confirmed",
+-   },
+-   "cleanup": {
+-     "cleanupSummary": "Owned resources cleared",
+-     "residualRisks": [
+-       "External process unavailable",
+-     ],
++     "confirmation": "unavailable",
+    },
++   "cleanup": null,
+  }
+
+ ❯ integration/execution-result.integration.test.ts:103:27
+    101|     const result = await agent(installation, 'GET', confirmation(execu…
+    102|     expect(result.statusCode, result.body).toBe(200)
+    103|     expect(result.json()).toMatchObject({ action: { confirmation: 'con…
+       |                           ^
+    104|     expect(await fingerprint()).toEqual(before)
+    105|     await db.query('UPDATE api_idempotency_keys SET replay_expires_at=…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 10 passed (12)
+   Start at  22:21:30
+   Duration  13.40s (transform 1.39s, setup 0ms, collect 5.51s, tests 6.92s, environment 0ms, prepare 378ms)
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config ../../vitest.integration.config.ts integration/execution-result.integration.test.ts integration/execution-waits.integration.test.ts

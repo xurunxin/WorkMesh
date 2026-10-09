@@ -9,6 +9,7 @@ export * from './agent-locks.js'
 export * from './agent-concurrency.js'
 export * from './agent-lock-order-manifest.js'
 export * from './agent-lifecycle.js'
+export * from './workbench-execution-waits.js'
 import { appendEvent } from './events.js'
 export { applyMigrations } from './migrations.js'
 

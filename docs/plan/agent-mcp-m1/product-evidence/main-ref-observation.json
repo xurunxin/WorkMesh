@@ -1,0 +1,22 @@
+{
+  "observedAt": {
+    "current_time": "2026-10-09 15:39:41 UTC"
+  },
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "args": [
+    "ls-remote",
+    "origin",
+    "refs/heads/main"
+  ],
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6\trefs/heads/main"
+      }
+    ]
+  },
+  "scope": "本轮实际 main ref；不以 FETCH_HEAD、origin/main 缓存或构建 HEAD 替代",
+  "implementationPlanHead": "938f67f88c4f6889cbd49a3fd9b81fbd62aa60f6",
+  "checkpointHead": "54a41056bc47e29ae478809858f4c218b7dfa5d3"
+}

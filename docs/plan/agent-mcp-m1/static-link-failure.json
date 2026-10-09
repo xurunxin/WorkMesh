@@ -1,0 +1,10 @@
+{
+  "command": ["python", "docs/plan/agent-mcp-m1/static-check.py", "--prepare-bindings", "--record"],
+  "actualExitCode": 1,
+  "actualRuntimeSeconds": 25.617,
+  "actualError": "相对文档链接",
+  "visibleFailedCheck": {"name":"相对文档链接","passed":false,"detail":[["review.md","static-checks.json"]]},
+  "stdoutFullCaptured": false,
+  "gap": "工具返回总18358tokens，显示截断；此文件仅保存实际可见失败及runtime，不冒充完整stdout。",
+  "resolution": "先建立明确未完成的回执文件，再正常核验其链接，成功后写入真实完整检查回执。"
+}

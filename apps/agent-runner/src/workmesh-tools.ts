@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import type { ToolDefinition } from '@earendil-works/pi-coding-agent'
 import {
   acquireLeaseInputSchema, qualifiedAgentCapabilityManifestResponseSchema, appendActivityInputSchema,
-  completeAgentSessionInputSchema,
+  completeAgentSessionInputSchema, consumeApprovalInputSchema,
   artifactInputSchema,
   createDocumentInputSchema, handoffInputSchema, projectInputSchema, publishPlanInputSchema,
   requestApprovalInputSchema, updateDocumentInputSchema, workItemInputSchema,
@@ -10,6 +10,7 @@ import {
 } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { z } from 'zod'
+import { sessionWaitIntentSchema, type SessionWaitIntent } from './execution-lifecycle.js'
 
 export interface RunnerToolApi {
   readonly sessionId: string
@@ -27,6 +28,12 @@ const id = z.string().uuid()
 const idParameter = Type.String({ format: 'uuid' })
 const ownerParameter = Type.Union([Type.Literal('project'), Type.Literal('work_item')])
 const resultLimit = 50_000
+const pageParameters = Type.Object({ limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })),
+  cursor: Type.Optional(Type.String({ minLength: 1, maxLength: 4096 })) })
+const pageQuery = (input: unknown): string => {
+  const page = z.object({ limit: z.number().int().min(1).max(100).optional(), cursor: z.string().min(1).max(4096).optional() }).strict().parse(input)
+  return `limit=${page.limit ?? 50}${page.cursor ? `&cursor=${encodeURIComponent(page.cursor)}` : ''}`
+}
 
 function operationKey(sessionId: string, attemptId: string, toolCallId: string, phase: string): string {
   const digest = createHash('sha256').update(JSON.stringify([sessionId, attemptId, toolCallId, phase])).digest('hex')
@@ -129,7 +136,8 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
 }
 
 export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string, onCall: (name: string) => void,
-  onCompletionIntent?: (intent: SessionCompletionIntent) => void): Promise<ToolDefinition[]> {
+  onCompletionIntent?: (intent: SessionCompletionIntent) => void,
+  onWaitIntent?: (intent: SessionWaitIntent) => void): Promise<ToolDefinition[]> {
   const manifest = qualifiedAgentCapabilityManifestResponseSchema.parse(
     await api.request<unknown>('GET', '/api/v1/agent-capabilities?discovery=qualified'))
   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.sessionState !== 'executing')
@@ -153,6 +161,56 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
   add('workmesh_get_session', 'getAgentSession',
     'Read the exact current Agent Session, including its revision for plan publication and other guarded commands.',
     Type.Object({}), () => ({ method: 'GET', path: `/api/v1/agent-sessions/${api.sessionId}` }))
+  add('workmesh_get_session_context', 'getAgentSessionContext', 'Read the authorized fixed context and current pins for this exact Session.',
+    Type.Object({}), () => ({ method: 'GET', path: `/api/v1/agent-sessions/${api.sessionId}/context` }))
+  add('workmesh_get_session_plan', 'getAgentPlan', 'Read the current immutable plan for this exact Session.',
+    Type.Object({}), () => ({ method: 'GET', path: `/api/v1/agent-sessions/${api.sessionId}/plan` }))
+  add('workmesh_list_plan_versions', 'listAgentPlanVersions', 'Read published plan history for this exact Session.',
+    pageParameters, input => ({ method: 'GET', path: `/api/v1/agent-sessions/${api.sessionId}/plans?${pageQuery(input)}` }))
+  add('workmesh_list_sessions', 'listAgentSessions', 'Read authorized Session summaries. This never changes the current execution identity.',
+    pageParameters, input => ({ method: 'GET', path: `/api/v1/agent-sessions?${pageQuery(input)}` }))
+  add('workmesh_list_recovery_items', 'listRecoveryItems', 'Read current recovery items for this exact Session; recovery decisions remain Human controls.',
+    pageParameters, input => ({ method: 'GET', path: `/api/v1/recovery-items?sessionId=${api.sessionId}&${pageQuery(input)}` }))
+  add('workmesh_get_recovery_item', 'getRecoveryItem', 'Read an authorized recovery item using its opaque returned identifier.',
+    Type.Object({ recoveryId: Type.String({ pattern: '^v1:[a-z_]+:[0-9a-f-]{36}$' }) }), input => ({ method: 'GET',
+      path: `/api/v1/recovery-items/${encodeURIComponent(z.object({ recoveryId: z.string().regex(/^v1:[a-z_]+:[0-9a-f-]{36}$/) }).strict().parse(input).recoveryId)}` }))
+  add('workmesh_list_approvals', 'listApprovals', 'Read approval requests for this exact Session.',
+    pageParameters, input => ({ method: 'GET', path: `/api/v1/approvals?sessionId=${api.sessionId}&${pageQuery(input)}` }))
+  add('workmesh_get_approval', 'getApproval', 'Read an authorized approval and its original action hash.',
+    Type.Object({ approvalId: idParameter }), input => ({ method: 'GET',
+      path: `/api/v1/approvals/${z.object({ approvalId: id }).parse(input).approvalId}` }))
+  add('workmesh_consume_approval', 'consumeApproval',
+    'Consume a current approved action for this Session using its exact Approval revision and original full sha256: action hash. This never decides a Human approval.',
+    Type.Object({ approvalId: idParameter, ifMatch: Type.Integer({ minimum: 1 }),
+      actionPayloadHash: Type.String({ pattern: '^sha256:[a-f0-9]{64}$' }) }), input => {
+      const { approvalId, ifMatch, ...body } = z.object({ approvalId: id, ifMatch: z.number().int().positive(),
+        actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/) }).strict().parse(input)
+      return { method: 'POST', path: `/api/v1/approvals/${approvalId}/consume`, ifMatch,
+        body: consumeApprovalInputSchema.parse(body) }
+    })
+  add('workmesh_transition_state', 'transitionAgentSessionState',
+    'Transition this exact Session to planning or executing. Human pause, resume, Stop and terminal controls are unavailable.',
+    Type.Object({ state: Type.Union([Type.Literal('planning'), Type.Literal('executing')]),
+      ifMatch: Type.Integer({ minimum: 1 }), reason: Type.String({ minLength: 1, maxLength: 2000 }) }), input => {
+      const { ifMatch, ...body } = z.object({ state: z.enum(['planning', 'executing']),
+        ifMatch: z.number().int().positive(), reason: z.string().min(1).max(2000) }).strict().parse(input)
+      return { method: 'POST', path: `/api/v1/agent-sessions/${api.sessionId}/state`, body, ifMatch }
+    }, false, false)
+  if (onWaitIntent && eligible.has('transitionAgentSessionState')) available.push({
+    name: 'workmesh_wait', label: 'WorkMesh wait',
+    description: 'End this model turn with a public waiting reply. Approval waits require the exact approval ID and original sha256: action hash. The Runner settles the wait and continues in a new authorized Turn after Human approval or input.',
+    parameters: Type.Object({ state: Type.Union([Type.Literal('awaiting_approval'), Type.Literal('awaiting_input'), Type.Literal('blocked')]),
+      reason: Type.String({ minLength: 1, maxLength: 2000 }),
+      approval: Type.Optional(Type.Object({ id: idParameter, actionPayloadHash: Type.String({ pattern: '^sha256:[a-f0-9]{64}$' }) })) }),
+    execute: async (_callId, input, signal) => {
+      if (signal?.aborted) throw new Error('RUNNER_ABORTED')
+      const intent = sessionWaitIntentSchema.parse(input)
+      onCall('workmesh_wait')
+      onWaitIntent(intent)
+      return { content: [{ type: 'text', text: JSON.stringify({ status: 'waiting_after_turn_settlement', state: intent.state }) }],
+        details: { source: 'workmesh_runner' } }
+    },
+  })
   add('workmesh_list_projects', 'listProjects', 'List authorized Projects. Use the returned IDs for later operations.',
     Type.Object({ limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })) }), input => {
       const { limit } = z.object({ limit: z.number().int().min(1).max(100).optional() }).parse(input)
@@ -295,10 +353,7 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
     })
   add('workmesh_list_leases', 'listLeases',
     'Read leases for this exact Session, including the current version needed for release.',
-    Type.Object({ limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })) }), input => {
-      const { limit } = z.object({ limit: z.number().int().min(1).max(100).optional() }).parse(input)
-      return { method: 'GET', path: `/api/v1/leases?sessionId=${api.sessionId}&limit=${limit ?? 50}` }
-    })
+    pageParameters, input => ({ method: 'GET', path: `/api/v1/leases?sessionId=${api.sessionId}&${pageQuery(input)}` }))
   add('workmesh_acquire_lease', 'acquireLease',
     'Acquire a short coordination lease for an authorized Issue or plan step. A lease never grants authority.',
     Type.Object({ resourceType: Type.Union([Type.Literal('work_item'), Type.Literal('plan_step')]),
@@ -318,6 +373,16 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
       return { method: 'POST', path: `/api/v1/leases/${parsed.leaseId}/release`,
         body: parsed.reason ? { reason: parsed.reason } : {}, ifMatch: parsed.ifMatch }
     })
+  add('workmesh_heartbeat_lease', 'heartbeatLease', 'Send diagnostic heartbeat for a Lease held by this Session; this does not renew it.',
+    Type.Object({ leaseId: idParameter }), input => ({ method: 'POST',
+      path: `/api/v1/leases/${z.object({ leaseId: id }).parse(input).leaseId}/heartbeat`, body: {} }), false, false)
+  add('workmesh_renew_lease', 'renewLease', 'Renew a Lease held by this Session using its exact current version.',
+    Type.Object({ leaseId: idParameter, ifMatch: Type.Integer({ minimum: 1 }),
+      ttlSeconds: Type.Optional(Type.Integer({ minimum: 10, maximum: 3600 })) }), input => {
+      const { leaseId, ifMatch, ...body } = z.object({ leaseId: id, ifMatch: z.number().int().positive(),
+        ttlSeconds: z.number().int().min(10).max(3600).optional() }).strict().parse(input)
+      return { method: 'POST', path: `/api/v1/leases/${leaseId}/renew`, ifMatch, body }
+    }, false, false)
   add('workmesh_offer_handoff', 'offerHandoff',
     'Offer visible, structured work to another Agent. The target and server must accept before work transfers.',
     Type.Object({ targetAgentId: idParameter, summary: Type.String({ minLength: 1, maxLength: 20000 }),

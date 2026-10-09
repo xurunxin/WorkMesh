@@ -32,6 +32,8 @@ const securityFor = (
       return [{ SessionCookie: [] }, { AgentConnectionInstallationToken: [] }]
     case 'coordination_connection':
       return [{ AgentConnectionInstallationToken: [] }]
+    case 'human_or_installation_target':
+      return [{ SessionCookie: [] }, { AgentInstallationToken: [] }, { AgentConnectionInstallationToken: [] }]
     case 'installation_target':
       return [{ AgentInstallationToken: [] }]
     case 'provider_signature':
@@ -68,7 +70,7 @@ describe('routePolicyManifest', () => {
     const policyRoutes = routePolicyManifest.map(keyOf)
     const legacyRoutes = agentRouteManifest.map(keyOf)
 
-    expect(routePolicyManifest).toHaveLength(277)
+    expect(routePolicyManifest).toHaveLength(278)
     expect(new Set(policyRoutes).size).toBe(routePolicyManifest.length)
     expect(new Set(routePolicyManifest.map(route => route.operationId)).size)
       .toBe(routePolicyManifest.length)

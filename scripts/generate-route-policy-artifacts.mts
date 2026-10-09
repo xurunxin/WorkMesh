@@ -53,6 +53,8 @@ const securityFor = (
       return '[{ SessionCookie: [] }, { AgentConnectionInstallationToken: [] }]'
     case 'coordination_connection':
       return '[{ AgentConnectionInstallationToken: [] }]'
+    case 'human_or_installation_target':
+      return '[{ SessionCookie: [] }, { AgentInstallationToken: [] }, { AgentConnectionInstallationToken: [] }]'
     case 'installation_target':
       return '[{ AgentInstallationToken: [] }]'
     case 'provider_signature':

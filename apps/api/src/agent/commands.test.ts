@@ -197,6 +197,7 @@ describe("heartbeat", () => {
 describe("acknowledge", () => {
   it("writes JSONB array text and returns a contract-valid normalized response", async () => {
     txQuery.mockImplementation(async (sql: string) => {
+      if (sql.includes("FROM pg_attribute")) return { rowCount: 1, rows: [{ present: true }] };
       if (sql.includes("INSERT INTO api_idempotency_keys"))
         return { rowCount: 1, rows: [] };
       if (sql.includes("UPDATE agent_sessions SET state='acknowledged'"))
@@ -243,6 +244,7 @@ describe("acknowledge", () => {
 
   it("normalizes an idempotent replay after agentMutate returns it", async () => {
     txQuery.mockImplementation(async (sql: string) => {
+      if (sql.includes("FROM pg_attribute")) return { rowCount: 1, rows: [{ present: true }] };
       if (sql.includes("INSERT INTO api_idempotency_keys"))
         return { rowCount: 0, rows: [] };
       if (sql.includes("SELECT operation,request_hash,response_body"))

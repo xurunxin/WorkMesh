@@ -1,3 +1,4 @@
+import { resolveExecutionResultIdentity } from './agent/execution-result.js';
 import crypto from "node:crypto";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
@@ -422,6 +423,17 @@ export const buildApp = (options: {
     )
       return;
     const coordinationToken = header(request, "x-workmesh-installation-token");
+    if (policyForRequest(request).authentication === 'human_or_installation_target') {
+      const authorization = header(request, 'authorization');
+      if (coordinationToken !== undefined && authorization !== undefined)
+        throw new DomainError('UNAUTHENTICATED', 'Use one installation credential');
+      if (coordinationToken !== undefined || authorization !== undefined) {
+        const token = coordinationToken ?? (/^Bearer\s+(.+)$/i.exec(authorization ?? '')?.[1]);
+        if (!token) throw new DomainError('UNAUTHENTICATED', 'Installation credential is required');
+        request.actor = await resolveExecutionResultIdentity(db, tokenHash(token), coordinationToken !== undefined);
+        return;
+      }
+    }
     // 身份解析会刷新凭据并创建/续期 Coordination Session；Human-only
     // 策略必须先拒绝此凭据类型，避免失败的只读请求产生领域写入。
     if (coordinationToken !== undefined) {

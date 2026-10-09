@@ -1,0 +1,14 @@
+{
+  "command": ["python", "-X", "utf8", "scripts/m1-product-resources.py"],
+  "exitCode": 1,
+  "runtimeSeconds": 3.7760126,
+  "stage": "archive integrity observation, no mutation or cleanup",
+  "error": "zipfile.BadZipFile: File is not a zip file",
+  "source": "实际工具返回的控制台首败；首次 stdout 未另存文件，不冒完整原日志",
+  "subsequentObservation": [
+    {"path": "integration-final-inputs.zip", "bytes": 2129560},
+    {"path": "lint-final-inputs.zip", "bytes": 498161},
+    {"path": "wait-ddl-first-inputs.zip", "bytes": 591568}
+  ],
+  "disposition": "保留原字节，标为历史中断/未闭合；完整新运行输入另有独立 ZIP，不补造旧回执或成功绑定"
+}

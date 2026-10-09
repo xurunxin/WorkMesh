@@ -1,0 +1,49 @@
+
+> @workmesh/worker@ test:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\worker
+> vitest run --config ../../vitest.integration.config.ts --maxWorkers=1
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/worker
+
+ ✓ integration/stage4-automation.integration.test.ts (49 tests) 13710ms
+   ✓ Stage 4 durable Automation and Loop runtime > admits a durable domain-event trigger exactly once across replay  548ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > processes a full slow adapter batch without preclaiming waiting attempts and still schedules Loops  2423ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > persists a timed-out external call as uncertain without automatically retrying it  5099ms
+ ✓ integration/stage1-lifecycle.integration.test.ts (13 tests) 16237ms
+   ✓ stage 1 worker durability > reconciles 'native' waits with null priority without duplicate execution (undefined older waits)  442ms
+   ✓ stage 1 worker durability > reconciles 'connection' waits with null priority without duplicate execution (undefined older waits)  632ms
+   ✓ stage 1 worker durability > reconciles 'native' waits with 'stop' priority without duplicate execution (undefined older waits)  391ms
+   ✓ stage 1 worker durability > reconciles 'connection' waits with 'stop' priority without duplicate execution (undefined older waits)  362ms
+   ✓ stage 1 worker durability > reconciles 'native' waits with 'revoke' priority without duplicate execution (undefined older waits)  302ms
+   ✓ stage 1 worker durability > reconciles 'connection' waits with 'revoke' priority without duplicate execution (undefined older waits)  345ms
+   ✓ stage 1 worker durability > reconciles 'native' waits with null priority without duplicate execution (100 older waits)  11045ms
+   ✓ stage 1 worker durability > reconciles existing pending approvals under YOLO exactly once across worker restarts  402ms
+   ✓ stage 1 worker durability > dead-letters a private target without sending and permits the explicit private-network override  312ms
+   ✓ stage 1 worker durability > normalizes Work Item and project-only room targets before delivery or suppression  685ms
+   ✓ stage 1 worker durability > handles ACK timeout/late ACK, heartbeat stale, stop grace, and approval expiry in durable transactions  707ms
+ ✓ integration/stage3-provider.integration.test.ts (14 tests) 6199ms
+   ✓ Stage 3 provider webhook worker > makes duplicate commit webhooks a single projection effect  725ms
+   ✓ Stage 3 provider webhook worker > recovers a stale webhook claim after a worker dies  312ms
+   ✓ Stage 3 provider webhook worker > does not claim or effect webhook deliveries from a disabled provider  323ms
+   ✓ Stage 3 provider webhook worker > revalidates the provider allowlist before every provider access and recovers released actions  502ms
+   ✓ Stage 3 provider webhook worker > reconciles a webhook-first provider PR, retries prerequisite deliveries, and preserves exact provenance through merge  662ms
+   ✓ Stage 3 provider webhook worker > dead-letters contradictory PR reconciliation and exhausted missing-PR delivery with audit outbox  312ms
+   ✓ Stage 3 provider webhook worker > keeps pull request, check, review, and exact-head approval projections monotonic when old deliveries arrive late  337ms
+   ✓ Stage 3 provider webhook worker > revalidates every queued provider mutation and audits revoked authority without a provider write  616ms
+   ✓ Stage 3 provider webhook worker > reconciles a checkpointed provider result after revocation without repeating the provider mutation  407ms
+   ✓ Stage 3 provider webhook worker > reconciles a provider-merged webhook race after a crash exactly once without a second merge  545ms
+   ✓ Stage 3 provider webhook worker > expires a delayed merge approval without calling the provider  393ms
+ ✓ integration/retention.integration.test.ts (36 tests) 4982ms
+   ✓ retention worker destructive-path fences > extends the exact delayed version when an old conditional PUT lands after the successor HEAD 404  348ms
+   ✓ retention worker destructive-path fences > fails closed on claim/segment and manifest fixed-cutoff mismatches  446ms
+ ✓ integration/outbox-recovery.integration.test.ts (5 tests) 362ms
+ ✓ integration/realtime-redis.integration.test.ts (1 test) 422ms
+   ✓ Redis realtime wake hint integration > approximately trims the lossy stream and retains only allowlisted fields  414ms
+ ✓ integration/stage2-lease.integration.test.ts (1 test) 326ms
+ ✓ integration/auth-idempotency-cleanup.integration.test.ts (1 test) 135ms
+ ↓ integration/retention-upgrade-barrier.integration.test.ts (1 test | 1 skipped)
+
+ Test Files  8 passed | 1 skipped (9)
+      Tests  120 passed | 1 skipped (121)
+   Start at  01:15:50
+   Duration  56.08s (transform 856ms, setup 0ms, collect 9.66s, tests 42.37s, environment 2ms, prepare 1.51s)

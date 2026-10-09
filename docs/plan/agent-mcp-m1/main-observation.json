@@ -1,0 +1,21 @@
+{
+  "tool": "mcp__tds__git",
+  "args": {
+    "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ]
+  },
+  "returned": {
+    "content": [
+      {
+        "type": "text",
+        "text": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6\trefs/heads/main"
+      }
+    ]
+  },
+  "meaning": "本轮只读精确ref观察；不是FETCH_HEAD、构建branch或PR候选。",
+  "ci408": "仅保留Chief前置证明；本轮未重跑或重新查询该历史CI。"
+}

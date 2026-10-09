@@ -1,0 +1,71 @@
+
+> workmesh@ test:integration:db C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/db test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/db@ test:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\db
+> vitest run --config ../../vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/db
+
+ ✓ integration/stage2-migration.integration.test.ts (2 tests) 3537ms
+   ✓ Stage 2 migration chain and PostgreSQL constraints > upgrades an applied 0032 receipt trigger through 0035 with actor-, Session-, and source-bound replies  1895ms
+   ✓ Stage 2 migration chain and PostgreSQL constraints > upgrades real 0026 Inbox rows through 0030, accepts legacy producers, and enforces collaboration constraints  1641ms
+ ✓ integration/stage0.integration.test.ts (9 tests) 12175ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > upgrades 0005 data with workspace-scoped context hashes and retry links  1575ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > upgrades representative 0001 data to workspace-scoped records and normalized mentions  675ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > rejects cross-workspace references, agent mentions, and cross-channel comment threads  1134ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > allows only one concurrent installation and records bootstrap with the service actor  1768ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > creates an admin, event, and outbox atomically and rejects a duplicate without an extra event  1840ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > enforces Stage 1 team scope, the active executor boundary, and immutable execution facts  1988ms
+   ✓ Stage 0 PostgreSQL integrity and delivery acceptance > enforces one-time token exchange and webhook replay deduplication  1721ms
+ ✓ integration/realtime-migration.integration.test.ts (6 tests) 1695ms
+ ✓ integration/migration-baseline.integration.test.ts (22 tests) 26430ms
+   ✓ atomic checksummed v1 migration baseline > installs the v1 baseline and ordered subsequent migrations restart-idempotently  1504ms
+   ✓ atomic checksummed v1 migration baseline > upgrades an already-deployed v1 database through 0007 without baseline checksum drift  1808ms
+   ✓ atomic checksummed v1 migration baseline > upgrades the immediately previous stage without replaying existing deliveries and rolls back a channel migration failure  2117ms
+   ✓ atomic checksummed v1 migration baseline > upgrades channel kinds from the previous stage atomically, retaining uncertain attempts and legacy deliveries  1596ms
+   ✓ atomic checksummed v1 migration baseline > normalizes pending quorum Approval kinds without replaying an uncertain attempt and rolls back on failure  1978ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0002 legacy endpoint without data loss  1522ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0006 legacy endpoint without data loss  1406ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0007 legacy endpoint without data loss  1958ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0014 legacy endpoint without data loss  878ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0021 legacy endpoint without data loss  1372ms
+   ✓ atomic checksummed v1 migration baseline > atomically upgrades the supported 0035 legacy endpoint without data loss  892ms
+   ✓ atomic checksummed v1 migration baseline > adopts a database already at the final pre-v1 migration  1512ms
+   ✓ atomic checksummed v1 migration baseline > serializes two concurrent runners with one baseline registration  1180ms
+   ✓ atomic checksummed v1 migration baseline > rejects an applied checksum mismatch with an actionable error  661ms
+   ✓ atomic checksummed v1 migration baseline > rejects an unsupported but contiguous legacy endpoint without changing it  325ms
+   ✓ atomic checksummed v1 migration baseline > rolls back a supported legacy upgrade crash and preserves its original ledger and rows  1284ms
+   ✓ atomic checksummed v1 migration baseline > rolls back a simulated before_sql crash and restarts safely  795ms
+   ✓ atomic checksummed v1 migration baseline > rolls back a simulated after_sql crash and restarts safely  1611ms
+   ✓ atomic checksummed v1 migration baseline > rolls back a simulated after_registration crash and restarts safely  1092ms
+   ✓ atomic checksummed v1 migration baseline > treats an after-commit crash as complete and restarts without replay  740ms
+ ✓ integration/stage4-migration.integration.test.ts (7 tests) 1717ms
+ ✓ integration/durable-archive-upload-intents-migration.integration.test.ts (4 tests) 3126ms
+ ✓ integration/agent-session-external-urls-migration.integration.test.ts (4 tests) 4038ms
+   ✓ 0031 Agent Session external URL shape migration > fails closed on a scalar without rewriting it  306ms
+ ✓ integration/planning-domain-parity-migration.integration.test.ts (8 tests) 2198ms
+ ✓ integration/retention-migration.integration.test.ts (4 tests) 2024ms
+ ✓ integration/active-executor-projection.integration.test.ts (1 test) 1470ms
+ ✓ integration/decision-session-provenance-migration.integration.test.ts (2 tests) 2905ms
+   ✓ Decision Session provenance migration > upgrades the previous 0029 constraint without rewriting existing Decisions  1623ms
+   ✓ Decision Session provenance migration > installs the same Decision subject constraint on a clean database  1281ms
+ ✓ integration/stage3-migration.integration.test.ts (2 tests) 1361ms
+ ✓ integration/worker-identity-migration.integration.test.ts (2 tests) 1430ms
+ ✓ integration/exact-archive-membership-migration.integration.test.ts (2 tests) 1575ms
+ ✓ integration/pagination-migration.integration.test.ts (2 tests) 2673ms
+   ✓ cursor pagination indexes > uses the team keyset index and traverses more than 100 bounded pages  1102ms
+ ✓ integration/auth-idempotency-migration.integration.test.ts (1 test) 1413ms
+   ✓ 0023 auth idempotency migration > upgrades through 0023 with fingerprint, envelope, expiry, and session revocation columns  1412ms
+ ✓ integration/route-policy-migration.integration.test.ts (2 tests) 1372ms
+
+ Test Files  17 passed (17)
+      Tests  80 passed (80)
+   Start at  22:09:42
+   Duration  85.95s (transform 359ms, setup 0ms, collect 8.46s, tests 71.14s, environment 2ms, prepare 2.51s)

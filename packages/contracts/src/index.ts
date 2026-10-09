@@ -17,6 +17,7 @@ import {
 export * from './route-policy.js'
 export * from './agent-discovery.js'
 export * from './pi-workbench-contracts.js'
+export * from './execution-contracts.js'
 export * from './model-presets.js'
 export * from './configuration-readiness-contracts.js'
 export { workmeshSkillManifest } from './workmesh-skill-manifest.js'
@@ -1239,7 +1240,7 @@ export const claimWorkItemInputSchema = z.object({
 export const agentSessionResponseSchema = z.object({
   id: idSchema, workspace_id: idSchema, agent_id: idSchema, agent_actor_id: idSchema, delegation_id: idSchema,
   work_item_id: idSchema.nullable(), project_id: idSchema.nullable(), plan_step_id: idSchema.nullable(), state: agentSessionStateSchema,
-  state_reason: z.string().nullable(), sequence: z.number().int().nonnegative(), revision: revisionSchema, current_plan_version_id: idSchema.nullable(),
+  state_reason: z.string().nullable(), sequence: z.union([z.number(), z.string().regex(/^\d+$/).transform(Number)]).pipe(z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER)), revision: revisionSchema, current_plan_version_id: idSchema.nullable(),
   context_snapshot_id: idSchema.nullable(), budget: budgetSchema, external_urls: z.array(externalUrlSchema), last_heartbeat_at: timestampSchema.nullable(),
   heartbeat_health: z.enum(['healthy', 'degraded', 'stale']), heartbeat_health_changed_at: timestampSchema,
   heartbeat_checked_at: timestampSchema.nullable(), heartbeat_current_step_id: idSchema.nullable(), heartbeat_usage: z.record(z.unknown()),
@@ -1684,6 +1685,7 @@ export const stage2RouteManifest = [
   { method: 'POST', path: '/api/v1/decisions/{id}/finalize', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/decisions/{id}/supersede', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/decisions/{id}/reverse', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/agent-sessions/{id}/execution-result', authenticated: true },
   { method: 'GET', path: '/api/v1/leases', authenticated: true },
   { method: 'POST', path: '/api/v1/leases', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/leases/{id}/heartbeat', authenticated: true, mutation: true },
@@ -2529,7 +2531,7 @@ const clientProfileFeatureSchema = z.object({
 const clientProfileOperationSchema = z.object({
   operationId: z.string().min(1),
   policyId: z.string().min(1),
-  authentication: z.enum(['agent_session', 'human_or_agent_session', 'human_or_coordination_connection', 'coordination_connection', 'installation_target']),
+  authentication: z.enum(['agent_session', 'human_or_agent_session', 'human_or_coordination_connection', 'coordination_connection', 'installation_target', 'human_or_installation_target']),
   transports: z.object({
     rest: z.object({ method: z.string().min(1), path: z.string().min(1) }).strict(),
     sse: z.boolean(),
@@ -2628,7 +2630,7 @@ export function createAgentCapabilityManifest(input: AgentCapabilityManifestInpu
       return {
         operationId: policy.operationId,
         policyId: policy.policyId,
-        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'human_or_coordination_connection' | 'coordination_connection' | 'installation_target',
+        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'human_or_coordination_connection' | 'coordination_connection' | 'installation_target' | 'human_or_installation_target',
         transports: {
           rest: policy.bindings.rest,
           sse: policy.bindings.sse,

@@ -1,3 +1,4 @@
+import { hasExecutionOrigin, lockExecutionOriginAuthority, saveExecutionOrigin } from './execution-origin.js';
 import crypto from "node:crypto";
 import type { Pool, PoolClient } from "pg";
 import {
@@ -310,7 +311,9 @@ export async function agentMutate<T>(db: Pool, meta: RequestMeta, handler: (tx: 
        ) VALUES($1,$2,$3,$4,$5,now()+($6::text||' hours')::interval,now()+($7::text||' days')::interval)
        ON CONFLICT(workspace_id,actor_id,idempotency_key) DO UPDATE
          SET operation=EXCLUDED.operation,request_hash=EXCLUDED.request_hash,
-             response_status=NULL,response_body=NULL,created_at=now(),
+             response_status=NULL,response_body=NULL,created_at=now(),${await hasExecutionOrigin(tx) ? `
+             execution_source_kind=NULL,execution_session_id=NULL,execution_session_token_id=NULL,
+             execution_installation_token_id=NULL,execution_connection_id=NULL,` : ''}
              replay_expires_at=EXCLUDED.replay_expires_at,
              conflict_expires_at=EXCLUDED.conflict_expires_at
        WHERE api_idempotency_keys.conflict_expires_at<=now()
@@ -418,7 +421,10 @@ export async function registerAgent(db: Pool, meta: RequestMeta, input: Record<s
     const actor = one((await tx.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name,is_active) VALUES($1,'agent',$2,true) RETURNING id", [meta.actor.workspaceId, input.name])).rows);
     const row = one((await tx.query("INSERT INTO agent_definitions(workspace_id,actor_id,slug,display_name,description,endpoint_url,manifest,supported_protocols,skills,requested_capabilities,approved_capabilities,output_artifact_types,max_concurrency) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *", [meta.actor.workspaceId, actor.id, input.slug, input.name, input.description ?? null, input.endpointUrl ?? null, { provider: input.provider, version: input.version, icon: input.icon ?? null, heartbeatIntervalSeconds: input.heartbeatIntervalSeconds, metadata: input.metadata ?? {} }, input.supportedProtocols, input.skills ?? [], requestedCapabilities, approvedCapabilities, input.outputArtifactTypes ?? [], input.maxConcurrency ?? 1])).rows);
     const installationToken = opaqueToken();
-    await tx.query("INSERT INTO agent_installation_tokens(agent_id,token_hash,created_by_actor_id) VALUES($1,$2,$3)", [(row as { id: string }).id, tokenHash(installationToken), meta.actor.id]);
+    const originColumns = await hasExecutionOrigin(tx);
+    await tx.query(originColumns
+      ? "INSERT INTO agent_installation_tokens(agent_id,token_hash,created_by_actor_id,origin_kind) VALUES($1,$2,$3,'native')"
+      : "INSERT INTO agent_installation_tokens(agent_id,token_hash,created_by_actor_id) VALUES($1,$2,$3)", [(row as { id: string }).id, tokenHash(installationToken), meta.actor.id]);
     if (input.endpointUrl) await tx.query("INSERT INTO agent_webhook_endpoints(agent_id,url) VALUES($1,$2)", [(row as { id: string }).id, input.endpointUrl]);
     await event(tx, meta, "agent.registered", "agent", String((row as { id: string }).id), Number((row as { revision: number }).revision), { slug: input.slug as string });
     return { ...row as object, installation_token: installationToken };
@@ -1625,6 +1631,7 @@ export async function claimWorkItem(
         projectIds: locator.project_id ? [locator.project_id] : [],
       }, async rankTx => reconcileConnectionInstallationToken(rankTx, {
         agentId: identity.connection_agent_id,
+        connectionId: identity.connection_id,
         credentialHash,
         expiresAt: identity.credential_status === "overlap"
           ? identity.credential_overlap_until
@@ -2845,11 +2852,11 @@ export async function prompt(db: Pool, meta: RequestMeta, sessionId: string, inp
   return agentMutate(db, meta, async tx => {
     assertSafeText(input.bodyMarkdown,"prompt");
     const session = one((await tx.query<{ id: string; team_id: string; state: AgentSessionState; revision: number; sequence: number }>("SELECT id,team_id,state,revision,sequence FROM agent_sessions WHERE id=$1 AND workspace_id=$2 FOR UPDATE", [sessionId, meta.actor.workspaceId])).rows); await assertHumanTeam(tx, meta.actor, session.team_id); if (expectedRevision !== undefined) assertRevision(expectedRevision, session.revision);
-    await tx.query("INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown,plan_revision,work_item_revision) VALUES($1,$2,$3,$4,$5)", [sessionId, meta.actor.id, input.bodyMarkdown, input.planRevision ?? null, input.workItemRevision ?? null]);
+    const insertedPrompt = one((await tx.query<{id:string}>("INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown,plan_revision,work_item_revision) VALUES($1,$2,$3,$4,$5) RETURNING id", [sessionId, meta.actor.id, input.bodyMarkdown, input.planRevision ?? null, input.workItemRevision ?? null])).rows);
     const state = session.state === "awaiting_input" ? "executing" : session.state;
     const row = one((await tx.query("UPDATE agent_sessions SET state=$2,sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, state])).rows);
     await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$3,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND session_id=$2 AND kind='waiting_input' AND status='open'", [meta.actor.workspaceId, sessionId, meta.actor.id]);
-    const eventId = await event(tx, meta, "agent.session.prompted", "agent_session", sessionId, Number((row as { revision: number }).revision), { resumed: state !== session.state }, session.team_id, sessionId, Number((row as { sequence: number }).sequence));
+    const eventId = await event(tx, meta, "agent.session.prompted", "agent_session", sessionId, Number((row as { revision: number }).revision), { resumed: state !== session.state, promptId: insertedPrompt.id }, session.team_id, sessionId, Number((row as { sequence: number }).sequence));
     await queueWebhookDeliveries(tx, (await tx.query<{ agent_id: string }>("SELECT agent_id FROM agent_sessions WHERE id=$1", [sessionId])).rows[0]!.agent_id, eventId, "agent.session.prompted", sessionId, { sessionId, prompt: input.bodyMarkdown }); return row;
   });
 }
@@ -2873,7 +2880,12 @@ export async function signal(db: Pool, meta: RequestMeta, sessionId: string, exp
 }
 
 export async function finishSession(db: Pool, meta: RequestMeta, sessionId: string, expectedRevision: number, input: CompleteAgentSessionInput | { code: string; summary: string; retryable: boolean; evidence: string[] }, failed = false) {
-  return agentMutate(db, meta, tx => finishSessionInTransaction(tx, meta, sessionId, expectedRevision, input, failed));
+  return agentMutate(db, meta, async tx => {
+    if (!failed) await lockExecutionOriginAuthority(tx, meta.actor, sessionId);
+    const result = await finishSessionInTransaction(tx, meta, sessionId, expectedRevision, input, failed);
+    if (!failed) await saveExecutionOrigin(tx, meta, sessionId);
+    return result;
+  });
 }
 
 /** Shared command policy for direct completion and atomic Workbench Turn settlement. */
@@ -2901,10 +2913,12 @@ export async function finishSessionInTransaction(tx: PoolClient, meta: RequestMe
 
 export async function stopAck(db: Pool, meta: RequestMeta, sessionId: string, expectedRevision: number, input: { cleanupSummary: string; residualRisks: string[] }) {
   return agentMutate(db, meta, async tx => {
+    await lockExecutionOriginAuthority(tx, meta.actor, sessionId);
     assertSafeText(input.cleanupSummary, "stop acknowledgement summary"); assertSanitized(input.residualRisks, "residual risks");
     const session = await loadAgentSessionForMutation(tx, meta.actor, sessionId); assertAgentWrite({ actor: meta.actor, session, sessionId, capability: "work:write", operation: "stop_ack", idempotencyKey: meta.idempotencyKey, expectedRevision });
     const row = one((await tx.query("UPDATE agent_sessions SET stop_acknowledged_at=now(),state='canceled',state_reason=$2,ended_at=now(),sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, input.cleanupSummary])).rows);
     await tx.query("INSERT INTO agent_activities(session_id,actor_id,sequence,kind,summary,details_markdown) VALUES($1,$2,$3,'stop_ack',$4,$5)", [sessionId, meta.actor.id, (row as { sequence: number }).sequence, input.cleanupSummary, JSON.stringify(input.residualRisks)]);
+    await saveExecutionOrigin(tx, meta, sessionId);
     await event(tx, meta, "agent.session.state_changed", "agent_session", sessionId, Number((row as { revision: number }).revision), { state: "canceled", stopAck: true }, session.team_id, sessionId, Number((row as { sequence: number }).sequence)); return row;
   });
 }
