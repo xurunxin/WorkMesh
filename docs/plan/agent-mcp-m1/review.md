@@ -1,23 +1,25 @@
-# 本轮静态核验与独审门禁
+# 当前静态核验与独审门禁
 
-本轮只保存受控文档与 Proposed ADR，不修改产品。准确提交 head 在最终回复中登记，不把文件写入自身 head。没有内部独审结论，没有代表平台另一 Agent 或 Chief 作出确认。
+本轮只同步完整受控文档与两个Proposed ADR，未改产品。准确提交head最终回复给出，不写入自身文件。不代表平台另一Agent或Chief确认，两项blocking仍待其完整定向复审。
 
-## 实际静态检查
+## 实际核验与历史
 
-回执为 [static-checks.json](static-checks.json)。复核命令：`python docs/plan/agent-mcp-m1/static-check.py`；检查源码 ZIP 的 203 个独立全文成员/哈希/对象、精确 main 父与 tree、冻结节全文、spec/plan 两对一致、平台可见前缀、操作合同及锚点、九类矩阵、相对链接、空白和只文档差异。将文档暂存后核 `git diff --cached --check`，再次执行带 `--staged` 的脚本并保存回执，核实际 CI 分类。提交后使用 `--commit HEAD` 对比受核验文档与提交 blob；只读结果在回复报告，避免自引用提交循环。
+当前回执 [static-checks.json](static-checks.json)；命令 python docs/plan/agent-mcp-m1/static-check.py --staged --record（另行准备全文绑定）。逐项重读217个完整Git成员、commit/父/tree、冻结M1完整节、Spec/plan两对一致、平台prefix/null、42已有operation合同参数/响应/源码锚点+1新增提案、九类适用性、来源/等待迁移提案、历史ZIP成员、相对链接、空白、docs-only和真实CI分类。提交后只读--commit HEAD核受测与blob一致。
 
-首败保存在 [static-first-failure.json](static-first-failure.json)：Spec 可读副本末尾保留两个工具分隔 LF，而核验期望一个；规范可读副本末尾空行，原始平台返回与 Git 全文保留。随后 [链接检查失败](static-link-failure.json) 是回执目标尚未生成，预建明确未完成文件后再正常核验；该次工具显示截断的缺口明示，未伪造完整日志。静态检查不调用 API handler、不启动 API/MCP/Worker/Runner，也不代表功能可用或产品测试通过。REST/DTO/policy/SDK/MCP/manifest/Runner/conformance 同步实施及全部必需本机检查、真实 Stop/失响应/撤权/并发/零事实运行、最新 Required CI、实际 main 合入尚未验收。
+旧static首败/链接失败及gPL工具原返回保留，原旧checks在 [history索引](history/candidate-69-manifest.json)。旧首败是可读Spec末尾分隔LF，旧链接失败是报告尚未生成并有工具显示截断缺口；其结果不用于新合同通过。本轮首败已完整保存static-failure-current.json：新增Runner assignment合同没有parameters字段，检查器错误地按必有字段索引；改为准确缺省空列表后重新核验，不改源合同。后续失败另编号保全，修正后独立保存成功回执，不清首败。
 
-## 待独审闭合
+静态看SQL只能校验文字/结构来源，不算执行迁移或竞态安全验收。所有产品服务/DB迁移/本机产品checks/真实Pi与Stop测试/最新PR RequiredCI未运行，平台独审未闭合，Chief confirm未收到。JSON/ZIP/脚本使实际分类full，不修改属性或门禁。
 
-- Proposed ADR、安全合同的无副作用身份分流、live 身份/双 Delegation/Connection 来源/精确 action 与 key、原回执 revision/sequence、最小摘要；拒绝账本例外明示。
-- 完整批次逐 operation 的角色、状态、scope、参数输出、具名消费者、旧 wire/工具兼容与 Human 控制保留，不把新查询当已有端点。
-- Pi settle 内层 completion 无独立 receipt 的事实、旧外层回执重放、不可确认不证明未提交、历史归属关联被清理后 Agent 拒绝。
-- Stop 关闭模型/工具/steering、等待退出、独立有界 finally、原 E Token 不刷新、cleanupSummary/residualRisks、晚到请求与失败残留、普通 release 不代 Stop。
-- 九类真实运行矩阵/CI 入口/逐套件删除负例、源码指纹和首败原件、资源准备恢复与清理；所有未来测试未运行。
+## 平台另一 Agent 定向审查
 
-下一步由平台另一 Agent 从此目录审完整方案，blocking/high 闭合后 Chief confirm 进入实现。本轮停止于该门禁，文档合入不等于整卡完成。
+- blocking归属：实际提交actor/E Token/安装/Connection来源是否唯一、同原事务保存、两种expired key reset、凭据删除保留证据、旧null/unproven failclosed，双C先refresh和双nativeinstall反例；没有任意历史Token证明或query补写。
+- blocking等待：WAIT_REQUESTED→模型与在途静止→释放本人Lease→公开等待settle完整原子事务；精准批准/输入条件、Worker锁序/唯一消费/续Turn、claim/credential/start fresh校验，paused不自动解除、Stop/撤权先提交零续接。
+- Proposed ADR0080/0081、具体DTO/policy与DDL结构/约束/FK/NULL语义/旧夹具及滚动兼容，默认opt-in关闭和内部启动门禁，旧settle/Pi内部completion无独receipt不假認。
+- 完整M1具名SDK/MCP/Runner/manifest/REST/Zod一致，普通terminal E和Human控制不放宽、确认零业务写与拒绝审计例外、Stop原E/独立finally signal/稳定key/body/失败残留。
+- 九类真实正拒、并发/失响应/重启、source/runtime字节和准备/清理/RequiredCI入口具体，静态结果不冒产品完成。
 
-## 资源与保存
+## 资源与停止位置
 
-只运行了只读 Git、Python 文档生成/核验和 Node CI 分类等短生命周期命令，退出随回执登记；未创建容器、镜像、卷、网络、监听服务或长期后台进程。生成路径仅本目录与该 Proposed ADR，都是交付文件，保留。未删除任何目录、共享 store、恢复现场、历史 worktree 或已拒 G1/D0/C3 目标；无全局 prune、ACL/属性调整或审批绕行。本轮没有产品运行首败现场；静态失败则按实际输出记录并修正后另留回执。
+仅只读git、Python文档生成/检查、Node分类等短进程，无容器/镜像/卷/网络/监听服务/长期进程。本目录/history及ADR是交付资料保留；无删除、prune、权限/属性调整、旧worktree或已拒目标操作。
+
+提交完整文件→停confirm供平台AI审核定向两block→blocking/high闭合→Chief confirm产品实施。产品之后还需完整适用checks、独立成果审查、最新PR RequiredCI、actualdone/main；文档提交或合入不验收本卡。

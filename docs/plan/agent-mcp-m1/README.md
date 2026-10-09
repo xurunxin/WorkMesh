@@ -1,22 +1,18 @@
 # M1 受控方案入口
 
-本批只交文档，产品尚未实施。本平台计划内容保持不变；按本轮明确反馈在同 todo、同会话分支保存完整可独审方案。终态恢复采用精确归属只读确认，不采用有限终态命令重放。先由平台另一 Agent 审查 Proposed ADR、安全合同和完整批次，blocking/high 闭合后由 Chief confirm 才进入产品实施；文档提交或合入不代表本卡完成。
+本轮仅方案文档修订，未产品实施。平台计划保持不变，当前注入全文两份一致；按明确反馈同步同 todo/会话分支。终态恢复采用精确原动作来源只读确认，等待采用“结算等待，自动继续”；两项 blocking 具体方案仍须平台另一 Agent 定向复审闭合、Chief confirm 才实施。文档提交或合入不表示整卡完成。
 
-## 审查顺序
+## 完整独审入口
 
-1. [当前 spec 全文](current-spec.md)、[本轮 steering 全文](steering.md)、[冻结 M1 原文](frozen-M1.md)：steering 与用户已选只读确认裁定覆盖原文中对应条款，其他要求保留。
-2. [savedplan](savedplan.md) 与 [implementation](implementation.md)：本轮注入完整当前计划，逐字节一致；[全文绑定](plan-fulltext-binding.json) 区分注入全文与工具截断读回，不重新 edit_plan。
-3. [Proposed ADR](../../adr/0080-exact-session-execution-result-confirmation.md)、[安全合同](security-contract.md)、[兼容策略](compatibility.md)：新增路径/DTO/policy 都是提案，主线不存在确认端点。
-4. [操作索引](operation-index.md) 与 [逐操作完整映射](operation-decisions.json)：完整 Session、Plan/context/版本、Approval、Lease、Recovery、stopAck、Human/内部前置；既有 REST 合同、实际源码锚点和拟新增消费者分列。
-5. [Runner 生命周期](lifecycle.md)、[九类 DoD 与实际验证入口](verification.md)：普通 makeTool、模型退出、原 E Token、独立 finally signal、失响应和不可确认残留均具体化。
-6. [来源说明](sources.md)、[不可变源码索引](source-manifest.json)、[源码全文容器](source-snapshot.zip)、[本轮静态回执与门禁](review.md)。
+1. [当前完整 spec](current-spec.md)、[steering及两项阻塞](steering.md)、[冻结M1全文](frozen-M1.md)。用户后续裁定覆盖对应原条款，冻结来源与旧报告不改。
+2. [savedplan](savedplan.md) / [implementation](implementation.md)：当前完整注入原文一致，[全文绑定](plan-fulltext-binding.json)区分工具截断/version null。
+3. [Proposed来源ADR](../../adr/0080-exact-session-execution-result-confirmation.md)、[安全合同](security-contract.md)：实际提交E来源同事务快照、只读身份/live归属/最小DTO，C2提前refresh和双nativeinstall拒绝，旧null/unproven fail closed，不假认Pi内部completion。
+4. [Proposed等待ADR](../../adr/0081-pi-execution-wait-continuation.md)、[等待合同](wait-contract.md)、[迁移合同](migration-contract.md)/[DDL提案](schema-proposal.sql)：字段/约束/回填缺口、滚动兼容、锁序与回滚；仅提案，没有执行SQL或改产品SCHEMA。
+5. [逐operation索引](operation-index.md)/[完整映射](operation-decisions.json)、[兼容](compatibility.md)、[生命周期](lifecycle.md)：完整M1范围，等待/monitor/唯一续Turn/admission，Stop/finally独立signal原E与残留。
+6. [九类DoD及两阻塞真实场景](verification.md)、[来源/字节](sources.md)、[静态门禁](review.md)/[真实静态回执](static-checks.json)。产品测试和RequiredCI尚未运行，静态不代运行。
 
-只读身份解析不得调用会写 usage/续建 C Session 的 resolveCoordinationIdentity；成功和拒绝均不签 Token、续 Session、写 receipt/领域 event/outbox，既有独立 authorization_denials 例外单列。保留普通终态 E 拒绝和 ADR0068 settle 回执重放；Pi 内层 completion 没有独立 receipt 的事实不得伪造。安装/Connection 归属历史关联缺失时 Agent 失败关闭，合法 Human 保留原读取。
+来源本轮独立refs/heads/main实读仍为e49eda142d61bdd248ddc42ec16f5563abd4bbc6；历史候选69f84207b6cc85a46609bdb781ecb377f4e0d743不是main。[旧Git与工作树原件索引](history/candidate-69-manifest.json)保存gPL、旧错误证明和旧静态首败，不倒改历史。当前完整源在[source manifest](source-manifest.json)/[ZIP](source-snapshot.zip)，不从工具显示前缀重建hash。
 
-本批只使用 Todos 与仓库记录，没有新建真实 WorkMesh Project/WorkItem。Web UI、F/TA 新域、真实外发/发布、团队权限及凭据连接扩大不在范围内。
+成功/拒绝确认零签Token/续Session/receipt/Activity/event/outbox，绕resolveCoordinationIdentity usage/createC Session；原authorization_denials独立审计例外保留。普通terminal E门禁、旧settle恢复、Human控制与批准权限保留；等待续接fresh授权且绝不自动解除pause。
 
-## 实际状态
-
-来源 main 为 `e49eda142d61bdd248ddc42ec16f5563abd4bbc6`，重新读取的是 `refs/heads/main`，不是 FETCH_HEAD。完整来源由 Git blob 归档，原始字节未通过工具显示前缀重建。当前会话分支交付，最终提交 head 由回复给出，避免文件写入自身提交循环。
-
-本轮无产品服务、无产品测试、无迁移、无产品 REST/事件变更；仅静态检查结果见 review。产品检查、独立成果审查、最新 PR Required CI 和实际 done/main 均是后续验收门禁，未运行不得写成通过。在本文件变更的审查页可用预览按钮阅读，Files 页可浏览同分支完整文档。
+仅Todos和仓库记录；UI/F/TA/真实外发发布/团队权限扩大不在范围。只运行文档归档和静态命令，所有交付路径保留，无服务资源清理。本文件可通过变更审查页预览按钮阅读；最终回复给准确head与Files入口，停confirm供完整独审。

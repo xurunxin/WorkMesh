@@ -14,6 +14,13 @@
 
 用户12:00已选「精确归属只读确认（推荐）」，取消M1节另一有限终态重放作为待选方案：新增最小只读确认合同须live C/安装身份（或原Human合法读取）重新验证principal/Connection/Team grant/delegation及精确session/action归属，仅返回准确状态/revision/原结果引用/清理概要；不签token/续Session/写receipt/event/outbox、不放宽普通终态E门禁。DTO/path/operationId先具体合同/ADR独审再实施，不虚构现有端点。已提交complete/stopAck失响应、原E重放被终态拒、有效归属确认成功、其他Connection/Session/撤权/scope错误拒绝/no新执行事实均须验证。此裁定不重问。
 
+## 等待恢复裁定与本轮方案修订
+用户2026-10-09 20:28在原卡q-3pvTZce9nm-_CGZOoaMwn明确选择「结算等待，自动继续（推荐）」：当前Turn保存公开等待回复并结算，持久绑定批准或输入条件；条件满足后创建唯一后续Turn，重新校验授权再继续。不再把超过当前两分钟Turn上限的等待行为留为未定，也不采用默认Human手动followup/retry作为所选路线。落实等待态的模型停止、Turn/Attempt结算、Lease维护/释放与条件满足后的恢复admission；保留Stop/撤权闭门与Human pause/resume控制，不能自动解除pause或重复Attempt。
+
+平台独审对原候选69f84207b6cc85a46609bdb781ecb377f4e0d743的两项blocking仍需受控修订与独审闭合：原动作归属必须证明实际提交来源，既有agent_session_tokens.installation_token_id仅曾获得Token，另一个同Agent/principal/Team Connection提前refresh不等于原complete/stopAck来源；加入双Connection及同Agent双原生安装反例，无法唯一证明来源的旧回执失败关闭。生产者20:47平台修订doc:UlypOW9r_NCpezuKHk6KQ提出绑定原动作实际E Token的来源快照与最小迁移，取消旧零迁移假设；这是待独审的具体实现提案，不能冒用户已经确定字段/表结构，不在查询时补造历史来源或产生执行事实。来源持久化在原动作的提交事务中，新只读确认本身仍须上述零写入副作用；旧settle/Pi内部completion没有独立receipt不得假确认。
+
+当前只是修订平台计划，仓库69旧方案不能冒本轮新合同已闭。仅同步完整当前注入savedplan/implementation、spec/steering、ProposedADR/SCHEMA迁移提案/安全与兼容合同、逐操作与等待状态时序和九类验证/来源及字节绑定，保留69/gPL及首败原始历史；新完整受控方案停confirm由另一Agent定向复审两项，仍未确认产品。
+
 ## 统一执行及验收要求
 开工读真正refs/heads/main精确SHA、前置落地证据和新差异，先withPlan具体安全合同/消费者兼容/实际运行与测试方案（完整中文受控文件）供另一Agent独审；必需新增最小只读投影要先ADR/合同复核，不假端点已存在。普通已授权实现选择由Chief依委托推进，真正扩大范围/权限/外发布另问。冻结已审#53历史，不修改其原报告冒新通过。
 产品交付须REST/Zod合同/SDK/policyfeature/MCP/derivedmanifest/Runner/conformance同一操作一致；对应完整节九类用例及不适用理由、新受测源码前后指纹/精确命令退出runtime/数量skip/首败/准备恢复清理实证落盘。Git对象与运行字节区分，缺旧原件真实标出，旧head检查不能代新组合。适用必需本机checks、独立成果审查、最新PR RequiredCI与actualdone/main均齐才验收；只报告实际运行支持/不支持/未测，不以工具或API数量冒全功能。

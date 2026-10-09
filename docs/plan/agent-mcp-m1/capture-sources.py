@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = Path(__file__).resolve().parent
-MAIN = 'e49eda142d61bdd248ddc42ec16f5563abd4bbc6'
+MAIN = json.loads((OUT/'main-observation-current.json').read_text(encoding='utf-8'))['main']
 FROZEN = 'c768e1e3db297d8b91b53dd68b60e723a8a40e7d'
 
 def git(*args):
@@ -64,6 +64,15 @@ paths = {
     'docs/plan/agent-mcp-m0/product-evidence/ci407-clean-receipt.json',
 }
 paths.update(names(MAIN, 'docs/adr'))
+paths.update({
+    'apps/api/src/commands.ts', 'apps/api/src/workbench-conversations.ts',
+    'apps/worker/src/session-lifecycle.ts', 'apps/worker/integration/stage1-lifecycle.integration.test.ts',
+    'packages/contracts/src/pi-workbench-contracts.ts', 'packages/db/src/schema.ts',
+    'packages/db/src/index.ts', 'packages/db/src/migrations.ts', 'packages/db/src/migration-manifest.ts',
+    'packages/db/src/agent-locks.ts', 'packages/db/src/agent-lock-order-manifest.ts',
+    'packages/db/integration/migration-baseline.integration.test.ts',
+    'packages/db/scripts/generate-v1-baseline.mts', 'packages/db/package.json',
+})
 paths.update(names(MAIN, 'packages/db/migrations/v1'))
 paths.update(names(MAIN, 'docs/plan/backend-agent-mcp-priority'))
 paths.update(p for p in names(MAIN, 'docs') if 'client' in p and p.endswith('.md'))

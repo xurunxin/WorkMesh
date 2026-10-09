@@ -12,11 +12,11 @@
 | 幂等 M1-IDEM | ack、Plan、Approval请求、Lease acquire/renew/release、complete/stopAck同key/body单事实，异体/key绑定冲突；Session/Lease heartbeat K1/K2/K1不回退，稳态无事件放大；新意图同body新key不被旧动作吞 | stopAck/complete重复200不是必需，终态前置拒绝后精确确认；纯GET无写key义务，反复查无receipt/event/outbox |
 | 旧revision M1-REV | 两Plan发布旧Session revision不覆盖；Lease renew/release旧Lease版本、complete/stopAck旧Session版本、consumeApproval旧Approval版本拒；SDK/MCP保currentRevision/trace；RunnerPlan/state无前置Activity | Session/Plan/Lease版本分列；GET及heartbeat无If-Match写冲突不适用；失败不能盲写重做 |
 | 事务失败 M1-TX / M1-CONFIRM-ZERO | stage1/stage2真实DB故障注入Plan、Lease、Approval request、complete、stopAck的event/outbox写失败，对比state/event/outbox/receipt全回滚；workbench runner原子settle+completion一起回滚；确认成功/各拒绝逐表比内容及数量 | 查询没有新command/job回滚，改验零业务写；authorization_denials原独立INSERT单列；不伪造所有表零写；外部I/O不在本批 |
-| 重放 M1-REPLAY | 原outbox/webhook/lifecycle job重复处理不双完成/批准；同key断网重放保正文；Stop重复只有专用事实；确认多次、MCP重新连接不新建C Session；ADR0068外层settle原key重复 | 不添加新job；新只读投影没有job效果去重需求，重复读零写；内存协议夹具不能冒真实HTTP/Pi运行 |
+| 重放 M1-REPLAY | 原outbox/webhook/lifecycle job重复处理不双完成/批准；同key断网重放保正文；Stop重复只有专用事实；确认多次、MCP重新连接不新建C Session；ADR0068外层settle原key重复 | 确认读不添加job；新增Worker等待协调须重复tick/event幂等；新只读投影没有job效果去重需求，重复读零写；内存协议夹具不能冒真实HTTP/Pi运行 |
 | 并发 M1-RACE | stage2两Session独占Lease竞争有holder详情；renew与到期job/Plan两版/Stop和complete、普通写、stopAck竞争；live撤权先commit后确认拒；双客户端C各桥接准确E；暂停或撤权晚到poll/steering不再启动模型 | 真实事务锁等待与提交次序证据；观察pg_blocking_pids，不能只delay；READ ONLY查询明确snapshot时点，非持锁召回承诺；M3外发checkpoint不适用本批 |
 | 重启/恢复/Stop M1-RECOVERY | API/MCP重启后原事实/cursor/Lease/批准仍可读取；Worker expiry保PG权威；Runner被Stop期间makeTool前置Activity会被拒但受控finally仍成功；timeout/abort/异常/强杀、Token到期、清理失败与未知在途保留 | 清理摘要/residualRisks准确，无新模型工具/Prompt，无普通release；强杀finally不保证执行，记录未确认；不是外部CLI或机器恢复验收 |
 
-逐operation的GATE场景选定实际身份分支后执行：credential → role/state → live definition/Team grant/Delegation → capability → exact subject/scope → revision/key → 该operation特有target事实。条件predicate未触发时标该分支不适用并说明条件，不用通用blocked/pending代替具体拒绝。34条映射包括Human/内部前置和新增确认，不将它们当34个新Agent工具。
+逐operation的GATE场景选定实际身份分支后执行：credential → role/state → live definition/Team grant/Delegation → capability → exact subject/scope → revision/key → 该operation特有target事实。条件predicate未触发时标该分支不适用并说明条件，不用通用blocked/pending代替具体拒绝。43条映射包括42个已有REST的适配/回归及1个新增确认提案；其中Human/内部前置不是新Agent工具。
 
 ## 终态确认专门用例
 
@@ -24,10 +24,37 @@
 | --- | --- | --- |
 | M1-CONFIRM-ALLOW | complete和stopAck各读取真实响应后故意在传输层丢弃；原E重放/GET明确terminal拒；live准确C、Connection-backed安装Bearer、native安装及合法Human各确认原key/action，originalResult revision与原DBreceipt相同 | 未运行 |
 | M1-CONFIRM-DENY | 另一Connection（包括相同actor/principal对照）、另一Agent、同Agent另一原生installation、S1 key查S2、错action、撤Connection/grant/双Delegation/principal membership/能力、跨Team/project/work_item、错scope、混合凭据、原E Bearer；原生安装不要求不存在的coordinator Delegation，但目标Delegation撤权仍拒 | 未运行；不泄露原真实资源 |
-| M1-CONFIRM-RETENTION | receipt不存在、response_body清除、replay过期、历史Token关联被删除、Stop摘要丢失/坏JSON、Human cancel终态但无stopAck | 未运行；unavailable或不可见按合同，绝不当未提交 |
+| M1-CONFIRM-RETENTION | receipt不存在、response_body清除、replay过期、完整快照保存后原Token被删除、旧null/unproven来源、Stop摘要丢失/坏JSON、Human cancel终态但无stopAck | 未运行；unavailable或不可见按合同，绝不当未提交 |
 | M1-CONFIRM-ZERO | 每个成功/拒绝重复调用前后逐表内容比较，含last_used_at、C Session创建/续期、Token、业务事实及api/auth幂等；原拒绝账本分列 | 未运行；零签Token/续Session/receipt/event/outbox |
 | M1-PI-SETTLE-LOSS | Pi原子settle提交后丢响应，同外层key/body既有回执恢复；内部completion key没有独立receipt，查询不得虚构；明确completion失败回滚并保持fallback警告 | 未运行；旧settle语义保持 |
 | M1-PI-STOP-LOSS | 真实Pi模型正在合法调用时H Stop；受控finally原E/独立signal发stopAck后丢响应；安装确认；model tools/迟到steering无新执行、准确durable Stop Activity/event | 未运行；不以进程exit0验收 |
+
+
+## 两项 blocking 定向闭合：原来源与等待续接
+
+全部为实施后真实运行要求，本轮未运行。API execution-result.integration、workbench-runner.integration，Worker stage1-lifecycle.integration、DB migration-baseline.integration 和真实 execution-recovery conformance 分别保存准备/故障/结果/残留，不能只跑单元假poll。
+
+| ID / 九类 | 必须构造与事实断言 | 入口 |
+| --- | --- | --- |
+| M1-ORIGIN-DOUBLE-C / 正常、越权、并发 | C1/C2同Agent/principal/Team皆live；C2提前refresh目标，C1实际E1提交complete与stopAck；C1确认原revision/summary，C2拒；两边合法自身请求正对照，查询前后无新业务事实 | API execution-result +真实HTTP/MCP/Pi Stop |
+| M1-ORIGIN-DOUBLE-NATIVE / 越权 | 同Agent原生I1/I2均获目标Token，E1提交，I1确认I2拒，不以同actor或Session历史Token代来源 | API+SDK/MCP conformance |
+| M1-ORIGIN-LEGACY / 状态、恢复 | old null/unproven、安装来源null/歧义、错误组合、另一Session/action/key、回执/摘要缺失；完整快照后原Token删除与同Connection轮换仍成功，撤权/删除拒 | API+DB迁移 |
+| M1-ORIGIN-ROLLBACK / 事务、幂等 | 故障注入source/response/event/outbox，原终态/receipt全回滚；两个reserve路径及旧API滚动写过期key新占位清空来源（DB trigger兜底）；原duplicate不改来源 | API stage1+DB |
+| M1-WAIT-APPROVAL / 正常 | 真实Pi请求准确Approval→等待工具→model idle/lease release→公开reply+Turn/Attempt/wait同commit；超过原模型预算仍无running旧Attempt/租约；Human批准准确hash→唯一续Turn/新Attempt→重新取Lease、合法动作消费批准→完成 | 真实conformance+API/Worker |
+| M1-WAIT-INPUT、M1-WAIT-BLOCKED / 正常、状态 | 各真实Pi等待，Human原Session prompt及同Conversation合法消息分别唤醒；公开等待reply在续context，真实trigger ID，无伪Human消息；现行prompt先executing也必须Worker消费wait后claim | 真实conformance+Human原REST |
+| M1-WAIT-DENY / 越权、状态、revision | 错Approval ID/hash、其他Session、旧输入边界、Agent/system输入、批准拒/过期/已消费、模型或负责Human资格撤销、来源不同、staleIfMatch、互斥completion/wait、externalEffectsReconciled=false | contracts+API+真实Pi负例 |
+| M1-WAIT-LOSS / 幂等、重放 | wait settle已commit传输丢响应，原outer key/body重放仅一公开reply/wait/settled事实，不改key、不Turn-only fallback；内部Pi completion key无独receipt不假认 | API故障代理+Pi |
+| M1-WAIT-TX / 事务 | wait/state/message/tool/receipt/event/outbox各失败全回滚；Worker consume/resume/queue中断全回滚，下一tick从pending重做，无漏resume/挂Turn | API/Worker真实Postgres故障 |
+| M1-WAIT-RACE / 并发 | 双Worker、重复批准事件/tick/同输入、Human prompt与Worker、queuedHumanTurn复用/创建竞争，只有一续Turn；双Runner claim/current fence只有一新Attempt；观察实际锁等待与提交次序 | Worker+API+conformance |
+| M1-WAIT-CONTROL / 状态、越权、并发 | pause后准确触发不创建Turn/启动模型，只有Human合法resume后fresh重验；Stop或撤权先commit零续接，晚到模型工具/poll/steering零新调用；新claim后至start撤权不得启动 | Worker+真实Pi |
+| M1-WAIT-RESTART / 重启、恢复 | API/Worker/Runner分别在wait提交前、提交丢响后、trigger消费前后、claim/start间重启；重扫唯一结果、无旧runningAttempt、无重复Attempt；短离线live可monitor，stale明确拒绝且保Human恢复 | 三进程真实重启 |
+| M1-WAIT-COMPAT / 兼容、迁移 | 无opt-in旧Runner看不到/claim不到自动或复用续Turn，旧wire不变；Attempt opt-in持久且start不能伪造；旧schema夹具普通写兼容、新合同拒绝；混合旧节点默认不开wait生产 | SDK/Runner+DB+API |
+
+M1-CONFIRM-ZERO逐表对比包括Connection及credential/installation使用时间、C/E Session、Token、Delegation/grant、Plan/context/Approval/Lease/Activity/Prompt、所有workbench表（含wait）、api/auth/heartbeat幂等、domain_events/outbox；拒绝只允许既有authorization_denials独立INSERT。查询并发用单次REPEATABLE READ快照语义，不用SQL行锁伪承诺返回后撤权召回。等待合法恢复有新事实，和确认零写各自统计。
+
+DB DDL的IS TRUE约束要测试NULL绕CHECK反例；各资源复合FK、sourceTurn/Attempt唯一、pendingSession唯一、continuation唯一、触发组合、native/connection原标记不可改、旧数据NULL、迁移整体失败回滚均验证。只静态看SQL不计迁移通过。
+
+Required worker-integration沿apps/worker/integration/stage1-lifecycle.integration.test.ts执行reconcileWorkbenchWaits；Required api-integration沿现有API集成+真实M0/M1 conformance接线；DB集成在根test:integration的db入口消费migration-baseline.integration。不得仅改include不改ci-policy逐套件负例，不新增空套件/skip或改变Required门禁。
 
 ## 实际入口与测试文件
 
@@ -63,6 +90,6 @@ finally保全必要脱敏原输出ZIP和可读副本，再按确切ID/owner labe
 
 ## 本阶段结论与后续门禁
 
-仅静态：完整计划一致、来源203个Git全文、当前33已有operation与1新增提案映射、参数/返回/源码锚点、九类矩阵、文档链接/空白/实际CI分类。实际回执见 [review](review.md) 与static-checks；无产品服务、无产品test、无迁移、无API/event修改。JSON/ZIP/脚本使本PR按当前ci-policy可能full，分类如实记录，不借文档阶段改变门禁。
+仅静态：完整计划一致、来源217个Git全文、当前42已有operation与1新增提案映射、参数/返回/源码锚点、九类矩阵、文档链接/空白/实际CI分类。实际回执见 [review](review.md) 与static-checks；无产品服务、无产品test、无迁移、无API/event修改。JSON/ZIP/脚本使本PR按当前ci-policy可能full，分类如实记录，不借文档阶段改变门禁。
 
 提交准确head停confirm → 平台另一Agent完整合同/方案独审 → blocking/high闭合 → Chief confirm才实施 → 新产品完整适用checks与独立成果审查 → 最新PR RequiredCI → todo实际done/main。文档合入或静态通过不完成本卡。

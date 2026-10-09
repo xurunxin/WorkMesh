@@ -14,6 +14,7 @@ OUT = Path(__file__).resolve().parent
 ROOT = OUT.parents[2]
 PREFIX = OUT.relative_to(ROOT).as_posix() + '/'
 ADR = 'docs/adr/0080-exact-session-execution-result-confirmation.md'
+WAIT_ADR = 'docs/adr/0081-pi-execution-wait-continuation.md'
 REPORT = PREFIX + 'static-checks.json'
 started = time.monotonic()
 parser = argparse.ArgumentParser()
@@ -60,7 +61,7 @@ def resolve(value, api):
 try:
     manifest = load('source-manifest.json')
     main = manifest['main']
-    observation = load('platform-observation.json')
+    observation = load('platform-observation-current.json')
     saved = (OUT/'savedplan.md').read_bytes()
     visible = observation['visiblePlanPrefix'].encode('utf-8')
     if args.prepare_bindings:
@@ -71,16 +72,29 @@ try:
             completePlanReadback=False,
             files=[fingerprint(name) for name in ['savedplan.md','implementation.md','current-spec.md','spec.md','steering.md']],
             visiblePrefix=dict(bytes=len(visible),sha256=digest(visible),matchesInjectedFulltext=saved.startswith(visible)),
-            truncatedObservation=fingerprint('platform-observation.json')))
+            truncatedObservation=fingerprint('platform-observation-current.json')))
     check('plan字节一致', saved == (OUT/'implementation.md').read_bytes())
     check('spec字节一致', (OUT/'spec.md').read_bytes() == (OUT/'current-spec.md').read_bytes())
     check('平台前缀非全文', saved.startswith(visible) and len(saved)>len(visible) and observation['version'] is None and observation['planCreatedAt'] is None and observation['completePlanReadback'] is False)
     spec = observation['returned']['content'][0]['text'].split('\nSpec:\n',1)[1].split('\n\nSaved plan:\n',1)[0]
     check('完整Spec来源一致', (spec.rstrip()+'\n').encode() == (OUT/'current-spec.md').read_bytes())
     binding = load('plan-fulltext-binding.json')
-    check('全文绑定准确', all(fingerprint(item['path'])==item for item in binding['files']) and binding['truncatedObservation']==fingerprint('platform-observation.json'))
-    remote = load('main-observation.json')
-    check('真正main观察', remote['args']['args']==['ls-remote','origin','refs/heads/main'] and remote['returned']['content'][0]['text'].strip()==main+'\trefs/heads/main')
+    check('全文绑定准确', all(fingerprint(item['path'])==item for item in binding['files']) and binding['truncatedObservation']==fingerprint('platform-observation-current.json'))
+    remote = load('main-observation-current.json')
+    check('真正main观察', remote['args']['args']==['ls-remote','origin','refs/heads/main'] and remote['returned']['content'][0]['text'].strip().endswith(main+'\trefs/heads/main'))
+    history = load('history/candidate-69-manifest.json')
+    historical_zip = OUT/'history'/history['archive']['path']
+    check('历史ZIP原字节', historical_zip.stat().st_size==history['archive']['bytes'] and digest(historical_zip.read_bytes())==history['archive']['sha256'])
+    with zipfile.ZipFile(historical_zip) as old:
+        check('历史ZIP完整成员', len(old.namelist())==len(history['entries'])*2 and len(set(old.namelist()))==len(old.namelist()))
+        for item in history['entries']:
+            original = git('show',history['head']+':'+item['path'])
+            check('历史Git:'+item['path'], old.read(item['git']['member'])==original and git('rev-parse',history['head']+':'+item['path']).decode().strip()==item['gitBlobOid'])
+            for kind in ['git','worktree']:
+                record=item[kind]; raw=old.read(record['member'])
+                check('历史独立指纹:'+kind+':'+item['path'], len(raw)==record['bytes'] and digest(raw)==record['sha256'])
+        for name in ['static-first-failure.json','static-link-failure.json','platform-observation.json']:
+            check('旧首败/返回不改:'+name, (OUT/name).read_bytes()==old.read('worktree/'+PREFIX+name))
     for sha, item in manifest['commits'].items():
         raw = git('cat-file','commit',sha)
         lines = raw.decode().splitlines()
@@ -89,7 +103,7 @@ try:
     archive = (OUT/'source-snapshot.zip').read_bytes()
     check('ZIP自身hash', len(archive)==manifest['archive']['bytes'] and digest(archive)==manifest['archive']['sha256'])
     with zipfile.ZipFile(OUT/'source-snapshot.zip') as source_zip:
-        check('成员完整且唯一', len(manifest['entries'])==203 and len(source_zip.namelist())==203 and set(source_zip.namelist())=={item['member'] for item in manifest['entries']})
+        check('成员完整且唯一', len(manifest['entries'])==217 and len(source_zip.namelist())==217 and set(source_zip.namelist())=={item['member'] for item in manifest['entries']})
         sources = {}
         for item in manifest['entries']:
             data = source_zip.read(item['member'])
@@ -107,7 +121,7 @@ try:
         check('冻结M1精确全文', frozen==(OUT/'frozen-M1.md').read_bytes() and digest(frozen)==manifest['originalM1']['sha256'])
     api = yaml.safe_load(sources['OPENAPI.yaml'].decode())
     operations = load('operation-decisions.json')['operations']
-    check('当前33及新增1唯一', len(operations)==34 and len({item['operationId'] for item in operations})==34)
+    check('当前42及新增1唯一', len(operations)==43 and len({item['operationId'] for item in operations})==43)
     nine = {'normal','authority','state','idempotency','revision','transaction','replay','concurrency','restart'}
     for item in operations:
         check('九类适用性:'+item['operationId'], set(item['nineClassApplicability'])==nine and all(item['nineClassApplicability'].values()))
@@ -116,13 +130,25 @@ try:
         if item['currentContract'] is not None:
             current = api['paths'][item['rest']['path']][item['rest']['method'].lower()]
             check('当前operationId:'+item['operationId'], current['operationId']==item['operationId'])
-            check('全参数响应:'+item['operationId'], item['currentContract']['parameters']==resolve(current.get('parameters',[]),api) and item['currentContract']['responses']==resolve(current.get('responses',{}),api))
+            check('全参数响应:'+item['operationId'], item['currentContract'].get('parameters',[])==resolve(current.get('parameters',[]),api) and item['currentContract']['responses']==resolve(current.get('responses',{}),api))
         else:
             check('新增合同未冒已有', item['operationId']=='getAgentSessionExecutionResult' and item['rest']['path'] not in api['paths'])
     required = {'listAgentSessions','getAgentSession','getAgentSessionContext','getAgentPlan','listAgentPlanVersions','listApprovals','getApproval','listLeases','heartbeatLease','renewLease','releaseLease','listRecoveryItems','getRecoveryItem','acknowledgeAgentSessionStop','getAgentSessionExecutionResult'}
     check('完整M1操作范围', required <= {item['operationId'] for item in operations})
     check('Proposed ADR未冒验收', 'Proposed。' in (ROOT/ADR).read_text(encoding='utf-8'))
-    files = sorted([path for path in OUT.iterdir() if path.is_file()]+[ROOT/ADR])
+    check('等待Proposed ADR未冒验收', 'Proposed。' in (ROOT/WAIT_ADR).read_text(encoding='utf-8'))
+    security=(OUT/'security-contract.md').read_text(encoding='utf-8')
+    migration=(OUT/'migration-contract.md').read_text(encoding='utf-8')
+    lifecycle=(OUT/'lifecycle.md').read_text(encoding='utf-8')
+    wait=(OUT/'wait-contract.md').read_text(encoding='utf-8')
+    ddl=(OUT/'schema-proposal.sql').read_text(encoding='utf-8')
+    verification=(OUT/'verification.md').read_text(encoding='utf-8')
+    check('不再任意Token证明或零迁移', '归属只取原 complete/stopAck' in security and '归属通过目标历史' not in security and '无迁移' not in security and '原 Token 被 refresh 删除不影响' in security)
+    check('来源在原事务与Pi内层分离', all(word in migration for word in ['actor.credentialHash','locateAgentSessionAuthority','lockExecutionInstallationAuthorities','unproven','finishSessionInTransaction','过期','全回滚']))
+    check('SQL仅提案且结构具体', all(word in ddl for word in ['execution_source_shape','IS TRUE','execution_waits_enabled','workbench_wait_one_pending_session','source_attempt_id','trigger_prompt_id','continuation_turn_id']) and 'DELETE CASCADE' not in ddl)
+    check('等待完整状态/失败合同', all(word in lifecycle for word in ['WAIT_REQUESTED','externalEffectsReconciled','RUNNER_ABORTED','paused','pending','claim','credential','start','stopAck','三十秒']) and all(word in wait for word in ['executionWaits','execution_waits_enabled','Human','promptId','pending','互斥']))
+    check('两个block真实正拒/恢复用例映射', all(word in verification for word in ['M1-ORIGIN-DOUBLE-C','M1-ORIGIN-DOUBLE-NATIVE','M1-WAIT-APPROVAL','M1-WAIT-INPUT','M1-WAIT-BLOCKED','M1-WAIT-CONTROL','M1-WAIT-RACE','M1-WAIT-RESTART','未运行']))
+    files = sorted([path for path in OUT.rglob('*') if path.is_file()]+[ROOT/ADR,ROOT/WAIT_ADR])
     missing_links = []
     for path in files:
         if path.suffix=='.md':
@@ -133,14 +159,14 @@ try:
                 target = target.split('#',1)[0]
                 if target and not (path.parent/target).is_file():
                     missing_links.append([path.name,target])
-        if path.suffix in {'.md','.json','.py'}:
+        if path.suffix in {'.md','.json','.py','.sql'}:
             text = path.read_text(encoding='utf-8')
             check('空白:'+path.name, not any(line.endswith((' ','\t')) for line in text.splitlines()))
     check('相对文档链接', not missing_links, missing_links)
     tracked = git('diff','--name-only',main).decode().splitlines()
     untracked = git('ls-files','--others','--exclude-standard').decode().splitlines()
     changed = sorted(set(tracked+untracked))
-    check('仅文档边界', bool(changed) and all(path.startswith(PREFIX) or path==ADR for path in changed), changed)
+    check('仅文档边界', bool(changed) and all(path.startswith(PREFIX) or path in {ADR,WAIT_ADR} for path in changed), changed)
     node_script = "import {classifyChanges,readWorkspaces} from './scripts/ci-policy.mjs';console.log(JSON.stringify({runtime:process.version,execPath:process.execPath,selection:classifyChanges(JSON.parse(process.argv[1]),readWorkspaces())}));"
     node = json.loads(subprocess.check_output(['node','--input-type=module','-e',node_script,json.dumps(changed)],cwd=ROOT))
     check('CI实际full且全部必需', node['selection']['mode']=='full' and all(node['selection']['checks'].values()), node)
@@ -166,10 +192,17 @@ try:
         receipt = load('static-checks.json')
         check('提交与静态回执受测文件一致', tested==receipt['testedFiles'])
         check('静态回执blob一致', git('show',args.commit+':'+REPORT)==(OUT/'static-checks.json').read_bytes())
-    result = dict(status='passed',kind='真实静态文档核验；无产品运行',command=['python',PREFIX+'static-check.py',*sys.argv[1:]],exitCode=0,runtimeSeconds=round(time.monotonic()-started,3),python=sys.version,pythonExecPath=sys.executable,yaml=yaml.__version__,sourceMain=main,sourceMembers=203,existingOperations=33,proposedOperations=1,checkCount=len(checks),failed=0,skipped=0,productTests='未运行',requiredCI='未运行/未查询本PR',platformIndependentReview='未进行',chiefConfirm='未收到',ciClassification=node,checks=checks,testedFiles=tested,reportSelfHash='不参与；提交后单独核回执blob一致',resources=dict(containers=[],images=[],volumes=[],networks=[],services=[],backgroundProcesses=[],retainedPaths=[PREFIX,ADR],cleanupActions=[]))
+    result = dict(status='passed',kind='真实静态文档核验；无产品运行',command=['python',PREFIX+'static-check.py',*sys.argv[1:]],exitCode=0,runtimeSeconds=round(time.monotonic()-started,3),python=sys.version,pythonExecPath=sys.executable,yaml=yaml.__version__,sourceMain=main,sourceMembers=217,existingOperations=42,proposedOperations=1,checkCount=len(checks),failed=0,skipped=0,productTests='未运行',requiredCI='未运行/未查询本PR',platformIndependentReview='两项blocking待平台另一Agent复审；本轮无内部独审',chiefConfirm='未收到',ciClassification=node,checks=checks,testedFiles=tested,reportSelfHash='不参与；提交后单独核回执blob一致',resources=dict(containers=[],images=[],volumes=[],networks=[],services=[],backgroundProcesses=[],retainedPaths=[PREFIX,ADR,WAIT_ADR],cleanupActions=[]))
     if args.record:
         write('static-checks.json',result)
     print(json.dumps({key:result[key] for key in ['status','exitCode','runtimeSeconds','checkCount','sourceMembers','existingOperations','proposedOperations','productTests']},ensure_ascii=False))
 except Exception as error:
-    print(json.dumps(dict(status='failed',exitCode=1,runtimeSeconds=round(time.monotonic()-started,3),error=str(error),checks=checks),ensure_ascii=False))
+    failure=dict(status='failed',exitCode=1,runtimeSeconds=round(time.monotonic()-started,3),command=['python',PREFIX+'static-check.py',*sys.argv[1:]],error=str(error),checks=checks)
+    name='static-failure-current.json'
+    number=1
+    while (OUT/name).exists():
+        number+=1
+        name=f'static-failure-current-{number}.json'
+    write(name,failure)
+    print(json.dumps(dict(status='failed',exitCode=1,error=str(error),fullReceipt=name),ensure_ascii=False))
     sys.exit(1)

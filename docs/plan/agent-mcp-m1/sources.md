@@ -1,19 +1,27 @@
-# 来源、全文与前置绑定
+# 本轮来源、历史与字节绑定
 
-[精确远端观察](main-observation.json) 保存本轮平台只读 git 的 `ls-remote origin refs/heads/main` 参数和完整输出。其 SHA 是 `e49eda142d61bdd248ddc42ec16f5563abd4bbc6`，与开工 HEAD 一致；该对象的父为 `69085317c88d84b702af727dc0ac7152589626d8` 和 `883d279d3b5978680672a6c1d7364d421d0afd10`，tree 为 `a1c61dbea9e6bb09bbe0a353b6e67e11f4fc0953`，与第二父 tree 相同。对象/父/tree 由本机不可变 Git 对象重新核验，未以远端跟踪分支、FETCH_HEAD 或构建候选代主线。
+## 当前真实主线与冻结输入
 
-M0 actual-main 来源已消费：已审合同/operation/domain 决定，product-report、product-recovery-report、product-ci407-report 及实际证据索引，连同本主线落地产品代码。#54 done/PR212、CI408/run37915376122 的历史通过是 Chief 提供的前置证明；本轮没有重新运行或重新查询该 CI，不算 M1 产品测试。旧 ZIP 声明缺失的两容器原件等缺口仍是历史缺口，本轮不修补、不倒改 M0 报告。
+main-observation-current.json保存本轮平台git ls-remote origin refs/heads/main完整返回，精确SHA e49eda142d61bdd248ddc42ec16f5563abd4bbc6；读取不可变Git对象，不依赖共享FETCH_HEAD/构建HEAD。source-manifest.json核commit原对象、父69085317c88d84b702af727dc0ac7152589626d8与883d279d3b5978680672a6c1d7364d421d0afd10、同tree；本轮main等M0实际merge，不声称有新main产品差异。
 
-## 精确 Git 全文
+冻结#53来源c768e1e3db297d8b91b53dd68b60e723a8a40e7d的整组priority文件与当前main同组全文独立归档；完整M1节原提取字节和可读末尾LF规范化分列。不以行定位代正文。M0合同/映射/产品报告/恢复报告/CI407及证据全文作为已落输入；旧ZIP缺原件等历史缺口保持，不拿旧checks验本轮。
 
-[source-manifest.json](source-manifest.json) 与 [source-snapshot.zip](source-snapshot.zip) 保存 203 个文件全文。每个成员路径为 `不可变SHA/仓库路径`，单独记录 Git blob OID、原始字节数和 SHA-256；ZIP 自身另记字节数和 SHA-256。`capture-sources.py` 通过 git show 精确对象读取二进制全文，不使用 shell/工具截断输出作为原件。`static-check.py` 独立解读每个成员并重新比较完整 Git blob。
+本轮source-snapshot.zip保存217个全文Git成员：authority文档、全部现行ADR、完整OPENAPI与schema/旧迁移、API/SDK/MCP/Runner、Worker等待协调实际入口、Pi contracts、DBmanifest/生成器/集成、CI/conformance/M0完整来源。成员清单而非工具显示前缀绑定每项head/path/gitBlobOid/bytes/SHA-256；本轮工作树原字节另列。capture-sources.py只归档，不运行服务。
 
-冻结来源为 `c768e1e3db297d8b91b53dd68b60e723a8a40e7d` 的 backend-agent-mcp-priority 全目录，包括 batches-and-acceptance、README、coverage-matrix、operation-index、branch-separation、sources、review。当前 main 的这些完整文件也归档，区别冻结依据与已落增量。[frozen-M1.md](frozen-M1.md) 从冻结全文两个节标题之间精确提取，保留原选项历史，不将已取消的有限终态重放重新设为待选。
+## 平台注入与工具返回
 
-权威 CONTEXT/AGENT_PROTOCOL/OPENAPI/SCHEMA/AGENTS、全部现行 ADR、数据库迁移、M0 来源、相关 API/domain/contracts/SDK/MCP/Runner 及测试/CI 入口完整归档。工作树对应文件另外记录原始字节/hash，与 Git 字节的 identical/CRLF/different 关系；运行字节不冒作 Git blob。没有重建已移除的 WORKMESH_PRD。
+当前planDocId UlypOW9r_NCpezuKHk6KQ从本轮用户提供的完整saved copy绑定；savedplan.md和implementation.md原文逐字节一致。platform-observation-current.json保留本轮完整可见工具返回，其中Spec段在Saved plan分隔前完整，plan被工具明确truncated，visiblePrefix只做前缀比对；version/planCreatedAt没有返回记null，completePlanReadback=false。不可把工具前缀、工具显示截断、当前完整注入或元数据null混为一谈，不通过edit_plan自引用循环造全文。
 
-## 平台全文与截断
+current-spec.md/spec.md来自本轮完整Spec工具段，steering保本轮明确授权、独审阻塞与用户所选等待；plan-fulltext-binding.json记录各原字节指纹与来源类型。这里只做末尾一个LF可读规范化，不修改原toolreturn。
 
-[savedplan.md](savedplan.md) 和 implementation.md 来自本轮消息注入的完整当前平台计划正文，去掉包裹标签，UTF-8、LF、末尾一个 LF，两文件字节一致。权威来源不是 todos 工具被截断的 Saved plan 读回。[platform-observation.json](platform-observation.json) 保存工具实际返回、可见前缀和 doc ID；version 与 planCreatedAt 读不到，均为 null，completePlanReadback=false。可见前缀与全文起始逐字一致，但其 hash 不可冒全文 hash。[plan-fulltext-binding.json](plan-fulltext-binding.json) 分别记录全文与前缀，不宣称后端全文读回，也不产生自引用 edit_plan 循环。
+## 旧候选原件
 
-current-spec.md 与 spec.md 是工具可见完整 Spec 正文的同字节副本，Spec 在 Saved plan 截断之前结束；可读 Spec 和 frozen-M1 仅移除段落/节分隔的末尾空行并补一个 LF，正文不改。原始工具返回及 Git 全文件字节完整保留，冻结节的原提取字节数/hash 与可读副本分列。steering.md 保存本轮反馈全文。生效要求是 current-spec 加后续 steering 加明确裁定；注入的 savedplan 原文不被静默重写。执行细节以合同/兼容/生命周期/映射/矩阵补充展开，不改变已选只读方案或扩大权限。
+history/candidate-69.zip逐文件保存旧候选69f84207b6cc85a46609bdb781ecb377f4e0d743的27个Git blob及本轮修改前工作树，history/candidate-69-manifest.json逐member独立指纹/旧GitOID。包括旧gPL完整文档、旧source ZIP、旧错误归属、旧静态回执和首败/链接失败。ZIP是二进制容器，独立比字节，不套UTF-8或CRLF说明。旧根static-first-failure.json/static-link-failure.json/platform-observation.json不改，旧checks原件已在ZIP；当前static-checks覆盖为新实际核验，与历史明确分开。
+
+本轮探索曾读取两个不存在的猜测迁移文件，实际退出1；随后rg --files定位0010_workbench_conversations.sql/0012_workbench_turn_lineage_and_tools.sql并读取成功，正文已按真实源校正，见[探索失败原回执](exploration-failures.json)。这是静态探索错误，不是SQL/产品测试失败或虚构原件。
+
+## 实施源码依据
+
+源录中guard.locateAgentSessionAuthority以trusted actor credentialHash定位；agentMutate/generic mutate reserve及expired key reset；refreshAgentToken能删旧Token且允许不同安装同目标；connection-installation-token创建镜像不记origin；finishSessionInTransaction内层无独回执。runPi非executingabort/RUNNER_ABORTED跳settle；workbench-runner list/claim/credential/start/settle实际fence、Conversation/Turn/Attempt锁；worker.reconcileWorkbenchAttempts只调和旧活动Attempt，不消费新wait。这些事实分别进入安全/迁移/等待/生命周期/逐operation文件，没有把拟新增helper当已实现。
+
+静态受测工作树、暂存blob和最终commit blob分别登记，Windows可存在CRLF差异。静态回执不hash自身，提交后只读核回执blob与受测文件对应，head只在最终回复登记，不循环提交自身head。

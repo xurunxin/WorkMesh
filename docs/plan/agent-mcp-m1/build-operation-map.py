@@ -66,6 +66,15 @@ specs = [
 ('claimWorkItem','claimWorkItem','claim_work_item','不交E模型','agent/commands.ts','export async function claimWorkItem(','原C接单前置，typed/身份产品M0已落；本批conformance消费queued链，不新增接单权限'),
 ('delegateAndStartAgentSession','delegateAndStart','delegate_work_item','不交E模型','agent/commands.ts','export async function delegateAndStartAgentSession(','原H/C委派及目标资格；非E Team管理'),
 ('settleWorkbenchAttempt','RunnerApi.request','adapter内部','executeTurn','workbench-runner.ts',"const body = workbenchRunnerSettleInputSchema.parse",'exact Session/attempt/fence/Runner service；保ADR0068外层回执重放，不泛化到complete/stopAck'),
+('listWorkbenchRunnerAssignments','RunnerApi.request','adapter内部','main→monitor或execute','workbench-runner.ts',"app.get('/api/v1/workbench/runner/assignments'",'新增executionWaits默认false；只有准确来源/live opt-in得到monitor，禁止ensureExecuting翻等待态'),
+('listAgentWorkbenchTurns','RunnerApi.request','adapter内部','main','workbench-runner.ts',"app.get('/api/v1/agent-sessions/:id/workbench-turns'",'新增executionWaits；pending wait未消费不返回可claim；续Turn要求opt-in/实际来源/合法触发'),
+('claimWorkbenchTurn','RunnerApi.request','adapter内部','executeTurn','workbench-runner.ts',"app.post('/api/v1/workbench/turns/:id/claim'",'executionWaits默认false，持久到Attempt；live/state/来源/trigger/predecessor/Conversation单执行；唯一新Attempt，不复用旧等待Attempt'),
+('getWorkbenchAttemptCredential','RunnerApi.request','adapter内部','promptFor','workbench-runner.ts',"app.get('/api/v1/workbench/runner-attempts/:id/credential'",'新受校验continuation引用与真实触发context；保持秘密no-store和模型权限，不伪造Human输入'),
+('startWorkbenchAttempt','RunnerApi.request','adapter内部','executeTurn','workbench-runner.ts',"app.post('/api/v1/workbench/runner-attempts/:id/start'",'fresh executing/live/来源/opt-in/合法触发/current fence；批准与pause/Stop重验，不自动resume'),
+('getWorkbenchAttemptStatus','RunnerApi.request','adapter内部','runPi poll','workbench-runner.ts',"app.get('/api/v1/workbench/runner-attempts/:id/status'",'原状态读取，Runner区分waitIntent与外部控制；晚到poll/steering先闭门，不能RUNNER_ABORTED跳等待settle'),
+('queueWorkbenchTurn','Human原REST','不提供','真实输入触发','workbench-conversations.ts',"app.post('/api/v1/workbench/conversations/:id/turns'",'仅原合法Human真实输入；记录messageId/sequence，pending wait admission阻止抢先claim'),
+('followupWorkbenchTurn','Human原REST','不提供','真实输入触发','workbench-conversations.ts',"app.post('/api/v1/workbench/conversations/:id/turns/:turnId/followup'",'原终态前提与Human权限；Worker优先合法最早queuedTurn，不伪造重复Human输入'),
+('promptAgentSession','Human原REST','不提供','真实输入触发','agent/commands.ts','export async function prompt(','原Human合法准确Session输入；INSERT RETURNING promptId附既有事件，原等待input自动executing后仍须Worker消费wait才claim'),
 ]
 base_by_id = {x['operationId']:x for x in baseline['operations']}
 operations = []
@@ -133,10 +142,32 @@ new=dict(operationId='getAgentSessionExecutionResult',rest=dict(method='GET',pat
          acceptance=dict(testIds=['M1-CONFIRM-ALLOW','M1-CONFIRM-DENY','M1-CONFIRM-ZERO'],status='未运行'),
          nineClassApplicability=operations[0]['nineClassApplicability'])
 operations.append(new)
+for item in operations:
+    oid=item['operationId']
+    if oid in {'completeAgentSession','acknowledgeAgentSessionStop','getAgentSessionExecutionResult'}:
+        item['originProposal']=dict(contract='security-contract.md',migration='migration-contract.md',
+          producer='原命令事务实际actor.credentialHash→唯一E Token→不可变installation来源；同commit保存；查询不补写',
+          proof='原receipt workspace/actor/action/key/session + execution_*；C匹配原Connection，native匹配原installation',
+          legacy='null/unproven失败关闭；任意历史Token不作证明；Pi内部completion没有独立receipt',
+          tests=['M1-ORIGIN-DOUBLE-C','M1-ORIGIN-DOUBLE-NATIVE','M1-ORIGIN-LEGACY','M1-ORIGIN-ROLLBACK'])
+        item['mainEvidence'] += [anchor('apps/api/src/agent/commands.ts','export async function refreshAgentToken'),
+                                anchor('apps/api/src/agent/guard.ts','export async function locateAgentSessionAuthority')]
+    if oid=='transitionAgentSessionState':
+        item['proposed']['domainRules'] += '；Pi等待目标仅形成waitIntent，sessionWait在settle同事务转态；API/MCP原独立transition不猜自动条件'
+    if oid=='settleWorkbenchAttempt':
+        item['waitProposal']=dict(contract='wait-contract.md',
+          fields='sessionWait{ifMatch,state,reason,approval?}与sessionCompletion互斥；settled公开回复且externalEffectsReconciled=true',
+          atomicity='wait+Session状态+Turn/Attempt结算+tool/message+receipt/event/outbox同事务；外层原key/body恢复',
+          lifecycle='模型停止/释放己有Lease/无旧Attemptmonitor/Worker条件消费/唯一后续Turn/重新claim-start',
+          tests=['M1-WAIT-APPROVAL','M1-WAIT-INPUT','M1-WAIT-BLOCKED','M1-WAIT-LOSS','M1-WAIT-RACE','M1-WAIT-RESTART'])
+        item['mainEvidence'] += [anchor('apps/agent-runner/src/run-session.ts',"if (stopped) throw new Error('RUNNER_ABORTED')"),
+                                anchor('apps/worker/src/session-lifecycle.ts','const reconcileWorkbenchAttempts')]
 index += ['| `getAgentSessionExecutionResult` GET `/api/v1/agent-sessions/{id}/execution-result`（新增提案） | `getSessionExecutionResult` → `get_session_execution_result` → 受控finally | [准确输入/DTO/live归属/零写合同](security-contract.md)，普通E拒绝；Proposed |','',
           '## 共同live门禁与逐操作反例','',
           '所有普通Agent操作逐次重验credential、definition/actor、Team grant、Delegation和能力交集；读取final live predicate与对象session FK，写命令under-lock exact authority。具体九类用例ID/测试文件/DoD见 [验证](verification.md)，不能用通用pending代审计完成。M0历史源码和本批main证据分列，不认为继承的旧test状态代表本批通过。','',
           '新增适配和Human保留见 [兼容](compatibility.md)，Stop特殊时序见 [生命周期](lifecycle.md)。']
 (OUT/'operation-index.md').write_text('\n'.join(index)+'\n',encoding='utf-8',newline='\n')
-(OUT/'operation-decisions.json').write_text(json.dumps(dict(main=MAIN,status='Proposed；静态映射，不是产品验收',operations=operations),ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
+(OUT/'operation-decisions.json').write_text(json.dumps(dict(main=MAIN,status='Proposed；静态映射，不是产品验收',
+    controlledContracts=['security-contract.md','wait-contract.md','migration-contract.md','schema-proposal.sql'],
+    operations=operations),ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
 print(json.dumps(dict(existingOperations=len(specs),newOperations=1),ensure_ascii=False))

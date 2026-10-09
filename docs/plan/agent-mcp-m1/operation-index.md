@@ -39,6 +39,15 @@
 | `claimWorkItem` POST `/api/v1/work-items/{id}/claim` | `claimWorkItem` → `claim_work_item` → 不交E模型 | 原C接单前置，typed/身份产品M0已落；本批conformance消费queued链，不新增接单权限；`apps/api/src/agent/commands.ts:1462` |
 | `delegateAndStartAgentSession` POST `/api/v1/work-items/{id}/agent-session` | `delegateAndStart` → `delegate_work_item` → 不交E模型 | 原H/C委派及目标资格；非E Team管理；`apps/api/src/agent/commands.ts:677` |
 | `settleWorkbenchAttempt` POST `/api/v1/workbench/runner-attempts/{id}/settle` | `RunnerApi.request` → `adapter内部` → executeTurn | exact Session/attempt/fence/Runner service；保ADR0068外层回执重放，不泛化到complete/stopAck；`apps/api/src/workbench-runner.ts:301` |
+| `listWorkbenchRunnerAssignments` GET `/api/v1/workbench/runner/assignments` | `RunnerApi.request` → `adapter内部` → main→monitor或execute | 新增executionWaits默认false；只有准确来源/live opt-in得到monitor，禁止ensureExecuting翻等待态；`apps/api/src/workbench-runner.ts:88` |
+| `listAgentWorkbenchTurns` GET `/api/v1/agent-sessions/{id}/workbench-turns` | `RunnerApi.request` → `adapter内部` → main | 新增executionWaits；pending wait未消费不返回可claim；续Turn要求opt-in/实际来源/合法触发；`apps/api/src/workbench-runner.ts:112` |
+| `claimWorkbenchTurn` POST `/api/v1/workbench/turns/{id}/claim` | `RunnerApi.request` → `adapter内部` → executeTurn | executionWaits默认false，持久到Attempt；live/state/来源/trigger/predecessor/Conversation单执行；唯一新Attempt，不复用旧等待Attempt；`apps/api/src/workbench-runner.ts:128` |
+| `getWorkbenchAttemptCredential` GET `/api/v1/workbench/runner-attempts/{id}/credential` | `RunnerApi.request` → `adapter内部` → promptFor | 新受校验continuation引用与真实触发context；保持秘密no-store和模型权限，不伪造Human输入；`apps/api/src/workbench-runner.ts:176` |
+| `startWorkbenchAttempt` POST `/api/v1/workbench/runner-attempts/{id}/start` | `RunnerApi.request` → `adapter内部` → executeTurn | fresh executing/live/来源/opt-in/合法触发/current fence；批准与pause/Stop重验，不自动resume；`apps/api/src/workbench-runner.ts:222` |
+| `getWorkbenchAttemptStatus` GET `/api/v1/workbench/runner-attempts/{id}/status` | `RunnerApi.request` → `adapter内部` → runPi poll | 原状态读取，Runner区分waitIntent与外部控制；晚到poll/steering先闭门，不能RUNNER_ABORTED跳等待settle；`apps/api/src/workbench-runner.ts:254` |
+| `queueWorkbenchTurn` POST `/api/v1/workbench/conversations/{id}/turns` | `Human原REST` → `不提供` → 真实输入触发 | 仅原合法Human真实输入；记录messageId/sequence，pending wait admission阻止抢先claim；`apps/api/src/workbench-conversations.ts:327` |
+| `followupWorkbenchTurn` POST `/api/v1/workbench/conversations/{id}/turns/{turnId}/followup` | `Human原REST` → `不提供` → 真实输入触发 | 原终态前提与Human权限；Worker优先合法最早queuedTurn，不伪造重复Human输入；`apps/api/src/workbench-conversations.ts:508` |
+| `promptAgentSession` POST `/api/v1/agent-sessions/{id}/prompt` | `Human原REST` → `不提供` → 真实输入触发 | 原Human合法准确Session输入；INSERT RETURNING promptId附既有事件，原等待input自动executing后仍须Worker消费wait才claim；`apps/api/src/agent/commands.ts:2843` |
 | `getAgentSessionExecutionResult` GET `/api/v1/agent-sessions/{id}/execution-result`（新增提案） | `getSessionExecutionResult` → `get_session_execution_result` → 受控finally | [准确输入/DTO/live归属/零写合同](security-contract.md)，普通E拒绝；Proposed |
 
 ## 共同live门禁与逐操作反例

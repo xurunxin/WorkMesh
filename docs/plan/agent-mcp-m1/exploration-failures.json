@@ -1,0 +1,18 @@
+{
+  "kind": "本轮只读源码探索失败，非产品测试",
+  "failures": [
+    {
+      "command": "Get-Content packages/db/migrations/v1/0006_pi_workbench.sql -Encoding UTF8",
+      "exitCode": 1,
+      "output": "Get-Content: 找不到路径 packages/db/migrations/v1/0006_pi_workbench.sql，因为该路径不存在。",
+      "rawOutputPreservation": "完整工具输出留于本轮对话；此字段为准确摘要，未冒原始stdout字节"
+    },
+    {
+      "command": "Get-Content packages/db/migrations/v1/0008_pi_workbench.sql -Encoding UTF8",
+      "exitCode": 1,
+      "output": "Get-Content: 找不到路径 packages/db/migrations/v1/0008_pi_workbench.sql，因为该路径不存在。",
+      "rawOutputPreservation": "完整工具输出留于本轮对话；此字段为准确摘要，未冒原始stdout字节"
+    }
+  ],
+  "recovery": "rg --files列出准确路径后读取0010_workbench_conversations.sql和0012_workbench_turn_lineage_and_tools.sql；均实际exit 0；完整Git原文进入source ZIP"
+}
