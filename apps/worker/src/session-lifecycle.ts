@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { appendEvent, withTx, type Db } from '@workmesh/db'
+import { appendEvent, withTx, type Db, executionWaitSchemaAvailable, reconcileWorkbenchExecutionWait } from '@workmesh/db'
 
 type Transaction = Pick<Db, 'query'>
 
@@ -42,6 +42,7 @@ export type SessionLifecycleWorker = {
   reconcileApprovalAutonomy: (limit?: number) => Promise<number>
   expireLeases: (limit?: number) => Promise<number>
   reconcileWorkbenchAttempts: (limit?: number) => Promise<number>
+  reconcileWorkbenchWaits: (limit?: number) => Promise<number>
   rebuildExecutorProjections: (workspaceId?: string, workItemId?: string) => Promise<number>
   cleanupAuthIdempotency: (limit?: number) => Promise<{ wiped: number; deleted: number }>
   tick: () => Promise<void>
@@ -777,6 +778,18 @@ export function createSessionLifecycleWorker({
     return changed
   }
 
+  const reconcileWorkbenchWaits = async (limit = 100): Promise<number> => {
+    if (!await executionWaitSchemaAvailable(db)) return 0
+    const pending = await db.query<{ id: string; workspace_id: string }>(
+      "SELECT id,workspace_id FROM workbench_execution_waits WHERE status='pending' ORDER BY created_at,id LIMIT $1",
+      [Math.max(1, Math.min(100, limit))])
+    let changed = 0
+    for (const candidate of pending.rows) changed += await withTx(db, async tx =>
+      reconcileWorkbenchExecutionWait(tx, { workspaceId: candidate.workspace_id, waitId: candidate.id,
+        actorId: await systemActorId(tx, candidate.workspace_id), correlationId: `${workerId}:wait:${candidate.id}` }))
+    return changed
+  }
+
   const tick = async (): Promise<void> => {
     await expireAckDeadlines()
     await reconcileHeartbeatLiveness()
@@ -785,8 +798,9 @@ export function createSessionLifecycleWorker({
     await reconcileApprovalAutonomy()
     await expireLeases()
     await reconcileWorkbenchAttempts()
+    await reconcileWorkbenchWaits()
     await cleanupAuthIdempotency()
   }
 
-  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, reconcileApprovalAutonomy, expireLeases, reconcileWorkbenchAttempts, rebuildExecutorProjections, cleanupAuthIdempotency, tick }
+  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, reconcileApprovalAutonomy, expireLeases, reconcileWorkbenchAttempts, reconcileWorkbenchWaits, rebuildExecutorProjections, cleanupAuthIdempotency, tick }
 }

@@ -17,6 +17,7 @@ import {
 export * from './route-policy.js'
 export * from './agent-discovery.js'
 export * from './pi-workbench-contracts.js'
+export * from './execution-contracts.js'
 export * from './model-presets.js'
 export * from './configuration-readiness-contracts.js'
 export { workmeshSkillManifest } from './workmesh-skill-manifest.js'
@@ -1684,6 +1685,7 @@ export const stage2RouteManifest = [
   { method: 'POST', path: '/api/v1/decisions/{id}/finalize', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/decisions/{id}/supersede', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/decisions/{id}/reverse', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/agent-sessions/{id}/execution-result', authenticated: true },
   { method: 'GET', path: '/api/v1/leases', authenticated: true },
   { method: 'POST', path: '/api/v1/leases', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/leases/{id}/heartbeat', authenticated: true, mutation: true },
@@ -2529,7 +2531,7 @@ const clientProfileFeatureSchema = z.object({
 const clientProfileOperationSchema = z.object({
   operationId: z.string().min(1),
   policyId: z.string().min(1),
-  authentication: z.enum(['agent_session', 'human_or_agent_session', 'human_or_coordination_connection', 'coordination_connection', 'installation_target']),
+  authentication: z.enum(['agent_session', 'human_or_agent_session', 'human_or_coordination_connection', 'coordination_connection', 'installation_target', 'human_or_installation_target']),
   transports: z.object({
     rest: z.object({ method: z.string().min(1), path: z.string().min(1) }).strict(),
     sse: z.boolean(),
@@ -2628,7 +2630,7 @@ export function createAgentCapabilityManifest(input: AgentCapabilityManifestInpu
       return {
         operationId: policy.operationId,
         policyId: policy.policyId,
-        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'human_or_coordination_connection' | 'coordination_connection' | 'installation_target',
+        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'human_or_coordination_connection' | 'coordination_connection' | 'installation_target' | 'human_or_installation_target',
         transports: {
           rest: policy.bindings.rest,
           sse: policy.bindings.sse,

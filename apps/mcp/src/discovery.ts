@@ -6,6 +6,7 @@ import { ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js'
 import { WorkMeshClient, WorkMeshSdkError } from '@workmesh/agent-sdk'
 import {
   agentDiscoveryBindings, projectAdapterDiscovery,
+  executionStateSchema, recoveryConditionSchema,
   type AdapterDiscovery, type QualifiedAgentCapabilityManifest,
 } from '@workmesh/contracts'
 
@@ -90,6 +91,11 @@ export function installDiscovery(server: McpServer, options: {
           throw new WorkMeshSdkError('This action is reserved for Humans', { code: 'FORBIDDEN', details: { reasons: ['ROLE_REQUIRED'] } })
         if (rule?.execution === 'adapter_internal') return await handler(request, extra)
         const configuration = options.client.discoveryCredentialConfiguration
+        if (bindingId === 'tool:stop_ack') {
+          // Stop 不准刷新已停止的 E；仅使用该 client 已持有的原凭据。
+          if (!configuration.session) throw new WorkMeshSdkError('Stop acknowledgement requires the original execution token', { code: 'AGENT_SESSION_TOKEN_REQUIRED' })
+          return await handler(request, extra)
+        }
         if (rule?.identityBinding === 'installation_target') {
           // 安装身份没有 Session/Delegation/manifest；准确 handoff 目标仍由 REST 核验。
           const installation = projectAdapterDiscovery({ kind: 'installation_target', session: null, delegation: null, manifest: null, qualification: null }, {
@@ -145,6 +151,15 @@ export function installDiscovery(server: McpServer, options: {
 
 export function registerResourceReadTools(server: McpServer, client: WorkMeshClient): void {
   const id = z.string().uuid()
+  const page = { cursor: z.string().min(1).max(8192).optional(), limit: z.number().int().min(1).max(200).optional() }
+  server.registerTool('list_agent_sessions', { description: '按当前准确身份读取 Session；过滤条件不扩展授权范围。', inputSchema: { ...page, teamId: id.optional(), workItemId: id.optional(), agentId: id.optional(), principalHumanActorId: id.optional(), state: executionStateSchema.optional() } }, async ({ cursor, limit, ...filters }) => result(await client.listSessions(filters, { cursor, limit })))
+  server.registerTool('list_session_plan_versions', { description: '分页读取准确 Session 的不可变 Plan 版本。', inputSchema: { ...page, sessionId: id } }, async ({ sessionId, ...options }) => result(await client.listPlanVersions(sessionId, options)))
+  server.registerTool('list_approvals', { description: '分页读取当前身份授权的批准，不代替 Human 批准决定。', inputSchema: { ...page, sessionId: id.optional(), status: z.string().optional() } }, async ({ cursor, limit, ...filters }) => result(await client.listApprovals(filters, { cursor, limit })))
+  server.registerTool('get_approval', { description: '读取准确批准及原 action_payload_hash。', inputSchema: { approvalId: id } }, async input => result(await client.getApproval(input.approvalId)))
+  server.registerTool('list_leases', { description: '分页读取授权 Lease 和准确 version；Lease 不授予权限。', inputSchema: page }, async input => result(await client.listLeases(input)))
+  server.registerTool('list_recovery_items', { description: '读取授权恢复投影；不执行恢复命令。', inputSchema: { ...page, limit: z.number().int().min(1).max(100).optional(), lifecycle: z.enum(['active', 'resolved']).optional(), condition: recoveryConditionSchema.optional(), severity: z.enum(['info', 'low', 'medium', 'high', 'critical']).optional(), projectId: id.optional(), workItemId: id.optional(), sessionId: id.optional() } }, async ({ cursor, limit, ...filters }) => result(await client.listRecoveryItems(filters, { cursor, limit })))
+  server.registerTool('get_recovery_item', { description: '读取不透明复合 ID 指定的恢复投影。', inputSchema: { recoveryId: z.string().regex(/^v1:[a-z_]+:[0-9a-f-]{36}$/) } }, async input => result(await client.getRecoveryItem(input.recoveryId)))
+  server.registerTool('get_session_execution_result', { description: '以显式安装用途凭据只读确认原 complete/stopAck；不刷新 Token，不恢复终态写入。', inputSchema: { sessionId: id, action: z.enum(['complete', 'stop_ack']), operationKey: z.string().min(1).max(200) } }, async ({ sessionId, ...input }) => result(await client.getSessionExecutionResult(sessionId, input)))
   server.registerTool('get_server_info', { description: '读取安全发布元数据。返回：OPENAPI getServerInfo。', inputSchema: {} }, async () => result(await client.getServerInfo()))
   server.registerTool('get_server_features', { description: '读取认证部署feature。返回：OPENAPI getDeploymentFeatures。', inputSchema: {} }, async () => result(await client.getFeatures()))
   server.registerTool('get_agent_capabilities', { description: '读取原始manifest，资格和adapter名单请用get_agent_discovery。', inputSchema: {} }, async () => result(await client.getAgentCapabilities()))

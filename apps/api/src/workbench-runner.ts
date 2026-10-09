@@ -2,8 +2,10 @@ import { createHash, randomBytes, timingSafeEqual } from 'node:crypto'
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { Pool, PoolClient } from 'pg'
 import { z } from 'zod'
-import { completeAgentSessionInputSchema, workbenchRunnerCredentialSchema, workbenchRunnerSettleInputSchema, workbenchUsageSchema } from '@workmesh/contracts'
-import { appendEvent, withTx } from '@workmesh/db'
+import { completeAgentSessionInputSchema, workbenchRunnerCredentialSchema, workbenchRunnerSettleInputSchema, workbenchUsageSchema,
+  workbenchExecutionWaitOptInSchema, workbenchExecutionWaitQuerySchema } from '@workmesh/contracts'
+import { appendEvent, withTx, executionWaitSchemaAvailable, assertWorkbenchWaitAdmission,
+  continuationForWait, createWorkbenchExecutionWait, executionWaitsEnabled } from '@workmesh/db'
 import { DomainError } from '@workmesh/domain'
 import {
   deriveTurnTelemetry, emitTurnTelemetry, logger,
@@ -11,6 +13,7 @@ import {
 } from '@workmesh/observability'
 import { agentMutate, finishSessionInTransaction } from './agent/commands.js'
 import { assertAgentWrite, loadAgentSessionForMutation } from './agent/guard.js'
+import { lockExecutionOriginAuthority } from './agent/execution-origin.js'
 import type { ApiActor } from './agent/types.js'
 import type { CommandContext } from './commands.js'
 
@@ -33,6 +36,7 @@ type AttemptRow = {
   id: string; workspace_id: string; conversation_id: string; turn_id: string
   agent_session_id: string; attempt_no: number; fence_token: string; status: string
   llm_connection_id: string | null; llm_model_id: string | null
+  execution_waits_enabled?: boolean
 }
 const actor = (request: FastifyRequest): ApiActor => request.actor as ApiActor
 const id = (request: FastifyRequest): string => z.string().uuid().parse((request.params as { id?: unknown }).id)
@@ -88,30 +92,65 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
   app.get('/api/v1/workbench/runner/assignments', async request => {
     serviceToken(request, h)
     const current = actor(request)
+    const { executionWaits } = workbenchExecutionWaitQuerySchema.parse(request.query)
     if (current.kind !== 'agent' || current.authentication !== 'installation_target' || !current.credentialHash)
       throw new DomainError('FORBIDDEN', 'Active Agent installation credential required')
-    const result = await h.db.query<{ session_id: string; state: string }>(
+    const hasWaits = await executionWaitSchemaAvailable(h.db)
+    const result = await h.db.query<{ session_id: string; state: string; wait_id?: string | null }>(
       `SELECT session.id AS session_id,session.state
+       ${hasWaits ? ',wait.id AS wait_id' : ''}
        FROM agent_installation_tokens installation
        JOIN agent_definitions definition ON definition.id=installation.agent_id
        JOIN agent_sessions session ON session.agent_id=definition.id
        JOIN delegations delegation ON delegation.id=session.delegation_id
        JOIN agent_team_access grant_row ON grant_row.workspace_id=session.workspace_id
          AND grant_row.agent_id=session.agent_id AND grant_row.team_id=session.team_id
+       ${hasWaits ? `LEFT JOIN workbench_execution_waits wait ON wait.workspace_id=session.workspace_id
+         AND wait.agent_session_id=session.id AND wait.status='pending'` : ''}
        WHERE installation.token_hash=$1 AND installation.revoked_at IS NULL
          AND (installation.expires_at IS NULL OR installation.expires_at>now())
          AND definition.workspace_id=$2 AND definition.actor_id=$3 AND definition.is_active
-         AND session.workspace_id=$2 AND session.state IN ('queued','acknowledged','executing')
+         AND session.workspace_id=$2
+         ${hasWaits ? `AND ((wait.id IS NULL AND session.state IN ('queued','acknowledged','executing'))
+           OR ($4 AND wait.id IS NOT NULL AND session.state IN ('awaiting_approval','awaiting_input','blocked','paused','executing')
+             AND wait.source_agent_actor_id=definition.actor_id AND installation.origin_kind=wait.source_kind
+             AND delegation.capability_scope->'teamIds' ? session.team_id::text
+             AND (session.work_item_id IS NULL OR (delegation.capability_scope->'workItemIds' ? session.work_item_id::text
+               AND EXISTS(SELECT 1 FROM work_items WHERE id=session.work_item_id AND deleted_at IS NULL)))
+             AND (session.project_id IS NULL OR (delegation.capability_scope->'projectIds' ? session.project_id::text
+               AND EXISTS(SELECT 1 FROM projects WHERE id=session.project_id AND deleted_at IS NULL)))
+             AND 'work:write'=ANY(delegation.permissions_snapshot) AND 'work:write'=ANY(definition.approved_capabilities)
+             AND 'work:write'=ANY(grant_row.approved_capabilities)
+             AND EXISTS(SELECT 1 FROM actors principal WHERE principal.id=delegation.principal_human_actor_id
+               AND principal.workspace_id=session.workspace_id AND principal.kind='human' AND principal.is_active
+               AND (principal.workspace_role='admin' OR EXISTS(SELECT 1 FROM memberships WHERE workspace_id=session.workspace_id
+                 AND team_id=session.team_id AND actor_id=principal.id)))
+             AND ((wait.source_kind='native' AND installation.id=wait.source_installation_token_id)
+               OR (wait.source_kind='connection' AND installation.origin_connection_id=wait.source_connection_id
+                 AND EXISTS(SELECT 1 FROM agent_connections connection JOIN agent_connection_credentials credential
+                   ON credential.connection_id=connection.id AND credential.token_hash=installation.token_hash
+                   JOIN delegations coordinator ON coordinator.id=connection.delegation_id AND coordinator.status='active'
+                   WHERE connection.id=wait.source_connection_id AND connection.workspace_id=session.workspace_id
+                     AND connection.team_id=session.team_id AND connection.agent_id=session.agent_id
+                     AND connection.agent_actor_id=session.agent_actor_id
+                     AND connection.principal_human_actor_id=delegation.principal_human_actor_id
+                     AND connection.status IN ('active','rotating') AND 'work:write'=ANY(connection.granted_capabilities)
+                     AND 'work:write'=ANY(coordinator.permissions_snapshot)
+                     AND coordinator.capability_scope->'teamIds' ? session.team_id::text
+                     AND (credential.status='active' OR (credential.status='overlap' AND credential.overlap_until>clock_timestamp())))))))`
+           : "AND session.state IN ('queued','acknowledged','executing')"}
          AND delegation.status='active' AND grant_row.revoked_at IS NULL
        ORDER BY CASE session.state WHEN 'queued' THEN 0 WHEN 'acknowledged' THEN 1 ELSE 2 END,
          session.created_at,session.id LIMIT 100`,
-      [current.credentialHash, current.workspaceId, current.id])
-    return { items: result.rows.map(row => ({ sessionId: row.session_id, state: row.state })) }
+      [current.credentialHash, current.workspaceId, current.id, ...(hasWaits ? [executionWaits] : [])])
+    return { items: result.rows.map(row => ({ sessionId: row.session_id, state: row.state,
+      ...(executionWaits ? { purpose: row.wait_id ? 'monitor' : 'execute', ...(row.wait_id ? { waitId: row.wait_id } : {}) } : {}) })) }
   })
 
   app.get('/api/v1/agent-sessions/:id/workbench-turns', async request => {
     serviceToken(request, h)
     const current = actor(request); const sessionId = exactAgentSession(current, id(request))
+    const { executionWaits } = workbenchExecutionWaitQuerySchema.parse(request.query)
     const result = await h.db.query<{ id: string; conversation_id: string }>(
       `SELECT turn.id,turn.conversation_id FROM workbench_turns turn
        JOIN workbench_conversations conversation ON conversation.id=turn.conversation_id
@@ -122,15 +161,33 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
          AND delegation.status='active'
        ORDER BY turn.queued_at,turn.id LIMIT 25`,
       [current.workspaceId, sessionId])
-    return { items: result.rows.map(row => ({ turnId: row.id, conversationId: row.conversation_id })) }
+    const items: { turnId: string; conversationId: string }[] = []
+    for (const row of result.rows) {
+      try {
+        await withTx(h.db, async tx => {
+          await lockExecutionOriginAuthority(tx, current, sessionId)
+          const session = await loadAgentSessionForMutation(tx, current, sessionId)
+          assertAgentWrite({ actor: current, session, sessionId, capability: 'work:write', operation: 'activity', idempotencyKey: 'runner-turn-discovery' })
+          return assertWorkbenchWaitAdmission(tx, { workspaceId: current.workspaceId,
+            sessionId, turnId: row.id, actorId: current.id, credentialHash: current.credentialHash!, optIn: executionWaits })
+        })
+        items.push({ turnId: row.id, conversationId: row.conversation_id })
+      } catch (error) {
+        if (!(error instanceof DomainError)) throw error
+      }
+    }
+    return { items }
   })
 
   app.post('/api/v1/workbench/turns/:id/claim', async request => {
     serviceToken(request, h)
     const current = actor(request); const sessionId = exactAgentSession(current)
     const targetId = id(request)
-    const context = h.meta(request, {}, { id: targetId })
+    const body = workbenchExecutionWaitOptInSchema.parse(request.body ?? {})
+    // The old empty claim body retains its original idempotency fingerprint.
+    const context = h.meta(request, request.body ?? {}, { id: targetId })
     return agentMutate(h.db, context, async tx => {
+      await lockExecutionOriginAuthority(tx, current, sessionId)
       const session = await loadAgentSessionForMutation(tx, current, sessionId)
       assertAgentWrite({ actor: current, session, sessionId, capability: 'work:write',
         operation: 'activity', idempotencyKey: context.idempotencyKey })
@@ -144,6 +201,9 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
       if (turn.agent_session_id !== sessionId || turn.conversation_status !== 'active')
         throw new DomainError('RESOURCE_SCOPE_DENIED', 'Turn is outside the active Agent Session')
       if (turn.status !== 'queued') throw new DomainError('INVALID_STATE', 'Turn is no longer queued')
+      await assertWorkbenchWaitAdmission(tx, { workspaceId: current.workspaceId, sessionId, turnId: turn.id,
+        actorId: current.id, credentialHash: current.credentialHash!, optIn: body.executionWaits })
+      const hasWaits = await executionWaitSchemaAvailable(tx)
       const predecessor = await tx.query(
         `SELECT 1 FROM workbench_turns WHERE conversation_id=$1 AND sequence<$2
           AND status NOT IN ('settled','failed','canceled','stopped') LIMIT 1`,
@@ -157,10 +217,11 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
       const attempt = one((await tx.query<AttemptRow>(
         `INSERT INTO workbench_runner_attempts
           (workspace_id,conversation_id,turn_id,agent_session_id,attempt_no,fence_token,
-           status,llm_connection_id,llm_model_id,external_effects_reconciled)
-         VALUES($1,$2,$3,$4,1,$5,'preparing',$6,$7,true) RETURNING *`,
+           status,llm_connection_id,llm_model_id,external_effects_reconciled${hasWaits ? ',execution_waits_enabled' : ''})
+         VALUES($1,$2,$3,$4,1,$5,'preparing',$6,$7,true${hasWaits ? ',$8' : ''}) RETURNING *`,
         [current.workspaceId, turn.conversation_id, turn.id, sessionId,
-          randomBytes(32).toString('base64url'), turn.llm_connection_id, turn.llm_model_id])).rows, 'Runner attempt')
+          randomBytes(32).toString('base64url'), turn.llm_connection_id, turn.llm_model_id,
+          ...(hasWaits ? [body.executionWaits] : [])])).rows, 'Runner attempt')
       await tx.query(`UPDATE workbench_turns SET status='dispatching',
         current_runner_attempt_id=$3,dispatch_requested_at=now(),updated_at=now()
         WHERE workspace_id=$1 AND id=$2`, [current.workspaceId, turn.id, attempt.id])
@@ -180,6 +241,7 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
     const key = process.env.WORKMESH_MASTER_KEY
     if (!key) throw new DomainError('INTERNAL_ERROR', 'Model credential decryption is unavailable')
     const result = await withTx(h.db, async tx => {
+      await lockExecutionOriginAuthority(tx, current, sessionId)
       const session = await loadAgentSessionForMutation(tx, current, sessionId)
       if (session.state !== 'executing' || session.delegation_status !== 'active')
         throw new DomainError('SESSION_STOPPED', 'Agent Session is not executable')
@@ -188,6 +250,9 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
       if (attempt.agent_session_id !== sessionId || turn.current_runner_attempt_id !== attempt.id
         || turn.status !== 'dispatching' || attempt.status !== 'preparing')
         throw new DomainError('RUNNER_FENCE_STALE', 'Runner attempt is no longer current')
+      const continuation = await assertWorkbenchWaitAdmission(tx, { workspaceId: current.workspaceId,
+        sessionId, turnId: turn.id, actorId: current.id, credentialHash: current.credentialHash!,
+        optIn: attempt.execution_waits_enabled === true })
       const model = one((await tx.query<{
         base_url: string; api_type: string; api_key: string; external_model_id: string
         display_name: string; capabilities: unknown; connection_revision: number; model_revision: number
@@ -213,6 +278,8 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
         modelId: model.external_model_id, modelName: model.display_name,
         capabilities: model.capabilities, connectionRevision: model.connection_revision,
         modelRevision: model.model_revision, messages: messages.rows,
+        ...(attempt.execution_waits_enabled === true ? { executionWaitsEnabled: executionWaitsEnabled() } : {}),
+        ...(continuation ? { continuation: continuationForWait(continuation) } : {}),
       }
     })
     reply.header('Cache-Control', 'no-store')
@@ -226,6 +293,7 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
     const body = z.object({ fenceToken: z.string().min(16).max(128) }).strict().parse(request.body)
     const context = h.meta(request, { fenceFingerprint: fenceFingerprint(body.fenceToken) }, { id: attemptId })
     return agentMutate(h.db, context, async tx => {
+      await lockExecutionOriginAuthority(tx, current, sessionId)
       const session = await loadAgentSessionForMutation(tx, current, sessionId)
       assertAgentWrite({ actor: current, session, sessionId, capability: 'work:write',
         operation: 'activity', idempotencyKey: context.idempotencyKey })
@@ -239,6 +307,9 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
         || !sameFence(attempt.fence_token, body.fenceToken) || attempt.status !== 'preparing'
         || turn.status !== 'dispatching')
         throw new DomainError('RUNNER_FENCE_STALE', 'Runner attempt is no longer current')
+      await assertWorkbenchWaitAdmission(tx, { workspaceId: current.workspaceId,
+        sessionId, turnId: turn.id, actorId: current.id, credentialHash: current.credentialHash!,
+        optIn: attempt.execution_waits_enabled === true })
       await tx.query(`UPDATE workbench_runner_attempts SET status='running',started_at=now(),updated_at=now()
         WHERE workspace_id=$1 AND id=$2`, [current.workspaceId, attempt.id])
       await tx.query(`UPDATE workbench_turns SET status='running',started_at=now(),updated_at=now()
@@ -306,6 +377,7 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
     let telemetrySample: WorkbenchTurnTelemetry | null = null
     let telemetryLineage: { attemptNo: number; sessionId: string | null; correlationId: string | null } | null = null
     const result = await agentMutate(h.db, context, async tx => {
+      await lockExecutionOriginAuthority(tx, current, sessionId)
       const session = await loadAgentSessionForMutation(tx, current, sessionId)
       assertAgentWrite({ actor: current, session, sessionId, capability: 'work:write',
         operation: 'activity', idempotencyKey: context.idempotencyKey })
@@ -322,8 +394,10 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
       const turnStatus = outcome === 'settled' ? 'settled' : outcome === 'aborted' ? 'canceled' : 'failed'
       const usage = body.settlement.usage ? workbenchUsageSchema.parse(body.settlement.usage) : null
       await tx.query(`UPDATE workbench_runner_attempts SET status=$3,usage=$4,error_code=$5,
+        external_effects_reconciled=$6,
         settled_at=now(),updated_at=now() WHERE workspace_id=$1 AND id=$2`,
-      [current.workspaceId, attempt.id, outcome, usage, body.settlement.errorCode ?? null])
+      [current.workspaceId, attempt.id, outcome, usage, body.settlement.errorCode ?? null,
+        body.settlement.externalEffectsReconciled])
       // The runner summarizes its tool usage at settlement (per-tool counts over the
       // sanitized input shape). The ledger is append-only audit material: raw
       // arguments stay with the runner and are reducible to a digest, so nothing here
@@ -376,6 +450,11 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
           { ...context, idempotencyKey: body.sessionCompletion.operationKey },
           sessionId, body.sessionCompletion.ifMatch, completion)
       }
+      const executionWait = body.sessionWait ? await createWorkbenchExecutionWait(tx, {
+        workspaceId: current.workspaceId, sessionId, actorId: current.id, credentialHash: current.credentialHash!,
+        turnId: turn.id, attemptId: attempt.id, conversationId: turn.conversation_id,
+        correlationId: context.correlationId, idempotencyKey: context.idempotencyKey, wait: body.sessionWait,
+      }) : undefined
       // W17 telemetry: capture the durable timestamps inside the transaction, but
       // emit only after it commits so a failing log sink can never change the
       // settlement outcome (observability must not affect availability).
@@ -394,7 +473,8 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
       })
       telemetryLineage = { attemptNo: attempt.attempt_no, sessionId: attempt.agent_session_id, correlationId: context.correlationId }
       return { runnerAttemptId: attempt.id, turnId: turn.id, status: turnStatus,
-        sessionCompletion: body.sessionCompletion ? 'completed' : 'not_requested' }
+        sessionCompletion: body.sessionCompletion ? 'completed' : 'not_requested',
+        ...(executionWait ? { executionWait } : {}) }
     })
     if (telemetrySample) {
       try {

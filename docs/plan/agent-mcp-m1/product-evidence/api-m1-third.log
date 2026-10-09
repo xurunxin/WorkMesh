@@ -1,0 +1,65 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/api
+
+ ❯ integration/execution-result.integration.test.ts (3 tests | 1 failed) 2165ms
+   ✓ exact execution confirmation > confirms a committed direct completion after lost response; terminal E and wrong origin stay closed, without business writes  350ms
+   × exact execution confirmation > confirms only the exact Stop cleanup, and rechecks live authority after token retention changes 252ms
+     → new row for relation "api_idempotency_keys" violates check constraint "api_idempotency_expiry_order"
+   ✓ exact execution confirmation > rolls back state and all execution facts when provenance persistence fails 213ms
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_approval publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"453fd209-ff84-4292-9cb8-8913a9cde429","conversationId":"5a19e18e-43b8-448c-aa30-42d6dd141505","attemptNo":1,"sessionId":"d4710715-bc72-46b0-a564-4b6967cd1fc1","correlationId":"0d137795-bc8d-4172-8768-d983818ebbda","status":"settled","outcome":"settled","queueWaitMs":137,"dispatchLagMs":48,"runDurationMs":88,"totalDurationMs":225,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_approval publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"e2e1339d-cf2b-4bc4-9958-765d7022f972","conversationId":"5a19e18e-43b8-448c-aa30-42d6dd141505","attemptNo":1,"sessionId":"d4710715-bc72-46b0-a564-4b6967cd1fc1","correlationId":"ddf4b472-0822-4afd-9630-27745d60bc66","status":"settled","outcome":"settled","queueWaitMs":193,"dispatchLagMs":128,"runDurationMs":35,"totalDurationMs":228,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_input publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"040bbeaf-5762-4984-92de-53d723205303","conversationId":"c0d11f5f-b096-496f-a767-ade371bd8f6c","attemptNo":1,"sessionId":"a255f6a0-dcf2-4943-adfc-b072631acb9a","correlationId":"f5a623aa-e92a-409b-872a-3eab75b508ab","status":"settled","outcome":"settled","queueWaitMs":67,"dispatchLagMs":20,"runDurationMs":27,"totalDurationMs":94,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles awaiting_input publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"550bc222-8d4d-466b-b3f8-1b4a94411023","conversationId":"c0d11f5f-b096-496f-a767-ade371bd8f6c","attemptNo":1,"sessionId":"a255f6a0-dcf2-4943-adfc-b072631acb9a","correlationId":"223eb15f-37c4-4117-9c36-1d8fbbc0c902","status":"settled","outcome":"settled","queueWaitMs":138,"dispatchLagMs":72,"runDurationMs":43,"totalDurationMs":181,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles blocked publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"5daca24a-0dd1-407b-bf75-9c3efe0e3036","conversationId":"2a286d90-b7ad-4f8e-8a41-f48b2e1899f9","attemptNo":1,"sessionId":"1984d834-84db-48c2-90ab-36a803685536","correlationId":"b58b5a9d-787f-443b-a28e-563a8c3cb258","status":"settled","outcome":"settled","queueWaitMs":68,"dispatchLagMs":20,"runDurationMs":29,"totalDurationMs":97,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > settles blocked publicly and resumes exactly once through live admission
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"350ac810-7881-46e4-bd0a-fd78b2f7f33b","conversationId":"2a286d90-b7ad-4f8e-8a41-f48b2e1899f9","attemptNo":1,"sessionId":"1984d834-84db-48c2-90ab-36a803685536","correlationId":"126b8bc5-2b36-4199-bd76-8c306829412c","status":"settled","outcome":"settled","queueWaitMs":152,"dispatchLagMs":91,"runDurationMs":36,"totalDurationMs":188,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > keeps pause ahead of a real prompt and only resumes after the Human control command
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"277f0f8a-6bcf-46eb-8eb2-a0d1a54cebcc","conversationId":"351e73c0-858c-4e4a-9460-52abedb5286a","attemptNo":1,"sessionId":"88307e8f-0d6d-473a-93f1-7f0fb0627833","correlationId":"bd12f2aa-f6d2-4e08-b507-fdce971dfbab","status":"settled","outcome":"settled","queueWaitMs":65,"dispatchLagMs":20,"runDurationMs":27,"totalDurationMs":92,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > keeps stop ahead of a matching input trigger
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"d2151f09-3802-4cd2-83ae-7c75ce888163","conversationId":"7484ac1a-3168-4fb5-80ed-871a8f33f80a","attemptNo":1,"sessionId":"45b1a468-e757-40a1-8b11-c74333c3b445","correlationId":"03057bad-2899-4117-bf85-88e42b035453","status":"settled","outcome":"settled","queueWaitMs":61,"dispatchLagMs":18,"runDurationMs":27,"totalDurationMs":88,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > keeps revoke ahead of a matching input trigger
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"313135ab-3efa-4471-8a63-55c95914e778","conversationId":"ea360816-628c-4b03-862e-0d0c1ac81031","attemptNo":1,"sessionId":"07fe3304-287e-4fec-aad4-2dd12dadd5a0","correlationId":"b88e10c3-3f82-4cd1-99e4-cb265f99e858","status":"settled","outcome":"settled","queueWaitMs":65,"dispatchLagMs":19,"runDurationMs":27,"totalDurationMs":92,"totalTokens":null,"errorCode":null}
+
+stdout | integration/execution-waits.integration.test.ts > persisted execution wait and Worker continuation > rejects another Session prompt, then accepts only the exact target prompt
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"23f6807a-e5c4-4685-84f6-8f2dbe43fc99","conversationId":"1719be68-cbe0-47c3-bd99-e62546a8763b","attemptNo":1,"sessionId":"330ffe4d-43da-4479-8ccc-1eca85425397","correlationId":"c8c35acf-50f2-4ff8-94f6-65334ab4ef5b","status":"settled","outcome":"settled","queueWaitMs":60,"dispatchLagMs":17,"runDurationMs":28,"totalDurationMs":88,"totalTokens":null,"errorCode":null}
+
+ ✓ integration/execution-waits.integration.test.ts (9 tests) 4916ms
+   ✓ persisted execution wait and Worker continuation > settles awaiting_approval publicly and resumes exactly once through live admission  1049ms
+   ✓ persisted execution wait and Worker continuation > settles awaiting_input publicly and resumes exactly once through live admission  583ms
+   ✓ persisted execution wait and Worker continuation > settles blocked publicly and resumes exactly once through live admission  569ms
+   ✓ persisted execution wait and Worker continuation > keeps pause ahead of a real prompt and only resumes after the Human control command  368ms
+   ✓ persisted execution wait and Worker continuation > keeps stop ahead of a matching input trigger  318ms
+   ✓ persisted execution wait and Worker continuation > rejects another Session prompt, then accepts only the exact target prompt  604ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/execution-result.integration.test.ts > exact execution confirmation > confirms only the exact Stop cleanup, and rechecks live authority after token retention changes
+error: new row for relation "api_idempotency_keys" violates check constraint "api_idempotency_expiry_order"
+ ❯ ../../node_modules/.pnpm/pg-pool@3.14.0_pg@8.22.0/node_modules/pg-pool/index.js:45:11
+ ❯ integration/execution-result.integration.test.ts:105:5
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 11 passed (12)
+   Start at  22:22:50
+   Duration  12.73s (transform 960ms, setup 0ms, collect 4.83s, tests 7.08s, environment 0ms, prepare 269ms)
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config ../../vitest.integration.config.ts integration/execution-result.integration.test.ts integration/execution-waits.integration.test.ts

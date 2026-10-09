@@ -1,0 +1,362 @@
+import type { PoolClient } from 'pg'
+import { assertAgentSessionTransition, assertRevision, DomainError } from '@workmesh/domain'
+import { lockAgentAuthorityPlan } from './agent-locks.js'
+import { appendEvent } from './events.js'
+
+type AgentSessionState = Parameters<typeof assertAgentSessionTransition>[0]
+
+export type ExecutionWait = {
+  id: string; workspace_id: string; agent_session_id: string; conversation_id: string
+  source_turn_id: string; source_attempt_id: string; requested_by_human_actor_id: string
+  source_agent_actor_id: string; source_kind: 'native' | 'connection'
+  source_installation_token_id: string; source_connection_id: string | null
+  wait_state: 'awaiting_approval' | 'awaiting_input' | 'blocked'; wait_revision: number
+  approval_id: string | null; approval_action_payload_hash: string | null
+  input_event_cursor: string | null; input_message_sequence: number | null
+  status: 'pending' | 'continued' | 'canceled'; continuation_turn_id: string | null
+  trigger_kind: 'approval' | 'prompt' | 'message' | null
+  trigger_approval_id: string | null; trigger_prompt_id: string | null; trigger_message_id: string | null
+}
+export const executionWaitsEnabled = (): boolean => process.env.WORKMESH_EXECUTION_WAITS_ENABLED === 'true'
+export async function executionWaitSchemaAvailable(tx: Pick<PoolClient, 'query'>): Promise<boolean> {
+  return (await tx.query<{ present: boolean }>(
+    "SELECT to_regclass('public.workbench_execution_waits') IS NOT NULL AS present")).rows[0]?.present === true
+}
+export async function executionOriginForToken(tx: PoolClient, input: {
+  workspaceId: string; sessionId: string; actorId: string; credentialHash: string
+}): Promise<{ kind: 'native' | 'connection'; installationId: string; connectionId: string | null }> {
+  const row = (await tx.query<{ origin_kind: 'native' | 'connection' | null; id: string; origin_connection_id: string | null }>(
+    `SELECT installation.id,installation.origin_kind,installation.origin_connection_id
+       FROM agent_session_tokens token JOIN agent_installation_tokens installation
+         ON installation.id=token.installation_token_id
+       JOIN agent_sessions session ON session.id=token.session_id AND session.agent_id=installation.agent_id
+       JOIN agent_definitions definition ON definition.id=session.agent_id AND definition.is_active
+       JOIN actors agent_actor ON agent_actor.id=session.agent_actor_id AND agent_actor.is_active
+       JOIN delegations delegation ON delegation.id=session.delegation_id AND delegation.status='active'
+       JOIN actors principal ON principal.id=delegation.principal_human_actor_id AND principal.kind='human' AND principal.is_active
+       JOIN agent_team_access grant_row ON grant_row.workspace_id=session.workspace_id AND grant_row.team_id=session.team_id
+         AND grant_row.agent_id=session.agent_id AND grant_row.revoked_at IS NULL
+       LEFT JOIN agent_connection_credentials credential ON credential.token_hash=installation.token_hash
+       LEFT JOIN agent_connections connection ON connection.id=credential.connection_id
+       LEFT JOIN delegations coordinator ON coordinator.id=connection.delegation_id
+       WHERE session.workspace_id=$1 AND session.id=$2 AND session.agent_actor_id=$3
+         AND token.token_hash=$4 AND token.revoked_at IS NULL AND token.exchanged_at IS NOT NULL
+         AND token.expires_at>clock_timestamp() AND installation.revoked_at IS NULL
+         AND (installation.expires_at IS NULL OR installation.expires_at>clock_timestamp())
+         AND 'work:write'=ANY(delegation.permissions_snapshot) AND 'work:write'=ANY(definition.approved_capabilities)
+         AND 'work:write'=ANY(grant_row.approved_capabilities)
+         AND (principal.workspace_role='admin' OR EXISTS(SELECT 1 FROM memberships
+           WHERE workspace_id=session.workspace_id AND team_id=session.team_id AND actor_id=principal.id))
+         AND ((installation.origin_kind='native' AND credential.id IS NULL AND installation.origin_connection_id IS NULL)
+           OR (installation.origin_kind='connection' AND connection.id=installation.origin_connection_id
+             AND connection.workspace_id=session.workspace_id AND connection.team_id=session.team_id
+             AND connection.agent_id=session.agent_id AND connection.agent_actor_id=session.agent_actor_id
+             AND connection.principal_human_actor_id=delegation.principal_human_actor_id
+             AND connection.status IN ('active','rotating')
+             AND (credential.status='active' OR (credential.status='overlap' AND credential.overlap_until>clock_timestamp()))
+             AND coordinator.workspace_id=session.workspace_id AND coordinator.agent_id=session.agent_id
+             AND coordinator.team_id=session.team_id AND coordinator.principal_human_actor_id=delegation.principal_human_actor_id
+             AND coordinator.status='active' AND 'work:write'=ANY(coordinator.permissions_snapshot)
+             AND coordinator.capability_scope->'teamIds' ? session.team_id::text
+             AND 'work:write'=ANY(connection.granted_capabilities)))`,
+    [input.workspaceId, input.sessionId, input.actorId, input.credentialHash])).rows
+  if (row.length !== 1 || !row[0]?.origin_kind)
+    throw new DomainError('FORBIDDEN', 'Execution origin cannot be proven')
+  return { kind: row[0].origin_kind, installationId: row[0].id, connectionId: row[0].origin_connection_id }
+}
+export function matchesExecutionWaitOrigin(wait: ExecutionWait, origin: {
+  kind: 'native' | 'connection'; installationId: string; connectionId: string | null
+}): boolean {
+  return wait.source_kind === origin.kind && (origin.kind === 'native'
+    ? wait.source_installation_token_id === origin.installationId
+    : wait.source_connection_id !== null && wait.source_connection_id === origin.connectionId)
+}
+export async function assertWorkbenchWaitAdmission(tx: PoolClient, input: {
+  workspaceId: string; sessionId: string; turnId: string; actorId: string; credentialHash: string; optIn: boolean
+}): Promise<ExecutionWait | undefined> {
+  if (!await executionWaitSchemaAvailable(tx)) return undefined
+  if ((await tx.query(`SELECT 1 FROM workbench_execution_waits
+    WHERE workspace_id=$1 AND agent_session_id=$2 AND status='pending'`,
+  [input.workspaceId, input.sessionId])).rowCount)
+    throw new DomainError('SESSION_NOT_ACTIVE', 'Execution is waiting for a verified continuation')
+  const wait = (await tx.query<ExecutionWait>(`SELECT * FROM workbench_execution_waits
+    WHERE workspace_id=$1 AND agent_session_id=$2 AND continuation_turn_id=$3 AND status='continued'`,
+  [input.workspaceId, input.sessionId, input.turnId])).rows[0]
+  if (!wait) return undefined
+  if (!input.optIn || !matchesExecutionWaitOrigin(wait, await executionOriginForToken(tx, input)))
+    throw new DomainError('FORBIDDEN', 'Continuation requires its original execution source and capable Runner')
+  if (!await validWaitTrigger(tx, wait)) throw new DomainError('FORBIDDEN', 'Continuation trigger is no longer valid')
+  return wait
+}
+export function continuationForWait(wait: ExecutionWait) {
+  const triggerId = wait.trigger_approval_id ?? wait.trigger_prompt_id ?? wait.trigger_message_id
+  if (!wait.trigger_kind || !triggerId) throw new DomainError('FORBIDDEN', 'Continuation lineage is incomplete')
+  return { waitId: wait.id, sourceTurnId: wait.source_turn_id, sourceAttemptId: wait.source_attempt_id,
+    trigger: { kind: wait.trigger_kind, id: triggerId } }
+}
+async function humanCanReadConversation(tx: PoolClient, workspaceId: string, conversationId: string, humanId: string): Promise<boolean> {
+  return Boolean((await tx.query(`SELECT 1 FROM workbench_conversations conversation
+    JOIN actors human ON human.id=$3 AND human.workspace_id=$1 AND human.kind='human' AND human.is_active
+    WHERE conversation.workspace_id=$1 AND conversation.id=$2 AND conversation.status='active'
+      AND (conversation.responsible_human_actor_id=human.id OR
+        (conversation.team_id IS NOT NULL AND (human.workspace_role='admin' OR EXISTS(
+          SELECT 1 FROM memberships WHERE workspace_id=$1 AND team_id=conversation.team_id AND actor_id=human.id))))`,
+  [workspaceId, conversationId, humanId])).rowCount)
+}
+async function validWaitTrigger(tx: PoolClient, wait: ExecutionWait): Promise<boolean> {
+  if (wait.wait_state === 'awaiting_approval') {
+    return Boolean((await tx.query(`SELECT 1 FROM approvals WHERE workspace_id=$1 AND id=$2
+      AND session_id=$3 AND requested_by_actor_id=$4 AND action_payload_hash=$5
+      AND status='approved' AND consumed_at IS NULL AND expires_at>clock_timestamp()
+      AND (EXISTS(SELECT 1 FROM approval_decisions decision WHERE decision.approval_id=approvals.id
+          AND decision.decision='approved' AND decision.source='workspace_policy')
+        OR (SELECT count(*) FROM approval_decisions decision WHERE decision.approval_id=approvals.id
+          AND decision.decision='approved' AND decision.source='human')>=approvals.required_approvals)`,
+    [wait.workspace_id, wait.approval_id, wait.agent_session_id, wait.source_agent_actor_id,
+      wait.approval_action_payload_hash])).rowCount)
+  }
+  if (wait.trigger_kind === 'prompt') {
+    const prompt = (await tx.query<{ author_actor_id: string }>(`SELECT prompt.author_actor_id
+      FROM agent_session_prompts prompt JOIN domain_events event
+        ON event.session_id=prompt.session_id AND event.event_type='agent.session.prompted'
+          AND event.payload->>'promptId'=prompt.id::text
+      WHERE prompt.session_id=$1 AND prompt.id=$2 AND event.workspace_id=$3 AND event.cursor>$4`,
+    [wait.agent_session_id, wait.trigger_prompt_id, wait.workspace_id, wait.input_event_cursor])).rows[0]
+    return Boolean(prompt && await humanCanReadConversation(tx, wait.workspace_id, wait.conversation_id, prompt.author_actor_id))
+  }
+  if (wait.trigger_kind === 'message') {
+    const message = (await tx.query<{ author_actor_id: string }>(`SELECT author_actor_id FROM workbench_messages
+      WHERE workspace_id=$1 AND conversation_id=$2 AND id=$3 AND role='user' AND sequence>=$4`,
+    [wait.workspace_id, wait.conversation_id, wait.trigger_message_id, wait.input_message_sequence])).rows[0]
+    return Boolean(message && await humanCanReadConversation(tx, wait.workspace_id, wait.conversation_id, message.author_actor_id))
+  }
+  return false
+}
+export async function createWorkbenchExecutionWait(tx: PoolClient, input: {
+  workspaceId: string; sessionId: string; actorId: string; credentialHash: string
+  turnId: string; attemptId: string; conversationId: string; correlationId: string; idempotencyKey: string
+  wait: { ifMatch: number; state: 'awaiting_approval' | 'awaiting_input' | 'blocked'; reason: string;
+    approval?: { id: string; actionPayloadHash: string } }
+}): Promise<{ id: string; state: string }> {
+  if (!executionWaitsEnabled() || !await executionWaitSchemaAvailable(tx))
+    throw new DomainError('FORBIDDEN', 'Execution waits are not enabled on this deployment')
+  const origin = await executionOriginForToken(tx, input)
+  const session = (await tx.query<{ state: AgentSessionState; revision: number; team_id: string }>(
+    'SELECT state,revision,team_id FROM agent_sessions WHERE workspace_id=$1 AND id=$2',
+    [input.workspaceId, input.sessionId])).rows[0]
+  if (!session || session.state !== 'executing') throw new DomainError('SESSION_NOT_ACTIVE', 'Only executing sessions can wait')
+  assertRevision(input.wait.ifMatch, session.revision)
+  assertAgentSessionTransition(session.state, input.wait.state)
+  const source = (await tx.query<{ initiated_by_actor_id: string; execution_waits_enabled: boolean }>(
+    `SELECT turn.initiated_by_actor_id,attempt.execution_waits_enabled FROM workbench_turns turn
+      JOIN workbench_runner_attempts attempt ON attempt.id=$4 AND attempt.turn_id=turn.id
+       AND attempt.agent_session_id=turn.agent_session_id AND attempt.conversation_id=turn.conversation_id
+      WHERE turn.workspace_id=$1 AND turn.id=$2 AND turn.agent_session_id=$3
+        AND turn.conversation_id=$5 AND turn.current_runner_attempt_id=attempt.id`,
+    [input.workspaceId, input.turnId, input.sessionId, input.attemptId, input.conversationId])).rows[0]
+  if (!source?.execution_waits_enabled || !await humanCanReadConversation(tx, input.workspaceId, input.conversationId, source.initiated_by_actor_id))
+    throw new DomainError('FORBIDDEN', 'Runner or original Human cannot register automatic waiting')
+  if (input.wait.approval) {
+    const approval = await tx.query(`SELECT 1 FROM approvals WHERE workspace_id=$1 AND id=$2
+      AND session_id=$3 AND requested_by_actor_id=$4 AND action_payload_hash=$5
+      AND status IN ('pending','approved') AND consumed_at IS NULL AND expires_at>clock_timestamp() FOR UPDATE`,
+    [input.workspaceId, input.wait.approval.id, input.sessionId, input.actorId, input.wait.approval.actionPayloadHash])
+    if (!approval.rowCount) throw new DomainError('APPROVAL_PAYLOAD_MISMATCH', 'Exact live approval binding required')
+  }
+  const updated = (await tx.query<{ revision: number; sequence: string }>(`UPDATE agent_sessions
+    SET state=$3,revision=revision+1,sequence=sequence+1,updated_at=now()
+    WHERE workspace_id=$1 AND id=$2 RETURNING revision,sequence`,
+  [input.workspaceId, input.sessionId, input.wait.state])).rows[0]!
+  const inserted = (await tx.query<{ id: string }>(`INSERT INTO workbench_execution_waits
+    (workspace_id,agent_session_id,conversation_id,source_turn_id,source_attempt_id,
+     requested_by_human_actor_id,source_agent_actor_id,source_kind,source_installation_token_id,
+     source_connection_id,wait_state,wait_revision,reason,approval_id,approval_action_payload_hash,
+     input_event_cursor,input_message_sequence)
+    SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,
+      CASE WHEN $14::uuid IS NULL THEN COALESCE((SELECT MAX(cursor) FROM domain_events WHERE workspace_id=$1),0) END,
+      CASE WHEN $14::uuid IS NULL THEN next_message_sequence END
+    FROM workbench_conversations WHERE workspace_id=$1 AND id=$3 RETURNING id`,
+  [input.workspaceId, input.sessionId, input.conversationId, input.turnId, input.attemptId,
+    source.initiated_by_actor_id, input.actorId, origin.kind, origin.installationId, origin.connectionId,
+    input.wait.state, updated.revision, input.wait.reason, input.wait.approval?.id ?? null,
+    input.wait.approval?.actionPayloadHash ?? null])).rows[0]!
+  await appendEvent(tx, { workspaceId: input.workspaceId, teamId: session.team_id, actorId: input.actorId,
+    correlationId: input.correlationId, idempotencyKey: input.idempotencyKey, sessionId: input.sessionId,
+    sessionSequence: updated.sequence, type: 'agent.session.state_changed', aggregateType: 'agent_session',
+    aggregateId: input.sessionId, revision: updated.revision,
+    payload: { state: input.wait.state, reason: input.wait.reason, executionWaitId: inserted.id,
+      sourceTurnId: input.turnId, sourceAttemptId: input.attemptId } })
+  return { id: inserted.id, state: input.wait.state }
+}
+
+type Authority = {
+  id: string; agent_id: string; agent_actor_id: string; delegation_id: string; team_id: string
+  work_item_id: string | null; project_id: string | null; work_item_project_id: string | null; state: AgentSessionState; revision: number
+  principal_human_actor_id: string; permissions_snapshot: string[]; capability_scope: {
+    teamIds?: string[]; workItemIds?: string[]; projectIds?: string[]
+  }; coordinator_delegation_id: string | null; credential_ids: string[]; installation_ids: string[]
+}
+/** Locator reads only identify the complete lock graph; all authority is checked after locking. */
+export async function reconcileWorkbenchExecutionWait(tx: PoolClient, input: {
+  workspaceId: string; waitId: string; actorId: string; correlationId: string
+}): Promise<number> {
+  const locator = (await tx.query<ExecutionWait & Authority>(`SELECT wait.*,session.agent_id,session.agent_actor_id,
+    session.delegation_id,session.team_id,session.work_item_id,session.project_id,
+    (SELECT project_id FROM work_items WHERE id=session.work_item_id) AS work_item_project_id,
+    delegation.principal_human_actor_id,connection.delegation_id AS coordinator_delegation_id,
+    ARRAY(SELECT id FROM agent_connection_credentials WHERE connection_id=connection.id ORDER BY id) AS credential_ids,
+    CASE WHEN wait.source_kind='native' THEN ARRAY[wait.source_installation_token_id]
+      ELSE ARRAY(SELECT id FROM agent_installation_tokens WHERE origin_kind='connection'
+        AND origin_connection_id=connection.id ORDER BY id) END AS installation_ids
+    FROM workbench_execution_waits wait JOIN agent_sessions session ON session.id=wait.agent_session_id
+    JOIN delegations delegation ON delegation.id=session.delegation_id
+    LEFT JOIN agent_connections connection ON connection.id=wait.source_connection_id
+    WHERE wait.workspace_id=$1 AND wait.id=$2 AND wait.status='pending'`,
+  [input.workspaceId, input.waitId])).rows[0]
+  if (!locator) return 0
+  if (locator.source_connection_id) {
+    await tx.query('SELECT id FROM agent_connections WHERE id=$1 FOR UPDATE', [locator.source_connection_id])
+    await tx.query('SELECT id FROM agent_connection_credentials WHERE id=ANY($1::uuid[]) ORDER BY id FOR UPDATE', [locator.credential_ids])
+  }
+  await lockAgentAuthorityPlan(tx, { definitionIds: [locator.agent_id],
+    teamGrants: [{ workspaceId: input.workspaceId, agentId: locator.agent_id, teamId: locator.team_id }],
+    delegationIds: [locator.delegation_id, ...(locator.coordinator_delegation_id ? [locator.coordinator_delegation_id] : [])],
+    sessionIds: [locator.agent_session_id], installationTokenIds: [...locator.installation_ids, locator.source_installation_token_id],
+    workItemIds: locator.work_item_id ? [locator.work_item_id] : [],
+    projectIds: [locator.project_id, locator.work_item_project_id].filter((id): id is string => id !== null) })
+  const conversation = (await tx.query<{ team_id: string | null; responsible_human_actor_id: string;
+    next_turn_sequence: number; next_message_sequence: number; status: string }>(
+    'SELECT * FROM workbench_conversations WHERE workspace_id=$1 AND id=$2 FOR UPDATE',
+    [input.workspaceId, locator.conversation_id])).rows[0]
+  const sourceTurn = (await tx.query<{ status: string; llm_connection_id: string; llm_model_id: string }>(
+    'SELECT * FROM workbench_turns WHERE workspace_id=$1 AND id=$2 FOR UPDATE', [input.workspaceId, locator.source_turn_id])).rows[0]
+  const sourceAttempt = (await tx.query<{ status: string; execution_waits_enabled: boolean; external_effects_reconciled: boolean }>(
+    'SELECT * FROM workbench_runner_attempts WHERE workspace_id=$1 AND id=$2 FOR UPDATE',
+    [input.workspaceId, locator.source_attempt_id])).rows[0]
+  if (locator.approval_id) await tx.query('SELECT id FROM approvals WHERE workspace_id=$1 AND id=$2 FOR UPDATE',
+    [input.workspaceId, locator.approval_id])
+  const wait = (await tx.query<ExecutionWait>('SELECT * FROM workbench_execution_waits WHERE workspace_id=$1 AND id=$2 FOR UPDATE',
+    [input.workspaceId, input.waitId])).rows[0]
+  if (!wait || wait.status !== 'pending' || !conversation || conversation.status !== 'active'
+    || sourceTurn?.status !== 'settled' || sourceAttempt?.status !== 'settled'
+    || !sourceAttempt.execution_waits_enabled || !sourceAttempt.external_effects_reconciled) return 0
+  const authority = (await tx.query<Authority>(`SELECT session.*,delegation.principal_human_actor_id,
+    delegation.permissions_snapshot,delegation.capability_scope FROM agent_sessions session
+    JOIN delegations delegation ON delegation.id=session.delegation_id AND delegation.status='active'
+    JOIN agent_definitions definition ON definition.id=session.agent_id AND definition.is_active
+    JOIN actors agent_actor ON agent_actor.id=session.agent_actor_id AND agent_actor.is_active
+    JOIN actors principal ON principal.id=delegation.principal_human_actor_id AND principal.is_active AND principal.kind='human'
+    JOIN agent_team_access grant_row ON grant_row.agent_id=session.agent_id AND grant_row.team_id=session.team_id AND grant_row.revoked_at IS NULL
+    JOIN agent_installation_tokens installation ON installation.id=ANY($3::uuid[]) AND installation.agent_id=session.agent_id
+      AND installation.revoked_at IS NULL AND (installation.expires_at IS NULL OR installation.expires_at>clock_timestamp())
+    WHERE session.workspace_id=$1 AND session.id=$2 AND 'work:write'=ANY(delegation.permissions_snapshot)
+      AND 'work:write'=ANY(definition.approved_capabilities) AND 'work:write'=ANY(grant_row.approved_capabilities)
+      AND installation.origin_kind=$4 AND installation.origin_connection_id IS NOT DISTINCT FROM $5::uuid
+      AND (principal.workspace_role='admin' OR EXISTS(SELECT 1 FROM memberships
+        WHERE workspace_id=session.workspace_id AND team_id=session.team_id AND actor_id=principal.id))
+      AND (session.work_item_id IS NULL OR EXISTS(SELECT 1 FROM work_items item WHERE item.workspace_id=session.workspace_id
+        AND item.id=session.work_item_id AND item.deleted_at IS NULL AND item.project_id IS NOT DISTINCT FROM $6::uuid
+        AND (item.project_id IS NULL OR EXISTS(SELECT 1 FROM projects WHERE id=item.project_id AND deleted_at IS NULL))))
+      AND (session.project_id IS NULL OR EXISTS(SELECT 1 FROM projects WHERE workspace_id=session.workspace_id
+        AND id=session.project_id AND deleted_at IS NULL))`,
+  [input.workspaceId, wait.agent_session_id, locator.installation_ids, wait.source_kind, wait.source_connection_id,
+    locator.work_item_project_id])).rows[0]
+  if (!authority || authority.agent_actor_id !== wait.source_agent_actor_id || authority.delegation_id !== locator.delegation_id
+    || ![wait.wait_state, 'executing'].includes(authority.state)) return 0
+  const scope = authority.capability_scope
+  if (!scope.teamIds?.includes(authority.team_id)
+    || (authority.work_item_id && !scope.workItemIds?.includes(authority.work_item_id))
+    || (authority.project_id && !scope.projectIds?.includes(authority.project_id))) return 0
+  if (wait.source_kind === 'connection' && !(await tx.query(`SELECT 1 FROM agent_connections connection
+    JOIN delegations delegation ON delegation.id=connection.delegation_id AND delegation.status='active'
+    WHERE connection.id=$1 AND connection.workspace_id=$2 AND connection.agent_id=$3 AND connection.team_id=$4
+      AND connection.principal_human_actor_id=$5 AND connection.status IN ('active','rotating')
+      AND delegation.workspace_id=$2 AND delegation.agent_id=$3 AND delegation.team_id=$4
+      AND delegation.principal_human_actor_id=$5 AND 'work:write'=ANY(delegation.permissions_snapshot)
+      AND delegation.capability_scope->'teamIds' ? $4::text
+      AND connection.delegation_id=$6
+      AND 'work:write'=ANY(connection.granted_capabilities) AND EXISTS(SELECT 1 FROM agent_connection_credentials
+        JOIN agent_installation_tokens installation ON installation.token_hash=agent_connection_credentials.token_hash
+          AND installation.id=ANY($7::uuid[]) AND installation.origin_connection_id=connection.id
+          AND installation.origin_kind='connection' AND installation.agent_id=connection.agent_id
+          AND installation.revoked_at IS NULL AND (installation.expires_at IS NULL OR installation.expires_at>clock_timestamp())
+        WHERE connection_id=connection.id AND (status='active' OR (status='overlap' AND overlap_until>clock_timestamp())))`,
+  [wait.source_connection_id, input.workspaceId, authority.agent_id, authority.team_id, authority.principal_human_actor_id,
+    locator.coordinator_delegation_id, locator.installation_ids])).rowCount) return 0
+  if (!await humanCanReadConversation(tx, input.workspaceId, wait.conversation_id, wait.requested_by_human_actor_id)
+    || !await humanCanReadConversation(tx, input.workspaceId, wait.conversation_id, conversation.responsible_human_actor_id)) return 0
+  if (!(await tx.query(`SELECT 1 FROM workbench_llm_connections connection JOIN workbench_llm_models model
+    ON model.connection_id=connection.id AND model.workspace_id=connection.workspace_id
+    WHERE connection.workspace_id=$1 AND connection.id=$2 AND model.id=$3 AND connection.status='active' AND model.enabled
+      AND (connection.scope='workspace' OR (connection.scope='personal' AND connection.owner_actor_id=$4)
+        OR (connection.scope='team' AND connection.team_id=$5))`,
+  [input.workspaceId, sourceTurn.llm_connection_id, sourceTurn.llm_model_id, wait.requested_by_human_actor_id, conversation.team_id])).rowCount) return 0
+  if (wait.wait_state === 'awaiting_approval') {
+    wait.trigger_kind = 'approval'; wait.trigger_approval_id = wait.approval_id
+  } else {
+    const prompt = (await tx.query<{ id: string }>(`SELECT prompt.id FROM agent_session_prompts prompt
+      JOIN domain_events event ON event.session_id=prompt.session_id AND event.event_type='agent.session.prompted'
+        AND event.payload->>'promptId'=prompt.id::text WHERE prompt.session_id=$1 AND event.workspace_id=$2
+        AND event.cursor>$3 ORDER BY event.cursor LIMIT 1`, [wait.agent_session_id, input.workspaceId, wait.input_event_cursor])).rows[0]
+    if (prompt) { wait.trigger_kind = 'prompt'; wait.trigger_prompt_id = prompt.id }
+    else {
+      const message = (await tx.query<{ id: string }>(`SELECT id FROM workbench_messages WHERE workspace_id=$1
+        AND conversation_id=$2 AND role='user' AND sequence>=$3 ORDER BY sequence LIMIT 1`,
+      [input.workspaceId, wait.conversation_id, wait.input_message_sequence])).rows[0]
+      if (message) { wait.trigger_kind = 'message'; wait.trigger_message_id = message.id }
+    }
+  }
+  if (!await validWaitTrigger(tx, wait)) return 0
+  const queued = (await tx.query<{ id: string; initiated_by_actor_id: string }>(`SELECT id,initiated_by_actor_id FROM workbench_turns
+    WHERE workspace_id=$1 AND conversation_id=$2 AND agent_session_id=$3 AND status='queued' ORDER BY sequence LIMIT 1 FOR UPDATE`,
+  [input.workspaceId, wait.conversation_id, wait.agent_session_id])).rows[0]
+  if (queued && !await humanCanReadConversation(tx, input.workspaceId, wait.conversation_id, queued.initiated_by_actor_id)) return 0
+  const turnId = queued?.id ?? (await tx.query<{ id: string }>(`INSERT INTO workbench_turns
+    (workspace_id,conversation_id,sequence,initiated_by_actor_id,agent_session_id,llm_connection_id,llm_model_id)
+    VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING id`, [input.workspaceId, wait.conversation_id,
+    conversation.next_turn_sequence, wait.requested_by_human_actor_id, wait.agent_session_id,
+    sourceTurn.llm_connection_id, sourceTurn.llm_model_id])).rows[0]!.id
+  if (!queued) {
+    let triggerSummary = 'The exact action was approved by its authorized Human.'
+    if (wait.trigger_kind === 'prompt') triggerSummary = (await tx.query<{ body_markdown: string }>(
+      'SELECT body_markdown FROM agent_session_prompts WHERE session_id=$1 AND id=$2',
+      [wait.agent_session_id, wait.trigger_prompt_id])).rows[0]!.body_markdown
+    if (wait.trigger_kind === 'message') triggerSummary = (await tx.query<{ content_markdown: string }>(
+      'SELECT content_markdown FROM workbench_messages WHERE workspace_id=$1 AND conversation_id=$2 AND id=$3',
+      [input.workspaceId, wait.conversation_id, wait.trigger_message_id])).rows[0]!.content_markdown
+    const message = (await tx.query<{ id: string }>(`INSERT INTO workbench_messages
+      (workspace_id,conversation_id,turn_id,sequence,role,author_actor_id,content_markdown)
+      VALUES($1,$2,$3,$4,'system',$5,$6) RETURNING id`, [input.workspaceId, wait.conversation_id, turnId,
+      conversation.next_message_sequence, input.actorId,
+      `Automatic continuation of waiting Turn ${wait.source_turn_id}; ${wait.trigger_kind} ${wait.trigger_approval_id ?? wait.trigger_prompt_id ?? wait.trigger_message_id}.\n${triggerSummary.slice(0, 49_000)}`])).rows[0]!
+    await tx.query(`UPDATE workbench_conversations SET next_turn_sequence=next_turn_sequence+1,
+      next_message_sequence=next_message_sequence+1,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND id=$2`,
+    [input.workspaceId, wait.conversation_id])
+    await appendEvent(tx, { workspaceId: input.workspaceId, teamId: conversation.team_id ?? undefined,
+      audienceActorId: conversation.team_id ? undefined : conversation.responsible_human_actor_id,
+      actorId: input.actorId, correlationId: input.correlationId, sessionId: wait.agent_session_id,
+      type: 'workbench.message.appended', aggregateType: 'workbench_message', aggregateId: message.id,
+      payload: { conversationId: wait.conversation_id, messageId: message.id, turnId, role: 'system', sequence: conversation.next_message_sequence } })
+    await appendEvent(tx, { workspaceId: input.workspaceId, teamId: conversation.team_id ?? undefined,
+      audienceActorId: conversation.team_id ? undefined : conversation.responsible_human_actor_id,
+      actorId: input.actorId, correlationId: input.correlationId, sessionId: wait.agent_session_id,
+      type: 'workbench.turn.queued', aggregateType: 'workbench_turn', aggregateId: turnId,
+      payload: { conversationId: wait.conversation_id, turnId, initiatedByActorId: wait.requested_by_human_actor_id,
+        executionWaitId: wait.id, sourceTurnId: wait.source_turn_id, triggerKind: wait.trigger_kind } })
+  }
+  if (authority.state !== 'executing') {
+    assertAgentSessionTransition(authority.state, 'executing')
+    const changed = (await tx.query<{ revision: number; sequence: string }>(`UPDATE agent_sessions SET state='executing',
+      revision=revision+1,sequence=sequence+1,updated_at=now() WHERE workspace_id=$1 AND id=$2 RETURNING revision,sequence`,
+    [input.workspaceId, wait.agent_session_id])).rows[0]!
+    await appendEvent(tx, { workspaceId: input.workspaceId, teamId: authority.team_id, actorId: input.actorId,
+      correlationId: input.correlationId, sessionId: wait.agent_session_id, sessionSequence: changed.sequence,
+      type: 'agent.session.state_changed', aggregateType: 'agent_session', aggregateId: wait.agent_session_id,
+      revision: changed.revision, payload: { state: 'executing', executionWaitId: wait.id, continuationTurnId: turnId } })
+  }
+  await tx.query(`UPDATE workbench_execution_waits SET status='continued',resolved_at=now(),continuation_turn_id=$3,
+    trigger_kind=$4,trigger_approval_id=$5,trigger_prompt_id=$6,trigger_message_id=$7
+    WHERE workspace_id=$1 AND id=$2 AND status='pending'`, [input.workspaceId, wait.id, turnId,
+    wait.trigger_kind, wait.trigger_approval_id, wait.trigger_prompt_id, wait.trigger_message_id])
+  return 1
+}

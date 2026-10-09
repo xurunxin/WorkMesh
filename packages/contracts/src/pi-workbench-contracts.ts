@@ -279,9 +279,28 @@ export const workbenchRunnerCredentialSchema = z.object({
   capabilities: z.unknown(),
   connectionRevision: revisionSchema,
   modelRevision: revisionSchema,
+  executionWaitsEnabled: z.boolean().optional(),
   messages: z.array(z.object({ role: conversationMessageRoleSchema,
     content_markdown: z.string().min(1).max(50_000) }).strict()).max(100),
+  continuation: z.object({
+    waitId: idSchema, sourceTurnId: idSchema, sourceAttemptId: idSchema,
+    trigger: z.object({ kind: z.enum(['approval', 'prompt', 'message']), id: idSchema }).strict(),
+  }).strict().optional(),
 }).strict()
+
+export const workbenchExecutionWaitOptInSchema = z.object({
+  executionWaits: z.boolean().default(false),
+}).strict()
+export const workbenchExecutionWaitQuerySchema = z.object({
+  executionWaits: z.enum(['true', 'false']).transform(value => value === 'true').default('false'),
+}).strict()
+export const workbenchSessionWaitSchema = z.object({
+  ifMatch: revisionSchema,
+  state: z.enum(['awaiting_approval', 'awaiting_input', 'blocked']),
+  reason: z.string().min(1).max(2_000),
+  approval: z.object({ id: idSchema, actionPayloadHash: sha256Schema }).strict().optional(),
+}).strict().refine(value => (value.state === 'awaiting_approval') === Boolean(value.approval),
+  { path: ['approval'], message: 'Only approval waits require an exact approval binding' })
 
 export const workbenchSessionCompletionRequestSchema = z.object({
   ifMatch: revisionSchema,
@@ -312,11 +331,15 @@ export const workbenchRunnerSettleInputSchema = z.object({
   assistantMessageMarkdown: z.string().min(1).max(50_000).optional(),
   settlement: runnerAttemptSettleInputSchema,
   sessionCompletion: workbenchSessionCompletionRequestSchema.optional(),
+  sessionWait: workbenchSessionWaitSchema.optional(),
   toolInvocations: z.array(workbenchToolInvocationSummarySchema).max(200).optional(),
 }).strict().refine(value => value.settlement.outcome !== 'settled' || Boolean(value.assistantMessageMarkdown),
   { path: ['assistantMessageMarkdown'], message: 'Settled turns require a public assistant response' })
   .refine(value => !value.sessionCompletion || value.settlement.outcome === 'settled',
     { path: ['sessionCompletion'], message: 'Session completion requires a settled public Turn' })
+  .refine(value => !value.sessionWait || (!value.sessionCompletion
+    && value.settlement.outcome === 'settled' && value.settlement.externalEffectsReconciled),
+  { path: ['sessionWait'], message: 'Waiting requires reconciled settlement and excludes completion' })
 
 // ---------------------------------------------------------------------------
 // LLM connections / models / secrets (Decision 5 + 6 of ADR 0065)

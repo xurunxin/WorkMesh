@@ -25,6 +25,27 @@ function manifest(capabilities: Capability[]): AgentCapabilityManifest {
 }
 
 describe('Pi WorkMesh tools', () => {
+  it('等待仅产生意图，不写状态或Activity，普通状态与租约心跳无前置Activity', async () => {
+    const calls: Array<{ path: string; ifMatch?: number }> = []
+    const waits: unknown[] = []
+    const api: RunnerToolApi = { sessionId, async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE',
+      path: string, _body?: unknown, ifMatch?: number): Promise<T> {
+      if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read', 'work:write']) as T
+      calls.push({ path, ifMatch }); return { revision: 3 } as T
+    } }
+    const tools = await createWorkMeshTools(api, 'wait-attempt', () => undefined, undefined, intent => waits.push(intent))
+    await tools.find(tool => tool.name === 'workmesh_wait')!.execute('wait-call',
+      { state: 'awaiting_input', reason: '请提供测试输入' }, undefined, undefined, {} as never)
+    expect(waits).toEqual([{ state: 'awaiting_input', reason: '请提供测试输入' }])
+    expect(calls).toEqual([])
+    await tools.find(tool => tool.name === 'workmesh_transition_state')!.execute('state-call',
+      { state: 'planning', reason: '整理计划', ifMatch: 2 }, undefined, undefined, {} as never)
+    expect(calls).toEqual([{ path: `/api/v1/agent-sessions/${sessionId}/state`, ifMatch: 2 }])
+    await tools.find(tool => tool.name === 'workmesh_heartbeat_lease')!.execute('lease-heartbeat',
+      { leaseId: documentId }, undefined, undefined, {} as never)
+    expect(calls.at(-1)).toEqual({ path: `/api/v1/leases/${documentId}/heartbeat`, ifMatch: undefined })
+    expect(calls.some(call => call.path.endsWith('/activities'))).toBe(false)
+  })
   it('offers only live eligible operations and replays a write with the same durable operation key', async () => {
     const calls: Array<{ method: string; path: string; key?: string; ifMatch?: number }> = []
     const api: RunnerToolApi = {

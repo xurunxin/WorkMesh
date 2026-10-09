@@ -1,3 +1,4 @@
+import { hasExecutionOrigin } from './agent/execution-origin.js';
 import type { Pool, PoolClient } from "pg";
 import { appendEvent, withTx } from "@workmesh/db";
 import { loadRetentionConfig } from "@workmesh/config";
@@ -327,7 +328,9 @@ export async function mutate<T>(
        ) VALUES($1,$2,$3,$4,$5,now()+($6::text||' hours')::interval,now()+($7::text||' days')::interval)
        ON CONFLICT(workspace_id,actor_id,idempotency_key) DO UPDATE
          SET operation=EXCLUDED.operation,request_hash=EXCLUDED.request_hash,
-             response_status=NULL,response_body=NULL,created_at=now(),
+             response_status=NULL,response_body=NULL,created_at=now(),${await hasExecutionOrigin(tx) ? `
+             execution_source_kind=NULL,execution_session_id=NULL,execution_session_token_id=NULL,
+             execution_installation_token_id=NULL,execution_connection_id=NULL,` : ''}
              replay_expires_at=EXCLUDED.replay_expires_at,
              conflict_expires_at=EXCLUDED.conflict_expires_at
        WHERE api_idempotency_keys.conflict_expires_at<=now()

@@ -539,6 +539,7 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       )
       await reconcileConnectionInstallationToken(tx, {
         agentId: row.agent_id,
+        connectionId: row.id,
         credentialHash: installationTokenHash,
         expiresAt: null,
         createdByActorId: row.agent_actor_id,
@@ -936,6 +937,7 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       )
       await reconcileConnectionInstallationToken(tx, {
         agentId: agent.id,
+        connectionId: connection.id,
         credentialHash: installationTokenHash,
         expiresAt: null,
         createdByActorId: agent.actor_id,

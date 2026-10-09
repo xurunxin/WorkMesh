@@ -166,6 +166,8 @@ export const sessions = pgTable('sessions', {
   id: uuid('id').primaryKey(), actorId: uuid('actor_id').notNull(), tokenHash: text('token_hash').notNull(), csrfToken: text('csrf_token').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), revokedAt: timestamp('revoked_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const apiIdempotencyKeys = pgTable('api_idempotency_keys', {
+  executionSourceKind: text('execution_source_kind'), executionSessionId: uuid('execution_session_id'),
+  executionSessionTokenId: uuid('execution_session_token_id'), executionInstallationTokenId: uuid('execution_installation_token_id'), executionConnectionId: uuid('execution_connection_id'),
   workspaceId: uuid('workspace_id').notNull(), actorId: uuid('actor_id').notNull(), idempotencyKey: text('idempotency_key').notNull(), operation: text('operation').notNull(), requestHash: text('request_hash').notNull(),
   responseStatus: integer('response_status'), responseBody: jsonb('response_body'), replayExpiresAt: timestamp('replay_expires_at', { withTimezone: true }).notNull(),
   conflictExpiresAt: timestamp('conflict_expires_at', { withTimezone: true }).notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
@@ -282,6 +284,7 @@ export const agentWebhookSecrets = pgTable('agent_webhook_secrets', {
   createdByActorId: uuid('created_by_actor_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const agentInstallationTokens = pgTable('agent_installation_tokens', {
+  originKind: text('origin_kind'), originConnectionId: uuid('origin_connection_id'),
   id: uuid('id').primaryKey(), agentId: uuid('agent_id').notNull(), tokenHash: text('token_hash').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }), lastUsedAt: timestamp('last_used_at', { withTimezone: true }), revokedAt: timestamp('revoked_at', { withTimezone: true }), createdByActorId: uuid('created_by_actor_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const agentConnections = pgTable('agent_connections', {
@@ -643,4 +646,33 @@ export const a2aDeliveries = pgTable('a2a_deliveries', {
   domainEventId: uuid('domain_event_id'), payload: jsonb('payload').notNull(), status: a2aDeliveryStatus('status').notNull(),
   attemptCount: integer('attempt_count').notNull(), lastError: text('last_error'),
   receivedAt: timestamp('received_at', { withTimezone: true }).notNull(), processedAt: timestamp('processed_at', { withTimezone: true }),
+})
+
+export const workbenchRunnerAttempts = pgTable('workbench_runner_attempts', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(),
+  conversationId: uuid('conversation_id').notNull(), turnId: uuid('turn_id').notNull(),
+  agentSessionId: uuid('agent_session_id').notNull(), attemptNo: integer('attempt_no').notNull(),
+  fenceToken: text('fence_token').notNull(), status: text('status').notNull(),
+  llmConnectionId: uuid('llm_connection_id'), llmModelId: uuid('llm_model_id'),
+  executionWaitsEnabled: boolean('execution_waits_enabled').notNull().default(false),
+  externalEffectsReconciled: boolean('external_effects_reconciled').notNull().default(false),
+  startedAt: timestamp('started_at', { withTimezone: true }),
+  settledAt: timestamp('settled_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const workbenchExecutionWaits = pgTable('workbench_execution_waits', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(),
+  agentSessionId: uuid('agent_session_id').notNull(), conversationId: uuid('conversation_id').notNull(),
+  sourceTurnId: uuid('source_turn_id').notNull(), sourceAttemptId: uuid('source_attempt_id').notNull(),
+  requestedByHumanActorId: uuid('requested_by_human_actor_id').notNull(),
+  sourceAgentActorId: uuid('source_agent_actor_id').notNull(), sourceKind: text('source_kind').notNull(),
+  sourceInstallationTokenId: uuid('source_installation_token_id').notNull(), sourceConnectionId: uuid('source_connection_id'),
+  waitState: text('wait_state').notNull(), waitRevision: integer('wait_revision').notNull(), reason: text('reason').notNull(),
+  approvalId: uuid('approval_id'), approvalActionPayloadHash: text('approval_action_payload_hash'),
+  inputEventCursor: bigint('input_event_cursor', { mode: 'bigint' }), inputMessageSequence: integer('input_message_sequence'),
+  status: text('status').notNull().default('pending'), triggerKind: text('trigger_kind'),
+  triggerApprovalId: uuid('trigger_approval_id'), triggerPromptId: uuid('trigger_prompt_id'), triggerMessageId: uuid('trigger_message_id'),
+  continuationTurnId: uuid('continuation_turn_id'), terminalReason: text('terminal_reason'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(), resolvedAt: timestamp('resolved_at', { withTimezone: true }),
 })

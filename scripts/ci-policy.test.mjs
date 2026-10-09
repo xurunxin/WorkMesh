@@ -198,7 +198,10 @@ test('real workflow semantic mutations cannot silently omit MCP conformance', ()
     value => { value.rootScripts['test:integration'] = 'pnpm test:integration:api' },
     value => { value.rootScripts['test:conformance:integration'] = 'pnpm --filter @workmesh/conformance test:integration' },
     value => { value.packageScripts['test:integration'] = 'vitest run' },
-    value => { value.integrationConfig = value.integrationConfig.replace("include: ['src/mcp-coverage.conformance.test.ts']", 'include: []') },
+    ...['src/mcp-coverage.conformance.test.ts', 'src/execution-recovery.conformance.test.ts'].map(suite => value => {
+      assert.ok(value.integrationConfig.includes(suite), 'Mutation must remove an existing suite')
+      value.integrationConfig = value.integrationConfig.replace(suite, 'deleted-suite.test.ts')
+    }),
     value => { value.integrationConfig = value.integrationConfig.replace('passWithNoTests: false', 'passWithNoTests: true') },
     value => { value.job.steps.find(step => step.name === 'Run real MCP and Pi conformance').run = 'pnpm test:conformance:integration' },
     value => { value.job.steps.find(step => step.name === 'Run real MCP and Pi conformance')['continue-on-error'] = true },

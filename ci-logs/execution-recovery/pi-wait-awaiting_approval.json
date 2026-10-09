@@ -1,0 +1,395 @@
+{
+  "sessionId": "b542a201-2d16-4782-970b-21be60b28a59",
+  "waiting": {
+    "waits": [
+      {
+        "id": "616f029c-7bfa-4403-b290-ec901b5c984f",
+        "workspace_id": "25344330-1831-4762-ad7f-c0da716f680b",
+        "agent_session_id": "b542a201-2d16-4782-970b-21be60b28a59",
+        "conversation_id": "0b5a41ff-c184-4db8-b0c1-3bb2d850d87b",
+        "source_turn_id": "8c55c357-2369-4d85-a3f9-41b2c455a3e7",
+        "source_attempt_id": "1d5ee299-62e0-4215-83b5-53fc171b2d25",
+        "requested_by_human_actor_id": "376e9c4c-d0c4-474b-8529-4b5c610dc5c6",
+        "source_agent_actor_id": "1bc3e2bf-4965-4f71-bf9e-8acd567ccff8",
+        "source_kind": "connection",
+        "source_installation_token_id": "f4754350-f360-4ef6-816e-d58347ab03b4",
+        "source_connection_id": "a931607b-c1b5-4c33-9f4e-9cebaf318133",
+        "wait_state": "awaiting_approval",
+        "wait_revision": 4,
+        "reason": "M1 waits for a precise Human trigger",
+        "approval_id": "5a156930-3098-47ce-b73e-b2b0ad07fcb5",
+        "approval_action_payload_hash": "sha256:f2baa5a466f983d978609c49cca5fce9171fca0252cf27a67efd06977cc0374b",
+        "input_event_cursor": null,
+        "input_message_sequence": null,
+        "status": "pending",
+        "trigger_kind": null,
+        "trigger_approval_id": null,
+        "trigger_prompt_id": null,
+        "trigger_message_id": null,
+        "continuation_turn_id": null,
+        "terminal_reason": null,
+        "created_at": "2026-10-09T14:24:33.160Z",
+        "resolved_at": null
+      }
+    ],
+    "turns": [
+      {
+        "id": "8c55c357-2369-4d85-a3f9-41b2c455a3e7",
+        "status": "settled"
+      }
+    ],
+    "attempts": [
+      {
+        "id": "1d5ee299-62e0-4215-83b5-53fc171b2d25",
+        "status": "settled"
+      }
+    ],
+    "leases": [
+      {
+        "id": "6368f032-271b-4871-bdb1-08e25cccebc3",
+        "status": "released"
+      }
+    ]
+  },
+  "resumed": {
+    "waits": [
+      {
+        "id": "616f029c-7bfa-4403-b290-ec901b5c984f",
+        "workspace_id": "25344330-1831-4762-ad7f-c0da716f680b",
+        "agent_session_id": "b542a201-2d16-4782-970b-21be60b28a59",
+        "conversation_id": "0b5a41ff-c184-4db8-b0c1-3bb2d850d87b",
+        "source_turn_id": "8c55c357-2369-4d85-a3f9-41b2c455a3e7",
+        "source_attempt_id": "1d5ee299-62e0-4215-83b5-53fc171b2d25",
+        "requested_by_human_actor_id": "376e9c4c-d0c4-474b-8529-4b5c610dc5c6",
+        "source_agent_actor_id": "1bc3e2bf-4965-4f71-bf9e-8acd567ccff8",
+        "source_kind": "connection",
+        "source_installation_token_id": "f4754350-f360-4ef6-816e-d58347ab03b4",
+        "source_connection_id": "a931607b-c1b5-4c33-9f4e-9cebaf318133",
+        "wait_state": "awaiting_approval",
+        "wait_revision": 4,
+        "reason": "M1 waits for a precise Human trigger",
+        "approval_id": "5a156930-3098-47ce-b73e-b2b0ad07fcb5",
+        "approval_action_payload_hash": "sha256:f2baa5a466f983d978609c49cca5fce9171fca0252cf27a67efd06977cc0374b",
+        "input_event_cursor": null,
+        "input_message_sequence": null,
+        "status": "continued",
+        "trigger_kind": "approval",
+        "trigger_approval_id": "5a156930-3098-47ce-b73e-b2b0ad07fcb5",
+        "trigger_prompt_id": null,
+        "trigger_message_id": null,
+        "continuation_turn_id": "0a3c19d1-70dc-4cba-92d5-0f0d1afdf702",
+        "terminal_reason": null,
+        "created_at": "2026-10-09T14:24:33.160Z",
+        "resolved_at": "2026-10-09T14:24:33.403Z"
+      }
+    ],
+    "turns": [
+      {
+        "id": "8c55c357-2369-4d85-a3f9-41b2c455a3e7",
+        "status": "settled"
+      },
+      {
+        "id": "0a3c19d1-70dc-4cba-92d5-0f0d1afdf702",
+        "status": "queued"
+      }
+    ],
+    "attempts": [
+      {
+        "id": "1d5ee299-62e0-4215-83b5-53fc171b2d25",
+        "status": "settled"
+      }
+    ],
+    "leases": [
+      {
+        "id": "6368f032-271b-4871-bdb1-08e25cccebc3",
+        "status": "released"
+      }
+    ]
+  },
+  "final": {
+    "waits": [
+      {
+        "id": "616f029c-7bfa-4403-b290-ec901b5c984f",
+        "workspace_id": "25344330-1831-4762-ad7f-c0da716f680b",
+        "agent_session_id": "b542a201-2d16-4782-970b-21be60b28a59",
+        "conversation_id": "0b5a41ff-c184-4db8-b0c1-3bb2d850d87b",
+        "source_turn_id": "8c55c357-2369-4d85-a3f9-41b2c455a3e7",
+        "source_attempt_id": "1d5ee299-62e0-4215-83b5-53fc171b2d25",
+        "requested_by_human_actor_id": "376e9c4c-d0c4-474b-8529-4b5c610dc5c6",
+        "source_agent_actor_id": "1bc3e2bf-4965-4f71-bf9e-8acd567ccff8",
+        "source_kind": "connection",
+        "source_installation_token_id": "f4754350-f360-4ef6-816e-d58347ab03b4",
+        "source_connection_id": "a931607b-c1b5-4c33-9f4e-9cebaf318133",
+        "wait_state": "awaiting_approval",
+        "wait_revision": 4,
+        "reason": "M1 waits for a precise Human trigger",
+        "approval_id": "5a156930-3098-47ce-b73e-b2b0ad07fcb5",
+        "approval_action_payload_hash": "sha256:f2baa5a466f983d978609c49cca5fce9171fca0252cf27a67efd06977cc0374b",
+        "input_event_cursor": null,
+        "input_message_sequence": null,
+        "status": "continued",
+        "trigger_kind": "approval",
+        "trigger_approval_id": "5a156930-3098-47ce-b73e-b2b0ad07fcb5",
+        "trigger_prompt_id": null,
+        "trigger_message_id": null,
+        "continuation_turn_id": "0a3c19d1-70dc-4cba-92d5-0f0d1afdf702",
+        "terminal_reason": null,
+        "created_at": "2026-10-09T14:24:33.160Z",
+        "resolved_at": "2026-10-09T14:24:33.403Z"
+      }
+    ],
+    "turns": [
+      {
+        "id": "8c55c357-2369-4d85-a3f9-41b2c455a3e7",
+        "status": "settled"
+      },
+      {
+        "id": "0a3c19d1-70dc-4cba-92d5-0f0d1afdf702",
+        "status": "settled"
+      }
+    ],
+    "attempts": [
+      {
+        "id": "1d5ee299-62e0-4215-83b5-53fc171b2d25",
+        "status": "settled"
+      },
+      {
+        "id": "36d2936e-8002-49db-ae33-475b9b6cb5f7",
+        "status": "settled"
+      }
+    ],
+    "leases": [
+      {
+        "id": "6368f032-271b-4871-bdb1-08e25cccebc3",
+        "status": "released"
+      }
+    ]
+  },
+  "captures": [
+    {
+      "phase": "wait",
+      "tools": [
+        "workmesh_session_context",
+        "workmesh_get_session",
+        "workmesh_get_session_context",
+        "workmesh_get_session_plan",
+        "workmesh_list_plan_versions",
+        "workmesh_list_sessions",
+        "workmesh_list_recovery_items",
+        "workmesh_get_recovery_item",
+        "workmesh_list_approvals",
+        "workmesh_get_approval",
+        "workmesh_consume_approval",
+        "workmesh_transition_state",
+        "workmesh_wait",
+        "workmesh_list_projects",
+        "workmesh_get_project",
+        "workmesh_list_work_items",
+        "workmesh_get_work_item",
+        "workmesh_list_documents",
+        "workmesh_get_document",
+        "workmesh_create_document",
+        "workmesh_update_document",
+        "workmesh_publish_artifact",
+        "workmesh_request_approval",
+        "workmesh_list_leases",
+        "workmesh_acquire_lease",
+        "workmesh_release_lease",
+        "workmesh_heartbeat_lease",
+        "workmesh_renew_lease",
+        "workmesh_offer_handoff",
+        "workmesh_append_activity",
+        "workmesh_publish_plan",
+        "workmesh_complete_session"
+      ],
+      "returnedToolCalls": [
+        "workmesh_wait"
+      ],
+      "receivedToolResults": []
+    },
+    {
+      "phase": "continue",
+      "tools": [
+        "workmesh_session_context",
+        "workmesh_get_session",
+        "workmesh_get_session_context",
+        "workmesh_get_session_plan",
+        "workmesh_list_plan_versions",
+        "workmesh_list_sessions",
+        "workmesh_list_recovery_items",
+        "workmesh_get_recovery_item",
+        "workmesh_list_approvals",
+        "workmesh_get_approval",
+        "workmesh_consume_approval",
+        "workmesh_transition_state",
+        "workmesh_wait",
+        "workmesh_list_projects",
+        "workmesh_get_project",
+        "workmesh_list_work_items",
+        "workmesh_get_work_item",
+        "workmesh_list_documents",
+        "workmesh_get_document",
+        "workmesh_create_document",
+        "workmesh_update_document",
+        "workmesh_publish_artifact",
+        "workmesh_request_approval",
+        "workmesh_list_leases",
+        "workmesh_acquire_lease",
+        "workmesh_release_lease",
+        "workmesh_heartbeat_lease",
+        "workmesh_renew_lease",
+        "workmesh_offer_handoff",
+        "workmesh_append_activity",
+        "workmesh_publish_plan",
+        "workmesh_complete_session"
+      ],
+      "returnedToolCalls": [
+        "workmesh_consume_approval"
+      ],
+      "receivedToolResults": []
+    },
+    {
+      "phase": "continue",
+      "tools": [
+        "workmesh_session_context",
+        "workmesh_get_session",
+        "workmesh_get_session_context",
+        "workmesh_get_session_plan",
+        "workmesh_list_plan_versions",
+        "workmesh_list_sessions",
+        "workmesh_list_recovery_items",
+        "workmesh_get_recovery_item",
+        "workmesh_list_approvals",
+        "workmesh_get_approval",
+        "workmesh_consume_approval",
+        "workmesh_transition_state",
+        "workmesh_wait",
+        "workmesh_list_projects",
+        "workmesh_get_project",
+        "workmesh_list_work_items",
+        "workmesh_get_work_item",
+        "workmesh_list_documents",
+        "workmesh_get_document",
+        "workmesh_create_document",
+        "workmesh_update_document",
+        "workmesh_publish_artifact",
+        "workmesh_request_approval",
+        "workmesh_list_leases",
+        "workmesh_acquire_lease",
+        "workmesh_release_lease",
+        "workmesh_heartbeat_lease",
+        "workmesh_renew_lease",
+        "workmesh_offer_handoff",
+        "workmesh_append_activity",
+        "workmesh_publish_plan",
+        "workmesh_complete_session"
+      ],
+      "returnedToolCalls": [
+        "workmesh_complete_session"
+      ],
+      "receivedToolResults": [
+        "\"{\\\"approval_id\\\":\\\"5a156930-3098-47ce-b73e-b2b0ad07fcb5\\\",\\\"status\\\":\\\"consumed\\\",\\\"consumed_at\\\":\\\"2026-10-09T14:24:36.120Z\\\",\\\"action_payload_hash\\\":\\\"sha256:f2baa5a466f983d978609c49cca5fce9171fca0252cf27a67efd06977cc0374b\\\"}\""
+      ]
+    },
+    {
+      "phase": "continue",
+      "tools": [
+        "workmesh_session_context",
+        "workmesh_get_session",
+        "workmesh_get_session_context",
+        "workmesh_get_session_plan",
+        "workmesh_list_plan_versions",
+        "workmesh_list_sessions",
+        "workmesh_list_recovery_items",
+        "workmesh_get_recovery_item",
+        "workmesh_list_approvals",
+        "workmesh_get_approval",
+        "workmesh_consume_approval",
+        "workmesh_transition_state",
+        "workmesh_wait",
+        "workmesh_list_projects",
+        "workmesh_get_project",
+        "workmesh_list_work_items",
+        "workmesh_get_work_item",
+        "workmesh_list_documents",
+        "workmesh_get_document",
+        "workmesh_create_document",
+        "workmesh_update_document",
+        "workmesh_publish_artifact",
+        "workmesh_request_approval",
+        "workmesh_list_leases",
+        "workmesh_acquire_lease",
+        "workmesh_release_lease",
+        "workmesh_heartbeat_lease",
+        "workmesh_renew_lease",
+        "workmesh_offer_handoff",
+        "workmesh_append_activity",
+        "workmesh_publish_plan",
+        "workmesh_complete_session"
+      ],
+      "returnedToolCalls": [],
+      "receivedToolResults": [
+        "\"{\\\"approval_id\\\":\\\"5a156930-3098-47ce-b73e-b2b0ad07fcb5\\\",\\\"status\\\":\\\"consumed\\\",\\\"consumed_at\\\":\\\"2026-10-09T14:24:36.120Z\\\",\\\"action_payload_hash\\\":\\\"sha256:f2baa5a466f983d978609c49cca5fce9171fca0252cf27a67efd06977cc0374b\\\"}\"",
+        "\"{\\\"status\\\":\\\"queued_after_turn_settlement\\\",\\\"sessionId\\\":\\\"b542a201-2d16-4782-970b-21be60b28a59\\\",\\\"message\\\":\\\"Completion is pending. Give the user a public answer; then inspect the Session state.\\\"}\""
+      ]
+    }
+  ],
+  "completion": {
+    "id": "b542a201-2d16-4782-970b-21be60b28a59",
+    "workspace_id": "25344330-1831-4762-ad7f-c0da716f680b",
+    "team_id": "7e8b7326-4773-4bdd-8d5b-aaff516203ac",
+    "agent_id": "d15159d8-520e-4c42-b80b-0b1bf04755c6",
+    "agent_actor_id": "1bc3e2bf-4965-4f71-bf9e-8acd567ccff8",
+    "delegation_id": "a05d9b6f-612e-4d9e-aaf5-3735161ed0aa",
+    "parent_session_id": null,
+    "work_item_id": "f42938fd-cec4-480b-8fec-42ec995ff368",
+    "project_id": null,
+    "plan_step_id": null,
+    "state": "completed",
+    "state_reason": "M1 continuation completed after its verified Human trigger",
+    "sequence": "10",
+    "revision": 8,
+    "current_plan_version_id": null,
+    "context_snapshot_id": "36ab38a5-d717-4058-af9d-fb61c1103be8",
+    "budget": {},
+    "external_urls": [],
+    "acknowledged_at": "2026-10-09T14:24:30.137Z",
+    "last_heartbeat_at": "2026-10-09T14:24:35.684Z",
+    "stop_requested_at": null,
+    "stop_acknowledged_at": null,
+    "result_summary": "M1 continuation completed after its verified Human trigger",
+    "result_evidence": {
+      "checks": [],
+      "artifactIds": [],
+      "limitations": []
+    },
+    "no_artifact_reason": "Deterministic lifecycle conformance; no product artifact was produced.",
+    "error_code": null,
+    "error_summary": null,
+    "ended_at": "2026-10-09T14:24:36.185Z",
+    "created_at": "2026-10-09T14:24:30.050Z",
+    "updated_at": "2026-10-09T14:24:36.185Z",
+    "retry_of_session_id": null,
+    "retry_reason": null,
+    "retry_count": 0,
+    "max_child_sessions": 8,
+    "inherited_budget": {},
+    "required_for_parent": false,
+    "plan_step_version_id": null,
+    "automation_run_id": null,
+    "heartbeat_health": "healthy",
+    "heartbeat_health_changed_at": "2026-10-09T14:24:30.050Z",
+    "heartbeat_checked_at": "2026-10-09T14:24:35.684Z",
+    "heartbeat_current_step_id": null,
+    "heartbeat_usage": {
+      "runtimeSeconds": 5
+    },
+    "heartbeat_idempotency_key": "40e90304-c720-47cd-b1b8-b11a53ba2f70",
+    "heartbeat_request_hash": "0bc48b4eed48851919c10dd30a2b7e18ea8b5b4916fe0747531dc342ad9334fe",
+    "session_kind": "execution",
+    "coordination_connection_id": null,
+    "heartbeat_interval_seconds": 30,
+    "ack_deadline": "2026-10-09T14:24:40.050Z"
+  },
+  "usedOriginalReturnedApprovalHash": "sha256:f2baa5a466f983d978609c49cca5fce9171fca0252cf27a67efd06977cc0374b"
+}

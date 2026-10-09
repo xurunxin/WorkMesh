@@ -11,6 +11,7 @@ export type RoutePolicyAuthentication =
   | 'human_or_coordination_connection'
   | 'coordination_connection'
   | 'installation_target'
+  | 'human_or_installation_target'
   | 'provider_signature'
 export type RoutePolicyFeatureTier = 'stable' | 'beta' | 'experimental'
 export type ResourceResolverId =
@@ -365,6 +366,7 @@ const leaseOperations = new Set([
 ])
 
 function authenticationFor(operationId: string): RoutePolicyAuthentication {
+  if (operationId === 'getAgentSessionExecutionResult') return 'human_or_installation_target'
   if (operationId === 'installWorkspace') return 'bootstrap'
   if (publicOperations.has(operationId)) return 'public'
   if (operationId === 'receiveGitHubWebhook') return 'provider_signature'
@@ -462,6 +464,7 @@ export function createRoutePolicyManifest(
       || authentication === 'human_or_coordination_connection'
       || authentication === 'coordination_connection'
       || authentication === 'installation_target'
+      || authentication === 'human_or_installation_target'
     const feature = featureForRoute(binding.path)
     const workspaceAdmin = workspaceAdminOperations.has(binding.operationId)
     const mutation = binding.method !== 'GET' && !readOnlyPostOperations.has(binding.operationId)
@@ -499,13 +502,13 @@ export function createRoutePolicyManifest(
         capabilities: agentAuthentication
           ? capabilityFor(binding.method, binding.path, binding.operationId)
           : [],
-        sessionBinding: authentication === 'installation_target' ? 'installation_target' : agentAuthentication ? 'current_session' : 'none',
+        sessionBinding: (authentication === 'installation_target' || authentication === 'human_or_installation_target') ? 'installation_target' : agentAuthentication ? 'current_session' : 'none',
         // Settle has a durable idempotency replay path after atomic Session completion.
         // A new write still passes the in-transaction active-Session guard.
-        requireActiveSession: authentication !== 'installation_target' && agentAuthentication
+        requireActiveSession: authentication !== 'installation_target' && authentication !== 'human_or_installation_target' && agentAuthentication
           && binding.operationId !== 'settleWorkbenchAttempt',
-        requireActiveDelegation: authentication !== 'installation_target' && agentAuthentication,
-        requireLiveGrantIntersection: authentication !== 'installation_target' && agentAuthentication,
+        requireActiveDelegation: authentication !== 'installation_target' && authentication !== 'human_or_installation_target' && agentAuthentication,
+        requireLiveGrantIntersection: authentication !== 'installation_target' && authentication !== 'human_or_installation_target' && agentAuthentication,
         resourceScope: resolver === 'none' ? 'none' : 'resolved_resource',
       },
       resourceResolverId: resolver,
@@ -634,6 +637,19 @@ const mcpOperationIds = {
   'tool:send_message': 'appendAgentActivity',
   'tool:ask': 'appendAgentActivity',
   'tool:request_approval': 'requestApproval',
+  'tool:get_session_execution_result': 'getAgentSessionExecutionResult',
+  'tool:stop_ack': 'acknowledgeAgentSessionStop',
+  'tool:consume_approval': 'consumeApproval',
+  'tool:release_lease': 'releaseLease',
+  'tool:renew_lease': 'renewLease',
+  'tool:heartbeat_lease': 'heartbeatLease',
+  'tool:list_recovery_items': 'listRecoveryItems',
+  'tool:get_recovery_item': 'getRecoveryItem',
+  'tool:list_leases': 'listLeases',
+  'tool:get_approval': 'getApproval',
+  'tool:list_approvals': 'listApprovals',
+  'tool:list_session_plan_versions': 'listAgentPlanVersions',
+  'tool:list_agent_sessions': 'listAgentSessions',
   'tool:publish_artifact': 'publishArtifact',
   'tool:complete_session': 'completeAgentSession',
   'tool:fail_session': 'failAgentSession',
