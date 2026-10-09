@@ -1,0 +1,127 @@
+import { AsyncLocalStorage } from 'node:async_hooks'
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+import { ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js'
+import { z } from 'zod'
+import { WorkMeshClient, WorkMeshSdkError } from '@workmesh/agent-sdk'
+import {
+  agentDiscoveryBindings, projectAdapterDiscovery,
+  type AdapterDiscovery, type QualifiedAgentCapabilityManifest,
+} from '@workmesh/contracts'
+
+export type PreparedDiscovery = { manifest: QualifiedAgentCapabilityManifest; projection: AdapterDiscovery }
+type Request = { method: string; params?: { name?: string; uri?: string; arguments?: Record<string, unknown> } }
+type Handler = (request: Request, extra: unknown) => Record<string, unknown> | Promise<Record<string, unknown>>
+
+/** 使用公开request handler接线，保留SDK输入校验和兼容callback。 */
+export function installDiscovery(server: McpServer, options: {
+  client: WorkMeshClient; mode?: 'read-only' | 'read-write'; coordination?: boolean
+  transport?: 'http' | 'stdio' | 'embedded'
+}, errorResult: (error: unknown) => Promise<Record<string, unknown>>) {
+  const registered = new Set<string>()
+  const resources: Array<{ bindingId: string; match: (uri: string) => Record<string, unknown> | null }> = []
+  const scope = new AsyncLocalStorage<PreparedDiscovery>()
+  const mode = options.mode ?? 'read-write'
+  const registerTool = server.registerTool.bind(server)
+  server.registerTool = ((...args: unknown[]) => {
+    registered.add(`tool:${String(args[0])}`)
+    return Reflect.apply(registerTool, server, args)
+  }) as typeof server.registerTool
+  const registerResource = server.registerResource.bind(server)
+  server.registerResource = ((...args: unknown[]) => {
+    const bindingId = `resource:${String(args[0])}`
+    registered.add(bindingId)
+    const uri = args[1]
+    resources.push({ bindingId, match: uri instanceof ResourceTemplate
+      ? value => uri.uriTemplate.match(value)
+      : value => value === uri ? {} : null })
+    return Reflect.apply(registerResource, server, args)
+  }) as typeof server.registerResource
+  const prepare = async (): Promise<PreparedDiscovery> => {
+    const manifest = await options.client.getQualifiedAgentCapabilities()
+    const configuration = options.client.discoveryCredentialConfiguration
+    const projection = projectAdapterDiscovery({ kind: 'exact_session', qualification: manifest.discovery }, {
+      registeredBindings: [...registered], mode, coordination: options.coordination === true,
+      installationBridge: configuration.installationBridge, transport: options.transport ?? 'embedded',
+    })
+    return { manifest, projection }
+  }
+  const current = (): PreparedDiscovery => {
+    const prepared = scope.getStore()
+    if (!prepared) throw new WorkMeshSdkError('Discovery request scope is missing', { code: 'MCP_DISCOVERY_UNAVAILABLE' })
+    return prepared
+  }
+  const guard = (bindingId: string, input: Record<string, unknown>, prepared: PreparedDiscovery): void => {
+    if (bindingId === 'tool:get_agent_discovery') return
+    const binding = prepared.projection.bindings.find(item => item.bindingId === bindingId)
+    if (!binding || binding.eligibility.status === 'blocked') throw new WorkMeshSdkError('The configured identity cannot call this binding', {
+      code: 'FORBIDDEN', details: { bindingId, reasons: binding?.eligibility.reasons ?? ['ADAPTER_NOT_IMPLEMENTED'] },
+    })
+    const rule = agentDiscoveryBindings.find(item => item.bindingId === bindingId)
+    const credential = prepared.manifest.discovery.identity.credentialMode
+    const variant = rule?.identityVariants.find(item => item.credentialMode.includes(credential))
+    if (variant?.variant === 'self_execution' && variant.targetParameter
+      && input[variant.targetParameter] !== undefined
+      && input[variant.targetParameter] !== prepared.manifest.agent.sessionId)
+      throw new WorkMeshSdkError('An execution credential can only bind its own Session', { code: 'SESSION_BINDING_MISMATCH' })
+  }
+  const setRequestHandler = server.server.setRequestHandler.bind(server.server)
+  server.server.setRequestHandler = ((schema: { shape: { method: { value: string } } }, handler: Handler) => {
+    const method = schema.shape.method.value
+    const intercepted = ['tools/list', 'tools/call', 'resources/list', 'resources/templates/list', 'resources/read'].includes(method)
+    const wrapped: Handler = !intercepted ? handler : async (request, extra) => {
+      try {
+        const bindingId = method === 'tools/call' ? `tool:${request.params?.name}` : undefined
+        // 已知Human-only与只读拒绝在任何资格读取/命令前返回。
+        const rule = agentDiscoveryBindings.find(item => item.bindingId === bindingId)
+        if (rule && !rule.mode.includes(mode)) throw new WorkMeshSdkError('This deployment is read-only', { code: 'FORBIDDEN', details: { reasons: ['READ_ONLY'] } })
+        if (rule && rule.operationIds.some(id => ['publishProjectUpdate', 'decideCompletionSuggestion', 'createComment', 'updateComment', 'cancelHandoff', 'completeHandoff'].includes(id)))
+          throw new WorkMeshSdkError('This action is reserved for Humans', { code: 'FORBIDDEN', details: { reasons: ['ROLE_REQUIRED'] } })
+        const prepared = await prepare()
+        return await scope.run(prepared, async () => {
+          if (bindingId && registered.has(bindingId)) guard(bindingId, request.params?.arguments ?? {}, prepared)
+          if (method === 'resources/read' && request.params?.uri) {
+            const match = resources.map(resource => ({ resource, variables: resource.match(request.params!.uri!) })).find(item => item.variables !== null)
+            if (match) guard(match.resource.bindingId, match.variables!, prepared)
+          }
+          const result = await handler(request, extra)
+          const key = method === 'tools/list' ? 'tools' : method === 'resources/list' ? 'resources' : method === 'resources/templates/list' ? 'resourceTemplates' : undefined
+          if (!key || !Array.isArray(result[key])) return result
+          return { ...result, [key]: (result[key] as Array<Record<string, unknown>>).filter(entry =>
+            entry.name === 'get_agent_discovery' || prepared.projection.bindings.some(binding =>
+              binding.bindingId === `${key === 'tools' ? 'tool' : 'resource'}:${entry.name}` && binding.discoverable))
+            .map(entry => {
+              const binding = prepared.projection.bindings.find(item => item.bindingId === `${key === 'tools' ? 'tool' : 'resource'}:${entry.name}`)
+              return { ...entry, _meta: { ...(entry._meta as Record<string, unknown> | undefined),
+                workmesh: { operationIds: binding?.operationIds ?? [], eligibility: binding?.eligibility,
+                  returnContracts: binding?.operationIds.map(operation => `OPENAPI.yaml#${operation}`) ?? [],
+                } }, ...(binding?.eligibility.status === 'requires_target_check' ? {
+                  description: `${entry.description ?? ''} 已知前提允许；调用仍需核目标资格：${binding.eligibility.pendingChecks.join(', ')}。`,
+                } : {}) }
+            }) }
+        })
+      } catch (error) {
+        if (method === 'tools/call') return errorResult(error)
+        throw error
+      }
+    }
+    Reflect.apply(setRequestHandler, server.server, [schema, wrapped])
+  }) as typeof server.server.setRequestHandler
+  server.registerTool('get_agent_discovery', {
+    description: '读取本次精确身份、adapter配置、工具/资源发现及尚需核验的前提；资格不授予权限。', inputSchema: {},
+  }, async () => ({ content: [{ type: 'text', text: JSON.stringify(current()) }], structuredContent: { data: current() } }))
+  return { current, prepare }
+}
+
+export function registerResourceReadTools(server: McpServer, client: WorkMeshClient): void {
+  const id = z.string().uuid()
+  server.registerTool('get_server_info', { description: '读取安全发布元数据。返回：OPENAPI getServerInfo。', inputSchema: {} }, async () => result(await client.getServerInfo()))
+  server.registerTool('get_server_features', { description: '读取认证部署feature。返回：OPENAPI getDeploymentFeatures。', inputSchema: {} }, async () => result(await client.getFeatures()))
+  server.registerTool('get_agent_capabilities', { description: '读取原始manifest，资格和adapter名单请用get_agent_discovery。', inputSchema: {} }, async () => result(await client.getAgentCapabilities()))
+  server.registerTool('get_agent_session', { description: '读取准确Session和revision；直接E只能读取自身。', inputSchema: { sessionId: id } }, async input => result(await client.getSession(input.sessionId)))
+  server.registerTool('get_session_context', { description: '读取准确Session的有界上下文。', inputSchema: { sessionId: id } }, async input => result(await client.getSessionContext(input.sessionId)))
+  server.registerTool('get_session_plan', { description: '读取准确Session的版本化Plan。', inputSchema: { sessionId: id } }, async input => result(await client.getPlan(input.sessionId)))
+  for (const scope of ['workspace', 'team', 'project'] as const)
+    server.registerTool(`get_${scope}_guidance`, { description: '读取授权范围的guidance。返回：OPENAPI guidance response。', inputSchema: { id } }, async input => result(await client.getGuidance(scope, input.id)))
+  server.registerTool('get_repository_context', { description: '读取授权Repository的固定context和AGENTS来源。', inputSchema: { repositoryId: id } }, async input => result(await client.getRepositoryContext(input.repositoryId)))
+}
+function result(data: unknown) { return { content: [{ type: 'text' as const, text: JSON.stringify(data) }], structuredContent: { data } } }

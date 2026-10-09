@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { qualifiedDiscoverySchema } from './agent-discovery.js'
 import {
   agentLifecycleStatusSchema,
   agentProtocolSchema,
@@ -14,6 +15,7 @@ import {
 } from './route-policy.js'
 
 export * from './route-policy.js'
+export * from './agent-discovery.js'
 export * from './pi-workbench-contracts.js'
 export * from './model-presets.js'
 export * from './configuration-readiness-contracts.js'
@@ -2576,6 +2578,10 @@ export const agentCapabilityManifestResponseSchema = z.object({
   errorReactions: z.array(clientProfileErrorReactionSchema),
 }).strict()
 export type AgentCapabilityManifest = z.infer<typeof agentCapabilityManifestResponseSchema>
+export const qualifiedAgentCapabilityManifestResponseSchema = agentCapabilityManifestResponseSchema.extend({
+  discovery: qualifiedDiscoverySchema,
+}).strict()
+export type QualifiedAgentCapabilityManifest = z.infer<typeof qualifiedAgentCapabilityManifestResponseSchema>
 export type ClientProfileErrorReaction = z.infer<typeof clientProfileErrorReactionSchema>
 
 type AgentCapabilityManifestInput = Readonly<{

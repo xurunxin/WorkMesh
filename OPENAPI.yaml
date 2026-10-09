@@ -148,6 +148,11 @@ paths:
       operationId: getAgentCapabilityManifest
       description: Returns protocol support derived from the route-policy, feature, and MCP binding registries for the exact authenticated Agent Session. This response describes support and capability eligibility; every request still performs live authorization.
       parameters:
+        - name: discovery
+          in: query
+          required: false
+          description: 显式 qualified 返回精确 Session 的资格；省略时保持旧 manifest，未知值拒绝。adapter 名单不属于 API 响应。
+          schema: { type: string, enum: [qualified] }
         - name: WorkMesh-Client-Profile
           in: header
           required: false
@@ -158,7 +163,10 @@ paths:
           description: Negotiated capability manifest for the exact Agent Session.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/AgentCapabilityManifest" }
+              schema:
+                oneOf:
+                  - { $ref: "#/components/schemas/AgentCapabilityManifest" }
+                  - { $ref: "#/components/schemas/QualifiedAgentCapabilityManifest" }
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
@@ -4259,9 +4267,71 @@ components:
             status: { type: string, enum: [ok, unavailable] }
             streamLength: { type: [integer, "null"], minimum: 0 }
             exactLimit: { type: integer, minimum: 1 }
-    AgentCapabilityManifest:
+    DiscoveryEligibility:
       type: object
       additionalProperties: false
+      required: [status, reasons, pendingChecks]
+      properties:
+        status: { type: string, enum: [eligible, blocked, requires_target_check] }
+        reasons: { type: array, items: { type: string, minLength: 1 } }
+        pendingChecks: { type: array, items: { type: string, minLength: 1 } }
+    QualifiedDiscovery:
+      type: object
+      additionalProperties: false
+      required: [request, identity, operations]
+      properties:
+        request: { const: qualified }
+        identity:
+          type: object
+          additionalProperties: false
+          required: [actorId, sessionId, credentialMode, sessionKind, delegationRole, delegationScopeType]
+          properties:
+            actorId: { type: string, format: uuid }
+            sessionId: { type: string, format: uuid }
+            credentialMode: { type: string, enum: [agent_session, coordination_connection] }
+            sessionKind: { type: string, enum: [execution, coordination] }
+            delegationRole: { type: string, enum: [executor, reviewer, researcher, coordinator, triager] }
+            delegationScopeType: { type: string, enum: [work_item, plan_step, project, automation, team] }
+        operations:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [operationId, variant, requirements, eligibility]
+            properties:
+              operationId: { type: string, minLength: 1 }
+              variant: { type: [string, "null"] }
+              eligibility: { $ref: "#/components/schemas/DiscoveryEligibility" }
+              requirements:
+                type: object
+                additionalProperties: false
+                required: [capabilities, predicates]
+                properties:
+                  capabilities: { type: array, items: { $ref: "#/components/schemas/Capability" } }
+                  predicates:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      required: [fact, allowed, reason]
+                      properties:
+                        fact: { type: string }
+                        allowed: { type: array, items: { type: [string, boolean] } }
+                        reason: { type: string }
+    QualifiedAgentCapabilityManifest:
+      allOf:
+        - { $ref: "#/components/schemas/AgentCapabilityManifestFields" }
+        - type: object
+          required: [discovery]
+          properties:
+            discovery: { $ref: "#/components/schemas/QualifiedDiscovery" }
+      unevaluatedProperties: false
+    AgentCapabilityManifest:
+      allOf:
+        - { $ref: "#/components/schemas/AgentCapabilityManifestFields" }
+      unevaluatedProperties: false
+    AgentCapabilityManifestFields:
+      type: object
       required: [profileVersion, generatedFrom, authorizationEvaluatedPerRequest, agent, delivery, operations, extensions, errorReactions]
       properties:
         profileVersion: { const: "1.0" }

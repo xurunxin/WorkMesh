@@ -21,6 +21,8 @@ export async function createWorkMeshMcpHttpServer(options: {
 }): Promise<WorkMeshMcpHttpServer> {
   if (!options.coordination && (!options.sessionToken || !options.accessToken))
     throw new Error('Static MCP mode requires sessionToken and accessToken')
+  if (options.coordination && (options.sessionToken || options.accessToken))
+    throw new Error('Coordination and static credential modes must not be mixed')
   const runtime = { accepting: true }
   const browserOrigin = options.browserOrigin ? normalizeBrowserOrigin(options.browserOrigin) : undefined
   const readinessProbe = options.readinessProbe ?? (async () => {
@@ -69,6 +71,9 @@ export async function createWorkMeshMcpHttpServer(options: {
     if (cors) for (const [name, value] of Object.entries(cors)) response.setHeader(name, value)
     if (!runtime.accepting) { response.writeHead(503).end(); return }
     const coordinationToken = headerValue(request, 'x-workmesh-installation-token')
+    if ((coordinationToken && request.headers.authorization) || (coordinationToken && !options.coordination)) {
+      response.writeHead(401).end(); return
+    }
     const dynamic = options.coordination && coordinationToken
     if (!dynamic && (!options.accessToken || !bearerMatches(request, options.accessToken))) { response.writeHead(401, { 'www-authenticate': 'Bearer, X-WorkMesh-Installation-Token' }).end(); return }
     const client = new WorkMeshClient(dynamic
@@ -78,7 +83,7 @@ export async function createWorkMeshMcpHttpServer(options: {
           installationToken: coordinationToken,
         }
       : { baseUrl: options.baseUrl, sessionToken: options.sessionToken })
-    const mcp = createWorkMeshMcpServer({ client, mode: options.mode, coordination: Boolean(dynamic) })
+    const mcp = createWorkMeshMcpServer({ client, mode: options.mode, coordination: Boolean(dynamic), transport: 'http' })
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined })
     await mcp.connect(transport)
     await transport.handleRequest(request, response)
