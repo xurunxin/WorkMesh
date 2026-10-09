@@ -65,7 +65,7 @@ try {
   const errors = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto(`${origin}/workbench`)
-  await page.waitForLoadState('networkidle')
+  await page.getByTestId('conversation-workbench').waitFor({ state: 'visible' })
   assert.match(await page.locator('body').innerText(), /WorkMesh/)
   assert.equal(await page.locator('[data-testid="configuration-readiness"]').count(), 0)
   assert.deepEqual(errors, [])

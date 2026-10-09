@@ -14,6 +14,7 @@ const source = { todoId: '0BkezbmWV6k8vwrlSNuF_', scopeChangeAt: '2026-10-09T12:
   binding: 'docs/reviews/a2-backend/sources.json' }
 const index = read('docs/plan/activation-task-specs/index.json')
 const task = index.tasks.find(item => item.seqNum === 9)
+if (task.historicalUi) throw Error('范围已同步，不覆盖历史映射；后续按新差异定向更新')
 task.historicalUi = { source: task.currentSource, approvedPlan: task.approvedPlanBinding, execution: task.execution,
   preservation: 'docs/reviews/a2-backend/preservation.json', scope: '旧 UI/失败/视觉未验收及六测试完整保全，当前不作为后端通过' }
 task.title = '[A2-后端] 仓库配置授权、稳定请求身份与异步结果追溯'
@@ -35,7 +36,7 @@ for (const entry of feature.originalTests) {
   entry.historicalStatus = entry.status; entry.status = '本轮延期 UI；不计新后端通过'
   entry.disposition = '用户收窄范围，原用例完整保全在 6f059e 与 preservation.json；后续重设计继续消费行为合同'
 }
-feature.originalDoD = { historical: feature.originalDoD, currentDisposition: '原 UIDoD 正式延期，未视觉接受；后端 DoD 见当前完整 Spec' }
+feature.originalDoDDisposition = '原 UIDoD 正式延期，未视觉接受；后端 DoD 见当前完整 Spec'
 const stage3 = 'apps/api/integration/stage3-delivery.integration.test.ts'
 const stage4 = 'apps/api/integration/stage4-operations.integration.test.ts'
 const rows = [

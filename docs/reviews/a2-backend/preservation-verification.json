@@ -1,0 +1,45 @@
+{
+  "observedAt": "2026-10-09T04:22:34.167Z",
+  "head": "38e2cf8f29c51adafbda11484e713df51d3ea8f2",
+  "archiveCount": 91,
+  "historicalObjects": [
+    {
+      "commit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "type": "commit",
+      "tree": "4dcd01f12f30610b15d551f9fdd6d7351925f0e6"
+    },
+    {
+      "commit": "741623eca9d26439e575d6119f7ed97d37df1fde",
+      "type": "commit",
+      "tree": "80d36fdc88e487919e0cf1ae56fe1ce5a43075ce"
+    },
+    {
+      "commit": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "type": "commit",
+      "tree": "f4cca73200724712f339a4d0e29d76db7ce435ee"
+    },
+    {
+      "commit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "type": "commit",
+      "tree": "c3fa200cff5b922f3935059091f34a4894b3418e"
+    }
+  ],
+  "sourceBytesMatchGit": true,
+  "deferredUiDiffAgainstMain": [],
+  "historicalEvidenceUnchanged": [
+    "docs/plan/a2-configuration-readiness.md",
+    "docs/plan/a2-configuration-readiness",
+    "docs/reviews/a2"
+  ],
+  "actualMainRefReadback": {
+    "sha": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+    "observedAt": "2026-10-09T04:21:40Z",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "tool": "mcp__tds__git",
+    "result": "同精确 c768，非 FETCH_HEAD"
+  }
+}

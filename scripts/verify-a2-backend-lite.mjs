@@ -33,6 +33,14 @@ const env = { ...process.env, WORKMESH_LITE_IMAGE: `workmesh-a2-lite:${runId}`, 
   PAGINATION_CURSOR_KEYS: `a2:${secretValues[3]}`, PAGINATION_CURSOR_ACTIVE_KID: 'a2', AUTH_RATE_LIMIT_HMAC_KEY: secretValues[4],
   MINIO_ROOT_USER: 'a2-lite', MINIO_ROOT_PASSWORD: secretValues[5], S3_ACCESS_KEY_ID: 'a2-lite', S3_SECRET_ACCESS_KEY: secretValues[5],
   S3_BUCKET: runId, S3_REGION: 'us-east-1', WORKMESH_BETA_GITEA: 'true', WORKMESH_BIND_ADDRESS: '127.0.0.1', POSTGRES_DB: 'workmesh_a2_lite_test' }
+// 测试仅显式开启固定 Gitea 夹具；不继承团队环境开启 C3 或其他域。
+const disabledFeatures = ['WORKMESH_BETA_PLANNING', 'WORKMESH_BETA_TEMPLATES', 'WORKMESH_BETA_COSTS',
+  'WORKMESH_BETA_OPERATIONS_UI', 'WORKMESH_BETA_COORDINATION_MCP', 'WORKMESH_BETA_MODEL_PRESETS',
+  'WORKMESH_EXPERIMENTAL_AUTOMATION', 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', 'WORKMESH_EXPERIMENTAL_A2A',
+  'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', 'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME']
+for (const feature of disabledFeatures) env[feature] = 'false'
+env.WORKMESH_MODEL_PRESETS_FILE = ''
+receipts.features = { ...Object.fromEntries(disabledFeatures.map(feature => [feature, false])), WORKMESH_BETA_GITEA: true }
 const command = (name, args, options = {}) => new Promise(resolveResult => {
   const startedAt = new Date().toISOString(); let output = ''
   const child = spawn(name, args, { cwd: root, env, windowsHide: true, ...options })
