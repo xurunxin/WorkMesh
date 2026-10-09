@@ -11,6 +11,7 @@ import type {
   CreateDocumentInput, UpdateDocumentInput, DocumentResponse, DocumentRevision,
   DocumentHistoryResponse, DocumentDiffResponse, DocumentArchiveInput, RestoreDocumentRevisionInput,
   AgentCapabilityManifest,
+  QualifiedAgentCapabilityManifest,
   AgentConnectionCreateInput, AgentConnectionCreateResponse,
   AgentConnectionCurrentIdentity,
   AgentConnectionPatchInput, AgentConnectionResponse,
@@ -21,6 +22,7 @@ import type {
   ClaimWorkItemInput, ClaimWorkItemResponse,
 } from '@workmesh/contracts'
 import {
+  qualifiedAgentCapabilityManifestResponseSchema,
   durableEventCursorSchema,
   eventEnvelopeSchema,
   routePolicyManifest,
@@ -275,6 +277,45 @@ export class WorkMeshClient {
     return this.request('GET', '/api/v1/agent-capabilities', undefined, options)
   }
 
+  async getQualifiedAgentCapabilities(options: RequestOptions = {}): Promise<QualifiedAgentCapabilityManifest> {
+    const response = await this.request<unknown>('GET', '/api/v1/agent-capabilities?discovery=qualified', undefined, { ...options, skipTokenRefresh: true })
+    const parsed = qualifiedAgentCapabilityManifestResponseSchema.safeParse(response)
+    if (!parsed.success) throw new WorkMeshSdkError('Invalid qualified discovery response', { code: 'MALFORMED_RESPONSE' })
+    if (parsed.data.agent.actorId !== parsed.data.discovery.identity.actorId
+      || parsed.data.agent.sessionId !== parsed.data.discovery.identity.sessionId)
+      throw new WorkMeshSdkError('Discovery identity disagrees with the manifest', { code: 'SESSION_BINDING_MISMATCH' })
+    return parsed.data
+  }
+
+  get discoveryCredentialConfiguration(): Readonly<{ session: boolean; coordination: boolean; installationBridge: boolean }> {
+    return { session: Boolean(this.sessionToken), coordination: Boolean(this.coordinationToken), installationBridge: Boolean(this.installationToken) }
+  }
+
+  /** 凭据只存在本次调用的局部client；不修改当前C或其他目标的Token。 */
+  async forExecutionSession(sessionId: string, options: RequestOptions = {}): Promise<{
+    client: WorkMeshClient; manifest: QualifiedAgentCapabilityManifest
+  }> {
+    if (!this.coordinationToken || !this.installationToken)
+      throw new WorkMeshSdkError('An exact target requires the configured Coordination bridge', { code: 'CREDENTIAL_MODE_MISMATCH' })
+    const source = await this.getQualifiedAgentCapabilities(options)
+    if (source.discovery.identity.credentialMode !== 'coordination_connection'
+      || source.discovery.identity.sessionKind !== 'coordination')
+      throw new WorkMeshSdkError('Target bridge requires the current Coordination identity', { code: 'CREDENTIAL_MODE_MISMATCH' })
+    const refreshed = await this.request<TokenExchange>('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/token/refresh`, {}, {
+      ...options, authorizationToken: this.installationToken, skipTokenRefresh: true,
+      idempotencyKey: stableIdempotencyKey(sessionId, 'token-refresh'),
+    })
+    const client = new WorkMeshClient({ baseUrl: this.baseUrl, sessionToken: refreshed.sessionToken,
+      fetch: this.requestFetch, retry: this.retry, logger: this.logger })
+    const manifest = await client.getQualifiedAgentCapabilities(options)
+    if (manifest.agent.sessionId !== sessionId || manifest.discovery.identity.sessionId !== sessionId
+      || manifest.agent.actorId !== source.agent.actorId
+      || manifest.discovery.identity.sessionKind !== 'execution'
+      || manifest.discovery.identity.credentialMode !== 'agent_session')
+      throw new WorkMeshSdkError('The refreshed target identity did not match the requested execution', { code: 'SESSION_BINDING_MISMATCH' })
+    return { client, manifest }
+  }
+
   getCurrentAgentConnectionIdentity(options: RequestOptions = {}): Promise<AgentConnectionCurrentIdentity> {
     return this.request('GET', '/api/v1/agent-connections/current-identity', undefined, options)
   }
@@ -375,6 +416,11 @@ export class WorkMeshClient {
   rejectHandoff<T = unknown>(handoffId: string, input: HandoffRejectInput, options: RequestOptions = {}): Promise<T> {
     if (this.sessionToken) return this.mutateHandoff(handoffId, 'reject', input, options)
     if (!this.installationToken) throw new WorkMeshSdkError('A session or installation token is required to reject a handoff', { code: 'AUTHORIZATION_TOKEN_REQUIRED' })
+    return this.request('POST', `/api/v1/handoffs/${encodeURIComponent(handoffId)}/reject`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(handoffId, 'handoff-reject'), authorizationToken: this.installationToken, skipTokenRefresh: true })
+  }
+  /** 安装用途 binding 显式选择安装 Bearer；保留 rejectHandoff 的 Session 兼容入口。 */
+  rejectPendingHandoff<T = unknown>(handoffId: string, input: HandoffRejectInput, options: RequestOptions = {}): Promise<T> {
+    if (!this.installationToken) throw new WorkMeshSdkError('An installation token is required to reject a pending handoff', { code: 'INSTALLATION_TOKEN_REQUIRED' })
     return this.request('POST', `/api/v1/handoffs/${encodeURIComponent(handoffId)}/reject`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(handoffId, 'handoff-reject'), authorizationToken: this.installationToken, skipTokenRefresh: true })
   }
   getWorkItem<T = WorkItemResponse>(workItemId: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/work-items/${encodeURIComponent(workItemId)}`, undefined, options) }
@@ -572,7 +618,6 @@ export class WorkMeshClient {
   }
 
   private async request<T>(method: string, path: string, body?: unknown, options: RequestOptions & { authorizationToken?: string; skipTokenRefresh?: boolean; refreshSessionId?: string } = {}): Promise<T> {
-    let refreshedSessionToken: string | undefined
     if (
       !options.skipTokenRefresh
       && !options.authorizationToken
@@ -580,6 +625,23 @@ export class WorkMeshClient {
       && this.installationToken
       && (Boolean(this.coordinationToken) || !this.sessionToken)
     ) {
+      const recoveryOperation = resolveSdkRoutePolicy(method, new URL(path, `${this.baseUrl}/`).pathname).operationId
+      if (this.coordinationToken && !['acknowledgeAgentSession', 'acknowledgeAgentSessionStop', 'heartbeatAgentSession'].includes(recoveryOperation)) {
+        const { client, manifest } = await this.forExecutionSession(options.refreshSessionId, options)
+        const policy = resolveSdkRoutePolicy(method, new URL(path, `${this.baseUrl}/`).pathname)
+        const variant = policy.operationId === 'requestProviderAction' && body && typeof body === 'object'
+          ? (body as { kind?: string }).kind
+          : manifest.discovery.identity.delegationRole === 'reviewer'
+            && ['completeAgentSession', 'failAgentSession'].includes(policy.operationId) ? 'reviewer' : undefined
+        const check = manifest.discovery.operations.find(operation => operation.operationId === policy.operationId
+          && operation.variant === (variant ?? null))
+        if (!check || check.eligibility.status === 'blocked')
+          throw new WorkMeshSdkError('The target execution cannot perform this operation', {
+            code: 'FORBIDDEN', details: { reasons: check?.eligibility.reasons ?? ['ADAPTER_NOT_IMPLEMENTED'] },
+          })
+        return client.request<T>(method, path, body, { ...options, skipTokenRefresh: true })
+      }
+      // 仅安装用途的既有显式刷新仍保留；不伪装为C发现。
       const refreshed = await this.request<TokenExchange>(
         'POST',
         `/api/v1/agent-sessions/${encodeURIComponent(options.refreshSessionId)}/token/refresh`,
@@ -594,13 +656,13 @@ export class WorkMeshClient {
           refreshSessionId: options.refreshSessionId,
         },
       )
-      refreshedSessionToken = refreshed.sessionToken
+      return this.request<T>(method, path, body, { ...options, authorizationToken: refreshed.sessionToken, skipTokenRefresh: true })
     }
     const url = new URL(path, `${this.baseUrl}/`).toString()
     resolveSdkRoutePolicy(method, new URL(url).pathname)
     const headers: Record<string, string> = { accept: 'application/json' }
     if (body !== undefined) headers['content-type'] = 'application/json'
-    const authorizationToken = options.authorizationToken ?? refreshedSessionToken ?? this.sessionToken
+    const authorizationToken = options.authorizationToken ?? this.sessionToken
     if (authorizationToken) headers.authorization = `Bearer ${authorizationToken}`
     else if (this.coordinationToken) headers['x-workmesh-installation-token'] = this.coordinationToken
     if (options.idempotencyKey) headers['idempotency-key'] = options.idempotencyKey

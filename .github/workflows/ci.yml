@@ -51,6 +51,7 @@ jobs:
         run: |
           mkdir -p ci-logs
           set -o pipefail
+          npm ci --prefix scripts/ci-bootstrap --ignore-scripts --no-audit --no-fund 2>&1 | tee ci-logs/ci-bootstrap.log
           node --test scripts/ci-policy.test.mjs 2>&1 | tee ci-logs/ci-policy.log
       - name: Select required jobs
         id: scope
@@ -360,6 +361,11 @@ jobs:
         run: |
           set -o pipefail
           pnpm test:integration:api 2>&1 | tee ci-logs/api-integration.log
+      - name: Run real MCP and Pi conformance
+        run: |
+          mkdir -p ci-logs/mcp-coverage
+          set -o pipefail
+          pnpm test:conformance:integration 2>&1 | tee ci-logs/mcp-coverage/conformance.log
       - name: Capture service logs
         if: ${{ failure() }}
         run: |

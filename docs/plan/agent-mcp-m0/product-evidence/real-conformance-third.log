@@ -1,0 +1,56 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/conformance
+
+stdout | src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"b27505eb-94eb-4a52-8218-52c51d0c52db","conversationId":"2a1041a0-3f78-4b53-b9ef-dbe92c5d66cc","attemptNo":1,"sessionId":"2fdec79e-1b9a-4dec-b6be-d433218347c1","correlationId":"a1dc9401-2d64-4b4b-9a56-c0cb98601a1d","status":"settled","outcome":"settled","queueWaitMs":2301,"dispatchLagMs":2262,"runDurationMs":407,"totalDurationMs":2708,"totalTokens":null,"errorCode":null}
+
+ ❯ src/mcp-coverage.conformance.test.ts (8 tests | 1 failed) 8505ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 同一C分别发现两种mode，Context与同次投影一致，verify无需目标参数  814ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取  964ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C  834ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision  622ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox  846ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实  3121ms
+   × 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走 515ms
+     → Stopped session cannot refresh its token
+   ✓ 真实API、MCP与Pi资格和恢复链 > 发现后撤Connection/Team grant仍拒绝，不以刷新或重新发现恢复授权 152ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走
+WorkMeshSdkError: Stopped session cannot refresh its token
+ ❯ toSdkError ../agent-sdk/src/index.ts:796:12
+    794|         })
+    795|     }
+    796|     return new WorkMeshSdkError(message, { code: typeof error.code ===…
+       |            ^
+    797|   }
+    798|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…
+ ❯ WorkMeshClient.request ../agent-sdk/src/index.ts:697:17
+ ❯ WorkMeshClient.request ../agent-sdk/src/index.ts:640:25
+ ❯ src/mcp-coverage.conformance.test.ts:156:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:48:01
+   Duration  11.56s (transform 1.02s, setup 0ms, collect 2.64s, tests 8.50s, environment 0ms, prepare 119ms)
+
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/conformance@ test:integration: `vitest run --config vitest.integration.config.ts`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.

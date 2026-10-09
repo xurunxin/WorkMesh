@@ -1,8 +1,25 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { WorkMeshClient, WorkMeshCursorExpiredError, WorkMeshSdkError, iterateListPages, redactForLog, stableIdempotencyKey, verifyWebhook } from './index.js'
 import { createHmac } from 'node:crypto'
+import { createAgentCapabilityManifest, qualifyAgentCapabilityManifest, capabilitySchema, featureKeySchema } from '@workmesh/contracts'
+
+const qualifiedFixture = (sessionId: string, coordination: boolean) => {
+  const actorId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'
+  const features = Object.fromEntries(featureKeySchema.options.map(key => [key, true])) as Record<typeof featureKeySchema.options[number], boolean>
+  const manifest = createAgentCapabilityManifest({ actorId, sessionId, sessionState: 'executing', sessionRevision: 1, effectiveCapabilities: capabilitySchema.options, capabilityScope: { workspaceId: actorId, teamIds: [actorId], projectIds: [], workItemIds: coordination ? [] : [sessionId], repositoryIds: [], capabilities: capabilitySchema.options }, features, supportedProtocols: ['mcp'], pushConfigured: false })
+  return qualifyAgentCapabilityManifest(manifest, { identity: { actorId, sessionId, credentialMode: coordination ? 'coordination_connection' : 'agent_session', sessionKind: coordination ? 'coordination' : 'execution', delegationRole: coordination ? 'coordinator' : 'executor', delegationScopeType: coordination ? 'team' : 'work_item' }, features, workItemId: coordination ? null : sessionId, projectId: null })
+}
 
 describe('WorkMeshClient', () => {
+  it('安装拒绝 helper 明确选安装 Bearer，原 Session 拒绝入口保留且不换共享 Token', async () => {
+    const fetcher = vi.fn().mockImplementation(async () => new Response('{}', { headers: { 'content-type': 'application/json' } }))
+    const client = new WorkMeshClient({ baseUrl: 'http://api.test', sessionToken: 'own-session', installationToken: 'target-installation', fetch: fetcher })
+    await client.rejectPendingHandoff('handoff', { machineReason: 'manual_reject' }, { idempotencyKey: 'install-reject' })
+    await client.rejectHandoff('handoff', { machineReason: 'manual_reject' }, { idempotencyKey: 'session-reject' })
+    expect(new Headers(fetcher.mock.calls[0]![1].headers).get('authorization')).toBe('Bearer target-installation')
+    expect(new Headers(fetcher.mock.calls[1]![1].headers).get('authorization')).toBe('Bearer own-session')
+    expect(fetcher).toHaveBeenCalledTimes(2)
+  })
   afterEach(() => {
     vi.useRealTimers()
   })
@@ -306,30 +323,34 @@ describe('WorkMeshClient', () => {
   it('keeps a connection bridge on coordination auth and refreshes each exact execution session request-locally', async () => {
     const fetch = vi.fn().mockImplementation(async (input: string | URL | Request, init?: RequestInit) => {
       const url = String(input)
+      if (url.endsWith('/agent-capabilities?discovery=qualified')) {
+        const token = new Headers(init?.headers).get('authorization')
+        return new Response(JSON.stringify(qualifiedFixture(token === 'Bearer execution-a' ? '11111111-1111-4111-8111-111111111111' : token === 'Bearer execution-b' ? '22222222-2222-4222-8222-222222222222' : '33333333-3333-4333-8333-333333333333', token === null)), { status: 200 })
+      }
       if (url.endsWith('/work-items/work-1/claim')) {
         return new Response(JSON.stringify({
           delegation: { id: 'delegation-a' },
-          session: { id: 'session-a' },
+          session: { id: '11111111-1111-4111-8111-111111111111' },
           exchangeToken: 'exchange-a',
         }), { status: 201 })
       }
-      if (url.endsWith('/agent-sessions/session-a/token/exchange')) {
+      if (url.endsWith('/agent-sessions/11111111-1111-4111-8111-111111111111/token/exchange')) {
         return new Response(JSON.stringify({ sessionToken: 'bootstrap-a' }), { status: 200 })
       }
       if (url.includes('/work-items?claimable=true')) {
         return new Response(JSON.stringify({ items: [], nextCursor: null }), { status: 200 })
       }
-      if (url.endsWith('/agent-sessions/session-a/token/refresh')) {
+      if (url.endsWith('/agent-sessions/11111111-1111-4111-8111-111111111111/token/refresh')) {
         return new Response(JSON.stringify({ sessionToken: 'execution-a' }), { status: 200 })
       }
-      if (url.endsWith('/agent-sessions/session-a/ack')) {
-        return new Response(JSON.stringify({ id: 'session-a', revision: 2 }), { status: 200 })
+      if (url.endsWith('/agent-sessions/11111111-1111-4111-8111-111111111111/ack')) {
+        return new Response(JSON.stringify({ id: '11111111-1111-4111-8111-111111111111', revision: 2 }), { status: 200 })
       }
-      if (url.endsWith('/agent-sessions/session-b/token/refresh')) {
+      if (url.endsWith('/agent-sessions/22222222-2222-4222-8222-222222222222/token/refresh')) {
         return new Response(JSON.stringify({ sessionToken: 'execution-b' }), { status: 200 })
       }
-      if (url.endsWith('/agent-sessions/session-b')) {
-        return new Response(JSON.stringify({ id: 'session-b' }), { status: 200 })
+      if (url.endsWith('/agent-sessions/22222222-2222-4222-8222-222222222222')) {
+        return new Response(JSON.stringify({ id: '22222222-2222-4222-8222-222222222222' }), { status: 200 })
       }
       if (url.endsWith('/handoffs/handoff-1/request')) {
         return new Response(JSON.stringify({ id: 'handoff-1', status: 'requested' }), { status: 200 })
@@ -346,15 +367,15 @@ describe('WorkMeshClient', () => {
     const claimed = await client.claimWorkItem('work-1', {}, { ifMatch: 1, idempotencyKey: 'claim-1' })
     await client.exchangeClaimedSessionToken(claimed.session.id, claimed.exchangeToken, { idempotencyKey: 'exchange-1' })
     await client.listClaimableWorkItems()
-    await client.acknowledge('session-a', { summary: 'accepted' }, { idempotencyKey: 'ack-a' })
-    await client.getSession('session-b')
+    await client.acknowledge('11111111-1111-4111-8111-111111111111', { summary: 'accepted' }, { idempotencyKey: 'ack-a' })
+    await client.getSession('22222222-2222-4222-8222-222222222222')
     await client.requestHandoff(
       'handoff-1',
       { reason: 'ready for transfer' },
-      { sessionId: 'session-a', idempotencyKey: 'handoff-request' },
+      { sessionId: '11111111-1111-4111-8111-111111111111', idempotencyKey: 'handoff-request' },
     )
 
-    const calls = fetch.mock.calls.map(([input, init]) => ({
+    const calls = fetch.mock.calls.filter(([input]) => !String(input).includes('agent-capabilities')).map(([input, init]) => ({
       url: String(input),
       headers: (init?.headers ?? {}) as Record<string, string>,
       body: init?.body,
@@ -363,20 +384,20 @@ describe('WorkMeshClient', () => {
     expect(calls[1]?.headers).toMatchObject({ authorization: 'Bearer connection-token' })
     expect(calls[2]?.headers).toMatchObject({ 'x-workmesh-installation-token': 'connection-token' })
     expect(calls[2]?.headers.authorization).toBeUndefined()
-    expect(calls[3]?.url).toContain('/agent-sessions/session-a/token/refresh')
+    expect(calls[3]?.url).toContain('/agent-sessions/11111111-1111-4111-8111-111111111111/token/refresh')
     expect(calls[3]?.headers).toMatchObject({ authorization: 'Bearer connection-token' })
     expect(calls[4]?.headers).toMatchObject({ authorization: 'Bearer execution-a' })
-    expect(calls[5]?.url).toContain('/agent-sessions/session-b/token/refresh')
+    expect(calls[5]?.url).toContain('/agent-sessions/22222222-2222-4222-8222-222222222222/token/refresh')
     expect(calls[5]?.headers).toMatchObject({ authorization: 'Bearer connection-token' })
     expect(calls[6]?.headers).toMatchObject({ authorization: 'Bearer execution-b' })
-    expect(calls[7]?.url).toContain('/agent-sessions/session-a/token/refresh')
+    expect(calls[7]?.url).toContain('/agent-sessions/11111111-1111-4111-8111-111111111111/token/refresh')
     expect(calls[7]?.headers).toMatchObject({ authorization: 'Bearer connection-token' })
     expect(calls[8]?.url).toContain('/handoffs/handoff-1/request')
     expect(calls[8]?.headers).toMatchObject({ authorization: 'Bearer execution-a' })
     expect(JSON.parse(String(calls[8]?.body))).toEqual({ reason: 'ready for transfer' })
     expect(String(calls[8]?.body)).not.toContain('sourceSessionId')
     const sessionARefreshKeys = calls
-      .filter(call => call.url.includes('/agent-sessions/session-a/token/refresh'))
+      .filter(call => call.url.includes('/agent-sessions/11111111-1111-4111-8111-111111111111/token/refresh'))
       .map(call => call.headers['idempotency-key'])
     expect(sessionARefreshKeys).toHaveLength(2)
     expect(sessionARefreshKeys[0]).not.toBe(sessionARefreshKeys[1])
@@ -384,15 +405,16 @@ describe('WorkMeshClient', () => {
   })
 
   it('rebuilds exact-session authorization independently in separate stateless bridge clients', async () => {
-    const makeFetch = (sessionId: string, sessionToken: string) => vi.fn().mockImplementation(async (input: string | URL | Request) => {
+    const makeFetch = (sessionId: string, sessionToken: string) => vi.fn().mockImplementation(async (input: string | URL | Request, init?: RequestInit) => {
       const url = String(input)
+      if (url.endsWith('/agent-capabilities?discovery=qualified')) return new Response(JSON.stringify(qualifiedFixture(new Headers(init?.headers).get('authorization') === `Bearer ${sessionToken}` ? sessionId : '33333333-3333-4333-8333-333333333333', !new Headers(init?.headers).has('authorization'))), { status: 200 })
       if (url.endsWith(`/agent-sessions/${sessionId}/token/refresh`)) {
         return new Response(JSON.stringify({ sessionToken }), { status: 200 })
       }
       return new Response(JSON.stringify({ id: sessionId, revision: 2 }), { status: 200 })
     })
-    const firstFetch = makeFetch('session-a', 'execution-a')
-    const secondFetch = makeFetch('session-b', 'execution-b')
+    const firstFetch = makeFetch('11111111-1111-4111-8111-111111111111', 'execution-a')
+    const secondFetch = makeFetch('22222222-2222-4222-8222-222222222222', 'execution-b')
     const first = new WorkMeshClient({
       baseUrl: 'https://workmesh.test',
       coordinationToken: 'connection-token',
@@ -407,8 +429,8 @@ describe('WorkMeshClient', () => {
     })
 
     await Promise.all([
-      first.appendActivity('session-a', { kind: 'message', summary: 'first' }),
-      second.complete('session-b', {
+      first.appendActivity('11111111-1111-4111-8111-111111111111', { kind: 'message', summary: 'first' }),
+      second.complete('22222222-2222-4222-8222-222222222222', {
         summary: 'done',
         artifactIds: [],
         checks: [],
@@ -417,10 +439,12 @@ describe('WorkMeshClient', () => {
       }),
     ])
 
-    expect(firstFetch.mock.calls[0]?.[1].headers.authorization).toBe('Bearer connection-token')
-    expect(firstFetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer execution-a')
-    expect(secondFetch.mock.calls[0]?.[1].headers.authorization).toBe('Bearer connection-token')
-    expect(secondFetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer execution-b')
+    const firstCalls = firstFetch.mock.calls.filter(([url]) => !String(url).includes('agent-capabilities'))
+    const secondCalls = secondFetch.mock.calls.filter(([url]) => !String(url).includes('agent-capabilities'))
+    expect(firstCalls[0]?.[1]?.headers && new Headers(firstCalls[0]?.[1]?.headers).get('authorization')).toBe('Bearer connection-token')
+    expect(new Headers(firstCalls[1]?.[1]?.headers).get('authorization')).toBe('Bearer execution-a')
+    expect(new Headers(secondCalls[0]?.[1]?.headers).get('authorization')).toBe('Bearer connection-token')
+    expect(new Headers(secondCalls[1]?.[1]?.headers).get('authorization')).toBe('Bearer execution-b')
   })
 
   it('propagates cancellation through the exact-session refresh before sending the target request', async () => {

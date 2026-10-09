@@ -1,10 +1,45 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces } from './ci-policy.mjs'
+import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints } from './ci-policy.mjs'
+import { readFileSync } from 'node:fs'
+import { parse } from './ci-bootstrap/yaml.mjs'
 
 const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
 const results = plan => Object.fromEntries(['changes', ...checkIds].map(id => [id, { result: id === 'changes' || plan.checks[id] ? 'success' : 'skipped' }]))
+
+test('classification bootstrap locks only YAML and cannot bypass policy or evidence', () => {
+  const input = {
+    job: parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs.changes,
+    manifest: JSON.parse(readFileSync(new URL('./ci-bootstrap/package.json', import.meta.url), 'utf8')),
+    lock: JSON.parse(readFileSync(new URL('./ci-bootstrap/package-lock.json', import.meta.url), 'utf8')),
+    yamlVersion: parse(readFileSync(new URL('../pnpm-lock.yaml', import.meta.url), 'utf8')).importers['.'].devDependencies.yaml.version,
+  }
+  assert.deepEqual(validateCiBootstrap(input), [])
+  for (const mutate of [
+    value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run = 'node --test scripts/ci-policy.test.mjs' },
+    value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run = value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run.replace('set -o pipefail', '') },
+    value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety')['continue-on-error'] = true },
+    value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety').if = 'false' },
+    value => { value.job.steps = value.job.steps.filter(step => step.name !== 'Set up exact Node') },
+    value => { value.job.steps = value.job.steps.filter(step => step.id !== 'scope') },
+    value => { value.job.steps = value.job.steps.filter(step => !step.uses?.startsWith('actions/upload-artifact@')) },
+    value => { value.manifest.dependencies.yaml = '^2.9.0' },
+    value => { value.lock.packages['node_modules/yaml'].integrity = '' },
+    value => { value.lock.packages['node_modules/extra'] = { version: '1.0.0' } },
+  ]) {
+    const candidate = structuredClone(input)
+    mutate(candidate)
+    assert.ok(validateCiBootstrap(candidate).length > 0)
+  }
+})
+
+test('YAML semantics preserve flow maps, aliases and literal command bodies', () => {
+  const document = parse('run: &command |\n  set -o pipefail\n  echo "# literal: yes"\nsteps: [{run: *command, continue-on-error: false}]\n')
+  assert.equal(document.steps[0].run, 'set -o pipefail\necho "# literal: yes"\n')
+  assert.equal(document.steps[0]['continue-on-error'], false)
+  assert.throws(() => parse('steps: []\nsteps: []\n'), /unique/)
+})
 
 test('known prose on PR and main avoids every install/service/test job', () => {
   for (const options of [{}, { mainPush: true }]) {
@@ -44,8 +79,9 @@ test('API and worker changes retain destructive recovery and real browser integr
 test('cross-workspace lock audits are selected without inventing runtime dependency cycles', () => {
   for (const name of ['api', 'worker']) {
     const plan = classify([`apps/${name}/src/agent/commands.ts`])
-    assert.deepEqual(plan.packages, [`@workmesh/${name}`])
-    assert.deepEqual(plan.testPackages, [`@workmesh/${name}`, '@workmesh/db'].sort())
+    const consumers = name === 'api' ? ['@workmesh/conformance'] : []
+    assert.deepEqual(plan.packages, [`@workmesh/${name}`, ...consumers].sort())
+    assert.deepEqual(plan.testPackages, [`@workmesh/${name}`, '@workmesh/db', ...consumers].sort())
     assert.equal(plan.checks['db-integration'], false)
     assert.equal(plan.checks['worker-integration'], name === 'worker')
   }
@@ -133,4 +169,43 @@ test('aggregate only accepts planned skips and rejects incomplete/malformed deci
   assert.throws(() => evaluateResults(null, {}))
   assert.throws(() => evaluateResults(plan, {}))
   assert.throws(() => evaluateResults({ ...plan, checks: {} }, results(plan)))
+})
+
+// 真实MCP/Pi链不得因只改adapter或Runner而漏过必需API job。
+test('MCP discovery consumers require real conformance and propagate failed or skipped job', () => {
+  for (const path of ['apps/mcp/src/index.ts', 'apps/agent-runner/src/workmesh-tools.ts', 'packages/agent-sdk/src/index.ts', 'packages/conformance/src/index.ts']) {
+    const plan = classify([path])
+    assert.equal(plan.checks['api-integration'], true)
+    for (const result of ['failure', 'cancelled', 'skipped']) {
+      const actual = results(plan)
+      actual['api-integration'] = { result }
+      assert.ok(evaluateResults(plan, actual).some(failure => failure.startsWith('api-integration=')))
+    }
+  }
+})
+
+test('real workflow semantic mutations cannot silently omit MCP conformance', () => {
+  const input = {
+    job: parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['api-integration'],
+    rootScripts: JSON.parse(readFileSync(new URL('../package.json', import.meta.url))).scripts,
+    packageScripts: JSON.parse(readFileSync(new URL('../packages/conformance/package.json', import.meta.url))).scripts,
+    integrationConfig: readFileSync(new URL('../packages/conformance/vitest.integration.config.ts', import.meta.url), 'utf8'),
+    unitConfig: readFileSync(new URL('../vitest.config.ts', import.meta.url), 'utf8'),
+  }
+  assert.deepEqual(validateMcpConformanceEntrypoints(input), [])
+  for (const mutate of [
+    value => { value.job.steps = value.job.steps.filter(step => step.name !== 'Run real MCP and Pi conformance') },
+    value => { value.rootScripts['test:integration'] = 'pnpm test:integration:api' },
+    value => { value.rootScripts['test:conformance:integration'] = 'pnpm --filter @workmesh/conformance test:integration' },
+    value => { value.packageScripts['test:integration'] = 'vitest run' },
+    value => { value.integrationConfig = value.integrationConfig.replace("include: ['src/mcp-coverage.conformance.test.ts']", 'include: []') },
+    value => { value.integrationConfig = value.integrationConfig.replace('passWithNoTests: false', 'passWithNoTests: true') },
+    value => { value.job.steps.find(step => step.name === 'Run real MCP and Pi conformance').run = 'pnpm test:conformance:integration' },
+    value => { value.job.steps.find(step => step.name === 'Run real MCP and Pi conformance')['continue-on-error'] = true },
+    value => { value.job.steps = value.job.steps.filter(step => !step.uses?.startsWith('actions/upload-artifact@')) },
+  ]) {
+    const candidate = structuredClone(input)
+    mutate(candidate)
+    assert.ok(validateMcpConformanceEntrypoints(candidate).length > 0)
+  }
 })

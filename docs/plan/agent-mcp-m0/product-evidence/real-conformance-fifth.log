@@ -1,0 +1,55 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/conformance
+
+stdout | src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"b98fae51-c79d-4cae-8c34-e37a76b0b0f7","conversationId":"aed99762-db9d-4f6f-a29b-98a89329cb38","attemptNo":1,"sessionId":"c7623221-4fa5-4fdc-bd23-60f736a52cd4","correlationId":"9fb5a010-e27d-4ef5-b9bc-4f8e37289407","status":"settled","outcome":"settled","queueWaitMs":2088,"dispatchLagMs":2048,"runDurationMs":379,"totalDurationMs":2467,"totalTokens":null,"errorCode":null}
+
+ ❯ src/mcp-coverage.conformance.test.ts (9 tests | 1 failed) 9291ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 同一C分别发现两种mode，Context与同次投影一致，verify无需目标参数  1089ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取  1102ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C  868ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision  653ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox  878ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实  2883ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走  504ms
+   × 真实API、MCP与Pi资格和恢复链 > queued只握手；paused/stopping/terminal拒普通发现，stale保留明确ACK恢复 456ms
+     → inconsistent types deduced for parameter $2
+   ✓ 真实API、MCP与Pi资格和恢复链 > 发现后撤Connection/Team grant仍拒绝，不以刷新或重新发现恢复授权 177ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > queued只握手；paused/stopping/terminal拒普通发现，stale保留明确ACK恢复
+error: inconsistent types deduced for parameter $2
+ ❯ ../../node_modules/.pnpm/pg-pool@3.14.0_pg@8.22.0/node_modules/pg-pool/index.js:45:11
+ ❯ src/mcp-coverage.conformance.test.ts:166:7
+    164|     // 仅test DB的状态夹具；不放宽route/domain，不把fixture更新计作领域命令。
+    165|     for (const state of ['queued', 'paused', 'stopping', 'completed'] …
+    166|       await fixture.db.query("UPDATE agent_sessions SET state=$2,ended…
+       |       ^
+    167|       if (state === 'queued') {
+    168|         const manifest = await execution.client.getQualifiedAgentCapab…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  15:51:54
+   Duration  12.23s (transform 1.01s, setup 0ms, collect 2.53s, tests 9.29s, environment 0ms, prepare 127ms)
+
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/conformance@ test:integration: `vitest run --config vitest.integration.config.ts`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.

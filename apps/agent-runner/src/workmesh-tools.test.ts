@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { appendActivityInputSchema, createAgentCapabilityManifest, featureKeySchema,
+import { appendActivityInputSchema, createAgentCapabilityManifest, qualifyAgentCapabilityManifest, featureKeySchema,
   type AgentCapabilityManifest } from '@workmesh/contracts'
 import { createWorkMeshTools, type RunnerToolApi, type SessionCompletionIntent } from './workmesh-tools.js'
 import type { Capability } from '@workmesh/contracts'
@@ -12,13 +12,16 @@ const baseRevisionId = '44444444-4444-4444-8444-444444444444'
 function manifest(capabilities: Capability[]): AgentCapabilityManifest {
   const features = Object.fromEntries(featureKeySchema.options.map(key => [key, true])) as
     Record<(typeof featureKeySchema.options)[number], boolean>
-  return createAgentCapabilityManifest({
+  const original = createAgentCapabilityManifest({
     actorId: ownerId, sessionId, sessionState: 'executing', sessionRevision: 2,
     effectiveCapabilities: capabilities,
     capabilityScope: { workspaceId: ownerId, teamIds: [ownerId], projectIds: [ownerId],
       workItemIds: [], repositoryIds: [], capabilities },
     supportedProtocols: ['native_http'], pushConfigured: false, features,
   })
+  return qualifyAgentCapabilityManifest(original, { identity: { actorId: ownerId, sessionId,
+    credentialMode: 'agent_session', sessionKind: 'execution', delegationRole: 'executor', delegationScopeType: 'project' },
+    features, workItemId: null, projectId: ownerId })
 }
 
 describe('Pi WorkMesh tools', () => {
@@ -29,7 +32,7 @@ describe('Pi WorkMesh tools', () => {
       async request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
         body?: unknown, ifMatch?: number, key?: string): Promise<T> {
         calls.push({ method, path, key, ifMatch })
-        if (path === '/api/v1/agent-capabilities') return manifest(['work:read', 'work:write']) as T
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read', 'work:write']) as T
         if (path.endsWith('/activities')) appendActivityInputSchema.parse(body)
         return { id: documentId, revision: 1 } as T
       },
@@ -49,13 +52,32 @@ describe('Pi WorkMesh tools', () => {
     expect(calls.filter(call => call.path.endsWith('/activities'))).toHaveLength(4)
   })
 
+  it('preserves structured REST errors for Pi and permits a later allowed read', async () => {
+    const denied = Object.assign(new Error('Resource not found'), { code: 'NOT_FOUND',
+      details: { operation: 'getDocument' }, correlationId: 'm0-trace' })
+    const api: RunnerToolApi = { sessionId,
+      async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string): Promise<T> {
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read']) as T
+        if (path.startsWith('/api/v1/documents/')) throw denied
+        return { id: ownerId } as T
+      },
+    }
+    const tools = await createWorkMeshTools(api, 'attempt-error', () => undefined)
+    const read = tools.find(tool => tool.name === 'workmesh_get_document')!
+    await expect(read.execute('missing', { documentId }, undefined, undefined, {} as never))
+      .rejects.toMatchObject({ message: JSON.stringify({ error: { code: 'NOT_FOUND',
+        message: 'Resource not found', details: { operation: 'getDocument' }, correlationId: 'm0-trace' } }) })
+    await expect(tools.find(tool => tool.name === 'workmesh_get_work_item')!
+      .execute('allowed', { workItemId: ownerId }, undefined, undefined, {} as never)).resolves.toMatchObject({ content: expect.any(Array) })
+  })
+
   it('validates the document base and refuses a stale or malformed write before any API mutation', async () => {
     const calls: string[] = []
     const api: RunnerToolApi = {
       sessionId,
       async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string): Promise<T> {
         calls.push(path)
-        if (path === '/api/v1/agent-capabilities') return manifest(['work:read', 'work:write']) as T
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read', 'work:write']) as T
         return {} as T
       },
     }
@@ -64,7 +86,7 @@ describe('Pi WorkMesh tools', () => {
     await expect(update.execute('pi-call-2', { documentId, ifMatch: 1, title: 'T', markdown: '',
       baseRevisionId, baseContentHash: 'sha256:bad' }, undefined, undefined, {} as never))
       .rejects.toThrow()
-    expect(calls).toEqual(['/api/v1/agent-capabilities'])
+    expect(calls).toEqual(['/api/v1/agent-capabilities?discovery=qualified'])
   })
 
   it('hides write tools when live capabilities only allow reading', async () => {
@@ -80,7 +102,7 @@ describe('Pi WorkMesh tools', () => {
   it('reports a successful oversized write without returning its full Markdown', async () => {
     const api: RunnerToolApi = { sessionId,
       async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string): Promise<T> {
-        if (path === '/api/v1/agent-capabilities') return manifest(['work:read', 'work:write']) as T
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read', 'work:write']) as T
         return { id: documentId, revision: 1,
           currentRevision: { id: baseRevisionId, contentHash: `sha256:${'a'.repeat(64)}`, markdown: 'x'.repeat(60_000) } } as T
       },
@@ -102,7 +124,7 @@ describe('Pi WorkMesh tools', () => {
       async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
         body?: unknown): Promise<T> {
         calls.push(path)
-        if (path === '/api/v1/agent-capabilities') return manifest(['work:read', 'work:write']) as T
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read', 'work:write']) as T
         if (path.endsWith('/activities') && (body as { toolInvocation?: { status?: string } })?.toolInvocation?.status === 'succeeded')
           throw new Error('SESSION_STOPPED')
         return { id: documentId, revision: 1 } as T
@@ -126,7 +148,7 @@ describe('Pi WorkMesh tools', () => {
     const api: RunnerToolApi = { sessionId,
       async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
         body?: unknown): Promise<T> {
-        if (path === '/api/v1/agent-capabilities')
+        if (path === '/api/v1/agent-capabilities?discovery=qualified')
           return manifest(['work:read', 'work:write', 'artifact:write', 'agent:delegate']) as T
         calls.push({ path, body })
         return { id: documentId } as T
@@ -161,7 +183,7 @@ describe('Pi WorkMesh tools', () => {
     const api: RunnerToolApi = { sessionId,
       async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
         _body?: unknown, ifMatch?: number): Promise<T> {
-        if (path === '/api/v1/agent-capabilities')
+        if (path === '/api/v1/agent-capabilities?discovery=qualified')
           return manifest(['work:read', 'work:write', 'plan:write']) as T
         calls.push({ path, ifMatch })
         return { id: documentId, revision: 3 } as T
@@ -187,7 +209,7 @@ describe('Pi WorkMesh tools', () => {
     const api: RunnerToolApi = { sessionId,
       async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
         body?: unknown): Promise<T> {
-        if (path === '/api/v1/agent-capabilities')
+        if (path === '/api/v1/agent-capabilities?discovery=qualified')
           return manifest(['work:read', 'work:write']) as T
         calls.push({ path, body })
         return { id: documentId } as T
@@ -210,7 +232,7 @@ describe('Pi WorkMesh tools', () => {
     const api: RunnerToolApi = { sessionId,
       async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
         body?: unknown, ifMatch?: number, key?: string): Promise<T> {
-        if (path === '/api/v1/agent-capabilities') return manifest(['work:read', 'work:write']) as T
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read', 'work:write']) as T
         calls.push({ path, body, ifMatch, key })
         return { id: documentId, version: 2 } as T
       },
@@ -238,7 +260,7 @@ describe('Pi WorkMesh tools', () => {
     const api: RunnerToolApi = { sessionId,
       async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string): Promise<T> {
         calls.push(path)
-        if (path === '/api/v1/agent-capabilities') return manifest(['work:read', 'work:write']) as T
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read', 'work:write']) as T
         return {} as T
       },
     }
@@ -253,7 +275,7 @@ describe('Pi WorkMesh tools', () => {
       summary: 'Document published', noArtifactReason: 'The document is stored on the Issue.' },
     undefined, undefined, {} as never)
     expect(result.content[0]).toMatchObject({ type: 'text', text: expect.stringContaining('queued_after_turn_settlement') })
-    expect(calls).toEqual(['/api/v1/agent-capabilities'])
+    expect(calls).toEqual(['/api/v1/agent-capabilities?discovery=qualified'])
     expect(intents).toEqual([{ body: { summary: 'Document published', artifactIds: [], checks: [],
       limitations: [], noArtifactReason: 'The document is stored on the Issue.' },
       ifMatch: 2, idempotencyKey: expect.stringMatching(/^pi-[a-f0-9]{64}$/) }])

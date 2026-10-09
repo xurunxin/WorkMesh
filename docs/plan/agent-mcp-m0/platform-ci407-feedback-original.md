@@ -1,0 +1,7 @@
+# PR212分类首败与CI增量指令原文
+
+以下为本轮用户注入完整反馈，保留为历史输入；旧独审候选与旧CI结果不倒写。
+
+> 17:50读取PR212/CI407 run37912036301@67c924b确定失败，不合并。失败job113759229826 Classify changes and validate CI selection，step4 Validate selection and required-result safety；该step实际只在checkout和exactNode22.19.0之后运行node --test scripts/ci-policy.test.mjs。完整job日志错误原文：Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'yaml' imported from /home/runner/work/WorkMesh/WorkMesh/scripts/ci-policy.test.mjs；pass0 fail1 exitCode1，进程exit1。Required job113759395287连带fail，其余七类jobskip，不能当产品检查跑过。不是尾部Nodeactions警告或随机业务失败。保留首败完整日志/artifact changes-raw-37912036301-1(11607436370)/required-ci-raw-37912036301-1(11607132504)及已审67历史，不伪改索引。请同todo同分支诊断并最小修前期bootstrap校验器依赖/执行环境匹配：保留准确YAML语义、非空真实suite/root+Requiredjob接线/pipefail/失败传播/always上传的验证，不能删检测、continue-on-error、强制skip、改变required aggregation或宽松文本猜配置以假绿。此前主线用户两轮优化CI效率，早期分类原无需全仓安装，修法需说明实际依赖边界/性能影响，不为仅此错无关重构。现行角色/SDK/API产品审已闭无需无变化全业务复跑；新增CI/checker实现有真实无预装node_modules/干净Node环境回归与现有14policy语义/入口缺失负例等必要检查、PR mergebase全diffcheck/source绑定和失败清理实证。若发现必须真正改变门禁范围而非补齐既定执行条件，先具体方案停review不可绕过。提交新准确head更新完整交付报告（旧产品source/旧CI首败保持历史），停review交另一Agent定向CI增量独审，再最新PR212 RequiredCI全成功才标准merge。当前Chief独立main仍69085317/head67c924b，勿FETCH_HEAD冒主线或旧mainCI替此候选。
+
+工具实际读取的首败响应见 `product-evidence/ci407-tool-{summary,changes,required}.json`，main的精确ref响应见 `ci407-tool-main.json`。即使请求指定jobId，当前平台工具返回内容仍标记 `Log (tail)`，不是完整job日志下载；本地只保全完整工具返回字节，不伪称取得被截掉的开头或artifact ZIP原件。原始artifact引用及服务端上传SHA见增量报告；旧索引不修改。

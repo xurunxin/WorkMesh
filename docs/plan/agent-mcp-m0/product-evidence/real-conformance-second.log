@@ -1,0 +1,106 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/conformance
+
+stdout | src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"0f83795a-28d8-4dfc-a400-02a07a57ca09","conversationId":"c78f63bd-64eb-495d-aed5-156eb4abea66","attemptNo":1,"sessionId":"9c623494-aba9-47c5-b0f4-43c1811d7ca2","correlationId":"e46cb757-def9-4fed-8591-72ae63bf78f9","status":"settled","outcome":"settled","queueWaitMs":2347,"dispatchLagMs":2305,"runDurationMs":401,"totalDurationMs":2748,"totalTokens":null,"errorCode":null}
+
+ ❯ src/mcp-coverage.conformance.test.ts (8 tests | 4 failed) 8069ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 同一C分别发现两种mode，Context与同次投影一致，verify无需目标参数  844ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取  925ms
+   × 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C 710ms
+     → {"error":{"code":"RESOURCE_SCOPE_DENIED","message":"Agent token cannot resolve this Work Room","correlationId":"34374e7a-f5ea-487f-9532-e82974efe280","safeNextAction":"Do not retry the out-of-scope resource; use get_workmesh_context to select a resource inside the bound Team."}}: expected true not to be true // Object.is equality
+   × 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision 540ms
+     → expected { content: [ { …(2) } ], …(2) } to match object { isError: true, …(1) }
+(1 matching property omitted from actual)
+   ✓ 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox  863ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实  3121ms
+   × 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走 382ms
+     → Human fixture POST /api/v1/agent-sessions/4c9ab34c-5723-4ed5-8017-a3910d37acb7/stop: 403 {"error":{"code":"FORBIDDEN","message":"The route has no registered authorization policy","correlationId":"4f0a3a06-cd78-4cab-884b-9f33cbcc06cc"}}
+   × 真实API、MCP与Pi资格和恢复链 > 发现后撤Connection/Team grant仍拒绝，不以刷新或重新发现恢复授权 109ms
+     → Human fixture DELETE /api/v1/agent-connections/a939d6df-d9e1-47e0-92e8-0deee8050a52: 500 {"error":{"code":"INTERNAL_ERROR","message":"Unexpected server error","correlationId":"9dcad5ac-133b-45c1-8738-6c389042b96f"}}
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C
+AssertionError: {"error":{"code":"RESOURCE_SCOPE_DENIED","message":"Agent token cannot resolve this Work Room","correlationId":"34374e7a-f5ea-487f-9532-e82974efe280","safeNextAction":"Do not retry the out-of-scope resource; use get_workmesh_context to select a resource inside the bound Team."}}: expected true not to be true // Object.is equality
+ ❯ tool src/mcp-coverage.conformance.test.ts:12:72
+     10| const tool = async <T>(client: Client, name: string, input: Record<str…
+     11|   const result = await client.callTool({ name, arguments: input })
+     12|   expect(result.isError, JSON.stringify(result.structuredContent)).not…
+       |                                                                        ^
+     13|   return (result.structuredContent as { data: T }).data
+     14| }
+ ❯ src/mcp-coverage.conformance.test.ts:69:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision
+AssertionError: expected { content: [ { …(2) } ], …(2) } to match object { isError: true, …(1) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "isError": true,
+    "structuredContent": {
+-     "currentRevision": 1,
+      "error": {
+        "code": "REVISION_CONFLICT",
+      },
+    },
+  }
+
+ ❯ src/mcp-coverage.conformance.test.ts:85:19
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走
+Error: Human fixture POST /api/v1/agent-sessions/4c9ab34c-5723-4ed5-8017-a3910d37acb7/stop: 403 {"error":{"code":"FORBIDDEN","message":"The route has no registered authorization policy","correlationId":"4f0a3a06-cd78-4cab-884b-9f33cbcc06cc"}}
+ ❯ Object.human src/mcp-coverage.fixture.ts:58:29
+     56|     body: body === undefined ? undefined : JSON.stringify(body) })
+     57|     const text = await response.text()
+     58|     if (!response.ok) throw new Error(`Human fixture ${method} ${path}…
+       |                             ^
+     59|     return (text ? JSON.parse(text) : undefined) as T
+     60|   }
+ ❯ src/mcp-coverage.conformance.test.ts:150:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 发现后撤Connection/Team grant仍拒绝，不以刷新或重新发现恢复授权
+Error: Human fixture DELETE /api/v1/agent-connections/a939d6df-d9e1-47e0-92e8-0deee8050a52: 500 {"error":{"code":"INTERNAL_ERROR","message":"Unexpected server error","correlationId":"9dcad5ac-133b-45c1-8738-6c389042b96f"}}
+ ❯ Object.human src/mcp-coverage.fixture.ts:58:29
+     56|     body: body === undefined ? undefined : JSON.stringify(body) })
+     57|     const text = await response.text()
+     58|     if (!response.ok) throw new Error(`Human fixture ${method} ${path}…
+       |                             ^
+     59|     return (text ? JSON.parse(text) : undefined) as T
+     60|   }
+ ❯ src/mcp-coverage.conformance.test.ts:161:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 4 passed (8)
+   Start at  15:45:31
+   Duration  11.05s (transform 986ms, setup 0ms, collect 2.57s, tests 8.07s, environment 0ms, prepare 119ms)
+
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/conformance@ test:integration: `vitest run --config vitest.integration.config.ts`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.

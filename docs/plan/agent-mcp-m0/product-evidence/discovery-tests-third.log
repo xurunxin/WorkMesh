@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61
+
+ ✓ packages/agent-sdk/src/discovery.test.ts (8 tests) 241ms
+ ✓ packages/agent-sdk/src/index.test.ts (33 tests) 295ms
+ ✓ packages/contracts/src/agent-discovery.test.ts (14 tests) 547ms
+   ✓ 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收  334ms
+stderr | apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > validates the document base and refuses a stale or malformed write before any API mutation
+{"tool":"workmesh_update_document","stage":"input_validation","paths":["baseContentHash"]}
+
+stderr | apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > releases only a versioned lease through the exact Session API authority
+{"tool":"workmesh_release_lease","stage":"input_validation","paths":["ifMatch"]}
+
+ ✓ apps/agent-runner/src/workmesh-tools.test.ts (10 tests) 272ms
+ ✓ apps/mcp/src/index.test.ts (29 tests) 693ms
+ ✓ apps/agent-runner/src/permission-matrix.test.ts (6 tests) 299ms
+ ✓ apps/agent-runner/src/runner-api.test.ts (2 tests) 6ms
+
+ Test Files  7 passed (7)
+      Tests  102 passed (102)
+   Start at  15:34:25
+   Duration  2.94s (transform 628ms, setup 0ms, collect 5.35s, tests 2.35s, environment 1ms, prepare 1.72s)

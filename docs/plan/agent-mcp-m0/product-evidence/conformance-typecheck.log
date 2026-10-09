@@ -1,0 +1,20 @@
+
+> @workmesh/conformance@ typecheck C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance
+> tsc --noEmit
+
+src/mcp-coverage.conformance.test.ts(3,29): error TS2307: Cannot find module '@modelcontextprotocol/sdk/client/index.js' or its corresponding type declarations.
+src/mcp-coverage.conformance.test.ts(24,62): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/mcp-coverage.conformance.test.ts(28,22): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/mcp-coverage.conformance.test.ts(29,22): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/mcp-coverage.conformance.test.ts(47,58): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/mcp-coverage.conformance.test.ts(132,162): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/mcp-coverage.fixture.ts(9,24): error TS2307: Cannot find module '@modelcontextprotocol/sdk/client/index.js' or its corresponding type declarations.
+src/mcp-coverage.fixture.ts(10,47): error TS2307: Cannot find module '@modelcontextprotocol/sdk/client/streamableHttp.js' or its corresponding type declarations.
+src/mcp-coverage.fixture.ts(12,43): error TS2307: Cannot find module '@workmesh/db' or its corresponding type declarations.
+src/mcp-coverage.fixture.ts(13,35): error TS2307: Cannot find module '@workmesh/config' or its corresponding type declarations.
+src/mcp-coverage.fixture.ts(160,22): error TS2339: Property 'DATABASE_URL' does not exist on type '{ WORKMESH_API_URL: string; WORKMESH_AGENT_INSTALLATION_TOKEN: string; WORKMESH_AGENT_SESSION_ID: string; NODE_EXTRA_CA_CERTS: string; }'.
+src/mcp-coverage.fixture.ts(160,47): error TS2339: Property 'WORKMESH_MASTER_KEY' does not exist on type '{ WORKMESH_API_URL: string; WORKMESH_AGENT_INSTALLATION_TOKEN: string; WORKMESH_AGENT_SESSION_ID: string; NODE_EXTRA_CA_CERTS: string; }'.
+src/mcp-coverage.fixture.ts(160,79): error TS2339: Property 'WORKMESH_BOOTSTRAP_TOKEN' does not exist on type '{ WORKMESH_API_URL: string; WORKMESH_AGENT_INSTALLATION_TOKEN: string; WORKMESH_AGENT_SESSION_ID: string; NODE_EXTRA_CA_CERTS: string; }'.
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/conformance@ typecheck: `tsc --noEmit`
+Exit status 2

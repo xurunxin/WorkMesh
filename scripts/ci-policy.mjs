@@ -7,6 +7,46 @@ import { testConsumers } from './ci-test-inputs.mjs'
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration', 'agent-smoke']
 
+export function validateCiBootstrap({ job, manifest, lock, yamlVersion }) {
+  const failures = []
+  const require = (value, message) => { if (!value) failures.push(message) }
+  const steps = job?.steps ?? []
+  const index = steps.findIndex(step => step.name === 'Validate selection and required-result safety')
+  const step = steps[index]
+  const lines = step?.run?.split(/\r?\n/).map(line => line.trim()) ?? []
+  const install = 'npm ci --prefix scripts/ci-bootstrap --ignore-scripts --no-audit --no-fund 2>&1 | tee ci-logs/ci-bootstrap.log'
+  const test = 'node --test scripts/ci-policy.test.mjs 2>&1 | tee ci-logs/ci-policy.log'
+  require(lines.includes(install) && lines.includes(test) && lines.indexOf(install) < lines.indexOf(test), 'Classification must install locked YAML before policy tests')
+  require(lines.includes('set -o pipefail') && !step?.['continue-on-error'] && !step?.if, 'Bootstrap and policy failures must propagate unconditionally')
+  const nodeIndex = steps.findIndex(step => step.uses?.startsWith('actions/setup-node@') && step.with?.['node-version-file'] === '.node-version')
+  require(nodeIndex >= 0 && index > nodeIndex && steps.findIndex(step => step.id === 'scope') > index, 'Bootstrap must follow Node setup and precede classification')
+  require(steps.some(step => step.if === '${{ always() }}' && step.uses?.startsWith('actions/upload-artifact@') && step.with?.path === 'ci-logs'), 'Bootstrap evidence must be always uploaded')
+  require(manifest.private === true && JSON.stringify(manifest.dependencies) === JSON.stringify({ yaml: yamlVersion }) && !manifest.devDependencies && !manifest.scripts && !manifest.workspaces, 'Bootstrap must contain only the exact workspace YAML parser')
+  require(lock.lockfileVersion === 3 && Object.keys(lock.packages ?? {}).sort().join(',') === ',node_modules/yaml', 'Bootstrap lock must contain exactly one dependency')
+  const dependency = lock.packages?.['node_modules/yaml']
+  require(lock.packages?.['']?.dependencies?.yaml === yamlVersion && dependency?.version === yamlVersion && dependency?.resolved === `https://registry.npmjs.org/yaml/-/yaml-${yamlVersion}.tgz` && /^sha512-[A-Za-z0-9+/]+=*$/.test(dependency?.integrity ?? ''), 'Bootstrap YAML must be versioned and integrity locked')
+  return failures
+}
+
+export function validateMcpConformanceEntrypoints({ job, rootScripts, packageScripts, integrationConfig, unitConfig }) {
+  const failures = []
+  const require = (value, message) => { if (!value) failures.push(message) }
+  const steps = job?.steps ?? []
+  const index = steps.findIndex(step => step.name === 'Run real MCP and Pi conformance')
+  const step = steps[index]
+  require(step?.run?.includes('pnpm test:conformance:integration'), 'Required API job must execute real MCP conformance')
+  require(step?.run?.includes('set -o pipefail') && !step?.['continue-on-error'], 'MCP conformance failures must propagate')
+  require(index > steps.findIndex(step => step.run?.includes('pnpm test:integration:api')), 'MCP services must run after API integration')
+  require(step?.run?.includes('ci-logs/mcp-coverage/conformance.log'), 'MCP evidence must be saved')
+  require(steps.some(step => step.if?.includes('always()') && step.with?.path === 'ci-logs' && step.uses?.startsWith('actions/upload-artifact@')), 'MCP evidence must be always uploaded')
+  require(rootScripts['test:integration']?.includes('pnpm test:conformance:integration'), 'Root integration must run real conformance')
+  require(rootScripts['test:conformance:integration'] === 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration', 'MCP fixture must be checked and reset before execution')
+  require(packageScripts['test:integration'] === 'vitest run --config vitest.integration.config.ts', 'Real conformance must use its dedicated config')
+  require(integrationConfig.includes("include: ['src/mcp-coverage.conformance.test.ts']") && integrationConfig.includes('passWithNoTests: false') && integrationConfig.includes('fileParallelism: false'), 'Real conformance must be explicit, nonempty and serial')
+  require(unitConfig.includes('**/mcp-coverage.conformance.test.ts'), 'Real conformance must be excluded from memory units')
+  return failures
+}
+
 export function readWorkspaces(directory = root) {
   return ['apps', 'packages'].flatMap(parent => readdirSync(resolve(directory, parent), { withFileTypes: true })
     .filter(entry => entry.isDirectory())
@@ -51,7 +91,7 @@ export function classifyChanges(paths, workspaces, { forceFull = false, mainPush
     'source-gates': full || runtime.length > 0,
     'db-integration': full || has('db'),
     // API integration imports worker implementations directly in its fixtures.
-    'api-integration': full || has('api') || has('worker'),
+    'api-integration': full || ['api', 'worker', 'mcp', 'agent-sdk', 'agent-runner', 'conformance'].some(has),
     'worker-integration': full || has('worker'),
     // E2E imports worker + fake-agent directly, outside web's package manifest.
     e2e: full || ['web', 'api', 'worker', 'fake-agent', 'agent-sdk', 'mcp', 'agent-runner'].some(has),

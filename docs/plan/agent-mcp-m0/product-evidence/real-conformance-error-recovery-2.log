@@ -1,0 +1,32 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/conformance
+
+stdout | src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"86fd6cca-54e5-43fc-8057-8938a5fddbd6","conversationId":"e17beb09-90ea-4bcf-a75a-c9184d154647","attemptNo":1,"sessionId":"3b767383-e344-4386-a026-c9db6d1b6cad","correlationId":"e89f0544-202c-4ff5-b39d-2bd300af3b4f","status":"settled","outcome":"settled","queueWaitMs":2488,"dispatchLagMs":2440,"runDurationMs":438,"totalDurationMs":2926,"totalTokens":null,"errorCode":null}
+
+ ✓ src/mcp-coverage.conformance.test.ts (9 tests) 9742ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 同一C分别发现两种mode，Context与同次投影一致，verify无需目标参数  967ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取  960ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C  943ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision  725ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox  893ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实  3325ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走  504ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > queued只握手；paused/stopping/terminal拒普通发现，stale保留明确ACK恢复  413ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  16:07:21
+   Duration  14.68s (transform 1.64s, setup 0ms, collect 4.37s, tests 9.74s, environment 0ms, prepare 209ms)

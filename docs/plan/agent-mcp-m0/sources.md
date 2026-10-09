@@ -1,0 +1,31 @@
+# 来源、完整正文与原件字节绑定
+
+## 当前平台输入与真实时序
+
+当前docID Qd1Ks9EH9uEvl1JW3O68D由本轮conversation实读。计划消息时间2026-10-09T05:47:13Z仅是平台消息时间；没有后端版本或doc创建字段，二者为null。原样正文来自本轮完整注入authoritative saved copy；以先前WS完整正文与实际五段精确替换落盘，并分别核全文和平台todos可见截断前缀。savedplan.md/implementation.md工作树均17150字节，SHA-256为4624508d03b3b9a28f8dc6d5db1fa8f002138fec637dd63612a2929cdb07e3f8。没有循环edit_plan或预填新docID，不声称工具返回过后端计划全文。
+
+本轮首个clock观察2026-10-09 05:49:59 UTC；先核branch/平台输入和真正main，随后在05:55:24 UTC归档旧原件，05:57:15 UTC保存平台观察，再同步正文并人工核读全部99领域项，生成结构化规则/正反例，最后执行静态语义及暂存字节检查。生成实际startedAt/completedAt/runtime见generation.json，命令首败/退出/等待与结果见audit-check-receipt.json，不将归档时点冒作工具原始事务时间。
+
+完整Spec由本轮todos实读，与spec.md逐字核。历史输入和本轮完整指令分列steering及steering-current；版本null、截断、旧失败不倒写。12:34仅文档授权及条件实施授权持续有效，但本轮按用户要求停在独审门禁。
+
+## 不可变main与历史产品工作树
+
+历史产品base是c768e1e3db297d8b91b53dd68b60e723a8a40e7d，本轮开始doc HEAD为1bcf1567b8d3f8774b219f927e3d832e72e4c7ef。平台git实际ls-remote origin refs/heads/main返回69085317c88d84b702af727dc0ac7152589626d8，再fetch refs/heads/main；所有当前源读取均指定该完整SHA，未用共享FETCH_HEAD或origin快照判主线。原始返回保存在platform-observation-q.json。
+
+主线690的两个父提交是add4340e9c52575c2fd9615b3b114ac9acd3e30e和328434d00268ce39222d677686dde3c64aba4e41（本轮git show -s --format=%P不可变main实读）。Chief提供A2/PR211/CI405十success，属于用户提供事实，本轮没有独立重跑或取新CI结果。历史add434的C2变化继续保留其原含义。
+
+A2实际改变OPENAPI中的Repository列表Human专用teamId/availableOnly和配置DTO、API delivery routes及新repository-configuration helper；Agent携带这两个过滤明确VALIDATION_ERROR，Agent返回can_configure_context=false，context带provider_action_id来源。provider HMAC指纹与Worker context动作来源一起记录；这些没有扩大Agent配置权限。现行route-policy、MCP、SDK、Runner身份源码相对历史base字节不变，所以verify/claim/self E与C目标E变体的修正来自审计，不是A2权限变化。OpenAPI全集双向解析仍277，计数只是该不可变输入的集合基数。
+
+source-manifest.json逐文件列当前main Git OID/bytes/SHA-256、历史base、现工作树与CRLF/LF映射，新增main helper在旧工作树不存在明确为null。115项来源包括现行权威协议、Schema、ADR、#53方案、所有API注册和具体guard/domain、SDK/adapter及RequiredCI。当前产品工作树仍c768，尚未整合main增量，不能冒称690产品已受测。本轮不混合#9/#16未合分支；产品放行后才实际整合已合主线并重核组合来源。
+
+## 完整旧原件与字节回执
+
+history/previous-1bcf.zip按内容寻址保存1bcf的全部35受控文件Git blob和本轮读取工作树原字节；索引记录两种bytes/SHA-256、OID和identity/换行映射。内部index.json与外部previous-1bcf-manifest.json一致，独立逐member解压核验。ZIP为316470字节、SHA-256 281b5593a98af88e9a838b81985862492d8072f2f978cb99e17cedf76a1c458d；暂存/提交需继续证明原字节相同，不添加whitespace/CI豁免。旧WS正文、平台观察、检查回执、generation及被阻断99记录全部完整保存，历史失败不是当前成功。
+
+00a5/K7原21文件继续从其可达commit及history/original-manifest.json逐blob验证；根first-byte-check-failure.md的ENOBUFS原件字节不变。未伪补缺失的历史工具原文或Windows运行副本。新正文及可读文档使用UTF-8 LF，源码主线blob、历史工作树和暂存blob分别记录；archive-byte-manifest排除自身循环哈希，其自身随提交另核。
+
+## 文档审计和运行边界
+
+人工规则在audit-rules.py，结构化副本domain-rules.json；每operation映射精确handler、DTO、route、领域helper与实际binding，并有允许事实与单门禁拒绝事实。生成器只把这些已核决定写入受控计划；不是从能力名或callback返回id猜权限。六项具体差异分别记M0发现校正与闭合条件、后续M4读投影归属。缺M1–M5入口是adapter未实现，不是未完成当前审计。
+
+archive-check.py从不可变main独立解析OpenAPI与MCP实际参数，核credential/role/state/scope事实求值、SDK方法锚点、完整历史字节和两项binding语义变异；callback仅添加返回sessionId不改变身份分类。文档模型通过不代表API/客户端链通过。未pnpm install或运行lint/typecheck/unit/integration/e2e/Pi/conformance/RequiredCI，未启动服务、容器、数据库或外部连接。资源列表为空；所有进程仅Git/Python/Node短时文档处理，受控生成脚本不是可删临时目录。当前worktree/恢复与必要旧证据保留，不global prune/force/父删绕拒绝。

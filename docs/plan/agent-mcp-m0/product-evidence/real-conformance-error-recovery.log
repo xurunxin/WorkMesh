@@ -1,0 +1,58 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/conformance
+
+stdout | src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"fae6a828-67ed-4e29-9919-eb563eda1529","conversationId":"6cdf2931-f6a8-4438-ad68-57080217f08f","attemptNo":1,"sessionId":"c9ee2fea-2c9b-4c54-9509-c53d84c01cb3","correlationId":"0c64c740-e18c-4ef9-8174-016dbb8efcf1","status":"settled","outcome":"settled","queueWaitMs":2326,"dispatchLagMs":2286,"runDurationMs":405,"totalDurationMs":2731,"totalTokens":null,"errorCode":null}
+
+ ❯ src/mcp-coverage.conformance.test.ts (9 tests | 1 failed) 9312ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 同一C分别发现两种mode，Context与同次投影一致，verify无需目标参数  989ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取  1033ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C  945ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision  655ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox  898ms
+   × 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实 3109ms
+     → expected '"{\"id\":\"229bf0b5-bbb1-482a-bbee-66…' to contain 'NOT_FOUND'
+   ✓ 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走  476ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > queued只握手；paused/stopping/terminal拒普通发现，stale保留明确ACK恢复  386ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 发现后撤Connection/Team grant仍拒绝，不以刷新或重新发现恢复授权 185ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+AssertionError: expected '"{\"id\":\"229bf0b5-bbb1-482a-bbee-66…' to contain 'NOT_FOUND'
+
+Expected: "NOT_FOUND"
+Received: ""{\"id\":\"229bf0b5-bbb1-482a-bbee-66da140628c6\",\"ownerType\":\"work_item\",\"ownerId\":\"637a0b95-0c52-47a7-92b6-088e9dd1d142\",\"teamId\":\"31d2c60e-6642-4100-9498-724ef0de5403\",\"title\":\"M0 Pi fact\",\"status\":\"active\",\"revision\":1,\"currentRevision\":{\"id\":\"37c0ce39-f2eb-4090-96d1-6999b2bd64e5\",\"revisionNumber\":1,\"baseRevisionId\":null,\"restoredFromRevisionId\":null,\"title\":\"M0 Pi fact\",\"markdown\":\"M0 deterministic model evidence\",\"contentHash\":\"sha256:3daba64d11c3118cfe3bcbfc6b67a76419cb22fbe5b5cf355d85516001b1af58\",\"changeSummary\":null,\"authorActorId\":\"127152ea-8268-4e77-b3d8-5661edc1b567\",\"createdAt\":\"2026-10-09T08:06:10.438Z\"},\"createdByActorId\":\"127152ea-8268-4e77-b3d8-5661edc1b567\",\"archivedAt\":null,\"createdAt\":\"2026-10-09T08:06:10.438Z\",\"updatedAt\":\"2026-10-09T08:06:10.438Z\"}" "Resource not found""
+
+ ❯ src/mcp-coverage.conformance.test.ts:136:55
+    134|     }
+    135|     expect(result.captures[3]?.receivedToolResults).toBe(3)
+    136|     expect(result.captures[2]?.toolResults.join(' ')).toContain('NOT_F…
+       |                                                       ^
+    137|     expect((await fixture.db.query<{ status: string }>('SELECT status …
+    138|     expect((await fixture.db.query<{ count: number }>("SELECT count(*)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  16:05:59
+   Duration  12.34s (transform 1.01s, setup 0ms, collect 2.63s, tests 9.31s, environment 0ms, prepare 122ms)
+
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/conformance@ test:integration: `vitest run --config vitest.integration.config.ts`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.

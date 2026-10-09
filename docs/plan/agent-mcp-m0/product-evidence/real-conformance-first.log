@@ -1,0 +1,160 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/conformance
+
+ ❯ src/mcp-coverage.conformance.test.ts (8 tests | 7 failed) 2534ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 同一C分别发现两种mode，Context与同次投影一致，verify无需目标参数  929ms
+   × 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取 527ms
+     → expected { content: [ { …(2) } ], …(2) } to match object { isError: true, …(1) }
+(8 matching properties omitted from actual)
+   × 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C 42ms
+     → Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+   × 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision 37ms
+     → Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+   × 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox 35ms
+     → Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+   × 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实 36ms
+     → Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+   × 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走 36ms
+     → Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+   × 真实API、MCP与Pi资格和恢复链 > 发现后撤Connection/Team grant仍拒绝，不以刷新或重新发现恢复授权 133ms
+     → Human fixture POST /api/v1/agent-connections/d31608c2-2396-4e7e-8acd-bd95127ae6ab/revoke: 403 {"error":{"code":"FORBIDDEN","message":"The route has no registered authorization policy","correlationId":"e7ee0194-ad8e-4048-a688-fa1b908e2d08"}}
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取
+AssertionError: expected { content: [ { …(2) } ], …(2) } to match object { isError: true, …(1) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "isError": true,
+    "structuredContent": {
+      "error": {
+-       "code": "SESSION_BINDING_MISMATCH",
++       "code": "NOT_FOUND",
+      },
+    },
+  }
+
+ ❯ src/mcp-coverage.conformance.test.ts:54:23
+     52|       expect(JSON.parse(String(resource.contents[0]?.text))).toMatchOb…
+     53|       const foreign = await client.callTool({ name: 'get_agent_session…
+     54|       expect(foreign).toMatchObject({ isError: true, structuredContent…
+       |                       ^
+     55|       await tool(client, 'get_session_context', { sessionId: execution…
+     56|       saveEvidence(`e-${mode}.json`, { names, projection: d.projection…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C
+WorkMeshSdkError: Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+ ❯ toSdkError ../agent-sdk/src/index.ts:796:12
+    794|         })
+    795|     }
+    796|     return new WorkMeshSdkError(message, { code: typeof error.code ===…
+       |            ^
+    797|   }
+    798|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…
+ ❯ WorkMeshClient.request ../agent-sdk/src/index.ts:697:17
+ ❯ Object.createExecution src/mcp-coverage.fixture.ts:85:19
+ ❯ src/mcp-coverage.conformance.test.ts:63:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision
+WorkMeshSdkError: Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+ ❯ toSdkError ../agent-sdk/src/index.ts:796:12
+    794|         })
+    795|     }
+    796|     return new WorkMeshSdkError(message, { code: typeof error.code ===…
+       |            ^
+    797|   }
+    798|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…
+ ❯ WorkMeshClient.request ../agent-sdk/src/index.ts:697:17
+ ❯ Object.createExecution src/mcp-coverage.fixture.ts:85:19
+ ❯ src/mcp-coverage.conformance.test.ts:73:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox
+WorkMeshSdkError: Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+ ❯ toSdkError ../agent-sdk/src/index.ts:796:12
+    794|         })
+    795|     }
+    796|     return new WorkMeshSdkError(message, { code: typeof error.code ===…
+       |            ^
+    797|   }
+    798|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…
+ ❯ WorkMeshClient.request ../agent-sdk/src/index.ts:697:17
+ ❯ Object.createExecution src/mcp-coverage.fixture.ts:85:19
+ ❯ src/mcp-coverage.conformance.test.ts:100:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+WorkMeshSdkError: Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+ ❯ toSdkError ../agent-sdk/src/index.ts:796:12
+    794|         })
+    795|     }
+    796|     return new WorkMeshSdkError(message, { code: typeof error.code ===…
+       |            ^
+    797|   }
+    798|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…
+ ❯ WorkMeshClient.request ../agent-sdk/src/index.ts:697:17
+ ❯ Object.createExecution src/mcp-coverage.fixture.ts:85:19
+ ❯ src/mcp-coverage.conformance.test.ts:118:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走
+WorkMeshSdkError: Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+ ❯ toSdkError ../agent-sdk/src/index.ts:796:12
+    794|         })
+    795|     }
+    796|     return new WorkMeshSdkError(message, { code: typeof error.code ===…
+       |            ^
+    797|   }
+    798|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…
+ ❯ WorkMeshClient.request ../agent-sdk/src/index.ts:697:17
+ ❯ Object.createExecution src/mcp-coverage.fixture.ts:85:19
+ ❯ src/mcp-coverage.conformance.test.ts:138:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 发现后撤Connection/Team grant仍拒绝，不以刷新或重新发现恢复授权
+Error: Human fixture POST /api/v1/agent-connections/d31608c2-2396-4e7e-8acd-bd95127ae6ab/revoke: 403 {"error":{"code":"FORBIDDEN","message":"The route has no registered authorization policy","correlationId":"e7ee0194-ad8e-4048-a688-fa1b908e2d08"}}
+ ❯ Object.human src/mcp-coverage.fixture.ts:58:29
+     56|     body: body === undefined ? undefined : JSON.stringify(body) })
+     57|     const text = await response.text()
+     58|     if (!response.ok) throw new Error(`Human fixture ${method} ${path}…
+       |                             ^
+     59|     return JSON.parse(text) as T
+     60|   }
+ ❯ src/mcp-coverage.conformance.test.ts:159:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 1 passed (8)
+   Start at  15:43:42
+   Duration  5.89s (transform 1.11s, setup 0ms, collect 2.98s, tests 2.53s, environment 0ms, prepare 112ms)
+
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/conformance@ test:integration: `vitest run --config vitest.integration.config.ts`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.

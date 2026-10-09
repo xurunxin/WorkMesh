@@ -1,0 +1,125 @@
+TAP version 13
+# Subtest: known prose on PR and main avoids every install/service/test job
+ok 1 - known prose on PR and main avoids every install/service/test job
+  ---
+  duration_ms: 1.9931
+  type: 'test'
+  ...
+# Subtest: UI changes test web consumers and E2E, but skip unrelated backend/protocol/recovery jobs
+ok 2 - UI changes test web consumers and E2E, but skip unrelated backend/protocol/recovery jobs
+  ---
+  duration_ms: 0.2629
+  type: 'test'
+  ...
+# Subtest: direct web tests, assets and package-local skills are runtime changes
+ok 3 - direct web tests, assets and package-local skills are runtime changes
+  ---
+  duration_ms: 0.1618
+  type: 'test'
+  ...
+# Subtest: API and worker changes retain destructive recovery and real browser integration
+ok 4 - API and worker changes retain destructive recovery and real browser integration
+  ---
+  duration_ms: 0.1254
+  type: 'test'
+  ...
+# Subtest: cross-workspace lock audits are selected without inventing runtime dependency cycles
+ok 5 - cross-workspace lock audits are selected without inventing runtime dependency cycles
+  ---
+  duration_ms: 0.2395
+  type: 'test'
+  ...
+# Subtest: upstream contracts/domain/db/config changes include transitive consumers
+ok 6 - upstream contracts/domain/db/config changes include transitive consumers
+  ---
+  duration_ms: 0.1577
+  type: 'test'
+  ...
+# Subtest: protocol changes retain SDK consumers, conformance and direct E2E imports
+ok 7 - protocol changes retain SDK consumers, conformance and direct E2E imports
+  ---
+  duration_ms: 0.0815
+  type: 'test'
+  ...
+# Subtest: root config, unknown/deleted workspaces and executable-looking docs fail closed to full
+ok 8 - root config, unknown/deleted workspaces and executable-looking docs fail closed to full
+  ---
+  duration_ms: 0.3722
+  type: 'test'
+  ...
+# Subtest: main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full
+ok 9 - main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full
+  ---
+  duration_ms: 0.4431
+  type: 'test'
+  ...
+# Subtest: PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full
+ok 10 - PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full
+  ---
+  duration_ms: 0.7548
+  type: 'test'
+  ...
+# Subtest: aggregate rejects failure, cancellation and accidental skips for every required job
+ok 11 - aggregate rejects failure, cancellation and accidental skips for every required job
+  ---
+  duration_ms: 0.3137
+  type: 'test'
+  ...
+# Subtest: aggregate only accepts planned skips and rejects incomplete/malformed decisions
+ok 12 - aggregate only accepts planned skips and rejects incomplete/malformed decisions
+  ---
+  duration_ms: 0.1705
+  type: 'test'
+  ...
+# Subtest: MCP discovery consumers require real conformance and propagate failed or skipped job
+ok 13 - MCP discovery consumers require real conformance and propagate failed or skipped job
+  ---
+  duration_ms: 0.1677
+  type: 'test'
+  ...
+# Subtest: real workflow semantic mutations cannot silently omit MCP conformance
+not ok 14 - real workflow semantic mutations cannot silently omit MCP conformance
+  ---
+  duration_ms: 22.5438
+  type: 'test'
+  location: 'C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\scripts\\ci-policy.test.mjs:154:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+    + [
+    +   'Required API job must execute real MCP conformance',
+    +   'MCP conformance failures must propagate',
+    +   'MCP services must run after API integration',
+    +   'MCP evidence must be saved'
+    + ]
+    - []
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'Required API job must execute real MCP conformance'
+    1: 'MCP conformance failures must propagate'
+    2: 'MCP services must run after API integration'
+    3: 'MCP evidence must be saved'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/scripts/ci-policy.test.mjs:162:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 13
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 222.7999

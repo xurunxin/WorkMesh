@@ -1,0 +1,33 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/conformance
+
+stdout | src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"521f953f-7c45-4168-82ed-0b0e6d51072c","conversationId":"79ca8e52-ef07-4d95-92f2-ca90edd7216e","attemptNo":1,"sessionId":"19b579d2-eb06-455a-ae70-d19b386ceb2b","correlationId":"883cdcbb-2500-4db1-86b6-f6c6b700b090","status":"settled","outcome":"settled","queueWaitMs":2327,"dispatchLagMs":2278,"runDurationMs":642,"totalDurationMs":2969,"totalTokens":null,"errorCode":null}
+
+ ✓ src/mcp-coverage.conformance.test.ts (9 tests) 11479ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 同一C分别发现两种mode，Context与同次投影一致，verify无需目标参数  962ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取  1088ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C  1287ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision  939ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox  1148ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实  3544ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走  820ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > queued只握手；paused/stopping/terminal拒普通发现，stale保留明确ACK恢复  765ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 发现后撤Connection/Team grant仍拒绝，不以刷新或重新发现恢复授权  303ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  15:53:18
+   Duration  14.48s (transform 992ms, setup 0ms, collect 2.56s, tests 11.48s, environment 0ms, prepare 120ms)

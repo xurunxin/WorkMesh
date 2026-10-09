@@ -1,0 +1,66 @@
+Scope: 3 of 19 workspace projects
+packages/contracts test$ vitest run
+packages/contracts test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/contracts
+packages/contracts test:  ✓ src/approval-contract.test.ts (4 tests) 9ms
+packages/contracts test:  ✓ src/stage2-contracts.test.ts (4 tests) 16ms
+packages/contracts test:  ✓ src/release-contract.test.ts (1 test) 20ms
+packages/contracts test:  ✓ src/pi-workbench-contracts.test.ts (27 tests) 32ms
+packages/contracts test:  ✓ src/stage4-contracts.test.ts (8 tests) 40ms
+packages/contracts test:  ✓ src/client-profile-contract.test.ts (3 tests) 43ms
+packages/contracts test:  ✓ src/control-plane-contracts.test.ts (5 tests) 38ms
+packages/contracts test:  ✓ src/stage3-contracts.test.ts (8 tests) 42ms
+packages/contracts test:  ✓ src/stage1-contracts.test.ts (10 tests) 60ms
+packages/contracts test:  ✓ src/release-manifest.test.ts (2 tests) 135ms
+packages/contracts test:  ✓ src/recovery-contract.test.ts (2 tests) 575ms
+packages/contracts test:    ✓ Recovery Center public contract > publishes list/detail operations and resolvable Recovery schemas  569ms
+packages/contracts test:  ✓ src/planning-domain-parity-contract.test.ts (5 tests) 600ms
+packages/contracts test:    ✓ planning domain parity public contract > keeps the OpenAPI schemas and complete REST surface aligned with Zod  589ms
+packages/contracts test:  ✓ src/pagination-contract.test.ts (2 tests) 911ms
+packages/contracts test:    ✓ pagination OpenAPI contract > declares the common cursor and limit on every paged collection  454ms
+packages/contracts test:    ✓ pagination OpenAPI contract > keeps durable event cursors separate and documents generic cursor failures  456ms
+packages/contracts test:  ✓ src/runtime-reliability-openapi.test.ts (2 tests) 963ms
+packages/contracts test:    ✓ runtime reliability OpenAPI contract > keeps the new response models in schemas and every local reference resolvable  469ms
+packages/contracts test:    ✓ runtime reliability OpenAPI contract > documents the dedicated identity credential and every execution-capacity conflict  492ms
+packages/contracts test:  ✓ src/configuration-readiness-contracts.test.ts (4 tests) 660ms
+packages/contracts test:    ✓ 配置就绪契约 > OpenAPI、清单与 Human-only 只读策略一致，拒绝审计保留  652ms
+packages/contracts test:  ✓ src/agent-discovery.test.ts (16 tests) 919ms
+packages/contracts test:    ✓ 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收  582ms
+packages/contracts test:  ✓ src/stage0-route-manifest.test.ts (6 tests) 1021ms
+packages/contracts test:    ✓ Stage 0 transport contract manifest > keeps parsed OpenAPI cursor boundaries in parity with runtime  605ms
+packages/contracts test:    ✓ Stage 0 transport contract manifest > documents and validates the backward-compatible Run Explanation keyset cursor  376ms
+packages/contracts test:  ✓ src/stage5-contracts.test.ts (66 tests) 1227ms
+packages/contracts test:    ✓ Stage 5 (v1.1) Agent Connection & Coordination MCP contracts > keeps the subset-block generator in sync with the canonical capability list  853ms
+packages/contracts test:  ✓ src/repository-configuration-contracts.test.ts (1 test) 5ms
+packages/contracts test:  ✓ src/route-policy.test.ts (14 tests) 1556ms
+packages/contracts test:    ✓ routePolicyManifest > parses OPENAPI.yaml as valid YAML before checking generated extensions  624ms
+packages/contracts test:    ✓ routePolicyManifest > matches OpenAPI operation IDs and feature tiers  414ms
+packages/contracts test:  ✓ src/guidance-contract.test.ts (2 tests) 5ms
+packages/contracts test:  ✓ src/auth-idempotency.test.ts (2 tests) 5ms
+packages/contracts test:  ✓ src/autonomous-control-contracts.test.ts (3 tests) 6ms
+packages/contracts test:  ✓ src/active-executor-contract.test.ts (2 tests) 6ms
+packages/contracts test:  ✓ src/agent-response-contract.test.ts (1 test) 7ms
+packages/contracts test:  ✓ src/human-attention-contract.test.ts (3 tests) 7ms
+packages/contracts test:  Test Files  26 passed (26)
+packages/contracts test:       Tests  203 passed (203)
+packages/contracts test:    Start at  16:43:18
+packages/contracts test:    Duration  3.69s (transform 1.21s, setup 0ms, collect 11.16s, tests 8.91s, environment 4ms, prepare 11.85s)
+packages/contracts test: Done
+packages/agent-sdk test$ vitest run
+packages/agent-sdk test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/agent-sdk
+packages/agent-sdk test:  ✓ src/discovery.test.ts (8 tests) 170ms
+packages/agent-sdk test:  ✓ src/index.test.ts (33 tests) 232ms
+packages/agent-sdk test:  Test Files  2 passed (2)
+packages/agent-sdk test:       Tests  41 passed (41)
+packages/agent-sdk test:    Start at  16:43:22
+packages/agent-sdk test:    Duration  1.44s (transform 299ms, setup 0ms, collect 693ms, tests 402ms, environment 0ms, prepare 286ms)
+packages/agent-sdk test: Done
+apps/mcp test$ vitest run
+apps/mcp test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/apps/mcp
+apps/mcp test:  ✓ src/recovery.test.ts (6 tests) 53ms
+apps/mcp test:  ✓ src/http.test.ts (9 tests) 67ms
+apps/mcp test:  ✓ src/index.test.ts (29 tests) 521ms
+apps/mcp test:  Test Files  3 passed (3)
+apps/mcp test:       Tests  44 passed (44)
+apps/mcp test:    Start at  16:43:25
+apps/mcp test:    Duration  1.86s (transform 406ms, setup 0ms, collect 1.65s, tests 641ms, environment 0ms, prepare 465ms)
+apps/mcp test: Done

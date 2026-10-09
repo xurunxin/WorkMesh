@@ -4,6 +4,7 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
 import { describe, expect, it, vi } from 'vitest'
 import { createWorkMeshMcpServer, mcpPolicyBindings } from './index.js'
 import { WorkMeshSdkError, type WorkMeshClient } from '@workmesh/agent-sdk'
+import { createAgentCapabilityManifest, qualifyAgentCapabilityManifest, capabilitySchema, featureKeySchema, agentDiscoveryBindings } from '@workmesh/contracts'
 
 const sessionId = '00000000-0000-4000-8000-000000000001'
 const workItemId = '00000000-0000-4000-8000-000000000002'
@@ -28,7 +29,19 @@ const currentConnectionIdentity = (capabilities = ['work:read', 'work:write']) =
   },
 })
 
-async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClient, coordination = false) {
+async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClient, coordination = false, role: 'executor' | 'reviewer' = 'executor', revision = 1) {
+  // 实际发现前必须有准确资格；旧callback单测补齐这一新增前置读取，不为产品降级。
+  if (!client.getQualifiedAgentCapabilities) {
+    const features = Object.fromEntries(featureKeySchema.options.map(key => [key, true])) as Record<typeof featureKeySchema.options[number], boolean>
+    const manifest = createAgentCapabilityManifest({ actorId: artifactId, sessionId, sessionState: 'executing', sessionRevision: revision,
+      effectiveCapabilities: capabilitySchema.options, capabilityScope: { workspaceId, teamIds: [teamId], projectIds: [projectId], workItemIds: [workItemId], repositoryIds: [repositoryId], capabilities: capabilitySchema.options },
+      supportedProtocols: ['mcp'], pushConfigured: false, features })
+    client.getQualifiedAgentCapabilities = vi.fn().mockResolvedValue(qualifyAgentCapabilityManifest(manifest, {
+      identity: { actorId: artifactId, sessionId, credentialMode: coordination ? 'coordination_connection' : 'agent_session', sessionKind: coordination ? 'coordination' : 'execution', delegationRole: coordination ? 'coordinator' : role, delegationScopeType: coordination ? 'team' : 'work_item' },
+      features, workItemId: coordination ? null : workItemId, projectId: coordination ? null : projectId,
+    }))
+    Object.defineProperty(client, 'discoveryCredentialConfiguration', { value: { coordination, installationBridge: coordination } })
+  }
   const server = createWorkMeshMcpServer({ client, mode, coordination })
   const [serverTransport, clientTransport] = InMemoryTransport.createLinkedPair()
   await server.connect(serverTransport)
@@ -295,7 +308,7 @@ describe('WorkMesh MCP adapter', () => {
       listWorkItems: vi.fn(),
       getWorkItem: vi.fn(),
     } as unknown as WorkMeshClient
-    const { server, protocol } = await connected('read-write', api, true)
+    const { server, protocol } = await connected('read-write', api, true, 'executor', 4)
     try {
       const context = await protocol.callTool({ name: 'get_workmesh_context', arguments: {} })
       expect(context.isError, JSON.stringify(context.structuredContent)).not.toBe(true)
@@ -309,9 +322,12 @@ describe('WorkMesh MCP adapter', () => {
           team: { id: teamId, key: 'WM', ref: 'WM' },
           defaultWorkflowState: { id: pullRequestId, name: 'Ready', ref: 'WM/state/ready' },
           eventCursor: { cursor: '0', semantics: 'replay_from_origin' },
-          allowedOperations: ['createProject'],
         },
       })
+      const discovery = await protocol.callTool({ name: 'get_agent_discovery', arguments: {} })
+      const projection = (discovery.structuredContent as { data: { projection: { allowedOperations: string[] } } }).data.projection
+      expect(context.structuredContent).toMatchObject({ data: { allowedOperations: projection.allowedOperations } })
+      expect(projection.allowedOperations).not.toContain('createProject') // 目标scope尚未求值，不能冒eligible。
       const identity = await protocol.callTool({ name: 'get_current_identity', arguments: {} })
       expect(identity.structuredContent).toMatchObject({
         data: {
@@ -793,7 +809,8 @@ describe('WorkMesh MCP adapter', () => {
     const registrations = [...source.matchAll(/register(Resource|Tool)\('([^']+)'/g)]
       .map(match => `${match[1]?.toLowerCase()}:${match[2]}`)
       .sort()
-    expect(Object.keys(mcpPolicyBindings).sort()).toEqual(registrations)
+    expect(Object.keys(mcpPolicyBindings).sort()).toEqual(registrations.filter(id => id !== 'tool:prepare_project_import'))
+    expect(agentDiscoveryBindings.find(item => item.bindingId === 'tool:prepare_project_import')).toMatchObject({ execution: 'adapter_internal', operationIds: [] })
     for (const binding of Object.values(mcpPolicyBindings)) {
       expect(binding.policyId).toBe(`route.${binding.operationId}`)
     }
@@ -913,7 +930,7 @@ describe('WorkMesh MCP adapter', () => {
         mimeType: 'application/json',
         text: JSON.stringify(guidance),
       }))
-      expect((await protocol.listTools()).tools.map(tool => tool.name).filter(name => name.includes('guidance'))).toEqual([])
+      expect((await protocol.listTools()).tools.map(tool => tool.name).filter(name => name.includes('guidance'))).toEqual(['get_workspace_guidance', 'get_team_guidance', 'get_project_guidance'])
     } finally { await protocol.close(); await server.close() }
   })
 
@@ -1122,7 +1139,7 @@ describe('WorkMesh MCP adapter', () => {
       listWorkItems: vi.fn(),
       getWorkItem: vi.fn(),
     } as unknown as WorkMeshClient
-    const { server, protocol } = await connected('read-write', api)
+    const { server, protocol } = await connected('read-write', api, false, 'reviewer')
     const headSha = 'reviewed-head'
     const checksum = `sha256:${'a'.repeat(64)}`
     try {

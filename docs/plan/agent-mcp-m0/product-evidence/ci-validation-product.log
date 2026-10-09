@@ -1,0 +1,10 @@
+
+> workmesh@ ci:validate C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61
+> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs
+
+[ci:validate] CI policy validation failed:
+- Required API job must execute real MCP conformance
+- MCP conformance failures must propagate
+- MCP services must run after API integration
+- MCP evidence must be saved
+ ELIFECYCLE  Command failed with exit code 1.

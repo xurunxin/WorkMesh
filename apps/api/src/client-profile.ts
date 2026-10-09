@@ -4,6 +4,8 @@ import type { FeatureConfig } from '@workmesh/config'
 import {
   capabilitySchema,
   createAgentCapabilityManifest,
+  qualifyAgentCapabilityManifest,
+  discoveryIdentitySchema,
   releaseMetadata,
   type Capability,
 } from '@workmesh/contracts'
@@ -11,6 +13,11 @@ import { DomainError } from '@workmesh/domain'
 import type { ApiActor } from './agent/types.js'
 
 type ManifestSession = {
+  session_kind: 'execution' | 'coordination'
+  work_item_id: string | null
+  project_id: string | null
+  delegation_role: 'executor' | 'reviewer' | 'researcher' | 'coordinator' | 'triager'
+  delegation_scope_type: 'work_item' | 'plan_step' | 'project' | 'automation' | 'team'
   state: 'queued' | 'acknowledged' | 'planning' | 'executing' | 'awaiting_input' | 'awaiting_approval' | 'blocked' | 'paused' | 'stopping' | 'stale' | 'completed' | 'failed' | 'canceled'
   revision: number
   permissions_snapshot: Capability[]
@@ -38,6 +45,10 @@ export function registerClientProfileRoutes(
   options: { db: Db; features: FeatureConfig },
 ): void {
   app.get('/api/v1/agent-capabilities', async request => {
+    const query = request.query as Record<string, unknown>
+    if (Object.keys(query).some(key => key !== 'discovery')
+      || (query.discovery !== undefined && query.discovery !== 'qualified'))
+      throw new DomainError('VALIDATION_ERROR', 'Unknown discovery negotiation')
     const actor = request.actor as ApiActor
     if (actor.kind !== 'agent' || !actor.agentSessionId)
       throw new DomainError('FORBIDDEN', 'An exact Agent Session token is required')
@@ -53,7 +64,8 @@ export function registerClientProfileRoutes(
         },
       )
     const session = (await options.db.query<ManifestSession>(
-      `SELECT session.state,session.revision,
+      `SELECT session.state,session.revision,session.session_kind,session.work_item_id,session.project_id,
+              delegation.role AS delegation_role,delegation.scope_type AS delegation_scope_type,
               delegation.permissions_snapshot,delegation.capability_scope,
               definition.approved_capabilities AS definition_capabilities,
               team_access.approved_capabilities AS team_capabilities,
@@ -79,9 +91,11 @@ export function registerClientProfileRoutes(
     const definition = new Set(session.definition_capabilities)
     const team = new Set(session.team_capabilities)
     const effectiveCapabilities = session.permissions_snapshot.filter(capability =>
-      definition.has(capability) && team.has(capability) && capabilitySchema.safeParse(capability).success,
+      definition.has(capability) && team.has(capability)
+        && session.capability_scope.capabilities.includes(capability)
+        && capabilitySchema.safeParse(capability).success,
     )
-    return createAgentCapabilityManifest({
+    const manifest = createAgentCapabilityManifest({
       actorId: actor.id,
       sessionId: actor.agentSessionId,
       sessionState: session.state,
@@ -99,5 +113,14 @@ export function registerClientProfileRoutes(
       pushConfigured: Boolean(session.endpoint_url),
       features: options.features,
     })
+    if (query.discovery === undefined) return manifest
+    const identity = discoveryIdentitySchema.safeParse({
+      actorId: actor.id, sessionId: actor.agentSessionId,
+      credentialMode: actor.authentication, sessionKind: session.session_kind,
+      delegationRole: session.delegation_role, delegationScopeType: session.delegation_scope_type,
+    })
+    if (!identity.success) throw new DomainError('FORBIDDEN', 'Discovery requires a valid exact Session credential mode')
+    return qualifyAgentCapabilityManifest(manifest, { identity: identity.data,
+      features: options.features, workItemId: session.work_item_id, projectId: session.project_id })
   })
 }

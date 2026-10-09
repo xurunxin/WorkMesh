@@ -169,6 +169,8 @@ const workspaceAdminOperations = new Set([
 ])
 
 const humanOnlyOperations = new Set([
+  'createComment',
+  'updateComment',
   'getNotificationChannelConfig',
   'listNotificationChannelTargets',
   'createNotificationChannelTarget',
@@ -543,7 +545,6 @@ const mcpOperationIds = {
   'tool:get_current_identity': 'getCurrentAgentConnectionIdentity',
   'tool:get_workmesh_context': 'getCurrentAgentConnectionIdentity',
   'tool:resolve_identifier': 'listProjects',
-  'tool:prepare_project_import': 'listProjects',
   'tool:apply_project_import': 'createProject',
   'tool:list_teams': 'listTeams',
   'tool:list_workflow_states': 'listWorkflowStates',

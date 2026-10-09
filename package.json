@@ -8,7 +8,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test --concurrency=2",
-    "test:integration": "pnpm test:integration:db && pnpm test:integration:api && pnpm test:integration:worker && pnpm test:integration:recovery",
+    "test:integration": "pnpm test:integration:db && pnpm test:integration:api && pnpm test:conformance:integration && pnpm test:integration:worker && pnpm test:integration:recovery",
     "test:integration:db": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/db test:integration",
     "test:integration:api": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/api test:integration",
     "test:integration:worker": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/worker test:integration",
@@ -45,7 +45,8 @@
     "test:soak:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-soak.mts",
     "test:restore:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-restore-rehearsal.mts",
     "test:acceptance:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-restart-acceptance.mts",
-    "upgrade:retention:production": "pnpm -C apps/worker exec tsx ../../scripts/retention-production-upgrade.mts"
+    "upgrade:retention:production": "pnpm -C apps/worker exec tsx ../../scripts/retention-production-upgrade.mts",
+    "test:conformance:integration": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

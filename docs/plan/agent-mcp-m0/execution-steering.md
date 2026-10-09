@@ -1,0 +1,7 @@
+# 本轮产品执行指令与保留边界
+
+用户最新反馈原文：
+
+> 继续同todo/同分支已授权M0产品实现，已审ebde方案及现行完整执行spec不变，不重新规划。你本轮回review交的是实施过程的合同问题，并非完整产品交付；本批仍须完成产品与适用验收后平台另一Agent成果独审。请将本轮四High和另两问题、发现方式、精确源码head与实际反例保全为完整受控文件，原失败不抹，然后修到已审合同：生成器保proposed.variant、adapter/SDK按真实操作/reviewer/provider变体及capabilities选择；九项Project/WorkItem/Milestone/relation写的team scope已知限制进入规则；现有stale refresh/ACK的SDK恢复入口保持合法兼容，不因先取拒stale qualifiedmanifest把其阻断，不刷新/重发受保护401/403绕撤权；C work room省略可选sessionId的currentidentity路径与targetbridge分别投影，不按credential首条抹当前路径；deploymentSupported按实际coordination/bridge部署支持计算，不能永等registered；两manifest actorId一致性及精确目标actor/session绑定核对，拒错绑不写共享client身份。以实际合法正例/缺capability、非teamscope、stale恢复、无目标C路径、无bridge及错actor反例验证，不松权限/断言，不把服务端最终拒绝当误广告已修。继续完成M0已审真实conformance接现有Required APIjob、resource/仅tool/readonly与C/E实际发现一致、真实MCP与Pi实收tools/调用/Turn事实、错误恢复九类DoD及适用检查，计划静态通过不代产品；M1–M5未来功能不抢做。更新必要合同/ADR/客户端指南及实际source绑定、原退出/runtime/首败/准备恢复cleanup和Git工作字节，专属资源收尾保护共享/被拒。完整可审产品候选准确head和文件入口提交后停review，Chief再安排另一Agent平台定向成果审，不由实施内‘独审’自行宣告平台通过，不merge未完成/无checks候选。
+
+本轮没有重写savedplan/implementation、旧首败和受控历史；源码在同分支修改。实际main仍为69085317c88d84b702af727dc0ac7152589626d8，源HEAD及中间输入分别见检查回执/ZIP。平台计划版本字段无可读原件，沿原null，不编造新版本或回执。新的产品运行输出与历史静态方案明确分列。

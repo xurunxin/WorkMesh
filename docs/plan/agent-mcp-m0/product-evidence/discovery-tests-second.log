@@ -1,0 +1,435 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61
+
+ ❯ packages/agent-sdk/src/index.test.ts (33 tests | 2 failed) 72ms
+   ✓ WorkMeshClient > binds Control Center, explanation, execution summary, and preview routes 7ms
+   ✓ WorkMeshClient > binds structured planning methods to the versioned REST routes and headers 4ms
+   ✓ WorkMeshClient > reads the exact Agent Connection identity with the coordination credential header 2ms
+   ✓ WorkMeshClient > lists exact decimal event cursors above 2^53 2ms
+   ✓ WorkMeshClient > streams typed events and preserves Last-Event-ID exactly 7ms
+   ✓ WorkMeshClient > surfaces CURSOR_EXPIRED without retrying or moving caller state 1ms
+   ✓ WorkMeshClient > retries documented realtime capacity responses with bounded policy 4ms
+   ✓ WorkMeshClient > reads release, features, and the negotiated Agent capability manifest 1ms
+   ✓ WorkMeshClient > uses stable idempotency and does not retry conflicts 1ms
+   ✓ WorkMeshClient > retries a rate limit and never exposes the authorization value to logs 2ms
+   ✓ WorkMeshClient > never refreshes or retries an authorization denial 1ms
+   ✓ WorkMeshClient > reuses the token-exchange key across a retry without logging credentials 2ms
+   × WorkMeshClient > keeps a connection bridge on coordination auth and refreshes each exact execution session request-locally 6ms
+     → WorkMesh request failed (404)
+   × WorkMeshClient > rebuilds exact-session authorization independently in separate stateless bridge clients 2ms
+     → Invalid qualified discovery response
+   ✓ WorkMeshClient > propagates cancellation through the exact-session refresh before sending the target request 1ms
+   ✓ WorkMeshClient > waits for the full Retry-After duration without changing the logical authentication attempt 6ms
+   ✓ WorkMeshClient > reuses the original serialized body when caller-owned input mutates during Retry-After 1ms
+   ✓ WorkMeshClient > does not retry or sleep when Retry-After exceeds the explicit limit and preserves error metadata 1ms
+   ✓ WorkMeshClient > falls back to bounded exponential delay for invalid Retry-After invalid 1ms
+   ✓ WorkMeshClient > falls back to bounded exponential delay for invalid Retry-After -1 1ms
+   ✓ WorkMeshClient > bounds automatic retries by the total retry-delay budget 1ms
+   ✓ WorkMeshClient > bounds automatic retries by the attempt limit 1ms
+   ✓ WorkMeshClient > uses installation authority only for pending handoff inspection and idle-target rejection 0ms
+   ✓ WorkMeshClient > passes opaque cursors unchanged and iterates page envelopes 1ms
+   ✓ WorkMeshClient > redacts nested sensitive values before logging 0ms
+   ✓ WorkMeshClient > uses the atomic delegation-and-session endpoint with If-Match 1ms
+   ✓ WorkMeshClient > transitions an Agent Session with its exact current revision 1ms
+   ✓ WorkMeshClient > preserves exact pull-request head provenance for delivery artifacts 0ms
+   ✓ WorkMeshClient > exposes approved CI retry and agent project-update draft without publishing 1ms
+   ✓ WorkMeshClient > uses the native Inbox routes with explicit empty mutation bodies 1ms
+   ✓ WorkMeshClient > reads the authorized Human Attention projection without local classification 0ms
+   ✓ WorkMeshClient > uses a new default key per public mutation while retaining it for retry and explicit callers 11ms
+   ✓ verifyWebhook > accepts a rotated secret and rejects expired deliveries 1ms
+ ✓ packages/contracts/src/agent-discovery.test.ts (14 tests) 523ms
+   ✓ 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收  327ms
+stderr | apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > validates the document base and refuses a stale or malformed write before any API mutation
+{"tool":"workmesh_update_document","stage":"input_validation","paths":["baseContentHash"]}
+
+stderr | apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > releases only a versioned lease through the exact Session API authority
+{"tool":"workmesh_release_lease","stage":"input_validation","paths":["ifMatch"]}
+
+ ✓ apps/agent-runner/src/workmesh-tools.test.ts (10 tests) 300ms
+ ✓ apps/agent-runner/src/permission-matrix.test.ts (6 tests) 326ms
+ ❯ apps/mcp/src/index.test.ts (29 tests | 6 failed) 737ms
+   ✓ WorkMesh MCP adapter > keeps Control Plane read tools in parity with the Agent SDK 97ms
+   ✓ WorkMesh MCP adapter > claims an eligible Issue and returns only a recoverable execution bridge receipt 43ms
+   ✓ WorkMesh MCP adapter > keeps explicit mutation idempotency keys out of API request bodies 24ms
+   × WorkMesh MCP adapter > bootstraps a fresh coordination Agent and resolves a stable Project reference in two calls 39ms
+     → expected { data: { identity: { …(7) }, …(10) } } to match object { data: { identity: { …(3) }, …(5) } }
+(20 matching properties omitted from actual)
+   ✓ WorkMesh MCP adapter > gives a stable UUID suffix precedence over duplicate Project and Milestone names 18ms
+   × WorkMesh MCP adapter > prepares a deterministic Project import without calling any WorkMesh API 32ms
+     → expected "spy" to not be called at all, but actually been called 2 times
+
+Received:
+
+  1st spy call:
+
+    Array []
+
+  2nd spy call:
+
+    Array []
+
+
+Number of calls: 2
+
+   ✓ WorkMesh MCP adapter > resumes apply_project_import after response loss and replays the complete source mapping 31ms
+   ✓ WorkMesh MCP adapter > applies a prepared import whose plan is schema-valid but not yet normalized 19ms
+   ✓ WorkMesh MCP adapter > returns actionable revision conflicts with correlation and current revision 19ms
+   ✓ WorkMesh MCP adapter > publishes stable schemas for bootstrap, resolution, prepare, and apply 18ms
+   ✓ WorkMesh MCP adapter > returns a generated correlation ID and safe repair action for local import validation errors 16ms
+   ✓ WorkMesh MCP adapter > normalizes pre-handler schema failures into the structured WorkMesh error envelope 15ms
+   ✓ WorkMesh MCP adapter > fails verify_connection when the Team live authorization probe is unavailable 32ms
+   × WorkMesh MCP adapter > binds every MCP resource and tool to a REST operation policy 6ms
+     → expected [ Array(96) ] to deeply equal [ Array(97) ]
+   ✓ WorkMesh MCP adapter > omits mutation tools in read-only mode 20ms
+   ✓ WorkMesh MCP adapter > forwards Human Attention filters through the read-only MCP surface 22ms
+   ✓ WorkMesh MCP adapter > reads the exact Session revision and transitions to executing through MCP 19ms
+   ✓ WorkMesh MCP adapter > preserves the shared Work Item executor projection through MCP 18ms
+   × WorkMesh MCP adapter > exposes versioned Guidance as a read-only MCP resource 27ms
+     → expected [ 'get_workspace_guidance', …(2) ] to deeply equal []
+   × WorkMesh MCP adapter > exposes Inbox mutations only in read-write mode and routes them through the SDK 23ms
+     → expected [ 'get_agent_discovery', …(64) ] to deeply equal ArrayContaining{…}
+   ✓ WorkMesh MCP adapter > routes an MCP message tool call to the upstream SDK 21ms
+   ✓ WorkMesh MCP adapter > preserves upstream authorization denial code and correlation ID 18ms
+   ✓ WorkMesh MCP adapter > forwards MCP cursor and limit through the SDK page helper 17ms
+   ✓ WorkMesh MCP adapter > uses the shared PostgreSQL bigint cursor boundary 22ms
+   ✓ WorkMesh MCP adapter > continues session activities with the opaque cursor returned by page one 35ms
+   × WorkMesh MCP adapter > uses direct exact-head code_review evidence and keeps signed uploads file-only 21ms
+     → expected [ 'get_agent_discovery', …(64) ] to deeply equal ArrayContaining{…}
+   ✓ WorkMesh MCP adapter > exposes exact approved CI retry and agent draft-only project updates 21ms
+   ✓ WorkMesh MCP adapter > returns a bounded secret-safe bootstrap receipt after live Connection verification 22ms
+   ✓ WorkMesh MCP adapter > exposes structured Milestone, hierarchy, and relation operations to coordination clients 19ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > bootstraps a fresh coordination Agent and resolves a stable Project reference in two calls
+AssertionError: expected { data: { identity: { …(7) }, …(10) } } to match object { data: { identity: { …(3) }, …(5) } }
+(20 matching properties omitted from actual)
+
+- Expected
++ Received
+
+@@ -1,9 +1,12 @@
+  {
+    "data": {
+      "allowedOperations": [
+-       "createProject",
++       "getAgentCapabilityManifest",
++       "getCurrentAgentConnectionIdentity",
++       "getDeploymentFeatures",
++       "getServerInfo",
+      ],
+      "connectionIdentity": {
+        "authenticated_credential": {
+          "fingerprint_prefix": "0123456789ab",
+        },
+@@ -21,11 +24,11 @@
+        "semantics": "replay_from_origin",
+      },
+      "identity": {
+        "actorId": "00000000-0000-4000-8000-000000000006",
+        "sessionId": "00000000-0000-4000-8000-000000000001",
+-       "sessionRevision": 4,
++       "sessionRevision": 1,
+      },
+      "team": {
+        "id": "00000000-0000-4000-8000-000000000008",
+        "key": "WM",
+        "ref": "WM",
+
+ ❯ apps/mcp/src/index.test.ts:315:41
+    313|       const context = await protocol.callTool({ name: 'get_workmesh_co…
+    314|       expect(context.isError, JSON.stringify(context.structuredContent…
+    315|       expect(context.structuredContent).toMatchObject({
+       |                                         ^
+    316|         data: {
+    317|           identity: { actorId: artifactId, sessionId, sessionRevision:…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > prepares a deterministic Project import without calling any WorkMesh API
+AssertionError: expected "spy" to not be called at all, but actually been called 2 times
+
+Received:
+
+  1st spy call:
+
+    Array []
+
+  2nd spy call:
+
+    Array []
+
+
+Number of calls: 2
+
+ ❯ apps/mcp/src/index.test.ts:448:68
+    446|       expect(prepared.plan.workItems.map(item => item.sourceId)).toEqu…
+    447|       expect(prepared.counts).toEqual({ projects: 1, milestones: 2, wo…
+    448|       for (const call of Object.values(apiCalls)) expect(call).not.toH…
+       |                                                                    ^
+    449|     } finally { await protocol.close(); await server.close() }
+    450|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > binds every MCP resource and tool to a REST operation policy
+AssertionError: expected [ Array(96) ] to deeply equal [ Array(97) ]
+
+- Expected
++ Received
+
+@@ -70,11 +70,10 @@
+    "tool:list_workflow_states",
+    "tool:merge_pull_request",
+    "tool:offer_handoff",
+    "tool:open_pull_request",
+    "tool:post_work_room_message",
+-   "tool:prepare_project_import",
+    "tool:preview_agent_session_control",
+    "tool:propose_plan_step_assignment",
+    "tool:publish_artifact",
+    "tool:publish_delivery_artifact",
+    "tool:publish_plan",
+
+ ❯ apps/mcp/src/index.test.ts:809:51
+    807|       .map(match => `${match[1]?.toLowerCase()}:${match[2]}`)
+    808|       .sort()
+    809|     expect(Object.keys(mcpPolicyBindings).sort()).toEqual(registration…
+       |                                                   ^
+    810|     for (const binding of Object.values(mcpPolicyBindings)) {
+    811|       expect(binding.policyId).toBe(`route.${binding.operationId}`)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > exposes versioned Guidance as a read-only MCP resource
+AssertionError: expected [ 'get_workspace_guidance', …(2) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "get_workspace_guidance",
++   "get_team_guidance",
++   "get_project_guidance",
++ ]
+
+ ❯ apps/mcp/src/index.test.ts:929:115
+    927|         text: JSON.stringify(guidance),
+    928|       }))
+    929|       expect((await protocol.listTools()).tools.map(tool => tool.name)…
+       |                                                                                                                   ^
+    930|     } finally { await protocol.close(); await server.close() }
+    931|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > exposes Inbox mutations only in read-write mode and routes them through the SDK
+AssertionError: expected [ 'get_agent_discovery', …(64) ] to deeply equal ArrayContaining{…}
+
+- Expected
++ Received
+
+- ArrayContaining [
++ [
++   "get_agent_discovery",
++   "list_work_items",
++   "list_events",
++   "list_session_activities",
++   "get_work_item",
++   "list_project_milestones",
++   "get_milestone",
++   "list_documents",
++   "get_document",
++   "list_document_history",
++   "get_document_revision",
++   "diff_document_revisions",
++   "list_work_item_relations",
++   "get_work_room",
++   "list_inbox_items",
++   "get_inbox_item",
++   "list_human_attention",
++   "get_human_attention",
++   "get_control_center",
++   "get_project_control_center",
++   "explain_agent_session",
++   "get_work_item_execution_summary",
++   "preview_agent_session_control",
++   "create_document",
++   "update_document",
++   "restore_document_revision",
++   "create_repository_branch",
++   "create_repository_commit",
++   "open_pull_request",
++   "publish_delivery_artifact",
++   "request_artifact_upload",
++   "finalize_artifact_upload",
++   "merge_pull_request",
++   "retry_ci_check",
++   "draft_project_update",
+    "claim_inbox_item",
+    "acknowledge_inbox_item",
+-   "reply_inbox_item",
++   "comment_plan_step",
++   "propose_plan_step_assignment",
++   "create_child_session",
++   "append_context_delta",
++   "create_review_delegation",
++   "acquire_lease",
++   "offer_handoff",
++   "request_handoff",
++   "transition_agent_session_state",
++   "heartbeat",
++   "append_activity",
++   "publish_plan",
++   "send_message",
++   "ask",
++   "request_approval",
++   "publish_artifact",
++   "complete_session",
++   "fail_session",
++   "get_server_info",
++   "get_server_features",
++   "get_agent_capabilities",
++   "get_agent_session",
++   "get_session_context",
++   "get_session_plan",
++   "get_workspace_guidance",
++   "get_team_guidance",
++   "get_project_guidance",
++   "get_repository_context",
+  ]
+
+ ❯ apps/mcp/src/index.test.ts:947:21
+    945|     try {
+    946|       const names = (await protocol.listTools()).tools.map(tool => too…
+    947|       expect(names).toEqual(expect.arrayContaining([
+       |                     ^
+    948|         'claim_inbox_item',
+    949|         'acknowledge_inbox_item',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > uses direct exact-head code_review evidence and keeps signed uploads file-only
+AssertionError: expected [ 'get_agent_discovery', …(64) ] to deeply equal ArrayContaining{…}
+
+- Expected
++ Received
+
+- ArrayContaining [
++ [
++   "get_agent_discovery",
++   "list_work_items",
++   "list_events",
++   "list_session_activities",
++   "get_work_item",
++   "list_project_milestones",
++   "get_milestone",
++   "list_documents",
++   "get_document",
++   "list_document_history",
++   "get_document_revision",
++   "diff_document_revisions",
++   "list_work_item_relations",
++   "get_work_room",
++   "list_inbox_items",
++   "get_inbox_item",
++   "list_human_attention",
++   "get_human_attention",
++   "get_control_center",
++   "get_project_control_center",
++   "explain_agent_session",
++   "get_work_item_execution_summary",
++   "preview_agent_session_control",
++   "create_document",
++   "update_document",
++   "restore_document_revision",
++   "create_repository_branch",
++   "create_repository_commit",
++   "open_pull_request",
+    "publish_delivery_artifact",
+    "request_artifact_upload",
+    "finalize_artifact_upload",
+-   "publish_structured_review",
++   "merge_pull_request",
++   "retry_ci_check",
++   "draft_project_update",
++   "claim_inbox_item",
++   "acknowledge_inbox_item",
++   "comment_plan_step",
++   "propose_plan_step_assignment",
++   "create_child_session",
++   "append_context_delta",
++   "create_review_delegation",
++   "acquire_lease",
++   "offer_handoff",
++   "request_handoff",
++   "transition_agent_session_state",
++   "heartbeat",
++   "append_activity",
++   "publish_plan",
++   "send_message",
++   "ask",
++   "request_approval",
++   "publish_artifact",
++   "complete_session",
++   "fail_session",
++   "get_server_info",
++   "get_server_features",
++   "get_agent_capabilities",
++   "get_agent_session",
++   "get_session_context",
++   "get_session_plan",
++   "get_workspace_guidance",
++   "get_team_guidance",
++   "get_project_guidance",
++   "get_repository_context",
+  ]
+
+ ❯ apps/mcp/src/index.test.ts:1143:44
+    1141|     try {
+    1142|       const tools = (await protocol.listTools()).tools
+    1143|       expect(tools.map(item => item.name)).toEqual(expect.arrayContain…
+       |                                            ^
+    1144|         'publish_delivery_artifact',
+    1145|         'request_artifact_upload',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  packages/agent-sdk/src/index.test.ts > WorkMeshClient > keeps a connection bridge on coordination auth and refreshes each exact execution session request-locally
+WorkMeshSdkError: WorkMesh request failed (404)
+ ❯ toSdkError packages/agent-sdk/src/index.ts:795:10
+    793|     return new WorkMeshSdkError(message, { code: typeof error.code ===…
+    794|   }
+    795|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…
+       |          ^
+    796| }
+    797|
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:694:17
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:281:22
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:20
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:622:38
+ ❯ packages/agent-sdk/src/index.test.ts:350:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  packages/agent-sdk/src/index.test.ts > WorkMeshClient > rebuilds exact-session authorization independently in separate stateless bridge clients
+WorkMeshSdkError: Invalid qualified discovery response
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:283:32
+    281|     const response = await this.request<unknown>('GET', '/api/v1/agent…
+    282|     const parsed = qualifiedAgentCapabilityManifestResponseSchema.safe…
+    283|     if (!parsed.success) throw new WorkMeshSdkError('Invalid qualified…
+       |                                ^
+    284|     if (parsed.data.agent.actorId !== parsed.data.discovery.identity.a…
+    285|       || parsed.data.agent.sessionId !== parsed.data.discovery.identit…
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:20
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:622:38
+ ❯ packages/agent-sdk/src/index.test.ts:409:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  2 failed | 3 passed (5)
+      Tests  8 failed | 84 passed (92)
+   Start at  15:25:18
+   Duration  2.64s (transform 666ms, setup 0ms, collect 3.45s, tests 1.96s, environment 1ms, prepare 1.44s)

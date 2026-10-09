@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import { WorkMeshClient, WorkMeshSdkError } from '@workmesh/agent-sdk'
 import { z } from 'zod'
+import type { PreparedDiscovery } from './discovery.js'
 
 type TeamRow = { id: string; key: string; name: string; revision?: number }
 type WorkflowStateRow = { id: string; team_id: string; name: string; category: string; position: number; revision?: number }
@@ -544,9 +545,9 @@ async function resolveProject(client: WorkMeshClient, ref: string, team?: TeamRo
   return { project, team: resolvedTeam }
 }
 
-export async function getWorkMeshContext(client: WorkMeshClient): Promise<unknown> {
+export async function getWorkMeshContext(client: WorkMeshClient, prepared: PreparedDiscovery): Promise<unknown> {
   const [manifest, connectionIdentity, team] = await Promise.all([
-    client.getAgentCapabilities(),
+    Promise.resolve(prepared.manifest),
     client.getCurrentAgentConnectionIdentity(),
     connectionTeam(client),
   ])
@@ -592,10 +593,7 @@ export async function getWorkMeshContext(client: WorkMeshClient): Promise<unknow
       details: { teamId: team.id },
     })
   }
-  const allowedOperations = manifest.operations
-    .filter(operation => operation.supported && operation.eligibleByCapability)
-    .map(operation => operation.operationId)
-    .sort()
+  const allowedOperations = prepared.projection.allowedOperations
   return {
     identity: manifest.agent,
     connectionIdentity,
@@ -606,6 +604,7 @@ export async function getWorkMeshContext(client: WorkMeshClient): Promise<unknow
     features,
     profileVersion: manifest.profileVersion,
     allowedOperations,
+    discovery: prepared.projection,
     eventCursor: {
       cursor: '0',
       semantics: 'replay_from_origin',
