@@ -438,3 +438,8 @@
 <!-- C2-QUOTA-RECOVERY -->
 
 C2 的原六测试、九类与 DoD 保留；R1-16-1/8/9 追加真实 Redis quota 丢失后固定冷却、六路并发重试、双目标恢复和旧许可失效，当前回执见 [频控恢复审阅](../c2/quota-recovery/review.md)。
+
+
+<!-- C2-BACKEND-SCOPE -->
+
+C2 本轮仅后端及 main 既有消费者兼容；六原测试/九类拆分去向与 UI 延后未验收见 ../c2/backend/coverage.json。旧绿色/首败和原验收保持历史含义。

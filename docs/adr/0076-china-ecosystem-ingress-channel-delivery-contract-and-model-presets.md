@@ -321,3 +321,8 @@ Chief 已按独审方案明确放行产品实现，同 todo、同分支正常整
 
 实际六原验收/九类、必需本机检查、前后 UI、配置与资源证据见 [产品审阅入口](../reviews/c2/product-review.md)。复用已有 API integration Redis 夹具，C1 Worker 回归与 CI 策略保留。没有迁移、新 API 或决策事件/身份桥接，不改变本 ADR 其它 Proposed 范围；产品独审、视觉停点、当前 Required CI 和实际 main 落地仍为后续门禁。
 <!-- C2-PRODUCT-REVIEW:END -->
+
+
+<!-- C2-BACKEND-SCOPE -->
+
+用户当前验收收窄为企业微信后端单向提醒、canonical HTTPS URL 合同与 main 现有消费者重鉴权兼容。新增登录 returnTo/401 缓存隔离/焦点/BackForward UI 未接受，原成果/失败保全后延至重设计，不作为本轮视觉 DoD。C1 授权锁/intent/attempt/fence/unknown、发送 checkpoint、频控 D+60/完成+60 与 sentinel 冷却恢复协议保持。完整范围、六原测试及九类去向见 ../reviews/c2/backend/。

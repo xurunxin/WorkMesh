@@ -90,19 +90,3 @@ Chief按用户18:38本批持续推进授权，现明确放行同todo、同agent�
 按已审产品方案实施单一企业微信低敏出站Markdown提醒及canonical登录后安全返回深链。复用C1管理与投递协议，不重复CRUD/队列、不身份桥接/决策按钮/入站回调/其它渠道；返回路径校验和转发仍由当前Human重新授权。保存秘密引用只走既有安全机制，不请求聊天凭据。验收只用fake provider/独有测试服务，不真实向企业微信或他人发消息；真实发送、凭据与仓库外发布仍另批。
 
 先同步16.md/index/矩阵/ADR0076当前执行阶段及当前完整spec/方案输入SHA，保留所有历史plan/raw/hash/首次失败与归档日志回执缺口；不把静态校验或文档通过冒产品验收。六原tests/DoD和九类适用场景全部按方案实现、真实执行/失败skip诚实记录，必要核心频控安全负例、权限撤权/fence竞态、unknown恢复/零决策写/深链/故障网页fallback须实证。受测源码前后指纹、精确命令退出runtime/服务准备恢复清理、真实Git对象字节和ZIPCRC映射随成果提交。按实际变更完成适用必需本机检查、真实UI前后对比与既有视觉停点、独立成果审查、最新PR RequiredCI；actualdone/gitmain后才能最终验收，不现在合并。清理沿上文用户要求，仅本任务资源且先保全，审批拒停目标留原报，不拆批/改工具/移动绕拒；当前与恢复worktree保护。完整成果回review，回复只摘要/精确head/路径与实际未齐门禁。
-
-<!-- C2-PRODUCT-REVIEW:BEGIN -->
-## 当前产品成果与 review 门禁
-
-企业微信单向 Markdown、C1 投递复用及安全登录深链已实现；五项必需本机检查均退出 0，fake provider/独有 Redis、数据库与真实网页回执见 `docs/reviews/c2/product-review.md`。六原验收、九类与 DoD 的当前结果另存矩阵 currentProductExecution，历史原文/来源/首败/回执缺口保留。未真实外发。成果停 review，独审、视觉停点、当前 PR Required CI、actual main 和 Chief 最终确认尚待完成，不宣称整卡验收。
-<!-- C2-PRODUCT-REVIEW:END -->
-
-
-<!-- C2-QUOTA-RECOVERY -->
-
-本轮修复 quota 丢失反复重启冷却的问题，追加真实 Redis 多 Worker/120 秒后双目标恢复及旧许可失效用例。当前回执见 [频控恢复审阅](../../reviews/c2/quota-recovery/review.md)。此前五项绿色保持旧源码含义；本轮新五项检查另存 currentQuotaRecovery，仍停 review。
-
-
-<!-- C2-BACKEND-SCOPE -->
-
-用户正式收窄本轮 DoD 至后端独立交付；原 UI 未接受并延后重设计，完整当前规格、旧完整正文/配额修复/失败保全及六测试/九类去向见 ../../reviews/c2/backend/。旧视觉门禁不再阻止本轮后端收尾；新候选仍需独审、适用必需检查、最新 CI、actual main 和 Chief。

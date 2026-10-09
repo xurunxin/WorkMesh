@@ -1080,5 +1080,15 @@
       "result": "真实 Redis Lua 通过；仅 TIME 替换为受控时钟，serial TTL 到期单独模拟；保留原生 Redis TIME 用例"
     },
     "status": "本轮五项必需本机检查通过；待独审/latest CI/actual main/Chief"
+  },
+  "currentBackendExecution": {
+    "scope": "后端独立候选；原 UI 延后未验收",
+    "currentSpec": "docs/reviews/c2/backend/current-spec.md",
+    "specSha256": "5203d84061b0b4d654fcec69f6d73839d75d941e7a6e56589b4a5f5cf17aaa76",
+    "preservation": "docs/reviews/c2/backend/preservation.json",
+    "coverage": "docs/reviews/c2/backend/coverage.json",
+    "oldHead": "5c870d9fe3c30736b8ce87292e1d0bf35838ae83",
+    "main": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+    "result": "新候选尚未运行，旧复审不冒新组合已验收"
   }
 }
