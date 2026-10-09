@@ -251,7 +251,6 @@ describe('web i18n entry', () => {
       'locale',
       'loginCopy',
       'operationsCopy',
-      'readinessCopy',
       'relationsCopy',
       'sessionDetailCopy',
       'setLocale',

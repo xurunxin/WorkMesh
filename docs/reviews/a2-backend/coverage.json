@@ -1,0 +1,242 @@
+{
+  "source": {
+    "todoId": "0BkezbmWV6k8vwrlSNuF_",
+    "scopeChangeAt": "2026-10-09T12:00:00+08:00",
+    "sha256": "b10b213d1f1c555985845cd3fa93550b70894639e3e89916d93c052ece0a58ed",
+    "snapshotPath": "docs/reviews/a2-backend/current-spec.md",
+    "source": "当前用户完整 Spec 注入；Chief 旧卡读回另存 history/chief-old-spec.md",
+    "version": null,
+    "binding": "docs/reviews/a2-backend/sources.json"
+  },
+  "matrix": [
+    {
+      "category": "happy path",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "authorizes before context disclosure and persists provider intent without provider I/O",
+      "assertion": "提交仅持久化 action，Worker 完成后 context 可精确追溯；新增 DTO 与现有 SDK/MCP/Web 消费兼容",
+      "owner": "A2 执行者",
+      "result": "未运行；新候选结果单独绑定"
+    },
+    {
+      "category": "unauthorized actor",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "解析期间撤权后无上下文发布：%s",
+      "assertion": "覆盖 Human/角色/membership/目标/Team/连接/仓库变更，无 context/pinned/outbox，拒绝受众仅原 requester；stage4 Agent 新过滤拒绝/旧范围正对照",
+      "owner": "A2 执行者",
+      "result": "未运行；新候选结果单独绑定"
+    },
+    {
+      "category": "invalid state transition",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "checkpoint 后撤权重启无上下文发布：%s",
+      "assertion": "持久化结果不授予过期目标权限；停用/删除/作用域变化禁止发布",
+      "owner": "A2 执行者",
+      "result": "未运行；新候选结果单独绑定"
+    },
+    {
+      "category": "duplicate idempotency key",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突：%s",
+      "assertion": "三秘密字段独立参数化；同文重放、旧脱敏键拒绝、TTL 边界；明文不入账本/事件/日志",
+      "owner": "A2 执行者",
+      "result": "未运行；新候选结果单独绑定"
+    },
+    {
+      "category": "stale revision",
+      "applicable": false,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": null,
+      "assertion": "本切片不新增 revisioned mutation；context POST 无 If-Match，保持异步追加事实语义",
+      "owner": "A2 执行者",
+      "result": "不适用；不伪造测试"
+    },
+    {
+      "category": "transaction failure",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "authorizes before context disclosure and persists provider intent without provider I/O",
+      "assertion": "现有事务失败注入回滚 action/context/event/outbox，不松原断言",
+      "owner": "A2 执行者",
+      "result": "未运行；新候选结果单独绑定"
+    },
+    {
+      "category": "webhook/job replay",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "A2 仓库解析重放仅产生一份上下文",
+      "assertion": "重复 tick 和重建 Worker 精确一次；保留现有 webhook 正负对照",
+      "owner": "A2 执行者",
+      "result": "未运行；新候选结果单独绑定"
+    },
+    {
+      "category": "concurrent request",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "撤权与上下文落库按持锁顺序串行",
+      "assertion": "两真实连接观测 pg_blocking_pids，撤权先锁拒绝/发布先锁提交；stage4 筛选游标不换域",
+      "owner": "A2 执行者",
+      "result": "未运行；新候选结果单独绑定"
+    },
+    {
+      "category": "server restart/outbox recovery",
+      "applicable": true,
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "checkpoint 后撤权重启无上下文发布：%s",
+      "assertion": "结果 checkpoint 后重建 Worker 不再读供应商，重验权限；正常恢复仍精确一次",
+      "owner": "A2 执行者",
+      "result": "未运行；新候选结果单独绑定"
+    }
+  ],
+  "supplementalCases": [
+    {
+      "file": "apps/api/integration/stage4-operations.integration.test.ts",
+      "caseName": "Human 可用仓库筛选在分页前排除关闭 provider 与其他 Team",
+      "result": "未运行"
+    },
+    {
+      "file": "apps/api/integration/stage4-operations.integration.test.ts",
+      "caseName": "Human 仓库筛选游标绑定不允许换域续页",
+      "result": "未运行"
+    },
+    {
+      "file": "apps/api/integration/stage4-operations.integration.test.ts",
+      "caseName": "Agent 旧列表权限不变且拒绝 Human 新筛选参数",
+      "result": "未运行"
+    },
+    {
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "连接同文重放与旧脱敏指纹拒绝降级",
+      "result": "未运行"
+    },
+    {
+      "file": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "caseName": "仓库发布与 C1 事件快照共享事务兼容",
+      "result": "未运行"
+    },
+    {
+      "file": "packages/contracts/src/repository-configuration-contracts.test.ts",
+      "caseName": "仓库Human筛选参数与操作提示响应边界",
+      "result": "未运行"
+    }
+  ],
+  "originalSixTests": [
+    {
+      "id": "todo-9-T1",
+      "text": "列表顺序 = 依赖深度",
+      "originalChecked": false,
+      "target": 9,
+      "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "依赖深度排序",
+      "status": "本轮延期 UI；不计新后端通过",
+      "disposition": "用户收窄范围，原用例完整保全在 6f059e 与 preservation.json；后续重设计继续消费行为合同",
+      "matrixCases": [
+        "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+      ],
+      "owner": "A2 执行者",
+      "targetTodoId": "0BkezbmWV6k8vwrlSNuF_",
+      "detailedMappingPath": "docs/plan/a2-configuration-readiness/review-map.md",
+      "originalPlannedCaseName": "#9 原验收1：列表顺序 = 依赖深度",
+      "historicalStatus": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    },
+    {
+      "id": "todo-9-T2",
+      "text": "点击深链后返回会重算",
+      "originalChecked": false,
+      "target": 9,
+      "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "逐项配置后 Back 重算并允许逆序解决",
+      "status": "本轮延期 UI；不计新后端通过",
+      "disposition": "用户收窄范围，原用例完整保全在 6f059e 与 preservation.json；后续重设计继续消费行为合同",
+      "matrixCases": [
+        "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+      ],
+      "owner": "A2 执行者",
+      "targetTodoId": "0BkezbmWV6k8vwrlSNuF_",
+      "detailedMappingPath": "docs/plan/a2-configuration-readiness/review-map.md",
+      "originalPlannedCaseName": "#9 原验收2：点击深链后返回会重算",
+      "historicalStatus": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    },
+    {
+      "id": "todo-9-T3",
+      "text": "全部满足时横幅不渲染",
+      "originalChecked": false,
+      "target": 9,
+      "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "可观察项全部满足时无横幅",
+      "status": "本轮延期 UI；不计新后端通过",
+      "disposition": "用户收窄范围，原用例完整保全在 6f059e 与 preservation.json；后续重设计继续消费行为合同",
+      "matrixCases": [
+        "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+      ],
+      "owner": "A2 执行者",
+      "targetTodoId": "0BkezbmWV6k8vwrlSNuF_",
+      "detailedMappingPath": "docs/plan/a2-configuration-readiness/review-map.md",
+      "originalPlannedCaseName": "#9 原验收3：全部满足时横幅不渲染",
+      "historicalStatus": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    },
+    {
+      "id": "todo-9-T4",
+      "text": "非 unmet 的空状态不长横幅",
+      "originalChecked": false,
+      "target": 9,
+      "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "ready/unknown/not_applicable 及普通空列表不长主动作",
+      "status": "本轮延期 UI；不计新后端通过",
+      "disposition": "用户收窄范围，原用例完整保全在 6f059e 与 preservation.json；后续重设计继续消费行为合同",
+      "matrixCases": [
+        "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+      ],
+      "owner": "A2 执行者",
+      "targetTodoId": "0BkezbmWV6k8vwrlSNuF_",
+      "detailedMappingPath": "docs/plan/a2-configuration-readiness/review-map.md",
+      "originalPlannedCaseName": "#9 原验收4：非 unmet 的空状态不长横幅",
+      "historicalStatus": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    },
+    {
+      "id": "todo-9-T5",
+      "text": "路由回退 / 键盘 / 窄屏 / i18n 回归",
+      "originalChecked": false,
+      "target": 9,
+      "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "Back/Forward、键盘焦点、390px 窄屏、中英文和明暗回归",
+      "status": "本轮延期 UI；不计新后端通过",
+      "disposition": "用户收窄范围，原用例完整保全在 6f059e 与 preservation.json；后续重设计继续消费行为合同",
+      "matrixCases": [
+        "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+      ],
+      "owner": "A2 执行者",
+      "targetTodoId": "0BkezbmWV6k8vwrlSNuF_",
+      "detailedMappingPath": "docs/plan/a2-configuration-readiness/review-map.md",
+      "originalPlannedCaseName": "#9 原验收5：路由回退 / 键盘 / 窄屏 / i18n 回归",
+      "historicalStatus": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    },
+    {
+      "id": "todo-9-T6",
+      "text": "e2e：装完 Lite → 看到缺配置 → 逐项补齐 → 横幅消失",
+      "originalChecked": false,
+      "target": 9,
+      "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+      "caseName": "Lite 安装后逐项补齐直到横幅消失 @lite",
+      "status": "本轮延期 UI；不计新后端通过",
+      "disposition": "用户收窄范围，原用例完整保全在 6f059e 与 preservation.json；后续重设计继续消费行为合同",
+      "matrixCases": [
+        "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+      ],
+      "owner": "A2 执行者",
+      "targetTodoId": "0BkezbmWV6k8vwrlSNuF_",
+      "detailedMappingPath": "docs/plan/a2-configuration-readiness/review-map.md",
+      "originalPlannedCaseName": "#9 原验收6：e2e：装完 Lite → 看到缺配置 → 逐项补齐 → 横幅消失",
+      "historicalStatus": "已实现；当前整合运行结果待执行结束后绑定，Lite 必须单独记录，不把 skip 计通过"
+    }
+  ],
+  "lite": {
+    "command": "node scripts/verify-a2-backend-lite.mjs",
+    "scope": "main 现有 Web/真实代理安装认证/四角色无源码/TLS/context 实际落库与 action 归因；非旧新横幅 UI 链路",
+    "status": "未运行",
+    "risk": "原 Lite RustFS 凭证映射安装缺口保留，不靠绕过认证/代理通过"
+  }
+}

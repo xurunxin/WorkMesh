@@ -47,7 +47,6 @@ import { clearDraft, RichTextEditor, type DraftIdentity } from '../features/rich
 import { ProjectEditor, type EditableProject } from '../features/projects/project-editor'
 import { ProjectMilestones } from '../features/projects/project-milestones'
 import { DocumentManager } from '../features/documents/document-manager'
-import { ProjectRepositoryConfiguration } from '../features/projects/project-repository-configuration'
 
 type Actor = AuthenticatedActor
 type InstallStatus = { installed: boolean }
@@ -147,23 +146,6 @@ function HomePageScope({
   const projectRequestGateRef = useRef(new LatestRequestGate<string>())
   const requestedProjectIdRef = useRef<string | null>(null)
   const restoredRouteIdentityRef = useRef<string | null>(null)
-  const repositoryWorkItem = searchParams?.get('repositoryWorkItem') ?? null
-  const explicitRepositoryTeam = searchParams?.get('teamId') ?? null
-  const [repositoryTarget, setRepositoryTarget] = useState<{ id: string; team_id: string; project_id: string | null } | null>(null)
-  const [repositoryTargetError, setRepositoryTargetError] = useState(false)
-  useEffect(() => {
-    if (explicitRepositoryTeam && currentTeamInitialized && teams.some(team => team.id === explicitRepositoryTeam)) setTeamId(explicitRepositoryTeam)
-  }, [explicitRepositoryTeam, currentTeamInitialized, teams, setTeamId])
-  useEffect(() => {
-    setRepositoryTarget(null); setRepositoryTargetError(false)
-    if (!repositoryWorkItem) return
-    const abort = new AbortController()
-    if (searchParams?.getAll('repositoryWorkItem').length !== 1 || !/^[0-9a-f-]{36}$/i.test(repositoryWorkItem)) { setRepositoryTargetError(true); return }
-    void apiRequest<{ id: string; team_id: string; project_id: string | null }>(`/api/v1/work-items/${encodeURIComponent(repositoryWorkItem)}`, { signal: abort.signal })
-      .then(value => { if (!abort.signal.aborted && isAuthorityCurrent()) { if (value.team_id !== teamId || (explicitRepositoryTeam && value.team_id !== explicitRepositoryTeam)) setRepositoryTargetError(true); else setRepositoryTarget(value) } })
-      .catch(() => { if (!abort.signal.aborted && isAuthorityCurrent()) setRepositoryTargetError(true) })
-    return () => abort.abort()
-  }, [repositoryWorkItem, teamId, explicitRepositoryTeam, isAuthorityCurrent])
 
   // Local `teamsPage` is kept for the team LoadMoreButton and realtime refresh; the
   // hook's `teams` drives the rendered team list so this subscription only carries
@@ -667,7 +649,6 @@ function HomePageScope({
       aria-busy={actorLoading || teamAuthorityRefreshBusy || undefined}
       aria-hidden={fullPageDetailActive || undefined}
       className={`content${scope === 'projects' ? ' projects-page' : ''}`}
-      style={scope === 'projects' ? { overflowY: 'auto' } : undefined}
       inert={fullPageDetailActive ? true : undefined}
     >
       {scope !== 'projects' && <header hidden={fullPageDetailActive}>
@@ -684,9 +665,6 @@ function HomePageScope({
         <div className="collection-continuation"><LoadMoreButton collection={statesPage} label={t('status')} /><LoadMoreButton collection={humansPage} label={t('responsibleHuman')} /><LoadMoreButton collection={projectsPage} label={t('projects')} /></div>
         {scope !== 'projects' && workSurfaces}
         {scope === 'projects' && <ProjectsWorkbench actions={<><Button onClick={() => setEditProjectOpen(true)} variant="secondary">{t('editProject')}</Button><Button onClick={() => setMilestonesOpen(true)} variant="secondary">{t('milestones')}</Button><Button onClick={() => setDocumentOwner({ type: 'project', id: selectedProject!.id, teamId: selectedProject!.team_id })} variant="secondary">{t('documents')}</Button><Button icon={<PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button></>} actor={actor} items={items} labels={{ documents: t('documents'), editProject: t('editProject'), milestones: t('milestones'), newIssue: t('newIssue'), newProject: t('newProject'), noProjects: t('noProjects'), projects: t('projects'), projectOverview: t('projectOverview'), targetDate: t('targetDate'), workspace: 'Workspace' }} locale={locale} onCreateProject={() => setCreateProjectOpen(true)} onOpenProject={id => void openProject(id)} onSelectTab={selectProjectTab} projectTab={projectTab} projects={teamProjects} selectedProject={selectedProject} workSurface={workSurfaces} />}
-        {scope === "projects" && (!explicitRepositoryTeam || (explicitRepositoryTeam === selectedTeam.id && searchParams?.getAll("teamId").length === 1)) && <>
-          {repositoryTargetError ? <p role="alert">{agentWorkCopy.routeAccountError}</p> : (!repositoryWorkItem || repositoryTarget) && (!searchParams?.get("project") || selectedProject?.id === searchParams.get("project")) && <ProjectRepositoryConfiguration actor={actor} key={authorityScopeKey + selectedTeam.id + (repositoryWorkItem ?? selectedProject?.id ?? "")} teamId={selectedTeam.id} projectId={selectedProject?.team_id === selectedTeam.id ? selectedProject.id : null} workItemId={repositoryTarget?.id} onCreateProject={() => setCreateProjectOpen(true)} />}
-        </>}
       </> : teamAuthoritiesInitialized
         ? <section className="empty">{t('noTeam')} · {t('settings')}</section>
         : teamAuthorityError

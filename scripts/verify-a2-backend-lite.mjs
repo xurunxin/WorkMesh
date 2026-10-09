@@ -9,10 +9,10 @@ import { StringDecoder } from 'node:string_decoder'
 
 // 只从精确 Git 提交构建；安装目录没有源码、node_modules 或源码挂载。
 const root = resolve(import.meta.dirname, '..')
-const runId = `a2-lite-${randomUUID().slice(0, 8)}`
+const runId = `a2-backend-lite-${randomUUID().slice(0, 8)}`
 const sha = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout.trim()
 if (!/^[a-f0-9]{40}$/.test(sha)) throw Error('缺少精确 Git 提交')
-const evidence = resolve(root, 'docs/reviews/a2/runs', runId)
+const evidence = resolve(root, 'docs/reviews/a2-backend/runs', runId)
 const installDir = resolve(tmpdir(), runId)
 mkdirSync(evidence, { recursive: true })
 const receipts = { runId, sha, environment: '工作站 Linux Docker；非真实低功耗设备', installDir, resources: [], results: [], outcome: '未运行' }
@@ -139,11 +139,8 @@ try {
   // Exercise Web -> API before installation; /readyz only proves the Web role.
   const installStatus = await must(process.execPath, ['-e', "fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})"])
   receipts.preInstallProxy = { ...JSON.parse(installStatus), at: new Date().toISOString() }; save()
-  const located = spawnSync(process.platform === 'win32' ? 'where.exe' : 'which', ['pnpm'], { encoding: 'utf8', windowsHide: true }).stdout.trim().split(/\r?\n/)[0]
-  const standalone = resolve(dirname(located), 'node_modules/pnpm/pnpm.exe')
-  const pnpm = existsSync(standalone) ? standalone : located
-  await must(pnpm, ['--filter', '@workmesh/web', 'exec', 'playwright', 'test', '--config', 'playwright.a2-lite.config.ts'], { env: { ...env, WORKMESH_A2_LITE: '1', WORKMESH_A2_LITE_URL: env.WEB_ORIGIN, WORKMESH_PLAYWRIGHT_RUN_DIR: resolve(evidence, 'playwright'), npm_execpath: pnpm } })
-  receipts.outcome = '本机无源码 Lite 配置链路通过；真实设备和真实厂商未验收'
+  await must(process.execPath, [resolve(root, 'scripts/verify-a2-backend-lite-api.mjs')])
+  receipts.outcome = '本机无源码 Lite 现有 Web/后端兼容通过；原新横幅 UI、真实设备与真实厂商未验收'
 } catch (error) { receipts.outcome = `失败或未验收：${redact(error)}`; console.error(receipts.outcome); process.exitCode = 1; save() }
 finally {
   let servicesStopped = true

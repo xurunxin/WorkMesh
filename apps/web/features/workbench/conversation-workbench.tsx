@@ -9,9 +9,6 @@ import { useRealtimeSubscription } from '../../app/lib/realtime'
 import { RichContent } from '../rich-content/markdown'
 import { RichTextEditor, clearDraft, type DraftIdentity } from '../rich-content/editor'
 import styles from './conversation-workbench.module.css'
-import readinessStyles from './configuration-readiness.module.css'
-import { readinessContext, readinessHref, saveReadinessReturn } from '../../app/lib/configuration-readiness-navigation'
-import { ConfigurationReadiness, useConfigurationReadiness } from './configuration-readiness'
 
 type Conversation = {
   id: string; title: string; status: 'active' | 'archived'; revision: number
@@ -45,8 +42,8 @@ const errorText = (reason: unknown) => reason instanceof Error ? reason.message 
 const etag = (value: number) => `"revision-${value}"`
 const pending = (turn: Turn) => ['queued', 'dispatching', 'running'].includes(turn.status)
 
-export function ConversationWorkbench({ actor, readinessSearch = '', readinessTeamId = null }: { actor: AuthenticatedActor; readinessSearch?: string; readinessTeamId?: string | null }) {
-  const { locale, agentWorkCopy: text, readinessCopy } = useLocale()
+export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) {
+  const { locale, agentWorkCopy: text } = useLocale()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [nextConversationCursor, setNextConversationCursor] = useState<string | null>(null)
   const [sessions, setSessions] = useState<Session[]>([])
@@ -78,44 +75,14 @@ export function ConversationWorkbench({ actor, readinessSearch = '', readinessTe
   // The per-turn picker defaults come from async loads that finish after the user can already
   // interact. Remember an explicit pick per conversation so a late default can never overwrite it.
   const turnPickRef = useRef<{ conversationId: string; connectionId: string; modelId: string | null } | null>(null)
-  const pendingStarter = useRef<string | null>(null)
-  const composerRef = useRef<HTMLDivElement>(null)
-  const context = !readinessTeamId || (selectedId && !selected) ? null : readinessContext(readinessSearch, readinessTeamId, selected)
-  const readiness = useConfigurationReadiness(actor, context)
-  const primaryGap = readiness.unmet[0]
-  const focusComposer = () => requestAnimationFrame(() => composerRef.current?.querySelector<HTMLTextAreaElement>('textarea')?.focus())
-  const chooseStarter = (value: string) => {
-    if (selected) { setDraft(current => current ? `${current}\n${value}` : value); focusComposer() }
-    else { pendingStarter.current = value; setShowCreate(true); requestAnimationFrame(() => document.querySelector<HTMLInputElement>('#workbench-create-form input')?.focus()) }
-  }
-  useEffect(() => { pendingStarter.current = null }, [readinessSearch, readinessTeamId])
-  useEffect(() => {
-    if (!selected || !pendingStarter.current) return
-    const value = pendingStarter.current; pendingStarter.current = null
-    setDraft(current => current ? `${current}\n${value}` : value); focusComposer()
-  }, [selected?.id])
-  useEffect(() => {
-    const restore = () => {
-      const saved = window.history.state?.a2Return?.conversationId as string | null | undefined
-      if (saved) setSelectedId(saved)
-    }
-    window.addEventListener('popstate', restore)
-    return () => window.removeEventListener('popstate', restore)
-  }, [])
   selectedRef.current = selectedId
-  const initialConversation = useCallback((items: Conversation[]) => {
-    const params = new URLSearchParams(readinessSearch)
-    return items.find(item => (!params.has('teamId') || item.team_id === params.get('teamId'))
-      && (!params.has('projectId') || item.project_id === params.get('projectId'))
-      && (!params.has('workItemId') || item.work_item_id === params.get('workItemId')))?.id ?? null
-  }, [readinessSearch])
 
   const refreshList = useCallback(async () => {
     const page = await apiRequest<ListResponse<Conversation>>(root)
     setConversations(page.items)
     setNextConversationCursor(page.nextCursor)
-    setSelectedId(current => current ?? initialConversation(page.items))
-  }, [initialConversation])
+    setSelectedId(current => current ?? page.items[0]?.id ?? null)
+  }, [])
   const refreshSelected = useCallback(async (conversationId: string) => {
     const version = ++refreshVersion.current
     const path = `${root}/${encodeURIComponent(conversationId)}`
@@ -156,8 +123,7 @@ export function ConversationWorkbench({ actor, readinessSearch = '', readinessTe
       if (!active) return
       setConversations(conversationPage.items)
       setNextConversationCursor(conversationPage.nextCursor)
-      const restored = window.history.state?.a2Return?.conversationId as string | undefined
-      setSelectedId(restored && conversationPage.items.some(item => item.id === restored) ? restored : initialConversation(conversationPage.items))
+      setSelectedId(conversationPage.items[0]?.id ?? null)
       const usableSessions = sessionPage.items.filter(item =>
         item.principal_human_actor_id === actor.id && (item.work_item_id || item.project_id)
         && ['queued', 'acknowledged', 'executing'].includes(item.state))
@@ -326,13 +292,6 @@ export function ConversationWorkbench({ actor, readinessSearch = '', readinessTe
   const sessionCanRun = boundSession && ['queued', 'acknowledged', 'executing'].includes(boundSession.state)
   const draftIdentity: DraftIdentity | null = selected ? { workspaceId: actor.workspace_id ?? '', teamId: selected.team_id ?? '', actorId: actor.id,
     resourceType: 'workbench_conversation', resourceId: selected.id, field: 'message', baseRevision: 0 } : null
-  const emptyState = <div className={styles.empty}>
-    <p>{selected ? text.sendFirstMessage : text.selectOrCreateConversation}</p>
-    {context && primaryGap && <a className={readinessStyles.configureAction} data-testid="readiness-primary-action" href={readinessHref(primaryGap, context)} onClick={() => saveReadinessReturn(primaryGap, selectedId)}>{readinessCopy[primaryGap]}</a>}
-    <div aria-label={readinessCopy.startersLabel} className={styles.starters}>
-      {Object.values(readinessCopy.starters).map(value => <Button key={value} onClick={() => chooseStarter(value)} type="button" variant="secondary">{value}</Button>)}
-    </div>
-  </div>
   return <div className={styles.layout} data-testid="conversation-workbench">
     <aside className={styles.sidebar} aria-label={text.conversationListLabel}>
       {/* The workbench is the default landing, so it owes the Human a way back
@@ -342,7 +301,7 @@ export function ConversationWorkbench({ actor, readinessSearch = '', readinessTe
       </a>
       <div className={styles.heading}><h1>{text.workbenchTitle}</h1><a href="/settings/agent-workbench">{text.modelSettingsLink}</a></div>
       <Button aria-controls="workbench-create-form" aria-expanded={showCreate} className={styles.newConversation}
-        onClick={() => { pendingStarter.current = null; setShowCreate(current => !current) }} type="button" variant="primary">{text.createConversation}</Button>
+        onClick={() => setShowCreate(current => !current)} type="button" variant="primary">{text.createConversation}</Button>
       <form className={styles.create} data-open={showCreate} id="workbench-create-form" onSubmit={event => void create(event)}>
         <label>{text.newConversationTitle}<input maxLength={180} onChange={event => setTitle(event.target.value)} required value={title} /></label>
         <label>{text.executionSessionLabel}<select onChange={event => setSessionId(event.target.value)} required value={sessionId}>
@@ -357,7 +316,7 @@ export function ConversationWorkbench({ actor, readinessSearch = '', readinessTe
           {modelOptions.map(item => <option key={item.id} value={item.id}>{item.display_name}</option>)}
         </select></label>
         <Button disabled={busy || !sessionId || !connectionId || !modelId || !title.trim()} type="submit">{text.createConversation}</Button>
-        {readiness.unmet.includes('agent') && <a href="/agents">{text.openAgentsForDelegation}</a>}
+        {sessions.length === 0 && <a href="/agents">{text.openAgentsForDelegation}</a>}
       </form>
       <p className={styles.sectionLabel}>{text.conversationsSection}</p>
       <div className={styles.list} role="list">
@@ -378,7 +337,7 @@ export function ConversationWorkbench({ actor, readinessSearch = '', readinessTe
           <span className={styles.railName}>{item.name}</span>
           <span className={styles.railValue}>{item.status}</span>
         </div>)}
-        {readiness.unmet.includes('model') && <p className={styles.hint}>{text.noModelServiceConfigured}</p>}
+        {connections.length === 0 && <p className={styles.hint}>{text.noModelServiceConfigured}</p>}
         <div className={styles.railRow}>
           <span aria-hidden="true" className={`${styles.railDot} ${selected?.agent_session_id ? styles.railDotReady : styles.railDotIdle}`} />
           <span className={styles.railName}>{text.delegatedSessionLabel}</span>
@@ -387,9 +346,8 @@ export function ConversationWorkbench({ actor, readinessSearch = '', readinessTe
       </div>
     </aside>
     <section className={styles.main} aria-label={text.conversationRegionLabel}>
-      <ConfigurationReadiness context={context} conversationId={selectedId} state={readiness} validWorkType={(() => { const values = new URLSearchParams(readinessSearch).getAll('workKind'); return values.length === 1 && ['repository', 'non_repository'].includes(values[0]!) })()} />
       {error && <div role="alert" className={styles.error}>{error} <button onClick={() => { setError(''); void refreshList(); if (selectedId) void refreshSelected(selectedId) }} type="button">{text.retry}</button></div>}
-      {!selected ? emptyState : <>
+      {!selected ? <p className={styles.empty}>{text.selectOrCreateConversation}</p> : <>
         <header className={styles.conversationHeader}><div><h2>{selected.title}</h2><p>{text.publicRecordNote}</p></div>
           <div className={styles.conversationFacts}>
             {boundSession && <span className={styles.chip}>{text.sessionChipLabel} {boundSession.id.slice(0, 8)} · {boundSession.state}</span>}
@@ -397,7 +355,7 @@ export function ConversationWorkbench({ actor, readinessSearch = '', readinessTe
           </div></header>
         <div className={styles.timeline} aria-live="polite">
           {olderBefore && <button onClick={() => void loadOlder()} type="button">{text.loadEarlierMessages}</button>}
-          {messages.length === 0 ? emptyState : messages.map(message =>
+          {messages.length === 0 ? <p className={styles.empty}>{text.sendFirstMessage}</p> : messages.map(message =>
             <article className={message.role === 'user' ? styles.userMessage : styles.agentMessage} key={message.id}>
               <div className={styles.messageHead}>
                 <span aria-hidden="true" className={`${styles.actorBadge} ${message.role === 'user' ? styles.actorBadgeHuman : message.role === 'system' ? styles.actorBadgeSystem : ''}`}>
@@ -448,7 +406,7 @@ export function ConversationWorkbench({ actor, readinessSearch = '', readinessTe
             <span className={styles.contextPill}>{selected.context_pins.length > 0 ? `⨯ @${text.filesPill} ${selected.context_pins.length}` : `＋ @${text.filesPill}`}</span>
             <span className={styles.contextPill}>＋ @{text.terminalPill}</span>
           </div>
-          <div ref={composerRef}><RichTextEditor identity={draftIdentity} label={text.messageFieldLabel} mode="comment" name="messageMarkdown" onChange={setDraft} required value={draft} /></div>
+          <RichTextEditor identity={draftIdentity} label={text.messageFieldLabel} mode="comment" name="messageMarkdown" onChange={setDraft} required value={draft} />
           <div className={styles.composerFooter}>
             <div className={styles.turnModelSelection}>
               <label>{text.turnServiceLabel}<select aria-label={text.turnServiceLabel} disabled={busy} onChange={event => { turnPickRef.current = { conversationId: selected.id, connectionId: event.target.value, modelId: null }; setTurnConnectionId(event.target.value) }} value={turnConnectionId}>
@@ -468,7 +426,7 @@ export function ConversationWorkbench({ actor, readinessSearch = '', readinessTe
           {!selected.agent_session_id && <p className={`${styles.hint} ${styles.hintBlocked}`}>{text.noBoundSession}</p>}
           {selected.agent_session_id && boundSession && !sessionCanRun && <p className={`${styles.hint} ${styles.hintBlocked}`} role="status">{text.boundSessionEnded}</p>}
           {sessionCanRun && <p className={`${styles.hint} ${styles.hintReady}`}>● {text.sessionCanRun}{boundSession ? ` · ${boundSession.state}` : ''}</p>}
-          {readiness.unmet.includes('model') && <a href="/settings/agent-workbench">{text.configureModelServiceLink}</a>}
+          {connections.length === 0 && <a href="/settings/agent-workbench">{text.configureModelServiceLink}</a>}
         </form>}
       </>}
     </section>

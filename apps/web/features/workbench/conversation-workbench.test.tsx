@@ -51,24 +51,6 @@ beforeEach(() => {
 afterEach(() => cleanup())
 
 describe('ConversationWorkbench', () => {
-  it('固定提示仅追加未发送草稿并聚焦，点击不自动发送或激活', async () => {
-    render(<LocaleProvider><ConversationWorkbench actor={actor} /></LocaleProvider>)
-    const editor = await screen.findByLabelText('消息（Markdown）')
-    fireEvent.change(editor, { target: { value: '保留原草稿' } })
-    fireEvent.click(screen.getByRole('button', { name: '介绍一下 WorkMesh 的主要功能和使用方式。' }))
-    expect(editor).toHaveValue('保留原草稿\n介绍一下 WorkMesh 的主要功能和使用方式。')
-    await waitFor(() => expect(editor).toHaveFocus())
-    expect(mocks.mutate).not.toHaveBeenCalled()
-  })
-  it('没有对话时提示仅展开既有创建表单，取消不会写入', async () => {
-    const original = mocks.request.getMockImplementation()!
-    mocks.request.mockImplementation((path: string) => path === '/api/v1/workbench/conversations' ? Promise.resolve({ items: [], nextCursor: null }) : original(path))
-    render(<LocaleProvider><ConversationWorkbench actor={actor} /></LocaleProvider>)
-    await screen.findByText('选择或新建对话。')
-    fireEvent.click(screen.getByRole('button', { name: '帮我梳理项目目标，整理待办和下一步。' }))
-    expect(document.getElementById('workbench-create-form')).toBeInTheDocument()
-    expect(mocks.mutate).not.toHaveBeenCalled()
-  })
   it('offers a return path to the classic screen now that it is the default landing', () => {
     render(<LocaleProvider><ConversationWorkbench actor={actor} /></LocaleProvider>)
     // The workbench is where a bare "/" lands, so the classic Issues screen must

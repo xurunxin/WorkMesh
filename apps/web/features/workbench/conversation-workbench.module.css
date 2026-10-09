@@ -139,7 +139,7 @@
 
 /* ---------- Main column ---------- */
 
-.main { display: flex; flex-direction: column; min-width: 0; overflow-y: auto; background: var(--wm-canvas); }
+.main { display: flex; flex-direction: column; min-width: 0; background: var(--wm-canvas); }
 .conversationHeader {
   display: flex;
   align-items: center;
@@ -292,5 +292,3 @@
   .userMessage, .agentMessage { max-width: 100%; align-self: stretch; }
   .turnModelSelection { flex-wrap: wrap; }
 }
-.starters { display: grid; gap: 12px; max-width: 520px; margin: 20px auto 0; }
-.starters button { height: auto; min-height: 44px; white-space: normal; text-align: left; overflow-wrap: anywhere; }

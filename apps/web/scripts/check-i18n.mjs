@@ -26,7 +26,6 @@ export const PRODUCTION_LOCALE_TABLE_INVENTORY = Object.freeze([
   'relationsCopies',
   'workRoomCopies',
   'humanControlPlaneCopies',
-  'readinessCopies',
 ])
 
 export const PRODUCTION_PARTIAL_OMISSION_ALLOWLIST = Object.freeze([])

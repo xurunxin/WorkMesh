@@ -2,6 +2,7 @@ import { expect, test, type Page, type Route, type TestInfo } from '@playwright/
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
+const evidenceRoot = 'D:\\Cache\\Temp\\workmesh-web-ui-evidence-2026-08-23\\task-6.5'
 const team = { id: '7d13dccc-2210-44db-b030-76d56db1b998', name: 'WorkMesh Product', key: 'WM', revision: 1 }
 const human = { id: '1ea95f79-9388-4418-bdd3-56a72871d70e', display_name: 'Alex Morgan', email: 'alex@workmesh.test' }
 const project = {
@@ -46,11 +47,6 @@ async function installRoutes(page: Page): Promise<string[]> {
     if (path === '/api/v1/install-status') return body({ installed: true })
     if (path === '/api/v1/auth/me') return body({ actor: { ...human, kind: 'human', workspace_id: 'workspace-preview', workspace_role: 'admin' }, csrfToken: 'reflow-fixture' })
     if (path === '/api/v1/features') return body({ features: [] })
-    if (path === '/api/v1/repositories') {
-      expect(request.method()).toBe('GET')
-      expect(Object.fromEntries(url.searchParams)).toEqual({ teamId: team.id, availableOnly: 'true', limit: '20' })
-      return list([])
-    }
     if (path === '/api/v1/info') return body({ serverVersion: '1.0.0', buildSha: 'reflow-fixture', schemaBaseline: 24 })
     if (path === '/api/v1/teams') return list([team])
     if (path === `/api/v1/teams/${team.id}/states`) return list([{ id: 'f0000000-0000-4000-8000-000000000001', name: 'Backlog', category: 'backlog', color: '#a8a29e', revision: 1 }])
@@ -83,7 +79,6 @@ async function installRoutes(page: Page): Promise<string[]> {
 }
 
 async function persistEvidence(page: Page, testInfo: TestInfo, name: string, geometry: unknown): Promise<void> {
-  const evidenceRoot = testInfo.outputPath('reflow-evidence')
   await mkdir(evidenceRoot, { recursive: true })
   const jsonPath = join(evidenceRoot, `${name}.json`)
   const screenshotPath = join(evidenceRoot, `${name}.png`)

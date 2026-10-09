@@ -509,11 +509,11 @@
     {
       "seqNum": 9,
       "todoId": "0BkezbmWV6k8vwrlSNuF_",
-      "title": "[A2] 工作台未满足项列表与空状态主动作（不做向导）",
+      "title": "[A2-后端] 仓库配置授权、稳定请求身份与异步结果追溯",
       "sourceUpdatedAt": "2026-10-07T15:23:25.992Z",
       "sourceSha256": "130e16687029a7950d13ebe964a9d230bfa1892e811d77bbfbe050e9201b0286",
       "path": "docs/plan/activation-task-specs/09.md",
-      "specSha256": "205f141ce3c21dca5d19fc44bcfcf48ee68de661f8217c76439ad1d15578b4ad",
+      "specSha256": "b10b213d1f1c555985845cd3fa93550b70894639e3e89916d93c052ece0a58ed",
       "phase": "todo",
       "owner": "A2 执行者",
       "withPlan": true,
@@ -526,7 +526,7 @@
       ],
       "acceptanceRequires": [],
       "blocks": [],
-      "syncStatus": "已批准实施并同步当前代码/执行文档；未写真实 WorkMesh，不标记整卡完成",
+      "syncStatus": "当前后端范围已同步受控文件；旧 UI 与旧检查保留历史，新候选待实际验证/独审/CI/main",
       "gate": "按依赖与审查门禁",
       "latestSourceUpdatedAt": "2026-10-08T12:26:24.989Z",
       "latestSourceSha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
@@ -542,45 +542,12 @@
       "acceptanceRequiresTodoIds": [],
       "stages": [
         {
-          "id": "9-contract",
+          "id": "9-backend",
           "owner": "A2 执行者",
-          "input": "已审R1完整规格、指定base及全部requires已验收产物；执行者先给出精确plan/head",
-          "output": "URL明确工作类型；有序未满足列表、三个固定WorkMesh提示和canonical页面链接；项目内复用已有仓库注册/上下文及必要连接命令，保留真实权限、幂等和并发，不新增wizard/seen/可编辑设置。A2独立验收，A2+D4组合归#13。 三修方案包含Worker落库/恢复授权锁、连接秘密HMAC幂等、Human作用域/provider分页；待实现/未运行。",
-          "acceptance": "方案/变更关口通过，未建测试文件按coverage指定owner创建",
-          "testMapping": "docs/reviews/r1/test-coverage.json"
-        },
-        {
-          "id": "9-delivery",
-          "owner": "A2 执行者",
-          "input": [
-            {
-              "todoId": "reEr9xXt9JXN26e5SbC7Z",
-              "seqNum": 1,
-              "required": "可消费的已验收接口/产物及精确提交"
-            },
-            {
-              "todoId": "qJKk_SAxN29AdBHERBl7u",
-              "seqNum": 2,
-              "required": "可消费的已验收接口/产物及精确提交"
-            },
-            {
-              "todoId": "Tws50k02Pi52R-RJEXP_N",
-              "seqNum": 18,
-              "required": "可消费的已验收接口/产物及精确提交"
-            },
-            {
-              "todoId": "q_1zKPuGsG-2ZRUwOwQx4",
-              "seqNum": 3,
-              "required": "可消费的已验收接口/产物及精确提交"
-            },
-            {
-              "todoId": "Hxr1xIdh4poZp3F5laGrT",
-              "seqNum": 8,
-              "required": "可消费的已验收接口/产物及精确提交"
-            }
-          ],
-          "output": "空白/已配置/部分撤权/非仓库Team、canonical往返和焦点、窄屏/i18n/明暗；仅对应缺口有主动作；项目配置成功按Worker落地核验，不自动激活；原Lite真实安装链路未通过不记已交付。",
-          "acceptance": "逐项用例/原DoD通过，实际适用required检查通过，另一agent独审；Chief确认后交付"
+          "input": "已合 #53/c768 精确 hunk 与用户后端范围裁定",
+          "output": "后端独立候选；延期 UI 移出当前差异并无损保全；当前 Web 恢复 main",
+          "acceptance": "新组合适用本机 checks、独审、最新 Required CI 与 actual main；不代原 UIDoD",
+          "testMapping": "docs/reviews/a2-backend/coverage.json"
         }
       ],
       "acceptanceBlocks": [
@@ -591,22 +558,22 @@
       ],
       "currentSource": {
         "todoId": "0BkezbmWV6k8vwrlSNuF_",
-        "updatedAt": "2026-10-08T12:26:24.989Z",
-        "sha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
-        "snapshotPath": "docs/plan/a2-configuration-readiness/current-spec.md",
-        "source": "本轮mcp__tds__todos的完整Spec段；Saved plan单独截断，不混用",
-        "questionCardId": "q-g078qrLdME6hTbM58dvfx",
-        "approvalReadback": "docs/plan/a2-configuration-readiness/revision-inputs.json",
-        "planPath": "docs/plan/a2-configuration-readiness.md",
-        "version": null
+        "scopeChangeAt": "2026-10-09T12:00:00+08:00",
+        "sha256": "b10b213d1f1c555985845cd3fa93550b70894639e3e89916d93c052ece0a58ed",
+        "snapshotPath": "docs/reviews/a2-backend/current-spec.md",
+        "source": "当前用户完整 Spec 注入；Chief 旧卡读回另存 history/chief-old-spec.md",
+        "version": null,
+        "binding": "docs/reviews/a2-backend/sources.json"
       },
       "approvedScope": [
-        "URL明确workKind，不推断",
-        "三个固定WorkMesh提示，点击不自动创建或发送",
-        "项目内复用已有仓库配置API，真实闭合缺口"
+        "仓库 Human/Agent 精确分页边界",
+        "连接秘密稳定 HMAC 请求身份",
+        "Worker 外读/恢复/落库授权与原 requester 受众",
+        "异步 action 追溯",
+        "现有消费者和独立 Lite 代理兼容"
       ],
-      "currentPlanPath": "docs/plan/a2-configuration-readiness.md",
-      "testMapping": "docs/plan/a2-configuration-readiness/review-map.md",
+      "currentPlanPath": "docs/plan/backend-agent-mcp-priority/branch-separation.md",
+      "testMapping": "docs/reviews/a2-backend/coverage.json",
       "currentPlanBinding": {
         "inputPlanId": "PjUMm3PTb-SjwgK6vrEgZ",
         "inputVersion": null,
@@ -620,7 +587,7 @@
         "actualMain": "5b9c76b5f79917697906520edcd6947bfbfa925f"
       },
       "reviewFixes": "docs/plan/a2-configuration-readiness/review-fixes.json",
-      "latestMainImpact": "已正常整合 C3 精确 main，保留模型预置默认关闭/零保存出站与 A1/C1/仓库三安全修补；当前结果及未验收项见 execution-results.json",
+      "latestMainImpact": "c768 相对已整合 74f247f 仅 #53 七份文档；产品无主线增量，正常整合精确对象",
       "approvedPlanBinding": {
         "id": "FkfKZkAdoHUa-nr2Hq1mA",
         "version": null,
@@ -629,18 +596,46 @@
         "readback": "docs/reviews/a2/approved-plan-readback.json"
       },
       "execution": {
-        "main": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
-        "inputMainSource": "docs/reviews/a2/context-read-generation/main-readback.json",
-        "planReadback": "docs/reviews/a2/approved-plan-readback.json",
-        "record": "docs/reviews/a2/implementation.md",
-        "matrix": "docs/reviews/a2/execution-map.json",
-        "results": "docs/reviews/a2/execution-results.json",
-        "status": "实现与检查结果已落盘，未标记整卡完成；等待实施独审及未验收项闭合",
-        "sourceBinding": "docs/reviews/a2/checked-source-binding.json",
-        "latestCI": "docs/reviews/a2/context-read-generation/delivery-readback.json",
-        "originalIntegratedMain": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
-        "configurationRecovery": "docs/reviews/a2/context-read-generation-review.md",
-        "testedProductHead": "380aad996489dbdabddd212be8f45edbcdda7209"
+        "inputMain": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+        "record": "docs/reviews/a2-backend/README.md",
+        "results": "docs/reviews/a2-backend/results.json",
+        "status": "未运行；不引用旧组合通过"
+      },
+      "historicalUi": {
+        "source": {
+          "todoId": "0BkezbmWV6k8vwrlSNuF_",
+          "updatedAt": "2026-10-08T12:26:24.989Z",
+          "sha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1",
+          "snapshotPath": "docs/plan/a2-configuration-readiness/current-spec.md",
+          "source": "本轮mcp__tds__todos的完整Spec段；Saved plan单独截断，不混用",
+          "questionCardId": "q-g078qrLdME6hTbM58dvfx",
+          "approvalReadback": "docs/plan/a2-configuration-readiness/revision-inputs.json",
+          "planPath": "docs/plan/a2-configuration-readiness.md",
+          "version": null
+        },
+        "approvedPlan": {
+          "id": "FkfKZkAdoHUa-nr2Hq1mA",
+          "version": null,
+          "sha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
+          "bytes": 17436,
+          "readback": "docs/reviews/a2/approved-plan-readback.json"
+        },
+        "execution": {
+          "main": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+          "inputMainSource": "docs/reviews/a2/context-read-generation/main-readback.json",
+          "planReadback": "docs/reviews/a2/approved-plan-readback.json",
+          "record": "docs/reviews/a2/implementation.md",
+          "matrix": "docs/reviews/a2/execution-map.json",
+          "results": "docs/reviews/a2/execution-results.json",
+          "status": "实现与检查结果已落盘，未标记整卡完成；等待实施独审及未验收项闭合",
+          "sourceBinding": "docs/reviews/a2/checked-source-binding.json",
+          "latestCI": "docs/reviews/a2/context-read-generation/delivery-readback.json",
+          "originalIntegratedMain": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+          "configurationRecovery": "docs/reviews/a2/context-read-generation-review.md",
+          "testedProductHead": "380aad996489dbdabddd212be8f45edbcdda7209"
+        },
+        "preservation": "docs/reviews/a2-backend/preservation.json",
+        "scope": "旧 UI/失败/视觉未验收及六测试完整保全，当前不作为后端通过"
       }
     },
     {

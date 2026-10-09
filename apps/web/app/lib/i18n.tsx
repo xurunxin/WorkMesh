@@ -4439,7 +4439,6 @@ const humanControlPlaneCopies: Record<Locale, HumanControlPlaneCopy & ControlPla
 }
 
 type LocaleContextValue = {
-  readinessCopy: typeof readinessCopies[Locale]
   locale: Locale
   setLocale: (locale: Locale) => void
   t: (key: TranslationKey) => string
@@ -4473,122 +4472,6 @@ function readSavedLocale(): Locale | null {
   return stored === 'zh-CN' || stored === 'en' ? stored : null
 }
 
-type ReadinessCopy = {
-  remaining: (count: number) => string
-  starters: { intro: string; project: string; task: string }
-  providerNames: Record<"github" | "gitea", string>
-  permissionLabels: Record<"read" | "write_branch" | "open_pr" | "review" | "merge" | "ci", string>
-  configured: string
-  repository: string
-  model: string
-  agent: string
-  configure: string
-  refresh: string
-  loading: string
-  loadFailed: string
-  contextRequired: string
-  repositoryWork: string
-  nonRepositoryWork: string
-  contextMismatch: string
-  runnerUnknown: string
-  startersLabel: string
-  configurationTitle: string
-  chooseTarget: string
-  readOnly: string
-  noRepositories: string
-  repositoryLabel: string
-  more: string
-  createTargetProject: string
-  connectTitle: string
-  providerTitle: string
-  provider: string
-  connectionId: string
-  externalId: string
-  fullName: string
-  defaultBranch: string
-  cloneUrl: string
-  accountId: string
-  displayName: string
-  installationId: string
-  appId: string
-  privateKey: string
-  baseUrl: string
-  accessToken: string
-  webhookSecret: string
-  baseBranch: string
-  baseSha: string
-  branchPattern: string
-  allowedPaths: string
-  permissions: string
-  submitContext: string
-  pending: string
-  notConfirmed: string
-  retryContext: string
-  editContext: string
-  previousContextSaved: string
-  selectRepository: string
-  saved: string
-  validationFailed: string
-  commandFailed: string
-  contextChanged: string
-  reusedKey: string
-  newRequest: string
-  secretsRequiredAgain: string
-  currentContext: string
-  noContext: string
-}
-
-const readinessCopies: Record<Locale, ReadinessCopy> = {
-  'zh-CN': {
-    remaining: (count: number) => `还有 ${count} 项配置未满足`, configured: '可观察的配置项已满足',
-    repository: '配置仓库与工作上下文', model: '配置模型服务并启用模型', agent: '配置智能体并授权此 Team',
-    configure: '前往配置', refresh: '刷新', loading: '正在读取当前配置…', loadFailed: '无法读取当前配置，请刷新重试。',
-    contextRequired: '请从明确指定工作类型的入口打开工作台。', repositoryWork: '仓库工作', nonRepositoryWork: '非仓库工作',
-    contextMismatch: '工作上下文不存在、无权访问或与当前对话不一致。',
-    runnerUnknown: '平台无法确认 Runner 是否在线。',
-    starters: { intro: '介绍一下 WorkMesh 的主要功能和使用方式。', project: '帮我梳理项目目标，整理待办和下一步。', task: '帮我把一个任务整理成清晰的目标、计划和验收条件。' },
-    startersLabel: '选择一个起点', configurationTitle: '仓库配置', chooseTarget: '选择或新建项目后配置仓库。',
-    readOnly: '你可以查看仓库；配置上下文需要 Team 管理员或维护者权限。',
-    noRepositories: '当前 Team 暂无可用仓库。', repositoryLabel: '仓库', more: '加载更多仓库', createTargetProject: '新建配置目标项目',
-    connectTitle: '注册仓库', providerTitle: '创建提供商连接', provider: '提供商', providerNames: { github: 'GitHub', gitea: 'Gitea' },
-    connectionId: '已有连接 ID', externalId: '提供商仓库 ID', fullName: '仓库全名', defaultBranch: '默认分支', cloneUrl: 'HTTPS 克隆地址',
-    accountId: '外部账户 ID', displayName: '连接名称', installationId: 'GitHub Installation ID', appId: 'GitHub App ID',
-    privateKey: 'GitHub 私钥', baseUrl: 'Gitea HTTPS 地址', accessToken: 'Gitea Access Token', webhookSecret: 'Webhook 秘密',
-    baseBranch: '基线分支', baseSha: '基线提交 SHA', branchPattern: '工作分支模式', allowedPaths: '允许路径（每行一项）', permissions: '上下文权限',
-    permissionLabels: { read: '读取', write_branch: '写入工作分支', open_pr: '创建 PR', review: '审查', merge: '合并', ci: 'CI' },
-    submitContext: '提交上下文配置', pending: '已提交，等待解析。', notConfirmed: '尚未确认解析结果，请刷新查看。', saved: '上下文已配置。',
-    retryContext: '重试确认', editContext: '修改配置', previousContextSaved: '上次提交的上下文已配置；当前修改尚未提交。', selectRepository: '选择仓库',
-    validationFailed: '请检查配置字段、资源链接与权限。', commandFailed: '配置请求未完成，请核对结果后重试。',
-    contextChanged: '上下文已被更新；已加载最新结果，请核对后再次提交。',
-    reusedKey: '该请求身份已用于不同配置；请先核对已有连接，再显式提交新的请求。', newRequest: '已核对，开始新的请求',
-    secretsRequiredAgain: '凭证已清除；重试时请重新输入相同凭证。', currentContext: '当前目标的最新上下文', noContext: '当前目标尚未配置上下文。',
-  },
-  en: {
-    remaining: (count: number) => `${count} configuration items remaining`, configured: 'Observable configuration is satisfied',
-    repository: 'Configure repository and work context', model: 'Configure a model service and enable a model', agent: 'Configure an agent and grant this Team access',
-    configure: 'Open configuration', refresh: 'Refresh', loading: 'Reading current configuration…', loadFailed: 'Unable to read current configuration. Refresh to retry.',
-    contextRequired: 'Open the workbench with an explicit work type.', repositoryWork: 'Repository work', nonRepositoryWork: 'Non-repository work',
-    contextMismatch: 'Work context is unavailable or does not match the current conversation.',
-    runnerUnknown: 'The platform cannot confirm whether the Runner is online.',
-    starters: { intro: 'Introduce WorkMesh and explain how to use its main features.', project: 'Help me organize project goals, tasks, and next actions.', task: 'Help me turn a task into clear goals, a plan, and acceptance criteria.' },
-    startersLabel: 'Choose a starting point', configurationTitle: 'Repository configuration', chooseTarget: 'Select or create a project to configure a repository.',
-    readOnly: 'You can view repositories. Configuring context requires a Team administrator or maintainer.',
-    noRepositories: 'No available repositories in this Team.', repositoryLabel: 'Repository', more: 'Load more repositories', createTargetProject: 'Create configuration target project',
-    connectTitle: 'Register repository', providerTitle: 'Create provider connection', provider: 'Provider', providerNames: { github: 'GitHub', gitea: 'Gitea' },
-    connectionId: 'Existing connection ID', externalId: 'Provider repository ID', fullName: 'Repository full name', defaultBranch: 'Default branch', cloneUrl: 'HTTPS clone URL',
-    accountId: 'External account ID', displayName: 'Connection name', installationId: 'GitHub Installation ID', appId: 'GitHub App ID',
-    privateKey: 'GitHub private key', baseUrl: 'Gitea HTTPS URL', accessToken: 'Gitea Access Token', webhookSecret: 'Webhook secret',
-    baseBranch: 'Base branch', baseSha: 'Base commit SHA', branchPattern: 'Work branch pattern', allowedPaths: 'Allowed paths (one per line)', permissions: 'Context permissions',
-    permissionLabels: { read: 'Read', write_branch: 'Write branch', open_pr: 'Open PR', review: 'Review', merge: 'Merge', ci: 'CI' },
-    submitContext: 'Submit context configuration', pending: 'Submitted; waiting for resolution.', notConfirmed: 'Resolution has not been confirmed. Refresh to check.', saved: 'Context configured.',
-    retryContext: 'Retry confirmation', editContext: 'Edit configuration', previousContextSaved: 'The previous context was configured; current edits have not been submitted.', selectRepository: 'Select a repository',
-    validationFailed: 'Check configuration fields, resource links, and permissions.', commandFailed: 'The configuration request did not complete. Check the result before retrying.',
-    contextChanged: 'The context changed. Review the refreshed result before submitting again.',
-    reusedKey: 'This request identity was used for different configuration. Verify existing connections before explicitly submitting a new request.', newRequest: 'Verified; start a new request',
-    secretsRequiredAgain: 'Credentials cleared. Re-enter the same credentials to retry.', currentContext: 'Latest context for the current target', noContext: 'No context configured for the current target.',
-  },
-}
-
 export function LocaleProvider({ children }: PropsWithChildren) {
   const [locale, setCurrentLocale] = useState<Locale>('zh-CN')
   useEffect(() => { setCurrentLocale(readSavedLocale() ?? 'zh-CN') }, [])
@@ -4599,7 +4482,6 @@ export function LocaleProvider({ children }: PropsWithChildren) {
   }, [locale])
   const value = useMemo<LocaleContextValue>(() => ({
     locale,
-    readinessCopy: readinessCopies[locale],
     setLocale: setCurrentLocale,
     t: key => messages[locale][key],
     toastCopy: toastCopies[locale],

@@ -375,8 +375,6 @@ test.describe("Stage 0 browser acceptance", () => {
       await login.getByPlaceholder("Email").fill("alice@example.test");
       await login.getByPlaceholder("Password").fill("password-acceptance");
       await login.getByTestId("login-submit").click();
-      // 等待默认落点的 canonical 重定向，避免旧首页的异步 replace 覆盖随后点击。
-      await secondPage.waitForURL((url) => url.pathname === "/workbench");
       // Address the surface this test is about. Signing in lands on the
       // default landing, which is the Agent workbench, not the Issues list.
       await secondPage.getByTestId("view-my-work").click();

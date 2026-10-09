@@ -4,9 +4,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { LocaleProvider } from '../lib/i18n'
 import WorkbenchPage from './page'
 
-vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams(), useRouter: () => ({ push: vi.fn() }) }))
-vi.mock('../lib/use-current-team', () => ({ useCurrentTeam: () => ({ initialized: true, teamId: null, teams: [] }) }))
-
 vi.mock('../lib/api', () => ({
   publicRequest: vi.fn(async () => ({ serverVersion: '0.0.0-test', buildSha: 'testsha', schemaBaseline: 1 })),
   apiMutation: vi.fn(async () => undefined),

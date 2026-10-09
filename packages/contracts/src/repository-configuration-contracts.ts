@@ -36,7 +36,7 @@ export const providerConnectionConfigurationSchema = z.object({
   service_actor_id: id, active: z.boolean(), revision: z.number().int(),
   created_at: timestamp, updated_at: timestamp,
 }).strict()
-// Only the fields needed to follow an asynchronous command cross this UI boundary.
+// Durable action acceptance is distinct from the asynchronously published context.
 export const repositoryContextActionSchema = z.object({
   id, kind: z.literal('resolve_repository_context'),
   status: z.enum(['pending', 'claimed', 'completed', 'failed', 'dead']),

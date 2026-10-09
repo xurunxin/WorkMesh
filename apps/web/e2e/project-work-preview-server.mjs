@@ -1557,11 +1557,6 @@ createServer(async (request, response) => {
   }
   if (path === '/__test/requests' && request.method === 'GET') return send(response, requestLedger())
   beginRequestEvidence(request, url, response)
-  if (path === '/api/v1/repositories' && request.method === 'GET'
-      && (activeScenario === 'final-tour' ? [...finalTourTeamsPageOne, finalTourTeamPageTwo] : [team])
-        .some(value => value.id === url.searchParams.get('teamId'))
-      && url.searchParams.get('availableOnly') === 'true'
-      && url.searchParams.get('limit') === '20') return send(response, page([]))
   if (await handleScenarioRoute(request, response, url)) return
   if (path === '/api/v1/install-status') return send(response, { installed: true })
   if (path === '/api/v1/auth/me') return send(response, { actor: { ...human, kind: 'human', workspace_id: 'workspace-preview', workspace_role: 'admin' }, csrfToken: 'preview-csrf' })

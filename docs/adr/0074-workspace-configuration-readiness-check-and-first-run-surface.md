@@ -292,3 +292,9 @@ Lite 原安装验收包含真实镜像无源码安装与逐项配置闭环。其
   interface stop describing the dependency two different ways.
 - `docs/plan/` gains the implementation plan, with the visibility-scoping and
   `unknown`-versus-`blocked` cases called out explicitly.
+
+## 当前 A2 后端独立交付范围
+
+用户正式将本轮 A2 验收收窄为后端；上文首运行面、三个提示、导航/焦点/等待恢复与视觉条款保留为后续 UI 行为参考，旧 UI 未获得视觉接受。原六项 UI 测试及其 DoD 延后，完整当前规格见 `docs/reviews/a2-backend/current-spec.md`，保全索引见同目录 `preservation.json`，历史来源不倒改。
+
+本候选只包含已审 #53 的仓库 Human/Agent 分页边界、用途分离秘密 HMAC 请求身份、Worker 外读/恢复/最终事务授权和原 requester 专属拒绝受众、持久化 action 精确归因及现有消费者兼容。保持 A1 只读三态和 C1 事务事实；无新端点、事件、迁移、If-Match 或 Agent 的 Human 配置资格。独立保留 Lite 构建期私网代理修复，须重新验证 main 现有 Web 与新后端的真实无源码安装/配置落库，旧新横幅通过不适用。ADR 状态不变，当前候选仍需独审、适用检查、最新 Required CI 与实际 main。
