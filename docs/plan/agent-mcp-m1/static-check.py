@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import re
+import runpy
 import subprocess
 import sys
 import time
@@ -70,6 +71,10 @@ try:
             normalization='plan去掉包裹标签；可读spec/frozen节仅移除段落分隔末尾空行；UTF-8/LF/末尾一个LF；不改正文；原始返回/完整Git字节另存',
             planDocId=observation['planDocId'], version=None, planCreatedAt=None,
             completePlanReadback=False,
+            effectiveSpec=dict(base='current-spec.md：本轮工具完整Spec段，不冒已包含新意见',
+                               latestSteering='steering.md：本轮用户明确最新修正',
+                               latestReview='review-feedback-contracts.md：两合同blocking原文',
+                               currentPlan='本轮注入完整plan，保持平台原文，不再edit_plan'),
             files=[fingerprint(name) for name in ['savedplan.md','implementation.md','current-spec.md','spec.md','steering.md']],
             visiblePrefix=dict(bytes=len(visible),sha256=digest(visible),matchesInjectedFulltext=saved.startswith(visible)),
             truncatedObservation=fingerprint('platform-observation-current.json')))
@@ -95,6 +100,18 @@ try:
                 check('历史独立指纹:'+kind+':'+item['path'], len(raw)==record['bytes'] and digest(raw)==record['sha256'])
         for name in ['static-first-failure.json','static-link-failure.json','platform-observation.json']:
             check('旧首败/返回不改:'+name, (OUT/name).read_bytes()==old.read('worktree/'+PREFIX+name))
+    previous = load('history/candidate-004554-manifest.json')
+    previous_zip = OUT/'history'/previous['archive']['path']
+    check('004554历史ZIP原字节', previous_zip.stat().st_size==previous['archive']['bytes'] and digest(previous_zip.read_bytes())==previous['archive']['sha256'])
+    with zipfile.ZipFile(previous_zip) as old:
+        check('004554历史完整成员', len(old.namelist())==len(previous['entries'])*2 and len(set(old.namelist()))==len(old.namelist()))
+        for item in previous['entries']:
+            original=git('show',previous['head']+':'+item['path'])
+            check('004554历史Git:'+item['path'], old.read(item['git']['member'])==original and git('rev-parse',previous['head']+':'+item['path']).decode().strip()==item['gitBlobOid'])
+            for kind in ['git','worktree']:
+                record=item[kind]; raw=old.read(record['member'])
+                check('004554历史独立指纹:'+kind+':'+item['path'], len(raw)==record['bytes'] and digest(raw)==record['sha256'])
+        check('004554首静态失败不改', old.read('worktree/'+PREFIX+'static-failure-current.json')==(OUT/'static-failure-current.json').read_bytes())
     for sha, item in manifest['commits'].items():
         raw = git('cat-file','commit',sha)
         lines = raw.decode().splitlines()
@@ -120,6 +137,7 @@ try:
         check('冻结M1原节字节', len(raw_frozen)==manifest['originalM1']['extractedOriginalBytes'] and digest(raw_frozen)==manifest['originalM1']['extractedOriginalSha256'])
         check('冻结M1精确全文', frozen==(OUT/'frozen-M1.md').read_bytes() and digest(frozen)==manifest['originalM1']['sha256'])
     api = yaml.safe_load(sources['OPENAPI.yaml'].decode())
+    runpy.run_path(str(OUT/'check-wait-contract-source.py'))['verify'](sources, OUT, check)
     operations = load('operation-decisions.json')['operations']
     check('当前42及新增1唯一', len(operations)==43 and len({item['operationId'] for item in operations})==43)
     nine = {'normal','authority','state','idempotency','revision','transaction','replay','concurrency','restart'}
@@ -192,7 +210,7 @@ try:
         receipt = load('static-checks.json')
         check('提交与静态回执受测文件一致', tested==receipt['testedFiles'])
         check('静态回执blob一致', git('show',args.commit+':'+REPORT)==(OUT/'static-checks.json').read_bytes())
-    result = dict(status='passed',kind='真实静态文档核验；无产品运行',command=['python',PREFIX+'static-check.py',*sys.argv[1:]],exitCode=0,runtimeSeconds=round(time.monotonic()-started,3),python=sys.version,pythonExecPath=sys.executable,yaml=yaml.__version__,sourceMain=main,sourceMembers=217,existingOperations=42,proposedOperations=1,checkCount=len(checks),failed=0,skipped=0,productTests='未运行',requiredCI='未运行/未查询本PR',platformIndependentReview='两项blocking待平台另一Agent复审；本轮无内部独审',chiefConfirm='未收到',ciClassification=node,checks=checks,testedFiles=tested,reportSelfHash='不参与；提交后单独核回执blob一致',resources=dict(containers=[],images=[],volumes=[],networks=[],services=[],backgroundProcesses=[],retainedPaths=[PREFIX,ADR,WAIT_ADR],cleanupActions=[]))
+    result = dict(status='passed',kind='真实静态文档/源码规则与变异核验；未执行SQL/Zod/Worker或产品服务',command=['python',PREFIX+'static-check.py',*sys.argv[1:]],exitCode=0,runtimeSeconds=round(time.monotonic()-started,3),python=sys.version,pythonExecPath=sys.executable,yaml=yaml.__version__,sourceMain=main,sourceMembers=217,existingOperations=42,proposedOperations=1,checkCount=len(checks),failed=0,skipped=0,productTests='未运行',requiredCI='未运行/未查询本PR',platformIndependentReview='原来源方案层面已闭、等待恢复路径已明确；当前hash/prompt FK两合同项待平台定向复审',chiefConfirm='未收到',ciClassification=node,checks=checks,testedFiles=tested,reportSelfHash='不参与；提交后单独核回执blob一致',resources=dict(containers=[],images=[],volumes=[],networks=[],services=[],backgroundProcesses=[],retainedPaths=[PREFIX,ADR,WAIT_ADR],cleanupActions=[]))
     if args.record:
         write('static-checks.json',result)
     print(json.dumps({key:result[key] for key in ['status','exitCode','runtimeSeconds','checkCount','sourceMembers','existingOperations','proposedOperations','productTests']},ensure_ascii=False))

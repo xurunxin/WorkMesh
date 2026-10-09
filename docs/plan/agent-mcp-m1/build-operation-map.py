@@ -14,7 +14,7 @@ with zipfile.ZipFile(OUT/'source-snapshot.zip') as z:
     api = yaml.safe_load(source('OPENAPI.yaml'))
     baseline = json.loads(source('docs/plan/agent-mcp-m0/operation-decisions.json'))
     files = {x['path']: source(x['path']) for x in manifest['entries']
-             if x['head'] == MAIN and x['path'].endswith(('.ts','.py','.mjs','.yml'))}
+             if x['head'] == MAIN and x['path'].endswith(('.ts','.py','.mjs','.yml','.sql'))}
 blobs = {x['path']: x for x in manifest['entries'] if x['head']==MAIN}
 def anchor(path, text):
     lines = files[path].splitlines()
@@ -160,14 +160,28 @@ for item in operations:
           atomicity='wait+Session状态+Turn/Attempt结算+tool/message+receipt/event/outbox同事务；外层原key/body恢复',
           lifecycle='模型停止/释放己有Lease/无旧Attemptmonitor/Worker条件消费/唯一后续Turn/重新claim-start',
           tests=['M1-WAIT-APPROVAL','M1-WAIT-INPUT','M1-WAIT-BLOCKED','M1-WAIT-LOSS','M1-WAIT-RACE','M1-WAIT-RESTART'])
+        item['waitProposal']['hashContract']=dict(pattern='^sha256:[a-f0-9]{64}$',
+          comparison='exact_full_string',transforms=[],dto='wait-dto-proposal.json',
+          positiveProductInput='真实requestApproval返回的action_payload_hash原样使用；非手拼fixture')
+        item['waitProposal']['promptForeignKey']=dict(local=['agent_session_id','trigger_prompt_id'],
+          target='agent_session_prompts',targetColumns=['session_id','id'],
+          prerequisite='新迁移先建UNIQUE(session_id,id)',workspace='锁内另外核live workspace授权，不引用prompt不存在的workspace_id')
+        item['waitProposal']['tests'] += ['M1-WAIT-HASH-SOURCE','M1-WAIT-HASH-DENY',
+                                        'M1-WAIT-PROMPT-FK','M1-WAIT-PROMPT-UPGRADE','M1-WAIT-PROMPT-ROLLBACK']
+        item['mainEvidence'] += [anchor('apps/api/src/agent/commands.ts','const canonicalPayloadHash'),
+                                anchor('packages/contracts/src/index.ts','export const requestApprovalInputSchema'),
+                                anchor('packages/contracts/src/index.ts','export const consumeApprovalInputSchema'),
+                                anchor('packages/db/migrations/v1/0001_v1_baseline.sql','CREATE TABLE agent_session_prompts (')]
         item['mainEvidence'] += [anchor('apps/agent-runner/src/run-session.ts',"if (stopped) throw new Error('RUNNER_ABORTED')"),
                                 anchor('apps/worker/src/session-lifecycle.ts','const reconcileWorkbenchAttempts')]
 index += ['| `getAgentSessionExecutionResult` GET `/api/v1/agent-sessions/{id}/execution-result`（新增提案） | `getSessionExecutionResult` → `get_session_execution_result` → 受控finally | [准确输入/DTO/live归属/零写合同](security-contract.md)，普通E拒绝；Proposed |','',
           '## 共同live门禁与逐操作反例','',
           '所有普通Agent操作逐次重验credential、definition/actor、Team grant、Delegation和能力交集；读取final live predicate与对象session FK，写命令under-lock exact authority。具体九类用例ID/测试文件/DoD见 [验证](verification.md)，不能用通用pending代审计完成。M0历史源码和本批main证据分列，不认为继承的旧test状态代表本批通过。','',
           '新增适配和Human保留见 [兼容](compatibility.md)，Stop特殊时序见 [生命周期](lifecycle.md)。']
+index += ['', '## 本轮定向两合同修正', '',
+          '等待批准hash的DTO/DDL/Worker保留现行sha256:前缀并完整比较；真实正例用requestApproval返回值。prompt表没有workspace_id，新unique(session_id,id)先于准确Session复合FK，workspace仍锁内授权。完整字段见 [等待DTO提案](wait-dto-proposal.json)，源语义及旧错误变异由check-wait-contract-source.py核对，不表示运行数据库或批准成功。']
 (OUT/'operation-index.md').write_text('\n'.join(index)+'\n',encoding='utf-8',newline='\n')
 (OUT/'operation-decisions.json').write_text(json.dumps(dict(main=MAIN,status='Proposed；静态映射，不是产品验收',
-    controlledContracts=['security-contract.md','wait-contract.md','migration-contract.md','schema-proposal.sql'],
+    controlledContracts=['security-contract.md','wait-contract.md','wait-dto-proposal.json','migration-contract.md','schema-proposal.sql'],
     operations=operations),ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
 print(json.dumps(dict(existingOperations=len(specs),newOperations=1),ensure_ascii=False))

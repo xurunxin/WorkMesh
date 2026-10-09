@@ -10,9 +10,11 @@ type SessionWait = {
   ifMatch: number; // 正整数，准确当前 Session revision
   state: 'awaiting_approval' | 'awaiting_input' | 'blocked';
   reason: string; // 1..2000，公开且脱敏
-  approval?: { id: string; actionPayloadHash: string }; // UUID，canonical SHA-256 hex
+  approval?: { id: string; actionPayloadHash: string }; // UUID，现行完整 sha256:<64位小写hex>
 };
 ```
+等待 approval.actionPayloadHash 的 Zod 使用 z.string().regex(/^sha256:[a-f0-9]{64}$/)，完整保留真实 requestApproval 返回的 action_payload_hash；不 strip 前缀、不转裸 hex。DTO、DDL CHECK 和 Worker/实际消费的比较完全一致，详见 [结构化提案](wait-dto-proposal.json)。
+
 awaiting_approval 必须 approval；另两态禁止 approval。与 sessionCompletion 互斥；settlement.outcome 必须 settled，externalEffectsReconciled 必须 true，assistantMessageMarkdown 必须非空；复用 settlement 的 evidence/noArtifactReason，严格拒绝未知字段。只在 running 的 current fence、Session executing、state 图允许及 ifMatch 准确时登记；旧字段不改。Runner 不提前 transition Session 到等待态再调用 settle，模型工具只形成 waitIntent；独立 API/MCP transitionState 仍按原行为，但不因此自动生成可恢复条件。
 
 listWorkbenchRunnerAssignments 的 GET query、listAgentWorkbenchTurns 的 GET query、claimWorkbenchTurn 的 strict body 增加 executionWaits:boolean 默认 false；原 claim 的空 body 消费者保留。支持新 schema 的 opt-in claim 在 workbench_runner_attempts.execution_waits_enabled 同事务记录为 wait/continuation admission，后续 credential/start 不靠可伪造请求参数判断能力。assignment 只有 opt-in 才带 purpose:'execute'|'monitor'（缺省旧执行）；monitor 返回 sessionId/state/waitId，不解密模型凭据，不分派旧 Attempt，不被 ensureExecuting 翻态。等待 Session 仍须 live 精确来源，paused 仅可观察 Human 控制与 Stop，不恢复模型。terminal/stale 不作为 monitor 自动恢复。
@@ -30,9 +32,9 @@ settle 原响应保留 status/sessionCompletion；仅 opt-in sessionWait 请求�
 
 ## condition 和 admission
 
-批准准确绑定 approval.id、session_id、canonical action_payload_hash；触发需要 approved、未到期、未消费、仍满足原 Human 决定和 quorum。 Worker 不消费批准代替实际动作；claim/start 与后续消费仍核准确 hash/有效期，恢复 executing 不授动作权限。
+批准准确绑定 approval.id、session_id、原完整 action_payload_hash；Worker 使用 approval.action_payload_hash === wait.approval_action_payload_hash，与现行 assertApprovalUsable/consumeApprovalInTx 全字符串比较一致，不重新编码；触发需要 approved、未到期、未消费、仍满足原 Human 决定和 quorum。 Worker 不消费批准代替实际动作；claim/start 与后续消费仍核准确 hash/有效期，恢复 executing 不授动作权限。
 
-输入或 blocked 使用原等待事务捕获的 Session prompt 边界与 Conversation next_message_sequence；只接受边界之后的准确 Session prompt 或同 Conversation 合法 Human 输入，来源事件必须携带准确 promptId/messageId。服务端 prompt 的 INSERT RETURNING promptId 与既有 agent.session.prompted 事件增加引用，无新增事件类型。不能用另一 Session、旧消息、Agent/system 消息或相同文字唤醒。负责 Human 与真实输入 Human 的现行成员资格/主体权限每次重验。
+输入或 blocked 使用原等待事务捕获的 Session prompt 边界与 Conversation next_message_sequence；只接受边界之后的准确 Session prompt 或同 Conversation 合法 Human 输入，来源事件必须携带准确 promptId/messageId。prompt 在源 schema 没有 workspace_id：新迁移先 ADD UNIQUE(session_id,id)，wait 外键使用 (agent_session_id,trigger_prompt_id)→agent_session_prompts(session_id,id) ON DELETE RESTRICT。锁内以准确 Session 重验 workspace/live授权，不能以外键代授权；不新增 prompt workspace_id、不改旧行。服务端 prompt 的 INSERT RETURNING promptId 与既有 agent.session.prompted 事件增加引用，无新增事件类型。不能用另一 Session、旧消息、Agent/system 消息或相同文字唤醒。负责 Human 与真实输入 Human 的现行成员资格/主体权限每次重验。
 
 Worker 持久扫描 pending wait，锁后重验原来源、principal、Connection/安装、目标 Delegation（Connection 另 coordinator Delegation）、grant/scope、负责 Human、Conversation、模型启用和合法请求归属。条件满足且 Session 在该等待态，按原 state 图转 executing；若现行 Human prompt/resume 已合法转 executing，必须读取该真实触发再唯一消费 wait，不做第二次 transition。paused 不消费、不创建 Turn；仅 Human 合法 resume 后重新检查，Stop/stale/terminal/撤权/拒批/过期不自动继续。
 

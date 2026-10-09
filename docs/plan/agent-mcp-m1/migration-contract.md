@@ -14,7 +14,7 @@ direct finishSession 完成入口与 stopAck 在同一个 agentMutate 事务，�
 
 ## 等待与续接
 
-workbench_execution_waits 保存具体列和 CHECK/FK，见 DDL。源 Turn 唯一，每 Session 至多一个 pending wait，continuation_turn_id 唯一；外部实际批准、prompt、message 分开字段，不用 timestamp 或相同正文代替触发身份。Session/Conversation/源 Turn/Attempt/原 Human/批准/输入和续 Turn 用 workspace 复合 FK，删除 RESTRICT；条件组合与状态组合 CHECK。跨表语义在原 authority 与 Conversation/Turn/Attempt 锁内核对：同 Session/Conversation、source Attempt current、源 Turn 已结算、原 Human 是合法请求归属、批准 session/hash 完全一致。
+workbench_execution_waits 保存具体列和 CHECK/FK，见 DDL。源 Turn 唯一，每 Session 至多一个 pending wait，continuation_turn_id 唯一；外部实际批准、prompt、message 分开字段，不用 timestamp 或相同正文代替触发身份。Session/Conversation/源 Turn/Attempt/原 Human/批准/消息输入和续 Turn 用 workspace 复合 FK，删除 RESTRICT；prompt 特例见下节，不引用不存在的列；条件组合与状态组合 CHECK。跨表语义在原 authority 与 Conversation/Turn/Attempt 锁内核对：同 Session/Conversation、source Attempt current、源 Turn 已结算、原 Human 是合法请求归属、批准 session/hash 完全一致。
 
 Attempt 增加 execution_waits_enabled boolean NOT NULL DEFAULT false，claim 捕获明确 opt-in；credential/start/settle 读该持久能力，旧 Attempt 为 false。该列不授权限，只约束消费者兼容。
 
@@ -31,3 +31,13 @@ settle 写 pending wait、等待状态、公开回复、工具账本、Turn/Atte
 无历史来源回填、无历史等待条件推测；旧已悬挂 Turn 仍沿现有 reconcileWorkbenchAttempts/合法 Human 恢复，不伪造可自动续接 wait。下线先关闭新的 wait 生产，保留新 Worker 处理或由 Human 停止所有 pending wait、续 Turn 和新 Attempt，确认无活动引用再回退旧服务；不删来源或等待事实，不自动执行 DOWN。DDL 失败整次迁移事务回滚，不允许部分新 schema。只读查询未部署增量时拒绝，不退回旧任意 Token 证明。
 
 必须验证上一增量升级、clean DB、旧夹具、新旧写入、null/unproven 失败关闭、过期 key reset、唯一约束、孤儿/跨 workspace FK、迁移中断回滚和滚动门禁；本轮均未执行数据库测试。
+
+## 本轮两项合同修正
+
+批准 hash 复用 canonicalPayloadHash 和 requestApprovalInputSchema/consumeApprovalInputSchema 的现行格式 ^sha256:[a-f0-9]{64}$。wait DTO/Zod、approval_action_payload_hash 的 DDL CHECK、Worker比较和实际批准消费均保完整字符串；裸hex或错误前缀拒绝，正确格式但不同hash由准确相等比较拒绝。真实批准等待正例必须调用 requestApproval，从其返回的 action_payload_hash 原样传至 sessionWait；不手拼测试 fixture，不把 Python 正则静态样本计为真实批准用例。
+
+源 baseline 的 agent_session_prompts 只有 id主键、session_id/author/body/版本/时间等列，没有workspace_id。新增迁移在 CREATE workbench_execution_waits 前执行 ALTER TABLE agent_session_prompts ADD CONSTRAINT agent_session_prompts_session_id_id_key UNIQUE(session_id,id)，之后 wait 的 FOREIGN KEY(agent_session_id,trigger_prompt_id) REFERENCES agent_session_prompts(session_id,id) ON DELETE RESTRICT。wait 自身已有 (workspace_id,agent_session_id)→agent_sessions(workspace_id,id)；锁内仍核准确Session/workspace与live主体，不依赖prompt FK授权限。
+
+旧prompt全保留，无新非空列、无推测/重写；旧id主键已保证(session_id,id)不重复，新增唯一约束不需回填。重用同一合法prompt的重复协调由原wait条件更新/唯一continuation去重，不能再建Attempt；另一Session的prompt在DB复合FK和领域读取均拒绝。clean DB和从前一增量升级均核新增约束、原prompt字节/行数不变、原id重复拒、合法session引用成功、跨session失败、同session但跨workspace请求锁内拒绝；迁移失败新unique/wait表全部回滚，重试由现行migration ledger管理，不改已应用迁移、不到旧SQL加列。
+
+本轮只执行源码/正则/FK静态语义检查及旧错误提案变异反例。约束建立、真实DB引用/事务/升级/clean/回滚均未运行，不能标passed。

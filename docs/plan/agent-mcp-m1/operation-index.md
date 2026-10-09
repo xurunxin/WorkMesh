@@ -55,3 +55,7 @@
 所有普通Agent操作逐次重验credential、definition/actor、Team grant、Delegation和能力交集；读取final live predicate与对象session FK，写命令under-lock exact authority。具体九类用例ID/测试文件/DoD见 [验证](verification.md)，不能用通用pending代审计完成。M0历史源码和本批main证据分列，不认为继承的旧test状态代表本批通过。
 
 新增适配和Human保留见 [兼容](compatibility.md)，Stop特殊时序见 [生命周期](lifecycle.md)。
+
+## 本轮定向两合同修正
+
+等待批准hash的DTO/DDL/Worker保留现行sha256:前缀并完整比较；真实正例用requestApproval返回值。prompt表没有workspace_id，新unique(session_id,id)先于准确Session复合FK，workspace仍锁内授权。完整字段见 [等待DTO提案](wait-dto-proposal.json)，源语义及旧错误变异由check-wait-contract-source.py核对，不表示运行数据库或批准成功。

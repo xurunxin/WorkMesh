@@ -4,6 +4,7 @@
   "controlledContracts": [
     "security-contract.md",
     "wait-contract.md",
+    "wait-dto-proposal.json",
     "migration-contract.md",
     "schema-proposal.sql"
   ],
@@ -63547,6 +63548,34 @@
           "gitBlobOid": "2f463a1188556d040e52f2615d0ae8ec83cb2b27"
         },
         {
+          "path": "apps/api/src/agent/commands.ts",
+          "line": 45,
+          "anchor": "const canonicalPayloadHash",
+          "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+          "gitBlobOid": "b061921e3756bb6eed2d5678800e2ea5e733f807"
+        },
+        {
+          "path": "packages/contracts/src/index.ts",
+          "line": 1424,
+          "anchor": "export const requestApprovalInputSchema",
+          "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+          "gitBlobOid": "72658c194647b7f48a8b28cf47ad5b4862c36ce9"
+        },
+        {
+          "path": "packages/contracts/src/index.ts",
+          "line": 1481,
+          "anchor": "export const consumeApprovalInputSchema",
+          "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+          "gitBlobOid": "72658c194647b7f48a8b28cf47ad5b4862c36ce9"
+        },
+        {
+          "path": "packages/db/migrations/v1/0001_v1_baseline.sql",
+          "line": 413,
+          "anchor": "CREATE TABLE agent_session_prompts (",
+          "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+          "gitBlobOid": "4804a88949ad3ed1314cad05f4540cd41d2f96c3"
+        },
+        {
           "path": "apps/agent-runner/src/run-session.ts",
           "line": 238,
           "anchor": "if (stopped) throw new Error('RUNNER_ABORTED')",
@@ -63718,8 +63747,33 @@
           "M1-WAIT-BLOCKED",
           "M1-WAIT-LOSS",
           "M1-WAIT-RACE",
-          "M1-WAIT-RESTART"
-        ]
+          "M1-WAIT-RESTART",
+          "M1-WAIT-HASH-SOURCE",
+          "M1-WAIT-HASH-DENY",
+          "M1-WAIT-PROMPT-FK",
+          "M1-WAIT-PROMPT-UPGRADE",
+          "M1-WAIT-PROMPT-ROLLBACK"
+        ],
+        "hashContract": {
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "comparison": "exact_full_string",
+          "transforms": [],
+          "dto": "wait-dto-proposal.json",
+          "positiveProductInput": "真实requestApproval返回的action_payload_hash原样使用；非手拼fixture"
+        },
+        "promptForeignKey": {
+          "local": [
+            "agent_session_id",
+            "trigger_prompt_id"
+          ],
+          "target": "agent_session_prompts",
+          "targetColumns": [
+            "session_id",
+            "id"
+          ],
+          "prerequisite": "新迁移先建UNIQUE(session_id,id)",
+          "workspace": "锁内另外核live workspace授权，不引用prompt不存在的workspace_id"
+        }
       }
     },
     {

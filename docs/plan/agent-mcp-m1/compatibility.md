@@ -24,3 +24,5 @@
 监测没有旧运行Attempt或Lease。Runner短时重启且Session仍live可恢复持久监测；离线stale、强杀/未知外部效果、过期Token或撤权不保证自动恢复，必须真实记残留。等待条件到达时paused不续接，Human合法resume后重验；执行前始终fresh state/live授权/模型/fence/动作批准。
 
 仅UI重设计、F/TA新域、发行外发与团队权限扩展不在本批。
+
+本轮仅两合同兼容修正：等待hash沿原sha256:前缀/完整比较，不要求旧批准改格式或回填；prompt无workspace_id，新约束(session_id,id)不改旧行，准确Session FK加现行锁内workspace授权。clean/升级/失败回滚均未来实测，不以静态匹配标产品通过。

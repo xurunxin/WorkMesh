@@ -63,6 +63,10 @@ CREATE TRIGGER execution_source_reoccupation_reset
 ALTER TABLE workbench_runner_attempts
   ADD COLUMN execution_waits_enabled boolean NOT NULL DEFAULT false;
 
+-- prompt 无 workspace_id；保留旧行，以准确 Session 复合键作为引用目标。
+ALTER TABLE agent_session_prompts
+  ADD CONSTRAINT agent_session_prompts_session_id_id_key UNIQUE(session_id,id);
+
 CREATE TABLE workbench_execution_waits (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id uuid NOT NULL,
@@ -104,13 +108,13 @@ CREATE TABLE workbench_execution_waits (
   FOREIGN KEY(workspace_id,source_agent_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT,
   FOREIGN KEY(workspace_id,approval_id) REFERENCES approvals(workspace_id,id) ON DELETE RESTRICT,
   FOREIGN KEY(workspace_id,trigger_approval_id) REFERENCES approvals(workspace_id,id) ON DELETE RESTRICT,
-  FOREIGN KEY(workspace_id,trigger_prompt_id) REFERENCES agent_session_prompts(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(agent_session_id,trigger_prompt_id) REFERENCES agent_session_prompts(session_id,id) ON DELETE RESTRICT,
   FOREIGN KEY(workspace_id,trigger_message_id) REFERENCES workbench_messages(workspace_id,id) ON DELETE RESTRICT,
   FOREIGN KEY(workspace_id,continuation_turn_id) REFERENCES workbench_turns(workspace_id,id) ON DELETE RESTRICT,
   CHECK ((source_kind='native' AND source_connection_id IS NULL)
     OR (source_kind='connection' AND source_connection_id IS NOT NULL)),
   CHECK (((wait_state='awaiting_approval' AND approval_id IS NOT NULL
-      AND approval_action_payload_hash ~ '^[a-f0-9]{64}$'
+      AND approval_action_payload_hash ~ '^sha256:[a-f0-9]{64}$'
       AND input_event_cursor IS NULL AND input_message_sequence IS NULL)
     OR (wait_state IN ('awaiting_input','blocked') AND approval_id IS NULL
       AND approval_action_payload_hash IS NULL AND input_event_cursor IS NOT NULL

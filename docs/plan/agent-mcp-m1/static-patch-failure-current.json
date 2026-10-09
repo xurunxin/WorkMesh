@@ -1,0 +1,9 @@
+{
+  "kind": "本轮文档静态检查器编辑失败；非产品测试",
+  "tool": "apply_patch",
+  "result": "verification failed: Failed to find expected lines in static-check.py: planDocId=observation['planDocId'], version=None, planCreatedAt=None,",
+  "rawPreservation": "完整工具返回保于本轮对话；此文件仅准确摘要，不冒原始返回字节",
+  "effect": "该批patch未应用，未运行测试；随后删除多余定位段，分两次准确patch成功",
+  "exitCode": null,
+  "exitCodeMeaning": "工具失败非shell命令，没有shell退出码，不虚构数字"
+}

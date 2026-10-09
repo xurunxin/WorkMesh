@@ -1,0 +1,33 @@
+{
+  "status": "Proposed；仅文档，未运行Zod/Worker/SQL产品",
+  "operationId": "settleWorkbenchAttempt",
+  "field": "sessionWait.approval.actionPayloadHash",
+  "pattern": "^sha256:[a-f0-9]{64}$",
+  "zodProposal": "z.string().regex(/^sha256:[a-f0-9]{64}$/)",
+  "workerComparison": "approval.action_payload_hash === wait.approval_action_payload_hash",
+  "comparisonMode": "exact_full_string",
+  "transforms": [],
+  "positiveProductInput": "真实requestApproval返回的action_payload_hash原样传递，不手拼fixture",
+  "promptForeignKey": {
+    "table": "workbench_execution_waits",
+    "columns": ["agent_session_id", "trigger_prompt_id"],
+    "target": "agent_session_prompts",
+    "targetColumns": ["session_id", "id"],
+    "newUniqueConstraint": "agent_session_prompts_session_id_id_key",
+    "onDelete": "RESTRICT",
+    "workspaceAuthorization": "现有Session复合FK加锁内live workspace授权重验，不能以FK授权限"
+  },
+  "sourceBindings": [
+    "apps/api/src/agent/commands.ts:canonicalPayloadHash/requestApproval/consumeApprovalInTx",
+    "packages/contracts/src/index.ts:requestApprovalInputSchema/consumeApprovalInputSchema/approvalResponseSchema",
+    "packages/domain/src/index.ts:assertApprovalUsable",
+    "packages/db/migrations/v1/0001_v1_baseline.sql:agent_session_prompts"
+  ],
+  "verification": [
+    "M1-WAIT-HASH-SOURCE",
+    "M1-WAIT-HASH-DENY",
+    "M1-WAIT-PROMPT-FK",
+    "M1-WAIT-PROMPT-UPGRADE",
+    "M1-WAIT-PROMPT-ROLLBACK"
+  ]
+}

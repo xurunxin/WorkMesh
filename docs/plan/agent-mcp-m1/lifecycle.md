@@ -6,7 +6,7 @@
 
 安装发现→queued ACK→合法 executing→list Turn→claim 新 Attempt→credential→start。普通模型只收到准确自身 E 的 Session/context/Plan/版本/Approval/Lease/Recovery 具名工具，权限依现行 role/state/scope/capability。Plan/state 命令和 Lease heartbeat 使用专门 wrapper，不能在请求前 append Activity 消耗 If-Match；其余原 makeTool 脱敏 Activity、结构化 error 和 SDK 响应校验保留。服务器最后校验仍为准。
 
-模型 state 工具到 planning/executing 时走原合法 transition；到 awaiting_approval/awaiting_input/blocked 时生成唯一 waitIntent，不立刻写 Session。approval 先 requestApproval 获得准确 ID/hash，再提交等待工具；等待工具严格校验字段、持有当前 Turn 的 opt-in 能力，第二个不同 intent 拒绝。state target 不包括 Human pause/resume/stop、terminal 或 retry。Completion intent 和 waitIntent 互斥。
+模型 state 工具到 planning/executing 时走原合法 transition；到 awaiting_approval/awaiting_input/blocked 时生成唯一 waitIntent，不立刻写 Session。approval 先 requestApproval 获得准确 ID/原完整 sha256: hash，再提交等待工具；等待工具严格校验字段、持有当前 Turn 的 opt-in 能力，第二个不同 intent 拒绝。state target 不包括 Human pause/resume/stop、terminal 或 retry。Completion intent 和 waitIntent 互斥。
 
 lifecycle 本地顺序是 stop/revocation/shutdown 闭门优先，其次 waitIntent，最后普通 completion。所有 tool、contextTool、steering 和晚到 poll 回调检查同一代际与关闭标记；本地闭门不依赖普通 Activity 被服务端拒绝。每个真正运行模型的 Turn 仍限原两分钟；被动 monitor 没有模型、没有原 Attempt，不把等待计作长模型调用。
 
@@ -24,7 +24,7 @@ lifecycle 本地顺序是 stop/revocation/shutdown 闭门优先，其次 waitInt
 
 ## 条件触发 → 唯一后续 Turn
 
-Worker 每次 tick 扫持久 pending wait；相同权威/资源/Conversation/Turn/Attempt 顺序锁后才取 wait 锁。取准确 approved/hash/未消费/未过期批准，或等候边界之后真实合法 prompt/message。重验来源/principal/Team grant/双 Delegation（native 仅目标）、scope、负责 Human、Conversation 与模型权限。输入到达可沿现行 Human prompt 先合法切 executing，Worker 必须核真实触发并消费 wait，不再无条件 resume。
+Worker 每次 tick 扫持久 pending wait；相同权威/资源/Conversation/Turn/Attempt 顺序锁后才取 wait 锁。取真实requestApproval返回的准确 approved/原完整sha256: hash/未消费/未过期批准（不strip前缀），或等候边界之后真实合法 prompt/message。重验来源/principal/Team grant/双 Delegation（native 仅目标）、scope、负责 Human、Conversation 与模型权限。输入到达可沿现行 Human prompt 先合法切 executing，Worker 必须核真实触发并消费 wait，不再无条件 resume。
 
 paused 保留 pending，无续 Turn/新 Attempt；批准或输入此时到达也不启动，Human resume 后 fresh 重验。Stop/撤权先提交使 Worker 不消费、不续接；拒批/过期也不启动，可保留待 Human 处理信息。无模型或凭据权限时不消费条件，避免“已继续却无法 claim”失去恢复事实。
 
@@ -41,3 +41,5 @@ paused 保留 pending，无续 Turn/新 Attempt；批准或输入此时到达也
 server Stop 已释放 Lease，finally 不以 release 代 Stop、不在 stopping 普通写 Activity/Plan。用原诊断 heartbeat 取 stopping revision，明确冲突且无未决发送才重读生成新逻辑请求。若强制取消已终态，不重发 ACK，不签新 Token；安装身份只走零写确认原 key/action。stopAck 提交丢响应：原 E 命令重放/普通 GET 终态拒绝，live 原来源安装/C 查询精确确认；无证明/撤权拒绝时留“无法确认”，不表示没有提交。
 
 撤权、Token 过期、进程强杀、未知在途、清理失败均记录已执行清理、未清资源和风险，不复活模型；强杀不承诺 finally。Pi 原子 complete 丢响应走旧 settle 回执，不以内部 completion key冒 direct complete 证明。确认查询零事实，合法自动续接新事实分开统计。
+
+本轮prompt FK准确绑定源Session，不替代Worker锁内workspace/live授权；两项具体合同修订见wait-contract/migration-contract，原自动续接路径与Stop时序不变。

@@ -18,6 +18,8 @@ Worker定期reconcileWorkbenchWaits，复用authority→资源→Conversation/Tu
 
 满足时一个事务唯一消费wait、合法转executing或核已由Humanprompt/resume合法转换，复用最早queuedHumanTurn；否则唯一新continuationTurn及service作者system消息，显式原请求与真实触发引用，不伪造Human新发言。Worker不生成Attempt。Runner随后list→claim→credential→start，每步live/state/来源/触发/fence重验再取新Lease。所有pending wait相关Turn未消费前闭门，防prompt自动executing/旧Runner绕过。
 
+等待批准的hash沿现行requestApproval返回的sha256:<64位小写hex>完整字符串，DTO/Zod、DDL CHECK、Worker和实际消费同格式/精确比较，不去前缀。
+
 完整wire/schema/字段限长及消息context见 [等待合同](../plan/agent-mcp-m1/wait-contract.md)，时序与Stop/finally/失败残留见 [生命周期](../plan/agent-mcp-m1/lifecycle.md)。原Human控制、实际动作批准与旧settle回执语义保持。
 
 ## Alternatives
@@ -30,7 +32,7 @@ Worker定期reconcileWorkbenchWaits，复用authority→资源→Conversation/Tu
 
 ## Migration
 
-新增workbench_execution_waits及Attempt opt-in列，与来源增量同一新迁移。源Turn/Attempt唯一、每Session一个pending、续Turn唯一，资源复合FK及组合CHECK；不推测旧等待条件。旧服务混合窗口不开启新等待生产，所有API/Worker升级后统一开启内部配置。具体 [迁移合同](../plan/agent-mcp-m1/migration-contract.md)。
+新增workbench_execution_waits及Attempt opt-in列，与来源增量同一新迁移。源Turn/Attempt唯一、每Session一个pending、续Turn唯一，资源复合FK及组合CHECK；不推测旧等待条件。prompt表无workspace_id，新迁移先建UNIQUE(session_id,id)，wait按(agent_session_id,trigger_prompt_id)引用agent_session_prompts(session_id,id) ON DELETE RESTRICT，锁内另外核workspace授权；旧prompt不回填或改写。旧服务混合窗口不开启新等待生产，所有API/Worker升级后统一开启内部配置。具体 [迁移合同](../plan/agent-mcp-m1/migration-contract.md)。
 
 ## Spec changes
 

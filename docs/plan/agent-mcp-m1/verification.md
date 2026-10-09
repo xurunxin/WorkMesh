@@ -40,7 +40,7 @@
 | M1-ORIGIN-DOUBLE-NATIVE / 越权 | 同Agent原生I1/I2均获目标Token，E1提交，I1确认I2拒，不以同actor或Session历史Token代来源 | API+SDK/MCP conformance |
 | M1-ORIGIN-LEGACY / 状态、恢复 | old null/unproven、安装来源null/歧义、错误组合、另一Session/action/key、回执/摘要缺失；完整快照后原Token删除与同Connection轮换仍成功，撤权/删除拒 | API+DB迁移 |
 | M1-ORIGIN-ROLLBACK / 事务、幂等 | 故障注入source/response/event/outbox，原终态/receipt全回滚；两个reserve路径及旧API滚动写过期key新占位清空来源（DB trigger兜底）；原duplicate不改来源 | API stage1+DB |
-| M1-WAIT-APPROVAL / 正常 | 真实Pi请求准确Approval→等待工具→model idle/lease release→公开reply+Turn/Attempt/wait同commit；超过原模型预算仍无running旧Attempt/租约；Human批准准确hash→唯一续Turn/新Attempt→重新取Lease、合法动作消费批准→完成 | 真实conformance+API/Worker |
+| M1-WAIT-APPROVAL / 正常 | 真实Pi调用requestApproval取得准确Approval和返回的原action_payload_hash（sha256:<64位小写hex>，不手拼fixture）→等待工具→model idle/lease release→公开reply+Turn/Attempt/wait同commit；超过原模型预算仍无running旧Attempt/租约；Human批准准确hash→唯一续Turn/新Attempt→重新取Lease、合法动作消费批准→完成 | 真实conformance+API/Worker |
 | M1-WAIT-INPUT、M1-WAIT-BLOCKED / 正常、状态 | 各真实Pi等待，Human原Session prompt及同Conversation合法消息分别唤醒；公开等待reply在续context，真实trigger ID，无伪Human消息；现行prompt先executing也必须Worker消费wait后claim | 真实conformance+Human原REST |
 | M1-WAIT-DENY / 越权、状态、revision | 错Approval ID/hash、其他Session、旧输入边界、Agent/system输入、批准拒/过期/已消费、模型或负责Human资格撤销、来源不同、staleIfMatch、互斥completion/wait、externalEffectsReconciled=false | contracts+API+真实Pi负例 |
 | M1-WAIT-LOSS / 幂等、重放 | wait settle已commit传输丢响应，原outer key/body重放仅一公开reply/wait/settled事实，不改key、不Turn-only fallback；内部Pi completion key无独receipt不假认 | API故障代理+Pi |
@@ -55,6 +55,21 @@ M1-CONFIRM-ZERO逐表对比包括Connection及credential/installation使用时�
 DB DDL的IS TRUE约束要测试NULL绕CHECK反例；各资源复合FK、sourceTurn/Attempt唯一、pendingSession唯一、continuation唯一、触发组合、native/connection原标记不可改、旧数据NULL、迁移整体失败回滚均验证。只静态看SQL不计迁移通过。
 
 Required worker-integration沿apps/worker/integration/stage1-lifecycle.integration.test.ts执行reconcileWorkbenchWaits；Required api-integration沿现有API集成+真实M0/M1 conformance接线；DB集成在根test:integration的db入口消费migration-baseline.integration。不得仅改include不改ci-policy逐套件负例，不新增空套件/skip或改变Required门禁。
+
+
+## 当前仅两合同项定向复审与验收补充
+
+原来源方案层面已闭、等待自动续接路径已明确，依据 [独审原文](review-feedback-contracts.md)；本轮不重开无变化合同。以下产品场景仍全部未运行，不以源码正则/元组演算计数据库迁移或真实批准等待通过。
+
+| ID | 实施后真实正拒与事实 | 必需落点 |
+| --- | --- | --- |
+| M1-WAIT-HASH-SOURCE | requestApproval真实HTTP响应返回原action_payload_hash→SDK/MCP/Pi等待DTO→Zod→DDL保存→Worker读取/完整比较→consumeApproval；字节一致保sha256:前缀，后续公开续Turn完成 | API workbench-runner +真实conformance |
+| M1-WAIT-HASH-DENY | 裸hex、错误前缀、大小写/长度错误被DTO/Zod/DDL拒；格式合法但与准确批准原hash不同由Worker/实际消费拒绝；不能strip前缀恢复 | contracts+API/Worker+DB |
+| M1-WAIT-PROMPT-FK | 准确Session prompt对应FK与领域正例；同workspace另一Session prompt同时被复合FK及锁内领域拒绝；同Session请求但错误workspace/live授权拒，服务不靠FK授权限 | API/Worker+DB |
+| M1-WAIT-PROMPT-UPGRADE | clean DB及上一增量升级：先ADD UNIQUE(session_id,id)再CREATE wait/FK；旧prompt完整内容/行数不变，无新增workspace列；同id重复仍旧PK拒；重复tick/input不双建续Turn或Attempt | DB migration-baseline+Worker |
+| M1-WAIT-PROMPT-ROLLBACK | 注入unique建立后/wait建表或FK建立时失败，整次增量事务回滚，新unique/wait/FK均不残留且旧prompt不改；重跑沿真实migration ledger一次登记；wait触发事务故障全回滚 | DB migration-baseline+API/Worker |
+
+当前静态命令static-check.py调用check-wait-contract-source.py：从Git源码提取canonicalPayloadHash前缀、request/consume Zod regex、原完整相等谓词与prompt实际列/主键，匹配提案pattern/新unique顺序/FK。构造旧裸hex CHECK、strip前缀、旧workspace FK、删new unique和仅id FK真实变异，每一变异须确实改变文本并被源规则拒绝；源格式算法样本与准确/其他Session元组关系只证明静态兼容，不是实际requestApproval返回、Zod执行或Postgres约束运行。scope/live/锁/回滚均在未来真实测试证明，未跑保持未测。
 
 ## 实际入口与测试文件
 
