@@ -1,0 +1,290 @@
+{
+  "scope": "仅文档受控检查，不是产品测试或RequiredCI结果",
+  "recordedAt": "2026-10-09T06:35:36.563062+00:00",
+  "firstClockObservation": "2026-10-09 05:49:59 UTC",
+  "sourceHead": "69085317c88d84b702af727dc0ac7152589626d8",
+  "historicalBase": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+  "previousDocHead": "1bcf1567b8d3f8774b219f927e3d832e72e4c7ef",
+  "planDocId": "Qd1Ks9EH9uEvl1JW3O68D",
+  "version": null,
+  "platformDocCreatedAt": null,
+  "toolCallIds": null,
+  "toolCallIdsReason": "工具返回仅有chunk/session，未提供调用ID，不伪填",
+  "productTestsRun": false,
+  "skip": "产品检查按仅文档授权未运行；静态必需检查不skip",
+  "commands": [
+    {
+      "command": "python -X utf8 -B docs/plan/agent-mcp-m0/audit-generate.py",
+      "exitCode": 0,
+      "start": "2026-10-09T06:31:52.540621+00:00",
+      "finish": "2026-10-09T06:32:16.129475+00:00",
+      "runtime": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+      "toolInitialChunk": "af7909",
+      "toolCompletionChunk": "cd896b",
+      "sessionId": 5068,
+      "output": {
+        "operations": 277,
+        "bindings": 107,
+        "registered": 97,
+        "auditedDomain": 99,
+        "positiveCases": 364,
+        "negativeCases": 1691,
+        "sourceFiles": 115,
+        "productTests": "未运行"
+      },
+      "stderr": "当前main新增repository-configuration.ts不在历史c768：Git show返回fatal后按不存在分列null，生成器整体exit0；不是产品运行失败"
+    },
+    {
+      "command": "python -X utf8 -B docs/plan/agent-mcp-m0/archive-check.py",
+      "executionKind": "仅受控文档检查",
+      "initial": {
+        "chunk_id": "2d3281",
+        "wall_time_seconds": 10.0064294,
+        "session_id": 14884,
+        "original_token_count": 0,
+        "output": ""
+      },
+      "completion": {
+        "chunk_id": "f4c9f4",
+        "session_id": 14884,
+        "exit_code": 0,
+        "wall_time_seconds": 8.7e-06,
+        "output": "{\"结果\":\"受控文档静态语义核验通过\",\"operations\":277,\"registeredBindings\":97,\"allBindings\":107,\"auditedPreviousPending\":99,\"existingBindingsPreviouslyPending\":43,\"positivePredicatesEvaluated\":364,\"negativePredicatesEvaluated\":1691,\"sdkCredentialConditionTruthTableCases\":64,\"semanticMutationsRejected\":2,\"callbackOutputDoesNotChangeIdentity\":true,\"sourceFiles\":115,\"oldFilesBytePreserved\":35,\"localLinks\":25,\"完整spec\":true,\"全文绑定\":true,\"产品测试\":\"未运行\",\"独审\":\"两项待定向复审\"}"
+      },
+      "runtime": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+      "wallTimeMeaning": "工具单次等待时长，不冒完整进程elapsed；生成器完整起止另列"
+    },
+    {
+      "command": "node --version",
+      "chunk_id": "498dd4",
+      "wall_time_seconds": 0.1994381,
+      "exit_code": 0,
+      "original_token_count": 3,
+      "output": "v24.20.0\r\n"
+    },
+    {
+      "command": "git diff --check",
+      "chunk_id": "c040bc",
+      "wall_time_seconds": 0.3759874,
+      "exit_code": 0,
+      "original_token_count": 529,
+      "output": "warning: in the working copy of 'docs/plan/agent-mcp-m0/README.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/archive-audit.mjs', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/archive-check.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/archive-metadata.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/compatibility.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/discovery-contract-draft.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/generation.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/implementation.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/operation-decisions.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/operation-index.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/review.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/savedplan.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/source-manifest.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/sources.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/steering.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m0/verification.md', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    {
+      "command": "node docs/plan/agent-mcp-m0/archive-byte-check.mjs",
+      "chunk_id": "e5ac16",
+      "wall_time_seconds": 5.5228372,
+      "exit_code": 0,
+      "original_token_count": 263,
+      "output": "{\"stagedDocumentFiles\":47,\"identicalBytes\":true,\"ciClassification\":{\"mode\":\"full\",\"packages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"testPackages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"checks\":{\"source-gates\":true,\"db-integration\":true,\"api-integration\":true,\"worker-integration\":true,\"e2e\":true,\"recovery-integration\":true,\"agent-smoke\":true}},\"productChecksRun\":false}\n"
+    },
+    {
+      "command": "git diff --cached --check",
+      "chunkId": "9a6e60",
+      "exitCode": 0,
+      "wallTimeSeconds": 0.3103431,
+      "output": ""
+    },
+    {
+      "command": "git diff --check c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "chunkId": "77c5f6",
+      "exitCode": 0,
+      "wallTimeSeconds": 0.2503165,
+      "output": "仅LF将来转换为CRLF提示；无空白错误"
+    },
+    {
+      "command": "python -X utf8 -B docs/plan/agent-mcp-m0/audit-generate.py",
+      "initialChunk": "5d8d6e",
+      "completionChunk": "6dbdb3",
+      "sessionId": 63930,
+      "exitCode": 0,
+      "start": "2026-10-09T06:46:10.626186+00:00",
+      "finish": "2026-10-09T06:46:33.379587+00:00",
+      "runtime": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+      "output": {
+        "operations": 277,
+        "bindings": 107,
+        "registered": 97,
+        "auditedDomain": 99,
+        "positiveCases": 364,
+        "negativeCases": 1687,
+        "sourceFiles": 115,
+        "productTests": "未运行"
+      },
+      "change": "末次准确区分getServerInfo公开安全元数据，无Session role/state/live grant门禁；不扩大业务权限。先前1691案例输出保留其当时含义。",
+      "stderr": "历史base没有当前main新增repository-configuration.ts，按缺失null记录；整体exit0"
+    },
+    {
+      "command": "git diff --cached --check",
+      "chunkId": "e2daea",
+      "exitCode": 0,
+      "wallTimeSeconds": 0.327145,
+      "output": ""
+    },
+    {
+      "command": "git diff --check c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "chunkId": "2c4d0e",
+      "exitCode": 0,
+      "wallTimeSeconds": 0.2809484,
+      "output": ""
+    }
+  ],
+  "visibleEarlierFailures": [
+    {
+      "chunkId": "77dc8c",
+      "command": "python -X utf8 -B docs/plan/agent-mcp-m0/audit-generate.py",
+      "exitCode": 1,
+      "wallTimeSeconds": 3.3678834,
+      "failure": "StopIteration：OpenAPI flow/block格式定位失败；改为准确operationId词法定位",
+      "recordKind": "本轮工具可见返回转录"
+    },
+    {
+      "chunkId": "3e1481",
+      "sessionId": 93817,
+      "exitCode": 1,
+      "failure": "AssertionError: ('缺SDK具名方法', 'delegateWorkItem')；真实helper是delegateAndStart，已核源码修正",
+      "recordKind": "本轮wait终结返回转录"
+    },
+    {
+      "chunkId": "bff167",
+      "exitCode": 1,
+      "wallTimeSeconds": 0.1845755,
+      "failure": "NameError: name 'true' is not defined；JSON经json.loads传入，失败前未写绑定文件",
+      "recordKind": "本轮工具可见返回转录"
+    },
+    {
+      "chunkId": "d1ceac",
+      "exitCode": 1,
+      "wallTimeSeconds": 3.4100634,
+      "failure": "TypeError: list indices must be integers or slices, not str；替换记录是二元数组",
+      "recordKind": "本轮工具可见返回转录"
+    },
+    {
+      "chunkId": "b2fe21",
+      "exitCode": 1,
+      "wallTimeSeconds": 7.5370161,
+      "failure": "返回值变异锚点不匹配actual true as const；改用实际源码",
+      "recordKind": "本轮工具可见返回转录"
+    },
+    {
+      "chunkId": "34e996",
+      "exitCode": 1,
+      "wallTimeSeconds": 4.8482283,
+      "failure": "AssertionError: ('packages/domain/src/index.ts', 'export function authorizeAgentMutation(')；现行是export const，已核read-only源码修正",
+      "recordKind": "本轮工具可见返回转录"
+    },
+    {
+      "chunkId": "2f9984",
+      "exitCode": 1,
+      "wallTimeSeconds": 5.7123813,
+      "failure": "AssertionError: ('缺SDK具名方法', 'streamEvents')；实际async generator，修正语法支持*",
+      "recordKind": "本轮工具可见返回转录"
+    },
+    {
+      "chunkId": "4a9ff2",
+      "sessionId": 71286,
+      "exitCode": 1,
+      "failure": "最终语义已完成后链接检查发现新README引用的audit-check-receipt.json尚未写；先写真实回执再重核",
+      "recordKind": "本轮wait终结返回转录"
+    },
+    {
+      "chunkId": "8877ef",
+      "exitCode": 1,
+      "wallTimeSeconds": 0.2119192,
+      "failure": "回执内嵌JSON的反斜线被普通Python字符串解码，JSONDecodeError；改用raw literal保留实际转义；失败发生在写入前",
+      "recordKind": "本轮工具可见输出转录"
+    }
+  ],
+  "nonCommandFailures": [
+    {
+      "kind": "functions执行脚本语法失败",
+      "reason": "Python scanner正则中backtick与JavaScript模板冲突；替换为\\x60，未修改目标"
+    },
+    {
+      "kind": "apply_patch片段不匹配",
+      "reason": "Workbench追加证据片段实际包含requireActive=false；按真实内容修正后应用，不冒首次写成功"
+    }
+  ],
+  "probeFailures": [
+    {
+      "kind": "只读搜索",
+      "summary": "PowerShell First参数ninety拼写、猜测不存在agent.ts/token.ts等路径、typescript未安装探测；未安装依赖或写产品。后续用rg定位真实文件及stdlib语法扫描。",
+      "rawHistory": "本轮会话可见；未伪造缺失工具原文"
+    }
+  ],
+  "preservation": {
+    "zip": "history/previous-1bcf.zip",
+    "bytes": 316470,
+    "sha256": "281b5593a98af88e9a838b81985862492d8072f2f978cb99e17cedf76a1c458d",
+    "files": 35,
+    "toolChunk": "c568c2",
+    "exitCode": 0,
+    "wallTimeSeconds": 3.3907966,
+    "old00a5FirstFailureUnchanged": true
+  },
+  "resources": {
+    "containers": [],
+    "images": [],
+    "volumes": [],
+    "networks": [],
+    "serviceProcesses": [],
+    "temporaryPaths": [],
+    "cleanupActions": [],
+    "retained": [
+      "当前worktree",
+      "恢复目录",
+      "受控历史证据"
+    ]
+  },
+  "pending": [
+    "同分支文档提交（真实SHA由最终消息报告，避免自引用预填）",
+    "另一Agent两项定向复审"
+  ],
+  "mainParentsObservation": {
+    "command": "git show -s --format=%P 69085317c88d84b702af727dc0ac7152589626d8",
+    "chunkId": "4f44f3",
+    "exitCode": 0,
+    "wallTimeSeconds": 0.176967,
+    "output": "add4340e9c52575c2fd9615b3b114ac9acd3e30e 328434d00268ce39222d677686dde3c64aba4e41",
+    "source": "只读cache的不可变main；原临时sources草稿曾误写328完整SHA，未提交且已据实读修正"
+  },
+  "finalByteRecheck": "记录首轮byte成功后更新本回执并重生成manifest；最后一次结果由manifest和工具输出证明，不为循环自引用改写回执",
+  "testedInputBinding": "最终受控代码与JSON由archive-byte-manifest逐staged OID/bytes/SHA绑定，最终提交后另核commit blob完全相同；不预填自身commit",
+  "intermediateEvidenceLimit": "本轮中间工作树脚本修改未逐版ZIP归档，失败按实际工具可见返回转录；不冒完整中间运行原件。旧1bcf全35文件和旧00a5/K7原件完整保全。",
+  "finalStaticCheck": {
+    "command": "python -X utf8 -B docs/plan/agent-mcp-m0/archive-check.py",
+    "initialChunk": "cf2916",
+    "completionChunk": "904852",
+    "sessionId": 54895,
+    "exitCode": 0,
+    "checkerElapsedSeconds": 14.486545,
+    "executionKind": "受控文档静态检查，非产品运行",
+    "recordKind": "本轮工具可见终结输出转录，未冒原stdout文件字节",
+    "result": {
+      "operations": 277,
+      "registeredBindings": 97,
+      "allBindings": 107,
+      "auditedPreviousPending": 99,
+      "existingBindingsPreviouslyPending": 43,
+      "positivePredicatesEvaluated": 364,
+      "negativePredicatesEvaluated": 1687,
+      "sdkCredentialConditionTruthTableCases": 64,
+      "semanticMutationsRejected": 2,
+      "callbackOutputDoesNotChangeIdentity": true,
+      "sourceFiles": 115,
+      "oldFilesBytePreserved": 35,
+      "localLinks": 25,
+      "完整spec": true,
+      "全文绑定": true,
+      "产品测试": "未运行",
+      "独审": "两项待定向复审"
+    },
+    "checkedInputByteReport": {
+      "path": "history/q-static-check-byte-manifest.json",
+      "bytes": 22144,
+      "sha256": "e904f1fa11e6242e12bc45d2f8016e726fa9a407e78701192300d6ad08953dbb"
+    },
+    "sourceCodeUnchangedAfterCheck": true,
+    "followingChanges": "仅本回执和保全字节checkpoint；最终重新生成暂存manifest，提交后核commit blob；受测checker/规则/JSON/正文源码不改。"
+  }
+}

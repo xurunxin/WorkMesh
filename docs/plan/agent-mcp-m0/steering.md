@@ -41,3 +41,7 @@ A: 允许仅文档落盘（推荐）
 
 [plan](doc:WS-FdgmfTwloZE8hNXvAb)
 [2026-10-09 05:06:33 UTC] (user/plan_revision) 沿用户12:34已给的“允许仅文档落盘”和本批条件推进授权，继续同分支仅同步方案文件，不进入产品。05:05:49 UTC的修订平台plan已生成，但你明确未修改文件，所以当前00a5e34e受控21文件尚是上一已被阻断版本；不能拿平台摘要代仓库方案复审。请把当前注入的完整修订plan（doc:WS-FdgmfTwloZE8hNXvAb）原文同步至docs/plan/agent-mcp-m0/savedplan.md及implementation.md，并同步其他依赖文档、277逐操作/credential/role/state/variant决策（含代码绑定和反例测试）、来源及Git字节绑定。落实上一独审四项：API资格与adapter配置/readonly注册发现投影分工和Context.allowedOperations同次一致性；installation字段与C→目标E单次Token bridge各自资格、未提供目标条件广告不算可执行；getCurrentAgentConnectionIdentity/publishAgentPlan reviewer deny/prepare_project_import adapterinternal/verify_connection组成等准确当前与拟变体映射，待核项明确blocked；真实conformance接现有api-integration Required job的service准备/执行/失败传播/证据上传及防漏接检查。保留原计划及截断/版本null/首败历史，不编造版本、工具全文或产品运行证据。提交新准确head并停confirm交另一Agent定向复审；不再次edit_plan循环造doc，不confirm产品或merge文档完成整卡。规格既有‘先受控完整方案独审再产品’不变，原四项未闭前不实施。
+
+## 后续完整反馈与本轮同步
+
+当前完整反馈与授权见 [steering-current.md](steering-current.md)。以上原WS消息/时序保持历史含义，当前平台计划为Qd1Ks9EH9uEvl1JW3O68D；不循环创建计划。

@@ -16,7 +16,7 @@ const rows = paths.filter(path => !excluded.includes(path)).map(path => {
   const blob = git(['show', ':' + path])
   const worktree = readFileSync(resolve(root, path))
   if (!blob.equals(worktree)) throw Error('本轮生成工作树与暂存blob不相同: ' + path)
-  return { path, bytes: worktree.length, worktreeSha256: sha256(worktree), gitBlobSha256: sha256(blob), gitObjectId: git(['rev-parse', ':' + path]).toString().trim(), mapping: '字节相同；UTF-8 LF生成；后续Windows检出可转换为CRLF' }
+  return { path, bytes: worktree.length, worktreeSha256: sha256(worktree), gitBlobSha256: sha256(blob), gitObjectId: git(['rev-parse', ':' + path]).toString().trim(), mapping: path.endsWith('.zip') ? '原始二进制字节相同；没有换行转换' : '字节相同；UTF-8 LF生成；后续Windows检出可转换为CRLF' }
 })
 const metadata = JSON.parse(readFileSync(resolve(directory, 'archive-metadata.json'), 'utf8'))
 const report = { checkedAt: new Date().toISOString(), command: 'node docs/plan/agent-mcp-m0/archive-byte-check.mjs', sourceHead: metadata.sourceHead, observedMainHead: metadata.observedMainHead, planDocId: metadata.currentDocId, version: null, documentHeadBeforeCommit: git(['rev-parse', 'HEAD']).toString().trim(), files: rows, excludedSelfReference: excluded, ciClassification: classifyChanges(paths, readWorkspaces(root)), productChecksRun: false }

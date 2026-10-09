@@ -14,7 +14,7 @@ Proposed。仅M0受控独审输入，未写入产品合同，未标Accepted。�
 
 安装target用途使用null身份联合，不manufacture Session。目标E bridge按准确ID一次refresh、以返回Token读取目标qualified、再同Token命令；不共享或改写当前C身份。manifest拒绝或目标错配终止，不放宽终态/Stop/queued门禁。完整DTO和调用顺序见compatibility.md。
 
-已知Human/reviewer/Coordination/provider kind门禁逐项表达；未核domain固定blocked。当前binding与拟binding分列，prepare为无REST内部操作，verify与import完整组成。旧名/schema/URI保留，隐藏工具cached call结构化拒绝，不能静默unknown。
+已知Human/reviewer/Coordination/provider kind门禁逐项表达；原99条domain均已核读；未知审计阻止编码，六条具体差异以明确发现决定与本批闭合条件收束。当前binding与拟binding分列，prepare为无REST内部操作，verify与import完整组成。旧名/schema/URI保留，隐藏工具cached call结构化拒绝，不能静默unknown。
 
 Runner401兜底刷新取消；仅请求前已知到期刷新并经live资格。错误、trace、revision和稳定逻辑key保留，不盲重写，不用同正文hash冒新动作身份。真实API/MCP/Pi链进入现有必需api-integration，内存conformance独立保留。
 
@@ -32,4 +32,6 @@ Runner401兜底刷新取消；仅请求前已知到期刷新并经live资格。�
 
 ## Spec changes
 
-产品轮同步contracts、OpenAPI、Agent Protocol、client guide、route-policy生成物及必要消费者检查；当前仅中文受控提案。四项blocking由另一Agent定向复审，Chief confirm前不产品实施、不merge文档完成整卡。
+产品轮同步contracts、OpenAPI、Agent Protocol、client guide、route-policy生成物及必要消费者检查；当前仅中文受控提案。前次1、2身份路径和4接线已闭；本轮领域审计与输入身份两项blocking由另一Agent定向复审，Chief confirm前不产品实施、不merge文档完成整卡。
+
+直接E自身读取和C准确目标E bridge分列；verify/get_current_identity固定无目标当前C，claim的返回sessionId不是输入。Document exact owner、Inbox exact recipient/claimant、Lease holder及当前状态/范围分别沿原handler，不增加协调角色或Human权限。静态门禁对实际输入/SDK凭据、逐项正反例求值并进行内存变异检测，不能以字符串出现sessionId或工具数推断资格。

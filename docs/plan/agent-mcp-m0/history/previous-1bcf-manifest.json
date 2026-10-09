@@ -1,0 +1,534 @@
+{
+  "sourceHead": "1bcf1567b8d3f8774b219f927e3d832e72e4c7ef",
+  "planDocId": "WS-FdgmfTwloZE8hNXvAb",
+  "version": null,
+  "capturedAt": "2026-10-09T05:55:24.212593+00:00",
+  "files": [
+    {
+      "path": "docs/plan/agent-mcp-m0/README.md",
+      "gitObjectId": "79f4b93a7471e455d70596cccf384244a47fe353",
+      "gitBlob": {
+        "bytes": 2383,
+        "sha256": "7a501d1f58316c385bcedb01613af9d2ee4a22e6465ffc9004c85bdc9ea05376",
+        "member": "bytes/7a501d1f58316c385bcedb01613af9d2ee4a22e6465ffc9004c85bdc9ea05376"
+      },
+      "worktree": {
+        "bytes": 2383,
+        "sha256": "7a501d1f58316c385bcedb01613af9d2ee4a22e6465ffc9004c85bdc9ea05376",
+        "member": "bytes/7a501d1f58316c385bcedb01613af9d2ee4a22e6465ffc9004c85bdc9ea05376"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/archive-audit.mjs",
+      "gitObjectId": "f54f9a5b4909878e3f751b1130064d8af66c13f6",
+      "gitBlob": {
+        "bytes": 29178,
+        "sha256": "17c1c2f3ca86bf331c6062006d83cca4e3df0d2608db1f716b0626e8432894ef",
+        "member": "bytes/17c1c2f3ca86bf331c6062006d83cca4e3df0d2608db1f716b0626e8432894ef"
+      },
+      "worktree": {
+        "bytes": 29178,
+        "sha256": "17c1c2f3ca86bf331c6062006d83cca4e3df0d2608db1f716b0626e8432894ef",
+        "member": "bytes/17c1c2f3ca86bf331c6062006d83cca4e3df0d2608db1f716b0626e8432894ef"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/archive-byte-check.mjs",
+      "gitObjectId": "14fa309adff23a6bba889bad9695d0a6ab4884d6",
+      "gitBlob": {
+        "bytes": 2184,
+        "sha256": "d4848a4a9109361d1811e79fa5f4a56c12b3fe23391142c2b5c748a2956ce84a",
+        "member": "bytes/d4848a4a9109361d1811e79fa5f4a56c12b3fe23391142c2b5c748a2956ce84a"
+      },
+      "worktree": {
+        "bytes": 2184,
+        "sha256": "d4848a4a9109361d1811e79fa5f4a56c12b3fe23391142c2b5c748a2956ce84a",
+        "member": "bytes/d4848a4a9109361d1811e79fa5f4a56c12b3fe23391142c2b5c748a2956ce84a"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/archive-byte-manifest.json",
+      "gitObjectId": "85e808bce7d4b7496558960d2893514224560f99",
+      "gitBlob": {
+        "bytes": 16550,
+        "sha256": "ef041badbb6f9f4fca454e03a9f7ab9e83bdfe188642a050771580d8618c56e1",
+        "member": "bytes/ef041badbb6f9f4fca454e03a9f7ab9e83bdfe188642a050771580d8618c56e1"
+      },
+      "worktree": {
+        "bytes": 16550,
+        "sha256": "ef041badbb6f9f4fca454e03a9f7ab9e83bdfe188642a050771580d8618c56e1",
+        "member": "bytes/ef041badbb6f9f4fca454e03a9f7ab9e83bdfe188642a050771580d8618c56e1"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/archive-check.py",
+      "gitObjectId": "c2a899f896cdf987b0f53614a977bf270975478b",
+      "gitBlob": {
+        "bytes": 8705,
+        "sha256": "1b3b8164c2ed08cae5fdb5dd75333febcca4e76febc3f84446ea4d016feabf90",
+        "member": "bytes/1b3b8164c2ed08cae5fdb5dd75333febcca4e76febc3f84446ea4d016feabf90"
+      },
+      "worktree": {
+        "bytes": 8705,
+        "sha256": "1b3b8164c2ed08cae5fdb5dd75333febcca4e76febc3f84446ea4d016feabf90",
+        "member": "bytes/1b3b8164c2ed08cae5fdb5dd75333febcca4e76febc3f84446ea4d016feabf90"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/archive-metadata.json",
+      "gitObjectId": "53ca296652a0a388459d5bca1eadd8ab3f5c7036",
+      "gitBlob": {
+        "bytes": 1642,
+        "sha256": "29d406857a72011ad7b333f6d5c2d50b5930cd701bb14dad3d7b3d84fb2ca1c3",
+        "member": "bytes/29d406857a72011ad7b333f6d5c2d50b5930cd701bb14dad3d7b3d84fb2ca1c3"
+      },
+      "worktree": {
+        "bytes": 1642,
+        "sha256": "29d406857a72011ad7b333f6d5c2d50b5930cd701bb14dad3d7b3d84fb2ca1c3",
+        "member": "bytes/29d406857a72011ad7b333f6d5c2d50b5930cd701bb14dad3d7b3d84fb2ca1c3"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/check-receipt.json",
+      "gitObjectId": "a0c5d6db13d128ad4cc55a0560d87a73945b4ecf",
+      "gitBlob": {
+        "bytes": 3031,
+        "sha256": "3be325177dcf2ad6fcc0c2afa85249d47ddb982f41f1b070da85e1053b06c00a",
+        "member": "bytes/3be325177dcf2ad6fcc0c2afa85249d47ddb982f41f1b070da85e1053b06c00a"
+      },
+      "worktree": {
+        "bytes": 3031,
+        "sha256": "3be325177dcf2ad6fcc0c2afa85249d47ddb982f41f1b070da85e1053b06c00a",
+        "member": "bytes/3be325177dcf2ad6fcc0c2afa85249d47ddb982f41f1b070da85e1053b06c00a"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/ci-integration.md",
+      "gitObjectId": "64e99959971ac832fa4767694927670d4e3c57a2",
+      "gitBlob": {
+        "bytes": 5744,
+        "sha256": "8e0bf42a9e739f4e7e17557dd23c6adef58275b0131dbec7a97592b366f60898",
+        "member": "bytes/8e0bf42a9e739f4e7e17557dd23c6adef58275b0131dbec7a97592b366f60898"
+      },
+      "worktree": {
+        "bytes": 5744,
+        "sha256": "8e0bf42a9e739f4e7e17557dd23c6adef58275b0131dbec7a97592b366f60898",
+        "member": "bytes/8e0bf42a9e739f4e7e17557dd23c6adef58275b0131dbec7a97592b366f60898"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/compatibility.md",
+      "gitObjectId": "3b4a04cdc2d60dd592deb9bd135630aa28283417",
+      "gitBlob": {
+        "bytes": 11584,
+        "sha256": "78825e7451224f7ffe54b19495b5fb2ca20aee28fbfcebbca816f69f76a5bf5f",
+        "member": "bytes/78825e7451224f7ffe54b19495b5fb2ca20aee28fbfcebbca816f69f76a5bf5f"
+      },
+      "worktree": {
+        "bytes": 11584,
+        "sha256": "78825e7451224f7ffe54b19495b5fb2ca20aee28fbfcebbca816f69f76a5bf5f",
+        "member": "bytes/78825e7451224f7ffe54b19495b5fb2ca20aee28fbfcebbca816f69f76a5bf5f"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/discovery-contract-draft.md",
+      "gitObjectId": "98016e791845f1b1a4b713c193fe23e2a6fd3107",
+      "gitBlob": {
+        "bytes": 2888,
+        "sha256": "c9956be35cbed4b35539c697d5d91dac56c34bc0b3b28c5ba132535f35c2ed75",
+        "member": "bytes/c9956be35cbed4b35539c697d5d91dac56c34bc0b3b28c5ba132535f35c2ed75"
+      },
+      "worktree": {
+        "bytes": 2888,
+        "sha256": "c9956be35cbed4b35539c697d5d91dac56c34bc0b3b28c5ba132535f35c2ed75",
+        "member": "bytes/c9956be35cbed4b35539c697d5d91dac56c34bc0b3b28c5ba132535f35c2ed75"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/first-byte-check-failure.md",
+      "gitObjectId": "40a969e45934756c27e28d2e0500c7186fc97721",
+      "gitBlob": {
+        "bytes": 3656,
+        "sha256": "2759699f6774f9872d18779c881691778f28879a394c2bf5af5b55a92535a09d",
+        "member": "bytes/2759699f6774f9872d18779c881691778f28879a394c2bf5af5b55a92535a09d"
+      },
+      "worktree": {
+        "bytes": 3656,
+        "sha256": "2759699f6774f9872d18779c881691778f28879a394c2bf5af5b55a92535a09d",
+        "member": "bytes/2759699f6774f9872d18779c881691778f28879a394c2bf5af5b55a92535a09d"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/generation.json",
+      "gitObjectId": "56031ba85db743ae151d6f778a8ca74197ea235b",
+      "gitBlob": {
+        "bytes": 978,
+        "sha256": "02ea7b42f3c76196529f00594a85d58fad349ae58d4cb99edec0e8d0051fa08a",
+        "member": "bytes/02ea7b42f3c76196529f00594a85d58fad349ae58d4cb99edec0e8d0051fa08a"
+      },
+      "worktree": {
+        "bytes": 978,
+        "sha256": "02ea7b42f3c76196529f00594a85d58fad349ae58d4cb99edec0e8d0051fa08a",
+        "member": "bytes/02ea7b42f3c76196529f00594a85d58fad349ae58d4cb99edec0e8d0051fa08a"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/history/original-archive-byte-manifest.json",
+      "gitObjectId": "64cabd7f63986d8bdc4ecf65a3cf973a3e7e5833",
+      "gitBlob": {
+        "bytes": 10178,
+        "sha256": "7e9db90dfb06014232a533647e87cf8720bb09dab3dc9efb0853e636c761d1d2",
+        "member": "bytes/7e9db90dfb06014232a533647e87cf8720bb09dab3dc9efb0853e636c761d1d2"
+      },
+      "worktree": {
+        "bytes": 10178,
+        "sha256": "7e9db90dfb06014232a533647e87cf8720bb09dab3dc9efb0853e636c761d1d2",
+        "member": "bytes/7e9db90dfb06014232a533647e87cf8720bb09dab3dc9efb0853e636c761d1d2"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/history/original-archive-metadata.json",
+      "gitObjectId": "376184ede7c2d2ff8e3aa8d1b625fe892d2fc7ff",
+      "gitBlob": {
+        "bytes": 1164,
+        "sha256": "4e20d70eb5936fb5a5c8b239c880a690a9724fbce1faf042080a37bc66558aaf",
+        "member": "bytes/4e20d70eb5936fb5a5c8b239c880a690a9724fbce1faf042080a37bc66558aaf"
+      },
+      "worktree": {
+        "bytes": 1164,
+        "sha256": "4e20d70eb5936fb5a5c8b239c880a690a9724fbce1faf042080a37bc66558aaf",
+        "member": "bytes/4e20d70eb5936fb5a5c8b239c880a690a9724fbce1faf042080a37bc66558aaf"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/history/original-check-receipt.json",
+      "gitObjectId": "a0c5d6db13d128ad4cc55a0560d87a73945b4ecf",
+      "gitBlob": {
+        "bytes": 3031,
+        "sha256": "3be325177dcf2ad6fcc0c2afa85249d47ddb982f41f1b070da85e1053b06c00a",
+        "member": "bytes/3be325177dcf2ad6fcc0c2afa85249d47ddb982f41f1b070da85e1053b06c00a"
+      },
+      "worktree": {
+        "bytes": 3031,
+        "sha256": "3be325177dcf2ad6fcc0c2afa85249d47ddb982f41f1b070da85e1053b06c00a",
+        "member": "bytes/3be325177dcf2ad6fcc0c2afa85249d47ddb982f41f1b070da85e1053b06c00a"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/history/original-compatibility.md",
+      "gitObjectId": "cdccaa4af76a2900a0808e2a0e2ad6acf960d252",
+      "gitBlob": {
+        "bytes": 12638,
+        "sha256": "6f37c864ff5dacf661a130c24be61285694dbb912340da56f6da908b58833ee8",
+        "member": "bytes/6f37c864ff5dacf661a130c24be61285694dbb912340da56f6da908b58833ee8"
+      },
+      "worktree": {
+        "bytes": 12638,
+        "sha256": "6f37c864ff5dacf661a130c24be61285694dbb912340da56f6da908b58833ee8",
+        "member": "bytes/6f37c864ff5dacf661a130c24be61285694dbb912340da56f6da908b58833ee8"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/history/original-generation.json",
+      "gitObjectId": "44f6e8513177fa4045aedf2f8ed9df2a17cd9913",
+      "gitBlob": {
+        "bytes": 1114,
+        "sha256": "f0b1c3edb29e00e1fd7c46de02797e577ed095ddd318cbdc965b3923c3a082b0",
+        "member": "bytes/f0b1c3edb29e00e1fd7c46de02797e577ed095ddd318cbdc965b3923c3a082b0"
+      },
+      "worktree": {
+        "bytes": 1114,
+        "sha256": "f0b1c3edb29e00e1fd7c46de02797e577ed095ddd318cbdc965b3923c3a082b0",
+        "member": "bytes/f0b1c3edb29e00e1fd7c46de02797e577ed095ddd318cbdc965b3923c3a082b0"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/history/original-manifest.json",
+      "gitObjectId": "dac998e5770095a65494bbae84238481d3a0b0bd",
+      "gitBlob": {
+        "bytes": 5252,
+        "sha256": "f546100bd63c0ec633ab88031cb0a4fc2128b3c9d2cf2c4a313c21e8c8bb82e0",
+        "member": "bytes/f546100bd63c0ec633ab88031cb0a4fc2128b3c9d2cf2c4a313c21e8c8bb82e0"
+      },
+      "worktree": {
+        "bytes": 5252,
+        "sha256": "f546100bd63c0ec633ab88031cb0a4fc2128b3c9d2cf2c4a313c21e8c8bb82e0",
+        "member": "bytes/f546100bd63c0ec633ab88031cb0a4fc2128b3c9d2cf2c4a313c21e8c8bb82e0"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/history/original-platform-observation.json",
+      "gitObjectId": "83fb7d8cd3faeb91fd041103977972e1e3daaa55",
+      "gitBlob": {
+        "bytes": 19754,
+        "sha256": "9bd8754a0c5fb671c4a1d4f62ba0d4dcc5aada40d744f162e7340de7b9ffed5b",
+        "member": "bytes/9bd8754a0c5fb671c4a1d4f62ba0d4dcc5aada40d744f162e7340de7b9ffed5b"
+      },
+      "worktree": {
+        "bytes": 19754,
+        "sha256": "9bd8754a0c5fb671c4a1d4f62ba0d4dcc5aada40d744f162e7340de7b9ffed5b",
+        "member": "bytes/9bd8754a0c5fb671c4a1d4f62ba0d4dcc5aada40d744f162e7340de7b9ffed5b"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/history/original-review.md",
+      "gitObjectId": "09e7dfe265efc626ecd2397a9f2b6aafa6196a6b",
+      "gitBlob": {
+        "bytes": 4161,
+        "sha256": "d4fdff6ea050e64811231f8fa62a8a51c3f1086a27aef85bc06f9264d9f10110",
+        "member": "bytes/d4fdff6ea050e64811231f8fa62a8a51c3f1086a27aef85bc06f9264d9f10110"
+      },
+      "worktree": {
+        "bytes": 4161,
+        "sha256": "d4fdff6ea050e64811231f8fa62a8a51c3f1086a27aef85bc06f9264d9f10110",
+        "member": "bytes/d4fdff6ea050e64811231f8fa62a8a51c3f1086a27aef85bc06f9264d9f10110"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/history/original-savedplan.md",
+      "gitObjectId": "af2e9c9fe748ba047bc716a95ba94ce27201c8a3",
+      "gitBlob": {
+        "bytes": 7955,
+        "sha256": "8aae2e9c50233366daea59ca7c63ef5335b64a44acbee99fe4429b3e8928a844",
+        "member": "bytes/8aae2e9c50233366daea59ca7c63ef5335b64a44acbee99fe4429b3e8928a844"
+      },
+      "worktree": {
+        "bytes": 7955,
+        "sha256": "8aae2e9c50233366daea59ca7c63ef5335b64a44acbee99fe4429b3e8928a844",
+        "member": "bytes/8aae2e9c50233366daea59ca7c63ef5335b64a44acbee99fe4429b3e8928a844"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/implementation.md",
+      "gitObjectId": "f1bd8e6e5db2f48a7de60b5db70aff7ce6fa40e6",
+      "gitBlob": {
+        "bytes": 13100,
+        "sha256": "e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940",
+        "member": "bytes/e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940"
+      },
+      "worktree": {
+        "bytes": 13100,
+        "sha256": "e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940",
+        "member": "bytes/e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/operation-decisions.json",
+      "gitObjectId": "ee26629c8e06bd714e2eb572f709d0e55c25de32",
+      "gitBlob": {
+        "bytes": 3765042,
+        "sha256": "b0e38e41e7c5219b58d29d43dc8c11761612a850def3ec875b328be63373a599",
+        "member": "bytes/b0e38e41e7c5219b58d29d43dc8c11761612a850def3ec875b328be63373a599"
+      },
+      "worktree": {
+        "bytes": 3765042,
+        "sha256": "b0e38e41e7c5219b58d29d43dc8c11761612a850def3ec875b328be63373a599",
+        "member": "bytes/b0e38e41e7c5219b58d29d43dc8c11761612a850def3ec875b328be63373a599"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/operation-index.md",
+      "gitObjectId": "28776d6b3f2793fab4d12495e0df47dfe25950ac",
+      "gitBlob": {
+        "bytes": 124333,
+        "sha256": "5b6a7107cc17a957e28716d96a8b92c3bae7348716dafe4b67427a3d981f13eb",
+        "member": "bytes/5b6a7107cc17a957e28716d96a8b92c3bae7348716dafe4b67427a3d981f13eb"
+      },
+      "worktree": {
+        "bytes": 124333,
+        "sha256": "5b6a7107cc17a957e28716d96a8b92c3bae7348716dafe4b67427a3d981f13eb",
+        "member": "bytes/5b6a7107cc17a957e28716d96a8b92c3bae7348716dafe4b67427a3d981f13eb"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/platform-observation-current.json",
+      "gitObjectId": "c684e4c5d605e7a505c67ad3e47fd2d5410511f3",
+      "gitBlob": {
+        "bytes": 61419,
+        "sha256": "7f1480995c848bd2e49083e0d3fe875129b6eb5fbc54effc4dd33b071310de4d",
+        "member": "bytes/7f1480995c848bd2e49083e0d3fe875129b6eb5fbc54effc4dd33b071310de4d"
+      },
+      "worktree": {
+        "bytes": 61419,
+        "sha256": "7f1480995c848bd2e49083e0d3fe875129b6eb5fbc54effc4dd33b071310de4d",
+        "member": "bytes/7f1480995c848bd2e49083e0d3fe875129b6eb5fbc54effc4dd33b071310de4d"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/platform-observation.json",
+      "gitObjectId": "83fb7d8cd3faeb91fd041103977972e1e3daaa55",
+      "gitBlob": {
+        "bytes": 19754,
+        "sha256": "9bd8754a0c5fb671c4a1d4f62ba0d4dcc5aada40d744f162e7340de7b9ffed5b",
+        "member": "bytes/9bd8754a0c5fb671c4a1d4f62ba0d4dcc5aada40d744f162e7340de7b9ffed5b"
+      },
+      "worktree": {
+        "bytes": 19754,
+        "sha256": "9bd8754a0c5fb671c4a1d4f62ba0d4dcc5aada40d744f162e7340de7b9ffed5b",
+        "member": "bytes/9bd8754a0c5fb671c4a1d4f62ba0d4dcc5aada40d744f162e7340de7b9ffed5b"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/review.md",
+      "gitObjectId": "557a86fa17d566528b1445e8324dc90598920a50",
+      "gitBlob": {
+        "bytes": 4258,
+        "sha256": "0a507b347bd6644ba1b4e980dea6d5dc7897e145f4870ebcc7fbe107d242d81e",
+        "member": "bytes/0a507b347bd6644ba1b4e980dea6d5dc7897e145f4870ebcc7fbe107d242d81e"
+      },
+      "worktree": {
+        "bytes": 4258,
+        "sha256": "0a507b347bd6644ba1b4e980dea6d5dc7897e145f4870ebcc7fbe107d242d81e",
+        "member": "bytes/0a507b347bd6644ba1b4e980dea6d5dc7897e145f4870ebcc7fbe107d242d81e"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/savedplan.md",
+      "gitObjectId": "f1bd8e6e5db2f48a7de60b5db70aff7ce6fa40e6",
+      "gitBlob": {
+        "bytes": 13100,
+        "sha256": "e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940",
+        "member": "bytes/e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940"
+      },
+      "worktree": {
+        "bytes": 13100,
+        "sha256": "e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940",
+        "member": "bytes/e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/source-manifest.json",
+      "gitObjectId": "56fa2b74ea39fc099196dae41721794d17ed4d53",
+      "gitBlob": {
+        "bytes": 154505,
+        "sha256": "944452f682dea067ffe96f98b6027fb52c0deb08ecc9f4898070ed7c3417b898",
+        "member": "bytes/944452f682dea067ffe96f98b6027fb52c0deb08ecc9f4898070ed7c3417b898"
+      },
+      "worktree": {
+        "bytes": 154505,
+        "sha256": "944452f682dea067ffe96f98b6027fb52c0deb08ecc9f4898070ed7c3417b898",
+        "member": "bytes/944452f682dea067ffe96f98b6027fb52c0deb08ecc9f4898070ed7c3417b898"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/sources.md",
+      "gitObjectId": "3d1e790e6e41c91d6ae8ca4103b7e90f537ee921",
+      "gitBlob": {
+        "bytes": 4428,
+        "sha256": "cf8bdc928f4b22f4c0bcd2e792785d16de05e0ae5cc99343169f337ce88fdbc4",
+        "member": "bytes/cf8bdc928f4b22f4c0bcd2e792785d16de05e0ae5cc99343169f337ce88fdbc4"
+      },
+      "worktree": {
+        "bytes": 4428,
+        "sha256": "cf8bdc928f4b22f4c0bcd2e792785d16de05e0ae5cc99343169f337ce88fdbc4",
+        "member": "bytes/cf8bdc928f4b22f4c0bcd2e792785d16de05e0ae5cc99343169f337ce88fdbc4"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/spec.md",
+      "gitObjectId": "845023b4d12954008d670b7666eda435a3bc6975",
+      "gitBlob": {
+        "bytes": 7891,
+        "sha256": "b2613e29380a3267879061d868cdcde1b768bda3ea301b843078584ef02a201a",
+        "member": "bytes/b2613e29380a3267879061d868cdcde1b768bda3ea301b843078584ef02a201a"
+      },
+      "worktree": {
+        "bytes": 7891,
+        "sha256": "b2613e29380a3267879061d868cdcde1b768bda3ea301b843078584ef02a201a",
+        "member": "bytes/b2613e29380a3267879061d868cdcde1b768bda3ea301b843078584ef02a201a"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/steering.md",
+      "gitObjectId": "f5e85d1797ff5210abc82fe5fdc146e1293e6bfd",
+      "gitBlob": {
+        "bytes": 7967,
+        "sha256": "42f57ac64dd7c238938a9502b6a8db9800d74138c69da19469c3db8bdad9938b",
+        "member": "bytes/42f57ac64dd7c238938a9502b6a8db9800d74138c69da19469c3db8bdad9938b"
+      },
+      "worktree": {
+        "bytes": 7967,
+        "sha256": "42f57ac64dd7c238938a9502b6a8db9800d74138c69da19469c3db8bdad9938b",
+        "member": "bytes/42f57ac64dd7c238938a9502b6a8db9800d74138c69da19469c3db8bdad9938b"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/sync-check-receipt.json",
+      "gitObjectId": "72140b1ad7c9c9a7c8c53303e68eee9246d38d6a",
+      "gitBlob": {
+        "bytes": 9253,
+        "sha256": "4ce4df08857ff4203779cb23b2f8bc4ae1cca5b3a9eda7efdf78c60d3359b2b9",
+        "member": "bytes/4ce4df08857ff4203779cb23b2f8bc4ae1cca5b3a9eda7efdf78c60d3359b2b9"
+      },
+      "worktree": {
+        "bytes": 9253,
+        "sha256": "4ce4df08857ff4203779cb23b2f8bc4ae1cca5b3a9eda7efdf78c60d3359b2b9",
+        "member": "bytes/4ce4df08857ff4203779cb23b2f8bc4ae1cca5b3a9eda7efdf78c60d3359b2b9"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/sync-documents.py",
+      "gitObjectId": "56cc517ef0c597e21bbe3944e5973ad4cf3b7385",
+      "gitBlob": {
+        "bytes": 20334,
+        "sha256": "41281b1413913138b106772bebe4039c6729553e0c1881313044eb8a5ef70fa7",
+        "member": "bytes/41281b1413913138b106772bebe4039c6729553e0c1881313044eb8a5ef70fa7"
+      },
+      "worktree": {
+        "bytes": 20334,
+        "sha256": "41281b1413913138b106772bebe4039c6729553e0c1881313044eb8a5ef70fa7",
+        "member": "bytes/41281b1413913138b106772bebe4039c6729553e0c1881313044eb8a5ef70fa7"
+      },
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/verification.md",
+      "gitObjectId": "ac9596d30dc467db2563b7a2d3c1d4abf006c559",
+      "gitBlob": {
+        "bytes": 12366,
+        "sha256": "f4c4c27ecda8e66005aa0bf8096d1a68ea07ba5f93f1555b14fc1a99794311b6",
+        "member": "bytes/f4c4c27ecda8e66005aa0bf8096d1a68ea07ba5f93f1555b14fc1a99794311b6"
+      },
+      "worktree": {
+        "bytes": 12366,
+        "sha256": "f4c4c27ecda8e66005aa0bf8096d1a68ea07ba5f93f1555b14fc1a99794311b6",
+        "member": "bytes/f4c4c27ecda8e66005aa0bf8096d1a68ea07ba5f93f1555b14fc1a99794311b6"
+      },
+      "mapping": "identity"
+    }
+  ],
+  "purpose": "完整旧受控文件Git blob和本轮读取工作树原字节；不修改旧回执和首败"
+}

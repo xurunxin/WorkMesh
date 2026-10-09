@@ -23,7 +23,7 @@
 | DoD | 文档输入 | 产品验收必须补的证据 |
 | --- | --- | --- |
 | 实际operation全集无遗漏 | operation-decisions.json每条完整请求/返回、原索引、policy及分类；archive-check.py集合核验 | 最新main重新全集核对；新增/删除差异有明确处理，非固定数量断言 |
-| 角色发现与领域一致 | Human corrections、Team协调写、provider variants、Loop及rollup差异行 | 每项发现输出与对应服务端允许/拒绝并列；误广告项不可只改描述；当前删除动作差异仍待证据 |
+| 角色发现与领域一致 | Human corrections、Team协调写、provider variants、Loop及rollup差异行 | 每项发现输出与对应服务端允许/拒绝并列；误广告项不可只改描述；当前删除Project/WorkItem已明确C coordinator/team scope和E拒绝；99条既有领域规则均附实际锚点/正反例 |
 | 旧客户端兼容 | compatibility.md、旧schema/URI/名称表、旧默认响应 | 旧客户端未协商读取无新增字段；隐藏工具直接call有角色拒绝；新只读alias不破坏resource |
 | 资源客户端、仅tool客户端、Pi | 真API/MCP流程与模型tools请求抓取方案 | 完整初始化/发现/读取/故意拒绝/继续读transcript、版本与输入源码绑定；不能只看REST manifest |
 | 错误与恢复 | Runner401、SDK/MCP envelope、稳定身份与导入限制 | 错误所有字段不丢；自动refresh/retry计数为零的拒绝案例；传输重试单事实；Stop既有入口可达 |
@@ -41,7 +41,7 @@ recovery默认可选skip如实记未验收，不计通过；适用必需用例�
 
 ## 本轮文档检查
 
-本轮运行`node docs/plan/agent-mcp-m0/archive-audit.mjs`生成结构化全集、binding和来源，再运行`python -X utf8 docs/plan/agent-mcp-m0/archive-check.py`核对文件、字段、来源与链接。暂存后执行`git diff --cached --check`和完整范围`git diff --check <来源head> HEAD`；对实际Git blob与工作树字节分别核验。
+本轮运行`python -X utf8 -B docs/plan/agent-mcp-m0/audit-generate.py`生成结构化全集、binding和来源，再运行`python -X utf8 -B docs/plan/agent-mcp-m0/archive-check.py`核对文件、字段、来源与链接。暂存后执行`git diff --cached --check`和完整范围`git diff --check <来源head> HEAD`；对实际Git blob与工作树字节分别核验。
 
 CI分类调用当前`classifyChanges`实读，不改policy/属性豁免。所有真实结果与首败保留在review及sync-check-receipt材料；旧check-receipt保持历史语义；不运行全产品tests，结果不写成产品通过。
 
@@ -50,7 +50,7 @@ CI分类调用当前`classifyChanges`实读，不改policy/属性豁免。所有
 | ID | 落点 | 输入与具体判定 |
 | --- | --- | --- |
 | M0-MODE-PROJECTION | contracts/client-profile-contract.test.ts；MCP index/http.test.ts；真实conformance | 同Connection/Session同时接read-only/read-write：API qualified结构/资格相同，不含registered/discoverable/mode；adapter写工具名单不同；只读cached写call拒绝，服务端写事实不增 |
-| M0-CONTEXT-PROJECTION | MCP index.test.ts、coordination-product调用测试 | 同次prepare得到的manifest和projection传给context，allowedOperations严格等于current_session、discoverable、eligible API绑定的去重集合；没有额外manifest请求，不含target_execution条件模板、adapter_internal或全API未适配项；两独立请求只在固定live事实下比较 |
+| M0-CONTEXT-PROJECTION | MCP index.test.ts、coordination-product调用测试 | 同次prepare得到的manifest和projection传给context，allowedOperations严格等于当前Session变体、discoverable、eligible API绑定的去重集合；没有额外manifest请求，不含target_execution条件模板、adapter_internal或全API未适配项；两独立请求只在固定live事实下比较 |
 | M0-INSTALLATION-NO-SESSION | contracts/SDK/MCP测试；真实conformance | installation_target无agentSessionId，adapter null联合；Session manifest仍被拒绝，不伪造Delegation、不隐式派生C；exact-target handoff沿自身installation入口验证 |
 | M0-TARGET-UNBOUND | MCP index/http.test.ts | C有安装bridge、写模式允许且E callback实现时，未给目标只条件广告requires_target_check，不进入allowedOperations；缺bridge blocked，缺必填ID输入失败，无token刷新 |
 | M0-TARGET-QUALIFICATION | SDK index.test.ts；MCP http.test.ts；真实conformance | C指向准确E后：一次refresh→目标Bearer qualified→同Token命令；断言manifest确为目标E而非C；角色/state/caps取E值。目标错kind/ID、跨Team/撤权、refresh或manifest失败均终止，不降级、不换身份 |
@@ -60,8 +60,23 @@ CI分类调用当前`classifyChanges`实读，不改policy/属性豁免。所有
 | M0-BINDING-prepare_project_import | contracts/coordination-product测试 | 当前listProjects映射仅历史；拟内部binding operationIds=[]，prepare不调用REST，read-only可本地规范化；不把prepare计为Project读取资格 |
 | M0-BINDING-verify_connection | MCP index.test.ts | manifest/current identity/listTeams三组成齐全；任一读取失败不能verified=true，不遗漏Team probe；E credential反例拒绝 |
 | M0-PROVIDER-OPEN-PR-CAPS | contracts/MCP/真实conformance代表provider夹具 | kind=open_pull_request仅repo:write_branch不足；联合repo:write_branch+repo:open_pr和context open_pr仍保留Lease/pinned branch/target检查 |
-| M0-PENDING-每operation | contracts/route-policy.test.ts | 未核domain固定blocked/DOMAIN_DIFFERENCE_PENDING；不转换成requires_target_check或eligible。每operation具体输入/理由/源码见negativeTests和sourceEvidence |
+| M0-DOMAIN-每operation | contracts/route-policy.test.ts；真实conformance | 原99条已核credential/kind/role/state/scope/variant；每条positiveTests逐谓词允许、negativeTests单独破坏每个门禁；六项具体差异的发现拒绝/精确列表正对照单列，不允许通用pending测试 |
 | M0-RUNNER-401 | Runner permission-matrix/workmesh-tools及run-session测试 | 本地到期仅请求前refresh；受保护401、撤权、Stop、错profile之后refresh与重发计数均零；refresh拒绝原envelope及trace不丢，failed活动失败不覆盖它 |
 | M0-CI-WIRING | scripts/ci-policy.test.mjs、validate-ci.mjs及隔离负例 | 四包单文件改动必选api-integration；删除CI调用/根串接/include时检查非零；fixture失败或零测试非零；选中job失败/意外skip聚合失败；always上传包含execution、模型tools和脱敏组件日志 |
 
-逐条negativeTests是待创建/扩展的稳定用例名与断言，不冒称目前已有或本轮运行。静态检查核每项内容，而不是只核数组非空；没有真实Token、数据库、Pi或RequiredCI结果预填。原四项审查仍待另一Agent确认闭合。
+逐条negativeTests是待创建/扩展的稳定用例名与断言，不冒称目前已有或本轮运行。静态检查核每项内容，而不是只核数组非空；没有真实Token、数据库、Pi或RequiredCI结果预填。已闭1/API与adapter、2身份路径、4/RequiredCI接线保持；本轮两blocking等另一Agent定向复审。
+
+## 本轮两阻断的具体正反例与静态语义验证
+
+- M0-VERIFY-C-NO-TARGET：合法C、不配置独立安装bridge、{}输入；三项调用均当前C，刷新计数零；E无Connection或listTeams失败反例不得verified=true。
+- M0-CLAIM-C-RETURNED-ID：正常HTTP/stdio同Connection凭据两个SDK用途槽，先C claim再返回nonce交换；断言返回id不在inputSchema、没有任意输入目标、无另一安装配置；只有coordinationToken槽的SDK反例兑换错误保留，不冒成通用目标bridge。
+- M0-SELF-E-READ：仅Session Token的E，在两个mode读自身Session/context/plan/activity resource及等价tool；自身manifest资格、刷新零；异Session输入拒绝后自身读取仍可走。C→目标E独立按目标manifest/Token/state求值，无目标仅条件入口。
+- M0-DOCUMENT-OWNER：三种准确owner分别允许；只有Team scope、同Team异owner、project文档但work_item不在live scope分别拒绝。当前归档读取允许、归档写拒绝，base revision/hash及restore相同内容反例按实际handler。
+- M0-INBOX-RECIPIENT：exact recipient与claimant详情允许；同actor另一Session/未领取详情拒绝；actor目标open仅有限列表，claim后本Session可读；ack work:read、reply work:write，review_request追加reviewer/artifact与准确源收件检查。
+- M0-LEASE-HOLDER：准确work_item/委派step/current与parent current step分别允许；异scope/持有Session拒绝，renew active且未过期、release active+If-Match，heartbeat当前不额外核expires_at。Human force-release正对照与Agent拒绝另行保留。
+
+archive-check.py独立从不可变main解析OpenAPI和MCP参数/SDK方法；校验99规则覆盖与源码锚点、逐operation允许/拒绝事实求值。检查binding输入必须含显式目标字段或resource URI参数，verify/claim语义固定；将verify改成目标bridge或让self_execution要求bridge的内存变异必须被拒绝，在callback仅加入返回sessionId不改变分类。用同一文档投影对象验证read-only/read-write名单及Context.allowedOperations；这不是实际客户端运行。
+
+本轮静态检查还解析SDK request实际布尔条件并求值64组合：有自身E Token而无Connection时不安装刷新，C带准确目标且安装用途槽可用时才局部刷新；未知运算/字段失败关闭。Workbench settle的route非active标记仍受domain普通写状态交集，credential入口仅executing；不是新增终态权限。
+
+直接E在initialize/list阶段尚无读取参数时，self_execution的准确自身id已由manifest确定，可披露自身读取；只有C target_execution无目标才是条件入口。实际调用缺必填id仍按旧schema拒绝，异id拒绝且不刷新。静态检查分别断言发现无参数允许与调用异id拒绝，不把输入必填误当所有发现都需安装bridge。

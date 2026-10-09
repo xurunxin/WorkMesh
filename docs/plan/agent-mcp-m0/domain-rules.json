@@ -1,0 +1,3199 @@
+{
+  "scope": "人工核读的99条领域谓词；不参与产品授权",
+  "sourceHead": "69085317c88d84b702af727dc0ac7152589626d8",
+  "rules": [
+    {
+      "operationId": "listDocuments",
+      "sourcePath": "apps/api/src/documents.ts",
+      "anchors": [
+        "async function assertExactAgentOwner(",
+        "async function assertRead("
+      ],
+      "predicates": [
+        {
+          "fact": "documentOwnerBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "work_item owner精确等于Session.work_item；project owner等于其live所属Project或Session.project"
+        },
+        {
+          "fact": "documentOwnerCapabilityScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "同Team且workItemIds/projectIds包含准确owner所需绑定；teamIds单独不足"
+        }
+      ],
+      "decision": "读取按准确owner而非Team可见性授权；已归档Document仍可读历史；revision/diff必须属于同document。",
+      "target": true
+    },
+    {
+      "operationId": "getDocument",
+      "sourcePath": "apps/api/src/documents.ts",
+      "anchors": [
+        "async function assertExactAgentOwner(",
+        "async function assertRead("
+      ],
+      "predicates": [
+        {
+          "fact": "documentOwnerBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "work_item owner精确等于Session.work_item；project owner等于其live所属Project或Session.project"
+        },
+        {
+          "fact": "documentOwnerCapabilityScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "同Team且workItemIds/projectIds包含准确owner所需绑定；teamIds单独不足"
+        }
+      ],
+      "decision": "读取按准确owner而非Team可见性授权；已归档Document仍可读历史；revision/diff必须属于同document。",
+      "target": true
+    },
+    {
+      "operationId": "listDocumentHistory",
+      "sourcePath": "apps/api/src/documents.ts",
+      "anchors": [
+        "async function assertExactAgentOwner(",
+        "async function assertRead("
+      ],
+      "predicates": [
+        {
+          "fact": "documentOwnerBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "work_item owner精确等于Session.work_item；project owner等于其live所属Project或Session.project"
+        },
+        {
+          "fact": "documentOwnerCapabilityScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "同Team且workItemIds/projectIds包含准确owner所需绑定；teamIds单独不足"
+        }
+      ],
+      "decision": "读取按准确owner而非Team可见性授权；已归档Document仍可读历史；revision/diff必须属于同document。",
+      "target": true
+    },
+    {
+      "operationId": "getDocumentRevision",
+      "sourcePath": "apps/api/src/documents.ts",
+      "anchors": [
+        "async function assertExactAgentOwner(",
+        "async function assertRead("
+      ],
+      "predicates": [
+        {
+          "fact": "documentOwnerBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "work_item owner精确等于Session.work_item；project owner等于其live所属Project或Session.project"
+        },
+        {
+          "fact": "documentOwnerCapabilityScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "同Team且workItemIds/projectIds包含准确owner所需绑定；teamIds单独不足"
+        }
+      ],
+      "decision": "读取按准确owner而非Team可见性授权；已归档Document仍可读历史；revision/diff必须属于同document。",
+      "target": true
+    },
+    {
+      "operationId": "diffDocumentRevisions",
+      "sourcePath": "apps/api/src/documents.ts",
+      "anchors": [
+        "async function assertExactAgentOwner(",
+        "async function assertRead("
+      ],
+      "predicates": [
+        {
+          "fact": "documentOwnerBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "work_item owner精确等于Session.work_item；project owner等于其live所属Project或Session.project"
+        },
+        {
+          "fact": "documentOwnerCapabilityScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "同Team且workItemIds/projectIds包含准确owner所需绑定；teamIds单独不足"
+        }
+      ],
+      "decision": "读取按准确owner而非Team可见性授权；已归档Document仍可读历史；revision/diff必须属于同document。",
+      "target": true
+    },
+    {
+      "operationId": "exportDocumentMarkdown",
+      "sourcePath": "apps/api/src/documents.ts",
+      "anchors": [
+        "async function assertExactAgentOwner(",
+        "async function assertRead("
+      ],
+      "predicates": [
+        {
+          "fact": "documentOwnerBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "work_item owner精确等于Session.work_item；project owner等于其live所属Project或Session.project"
+        },
+        {
+          "fact": "documentOwnerCapabilityScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "同Team且workItemIds/projectIds包含准确owner所需绑定；teamIds单独不足"
+        }
+      ],
+      "decision": "读取按准确owner而非Team可见性授权；已归档Document仍可读历史；revision/diff必须属于同document。",
+      "target": true
+    },
+    {
+      "operationId": "createDocument",
+      "sourcePath": "apps/api/src/documents.ts",
+      "anchors": [
+        "async function assertWrite(",
+        "async function assertExactAgentOwner("
+      ],
+      "predicates": [
+        {
+          "fact": "documentOwnerBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "work_item owner精确等于Session.work_item；project owner等于其live所属Project或Session.project"
+        },
+        {
+          "fact": "documentOwnerCapabilityScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "同Team且workItemIds/projectIds包含准确owner所需绑定；teamIds单独不足"
+        }
+      ],
+      "decision": "新写使用当前Session、work:write及owner范围；project owner再assertExactAgentProjectBinding；不增加角色特权。",
+      "target": true
+    },
+    {
+      "operationId": "updateDocument",
+      "sourcePath": "apps/api/src/documents.ts",
+      "anchors": [
+        "async function assertWrite(",
+        "async function assertExactAgentOwner("
+      ],
+      "predicates": [
+        {
+          "fact": "documentOwnerBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "work_item owner精确等于Session.work_item；project owner等于其live所属Project或Session.project"
+        },
+        {
+          "fact": "documentOwnerCapabilityScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "同Team且workItemIds/projectIds包含准确owner所需绑定；teamIds单独不足"
+        },
+        {
+          "fact": "documentStatus",
+          "allowed": [
+            "active"
+          ],
+          "reason": "CONFLICT",
+          "description": "归档文档不能更新"
+        },
+        {
+          "fact": "documentBaseMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "CONFLICT",
+          "description": "baseRevisionId及baseContentHash必须匹配当前内容"
+        }
+      ],
+      "decision": "新写使用当前Session、work:write及owner范围；project owner再assertExactAgentProjectBinding；不增加角色特权。",
+      "target": true
+    },
+    {
+      "operationId": "restoreDocumentRevision",
+      "sourcePath": "apps/api/src/documents.ts",
+      "anchors": [
+        "async function assertWrite(",
+        "async function assertExactAgentOwner("
+      ],
+      "predicates": [
+        {
+          "fact": "documentOwnerBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "work_item owner精确等于Session.work_item；project owner等于其live所属Project或Session.project"
+        },
+        {
+          "fact": "documentOwnerCapabilityScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "同Team且workItemIds/projectIds包含准确owner所需绑定；teamIds单独不足"
+        },
+        {
+          "fact": "documentStatus",
+          "allowed": [
+            "active"
+          ],
+          "reason": "CONFLICT",
+          "description": "归档文档不能恢复"
+        },
+        {
+          "fact": "documentBaseMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "CONFLICT",
+          "description": "准确baseRevisionId及hash"
+        },
+        {
+          "fact": "restoreChangesContent",
+          "allowed": [
+            true
+          ],
+          "reason": "CONFLICT",
+          "description": "目标revision存在于同document且内容不等于当前"
+        }
+      ],
+      "decision": "新写使用当前Session、work:write及owner范围；project owner再assertExactAgentProjectBinding；不增加角色特权。",
+      "target": true
+    },
+    {
+      "operationId": "listInbox",
+      "sourcePath": "apps/api/src/inbox/routes.ts",
+      "anchors": [
+        "function listAgentInbox(",
+        "const activeScopeSql"
+      ],
+      "predicates": [
+        {
+          "fact": "inboxAudience",
+          "allowed": [
+            "exact_recipient",
+            "exact_claimant",
+            "unclaimed_actor"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "exact Session收件/领取者可完整列；actor-target未领取仅intent/channelId和detail_available=false"
+        },
+        {
+          "fact": "inboxSourceScope",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同Team和源Room work_item/project/Session lineage；非Room源可同Team"
+        }
+      ],
+      "decision": "无Session输入，始终当前身份；role无额外限制。",
+      "target": true
+    },
+    {
+      "operationId": "getInboxItem",
+      "sourcePath": "apps/api/src/inbox/routes.ts",
+      "anchors": [
+        "const itemDetailSql",
+        "async function loadAgentItemForUpdate(",
+        "async function assertReviewReplyAuthority("
+      ],
+      "predicates": [
+        {
+          "fact": "inboxAudience",
+          "allowed": [
+            "exact_recipient",
+            "exact_claimant"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同actor另一Session不是收件/领取者；未领取actor目标不能读detail"
+        },
+        {
+          "fact": "inboxSourceScope",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同Team和源Room live scope"
+        }
+      ],
+      "decision": "get沿liveSessionReadPredicate；ack使用work:read并写receipt而不改item revision；reply使用work:write，If-Match并解析源消息。",
+      "target": true
+    },
+    {
+      "operationId": "acknowledgeInboxItem",
+      "sourcePath": "apps/api/src/inbox/routes.ts",
+      "anchors": [
+        "const itemDetailSql",
+        "async function loadAgentItemForUpdate(",
+        "async function assertReviewReplyAuthority("
+      ],
+      "predicates": [
+        {
+          "fact": "inboxAudience",
+          "allowed": [
+            "exact_recipient",
+            "exact_claimant"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同actor另一Session不是收件/领取者；未领取actor目标不能读detail"
+        },
+        {
+          "fact": "inboxSourceScope",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同Team和源Room live scope"
+        }
+      ],
+      "decision": "get沿liveSessionReadPredicate；ack使用work:read并写receipt而不改item revision；reply使用work:write，If-Match并解析源消息。",
+      "target": true
+    },
+    {
+      "operationId": "replyInboxItem",
+      "sourcePath": "apps/api/src/inbox/routes.ts",
+      "anchors": [
+        "const itemDetailSql",
+        "async function loadAgentItemForUpdate(",
+        "async function assertReviewReplyAuthority("
+      ],
+      "predicates": [
+        {
+          "fact": "inboxAudience",
+          "allowed": [
+            "exact_recipient",
+            "exact_claimant"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同actor另一Session不是收件/领取者；未领取actor目标不能读detail"
+        },
+        {
+          "fact": "inboxSourceScope",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同Team和源Room live scope"
+        },
+        {
+          "fact": "inboxStatus",
+          "allowed": [
+            "open"
+          ],
+          "reason": "INBOX_REPLY_CONFLICT",
+          "description": "open且有source_room_message/channel"
+        },
+        {
+          "fact": "inboxReplySourceLive",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "authorizeExactReplyRecipient复核准确源收件Session/actor，撤权不投递"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "reviewer"
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "review_request回复必须reviewer",
+          "when": {
+            "replyKind": "review_request"
+          }
+        },
+        {
+          "fact": "artifactCapability",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "review_request还需live artifact:write",
+          "when": {
+            "replyKind": "review_request"
+          }
+        }
+      ],
+      "decision": "get沿liveSessionReadPredicate；ack使用work:read并写receipt而不改item revision；reply使用work:write，If-Match并解析源消息。",
+      "target": true
+    },
+    {
+      "operationId": "claimInboxItem",
+      "sourcePath": "apps/api/src/inbox/routes.ts",
+      "anchors": [
+        "app.post(\"/api/v1/inbox/:id/claim\"",
+        "const activeScopeSql"
+      ],
+      "predicates": [
+        {
+          "fact": "inboxAudience",
+          "allowed": [
+            "unclaimed_actor"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "仅当前actor目标、recipient_session_id和claimed_by_session_id均null"
+        },
+        {
+          "fact": "inboxSourceScope",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同Team及源Room范围"
+        },
+        {
+          "fact": "inboxStatus",
+          "allowed": [
+            "open"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "仅open，锁下原子领取"
+        }
+      ],
+      "decision": "当前Session凭据+work:read+幂等；不从任意sessionId刷新。",
+      "target": true
+    },
+    {
+      "operationId": "listLeases",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/leases'"
+      ],
+      "predicates": [
+        {
+          "fact": "leaseHolderMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "最终SQL只列当前Session leases并live授权"
+        }
+      ],
+      "decision": "仅现有REST/SDK；MCP缺list入口沿M1披露未适配，不改变现有读取权限。",
+      "target": true,
+      "futureAdapter": "M1"
+    },
+    {
+      "operationId": "acquireLease",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function acquireLease(",
+        "async function assertLeaseResourceScope("
+      ],
+      "predicates": [
+        {
+          "fact": "leaseResourceBinding",
+          "allowed": [
+            "exact_work_item",
+            "delegated_plan_step",
+            "current_plan_step",
+            "parent_current_plan_step"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "work_item等于Session work_item；plan_step为准确delegation.scope或当前/parent当前Plan步骤"
+        },
+        {
+          "fact": "leaseConflictFree",
+          "allowed": [
+            true
+          ],
+          "reason": "LEASE_CONFLICT",
+          "description": "active exclusive/review_shared冲突按resource和kind锁下判断"
+        }
+      ],
+      "decision": "准确body.sessionId+work:write；TTL/MIME等输入由DTO校验；Lease不授予权限。",
+      "target": true
+    },
+    {
+      "operationId": "heartbeatLease",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function leaseAction(",
+        "async function assertSessionWrite("
+      ],
+      "predicates": [
+        {
+          "fact": "leaseHolderMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "AGENT_SESSION_TOKEN_MISMATCH",
+          "description": "租约row.session_id必须为当前Session；不能用id获取别的身份"
+        },
+        {
+          "fact": "leaseStatus",
+          "allowed": [
+            "active"
+          ],
+          "reason": "CONFLICT",
+          "description": "heartbeat只核active status；现行handler不额外检查expires_at，不改授权"
+        }
+      ],
+      "decision": "无需目标Session输入；现有SDK有实现但MCP缺入口，M1补适配；普通release不成为Stop专用清理。",
+      "target": true,
+      "futureAdapter": "M1"
+    },
+    {
+      "operationId": "renewLease",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function leaseAction(",
+        "async function assertSessionWrite("
+      ],
+      "predicates": [
+        {
+          "fact": "leaseHolderMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "AGENT_SESSION_TOKEN_MISMATCH",
+          "description": "租约row.session_id必须为当前Session；不能用id获取别的身份"
+        },
+        {
+          "fact": "leaseStatus",
+          "allowed": [
+            "active"
+          ],
+          "reason": "LEASE_EXPIRED",
+          "description": "active"
+        },
+        {
+          "fact": "leaseNotExpired",
+          "allowed": [
+            true
+          ],
+          "reason": "LEASE_EXPIRED",
+          "description": "expires_at>now；需If-Match"
+        }
+      ],
+      "decision": "无需目标Session输入；现有SDK有实现但MCP缺入口，M1补适配；普通release不成为Stop专用清理。",
+      "target": true,
+      "futureAdapter": "M1"
+    },
+    {
+      "operationId": "releaseLease",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function leaseAction(",
+        "async function assertSessionWrite("
+      ],
+      "predicates": [
+        {
+          "fact": "leaseHolderMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "AGENT_SESSION_TOKEN_MISMATCH",
+          "description": "租约row.session_id必须为当前Session；不能用id获取别的身份"
+        },
+        {
+          "fact": "leaseStatus",
+          "allowed": [
+            "active"
+          ],
+          "reason": "CONFLICT",
+          "description": "仅active；If-Match，重复动作走现有key replay"
+        }
+      ],
+      "decision": "无需目标Session输入；现有SDK有实现但MCP缺入口，M1补适配；普通release不成为Stop专用清理。",
+      "target": true,
+      "futureAdapter": "M1"
+    },
+    {
+      "operationId": "getWorkRoom",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/rooms'"
+      ],
+      "predicates": [
+        {
+          "fact": "roomSubjectBinding",
+          "allowed": [
+            "self_session",
+            "session_work_item",
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "只传一种subject；Session subject仅自身，Project为所属或Session.project"
+        }
+      ],
+      "decision": "workItemId/projectId是普通目标；sessionId变体按真实getRoom refresh路径分别当前E与C目标；不是无条件Team Room。",
+      "target": true
+    },
+    {
+      "operationId": "postWorkRoomMessage",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function assertSessionMessageWrite(",
+        "const reviewResult = intent === 'review_result'"
+      ],
+      "predicates": [
+        {
+          "fact": "roomLineageScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "源Session当前范围/Room lineage及准确recipients在merged锁下复核"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "reviewer"
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "review_result须reviewer",
+          "when": {
+            "messageIntent": "review_result"
+          }
+        },
+        {
+          "fact": "artifactCapability",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "review_result须artifact:write联合route work:write",
+          "when": {
+            "messageIntent": "review_result"
+          }
+        }
+      ],
+      "decision": "普通intent保留work:write；sessionId若省略不能假设目标E，使用DTO和handler当前身份路径；recipientSessionId不是调用身份。",
+      "target": true
+    },
+    {
+      "operationId": "createWorkItemDecision",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function createDecision(",
+        "function assertDecisionSubjectInSessionScope("
+      ],
+      "predicates": [
+        {
+          "fact": "decisionSubjectBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project",
+            "self_session"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确subject work_item/project/session，不能任意Team资源"
+        }
+      ],
+      "decision": "Agent提案需当前Token，body.sessionId若提供须匹配；读取同范围。Human终裁另是H-only操作。",
+      "target": true
+    },
+    {
+      "operationId": "createProjectDecision",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function createDecision(",
+        "function assertDecisionSubjectInSessionScope("
+      ],
+      "predicates": [
+        {
+          "fact": "decisionSubjectBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project",
+            "self_session"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确subject work_item/project/session，不能任意Team资源"
+        }
+      ],
+      "decision": "Agent提案需当前Token，body.sessionId若提供须匹配；读取同范围。Human终裁另是H-only操作。",
+      "target": true
+    },
+    {
+      "operationId": "createSessionDecision",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function createDecision(",
+        "function assertDecisionSubjectInSessionScope("
+      ],
+      "predicates": [
+        {
+          "fact": "decisionSubjectBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project",
+            "self_session"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确subject work_item/project/session，不能任意Team资源"
+        }
+      ],
+      "decision": "Agent提案需当前Token，body.sessionId若提供须匹配；读取同范围。Human终裁另是H-only操作。",
+      "target": true
+    },
+    {
+      "operationId": "getDecision",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function createDecision(",
+        "function assertDecisionSubjectInSessionScope("
+      ],
+      "predicates": [
+        {
+          "fact": "decisionSubjectBinding",
+          "allowed": [
+            "session_work_item",
+            "work_item_project",
+            "session_project",
+            "self_session"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确subject work_item/project/session，不能任意Team资源"
+        }
+      ],
+      "decision": "Agent提案需当前Token，body.sessionId若提供须匹配；读取同范围。Human终裁另是H-only操作。",
+      "target": true
+    },
+    {
+      "operationId": "commentOnPlanStep",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "app.post('/api/v1/agent-sessions/:id/plan/comments'",
+        "app.post('/api/v1/agent-sessions/:id/assignment-proposals'"
+      ],
+      "predicates": [
+        {
+          "fact": "currentPlanStep",
+          "allowed": [
+            true
+          ],
+          "reason": "STALE_PLAN_VERSION",
+          "description": "planVersionId/current_plan_version与step都属于源Session当前Plan"
+        }
+      ],
+      "decision": "源Session必须当前Token，work:write；assignment只是proposal/routing facts，不授予目标Agent执行资格。",
+      "target": true
+    },
+    {
+      "operationId": "proposePlanAssignment",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "app.post('/api/v1/agent-sessions/:id/plan/comments'",
+        "app.post('/api/v1/agent-sessions/:id/assignment-proposals'"
+      ],
+      "predicates": [
+        {
+          "fact": "currentPlanStep",
+          "allowed": [
+            true
+          ],
+          "reason": "STALE_PLAN_VERSION",
+          "description": "planVersionId/current_plan_version与step都属于源Session当前Plan"
+        }
+      ],
+      "decision": "源Session必须当前Token，work:write；assignment只是proposal/routing facts，不授予目标Agent执行资格。",
+      "target": true
+    },
+    {
+      "operationId": "createChildAgentSession",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function createChild(",
+        "async function createReview(",
+        "async function lockCollaborationSessionTargets("
+      ],
+      "predicates": [
+        {
+          "fact": "currentPlanStep",
+          "allowed": [
+            true
+          ],
+          "reason": "STALE_PLAN_VERSION",
+          "description": "parent当前Plan、稳定step identity"
+        },
+        {
+          "fact": "childTargetGrant",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "父Delegation∩目标definition∩同Team grant的所需能力"
+        },
+        {
+          "fact": "childCapacityAvailable",
+          "allowed": [
+            true
+          ],
+          "reason": "CHILD_SESSION_LIMIT",
+          "description": "parent/step/Agent并发、预算reservations"
+        },
+        {
+          "fact": "childExactInstallation",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "准确target Agent/Team/principal的active installation用于新Session配送"
+        }
+      ],
+      "decision": "审计当前已注册实现；M2承接后续子Session/reviewer完善，不以未来入口缺口屏蔽当前合法调用。调用者role未额外限制；创建目标角色按DTO。",
+      "target": true
+    },
+    {
+      "operationId": "createReviewDelegation",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function createChild(",
+        "async function createReview(",
+        "async function lockCollaborationSessionTargets("
+      ],
+      "predicates": [
+        {
+          "fact": "currentPlanStep",
+          "allowed": [
+            true
+          ],
+          "reason": "STALE_PLAN_VERSION",
+          "description": "parent当前Plan、稳定step identity"
+        },
+        {
+          "fact": "childTargetGrant",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "父Delegation∩目标definition∩同Team grant的所需能力"
+        },
+        {
+          "fact": "childCapacityAvailable",
+          "allowed": [
+            true
+          ],
+          "reason": "CHILD_SESSION_LIMIT",
+          "description": "parent/step/Agent并发、预算reservations"
+        },
+        {
+          "fact": "childExactInstallation",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "准确target Agent/Team/principal的active installation用于新Session配送"
+        },
+        {
+          "fact": "reviewTargetCaps",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "target reviewer需要work:read/work:write/artifact:write的联合live交集"
+        },
+        {
+          "fact": "reviewStepLeaseFree",
+          "allowed": [
+            true
+          ],
+          "reason": "LEASE_CONFLICT",
+          "description": "当前Plan step不得有exclusive active Lease"
+        }
+      ],
+      "decision": "审计当前已注册实现；M2承接后续子Session/reviewer完善，不以未来入口缺口屏蔽当前合法调用。调用者role未额外限制；创建目标角色按DTO。",
+      "target": true
+    },
+    {
+      "operationId": "appendContextDelta",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function appendDelta("
+      ],
+      "predicates": [
+        {
+          "fact": "contextBaseMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "CONFLICT",
+          "description": "baseSnapshotId为源Session当前context；additions不得扩大授权"
+        }
+      ],
+      "decision": "准确Session+work:write；新snapshot和context_delta事实，不替换他人snapshot。",
+      "target": true
+    },
+    {
+      "operationId": "listHandoffs",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/handoffs'"
+      ],
+      "predicates": [
+        {
+          "fact": "handoffVisibleScope",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同Team/current work_item/project范围且是源Session或target_agent_id为当前Agent"
+        }
+      ],
+      "decision": "使用当前身份list；不是按返回from_session_id切换Token。",
+      "target": true
+    },
+    {
+      "operationId": "offerHandoff",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function offerHandoff("
+      ],
+      "predicates": [
+        {
+          "fact": "handoffSourceMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "AGENT_SESSION_TOKEN_MISMATCH",
+          "description": "fromSessionId为当前准确源Session"
+        },
+        {
+          "fact": "handoffTargetGrant",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "精确目标Agent/同Team与请求capabilities，不从targetSkill授予身份"
+        },
+        {
+          "fact": "handoffScopeNarrow",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "scope_type/scope_id不能扩大源授权"
+        }
+      ],
+      "decision": "源work:write；requested status需要既有目标live资格及至少work:read；payload/context/artifact按当前源事实。",
+      "target": true
+    },
+    {
+      "operationId": "requestHandoff",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function transitionHandoff("
+      ],
+      "predicates": [
+        {
+          "fact": "handoffSourceMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "AGENT_SESSION_TOKEN_MISMATCH",
+          "description": "记录from_session_id必须等于当前源Session"
+        },
+        {
+          "fact": "handoffStatus",
+          "allowed": [
+            "draft"
+          ],
+          "reason": "CONFLICT",
+          "description": "仅draft→requested"
+        },
+        {
+          "fact": "handoffTargetGrant",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "目标授权及requestedCapabilities中含work:read"
+        }
+      ],
+      "decision": "实际SDK通过sourceSessionId刷新源E；准确源而非目标accepted_session；不同targetActor不替代源。",
+      "target": true
+    },
+    {
+      "operationId": "cancelHandoff",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function transitionHandoff("
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "human_session"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "当前domain对canceled/completed固定assertHumanTeam；route含Agent不放宽"
+        },
+        {
+          "fact": "handoffStatus",
+          "allowed": [
+            "draft",
+            "requested"
+          ],
+          "reason": "CONFLICT",
+          "description": "仅draft/requested取消"
+        }
+      ],
+      "decision": "route宽于domain：Agent已知拒绝，不为其广告；Human按Team和状态完成/cancel。",
+      "domainDifference": {
+        "kind": "route_agent_domain_human",
+        "closure": "M0共享发现规则固定H-only，保留当前API拒绝并补Agent拒绝/Human允许测试；不改写领域权限"
+      },
+      "positiveActor": "H"
+    },
+    {
+      "operationId": "completeHandoff",
+      "sourcePath": "apps/api/src/collaboration/routes.ts",
+      "anchors": [
+        "async function transitionHandoff("
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "human_session"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "当前domain对canceled/completed固定assertHumanTeam；route含Agent不放宽"
+        },
+        {
+          "fact": "handoffStatus",
+          "allowed": [
+            "accepted"
+          ],
+          "reason": "CONFLICT",
+          "description": "仅accepted完成"
+        },
+        {
+          "fact": "handoffAcceptedCompleted",
+          "allowed": [
+            true
+          ],
+          "reason": "HANDOFF_TARGET_INCOMPLETE",
+          "description": "accepted子Session completed且有summary/evidence，lease transfer已满足"
+        }
+      ],
+      "decision": "route宽于domain：Agent已知拒绝，不为其广告；Human按Team和状态完成/cancel。",
+      "domainDifference": {
+        "kind": "route_agent_domain_human",
+        "closure": "M0共享发现规则固定H-only，保留当前API拒绝并补Agent拒绝/Human允许测试；不改写领域权限"
+      },
+      "positiveActor": "H"
+    },
+    {
+      "operationId": "getCurrentActor",
+      "sourcePath": "apps/api/src/server.ts",
+      "anchors": [
+        "app.get(\"/api/v1/auth/me\"",
+        "app.get(\"/api/v1/workspace\""
+      ],
+      "predicates": [],
+      "decision": "当前Actor/Workspace元数据，route要求live Session/work:read；没有目标、无角色追加。"
+    },
+    {
+      "operationId": "getWorkspace",
+      "sourcePath": "apps/api/src/server.ts",
+      "anchors": [
+        "app.get(\"/api/v1/auth/me\"",
+        "app.get(\"/api/v1/workspace\""
+      ],
+      "predicates": [],
+      "decision": "当前Actor/Workspace元数据，route要求live Session/work:read；没有目标、无角色追加。"
+    },
+    {
+      "operationId": "deleteProject",
+      "sourcePath": "apps/api/src/commands.ts",
+      "anchors": [
+        "deleteProject:",
+        "deleteWorkItem:",
+        "AND s.session_kind='coordination'"
+      ],
+      "predicates": [
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "coordination"
+          ],
+          "reason": "ROLE_REQUIRED",
+          "description": "teamAccess只许协调kind"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "coordinator"
+          ],
+          "reason": "ROLE_REQUIRED",
+          "description": "coordinator/team scope"
+        },
+        {
+          "fact": "delegationScopeType",
+          "allowed": [
+            "team"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确Team grant和scope_id"
+        },
+        {
+          "fact": "sameTeam",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同Team"
+        }
+      ],
+      "decision": "源码已确定：deleteProject teamAccess manage，deleteWorkItem write；Agent两者沿同一C coordinator规则；Human分别admin/maintainer管理与writer。不新增MCP删除入口。",
+      "states": [
+        "acknowledged",
+        "planning",
+        "executing"
+      ],
+      "positiveActor": "C"
+    },
+    {
+      "operationId": "deleteWorkItem",
+      "sourcePath": "apps/api/src/commands.ts",
+      "anchors": [
+        "deleteProject:",
+        "deleteWorkItem:",
+        "AND s.session_kind='coordination'"
+      ],
+      "predicates": [
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "coordination"
+          ],
+          "reason": "ROLE_REQUIRED",
+          "description": "teamAccess只许协调kind"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "coordinator"
+          ],
+          "reason": "ROLE_REQUIRED",
+          "description": "coordinator/team scope"
+        },
+        {
+          "fact": "delegationScopeType",
+          "allowed": [
+            "team"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确Team grant和scope_id"
+        },
+        {
+          "fact": "sameTeam",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "同Team"
+        }
+      ],
+      "decision": "源码已确定：deleteProject teamAccess manage，deleteWorkItem write；Agent两者沿同一C coordinator规则；Human分别admin/maintainer管理与writer。不新增MCP删除入口。",
+      "states": [
+        "acknowledged",
+        "planning",
+        "executing"
+      ],
+      "positiveActor": "C"
+    },
+    {
+      "operationId": "listWorkItemComments",
+      "sourcePath": "apps/api/src/server.ts",
+      "anchors": [
+        "app.get(\"/api/v1/work-items/:id/comments\""
+      ],
+      "predicates": [
+        {
+          "fact": "workItemExact",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "最终live SQL w.id=Session.work_item_id"
+        }
+      ],
+      "decision": "读取准确Work Item评论可用于E；写评论另H-only，不把读权限转成写权限。",
+      "target": true
+    },
+    {
+      "operationId": "listSavedViews",
+      "sourcePath": "apps/api/src/server.ts",
+      "anchors": [
+        "app.get(\"/api/v1/views\"",
+        "async function createView("
+      ],
+      "predicates": [
+        {
+          "fact": "savedViewVisibleScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "列表仅owner_actor_id=self、builtins和同Team/Workspace scope；create可指定已授权Team"
+        }
+      ],
+      "decision": "createView领域不含额外role门禁，沿route身份/live capability/Team scope；只插当前actor所有的view和event。",
+      "target": true
+    },
+    {
+      "operationId": "createSavedView",
+      "sourcePath": "apps/api/src/server.ts",
+      "anchors": [
+        "app.get(\"/api/v1/views\"",
+        "async function createView("
+      ],
+      "predicates": [
+        {
+          "fact": "savedViewVisibleScope",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "列表仅owner_actor_id=self、builtins和同Team/Workspace scope；create可指定已授权Team"
+        }
+      ],
+      "decision": "createView领域不含额外role门禁，沿route身份/live capability/Team scope；只插当前actor所有的view和event。",
+      "target": true
+    },
+    {
+      "operationId": "delegateAndStartAgentSession",
+      "sourcePath": "apps/api/src/agent/commands.ts",
+      "anchors": [
+        "export async function delegateAndStartAgentSession(",
+        "AND connection.grant_agent_delegate"
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "coordination_connection"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH",
+          "description": "Agent仅准确Connection C"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "coordinator"
+          ],
+          "reason": "ROLE_REQUIRED",
+          "description": "连接Coordinator"
+        },
+        {
+          "fact": "sameTeam",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "目标Work Item同Team"
+        },
+        {
+          "fact": "principalResponsibleMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "principalHumanActorId=Connection principal=work item responsible"
+        },
+        {
+          "fact": "delegateGrantEnabled",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "Connection grant_agent_delegate及agent:delegate联合"
+        },
+        {
+          "fact": "childTargetGrant",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "target definition/Team批准请求能力、安装配送身份"
+        },
+        {
+          "fact": "assignmentCompatible",
+          "allowed": [
+            true
+          ],
+          "reason": "ACTIVE_AGENT_EXECUTION",
+          "description": "不替换Human强制/不兼容或live执行"
+        }
+      ],
+      "decision": "C→新E创建，不是输入已有sessionId bridge；输入role为executor；Human分支沿现行Team授权。",
+      "states": [
+        "acknowledged",
+        "planning",
+        "executing"
+      ],
+      "positiveActor": "C",
+      "target": true,
+      "extraCaps": [
+        "agent:delegate"
+      ]
+    },
+    {
+      "operationId": "claimWorkItem",
+      "sourcePath": "apps/api/src/agent/commands.ts",
+      "anchors": [
+        "export async function claimWorkItem(",
+        "const coordinationActive ="
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "coordination_connection"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "仅active/rotating准确Connection"
+        },
+        {
+          "fact": "sameTeam",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "目标Work Item同Team"
+        },
+        {
+          "fact": "principalResponsibleMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "Connection principal与responsible及授权一致"
+        },
+        {
+          "fact": "assignmentCompatible",
+          "allowed": [
+            true
+          ],
+          "reason": "ACTIVE_AGENT_EXECUTION",
+          "description": "无live/不兼容执行；旧同Agent stale可继续兼容assignment"
+        },
+        {
+          "fact": "claimWorkCapabilities",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "Connection∩C Delegation∩definition∩Team包括work:read/work:write"
+        },
+        {
+          "fact": "claimRequestedSubset",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "requestedCapabilities不扩大live交集；agent:delegate不继承"
+        }
+      ],
+      "decision": "当前C self claim；返回queued新E和exchangeToken，SDK用Connection交换；无需预配置installation bridge。",
+      "states": [
+        "acknowledged",
+        "planning",
+        "executing"
+      ],
+      "positiveActor": "C",
+      "target": true,
+      "extraCaps": [
+        "work:read",
+        "work:write"
+      ]
+    },
+    {
+      "operationId": "listAgentSessions",
+      "sourcePath": "apps/api/src/agent/routes.ts",
+      "anchors": [
+        "async function readableSession("
+      ],
+      "predicates": [
+        {
+          "fact": "readSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "AGENT_SESSION_TOKEN_MISMATCH",
+          "description": "Agent读只绑定自身Session，列表按自身过滤；Human按Team"
+        },
+        {
+          "fact": "readObjectSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "plan/artifact/approval准确session FK"
+        }
+      ],
+      "decision": "sessionId过滤不是任意Token切换；C list只返回当前C的事实，不列其他E。",
+      "target": true
+    },
+    {
+      "operationId": "listAgentPlanVersions",
+      "sourcePath": "apps/api/src/agent/routes.ts",
+      "anchors": [
+        "async function readableSession("
+      ],
+      "predicates": [
+        {
+          "fact": "readSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "AGENT_SESSION_TOKEN_MISMATCH",
+          "description": "Agent读只绑定自身Session，列表按自身过滤；Human按Team"
+        },
+        {
+          "fact": "readObjectSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "plan/artifact/approval准确session FK"
+        }
+      ],
+      "decision": "sessionId过滤不是任意Token切换；C list只返回当前C的事实，不列其他E。",
+      "target": true
+    },
+    {
+      "operationId": "listArtifacts",
+      "sourcePath": "apps/api/src/agent/routes.ts",
+      "anchors": [
+        "async function readableSession("
+      ],
+      "predicates": [
+        {
+          "fact": "readSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "AGENT_SESSION_TOKEN_MISMATCH",
+          "description": "Agent读只绑定自身Session，列表按自身过滤；Human按Team"
+        },
+        {
+          "fact": "readObjectSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "plan/artifact/approval准确session FK"
+        }
+      ],
+      "decision": "sessionId过滤不是任意Token切换；C list只返回当前C的事实，不列其他E。",
+      "target": true
+    },
+    {
+      "operationId": "listApprovals",
+      "sourcePath": "apps/api/src/agent/routes.ts",
+      "anchors": [
+        "async function readableSession("
+      ],
+      "predicates": [
+        {
+          "fact": "readSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "AGENT_SESSION_TOKEN_MISMATCH",
+          "description": "Agent读只绑定自身Session，列表按自身过滤；Human按Team"
+        },
+        {
+          "fact": "readObjectSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "plan/artifact/approval准确session FK"
+        }
+      ],
+      "decision": "sessionId过滤不是任意Token切换；C list只返回当前C的事实，不列其他E。",
+      "target": true
+    },
+    {
+      "operationId": "getApproval",
+      "sourcePath": "apps/api/src/agent/routes.ts",
+      "anchors": [
+        "async function readableSession("
+      ],
+      "predicates": [
+        {
+          "fact": "readSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "AGENT_SESSION_TOKEN_MISMATCH",
+          "description": "Agent读只绑定自身Session，列表按自身过滤；Human按Team"
+        },
+        {
+          "fact": "readObjectSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "plan/artifact/approval准确session FK"
+        }
+      ],
+      "decision": "sessionId过滤不是任意Token切换；C list只返回当前C的事实，不列其他E。",
+      "target": true
+    },
+    {
+      "operationId": "consumeApproval",
+      "sourcePath": "apps/api/src/agent/commands.ts",
+      "anchors": [
+        "export async function consumeApproval(",
+        "async function consumeApprovalInTx("
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session",
+            "coordination_connection"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "consumeApproval handler只Agent，Human凭据虽route允许仍拒绝"
+        },
+        {
+          "fact": "approvalSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "approval.session_id=self"
+        },
+        {
+          "fact": "approvalUsable",
+          "allowed": [
+            true
+          ],
+          "reason": "APPROVAL_REQUIRED",
+          "description": "approved、未过期未消费、hash和If-Match"
+        }
+      ],
+      "decision": "领域只允许Agent Session，Human虽然route宽仍FORBIDDEN；准确当前Session+work:write。",
+      "target": true
+    },
+    {
+      "operationId": "listHumanAttention",
+      "sourcePath": "apps/api/src/human-attention/routes.ts",
+      "anchors": [
+        "export function humanAttentionAuthorizationPredicate("
+      ],
+      "predicates": [
+        {
+          "fact": "attentionScope",
+          "allowed": [
+            "self_session",
+            "session_work_item",
+            "work_item_project",
+            "session_project",
+            "coordination_same_team"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "E准确源范围；C同Team；所有live事实在最终SQL"
+        },
+        {
+          "fact": "attentionInboxRecipient",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "Inbox source还需actor收件且Session null或self"
+        }
+      ],
+      "decision": "只读聚合，不授予Attention上的Human action；可选sessionId为过滤，不自动bridge。",
+      "target": true
+    },
+    {
+      "operationId": "getHumanAttention",
+      "sourcePath": "apps/api/src/human-attention/routes.ts",
+      "anchors": [
+        "export function humanAttentionAuthorizationPredicate("
+      ],
+      "predicates": [
+        {
+          "fact": "attentionScope",
+          "allowed": [
+            "self_session",
+            "session_work_item",
+            "work_item_project",
+            "session_project",
+            "coordination_same_team"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "E准确源范围；C同Team；所有live事实在最终SQL"
+        },
+        {
+          "fact": "attentionInboxRecipient",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "Inbox source还需actor收件且Session null或self"
+        }
+      ],
+      "decision": "只读聚合，不授予Attention上的Human action；可选sessionId为过滤，不自动bridge。",
+      "target": true
+    },
+    {
+      "operationId": "listRecoveryItems",
+      "sourcePath": "apps/api/src/recovery/routes.ts",
+      "anchors": [
+        "export function recoveryAuthorizationPredicate("
+      ],
+      "predicates": [
+        {
+          "fact": "readSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "recovery.session_id必须当前exact Session，C不借Team scope读其他E"
+        }
+      ],
+      "decision": "只读恢复投影；M1专用终态确认不在此新增。",
+      "target": true
+    },
+    {
+      "operationId": "getRecoveryItem",
+      "sourcePath": "apps/api/src/recovery/routes.ts",
+      "anchors": [
+        "export function recoveryAuthorizationPredicate("
+      ],
+      "predicates": [
+        {
+          "fact": "readSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "recovery.session_id必须当前exact Session，C不借Team scope读其他E"
+        }
+      ],
+      "decision": "只读恢复投影；M1专用终态确认不在此新增。",
+      "target": true
+    },
+    {
+      "operationId": "listControlCenter",
+      "sourcePath": "apps/api/src/control-center/routes.ts",
+      "anchors": [
+        "const sourceScopePredicate ="
+      ],
+      "predicates": [
+        {
+          "fact": "controlSourceScope",
+          "allowed": [
+            "self_session",
+            "session_work_item",
+            "work_item_project",
+            "session_project",
+            "coordination_same_team"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "源Session/Work Item/Project或C同Team；每collection沿对应SQL"
+        }
+      ],
+      "decision": "只读bounded投影；allowedControls为服务端建议，不授予control写；Project/not found保守。",
+      "target": true
+    },
+    {
+      "operationId": "getProjectControlCenter",
+      "sourcePath": "apps/api/src/control-center/routes.ts",
+      "anchors": [
+        "const sourceScopePredicate ="
+      ],
+      "predicates": [
+        {
+          "fact": "controlSourceScope",
+          "allowed": [
+            "self_session",
+            "session_work_item",
+            "work_item_project",
+            "session_project",
+            "coordination_same_team"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "源Session/Work Item/Project或C同Team；每collection沿对应SQL"
+        }
+      ],
+      "decision": "只读bounded投影；allowedControls为服务端建议，不授予control写；Project/not found保守。",
+      "target": true
+    },
+    {
+      "operationId": "getWorkItemExecutionSummary",
+      "sourcePath": "apps/api/src/control-center/routes.ts",
+      "anchors": [
+        "const sourceScopePredicate ="
+      ],
+      "predicates": [
+        {
+          "fact": "controlSourceScope",
+          "allowed": [
+            "self_session",
+            "session_work_item",
+            "work_item_project",
+            "session_project",
+            "coordination_same_team"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "源Session/Work Item/Project或C同Team；每collection沿对应SQL"
+        }
+      ],
+      "decision": "只读bounded投影；allowedControls为服务端建议，不授予control写；Project/not found保守。",
+      "target": true
+    },
+    {
+      "operationId": "explainAgentSession",
+      "sourcePath": "apps/api/src/control-center/routes.ts",
+      "anchors": [
+        "async function readRunExplanation(",
+        "async function previewControl("
+      ],
+      "predicates": [
+        {
+          "fact": "readSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "liveSessionReadPredicate exact session.id=self；有sessionId参数不代表C可直接查其他E"
+        }
+      ],
+      "decision": "explanation/preview为读取；preview POST无领域写，allowed字段是目标状态建议，不能凭它执行H-only控制。",
+      "target": true
+    },
+    {
+      "operationId": "previewAgentSessionControl",
+      "sourcePath": "apps/api/src/control-center/routes.ts",
+      "anchors": [
+        "async function readRunExplanation(",
+        "async function previewControl("
+      ],
+      "predicates": [
+        {
+          "fact": "readSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "liveSessionReadPredicate exact session.id=self；有sessionId参数不代表C可直接查其他E"
+        }
+      ],
+      "decision": "explanation/preview为读取；preview POST无领域写，allowed字段是目标状态建议，不能凭它执行H-only控制。",
+      "target": true
+    },
+    {
+      "operationId": "getWorkspaceGuidance",
+      "sourcePath": "apps/api/src/guidance.ts",
+      "anchors": [
+        "export function registerGuidanceRoutes(",
+        "export async function readGuidance("
+      ],
+      "predicates": [
+        {
+          "fact": "guidanceScopeMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "route workspace/team/project resolver要求当前live授权范围；handler只读取已选scope"
+        }
+      ],
+      "decision": "无目标Session字段；Guidance URI普通scope id；未发布返回空文档，不授予publish/archive/rollback。",
+      "target": true
+    },
+    {
+      "operationId": "getTeamGuidance",
+      "sourcePath": "apps/api/src/guidance.ts",
+      "anchors": [
+        "export function registerGuidanceRoutes(",
+        "export async function readGuidance("
+      ],
+      "predicates": [
+        {
+          "fact": "guidanceScopeMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "route workspace/team/project resolver要求当前live授权范围；handler只读取已选scope"
+        }
+      ],
+      "decision": "无目标Session字段；Guidance URI普通scope id；未发布返回空文档，不授予publish/archive/rollback。",
+      "target": true
+    },
+    {
+      "operationId": "getProjectGuidance",
+      "sourcePath": "apps/api/src/guidance.ts",
+      "anchors": [
+        "export function registerGuidanceRoutes(",
+        "export async function readGuidance("
+      ],
+      "predicates": [
+        {
+          "fact": "guidanceScopeMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "route workspace/team/project resolver要求当前live授权范围；handler只读取已选scope"
+        }
+      ],
+      "decision": "无目标Session字段；Guidance URI普通scope id；未发布返回空文档，不授予publish/archive/rollback。",
+      "target": true
+    },
+    {
+      "operationId": "listRepositories",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "function applicableAgentRepositoryContexts(",
+        "async function assertRepositoryRead(",
+        "Repository filters require a Human session"
+      ],
+      "predicates": [
+        {
+          "fact": "repositoryContextApplicable",
+          "allowed": [
+            true
+          ],
+          "reason": "REPOSITORY_ACCESS_DENIED",
+          "description": "准确Session/work_item/project context且live repo:read、repositoryIds、同Team、active repo/provider"
+        },
+        {
+          "fact": "repositoryHumanFiltersAbsent",
+          "allowed": [
+            true
+          ],
+          "reason": "VALIDATION_ERROR",
+          "description": "当前main teamId/availableOnly仅Human；Agent携带过滤失败"
+        }
+      ],
+      "decision": "repo:read不扩大为配置权限；Agent DTO can_configure_context=false；context数组返回原件/provenance。A2改变DTO，不改变Session资格。",
+      "target": true,
+      "extraCaps": [
+        "repo:read"
+      ]
+    },
+    {
+      "operationId": "getRepositoryContext",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "function applicableAgentRepositoryContexts(",
+        "async function assertRepositoryRead(",
+        "Repository filters require a Human session"
+      ],
+      "predicates": [
+        {
+          "fact": "repositoryContextApplicable",
+          "allowed": [
+            true
+          ],
+          "reason": "REPOSITORY_ACCESS_DENIED",
+          "description": "准确Session/work_item/project context且live repo:read、repositoryIds、同Team、active repo/provider"
+        }
+      ],
+      "decision": "repo:read不扩大为配置权限；Agent DTO can_configure_context=false；context数组返回原件/provenance。A2改变DTO，不改变Session资格。",
+      "target": true,
+      "extraCaps": [
+        "repo:read"
+      ]
+    },
+    {
+      "operationId": "publishDeliveryArtifact",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "async function assertAgentRepositoryWrite(",
+        "async function assertDeliveryTarget("
+      ],
+      "predicates": [
+        {
+          "fact": "deliveryWorkItemExact",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确session work_item、可选project为其所属、planStep为当前Plan"
+        },
+        {
+          "fact": "repositoryContextApplicable",
+          "allowed": [
+            true
+          ],
+          "reason": "REPOSITORY_ACCESS_DENIED",
+          "description": "repository分支live repo:read及context权限read",
+          "when": {
+            "deliveryVariant": "repository"
+          }
+        },
+        {
+          "fact": "deliveryCurrentHead",
+          "allowed": [
+            true
+          ],
+          "reason": "MERGE_HEAD_CHANGED",
+          "description": "提供PR/head必须为同work_item/repository准确当前head",
+          "when": {
+            "pullRequestProvided": true
+          }
+        },
+        {
+          "fact": "artifactMetadataValid",
+          "allowed": [
+            true
+          ],
+          "reason": "VALIDATION_ERROR",
+          "description": "checksum/sourceTool/安全正文或上传mime/size准确DTO"
+        }
+      ],
+      "decision": "artifact:write；普通artifact无repository变体不要求repocontext，当前MCP固定deliveryLink repository分支；上传只能物化file不能当code_review。",
+      "target": true,
+      "extraCaps": [
+        "artifact:write"
+      ]
+    },
+    {
+      "operationId": "requestArtifactUpload",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "async function assertAgentRepositoryWrite(",
+        "async function assertDeliveryTarget("
+      ],
+      "predicates": [
+        {
+          "fact": "deliveryWorkItemExact",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确session work_item、可选project为其所属、planStep为当前Plan"
+        },
+        {
+          "fact": "repositoryContextApplicable",
+          "allowed": [
+            true
+          ],
+          "reason": "REPOSITORY_ACCESS_DENIED",
+          "description": "repository分支live repo:read及context权限read",
+          "when": {
+            "deliveryVariant": "repository"
+          }
+        },
+        {
+          "fact": "deliveryCurrentHead",
+          "allowed": [
+            true
+          ],
+          "reason": "MERGE_HEAD_CHANGED",
+          "description": "提供PR/head必须为同work_item/repository准确当前head",
+          "when": {
+            "pullRequestProvided": true
+          }
+        },
+        {
+          "fact": "artifactMetadataValid",
+          "allowed": [
+            true
+          ],
+          "reason": "VALIDATION_ERROR",
+          "description": "checksum/sourceTool/安全正文或上传mime/size准确DTO"
+        }
+      ],
+      "decision": "artifact:write；普通artifact无repository变体不要求repocontext，当前MCP固定deliveryLink repository分支；上传只能物化file不能当code_review。",
+      "target": true,
+      "extraCaps": [
+        "artifact:write"
+      ]
+    },
+    {
+      "operationId": "getArtifactUploadStatus",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/artifact-upload-intents/:id'",
+        "app.post('/api/v1/artifact-upload-intents/:id/finalize'"
+      ],
+      "predicates": [
+        {
+          "fact": "uploadSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "upload.session_id=self；Human为本人requester或对应Team下载规则"
+        }
+      ],
+      "decision": "不从uploadId推断可切换身份；finalize body current Session沿SDK显式目标，cancel和status为当前Token。",
+      "target": true
+    },
+    {
+      "operationId": "finalizeArtifactUpload",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/artifact-upload-intents/:id'",
+        "app.post('/api/v1/artifact-upload-intents/:id/finalize'"
+      ],
+      "predicates": [
+        {
+          "fact": "uploadSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "upload.session_id=self；Human为本人requester或对应Team下载规则"
+        },
+        {
+          "fact": "uploadProofValid",
+          "allowed": [
+            true
+          ],
+          "reason": "ARTIFACT_CHECKSUM_MISMATCH",
+          "description": "精确storage对象长度/hash及允许type/mime，verified重放沿现行规则"
+        }
+      ],
+      "decision": "不从uploadId推断可切换身份；finalize body current Session沿SDK显式目标，cancel和status为当前Token。",
+      "target": true
+    },
+    {
+      "operationId": "cancelArtifactUpload",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/artifact-upload-intents/:id'",
+        "app.post('/api/v1/artifact-upload-intents/:id/finalize'"
+      ],
+      "predicates": [
+        {
+          "fact": "uploadSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "upload.session_id=self；Human为本人requester或对应Team下载规则"
+        },
+        {
+          "fact": "uploadStatus",
+          "allowed": [
+            "pending",
+            "uploaded",
+            "canceled"
+          ],
+          "reason": "CONFLICT",
+          "description": "仅pending/uploaded可变更，canceled可返回"
+        }
+      ],
+      "decision": "不从uploadId推断可切换身份；finalize body current Session沿SDK显式目标，cancel和status为当前Token。",
+      "target": true
+    },
+    {
+      "operationId": "downloadVerifiedArtifact",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/artifact-upload-intents/:id'",
+        "app.post('/api/v1/artifact-upload-intents/:id/finalize'"
+      ],
+      "predicates": [
+        {
+          "fact": "uploadSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "upload.session_id=self；Human为本人requester或对应Team下载规则"
+        },
+        {
+          "fact": "uploadStatus",
+          "allowed": [
+            "verified"
+          ],
+          "reason": "CONFLICT",
+          "description": "仅verified并由存储生成有界download链接"
+        }
+      ],
+      "decision": "不从uploadId推断可切换身份；finalize body current Session沿SDK显式目标，cancel和status为当前Token。",
+      "target": true
+    },
+    {
+      "operationId": "listWorkItemArtifacts",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/work-items/:id/artifacts'"
+      ],
+      "predicates": [
+        {
+          "fact": "workItemExact",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确Session.work_item，不用任意同TeamWork Item"
+        }
+      ],
+      "decision": "列表投影沿live work:read，包含同Work Item证据；不等于批准review/merge。",
+      "target": true
+    },
+    {
+      "operationId": "publishStructuredReview",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "async function prepareAgentPullRequestAccess(",
+        "delegation.role !== 'reviewer'"
+      ],
+      "predicates": [
+        {
+          "fact": "role",
+          "allowed": [
+            "reviewer"
+          ],
+          "reason": "REVIEWER_CONFLICT",
+          "description": "必须reviewer Delegation"
+        },
+        {
+          "fact": "independentReviewer",
+          "allowed": [
+            true
+          ],
+          "reason": "REVIEWER_CONFLICT",
+          "description": "actor!=PR producer"
+        },
+        {
+          "fact": "repositoryContextApplicable",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "live repo:read及context review permission"
+        },
+        {
+          "fact": "deliveryWorkItemExact",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "PR属于exact Session work_item/repository"
+        },
+        {
+          "fact": "deliveryCurrentHead",
+          "allowed": [
+            true
+          ],
+          "reason": "MERGE_HEAD_CHANGED",
+          "description": "准确当前head"
+        },
+        {
+          "fact": "linkedReviewArtifact",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "自己的code_review artifact，checksum/sourceTool/head/work_item/repository/PR完整provenance"
+        }
+      ],
+      "decision": "artifact:write联合route能力，file upload不满足reviewartifact；不授予executor reviewer身份。",
+      "target": true,
+      "extraCaps": [
+        "artifact:write",
+        "repo:read"
+      ],
+      "roles": [
+        "reviewer"
+      ]
+    },
+    {
+      "operationId": "requestPullRequestMerge",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "async function prepareAgentPullRequestAccess(",
+        "assertMergeReady("
+      ],
+      "predicates": [
+        {
+          "fact": "repositoryContextApplicable",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "live repo:read及merge/ci context permission"
+        },
+        {
+          "fact": "deliveryWorkItemExact",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确PR/work_item/repository"
+        },
+        {
+          "fact": "deliveryCurrentHead",
+          "allowed": [
+            true
+          ],
+          "reason": "MERGE_HEAD_CHANGED",
+          "description": "准确当前head"
+        },
+        {
+          "fact": "providerApprovalBound",
+          "allowed": [
+            true
+          ],
+          "reason": "MERGE_APPROVAL_MISMATCH",
+          "description": "approved未过期未消费；Session/action/provider/connection/repository/PR/head/method/check及canonical hash准确"
+        },
+        {
+          "fact": "mergeReady",
+          "allowed": [
+            true
+          ],
+          "reason": "MERGE_CHECKS_BLOCKED",
+          "description": "当前head required checks齐全通过且blocking/high findings和独立review闭合"
+        },
+        {
+          "fact": "pullRequestState",
+          "allowed": [
+            "open"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "open PR"
+        }
+      ],
+      "decision": "写仅持久化provider intent；审批/required CI/独审仍server裁决；不在本轮外发。",
+      "target": true,
+      "extraCaps": [
+        "repo:read"
+      ]
+    },
+    {
+      "operationId": "retryPullRequestCheck",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "async function prepareAgentPullRequestAccess(",
+        "assertMergeReady("
+      ],
+      "predicates": [
+        {
+          "fact": "repositoryContextApplicable",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED",
+          "description": "live repo:read及merge/ci context permission"
+        },
+        {
+          "fact": "deliveryWorkItemExact",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确PR/work_item/repository"
+        },
+        {
+          "fact": "deliveryCurrentHead",
+          "allowed": [
+            true
+          ],
+          "reason": "MERGE_HEAD_CHANGED",
+          "description": "准确当前head"
+        },
+        {
+          "fact": "providerApprovalBound",
+          "allowed": [
+            true
+          ],
+          "reason": "MERGE_APPROVAL_MISMATCH",
+          "description": "approved未过期未消费；Session/action/provider/connection/repository/PR/head/method/check及canonical hash准确"
+        },
+        {
+          "fact": "checkStatus",
+          "allowed": [
+            "failed",
+            "skipped"
+          ],
+          "reason": "CI_RETRY_NOT_ALLOWED",
+          "description": "仅failed/skipped current-head check；准确provider.ci.retry批准"
+        }
+      ],
+      "decision": "写仅持久化provider intent；审批/required CI/独审仍server裁决；不在本轮外发。",
+      "target": true,
+      "extraCaps": [
+        "repo:read"
+      ]
+    },
+    {
+      "operationId": "getProjectDelivery",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/projects/:id/delivery'"
+      ],
+      "predicates": [
+        {
+          "fact": "projectDeliveryVisible",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "route Project范围+readableTeam；列表PR provider feature与context不授予配置权限"
+        }
+      ],
+      "decision": "按现行project delivery查询；无MCP入口不误列supported；不会新增Agent管理动作。",
+      "target": true
+    },
+    {
+      "operationId": "createProjectUpdateDraft",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "Project update is outside the session scope",
+        "await assertEvidenceArtifacts(tx,"
+      ],
+      "predicates": [
+        {
+          "fact": "projectBinding",
+          "allowed": [
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确Project或其Work Item"
+        },
+        {
+          "fact": "evidenceSameTarget",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "evidence artifacts属于准确Project/WorkItem"
+        }
+      ],
+      "decision": "当前Agent只draft，work:write；MCP sessionId供SDK选择当前E/目标E，正文不含该字段；publish H-only。",
+      "target": true
+    },
+    {
+      "operationId": "suggestWorkItemCompletion",
+      "sourcePath": "apps/api/src/delivery/routes.ts",
+      "anchors": [
+        "Work item does not belong to this project",
+        "await assertDeliveryTarget(tx,"
+      ],
+      "predicates": [
+        {
+          "fact": "deliveryWorkItemExact",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确SessionWork Item且属于输入Project"
+        },
+        {
+          "fact": "evidenceSameTarget",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "PR/artifacts同target"
+        }
+      ],
+      "decision": "Agent suggestion不是Human completion decision；无现有MCP入口，按当前SDK实现披露。",
+      "target": true
+    },
+    {
+      "operationId": "listCycles",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/cycles'",
+        "app.get('/api/v1/automation-rules'"
+      ],
+      "predicates": [
+        {
+          "fact": "teamCollectionScope",
+          "allowed": [
+            "workspace",
+            "current_team"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "最终live SQL只许Workspace或当前Team"
+        }
+      ],
+      "decision": "现有REST/SDK列表，role无额外限制；缺MCP具名适配单列，不阻断领域审计。",
+      "target": true
+    },
+    {
+      "operationId": "listAutomationRules",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/cycles'",
+        "app.get('/api/v1/automation-rules'"
+      ],
+      "predicates": [
+        {
+          "fact": "teamCollectionScope",
+          "allowed": [
+            "workspace",
+            "current_team"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "最终live SQL只许Workspace或当前Team"
+        }
+      ],
+      "decision": "现有REST/SDK列表，role无额外限制；缺MCP具名适配单列，不阻断领域审计。",
+      "target": true
+    },
+    {
+      "operationId": "listInitiatives",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/initiatives'"
+      ],
+      "predicates": [
+        {
+          "fact": "initiativeLinkedProjectScope",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "必须关联当前Team且准确Session project/Work Item project"
+        }
+      ],
+      "decision": "聚合列表只是可见Initiative；rollup另有实际membership差异，不能借此扩大。",
+      "target": true
+    },
+    {
+      "operationId": "listAdvancedViews",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/advanced-views'",
+        "const resultScope ="
+      ],
+      "predicates": [
+        {
+          "fact": "viewVisibility",
+          "allowed": [
+            "owner",
+            "workspace",
+            "current_team"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "owner或workspace/current team的saved view"
+        }
+      ],
+      "decision": "evaluate结果按entity issue/project/session/initiative再缩到Session绑定；cost字段需显式currency及feature；supported layout/filter由DTO/domain校验。",
+      "target": true
+    },
+    {
+      "operationId": "evaluateAdvancedView",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/advanced-views'",
+        "const resultScope ="
+      ],
+      "predicates": [
+        {
+          "fact": "viewVisibility",
+          "allowed": [
+            "owner",
+            "workspace",
+            "current_team"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "owner或workspace/current team的saved view"
+        },
+        {
+          "fact": "viewResultScope",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "每类结果使用Session准确绑定"
+        },
+        {
+          "fact": "viewLayoutFilterSupported",
+          "allowed": [
+            true
+          ],
+          "reason": "VIEW_FILTER_UNSUPPORTED",
+          "description": "有效layout/filter与cost currency和feature"
+        }
+      ],
+      "decision": "evaluate结果按entity issue/project/session/initiative再缩到Session绑定；cost字段需显式currency及feature；supported layout/filter由DTO/domain校验。",
+      "target": true
+    },
+    {
+      "operationId": "getInitiativeRollup",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/initiatives/:id/rollup'",
+        "app.get('/api/v1/automation-runs/:runId'",
+        "app.get('/api/v1/usage-summary'",
+        "app.get('/api/v1/a2a-bindings/:id/tasks/:taskId/events'"
+      ],
+      "predicates": [
+        {
+          "fact": "legacyMembershipQueryVisible",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "当前handler查询仍按actor workspaceRole/admin或memberships；没有与列表一致的exact Agent source投影"
+        }
+      ],
+      "decision": "真实领域差异已定位，不能把Human membership SQL当Agent通用支持；M0不广告这些未适配聚合。",
+      "target": true,
+      "domainDifference": {
+        "kind": "agent_list_vs_legacy_detail_scope",
+        "closure": "M0共享发现固定blocked/DOMAIN_QUERY_NOT_AGENT_ALIGNED，static核差异与缺MCP，产品验收验证不广告及允许既有精确列表；M4负责领域投影补齐，本轮不改变原API写授权"
+      },
+      "discoveryBlocked": "DOMAIN_QUERY_NOT_AGENT_ALIGNED",
+      "positiveActor": "H",
+      "futureAdapter": "M4"
+    },
+    {
+      "operationId": "getAutomationRun",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/initiatives/:id/rollup'",
+        "app.get('/api/v1/automation-runs/:runId'",
+        "app.get('/api/v1/usage-summary'",
+        "app.get('/api/v1/a2a-bindings/:id/tasks/:taskId/events'"
+      ],
+      "predicates": [
+        {
+          "fact": "legacyMembershipQueryVisible",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "当前handler查询仍按actor workspaceRole/admin或memberships；没有与列表一致的exact Agent source投影"
+        }
+      ],
+      "decision": "真实领域差异已定位，不能把Human membership SQL当Agent通用支持；M0不广告这些未适配聚合。",
+      "target": true,
+      "domainDifference": {
+        "kind": "agent_list_vs_legacy_detail_scope",
+        "closure": "M0共享发现固定blocked/DOMAIN_QUERY_NOT_AGENT_ALIGNED，static核差异与缺MCP，产品验收验证不广告及允许既有精确列表；M4负责领域投影补齐，本轮不改变原API写授权"
+      },
+      "discoveryBlocked": "DOMAIN_QUERY_NOT_AGENT_ALIGNED",
+      "positiveActor": "H",
+      "futureAdapter": "M4"
+    },
+    {
+      "operationId": "getUsageSummary",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/initiatives/:id/rollup'",
+        "app.get('/api/v1/automation-runs/:runId'",
+        "app.get('/api/v1/usage-summary'",
+        "app.get('/api/v1/a2a-bindings/:id/tasks/:taskId/events'"
+      ],
+      "predicates": [
+        {
+          "fact": "legacyMembershipQueryVisible",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "当前handler查询仍按actor workspaceRole/admin或memberships；没有与列表一致的exact Agent source投影"
+        }
+      ],
+      "decision": "真实领域差异已定位，不能把Human membership SQL当Agent通用支持；M0不广告这些未适配聚合。",
+      "target": true,
+      "domainDifference": {
+        "kind": "agent_list_vs_legacy_detail_scope",
+        "closure": "M0共享发现固定blocked/DOMAIN_QUERY_NOT_AGENT_ALIGNED，static核差异与缺MCP，产品验收验证不广告及允许既有精确列表；M4负责领域投影补齐，本轮不改变原API写授权"
+      },
+      "discoveryBlocked": "DOMAIN_QUERY_NOT_AGENT_ALIGNED",
+      "positiveActor": "H",
+      "futureAdapter": "M4"
+    },
+    {
+      "operationId": "streamA2ATaskEvents",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/initiatives/:id/rollup'",
+        "app.get('/api/v1/automation-runs/:runId'",
+        "app.get('/api/v1/usage-summary'",
+        "app.get('/api/v1/a2a-bindings/:id/tasks/:taskId/events'"
+      ],
+      "predicates": [
+        {
+          "fact": "legacyMembershipQueryVisible",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "当前handler查询仍按actor workspaceRole/admin或memberships；没有与列表一致的exact Agent source投影"
+        }
+      ],
+      "decision": "真实领域差异已定位，不能把Human membership SQL当Agent通用支持；M0不广告这些未适配聚合。",
+      "target": true,
+      "domainDifference": {
+        "kind": "agent_list_vs_legacy_detail_scope",
+        "closure": "M0共享发现固定blocked/DOMAIN_QUERY_NOT_AGENT_ALIGNED，static核差异与缺MCP，产品验收验证不广告及允许既有精确列表；M4负责领域投影补齐，本轮不改变原API写授权"
+      },
+      "discoveryBlocked": "DOMAIN_QUERY_NOT_AGENT_ALIGNED",
+      "positiveActor": "H",
+      "futureAdapter": "M4"
+    },
+    {
+      "operationId": "listAutomationRuns",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/automation-runs'"
+      ],
+      "predicates": [
+        {
+          "fact": "automationRunSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "run.session_id=current exact Session且live"
+        }
+      ],
+      "decision": "列表有精确Agent分支；getAutomationRun另记差异，不整体关闭列表。",
+      "target": true
+    },
+    {
+      "operationId": "listLoops",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/loops'"
+      ],
+      "predicates": [
+        {
+          "fact": "loopVisibility",
+          "allowed": [
+            "workspace",
+            "owner",
+            "current_team"
+          ],
+          "reason": "NOT_FOUND",
+          "description": "loop workspace可见、当前actor拥有或Session Team，live Session"
+        }
+      ],
+      "decision": "当前list可适配；run admission另列状态/模板/预算，不从enabled推可运行。",
+      "target": true
+    },
+    {
+      "operationId": "runLoopNow",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "const admissionAuthorization =",
+        "app.post('/api/v1/loops/:id/run'"
+      ],
+      "predicates": [
+        {
+          "fact": "loopSameTeam",
+          "allowed": [
+            true
+          ],
+          "reason": "FORBIDDEN",
+          "description": "DB admission要求非null Team且等于Session Team及teamIds"
+        },
+        {
+          "fact": "loopTemplateActive",
+          "allowed": [
+            true
+          ],
+          "reason": "RUN_TEMPLATE_INVALID",
+          "description": "active AgentRunTemplate版本"
+        },
+        {
+          "fact": "loopAdmissionCapacity",
+          "allowed": [
+            true
+          ],
+          "reason": "LOOP_RUN_LIMIT",
+          "description": "loop state/budget/concurrency/overlap/occurrenceKey及template所需cap/scope"
+        }
+      ],
+      "decision": "route automation:manage与DB work:write联合；state取交集acknowledged/executing/awaiting_input/awaiting_approval；无MCP入口，M4只补后续入口不以此阻断M0。",
+      "target": true,
+      "extraCaps": [
+        "work:write"
+      ],
+      "states": [
+        "acknowledged",
+        "executing",
+        "awaiting_input",
+        "awaiting_approval"
+      ],
+      "additionalSources": [
+        [
+          "packages/db/src/stage4.ts",
+          "async function assertAdmissionAuthorization("
+        ],
+        [
+          "packages/db/src/stage4.ts",
+          "export async function admitLoopRun("
+        ]
+      ],
+      "futureAdapter": "M4"
+    },
+    {
+      "operationId": "getProjectHealthHistory",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/projects/:id/health'",
+        "assertExactAgentProjectBinding(agentHealthSession"
+      ],
+      "predicates": [
+        {
+          "fact": "projectBinding",
+          "allowed": [
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确所属Project或Session Project且live Team"
+        }
+      ],
+      "decision": "read history work:read；Agent health source必须agent，work:write，If-Match；Human source另分支。",
+      "target": true
+    },
+    {
+      "operationId": "createProjectHealthUpdate",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/projects/:id/health'",
+        "assertExactAgentProjectBinding(agentHealthSession"
+      ],
+      "predicates": [
+        {
+          "fact": "projectBinding",
+          "allowed": [
+            "work_item_project",
+            "session_project"
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "准确所属Project或Session Project且live Team"
+        },
+        {
+          "fact": "healthSource",
+          "allowed": [
+            "agent"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "Agent不得提交human source"
+        },
+        {
+          "fact": "healthSourcesSameProject",
+          "allowed": [
+            true
+          ],
+          "reason": "HEALTH_SOURCE_SCOPE_INVALID",
+          "description": "有来源且source属于准确Project"
+        },
+        {
+          "fact": "healthPublishApproval",
+          "allowed": [
+            true
+          ],
+          "reason": "APPROVAL_PAYLOAD_MISMATCH",
+          "description": "publish=true需准确project.health.publish批准/hash",
+          "when": {
+            "healthPublish": true
+          }
+        }
+      ],
+      "decision": "read history work:read；Agent health source必须agent，work:write，If-Match；Human source另分支。",
+      "target": true
+    },
+    {
+      "operationId": "recordUsage",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "Usage Agent must match the Agent Session",
+        "Usage Project must match the Agent Session resource"
+      ],
+      "predicates": [
+        {
+          "fact": "usageSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "只当前Session"
+        },
+        {
+          "fact": "usageAgentMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "body.agentId等于Session.agent_id"
+        },
+        {
+          "fact": "usageProjectMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED",
+          "description": "body.projectId等于Session.project或其work_item所属Project"
+        }
+      ],
+      "decision": "领域要求work:read，route所需能力仍取联合；dedupeKey是持久事实去重，不能用外部agentId扩大身份。",
+      "target": true
+    },
+    {
+      "operationId": "listTemplates",
+      "sourcePath": "apps/api/src/operations/routes.ts",
+      "anchors": [
+        "app.get('/api/v1/templates'"
+      ],
+      "predicates": [
+        {
+          "fact": "templatePinnedToRun",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "仅自己automation_run→loop→run_template_version的active模板"
+        }
+      ],
+      "decision": "当前Agent已授权模板读取有精确SQL；不广告模板管理，缺MCP适配单列。",
+      "target": true
+    },
+    {
+      "operationId": "listAgentWorkbenchTurns",
+      "sourcePath": "apps/api/src/workbench-runner.ts",
+      "anchors": [
+        "const exactAgentSession =",
+        "const serviceToken ="
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "拒绝C Connection和installation；exactAgentSession读取当前E"
+        },
+        {
+          "fact": "runnerServiceAuthorized",
+          "allowed": [
+            true
+          ],
+          "reason": "FORBIDDEN",
+          "description": "还需真实x-workmesh-runner-token；不披露secret"
+        },
+        {
+          "fact": "workbenchAttemptOwn",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "turn/attempt准确当前Session和conversation"
+        }
+      ],
+      "decision": "Runner内部REST，不向模型/普通MCP工具广告；缺Runner service配置是部署前提，不伪造Session资格。",
+      "target": true,
+      "adapterInternal": true
+    },
+    {
+      "operationId": "claimWorkbenchTurn",
+      "sourcePath": "apps/api/src/workbench-runner.ts",
+      "anchors": [
+        "const exactAgentSession =",
+        "const serviceToken ="
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "拒绝C Connection和installation；exactAgentSession读取当前E"
+        },
+        {
+          "fact": "runnerServiceAuthorized",
+          "allowed": [
+            true
+          ],
+          "reason": "FORBIDDEN",
+          "description": "还需真实x-workmesh-runner-token；不披露secret"
+        },
+        {
+          "fact": "workbenchAttemptOwn",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "turn/attempt准确当前Session和conversation"
+        },
+        {
+          "fact": "runnerFenceCurrent",
+          "allowed": [
+            true
+          ],
+          "reason": "RUNNER_FENCE_STALE",
+          "description": "queued或当前claim/running attempt fence及conversation次序"
+        }
+      ],
+      "decision": "Runner内部REST，不向模型/普通MCP工具广告；缺Runner service配置是部署前提，不伪造Session资格。",
+      "target": true,
+      "adapterInternal": true,
+      "states": [
+        "executing"
+      ]
+    },
+    {
+      "operationId": "getWorkbenchAttemptCredential",
+      "sourcePath": "apps/api/src/workbench-runner.ts",
+      "anchors": [
+        "const exactAgentSession =",
+        "const serviceToken ="
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "拒绝C Connection和installation；exactAgentSession读取当前E"
+        },
+        {
+          "fact": "runnerServiceAuthorized",
+          "allowed": [
+            true
+          ],
+          "reason": "FORBIDDEN",
+          "description": "还需真实x-workmesh-runner-token；不披露secret"
+        },
+        {
+          "fact": "workbenchAttemptOwn",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "turn/attempt准确当前Session和conversation"
+        },
+        {
+          "fact": "runnerFenceCurrent",
+          "allowed": [
+            true
+          ],
+          "reason": "RUNNER_FENCE_STALE",
+          "description": "准确claimToken/fence"
+        },
+        {
+          "fact": "workbenchExecutable",
+          "allowed": [
+            true
+          ],
+          "reason": "SESSION_STOPPED",
+          "description": "state executing且current未settled turn，敏感model credential仅Runner"
+        }
+      ],
+      "decision": "Runner内部REST，不向模型/普通MCP工具广告；缺Runner service配置是部署前提，不伪造Session资格。",
+      "target": true,
+      "adapterInternal": true,
+      "states": [
+        "executing"
+      ]
+    },
+    {
+      "operationId": "startWorkbenchAttempt",
+      "sourcePath": "apps/api/src/workbench-runner.ts",
+      "anchors": [
+        "const exactAgentSession =",
+        "const serviceToken ="
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "拒绝C Connection和installation；exactAgentSession读取当前E"
+        },
+        {
+          "fact": "runnerServiceAuthorized",
+          "allowed": [
+            true
+          ],
+          "reason": "FORBIDDEN",
+          "description": "还需真实x-workmesh-runner-token；不披露secret"
+        },
+        {
+          "fact": "workbenchAttemptOwn",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "turn/attempt准确当前Session和conversation"
+        },
+        {
+          "fact": "runnerFenceCurrent",
+          "allowed": [
+            true
+          ],
+          "reason": "RUNNER_FENCE_STALE",
+          "description": "queued或当前claim/running attempt fence及conversation次序"
+        }
+      ],
+      "decision": "Runner内部REST，不向模型/普通MCP工具广告；缺Runner service配置是部署前提，不伪造Session资格。",
+      "target": true,
+      "adapterInternal": true,
+      "states": [
+        "executing"
+      ]
+    },
+    {
+      "operationId": "getWorkbenchAttemptStatus",
+      "sourcePath": "apps/api/src/workbench-runner.ts",
+      "anchors": [
+        "const exactAgentSession =",
+        "const serviceToken ="
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "拒绝C Connection和installation；exactAgentSession读取当前E"
+        },
+        {
+          "fact": "runnerServiceAuthorized",
+          "allowed": [
+            true
+          ],
+          "reason": "FORBIDDEN",
+          "description": "还需真实x-workmesh-runner-token；不披露secret"
+        },
+        {
+          "fact": "workbenchAttemptOwn",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "turn/attempt准确当前Session和conversation"
+        }
+      ],
+      "decision": "Runner内部REST，不向模型/普通MCP工具广告；缺Runner service配置是部署前提，不伪造Session资格。",
+      "target": true,
+      "adapterInternal": true
+    },
+    {
+      "operationId": "settleWorkbenchAttempt",
+      "sourcePath": "apps/api/src/workbench-runner.ts",
+      "anchors": [
+        "const exactAgentSession =",
+        "const serviceToken ="
+      ],
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "FORBIDDEN",
+          "description": "拒绝C Connection和installation；exactAgentSession读取当前E"
+        },
+        {
+          "fact": "runnerServiceAuthorized",
+          "allowed": [
+            true
+          ],
+          "reason": "FORBIDDEN",
+          "description": "还需真实x-workmesh-runner-token；不披露secret"
+        },
+        {
+          "fact": "workbenchAttemptOwn",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND",
+          "description": "turn/attempt准确当前Session和conversation"
+        },
+        {
+          "fact": "runnerFenceCurrent",
+          "allowed": [
+            true
+          ],
+          "reason": "RUNNER_FENCE_STALE",
+          "description": "当前running turn/attempt精确fence；domain普通write门禁仍在，不用route requireActive=false宣称terminal可settle"
+        }
+      ],
+      "decision": "Runner内部REST，不向模型/普通MCP工具广告；缺Runner service配置是部署前提，不伪造Session资格。",
+      "target": true,
+      "adapterInternal": true,
+      "states": [
+        "acknowledged",
+        "planning",
+        "executing",
+        "awaiting_input",
+        "awaiting_approval",
+        "blocked"
+      ],
+      "additionalSources": [
+        [
+          "packages/domain/src/index.ts",
+          "export const authorizeAgentMutation ="
+        ],
+        [
+          "apps/api/src/agent/guard.ts",
+          "export function assertAgentWrite("
+        ]
+      ]
+    }
+  ]
+}

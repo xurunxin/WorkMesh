@@ -1,29 +1,33 @@
 {
-  "startedAt": "2026-10-09T05:29:37.854Z",
-  "completedAt": "2026-10-09T05:30:05.770Z",
-  "sourceHead": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
-  "observedMainHead": "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
-  "node": "v24.20.0",
-  "python": "Python 3.13.15",
-  "command": "node docs/plan/agent-mcp-m0/archive-audit.mjs",
-  "count": 277,
-  "sourceFiles": 114,
-  "readOnlyDomainEvaluation": true,
+  "startedAt": "2026-10-09T06:46:10.626186+00:00",
+  "completedAt": "2026-10-09T06:46:33.379587+00:00",
+  "command": "python -X utf8 -B docs/plan/agent-mcp-m0/audit-generate.py",
+  "runtime": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "sourceHead": "69085317c88d84b702af727dc0ac7152589626d8",
+  "historicalBase": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+  "previousArchiveHead": "1bcf1567b8d3f8774b219f927e3d832e72e4c7ef",
+  "operationCount": 277,
+  "registeredBindings": 97,
+  "domainRules": 99,
+  "sourceFiles": 115,
   "productChecksRun": false,
-  "planDocId": "WS-FdgmfTwloZE8hNXvAb",
+  "productImplemented": false,
+  "planDocId": "Qd1Ks9EH9uEvl1JW3O68D",
   "planVersion": null,
-  "planBodySource": "本轮注入的完整authoritative saved copy；工具截断只比对前缀",
+  "platformDocCreatedAt": null,
+  "planBodySource": "本轮完整注入authoritative saved copy，按五处精确替换同步；平台工具全文截断仅核前缀，不冒后端全文读回",
   "planFiles": [
     {
       "path": "savedplan.md",
-      "bytes": 13100,
-      "sha256": "e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940"
+      "bytes": 17150,
+      "sha256": "4624508d03b3b9a28f8dc6d5db1fa8f002138fec637dd63612a2929cdb07e3f8"
     },
     {
       "path": "implementation.md",
-      "bytes": 13100,
-      "sha256": "e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940"
+      "bytes": 17150,
+      "sha256": "4624508d03b3b9a28f8dc6d5db1fa8f002138fec637dd63612a2929cdb07e3f8"
     }
   ],
-  "previousGeneration": "history/original-generation.json"
+  "preservation": "history/previous-1bcf-manifest.json；完整Git与工作树原字节在ZIP"
 }
