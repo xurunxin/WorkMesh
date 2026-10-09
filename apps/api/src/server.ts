@@ -1248,7 +1248,7 @@ export const buildApp = (options: {
     header,
     paginator,
   });
-  registerNotificationChannelRoutes(app, { db, meta: commandContext, header, paginator });
+  registerNotificationChannelRoutes(app, { db, meta: commandContext, header, paginator, configuredProviders: features.WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS ? ['wecom'] : [] });
   registerAutonomousControlPlaneRoutes(app, {
     db,
     webPushPublicKey: config.WORKMESH_WEB_PUSH_PUBLIC_KEY,

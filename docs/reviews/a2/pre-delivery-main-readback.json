@@ -1,0 +1,20 @@
+{
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "args": [
+    "ls-remote",
+    "origin",
+    "refs/heads/main"
+  ],
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "18252ba8761aa810c3fd12d31ecae83e8b24d985\trefs/heads/main"
+      }
+    ]
+  },
+  "observedAfter": {
+    "current_time": "2026-10-08 16:09:53 UTC"
+  },
+  "interpretation": "远端精确 refs/heads/main 仍为已整合的 C3 提交；FETCH_HEAD 与缓存 HEAD 不用于判定主线。"
+}

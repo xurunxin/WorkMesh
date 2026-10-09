@@ -146,13 +146,47 @@ wizard is a second information architecture that can disagree with the first and
 strands anyone who arrived by another route. The list is order-derived but not
 order-enforced: resolve the Project first and the list simply shows fewer items.
 
-Starting prompts under an empty composer are **fixed copy in the existing i18n
-bundle**, not a workspace-editable setting. An editable setting would need its
-own command, permission, revision, idempotency, and event, and inventing that is
-out of scope for a first-run surface; a deployment that wants different copy
-forks the string. An earlier draft of this ADR proposed a workspace-level
-editable setting and a preset aggregate with a write path; both were withdrawn
-because no write contract was defined for them.
+起始提示新增三个固定 WorkMesh 字符串，仍放在现有类型化中英文 i18n 字典中，
+不提供 workspace 可编辑设置。三条内容及点击语义由 A2 完整计划冻结：点击只填未发送草稿并聚焦，
+没有对话时仅展开既有创建表单；Human 明确创建后才填草稿，不自动创建、发送、委派或激活。
+
+### A2 已确认的 URL 与项目配置范围
+
+workKind 仅从 URL 明确读取 repository/non_repository，不从 Team、Project、WorkItem、
+已有仓库或对话推断。缺失、重复或非法参数时不查询，显示普通上下文提示。
+显式失效上下文不回退到另一资源；Back/Forward 后重新查询当前权限与配置。
+
+仓库缺口的 canonical 深链必须抵达既有 Projects 页面中的真实配置区。
+该区允许复用既有 provider-connections、repositories、repositories/{id}/context 命令，
+补齐必要连接、注册和上下文入口，不新增 setup 页面或配置实体。
+workspace admin 管连接及注册，当前 Team admin/maintainer 配置既有仓库上下文，
+普通成员只读；界面操作提示不授予权限，POST 和 Worker 按既有规则重新核对授权。
+上下文命令只提交待处理 action，Worker 产生 repository.context.pinned 后才显示已配置。
+稳定请求身份、事务/event/outbox、并发追加事实、撤权、校验和秘密保护保持既有命令语义。
+新增 POST 没有 If-Match，不伪造 revision 防护；当前配置以服务器读取为准。
+
+仓库读取的 can_configure_context 是当前 caller 的无秘密 UI 提示，Agent 固定 false，
+不建立能力授予或新安全政策。A1 readiness 仍是只读合同，不因配置区新增命令而产生领域写入。
+Runner 始终 unknown；完成配置不自动触发执行。
+
+原六项验收与 Lite 安装链路保持；A2 独立验收，组合回归归原后续阶段。
+具体方案与逐类映射见 [A2 完整计划](../plan/a2-configuration-readiness.md)
+及 [验收映射](../plan/a2-configuration-readiness/review-map.md)。
+这些内容记录用户已确认范围与待独审实施方案，不改变本 ADR 的 Proposed 状态，不宣告产品完成。
+
+### A2 独审要求的最小命令与读取修补
+
+本节按实读C1当前main更新，仍是待独审实施决定，不改变Proposed状态、不声明已修复。
+
+- `apps/api/src/delivery/repository-configuration.ts`、`apps/api/src/delivery/routes.ts`：封装仓库读取投影，按当前 workspace admin、Team admin/maintainer 派生操作提示。A2 以 `teamId=T&availableOnly=true` 请求：校验当前 Team 可读，在 SQL 中先限制 Team、active 仓库/连接与已启用 provider，再执行既有 Paginator 的游标排序和 `limit+1`，不在分页后筛选。新筛选分支将 Team、`availableOnly` 值及仅在 true 时生效的排序后 provider 集合放进 Paginator `filters`，沿用 actor/workspace/route、`full_name,id` 排序和 `limit+1`；切 Team/筛选/feature 导致 `PAGINATION_CURSOR_MISMATCH`，丢弃游标从首屏重读。`availableOnly=false` 或未传时不隐藏禁用 provider，保留原 feature 拒绝；显式 `teamId` 仍在 SQL 分页前限制范围，无新参数的旧分支保持 `filters={}`。无新参数的 Human/Agent 请求保留旧分支、分页信封、既有字段及 feature 拒绝语义，仅附加已规划的操作提示字段；Agent 携带新 Human 筛选参数返回 `VALIDATION_ERROR`，不扩张 Session/Delegation 范围。上下文直接读取和 POST 仍执行 `requireProviderFeature`。
+
+- `apps/api/src/delivery/routes.ts` 的连接创建：新增局部 `providerConnectionFingerprint`，复用 `workbench-llm-connections.ts` 的 `createHmac('sha256', masterKey())` 模式，以 UTF-8 `workmesh:provider-connection-idempotency\0` 为用途域，追加字段名、NUL 分隔及秘密原字符串字节，分别计算 `webhookSecret`、`privateKey`、`accessToken` 的摘要；未提供字段用 `null`，已提供字段用带算法标记的摘要，不 trim 或重写秘密；只将公共字段、明确的缺省标记和这些摘要交给 `h.meta`，继续由 `mutate` 比较最终 `request_hash`。同 key 同正文重放，仅改任一秘密字段返回 `IDEMPOTENCY_KEY_REUSED`；不采用秘密明文或无密钥散列。旧脱敏账本无法证明正文相同，按指纹不匹配拒绝，不降级旧算法、不改历史账本、不自动换 key 重提；提示先核对已有连接，显式提交才可使用新请求身份；合法的新同文重试保持 key，账本保留原 TTL/过期清理语义，主密钥缺失失败关闭，不用随机盐破坏稳定重试。秘密仅按现有加密存储进入连接表，不进入账本、事件、响应或日志。
+
+- `apps/worker/src/provider-actions.ts`：把 `authorizeRepositoryContextResolution` 的事务内检查抽成接收 `PoolClient` 的 helper，在外部读取前和 `finishAction` 的 context 插入前复用；正常返回和 `action.result` checkpoint 恢复统一经过后者。采用当前 C1 `lockChannelAuthority` 的模式：无锁 locator 只找 ID；先对 workspace 取 `FOR KEY SHARE` 防止 Team 删除与事件 FK 锁倒置，保留 action 的 `FOR UPDATE`，再以 `lockAgentAuthorityPlan` 一次取得完整目标资源锁计划。Session 目标定位其 definition/grant/delegation 及关联 WorkItem/Project，遵守 helper 全局顺序与同类 ID 排序；这些锁不成为新的 Human 配置授权条件。随后对连接/仓库、Team、Human、具体 membership 行取 `FOR SHARE`，锁后重读全部 locator 绑定及现行 Human/角色/active/非删除目标权限，不新增逆序目标锁、不嵌套事务、不用 `EXISTS` 或 `FOR KEY SHARE` 替代授权行锁。锁持有至 context、pinned 与 outbox 提交；失权同事务 action dead 并复用 `provider.action.authorization_revoked`，不新增 context/guidance、pinned 或其 outbox，拒绝事实自身 outbox 单列。撤权先持锁则等待后拒绝；发布先持锁则撤权等待其提交。供应商读取期间不持数据库锁，C1 `appendEvent` 的迁移兼容与内部通知快照机制保留。
+
+- `packages/db/src/agent-lock-order-manifest.ts`：登记 Worker 新增的资源锁消费符号及受影响 SQL statement；沿用既有清单生成与 `agent-lock-order-inventory.test.ts` 校验，不修改 `agentLockRanks` 或锁 helper，逐 statement 复核而不以行号变化当安全证明。
+
+复用workspace兼容FK锁、完整资源plan、授权行锁的现行顺序；不改C1通知锁helper/受众/内部快照/迁移。旧脱敏幂等键fail-closed，新同文稳定，旧无参数仓库权限及filters={}不变。13条精确三修/整合场景、原六验收及DoD见review-fixes.json与review-map.md；所有产品结果未实现、未运行。
 
 ## Alternatives
 
@@ -230,6 +264,24 @@ numbers alone, because `statementId` covers the owner and a canonical SQL hash
 
 ## Spec changes
 
+### A2 已批准表面与配置入口
+
+工作类型只来自 URL 的唯一合法 `workKind=repository|non_repository`，缺失、重复或非法参数不查询、不从 Team/对话/工作项推断。A1 投影及权限边界不变；非仓库工作仍为 `not_applicable`，Runner 恒 `unknown`，不能作为执行许可。
+
+工作台按依赖深度排列可任意顺序解决的 unmet，固定起始提示采用三个新增中英文 WorkMesh 文案；点击只追加未发送草稿、聚焦或展开现有创建表单。仓库缺口使用 Projects canonical 页面及固定锚点，模型/Agent 使用已有 canonical 路由，浏览器往返重新查询并恢复焦点。
+
+用户已批准项目内复用现有 provider connection、仓库注册和异步上下文 POST；只读投影自身仍无写入副作用。配置命令不自动创建 Session、委派或激活，追加 POST 没有 If-Match。新增 DTO 的 `provider_action_id` 仅用于把精确上下文结果关联至已完成动作，历史未关联结果为 null。`can_configure_context` 是提示，命令和 Worker 各自核验当前权限。
+
+Worker 正常解析和 checkpoint 恢复均在最终落库事务内重验 Human、Team/目标作用域及资源状态，复用既有 workspace 前置锁和资源锁序，授权锁持有至事实/event/outbox 提交；不跨供应商请求持锁。连接秘密按独立用途域和字段名参加稳定 HMAC 指纹，账本不存明文；旧脱敏账本无法证明正文相同，拒绝重放且保留原 TTL 语义，不自动换键。
+
+目标变更 Team 后，拒绝事件沿用既有解析器解析目标当前作用域，并限定原请求人的 audience，同时保留当前资源授权过滤；动作历史目标不改写，不能为了记录拒绝而降低事件作用域校验。分页最终 SQL 重验当前角色、membership 与 Team 删除状态，预检缓存不授予读取范围。
+
+仓库列表新增 Human 专用 Team/可用 provider 筛选，在 SQL 分页前执行并绑定游标；旧无参数 Human/Agent 的范围、排序、分页信封及 200 条上限保持，Agent 拒绝新增筛选。C1 事件快照兼容及 C3 模型预置默认关闭、读取/草稿零保存出站的行为保留。无新实体、端点、事件类型或迁移；实施与实际验收记录在 `docs/reviews/a2/`，未通过 Lite、人类视觉及最终 CI 的项目不记通过。
+
+Lite 原安装验收包含真实镜像无源码安装与逐项配置闭环。其构建阶段必须将既有 Compose 内部 `api:3001` 地址固化进 Next 五条代理规则，运行时声明不能重建 rewrites；修补及前两轮首败见 `docs/reviews/a2/lite-proxy-repair.md`。不改变外部同源地址、认证、TLS、四角色或只读镜像合同，也不将真实设备和厂商兼容冒作本机安装结果。
+
+异步上下文的恢复确认以精确动作 ID、仓库、目标及正文匹配为准，不因已完成结果出现在重载后的基线中而排除。基线只作新命令的并发提示。等待期限及临时读取失败解除表单禁用，原动作记录继续用于只读确认重试和迟到结果；改正文后由用户显式提交新命令。仓库刷新重读已展开分页并核当前选择，只有授权列表完整证实不可用才清空，不自动替换仓库。焦点、实时、手动与轮询的上下文读取共用取消及请求代际门禁，成功和错误均须通过；原动作重试、新动作接收、作用域切换和卸载使旧读取失效，取消的提交前读取不发命令。当前修补证据见 `docs/reviews/a2/context-read-generation-review.md`，上一轮记录保留于 `docs/reviews/a2/configuration-recovery-review.md`；不改变 API、权限、事务、幂等或分页合同。
+
 - `OPENAPI.yaml` declares the readiness route, its three states per check
   (`ready` / `blocked` / `unknown`；`not_applicable` 另属适用性), and the fact that it
   is a query with no write counterpart.
@@ -240,3 +292,9 @@ numbers alone, because `statementId` covers the owner and a canonical SQL hash
   interface stop describing the dependency two different ways.
 - `docs/plan/` gains the implementation plan, with the visibility-scoping and
   `unknown`-versus-`blocked` cases called out explicitly.
+
+## 当前 A2 后端独立交付范围
+
+用户正式将本轮 A2 验收收窄为后端；上文首运行面、三个提示、导航/焦点/等待恢复与视觉条款保留为后续 UI 行为参考，旧 UI 未获得视觉接受。原六项 UI 测试及其 DoD 延后，完整当前规格见 `docs/reviews/a2-backend/current-spec.md`，保全索引见同目录 `preservation.json`，历史来源不倒改。
+
+本候选只包含已审 #53 的仓库 Human/Agent 分页边界、用途分离秘密 HMAC 请求身份、Worker 外读/恢复/最终事务授权和原 requester 专属拒绝受众、持久化 action 精确归因及现有消费者兼容。保持 A1 只读三态和 C1 事务事实；无新端点、事件、迁移、If-Match 或 Agent 的 Human 配置资格。独立保留 Lite 构建期私网代理修复，须重新验证 main 现有 Web 与新后端的真实无源码安装/配置落库，旧新横幅通过不适用。ADR 状态不变，当前候选仍需独审、适用检查、最新 Required CI 与实际 main。

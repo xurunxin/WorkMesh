@@ -53,6 +53,7 @@ x-feature-flags: &feature-flags
   WORKMESH_EXPERIMENTAL_A2A: ${WORKMESH_EXPERIMENTAL_A2A:-false}
   WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: ${WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS:-false}
   WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: ${WORKMESH_EXPERIMENTAL_MULTI_RUNTIME:-false}
+  WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS: ${WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS:-false}
 
 services:
   postgres:
@@ -256,6 +257,7 @@ services:
       NODE_OPTIONS: --max-old-space-size=256
       DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-workmesh}
       REDIS_URL: redis://redis:6379
+      WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN is required}
       WORKMESH_REALTIME_REDIS_MAXLEN: ${WORKMESH_REALTIME_REDIS_MAXLEN:-10000}
       WORKMESH_IDEMPOTENCY_REPLAY_HOURS: ${WORKMESH_IDEMPOTENCY_REPLAY_HOURS:-24}
       WORKMESH_IDEMPOTENCY_CONFLICT_DAYS: ${WORKMESH_IDEMPOTENCY_CONFLICT_DAYS:-30}
@@ -310,8 +312,9 @@ services:
       # Browser call this server, and the Next.js proxy forwards to the API, which
       # is what keeps the session cookie first-party. A device can be reached by
       # LAN address, hostname, or tunnel name, and none of those are knowable when
-      # the bundle is built. Declaring NEXT_API_UPSTREAM is what tells the runtime
-      # guard that the Web server terminates /api.
+      # the bundle is built. lite.Dockerfile compiles this private service address
+      # into Next rewrites; changing runtime env does not rebuild those rules.
+      # NEXT_API_UPSTREAM also declares the proxy to the runtime guard.
       NEXT_API_UPSTREAM: http://api:3001
       HOSTNAME: 0.0.0.0
       PORT: 3000

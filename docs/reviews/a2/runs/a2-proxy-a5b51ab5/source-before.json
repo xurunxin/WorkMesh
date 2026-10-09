@@ -1,0 +1,56 @@
+{
+  "head": "5f052960325c92154486eab6d1c93689d4489899",
+  "observedAt": "2026-10-08T17:12:11.180Z",
+  "files": [
+    {
+      "path": "infra/docker/lite.Dockerfile",
+      "bytes": 5908,
+      "sha256": "ed12490b9f817cb5331d0be986594c93f70deb0b6433a89ec6d853008632ba01"
+    },
+    {
+      "path": "docker-compose.lite.yml",
+      "bytes": 14981,
+      "sha256": "6afd85d7af1b28da003fd4c26a123e2b9e7102a9b73b937b1c500621275e0edb"
+    },
+    {
+      "path": "apps/web/next.config.ts",
+      "bytes": 1920,
+      "sha256": "166dcbee4bbddfbdce41ee2b892ce586c61c6aaeb8b40318649f10246777e54f"
+    },
+    {
+      "path": "scripts/verify-a2-lite.mjs",
+      "bytes": 21912,
+      "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32"
+    },
+    {
+      "path": "packages/config/src/runtime-secrets.mjs",
+      "bytes": 8866,
+      "sha256": "87d95a5418231d3b0a096d91b1f9b2bea74a78d0ef3e6f5d951276716d41daed"
+    },
+    {
+      "path": "infra/docker/runtime-guard.mjs",
+      "bytes": 1440,
+      "sha256": "081bc78841a6e079cf13981d5d1822dca8bf106f5f4beb2280a1e70e41382d63"
+    },
+    {
+      "path": "apps/web/playwright.a2-lite.config.ts",
+      "bytes": 648,
+      "sha256": "4bc1c255350f561b927b8f9b85f511961645d802c74dc07534d51ab3eabcdf33"
+    },
+    {
+      "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+      "bytes": 8443,
+      "sha256": "bee08ca6b4ca303e0a544530ac2221a3d6564675bd23ebf0c4c4143e448a7485"
+    },
+    {
+      "path": "apps/web/e2e/configuration-readiness.spec.ts",
+      "bytes": 14745,
+      "sha256": "9a378cdec3197092a5080176d5acc904ba132526cf2e87002b30c2b78b557c6c"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "bytes": 233344,
+      "sha256": "ed92a40f6dca083b5fe725c28a2b52571f2e695092b282936f65404f85d0429b"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "head": "b492a35b11445c157a825b5e747ac0e15506e491",
+  "observedAt": "2026-10-08T17:47:55.729Z",
+  "meaning": "上一轮交付字节快照，不当本轮恢复修补通过",
+  "readingRule": "snapshot 为原逻辑路径；原字节在同路径 .gz 中无损保存，使用 read-evidence-bytes.mjs 解压读回，避免 Git CRLF 归一化改变旧字节哈希",
+  "files": [
+    {
+      "path": "docs/reviews/a2/execution-map.json",
+      "snapshot": "docs/reviews/a2/configuration-recovery/history/execution-map.json",
+      "bytes": 14456,
+      "sha256": "cb540caba91438fca3e61a4b989f50114dc718441efc5b7612136330db81c848"
+    },
+    {
+      "path": "docs/reviews/a2/execution-results.json",
+      "snapshot": "docs/reviews/a2/configuration-recovery/history/execution-results.json",
+      "bytes": 544020,
+      "sha256": "8c9d2392021ffc1f8fa72e93403fce2dd989e3798d9b4971e96944b5893242d4"
+    },
+    {
+      "path": "docs/reviews/a2/checked-source-binding.json",
+      "snapshot": "docs/reviews/a2/configuration-recovery/history/checked-source-binding.json",
+      "bytes": 106941,
+      "sha256": "43bd5bcd7fee86ecc8a9622e4694e4903b3fdf386b5b9334e8c920c7709ad2e3"
+    },
+    {
+      "path": "docs/reviews/a2/latest-ci-readback.json",
+      "snapshot": "docs/reviews/a2/configuration-recovery/history/latest-ci-readback.json",
+      "bytes": 1258,
+      "sha256": "dc855a88dddb1bcfc90232cb49d0fd0ee01ed0146ed0e8613550e75b8e595f41"
+    }
+  ]
+}

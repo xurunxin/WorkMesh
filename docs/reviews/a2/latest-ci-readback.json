@@ -1,0 +1,21 @@
+{
+  "observedAt": "2026-10-08 18:21:46 UTC",
+  "head": "fc14c523ae86c13e952e47d19b7508695c402d76",
+  "latestMaterialObservation": "docs/reviews/a2/configuration-recovery/delivery-readback.json",
+  "branch": "tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe",
+  "tool": "tds workflow_runs",
+  "args": {
+    "branch": "tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe",
+    "limit": 5
+  },
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "No workflow runs in xurunxin/WorkMesh matching branch \"tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe\"."
+      }
+    ]
+  },
+  "status": "未发现本分支工作流；最新 Required CI 尚未完成，不以主线历史 CI 或本机检查冒本分支绿色",
+  "previousEvidence": "docs/reviews/a2/configuration-recovery/history/latest-ci-readback.json.gz"
+}

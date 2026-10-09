@@ -1,0 +1,43 @@
+{
+  "observedAt": "2026-10-08 18:32:34 UTC",
+  "materialHead": "50b91a9bed3252046f2f6e0e8a85140a63050faa",
+  "testedProductHead": "fc14c523ae86c13e952e47d19b7508695c402d76",
+  "branch": "tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe",
+  "workflowReadback": {
+    "content": [
+      {
+        "type": "text",
+        "text": "No workflow runs in xurunxin/WorkMesh matching branch \"tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe\"."
+      }
+    ]
+  },
+  "status": "本分支未找到工作流，latest Required CI 尚未完成；产品差异比对为空，后续只读回执属于文档，不伪补未来提交 ID",
+  "mainReadback": "docs/reviews/a2/configuration-recovery/delivery-main-readback.json",
+  "gitBytes": "docs/reviews/a2/configuration-recovery/git-byte-proof.json",
+  "codeDiff": {
+    "args": [
+      "diff",
+      "--exit-code",
+      "fc14c523ae86c13e952e47d19b7508695c402d76",
+      "50b91a9bed3252046f2f6e0e8a85140a63050faa",
+      "--",
+      "apps",
+      "packages",
+      "scripts",
+      "infra",
+      "OPENAPI.yaml",
+      "SCHEMA.sql",
+      "docker-compose.lite.yml"
+    ],
+    "exitCode": 0,
+    "toolOutputBlock": "1a2dca"
+  },
+  "postCommitCI": {
+    "command": "pnpm ci:validate",
+    "head": "fc14c523ae86c13e952e47d19b7508695c402d76",
+    "exitCode": 0,
+    "toolOutputBlock": "c2d0c2",
+    "startTimestamp": null
+  },
+  "cleanupReadback": "docs/reviews/a2/configuration-recovery/cleanup-readback.json"
+}

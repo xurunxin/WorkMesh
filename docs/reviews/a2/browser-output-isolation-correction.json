@@ -1,0 +1,8 @@
+{
+  "observedAt": "2026-10-08T15:52:58.467Z",
+  "previous": "browser-output-isolation.json",
+  "firstCheck": "runs/a2-ef2c1974/3.log",
+  "reason": "既有 PlaywrightTopology 不接受新的命名；类型检查已拒绝，未运行该配置的浏览器。恢复原拓扑，改由验收 harness 提供独立绝对输出根，配置与认证 helper 保持一致。",
+  "current": "全量报告在 playwright/root-mixed；关闭 Gitea 报告在 playwright-gitea-disabled/root-mixed，不覆盖旧报告。",
+  "productSource": "无产品源码改变"
+}

@@ -1,0 +1,131 @@
+{
+  "observedAt": "2026-10-09T04:51:35.242Z",
+  "head": "9de5897ab42b4a3459bf977c7a78c78bc3d11538",
+  "sourceHead": "9de5897ab42b4a3459bf977c7a78c78bc3d11538",
+  "main": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+  "actualMainObservation": "2026-10-09T04:48:57Z 精确 refs/heads/main 同 c768，保留此前读回",
+  "archiveCount": 3929,
+  "allArchiveBytesExact": true,
+  "files": [
+    {
+      "path": "OPENAPI.yaml",
+      "worktreeSha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871",
+      "gitBlobSha256": "3e971cd82c412fb2053e5999e6d86a391654d0a917c30affa7b8efaaa69ef4e8",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "worktreeSha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5",
+      "gitBlobSha256": "1e9697a4d79631cd61bce74db9e1852619cc26647e11f726c5eb221cfc851648",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "worktreeSha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d",
+      "gitBlobSha256": "931a7feb0ba0a8c28ce8ad3b5a28eb15a05c6134f41626816dba70d15bb75ea7",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "apps/api/src/delivery/repository-configuration.ts",
+      "worktreeSha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7",
+      "gitBlobSha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7",
+      "boundSource": "Git/工作树字节相同"
+    },
+    {
+      "path": "apps/api/src/delivery/routes.ts",
+      "worktreeSha256": "b95483c83d42ae02869d1f59454dd936ad297b450e9f66c1881e4f4f6179a858",
+      "gitBlobSha256": "0240ae3dc7da5d005bdf8409d641e7e41c186e36e06619a1f045540b05c60a98",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "apps/worker/src/provider-actions.ts",
+      "worktreeSha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d",
+      "gitBlobSha256": "cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "deploy/lite/README.md",
+      "worktreeSha256": "eefb2d3f36b3e03d4a909750ae02bd6a890095f84ecf5a04ea6bab87b14b515a",
+      "gitBlobSha256": "b2804adc08a60d5087a8a501e2241d669c387b09d02802871f1f2dcff235da2a",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "docker-compose.lite.yml",
+      "worktreeSha256": "6afd85d7af1b28da003fd4c26a123e2b9e7102a9b73b937b1c500621275e0edb",
+      "gitBlobSha256": "9d6679d8df506d4f0ad3b11faa051f5326aedef4341a6e5d6d6ffdfe95bf900e",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "infra/docker/lite.Dockerfile",
+      "worktreeSha256": "ed12490b9f817cb5331d0be986594c93f70deb0b6433a89ec6d853008632ba01",
+      "gitBlobSha256": "cda11e2c6ee51cd7c4b499aa8e6f8f1b6e7d8f02138e74e93a6b100cd532c5ee",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "worktreeSha256": "e60c51027dc9b198f7f48738e5dcb59a63c9519db7b6e6513865664854d86139",
+      "gitBlobSha256": "30c064cbd4f8e4434cbf74d6d6853bd160d1d6bafdebd3d122fbc8d2d0d5a1d7",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "packages/contracts/src/pagination-contract.test.ts",
+      "worktreeSha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e",
+      "gitBlobSha256": "1405bdfd8ff9fec52aad92993ee7127661ee14c23c1f613f20d526f7aefa01ca",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "packages/contracts/src/repository-configuration-contracts.test.ts",
+      "worktreeSha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262",
+      "gitBlobSha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262",
+      "boundSource": "Git/工作树字节相同"
+    },
+    {
+      "path": "packages/contracts/src/repository-configuration-contracts.ts",
+      "worktreeSha256": "e0f71021e95c6d1bffad7ca47efaf2705a4c86c42e63b3cf153fbd4674d5cbfd",
+      "gitBlobSha256": "e0f71021e95c6d1bffad7ca47efaf2705a4c86c42e63b3cf153fbd4674d5cbfd",
+      "boundSource": "Git/工作树字节相同"
+    },
+    {
+      "path": "packages/db/src/agent-lock-order-manifest.ts",
+      "worktreeSha256": "956a27bbb9882fecc69271973da4f134ba2bc905a20394f2f3d31a0e6797792c",
+      "gitBlobSha256": "3ec8dcee876bcd4d75a25d623fc718d4e60e17f6624999cf40df780074693881",
+      "boundSource": "Windows 换行分别绑定，不冒相同字节"
+    },
+    {
+      "path": "scripts/verify-a2-backend-lite-api.mjs",
+      "worktreeSha256": "f09a31ba0e74fec1dfbfdc3b937d2b22ef0ba0727a714d03cd04043b4a40c8b8",
+      "gitBlobSha256": "f09a31ba0e74fec1dfbfdc3b937d2b22ef0ba0727a714d03cd04043b4a40c8b8",
+      "boundSource": "Git/工作树字节相同"
+    },
+    {
+      "path": "scripts/verify-a2-backend-lite.mjs",
+      "worktreeSha256": "7dfb25f5d068b6b43202c73012b8f5381f630c428982d5183a0a531321232abb",
+      "gitBlobSha256": "7dfb25f5d068b6b43202c73012b8f5381f630c428982d5183a0a531321232abb",
+      "boundSource": "Git/工作树字节相同"
+    }
+  ],
+  "requiredBackendSourceToLiteDiff": [],
+  "postLiteProductDiff": [],
+  "lite": {
+    "outcome": "本机无源码 Lite 现有 Web/后端兼容通过；原新横幅 UI、真实设备与真实厂商未验收",
+    "sourceHead": "9de5897ab42b4a3459bf977c7a78c78bc3d11538",
+    "imageId": "sha256:e9903877d4ea6cd29113431e49b00093b8c30b9ea3374f6c249ad19da429b33d",
+    "cleanupPaths": 7,
+    "allOwnedResourcesClosed": true,
+    "originalNewUi": "延期，未验收"
+  },
+  "ciObservation": {
+    "tool": "mcp__tds__workflow_runs",
+    "branch": "tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe",
+    "limit": 5,
+    "result": "No workflow runs in xurunxin/WorkMesh matching branch；不声称最新 CI 通过"
+  },
+  "gates": {
+    "independentReview": "待当前候选另一 Agent 独审",
+    "latestRequiredCI": "未绑定",
+    "actualMain": "当前候选未合入；不宣称 backend done"
+  },
+  "publication": "此记录绑定已有受测 head；最终文档提交 ID 尚未生成，不伪补未来 ID",
+  "relativeLinks": 16,
+  "relativeLinksReachable": true
+}

@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from 'node:crypto'
+import { createHash, createHmac, randomUUID } from 'node:crypto'
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { Pool, PoolClient } from 'pg'
 import { z } from 'zod'
@@ -43,6 +43,7 @@ import { assertAgentWrite, loadAgentSessionForMutation } from '../agent/guard.js
 import type { ApiActor, RequestMeta } from '../agent/types.js'
 import { liveSessionReadPredicate } from '../live-read-authorization.js'
 import type { Paginator, PreparedPage } from '../pagination.js'
+import { loadRepositoryConfiguration } from './repository-configuration.js'
 
 type Helpers = {
   db: Pool
@@ -105,6 +106,12 @@ const masterKey = (): string => {
   const value = process.env.WORKMESH_MASTER_KEY
   if (!value) throw new DomainError('INTERNAL_ERROR', 'WORKMESH_MASTER_KEY is required for provider secrets')
   return value
+}
+// Purpose- and field-separated fingerprints retain secret differences without persisting plaintext.
+const providerConnectionFingerprint = (body: ReturnType<typeof providerConnectionInputSchema.parse>) => {
+  const secret = (field: 'webhookSecret' | 'privateKey' | 'accessToken') => body[field] === undefined ? null
+    : `hmac-sha256:${createHmac('sha256', masterKey()).update('workmesh:provider-connection-idempotency\0').update(field).update('\0').update(body[field]!).digest('hex')}`
+  return { ...body, webhookSecret: secret('webhookSecret'), privateKey: secret('privateKey'), accessToken: secret('accessToken') }
 }
 const requireProviderFeature = (
   features: FeatureConfig,
@@ -403,7 +410,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     const body = providerConnectionInputSchema.parse(request.body)
     requireHuman(actor(request), true)
     requireProviderFeature(h.features, body.provider)
-    return command(h.db, h.meta(request, { ...body, webhookSecret: '[REDACTED]', privateKey: body.privateKey ? '[REDACTED]' : undefined, accessToken: body.accessToken ? '[REDACTED]' : undefined }), async tx => {
+    return command(h.db, h.meta(request, providerConnectionFingerprint(body)), async tx => {
       const service = one((await tx.query<{ id: string }>(
         "INSERT INTO actors(workspace_id,kind,display_name,is_active) VALUES($1,'service',$2,true) RETURNING id",
         [actor(request).workspaceId, `${body.displayName} provider`],
@@ -481,6 +488,9 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
   app.get('/api/v1/repositories', async request => withTx(h.db, async tx => {
     const current = actor(request)
     if (current.kind === 'agent') {
+      const query = request.query as Record<string, unknown>
+      if (query.teamId !== undefined || query.availableOnly !== undefined)
+        throw new DomainError('VALIDATION_ERROR', 'Repository filters require a Human session')
       const page = h.paginator.prepare(request,request.query,{route:'/api/v1/repositories',filters:{},sort:[{key:'full_name',sql:'full_name',direction:'ASC'},{key:'id',sql:'id',direction:'ASC'}]},[current.agentSessionId,current.workspaceId,null])
       await page.beforeQuery()
       const contexts = (await applicableAgentRepositoryContexts(tx, current, undefined, page)).rows
@@ -489,18 +499,10 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
       return {items:response.items.map(context => ({
         id: context.id, workspace_id: context.workspace_id, connection_id: context.connection_id,
         team_id: context.team_id, external_id: context.external_id, full_name: context.full_name,
-        default_branch: context.default_branch, required_checks: context.required_checks,
+        default_branch: context.default_branch, required_checks: context.required_checks, can_configure_context: false,
       })),nextCursor:response.nextCursor}
     }
-    const response=await h.paginator.query<Omit<RepositoryRow, 'provider'> & { feature_provider: RepositoryRow['provider'] }>(tx,request,request.query,{route:'/api/v1/repositories',filters:{},sort:[{key:'full_name',sql:'r.full_name',direction:'ASC'},{key:'id',sql:'r.id',direction:'ASC'}]},
-      `SELECT r.*,c.provider AS feature_provider FROM repositories r
-       JOIN provider_connections c ON c.id=r.connection_id AND c.active
-       WHERE r.workspace_id=$1 AND
-       ($2='admin' OR EXISTS(SELECT 1 FROM memberships m WHERE m.workspace_id=r.workspace_id AND m.team_id=r.team_id AND m.actor_id=$3))`,
-      [current.workspaceId, current.workspaceRole, current.id],
-    )
-    for (const repo of response.items) requireProviderFeature(h.features, repo.feature_provider)
-    return {items:response.items.map(({ feature_provider: _featureProvider, ...repo }) => repo),nextCursor:response.nextCursor}
+    return loadRepositoryConfiguration(tx, request, current, h.features, h.paginator)
   }))
 
   app.post('/api/v1/repositories', async request => {
@@ -534,7 +536,10 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
       requireProviderFeature(h.features, repo.provider)
     }
     return (await tx.query(
-      `SELECT rc.*,coalesce(jsonb_agg(jsonb_build_object(
+      `SELECT rc.*,(SELECT a.id FROM provider_actions a WHERE a.workspace_id=rc.workspace_id
+         AND a.repository_id=rc.repository_id AND a.kind='resolve_repository_context'
+         AND a.status='completed' AND a.result->>'contextId'=rc.id::text LIMIT 1) AS provider_action_id,
+         coalesce(jsonb_agg(jsonb_build_object(
          'path',g.path,'blobSha',g.blob_sha,'contentHash',g.content_hash,'content',g.content) ORDER BY g.ordinal)
         FILTER(WHERE g.context_id IS NOT NULL),'[]'::jsonb) AS guidance
        FROM repository_contexts rc LEFT JOIN repository_guidance_entries g ON g.context_id=rc.id

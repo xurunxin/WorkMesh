@@ -1,0 +1,60 @@
+[WebServer] (node:44544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] project-work-preview-api:3201
+[WebServer] (node:60836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:41160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:49456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]    ▲ Next.js 15.5.22
+[WebServer]    - Local:        http://localhost:3200
+[WebServer]    - Network:      http://100.77.217.65:3200
+[WebServer]
+[WebServer]  ✓ Starting...
+[WebServer]  ✓ Ready in 4s
+[WebServer]  ○ Compiling / ...
+[WebServer]  ✓ Compiled / in 9.8s (10534 modules)
+[WebServer]  GET / 200 in 10744ms
+
+Running 1 test using 1 worker
+
+(node:2268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /?view=projects&teamId=22222222-2222-4222-8222-222222222222&project=11111111-1111-4111-8111-111111111111 200 in 114ms
+[WebServer]  ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+  ✘  1 ..\..\docs\reviews\a2\visual-delivery\capture.spec.ts:5:1 › 局部视觉：等待、超时重试、修改与窄屏恢复入口 (11.6s)
+
+
+  1) ..\..\docs\reviews\a2\visual-delivery\capture.spec.ts:5:1 › 局部视觉：等待、超时重试、修改与窄屏恢复入口 ────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: locator('#project-repository-configuration').getByLabel('基线提交 SHA')
+    Expected: enabled
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" with timeout 10000ms
+      - waiting for locator('#project-repository-configuration').getByLabel('基线提交 SHA')
+
+
+      46 |   const section = page.locator('#project-repository-configuration')
+      47 |   const sha = section.getByLabel('基线提交 SHA')
+    > 48 |   await expect(sha).toBeEnabled()
+         |                     ^
+      49 |   await page.evaluate(() => document.fonts.ready)
+      50 |   await page.clock.install({ time: new Date('2026-10-09T00:00:00.000Z') })
+      51 |   await sha.fill('a'.repeat(40))
+        at C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\docs\reviews\a2\visual-delivery\capture.spec.ts:48:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\docs\reviews\a2\visual-delivery\runs\visual-0780e159\playwright\mocked-dev\output\capture-局部视觉：等待、超时重试、修改与窄屏恢复入口\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\docs\reviews\a2\visual-delivery\runs\visual-0780e159\playwright\mocked-dev\output\capture-局部视觉：等待、超时重试、修改与窄屏恢复入口\error-context.md
+
+  1 failed
+    ..\..\docs\reviews\a2\visual-delivery\capture.spec.ts:5:1 › 局部视觉：等待、超时重试、修改与窄屏恢复入口 ─────────────

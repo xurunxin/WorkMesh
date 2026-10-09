@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-08T17:10:31.519Z",
+  "head": "5f052960325c92154486eab6d1c93689d4489899",
+  "toolChunk": "2df7be",
+  "checks": [
+    {
+      "command": "node --check scripts/verify-a2-lite.mjs",
+      "code": 0
+    },
+    {
+      "command": "node scripts/validate-lite-compose.mjs",
+      "code": 0
+    },
+    {
+      "command": "node scripts/validate-lite-compose.mjs --self-test",
+      "code": 0,
+      "rejectedVariants": 16
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "startedAt": "2026-10-08T16:35:38.684852+00:00",
+  "checks": [
+    {
+      "command": [
+        "node",
+        "--version"
+      ],
+      "startedAt": "2026-10-08T16:35:38.684862+00:00",
+      "finishedAt": "2026-10-08T16:35:38.789012+00:00",
+      "exitCode": 0,
+      "stdout": "v24.20.0\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "docs/plan/c2-wecom/verify-archive.mjs"
+      ],
+      "startedAt": "2026-10-08T16:35:38.789026+00:00",
+      "finishedAt": "2026-10-08T16:35:43.727613+00:00",
+      "exitCode": 0,
+      "stdout": "{\"结果\":\"通过\",\"原始映射\":26,\"ZIP成员\":13,\"清单文件\":34,\"本地链接\":39,\"六原测试\":6,\"九类\":9,\"历史规划矩阵\":\"未实施/未运行；保持冻结来源\",\"当前产品结果\":\"另见 docs/reviews/c2/product-review.md，不由本归档检查判定\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+      ],
+      "startedAt": "2026-10-08T16:35:43.727645+00:00",
+      "finishedAt": "2026-10-08T16:35:43.921630+00:00",
+      "exitCode": 2,
+      "stdout": "docs/reviews/c2/product/20261008T142039Z-852ed6/api-config.log:118: new blank line at EOF.\ndocs/reviews/c2/product/20261008T142039Z-852ed6/c1-c2-integration.log:15: new blank line at EOF.\ndocs/reviews/c2/product/20261008T142039Z-852ed6/reset.log:4: new blank line at EOF.\ndocs/reviews/c2/product/20261008T142039Z-852ed6/unit.log:11: new blank line at EOF.\ndocs/reviews/c2/product/20261008T142039Z-852ed6/web-unit.log:10: new blank line at EOF.\ndocs/reviews/c2/product/20261008T142845Z-d2da88/reset.log:4: new blank line at EOF.\ndocs/reviews/c2/product/20261008T142845Z-d2da88/unit.log:11: new blank line at EOF.\ndocs/reviews/c2/product/20261008T142845Z-d2da88/web-unit.log:10: new blank line at EOF.\ndocs/reviews/c2/product/20261008T143103Z-ea28b5/lint.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T143103Z-ea28b5/typecheck.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T144059Z-000dbc/lint.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T144059Z-000dbc/typecheck.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T145209Z-b49b85/lint.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T145209Z-b49b85/test-integration.log:4516: new blank line at EOF.\ndocs/reviews/c2/product/20261008T145209Z-b49b85/typecheck.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T150955Z-5f8e65/api-config.log:118: new blank line at EOF.\ndocs/reviews/c2/product/20261008T150955Z-5f8e65/c1-c2-integration.log:18: new blank line at EOF.\ndocs/reviews/c2/product/20261008T150955Z-5f8e65/c2-redis-integration.log:12: new blank line at EOF.\ndocs/reviews/c2/product/20261008T150955Z-5f8e65/reset.log:4: new blank line at EOF.\ndocs/reviews/c2/product/20261008T150955Z-5f8e65/unit.log:11: new blank line at EOF.\ndocs/reviews/c2/product/20261008T150955Z-5f8e65/web-unit.log:10: new blank line at EOF.\ndocs/reviews/c2/product/20261008T151344Z-0be08d/baseline-ui.log:9: new blank line at EOF.\ndocs/reviews/c2/product/20261008T151539Z-ce775c/baseline-ui.log:96: new blank line at EOF.\ndocs/reviews/c2/product/20261008T152237Z-75d17a/lint.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T152237Z-75d17a/typecheck.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T152932Z-28a255/lint.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T152932Z-28a255/typecheck.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T153826Z-31123a/lint.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T153826Z-31123a/test-integration.log:4529: new blank line at EOF.\ndocs/reviews/c2/product/20261008T153826Z-31123a/typecheck.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T155756Z-fd0f13/lint.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T155756Z-fd0f13/typecheck.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T160516Z-c88908/lint.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T160516Z-c88908/test-integration.log:4544: new blank line at EOF.\ndocs/reviews/c2/product/20261008T160516Z-c88908/typecheck.log:105: new blank line at EOF.\ndocs/reviews/c2/product/20261008T162342Z-55df46/test-e2e.log:6262: new blank line at EOF.\ndocs/reviews/c2/product/route-policy.log:4: new blank line at EOF.\n",
+      "stderr": ""
+    }
+  ],
+  "gate": "仅本机与归档核验；独审、视觉停点、当前 Required CI 和 actual main 尚待完成"
+}

@@ -1,0 +1,91 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+sh: locale: not found
+2026-10-08 14:28:53.219 UTC [36] WARNING:  no usable system locales were found
+performing post-bootstrap initialization ... ok
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-08 14:28:53.565 UTC [42] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-08 14:28:53.566 UTC [42] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-08 14:28:53.569 UTC [45] LOG:  database system was shut down at 2026-10-08 14:28:53 UTC
+2026-10-08 14:28:53.573 UTC [42] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-08 14:28:53.694 UTC [42] LOG:  received fast shutdown request
+2026-10-08 14:28:53.694 UTC [42] LOG:  aborting any active transactions
+2026-10-08 14:28:53.695 UTC [42] LOG:  background worker "logical replication launcher" (PID 48) exited with exit code 1
+2026-10-08 14:28:53.695 UTC [43] LOG:  shutting down
+2026-10-08 14:28:53.695 UTC [43] LOG:  checkpoint starting: shutdown immediate
+2026-10-08 14:28:53.700 UTC [43] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.001 s, total=0.005 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D68, redo lsn=0/1925D68
+2026-10-08 14:28:53.705 UTC [42] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+2026-10-08 14:28:53.810 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-08 14:28:53.810 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-08 14:28:53.810 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-08 14:28:53.812 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-08 14:28:53.813 UTC [58] LOG:  database system was shut down at 2026-10-08 14:28:53 UTC
+2026-10-08 14:28:53.817 UTC [1] LOG:  database system is ready to accept connections
+2026-10-08 14:29:41.787 UTC [71] ERROR:  DELEGATION_REQUIRES_HUMAN_PRINCIPAL_AND_AGENT_ACTOR
+2026-10-08 14:29:41.787 UTC [71] CONTEXT:  PL/pgSQL function enforce_delegation_actor_kinds() line 6 at RAISE
+2026-10-08 14:29:41.787 UTC [71] STATEMENT:  INSERT INTO delegations(
+	       workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,role,scope_type,scope_id,
+	       permissions_snapshot,capability_scope
+	     ) VALUES($1,$2,$3,$4,$5,'executor','automation',$6,$7,$8) RETURNING id
+2026-10-08 14:29:47.971 UTC [71] WARNING:  there is no transaction in progress
+2026-10-08 14:29:48.100 UTC [71] WARNING:  there is no transaction in progress
+2026-10-08 14:29:48.211 UTC [71] WARNING:  there is no transaction in progress
+2026-10-08 14:29:48.323 UTC [71] WARNING:  there is no transaction in progress
+2026-10-08 14:29:48.444 UTC [71] WARNING:  there is no transaction in progress
+2026-10-08 14:29:48.548 UTC [71] WARNING:  there is no transaction in progress
+2026-10-08 14:29:48.658 UTC [71] WARNING:  there is no transaction in progress
+2026-10-08 14:29:48.740 UTC [71] WARNING:  there is no transaction in progress
+2026-10-08 14:29:48.740 UTC [72] WARNING:  there is no transaction in progress
+2026-10-08 14:29:53.593 UTC [71] ERROR:  new row for relation "notification_deliveries" violates check constraint "notification_delivery_kind_required"
+2026-10-08 14:29:53.593 UTC [71] DETAIL:  Failing row contains (3cbe12f5-97e1-4810-86e5-1de4e36895ed, null, webhook, pending, 0, 2026-10-08 14:29:53.592876+00, null, null, 0, notification:a8be6dc5-aac0-4b0d-9a95-985f850b97a9:target:0ac84e6..., null, null, null, 2026-10-08 14:29:53.592876+00, null, 7957f57f-6463-4f8c-9497-0c3d1c077b60, a8be6dc5-aac0-4b0d-9a95-985f850b97a9, 0ac84e62-d2d8-492e-a49b-9ef4d2c50265, fe5f27c8-c3ac-4603-86ee-9a320100984e, 1, null, null, not_sent, null, 0, 1, null).
+2026-10-08 14:29:53.593 UTC [71] STATEMENT:  INSERT INTO notification_deliveries(workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key)
+	        SELECT workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key FROM notification_deliveries WHERE id=$1
+2026-10-08 14:29:53.807 UTC [72] WARNING:  there is no transaction in progress
+2026-10-08 14:30:03.361 UTC [74] WARNING:  there is no transaction in progress
+2026-10-08 14:30:03.581 UTC [74] WARNING:  there is no transaction in progress
+2026-10-08 14:30:03.728 UTC [74] WARNING:  there is no transaction in progress
+2026-10-08 14:30:03.829 UTC [74] ERROR:  new row for relation "notification_channel_targets" violates check constraint "notification_channel_targets_check"
+2026-10-08 14:30:03.829 UTC [74] DETAIL:  Failing row contains (e9dda1ab-84fb-4b85-8bc7-5b1006b07837, 7957f57f-6463-4f8c-9497-0c3d1c077b60, fe5f27c8-c3ac-4603-86ee-9a320100984e, wecom, C2 fake, t, revoked, \xc30d040703023e6d0fb461cb1e3e64d28a01e2ddd700e85ceca33790b14392..., hmac:c380ce0699df1b2b91fd21b55615abbf8eff24cb3e5021681dc211a2b3d..., 1, 2026-10-08 14:30:03.743456+00, 2026-10-08 14:30:03.743456+00).
+2026-10-08 14:30:03.829 UTC [74] STATEMENT:  UPDATE notification_channel_targets SET status='revoked' WHERE id=$1
+2026-10-08 14:30:03.986 UTC [74] WARNING:  there is no transaction in progress
+2026-10-08 14:30:03.987 UTC [74] ERROR:  invalid input value for enum membership_role: "owner" at character 77
+2026-10-08 14:30:03.987 UTC [74] STATEMENT:  INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'owner') ON CONFLICT DO NOTHING
+2026-10-08 14:30:04.186 UTC [72] WARNING:  there is no transaction in progress
+2026-10-08 14:30:04.326 UTC [72] WARNING:  there is no transaction in progress
+2026-10-08 14:30:04.419 UTC [72] ERROR:  invalid input value for enum agent_session_state: "stopped" at character 33
+2026-10-08 14:30:04.419 UTC [72] STATEMENT:  UPDATE agent_sessions SET state='stopped' WHERE id=$1

@@ -63,6 +63,12 @@ base and the Next server proxies `/api`, which is what keeps the session cookie
 first-party. A device can be reached by LAN address, hostname, or tunnel name, and
 none of those are knowable at build time.
 
+Lite 镜像在构建时将五个代理前缀 `/api`、`/auth`、`/sse`、`/mcp`、
+`/.well-known` 的内部上游绑定为 Compose 的 `http://api:3001`。
+Next 将这些规则写入镜像中的 `routes-manifest.json`；运行时修改
+`NEXT_API_UPSTREAM` 不会重新生成规则。设备的外部地址仍由浏览器同源请求决定，
+无需因此重建镜像；本部署保持既有 `api` 服务名和内部端口。
+
 The verification script is not optional bookkeeping. It is the only check that can
 see a wrong path inside the image: the unit tests pin the dispatch table and the
 compose validator pins the topology, but neither can see where the trees landed.

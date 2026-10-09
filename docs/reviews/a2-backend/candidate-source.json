@@ -1,0 +1,224 @@
+{
+  "main": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+  "sourceHead": "9de5897ab42b4a3459bf977c7a78c78bc3d11538",
+  "observedAt": "2026-10-09T04:36:44.988Z",
+  "productDiff": {
+    "path": "candidate-product.patch.gz",
+    "rawBytes": 102952,
+    "rawSha256": "d3efaa47ddedcdeadbfee2b54f559649b2354475721b4f4e88903519f722edf1"
+  },
+  "files": [
+    {
+      "path": "OPENAPI.yaml",
+      "gitBlob": {
+        "bytes": 511040,
+        "sha256": "3e971cd82c412fb2053e5999e6d86a391654d0a917c30affa7b8efaaa69ef4e8"
+      },
+      "worktree": {
+        "bytes": 518324,
+        "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871"
+      },
+      "sameBytes": false,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "gitBlob": {
+        "bytes": 87087,
+        "sha256": "1e9697a4d79631cd61bce74db9e1852619cc26647e11f726c5eb221cfc851648"
+      },
+      "worktree": {
+        "bytes": 88291,
+        "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5"
+      },
+      "sameBytes": false,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "gitBlob": {
+        "bytes": 77919,
+        "sha256": "931a7feb0ba0a8c28ce8ad3b5a28eb15a05c6134f41626816dba70d15bb75ea7"
+      },
+      "worktree": {
+        "bytes": 80095,
+        "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d"
+      },
+      "sameBytes": false,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "apps/api/src/delivery/repository-configuration.ts",
+      "gitBlob": {
+        "bytes": 3447,
+        "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+      },
+      "worktree": {
+        "bytes": 3447,
+        "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7"
+      },
+      "sameBytes": true,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "apps/api/src/delivery/routes.ts",
+      "gitBlob": {
+        "bytes": 95238,
+        "sha256": "0240ae3dc7da5d005bdf8409d641e7e41c186e36e06619a1f045540b05c60a98"
+      },
+      "worktree": {
+        "bytes": 96822,
+        "sha256": "b95483c83d42ae02869d1f59454dd936ad297b450e9f66c1881e4f4f6179a858"
+      },
+      "sameBytes": false,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "apps/worker/src/provider-actions.ts",
+      "gitBlob": {
+        "bytes": 74385,
+        "sha256": "cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376"
+      },
+      "worktree": {
+        "bytes": 75721,
+        "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+      },
+      "sameBytes": false,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "deploy/lite/README.md",
+      "gitBlob": {
+        "bytes": 10276,
+        "sha256": "b2804adc08a60d5087a8a501e2241d669c387b09d02802871f1f2dcff235da2a"
+      },
+      "worktree": {
+        "bytes": 10509,
+        "sha256": "eefb2d3f36b3e03d4a909750ae02bd6a890095f84ecf5a04ea6bab87b14b515a"
+      },
+      "sameBytes": false,
+      "purpose": "独立构建期代理兼容"
+    },
+    {
+      "path": "docker-compose.lite.yml",
+      "gitBlob": {
+        "bytes": 14650,
+        "sha256": "9d6679d8df506d4f0ad3b11faa051f5326aedef4341a6e5d6d6ffdfe95bf900e"
+      },
+      "worktree": {
+        "bytes": 14981,
+        "sha256": "6afd85d7af1b28da003fd4c26a123e2b9e7102a9b73b937b1c500621275e0edb"
+      },
+      "sameBytes": false,
+      "purpose": "独立构建期代理兼容"
+    },
+    {
+      "path": "infra/docker/lite.Dockerfile",
+      "gitBlob": {
+        "bytes": 5808,
+        "sha256": "cda11e2c6ee51cd7c4b499aa8e6f8f1b6e7d8f02138e74e93a6b100cd532c5ee"
+      },
+      "worktree": {
+        "bytes": 5908,
+        "sha256": "ed12490b9f817cb5331d0be986594c93f70deb0b6433a89ec6d853008632ba01"
+      },
+      "sameBytes": false,
+      "purpose": "独立构建期代理兼容"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "gitBlob": {
+        "bytes": 185833,
+        "sha256": "30c064cbd4f8e4434cbf74d6d6853bd160d1d6bafdebd3d122fbc8d2d0d5a1d7"
+      },
+      "worktree": {
+        "bytes": 188991,
+        "sha256": "e60c51027dc9b198f7f48738e5dcb59a63c9519db7b6e6513865664854d86139"
+      },
+      "sameBytes": false,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "packages/contracts/src/pagination-contract.test.ts",
+      "gitBlob": {
+        "bytes": 4908,
+        "sha256": "1405bdfd8ff9fec52aad92993ee7127661ee14c23c1f613f20d526f7aefa01ca"
+      },
+      "worktree": {
+        "bytes": 5049,
+        "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e"
+      },
+      "sameBytes": false,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "packages/contracts/src/repository-configuration-contracts.test.ts",
+      "gitBlob": {
+        "bytes": 1243,
+        "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+      },
+      "worktree": {
+        "bytes": 1243,
+        "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262"
+      },
+      "sameBytes": true,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "packages/contracts/src/repository-configuration-contracts.ts",
+      "gitBlob": {
+        "bytes": 2465,
+        "sha256": "e0f71021e95c6d1bffad7ca47efaf2705a4c86c42e63b3cf153fbd4674d5cbfd"
+      },
+      "worktree": {
+        "bytes": 2465,
+        "sha256": "e0f71021e95c6d1bffad7ca47efaf2705a4c86c42e63b3cf153fbd4674d5cbfd"
+      },
+      "sameBytes": true,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "packages/db/src/agent-lock-order-manifest.ts",
+      "gitBlob": {
+        "bytes": 27527,
+        "sha256": "3ec8dcee876bcd4d75a25d623fc718d4e60e17f6624999cf40df780074693881"
+      },
+      "worktree": {
+        "bytes": 27777,
+        "sha256": "956a27bbb9882fecc69271973da4f134ba2bc905a20394f2f3d31a0e6797792c"
+      },
+      "sameBytes": false,
+      "purpose": "已审仓库后端 hunk"
+    },
+    {
+      "path": "scripts/verify-a2-backend-lite-api.mjs",
+      "gitBlob": {
+        "bytes": 4810,
+        "sha256": "f09a31ba0e74fec1dfbfdc3b937d2b22ef0ba0727a714d03cd04043b4a40c8b8"
+      },
+      "worktree": {
+        "bytes": 4810,
+        "sha256": "f09a31ba0e74fec1dfbfdc3b937d2b22ef0ba0727a714d03cd04043b4a40c8b8"
+      },
+      "sameBytes": true,
+      "purpose": "独立 Lite 后端验收入口，须本轮实际安装执行"
+    },
+    {
+      "path": "scripts/verify-a2-backend-lite.mjs",
+      "gitBlob": {
+        "bytes": 22161,
+        "sha256": "7dfb25f5d068b6b43202c73012b8f5381f630c428982d5183a0a531321232abb"
+      },
+      "worktree": {
+        "bytes": 22161,
+        "sha256": "7dfb25f5d068b6b43202c73012b8f5381f630c428982d5183a0a531321232abb"
+      },
+      "sameBytes": true,
+      "purpose": "独立 Lite 后端验收入口，须本轮实际安装执行"
+    }
+  ],
+  "historicalUiPreservedAt": "3f0227876461",
+  "currentSpec": "current-spec.md",
+  "consumerCheck": "main Web 无 repository 配置消费者；SDK listRepositories/getRepositoryContext 使用通用 transport，不将新增 DTO 强加到现有客户端；MCP 既有只读工具消费该 SDK",
+  "acceptance": "本文件绑定候选源码，不代表独审、最新 CI、actual main 或旧 UI 视觉通过"
+}

@@ -1,0 +1,54 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/apps/api
+
+ ❯ integration/wecom-notifications.integration.test.ts (18 tests | 1 failed | 17 skipped) 332ms
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 并发 Worker 原子额度上限；崩溃后仅 token 过期，额度仍保留至 D+60
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 可信完成晚于发送截止上界：额度至少保留至完成后 60 秒，token 单独释放
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > C2 实际五秒 Abort 结束请求后进入 uncertain，不自动重送且额度保留 D+60
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > Redis 状态丢失：共享冷却 120 秒，旧 token 不恢复发送
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 授权锁等待跨窗口，过期 permit 不提交 checkpoint、不外发、不消耗失败预算
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 disabled 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 inactive 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 revoked 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 membership 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 changed 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 muted 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 审批 Stop 先提交，C1 当前授权重新检查后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > checkpoint 事务回滚不外发；发送后进程崩溃重启进入 uncertain，旧 fence 不 ACK
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 真实 Redis TIME 与部分 bucket 丢失：旧许可失效，共同冷却不吞失败预算
+   × C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效 50ms
+     → expected NaN to be Infinity // Object.is equality
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 网络未知不自动重送；C1 显式对账复用原 delivery/fence，渠道零决策事件/outbox
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效
+AssertionError: expected NaN to be Infinity // Object.is equality
+
+- Expected
++ Received
+
+- Infinity
++ NaN
+
+ ❯ integration/wecom-notifications.integration.test.ts:311:101
+    309|           expect(await redis.hGet(stateKey, 'epoch')).toBe(epoch)
+    310|         }
+    311|         expect(await redis.zScore(`${namespace}:${lost.endpoint_finger…
+       |                                                                                                     ^
+    312|         // 替换 TIME 不推进真实 Redis TTL；仅模拟早于冷却结束的 serial TTL 到期。
+    313|         await redis.del([`${namespace}:${lost.endpoint_fingerprint}:se…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 17 skipped (18)
+   Start at  00:57:06
+   Duration  1.90s (transform 340ms, setup 0ms, collect 1.23s, tests 332ms, environment 0ms, prepare 109ms)
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config ../../vitest.integration.config.ts integration/wecom-notifications.integration.test.ts --maxWorkers=1 -t quota 丢失只触发一次冷却

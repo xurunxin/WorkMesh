@@ -13,6 +13,7 @@ import { createArtifactUploadWorker } from './artifact-uploads.js'
 import { artifactStorageFromEnvironment } from '@workmesh/artifact-storage'
 import { FakeGitProvider, GiteaProvider, GitHubAppProvider, type GitProvider } from '@workmesh/git-provider'
 import { createAutomationWorker } from './automation.js'
+import { createWecomAdmission, createWecomNotificationAdapter } from './wecom-notifications.js'
 import { createRetentionWorker } from './retention.js'
 import { createWorkerHealthServer, WorkerRuntime } from './runtime.js'
 import { RetentionScheduler } from './retention-scheduler.js'
@@ -430,7 +431,20 @@ const startWorkerProcess = async (): Promise<void> => {
   })
   const artifactStorage = artifactStorageFromEnvironment()
   const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorage })
-  const automationWorker = createAutomationWorker({ db, features })
+  const channelRedis = features.WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS
+    ? createClient({ url: loadRealtimeRedisHintConfig().redisUrl, disableOfflineQueue: true, socket: { connectTimeout: 2000, reconnectStrategy: redisReconnectDelay } }) : undefined
+  channelRedis?.on('error', () => { /* 出口关闭；不记录含凭据的 Redis 异常原文。 */ })
+  if (channelRedis) void channelRedis.connect().catch(() => undefined)
+  const channelAdapters: Parameters<typeof createAutomationWorker>[0]['channelAdapters'] = channelRedis ? {
+    wecom: createWecomNotificationAdapter({
+      webOrigin: process.env.WEB_ORIGIN ?? '',
+      admission: createWecomAdmission({ eval: async (script, options) => {
+        if (!channelRedis.isReady) throw new Error('WECOM_RATE_UNAVAILABLE')
+        return channelRedis.eval(script, options)
+      } }),
+    }),
+  } : {}
+  const automationWorker = createAutomationWorker({ db, features, channelAdapters })
   const agentConnectionWorker = createAgentConnectionLifecycleWorker({ db })
   const retentionConfig = loadRetentionConfig()
   const retentionWorker = createRetentionWorker({
@@ -470,6 +484,7 @@ const startWorkerProcess = async (): Promise<void> => {
     const results = await Promise.allSettled([
       outboxWorker.close(),
       retentionScheduler.stop(),
+      channelRedis?.isOpen ? channelRedis.disconnect() : Promise.resolve(),
     ])
     const errors = results.flatMap(result =>
       result.status === 'rejected' ? [result.reason] : [],

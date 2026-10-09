@@ -1,0 +1,27 @@
+{
+  "observedAt": "2026-10-08T15:48:55.016Z",
+  "runId": "a2-22323ec0",
+  "reason": "首轮全量报告与随后 Gitea 关闭报告必须分目录，避免 Playwright 清理 output/html-report 时覆盖已完成证据",
+  "changes": [
+    {
+      "path": "playwright.config.ts",
+      "after": {
+        "bytes": 5243,
+        "sha256": "18bc232d81d0f44af64931c1be96a8ca13c7e8b519766e0b82aaf8c2107e50b0"
+      }
+    },
+    {
+      "path": "apps/web/e2e/stage0.spec.ts",
+      "before": {
+        "path": "apps/web/e2e/stage0.spec.ts",
+        "bytes": 23011,
+        "sha256": "690d05ea67787cd38fdeca99f5b5a00faf2ad142c43db94186c746a04aaded88"
+      },
+      "after": {
+        "bytes": 23080,
+        "sha256": "dd2f7b9c29e191f6c01118ffa13d98e467cffd71a3b7e7d6db4621e05b717ec6"
+      }
+    }
+  ],
+  "scope": "仅测试输出及认证状态路径选择；未改产品源码、断言、视口、超时或 feature 值。全量入口早已加载旧配置，关闭 Gitea 的下一子进程加载新配置。before/after 均保全，记录此两文件差异，不冒整个运行零漂移。"
+}

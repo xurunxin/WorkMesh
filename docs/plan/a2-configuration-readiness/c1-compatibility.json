@@ -1,0 +1,198 @@
+{
+  "remote": {
+    "before": {
+      "current_time": "2026-10-08 12:40:04 UTC"
+    },
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "5b9c76b5f79917697906520edcd6947bfbfa925f\trefs/heads/main"
+        }
+      ]
+    },
+    "after": {
+      "current_time": "2026-10-08 12:40:06 UTC"
+    }
+  },
+  "fetch": {
+    "args": [
+      "fetch",
+      "origin",
+      "refs/heads/main"
+    ],
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Fetched refs/heads/main — reference it as FETCH_HEAD, e.g. [\"log\", \"--oneline\", \"-10\", \"FETCH_HEAD\"]."
+        }
+      ]
+    },
+    "after": {
+      "current_time": "2026-10-08 12:40:08 UTC"
+    }
+  },
+  "actualMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "parents": "96e724858e692d262107c34db50b40c3ae7c122c 81090ec01bcbc84edbe101418d833840999a5326",
+  "tree": "059b73da4de571965ce7fb88c139d8bc07ec7455",
+  "reviewedTree": "059b73da4de571965ce7fb88c139d8bc07ec7455",
+  "cacheFetchHeadObserved": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "worktreeHead": "dbabcedbadc5ca4ecd290ebbebd5a79f186e1698",
+  "blobs": [
+    {
+      "path": "apps/worker/src/provider-actions.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "5b224445917efe29f1234ddf1e233c149951834e19f34c454ccec31bdf4707f7",
+      "bytes": 70418,
+      "unchangedFromA1": true
+    },
+    {
+      "path": "apps/api/src/delivery/routes.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "71bca1ffd3225f8a5165a2fc952571cd9c2f048317c125dfab586dcf43457626",
+      "bytes": 94927,
+      "unchangedFromA1": true
+    },
+    {
+      "path": "apps/api/src/pagination.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "29bb52a0fb0c75f66e1b586a0802dd8e0b3ae7ff95b01d6b7b3c58808e5a7fd3",
+      "bytes": 9760,
+      "unchangedFromA1": true
+    },
+    {
+      "path": "apps/api/src/workbench-llm-connections.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "e8a91e6e169bc7f2d9dcd2080cc050ebee87d73d6b768f729fe81d4f5ccc3ba0",
+      "bytes": 19485,
+      "unchangedFromA1": true
+    },
+    {
+      "path": "packages/db/src/agent-locks.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "d732f393e102d08134535a589bd13f97651c2d9c4ac10aa14487b8d1142c0eb6",
+      "bytes": 3806,
+      "unchangedFromA1": true
+    },
+    {
+      "path": "packages/db/src/agent-lock-order-manifest.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "3d64b5abc187a6775f0e9399325f4b40c26420c598d2d2a887e81bc1d152115a",
+      "bytes": 27268,
+      "unchangedFromA1": true
+    },
+    {
+      "path": "packages/contracts/src/configuration-readiness-contracts.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "a0da8f69b998dc9bb70eaf01f61f0644013e9ef19db3db1ac0f9aba286c8a75a",
+      "bytes": 1606,
+      "unchangedFromA1": true
+    },
+    {
+      "path": "apps/api/src/configuration-readiness.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "60289833f1b1f9804bb638603a16ca79c9edb503ca4d9da6d8fd6f25abf15799",
+      "bytes": 5623,
+      "unchangedFromA1": true
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "8b684aaebea15dfb7ea9c68536978a7db19f4c79263618e7d5c0e8e84a133f4f",
+      "bytes": 503229,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "SCHEMA.sql",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "9682e88fb26f7c82452ad383ea5618ad7e150d149c44f44d578fd665feab35d2",
+      "bytes": 1531,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "e7a649ab7a2422e4a998a3cff9708e141835ec94f4ad7ac67c340ecc3fa5bb22",
+      "bytes": 72836,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "4e3e12aa53aacbb20206ab04bb2676c7312c5ced0873ec9847b7ca73ba0cd340",
+      "bytes": 185438,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "4b3489d0484a1a30b5cd1aa27b971e2efb39520cf237a8072fb1b99e485eeea2",
+      "bytes": 70001,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "packages/db/src/index.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "f3153cd8fde2db27ed209a6e0ab83aa963791ba7e1aba51161982f982ead8bee",
+      "bytes": 6607,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "packages/db/src/events.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "d4cf2eeb2736651c71ce46be3092a22d90d6a726a720f7effebbe932e62e2015",
+      "bytes": 6835,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "packages/db/src/event-resources.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "b3e035cb948c4a468b25c1323c16c05a9b3089021bf2d5a312a900b0e5bc78cd",
+      "bytes": 35858,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "packages/db/src/channel-notifications.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "7333d1040f73e63de71f77d31fb54119fe9e2af64b25824d5208da37f1b0ef4a",
+      "bytes": 31862,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "packages/db/src/human-attention-sources.ts",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "4ac967adda4daba404789c5c4f86fad7acafc80097460451ca1aa6aa5083066e",
+      "bytes": 10960,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "packages/db/migrations/v1/0014_channel_delivery_contract.sql",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "1f8d766b5215c3bbade32c4f52ac790edb004d30a586034df2518cf2794247e7",
+      "bytes": 5557,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "packages/db/migrations/v1/0015_channel_notification_kind.sql",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "632dbc4eb356f6b032cc405a1960cbf006cced66c950763f165f87bd9f4191e5",
+      "bytes": 749,
+      "unchangedFromA1": false
+    },
+    {
+      "path": "packages/db/migrations/v1/0016_approval_notification_kind.sql",
+      "commit": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "gitBlobSha256": "01fa357c187faf980e7e1344ccd12de5af3826029d45744732041fc5b56d72e4",
+      "bytes": 345,
+      "unchangedFromA1": false
+    }
+  ],
+  "impact": "A1及三修入口未改；C1现行authority-first与workspace锁序、内部event快照及共享注册/feature断言纳入规划。未产品实现或合并。",
+  "ciSource": "Chief实读main已为5b9c76b5f79917697906520edcd6947bfbfa925f，C1 PR206合入；CI391十项成功属于用户提供状态，本轮不冒称自己执行产品检查。仍只改规划文档，保留历史、完整仓库交付后复审。"
+}

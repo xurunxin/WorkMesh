@@ -1,0 +1,38 @@
+2026-10-08T14:24:32.003Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:24:32.012Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:24:32.012Z pw:webserver Starting WebServer process pnpm --filter @workmesh/api exec tsx src/server.ts...
+2026-10-08T14:24:32.025Z pw:webserver Process started
+2026-10-08T14:24:32.026Z pw:webserver Waiting for availability...
+2026-10-08T14:24:32.026Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:24:32.032Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:24:32.032Z pw:webserver Waiting 100ms
+2026-10-08T14:24:32.134Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:24:32.136Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:24:32.136Z pw:webserver Waiting 250ms
+2026-10-08T14:24:32.397Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:24:32.398Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:24:32.398Z pw:webserver Waiting 500ms
+[WebServer] (node:41352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:39364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T14:24:32.906Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:24:32.907Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:24:32.907Z pw:webserver Waiting 1000ms
+[WebServer] (node:41908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T14:24:33.920Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:24:33.921Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:24:33.921Z pw:webserver Waiting 1000ms
+2026-10-08T14:24:34.926Z pw:webserver HTTP GET: http://127.0.0.1:3101/health
+2026-10-08T14:24:34.927Z pw:webserver Error while checking if http://127.0.0.1:3101/health is available: connect ECONNREFUSED 127.0.0.1:3101
+2026-10-08T14:24:34.927Z pw:webserver Waiting 1000ms
+2026-10-08T14:24:35.493Z pw:webserver Terminating the WebServer
+2026-10-08T14:24:35.493Z pw:webserver Terminated the WebServer
+Error: Process from config.webServer exited early.
+2026-10-08T14:24:35.513Z pw:webserver Terminating the WebServer
+2026-10-08T14:24:35.513Z pw:webserver Terminated the WebServer
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test --config ../../playwright.config.ts e2e/wecom-notifications.spec.ts

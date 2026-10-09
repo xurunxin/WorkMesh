@@ -43,6 +43,7 @@ export function registerNotificationChannelRoutes(
   app: FastifyInstance,
   h: {
     db: Pool
+    configuredProviders?: 'wecom'[]
     paginator: Paginator
     meta: (
       request: FastifyRequest,
@@ -100,7 +101,7 @@ export function registerNotificationChannelRoutes(
     return {
       redis_required: true,
       no_redis_supported: false,
-      configured_providers: [],
+      configured_providers: h.configuredProviders ?? [],
     }
   })
   app.get(root, async (request) => {

@@ -2,6 +2,7 @@ import { createHash, createHmac, randomUUID } from 'node:crypto'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { applyMigrations, createDb } from '@workmesh/db'
 import { FakeGitProvider } from '@workmesh/git-provider'
+import { loadFeatureConfig } from '@workmesh/config'
 import { canonicalActionApprovalPayload, canonicalMergeApprovalPayload } from '@workmesh/domain'
 import { buildApp } from '../src/server.js'
 import { createProviderActionWorker } from '../../worker/src/provider-actions.js'
@@ -220,6 +221,210 @@ describe('Stage 3 delivery API', () => {
   beforeAll(async () => { await applyMigrations(db); await app.ready() })
   beforeEach(async () => { await db.query('TRUNCATE workspaces CASCADE') })
   afterAll(async () => { await app.close(); await db.end() })
+
+  const revocations = ['actor', 'workspace-role', 'membership-role', 'membership-delete', 'target-delete', 'target-team', 'team-delete', 'repository', 'repository-connection', 'connection'] as const
+  const queueContext = async (f: Fixture, movable = false) => {
+    if (movable) {
+      // An active delegation intentionally prevents moving its original work item.
+      // Create an unassigned target through the command; keep every FK enabled.
+      const status = (await db.query<{ status_id: string }>('SELECT status_id FROM work_items WHERE id=$1', [f.workItemId])).rows[0]!
+      const response = await humanCall(f.human, 'POST', '/api/v1/work-items', { teamId: f.teamId, projectId: f.projectId, title: 'A2 movable context target', statusId: status.status_id, responsibleHumanActorId: f.human.actorId })
+      expect(response.statusCode).toBe(200); f.workItemId = response.json<{ id: string }>().id
+    }
+    const body = { workItemId: f.workItemId, baseBranch: 'main', baseSha: 'a2-sha', branchPattern: 'workmesh/{workItemKey}-{slug}', allowedPaths: ['apps/api/**'], permissions: ['read'] }
+    const response = await humanCall(f.human, 'POST', `/api/v1/repositories/${f.repositoryId}/context`, body)
+    expect(response.statusCode, JSON.stringify(response.json())).toBe(200)
+    const provider = new FakeGitProvider()
+    provider.seedRepository(f.connectionId, '9001', 'main', body.baseSha)
+    provider.seedRepositoryFiles(f.connectionId, '9001', body.baseSha, { 'AGENTS.md': '# A2 guidance' })
+    return { id: response.json<{ id: string }>().id, provider }
+  }
+  const totals = async (f: Fixture) => (await db.query(
+    `SELECT (SELECT count(*)::int FROM repository_contexts WHERE workspace_id=$1) AS contexts,
+      (SELECT count(*)::int FROM repository_guidance_entries g JOIN repository_contexts c ON c.id=g.context_id WHERE c.workspace_id=$1) AS guidance,
+      (SELECT count(*)::int FROM domain_events WHERE workspace_id=$1 AND event_type='repository.context.pinned') AS pins,
+      (SELECT count(*)::int FROM outbox_events o JOIN domain_events e ON e.id=o.domain_event_id WHERE e.workspace_id=$1 AND e.event_type='repository.context.pinned') AS outbox`, [f.workspaceId],
+  )).rows[0]
+  const revoke = async (f: Fixture, kind: typeof revocations[number]) => {
+    if (kind === 'actor') await db.query('UPDATE actors SET is_active=false WHERE id=$1', [f.human.actorId])
+    if (kind === 'workspace-role') { await db.query("UPDATE actors SET workspace_role='member' WHERE id=$1", [f.human.actorId]); await db.query("UPDATE memberships SET role='member' WHERE actor_id=$1", [f.human.actorId]) }
+    if (kind === 'membership-role' || kind === 'membership-delete') {
+      await db.query("UPDATE actors SET workspace_role='member' WHERE id=$1", [f.human.actorId])
+      await db.query(kind === 'membership-delete' ? 'DELETE FROM memberships WHERE team_id=$1 AND actor_id=$2' : "UPDATE memberships SET role='member' WHERE team_id=$1 AND actor_id=$2", [f.teamId, f.human.actorId])
+    }
+    if (kind === 'target-delete') await db.query('UPDATE work_items SET deleted_at=now() WHERE id=$1', [f.workItemId])
+    if (kind === 'target-team') {
+      const response = await humanCall(f.human, 'POST', '/api/v1/teams', { name: 'A2 moved target', key: `M${randomUUID().slice(0, 6).toUpperCase()}` })
+      expect(response.statusCode).toBe(200)
+      const nextTeam = response.json<{ id: string }>().id
+      const state = await humanCall(f.human, 'POST', `/api/v1/teams/${nextTeam}/states`, { name: 'A2 moved backlog', category: 'backlog', color: '#64748b', position: 0 })
+      expect(state.statusCode).toBe(200)
+      await db.query(`UPDATE work_items SET team_id=$2,project_id=NULL,milestone_id=NULL,
+        status_id=$3 WHERE id=$1`, [f.workItemId, nextTeam, state.json<{ id: string }>().id])
+    }
+    if (kind === 'team-delete') await db.query('UPDATE teams SET deleted_at=now() WHERE id=$1', [f.teamId])
+    if (kind === 'repository') await db.query('UPDATE repositories SET active=false WHERE id=$1', [f.repositoryId])
+    if (kind === 'repository-connection') {
+      const response = await humanCall(f.human, 'POST', '/api/v1/provider-connections', { provider: 'fake', externalAccountId: randomUUID(), displayName: 'A2 replacement connection', webhookSecret: 'a2-webhook-placeholder' })
+      expect(response.statusCode).toBe(200)
+      await db.query('UPDATE repositories SET connection_id=$2 WHERE id=$1', [f.repositoryId, response.json<{ id: string }>().id])
+    }
+    if (kind === 'connection') await db.query('UPDATE provider_connections SET active=false WHERE id=$1', [f.connectionId])
+  }
+  const assertRejected = async (f: Fixture, id: string, baseline: unknown) => {
+    expect(await totals(f)).toEqual(baseline)
+    const rejected = (await db.query<{ status: string; last_error: string | null }>('SELECT status,last_error FROM provider_actions WHERE id=$1', [id])).rows[0]
+    expect(rejected?.status, rejected?.last_error ?? undefined).toBe('dead')
+    expect((await db.query("SELECT e.id FROM domain_events e JOIN outbox_events o ON o.domain_event_id=e.id WHERE e.aggregate_id=$1 AND e.event_type='provider.action.authorization_revoked'", [id])).rowCount).toBe(1)
+    const denial = (await db.query<{ id: string; team_id: string; audience_actor_id: string }>(
+      "SELECT id,team_id,audience_actor_id FROM domain_events WHERE aggregate_id=$1 AND event_type='provider.action.authorization_revoked'", [id],
+    )).rows[0]!
+    const target = (await db.query<{ team_id: string }>('SELECT team_id FROM work_items WHERE id=$1', [f.workItemId])).rows[0]!
+    expect(denial.team_id).toBe(target.team_id)
+    expect(denial.audience_actor_id).toBe(f.human.actorId)
+    expect((await db.query("SELECT 1 FROM domain_event_resources WHERE domain_event_id=$1 AND resource_type='team' AND resource_id<>$2", [denial.id, target.team_id])).rowCount).toBe(0)
+  }
+  it.each(revocations)('解析期间撤权后无上下文发布：%s', async kind => {
+    const f = await fixture(); const queued = await queueContext(f, kind === 'target-team'); const baseline = await totals(f)
+    const original = queued.provider.resolveRepositoryGuidance.bind(queued.provider)
+    let release!: () => void; let entered!: () => void
+    const started = new Promise<void>(resolve => { entered = resolve })
+    const pause = new Promise<void>(resolve => { release = resolve })
+    vi.spyOn(queued.provider, 'resolveRepositoryGuidance').mockImplementation(async input => { entered(); await pause; return original(input) })
+    const worker = createProviderActionWorker({ db, resolveProvider: () => queued.provider, workerId: `a2-${randomUUID()}` })
+    const running = worker.tick()
+    try { await started; await revoke(f, kind) } finally { release() }
+    await running; await assertRejected(f, queued.id, baseline)
+    await worker.tick(); await assertRejected(f, queued.id, baseline)
+  })
+  it.each(revocations)('checkpoint 后撤权重启无上下文发布：%s', async kind => {
+    const f = await fixture(); const queued = await queueContext(f, kind === 'target-team'); const baseline = await totals(f)
+    const worker = createProviderActionWorker({ db, resolveProvider: () => queued.provider })
+    process.env.PROVIDER_INJECT_FAILURE_AFTER_RESULT_CHECKPOINT = 'true'
+    try { await worker.tick() } finally { delete process.env.PROVIDER_INJECT_FAILURE_AFTER_RESULT_CHECKPOINT }
+    expect((await db.query('SELECT result FROM provider_actions WHERE id=$1', [queued.id])).rows[0]?.result).toBeTruthy()
+    await revoke(f, kind)
+    await db.query("UPDATE provider_actions SET available_at=now(),claimed_at=now()-interval '2 minutes' WHERE id=$1", [queued.id])
+    const restoredProvider = vi.fn(() => { throw new Error('Checkpoint must not read provider again') })
+    await createProviderActionWorker({ db, resolveProvider: restoredProvider }).tick()
+    expect(restoredProvider).not.toHaveBeenCalled(); await assertRejected(f, queued.id, baseline)
+  })
+  it('A2 仓库解析重放仅产生一份上下文', async () => {
+    const f = await fixture(); const queued = await queueContext(f); const baseline = await totals(f)
+    const worker = createProviderActionWorker({ db, resolveProvider: () => queued.provider })
+    await worker.tick(); const once = await totals(f); expect(once).not.toEqual(baseline)
+    await worker.tick(); await createProviderActionWorker({ db, resolveProvider: () => queued.provider }).tick()
+    expect(await totals(f)).toEqual(once)
+  })
+  it('撤权与上下文落库按持锁顺序串行', async () => {
+    const f = await fixture(); const baseline = await totals(f)
+    const waitForBlock = async (pid: number) => {
+      for (let attempt = 0; attempt < 250; attempt++) {
+        const row = await db.query('SELECT pid FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))', [pid])
+        if (row.rowCount) return row.rows[0].pid as number
+        await new Promise(resolve => setTimeout(resolve, 20))
+      }
+      throw Error('Expected real database lock wait')
+    }
+    const revoker = await db.connect(); const barrier = await db.connect()
+    try {
+      const queued = await queueContext(f)
+      const worker = createProviderActionWorker({ db, resolveProvider: () => queued.provider })
+      const action = await worker.claimAction(); expect(action?.id).toBe(queued.id)
+      await revoker.query('BEGIN'); await revoker.query('UPDATE actors SET is_active=false WHERE id=$1', [f.human.actorId])
+      const revokerPid = (await revoker.query('SELECT pg_backend_pid() AS pid')).rows[0].pid as number
+      const first = worker.executeAction(action!)
+      await waitForBlock(revokerPid); await revoker.query('COMMIT'); await first
+      await assertRejected(f, queued.id, baseline)
+      await db.query('UPDATE actors SET is_active=true WHERE id=$1', [f.human.actorId])
+      const published = await queueContext(f)
+      const next = await worker.claimAction(); expect(next?.id).toBe(published.id)
+      await barrier.query('BEGIN'); await barrier.query('SELECT workspace_id FROM event_retention_state WHERE workspace_id=$1 FOR UPDATE', [f.workspaceId])
+      const barrierPid = (await barrier.query('SELECT pg_backend_pid() AS pid')).rows[0].pid as number
+      const publication = worker.executeAction(next!)
+      const workerPid = await waitForBlock(barrierPid)
+      await revoker.query('BEGIN')
+      const revocation = revoker.query('UPDATE actors SET is_active=false WHERE id=$1', [f.human.actorId])
+      await waitForBlock(workerPid)
+      await barrier.query('COMMIT'); await publication; await revocation; await revoker.query('COMMIT')
+      expect((await db.query('SELECT status FROM provider_actions WHERE id=$1', [published.id])).rows[0]?.status).toBe('completed')
+      expect((await db.query("SELECT id FROM domain_events WHERE event_type='repository.context.pinned' AND payload->>'providerActionId'=$1", [published.id])).rowCount).toBe(1)
+    } finally { await barrier.query('ROLLBACK'); await revoker.query('ROLLBACK'); barrier.release(); revoker.release() }
+  })
+  it.each(['repository_contexts', 'repository_guidance_entries', 'domain_events', 'outbox_events'])('A2 配置事务失败无部分状态事件或outbox：%s', async table => {
+    const f = await fixture(); const queued = await queueContext(f); const baseline = await totals(f)
+    const worker = createProviderActionWorker({ db, resolveProvider: () => queued.provider })
+    const action = await worker.claimAction(); expect(action?.id).toBe(queued.id)
+    const name = `a2_failure_${randomUUID().replaceAll('-', '')}`
+    try {
+      await db.query(`CREATE FUNCTION ${name}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'A2_TEST_TRANSACTION_FAILURE'; END $$`)
+      await db.query(`CREATE TRIGGER ${name} BEFORE INSERT ON ${table} FOR EACH ROW EXECUTE FUNCTION ${name}()`)
+      await expect(worker.executeAction(action!)).rejects.toThrow('A2_TEST_TRANSACTION_FAILURE')
+      expect(await totals(f)).toEqual(baseline)
+      expect((await db.query('SELECT status FROM provider_actions WHERE id=$1', [queued.id])).rows[0]?.status).toBe('claimed')
+    } finally { await db.query(`DROP TRIGGER IF EXISTS ${name} ON ${table}`); await db.query(`DROP FUNCTION IF EXISTS ${name}()`)}
+    await worker.executeAction(action!)
+    expect((await db.query('SELECT status FROM provider_actions WHERE id=$1', [queued.id])).rows[0]?.status).toBe('completed')
+  })
+  it('仓库发布与 C1 事件快照共享事务兼容', async () => {
+    const f = await fixture(); const queued = await queueContext(f)
+    await createProviderActionWorker({ db, resolveProvider: () => queued.provider }).tick()
+    const events = await db.query<{ notification_sources: unknown[] }>("SELECT notification_sources FROM domain_events WHERE event_type='repository.context.pinned' AND payload->>'providerActionId'=$1", [queued.id])
+    expect(events.rows).toEqual([{ notification_sources: [] }])
+    expect((await db.query('SELECT id FROM notification_intents WHERE workspace_id=$1', [f.workspaceId])).rowCount).toBe(0)
+  })
+  it('连接同文重放与旧脱敏指纹拒绝降级', async () => {
+    const f = await fixture()
+    const body = { provider: 'github', externalAccountId: randomUUID(), displayName: 'Legacy A2', installationId: '73', appId: '17', privateKey: 'legacy-private-sentinel'.repeat(5), webhookSecret: 'legacy-webhook-sentinel' }
+    const key = randomUUID()
+    const first = await humanCall(f.human, 'POST', '/api/v1/provider-connections', body, { 'idempotency-key': key })
+    expect(first.statusCode).toBe(200)
+    expect((await humanCall(f.human, 'POST', '/api/v1/provider-connections', body, { 'idempotency-key': key })).json()).toEqual(first.json())
+    const stable = (value: unknown): unknown => Array.isArray(value) ? value.map(stable) : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)).map(([name, entry]) => [name, stable(entry)])) : value
+    const legacyHash = createHash('sha256').update(JSON.stringify(stable({ method: 'POST', route: '/api/v1/provider-connections', pathParams: {}, body: { ...body, webhookSecret: '[REDACTED]', privateKey: '[REDACTED]' }, ifMatch: null, agentSessionId: null }))).digest('hex')
+    await db.query('UPDATE api_idempotency_keys SET request_hash=$1 WHERE workspace_id=$2 AND actor_id=$3 AND idempotency_key=$4', [legacyHash, f.workspaceId, f.human.actorId, key])
+    for (const payload of [body, { ...body, webhookSecret: 'legacy-new-webhook-value' }]) expect((await humanCall(f.human, 'POST', '/api/v1/provider-connections', payload, { 'idempotency-key': key })).json<{ error: { code: string } }>().error.code).toBe('IDEMPOTENCY_KEY_REUSED')
+    expect((await db.query('SELECT request_hash FROM api_idempotency_keys WHERE idempotency_key=$1', [key])).rows[0]?.request_hash).toBe(legacyHash)
+    const expiredBody = { ...body, externalAccountId: randomUUID() }
+    await db.query("UPDATE api_idempotency_keys SET created_at=now()-interval '2 days',replay_expires_at=now()-interval '1 day',conflict_expires_at=now()-interval '1 hour' WHERE idempotency_key=$1", [key])
+    expect((await humanCall(f.human, 'POST', '/api/v1/provider-connections', expiredBody, { 'idempotency-key': key })).statusCode).toBe(200)
+    const master = process.env.WORKMESH_MASTER_KEY
+    delete process.env.WORKMESH_MASTER_KEY
+    const missingKeyAccount = randomUUID()
+    try {
+      expect((await humanCall(f.human, 'POST', '/api/v1/provider-connections', { ...body, externalAccountId: missingKeyAccount })).json<{ error: { code: string } }>().error.code).toBe('INTERNAL_ERROR')
+      expect((await db.query('SELECT id FROM provider_connections WHERE external_account_id=$1', [missingKeyAccount])).rowCount).toBe(0)
+    }
+    finally { process.env.WORKMESH_MASTER_KEY = master }
+  })
+  it.each(['webhookSecret', 'privateKey', 'accessToken'] as const)('连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突：%s', async field => {
+    const f = await fixture()
+    const capturedLogs: string[] = []
+    const enabled = buildApp({ features: loadFeatureConfig({ WORKMESH_BETA_GITEA: 'true' }), logger: { stream: { write: (message: string) => capturedLogs.push(message) } } })
+    try {
+      const body = { provider: field === 'accessToken' ? 'gitea' : 'github', externalAccountId: randomUUID(), displayName: 'A2 secret test',
+        installationId: '73', appId: '17', privateKey: 'a2-private-secret-sentinel-'.repeat(5), webhookSecret: 'a2-webhook-secret-sentinel', baseUrl: 'https://gitea.example.test', accessToken: 'a2-token-secret-sentinel' }
+      const key = randomUUID()
+      const send = (payload: object) => enabled.inject({ method: 'POST', url: '/api/v1/provider-connections', payload, headers: { cookie: f.human.cookie, 'x-csrf-token': f.human.csrf, 'idempotency-key': key } })
+      const first = await send(body); expect(first.statusCode, first.body).toBe(200)
+      const facts = async () => (await db.query(`SELECT
+        (SELECT count(*) FROM provider_connections WHERE workspace_id=$1) AS connections,
+        (SELECT count(*) FROM actors WHERE workspace_id=$1 AND kind='service') AS services,
+        (SELECT count(*) FROM api_idempotency_keys WHERE workspace_id=$1) AS ledger,
+        (SELECT count(*) FROM domain_events WHERE workspace_id=$1) AS events,
+        (SELECT count(*) FROM outbox_events o JOIN domain_events e ON e.id=o.domain_event_id WHERE e.workspace_id=$1) AS outbox`, [f.workspaceId])).rows[0]
+      const baseline = await facts()
+      const replay = await send(body); expect(replay.json()).toEqual(first.json())
+      const changed = await send({ ...body, [field]: `${body[field]}-changed` })
+      expect(changed.json().error.code).toBe('IDEMPOTENCY_KEY_REUSED')
+      expect(await facts()).toEqual(baseline)
+      expect((await db.query('SELECT id FROM provider_connections WHERE external_account_id=$1', [body.externalAccountId])).rowCount).toBe(1)
+      const stored = JSON.stringify((await db.query(`SELECT response_body,request_hash FROM api_idempotency_keys WHERE workspace_id=$1`, [f.workspaceId])).rows)
+        + JSON.stringify((await db.query('SELECT payload FROM domain_events WHERE workspace_id=$1', [f.workspaceId])).rows)
+        + capturedLogs.join('')
+      for (const secret of [body.webhookSecret, body.privateKey, body.accessToken]) expect(stored).not.toContain(secret)
+    } finally { await enabled.close() }
+  })
 
   it('authorizes before context disclosure and persists provider intent without provider I/O', async () => {
     const f = await fixture()

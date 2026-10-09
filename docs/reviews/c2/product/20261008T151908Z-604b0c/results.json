@@ -1,0 +1,492 @@
+{
+  "run": "20261008T151908Z-604b0c",
+  "mode": "visual",
+  "temporaryPath": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T151908Z-604b0c",
+  "testPool": {
+    "VITEST_MAX_FORKS": 4,
+    "VITEST_MIN_FORKS": 1,
+    "assertionsAndTimeoutsUnchanged": true
+  },
+  "checks": [
+    {
+      "label": "node-version",
+      "command": [
+        "node",
+        "--version"
+      ],
+      "pid": 57812,
+      "startedAt": "2026-10-08T15:19:13.882696+00:00",
+      "finishedAt": "2026-10-08T15:19:13.988528+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 10,
+      "rawLogSha256": "961cd9dfa4d41eb2d3ce710fbee026efd37f216d21606d54ed179f323935a6f9",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "pnpm-version",
+      "command": [
+        "pnpm.cmd",
+        "--version"
+      ],
+      "pid": 52520,
+      "startedAt": "2026-10-08T15:19:13.989327+00:00",
+      "finishedAt": "2026-10-08T15:19:14.535548+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 7,
+      "rawLogSha256": "aa4b6073295967fb7e7e4f8b415ae112cffbd0fe5aa20c6edb02e3b6c4935684",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "pnpm-child-runtime",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "node",
+        "-p",
+        "JSON.stringify({version:process.version,execPath:process.execPath})"
+      ],
+      "pid": 63048,
+      "startedAt": "2026-10-08T15:19:14.536305+00:00",
+      "finishedAt": "2026-10-08T15:19:15.147755+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 160,
+      "rawLogSha256": "b30a886c907187302ba56ebeb190e0b0528983d46b643a82b61d8c851db8928d",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "start-pg",
+      "command": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "c2-product-20261008t151908z-604b0c-pg",
+        "--label",
+        "workmesh.c2.run=20261008T151908Z-604b0c",
+        "-p",
+        "127.0.0.1:25516:5432",
+        "--env",
+        "POSTGRES_PASSWORD",
+        "--env",
+        "POSTGRES_USER=workmesh",
+        "--env",
+        "POSTGRES_DB=c2_product_test",
+        "--tmpfs",
+        "/var/lib/postgresql/data",
+        "postgres:16-alpine"
+      ],
+      "pid": 52888,
+      "startedAt": "2026-10-08T15:19:15.148872+00:00",
+      "finishedAt": "2026-10-08T15:19:15.342456+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 65,
+      "rawLogSha256": "bd20fb6a535b7b4e800ad6c0fec64a19677282613ffa3f921087467e1343e409",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "start-redis",
+      "command": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "c2-product-20261008t151908z-604b0c-redis",
+        "--label",
+        "workmesh.c2.run=20261008T151908Z-604b0c",
+        "-p",
+        "127.0.0.1:26516:6379",
+        "--tmpfs",
+        "/data",
+        "redis:7-alpine"
+      ],
+      "pid": 54668,
+      "startedAt": "2026-10-08T15:19:15.345259+00:00",
+      "finishedAt": "2026-10-08T15:19:15.571117+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 65,
+      "rawLogSha256": "29e7d476be2efb643e3359db799c0e4b8e5ac757dd620ac24700875293bb32cd",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "start-s3",
+      "command": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "c2-product-20261008t151908z-604b0c-s3",
+        "--label",
+        "workmesh.c2.run=20261008T151908Z-604b0c",
+        "-p",
+        "127.0.0.1:27516:9000",
+        "--env",
+        "RUSTFS_ACCESS_KEY",
+        "--env",
+        "RUSTFS_SECRET_KEY",
+        "--tmpfs",
+        "/data:mode=0777",
+        "rustfs/rustfs:1.0.0"
+      ],
+      "pid": 29136,
+      "startedAt": "2026-10-08T15:19:15.573778+00:00",
+      "finishedAt": "2026-10-08T15:19:15.810773+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 65,
+      "rawLogSha256": "3f42b8f2cbd8e7bcfbaa8ec25a7212336d0837ab6b4866892cee837cb25552d6",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "prepare-s3",
+      "command": [
+        "node",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T151908Z-604b0c\\prepare-s3.mjs"
+      ],
+      "pid": 8296,
+      "startedAt": "2026-10-08T15:19:16.077753+00:00",
+      "finishedAt": "2026-10-08T15:19:16.329642+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 48,
+      "rawLogSha256": "372fe595dfd27eff18e9386db343b8c7976821ed4ad2ef66d850d6e9d41de584",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "baseline-ui",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T151908Z-604b0c\\playwright.baseline.config.ts"
+      ],
+      "pid": 32220,
+      "startedAt": "2026-10-08T15:19:17.409452+00:00",
+      "finishedAt": "2026-10-08T15:20:19.305797+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 208680,
+      "rawLogSha256": "396108c95876b3d09ac3862ebabda24e28044c9b362e738aa2660b5e45244bf1",
+      "sourceBefore": {
+        "path": "source-c047f66ecf306103ce150288926904d052e206d3ef8fe8c6d0b91a3df5566cec.json",
+        "bytes": 277214,
+        "sha256": "c047f66ecf306103ce150288926904d052e206d3ef8fe8c6d0b91a3df5566cec",
+        "files": 889
+      },
+      "sourceAfter": {
+        "path": "source-c047f66ecf306103ce150288926904d052e206d3ef8fe8c6d0b91a3df5566cec.json",
+        "bytes": 277214,
+        "sha256": "c047f66ecf306103ce150288926904d052e206d3ef8fe8c6d0b91a3df5566cec",
+        "files": 889
+      }
+    },
+    {
+      "label": "service-log-pg",
+      "command": [
+        "docker",
+        "logs",
+        "08e5b6240e0330f926dbcf89729dd373d245253c74ca73e5a40436e8300fde04"
+      ],
+      "pid": 32904,
+      "startedAt": "2026-10-08T15:20:20.008113+00:00",
+      "finishedAt": "2026-10-08T15:20:20.102117+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 3311,
+      "rawLogSha256": "5e19e43dddbde8ff88582a38556edec7e6290de0a5ac9dddf18cbe264e01aeb8",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "inspect-pg",
+      "command": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{json .Id}}|{{json .Config.Labels}}|{{json .Mounts}}|{{json .NetworkSettings.Ports}}|{{json .Image}}",
+        "08e5b6240e0330f926dbcf89729dd373d245253c74ca73e5a40436e8300fde04"
+      ],
+      "pid": 48484,
+      "startedAt": "2026-10-08T15:20:20.102907+00:00",
+      "finishedAt": "2026-10-08T15:20:20.183207+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 247,
+      "rawLogSha256": "5d76c25d5815b83ee9ef340c2157bccfeacae2b901611fe3aa25d136104aaf2c",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "stop-pg",
+      "command": [
+        "docker",
+        "stop",
+        "08e5b6240e0330f926dbcf89729dd373d245253c74ca73e5a40436e8300fde04"
+      ],
+      "pid": 9708,
+      "startedAt": "2026-10-08T15:20:20.183990+00:00",
+      "finishedAt": "2026-10-08T15:20:20.386527+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 65,
+      "rawLogSha256": "bd20fb6a535b7b4e800ad6c0fec64a19677282613ffa3f921087467e1343e409",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "remove-pg",
+      "command": [
+        "docker",
+        "rm",
+        "08e5b6240e0330f926dbcf89729dd373d245253c74ca73e5a40436e8300fde04"
+      ],
+      "pid": 46672,
+      "startedAt": "2026-10-08T15:20:20.387331+00:00",
+      "finishedAt": "2026-10-08T15:20:20.487550+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 65,
+      "rawLogSha256": "bd20fb6a535b7b4e800ad6c0fec64a19677282613ffa3f921087467e1343e409",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "service-log-redis",
+      "command": [
+        "docker",
+        "logs",
+        "e8b78e91f8e8a063e0eb8bf25a2c860c49a1383741a2376f520d00b033b1e465"
+      ],
+      "pid": 47884,
+      "startedAt": "2026-10-08T15:20:20.488396+00:00",
+      "finishedAt": "2026-10-08T15:20:20.602966+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 599,
+      "rawLogSha256": "b78e1f4b3c1dbad5d2bf6c17e1b4cfd801c756b3dd83745b5614d217039932e6",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "inspect-redis",
+      "command": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{json .Id}}|{{json .Config.Labels}}|{{json .Mounts}}|{{json .NetworkSettings.Ports}}|{{json .Image}}",
+        "e8b78e91f8e8a063e0eb8bf25a2c860c49a1383741a2376f520d00b033b1e465"
+      ],
+      "pid": 54516,
+      "startedAt": "2026-10-08T15:20:20.603783+00:00",
+      "finishedAt": "2026-10-08T15:20:20.681649+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 247,
+      "rawLogSha256": "55a219c5cde0ee2e722fd30ed34eb335dd5a0115136e6e8cd94175192fae4438",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "stop-redis",
+      "command": [
+        "docker",
+        "stop",
+        "e8b78e91f8e8a063e0eb8bf25a2c860c49a1383741a2376f520d00b033b1e465"
+      ],
+      "pid": 60256,
+      "startedAt": "2026-10-08T15:20:20.682405+00:00",
+      "finishedAt": "2026-10-08T15:20:20.889510+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 65,
+      "rawLogSha256": "29e7d476be2efb643e3359db799c0e4b8e5ac757dd620ac24700875293bb32cd",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "remove-redis",
+      "command": [
+        "docker",
+        "rm",
+        "e8b78e91f8e8a063e0eb8bf25a2c860c49a1383741a2376f520d00b033b1e465"
+      ],
+      "pid": 49756,
+      "startedAt": "2026-10-08T15:20:20.890395+00:00",
+      "finishedAt": "2026-10-08T15:20:20.989384+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 65,
+      "rawLogSha256": "29e7d476be2efb643e3359db799c0e4b8e5ac757dd620ac24700875293bb32cd",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "service-log-s3",
+      "command": [
+        "docker",
+        "logs",
+        "dc670ff7871f1ef26fbad417c404d2f62c5d087831660a702fe4509b0f20f2c9"
+      ],
+      "pid": 36752,
+      "startedAt": "2026-10-08T15:20:20.990141+00:00",
+      "finishedAt": "2026-10-08T15:20:21.078951+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 104,
+      "rawLogSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "inspect-s3",
+      "command": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{json .Id}}|{{json .Config.Labels}}|{{json .Mounts}}|{{json .NetworkSettings.Ports}}|{{json .Image}}",
+        "dc670ff7871f1ef26fbad417c404d2f62c5d087831660a702fe4509b0f20f2c9"
+      ],
+      "pid": 58316,
+      "startedAt": "2026-10-08T15:20:21.079833+00:00",
+      "finishedAt": "2026-10-08T15:20:21.161501+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 1079,
+      "rawLogSha256": "b7db26f17405d33193c482e387ff44ea1509115f49e504e1c1dc3d437ea45c00",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "stop-s3",
+      "command": [
+        "docker",
+        "stop",
+        "dc670ff7871f1ef26fbad417c404d2f62c5d087831660a702fe4509b0f20f2c9"
+      ],
+      "pid": 35108,
+      "startedAt": "2026-10-08T15:20:21.162212+00:00",
+      "finishedAt": "2026-10-08T15:20:21.356000+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 65,
+      "rawLogSha256": "3f42b8f2cbd8e7bcfbaa8ec25a7212336d0837ab6b4866892cee837cb25552d6",
+      "sourceBefore": null,
+      "sourceAfter": null
+    },
+    {
+      "label": "remove-s3",
+      "command": [
+        "docker",
+        "rm",
+        "dc670ff7871f1ef26fbad417c404d2f62c5d087831660a702fe4509b0f20f2c9"
+      ],
+      "pid": 17208,
+      "startedAt": "2026-10-08T15:20:21.356933+00:00",
+      "finishedAt": "2026-10-08T15:20:21.456034+00:00",
+      "exitCode": 0,
+      "rawLogBytes": 65,
+      "rawLogSha256": "3f42b8f2cbd8e7bcfbaa8ec25a7212336d0837ab6b4866892cee837cb25552d6",
+      "sourceBefore": null,
+      "sourceAfter": null
+    }
+  ],
+  "resources": [
+    {
+      "kind": "pg",
+      "name": "c2-product-20261008t151908z-604b0c-pg",
+      "id": "08e5b6240e0330f926dbcf89729dd373d245253c74ca73e5a40436e8300fde04",
+      "image": "postgres:16-alpine",
+      "createdAt": "2026-10-08T15:19:15.148357+00:00",
+      "ownershipLabel": "workmesh.c2.run=20261008T151908Z-604b0c",
+      "sharedImageRetained": true
+    },
+    {
+      "kind": "redis",
+      "name": "c2-product-20261008t151908z-604b0c-redis",
+      "id": "e8b78e91f8e8a063e0eb8bf25a2c860c49a1383741a2376f520d00b033b1e465",
+      "image": "redis:7-alpine",
+      "createdAt": "2026-10-08T15:19:15.344513+00:00",
+      "ownershipLabel": "workmesh.c2.run=20261008T151908Z-604b0c",
+      "sharedImageRetained": true
+    },
+    {
+      "kind": "s3",
+      "name": "c2-product-20261008t151908z-604b0c-s3",
+      "id": "dc670ff7871f1ef26fbad417c404d2f62c5d087831660a702fe4509b0f20f2c9",
+      "image": "rustfs/rustfs:1.0.0",
+      "createdAt": "2026-10-08T15:19:15.572780+00:00",
+      "ownershipLabel": "workmesh.c2.run=20261008T151908Z-604b0c",
+      "sharedImageRetained": true
+    }
+  ],
+  "cleanup": [
+    {
+      "id": "08e5b6240e0330f926dbcf89729dd373d245253c74ca73e5a40436e8300fde04",
+      "receipts": [
+        "stop-pg",
+        "remove-pg"
+      ],
+      "imageRetained": "postgres:16-alpine"
+    },
+    {
+      "id": "e8b78e91f8e8a063e0eb8bf25a2c860c49a1383741a2376f520d00b033b1e465",
+      "receipts": [
+        "stop-redis",
+        "remove-redis"
+      ],
+      "imageRetained": "redis:7-alpine"
+    },
+    {
+      "id": "dc670ff7871f1ef26fbad417c404d2f62c5d087831660a702fe4509b0f20f2c9",
+      "receipts": [
+        "stop-s3",
+        "remove-s3"
+      ],
+      "imageRetained": "rustfs/rustfs:1.0.0"
+    }
+  ],
+  "limitations": [],
+  "runtime": {
+    "url": "https://nodejs.org/dist/v22.19.0/node-v22.19.0-win-x64.zip",
+    "checksumUrl": "https://nodejs.org/dist/v22.19.0/SHASUMS256.txt",
+    "archiveSha256": "ea3fad0e67a991d8477d8c01344b56e69c676ccb733f065b22436994b1253f86",
+    "executableSha256": "995a3fb3cefad590cd3f4b321532a4b9582fb9c6575320ed2e3e894caac3e362",
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T151908Z-604b0c\\node.exe",
+    "readAt": "2026-10-08T15:19:13.882670+00:00",
+    "version": "22.19.0"
+  },
+  "visualBaseline": {
+    "inputHead": "f7c2265b4abd1f06ca97be5c2a16a1568fc2b767",
+    "files": [
+      {
+        "path": "apps/web/app/lib/canonical-route.ts",
+        "backup": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T151908Z-604b0c\\current-ui-0.source",
+        "currentSha256": "aaaa2c1a0db03416e8a75be81d911149106b3933edf3e513333c7a4d07da8f36",
+        "baselineGitSha256": "3a593854807e9dcf3d54f90aa07f09864db72bed6076423e900c9d5b5ef88e1a",
+        "restoredSha256": "aaaa2c1a0db03416e8a75be81d911149106b3933edf3e513333c7a4d07da8f36",
+        "restored": true
+      },
+      {
+        "path": "apps/web/app/lib/use-authenticated-actor.ts",
+        "backup": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T151908Z-604b0c\\current-ui-1.source",
+        "currentSha256": "1327751488210f22fcbac3156c3b39d7a01b8ddcdced52a86987fbea939594b6",
+        "baselineGitSha256": "fcf4295f4edab0707bc345066d4491ee21b24c00487b31df28027b3f27d38c56",
+        "restoredSha256": "1327751488210f22fcbac3156c3b39d7a01b8ddcdced52a86987fbea939594b6",
+        "restored": true
+      },
+      {
+        "path": "apps/web/app/login/page.tsx",
+        "backup": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T151908Z-604b0c\\current-ui-2.source",
+        "currentSha256": "ce3c8dc81606d53547c16dc2952d2944fe1e41cc6034df7dc18518c2c2b44bc4",
+        "baselineGitSha256": "78cb8ba0df14fd0e67481004e6d5612ce5ccdd78667c553537c7d87c7ba8da03",
+        "restoredSha256": "ce3c8dc81606d53547c16dc2952d2944fe1e41cc6034df7dc18518c2c2b44bc4",
+        "restored": true
+      },
+      {
+        "path": "apps/web/app/attention-center.tsx",
+        "backup": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e\\.tmp\\c2-product-20261008T151908Z-604b0c\\current-ui-3.source",
+        "currentSha256": "e5f15d70e9db58e6b1c8bb89334164fa7c199babdd094af2e5b85561879e024e",
+        "baselineGitSha256": "cfa044a68699679524fc80f363ada26b461fec9cf976f731e5d33e8134df1b3f",
+        "restoredSha256": "e5f15d70e9db58e6b1c8bb89334164fa7c199babdd094af2e5b85561879e024e",
+        "restored": true
+      }
+    ],
+    "scope": "实施前 UI 行为/截图，不能充作当前产品验收"
+  },
+  "temporaryPathRetainedReason": "Playwright 原始 trace/截图及服务准备输入待保全；不删除活动或尚未归档路径",
+  "finishedAt": "2026-10-08T15:20:21.461702+00:00"
+}

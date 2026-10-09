@@ -1,0 +1,228 @@
+{
+  "runId": "a2-ae8589df",
+  "resources": [
+    {
+      "type": "container",
+      "name": "a2-ae8589df-postgres",
+      "owner": "a2-ae8589df",
+      "image": "postgres:16-alpine",
+      "plannedAt": "2026-10-08T15:14:40.276Z",
+      "id": "6ceffa02449c37ac3331e2c3ab6f39a42b6c531dd3e84b4589ea1859464f0ab5",
+      "cleanup": {
+        "code": 0,
+        "output": "6ceffa02449c37ac3331e2c3ab6f39a42b6c531dd3e84b4589ea1859464f0ab5\n",
+        "at": "2026-10-08T15:15:15.053Z"
+      },
+      "preDelete": {
+        "id": "6ceffa02449c37ac3331e2c3ab6f39a42b6c531dd3e84b4589ea1859464f0ab5",
+        "owner": "a2-ae8589df",
+        "exitCode": 0,
+        "mounts": [],
+        "activity": "验收子进程已结束，保全日志与源码后收尾",
+        "at": "2026-10-08T15:15:14.761Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-ae8589df-redis",
+      "owner": "a2-ae8589df",
+      "image": "redis:7-alpine",
+      "plannedAt": "2026-10-08T15:14:40.491Z",
+      "id": "b292eef02c99c88d589b3a634a61bacff951057df50187f3b5dc60db95f66fd4",
+      "cleanup": {
+        "code": 0,
+        "output": "b292eef02c99c88d589b3a634a61bacff951057df50187f3b5dc60db95f66fd4\n",
+        "at": "2026-10-08T15:15:14.490Z"
+      },
+      "preDelete": {
+        "id": "b292eef02c99c88d589b3a634a61bacff951057df50187f3b5dc60db95f66fd4",
+        "owner": "a2-ae8589df",
+        "exitCode": 0,
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "c05efdadb22d14232073f151f26ee54b1e77285140837712652699025fcc74f3",
+            "Source": "/var/lib/docker/volumes/c05efdadb22d14232073f151f26ee54b1e77285140837712652699025fcc74f3/_data",
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "activity": "验收子进程已结束，保全日志与源码后收尾",
+        "at": "2026-10-08T15:15:14.258Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-ae8589df-s3",
+      "owner": "a2-ae8589df",
+      "image": "rustfs/rustfs:1.0.0",
+      "plannedAt": "2026-10-08T15:14:40.769Z",
+      "id": "44156084b280a3821d1c22a9742f07537e815ae6c4a9a2891c08436672976595",
+      "cleanup": {
+        "code": 0,
+        "output": "44156084b280a3821d1c22a9742f07537e815ae6c4a9a2891c08436672976595\n",
+        "at": "2026-10-08T15:15:13.966Z"
+      },
+      "preDelete": {
+        "id": "44156084b280a3821d1c22a9742f07537e815ae6c4a9a2891c08436672976595",
+        "owner": "a2-ae8589df",
+        "exitCode": 0,
+        "mounts": [],
+        "activity": "验收子进程已结束，保全日志与源码后收尾",
+        "at": "2026-10-08T15:15:13.730Z"
+      }
+    }
+  ],
+  "results": [
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-ae8589df-postgres",
+        "--label",
+        "workmesh.task=a2-ae8589df",
+        "-p",
+        "127.0.0.1:58424:5432",
+        "-e",
+        "POSTGRES_PASSWORD",
+        "-e",
+        "POSTGRES_USER=workmesh",
+        "-e",
+        "POSTGRES_DB=workmesh_a2_test",
+        "--tmpfs",
+        "/var/lib/postgresql/data",
+        "postgres:16-alpine"
+      ],
+      "pid": 47324,
+      "start": "2026-10-08T15:14:40.277Z",
+      "end": "2026-10-08T15:14:40.488Z",
+      "code": 0,
+      "log": "0.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-ae8589df-redis",
+        "--label",
+        "workmesh.task=a2-ae8589df",
+        "-p",
+        "127.0.0.1:58425:6379",
+        "redis:7-alpine"
+      ],
+      "pid": 63092,
+      "start": "2026-10-08T15:14:40.491Z",
+      "end": "2026-10-08T15:14:40.768Z",
+      "code": 0,
+      "log": "1.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-ae8589df-s3",
+        "--label",
+        "workmesh.task=a2-ae8589df",
+        "-p",
+        "127.0.0.1:58426:9000",
+        "-e",
+        "RUSTFS_ACCESS_KEY",
+        "-e",
+        "RUSTFS_SECRET_KEY",
+        "--tmpfs",
+        "/data:rw,mode=1777",
+        "rustfs/rustfs:1.0.0"
+      ],
+      "pid": 44452,
+      "start": "2026-10-08T15:14:40.770Z",
+      "end": "2026-10-08T15:14:41.000Z",
+      "code": 0,
+      "log": "2.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage3-delivery.integration.test.ts",
+        "integration/stage4-operations.integration.test.ts"
+      ],
+      "pid": 60940,
+      "start": "2026-10-08T15:14:42.438Z",
+      "end": "2026-10-08T15:15:12.963Z",
+      "code": 1,
+      "log": "3.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "44156084b280a3821d1c22a9742f07537e815ae6c4a9a2891c08436672976595"
+      ],
+      "pid": 59136,
+      "start": "2026-10-08T15:15:13.731Z",
+      "end": "2026-10-08T15:15:13.965Z",
+      "code": 0,
+      "log": "4.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "b292eef02c99c88d589b3a634a61bacff951057df50187f3b5dc60db95f66fd4"
+      ],
+      "pid": 53280,
+      "start": "2026-10-08T15:15:14.259Z",
+      "end": "2026-10-08T15:15:14.489Z",
+      "code": 0,
+      "log": "5.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "6ceffa02449c37ac3331e2c3ab6f39a42b6c531dd3e84b4589ea1859464f0ab5"
+      ],
+      "pid": 29428,
+      "start": "2026-10-08T15:15:14.761Z",
+      "end": "2026-10-08T15:15:15.052Z",
+      "code": 0,
+      "log": "6.log"
+    },
+    {
+      "name": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\sanitize-evidence.ps1",
+        "-RunDirectory",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-ae8589df"
+      ],
+      "pid": 7216,
+      "start": "2026-10-08T15:15:15.055Z",
+      "end": "2026-10-08T15:15:15.695Z",
+      "code": 0,
+      "log": "7.log"
+    }
+  ]
+}

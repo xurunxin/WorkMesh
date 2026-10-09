@@ -1,0 +1,34 @@
+{
+  "id": "8K46xBWutJwsqCy89K5Oq",
+  "reference": "doc:8K46xBWutJwsqCy89K5Oq",
+  "version": null,
+  "generatedAt": null,
+  "messageTimestamp": "2026-10-08 12:55:02 UTC",
+  "messageTimestampKind": "conversation 返回的消息时间，非文档生成时间",
+  "source": "用户消息中的对应完整平台 saved copy；conversation 工具只复核 ID 与消息顺序",
+  "sourceExtraction": "共用未改段及各自原始差异段；plan-source-spans.json 可复核，非后端 doc 全文读取",
+  "bodyBoundary": "移除 plan 容器及边界换行；从第一个 ## 至最后一个句号，保留正文空白",
+  "encoding": "UTF-8",
+  "lineEndings": "LF",
+  "bytes": 8184,
+  "sha256": "e414db43dd730f332ab85f92f42bc1f618bf1dd31fa07da1bbae350791d0e9cd",
+  "predecessor": "vYxCwh0TMRC3mOrr6cU1K",
+  "body": "## 上下文\n\n真实远端 `refs/heads/main` 为 `5b9c76b5f79917697906520edcd6947bfbfa925f`，当前工作树与其一致。C1 已提供目标管理、intent、逐目标 delivery、发送 checkpoint、fenced ACK 和未知结果对账。\n\n本阶段冻结可执行的 C2 方案及证据。仅变更规划与规格文档，不创建真实 WorkMesh 记录，不实现产品代码，不发送真实消息。\n\n## 已确定的选择\n\n采用官方“消息推送（原群机器人）”Webhook，发送 `msgtype: markdown`，内容仅含通用提醒和 canonical 网页链接。官方正文已通过本机 HTTPS 读取，确认 Markdown 内容上限为 4096 UTF-8 字节、每目标每分钟最多 20 条消息。[协议来源](https://developer.work.weixin.qq.com/document/path/91770)\n\n部署沿用 `WEB_ORIGIN` 和 C1 的 Redis 必需条件；生产深链使用可访问的 HTTPS 网页入口。目标由当前 Human 在既有个人设置中管理，部署说明要求目标企业允许该群组消息推送。群成员身份不参与 WorkMesh 授权。\n\n其他渠道、入站回调、账户绑定、决策按钮和真实外发验证均不在范围内。\n\n## 文档变更\n\n- `docs/plan/c2-wecom/implementation-plan.md`：保存完整中文实现方案和后续逐文件变更清单。适配器落在 `apps/worker/src/wecom-notifications.ts`，由 `apps/worker/src/index.ts` 注册到 `createAutomationWorker.channelAdapters`；复用 `claimNotifications`、`deliverNotification` 及 `packages/db/src/channel-notifications.ts` 的 `prepareChannelSend`、`settleChannelSend`、`reconcileChannelSend`，不新增 CRUD 或队列。保留 workspace 前置锁、`lockAgentAuthorityPlan` 锁序、锁后实际租期检查、静音 kind、逐条 claim 和八次重试预算。\n  \n  冻结端点白名单为 HTTPS `qyapi.weixin.qq.com/cgi-bin/webhook/send`，仅接受一个非空 `key`，拒绝凭据、额外参数、fragment 和重定向；复用 `resolveWebhookTarget` 的公共地址校验与 DNS 固定连接模式。现有 `fetchResolvedWebhook` 只返回 HTTP 状态，方案明确增加有界响应正文读取并用 Zod 校验提供方结果。仅有效成功响应记 delivered；明确拒绝记 failed；请求发出后的 timeout、断连、畸形响应或不确定结果进入 unknown。沿用五秒上限及 claim 剩余租期，不自动重送 uncertain，不保存原始 URL、key 或 `errmsg`。[错误码来源](https://developer.work.weixin.qq.com/document/path/90313)\n  \n  频控采用 Redis Lua，以秘密 HMAC 指纹区分实际目标，跨 Worker 和重复 target 配置共用滚动窗口及串行发送许可。频控等待发生在发送 checkpoint 之前；使用原 delivery 延后领取，不消耗失败重试预算，Redis 不可用时停止发送。许可过期必须重新取得许可并重新鉴权。\n  \n  深链由 `WEB_ORIGIN` 与 C1 的 Attention 相对路由构造。冻结 `apps/web/app/lib/use-authenticated-actor.ts`、`apps/web/app/login/page.tsx` 及 `apps/web/app/lib/canonical-route.ts` 的安全 `returnTo` 方案：接受以单个 `/` 开头的站内路径和与当前网页 origin 完全一致的 HTTP(S) 绝对 URL，规范化后只返回 pathname、search、hash；拒绝外域、协议相对地址、反斜杠、控制字符、URL 凭据、畸形编码及登录/安装循环，失败回首页。查询参数只解码一次，规范化后重新验证，跳转端重复校验，防止开放重定向；复用 `canonicalObjectHref`、`safeInternalHref`。返回后以当前 Human 会话重新请求 Attention，授权完成才展示和聚焦详情；无权转发者看到既有不可见状态，不能继承 target owner 权限。验证 Back/Forward、关闭详情后的焦点恢复及登录重开后的详情焦点，不携带跨身份缓存。陈旧来源仅保留通用提醒；网页读取当前状态，渠道不写决策。\n\n- `docs/plan/c2-wecom/` 中的来源快照与绑定文件：分别保存 R1 原始正文、当前完整 Todos spec、原九类矩阵，以及官方协议页和错误码页的完整正文来源快照；保留准确 URL、读取日期/时间、方法、原始响应与正文提取边界、字节数及 SHA-256。浏览工具失败与本机 HTTPS 取得正文分开记录；保留实际出处和部署前提缺口，不以第三方摘要补证。记录真实 main 精确 SHA 与实际源码输入，分别登记工作树和 Git blob 的 UTF-8 字节、哈希及换行差异。分别原样归档输入原计划 `doc:G27jedfwL5ikAj9GiLO1R` 与本条注入的当前完整方案 `doc:vYxCwh0TMRC3mOrr6cU1K`，文件为 `savedplan-G27jedfwL5ikAj9GiLO1R.md` 与 `savedplan-vYxCwh0TMRC3mOrr6cU1K.md`；前者正文来自此前用户消息中的平台 saved copy，后者正文来自本条用户消息中的平台 saved copy，不混用正文或哈希。两份各配 JSON，独立登记已知 ID、来源消息、正文边界、UTF-8 原样字节数、换行和 SHA-256，核对归档文件及 Git blob；生成先后由 `conversation(todoId)` 返回的两条 plan 引用与消息顺序佐证，消息时间单列，不冒作不可得的文档生成时间。两份 version 及不可得的文档生成时间写 `null`，不得将已知 ID 写空。保留两份冻结快照，本轮阻断修正后的执行正文另存 `implementation-plan.md`，明确关联两份输入和本次修正；本轮输出 ID 尚未生成时记 `null`，随后读取已有引用完成绑定，不为自引用反复存 plan，不改历史来源。\n\n- `docs/plan/activation-task-specs/16.md`：同步当前完整规格，追加已核实协议、C1 复用和阶段边界，保留历史来源记录及全部原验收。\n\n- `docs/plan/activation-task-specs/index.json`：只更新 C2 的当前输入、文件哈希、方案引用和审查状态，保留 requires、历史哈希和历史同步状态。\n\n- `docs/reviews/r1/test-coverage.json` 与同目录 `test-coverage.md`：保留六项原测试及 DoD，为每项补充实际文件、场景和用例。协议边界映射至 `apps/worker/src/wecom-notifications.test.ts`；事务、撤权竞争、fence、重启及 unknown 恢复映射至 `apps/worker/integration/stage4-automation.integration.test.ts`；登录、转发鉴权、返回焦点和故障后网页可见映射至 `apps/web/e2e/wecom-notifications.spec.ts`。九类逐项登记，回调签名、绑定和回调时窗记录具体不适用依据；未运行结果保持未运行。\n\n- `docs/reviews/r1/decisions.md`：追加本次官方核实结论和部署前提，保留原访问失败的历史记录。\n\n- `docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md`：追加 C2 协议与发送语义，不改变其他 Proposed 范围。明确撤权先于 checkpoint 提交时零外发，之后不能召回在途调用；至少一次及显式对账不等于外部恰好一次。\n\n- `docs/reviews/c2/verification.json`：登记文档检查、资源归属、真实退出结果与保留原因。本阶段不启动容器或测试服务；当前工作树保留。\n\n## 验证与交接\n\n1. 用平台 git 再读精确 `refs/heads/main`，按 SHA 比较输入；核对原始来源哈希、当前完整 spec、六项原测试、九类矩阵及 DoD 无遗漏。\n2. 执行 `git diff --check`，解析全部变更 JSON，核验链接、字节数、SHA-256 和 savedplan 生成顺序；确认差异仅含上述文档。\n3. 后续产品阶段按映射运行 fake provider、C1 集成及 Playwright 深链验收，覆盖字节边界、频控竞争、未知结果、撤权零外发、零决策事件/outbox 和网页可见性；执行 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:e2e`，保存首败和实际结果。\n4. 仅在本 todo 的当前会话分支提交上述文档，提交信息使用 `docs(c2): archive WeCom protocol and implementation plan`。经平台正常推送后停在 confirm，报告精确 head、文档路径和推送实际状态；Chief 读取完整文件并交另一 Agent 独审，blocking/high 闭合后按既有委托确认，不再次请求已授权文档提交的批准。本阶段只交付规划；C2 最终验收须另核当前 Required CI 和真实 main 落地。",
+  "rawEvidence": {
+    "archive": "raw-evidence.zip",
+    "index": "raw-evidence-index.json",
+    "logicalPath": "docs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.md",
+    "version": "a3105cfb51ee0dd6f3adf61fe7d6fccc0bee6d14",
+    "byteKind": "worktree",
+    "member": "bytes/e414db43dd730f332ab85f92f42bc1f618bf1dd31fa07da1bbae350791d0e9cd",
+    "bytes": 8184,
+    "sha256": "e414db43dd730f332ab85f92f42bc1f618bf1dd31fa07da1bbae350791d0e9cd"
+  },
+  "readableCopy": {
+    "path": "docs/plan/c2-wecom/savedplan-8K46xBWutJwsqCy89K5Oq.md",
+    "bytes": 8179,
+    "sha256": "c6c64f217e5e2b1b818d0dcec18c6eb678e0bbe1165d20871978ef36d2794294",
+    "transformation": "仅可读副本：CRLF 转 LF、制表符展开为空格、移除行尾空白、末尾保留一个 LF；原字节在 ZIP，不以此哈希替代原哈希"
+  },
+  "bytesKind": "bytes/sha256/body 保留原始输入含义；Markdown 文件仅为可读副本"
+}

@@ -1,0 +1,33 @@
+{
+  "source": "本轮用户注入实施独审；问题转录明确非原消息字节",
+  "inputHead": "b492a35b11445c157a825b5e747ac0e15506e491",
+  "main": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+  "feedbackDocumentId": null,
+  "feedbackVersion": null,
+  "planId": "FkfKZkAdoHUa-nr2Hq1mA",
+  "planVersion": null,
+  "outputPlanId": null,
+  "reason": "执行修补不修改批准计划、不新建自引用 plan",
+  "inputs": [
+    {
+      "path": "docs/plan/a2-configuration-readiness.md",
+      "bytes": 17436,
+      "sha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2"
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/current-spec.md",
+      "bytes": 11506,
+      "sha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1"
+    },
+    {
+      "path": "docs/reviews/a2/configuration-recovery/reviewer-feedback.md",
+      "bytes": 1707,
+      "sha256": "623d2dcb7f5676c104bd2ed5190d2f6603a9749c3b11ced71e0371b3fb53dff7"
+    }
+  ],
+  "previousEvidence": "docs/reviews/a2/configuration-recovery/history/source.json",
+  "mainObservation": "docs/reviews/a2/configuration-recovery/final-main-readback.json",
+  "runId": "a2-e9a97c5f",
+  "proofRunId": "a2-99deca8f",
+  "liteRunId": "a2-lite-179f2a01"
+}

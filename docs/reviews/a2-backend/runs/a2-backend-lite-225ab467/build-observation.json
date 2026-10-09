@@ -1,0 +1,39 @@
+{
+  "code": 0,
+  "result": {
+    "Name": "http://buildkit-session/mqgopzu462bp0usjyo729w4qd",
+    "Ref": "oqzqsjj5yme3tsw97j0xaara2",
+    "Context": "-",
+    "Dockerfile": "infra/docker/lite.Dockerfile",
+    "StartedAt": "2026-10-09T12:36:51.4521944+08:00",
+    "Duration": 235721093400,
+    "Status": "running",
+    "NumCompletedSteps": 0,
+    "NumTotalSteps": 0,
+    "NumCachedSteps": 0,
+    "BuildArgs": [
+      {
+        "Name": "WORKMESH_BUILD_SHA",
+        "Value": "9de5897ab42b4a3459bf977c7a78c78bc3d11538"
+      }
+    ],
+    "Labels": [
+      {
+        "Name": "workmesh.task",
+        "Value": "a2-backend-lite-225ab467"
+      }
+    ],
+    "Config": {
+      "ImageResolveMode": "local",
+      "RestRaw": [
+        {
+          "Name": "context",
+          "Value": "http://buildkit-session/mqgopzu462bp0usjyo729w4qd"
+        }
+      ]
+    }
+  },
+  "action": "只读观察；没有取消健康构建或操作共享 Docker 资源",
+  "observedAt": "2026-10-09T04:40:46.6219753Z",
+  "command": "docker buildx history inspect oqzqsjj5yme3tsw97j0xaara2 --format json"
+}

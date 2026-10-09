@@ -1,0 +1,81 @@
+{
+  "observedAt": "2026-10-08T13:41:57.025Z",
+  "source": "本轮平台 git ls-remote origin refs/heads/main；随后 fetch 取得精确对象，本地 origin/main 也匹配",
+  "actualMain": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "head": "2c0192444a8cb6ef46ca3a11a850391f25f1350b",
+  "comparisonBase": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "changedMainPaths": "M\t.env.example\nM\t.env.lite.example\nM\t.gitignore\nM\tCONTEXT.md\nM\tOPENAPI.yaml\nM\tapps/api/integration/configuration-readiness.integration.test.ts\nM\tapps/api/integration/stage4-operations.integration.test.ts\nM\tapps/api/integration/workbench-llm-connections.integration.test.ts\nA\tapps/api/src/data/model-presets.json\nA\tapps/api/src/model-presets.test.ts\nA\tapps/api/src/model-presets.ts\nM\tapps/api/src/server.ts\nM\tapps/web/app/lib/i18n.tsx\nA\tapps/web/app/lib/model-presets.test.ts\nA\tapps/web/app/lib/model-presets.ts\nM\tapps/web/app/operations-content.test.tsx\nM\tapps/web/app/settings/workbench-llm-settings.test.tsx\nM\tapps/web/app/settings/workbench-llm-settings.tsx\nM\tapps/web/e2e/mocked/accessibility-fixtures.ts\nM\tapps/web/e2e/mocked/loading-states.mocked.spec.ts\nM\tapps/web/e2e/mocked/operations-ux.mocked.spec.ts\nM\tapps/web/e2e/mocked/overlay-contract.mocked.spec.ts\nM\tapps/web/e2e/mocked/page-hotkeys.mocked.spec.ts\nM\tapps/web/e2e/workbench-llm-settings.spec.ts\nM\tdocker-compose.lite.yml\nM\tdocker-compose.production.yml\nM\tdocker-compose.yml\nM\tdocs/VERSION_POLICY.md\nM\tdocs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md\nA\tdocs/plan/c3-model-presets-handoff/README.md\nA\tdocs/plan/c3-model-presets-handoff/conversation-read.json\nA\tdocs/plan/c3-model-presets-handoff/current-plan-read.json\nA\tdocs/plan/c3-model-presets-handoff/official-source-review.md\nA\tdocs/plan/c3-model-presets-handoff/official-sources.json\nA\tdocs/plan/c3-model-presets-handoff/source.json\nA\tdocs/plan/c3-model-presets-handoff/spec.md\nA\tdocs/plan/c3-model-presets-handoff/test-coverage.json\nA\tdocs/plan/c3-model-presets-handoff/todo-read.json\nA\tdocs/plan/c3-model-presets-handoff/validation.json\nA\tdocs/plan/c3-model-presets.md\nM\tdocs/production-deployment.md\nA\tdocs/reviews/c3/README.md\nA\tdocs/reviews/c3/baseline-agent-comparison.json\nA\tdocs/reviews/c3/browser-failure-index.json\nA\tdocs/reviews/c3/browser-failures.zip\nA\tdocs/reviews/c3/c1-combination/README.md\nA\tdocs/reviews/c3/c1-combination/boundary-integrity.json\nA\tdocs/reviews/c3/c1-combination/checks-raw-index.json\nA\tdocs/reviews/c3/c1-combination/checks-raw.zip\nA\tdocs/reviews/c3/c1-combination/checks.json\nA\tdocs/reviews/c3/c1-combination/cleanup-audit/.gitattributes\nA\tdocs/reviews/c3/c1-combination/cleanup-audit/config-refusal-input.txt\nA\tdocs/reviews/c3/c1-combination/cleanup-audit/config-refusal-output.json\nA\tdocs/reviews/c3/c1-combination/cleanup-audit/config-refusal.json\nA\tdocs/reviews/c3/c1-combination/cleanup-audit/refusal-input.txt\nA\tdocs/reviews/c3/c1-combination/cleanup-audit/refusal-output.json\nA\tdocs/reviews/c3/c1-combination/cleanup-audit/refusal.json\nA\tdocs/reviews/c3/c1-combination/cleanup-summary.json\nA\tdocs/reviews/c3/c1-combination/delivery-readback.json\nA\tdocs/reviews/c3/c1-combination/historical-evidence.json\nA\tdocs/reviews/c3/c1-combination/input.json\nA\tdocs/reviews/c3/c1-combination/merge-conflicts-index.json\nA\tdocs/reviews/c3/c1-combination/merge-conflicts.zip\nA\tdocs/reviews/c3/c1-combination/merge-resolution.json\nA\tdocs/reviews/c3/c1-combination/post-run-processes.json\nA\tdocs/reviews/c3/c1-combination/post-validation-ci.json\nA\tdocs/reviews/c3/c1-combination/post-validation-metadata.json\nA\tdocs/reviews/c3/c1-combination/prepare-s3.mjs\nA\tdocs/reviews/c3/c1-combination/preserve-evidence.py\nA\tdocs/reviews/c3/c1-combination/process-inventory.json\nA\tdocs/reviews/c3/c1-combination/resources.json\nA\tdocs/reviews/c3/c1-combination/run-checks.py\nA\tdocs/reviews/c3/c1-combination/runtime-copies.json\nA\tdocs/reviews/c3/c1-combination/runtime-input.json\nA\tdocs/reviews/c3/c1-combination/s3-preparation.json\nA\tdocs/reviews/c3/c1-combination/secret-scan.json\nA\tdocs/reviews/c3/c1-combination/source-binding.json\nA\tdocs/reviews/c3/c1-combination/verification-scope.json\nA\tdocs/reviews/c3/c1-combination/verification.json\nA\tdocs/reviews/c3/c1-combination/verify-evidence.py\nA\tdocs/reviews/c3/current-plan-readback.json\nA\tdocs/reviews/c3/current-spec.md\nA\tdocs/reviews/c3/execution-log-index.json\nA\tdocs/reviews/c3/execution-logs.zip\nA\tdocs/reviews/c3/final-conversation-read.json\nA\tdocs/reviews/c3/final-todo-read.json\nA\tdocs/reviews/c3/fixtures/README.md\nA\tdocs/reviews/c3/fixtures/convert-test-junctions.mjs\nA\tdocs/reviews/c3/fixtures/deployment-probe.mjs\nA\tdocs/reviews/c3/fixtures/verify-regression-evidence.py\nA\tdocs/reviews/c3/input-binding.json\nA\tdocs/reviews/c3/main-combination/README.md\nA\tdocs/reviews/c3/main-combination/accepted/checks.json\nA\tdocs/reviews/c3/main-combination/accepted/input.json\nA\tdocs/reviews/c3/main-combination/accepted/resources.json\nA\tdocs/reviews/c3/main-combination/accepted/s3-preparation.json\nA\tdocs/reviews/c3/main-combination/browser/checks.json\nA\tdocs/reviews/c3/main-combination/browser/input.json\nA\tdocs/reviews/c3/main-combination/browser/resources.json\nA\tdocs/reviews/c3/main-combination/browser/runtime-copies.json\nA\tdocs/reviews/c3/main-combination/browser/s3-preparation.json\nA\tdocs/reviews/c3/main-combination/capture-preparation.json\nA\tdocs/reviews/c3/main-combination/checks-raw-index.json\nA\tdocs/reviews/c3/main-combination/checks-raw.zip\nA\tdocs/reviews/c3/main-combination/checks.json\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/.gitattributes\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/README.md\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls-index.json\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls.zip\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_a694c2419db74628858fd2b79f9ee0c8/command-1.txt\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_a694c2419db74628858fd2b79f9ee0c8/command-2.txt\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_a694c2419db74628858fd2b79f9ee0c8/input.txt\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_a694c2419db74628858fd2b79f9ee0c8/output.json\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_b86def6a5f4a4b7ab3004fb6a5c8e009/command-1.txt\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_b86def6a5f4a4b7ab3004fb6a5c8e009/input.txt\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_b86def6a5f4a4b7ab3004fb6a5c8e009/output.json\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_daf2599d8ae943d5bd10995153cf3e33/command-1.txt\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_daf2599d8ae943d5bd10995153cf3e33/input.txt\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_daf2599d8ae943d5bd10995153cf3e33/output.json\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_e06e825e469d455191f17c413f25c6a5/command-1.txt\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_e06e825e469d455191f17c413f25c6a5/input.txt\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/calls/call_e06e825e469d455191f17c413f25c6a5/output.json\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/extract-calls.py\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/incident.json\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/operation-timeline.json\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/supplement.py\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/verification-result.json\nA\tdocs/reviews/c3/main-combination/cleanup-approval-audit/verify-evidence.py\nA\tdocs/reviews/c3/main-combination/cleanup-summary.json\nA\tdocs/reviews/c3/main-combination/delivery-readback.json\nA\tdocs/reviews/c3/main-combination/history-integrity.json\nA\tdocs/reviews/c3/main-combination/input.json\nA\tdocs/reviews/c3/main-combination/merge-resolution.json\nA\tdocs/reviews/c3/main-combination/occupied-browser-ports.json\nA\tdocs/reviews/c3/main-combination/preparation-failures.json\nA\tdocs/reviews/c3/main-combination/prepare-s3.mjs\nA\tdocs/reviews/c3/main-combination/preserve-evidence.py\nA\tdocs/reviews/c3/main-combination/process-cleanup-before.json\nA\tdocs/reviews/c3/main-combination/processes-browser.json\nA\tdocs/reviews/c3/main-combination/processes-integration.json\nA\tdocs/reviews/c3/main-combination/processes-unit-later.json\nA\tdocs/reviews/c3/main-combination/processes-unit.json\nA\tdocs/reviews/c3/main-combination/resources.json\nA\tdocs/reviews/c3/main-combination/retry/checks.json\nA\tdocs/reviews/c3/main-combination/retry/input.json\nA\tdocs/reviews/c3/main-combination/retry/resources.json\nA\tdocs/reviews/c3/main-combination/retry/s3-preparation.json\nA\tdocs/reviews/c3/main-combination/run-checks.py\nA\tdocs/reviews/c3/main-combination/source-binding.json\nA\tdocs/reviews/c3/main-combination/temporary-cleanup.json\nA\tdocs/reviews/c3/main-combination/verification.json\nA\tdocs/reviews/c3/main-combination/verify-combination.py\nA\tdocs/reviews/c3/mocked-regression-comparison.json\nA\tdocs/reviews/c3/mocked-regression-comparison.md\nA\tdocs/reviews/c3/mocked-regression-evidence-index.json\nA\tdocs/reviews/c3/mocked-regression-evidence.zip\nA\tdocs/reviews/c3/mocked-regression-resources.json\nA\tdocs/reviews/c3/mocked-regression-sources.json\nA\tdocs/reviews/c3/mocked-regression-verification.json\nA\tdocs/reviews/c3/official-source-review.md\nA\tdocs/reviews/c3/official-sources.json\nA\tdocs/reviews/c3/resources.json\nA\tdocs/reviews/c3/results.json\nA\tdocs/reviews/c3/secret-scan.json\nA\tdocs/reviews/c3/source-binding.json\nA\tdocs/reviews/c3/test-coverage.json\nA\tdocs/reviews/c3/todo-input-read.json\nA\tdocs/reviews/c3/todo-recovery-read.json\nM\tdocs/route-policy-matrix.md\nM\tpackages/config/src/index.test.ts\nM\tpackages/config/src/index.ts\nM\tpackages/contracts/src/index.ts\nA\tpackages/contracts/src/model-presets.ts\nM\tpackages/contracts/src/route-policy-bindings.ts\nM\tpackages/contracts/src/route-policy.test.ts\nM\tpackages/contracts/src/route-policy.ts\nM\tplaywright.config.ts\n",
+  "adrChange": "diff --git a/docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md b/docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md\nindex c49ca75..a140747 100644\n--- a/docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md\n+++ b/docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md\n@@ -125,10 +125,13 @@ Redis or be explicitly declared unsupported in that profile.\n \n ### Presets are a read-only, versioned catalogue\n \n-A versioned catalogue ships the domestic providers with region-correct base URLs,\n-protocols, and model identifiers: MiniMax, DashScope, Z.AI/GLM, Moonshot/Kimi,\n-DeepSeek, Volcengine, SiliconFlow, and Baidu Qianfan, plus the global providers\n-reachable from the region. Selecting one **fills in editable configuration**.\n+首批目录包含 MiniMax、DashScope、智谱、Moonshot·Kimi、DeepSeek、火山、SiliconFlow、百度千帆及 OpenAI。\n+条目记录官方文档的地区、调用格式、base URL 和模型标识，不推断部署网络可达或 WorkMesh 兼容。\n+选择仅填充可编辑配置；连接保存和模型登记是两个显式操作，均不探测提供方。\n+\n+`WORKMESH_BETA_MODEL_PRESETS` 默认关闭。启用时 `WORKMESH_MODEL_PRESETS_FILE` 指定本地完整 JSON，整体替换内置目录；然后应用该目录的 `disabledIds`。功能关闭时不读取文件，启用后文件缺失或校验失败阻止启动。未知禁用 ID 拒绝加载；加载结果冻结，请求只读，重启生效。目录和部署网关地址通过公开 GET 可见，禁止写入秘密；既有 `normalizeLlmBaseUrl`、私有主机 allowlist、作用域与管理员授权继续约束实际保存。\n+\n+目录 `version` 与每条出处、核对日期和确认方式必填。确认方式仅表示机器或人工阅读官方资料。预置不验证凭据。百炼的地域 Key 与业务空间专属域名按[官方说明](https://help.aliyun.com/zh/model-studio/compatibility-of-openai-with-dashscope)核对；内置使用文档保留的北京固定域名，部署方可填真实专属域名，不制造 WorkspaceId。官方复核记录见 `docs/reviews/c3/official-source-review.md`。\n \n Presets are deployment data, versioned and read-only over the API. They are not\n an aggregate with CRUD, and they are not editable through a request. Loading,\n",
+  "bindings": [
+    {
+      "path": "apps/worker/src/automation.ts",
+      "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "b1dbff240dbe61dd48694ba334e81cf755500a42",
+      "bytes": 40110,
+      "sha256": "52232b8d85f7418aa63266401a7ab79807dbd41e66c9c55e12b01870bb61f0ce",
+      "comparedWithInput": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "result": "源码 blob 不变"
+    },
+    {
+      "path": "apps/worker/src/agent-webhook.ts",
+      "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "18994ded105adf942638e3bd9070c2a470f91c1d",
+      "bytes": 22022,
+      "sha256": "771f86bff4157c51f511e2d9376f66dbed3d8043a1413182899e15a12714f33f",
+      "comparedWithInput": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "result": "源码 blob 不变"
+    },
+    {
+      "path": "packages/db/src/channel-notifications.ts",
+      "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "2ed38a67b7ef5c5a0686c0e86759d4c3fe39c176",
+      "bytes": 31862,
+      "sha256": "7333d1040f73e63de71f77d31fb54119fe9e2af64b25824d5208da37f1b0ef4a",
+      "comparedWithInput": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "result": "源码 blob 不变"
+    },
+    {
+      "path": "apps/web/app/lib/canonical-route.ts",
+      "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "737adba643d3b727ed22312ae6ad02acf6665acd",
+      "bytes": 4459,
+      "sha256": "3a593854807e9dcf3d54f90aa07f09864db72bed6076423e900c9d5b5ef88e1a",
+      "comparedWithInput": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "result": "源码 blob 不变"
+    },
+    {
+      "path": "apps/web/app/lib/use-authenticated-actor.ts",
+      "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "6a28e743f1e41954df7e7b38edfbcfbafc6e7c35",
+      "bytes": 1857,
+      "sha256": "fcf4295f4edab0707bc345066d4491ee21b24c00487b31df28027b3f27d38c56",
+      "comparedWithInput": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "result": "源码 blob 不变"
+    },
+    {
+      "path": "apps/web/app/login/page.tsx",
+      "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "cbc067bb7f4aa7acda86dbe55c1853d1df4dfbae",
+      "bytes": 2779,
+      "sha256": "78cb8ba0df14fd0e67481004e6d5612ce5ccdd78667c553537c7d87c7ba8da03",
+      "comparedWithInput": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "result": "源码 blob 不变"
+    },
+    {
+      "path": "scripts/ci-policy.mjs",
+      "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "oid": "a7ee0da8f1cca82e7fdbedd884d7cbd5261a869c",
+      "bytes": 7063,
+      "sha256": "e8dec6c099c802e0df19c07a13750fea6f84580d0b5c3ef191f78c68799c410d",
+      "comparedWithInput": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "result": "源码 blob 不变"
+    }
+  ],
+  "check": {
+    "command": "git diff --check origin/main...HEAD",
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "conclusion": "C3 模型目录增量；C1、深链源码和 CI 策略不变。ADR 在 presets 段变更，与本次 C2 追加段不同；只记录读取，不在本轮整合产品代码。原规划输入及哈希仍冻结在 5b9c76b，不冒称新组合验收或 main 合入。"
+}

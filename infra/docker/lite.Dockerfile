@@ -19,7 +19,10 @@ ARG NODE_IMAGE=node:22.19.0-alpine3.21
 
 FROM ${NODE_IMAGE} AS build
 ARG NEXT_PUBLIC_API_URL
-ENV COREPACK_HOME=/opt/corepack NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV COREPACK_HOME=/opt/corepack NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
+    NEXT_API_UPSTREAM=http://api:3001
+# Next serializes rewrites during build; the runtime environment cannot change
+# them. Lite's private Compose service address is independent of the device URL.
 # An empty NEXT_PUBLIC_API_URL is the Lite default, not a mistake. The Browser
 # then uses a relative base and the Next server proxies /api to
 # NEXT_API_UPSTREAM, which is what keeps the session cookie first-party on a

@@ -1,0 +1,24 @@
+{
+  "scope": "仅视觉材料提交后核验，不作为产品或人工视觉接受",
+  "firstHead": "0b3c181b7ec89e86bf4a50b39e39a11ad249f999",
+  "firstCommand": "node docs/reviews/a2/visual-delivery/verify.mjs --git",
+  "firstExitCode": 1,
+  "firstError": "Error: 本轮提交越出视觉材料范围",
+  "cause": "git diff --name-only 默认对中文路径加引号及转义；校验脚本把该输出当原路径。实际新增文件均位于 docs/reviews/a2/visual-delivery。PNG 字节及历史输入检查已先完成，尚未开始本轮静态服务。",
+  "correction": "仅校验脚本改为 git diff --name-only -z 并按 NUL 分隔，不更改仓库全局 Git 配置、产品、PNG、历史证据或批准正文",
+  "rerunCommand": "node docs/reviews/a2/visual-delivery/verify.mjs --git",
+  "rerunExitCode": 0,
+  "rerunBoundHead": "0b3c181b7ec89e86bf4a50b39e39a11ad249f999",
+  "rerunResults": {
+    "gitBlobPngCount": 25,
+    "allPngByteIdenticalToSources": true,
+    "immutableInputsUnchanged": true,
+    "relativeResourcesReachable": true,
+    "viewports": ["1440x1000", "390x844"],
+    "horizontalOverflow": false,
+    "browserClosed": true,
+    "previewServerListeningAfter": false
+  },
+  "finalHead": null,
+  "finalHeadReason": "本次文档校正提交 ID 生成前未知，不伪造未来 ID；最终回复提供平台实际返回 head"
+}

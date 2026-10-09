@@ -1,0 +1,112 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/apps/worker
+
+ ❯ integration/stage4-automation.integration.test.ts (64 tests | 3 failed) 24570ms
+   ✓ Stage 4 durable Automation and Loop runtime > deduplicates an event occurrence and produces exactly one action 102ms
+   ✓ Stage 4 durable Automation and Loop runtime > dead-letters an exhausted predecessor and permanently blocks later ordinals 95ms
+   ✓ Stage 4 durable Automation and Loop runtime > retries Automation Session admission after execution capacity becomes available 188ms
+   ✓ Stage 4 durable Automation and Loop runtime > serializes action ordinals across concurrent workers 99ms
+   ✓ Stage 4 durable Automation and Loop runtime > delivers notifications independently of Beta Planning and skips a disabled webhook at the queue head 27ms
+   ✓ Stage 4 durable Automation and Loop runtime > atomically enforces Loop overlap, budget cutoff, rollback, and revocation 271ms
+   ✓ Stage 4 durable Automation and Loop runtime > durably defers one scheduled Loop occurrence while execution capacity is full 185ms
+   ✓ Stage 4 durable Automation and Loop runtime > gates loop soft and failure notification admission by Planning and External Webhooks  613ms
+   ✓ Stage 4 durable Automation and Loop runtime > delivers generic browser push deep links and invalidates gone subscriptions 143ms
+   ✓ Stage 4 durable Automation and Loop runtime > executes every declared internal action through the same authority boundary  608ms
+   ✓ Stage 4 durable Automation and Loop runtime > revalidates authority after claim and does not repeat a webhook after a post-success crash  401ms
+   ✓ Stage 4 durable Automation and Loop runtime > runs the scheduled triage demo end to end and creates an auditable Session  3201ms
+   ✓ Stage 4 durable Automation and Loop runtime > admits a durable domain-event trigger exactly once across replay  643ms
+   ✓ Stage 4 durable Automation and Loop runtime > fails closed before scheduled or event admission when child action features are disabled 231ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > serializes inactive revocation before the send checkpoint and makes zero adapter calls 144ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > serializes membership revocation before the send checkpoint and makes zero adapter calls 130ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > serializes assignment revocation before the send checkpoint and makes zero adapter calls 110ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > serializes grant revocation before the send checkpoint and makes zero adapter calls 112ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > serializes delegation revocation before the send checkpoint and makes zero adapter calls 121ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > serializes approval revocation before the send checkpoint and makes zero adapter calls 104ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > serializes team revocation before the send checkpoint and makes zero adapter calls 110ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > holds authorization through checkpoint commit and orders a later revocation after sending 81ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > persists the compatible approval kind for approval.requested and rechecks a newly muted kind at send time 90ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > persists the compatible approval kind for approval.decision.recorded and rechecks a newly muted kind at send time 94ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > processes a full slow adapter batch without preclaiming waiting attempts and still schedules Loops  4247ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > isolates a lost prepare claim and continues deliveries and Loop work 173ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > isolates a lost ack claim and continues deliveries and Loop work 178ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > admits only exact assigned Human targets and deduplicates concurrent source replay and fan-out 74ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > does not notify unassigned sources or all readable Team members 83ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > processes a lower cursor that commits after a higher cursor checkpoint 127ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > recovers source commit, admission rollback and checkpoint commit without partial fan-out 61ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > maps committed activity events to their exact Inbox recipient without Team fan-out 44ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > allows one current holder, rejects stale prepare/ack and preserves one logical attempt 121ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > isolates target failure and retries only the failed target with its original effectKey 173ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > persists a timed-out external call as uncertain without automatically retrying it  5139ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > rolls back a send checkpoint before commit and reclaims without any external send 142ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > recovers a crash after checkpoint as uncertain and requires explicit reconciliation 105ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > recovers a crash after send as uncertain and requires explicit reconciliation 99ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > recovers a crash after ack as uncertain and requires explicit reconciliation 115ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > suppresses disabled after enqueue with zero external calls 85ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > suppresses changed after enqueue with zero external calls 96ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > suppresses inactive after enqueue with zero external calls 83ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > suppresses membership after enqueue with zero external calls 93ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > captures the committed stale Inbox before the ack_timeout event and admits its exact Human 111ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > captures the committed stale Inbox before the heartbeat_timeout event and admits its exact Human 170ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > rechecks Approval Team grants immediately before sending and suppresses revoked authority 115ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > keeps stale revisions as generic deep links and never writes decision content 86ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条  2443ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 并发 Worker 原子额度上限；崩溃后仅 token 过期，额度仍保留至 D+60 90ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > Redis 状态丢失：共享冷却 120 秒，旧 token 不恢复发送 26ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 授权锁等待跨窗口，过期 permit 不提交 checkpoint、不外发、不消耗失败预算 178ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 当前 disabled 撤权先提交，真实授权锁后零 fake provider 调用 195ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 当前 inactive 撤权先提交，真实授权锁后零 fake provider 调用 147ms
+   × Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 当前 revoked 撤权先提交，真实授权锁后零 fake provider 调用 120ms
+     → new row for relation "notification_channel_targets" violates check constraint "notification_channel_targets_check"
+   × Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 当前 membership 撤权先提交，真实授权锁后零 fake provider 调用 144ms
+     → invalid input value for enum membership_role: "owner"
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 当前 changed 撤权先提交，真实授权锁后零 fake provider 调用 194ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 当前 muted 撤权先提交，真实授权锁后零 fake provider 调用 139ms
+   × Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 审批 Stop 先提交，C1 当前授权重新检查后零 fake provider 调用 94ms
+     → invalid input value for enum agent_session_state: "stopped"
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝 197ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > checkpoint 事务回滚不外发；发送后进程崩溃重启进入 uncertain，旧 fence 不 ACK 185ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 真实 Redis TIME 与部分 bucket 丢失：旧许可失效，共同冷却不吞失败预算 25ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 网络未知不自动重送；C1 显式对账复用原 delivery/fence，渠道零决策事件/outbox 204ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > recovers the final claim to dead and explicitly rejects noRedis while missing adapters consume no attempts 111ms
+   ✓ Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > replays outbox after intent commit without duplicate attempts or notification event recursion 70ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/stage4-automation.integration.test.ts > Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 当前 revoked 撤权先提交，真实授权锁后零 fake provider 调用
+error: new row for relation "notification_channel_targets" violates check constraint "notification_channel_targets_check"
+ ❯ ../../node_modules/.pnpm/pg@8.22.0/node_modules/pg/lib/client.js:652:17
+ ❯ integration/stage4-automation.integration.test.ts:1590:42
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  integration/stage4-automation.integration.test.ts > Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 当前 membership 撤权先提交，真实授权锁后零 fake provider 调用
+error: invalid input value for enum membership_role: "owner"
+ ❯ ../../node_modules/.pnpm/pg-pool@3.14.0_pg@8.22.0/node_modules/pg-pool/index.js:45:11
+ ❯ integration/stage4-automation.integration.test.ts:1601:40
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  integration/stage4-automation.integration.test.ts > Stage 4 durable Automation and Loop runtime > C1 channel delivery contract > C2 fake provider 与真实 Redis Lua > 审批 Stop 先提交，C1 当前授权重新检查后零 fake provider 调用
+error: invalid input value for enum agent_session_state: "stopped"
+ ❯ ../../node_modules/.pnpm/pg@8.22.0/node_modules/pg/lib/client.js:652:17
+ ❯ integration/stage4-automation.integration.test.ts:1610:11
+    1608|         try {
+    1609|           await lock.query('BEGIN'); const pid = (await lock.query<{ p…
+    1610|           await lock.query("UPDATE agent_sessions SET state='stopped' …
+       |           ^
+    1611|           sending = a.deliverNotification(delivery!); await waitForBlo…
+    1612|           expect(sends).toHaveLength(0); expect(await state(delivery!.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 61 passed (64)
+   Start at  22:29:36
+   Duration  29.08s (transform 940ms, setup 0ms, collect 3.58s, tests 24.57s, environment 0ms, prepare 259ms)
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\worker:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config ../../vitest.integration.config.ts integration/stage4-automation.integration.test.ts --maxWorkers=1

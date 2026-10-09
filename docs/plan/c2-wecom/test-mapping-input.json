@@ -1,0 +1,599 @@
+{
+  "阶段": "仅文档归档；所有产品场景待实施/未运行",
+  "matrix": [
+    {
+      "category": "happy path",
+      "cases": [
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 协议：低敏 markdown 载荷与 canonical 绝对深链",
+          "assertion": "只包含固定提醒和网页登录链接，UTF-8 内容及 JSON 字节计数分别正确，errcode=0 才成功"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 全链：已提交来源经 C1 intent、精确 Human target、fenced ACK",
+          "assertion": "复用单逻辑 delivery，不写 decision/approval 事件或 outbox"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 登录返回：当前 Human 打开受权 Attention 并聚焦详情",
+          "assertion": "canonical 路由、Back/Forward、关闭焦点和首次返回焦点"
+        }
+      ],
+      "id": "R1-16-1",
+      "applicable": true,
+      "status": "未实施/未运行"
+    },
+    {
+      "category": "unauthorized actor",
+      "cases": [
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 授权竞争：禁用、撤销、离队、Stop、撤权先提交零外发",
+          "assertion": "观察真实数据库锁等待，完整 C1 锁序及租期，包含合法收件人可发送正对照"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 转发：不同当前 Human 无权内容不可见",
+          "assertion": "不继承 target owner，重读身份，不显示前一 Human 缓存，含有权正对照"
+        }
+      ],
+      "id": "R1-16-2",
+      "applicable": true,
+      "status": "未实施/未运行"
+    },
+    {
+      "category": "invalid state transition",
+      "cases": [
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 拒绝：端点、4096 字节边界、响应结构和安全错误分类",
+          "assertion": "4095/4096/4097 UTF-8 字节、多字节字符、URL 不截断，重定向及私网拒绝，errno/HTTP/JSON 分类"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 渠道关闭或失效：不外发，网页仍保留事项",
+          "assertion": "未发送不记 delivered，正常 notification.* 可以存在，decision.* outbox 为零"
+        }
+      ],
+      "id": "R1-16-3",
+      "applicable": true,
+      "status": "未实施/未运行"
+    },
+    {
+      "category": "duplicate idempotency key",
+      "cases": [
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 重放：同 source、intent、target、job、ACK 只一逻辑 delivery",
+          "assertion": "同体 ACK 不写，异体冲突；对账重试原 effectKey，不承诺 external exactly-once"
+        }
+      ],
+      "id": "R1-16-4",
+      "applicable": true,
+      "status": "未实施/未运行"
+    },
+    {
+      "category": "stale revision",
+      "cases": [
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 陈旧：target revision 抑制、旧 fence 不确认、来源仅通用深链",
+          "assertion": "不发送陈旧敏感内容、不生成决定，保留 C1 原 request_hash；source 变更后网页读当前状态"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 陈旧转发：重新登录后读取当前状态与权限",
+          "assertion": "无权拒绝；不提交卡片中的旧选项"
+        }
+      ],
+      "id": "R1-16-5",
+      "applicable": true,
+      "status": "未实施/未运行"
+    },
+    {
+      "category": "transaction failure",
+      "cases": [
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 事务故障：source、fanout、checkpoint、ACK 失败各边界恢复",
+          "assertion": "checkpoint 未提交零外发，已发送 ACK 回滚不得冒作未发送，原 intent/attempt 不重复；decision/outbox 前后计数"
+        }
+      ],
+      "id": "R1-16-6",
+      "applicable": true,
+      "status": "未实施/未运行"
+    },
+    {
+      "category": "webhook/job replay",
+      "cases": [
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 job replay：旧 fence 与重复 outbox 不产生新的逻辑 attempt",
+          "assertion": "没有入站 handler；出站重放继承 C1 同体/异体 ACK 校验"
+        }
+      ],
+      "id": "R1-16-7",
+      "applicable": true,
+      "status": "未实施/未运行"
+    },
+    {
+      "category": "concurrent request",
+      "cases": [
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 限流：同指纹滚动窗口与多个 target 隔离",
+          "assertion": "fake 时钟及 Redis 接口竞争，20 条/分钟边界、原目标不同配置共用预算，秘密不在 key"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 多 Worker：频控延期不消耗 claim 预算、不阻塞其他目标",
+          "assertion": "有效 permit 才 claim，Redis 故障不外发，授权锁等待后 permit/lease 再检查"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 实际发送窗口：第 0 秒预留、第 4 秒发送，第 60 秒仍拒绝第 21 条",
+          "assertion": "额度保留至 max(D,完成或安全终止时间)+60 秒；重复 target、多个 Worker 共用指纹，断言任意实际发送 60 秒窗口最多 20 条"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 授权锁跨窗口：等待后发送与 permit 截止复核",
+          "assertion": "持锁等待跨第 60 秒不能令预留额度提前回收；超 D 不外发，重新准入重新鉴权；观察实际锁等待及 fake transport 开始/结束时间，多 Worker 竞争不能超额"
+        }
+      ],
+      "id": "R1-16-8",
+      "applicable": true,
+      "status": "未实施/未运行"
+    },
+    {
+      "category": "server restart/outbox recovery",
+      "cases": [
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 重启：已发送 ACK 丢失进入 uncertain，显式对账才允许重送",
+          "assertion": "checkpoint/发送/ACK 各边界进程崩溃，原 effectKey、旧 fence 拒绝、重试预算与 Redis 冷却恢复"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 渠道故障：网页可见及 C1 本人管理/未知对账仍可用",
+          "assertion": "fake provider 故障不影响 Attention GET，不出现第二套 CRUD"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 频控崩溃：预留、checkpoint、网络开始和完成回执各边界",
+          "assertion": "崩溃后 quota 至 D+60 秒才可回收，serial token 释放不释放 quota；重启 Worker 不清共享状态，未知发送保持 uncertain；其他 Worker 任意实际发送窗口不超 20 条"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 Redis 状态丢失：所有 Worker 共同冷却至少 120 秒",
+          "assertion": "最大剩余发送截止 60 秒加尾部 60 秒；拒绝旧 token，进程分别启动不能重置标记或提前开放预算，Redis 不可用零外发"
+        }
+      ],
+      "id": "R1-16-9",
+      "applicable": true,
+      "status": "未实施/未运行"
+    }
+  ],
+  "originalTests": [
+    {
+      "id": "todo-16-T1",
+      "matrixIds": [
+        "R1-16-1",
+        "R1-16-3",
+        "R1-16-8",
+        "R1-16-9"
+      ],
+      "cases": [
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 协议：低敏 markdown 载荷与 canonical 绝对深链",
+          "assertion": "只包含固定提醒和网页登录链接，UTF-8 内容及 JSON 字节计数分别正确，errcode=0 才成功"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 全链：已提交来源经 C1 intent、精确 Human target、fenced ACK",
+          "assertion": "复用单逻辑 delivery，不写 decision/approval 事件或 outbox"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 登录返回：当前 Human 打开受权 Attention 并聚焦详情",
+          "assertion": "canonical 路由、Back/Forward、关闭焦点和首次返回焦点"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 拒绝：端点、4096 字节边界、响应结构和安全错误分类",
+          "assertion": "4095/4096/4097 UTF-8 字节、多字节字符、URL 不截断，重定向及私网拒绝，errno/HTTP/JSON 分类"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 渠道关闭或失效：不外发，网页仍保留事项",
+          "assertion": "未发送不记 delivered，正常 notification.* 可以存在，decision.* outbox 为零"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 限流：同指纹滚动窗口与多个 target 隔离",
+          "assertion": "fake 时钟及 Redis 接口竞争，20 条/分钟边界、原目标不同配置共用预算，秘密不在 key"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 多 Worker：频控延期不消耗 claim 预算、不阻塞其他目标",
+          "assertion": "有效 permit 才 claim，Redis 故障不外发，授权锁等待后 permit/lease 再检查"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 实际发送窗口：第 0 秒预留、第 4 秒发送，第 60 秒仍拒绝第 21 条",
+          "assertion": "额度保留至 max(D,完成或安全终止时间)+60 秒；重复 target、多个 Worker 共用指纹，断言任意实际发送 60 秒窗口最多 20 条"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 授权锁跨窗口：等待后发送与 permit 截止复核",
+          "assertion": "持锁等待跨第 60 秒不能令预留额度提前回收；超 D 不外发，重新准入重新鉴权；观察实际锁等待及 fake transport 开始/结束时间，多 Worker 竞争不能超额"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 重启：已发送 ACK 丢失进入 uncertain，显式对账才允许重送",
+          "assertion": "checkpoint/发送/ACK 各边界进程崩溃，原 effectKey、旧 fence 拒绝、重试预算与 Redis 冷却恢复"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 渠道故障：网页可见及 C1 本人管理/未知对账仍可用",
+          "assertion": "fake provider 故障不影响 Attention GET，不出现第二套 CRUD"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 频控崩溃：预留、checkpoint、网络开始和完成回执各边界",
+          "assertion": "崩溃后 quota 至 D+60 秒才可回收，serial token 释放不释放 quota；重启 Worker 不清共享状态，未知发送保持 uncertain；其他 Worker 任意实际发送窗口不超 20 条"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 Redis 状态丢失：所有 Worker 共同冷却至少 120 秒",
+          "assertion": "最大剩余发送截止 60 秒加尾部 60 秒；拒绝旧 token，进程分别启动不能重置标记或提前开放预算，Redis 不可用零外发"
+        }
+      ],
+      "status": "未实施/未运行"
+    },
+    {
+      "id": "todo-16-T2",
+      "matrixIds": [
+        "R1-16-1",
+        "R1-16-2",
+        "R1-16-5"
+      ],
+      "cases": [
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 协议：低敏 markdown 载荷与 canonical 绝对深链",
+          "assertion": "只包含固定提醒和网页登录链接，UTF-8 内容及 JSON 字节计数分别正确，errcode=0 才成功"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 全链：已提交来源经 C1 intent、精确 Human target、fenced ACK",
+          "assertion": "复用单逻辑 delivery，不写 decision/approval 事件或 outbox"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 登录返回：当前 Human 打开受权 Attention 并聚焦详情",
+          "assertion": "canonical 路由、Back/Forward、关闭焦点和首次返回焦点"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 授权竞争：禁用、撤销、离队、Stop、撤权先提交零外发",
+          "assertion": "观察真实数据库锁等待，完整 C1 锁序及租期，包含合法收件人可发送正对照"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 转发：不同当前 Human 无权内容不可见",
+          "assertion": "不继承 target owner，重读身份，不显示前一 Human 缓存，含有权正对照"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 陈旧：target revision 抑制、旧 fence 不确认、来源仅通用深链",
+          "assertion": "不发送陈旧敏感内容、不生成决定，保留 C1 原 request_hash；source 变更后网页读当前状态"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 陈旧转发：重新登录后读取当前状态与权限",
+          "assertion": "无权拒绝；不提交卡片中的旧选项"
+        }
+      ],
+      "status": "未实施/未运行"
+    },
+    {
+      "id": "todo-16-T3",
+      "matrixIds": [
+        "R1-16-2",
+        "R1-16-5",
+        "R1-16-8"
+      ],
+      "cases": [
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 授权竞争：禁用、撤销、离队、Stop、撤权先提交零外发",
+          "assertion": "观察真实数据库锁等待，完整 C1 锁序及租期，包含合法收件人可发送正对照"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 转发：不同当前 Human 无权内容不可见",
+          "assertion": "不继承 target owner，重读身份，不显示前一 Human 缓存，含有权正对照"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 陈旧：target revision 抑制、旧 fence 不确认、来源仅通用深链",
+          "assertion": "不发送陈旧敏感内容、不生成决定，保留 C1 原 request_hash；source 变更后网页读当前状态"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 陈旧转发：重新登录后读取当前状态与权限",
+          "assertion": "无权拒绝；不提交卡片中的旧选项"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 限流：同指纹滚动窗口与多个 target 隔离",
+          "assertion": "fake 时钟及 Redis 接口竞争，20 条/分钟边界、原目标不同配置共用预算，秘密不在 key"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 多 Worker：频控延期不消耗 claim 预算、不阻塞其他目标",
+          "assertion": "有效 permit 才 claim，Redis 故障不外发，授权锁等待后 permit/lease 再检查"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 实际发送窗口：第 0 秒预留、第 4 秒发送，第 60 秒仍拒绝第 21 条",
+          "assertion": "额度保留至 max(D,完成或安全终止时间)+60 秒；重复 target、多个 Worker 共用指纹，断言任意实际发送 60 秒窗口最多 20 条"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 授权锁跨窗口：等待后发送与 permit 截止复核",
+          "assertion": "持锁等待跨第 60 秒不能令预留额度提前回收；超 D 不外发，重新准入重新鉴权；观察实际锁等待及 fake transport 开始/结束时间，多 Worker 竞争不能超额"
+        }
+      ],
+      "status": "未实施/未运行"
+    },
+    {
+      "id": "todo-16-T4",
+      "matrixIds": [
+        "R1-16-1",
+        "R1-16-3",
+        "R1-16-4",
+        "R1-16-6",
+        "R1-16-7",
+        "R1-16-9"
+      ],
+      "cases": [
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 协议：低敏 markdown 载荷与 canonical 绝对深链",
+          "assertion": "只包含固定提醒和网页登录链接，UTF-8 内容及 JSON 字节计数分别正确，errcode=0 才成功"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 全链：已提交来源经 C1 intent、精确 Human target、fenced ACK",
+          "assertion": "复用单逻辑 delivery，不写 decision/approval 事件或 outbox"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 登录返回：当前 Human 打开受权 Attention 并聚焦详情",
+          "assertion": "canonical 路由、Back/Forward、关闭焦点和首次返回焦点"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 拒绝：端点、4096 字节边界、响应结构和安全错误分类",
+          "assertion": "4095/4096/4097 UTF-8 字节、多字节字符、URL 不截断，重定向及私网拒绝，errno/HTTP/JSON 分类"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 渠道关闭或失效：不外发，网页仍保留事项",
+          "assertion": "未发送不记 delivered，正常 notification.* 可以存在，decision.* outbox 为零"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 重放：同 source、intent、target、job、ACK 只一逻辑 delivery",
+          "assertion": "同体 ACK 不写，异体冲突；对账重试原 effectKey，不承诺 external exactly-once"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 事务故障：source、fanout、checkpoint、ACK 失败各边界恢复",
+          "assertion": "checkpoint 未提交零外发，已发送 ACK 回滚不得冒作未发送，原 intent/attempt 不重复；decision/outbox 前后计数"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 job replay：旧 fence 与重复 outbox 不产生新的逻辑 attempt",
+          "assertion": "没有入站 handler；出站重放继承 C1 同体/异体 ACK 校验"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 重启：已发送 ACK 丢失进入 uncertain，显式对账才允许重送",
+          "assertion": "checkpoint/发送/ACK 各边界进程崩溃，原 effectKey、旧 fence 拒绝、重试预算与 Redis 冷却恢复"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 渠道故障：网页可见及 C1 本人管理/未知对账仍可用",
+          "assertion": "fake provider 故障不影响 Attention GET，不出现第二套 CRUD"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 频控崩溃：预留、checkpoint、网络开始和完成回执各边界",
+          "assertion": "崩溃后 quota 至 D+60 秒才可回收，serial token 释放不释放 quota；重启 Worker 不清共享状态，未知发送保持 uncertain；其他 Worker 任意实际发送窗口不超 20 条"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 Redis 状态丢失：所有 Worker 共同冷却至少 120 秒",
+          "assertion": "最大剩余发送截止 60 秒加尾部 60 秒；拒绝旧 token，进程分别启动不能重置标记或提前开放预算，Redis 不可用零外发"
+        }
+      ],
+      "status": "未实施/未运行"
+    },
+    {
+      "id": "todo-16-T5",
+      "matrixIds": [
+        "R1-16-1",
+        "R1-16-3",
+        "R1-16-4",
+        "R1-16-9"
+      ],
+      "cases": [
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 协议：低敏 markdown 载荷与 canonical 绝对深链",
+          "assertion": "只包含固定提醒和网页登录链接，UTF-8 内容及 JSON 字节计数分别正确，errcode=0 才成功"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 全链：已提交来源经 C1 intent、精确 Human target、fenced ACK",
+          "assertion": "复用单逻辑 delivery，不写 decision/approval 事件或 outbox"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 登录返回：当前 Human 打开受权 Attention 并聚焦详情",
+          "assertion": "canonical 路由、Back/Forward、关闭焦点和首次返回焦点"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 拒绝：端点、4096 字节边界、响应结构和安全错误分类",
+          "assertion": "4095/4096/4097 UTF-8 字节、多字节字符、URL 不截断，重定向及私网拒绝，errno/HTTP/JSON 分类"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 渠道关闭或失效：不外发，网页仍保留事项",
+          "assertion": "未发送不记 delivered，正常 notification.* 可以存在，decision.* outbox 为零"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 重放：同 source、intent、target、job、ACK 只一逻辑 delivery",
+          "assertion": "同体 ACK 不写，异体冲突；对账重试原 effectKey，不承诺 external exactly-once"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 重启：已发送 ACK 丢失进入 uncertain，显式对账才允许重送",
+          "assertion": "checkpoint/发送/ACK 各边界进程崩溃，原 effectKey、旧 fence 拒绝、重试预算与 Redis 冷却恢复"
+        },
+        {
+          "file": "apps/web/e2e/wecom-notifications.spec.ts",
+          "name": "C2 渠道故障：网页可见及 C1 本人管理/未知对账仍可用",
+          "assertion": "fake provider 故障不影响 Attention GET，不出现第二套 CRUD"
+        },
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 频控崩溃：预留、checkpoint、网络开始和完成回执各边界",
+          "assertion": "崩溃后 quota 至 D+60 秒才可回收，serial token 释放不释放 quota；重启 Worker 不清共享状态，未知发送保持 uncertain；其他 Worker 任意实际发送窗口不超 20 条"
+        },
+        {
+          "file": "apps/worker/src/wecom-notifications.test.ts",
+          "name": "C2 Redis 状态丢失：所有 Worker 共同冷却至少 120 秒",
+          "assertion": "最大剩余发送截止 60 秒加尾部 60 秒；拒绝旧 token，进程分别启动不能重置标记或提前开放预算，Redis 不可用零外发"
+        }
+      ],
+      "status": "未实施/未运行"
+    },
+    {
+      "id": "todo-16-T6",
+      "matrixIds": [
+        "R1-16-7"
+      ],
+      "cases": [
+        {
+          "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+          "name": "C2 job replay：旧 fence 与重复 outbox 不产生新的逻辑 attempt",
+          "assertion": "没有入站 handler；出站重放继承 C1 同体/异体 ACK 校验"
+        }
+      ],
+      "status": "未实施/未运行",
+      "currentSpecText": "仅出站没有回调依赖：入站签名/绑定/回调时窗不适用，写具体依据；改变为需要回调的协议另交范围裁决，不在本卡默认实现。",
+      "notApplicable": "仅 POST 群消息推送，不接受提供方回调，不存在 binding/unbinding；不实现签名/回放窗口假测试，job replay 仍适用。"
+    }
+  ],
+  "dod": [
+    {
+      "clause": "单渠道可用",
+      "evidence": [
+        "R1-16-1",
+        "R1-16-3"
+      ],
+      "status": "待产品实现及 fake 验证；未真实外发"
+    },
+    {
+      "clause": "上述适用断言与必需检查通过",
+      "evidence": [
+        "R1-16-1",
+        "R1-16-2",
+        "R1-16-3",
+        "R1-16-4",
+        "R1-16-5",
+        "R1-16-6",
+        "R1-16-7",
+        "R1-16-8",
+        "R1-16-9"
+      ],
+      "commands": [
+        "pnpm lint",
+        "pnpm typecheck",
+        "pnpm test",
+        "pnpm test:integration",
+        "pnpm test:e2e"
+      ],
+      "status": "产品检查未运行"
+    },
+    {
+      "clause": "渠道不成为正确性关键路径",
+      "evidence": [
+        "R1-16-3",
+        "R1-16-9"
+      ],
+      "status": "待故障注入与网页正对照"
+    },
+    {
+      "clause": "协议来源/日期、配置说明与证据提交仓库",
+      "files": [
+        "official/retrieval.json",
+        "product-design.md",
+        "source-metadata.json",
+        "../../reviews/c2/verification.json"
+      ],
+      "status": "本轮归档，等待仓库文档独审"
+    },
+    {
+      "clause": "G1/P1/R1/C1 依赖、独立复核及 Chief 确认",
+      "evidence": "真实 main SHA + 平台已确认 C1；本轮独审放行仅针对 ID 归档",
+      "status": "产品源码方案待另一 Agent 独审及 Chief 另行放行"
+    },
+    {
+      "clause": "最终验收含当前 Required CI 与 actual main 落地",
+      "status": "未执行合入、未宣称 C2 完成"
+    },
+    {
+      "clause": "不 blocks C3，不用 TA15/设备或假 provider 冒真实验证",
+      "status": "范围保持；真实外发验证未授权/未运行"
+    }
+  ],
+  "returnToCases": [
+    {
+      "file": "apps/web/app/lib/canonical-route.test.ts",
+      "name": "C2 returnTo：单斜杠站内与同源绝对 URL 规范化",
+      "inputs": [
+        "/?view=inbox&attentionSelected=...",
+        "同 origin 的 HTTPS 完整地址"
+      ],
+      "assertion": "输出仅 pathname/search/hash"
+    },
+    {
+      "file": "apps/web/app/lib/canonical-route.test.ts",
+      "name": "C2 returnTo：开放重定向编码负例",
+      "inputs": [
+        "//evil.test",
+        "https://evil.test",
+        "不同端口同主机",
+        "反斜杠/控制字符",
+        "凭据 URL",
+        "畸形百分号/UTF-8",
+        "编码的 // 或反斜杠",
+        "/login、/install、嵌套 returnTo"
+      ],
+      "assertion": "仅解码一次；重新验证后拒绝/回首页"
+    },
+    {
+      "file": "apps/web/e2e/wecom-notifications.spec.ts",
+      "name": "C2 登录返回：换 Human、无权转发、失权中途与焦点恢复",
+      "assertion": "GET 当前 Human 和 Attention，零决策命令和 outbox，包含可读取正对照"
+    }
+  ]
+}

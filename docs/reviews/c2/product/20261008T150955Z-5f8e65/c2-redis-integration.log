@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/apps/api
+
+ ✓ integration/wecom-notifications.integration.test.ts (17 tests) 8609ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条  1636ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > C2 实际五秒 Abort 结束请求后进入 uncertain，不自动重送且额度保留 D+60  5140ms
+
+ Test Files  1 passed (1)
+      Tests  17 passed (17)
+   Start at  23:11:33
+   Duration  10.69s (transform 418ms, setup 0ms, collect 1.60s, tests 8.61s, environment 0ms, prepare 199ms)

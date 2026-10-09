@@ -1,0 +1,270 @@
+{
+  "runId": "a2-7b267dfa",
+  "resources": [
+    {
+      "type": "container",
+      "name": "a2-7b267dfa-postgres",
+      "owner": "a2-7b267dfa",
+      "image": "postgres:16-alpine",
+      "plannedAt": "2026-10-08T15:22:26.869Z",
+      "id": "5da7b79f9b42f31ee5b1d74a85fbc24e041da775104eae9db8a2d478fed3fea0",
+      "cleanup": {
+        "code": 0,
+        "output": "5da7b79f9b42f31ee5b1d74a85fbc24e041da775104eae9db8a2d478fed3fea0\n",
+        "at": "2026-10-08T15:28:53.007Z"
+      },
+      "preDelete": {
+        "id": "5da7b79f9b42f31ee5b1d74a85fbc24e041da775104eae9db8a2d478fed3fea0",
+        "owner": "a2-7b267dfa",
+        "exitCode": 0,
+        "mounts": [],
+        "activity": "验收子进程已结束，保全日志与源码后收尾",
+        "at": "2026-10-08T15:28:52.764Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-7b267dfa-redis",
+      "owner": "a2-7b267dfa",
+      "image": "redis:7-alpine",
+      "plannedAt": "2026-10-08T15:22:27.087Z",
+      "id": "a5451a3833219184161dc4abb6e415bba74f348d2f5d89d394f875e4d951962a",
+      "cleanup": {
+        "code": 0,
+        "output": "a5451a3833219184161dc4abb6e415bba74f348d2f5d89d394f875e4d951962a\n",
+        "at": "2026-10-08T15:28:52.567Z"
+      },
+      "preDelete": {
+        "id": "a5451a3833219184161dc4abb6e415bba74f348d2f5d89d394f875e4d951962a",
+        "owner": "a2-7b267dfa",
+        "exitCode": 0,
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "ec6ea7dc94c4ba03770b18a4474fa41bae973c83df6ba14feee7a715e10948fa",
+            "Source": "/var/lib/docker/volumes/ec6ea7dc94c4ba03770b18a4474fa41bae973c83df6ba14feee7a715e10948fa/_data",
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "activity": "验收子进程已结束，保全日志与源码后收尾",
+        "at": "2026-10-08T15:28:52.354Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-7b267dfa-s3",
+      "owner": "a2-7b267dfa",
+      "image": "rustfs/rustfs:1.0.0",
+      "plannedAt": "2026-10-08T15:22:27.312Z",
+      "id": "8fc090ba14eb1cddecfa4bbf90a7e4f20e35c5b19f9d63fd1d958924e1de7043",
+      "cleanup": {
+        "code": 0,
+        "output": "8fc090ba14eb1cddecfa4bbf90a7e4f20e35c5b19f9d63fd1d958924e1de7043\n",
+        "at": "2026-10-08T15:28:52.154Z"
+      },
+      "preDelete": {
+        "id": "8fc090ba14eb1cddecfa4bbf90a7e4f20e35c5b19f9d63fd1d958924e1de7043",
+        "owner": "a2-7b267dfa",
+        "exitCode": 0,
+        "mounts": [],
+        "activity": "验收子进程已结束，保全日志与源码后收尾",
+        "at": "2026-10-08T15:28:51.913Z"
+      }
+    }
+  ],
+  "results": [
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-7b267dfa-postgres",
+        "--label",
+        "workmesh.task=a2-7b267dfa",
+        "-p",
+        "127.0.0.1:53370:5432",
+        "-e",
+        "POSTGRES_PASSWORD",
+        "-e",
+        "POSTGRES_USER=workmesh",
+        "-e",
+        "POSTGRES_DB=workmesh_a2_test",
+        "--tmpfs",
+        "/var/lib/postgresql/data",
+        "postgres:16-alpine"
+      ],
+      "pid": 18484,
+      "start": "2026-10-08T15:22:26.870Z",
+      "end": "2026-10-08T15:22:27.086Z",
+      "code": 0,
+      "log": "0.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-7b267dfa-redis",
+        "--label",
+        "workmesh.task=a2-7b267dfa",
+        "-p",
+        "127.0.0.1:53371:6379",
+        "redis:7-alpine"
+      ],
+      "pid": 60148,
+      "start": "2026-10-08T15:22:27.088Z",
+      "end": "2026-10-08T15:22:27.311Z",
+      "code": 0,
+      "log": "1.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-7b267dfa-s3",
+        "--label",
+        "workmesh.task=a2-7b267dfa",
+        "-p",
+        "127.0.0.1:53372:9000",
+        "-e",
+        "RUSTFS_ACCESS_KEY",
+        "-e",
+        "RUSTFS_SECRET_KEY",
+        "--tmpfs",
+        "/data:rw,mode=1777",
+        "rustfs/rustfs:1.0.0"
+      ],
+      "pid": 34584,
+      "start": "2026-10-08T15:22:27.313Z",
+      "end": "2026-10-08T15:22:27.535Z",
+      "code": 0,
+      "log": "2.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "check:route-policy"
+      ],
+      "pid": 9284,
+      "start": "2026-10-08T15:22:28.977Z",
+      "end": "2026-10-08T15:22:30.742Z",
+      "code": 0,
+      "log": "3.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "--filter",
+        "@workmesh/web",
+        "check:i18n"
+      ],
+      "pid": 30736,
+      "start": "2026-10-08T15:22:30.742Z",
+      "end": "2026-10-08T15:22:49.326Z",
+      "code": 1,
+      "log": "4.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "lint"
+      ],
+      "pid": 5164,
+      "start": "2026-10-08T15:22:49.326Z",
+      "end": "2026-10-08T15:23:06.802Z",
+      "code": 0,
+      "log": "5.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "typecheck"
+      ],
+      "pid": 34320,
+      "start": "2026-10-08T15:23:06.803Z",
+      "end": "2026-10-08T15:23:25.969Z",
+      "code": 0,
+      "log": "6.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "exec",
+        "turbo",
+        "run",
+        "test",
+        "--concurrency=1"
+      ],
+      "pid": 58132,
+      "start": "2026-10-08T15:23:25.970Z",
+      "end": "2026-10-08T15:28:51.058Z",
+      "code": 1,
+      "log": "7.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "8fc090ba14eb1cddecfa4bbf90a7e4f20e35c5b19f9d63fd1d958924e1de7043"
+      ],
+      "pid": 57840,
+      "start": "2026-10-08T15:28:51.914Z",
+      "end": "2026-10-08T15:28:52.153Z",
+      "code": 0,
+      "log": "8.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "a5451a3833219184161dc4abb6e415bba74f348d2f5d89d394f875e4d951962a"
+      ],
+      "pid": 48592,
+      "start": "2026-10-08T15:28:52.355Z",
+      "end": "2026-10-08T15:28:52.566Z",
+      "code": 0,
+      "log": "9.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "5da7b79f9b42f31ee5b1d74a85fbc24e041da775104eae9db8a2d478fed3fea0"
+      ],
+      "pid": 50288,
+      "start": "2026-10-08T15:28:52.765Z",
+      "end": "2026-10-08T15:28:53.006Z",
+      "code": 0,
+      "log": "10.log"
+    },
+    {
+      "name": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\sanitize-evidence.ps1",
+        "-RunDirectory",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-7b267dfa"
+      ],
+      "pid": 6112,
+      "start": "2026-10-08T15:28:53.008Z",
+      "end": "2026-10-08T15:28:53.549Z",
+      "code": 0,
+      "log": "11.log"
+    }
+  ]
+}

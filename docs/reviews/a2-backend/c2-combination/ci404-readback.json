@@ -1,0 +1,77 @@
+{
+  "tool": "mcp__tds__workflow_runs",
+  "args": {
+    "runId": 37887331225
+  },
+  "observedAt": "2026-10-09T05:18:59.760Z",
+  "number": 404,
+  "runId": 37887331225,
+  "head": "dcf8e08feeb1ecfcfe71d5723e7ccb509b74e8c2",
+  "event": "pull_request",
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/37887331225",
+  "jobs": [
+    {
+      "name": "Classify changes and validate CI selection",
+      "id": 113680161213,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Worker integration",
+      "id": 113680282530,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete disaster recovery",
+      "id": 113680282536,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Browser acceptance (1/2)",
+      "id": 113680282553,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Agent construction and protocol smoke",
+      "id": 113680282554,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Source gates",
+      "id": 113680282563,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Database integration",
+      "id": 113680282569,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "API integration",
+      "id": 113680282629,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Browser acceptance (2/2)",
+      "id": 113680282783,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Required CI",
+      "id": 113681660761,
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "meaning": "真实整合受测提交的 CI，非 CI402@c800；最终文档提交 head 尚未生成，不能伪补或冒其最新 CI"
+}

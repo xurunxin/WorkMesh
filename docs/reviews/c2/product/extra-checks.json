@@ -1,0 +1,91 @@
+{
+  "recordedAt": "2026-10-08T15:42:13.275477+00:00",
+  "archive": "extra-checks-raw.zip",
+  "crc": "通过",
+  "checks": [
+    {
+      "path": "ci-validate.log",
+      "command": "pnpm ci:validate",
+      "exitCode": 1,
+      "execCommandChunkIds": [
+        "10d2e7"
+      ],
+      "callId": null,
+      "startedAt": null,
+      "finishedAt": null,
+      "observedBy": "当前 turn 已返回的 exec_command 回执；缺失时间字段不伪补",
+      "rawBytes": 467,
+      "rawSha256": "241c570c3a70f79a3ec311f1da82e0d10229adb68fbbf385cbfbc8a8ae406093",
+      "note": "CI 策略拒绝新增 Worker Redis；最终 CI 工作流已恢复原样",
+      "readableBytes": 467,
+      "readableSha256": "241c570c3a70f79a3ec311f1da82e0d10229adb68fbbf385cbfbc8a8ae406093"
+    },
+    {
+      "path": "ci-validate-recheck.log",
+      "command": "pnpm ci:validate",
+      "exitCode": 1,
+      "execCommandChunkIds": [
+        "69e9c0"
+      ],
+      "callId": null,
+      "startedAt": null,
+      "finishedAt": null,
+      "observedBy": "当前 turn 已返回的 exec_command 回执；缺失时间字段不伪补",
+      "rawBytes": 1073,
+      "rawSha256": "8b0764b29af40a445e225fa601485d8c0751fe2edadb5cc87c8b5eca3133f5f1",
+      "note": "Lite 示例遗漏渠道开关；最终已补默认 false，不改门禁",
+      "readableBytes": 1073,
+      "readableSha256": "8b0764b29af40a445e225fa601485d8c0751fe2edadb5cc87c8b5eca3133f5f1"
+    },
+    {
+      "path": "ci-validate-final.log",
+      "command": "pnpm ci:validate",
+      "exitCode": 0,
+      "execCommandChunkIds": [
+        "0ebdaf"
+      ],
+      "callId": null,
+      "startedAt": null,
+      "finishedAt": null,
+      "observedBy": "当前 turn 已返回的 exec_command 回执；缺失时间字段不伪补",
+      "rawBytes": 2911,
+      "rawSha256": "45c9382c75598a68a2ce2b8ce689e9d94d1ac6e59bf9766749369ab4cc2acf2e",
+      "note": "实际 Node 22.19.0；CI/release/Lite/原始证据校验均成功",
+      "readableBytes": 2911,
+      "readableSha256": "45c9382c75598a68a2ce2b8ce689e9d94d1ac6e59bf9766749369ab4cc2acf2e"
+    },
+    {
+      "path": "route-policy.log",
+      "command": "pnpm check:route-policy",
+      "exitCode": 0,
+      "execCommandChunkIds": [
+        "71d3b8",
+        "b60315"
+      ],
+      "callId": null,
+      "startedAt": null,
+      "finishedAt": null,
+      "observedBy": "当前 turn 已返回的 exec_command 回执；缺失时间字段不伪补",
+      "rawBytes": 190,
+      "rawSha256": "a6ac85a2afc3b922ed74fb2856df88859a5eef9555d6c207d21d34922758fc3f",
+      "note": "实际 Node 22.19.0，路由策略产物一致",
+      "readableBytes": 190,
+      "readableSha256": "a6ac85a2afc3b922ed74fb2856df88859a5eef9555d6c207d21d34922758fc3f"
+    },
+    {
+      "path": "dependency-install.log",
+      "command": "pnpm install --frozen-lockfile",
+      "exitCode": 0,
+      "execCommandChunkIds": [],
+      "callId": null,
+      "startedAt": null,
+      "finishedAt": null,
+      "observedBy": "当前 turn 已返回的 exec_command 回执；缺失时间字段不伪补",
+      "rawBytes": 123,
+      "rawSha256": "70ea66746afcc046f1a8161991f1016ac35a35533d328951128f133842c01cde",
+      "note": "首轮工具 stdout 与包目录键修正缺口保留；完整冻结安装输出在本日志",
+      "readableBytes": 123,
+      "readableSha256": "70ea66746afcc046f1a8161991f1016ac35a35533d328951128f133842c01cde"
+    }
+  ]
+}

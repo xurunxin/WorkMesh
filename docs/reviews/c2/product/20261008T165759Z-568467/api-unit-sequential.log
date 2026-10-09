@@ -1,0 +1,107 @@
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/api
+   • Running test in 1 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/contracts:build: cache miss, executing 7a0e798046a63e08
+@workmesh/contracts:build:
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build:
+@workmesh/git-provider:build: cache miss, executing 2d8c0edf37d2c5a4
+@workmesh/git-provider:build:
+@workmesh/git-provider:build: > @workmesh/git-provider@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\git-provider
+@workmesh/git-provider:build: > tsc -p tsconfig.json
+@workmesh/git-provider:build:
+@workmesh/observability:build: cache miss, executing d8122fb1028bb381
+@workmesh/observability:build:
+@workmesh/observability:build: > @workmesh/observability@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\observability
+@workmesh/observability:build: > tsc -p tsconfig.json
+@workmesh/observability:build:
+@workmesh/artifact-storage:build: cache miss, executing 5311eb43dc8c65fe
+@workmesh/artifact-storage:build:
+@workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\artifact-storage
+@workmesh/artifact-storage:build: > tsc -p tsconfig.json
+@workmesh/artifact-storage:build:
+@workmesh/domain:build: cache miss, executing 357340d8423a29c5
+@workmesh/domain:build:
+@workmesh/domain:build: > @workmesh/domain@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\domain
+@workmesh/domain:build: > tsc -p tsconfig.json
+@workmesh/domain:build:
+@workmesh/config:build: cache miss, executing f4d33c3636177733
+@workmesh/config:build:
+@workmesh/config:build: > @workmesh/config@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\config
+@workmesh/config:build: > tsc -p tsconfig.json
+@workmesh/config:build:
+@workmesh/a2a-adapter:build: cache miss, executing 796a4067b2d06fb0
+@workmesh/a2a-adapter:build:
+@workmesh/a2a-adapter:build: > @workmesh/a2a-adapter@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\a2a-adapter
+@workmesh/a2a-adapter:build: > tsc -p tsconfig.json
+@workmesh/a2a-adapter:build:
+@workmesh/db:build: cache miss, executing fd4f679405c4210e
+@workmesh/db:build:
+@workmesh/db:build: > @workmesh/db@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\db
+@workmesh/db:build: > tsc -p tsconfig.json
+@workmesh/db:build:
+@workmesh/recovery:build: cache miss, executing e77d226740a2b7da
+@workmesh/recovery:build:
+@workmesh/recovery:build: > @workmesh/recovery@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\recovery
+@workmesh/recovery:build: > tsc -p tsconfig.build.json
+@workmesh/recovery:build:
+@workmesh/api:test: cache miss, executing 945e38d167f664b9
+@workmesh/api:test:
+@workmesh/api:test: > @workmesh/api@ test C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\api
+@workmesh/api:test: > vitest run --fileParallelism=false
+@workmesh/api:test:
+@workmesh/api:test:
+@workmesh/api:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/apps/api
+@workmesh/api:test:
+@workmesh/api:test:  ✓ src/auth-rate-limit/server-rate-limit.test.ts (4 tests) 1600ms
+@workmesh/api:test:  ✓ src/health.test.ts (2 tests) 1268ms
+@workmesh/api:test:  ✓ src/authz/route-policy.test.ts (8 tests) 1221ms
+@workmesh/api:test:    ✓ Fastify route policy inventory > registers the complete production route surface  1210ms
+@workmesh/api:test:  ✓ src/origin-routing.test.ts (5 tests) 890ms
+@workmesh/api:test:  ✓ src/bootstrap-auth.test.ts (14 tests) 185ms
+@workmesh/api:test:  ✓ src/live-read-authorization.test.ts (9 tests) 373ms
+@workmesh/api:test:    ✓ live paged-read authorization > audits all 25 Agent-readable routes derived from the 28-route pagination inventory  361ms
+@workmesh/api:test:  ✓ src/auth-rate-limit/trusted-proxy.test.ts (5 tests) 132ms
+@workmesh/api:test:  ✓ src/model-presets.test.ts (5 tests) 135ms
+@workmesh/api:test:  ✓ src/realtime/coordinator.test.ts (4 tests) 315ms
+@workmesh/api:test:  ✓ src/auth-idempotency-inventory.test.ts (4 tests) 135ms
+@workmesh/api:test:  ✓ load/sse.test.ts (10 tests) 167ms
+@workmesh/api:test:  ✓ src/pagination.test.ts (9 tests) 36ms
+@workmesh/api:test:  ✓ src/realtime/routes.test.ts (7 tests) 33ms
+@workmesh/api:test:  ✓ src/pagination-inventory.test.ts (3 tests) 9ms
+@workmesh/api:test:  ✓ src/agent/guard.test.ts (9 tests) 9ms
+@workmesh/api:test:  ✓ src/agent/approval-projection.test.ts (4 tests) 7ms
+@workmesh/api:test:  ✓ src/human-attention/projection.test.ts (9 tests) 10ms
+@workmesh/api:test:  ✓ src/agent/commands.test.ts (9 tests) 10ms
+@workmesh/api:test:  ✓ src/auth-rate-limit/auth-rate-limit.test.ts (4 tests) 9ms
+@workmesh/api:test:  ✓ src/authz/authorize.test.ts (4 tests) 6ms
+@workmesh/api:test:  ✓ src/work-item-executors.test.ts (5 tests) 6ms
+@workmesh/api:test:  ✓ src/commands-lock-order.test.ts (3 tests) 6ms
+@workmesh/api:test:  ✓ load/readiness.test.ts (3 tests) 6ms
+@workmesh/api:test:  ✓ src/workbench-llm-connections.test.ts (3 tests) 7ms
+@workmesh/api:test:  ✓ load/worker-evidence.test.ts (5 tests) 3ms
+@workmesh/api:test:  ✓ src/realtime/event-reader.test.ts (3 tests) 4ms
+@workmesh/api:test:  ✓ load/evidence-continuation.test.ts (6 tests) 4ms
+@workmesh/api:test:  ✓ src/authz/event-audience.test.ts (6 tests) 4ms
+@workmesh/api:test:  ✓ src/realtime/cursor.test.ts (7 tests) 3ms
+@workmesh/api:test:  ✓ src/comment-event-semantics.test.ts (1 test) 2ms
+@workmesh/api:test:  ✓ src/authz/request-metadata.test.ts (5 tests) 2ms
+@workmesh/api:test:  ✓ src/auth-idempotency.test.ts (1 test) 2ms
+@workmesh/api:test:  ✓ src/human-attention/routes.test.ts (2 tests) 2ms
+@workmesh/api:test:  ✓ src/recovery/projection.test.ts (1 test) 2ms
+@workmesh/api:test:
+@workmesh/api:test:  Test Files  34 passed (34)
+@workmesh/api:test:       Tests  179 passed (179)
+@workmesh/api:test:    Start at  00:59:32
+@workmesh/api:test:    Duration  22.49s (transform 1.01s, setup 0ms, collect 6.18s, tests 6.60s, environment 4ms, prepare 3.72s)
+@workmesh/api:test:
+
+ Tasks:    10 successful, 10 total
+Cached:    0 cached, 10 total
+  Time:    49.285s
+
+ WARNING  no output files found for task @workmesh/api#test. Please check your `outputs` key in `turbo.json`

@@ -1,0 +1,42 @@
+[
+  {
+    "path": "ui/before-login.png",
+    "label": "实施前：未保留登录目的地",
+    "archive": "docs/reviews/c2/product/20261008T151908Z-604b0c/ui-evidence.zip",
+    "member": "playwright/root-mixed/output/c2-baseline-C2-实施前：登录丢失目的地，手动-canonical-网页仍可见-authenticated/c2-baseline-login.png",
+    "bytes": 33904,
+    "sha256": "7e84d15839e58a25b016f383bc61449499b9fc994fbf3d1d7bfeec9bb53dacc3"
+  },
+  {
+    "path": "ui/before-authorized.png",
+    "label": "实施前：手动打开详情但未聚焦",
+    "archive": "docs/reviews/c2/product/20261008T151908Z-604b0c/ui-evidence.zip",
+    "member": "playwright/root-mixed/output/c2-baseline-C2-实施前：登录丢失目的地，手动-canonical-网页仍可见-authenticated/c2-baseline-authorized.png",
+    "bytes": 123379,
+    "sha256": "36835f14274da4dce8410f405be4261a16b9c60ec31d927ff7280c3febbaee2a"
+  },
+  {
+    "path": "ui/after-login.png",
+    "label": "实施后：保留 canonical 安全登录返回",
+    "archive": "docs/reviews/c2/product/20261008T162342Z-55df46/ui-evidence.zip",
+    "member": "playwright/root-mixed/output/wecom-notifications-C2-登录--a79d8-深链、当前-Human-重鉴权、转发无权及网页故障回退-authenticated/c2-before-login.png",
+    "bytes": 35686,
+    "sha256": "7da6ce595befa4c5ce991e4e365b4e717ec1bf7f4c81d2d9baa26bbd964afefe"
+  },
+  {
+    "path": "ui/after-authorized.png",
+    "label": "实施后：有权当前 Human 详情聚焦",
+    "archive": "docs/reviews/c2/product/20261008T162342Z-55df46/ui-evidence.zip",
+    "member": "playwright/root-mixed/output/wecom-notifications-C2-登录--a79d8-深链、当前-Human-重鉴权、转发无权及网页故障回退-authenticated/c2-after-authorized-login.png",
+    "bytes": 123063,
+    "sha256": "b06b108159339e7c586708a440d3a45eddd49827fcbbe69d131d57d70404f5b1"
+  },
+  {
+    "path": "ui/after-forwarded.png",
+    "label": "实施后：不同当前 Human 无权，内容不可见",
+    "archive": "docs/reviews/c2/product/20261008T162342Z-55df46/ui-evidence.zip",
+    "member": "playwright/root-mixed/output/wecom-notifications-C2-登录--a79d8-深链、当前-Human-重鉴权、转发无权及网页故障回退-authenticated/c2-forwarded-unauthorized.png",
+    "bytes": 54202,
+    "sha256": "f626271879a437e3e0cd89153029f3a9db63d48e87a69c37e73027e405a70c40"
+  }
+]

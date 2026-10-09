@@ -1,0 +1,22 @@
+{
+  "source": "本轮平台 git 精确远端读取；共享 FETCH_HEAD 不作为主线依据",
+  "observedAt": "2026-10-08T18:41:56Z",
+  "observationTimeMeaning": "本轮开始时钟；工具未单独提供服务端观察时间",
+  "args": [
+    "ls-remote",
+    "origin",
+    "refs/heads/main"
+  ],
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Local clone of xurunxin/WorkMesh at C:\\Users\\xurx\\.tds\\workspaces\\DzkLDn6UW-IbfoTJzN9Ro\\repo (default branch main checked out, read-only): read it with read/grep/find like any folder; never edit it or run git writes there. Other refs: [\"fetch\", \"origin\", \"<ref>\"] here, then read FETCH_HEAD.\n\n74f247f9240eaf21e74ef248f71a445c1d4276d7\trefs/heads/main"
+      }
+    ]
+  },
+  "main": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+  "inputHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+  "change": "已整合 main；历史 C1/C3、5b/182/74 输入不倒改"
+}

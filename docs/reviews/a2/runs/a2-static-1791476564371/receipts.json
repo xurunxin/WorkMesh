@@ -1,0 +1,53 @@
+{
+  "runId": "a2-static-1791476564371",
+  "resources": [],
+  "results": [
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "check:route-policy"
+      ],
+      "pid": 10840,
+      "start": "2026-10-08T16:22:46.636Z",
+      "end": "2026-10-08T16:22:50.069Z",
+      "code": 0,
+      "log": "0.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "lint"
+      ],
+      "pid": 55088,
+      "start": "2026-10-08T16:22:50.071Z",
+      "end": "2026-10-08T16:23:50.268Z",
+      "code": 0,
+      "log": "1.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "typecheck"
+      ],
+      "pid": 18284,
+      "start": "2026-10-08T16:23:50.269Z",
+      "end": "2026-10-08T16:24:44.999Z",
+      "code": 0,
+      "log": "2.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "--filter",
+        "@workmesh/web",
+        "check:i18n"
+      ],
+      "pid": 52724,
+      "start": "2026-10-08T16:24:45.000Z",
+      "end": "2026-10-08T16:25:24.248Z",
+      "code": 1,
+      "log": "3.log"
+    }
+  ],
+  "outcome": "含未通过检查；逐条保留实际结果，不忽略全站 i18n 诊断"
+}

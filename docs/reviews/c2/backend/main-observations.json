@@ -1,0 +1,26 @@
+[
+  {
+    "readAt": "2026-10-09T04:23:30.377047+00:00",
+    "tool": "git",
+    "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "sha": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+    "说明": "平台实际返回精确 ref，不以共享 FETCH_HEAD 判断"
+  },
+  {
+    "readAt": "2026-10-09T04:36:47.526137+00:00",
+    "tool": "git",
+    "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "sha": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+    "说明": "完整 E2E 重跑期间再次读回精确 ref，同一 main 输入仍有效"
+  }
+]

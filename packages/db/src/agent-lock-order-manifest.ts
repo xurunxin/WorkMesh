@@ -43,6 +43,13 @@ export type AgentLockStatementManifestEntry = Readonly<{
  */
 export const agentLockManifest: readonly AgentLockManifestEntry[] = [
   {
+    file: 'apps/worker/src/provider-actions.ts',
+    symbols: ['authorizeRepositoryContextInTransaction', 'authorizeRepositoryContextResolution', 'finishAction'],
+    classes: ['ranked-lock'],
+    ranks: agentLockRanks,
+    order: 'authority-first',
+  },
+  {
     file: 'packages/db/src/agent-locks.ts',
     symbols: [
       'lockAgentAuthorityPlan',
@@ -262,11 +269,11 @@ export const agentLockStatementManifest: readonly AgentLockStatementManifestEntr
   write("1188:9:d877ce877a3dd40f92f9d2588232147624c5802ce6015aaf769cd29afa391f7f#1","1188:9","apps/api/src/agent-connections.ts","resolveCoordinationIdentity",["agent_sessions"]),
   write("1215:7:32af31bb13f2eefccee15ec216c61a5d783d2378f4409ac927d604634f4a1856#1","1215:7","packages/db/src/stage4.ts","executeAutomationAction",["agent_sessions"]),
   lock("1264:120:c582615b27244ec6808219ddcb995263c1e9321a05b09e47d22e906017d29acb#1","1264:120","apps/api/src/collaboration/routes.ts","transitionHandoff",["agent_sessions"]),
-  lock("1286:9:76f3cf8fb1dee030342ae2b6a85abe7b0b934c6ad9b892e9ebeb0aceb16cfc9c#1","1286:9","apps/api/src/delivery/routes.ts","POST /api/v1/projects/:id/milestones",["projects"]),
+  lock("1291:9:76f3cf8fb1dee030342ae2b6a85abe7b0b934c6ad9b892e9ebeb0aceb16cfc9c#1","1291:9","apps/api/src/delivery/routes.ts","POST /api/v1/projects/:id/milestones",["projects"]),
   write("1301:9:2ab9fe92a677fea0c751df4a40f9eb975393dd7768d56f0eec7e85a26ee280f2#1","1301:9","packages/db/src/stage4.ts","executeAutomationAction",["work_items"]),
   write("1309:9:5ee460fcc23e32c2c818eb6aff929d9746695eef83d97bd2c592ff66cbc8c4eb#1","1309:9","packages/db/src/stage4.ts","executeAutomationAction",["work_items"]),
   write("135:11:abc5812ef56a2dfb6ea37d73bfdde6ba33da214d8cb88cb06be4301e3d0aa280#1","135:11","apps/worker/src/agent-connections.ts","tick",["agent_sessions"]),
-  lock("1384:9:1ebdb429fa5d42869396f789e068cae29dc71798121be9d621d20c076b8a1059#1","1384:9","apps/api/src/delivery/routes.ts","POST /api/v1/work-items/:id/relations",["work_items"]),
+  lock("1389:9:1ebdb429fa5d42869396f789e068cae29dc71798121be9d621d20c076b8a1059#1","1389:9","apps/api/src/delivery/routes.ts","POST /api/v1/work-items/:id/relations",["work_items"]),
   lock("1432:11:045825b441e727cd5e0ece54b213812433dbc996b6e35954a559b35c38238114#1","1432:11","apps/worker/src/retention.ts","cleanup",["agent_sessions"]),
   write("144:5:72c8f3f268d9e90f5a2b39fc665783a33115fd076bb00af23b858eee4cc5a626#1","144:5","apps/api/src/commands.ts","respacedColumn",["work_items"]),
   lock("1474:9:11a81931197bbef4910184e11da505f55c6db35f71c63e0a9b458ae5e204ffec#1","1474:9","apps/api/src/operations/routes.ts","POST /api/v1/usage-records",["agent_sessions"]),
@@ -342,7 +349,7 @@ export const agentLockStatementManifest: readonly AgentLockStatementManifestEntr
   write("620:9:97ad748a5042ecc17a8e2c8a4dabd0e151f32c1730dc4245dbf6e3428479efb3#1","620:9","apps/api/src/agent/commands.ts","revokeDelegation",["agent_installation_tokens"]),
   write("646:9:7d5e0e06b64977d4d54287afcf4c61e151bd872abdabf0dbcc03d63e8325b81f#1","646:9","apps/api/src/agent-connections.ts","DELETE /api/v1/agent-connections/:id",["agent_sessions"]),
   write("659:9:fa3d02ee5c921c4af2e31b80fa20175bc3c27cb9ba7fd7f83fb8328557be81aa#1","659:9","apps/api/src/agent-connections.ts","DELETE /api/v1/agent-connections/:id",["agent_session_tokens"]),
-  lock("673:9:fbd9c116ab6ef561b16337ef9d79ea16ebcd26950ffaffcd837e3d50645a4e41#1","673:9","apps/api/src/delivery/routes.ts","POST /api/v1/artifact-upload-intents",["work_items"]),
+  lock("678:9:fbd9c116ab6ef561b16337ef9d79ea16ebcd26950ffaffcd837e3d50645a4e41#1","678:9","apps/api/src/delivery/routes.ts","POST /api/v1/artifact-upload-intents",["work_items"]),
   write("68:5:78990fa406157cc8d99c5d989545f78a79f6ce3593edc32b2e90e3acb872c62c#1","68:5","packages/db/src/agent-lifecycle.ts","reconcileAgentLifecycle",["agent_definitions"]),
   lock("682:13:371463a11e059824ed4beb5aad05086019e3ed20dcc5b637380a1867ae23f83e#1","682:13","apps/api/src/commands.ts","updateProject",["projects"]),
   write("687:22:2292abeccafd719abd1629d15e0f16e17d1d48c667cc44d63bc0a12b63a739f7#1","687:22","apps/api/src/agent-connections.ts","DELETE /api/v1/agent-connections/:id",["delegations"]),
@@ -351,7 +358,7 @@ export const agentLockStatementManifest: readonly AgentLockStatementManifestEntr
   lock("730:11:ca0e23efac54d1e7d1a00ad7e57cb82e98b7c32893172a7e986183621de5c77a#1","730:11","apps/worker/src/session-lifecycle.ts","reconcileWorkbenchAttempts",["agent_sessions"]),
   lock("741:13:53fa34635162ed11678dcc3dae71cab6735473a9eaaad5614344ea622a98b9b7#1","741:13","apps/api/src/commands.ts","deleteProject",["projects"]),
   write("751:13:19520875bc42802ef91a269928dee15007e5b9604a52b7efb9098e14e26f3fb4#1","751:13","apps/api/src/commands.ts","deleteProject",["projects"]),
-  lock("811:9:19daec33faff942a858f114425030d13f1364209f897fee57dc6e7254880a6ae#1","811:9","apps/api/src/delivery/routes.ts","POST /api/v1/artifact-upload-intents/:id/cancel",["work_items"]),
+  lock("816:9:19daec33faff942a858f114425030d13f1364209f897fee57dc6e7254880a6ae#1","816:9","apps/api/src/delivery/routes.ts","POST /api/v1/artifact-upload-intents/:id/cancel",["work_items"]),
   lock("82:8:abf8fd2f04c3edce1f7df6ba988e86ecd4c26e3514b888e59fa63ff319d480e4#1","82:8","apps/worker/src/agent-connections.ts","tick",["agent_sessions"]),
   lock("880:9:070d40456452267c46bf4d0f2e5049d753a0d71b767e1858c2b18e269ad9f193#1","880:9","apps/api/src/agent-connections.ts","POST /api/v1/agent-enrollments/redeem",["agent_definitions"]),
   lock("890:13:cc5945ae8e04d4e36a982f96c0bcca699173497d3d76d043f74ee89be576ae7e#1","890:13","apps/api/src/commands.ts","updateWorkItem",["work_items"]),

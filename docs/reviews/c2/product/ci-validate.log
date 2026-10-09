@@ -1,0 +1,7 @@
+
+> workmesh@ ci:validate C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e
+> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs
+
+[ci:validate] CI policy validation failed:
+- worker integration must not provision Redis
+ ELIFECYCLE  Command failed with exit code 1.

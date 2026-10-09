@@ -1868,18 +1868,18 @@ paths:
     post: { x-workmesh-policy-id: route.rollbackProjectGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: rollbackProjectGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { $ref: "#/components/requestBodies/RollbackGuidanceInput" }, responses: { "200": { $ref: "#/components/responses/Guidance" } } }
   /api/v1/provider-connections:
     post:
-      { x-workmesh-policy-id: route.createProviderConnection, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: createProviderConnection, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderConnectionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
+      { x-workmesh-policy-id: route.createProviderConnection, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], description: Stable purpose-separated HMAC fingerprints cover secret fields without plaintext in the idempotency ledger. A retained legacy redacted key is rejected with IDEMPOTENCY_KEY_REUSED; verify existing connections before explicitly submitting a new request., operationId: createProviderConnection, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderConnectionInput" } } } }, responses: { "200": { description: 无秘密的连接响应, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderConnectionConfiguration" } } } }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/provider-webhooks/{connectionId}/github:
     post:
       { x-workmesh-policy-id: route.receiveGitHubWebhook, x-workmesh-actor-kinds: [service], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ GitHubWebhookSignature: [] }], operationId: receiveGitHubWebhook, parameters: [{ name: connectionId, in: path, required: true, schema: { type: string, format: uuid } }, { name: X-GitHub-Delivery, in: header, required: true, schema: { type: string, maxLength: 200 } }, { name: X-GitHub-Event, in: header, required: true, schema: { type: string, maxLength: 100 } }, { name: X-Hub-Signature-256, in: header, required: true, schema: { type: string, pattern: "^sha256=[a-f0-9]{64}$" } }], requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: true } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "202": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ProviderSignatureInvalid" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/repositories:
-    get: { x-workmesh-policy-id: route.listRepositories, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listRepositories, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.listRepositories, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listRepositories, parameters: [{ name: teamId, in: query, description: Human-only Team filter applied before pagination., schema: { type: string, format: uuid } }, { name: availableOnly, in: query, description: Human-only filter; true excludes inactive repositories and disabled providers before pagination. Bound to the cursor with the enabled provider set., schema: { type: string, enum: ["true", "false"] } }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/RepositoryConfigurations" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
     post:
       { x-workmesh-policy-id: route.connectRepository, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: connectRepository, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/repositories/{id}/context:
-    get: { x-workmesh-policy-id: route.getRepositoryContext, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getRepositoryContext, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "404": { $ref: "#/components/responses/NotFound" } } }
+    get: { x-workmesh-policy-id: route.getRepositoryContext, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getRepositoryContext, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { description: 已落库上下文及原件, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/RepositoryContextConfiguration" } } } } }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "404": { $ref: "#/components/responses/NotFound" } } }
     post:
-      { x-workmesh-policy-id: route.pinRepositoryContext, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: pinRepositoryContext, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryContextInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
+      { x-workmesh-policy-id: route.pinRepositoryContext, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: pinRepositoryContext, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryContextInput" } } } }, responses: { "200": { description: 已持久化的异步解析动作, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryContextAction" } } } }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/provider-actions:
     post:
       { x-workmesh-policy-id: route.requestProviderAction, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: requestProviderAction, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderActionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
@@ -3072,6 +3072,8 @@ components:
       { description: WorkMesh 1.0 resource, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
     PagedJson:
       { description: Authorized cursor page, content: { application/json: { schema: { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { type: object, additionalProperties: true } }, nextCursor: { type: [string, "null"] } } } } } }
+    RepositoryConfigurations:
+      { description: 保持原分页信封的仓库配置读取, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryConfigurationPage" } } } }
     AgentConnections:
       { description: Workspace Admin Agent Connection page without credential material, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionPage" } } } }
     HumanAttentionItems:
@@ -3738,6 +3740,87 @@ components:
     GuidanceDiff:
       { description: Authorized line diff between two immutable Guidance revisions., content: { application/json: { schema: { $ref: "#/components/schemas/GuidanceDiff" } } } }
   schemas:
+    RepositoryConfiguration:
+      type: object
+      additionalProperties: false
+      required: [id, workspace_id, connection_id, team_id, external_id, full_name, default_branch, required_checks, can_configure_context]
+      properties:
+        id: { type: string, format: uuid }
+        workspace_id: { type: string, format: uuid }
+        connection_id: { type: string, format: uuid }
+        team_id: { type: string, format: uuid }
+        external_id: { type: string }
+        full_name: { type: string }
+        default_branch: { type: string }
+        clone_url: { type: [string, 'null'] }
+        required_checks: { type: array, items: { type: string } }
+        active: { type: boolean }
+        revision: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        can_configure_context: { type: boolean, description: 当前 Human 可配置上下文的展示提示；Agent 固定 false，不替代命令授权。 }
+    RepositoryConfigurationPage:
+      type: object
+      additionalProperties: false
+      required: [items, nextCursor]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/RepositoryConfiguration' } }
+        nextCursor: { type: [string, 'null'] }
+    RepositoryContextConfiguration:
+      type: object
+      additionalProperties: false
+      required: [id, workspace_id, repository_id, project_id, work_item_id, session_id, base_branch, base_sha, branch_pattern, allowed_paths, permissions, guidance_manifest_hash, created_by_actor_id, created_at, provider_action_id, guidance]
+      properties:
+        id: { type: string, format: uuid }
+        workspace_id: { type: string, format: uuid }
+        repository_id: { type: string, format: uuid }
+        project_id: { type: [string, 'null'], format: uuid }
+        work_item_id: { type: [string, 'null'], format: uuid }
+        session_id: { type: [string, 'null'], format: uuid }
+        base_branch: { type: string }
+        base_sha: { type: string }
+        branch_pattern: { type: string }
+        allowed_paths: { type: array, items: { type: string } }
+        permissions: { type: array, items: { type: string, enum: [read, write_branch, open_pr, review, merge, ci] } }
+        guidance_manifest_hash: { type: string }
+        created_by_actor_id: { type: string, format: uuid }
+        created_at: { type: string, format: date-time }
+        provider_action_id: { type: [string, 'null'], format: uuid, description: 完成本上下文的动作 ID；历史无法关联时 null，不能用其他动作或旧上下文确认新提交成功。 }
+        guidance:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [path, blobSha, contentHash, content]
+            properties:
+              path: { type: string }
+              blobSha: { type: string }
+              contentHash: { type: string }
+              content: { type: string }
+    ProviderConnectionConfiguration:
+      type: object
+      additionalProperties: false
+      required: [id, workspace_id, provider, external_account_id, display_name, installation_id, service_actor_id, active, revision, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        workspace_id: { type: string, format: uuid }
+        provider: { type: string, enum: [fake, github, gitea] }
+        external_account_id: { type: string }
+        display_name: { type: string }
+        installation_id: { type: [string, 'null'] }
+        service_actor_id: { type: string, format: uuid }
+        active: { type: boolean }
+        revision: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    RepositoryContextAction:
+      type: object
+      description: 提交成功仅表示解析动作已持久化；调用方等待精确 provider_action_id 关联的上下文。
+      required: [id, kind, status]
+      properties:
+        id: { type: string, format: uuid }
+        kind: { type: string, const: resolve_repository_context }
+        status: { type: string, enum: [pending, claimed, completed, failed, dead] }
     ModelPresetCatalog:
       type: object
       additionalProperties: false

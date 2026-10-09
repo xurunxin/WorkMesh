@@ -10,9 +10,37 @@ import {
   isUnsafeWebhookAddress,
   masterKeyFromEnvironment,
   resolveWebhookTarget,
+  fetchResolvedWebhook,
   retryDelaySeconds,
   signWebhook,
 } from './agent-webhook.js'
+
+describe('C2 有界响应读取与 socket Abort', () => {
+  it.each(['success', 'oversize', 'legacy-oversize', 'abort'] as const)('固定 DNS transport：%s', async mode => {
+    let closed = false
+    const controller = new AbortController()
+    let timeout: ReturnType<typeof setTimeout> | undefined
+    const server = createServer((_request, response) => {
+      response.on('close', () => { closed = true })
+      if (mode === 'success') response.end('{"errcode":0}')
+      else if (mode.endsWith('oversize')) response.end('x'.repeat(65537))
+      else timeout = setTimeout(() => controller.abort(), 50)
+    })
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve))
+    const port = (server.address() as AddressInfo).port
+    try {
+      const result = fetchResolvedWebhook(`http://fake-provider.invalid:${port}/`, { method: 'POST', headers: {}, body: '{}', redirect: 'error', signal: controller.signal, resolvedAddresses: [{ address: '127.0.0.1', family: 4 }], readBody: mode !== 'legacy-oversize' })
+      if (mode === 'success') expect(await result).toEqual({ status: 200, body: '{"errcode":0}' })
+      else await expect(result).rejects.toThrow()
+      await expect.poll(() => closed).toBe(true)
+    } finally {
+      clearTimeout(timeout)
+      server.closeAllConnections()
+      await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()))
+    }
+    expect(closed).toBe(true)
+  })
+})
 
 describe('agent webhook signing', () => {
   it('signs exactly timestamp, dot, and the unmodified JSON body', () => {
