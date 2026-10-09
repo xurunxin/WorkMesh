@@ -1,5 +1,7 @@
 # M0成果独审后恢复与安装交接修正
 
+后续平台成果独审已批准精确候选 `67c924b3d8837d81e6b3314e9c3cec7693f3ff34`；PR212/CI407随后因早期分类缺yaml失败，未合入。当前CI增量、原失败、空依赖回归与剩余门禁见 [product-ci407-report.md](product-ci407-report.md)。以下旧报告、检查和历史缺口保留当时含义，不倒写为最新CI成功。
+
 ## 修正与边界
 
 原平台三 High 完整注入审查及原候选见 [platform-recovery-review-original.md](platform-recovery-review-original.md)。本轮在同分支修正这些产品回归，冻结方案、历史档案和旧运行原件保留。主线重新实读 `refs/heads/main=69085317c88d84b702af727dc0ac7152589626d8`；本轮启动精确 head 为 `6cf8b105a320e9f72eba4aef5d335de8ae344730`，修改前工作树干净。不是新计划，不以文档或内部复核完成整卡。

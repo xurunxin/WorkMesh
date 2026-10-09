@@ -7,6 +7,27 @@ import { testConsumers } from './ci-test-inputs.mjs'
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration', 'agent-smoke']
 
+export function validateCiBootstrap({ job, manifest, lock, yamlVersion }) {
+  const failures = []
+  const require = (value, message) => { if (!value) failures.push(message) }
+  const steps = job?.steps ?? []
+  const index = steps.findIndex(step => step.name === 'Validate selection and required-result safety')
+  const step = steps[index]
+  const lines = step?.run?.split(/\r?\n/).map(line => line.trim()) ?? []
+  const install = 'npm ci --prefix scripts/ci-bootstrap --ignore-scripts --no-audit --no-fund 2>&1 | tee ci-logs/ci-bootstrap.log'
+  const test = 'node --test scripts/ci-policy.test.mjs 2>&1 | tee ci-logs/ci-policy.log'
+  require(lines.includes(install) && lines.includes(test) && lines.indexOf(install) < lines.indexOf(test), 'Classification must install locked YAML before policy tests')
+  require(lines.includes('set -o pipefail') && !step?.['continue-on-error'] && !step?.if, 'Bootstrap and policy failures must propagate unconditionally')
+  const nodeIndex = steps.findIndex(step => step.uses?.startsWith('actions/setup-node@') && step.with?.['node-version-file'] === '.node-version')
+  require(nodeIndex >= 0 && index > nodeIndex && steps.findIndex(step => step.id === 'scope') > index, 'Bootstrap must follow Node setup and precede classification')
+  require(steps.some(step => step.if === '${{ always() }}' && step.uses?.startsWith('actions/upload-artifact@') && step.with?.path === 'ci-logs'), 'Bootstrap evidence must be always uploaded')
+  require(manifest.private === true && JSON.stringify(manifest.dependencies) === JSON.stringify({ yaml: yamlVersion }) && !manifest.devDependencies && !manifest.scripts && !manifest.workspaces, 'Bootstrap must contain only the exact workspace YAML parser')
+  require(lock.lockfileVersion === 3 && Object.keys(lock.packages ?? {}).sort().join(',') === ',node_modules/yaml', 'Bootstrap lock must contain exactly one dependency')
+  const dependency = lock.packages?.['node_modules/yaml']
+  require(lock.packages?.['']?.dependencies?.yaml === yamlVersion && dependency?.version === yamlVersion && dependency?.resolved === `https://registry.npmjs.org/yaml/-/yaml-${yamlVersion}.tgz` && /^sha512-[A-Za-z0-9+/]+=*$/.test(dependency?.integrity ?? ''), 'Bootstrap YAML must be versioned and integrity locked')
+  return failures
+}
+
 export function validateMcpConformanceEntrypoints({ job, rootScripts, packageScripts, integrationConfig, unitConfig }) {
   const failures = []
   const require = (value, message) => { if (!value) failures.push(message) }

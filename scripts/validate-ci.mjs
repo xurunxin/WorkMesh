@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parseDocument } from 'yaml'
+import { parseDocument } from './ci-bootstrap/yaml.mjs'
 import { externalTestInputs, externalTypecheckInputs } from './ci-test-inputs.mjs'
-import { readWorkspaces, validateMcpConformanceEntrypoints } from './ci-policy.mjs'
+import { readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints } from './ci-policy.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8')
@@ -20,6 +20,12 @@ const occurrences = (pattern, value = workflow) => [...value.matchAll(pattern)].
 const workflowDocument = parseDocument(workflow, { prettyErrors: true })
 requireCondition(workflowDocument.errors.length === 0, 'workflow must be valid YAML')
 const parsedWorkflow = workflowDocument.toJS()
+failures.push(...validateCiBootstrap({
+  job: parsedWorkflow.jobs?.changes,
+  manifest: JSON.parse(readFileSync(resolve(root, 'scripts/ci-bootstrap/package.json'), 'utf8')),
+  lock: JSON.parse(readFileSync(resolve(root, 'scripts/ci-bootstrap/package-lock.json'), 'utf8')),
+  yamlVersion: parseDocument(readFileSync(resolve(root, 'pnpm-lock.yaml'), 'utf8')).toJS().importers['.'].devDependencies.yaml.version,
+}))
 
 requireCondition(!workflow.includes('\t'), 'workflow must use spaces, not tabs')
 requireCondition(

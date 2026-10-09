@@ -51,6 +51,7 @@ jobs:
         run: |
           mkdir -p ci-logs
           set -o pipefail
+          npm ci --prefix scripts/ci-bootstrap --ignore-scripts --no-audit --no-fund 2>&1 | tee ci-logs/ci-bootstrap.log
           node --test scripts/ci-policy.test.mjs 2>&1 | tee ci-logs/ci-policy.log
       - name: Select required jobs
         id: scope

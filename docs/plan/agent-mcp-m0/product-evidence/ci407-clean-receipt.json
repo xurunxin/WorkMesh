@@ -1,0 +1,334 @@
+{
+  "startedAt": "2026-10-09T09:57:50.201337+00:00",
+  "parentHead": "67c924b3d8837d81e6b3314e9c3cec7693f3ff34",
+  "fixture": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-m0-ci407-96yyo7lf",
+  "commands": [
+    {
+      "name": "node",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "-p",
+        "JSON.stringify({version:process.version,execPath:process.execPath})"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.086759,
+      "log": "ci407-clean-node.log",
+      "logSha256": "17b27338d24ae4490fcae03709a0aa4f0e6870c1539f0475e715cd3901183758",
+      "expectedExitCode": 0
+    },
+    {
+      "name": "old-no-install",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "--test",
+        "scripts/ci-policy.test.mjs"
+      ],
+      "exitCode": 1,
+      "runtimeSeconds": 0.195608,
+      "log": "ci407-clean-old-no-install.log",
+      "logSha256": "a5f92002ad83859fcd87fecbd19f1e59ef31c3ed0efb8e66c32dcd69053379be",
+      "expectedExitCode": 1
+    },
+    {
+      "name": "new-no-install",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "--test",
+        "scripts/ci-policy.test.mjs"
+      ],
+      "exitCode": 1,
+      "runtimeSeconds": 0.195012,
+      "log": "ci407-clean-new-no-install.log",
+      "logSha256": "6502c4bfd158181b85801068eff6f9635a10716e13d28db8e40aca299a8294ff",
+      "expectedExitCode": 1
+    },
+    {
+      "name": "install",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node_modules\\npm\\bin\\npm-cli.js",
+        "ci",
+        "--prefix",
+        "scripts/ci-bootstrap",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 1.051214,
+      "log": "ci407-clean-install.log",
+      "logSha256": "c52885a11dd15c2d8b4e1397dbc08eed08ef325561f5709c1619a1791c0e23cb",
+      "expectedExitCode": 0
+    },
+    {
+      "name": "policy",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "--test",
+        "scripts/ci-policy.test.mjs"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.412489,
+      "log": "ci407-clean-policy.log",
+      "logSha256": "4cf9c7b8eeee9e028f638a77f147ac550101aa4dec4b49c218474618d1f52c4a",
+      "expectedExitCode": 0
+    },
+    {
+      "name": "validator",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "scripts/validate-ci.mjs"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.287691,
+      "log": "ci407-clean-validator.log",
+      "logSha256": "933481790d4344e8f636dd532d5360412a7a1043bd849d43377954b8c5976aca",
+      "expectedExitCode": 0
+    },
+    {
+      "name": "missing-install",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "scripts/validate-ci.mjs"
+      ],
+      "exitCode": 1,
+      "runtimeSeconds": 0.29358,
+      "log": "ci407-clean-missing-install.log",
+      "logSha256": "d33c4b0f36a8537dc876bb349e8288e543353ef821c8df6ab1b90d73d58949f4",
+      "expectedExitCode": 1
+    },
+    {
+      "name": "missing-install-policy",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "--test",
+        "scripts/ci-policy.test.mjs"
+      ],
+      "exitCode": 1,
+      "runtimeSeconds": 0.412608,
+      "log": "ci407-clean-missing-install-policy.log",
+      "logSha256": "85a85cf624b5c3e9c2ea807473cb2e52ab90e9999088d54e0ca8353e45b3a09c",
+      "expectedExitCode": 1
+    },
+    {
+      "name": "missing-real-entry",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "scripts/validate-ci.mjs"
+      ],
+      "exitCode": 1,
+      "runtimeSeconds": 0.31139,
+      "log": "ci407-clean-missing-real-entry.log",
+      "logSha256": "c77c89cb532e17a5fa612bf476b6557480c2f7e3bfeca5f73172e5ef40f885c4",
+      "expectedExitCode": 1
+    },
+    {
+      "name": "missing-real-entry-policy",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "--test",
+        "scripts/ci-policy.test.mjs"
+      ],
+      "exitCode": 1,
+      "runtimeSeconds": 0.423685,
+      "log": "ci407-clean-missing-real-entry-policy.log",
+      "logSha256": "daeaf5bdffa19e00c54592e22dbeb5fa3b35cfd19ab587353f12e4f799e5cbcf",
+      "expectedExitCode": 1
+    },
+    {
+      "name": "policy-restored",
+      "command": [
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+        "--test",
+        "scripts/ci-policy.test.mjs"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.454009,
+      "log": "ci407-clean-policy-restored.log",
+      "logSha256": "1b89c0e9357ba36bd4aa0605dfff5eda5978dda5cb6476e7d411bc4118ecb24b",
+      "expectedExitCode": 0
+    }
+  ],
+  "inputs": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 33151,
+      "sha256": "0f1a9bea97c2a86ce358d0ab3eccb7414e876c44c8f6367ba1d3397b055e3cf8"
+    },
+    {
+      "path": ".node-version",
+      "bytes": 9,
+      "sha256": "751fc97484d12d7946b0ec9c74d94ecfa555de9daa35f040f037ae1fadc22958"
+    },
+    {
+      "path": "apps/agent-runner/package.json",
+      "bytes": 644,
+      "sha256": "e9d799239b9d0f470b8a11ac163894d49382aaa559514167bc6550194623d317"
+    },
+    {
+      "path": "apps/api/package.json",
+      "bytes": 1008,
+      "sha256": "c23e4382f7f6189e8b4c28624bc2e333d64d9e4a621b7bffa6f9fcaad74cab6b"
+    },
+    {
+      "path": "apps/fake-agent/package.json",
+      "bytes": 480,
+      "sha256": "58b142322dd3d9fb7fb6b905dc271deb520537b834fdbd117be8bc7a2fca9219"
+    },
+    {
+      "path": "apps/mcp/package.json",
+      "bytes": 739,
+      "sha256": "0e983adcc2b3e9767387a5f99acc6f5a5ea661059ac83415df12b4239b3255c6"
+    },
+    {
+      "path": "apps/web/package.json",
+      "bytes": 858,
+      "sha256": "ce1bf9e0ca52869b4c6e3f533b1b4aac55117d2e595cfef2659cdae58ecc0189"
+    },
+    {
+      "path": "apps/worker/package.json",
+      "bytes": 915,
+      "sha256": "e073ba6966cc6b90b79a4b44fa9d481b3ec85e9ec25b419c4ff0fe4486c9ad38"
+    },
+    {
+      "path": "package.json",
+      "bytes": 4897,
+      "sha256": "2bcf1b9506418f1d136abf3a0a83f114db4f4404303ccabcde5ff5c07c10deb7"
+    },
+    {
+      "path": "packages/a2a-adapter/package.json",
+      "bytes": 386,
+      "sha256": "f6f2409f7369fd34e691417fb1660e262e553a9427c99f0d2edcdddb273d7802"
+    },
+    {
+      "path": "packages/agent-sdk/package.json",
+      "bytes": 416,
+      "sha256": "68e34564ab0a580463ad1147a678bbd9934e1943322d234b98de7f2c9bd402ce"
+    },
+    {
+      "path": "packages/artifact-storage/package.json",
+      "bytes": 498,
+      "sha256": "3f2e726eba9fae17f8e1f9e72613ade25f423a51a814ea88144e446f68a96b93"
+    },
+    {
+      "path": "packages/config/package.json",
+      "bytes": 268,
+      "sha256": "bc3dabf2d08a97d2d83a35e32748e49d9dd124dc497e0250250f87d13acba8c9"
+    },
+    {
+      "path": "packages/conformance/package.json",
+      "bytes": 845,
+      "sha256": "fdbf989c33c4ec5cf878daeb1ef906ebb66193576a2aa287233872dc097053c3"
+    },
+    {
+      "path": "packages/conformance/vitest.integration.config.ts",
+      "bytes": 272,
+      "sha256": "ceae98eed06aa0cd1962a58efab2124c1a6e7cb0af48cd2f9ef2003b538380f4"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "bytes": 292,
+      "sha256": "6788f48d9bbabc7f6c229ce715e8a664a2eddd9a7ef031a180d7423c765ea188"
+    },
+    {
+      "path": "packages/db/package.json",
+      "bytes": 718,
+      "sha256": "599f30f63fd0466c289d81ff71dbbae19fda90512fc4942796e3ba5fdc3aa8b3"
+    },
+    {
+      "path": "packages/domain/package.json",
+      "bytes": 290,
+      "sha256": "fa655921f418268441be0b981bb1b51563dd814705c6001ced52fd076bc71f06"
+    },
+    {
+      "path": "packages/git-provider/package.json",
+      "bytes": 350,
+      "sha256": "d0a8df2cf60e75f42d457c5017f5901c687fede3b77bcbabf1c6d242b78ab035"
+    },
+    {
+      "path": "packages/observability/package.json",
+      "bytes": 206,
+      "sha256": "a34a33a0eaa0c446face1ceb91e4edfe71231c1556b03ec1e6f6e31a91e1ca06"
+    },
+    {
+      "path": "packages/recovery/package.json",
+      "bytes": 822,
+      "sha256": "91adaea9339b6ef651d1aa5c7aa01941579703606443e8d1350a4a2e822e3c7d"
+    },
+    {
+      "path": "packages/ui/package.json",
+      "bytes": 414,
+      "sha256": "0ca1582a766195c32fe6f11447f8761edef1b5d7c2aad6b5ae153f6907acb5c3"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "bytes": 226958,
+      "sha256": "b67ee0297a6e24025157309742ce56e6edca02fd8ae2e8f978f7e9798f5d2c07"
+    },
+    {
+      "path": "scripts/ci-bootstrap/package-lock.json",
+      "bytes": 669,
+      "sha256": "f6a6ea0b418bb769e82f3b715d229788d014eace43b7ee088fd05367f7102f69"
+    },
+    {
+      "path": "scripts/ci-bootstrap/package.json",
+      "bytes": 102,
+      "sha256": "65ea6bf969c34df35b9c24ffff13a7688d2f9b101ddc2b6ae59f51d423f513a4"
+    },
+    {
+      "path": "scripts/ci-bootstrap/yaml.mjs",
+      "bytes": 280,
+      "sha256": "38e0b6a160eefad8c174b4010cf5a9ca147c80765c3894cc9d93b43dd2a916db"
+    },
+    {
+      "path": "scripts/ci-policy.mjs",
+      "bytes": 11392,
+      "sha256": "06cddfba12c9379f31f113b4c46bae20d5795c7e71631b0cdaaf8e824d975cfc"
+    },
+    {
+      "path": "scripts/ci-policy.test.mjs",
+      "bytes": 12764,
+      "sha256": "ecf357a9294bd600a86fbbf15e503a8a35a057814389d11176d3d38d96453f72"
+    },
+    {
+      "path": "scripts/ci-test-inputs.mjs",
+      "bytes": 1209,
+      "sha256": "055e6d0512adc9d75258bac4d7688fd6dc05708abb62c2d9983b5dcc7a60ed09"
+    },
+    {
+      "path": "scripts/run-ci-source.mjs",
+      "bytes": 3222,
+      "sha256": "6ed270c9ef4b9fb30897551beb6b98195f5d1f3ac0c70772d5029d08e75b6265"
+    },
+    {
+      "path": "scripts/set-ci-bootstrap-token.mjs",
+      "bytes": 1481,
+      "sha256": "6a24fd473771b5a56e746a5dbc53f68e15352895c834a599e7dd9a6021bf6c33"
+    },
+    {
+      "path": "scripts/validate-ci.mjs",
+      "bytes": 33721,
+      "sha256": "d875bfdb55da8b204dc3bd1d2a06e43353f98c40a76da583c8c806f2e912c0d9"
+    },
+    {
+      "path": "turbo.json",
+      "bytes": 9529,
+      "sha256": "286749e8e47ffb5931aa9a818aee30bb2c4bf0041bdc65811d2ece0e2dec9e8f"
+    },
+    {
+      "path": "vitest.config.ts",
+      "bytes": 1499,
+      "sha256": "e8cddbe42003c811d14107f2a417cc3f6ca93fecc26653905394f6fec77a2fc8"
+    }
+  ],
+  "cleanup": {
+    "target": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-m0-ci407-96yyo7lf",
+    "precheckedRealPath": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-m0-ci407-96yyo7lf",
+    "noLinks": true,
+    "activeChildren": 0,
+    "exitCode": 0,
+    "absent": true,
+    "output": ""
+  },
+  "result": "passed"
+}

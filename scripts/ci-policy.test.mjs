@@ -1,12 +1,45 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateMcpConformanceEntrypoints } from './ci-policy.mjs'
+import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints } from './ci-policy.mjs'
 import { readFileSync } from 'node:fs'
-import { parse } from 'yaml'
+import { parse } from './ci-bootstrap/yaml.mjs'
 
 const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
 const results = plan => Object.fromEntries(['changes', ...checkIds].map(id => [id, { result: id === 'changes' || plan.checks[id] ? 'success' : 'skipped' }]))
+
+test('classification bootstrap locks only YAML and cannot bypass policy or evidence', () => {
+  const input = {
+    job: parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs.changes,
+    manifest: JSON.parse(readFileSync(new URL('./ci-bootstrap/package.json', import.meta.url), 'utf8')),
+    lock: JSON.parse(readFileSync(new URL('./ci-bootstrap/package-lock.json', import.meta.url), 'utf8')),
+    yamlVersion: parse(readFileSync(new URL('../pnpm-lock.yaml', import.meta.url), 'utf8')).importers['.'].devDependencies.yaml.version,
+  }
+  assert.deepEqual(validateCiBootstrap(input), [])
+  for (const mutate of [
+    value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run = 'node --test scripts/ci-policy.test.mjs' },
+    value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run = value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run.replace('set -o pipefail', '') },
+    value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety')['continue-on-error'] = true },
+    value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety').if = 'false' },
+    value => { value.job.steps = value.job.steps.filter(step => step.name !== 'Set up exact Node') },
+    value => { value.job.steps = value.job.steps.filter(step => step.id !== 'scope') },
+    value => { value.job.steps = value.job.steps.filter(step => !step.uses?.startsWith('actions/upload-artifact@')) },
+    value => { value.manifest.dependencies.yaml = '^2.9.0' },
+    value => { value.lock.packages['node_modules/yaml'].integrity = '' },
+    value => { value.lock.packages['node_modules/extra'] = { version: '1.0.0' } },
+  ]) {
+    const candidate = structuredClone(input)
+    mutate(candidate)
+    assert.ok(validateCiBootstrap(candidate).length > 0)
+  }
+})
+
+test('YAML semantics preserve flow maps, aliases and literal command bodies', () => {
+  const document = parse('run: &command |\n  set -o pipefail\n  echo "# literal: yes"\nsteps: [{run: *command, continue-on-error: false}]\n')
+  assert.equal(document.steps[0].run, 'set -o pipefail\necho "# literal: yes"\n')
+  assert.equal(document.steps[0]['continue-on-error'], false)
+  assert.throws(() => parse('steps: []\nsteps: []\n'), /unique/)
+})
 
 test('known prose on PR and main avoids every install/service/test job', () => {
   for (const options of [{}, { mainPush: true }]) {
@@ -163,7 +196,11 @@ test('real workflow semantic mutations cannot silently omit MCP conformance', ()
   for (const mutate of [
     value => { value.job.steps = value.job.steps.filter(step => step.name !== 'Run real MCP and Pi conformance') },
     value => { value.rootScripts['test:integration'] = 'pnpm test:integration:api' },
+    value => { value.rootScripts['test:conformance:integration'] = 'pnpm --filter @workmesh/conformance test:integration' },
+    value => { value.packageScripts['test:integration'] = 'vitest run' },
+    value => { value.integrationConfig = value.integrationConfig.replace("include: ['src/mcp-coverage.conformance.test.ts']", 'include: []') },
     value => { value.integrationConfig = value.integrationConfig.replace('passWithNoTests: false', 'passWithNoTests: true') },
+    value => { value.job.steps.find(step => step.name === 'Run real MCP and Pi conformance').run = 'pnpm test:conformance:integration' },
     value => { value.job.steps.find(step => step.name === 'Run real MCP and Pi conformance')['continue-on-error'] = true },
     value => { value.job.steps = value.job.steps.filter(step => !step.uses?.startsWith('actions/upload-artifact@')) },
   ]) {

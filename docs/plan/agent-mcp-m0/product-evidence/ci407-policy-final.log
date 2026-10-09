@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: classification bootstrap locks only YAML and cannot bypass policy or evidence
+ok 1 - classification bootstrap locks only YAML and cannot bypass policy or evidence
+  ---
+  duration_ms: 135.8985
+  type: 'test'
+  ...
+# Subtest: YAML semantics preserve flow maps, aliases and literal command bodies
+ok 2 - YAML semantics preserve flow maps, aliases and literal command bodies
+  ---
+  duration_ms: 1.709
+  type: 'test'
+  ...
+# Subtest: known prose on PR and main avoids every install/service/test job
+ok 3 - known prose on PR and main avoids every install/service/test job
+  ---
+  duration_ms: 0.5654
+  type: 'test'
+  ...
+# Subtest: UI changes test web consumers and E2E, but skip unrelated backend/protocol/recovery jobs
+ok 4 - UI changes test web consumers and E2E, but skip unrelated backend/protocol/recovery jobs
+  ---
+  duration_ms: 0.2606
+  type: 'test'
+  ...
+# Subtest: direct web tests, assets and package-local skills are runtime changes
+ok 5 - direct web tests, assets and package-local skills are runtime changes
+  ---
+  duration_ms: 0.1689
+  type: 'test'
+  ...
+# Subtest: API and worker changes retain destructive recovery and real browser integration
+ok 6 - API and worker changes retain destructive recovery and real browser integration
+  ---
+  duration_ms: 0.1161
+  type: 'test'
+  ...
+# Subtest: cross-workspace lock audits are selected without inventing runtime dependency cycles
+ok 7 - cross-workspace lock audits are selected without inventing runtime dependency cycles
+  ---
+  duration_ms: 0.2473
+  type: 'test'
+  ...
+# Subtest: upstream contracts/domain/db/config changes include transitive consumers
+ok 8 - upstream contracts/domain/db/config changes include transitive consumers
+  ---
+  duration_ms: 0.1546
+  type: 'test'
+  ...
+# Subtest: protocol changes retain SDK consumers, conformance and direct E2E imports
+ok 9 - protocol changes retain SDK consumers, conformance and direct E2E imports
+  ---
+  duration_ms: 0.2398
+  type: 'test'
+  ...
+# Subtest: root config, unknown/deleted workspaces and executable-looking docs fail closed to full
+ok 10 - root config, unknown/deleted workspaces and executable-looking docs fail closed to full
+  ---
+  duration_ms: 0.4874
+  type: 'test'
+  ...
+# Subtest: main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full
+ok 11 - main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full
+  ---
+  duration_ms: 0.3087
+  type: 'test'
+  ...
+# Subtest: PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full
+ok 12 - PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full
+  ---
+  duration_ms: 0.3621
+  type: 'test'
+  ...
+# Subtest: aggregate rejects failure, cancellation and accidental skips for every required job
+ok 13 - aggregate rejects failure, cancellation and accidental skips for every required job
+  ---
+  duration_ms: 0.2638
+  type: 'test'
+  ...
+# Subtest: aggregate only accepts planned skips and rejects incomplete/malformed decisions
+ok 14 - aggregate only accepts planned skips and rejects incomplete/malformed decisions
+  ---
+  duration_ms: 0.1598
+  type: 'test'
+  ...
+# Subtest: MCP discovery consumers require real conformance and propagate failed or skipped job
+ok 15 - MCP discovery consumers require real conformance and propagate failed or skipped job
+  ---
+  duration_ms: 0.1561
+  type: 'test'
+  ...
+# Subtest: real workflow semantic mutations cannot silently omit MCP conformance
+ok 16 - real workflow semantic mutations cannot silently omit MCP conformance
+  ---
+  duration_ms: 11.293
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 347.6499

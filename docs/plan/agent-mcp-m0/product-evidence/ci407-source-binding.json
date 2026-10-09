@@ -1,0 +1,644 @@
+{
+  "observedAt": "2026-10-09T10:03:24.557160+00:00",
+  "parentHead": "67c924b3d8837d81e6b3314e9c3cec7693f3ff34",
+  "main": "69085317c88d84b702af727dc0ac7152589626d8",
+  "mainObservation": "platform git ls-remote exact refs/heads/main this turn, ci407-tool-main.json",
+  "mergeBase": "69085317c88d84b702af727dc0ac7152589626d8",
+  "candidateHead": null,
+  "version": null,
+  "sourceArchive": "ci407-source.zip",
+  "sourceArchiveSha256": "aaf8804a2e23da756c9213173683b087ebe904fb3a4c8fd294b8a49917cbaedb",
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "stagedBlob": "539561fc9cdc80fe61410c5d2e96df524b4f8b46",
+      "gitSha256": "0f1a9bea97c2a86ce358d0ab3eccb7414e876c44c8f6367ba1d3397b055e3cf8",
+      "worktreeSha256": "0f1a9bea97c2a86ce358d0ab3eccb7414e876c44c8f6367ba1d3397b055e3cf8",
+      "worktreeBytes": 33151,
+      "gitBytes": 33151,
+      "oldBlob": "7d79806d6012ce640630b3fdd75cf0d1aaf33cc9",
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/README.md",
+      "stagedBlob": "c39fd5eb83133415f8e347d399987a1932629bb8",
+      "gitSha256": "2a27e120c45f0c88b05558886e26062d8f01244dbfa7902a33bfc6fb0d0f8560",
+      "worktreeSha256": "2a27e120c45f0c88b05558886e26062d8f01244dbfa7902a33bfc6fb0d0f8560",
+      "worktreeBytes": 4648,
+      "gitBytes": 4648,
+      "oldBlob": "3981ba92aa0ad99a9519c72a88e8abd4baaf5cdd",
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/platform-ci407-feedback-original.md",
+      "stagedBlob": "e5fcdbeeba2584249af80d315a23695a2649def8",
+      "gitSha256": "99992d7277e410b88bc367b6db828ad1a373fa530fe6f65cab8fad7f785bb417",
+      "worktreeSha256": "99992d7277e410b88bc367b6db828ad1a373fa530fe6f65cab8fad7f785bb417",
+      "worktreeBytes": 2520,
+      "gitBytes": 2520,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-ci407-report.md",
+      "stagedBlob": "169ee6767e0a3b45bdc7da41823ce5578b7328f9",
+      "gitSha256": "ce4d6647b204a00336ed793cbaa35b30dfa7ce6230ace3beb00c2d9c003e2b1d",
+      "worktreeSha256": "ce4d6647b204a00336ed793cbaa35b30dfa7ce6230ace3beb00c2d9c003e2b1d",
+      "worktreeBytes": 8120,
+      "gitBytes": 8120,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-bootstrap-cleanup.json",
+      "stagedBlob": "c4bda39ac7743240a287bd42ff8cc0eab0ea49e1",
+      "gitSha256": "97cc1311b93ffff31290c85d4d4e2170bb9c4566d75939f31f4468069028cb4e",
+      "worktreeSha256": "0b0eaecdb9f0ca91daaf0b2ff7fbe485944dd37c968b2f60fc470e8916a2a3a4",
+      "worktreeBytes": 448,
+      "gitBytes": 437,
+      "oldBlob": null,
+      "mapping": "CRLF to LF"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-ci-final-inputs.zip",
+      "stagedBlob": "9403347880191315efb139d1818b1221788338c7",
+      "gitSha256": "2cd877ca694ca8de10ac024471dc737277b95d0753f8783ce6c9808fe74896bd",
+      "worktreeSha256": "2cd877ca694ca8de10ac024471dc737277b95d0753f8783ce6c9808fe74896bd",
+      "worktreeBytes": 3847440,
+      "gitBytes": 3847440,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-ci-final.json",
+      "stagedBlob": "952f99ce4fb100caa8ddd4a734ffb734f453a5c3",
+      "gitSha256": "389b670bed012da8d9ec397369cde07738e63c32f3f7b1aa62e61a33e67f4aae",
+      "worktreeSha256": "389b670bed012da8d9ec397369cde07738e63c32f3f7b1aa62e61a33e67f4aae",
+      "worktreeBytes": 814,
+      "gitBytes": 814,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-ci-final.log",
+      "stagedBlob": "4a2aad401c60bc8f1614f58d8c3d8b3594797282",
+      "gitSha256": "985a9939b78581de8e41d030fe4449c887e411270441151c7da42edcaffb40a8",
+      "worktreeSha256": "985a9939b78581de8e41d030fe4449c887e411270441151c7da42edcaffb40a8",
+      "worktreeBytes": 2802,
+      "gitBytes": 2802,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-harness.zip",
+      "stagedBlob": "06c5504962af090328662f3ab441c3fc6de0e208",
+      "gitSha256": "ae868a95d6ba2dd56a01be66bd482617273af104dd7e62c6bb2c0fc1ddd20c91",
+      "worktreeSha256": "ae868a95d6ba2dd56a01be66bd482617273af104dd7e62c6bb2c0fc1ddd20c91",
+      "worktreeBytes": 2895,
+      "gitBytes": 2895,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-inputs.zip",
+      "stagedBlob": "bfd093de8e2ed93b4366791163506779cb777157",
+      "gitSha256": "8bdb00bf3f7af919058ff2dbfb955472d2be8878f96bbecd6c24abda5864694a",
+      "worktreeSha256": "8bdb00bf3f7af919058ff2dbfb955472d2be8878f96bbecd6c24abda5864694a",
+      "worktreeBytes": 116371,
+      "gitBytes": 116371,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-install.log",
+      "stagedBlob": "81abcb9ba89ff48128941c07798b39ae1e8a12cd",
+      "gitSha256": "c52885a11dd15c2d8b4e1397dbc08eed08ef325561f5709c1619a1791c0e23cb",
+      "worktreeSha256": "c52885a11dd15c2d8b4e1397dbc08eed08ef325561f5709c1619a1791c0e23cb",
+      "worktreeBytes": 26,
+      "gitBytes": 26,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-missing-install-policy.log",
+      "stagedBlob": "04f3b47e46bd767eb143ac4c304ca2f1361f16a7",
+      "gitSha256": "1621700d5d6824b2e51d6aa603a8f1936ea0f4b0dc30028c81b7c6c13e8066d3",
+      "worktreeSha256": "1621700d5d6824b2e51d6aa603a8f1936ea0f4b0dc30028c81b7c6c13e8066d3",
+      "worktreeBytes": 4652,
+      "gitBytes": 4652,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-missing-install.log",
+      "stagedBlob": "2d8571b46ee30f1957785b9e17bc4f06d2186c5b",
+      "gitSha256": "d33c4b0f36a8537dc876bb349e8288e543353ef821c8df6ab1b90d73d58949f4",
+      "worktreeSha256": "d33c4b0f36a8537dc876bb349e8288e543353ef821c8df6ab1b90d73d58949f4",
+      "worktreeBytes": 105,
+      "gitBytes": 105,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-missing-real-entry-policy.log",
+      "stagedBlob": "9bd43d17475b0baf22611184dc08dbe90feb449f",
+      "gitSha256": "5896c0db541c728c6c2e2da3e9d7e2fc8f19719a000314f4d2d660dee3770eba",
+      "worktreeSha256": "5896c0db541c728c6c2e2da3e9d7e2fc8f19719a000314f4d2d660dee3770eba",
+      "worktreeBytes": 4767,
+      "gitBytes": 4767,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-missing-real-entry.log",
+      "stagedBlob": "7ca6ae26a1341d40fa88453c114512772d3f4ad7",
+      "gitSha256": "c77c89cb532e17a5fa612bf476b6557480c2f7e3bfeca5f73172e5ef40f885c4",
+      "worktreeSha256": "c77c89cb532e17a5fa612bf476b6557480c2f7e3bfeca5f73172e5ef40f885c4",
+      "worktreeBytes": 96,
+      "gitBytes": 96,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-new-no-install.log",
+      "stagedBlob": "4a147a5f61985f138592e2a4eaad22ee88f2b0d4",
+      "gitSha256": "6502c4bfd158181b85801068eff6f9635a10716e13d28db8e40aca299a8294ff",
+      "worktreeSha256": "6502c4bfd158181b85801068eff6f9635a10716e13d28db8e40aca299a8294ff",
+      "worktreeBytes": 1658,
+      "gitBytes": 1658,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-node.log",
+      "stagedBlob": "928de6977e60d9500f32f106d1c05c6920597863",
+      "gitSha256": "17b27338d24ae4490fcae03709a0aa4f0e6870c1539f0475e715cd3901183758",
+      "worktreeSha256": "17b27338d24ae4490fcae03709a0aa4f0e6870c1539f0475e715cd3901183758",
+      "worktreeBytes": 158,
+      "gitBytes": 158,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-old-no-install.log",
+      "stagedBlob": "4a3e3f00a81b718b2f17e90562ced5349b1c841d",
+      "gitSha256": "a5f92002ad83859fcd87fecbd19f1e59ef31c3ed0efb8e66c32dcd69053379be",
+      "worktreeSha256": "a5f92002ad83859fcd87fecbd19f1e59ef31c3ed0efb8e66c32dcd69053379be",
+      "worktreeBytes": 1415,
+      "gitBytes": 1415,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-policy-restored.log",
+      "stagedBlob": "f2f9b23c64515add6fe21b26466d0b065d5e5d5e",
+      "gitSha256": "1b89c0e9357ba36bd4aa0605dfff5eda5978dda5cb6476e7d411bc4118ecb24b",
+      "worktreeSha256": "1b89c0e9357ba36bd4aa0605dfff5eda5978dda5cb6476e7d411bc4118ecb24b",
+      "worktreeBytes": 3773,
+      "gitBytes": 3773,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-policy.log",
+      "stagedBlob": "31ead84a1cdfac7a6bacd1f914b261ea08ff6ea0",
+      "gitSha256": "4cf9c7b8eeee9e028f638a77f147ac550101aa4dec4b49c218474618d1f52c4a",
+      "worktreeSha256": "4cf9c7b8eeee9e028f638a77f147ac550101aa4dec4b49c218474618d1f52c4a",
+      "worktreeBytes": 3772,
+      "gitBytes": 3772,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-receipt.json",
+      "stagedBlob": "ecfd13265050c4b68f6c1f02be1b140bb0d2c2f3",
+      "gitSha256": "fde24caba1bafcc5abb36640c990d6281f2538383308c13f88c9fdc7476b10dc",
+      "worktreeSha256": "fde24caba1bafcc5abb36640c990d6281f2538383308c13f88c9fdc7476b10dc",
+      "worktreeBytes": 11495,
+      "gitBytes": 11495,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-validator.log",
+      "stagedBlob": "d8bb8fa6da7e858fdf8b22d21071a2b0b7e5ea88",
+      "gitSha256": "933481790d4344e8f636dd532d5360412a7a1043bd849d43377954b8c5976aca",
+      "worktreeSha256": "933481790d4344e8f636dd532d5360412a7a1043bd849d43377954b8c5976aca",
+      "worktreeBytes": 84,
+      "gitBytes": 84,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-policy-final-inputs.zip",
+      "stagedBlob": "8b087555aa06d5e9c9e1af1644167ea065edbf45",
+      "gitSha256": "df39071d80838701d61339f76a3489838749a6526cf29abdd79d70b5ec9052e7",
+      "worktreeSha256": "df39071d80838701d61339f76a3489838749a6526cf29abdd79d70b5ec9052e7",
+      "worktreeBytes": 3847440,
+      "gitBytes": 3847440,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-policy-final.json",
+      "stagedBlob": "498f17d539132b9d05e3bfde1dbdfc1db946757b",
+      "gitSha256": "5be3b1e66d52ee8e5b9f392a3869bf5ceec4dbec1f87f92279be533dd98b1f22",
+      "worktreeSha256": "5be3b1e66d52ee8e5b9f392a3869bf5ceec4dbec1f87f92279be533dd98b1f22",
+      "worktreeBytes": 793,
+      "gitBytes": 793,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-policy-final.log",
+      "stagedBlob": "8c04ea0b04baccadbafc3e0f0470693cd11a7b31",
+      "gitSha256": "cda76b72299c6863217e49c0ada404957c3ea699e0458001cb75a784927b23ca",
+      "worktreeSha256": "cda76b72299c6863217e49c0ada404957c3ea699e0458001cb75a784927b23ca",
+      "worktreeBytes": 3774,
+      "gitBytes": 3774,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-policy-inputs.zip",
+      "stagedBlob": "d6e4ff677895a5282dcf9a5aa00eebfc1aaa3927",
+      "gitSha256": "0ce048ec5b22a6fb91f53b961c1f23ff6644db4514e01d4d92a66e4dac515e95",
+      "worktreeSha256": "0ce048ec5b22a6fb91f53b961c1f23ff6644db4514e01d4d92a66e4dac515e95",
+      "worktreeBytes": 3844354,
+      "gitBytes": 3844354,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-policy.json",
+      "stagedBlob": "b49d03a105ba59b993907966082082478108e604",
+      "gitSha256": "e528f4f55ce1b51fb1eecf305739b3e5bf7d43378f1d7e6a5402f59d937257b7",
+      "worktreeSha256": "e528f4f55ce1b51fb1eecf305739b3e5bf7d43378f1d7e6a5402f59d937257b7",
+      "worktreeBytes": 788,
+      "gitBytes": 788,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-policy.log",
+      "stagedBlob": "ff4e30e87090c54170780e6f48f539c876256b27",
+      "gitSha256": "ba6ea4fa91f6b7261933f7f1444fcafef9a2a3afae03a82ea4f18bcf6750bd01",
+      "worktreeSha256": "ba6ea4fa91f6b7261933f7f1444fcafef9a2a3afae03a82ea4f18bcf6750bd01",
+      "worktreeBytes": 4787,
+      "gitBytes": 4787,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-raw-output-index.json",
+      "stagedBlob": "84325348884bf5b6ca8bdef5a22a1143550048a6",
+      "gitSha256": "ce3bab03aeab9d65941a8382156ade6111b131b6cf8919c3ff798bf821412e27",
+      "worktreeSha256": "55e126a5c378b7569710797a9c8836081f7e0ed9757c8a6e7bb6e6460745ac0d",
+      "worktreeBytes": 4819,
+      "gitBytes": 4708,
+      "oldBlob": null,
+      "mapping": "CRLF to LF"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-raw-outputs.zip",
+      "stagedBlob": "0625f6b0734f370149a9518c2d97a5084fe43b33",
+      "gitSha256": "973f4caf24f514f84c3acdeb00df03b37c8fb26d60412cb01a03b9d0b619d8a0",
+      "worktreeSha256": "973f4caf24f514f84c3acdeb00df03b37c8fb26d60412cb01a03b9d0b619d8a0",
+      "worktreeBytes": 13688,
+      "gitBytes": 13688,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-tool-changes.json",
+      "stagedBlob": "701047074f481bc192bb8e078291f0d39ac3a57d",
+      "gitSha256": "8769f4b183cce218af4e5c8949e8a64e7529f3a24764a91a29de648f1b78ed84",
+      "worktreeSha256": "8769f4b183cce218af4e5c8949e8a64e7529f3a24764a91a29de648f1b78ed84",
+      "worktreeBytes": 15066,
+      "gitBytes": 15066,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-tool-main.json",
+      "stagedBlob": "ac622d73ee131cad26f8bf21b1f48ff1987ef88b",
+      "gitSha256": "538a3643e5a00930739c3466c2032835a27aabfa601adb639368cbb63f3ddca5",
+      "worktreeSha256": "538a3643e5a00930739c3466c2032835a27aabfa601adb639368cbb63f3ddca5",
+      "worktreeBytes": 492,
+      "gitBytes": 492,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-tool-required.json",
+      "stagedBlob": "4352717cdf35f7c39202abe547ee096b9d09376d",
+      "gitSha256": "f00b548de9b20bc9b8f666eacf6e8a1b93964f954dc704c05c594f1878d61892",
+      "worktreeSha256": "f00b548de9b20bc9b8f666eacf6e8a1b93964f954dc704c05c594f1878d61892",
+      "worktreeBytes": 15039,
+      "gitBytes": 15039,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-tool-summary.json",
+      "stagedBlob": "024caaa513e03b3d1f3777def75d5dfe7dcb07c8",
+      "gitSha256": "41223436ce623b450f60f5edef2fb98123ace47215d7d7ea7c14804ccb7ff9b3",
+      "worktreeSha256": "41223436ce623b450f60f5edef2fb98123ace47215d7d7ea7c14804ccb7ff9b3",
+      "worktreeBytes": 6345,
+      "gitBytes": 6345,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-validator-inputs.zip",
+      "stagedBlob": "732daf24761af2831cf38fac732be3af4fc42653",
+      "gitSha256": "582c9db7fe35b795cce3ddf3d16758beefa6ff7cd6fdd8738555a977f6b7b41c",
+      "worktreeSha256": "582c9db7fe35b795cce3ddf3d16758beefa6ff7cd6fdd8738555a977f6b7b41c",
+      "worktreeBytes": 3844354,
+      "gitBytes": 3844354,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-validator.json",
+      "stagedBlob": "4dd944627d442e105cfec420f8398957fb6b4ffa",
+      "gitSha256": "77fedba46a2f0ef15aa37e93d1cefb2420f5388714debf05485ff2026350ab2e",
+      "worktreeSha256": "77fedba46a2f0ef15aa37e93d1cefb2420f5388714debf05485ff2026350ab2e",
+      "worktreeBytes": 774,
+      "gitBytes": 774,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-validator.log",
+      "stagedBlob": "2387cb8a9ae056469344ad9bc5c3108ddac6e2c8",
+      "gitSha256": "b1e6ffd3fd1a93e77c7af9adc9d2f3ec49499af943847c46a0a91fd92f8612ad",
+      "worktreeSha256": "b1e6ffd3fd1a93e77c7af9adc9d2f3ec49499af943847c46a0a91fd92f8612ad",
+      "worktreeBytes": 158,
+      "gitBytes": 158,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m0/product-recovery-report.md",
+      "stagedBlob": "68e03c44b428f04f7004f69c4eb139300c7ef40d",
+      "gitSha256": "cfb6ec511480d060a7415be75a3f9085468a64a14b25e62813e71e5d8b246ccf",
+      "worktreeSha256": "cfb6ec511480d060a7415be75a3f9085468a64a14b25e62813e71e5d8b246ccf",
+      "worktreeBytes": 8736,
+      "gitBytes": 8736,
+      "oldBlob": "1c86e1577c8dfb17ed982ed44f583b6160913f29",
+      "mapping": "identity"
+    },
+    {
+      "path": "scripts/ci-bootstrap/package-lock.json",
+      "stagedBlob": "2cee4faef200ed2910b0927af75bd657fcde2c52",
+      "gitSha256": "f6a6ea0b418bb769e82f3b715d229788d014eace43b7ee088fd05367f7102f69",
+      "worktreeSha256": "f6a6ea0b418bb769e82f3b715d229788d014eace43b7ee088fd05367f7102f69",
+      "worktreeBytes": 669,
+      "gitBytes": 669,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "scripts/ci-bootstrap/package.json",
+      "stagedBlob": "1d28685a92a929fb1139893a19fd1acb95ebce42",
+      "gitSha256": "65ea6bf969c34df35b9c24ffff13a7688d2f9b101ddc2b6ae59f51d423f513a4",
+      "worktreeSha256": "65ea6bf969c34df35b9c24ffff13a7688d2f9b101ddc2b6ae59f51d423f513a4",
+      "worktreeBytes": 102,
+      "gitBytes": 102,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "scripts/ci-bootstrap/yaml.mjs",
+      "stagedBlob": "2455793a69c7663ebd543ea381f653a62387aaff",
+      "gitSha256": "38e0b6a160eefad8c174b4010cf5a9ca147c80765c3894cc9d93b43dd2a916db",
+      "worktreeSha256": "38e0b6a160eefad8c174b4010cf5a9ca147c80765c3894cc9d93b43dd2a916db",
+      "worktreeBytes": 280,
+      "gitBytes": 280,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "scripts/ci-policy.mjs",
+      "stagedBlob": "29ed1733431c972f262f34c66b5059efd9bd3633",
+      "gitSha256": "06cddfba12c9379f31f113b4c46bae20d5795c7e71631b0cdaaf8e824d975cfc",
+      "worktreeSha256": "06cddfba12c9379f31f113b4c46bae20d5795c7e71631b0cdaaf8e824d975cfc",
+      "worktreeBytes": 11392,
+      "gitBytes": 11392,
+      "oldBlob": "e4ca107bc5f98adf9c1012f5657c4d571ec191ab",
+      "mapping": "identity"
+    },
+    {
+      "path": "scripts/ci-policy.test.mjs",
+      "stagedBlob": "f48bdad4074d28a9810dbe032aaae9765af7481e",
+      "gitSha256": "ecf357a9294bd600a86fbbf15e503a8a35a057814389d11176d3d38d96453f72",
+      "worktreeSha256": "ecf357a9294bd600a86fbbf15e503a8a35a057814389d11176d3d38d96453f72",
+      "worktreeBytes": 12764,
+      "gitBytes": 12764,
+      "oldBlob": "5fcfe1cc19ea42fe52796e1965b7ff213bb8aebf",
+      "mapping": "identity"
+    },
+    {
+      "path": "scripts/m0-ci-bootstrap-check.py",
+      "stagedBlob": "1828fd6765d560e4e937dffd79e396280430d00c",
+      "gitSha256": "cae7273f112e7f8cdae7f6869fcd92f9f8580ab0f5dcdbc09c809499bf0dc871",
+      "worktreeSha256": "cae7273f112e7f8cdae7f6869fcd92f9f8580ab0f5dcdbc09c809499bf0dc871",
+      "worktreeBytes": 6822,
+      "gitBytes": 6822,
+      "oldBlob": null,
+      "mapping": "identity"
+    },
+    {
+      "path": "scripts/validate-ci.mjs",
+      "stagedBlob": "115ce832992b7c974d199c5eda3d85c80490d8f4",
+      "gitSha256": "d875bfdb55da8b204dc3bd1d2a06e43353f98c40a76da583c8c806f2e912c0d9",
+      "worktreeSha256": "d875bfdb55da8b204dc3bd1d2a06e43353f98c40a76da583c8c806f2e912c0d9",
+      "worktreeBytes": 33721,
+      "gitBytes": 33721,
+      "oldBlob": "938589eb7c8e65b9b7a81e4ceaf76b0906d125ec",
+      "mapping": "identity"
+    }
+  ],
+  "unchangedProductFiles": [
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "blob": "d419ac172b801fcc3c336f50a8eb1fbb4b2c270d"
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "blob": "f917c9af38c4c74bbf3ad2fcd2b7b50d2789ca7e"
+    },
+    {
+      "path": "apps/agent-runner/src/permission-matrix.test.ts",
+      "blob": "588c45377985da9d5bb63802b50ea2a2f766df14"
+    },
+    {
+      "path": "apps/agent-runner/src/run-session.ts",
+      "blob": "a061ca61557cf65e672d3ee30148bae6a2bd0892"
+    },
+    {
+      "path": "apps/agent-runner/src/runner-api.test.ts",
+      "blob": "b854ac48711b97ce089d395330e7d4a6ebf1862f"
+    },
+    {
+      "path": "apps/agent-runner/src/workmesh-tools.test.ts",
+      "blob": "be83ba06ba8226c030db62a67146d066e115342c"
+    },
+    {
+      "path": "apps/agent-runner/src/workmesh-tools.ts",
+      "blob": "793aa8ab8f0fa07488bb64596ac0ab2c37588d39"
+    },
+    {
+      "path": "apps/api/src/client-profile.ts",
+      "blob": "03b689a0ea61dd556f6e20abef6529b7bf442fe2"
+    },
+    {
+      "path": "apps/mcp/src/coordination-product.ts",
+      "blob": "add1c42fc0d9c91380f0727f19886fef1269f6cb"
+    },
+    {
+      "path": "apps/mcp/src/discovery.ts",
+      "blob": "6f1fc9086bc6db3c8ffd341d1ce016248b645b20"
+    },
+    {
+      "path": "apps/mcp/src/http.ts",
+      "blob": "4aeb481531f126ed2c502a40a7ededcd1ce56b38"
+    },
+    {
+      "path": "apps/mcp/src/index.test.ts",
+      "blob": "d5bd071aa253aee1dd5406bb936f529ff1a71cfb"
+    },
+    {
+      "path": "apps/mcp/src/index.ts",
+      "blob": "ed916b74bcd0a80980ae0ed3739ec2ee136e1c94"
+    },
+    {
+      "path": "apps/mcp/src/recovery.test.ts",
+      "blob": "e4792d051d275bdf75d7c34a9d67fd7f4440f4a3"
+    },
+    {
+      "path": "apps/mcp/src/stdio.ts",
+      "blob": "4eb00c6e64e0c69002b5ffeeb3117693f73a4580"
+    },
+    {
+      "path": "package.json",
+      "blob": "7652f1cb897f4535ee1fc5f4a93ae34794a99231"
+    },
+    {
+      "path": "packages/agent-sdk/src/discovery.test.ts",
+      "blob": "bfb2ca5b238f2c69e5d812cef59eae6be79c9b4f"
+    },
+    {
+      "path": "packages/agent-sdk/src/index.test.ts",
+      "blob": "2ef6e6d969ff3b2be734912bcf5748d96afc37db"
+    },
+    {
+      "path": "packages/agent-sdk/src/index.ts",
+      "blob": "204f17bbf907ca57e638f187f6d46de7973fdf8b"
+    },
+    {
+      "path": "packages/conformance/conformance-results/junit.xml",
+      "blob": "177647e29b50cff58c933062aa88aafd3d2f709c"
+    },
+    {
+      "path": "packages/conformance/conformance-results/report.json",
+      "blob": "c1cc0001d463d0ccd3fb0a4203ad0b9b420e8947"
+    },
+    {
+      "path": "packages/conformance/conformance-results/transcript.md",
+      "blob": "38caf52f9fd3fa5dc1b321b3a3937d12255c3fa8"
+    },
+    {
+      "path": "packages/conformance/package.json",
+      "blob": "a4d2998c2e7ddb41d567b7c74ea1c5b9d062e909"
+    },
+    {
+      "path": "packages/conformance/src/fixtures/model-test-ca.pem",
+      "blob": "36c10f6c07a6922483e039fdfae5b82156d6b079"
+    },
+    {
+      "path": "packages/conformance/src/fixtures/model-test-key.pem",
+      "blob": "910f340a664bb695a42cc4bd30cba9133b14503b"
+    },
+    {
+      "path": "packages/conformance/src/mcp-coverage.conformance.test.ts",
+      "blob": "813592cf584e3905e7a9b8f1e92bde2bf6b1a2c3"
+    },
+    {
+      "path": "packages/conformance/src/mcp-coverage.fixture.ts",
+      "blob": "26b7edd8f5dc0973ce11d3e6b61ccdc85d83fcea"
+    },
+    {
+      "path": "packages/conformance/tsconfig.build.json",
+      "blob": "345b165aa18d87dd10e3dd705608674596e2c705"
+    },
+    {
+      "path": "packages/conformance/tsconfig.json",
+      "blob": "af86f2f1d8c4e2c184e236ed371e3ff75c311d6f"
+    },
+    {
+      "path": "packages/conformance/vitest.integration.config.ts",
+      "blob": "5348e55421c7e04d93869a4a73b2d282faccdbf2"
+    },
+    {
+      "path": "packages/contracts/src/agent-discovery-rules.ts",
+      "blob": "61d4a31905d711cde78227f0ce08fd65bde68053"
+    },
+    {
+      "path": "packages/contracts/src/agent-discovery.test.ts",
+      "blob": "5e445f5c72c37e7c34c3af66d43a29b5e72197cf"
+    },
+    {
+      "path": "packages/contracts/src/agent-discovery.ts",
+      "blob": "89423dba175b572e7ec82ae17a182b87cf827a20"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "blob": "72658c194647b7f48a8b28cf47ad5b4862c36ce9"
+    },
+    {
+      "path": "packages/contracts/src/route-policy.ts",
+      "blob": "66b5efc460186b5c0cccef675a09f2df3f955555"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "blob": "0423ec41209b2b788e4d7a032167f3e56c033158"
+    }
+  ],
+  "checks": [
+    {
+      "label": "pr-full-diff",
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "69085317c88d84b702af727dc0ac7152589626d8"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.35650900000473484,
+      "output": ""
+    },
+    {
+      "label": "incremental-diff",
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "67c924b3d8837d81e6b3314e9c3cec7693f3ff34"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.10821420000866055,
+      "output": ""
+    }
+  ],
+  "finalPolicyAndValidatorInputBytesMatch": true,
+  "cleanFixtureInputBytesMatch": true,
+  "exclusions": [
+    "ci407-source-binding.json",
+    "ci407-source.zip: container of this snapshot"
+  ],
+  "historicalIndexesChanged": false
+}
