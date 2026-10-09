@@ -1,0 +1,92 @@
+{
+  "status": "Proposed；不在运行时注册",
+  "operationDecision": {
+    "operationId": "listAgentSessionChildren",
+    "family": "子任务",
+    "rest": {
+      "method": "GET",
+      "path": "/api/v1/agent-sessions/{id}/children"
+    },
+    "sourceHead": "cfce77546b64c2a8d7d12949261c38e2f666d5ae",
+    "source": "新增 apps/api/src/agent/child-session-status.ts；注册于 agent/routes.ts",
+    "openApiContract": "openapi-proposal.yaml",
+    "policy": {
+      "id": "route.listAgentSessionChildren",
+      "authentication": "agent_session",
+      "actors": [
+        "agent"
+      ],
+      "agent": {
+        "capabilities": [
+          "work:read"
+        ],
+        "sessionBinding": "current_session",
+        "requireActiveSession": true,
+        "requireActiveDelegation": true,
+        "requireLiveGrantIntersection": true,
+        "resourceScope": "resolved_resource"
+      },
+      "resourceResolverId": "agent_session",
+      "feature": {
+        "key": null,
+        "tier": "stable",
+        "disabledBehavior": "available"
+      },
+      "idempotency": "none",
+      "revision": "none",
+      "approval": {
+        "required": false
+      },
+      "lease": {
+        "required": false,
+        "grantsAuthorization": false
+      }
+    },
+    "contracts": "childSessionStatusQuerySchema / childSessionStatusSchema / childSessionStatusPageSchema",
+    "sdk": {
+      "name": "listChildSessions",
+      "file": "packages/agent-sdk/src/index.ts",
+      "change": "新增strict typed返回；仅直接E，不refresh/bridge"
+    },
+    "mcp": {
+      "name": "list_child_sessions",
+      "file": "apps/mcp/src/index.ts",
+      "input": {
+        "parentSessionId": "uuid",
+        "childSessionId": "uuid?",
+        "cursor": "opaque?",
+        "limit": "1..200?"
+      },
+      "binding": "direct exact E，安装/C无variant"
+    },
+    "runner": {
+      "name": "workmesh_list_child_sessions",
+      "file": "apps/agent-runner/src/workmesh-tools.ts",
+      "input": {
+        "childSessionId": "uuid?",
+        "cursor": "opaque?",
+        "limit": "1..200?"
+      },
+      "parentBinding": "api.sessionId",
+      "activity": false
+    },
+    "discovery": "M2受控增量；新增routeOperationBindings/policy predicate/derivedmanifest，同source DTO",
+    "decision": "确认后新增最小有界GET",
+    "credentialsAndScope": "live准确父E＋父Delegation/principal/membership/definition/grant/resource＋原子查询精确child创建绑定；子终态可读、父终态/撤权拒",
+    "pagination": "signed cursor，limit默认50最大200；sort created_at DESC,id DESC；filters含exact父Session/child筛选",
+    "revision": "none",
+    "idempotency": "none",
+    "tests": [
+      "M2-C-1",
+      "M2-C-2",
+      "M2-C-3",
+      "M2-C-5",
+      "M2-C-6",
+      "M2-C-8",
+      "M2-C-9"
+    ],
+    "positive": "live父读取已完成child仅最小DTO，零业务写",
+    "negative": "父终态/撤权/错父/跨Team/篡改cursor拒；无token/prompt",
+    "futureProductTestStatus": "未运行"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "scope": "仅本轮规划静态阶段",
+  "containers": [],
+  "images": [],
+  "volumes": [],
+  "networks": [],
+  "persistentProcesses": [],
+  "createdPaths": [
+    "docs/plan/agent-mcp-m2/",
+    "docs/adr/0082-parent-child-status-projection.md"
+  ],
+  "shortProcesses": [
+    "git来源读取",
+    "Python静态生成/核验",
+    "Node CI分类"
+  ],
+  "deletedResources": [],
+  "retained": [
+    "当前worktree",
+    "恢复目录",
+    "M0/M1原证据",
+    "G1D0C3拒目标"
+  ],
+  "secretsUsed": false,
+  "cleanup": "短命进程自然退出；无递归清理，不触已拒目标"
+}

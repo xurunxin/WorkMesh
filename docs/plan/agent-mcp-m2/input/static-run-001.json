@@ -1,0 +1,95 @@
+{
+  "kind": "规划静态实跑",
+  "sequence": 1,
+  "commands": [
+    {
+      "argv": [
+        "python",
+        "docs/plan/agent-mcp-m2/static-check.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe",
+      "nativeExit": 1,
+      "startedUnix": 1791574775.959746,
+      "endedUnix": 1791574777.9296238,
+      "runtimeSeconds": 1.9698779582977295,
+      "stdout": {
+        "member": "command-1.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "member": "command-1.stderr",
+        "bytes": 653,
+        "sha256": "1ac4fb265fd0bdf3d122776ba488214f579b2ad82a380adb6dd0792506b75d5a"
+      },
+      "displayStdout": "",
+      "displayStderr": "Traceback (most recent call last):\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\docs\\plan\\agent-mcp-m2\\static-check.py\", line 147, in <module>\r\n    if __name__==\"__main__\":main()\r\n                            ~~~~^^\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\docs\\plan\\agent-mcp-m2\\static-check.py\", line 140, in main\r\n    assert (file.parent/path).resolve().exists(),(str(file),target)\r\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\r\nAssertionError: ('C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\docs\\\\plan\\\\agent-mcp-m2\\\\README.md', 'planning-report.md')\r\n",
+      "testCounts": null,
+      "skip": null,
+      "status": "failed"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "cfce77546b64c2a8d7d12949261c38e2f666d5ae"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe",
+      "nativeExit": 0,
+      "startedUnix": 1791574777.929665,
+      "endedUnix": 1791574778.0155435,
+      "runtimeSeconds": 0.08587837219238281,
+      "stdout": {
+        "member": "command-2.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "member": "command-2.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "displayStdout": "",
+      "displayStderr": "",
+      "testCounts": null,
+      "skip": null,
+      "status": "passed"
+    },
+    {
+      "argv": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import {classifyChanges,readWorkspaces} from './scripts/ci-policy.mjs';\nlet s='';for await (const c of process.stdin)s+=c;\nconsole.log(JSON.stringify({node:process.version,execPath:process.execPath,\nclassification:classifyChanges(JSON.parse(s),readWorkspaces())}));"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe",
+      "nativeExit": 0,
+      "startedUnix": 1791574778.0155644,
+      "endedUnix": 1791574778.0840943,
+      "runtimeSeconds": 0.06852984428405762,
+      "stdout": {
+        "member": "command-3.stdout",
+        "bytes": 1036,
+        "sha256": "8a1c054f6f8d3255a01eb3493552c22a291d3c1cb5991005c8e5ffd38fa0e134"
+      },
+      "stderr": {
+        "member": "command-3.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "displayStdout": "{\"node\":\"v24.15.0\",\"execPath\":\"C:\\\\nvm4w\\\\nodejs\\\\node.exe\",\"classification\":{\"mode\":\"full\",\"packages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"testPackages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"checks\":{\"source-gates\":true,\"db-integration\":true,\"api-integration\":true,\"worker-integration\":true,\"e2e\":true,\"recovery-integration\":true,\"agent-smoke\":true}}}\n",
+      "displayStderr": "",
+      "testCounts": null,
+      "skip": null,
+      "status": "passed"
+    }
+  ],
+  "archive": {
+    "path": "input/static-run-001-originals.zip",
+    "bytes": 1276,
+    "sha256": "83b429fbc10c639d3acfe59e71493378cf176a571970cf4caf2890a3187bb2da"
+  },
+  "futureProductTests": "全部未运行",
+  "firstFailureRetained": "input/planning-first-failures.json及不可覆盖static-run-*"
+}

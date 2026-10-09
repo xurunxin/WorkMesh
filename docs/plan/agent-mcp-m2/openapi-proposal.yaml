@@ -1,0 +1,53 @@
+# 规划草案：现行 OPENAPI.yaml 本轮不变。
+paths:
+  /api/v1/agent-sessions/{id}/children:
+    get:
+      operationId: listAgentSessionChildren
+      x-workmesh-policy-id: route.listAgentSessionChildren
+      x-workmesh-actor-kinds: [agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{AgentSessionToken: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: childSessionId, in: query, schema: {type: string, format: uuid}}
+        - {name: cursor, in: query, schema: {type: string, minLength: 1, maxLength: 8192}}
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 200, default: 50}}
+      responses:
+        '200':
+          description: 精确 live 父 E 读取直接子最小事实；子终态可确认
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ChildSessionStatusPage'}
+        '400': {description: VALIDATION_ERROR 或现行 PAGINATION_CURSOR 错误；统一结构化 error}
+        '401': {description: 凭据缺失或过期撤权；统一结构化 error}
+        '403': {description: 父非本 E 或父实时资格失败；统一结构化 error}
+        '404': {description: 精确 child 不存在或不属父或无证明绑定；统一结构化 error}
+components:
+  schemas:
+    ChildSessionStatus:
+      type: object
+      additionalProperties: false
+      required: [id, parentSessionId, requiredForParent, state, revision, planStepId, planVersionId, resultArtifactIds]
+      properties:
+        id: {type: string, format: uuid}
+        parentSessionId: {type: string, format: uuid}
+        requiredForParent: {type: boolean}
+        state:
+          type: string
+          enum: [queued, acknowledged, planning, executing, awaiting_input, awaiting_approval, blocked, paused, stopping, stale, completed, failed, canceled]
+        revision: {type: integer, minimum: 1}
+        planStepId: {type: string, format: uuid}
+        planVersionId: {type: string, format: uuid}
+        resultArtifactIds:
+          type: array
+          maxItems: 100
+          uniqueItems: true
+          items: {type: string, format: uuid}
+    ChildSessionStatusPage:
+      type: object
+      additionalProperties: false
+      required: [items, nextCursor]
+      properties:
+        items: {type: array, maxItems: 200, items: {$ref: '#/components/schemas/ChildSessionStatus'}}
+        nextCursor: {type: [string, 'null'], maxLength: 8192}

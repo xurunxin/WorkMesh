@@ -1,0 +1,31 @@
+# 普通 child 与 reviewer 的真实调用方案
+
+## 父 Session 与受控子启动
+
+Human 通过现有授权 REST 预备两名目标 Agent／Team grant／真实 installation delivery；其 cookie仅在 Human 夹具，绝不注入 Agent／模型。父 E 按 M1 ACK→planning→publishPlan，读取准确 current planVersionId、stable step、revision及 maxChildSessions；exclusive Lease 在 review 前释放或明确验证冲突。父通过自身 MCP／Pi创建工具提交普通 child 或专用 reviewer，工具不接收其他 parent ID。
+
+createChild 返回的 queued child／createReview 的 session＋review_shared Lease只是已创建。实际启动必须观察准确目标的 provisionNewSessionDelivery→已提交 outbox→fake webhook／受控 adapter→目标自身 token exchange→ACK→state executing，installation来源与 principal／Team匹配。MCP HTTP逐请求无持久 E上下文，目标子每请求显式自身 Token；父不会收到子 Token。
+
+Pi 子执行采用已存在 workbench fixture 的 Human 建立 authorized Conversation／Turn、真实 claim→credential→start→运行子 Runner；公开 child创建本身不会自动创建 Pi Turn，不能把此夹具步骤或新 F admission假装成既有自动功能。模型只得到 Session允许工具，credential保 adapter内存。原 M1等待／121秒案例沿完整回归，不将父等待长占 Attempt。
+
+## 普通 child
+
+普通 executor/researcher child仅 work:read/work:write，读取自身 Session/context/Issue／Inbox允许材料，按合法执行态工作；不能自动 publishPlan／Artifact。无 Artifact 权限时 complete用真实 summary、checks 和明确 noArtifactReason；不声称 Artifact已发表，也不要求 review_result。通用 role=reviewer不自动获得专用review的artifact或Lease，作为兼容限制／拒例报告。
+
+## 专用 reviewer
+
+reviewer握手／ACK后进入合法 executing，不发布实施 Plan。本人解析 Room（自身／准确 WorkItem），本人 post_work_room_message(intent=review_result,sessionId=reviewer.id)；随后本人 publish_artifact(type=code_review,sessionId=reviewer.id)。模型真实实收两工具及结果，类型／作者／Session绑定由 API重验。读取最新 revision再通过 M1 completion intent／atomic settle完成 reviewer。
+
+只 structured review、不发消息；只消息；只Artifact；父／其他 child代发；只有noArtifactReason，分别断言 REVIEW_COMPLETION_EVIDENCE_REQUIRED或前置身份拒绝。M3 PR/head provenance与structured review能力不在M2新增工具范围；本批通过已有 REST负例验证其不替代双证据，不宣称PR交付全链已验。不得自审PR producer。
+
+## 父完成与状态投影
+
+父本人从 listAgentSessionChildren分页／childSessionId过滤确认 child准确绑定和 state=completed。父当前 Plan已换版本时仍能看到原 child，以免漏 required。再读父最新 revision→complete；不能以公开模型回答／子终态失败替代完成。
+
+required 子的 queued、acknowledged、planning、executing、awaiting_input、awaiting_approval、blocked、paused、stopping、stale、failed、canceled逐状态全部阻父，COMPLETION_PLAN_INCOMPLETE.details.blockerSessionIds集合准确；completed才解除，非required不因该gate阻父。不得修改required、换step/agent/key绕 gate。父旧 revision与子完成竞态按事务提交顺序验证，不静默重写Plan。
+
+## 丢响应、Stop 与恢复
+
+直接 complete/stopAck丢响应沿M1准确来源的C／安装确认；父子投影只证明当前子状态，不证明任意原operationKey成功。Pi内部completion没有独立receipt，只可重放原settle key/body。父terminal／撤权不可再读投影；子terminal不会恢复自己的普通Bearer权限。
+
+API／MCP／Worker重启后重新登录／连接，用持久页 cursor／事实确认不盲重发创建。重复outbox只能同一个子／交付授权。Stop／撤权在提交前获得锁则零新子／证据；提交后外部在途仅按原受控机制报告。父Stop不添加隐式子级联，子重新检查自身当前授权；子finally用原E独立stopAck，保cleanupSummary／residualRisks，沿M1闭门。
