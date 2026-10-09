@@ -575,7 +575,8 @@
         "inputMain": "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
         "record": "docs/reviews/a2-backend/c2-combination/README.md",
         "results": "docs/reviews/a2-backend/c2-combination/results.json",
-        "status": "整合后组合检查待执行；旧 c800/CI402 不代新 head"
+        "status": "整合后本机适用组合检查与无源码 Lite 通过；CI404@受测 dcf8 通过，最终交付 head 另核 Required CI；停 review，不宣称 main 落地",
+        "testedCombinationHead": "dcf8e08feeb1ecfcfe71d5723e7ccb509b74e8c2"
       },
       "historicalUi": {
         "source": {

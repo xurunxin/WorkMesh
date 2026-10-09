@@ -37,5 +37,18 @@
     "version": null,
     "binding": "docs/reviews/a2-backend/sources.json"
   },
-  "merge": "git merge --no-commit --no-ff exact SHA；无冲突，当前分支正常合入对象，不读 FETCH_HEAD"
+  "merge": "git merge --no-commit --no-ff exact SHA；无冲突，当前分支正常合入对象，不读 FETCH_HEAD",
+  "mainObservations": [
+    {
+      "sha": "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
+      "observedAt": "2026-10-09T05:20:49Z",
+      "tool": "mcp__tds__git",
+      "args": [
+        "ls-remote",
+        "origin",
+        "refs/heads/main"
+      ],
+      "result": "同精确 add4340；不使用 FETCH_HEAD，无后续主线增量"
+    }
+  ]
 }

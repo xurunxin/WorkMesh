@@ -1,7 +1,385 @@
 {
-  "status": "待本轮新组合检查",
-  "sourceHead": null,
-  "latestRequiredCI": "待 PR211 新 head，不用 CI402@c800",
-  "review": "提交后停 review",
-  "originalUi": "延期，未验收"
+  "sourceHead": "dcf8e08feeb1ecfcfe71d5723e7ccb509b74e8c2",
+  "main": "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
+  "generatedAt": "2026-10-09T05:22:40.176Z",
+  "runs": [
+    {
+      "id": "a2-backend-d5e6d2d3",
+      "receipt": "../runs/a2-backend-d5e6d2d3/receipts.json",
+      "sourceBefore": "../runs/a2-backend-d5e6d2d3/source-before.json",
+      "sourceAfter": "../runs/a2-backend-d5e6d2d3/source-after.json",
+      "archive": "../runs/a2-backend-d5e6d2d3/archive.json",
+      "sourceFiles": 960,
+      "changedDuringRun": [],
+      "commands": [
+        {
+          "command": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe check:route-policy",
+          "code": 0,
+          "start": "2026-10-09T05:10:52.591Z",
+          "end": "2026-10-09T05:10:54.293Z",
+          "log": "3.log",
+          "summaries": []
+        },
+        {
+          "command": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe lint",
+          "code": 0,
+          "start": "2026-10-09T05:10:54.293Z",
+          "end": "2026-10-09T05:11:28.955Z",
+          "log": "4.log",
+          "summaries": [
+            " Tasks:    18 successful, 18 total"
+          ]
+        },
+        {
+          "command": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe typecheck",
+          "code": 0,
+          "start": "2026-10-09T05:11:28.955Z",
+          "end": "2026-10-09T05:12:02.245Z",
+          "log": "5.log",
+          "summaries": [
+            " Tasks:    18 successful, 18 total"
+          ]
+        },
+        {
+          "command": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe --filter @workmesh/contracts exec vitest run src/repository-configuration-contracts.test.ts src/pagination-contract.test.ts",
+          "code": 0,
+          "start": "2026-10-09T05:12:02.246Z",
+          "end": "2026-10-09T05:12:05.294Z",
+          "log": "6.log",
+          "summaries": [
+            " Test Files  2 passed (2)",
+            "      Tests  3 passed (3)"
+          ]
+        },
+        {
+          "command": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe --filter @workmesh/db exec vitest run src/agent-lock-order-inventory.test.ts",
+          "code": 0,
+          "start": "2026-10-09T05:12:05.294Z",
+          "end": "2026-10-09T05:12:08.845Z",
+          "log": "7.log",
+          "summaries": [
+            " Test Files  1 passed (1)",
+            "      Tests  8 passed (8)"
+          ]
+        },
+        {
+          "command": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe --filter @workmesh/worker exec vitest run src/automation.test.ts src/agent-webhook.test.ts src/wecom-notifications.test.ts",
+          "code": 0,
+          "start": "2026-10-09T05:12:08.846Z",
+          "end": "2026-10-09T05:12:12.348Z",
+          "log": "8.log",
+          "summaries": [
+            " Test Files  3 passed (3)",
+            "      Tests  58 passed (58)"
+          ]
+        },
+        {
+          "command": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe --filter @workmesh/api exec vitest run --config ../../vitest.integration.config.ts integration/stage3-delivery.integration.test.ts integration/stage4-operations.integration.test.ts integration/notification-channels.integration.test.ts integration/wecom-notifications.integration.test.ts",
+          "code": 0,
+          "start": "2026-10-09T05:12:12.348Z",
+          "end": "2026-10-09T05:12:52.376Z",
+          "log": "9.log",
+          "summaries": [
+            " Test Files  4 passed (4)",
+            "      Tests  83 passed (83)"
+          ]
+        },
+        {
+          "command": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe --filter @workmesh/worker exec vitest run --config ../../vitest.integration.config.ts integration/stage4-automation.integration.test.ts",
+          "code": 0,
+          "start": "2026-10-09T05:12:52.377Z",
+          "end": "2026-10-09T05:13:07.321Z",
+          "log": "10.log",
+          "summaries": [
+            " Test Files  1 passed (1)",
+            "      Tests  49 passed (49)"
+          ]
+        },
+        {
+          "command": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe --filter @workmesh/web exec playwright test --config ../../playwright.config.ts wecom-backend-compatibility.spec.ts",
+          "code": 0,
+          "start": "2026-10-09T05:13:07.322Z",
+          "end": "2026-10-09T05:14:15.407Z",
+          "log": "11.log",
+          "summaries": [
+            "  2 passed (1.1m)"
+          ]
+        },
+        {
+          "command": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe ci:validate",
+          "code": 0,
+          "start": "2026-10-09T05:14:15.408Z",
+          "end": "2026-10-09T05:14:17.424Z",
+          "log": "12.log",
+          "summaries": []
+        }
+      ],
+      "cleanup": [
+        {
+          "id": "1d98e670fd80c518071c2e9c4bbd7b319fdb6ad23ed8ebf807e2816ed41f692f",
+          "name": "a2-backend-d5e6d2d3-postgres",
+          "cleanup": {
+            "code": 0,
+            "output": "1d98e670fd80c518071c2e9c4bbd7b319fdb6ad23ed8ebf807e2816ed41f692f\n",
+            "at": "2026-10-09T05:14:20.870Z"
+          }
+        },
+        {
+          "id": "041c82ff59c27b27b01e799aaf6e00d949211da12993629011dbf8da80d6b444",
+          "name": "a2-backend-d5e6d2d3-redis",
+          "cleanup": {
+            "code": 0,
+            "output": "041c82ff59c27b27b01e799aaf6e00d949211da12993629011dbf8da80d6b444\n",
+            "at": "2026-10-09T05:14:20.420Z"
+          }
+        },
+        {
+          "id": "3daa7b2a649a6253911e4095642523de00ee64c1116d7ae39dd4c24aea477d9f",
+          "name": "a2-backend-d5e6d2d3-s3",
+          "cleanup": {
+            "code": 0,
+            "output": "3daa7b2a649a6253911e4095642523de00ee64c1116d7ae39dd4c24aea477d9f\n",
+            "at": "2026-10-09T05:14:19.986Z"
+          }
+        }
+      ]
+    }
+  ],
+  "lite": {
+    "runId": "a2-backend-lite-abd10056",
+    "sourceHead": "dcf8e08feeb1ecfcfe71d5723e7ccb509b74e8c2",
+    "status": "本机无源码 Lite 现有 Web/后端兼容通过；原新横幅 UI、真实设备与真实厂商未验收",
+    "receipt": "../runs/a2-backend-lite-abd10056/receipts.json",
+    "archive": "../runs/a2-backend-lite-abd10056/archive.json",
+    "rawApiResult": {
+      "installViaWebProxy": true,
+      "authenticatedRead": true,
+      "existingMainWeb": true,
+      "connectionReplay": true,
+      "contextAction": "c22046d8-d4d2-437e-accc-fa2bd3e74107",
+      "contextId": "f639d228-3a81-4498-bab8-badf30aa492f",
+      "exactContextConfirmed": true,
+      "providerTls": true,
+      "newUiAcceptance": "延期，未验收"
+    },
+    "compiledProxy": {
+      "imageId": "sha256:8e89894ae2431d2746cb74cbfca5e322440497a49088a59246998a8b18d37db3",
+      "rules": [
+        {
+          "source": "/api/:path*",
+          "destination": "http://api:3001/api/:path*"
+        },
+        {
+          "source": "/.well-known/:path*",
+          "destination": "http://api:3001/.well-known/:path*"
+        },
+        {
+          "source": "/auth/:path*",
+          "destination": "http://api:3001/auth/:path*"
+        },
+        {
+          "source": "/mcp/:path*",
+          "destination": "http://api:3001/mcp/:path*"
+        },
+        {
+          "source": "/sse/:path*",
+          "destination": "http://api:3001/sse/:path*"
+        }
+      ],
+      "at": "2026-10-09T05:20:42.618Z"
+    },
+    "preInstallProxy": {
+      "status": 200,
+      "body": {
+        "installed": false
+      },
+      "at": "2026-10-09T05:21:22.645Z"
+    },
+    "features": {
+      "WORKMESH_BETA_PLANNING": false,
+      "WORKMESH_BETA_TEMPLATES": false,
+      "WORKMESH_BETA_COSTS": false,
+      "WORKMESH_BETA_OPERATIONS_UI": false,
+      "WORKMESH_BETA_COORDINATION_MCP": false,
+      "WORKMESH_BETA_MODEL_PRESETS": false,
+      "WORKMESH_EXPERIMENTAL_AUTOMATION": false,
+      "WORKMESH_EXPERIMENTAL_AGENT_LOOPS": false,
+      "WORKMESH_EXPERIMENTAL_A2A": false,
+      "WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS": false,
+      "WORKMESH_EXPERIMENTAL_MULTI_RUNTIME": false,
+      "WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS": false,
+      "WORKMESH_BETA_GITEA": true
+    },
+    "commands": [
+      {
+        "name": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "-e",
+          "fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})"
+        ],
+        "code": 0,
+        "start": "2026-10-09T05:21:22.458Z",
+        "end": "2026-10-09T05:21:22.644Z",
+        "log": "31.log"
+      },
+      {
+        "name": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\scripts\\verify-a2-backend-lite-api.mjs"
+        ],
+        "code": 0,
+        "start": "2026-10-09T05:21:22.645Z",
+        "end": "2026-10-09T05:21:25.999Z",
+        "log": "32.log"
+      }
+    ],
+    "build": {
+      "code": 0,
+      "log": "1.log",
+      "transientRetry": "原日志保留 npm ECONNRESET；既有有界重试恢复，构建最终 exit 0；不将警告改写为不存在"
+    },
+    "cleanup": [
+      {
+        "type": "directory",
+        "id": null,
+        "target": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-abd10056",
+        "cleanup": {
+          "code": 0,
+          "output": ""
+        }
+      },
+      {
+        "type": "image",
+        "id": "sha256:8e89894ae2431d2746cb74cbfca5e322440497a49088a59246998a8b18d37db3",
+        "target": "workmesh-a2-lite:a2-backend-lite-abd10056",
+        "cleanup": {
+          "code": 0,
+          "output": "Untagged: workmesh-a2-lite:a2-backend-lite-abd10056\nDeleted: sha256:8e89894ae2431d2746cb74cbfca5e322440497a49088a59246998a8b18d37db3\n"
+        }
+      },
+      {
+        "type": "container",
+        "id": "d0b367c8c20f91cd86618c97eee128aef75fe49ae1f6f377fe09217a03c26dec",
+        "target": "a2-backend-lite-abd10056-probe-migrate",
+        "cleanup": {
+          "code": 0,
+          "output": "d0b367c8c20f91cd86618c97eee128aef75fe49ae1f6f377fe09217a03c26dec\n"
+        }
+      },
+      {
+        "type": "container",
+        "id": "0fb8ffb3338301ad55e10a28acb30be5413b9e2f42ade404ce7a6d764ffe93d9",
+        "target": "a2-backend-lite-abd10056-probe-api",
+        "cleanup": {
+          "code": 0,
+          "output": "0fb8ffb3338301ad55e10a28acb30be5413b9e2f42ade404ce7a6d764ffe93d9\n"
+        }
+      },
+      {
+        "type": "container",
+        "id": "5cc7c54d1fa3165820e9cfb89c24b247c30dd9f39fd6d4d142ae9e67c33a75b5",
+        "target": "a2-backend-lite-abd10056-probe-worker",
+        "cleanup": {
+          "code": 0,
+          "output": "5cc7c54d1fa3165820e9cfb89c24b247c30dd9f39fd6d4d142ae9e67c33a75b5\n"
+        }
+      },
+      {
+        "type": "container",
+        "id": "d2f5150f0b90bad1ab48878e449c4901b06d562e1308d5b05701c9b756f9c502",
+        "target": "a2-backend-lite-abd10056-probe-web",
+        "cleanup": {
+          "code": 0,
+          "output": "d2f5150f0b90bad1ab48878e449c4901b06d562e1308d5b05701c9b756f9c502\n"
+        }
+      },
+      {
+        "type": "file",
+        "id": null,
+        "target": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-abd10056\\workmesh-lite.tar",
+        "cleanup": null
+      },
+      {
+        "type": "volume",
+        "id": null,
+        "target": "a2-backend-lite-abd10056-ca",
+        "cleanup": {
+          "code": 0,
+          "output": "a2-backend-lite-abd10056-ca\n"
+        }
+      },
+      {
+        "type": "container",
+        "id": "31378972a35ddeb9720998a23e86316407eafd366678f7d20676d8f820e1be47",
+        "target": "a2-backend-lite-abd10056-ca-loader",
+        "cleanup": {
+          "code": 0,
+          "output": "31378972a35ddeb9720998a23e86316407eafd366678f7d20676d8f820e1be47\n"
+        }
+      },
+      {
+        "type": "https-provider",
+        "id": null,
+        "target": "host.docker.internal:49621",
+        "cleanup": "已关闭"
+      },
+      {
+        "type": "compose-project",
+        "id": null,
+        "target": "a2-backend-lite-abd10056",
+        "cleanup": {
+          "code": 0,
+          "output": " Container a2-backend-lite-abd10056-worker-1 Stopping \n Container a2-backend-lite-abd10056-web-1 Stopping \n Container a2-backend-lite-abd10056-web-1 Stopped \n Container a2-backend-lite-abd10056-web-1 Removing \n Container a2-backend-lite-abd10056-worker-1 Stopped \n Container a2-backend-lite-abd10056-worker-1 Removing \n Container a2-backend-lite-abd10056-web-1 Removed \n Container a2-backend-lite-abd10056-api-1 Stopping \n Container a2-backend-lite-abd10056-worker-1 Removed \n Container a2-backend-lite-abd10056-api-1 Stopped \n Container a2-backend-lite-abd10056-api-1 Removing \n Container a2-backend-lite-abd10056-api-1 Removed \n Container a2-backend-lite-abd10056-migrate-1 Stopping \n Container a2-backend-lite-abd10056-redis-1 Stopping \n Container a2-backend-lite-abd10056-minio-init-1 Stopping \n Container a2-backend-lite-abd10056-migrate-1 Stopped \n Container a2-backend-lite-abd10056-migrate-1 Removing \n Container a2-backend-lite-abd10056-minio-init-1 Stopped \n Container a2-backend-lite-abd10056-minio-init-1 Removing \n Container a2-backend-lite-abd10056-migrate-1 Removed \n Container a2-backend-lite-abd10056-postgres-1 Stopping \n Container a2-backend-lite-abd10056-minio-init-1 Removed \n Container a2-backend-lite-abd10056-minio-1 Stopping \n Container a2-backend-lite-abd10056-minio-1 Stopped \n Container a2-backend-lite-abd10056-minio-1 Removing \n Container a2-backend-lite-abd10056-redis-1 Stopped \n Container a2-backend-lite-abd10056-redis-1 Removing \n Container a2-backend-lite-abd10056-minio-1 Removed \n Container a2-backend-lite-abd10056-postgres-1 Stopped \n Container a2-backend-lite-abd10056-postgres-1 Removing \n Container a2-backend-lite-abd10056-redis-1 Removed \n Container a2-backend-lite-abd10056-postgres-1 Removed \n Volume a2-backend-lite-abd10056_lite-redis-data Removing \n Volume a2-backend-lite-abd10056_lite-object-data Removing \n Network a2-backend-lite-abd10056_default Removing \n Volume a2-backend-lite-abd10056_lite-redis-data Removed \n Volume a2-backend-lite-abd10056_lite-postgres-data Removing \n Volume a2-backend-lite-abd10056_lite-object-data Removed \n Volume a2-backend-lite-abd10056_lite-postgres-data Removed \n Network a2-backend-lite-abd10056_default Removed \n"
+        }
+      }
+    ],
+    "cleanupPaths": [
+      {
+        "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-abd10056\\workmesh-lite.tar",
+        "code": 0,
+        "exists": false
+      },
+      {
+        "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-abd10056\\tls\\key.pem",
+        "code": 0,
+        "exists": false
+      },
+      {
+        "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-abd10056\\tls\\ca.pem",
+        "code": 0,
+        "exists": false
+      },
+      {
+        "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-abd10056\\tls",
+        "code": 0,
+        "exists": false
+      },
+      {
+        "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-abd10056\\provider.override.yml",
+        "code": 0,
+        "exists": false
+      },
+      {
+        "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-abd10056\\docker-compose.lite.yml",
+        "code": 0,
+        "exists": false
+      },
+      {
+        "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-abd10056",
+        "code": 0,
+        "exists": false
+      }
+    ],
+    "limits": "本机 Linux Docker 与 HTTPS 测试供应商；非真实设备/厂商或延期 UI、S3 全面验收；原 RustFS 映射风险保留"
+  },
+  "historicalResults": "../results.json；旧 c800 全套、原失败及 skip 保留历史含义",
+  "unrepeated": "A2 未变的整套单元/集成/69 项 E2E 不重复；运行新组合对应目录，并以新 Lite 真正构建所有生产角色",
+  "gates": {
+    "review": "待组合材料定向独审",
+    "latestRequiredCI": "CI404@dcf8e08 十项含 Required CI success；本次文档输出 head 尚未生成，需另核新 head",
+    "actualMain": "当前候选未合入；不宣称完成"
+  },
+  "ui": "正式延期，旧视觉未接受",
+  "ci404": "ci404-readback.json",
+  "firstFailures": "本轮适用命令无失败；新 Lite 预检不存在/清理后不存在的 inspect exit 1 是预期负对照，原失败历史保持不变"
 }

@@ -16,4 +16,16 @@
 
 ## 新结果与停点
 
-运行命令、首败/skip、原件索引、源码前后绑定、逐资源收尾和最新 head 的检查索引见 [results.json](results.json)。准备提交时所有新检查仍记待执行；实际执行后按回执更新，不改历史结果。适用检查通过后仍停 review；当前组合必要独审及 PR211 新 head 最新 Required CI 均为合入前门禁，CI402@c800 不替代。
+当前受测提交为 `dcf8e08feeb1ecfcfe71d5723e7ccb509b74e8c2`，parents 为已审 `c800` 与真实 main `add4340`；[candidate-source.json](candidate-source.json) 逐文件区分 Git blob 与 Windows 工作树原字节，并绑定相对实际 main 的完整 16 文件产品 patch。Lite 后没有产品修订，最终提交仅补文档与证据，不伪补未来 head。
+
+| 新运行 | 实际结果 |
+| --- | --- |
+| `a2-backend-d5e6d2d3` | route-policy、lint、typecheck、ci:validate 全部 exit 0；契约 3、锁清单 8、Worker 单元 58、API 集成 83、Worker 集成 49、浏览器 2 项全部通过，零 skip。960 个源码文件前后哈希相同。浏览器包含既有 bootstrap 依赖，不拿旧 69 项计为新运行。 |
+| `a2-backend-lite-abd10056` | 从该精确 Git archive 构建，四角色入口、save/load、真实无源码安装、Web 编译代理、认证、repository/context 提交与同 key 重放、Worker HTTPS 读取及精确 action/context 确认、现有工作台打开全部通过。通知开关显式 false，TLS 验证保持。 |
+| [CI404](https://github.com/xurunxin/WorkMesh/actions/runs/37887331225) | 受测提交的十项检查含 Required CI 全部 success，工具原读回绑定见 [ci404-readback.json](ci404-readback.json)。最终文档提交的新 head 须另核最新 CI，不能冒作已通过。 |
+
+运行命令、起止时间、原日志/压缩索引、源码前后绑定及逐资源收尾见 [results.json](results.json)。新命令无失败；Docker 不存在预检与清理后不存在的 inspect 为预期负对照。构建中 npm 连接重置的原日志保留，既有有界重试恢复后 exit 0。旧首败、optional skip、UI 六测试及视觉未接受不倒改。
+
+[preservation-check.json](preservation-check.json) 证明旧成果/原件及非 A2 主线条目未被覆盖；[verification.json](verification.json) 核新原件、来源和完整 PR 空白检查。专用测试与 Lite 资源、临时路径已保全后逐项清理，共享资源、被拒目标和当前 worktree 保留。本机安装不冒真实设备/厂商、S3 全面功能或延期 UI 验收，原 RustFS 映射风险保持。
+
+适用检查通过后仍停 review；当前组合必要独审及 PR211 新 head 最新 Required CI 均为合入前门禁。当前候选未合入实际 main，不宣称完成。
