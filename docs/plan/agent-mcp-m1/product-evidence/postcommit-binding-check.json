@@ -1,0 +1,38 @@
+{
+  "observedAt": "2026-10-09T16:03:24.325152+00:00",
+  "productSourceHead": "1f3ac69a51a15d1b7edaa242963673d3edf8e1ae",
+  "sourceFilesUnchanged": 78,
+  "evidenceOnlyChangedPaths": [
+    "docs/plan/agent-mcp-m1/product-evidence/candidate-binding.json",
+    "docs/plan/agent-mcp-m1/product-evidence/candidate-git-source.zip",
+    "docs/plan/agent-mcp-m1/product-report.md"
+  ],
+  "commands": [
+    {
+      "args": [
+        "git",
+        "add",
+        "--all"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'docs/plan/agent-mcp-m1/product-report.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m1/product-evidence/candidate-binding.json', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    {
+      "args": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+        "--"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "gitDiffExit": 0,
+  "candidateArchiveSha256": "31259361c7a5315ae63838620bf8493be5097ac80617714c7f94c400e34799dc",
+  "sourceOrServicesRetested": false
+}

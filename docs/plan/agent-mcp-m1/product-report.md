@@ -2,6 +2,8 @@
 
 本卡已按已审方案实现执行、Lease、Stop 恢复和精确原动作只读确认，并完成本机适用检查及真实 HTTP/MCP/Pi 验证。本报告是主执行 Agent 对整卡的汇总，不以内部子任务结束或 checkpoint 代替交付。当前停在**平台另一 Agent 完整成果独审**；最新 PR Required CI、实际 main 合入和 todo Done 尚未完成，不能据本报告称整卡已验收。
 
+产品源码候选已提交并推送：`1f3ac69a51a15d1b7edaa242963673d3edf8e1ae`。后续只增加提交后 78 源码/93 归档的 Git 字节绑定及本段说明；最终证据提交 head 在主执行回复中给出，不循环将文件自身未来 SHA 写回。产品执行源码保持该候选，回执不宣称成果独审或最新 Required CI 通过。
+
 方案依据为 `938f67f88c4f6889cbd49a3fd9b81fbd62aa60f6`，其全文、217 来源和历史首败保持原义。本轮重新通过平台只读 Git `ls-remote origin refs/heads/main` 实读仍为 `e49eda142d61bdd248ddc42ec16f5563abd4bbc6`，不是 FETCH_HEAD 或构建分支。受测输入包含运行当时 HEAD 的 Git blob 和实际工作树字节；本报告不把旧 HEAD 的结果冒为最终所有字节都已运行。候选提交绑定见 [candidate-binding](product-evidence/candidate-binding.json)，源码双字节见 [product-source-index](product-evidence/product-source-index.json)。
 
 ## 实现及合同
