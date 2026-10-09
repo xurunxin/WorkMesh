@@ -1,0 +1,818 @@
+{
+  "sourceHead": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+  "observedAt": "2026-10-09T04:46:56.601Z",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "gitBlob": {
+        "bytes": 9050,
+        "sha256": "25a0c33887733812dd1fc7f488cea57ef2e38a6436c788b5814562f22a88bb25",
+        "objectId": "fe9114d161ce694a5fa3d0b4ba0efbf2c8ab1642"
+      },
+      "worktree": {
+        "bytes": 9306,
+        "sha256": "a3eb6f9d3e9ebe6db6887f561f400db76207645d3478a84d83ae4332af20cf96",
+        "crlf": 256
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "CONTEXT.md",
+      "gitBlob": {
+        "bytes": 5072,
+        "sha256": "30a05e460cc2bc337cf98f721b942804c58ff9cd9d1ab1690928e93d554d1499",
+        "objectId": "ec382a5cbaff07f16bd49acb4336f5d930c0eb23"
+      },
+      "worktree": {
+        "bytes": 5177,
+        "sha256": "f4c047a902dcac2b49631d2cc8013c3f8eca09cee29eb500ca60a2716dd2658f",
+        "crlf": 105
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "gitBlob": {
+        "bytes": 69441,
+        "sha256": "cd197da780ae7678ba4f5a2f3b5d88fc979e17685b3525b391f346bc1d4a5c59",
+        "objectId": "f40c57b74ca11e8b1e84b085a01550e430b5a7f6"
+      },
+      "worktree": {
+        "bytes": 71228,
+        "sha256": "d7601e8d5fae33dcc7a2c231fd20379ec6f52f7c12d721cde9782700127d26d7",
+        "crlf": 1787
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "gitBlob": {
+        "bytes": 505586,
+        "sha256": "2a16e2efd6736308721b66852e76d3e008df0c87720d9c44c3cda2bf6276d03f",
+        "objectId": "b187c8dd41a9910bcc91d1bb088ede99708f9489"
+      },
+      "worktree": {
+        "bytes": 512791,
+        "sha256": "bb62408f1a57b2340962d9a02c2580534ec6c007fccfccf96452df65066afadf",
+        "crlf": 7205
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "SCHEMA.sql",
+      "gitBlob": {
+        "bytes": 1531,
+        "sha256": "9682e88fb26f7c82452ad383ea5618ad7e150d149c44f44d578fd665feab35d2",
+        "objectId": "7184e1fa7f52bd33ee960d6a370dccbe7dbb504b"
+      },
+      "worktree": {
+        "bytes": 1561,
+        "sha256": "4ba5c8a954907f2df8a75e0ec0ba6aacf24f0f5a4478d152baa5f30be7867a17",
+        "crlf": 30
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "package.json",
+      "gitBlob": {
+        "bytes": 4611,
+        "sha256": "318bf89f75395b4316cb7b7bf18ffeef46266bd32f7a76e938fd1c24e0cec2bc",
+        "objectId": "d2afc75c7a1e7eb188ba3ae65f673e5a35e476e9"
+      },
+      "worktree": {
+        "bytes": 4682,
+        "sha256": "2e06aa849c60f1db7f79c58a550781752570cce0ca68f53aadd3ca67138c62b2",
+        "crlf": 71
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "gitBlob": {
+        "bytes": 226336,
+        "sha256": "ee132beb6ad55a041faed36fb1da1bc7c855f83a1b461d5a16a4f6d64999584b",
+        "objectId": "3a82aa7be5867c98e3de5bbbb7a6c4f91673ce91"
+      },
+      "worktree": {
+        "bytes": 233344,
+        "sha256": "ed92a40f6dca083b5fe725c28a2b52571f2e695092b282936f65404f85d0429b",
+        "crlf": 7008
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "vitest.config.ts",
+      "gitBlob": {
+        "bytes": 1460,
+        "sha256": "9255e891735d5c421b1084f2f187cbe9b31a3880ede10d8def0da2558e6147e7",
+        "objectId": "22eb710f02612fa3fcf272b9867046726376eef6"
+      },
+      "worktree": {
+        "bytes": 1491,
+        "sha256": "de6eafb8f3cb9b0134c39ed38da801b0d427e6956e893fb00f4e21c4d3003d33",
+        "crlf": 31
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "vitest.integration.config.ts",
+      "gitBlob": {
+        "bytes": 733,
+        "sha256": "472847e308368450c040b27e9ddc4f6f694f8af4eaadecc63fb7cf06f433425b",
+        "objectId": "e6a813d2cecd039ad9be481a26e6b4129caefba3"
+      },
+      "worktree": {
+        "bytes": 752,
+        "sha256": "ca9031eca23a729d89184c49246b8f1891c784382293cc91ac7ad25b58b3ccfe",
+        "crlf": 19
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "scripts/ci-policy.mjs",
+      "gitBlob": {
+        "bytes": 7063,
+        "sha256": "e8dec6c099c802e0df19c07a13750fea6f84580d0b5c3ef191f78c68799c410d",
+        "objectId": "a7ee0da8f1cca82e7fdbedd884d7cbd5261a869c"
+      },
+      "worktree": {
+        "bytes": 7182,
+        "sha256": "9c572496cb48bb16a4f7f7adfb89cf0c9d27c98cf331027f45de744f6df4943c",
+        "crlf": 119
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "gitBlob": {
+        "bytes": 185776,
+        "sha256": "4f19358275ed5df9bb90ecf387b302384478c2bfb69817a7869b9a9d0f3b7308",
+        "objectId": "577109e27985f76569a335f4731471b06f20334d"
+      },
+      "worktree": {
+        "bytes": 188932,
+        "sha256": "0a0e1dd5826d7d0d85d1787472aef9d671e5d81478bdbc7546be8c1e5a4065f2",
+        "crlf": 3156
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/contracts/src/route-policy.ts",
+      "gitBlob": {
+        "bytes": 24189,
+        "sha256": "81cc784bf513faf10e0a8b80a26219652c466e58e8888c77a8a829ecb1500640",
+        "objectId": "95db4e06aee45a472e049628d9a799f8fc7c6390"
+      },
+      "worktree": {
+        "bytes": 24845,
+        "sha256": "0b0dd6468901150bd10fd157cc59f1047bfc186a2580095b0e0b79612fd01bd5",
+        "crlf": 656
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/contracts/src/route-policy-bindings.ts",
+      "gitBlob": {
+        "bytes": 32054,
+        "sha256": "914426e99b58e5ceec4d836e1894ebc18fa451743cbdab40bb74ea715503c03d",
+        "objectId": "92e9119dd6a8fd1105fe6b4c21a536f4757c6ed5"
+      },
+      "worktree": {
+        "bytes": 33270,
+        "sha256": "a0a66ad378dfe08ef8d76b008fa892aef610af2c2ed3f2efd4eb92c0368dccef",
+        "crlf": 1216
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/api/src/client-profile.ts",
+      "gitBlob": {
+        "bytes": 4476,
+        "sha256": "dd050c847b30ec12ad30d5333118dda6aeef57f23569fb36cea442b11767945a",
+        "objectId": "cda86ca922dac28d3226fc5c4e84462ef7ded764"
+      },
+      "worktree": {
+        "bytes": 4579,
+        "sha256": "7a29b2e8583710570068040eb1ab79930d23d75867b514edda10e499858cfe92",
+        "crlf": 103
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/api/src/authz/authorize.ts",
+      "gitBlob": {
+        "bytes": 25428,
+        "sha256": "7b6f36eee65ed3a09494a5cbaef8edf9e8a7090aef1f8b32bc3619384d66957a",
+        "objectId": "f5ffbcb065854bc04b39ed0948ac45a5d8991ed4"
+      },
+      "worktree": {
+        "bytes": 26032,
+        "sha256": "bbf32fe6ba530689b638e018d664f3c53c859126210f44f23a28741e9d6a2da5",
+        "crlf": 604
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "gitBlob": {
+        "bytes": 73118,
+        "sha256": "3ba90336ccc42073f876bd3b3dc36b32774ec489fbb49e31dd29062265dcbf9e",
+        "objectId": "406fc9156823259951a44b608489f590be15474e"
+      },
+      "worktree": {
+        "bytes": 74878,
+        "sha256": "5036c5ed65c6ec1d94ddce095af6a84776347e237ad3e0aa9d3ce3fb749b6ffd",
+        "crlf": 1760
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/api/src/commands.ts",
+      "gitBlob": {
+        "bytes": 39541,
+        "sha256": "30b702fb138c8fb36ce5ca1be5c2c559c3ef8c2cad437869c3acd27b44af0191",
+        "objectId": "1d244b5e2dad028bb171890792db9472f0594519"
+      },
+      "worktree": {
+        "bytes": 40685,
+        "sha256": "b66fc2d1f3a23b0d35e36638be309ff672a374cdc333299bc9397b8ae16872de",
+        "crlf": 1144
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/api/src/delivery/routes.ts",
+      "gitBlob": {
+        "bytes": 94927,
+        "sha256": "71bca1ffd3225f8a5165a2fc952571cd9c2f048317c125dfab586dcf43457626",
+        "objectId": "ff16432aa968e5ccf2a5b317645eeeb7a6792169"
+      },
+      "worktree": {
+        "bytes": 96529,
+        "sha256": "21c1488035209ad881fb98891811f7a2f8a586af512eee41189c2337746f1038",
+        "crlf": 1602
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/api/src/operations/routes.ts",
+      "gitBlob": {
+        "bytes": 118316,
+        "sha256": "1b5a1fd9678a3ff45514c4a0dc86f68b6febf4282e51a6f51c0afaf8f5743ee2",
+        "objectId": "a7c61465730e7eb8a2ba868edfb49c14fdddef66"
+      },
+      "worktree": {
+        "bytes": 120724,
+        "sha256": "1c093bef2eb30ce01b6c9eb418112d31b5ebe4b93487af107dc4155989d0b39b",
+        "crlf": 2408
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/src/stage4.ts",
+      "gitBlob": {
+        "bytes": 58288,
+        "sha256": "db710ac3b223c2f54038d566d3a8d010e8613b012054c5bc9538d6399e89ab2a",
+        "objectId": "e7a676108179380320476a763436061aba707a3d"
+      },
+      "worktree": {
+        "bytes": 59705,
+        "sha256": "26fbb64a9d469ddc1aa17dd91099f5f6d4bc28d2874a1ca4b8d2b5eb4f1d4eea",
+        "crlf": 1417
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/mcp/src/index.ts",
+      "gitBlob": {
+        "bytes": 67309,
+        "sha256": "84b202361884d00e9434a495b1b8fc6fc557795079b523a102eefc83e9a91ba2",
+        "objectId": "a274343b5ca2523d0fab2ae714b94006c27a3f05"
+      },
+      "worktree": {
+        "bytes": 67695,
+        "sha256": "8f62edbab1de5a2ad391f8ca66a7b46967c7e4968a8fb22074e2f05fcb3b29a2",
+        "crlf": 386
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/mcp/src/http.ts",
+      "gitBlob": {
+        "bytes": 6498,
+        "sha256": "987460c6231841ae8f6c9c87bcb30ceaca142e4a5a6688a59c13d9f5dd8983d3",
+        "objectId": "7bfc5722d8b98078c0bf46a5fb58f288f6c41390"
+      },
+      "worktree": {
+        "bytes": 6646,
+        "sha256": "bbabd9f6eea2a97dc9c236f38c0fa2b08e7d2e74105addf31c6b29382513cea9",
+        "crlf": 148
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/mcp/src/stdio.ts",
+      "gitBlob": {
+        "bytes": 908,
+        "sha256": "b5aa62df1ad9f2ed9f783b339555952bf0418d2c9e7b3007d5512b53fe8ee6ed",
+        "objectId": "137477aea9383483e9020a553181d8d6f58beff3"
+      },
+      "worktree": {
+        "bytes": 922,
+        "sha256": "c4566ba76f53483956f75da47d804ddd2aba444eae91f1d07a23ea3d6a599de0",
+        "crlf": 14
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/mcp/src/coordination-product.ts",
+      "gitBlob": {
+        "bytes": 28936,
+        "sha256": "5e0152b20af49163d8081c8112302d05fa0de6e94ff722530418f56ec5d881d4",
+        "objectId": "95de5d3f760f8c267b57b6b01bb39434fb1675c9"
+      },
+      "worktree": {
+        "bytes": 29604,
+        "sha256": "2b9697085c1698092c3d6e9753fd9e1df2daca0db086279346f8f8ffefa22c78",
+        "crlf": 668
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/agent-sdk/src/index.ts",
+      "gitBlob": {
+        "bytes": 67781,
+        "sha256": "eda94af2f4aec0346ad05dbac245244c333b4cab9f0cd3096635cc176f4dd073",
+        "objectId": "9fdd760901ff3738ecceaf15fecc6d6d6bf5af58"
+      },
+      "worktree": {
+        "bytes": 68589,
+        "sha256": "44cc5aea5091202517489af7a5377715381b225d6f31ee76dbf391e9dc9d70e1",
+        "crlf": 808
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/agent-runner/src/workmesh-tools.ts",
+      "gitBlob": {
+        "bytes": 25826,
+        "sha256": "975aaa0f960877f44c730449c94ea692b81ebf18c81a928dd4eca6720891768f",
+        "objectId": "38cdc4902d968a6b733f330f32a8a8d5672b3452"
+      },
+      "worktree": {
+        "bytes": 26218,
+        "sha256": "a0caf5751a175e0644ef14ef5db9c87531a695be719695471fc48c6dbc0dc50c",
+        "crlf": 392
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "apps/agent-runner/src/run-session.ts",
+      "gitBlob": {
+        "bytes": 21470,
+        "sha256": "e45be453a2320874f83dd815c8366e1af78d4b9094d014c5f84eb9752dc82428",
+        "objectId": "1031a883102f2d52650de893a52d6ac7005e4492"
+      },
+      "worktree": {
+        "bytes": 21879,
+        "sha256": "f49e5507f35478a2b3c967ea82f313c5fce738a01dc947f11a10b861f5b59947",
+        "crlf": 409
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/conformance/src/drivers.ts",
+      "gitBlob": {
+        "bytes": 12550,
+        "sha256": "f97304eecb9d4b7171788cde3c9f025e6798e69cd73116393e47035d42e0f7bf",
+        "objectId": "73565aa5a811fbf368d42d55e43d7dc8f88a59a8"
+      },
+      "worktree": {
+        "bytes": 12694,
+        "sha256": "08e1ec8445668aa4278def4c0a0d7a46cfc3b2609883971e9f571158de5000a8",
+        "crlf": 144
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/conformance/src/cli.ts",
+      "gitBlob": {
+        "bytes": 1513,
+        "sha256": "1174a2cd0834d16bd9444995c09912eae521fc76ec4e06faf15408c36a65b78a",
+        "objectId": "d33411d624d91523d1fde67909085160bef50bf5"
+      },
+      "worktree": {
+        "bytes": 1536,
+        "sha256": "fb5d32e69d46285f09bbc8c71aa149abeede72efd4a16b14a52eeece755b332f",
+        "crlf": 23
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/conformance/src/reference-fixture.ts",
+      "gitBlob": {
+        "bytes": 13346,
+        "sha256": "086ea54c8ecf4247151127ef97cdf20bcb5ac2d15371688149c1d5c4e30f4b53",
+        "objectId": "3f93386029621c33235a3969ec3e8dbc7e6cbbb5"
+      },
+      "worktree": {
+        "bytes": 13624,
+        "sha256": "69c0475c6c0121217b99b8cef0de9fa8389828d2240652601ae9311ecefd550a",
+        "crlf": 278
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/plan/backend-agent-mcp-priority/README.md",
+      "gitBlob": {
+        "bytes": 9139,
+        "sha256": "b156d436c2222adca9ad25ab0d9224b0388b278bc58743d294c803e7961209a1",
+        "objectId": "95d56c599bcb9ea20e1ce7105deb694e54fff4e0"
+      },
+      "worktree": {
+        "bytes": 9200,
+        "sha256": "1c4756741e0b69013240f2baa62951c1a3066d09c0b3d8278d0c1232fb3e54ff",
+        "crlf": 61
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "gitBlob": {
+        "bytes": 38635,
+        "sha256": "8fd80172cda4734fcb750e3415c2da38304072f992c58781a2e677ae9eab633f",
+        "objectId": "4d194d771c251de5def0c61ff61ce568f7c7fe61"
+      },
+      "worktree": {
+        "bytes": 38857,
+        "sha256": "cd3164833198bbdc5ca85cae0cdd48fc718d90cb3c6f714c3a5547ad778fc004",
+        "crlf": 222
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/plan/backend-agent-mcp-priority/branch-separation.md",
+      "gitBlob": {
+        "bytes": 15001,
+        "sha256": "b3981214b3aabb7c760d5408dad2b5d3393dfed444ffba5503a8d7c5e8e5e7ce",
+        "objectId": "dfbd2d95d962fcfc2ddf0030054b56c3139bd48d"
+      },
+      "worktree": {
+        "bytes": 15090,
+        "sha256": "3ccb18d1b6b495f1109404a54ed764e0462d12f28da2b1838cdbc8fc529626d0",
+        "crlf": 89
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/plan/backend-agent-mcp-priority/coverage-matrix.md",
+      "gitBlob": {
+        "bytes": 26429,
+        "sha256": "34d6527d056df873b33cd3e5344e7b9f5fa8698db59665fa455627a79c751fd2",
+        "objectId": "0d2ab85cc22e398d95751ffbeea30b26a7f69dc0"
+      },
+      "worktree": {
+        "bytes": 26504,
+        "sha256": "b5cc4b4eef8a347f7a4abe5ea1ef529818fc41e179fd10998a1af8424aa1fcd6",
+        "crlf": 75
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/plan/backend-agent-mcp-priority/operation-index.md",
+      "gitBlob": {
+        "bytes": 162368,
+        "sha256": "7fefa525a0b555094dd521eb3690ef9c3cf0c0a4917eb76a7177a43724879f0a",
+        "objectId": "53b0019d9bced0bbaad8948b3a49e9ce38df5912"
+      },
+      "worktree": {
+        "bytes": 164873,
+        "sha256": "d8dda84f4025c91f31c19f96b14af9da964dec13209b972aec745d61f769a246",
+        "crlf": 2505
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/plan/backend-agent-mcp-priority/review.md",
+      "gitBlob": {
+        "bytes": 10968,
+        "sha256": "df3fe6b47f895fef7439c7ecb2433dc6637cd4c4eb3725e035ebb973696ced09",
+        "objectId": "8e7a26b786d7e2d93a7de65161eb5d9db0979685"
+      },
+      "worktree": {
+        "bytes": 11048,
+        "sha256": "a80c25b26459dcfd3100212db5e2b64b0a8077b1bc566fb88340d1856a9432d9",
+        "crlf": 80
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/plan/backend-agent-mcp-priority/sources.md",
+      "gitBlob": {
+        "bytes": 50119,
+        "sha256": "e029c6fc747e896516c91cb7285fa6cc4cf9cce4265bd589c405fff9355145a1",
+        "objectId": "615ddaf879cbe1894c13c781d8a5243fa4d69582"
+      },
+      "worktree": {
+        "bytes": 50498,
+        "sha256": "977c72867ec4b103c15a47fb11b61dc36f4218fbf4a1506c065a98baa245d7ca",
+        "crlf": 379
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/adr/0012-mcp-domain-boundary.md",
+      "gitBlob": {
+        "bytes": 1286,
+        "sha256": "31dbeecc6b37d93d207ebcf81ca80cefd082bc82906843bf783c7caa74d1b517",
+        "objectId": "f9a0719a326538023e462e546a2f5ef869fa8dd6"
+      },
+      "worktree": {
+        "bytes": 1313,
+        "sha256": "92259a1bc30b7627ba04fede535029ae743097f312491f9d77bdd32f7adb76a2",
+        "crlf": 27
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/adr/0028-declarative-route-policy-and-event-audience.md",
+      "gitBlob": {
+        "bytes": 4661,
+        "sha256": "c45e1c3474a101c933fc2b888a8804859a4a871acd6c58236076fcacbcb4dd64",
+        "objectId": "250f6580b7a536196c8560d7d98899484a91696e"
+      },
+      "worktree": {
+        "bytes": 4751,
+        "sha256": "5ef48f79774654d882a11c4044371419975ef4c3ea95802cdf0c757b34880871",
+        "crlf": 90
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/adr/0042-agent-client-profile-and-derived-capability-manifest.md",
+      "gitBlob": {
+        "bytes": 2339,
+        "sha256": "a0530dfa3a65ee8e4771d94d8e64ee529f7f54462967b63b6331e00b73a50ce3",
+        "objectId": "5ad4e5434603fe83555cda3df4e6f507f51d8f7a"
+      },
+      "worktree": {
+        "bytes": 2394,
+        "sha256": "c2ea95b82a92da00776713cb6c9874ba707d80d0fca61abbd50c57f87924ebae",
+        "crlf": 55
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/adr/0067-governed-pi-workmesh-tools.md",
+      "gitBlob": {
+        "bytes": 4655,
+        "sha256": "f84e60c19538bfbbb3daa3c6775ce35d6cdac8ce3bce0e06e354d8f8a54465d3",
+        "objectId": "b80b176e8688c0269204a4f165e46a281c77fd6f"
+      },
+      "worktree": {
+        "bytes": 4693,
+        "sha256": "b9d27884633ce6f897fd9ab214ca95ec64e8d7f1c3ee3829c5e4c37825e3435e",
+        "crlf": 38
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "docs/adr/0068-atomic-workbench-turn-session-completion.md",
+      "gitBlob": {
+        "bytes": 3545,
+        "sha256": "d56365f5b66b99826bf5e14bf4e89701e9430defce769c5c6ce4a4e8f0e00514",
+        "objectId": "ff826704199e38904d66b3875ec25b49e6210c6c"
+      },
+      "worktree": {
+        "bytes": 3578,
+        "sha256": "ea0146641b7e7c25027ea2abbc4e3d536f43c8ed55e862f535bf0cf5eb24471a",
+        "crlf": 33
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0001_v1_baseline.sql",
+      "gitBlob": {
+        "bytes": 172420,
+        "sha256": "1fc1297ef9b4600d56368c6734b318b41b48776de82d5d9fe307d09427ce3f83",
+        "objectId": "4804a88949ad3ed1314cad05f4540cd41d2f96c3"
+      },
+      "worktree": {
+        "bytes": 175783,
+        "sha256": "f935f49d9020046b19f3dfbbae144d0947bc66ff1c07a30abffd29a84550dfab",
+        "crlf": 3363
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0002_active_executor_projection.sql",
+      "gitBlob": {
+        "bytes": 11126,
+        "sha256": "0742da4ba547e484f463687e67392c3762e3628f2f841473cfde66c2725342d2",
+        "objectId": "9b8e3d198fecfc55415c8df8b18733ee4972c129"
+      },
+      "worktree": {
+        "bytes": 11420,
+        "sha256": "2859643567ffeb7a114d59f961b7afe071c0682668e77e6db3d39d9de97fa688",
+        "crlf": 294
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0003_versioned_guidance.sql",
+      "gitBlob": {
+        "bytes": 5056,
+        "sha256": "199adac75057ed0a2b285453440359d68aea1ae62cba33b2274ac8e6364fa2e7",
+        "objectId": "0a79d24e425da6fc60c222e754cda39dc4a11cd5"
+      },
+      "worktree": {
+        "bytes": 5185,
+        "sha256": "217b849cb4549e4a75cfc7f5ffc550966b3c55c74fce121d0451ee9e57862473",
+        "crlf": 129
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0004_agent_connections.sql",
+      "gitBlob": {
+        "bytes": 6630,
+        "sha256": "c31fde289828e87e7919cf114cccd24fb67ace2ee8007539a66273cfb6b90548",
+        "objectId": "c55c391aa324281b0c8567809315be9532c3832e"
+      },
+      "worktree": {
+        "bytes": 6747,
+        "sha256": "8c398de636caa11d67633bf6dd04227055d5b5c788d898cf25601005a4adb8fe",
+        "crlf": 117
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0005_planning_domain_parity.sql",
+      "gitBlob": {
+        "bytes": 8197,
+        "sha256": "1810ceb56156b7d0305b03b6b69b65453fb85d8b949afbfc78eed2ebf2295be4",
+        "objectId": "b9d131625379886184606b83270088d8184da2cd"
+      },
+      "worktree": {
+        "bytes": 8415,
+        "sha256": "cae82c66adb29822b1a89070768d9268973f48557b16879ad0030c819fa3adc9",
+        "crlf": 218
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0006_human_attachments.sql",
+      "gitBlob": {
+        "bytes": 2824,
+        "sha256": "076f92a3257f9ad15c6c9770f31c12755d10a74e7f87b15b0363c391ec050ce5",
+        "objectId": "d59f9c7dc8bb77e6c955beb2feaa1c2a90a7cd50"
+      },
+      "worktree": {
+        "bytes": 2869,
+        "sha256": "8b702dec842da5dbe80ad362528c0cc095080f3b494004c26d3d643c458e9aea",
+        "crlf": 45
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0007_active_milestone_name_uniqueness.sql",
+      "gitBlob": {
+        "bytes": 225,
+        "sha256": "a3313489a85a5aac71192f540cae57f84f29036a023018c7f2d295d7f5a87302",
+        "objectId": "a2e34a494a9a14766061b167955a3ecdb92832b0"
+      },
+      "worktree": {
+        "bytes": 231,
+        "sha256": "d44cb04e5dc62fd8e9a026c9867e20726e0dfac80c589716ad8a3c9b3fa92af3",
+        "crlf": 6
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0008_autonomous_control_push_enrollment.sql",
+      "gitBlob": {
+        "bytes": 12046,
+        "sha256": "ca8ecf47510edfda6221de7f6f375c55d20d4cda588d39ff39816ebed24031d3",
+        "objectId": "4354ffbdd919054e3f781ff7f3232b1acb023bf1"
+      },
+      "worktree": {
+        "bytes": 12273,
+        "sha256": "3f202aaaf676447a6183670dc92d21907737e74c5bfefbd48295821d2e2e731e",
+        "crlf": 227
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0009_workbench_llm_connections.sql",
+      "gitBlob": {
+        "bytes": 2740,
+        "sha256": "5d41a6e5035a30619691a8f59e1dbe836345ef0f826a87776b99c6f272ea4b68",
+        "objectId": "a6f416207fedba2818aee9407588cbd604764013"
+      },
+      "worktree": {
+        "bytes": 2786,
+        "sha256": "28fb5716647820e11eb59aba470d186dbcd0c4311d89a4e6c87a1c5a63b879bb",
+        "crlf": 46
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0010_workbench_conversations.sql",
+      "gitBlob": {
+        "bytes": 7618,
+        "sha256": "3ed3f9c50099cf8d5f255b79d34c11f7c00881149ee707a9cd49d1461115ff42",
+        "objectId": "031c6450ea0134e1629f4f600b20eb21631b896a"
+      },
+      "worktree": {
+        "bytes": 7735,
+        "sha256": "82b6fbafa3827abbb7df9235090e096b124f5e5f4178be6c0cda5af7941e6ff0",
+        "crlf": 117
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0012_workbench_turn_lineage_and_tools.sql",
+      "gitBlob": {
+        "bytes": 2870,
+        "sha256": "ca928f0cbd79cb608ad355a4fc60b96a4f418cb3d6a70698876ede53631865d3",
+        "objectId": "57663bf5ff30322087db3dd9f1de51ff82d1e8af"
+      },
+      "worktree": {
+        "bytes": 2927,
+        "sha256": "1ec0aad2dabdd7e58c0c9f6b3ade1fe833e7186b7754e934ff36cc9346a5052a",
+        "crlf": 57
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0011_versioned_documents.sql",
+      "gitBlob": {
+        "bytes": 4975,
+        "sha256": "b647d04ded7720ee3b993721f72097c3a2e642bb0c0010bb4b764a9dcb4384b6",
+        "objectId": "66ae58c0168d6b7dc8e38b133bef96de70136b6f"
+      },
+      "worktree": {
+        "bytes": 5083,
+        "sha256": "83adf2b0b2aab417e336278fbf32895ac6a5f8df7dbb828119e4f135513fd38d",
+        "crlf": 108
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0013_work_item_board_rank.sql",
+      "gitBlob": {
+        "bytes": 2107,
+        "sha256": "2649c369972cd710097923956f42c03e7db663d58cb458dfe7b8fa325ed406fb",
+        "objectId": "4f1c0e4e47f8adfc3cf9bfe38a45000777630ad3"
+      },
+      "worktree": {
+        "bytes": 2151,
+        "sha256": "588c3385b901a3065c1df2489163f0923f645580fdd58f0fba2a799217770b63",
+        "crlf": 44
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0014_channel_delivery_contract.sql",
+      "gitBlob": {
+        "bytes": 5557,
+        "sha256": "1f8d766b5215c3bbade32c4f52ac790edb004d30a586034df2518cf2794247e7",
+        "objectId": "4681dfdeaa1e8582fc6bf68b516b66f8d407f9fb"
+      },
+      "worktree": {
+        "bytes": 5645,
+        "sha256": "67998f8ae3de49a02ea250016dcb20c07dfa26afa80cc9fc49a877203bd13dea",
+        "crlf": 88
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0015_channel_notification_kind.sql",
+      "gitBlob": {
+        "bytes": 749,
+        "sha256": "632dbc4eb356f6b032cc405a1960cbf006cced66c950763f165f87bd9f4191e5",
+        "objectId": "e44286b27ef3ee785f4b553ee46d6cc7dc59911b"
+      },
+      "worktree": {
+        "bytes": 760,
+        "sha256": "79d65a77aca94ff739d136c6db8abac3fa68c4fe24c2fb363d664ce7fe5b4c28",
+        "crlf": 11
+      },
+      "mapping": "仅CRLF/LF转换"
+    },
+    {
+      "path": "packages/db/migrations/v1/0016_approval_notification_kind.sql",
+      "gitBlob": {
+        "bytes": 345,
+        "sha256": "01fa357c187faf980e7e1344ccd12de5af3826029d45744732041fc5b56d72e4",
+        "objectId": "8791ba7e699bc9ad0ce631d785a38be4c224c051"
+      },
+      "worktree": {
+        "bytes": 350,
+        "sha256": "695e319681601cbf6138cfecd71f9347d4fa28c871a2dce41866947905d4eb4c",
+        "crlf": 5
+      },
+      "mapping": "仅CRLF/LF转换"
+    }
+  ]
+}

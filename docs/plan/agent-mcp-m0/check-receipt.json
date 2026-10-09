@@ -1,0 +1,67 @@
+{
+  "status": "本轮文档核验；无产品测试或平台独审结论",
+  "recordedAt": "2026-10-09 04:49:02 UTC",
+  "runs": [
+    {
+      "command": "node docs/plan/agent-mcp-m0/archive-audit.mjs",
+      "exitCode": 0,
+      "output": "{\"operations\":277,\"sourceFiles\":58,\"noProductWrites\":true,\"completedAt\":\"2026-10-09T04:40:20.758Z\"}",
+      "stderr": "(node:23260) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time",
+      "recordSource": "实际工具输出的逐字转录；未保存原进程stdout文件"
+    },
+    {
+      "command": "node docs/plan/agent-mcp-m0/archive-audit.mjs",
+      "exitCode": 0,
+      "output": "{\"operations\":277,\"sourceFiles\":58,\"noProductWrites\":true,\"completedAt\":\"2026-10-09T04:46:56.745Z\"}",
+      "stderr": "(node:63448) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time",
+      "recordSource": "实际工具输出的逐字转录；对应当前generation.json"
+    },
+    {
+      "command": "python docs/plan/agent-mcp-m0/archive-check.py",
+      "result": {
+        "chunk_id": "dfb5a9",
+        "wall_time_seconds": 3.8474486,
+        "exit_code": 0,
+        "original_token_count": 48,
+        "output": "{\"���\": \"�ĵ���̬����ͨ��\", \"operationCount\": 277, \"sourceFiles\": 58, \"localLinks\": 16, \"savedPlanPrefixMatch\": true, \"fullSpecMatch\": true, \"productChecks\": \"δ����\", \"����\": \"��ƽ̨����\"}\r\n"
+      },
+      "note": "exit=0但工具显示中文乱码，保留该可见输出；不冒作原stdout字节"
+    },
+    {
+      "command": "python -X utf8 docs/plan/agent-mcp-m0/archive-check.py",
+      "result": {
+        "chunk_id": "c590d8",
+        "wall_time_seconds": 3.7838307,
+        "exit_code": 0,
+        "original_token_count": 53,
+        "output": "{\"结果\": \"文档静态核验通过\", \"operationCount\": 277, \"sourceFiles\": 58, \"localLinks\": 16, \"savedPlanPrefixMatch\": true, \"fullSpecMatch\": true, \"productChecks\": \"未运行\", \"独审\": \"待平台独审\"}\r\n"
+      },
+      "note": "显式UTF-8后可读；源码资料、spec、plan可见前缀、集合及链接核验"
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0,
+      "output": "",
+      "note": "首次暂存后实际执行；仅文档范围；提交前最终再次执行"
+    }
+  ],
+  "resourceLedger": {
+    "createdContainers": [],
+    "createdImages": [],
+    "createdVolumes": [],
+    "createdNetworks": [],
+    "serviceProcesses": [],
+    "temporaryPaths": [],
+    "cleanupOperations": [],
+    "retained": [
+      "当前worktree",
+      "本目录受控文档",
+      "既有历史证据及恢复目录"
+    ]
+  },
+  "limitations": [
+    "只保存工具可见输出及元数据，未虚构此前stdout原字节",
+    "无产品测试、独审、RequiredCI或合入main证明",
+    "执行本机Node/Python子进程均已退出，无长期服务"
+  ]
+}
