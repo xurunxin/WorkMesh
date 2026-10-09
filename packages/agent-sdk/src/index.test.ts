@@ -11,6 +11,15 @@ const qualifiedFixture = (sessionId: string, coordination: boolean) => {
 }
 
 describe('WorkMeshClient', () => {
+  it('安装拒绝 helper 明确选安装 Bearer，原 Session 拒绝入口保留且不换共享 Token', async () => {
+    const fetcher = vi.fn().mockImplementation(async () => new Response('{}', { headers: { 'content-type': 'application/json' } }))
+    const client = new WorkMeshClient({ baseUrl: 'http://api.test', sessionToken: 'own-session', installationToken: 'target-installation', fetch: fetcher })
+    await client.rejectPendingHandoff('handoff', { machineReason: 'manual_reject' }, { idempotencyKey: 'install-reject' })
+    await client.rejectHandoff('handoff', { machineReason: 'manual_reject' }, { idempotencyKey: 'session-reject' })
+    expect(new Headers(fetcher.mock.calls[0]![1].headers).get('authorization')).toBe('Bearer target-installation')
+    expect(new Headers(fetcher.mock.calls[1]![1].headers).get('authorization')).toBe('Bearer own-session')
+    expect(fetcher).toHaveBeenCalledTimes(2)
+  })
   afterEach(() => {
     vi.useRealTimers()
   })

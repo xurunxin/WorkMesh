@@ -1,0 +1,447 @@
+{
+  "generatedAt": "2026-10-09T09:16:58.008898+00:00",
+  "checks": [
+    {
+      "name": "review3-lint-final",
+      "receipt": "review3-lint-final.json",
+      "exitCode": 0,
+      "runtimeSeconds": 125.72329500000342,
+      "inputArchiveSha256": "6086eae14f9806c80876ad1e10d7a567b7e7b8f0a751f8bf7ce5f77fe119a5b9",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": []
+    },
+    {
+      "name": "review3-typecheck-final",
+      "receipt": "review3-typecheck-final.json",
+      "exitCode": 0,
+      "runtimeSeconds": 71.01511860001483,
+      "inputArchiveSha256": "5fe67551941634cfdc6eb8bcec95921c94281bd7b6ccf46c50cb8fb9d50a851e",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": []
+    },
+    {
+      "name": "review3-unit-final",
+      "receipt": "review3-unit-final.json",
+      "exitCode": 0,
+      "runtimeSeconds": 271.4514818000025,
+      "inputArchiveSha256": "abce2201596f10c69e891581c482e4bb52f20d19d01dd26ce3ca0ccbf0c2289d",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": [
+        "Tests  22 passed (22)",
+        "Tests  203 passed (203)",
+        "Tests  13 passed (13)",
+        "Tests  50 passed (50)",
+        "Tests  16 passed (16)",
+        "Tests  4 passed (4)",
+        "Tests  65 passed (65)",
+        "Tests  42 passed (42)",
+        "Tests  34 passed (34)",
+        "Tests  51 passed (51)",
+        "Tests  28 passed (28)",
+        "Tests  4 passed (4)",
+        "Tests  44 passed (44)",
+        "Tests  211 passed | 2 skipped (213)",
+        "Tests  7 passed (7)",
+        "Tests  789 passed (789)",
+        "Tests  1 passed (1)",
+        "Tests  179 passed (179)"
+      ]
+    },
+    {
+      "name": "review3-integration-final",
+      "receipt": "review3-integration-final.json",
+      "exitCode": 0,
+      "runtimeSeconds": 425.93597049999516,
+      "inputArchiveSha256": "5d700056de3cda9031f4e7f41eb6b6759e5b2c64b52ea82b9cad5bb333b7a4e8",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": [
+        "Tests  80 passed (80)",
+        "Tests  234 passed | 1 skipped (235)",
+        "Tests  12 passed (12)",
+        "Tests  113 passed | 1 skipped (114)",
+        "Tests  1 skipped (1)"
+      ]
+    },
+    {
+      "name": "review3-e2e",
+      "receipt": "review3-e2e.json",
+      "exitCode": 0,
+      "runtimeSeconds": 267.6044853000203,
+      "inputArchiveSha256": "9231924947ead39dc8e03add163a4369b9d03fc9636d794d032e7c0d9a931ee6",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": []
+    },
+    {
+      "name": "review3-targeted-final",
+      "receipt": "review3-targeted-final.json",
+      "exitCode": 0,
+      "runtimeSeconds": 15.04598920000717,
+      "inputArchiveSha256": "5518c24905b08cbe3ad09a87ae6d7e2485bd05ac9199b9e246eb1c4466aafc48",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": [
+        "Tests  203 passed (203)",
+        "Tests  42 passed (42)",
+        "Tests  44 passed (44)"
+      ]
+    },
+    {
+      "name": "review3-ci",
+      "receipt": "review3-ci.json",
+      "exitCode": 0,
+      "runtimeSeconds": 2.377360599988606,
+      "inputArchiveSha256": "6b17067941d2fad677a8a7a1b38f23768dc13403f428b23735c816494fa9d6e1",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": []
+    },
+    {
+      "name": "review3-ci-policy",
+      "receipt": "review3-ci-policy.json",
+      "exitCode": 0,
+      "runtimeSeconds": 0.45024009997723624,
+      "inputArchiveSha256": "e0d5f8b6fdec116f9f4ad380c499f3ba4ce62a58d6284238ec1ded1c336e3afe",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": []
+    },
+    {
+      "name": "review3-route-policy",
+      "receipt": "review3-route-policy.json",
+      "exitCode": 0,
+      "runtimeSeconds": 3.1550494999974035,
+      "inputArchiveSha256": "c17a60bf8c81170be492b3a9303260a490d478a0cd8016bc86d8e813b48007ad",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": []
+    },
+    {
+      "name": "review3-product-static-final",
+      "receipt": "review3-product-static-final.json",
+      "exitCode": 0,
+      "runtimeSeconds": 1.6645556000003126,
+      "inputArchiveSha256": "b55f6854f4d4e160f9de0df98907839532b606aab1b5db8e3e08a43319b2d41b",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": []
+    },
+    {
+      "name": "review3-memory-conformance",
+      "receipt": "review3-memory-conformance.json",
+      "exitCode": 0,
+      "runtimeSeconds": 2.1739779000054114,
+      "inputArchiveSha256": "313276121b5a56a21b9c37a07078174273cd5956b5ed3d8efa603e3e43c181b4",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [
+        {
+          "path": "scripts/m0-finalize-evidence.py",
+          "worktreeBytes": 1870,
+          "worktreeSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "gitObjectId": "45fb2ffca055da4f2ac47e992c7ac1a008e6ebec",
+          "gitSha256": "4412eaae75bb43c08f0300959ee2ebefd157b15b4ad641ae4786c616da89d155",
+          "newlineMapping": "identity"
+        }
+      ],
+      "testSummaryLines": []
+    },
+    {
+      "name": "review3-evidence-integrity-final",
+      "receipt": "review3-evidence-integrity-final.json",
+      "exitCode": 0,
+      "runtimeSeconds": 1.2804313999949954,
+      "inputArchiveSha256": "623ca6d75c5351f35a3e86f7bb08ec01531de2e2d14795851f5208eb95377f27",
+      "productSourceFiles": 37,
+      "productWorktreeBytesMatch": true,
+      "laterEvidenceToolDifferences": [],
+      "testSummaryLines": []
+    }
+  ],
+  "preservedFailures": [
+    {
+      "name": "review3-static",
+      "exitCode": 1,
+      "runtimeSeconds": 8.24287909999839,
+      "receipt": "review3-static.json"
+    },
+    {
+      "name": "review3-static-recheck",
+      "exitCode": 1,
+      "runtimeSeconds": 19.633666500012623,
+      "receipt": "review3-static-recheck.json"
+    },
+    {
+      "name": "review3-evidence-integrity",
+      "exitCode": 1,
+      "runtimeSeconds": 0.5097112999937963,
+      "receipt": "review3-evidence-integrity.json"
+    }
+  ],
+  "ownedResources": [
+    {
+      "receipt": "m0-228c62af538a-resources.json",
+      "runId": "m0-228c62af538a",
+      "resources": [
+        {
+          "role": "postgres",
+          "name": "m0-228c62af538a-postgres",
+          "id": "156f339f838a02510a7190ab906453141cdd83e54398a050a8824eb56654b487",
+          "image": "postgres:16-alpine",
+          "createdAt": "2026-10-09T09:06:17.852345+00:00",
+          "cleaned": true,
+          "hostPort": 60472,
+          "ready": true,
+          "cleanupAt": "2026-10-09T09:11:00.134146+00:00"
+        },
+        {
+          "role": "redis",
+          "name": "m0-228c62af538a-redis",
+          "id": "af467af5806544fb6bc20baa54c23c2c1e55bb67a6efd8b0303fbc1b16bfdb33",
+          "image": "redis:7-alpine",
+          "createdAt": "2026-10-09T09:06:18.170590+00:00",
+          "cleaned": true,
+          "hostPort": 60473,
+          "ready": true,
+          "cleanupAt": "2026-10-09T09:10:59.569216+00:00"
+        },
+        {
+          "role": "rustfs",
+          "name": "m0-228c62af538a-rustfs",
+          "id": "e2d277e46233cfe0b7a6337722556abaf59eea87028d4160221ad03b129f81ce",
+          "image": "rustfs/rustfs:1.0.0",
+          "createdAt": "2026-10-09T09:06:18.513402+00:00",
+          "cleaned": true,
+          "hostPort": 60474,
+          "ready": true,
+          "cleanupAt": "2026-10-09T09:10:58.975185+00:00"
+        }
+      ]
+    },
+    {
+      "receipt": "m0-3dbd2be74bc6-resources.json",
+      "runId": "m0-3dbd2be74bc6",
+      "resources": [
+        {
+          "role": "postgres",
+          "name": "m0-3dbd2be74bc6-postgres",
+          "id": "de547e65843f10013754024d3af4f5efd0e56a51e1de188f7dbe1f79385c2db3",
+          "image": "postgres:16-alpine",
+          "createdAt": "2026-10-09T08:51:03.729554+00:00",
+          "cleaned": true,
+          "hostPort": 50320,
+          "ready": true,
+          "cleanupAt": "2026-10-09T08:57:38.333103+00:00"
+        },
+        {
+          "role": "redis",
+          "name": "m0-3dbd2be74bc6-redis",
+          "id": "9d17abd1c29a13cf604e87727d7d6e82216529c89cd3965b0f4a62a066c27ae7",
+          "image": "redis:7-alpine",
+          "createdAt": "2026-10-09T08:51:04.183207+00:00",
+          "cleaned": true,
+          "hostPort": 50321,
+          "ready": true,
+          "cleanupAt": "2026-10-09T08:57:37.426273+00:00"
+        },
+        {
+          "role": "rustfs",
+          "name": "m0-3dbd2be74bc6-rustfs",
+          "id": "811043f43c2e0c768dead82b557da0d513e2d253469ce9ad3343b1a220b31be8",
+          "image": "rustfs/rustfs:1.0.0",
+          "createdAt": "2026-10-09T08:51:04.599925+00:00",
+          "cleaned": true,
+          "hostPort": 50322,
+          "ready": true,
+          "cleanupAt": "2026-10-09T08:57:36.817965+00:00"
+        }
+      ]
+    },
+    {
+      "receipt": "m0-4522003caddf-resources.json",
+      "runId": "m0-4522003caddf",
+      "resources": [
+        {
+          "role": "postgres",
+          "name": "m0-4522003caddf-postgres",
+          "id": "014a5c097c8ad93f1cf8419850795e1735f36021fddad61ba23e2a2eda0e6dc7",
+          "image": "postgres:16-alpine",
+          "createdAt": "2026-10-09T08:46:14.627576+00:00",
+          "cleaned": true,
+          "hostPort": 53556,
+          "ready": true,
+          "cleanupAt": "2026-10-09T08:46:48.593429+00:00"
+        },
+        {
+          "role": "redis",
+          "name": "m0-4522003caddf-redis",
+          "id": "d8ce5a2decefe9e21ab5ff053e057b27bfd41a1d2ae9a522a1ce241198ac8ced",
+          "image": "redis:7-alpine",
+          "createdAt": "2026-10-09T08:46:15.264215+00:00",
+          "cleaned": true,
+          "hostPort": 53559,
+          "ready": true,
+          "cleanupAt": "2026-10-09T08:46:48.048263+00:00"
+        },
+        {
+          "role": "rustfs",
+          "name": "m0-4522003caddf-rustfs",
+          "id": "17714a78d0a6abab226303db9b2121248dab926795907af02fa1d5a3899a09cb",
+          "image": "rustfs/rustfs:1.0.0",
+          "createdAt": "2026-10-09T08:46:15.617027+00:00",
+          "cleaned": true,
+          "hostPort": 53561,
+          "ready": true,
+          "cleanupAt": "2026-10-09T08:46:47.451851+00:00"
+        }
+      ]
+    },
+    {
+      "receipt": "m0-d2599416d9a5-resources.json",
+      "runId": "m0-d2599416d9a5",
+      "resources": [
+        {
+          "role": "postgres",
+          "name": "m0-d2599416d9a5-postgres",
+          "id": "a670deeee70b25728711c41d44c3d4fc328044cf36b67f7036a8c6806448a6e8",
+          "image": "postgres:16-alpine",
+          "createdAt": "2026-10-09T08:58:16.428077+00:00",
+          "cleaned": true,
+          "hostPort": 60953,
+          "ready": true,
+          "cleanupAt": "2026-10-09T09:05:39.775746+00:00"
+        },
+        {
+          "role": "redis",
+          "name": "m0-d2599416d9a5-redis",
+          "id": "8d6713e0180d37987e304d3fc8537454ce3e7e85134cec5a4b7d993f221bc0e5",
+          "image": "redis:7-alpine",
+          "createdAt": "2026-10-09T08:58:16.927963+00:00",
+          "cleaned": true,
+          "hostPort": 60954,
+          "ready": true,
+          "cleanupAt": "2026-10-09T09:05:38.876088+00:00"
+        },
+        {
+          "role": "rustfs",
+          "name": "m0-d2599416d9a5-rustfs",
+          "id": "93ff2733e4a9440a720a1c2ef31d1512895245e5e768290864359a073c63e32b",
+          "image": "rustfs/rustfs:1.0.0",
+          "createdAt": "2026-10-09T08:58:17.311405+00:00",
+          "cleaned": true,
+          "hostPort": 60955,
+          "ready": true,
+          "cleanupAt": "2026-10-09T09:05:38.271887+00:00"
+        }
+      ]
+    }
+  ],
+  "sharedImagesPreserved": true,
+  "noVolumesOrNetworksCreated": true,
+  "historicalContainerDeclarationsUnverified": 10,
+  "missingHistoricalUniqueContainers": 2
+}

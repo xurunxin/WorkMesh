@@ -89,6 +89,21 @@ export function installDiscovery(server: McpServer, options: {
         if (rule && rule.operationIds.some(id => ['publishProjectUpdate', 'decideCompletionSuggestion', 'createComment', 'updateComment', 'cancelHandoff', 'completeHandoff'].includes(id)))
           throw new WorkMeshSdkError('This action is reserved for Humans', { code: 'FORBIDDEN', details: { reasons: ['ROLE_REQUIRED'] } })
         if (rule?.execution === 'adapter_internal') return await handler(request, extra)
+        const configuration = options.client.discoveryCredentialConfiguration
+        if (rule?.identityBinding === 'installation_target') {
+          // 安装身份没有 Session/Delegation/manifest；准确 handoff 目标仍由 REST 核验。
+          const installation = projectAdapterDiscovery({ kind: 'installation_target', session: null, delegation: null, manifest: null, qualification: null }, {
+            registeredBindings: [...registered], mode, coordination: options.coordination === true,
+            installationBridge: configuration.installationBridge, transport: options.transport ?? 'embedded',
+          }).bindings.find(item => item.bindingId === bindingId)
+          if (!installation || installation.eligibility.status === 'blocked') throw new WorkMeshSdkError('An installation credential is required', { code: 'INSTALLATION_TOKEN_REQUIRED' })
+          return await handler(request, extra)
+        }
+        if (bindingId && ['tool:ack_agent_session', 'tool:heartbeat'].includes(bindingId)
+          && (configuration.session && !configuration.coordination || configuration.coordination && configuration.installationBridge)) {
+          // 仅既有 ACK/诊断入口绕过普通发现读取；REST 用原 Token 校验 live 授权、准确 Session 和回执。
+          return await handler(request, extra)
+        }
         const prepared = await prepare()
         return await scope.run(prepared, async () => {
           if (bindingId && registered.has(bindingId)) guard(bindingId, request.params?.arguments ?? {}, prepared)

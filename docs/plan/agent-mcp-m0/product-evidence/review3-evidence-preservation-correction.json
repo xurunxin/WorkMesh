@@ -1,0 +1,30 @@
+{
+  "observedAt": "2026-10-09T09:10:41.406748+00:00",
+  "sourceHead": "6cf8b105a320e9f72eba4aef5d335de8ae344730",
+  "cause": "existing content-addressed ZIP rewritten with new ZIP timestamps; output member bytes equal",
+  "preCorrectionIndexSha256": "6f0e304d78d0ce932d68df44548bcd7a414f805d25c3db7d3bae3f8a02b70522",
+  "preservedPreCorrectionArchive": "review3-pre-restoration-zip-bytes.zip",
+  "preservedPreCorrectionArchiveSha256": "6e3cbfbc2dc4bc0420a9ae890769ada3c4073b1f1ca67d57fcaaeb3149e1aeac",
+  "items": [
+    {
+      "path": "raw-output-986261a7e613faf9d5bad12cf3c7ff7c0c9a5800a83df462d5df67d96aa80f7e.zip",
+      "originalGitHead": "6cf8b105a320e9f72eba4aef5d335de8ae344730",
+      "originalZipSha256": "f4f4b2dbafe9ec49dcb683288a59472622232f28711d0b1dd182aa069bc82217",
+      "rewrittenZipSha256": "8144589147a5be3fdf591a6762bad27adbd3ca8d3f5d96b3716cf236f46351f0",
+      "memberSha256": "986261a7e613faf9d5bad12cf3c7ff7c0c9a5800a83df462d5df67d96aa80f7e",
+      "memberBytesEqual": true,
+      "restoredGitContainerBytes": true
+    },
+    {
+      "path": "raw-output-c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7.zip",
+      "originalGitHead": "6cf8b105a320e9f72eba4aef5d335de8ae344730",
+      "originalZipSha256": "bb69373b306d867f071b4d8e58dfa3224a38772ef780c2338bdc19de81be1b1a",
+      "rewrittenZipSha256": "4cba233d9c7de2c5e357322c1ab149285d9a6a694cd9de870271e4afaef6c8a3",
+      "memberSha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7",
+      "memberBytesEqual": true,
+      "restoredGitContainerBytes": true
+    }
+  ],
+  "oldRowsKeepOriginalArchiveHashes": true,
+  "rejectedTargetsTouched": false
+}

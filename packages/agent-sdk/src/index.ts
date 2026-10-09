@@ -287,8 +287,8 @@ export class WorkMeshClient {
     return parsed.data
   }
 
-  get discoveryCredentialConfiguration(): Readonly<{ coordination: boolean; installationBridge: boolean }> {
-    return { coordination: Boolean(this.coordinationToken), installationBridge: Boolean(this.installationToken) }
+  get discoveryCredentialConfiguration(): Readonly<{ session: boolean; coordination: boolean; installationBridge: boolean }> {
+    return { session: Boolean(this.sessionToken), coordination: Boolean(this.coordinationToken), installationBridge: Boolean(this.installationToken) }
   }
 
   /** 凭据只存在本次调用的局部client；不修改当前C或其他目标的Token。 */
@@ -416,6 +416,11 @@ export class WorkMeshClient {
   rejectHandoff<T = unknown>(handoffId: string, input: HandoffRejectInput, options: RequestOptions = {}): Promise<T> {
     if (this.sessionToken) return this.mutateHandoff(handoffId, 'reject', input, options)
     if (!this.installationToken) throw new WorkMeshSdkError('A session or installation token is required to reject a handoff', { code: 'AUTHORIZATION_TOKEN_REQUIRED' })
+    return this.request('POST', `/api/v1/handoffs/${encodeURIComponent(handoffId)}/reject`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(handoffId, 'handoff-reject'), authorizationToken: this.installationToken, skipTokenRefresh: true })
+  }
+  /** 安装用途 binding 显式选择安装 Bearer；保留 rejectHandoff 的 Session 兼容入口。 */
+  rejectPendingHandoff<T = unknown>(handoffId: string, input: HandoffRejectInput, options: RequestOptions = {}): Promise<T> {
+    if (!this.installationToken) throw new WorkMeshSdkError('An installation token is required to reject a pending handoff', { code: 'INSTALLATION_TOKEN_REQUIRED' })
     return this.request('POST', `/api/v1/handoffs/${encodeURIComponent(handoffId)}/reject`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(handoffId, 'handoff-reject'), authorizationToken: this.installationToken, skipTokenRefresh: true })
   }
   getWorkItem<T = WorkItemResponse>(workItemId: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/work-items/${encodeURIComponent(workItemId)}`, undefined, options) }

@@ -16,8 +16,10 @@ for path in sorted(evidence.glob('*.log')):
         continue
     original_hash = current_hash
     archive = evidence / ('raw-output-' + original_hash + '.zip')
-    with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as saved:
-        saved.writestr('output.log', original)
+    # 相同原输出复用已保全容器字节；ZIP 时间戳不能改写旧 archiveSha256。
+    if not archive.exists():
+        with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as saved:
+            saved.writestr('output.log', original)
     with zipfile.ZipFile(archive) as saved:
         assert saved.read('output.log') == original
     text = original.decode('utf8')

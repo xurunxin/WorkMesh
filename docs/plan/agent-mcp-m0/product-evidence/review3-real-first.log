@@ -1,0 +1,34 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/conformance
+
+stdout | src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"7607ce58-7138-4c07-bf41-c56695564dde","conversationId":"c1eb88ac-8f31-4f1e-9f9c-ed94c051a5ea","attemptNo":1,"sessionId":"5ed29a09-048e-48ea-99b1-ed8b647881b2","correlationId":"c3e10b62-25d3-4e42-ac03-160812670a69","status":"settled","outcome":"settled","queueWaitMs":2640,"dispatchLagMs":2599,"runDurationMs":435,"totalDurationMs":3075,"totalTokens":null,"errorCode":null}
+
+ ✓ src/mcp-coverage.conformance.test.ts (12 tests) 11045ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 同一C分别发现两种mode，Context与同次投影一致，verify无需目标参数  887ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取  996ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C  893ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision  681ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox  897ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实  3470ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走  495ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > queued只握手；paused/stopping/terminal拒普通发现，stale保留明确ACK恢复  408ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > stale ACK及stopping/terminal诊断heartbeat经MCP到REST，撤Delegation仍拒绝  649ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 安装交接准确目标可inspect/reject，另一真实Agent和无安装E拒绝  539ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  16:46:32
+   Duration  14.39s (transform 1.09s, setup 0ms, collect 2.87s, tests 11.05s, environment 0ms, prepare 132ms)

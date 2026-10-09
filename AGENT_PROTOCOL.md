@@ -1801,3 +1801,9 @@ Human-only 旧工具保持名称与输入 schema，发现时隐藏，缓存调�
 调用前持久化显式 Idempotency-Key；丢响应、重连和传输重试保持同 key/body。异正文或另一个逻辑新动作使用新 key。复合 import 保持内容 hash、逐命令部分提交及各命令 key；相同内容再次导入仍受原 hash 身份限制，不能冒作另一个新动作。发现/resource读取不新增业务 receipt/outbox。后续 M1–M5 的缺入口仅披露归属。
 
 真实本机 conformance 使用现有安全配对、真实 API/MCP、两种 mode 与直接 E；Pi 连接本机 HTTPS 假模型，核模型实收工具、真实调用和持久 Turn/Document/工具活动。根 `pnpm test:conformance:integration` 与现有 Required `api-integration` 执行该套件；内存 conformance 独立报告。上述语义决策见 `docs/adr/0079-qualified-agent-discovery-and-recovery.md`，状态保持 Proposed，最终成果须独立审查与最新 Required CI。
+
+### MCP 既有恢复与安装交接兼容入口
+
+`ack_agent_session` 与 `heartbeat` 保留既有凭据调用路径，不先读取普通 qualified manifest；服务端仍校验准确 Session、有效 Token、live grant 和 capability。ACK 在 `acknowledged` 是 `ackReceiptReplayOnly` 条件入口，同 key/body 重放返回原回执，新 key 仍被命令拒绝。stale ACK 可恢复；stopping/terminal heartbeat 仅诊断，不恢复执行、读取权限或授权。readonly 仍拒缓存写调用；其他 binding 不使用该例外，受保护 401/403 不刷新或重发。
+
+安装交接 `inspect_pending_handoff`、`reject_handoff` 按 binding 的安装用途槽使用 null Session/Delegation/manifest 身份和安装 Bearer，不借 C/E manifest 判安装资格。准确 handoff 目标与 live 授权仍由 REST 核验，缺安装凭据明确拒绝。SDK 原 `rejectHandoff` 保留 Session 兼容分支，MCP 安装 binding 使用显式 `rejectPendingHandoff`。

@@ -132,3 +132,9 @@ Document：work_item owner精确为Session work_item；project owner为该work_i
 当前C的Document资格还可由已知Session形态早判：派生C只有team scope、无work_item/project owner，因此固定RESOURCE_SCOPE_DENIED；E在提供准确owner前为requires_target_check，提供后沿三种owner谓词判定，不整体关闭既有读取。
 
 直接E在initialize/list阶段尚无读取参数时，self_execution的准确自身id已由manifest确定，可披露自身读取；只有C target_execution无目标才是条件入口。实际调用缺必填id仍按旧schema拒绝，异id拒绝且不刷新。静态检查分别断言发现无参数允许与调用异id拒绝，不把输入必填误当所有发现都需安装bridge。
+
+## 产品成果独审后的恢复补充
+
+平台原三 High 及原候选字节引用见 `platform-recovery-review-original.md`。普通发现保持精确 Session 门禁；调用仅对既有 ACK/heartbeat 使用原准确 Token/明确刷新路径，不先读取 ordinary qualified。acknowledged 条件只允许回执重放；新 key 仍被原命令拒绝。只读写与 Human-only 早拒绝保持，不从被拒 manifest 降级普通工具。
+
+安装交接按实际安装用途槽独立投影 null 身份，调用无需 C/E manifest。MCP reject 使用显式安装方法，SDK 原 Session 分支不变。目标 handoff、live grant 和 scope 仍由 REST 校验。无安装凭据的 E cached call 拒绝。此补充不改变冻结 savedplan 或历史方案证据，也不授予新权限。

@@ -21,6 +21,18 @@ const projection = (qualification: QualifiedDiscovery, installationBridge = fals
     mode: 'read-write', coordination: true, installationBridge, transport: 'embedded' })
 
 describe('已审发现规则的已知门禁和身份投影', () => {
+  it('acknowledged 的 ACK 只广告回执重放条件，新命令须 REST 判断', () => {
+    const check = operation(deriveOperationEligibility(facts({ state: 'acknowledged' })), 'acknowledgeAgentSession').eligibility
+    expect(check).toMatchObject({ status: 'requires_target_check', pendingChecks: expect.arrayContaining(['ackReceiptReplayOnly']) })
+    expect(operation(deriveOperationEligibility(facts({ state: 'executing' })), 'acknowledgeAgentSession').eligibility.status).toBe('blocked')
+  })
+  it('安装交接投影使用独立 null 身份，不复用 C/E 状态角色', () => {
+    const qualification = deriveOperationEligibility(facts({ state: 'completed' }))
+    for (const id of ['tool:inspect_pending_handoff', 'tool:reject_handoff']) {
+      expect(projection(qualification, true).bindings.find(binding => binding.bindingId === id)).toMatchObject({ discoverable: true, identityVariant: 'installation_target', eligibility: { status: 'requires_target_check', pendingChecks: ['exact_installation_target'] } })
+      expect(projection(qualification, false).bindings.find(binding => binding.bindingId === id)).toMatchObject({ discoverable: false, deploymentSupported: false, eligibility: { status: 'blocked', reasons: ['INSTALLATION_TOKEN_REQUIRED'] } })
+    }
+  })
   it('与当前OpenAPI operation全集一致，不将计数作为验收', () => {
     const text = readFileSync(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
     const api = parse(text) as { paths: Record<string, Record<string, { operationId?: string }>> }

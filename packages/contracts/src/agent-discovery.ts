@@ -132,18 +132,25 @@ export function projectAdapterDiscovery(identity: AdapterDiscoveryIdentity, inpu
     if (!registered) return blocked('ADAPTER_NOT_IMPLEMENTED')
     if (!rule.mode.includes(inputs.mode)) return blocked('READ_ONLY')
     if (rule.coordination && !inputs.coordination) return blocked('ADAPTER_NOT_IMPLEMENTED')
+    if (rule.identityBinding === 'installation_target' && !inputs.installationBridge)
+      return { ...blocked('INSTALLATION_TOKEN_REQUIRED'), deploymentSupported: false }
     if (rule.execution === 'adapter_internal') return { ...base, discoverable: true, eligibility: eligibility('eligible') }
-    const credentialMode = identity.kind === 'exact_session' ? identity.qualification.identity.credentialMode : 'installation_target'
+    // 安装交接使用独立凭据用途槽；不能从当前 C/E 的 Session 资格推断安装权限。
+    const bindingIdentity: AdapterDiscoveryIdentity = rule.identityBinding === 'installation_target' && inputs.installationBridge
+      ? { kind: 'installation_target', session: null, delegation: null, manifest: null, qualification: null } : identity
+    const credentialMode = bindingIdentity.kind === 'exact_session' ? bindingIdentity.qualification.identity.credentialMode : 'installation_target'
     const variants = rule.identityVariants.filter(item => item.credentialMode.includes(credentialMode))
     // 可选目标的current路径与bridge分别披露；输入省略不能被首个C bridge抹掉。
     const evaluate = (variant: DiscoveryBindingRule['identityVariants'][number]): DiscoveryEligibility => {
       if (variant.installationBridgeRequired && !inputs.installationBridge) return eligibility('blocked', ['ADAPTER_NOT_IMPLEMENTED'])
-      if (identity.kind === 'installation_target') return eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], ['exact_installation_target'])
+      if (bindingIdentity.kind === 'installation_target') return inputs.installationBridge
+        ? eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], ['exact_installation_target'])
+        : eligibility('blocked', ['INSTALLATION_TOKEN_REQUIRED'])
       if (variant.variant === 'target_execution' && !inputs.targetQualification) {
-        const disabled = rule.operationIds.some(operationId => identity.qualification.operations.find(item => item.operationId === operationId && item.variant === rule.variant)?.eligibility.reasons.includes('FEATURE_DISABLED'))
+        const disabled = rule.operationIds.some(operationId => bindingIdentity.qualification.operations.find(item => item.operationId === operationId && item.variant === rule.variant)?.eligibility.reasons.includes('FEATURE_DISABLED'))
         return disabled ? eligibility('blocked', ['FEATURE_DISABLED']) : eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], ['targetSessionId', 'targetQualification'])
       }
-      const qualification = variant.variant === 'target_execution' ? inputs.targetQualification! : identity.qualification
+      const qualification = variant.variant === 'target_execution' ? inputs.targetQualification! : bindingIdentity.qualification
       const checks = rule.operationIds.map(operationId => qualification.operations.find(item => item.operationId === operationId && item.variant === rule.variant)?.eligibility
         ?? eligibility('blocked', ['ADAPTER_NOT_IMPLEMENTED']))
       const reasons = checks.filter(check => check.status === 'blocked').flatMap(check => check.reasons)

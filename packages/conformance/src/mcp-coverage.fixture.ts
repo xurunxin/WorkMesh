@@ -8,11 +8,13 @@ import { promisify } from 'node:util'
 import type { Server } from 'node:http'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
 import { WorkMeshClient } from '@workmesh/agent-sdk'
 import { applyMigrations, createDb } from '@workmesh/db'
 import { loadFeatureConfig } from '@workmesh/config'
 import { buildApp } from '../../../apps/api/src/server.js'
 import { createWorkMeshMcpHttpServer } from '../../../apps/mcp/src/http.js'
+import { createWorkMeshMcpServer } from '../../../apps/mcp/src/index.js'
 
 const execFileAsync = promisify(execFile)
 export const evidenceRoot = resolve(import.meta.dirname, '../../../ci-logs/mcp-coverage')
@@ -35,6 +37,7 @@ export async function createMcpCoverageFixture() {
   let app = buildApp({ features, logger: { level: 'silent' } })
   const servers: Server[] = []
   const clients: Client[] = []
+  const embedded: Array<ReturnType<typeof createWorkMeshMcpServer>> = []
   const events: Array<Record<string, unknown>> = []
   let baseUrl = '', cookie = '', csrf = '', teamId = '', humanActorId = '', readyId = '', connectionToken = '', connectionId = ''
   let closed = false
@@ -46,6 +49,7 @@ export async function createMcpCoverageFixture() {
       server.closeAllConnections()
       if (server.listening) await new Promise<void>((done, reject) => server.close(error => error ? reject(error) : done()))
     }
+    for (const server of embedded) await server.close()
     await app.close()
     await db.end()
     saveEvidence('resources.json', { events, cleanup: results.map(result => result.status), ownedListenersClosed: servers.every(server => !server.listening), database: new URL(databaseUrl).pathname, databasePreserved: true })
@@ -58,7 +62,7 @@ export async function createMcpCoverageFixture() {
     if (!response.ok) throw new Error(`Human fixture ${method} ${path}: ${response.status} ${safeBody(text)}`)
     return (text ? JSON.parse(text) : undefined) as T
   }
-  const connect = async (mode: 'read-only' | 'read-write', execution?: Execution): Promise<Client> => {
+  const connect = async (mode: 'read-only' | 'read-write', execution?: Execution, installationToken = connectionToken): Promise<Client> => {
     const accessToken = randomUUID()
     const server = await createWorkMeshMcpHttpServer({ baseUrl, mode,
       ...(execution ? { sessionToken: execution.token, accessToken } : { coordination: true }) })
@@ -73,17 +77,18 @@ export async function createMcpCoverageFixture() {
     const client = new Client({ name: 'workmesh-m0-real-client', version: '1.0.0' })
     clients.push(client)
     await client.connect(new StreamableHTTPClientTransport(new URL(url + '/mcp'), {
-      requestInit: { headers: execution ? { authorization: `Bearer ${accessToken}` } : { 'x-workmesh-installation-token': connectionToken } },
+      requestInit: { headers: execution ? { authorization: `Bearer ${accessToken}` } : { 'x-workmesh-installation-token': installationToken } },
     }))
     return client
   }
-  const createExecution = async (title = 'M0 execution'): Promise<Execution> => {
+  const createExecution = async (title = 'M0 execution', queued = false): Promise<Execution> => {
     const work = await human<{ id: string; revision: number }>('POST', '/api/v1/work-items', {
       teamId, title, statusId: readyId, responsibleHumanActorId: humanActorId,
     })
     const coordination = new WorkMeshClient({ baseUrl, coordinationToken: connectionToken, installationToken: connectionToken })
     const claim = await coordination.claimWorkItem(work.id, {}, { ifMatch: work.revision, idempotencyKey: randomUUID() })
-    await coordination.exchangeClaimedSessionToken(claim.session.id, claim.exchangeToken, { idempotencyKey: randomUUID() })
+    const exchanged = await coordination.exchangeClaimedSessionToken(claim.session.id, claim.exchangeToken, { idempotencyKey: randomUUID() })
+    if (queued) return { sessionId: claim.session.id, workItemId: work.id, token: exchanged.sessionToken, client: new WorkMeshClient({ baseUrl, sessionToken: exchanged.sessionToken }) }
     await coordination.acknowledge(claim.session.id, { summary: 'M0 fixture ready', externalUrls: [] }, { idempotencyKey: randomUUID() })
     const refreshed = await fetch(`${baseUrl}/api/v1/agent-sessions/${claim.session.id}/token/refresh`, {
       method: 'POST', headers: { authorization: `Bearer ${connectionToken}`, 'idempotency-key': randomUUID(), 'content-type': 'application/json' }, body: '{}',
@@ -95,12 +100,38 @@ export async function createMcpCoverageFixture() {
     await client.transitionState(claim.session.id, 'executing', 'M0 conformance', { ifMatch: session.revision, idempotencyKey: randomUUID() })
     return { sessionId: claim.session.id, workItemId: work.id, token, client }
   }
+  const connectSdk = async (sdk: WorkMeshClient) => {
+    const server = createWorkMeshMcpServer({ client: sdk, mode: 'read-write' })
+    embedded.push(server)
+    const [a, b] = InMemoryTransport.createLinkedPair()
+    await server.connect(a)
+    const client = new Client({ name: 'm0-loss-client', version: '1.0.0' })
+    clients.push(client)
+    await client.connect(b)
+    events.push({ kind: 'mcp', mode: 'read-write', transport: 'in-memory SDK transport to real HTTP API' })
+    return client
+  }
   const restart = async () => {
     const port = Number(new URL(baseUrl).port)
     await app.close()
     app = buildApp({ features, logger: { level: 'silent' } })
     await app.listen({ port, host: '127.0.0.1' })
     events.push({ kind: 'api-restart', port })
+  }
+  const pairTarget = async () => {
+    const agentSlug = `m0-target-${randomUUID().slice(0, 8)}`
+    const paired = await human<{ connection: { id: string }; connect_url: string }>('POST', '/api/v1/agent-connections', {
+      name: 'M0 exact handoff target', agentSlug, clientType: 'codex', teamId, principalHumanActorId: humanActorId,
+      requestedCapabilities: ['work:read', 'work:write'], grantAgentDelegate: false,
+    })
+    const redeemed = await fetch(baseUrl + '/api/v1/agent-connections/redeem', {
+      method: 'POST', headers: { 'idempotency-key': randomUUID(), 'content-type': 'application/json' },
+      body: JSON.stringify({ pairingCode: new URL(paired.connect_url).hash.slice(1), agentSlug, client: { type: 'codex', version: '1.0.0' } }),
+    })
+    if (!redeemed.ok) throw new Error(`Target pairing fixture failed: ${redeemed.status}`)
+    const token = (await redeemed.json() as { installation_token: string }).installation_token
+    const agentId = (await db.query<{ agent_id: string }>('SELECT agent_id FROM agent_connections WHERE id=$1', [paired.connection.id])).rows[0]!.agent_id
+    return { agentId, token }
   }
   try {
     await applyMigrations(db)
@@ -133,7 +164,7 @@ export async function createMcpCoverageFixture() {
     // 仅提高管理员已预授权测试Agent的并发夹具容量，不更改任何角色/能力。
     await human('PATCH', `/api/v1/agents/${definition.agent_id}`, { maxConcurrency: 16 }, definition.revision)
     const coordination = new WorkMeshClient({ baseUrl, coordinationToken: connectionToken, installationToken: connectionToken })
-    return { db, human, connect, close, restart, createExecution, coordination,
+    return { db, human, connect, connectSdk, close, restart, createExecution, coordination, pairTarget, agentId: definition.agent_id,
       get baseUrl() { return baseUrl }, get connectionToken() { return connectionToken }, teamId, humanActorId, connectionId,
       runPi: async (execution: Execution) => {
         const captures: Array<{ tools: string[]; returnedToolCalls: string[]; receivedToolResults: number; toolResults: string[] }> = []

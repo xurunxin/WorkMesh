@@ -81724,7 +81724,8 @@
             "fact": "state",
             "allowed": [
               "queued",
-              "stale"
+              "stale",
+              "acknowledged"
             ],
             "reason": "SESSION_STATE_DENIED",
             "description": "route与domain实际状态交集"
@@ -81768,6 +81769,17 @@
             ],
             "reason": "TARGET_PREREQUISITE_DENIED",
             "description": "目标live范围与存在性，跨Team NOT_FOUND"
+          },
+          {
+            "fact": "ackReceiptReplayOnly",
+            "allowed": [
+              true
+            ],
+            "reason": "SESSION_STATE_DENIED",
+            "when": {
+              "state": "acknowledged"
+            },
+          "description": "acknowledged 仅同 key/body 回执重放；新 ACK 仍由原命令拒绝"
           }
         ]
       },
@@ -82121,6 +82133,31 @@
           "predicate": "目标live范围与存在性，跨Team NOT_FOUND",
           "file": "packages/conformance/src/mcp-coverage.conformance.test.ts",
           "executionStatus": "待产品测试；当前只求值文档谓词，reason是发现原因，不冒API运行错误"
+        },
+        {
+          "id": "M0-DENY-acknowledgeAgentSession-new-ack-in-acknowledged",
+          "facts": {
+            "credentialMode": "agent_session",
+            "sessionKind": "execution",
+            "role": "executor",
+            "state": "acknowledged",
+            "liveAuthority": true,
+            "capabilitiesAllPresent": true,
+            "routeResolvedScope": true,
+            "idempotencyValid": true,
+            "domainTargetFactsMatch": true,
+            "deliveryVariant": "repository",
+            "pullRequestProvided": true,
+            "ackReceiptReplayOnly": false
+          },
+          "expect": {
+            "status": "blocked",
+            "reason": "SESSION_STATE_DENIED",
+            "failedFact": "ackReceiptReplayOnly"
+          },
+          "predicate": "acknowledged 仅同 key/body 回执重放；新 ACK 仍由原命令拒绝",
+          "file": "packages/conformance/src/mcp-coverage.conformance.test.ts",
+          "executionStatus": "待产品测试；当前只求值文档谓词，reason是发现原因，不冒API运行错误"
         }
       ],
       "positiveTests": [
@@ -82138,6 +82175,29 @@
             "domainTargetFactsMatch": true,
             "deliveryVariant": "repository",
             "pullRequestProvided": true
+          },
+          "actor": "E",
+          "expect": {
+            "status": "eligible",
+            "reason": null
+          },
+          "executionStatus": "待产品测试；当前只求值文档谓词"
+        },
+        {
+          "id": "M0-ALLOW-acknowledgeAgentSession-receipt-replay",
+          "facts": {
+            "credentialMode": "agent_session",
+            "sessionKind": "execution",
+            "role": "executor",
+            "state": "acknowledged",
+            "liveAuthority": true,
+            "capabilitiesAllPresent": true,
+            "routeResolvedScope": true,
+            "idempotencyValid": true,
+            "domainTargetFactsMatch": true,
+            "deliveryVariant": "repository",
+            "pullRequestProvided": true,
+            "ackReceiptReplayOnly": true
           },
           "actor": "E",
           "expect": {

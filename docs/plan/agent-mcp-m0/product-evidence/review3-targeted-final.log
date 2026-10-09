@@ -1,0 +1,68 @@
+Scope: 3 of 19 workspace projects
+packages/contracts test$ vitest run
+packages/contracts test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/contracts
+packages/contracts test:  ✓ src/release-contract.test.ts (1 test) 18ms
+packages/contracts test:  ✓ src/agent-response-contract.test.ts (1 test) 20ms
+packages/contracts test:  ✓ src/pi-workbench-contracts.test.ts (27 tests) 22ms
+packages/contracts test:  ✓ src/control-plane-contracts.test.ts (5 tests) 26ms
+packages/contracts test:  ✓ src/stage3-contracts.test.ts (8 tests) 35ms
+packages/contracts test:  ✓ src/stage4-contracts.test.ts (8 tests) 38ms
+packages/contracts test:  ✓ src/stage1-contracts.test.ts (10 tests) 45ms
+packages/contracts test:  ✓ src/stage2-contracts.test.ts (4 tests) 15ms
+packages/contracts test:  ✓ src/client-profile-contract.test.ts (3 tests) 37ms
+packages/contracts test:  ✓ src/release-manifest.test.ts (2 tests) 125ms
+packages/contracts test:  ✓ src/pagination-contract.test.ts (2 tests) 925ms
+packages/contracts test:    ✓ pagination OpenAPI contract > declares the common cursor and limit on every paged collection  490ms
+packages/contracts test:    ✓ pagination OpenAPI contract > keeps durable event cursors separate and documents generic cursor failures  433ms
+packages/contracts test:  ✓ src/configuration-readiness-contracts.test.ts (4 tests) 549ms
+packages/contracts test:    ✓ 配置就绪契约 > OpenAPI、清单与 Human-only 只读策略一致，拒绝审计保留  539ms
+packages/contracts test:  ✓ src/planning-domain-parity-contract.test.ts (5 tests) 613ms
+packages/contracts test:    ✓ planning domain parity public contract > keeps the OpenAPI schemas and complete REST surface aligned with Zod  603ms
+packages/contracts test:  ✓ src/runtime-reliability-openapi.test.ts (2 tests) 1090ms
+packages/contracts test:    ✓ runtime reliability OpenAPI contract > keeps the new response models in schemas and every local reference resolvable  596ms
+packages/contracts test:    ✓ runtime reliability OpenAPI contract > documents the dedicated identity credential and every execution-capacity conflict  492ms
+packages/contracts test:  ✓ src/recovery-contract.test.ts (2 tests) 536ms
+packages/contracts test:    ✓ Recovery Center public contract > publishes list/detail operations and resolvable Recovery schemas  530ms
+packages/contracts test:  ✓ src/stage5-contracts.test.ts (66 tests) 1002ms
+packages/contracts test:    ✓ Stage 5 (v1.1) Agent Connection & Coordination MCP contracts > keeps the subset-block generator in sync with the canonical capability list  619ms
+packages/contracts test:  ✓ src/agent-discovery.test.ts (16 tests) 1089ms
+packages/contracts test:    ✓ 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收  622ms
+packages/contracts test:  ✓ src/stage0-route-manifest.test.ts (6 tests) 1355ms
+packages/contracts test:    ✓ Stage 0 transport contract manifest > keeps parsed OpenAPI cursor boundaries in parity with runtime  632ms
+packages/contracts test:    ✓ Stage 0 transport contract manifest > documents and validates the backward-compatible Run Explanation keyset cursor  677ms
+packages/contracts test:  ✓ src/repository-configuration-contracts.test.ts (1 test) 6ms
+packages/contracts test:  ✓ src/guidance-contract.test.ts (2 tests) 8ms
+packages/contracts test:  ✓ src/active-executor-contract.test.ts (2 tests) 9ms
+packages/contracts test:  ✓ src/autonomous-control-contracts.test.ts (3 tests) 8ms
+packages/contracts test:  ✓ src/auth-idempotency.test.ts (2 tests) 7ms
+packages/contracts test:  ✓ src/human-attention-contract.test.ts (3 tests) 12ms
+packages/contracts test:  ✓ src/approval-contract.test.ts (4 tests) 10ms
+packages/contracts test:  ✓ src/route-policy.test.ts (14 tests) 2620ms
+packages/contracts test:    ✓ routePolicyManifest > parses OPENAPI.yaml as valid YAML before checking generated extensions  773ms
+packages/contracts test:    ✓ routePolicyManifest > matches OpenAPI operation IDs and feature tiers  806ms
+packages/contracts test:    ✓ routePolicyManifest > documents bootstrap authentication failures as a structured 401 response  518ms
+packages/contracts test:    ✓ routePolicyManifest > keeps deployment feature discovery authenticated for humans and agents  478ms
+packages/contracts test:  Test Files  26 passed (26)
+packages/contracts test:       Tests  203 passed (203)
+packages/contracts test:    Start at  16:54:19
+packages/contracts test:    Duration  5.48s (transform 2.16s, setup 0ms, collect 17.66s, tests 10.22s, environment 5ms, prepare 20.78s)
+packages/contracts test: Done
+packages/agent-sdk test$ vitest run
+packages/agent-sdk test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/packages/agent-sdk
+packages/agent-sdk test:  ✓ src/discovery.test.ts (8 tests) 195ms
+packages/agent-sdk test:  ✓ src/index.test.ts (34 tests) 237ms
+packages/agent-sdk test:  Test Files  2 passed (2)
+packages/agent-sdk test:       Tests  42 passed (42)
+packages/agent-sdk test:    Start at  16:54:26
+packages/agent-sdk test:    Duration  1.94s (transform 361ms, setup 0ms, collect 849ms, tests 432ms, environment 0ms, prepare 653ms)
+packages/agent-sdk test: Done
+apps/mcp test$ vitest run
+apps/mcp test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/apps/mcp
+apps/mcp test:  ✓ src/recovery.test.ts (6 tests) 60ms
+apps/mcp test:  ✓ src/http.test.ts (9 tests) 73ms
+apps/mcp test:  ✓ src/index.test.ts (29 tests) 589ms
+apps/mcp test:  Test Files  3 passed (3)
+apps/mcp test:       Tests  44 passed (44)
+apps/mcp test:    Start at  16:54:29
+apps/mcp test:    Duration  2.47s (transform 464ms, setup 0ms, collect 2.13s, tests 723ms, environment 0ms, prepare 1.04s)
+apps/mcp test: Done

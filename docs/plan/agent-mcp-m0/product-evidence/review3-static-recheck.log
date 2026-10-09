@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\docs\plan\agent-mcp-m0\archive-check.py", line 4, in <module>
+    runpy.run_path(str(Path(__file__).with_name("audit-check.py")),run_name="__main__")
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 294, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\docs\plan\agent-mcp-m0\audit-check.py", line 177, in <module>
+    w=wpath.read_bytes();assert (len(w),digest(w))==(f["worktree"]["bytes"],f["worktree"]["sha256"])
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

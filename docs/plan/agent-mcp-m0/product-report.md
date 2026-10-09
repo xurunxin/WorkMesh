@@ -1,5 +1,7 @@
 # M0产品候选与实际验收证据
 
+平台成果独审后的三项恢复/交接修正及本轮候选证据见 [product-recovery-report.md](product-recovery-report.md)。下文的旧检查、原首败、源码快照和交付观察保留此前时序，不倒写为本轮结果。
+
 ## 实现范围
 
 复用已审冻结规则实现277个现有operation、97个现有binding与10个等价只读tool的资格和发现投影，数量仅为静态全集核验。API通过qualified参数协商精确Session资格；旧响应、旧tool/input schema和resource URI保留。API不猜MCP运行配置。adapter按实际注册、readonly/coordination/bridge部署配置独立投影，Context.allowedOperations来自同一次投影。Human-only兼容调用提前拒绝，领域授权未放宽。

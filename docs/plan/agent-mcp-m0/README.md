@@ -3,6 +3,7 @@
 本目录属于原todo [#54](todo:pMO6s_SmEL_d81kjKm6S1)。已审方案 `ebde705a2e87f831f6546cbbc94590a07f564bcf` 及平台 doc:Qd1Ks9EH9uEvl1JW3O68D 保持原文；当前沿授权实现产品，不新建计划。下面原规划交付说明作为历史记录保留，其“仅文档”“未运行”仅说明当时状态。
 
 - [产品报告](product-report.md)：实际实现、适用检查、九类DoD、剩余门禁和演示步骤。
+- [成果独审后修正报告](product-recovery-report.md)、[平台三High原审查](platform-recovery-review-original.md)：ACK回执、stale/终态诊断及安装用途修正，本轮实际检查和字节归属；不以旧文档checker代产品验证。
 - [实施问题与修正](implementation-findings.md)、[原合同审查全文](implementation-contract-review-original.md)：四项High及两项问题、实际首败和修正，内部合同检查不代平台成果独审。
 - [产品证据目录](product-evidence/)：真实命令、退出/runtime、受测源码ZIP、客户端工具名单与Pi调用/Turn事实、资源准备与归属收尾。
 - [现行协议决策](../../adr/0079-qualified-agent-discovery-and-recovery.md)：仍为Proposed，不扩权限。

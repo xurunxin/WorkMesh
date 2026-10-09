@@ -129,3 +129,9 @@ Human-only 旧工具保持名称与输入 schema，发现时隐藏，缓存调�
 调用前持久化显式 Idempotency-Key；丢响应、重连和传输重试保持同 key/body。异正文或另一个逻辑新动作使用新 key。复合 import 保持内容 hash、逐命令部分提交及各命令 key；相同内容再次导入仍受原 hash 身份限制，不能冒作另一个新动作。发现/resource读取不新增业务 receipt/outbox。后续 M1–M5 的缺入口仅披露归属。
 
 真实本机 conformance 使用现有安全配对、真实 API/MCP、两种 mode 与直接 E；Pi 连接本机 HTTPS 假模型，核模型实收工具、真实调用和持久 Turn/Document/工具活动。根 `pnpm test:conformance:integration` 与现有 Required `api-integration` 执行该套件；内存 conformance 独立报告。上述语义决策见 `docs/adr/0079-qualified-agent-discovery-and-recovery.md`，状态保持 Proposed，最终成果须独立审查与最新 Required CI。
+
+### 恢复调用与安装凭据用途
+
+旧 MCP `ack_agent_session`、`heartbeat` 调用不先要求普通 qualified manifest。直接 E 凭有效自身 Token 到 REST；stale ACK 可恢复，acknowledged 同 key/body 可重放回执，新 key ACK 拒绝。stopping/terminal 心跳只诊断，不恢复普通写权限或 manifest 读取。其他工具没有此例外，readonly 缓存写调用仍拒绝，受保护 401/403 不换身份重试。
+
+`inspect_pending_handoff`、`reject_handoff` 按独立 null 安装身份披露条件入口，调用明确使用安装 Bearer；准确 handoffId 的归属与 live 授权由 REST 检查。SDK `rejectPendingHandoff` 专用于该安装用途，原 `rejectHandoff` 的 Session 兼容行为保留；仅 Session Token 的 E 没有安装工具资格。

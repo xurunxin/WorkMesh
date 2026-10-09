@@ -26,7 +26,11 @@ verify 无参数且使用当前 C；claim 的返回 Session ID 不是输入。�
 
 ## Consequences
 
-每次发现重新读取 live 身份；发现后撤权仍由 API 拒绝。MCP 两种 mode 只影响名单，不改变领域授权。新增资格读取增加一次往返；错误原样终止，不以旧资格降级。
+每次普通发现重新读取 live 身份；发现后撤权仍由 API 拒绝。MCP 两种 mode 只影响名单，不改变领域授权。新增资格读取增加一次往返；错误原样终止，不以旧资格降级。
+
+既有 `ack_agent_session` 和 `heartbeat` 调用不先读取普通 qualified manifest：直接 E 使用仍有效的自身 Token，C 保留 SDK 既有明确安装刷新路径，REST 重新校验准确 Session、live grant 和 capability。`acknowledged` 仅披露 `ackReceiptReplayOnly` 条件，原同 key/body 回执可返回，新 key 仍被 ACK 命令拒绝。stale ACK、stopping/terminal 诊断心跳不会恢复普通执行或终态读取权限；只读部署仍拒绝缓存写调用。其他 binding 不使用此例外。
+
+`inspect_pending_handoff`、`reject_handoff` 的名单和调用按实际安装用途槽投影 null 安装身份，不用 C/E Session 角色、状态或 manifest 判安装资格。准确 handoff 目标和授权仍在 REST 检查，不计为当前 Session 的 eligible operation。MCP `reject_handoff` 用 SDK `rejectPendingHandoff` 明确选安装 Bearer；SDK 原 `rejectHandoff` 的 Session 兼容分支保持。没有安装凭据的 E 旧调用明确拒绝，不静默换身份。
 
 ## Migration
 

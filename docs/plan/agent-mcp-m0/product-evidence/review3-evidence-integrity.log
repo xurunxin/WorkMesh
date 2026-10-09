@@ -1,0 +1,7 @@
+{"rawOutputs": 103, "archivesVerified": true}
+{"rawOutputs": 103, "archivesVerified": true}
+Traceback (most recent call last):
+  File "C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\scripts\m0-verify-output-evidence.py", line 17, in <module>
+    assert rows[:len(original)] == original, '旧索引原件承诺不得倒写'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 旧索引原件承诺不得倒写
