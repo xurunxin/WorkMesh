@@ -104,7 +104,11 @@ describe('stage 1 worker durability', () => {
   afterEach(restoreSessionSubjectConstraint)
   afterAll(async () => { await db.end() })
 
-  it.each(['native','connection'] as const)('continues one persisted %s input wait across duplicate workers and preserves pause, revoke and source identity', async sourceKind => {
+  it.each([
+    { sourceKind: 'native', closure: null }, { sourceKind: 'connection', closure: null },
+    { sourceKind: 'native', closure: 'stop' }, { sourceKind: 'connection', closure: 'stop' },
+    { sourceKind: 'native', closure: 'revoke' }, { sourceKind: 'connection', closure: 'revoke' },
+  ] as const)('reconciles $sourceKind waits with $closure priority without duplicate execution', async ({ sourceKind, closure }) => {
     const previousWaitsEnabled = process.env.WORKMESH_EXECUTION_WAITS_ENABLED
     process.env.WORKMESH_EXECUTION_WAITS_ENABLED = 'true'
     try {
@@ -166,6 +170,32 @@ describe('stage 1 worker durability', () => {
     await db.query(`INSERT INTO workbench_messages(workspace_id,conversation_id,sequence,role,author_actor_id,content_markdown)
       VALUES($1,$2,2,'user',$3,'The exact input.')`, [data.workspaceId, conversation, data.humanActorId])
     await db.query('UPDATE workbench_conversations SET next_message_sequence=3 WHERE id=$1', [conversation])
+    if (closure) {
+      if (closure === 'stop') await db.query("UPDATE agent_sessions SET state='stopping' WHERE id=$1", [sessionId])
+      else await db.query("UPDATE delegations SET status='revoked',revoked_at=now(),revoked_by_actor_id=$2 WHERE id=$1",
+        [data.delegationId, data.humanActorId])
+      const restarted = createSessionLifecycleWorker({ db, workerId: 'wait-close-restart' })
+      expect(await Promise.all([first.reconcileWorkbenchWaits(), restarted.reconcileWorkbenchWaits()])).toEqual([0, 0])
+      expect((await db.query<{ status: string; terminal_reason: string; continuation_turn_id: string | null }>(
+        'SELECT status,terminal_reason,continuation_turn_id FROM workbench_execution_waits WHERE id=$1', [wait])).rows[0])
+        .toEqual({ status: 'canceled', terminal_reason: closure === 'stop' ? 'session_closed' : 'authority_revoked', continuation_turn_id: null })
+      const before = (await db.query<{ turns: number; attempts: number; events: number; outbox: number }>(
+        `SELECT (SELECT count(*)::int FROM workbench_turns WHERE conversation_id=$1) AS turns,
+          (SELECT count(*)::int FROM workbench_runner_attempts WHERE agent_session_id=$2) AS attempts,
+          (SELECT count(*)::int FROM domain_events WHERE workspace_id=$3) AS events,
+          (SELECT count(*)::int FROM outbox_events outbox JOIN domain_events event ON event.id=outbox.domain_event_id
+            WHERE event.workspace_id=$3) AS outbox`, [conversation, sessionId, data.workspaceId])).rows[0]!
+      expect(before.turns).toBe(1); expect(before.attempts).toBe(1)
+      expect(await restarted.reconcileWorkbenchWaits()).toBe(0)
+      expect((await db.query<{ turns: number; attempts: number; events: number; outbox: number }>(
+        `SELECT (SELECT count(*)::int FROM workbench_turns WHERE conversation_id=$1) AS turns,
+          (SELECT count(*)::int FROM workbench_runner_attempts WHERE agent_session_id=$2) AS attempts,
+          (SELECT count(*)::int FROM domain_events WHERE workspace_id=$3) AS events,
+          (SELECT count(*)::int FROM outbox_events outbox JOIN domain_events event ON event.id=outbox.domain_event_id
+            WHERE event.workspace_id=$3) AS outbox`, [conversation, sessionId, data.workspaceId])).rows[0])
+        .toEqual(before)
+      return
+    }
     await db.query("UPDATE agent_sessions SET state='paused' WHERE id=$1", [sessionId])
     expect(await first.reconcileWorkbenchWaits()).toBe(0)
     expect((await db.query('SELECT id FROM workbench_turns WHERE conversation_id=$1', [conversation])).rowCount).toBe(1)

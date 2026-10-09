@@ -154,4 +154,29 @@ describe('exact execution confirmation', () => {
     expect(restored.statusCode).toBe(200)
     expect(restored.json()).toEqual(reads[0]!.json())
   })
+
+  it('clears retained provenance when a rolling old producer reoccupies an expired key, while ordinary response updates keep proof', async () => {
+    const execution = await start(), key = randomUUID()
+    await db.query(`UPDATE agent_session_tokens SET installation_token_id=(SELECT id FROM agent_installation_tokens WHERE token_hash=$2)
+      WHERE token_hash=$1`, [tokenHash(execution.token), tokenHash(installation)])
+    expect((await agent(execution.token, 'POST', `/api/v1/agent-sessions/${execution.sessionId}/complete`, completion, execution.revision, key)).statusCode).toBe(200)
+    const path = confirmation(execution.sessionId, key)
+    expect((await agent(installation, 'GET', path)).statusCode).toBe(200)
+    await db.query('UPDATE api_idempotency_keys SET response_body=response_body WHERE idempotency_key=$1', [key])
+    expect((await agent(installation, 'GET', path)).statusCode).toBe(200)
+    // This is the old producer's reservation shape: it knows no new source columns.
+    await db.query(`UPDATE api_idempotency_keys SET created_at=now()-interval '2 days',
+      replay_expires_at=now()-interval '1 day',conflict_expires_at=now()-interval '1 hour'
+      WHERE idempotency_key=$1`, [key])
+    await db.query(`UPDATE api_idempotency_keys SET operation='POST /legacy/new-action',request_hash='new-logical-request',
+      created_at=now(),replay_expires_at=now()+interval '1 day',conflict_expires_at=now()+interval '30 days',
+      response_status=NULL,response_body=NULL WHERE idempotency_key=$1`, [key])
+    expect((await db.query(`SELECT execution_source_kind,execution_session_id,execution_session_token_id,
+      execution_installation_token_id,execution_connection_id FROM api_idempotency_keys WHERE idempotency_key=$1`, [key])).rows[0])
+      .toEqual({ execution_source_kind: null, execution_session_id: null, execution_session_token_id: null,
+        execution_installation_token_id: null, execution_connection_id: null })
+    const baseline = await fingerprint()
+    expect((await agent(installation, 'GET', path)).statusCode).toBe(404)
+    expect(await fingerprint()).toEqual(baseline)
+  })
 })

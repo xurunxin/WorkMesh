@@ -53,20 +53,37 @@ with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as saved:
                          newlineMapping='identity' if blob == data else 'distinct bytes; both preserved'))
     saved.writestr('inputs.json', json.dumps(rows, ensure_ascii=False, indent=2))
 start = time.monotonic()
-result = subprocess.run(command, cwd=root, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+running = dict(command=command, startedAt=started, head=head, status='running', exitCode=None,
+               inputArchive=archive.name, recorderPid=os.getpid(),
+               inputArchiveSha256=hashlib.sha256(archive.read_bytes()).hexdigest())
+(evidence / f'{name}.json').write_text(json.dumps(running, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+process = subprocess.Popen(command, cwd=root, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+running['processId'] = process.pid
+(evidence / f'{name}.json').write_text(json.dumps(running, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+# Stream each redacted line to disk before the tool can be interrupted. Missing
+# final receipt remains an interrupted run, never an inferred successful exit.
+with (evidence / f'{name}.log').open('wb') as output_file:
+    assert process.stdout is not None
+    for line in iter(process.stdout.readline, b''):
+        for key, value in env.items():
+            if len(value) >= 24 and any(word in key.upper() for word in ('TOKEN', 'SECRET', 'PASSWORD', 'MASTER_KEY', 'DATABASE_URL')):
+                line = line.replace(value.encode(), b'[REDACTED]')
+        output_file.write(line)
+        output_file.flush()
+process.wait()
 post = {row['path']: hashlib.sha256((root / row['path']).read_bytes()).hexdigest() for row in rows if (root / row['path']).is_file()}
-output = result.stdout
+output = (evidence / f'{name}.log').read_bytes()
 # 输出与命令不能携带配置秘密；测试输出意外泄露时只保存脱敏副本。
 for key, value in env.items():
     if len(value) >= 24 and any(word in key.upper() for word in ('TOKEN', 'SECRET', 'PASSWORD', 'MASTER_KEY')):
         output = output.replace(value.encode(), b'[REDACTED]')
 (evidence / f'{name}.log').write_bytes(output)
 receipt = dict(command=command, startedAt=started, head=head, runtimeSeconds=time.monotonic() - start,
-               exitCode=result.returncode, postFingerprints=post, inputArchive=archive.name,
+               exitCode=process.returncode, status='finished', processId=process.pid, postFingerprints=post, inputArchive=archive.name,
                inputArchiveSha256=hashlib.sha256(archive.read_bytes()).hexdigest(),
                node=subprocess.check_output([str(runtime / 'node.exe'), '-p', 'JSON.stringify({version:process.version,execPath:process.execPath})']).decode().strip(),
                redaction='team secret environment values replaced when present; no environment dump')
 (evidence / f'{name}.json').write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
 sys.stdout.buffer.write(output[-12000:])
 print(json.dumps({key:value for key,value in receipt.items() if key!='postFingerprints'}, ensure_ascii=False))
-raise SystemExit(result.returncode)
+raise SystemExit(process.returncode)

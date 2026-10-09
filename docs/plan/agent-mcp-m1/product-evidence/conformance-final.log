@@ -1,0 +1,24 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_approval 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"fc5ec531-53e8-47f1-a089-4ecdf1e48567","conversationId":"98b1685f-7483-452e-a326-c187d677dee8","attemptNo":1,"sessionId":"4ecf6e94-2d4b-454f-98f8-b5c131961cde","correlationId":"76e0af5a-0227-467f-a20b-a0897182c5e8","status":"settled","outcome":"settled","queueWaitMs":2890,"dispatchLagMs":2831,"runDurationMs":432,"totalDurationMs":3322,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_approval 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"2567e7cf-1677-45a4-9fe4-93edd4193e8c","conversationId":"98b1685f-7483-452e-a326-c187d677dee8","attemptNo":1,"sessionId":"4ecf6e94-2d4b-454f-98f8-b5c131961cde","correlationId":"bf9f8739-72f3-45c2-b1a4-426c96a6d82b","status":"settled","outcome":"settled","queueWaitMs":2689,"dispatchLagMs":2602,"runDurationMs":452,"totalDurationMs":3141,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_input 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"533a099e-3d45-4d4a-9dc4-729122cad10b","conversationId":"9c07984b-6271-4cdf-8fc4-34943acf0d69","attemptNo":1,"sessionId":"92765db0-f0a9-4d37-997d-a36c31d4b297","correlationId":"f64ce453-afed-474d-8b5b-7027cc6c075e","status":"settled","outcome":"settled","queueWaitMs":2565,"dispatchLagMs":2498,"runDurationMs":379,"totalDurationMs":2944,"totalTokens":null,"errorCode":null}
+

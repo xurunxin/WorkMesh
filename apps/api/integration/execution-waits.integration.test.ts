@@ -176,6 +176,16 @@ describe('persisted execution wait and Worker continuation', () => {
       .toEqual({ status: 'canceled', terminal_reason: action === 'stop' ? 'session_closed' : 'authority_revoked' })
     expect((await db.query<{ continuation_turn_id: string | null }>('SELECT continuation_turn_id FROM workbench_execution_waits WHERE agent_session_id=$1', [f.sessionId])).rows[0]!.continuation_turn_id).toBeNull()
     expect((await db.query('SELECT id FROM workbench_runner_attempts WHERE agent_session_id=$1', [f.sessionId])).rowCount).toBe(1)
+    expect((await db.query('SELECT id FROM workbench_turns WHERE conversation_id=$1', [f.conversationId])).rowCount).toBe(1)
+    expect(await worker().reconcileWorkbenchWaits()).toBe(0)
+    const publicTurns = await human('GET', `/api/v1/workbench/conversations/${f.conversationId}/turns`)
+    expect(publicTurns.statusCode, publicTurns.body).toBe(200)
+    expect(publicTurns.json<{ items: { id: string; status: string }[] }>().items)
+      .toEqual([expect.objectContaining({ id: f.turnId, status: 'settled' })])
+    const publicMessages = await human('GET', `/api/v1/workbench/conversations/${f.conversationId}/messages`)
+    expect(publicMessages.statusCode, publicMessages.body).toBe(200)
+    expect(publicMessages.json<{ items: { role: string; content_markdown: string }[] }>().items.filter(item => item.role === 'assistant'))
+      .toEqual([expect.objectContaining({ content_markdown: 'Waiting for input.' })])
   }, 120_000)
 
   it('rejects another Session prompt, then accepts only the exact target prompt', async () => {
@@ -301,10 +311,11 @@ describe('persisted execution wait and Worker continuation', () => {
       constraint: 'workbench_execution_waits_workspace_id_source_turn_id_key' })
     await expect(clone({ ...canceled, source_turn_id: other.turnId })).rejects.toMatchObject({ code: '23505',
       constraint: 'workbench_execution_waits_workspace_id_source_attempt_id_key' })
-    // The rows deliberately use different source facts to isolate the pending-Session constraint.
-    await db.query("UPDATE workbench_execution_waits SET status='canceled',resolved_at=now(),terminal_reason='DDL probe' WHERE id=$1", [otherWaitId])
-    await expect(clone({ source_turn_id: other.turnId, source_attempt_id: other.attemptId })).rejects.toMatchObject({ code: '23505',
+    // Use source facts with no wait so the earlier source UNIQUE constraints cannot mask this index.
+    const unusedSource = await sessionFixture()
+    await expect(clone({ source_turn_id: unusedSource.turnId, source_attempt_id: unusedSource.attemptId })).rejects.toMatchObject({ code: '23505',
       constraint: 'workbench_wait_one_pending_session' })
+    await db.query("UPDATE workbench_execution_waits SET status='canceled',resolved_at=now(),terminal_reason='DDL probe' WHERE id=$1", [otherWaitId])
     await expect(db.query('UPDATE workbench_execution_waits SET input_message_sequence=NULL WHERE id=$1', [waitId]))
       .rejects.toMatchObject({ code: '23514' })
 

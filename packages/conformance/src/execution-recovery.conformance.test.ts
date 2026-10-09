@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto'
+import { existsSync } from 'node:fs'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { WorkMeshClient } from '@workmesh/agent-sdk'
@@ -174,6 +175,8 @@ describe('M1 真实 HTTP、MCP、Pi 执行与恢复', () => {
     expect(pi.captures[0]?.tools).toContain('workmesh_wait')
     const publicReplies = await fixture.db.query<{ content_markdown: string }>("SELECT content_markdown FROM workbench_messages WHERE turn_id=$1 AND role='assistant'", [pi.turnId])
     expect(publicReplies.rows[0]?.content_markdown.length).toBeGreaterThan(0)
+    const publicMessages = await fixture.human<{ items: Array<{ turn_id: string; role: string; content_markdown: string }> }>('GET', `/api/v1/workbench/conversations/${pi.conversationId}/messages`)
+    expect(publicMessages.items).toEqual(expect.arrayContaining([expect.objectContaining({ turn_id: pi.turnId, role: 'assistant', content_markdown: publicReplies.rows[0]!.content_markdown })]))
     const worker = createSessionLifecycleWorker({ db: fixture.db, workerId: `m1-wait-${randomUUID()}` })
     expect(await worker.reconcileWorkbenchWaits()).toBe(0)
     // Restart monitor has no model call or another Attempt. One real waiting case
@@ -228,21 +231,63 @@ describe('M1 真实 HTTP、MCP、Pi 执行与恢复', () => {
     await worker.reconcileWorkbenchWaits()
     const stopped = await snapshotWait(execution.sessionId)
     expect(stopped.turns).toHaveLength(1)
+    expect(stopped.attempts).toHaveLength(1)
+    expect(stopped.attempts[0]?.status).toBe('settled')
     expect(stopped.waits[0]).toMatchObject({ status: 'canceled', continuation_turn_id: null })
+    const capturesBefore = pi.captures.length
+    await pi.run('continue')
+    expect(pi.captures).toHaveLength(capturesBefore)
+    expect(await snapshotWait(execution.sessionId)).toEqual(stopped)
+    const publicTurns = await fixture.human<{ items: Array<{ id: string; status: string }> }>('GET', `/api/v1/workbench/conversations/${pi.conversationId}/turns`)
+    expect(publicTurns.items).toEqual([expect.objectContaining({ id: pi.turnId, status: 'settled' })])
     saveExecutionEvidence('pi-wait-pause-stop.json', { sessionId: execution.sessionId, stopped })
+  })
+
+  it('真实 Pi 等待后准确输入已到达，Human 撤 Delegation 优先且不创建续 Turn/Attempt', async () => {
+    const execution = await fixture.createExecution('M1 wait revoked before continuation')
+    const pi = await fixture.createPi(execution, { state: 'awaiting_input', reason: 'M1 waits for authorized input' })
+    await pi.run('wait')
+    await fixture.human('POST', `/api/v1/agent-sessions/${execution.sessionId}/prompt`, { bodyMarkdown: 'Accurate input cannot override revoked authority.' })
+    const authority = (await fixture.db.query<{ id: string; revision: number }>('SELECT delegation.id,delegation.revision FROM delegations delegation JOIN agent_sessions session ON session.delegation_id=delegation.id WHERE session.id=$1', [execution.sessionId])).rows[0]!
+    await fixture.human('POST', `/api/v1/delegations/${authority.id}/revoke`, {}, authority.revision)
+    const worker = createSessionLifecycleWorker({ db: fixture.db, workerId: `m1-revoked-${randomUUID()}` })
+    expect(await worker.reconcileWorkbenchWaits()).toBe(0)
+    const closed = await snapshotWait(execution.sessionId)
+    expect(closed.waits[0]).toMatchObject({ status: 'canceled', continuation_turn_id: null })
+    expect(closed.turns).toEqual([{ id: pi.turnId, status: 'settled' }])
+    expect(closed.attempts).toHaveLength(1)
+    expect(closed.attempts[0]?.status).toBe('settled')
+    await expect(execution.client.getSession(execution.sessionId)).rejects.toMatchObject({ code: 'DELEGATION_NOT_ACTIVE' })
+    const mcp = await fixture.connect('read-only', execution)
+    const rejected = await mcp.callTool({ name: 'get_agent_session', arguments: { id: execution.sessionId } })
+    expect(rejected.isError).toBe(true)
+    expect(JSON.stringify(rejected.structuredContent)).toContain('DELEGATION_NOT_ACTIVE')
+    expect(pi.captures).toHaveLength(1)
+    expect(await snapshotWait(execution.sessionId)).toEqual(closed)
+    saveExecutionEvidence('pi-wait-revoked.json', { sessionId: execution.sessionId, closed, captures: pi.captures, rejected: rejected.structuredContent })
   })
 
   it('真实 Pi 模型运行期间 Stop 关闭模型与工具，finally 专用 stopAck 保存清理事实', async () => {
     const execution = await fixture.createExecution('M1 Pi controlled Stop')
     const pi = await fixture.createPi(execution, null)
-    await pi.run('stop')
+    const runner = await pi.run('stop')
     const session = await fixture.human<{ state: string }>('GET', `/api/v1/agent-sessions/${execution.sessionId}`)
     expect(session.state).toBe('canceled')
     const ack = (await fixture.db.query<{ id: string; summary: string; details_markdown: string | null }>("SELECT id,summary,details_markdown FROM agent_activities WHERE session_id=$1 AND kind='stop_ack'", [execution.sessionId])).rows
     expect(ack).toHaveLength(1)
-    expect(ack[0]?.summary.length).toBeGreaterThan(0)
+    expect(ack[0]?.summary).toBe('Pi model stopped and the Runner scratch directory cleanup completed.')
+    expect(JSON.parse(ack[0]!.details_markdown!)).toEqual([])
     expect((await fixture.db.query("SELECT 1 FROM domain_events WHERE session_id=$1 AND event_type='agent.session.completed'", [execution.sessionId])).rows).toHaveLength(0)
     expect(pi.captures).toHaveLength(1)
-    saveExecutionEvidence('pi-stop-finally.json', { sessionId: execution.sessionId, session, ack, captures: pi.captures })
+    expect(pi.captures[0]?.phase).toBe('stop')
+    expect(pi.captures[0]?.returnedToolCalls).toEqual([])
+    const resourceRecords = runner.stdout.split(/\r?\n/).filter(line => line.startsWith('{')).map(line => JSON.parse(line) as { runnerResource?: { path: string; sessionId: string; status: string } }).flatMap(record => record.runnerResource ? [record.runnerResource] : [])
+    expect(resourceRecords).toHaveLength(2)
+    expect(resourceRecords.map(resource => resource.status)).toEqual(['created', 'removed'])
+    expect(resourceRecords.every(resource => resource.sessionId === execution.sessionId && !existsSync(resource.path))).toBe(true)
+    const afterStop = await snapshotWait(execution.sessionId)
+    await createSessionLifecycleWorker({ db: fixture.db, workerId: `m1-stop-final-${randomUUID()}` }).reconcileWorkbenchWaits()
+    expect(await snapshotWait(execution.sessionId)).toEqual(afterStop)
+    saveExecutionEvidence('pi-stop-finally.json', { sessionId: execution.sessionId, session, ack, captures: pi.captures, resourceRecords, afterStop })
   })
 })
