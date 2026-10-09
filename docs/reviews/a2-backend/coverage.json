@@ -16,7 +16,8 @@
       "caseName": "authorizes before context disclosure and persists provider intent without provider I/O",
       "assertion": "提交仅持久化 action，Worker 完成后 context 可精确追溯；新增 DTO 与现有 SDK/MCP/Web 消费兼容",
       "owner": "A2 执行者",
-      "result": "未运行；新候选结果单独绑定"
+      "result": "本轮新后端定向及完整检查通过；精确运行/源码/skip 见 results.json，不代独审/CI",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "category": "unauthorized actor",
@@ -25,7 +26,8 @@
       "caseName": "解析期间撤权后无上下文发布：%s",
       "assertion": "覆盖 Human/角色/membership/目标/Team/连接/仓库变更，无 context/pinned/outbox，拒绝受众仅原 requester；stage4 Agent 新过滤拒绝/旧范围正对照",
       "owner": "A2 执行者",
-      "result": "未运行；新候选结果单独绑定"
+      "result": "本轮新后端定向及完整检查通过；精确运行/源码/skip 见 results.json，不代独审/CI",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "category": "invalid state transition",
@@ -34,7 +36,8 @@
       "caseName": "checkpoint 后撤权重启无上下文发布：%s",
       "assertion": "持久化结果不授予过期目标权限；停用/删除/作用域变化禁止发布",
       "owner": "A2 执行者",
-      "result": "未运行；新候选结果单独绑定"
+      "result": "本轮新后端定向及完整检查通过；精确运行/源码/skip 见 results.json，不代独审/CI",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "category": "duplicate idempotency key",
@@ -43,7 +46,8 @@
       "caseName": "连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突：%s",
       "assertion": "三秘密字段独立参数化；同文重放、旧脱敏键拒绝、TTL 边界；明文不入账本/事件/日志",
       "owner": "A2 执行者",
-      "result": "未运行；新候选结果单独绑定"
+      "result": "本轮新后端定向及完整检查通过；精确运行/源码/skip 见 results.json，不代独审/CI",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "category": "stale revision",
@@ -61,7 +65,8 @@
       "caseName": "authorizes before context disclosure and persists provider intent without provider I/O",
       "assertion": "现有事务失败注入回滚 action/context/event/outbox，不松原断言",
       "owner": "A2 执行者",
-      "result": "未运行；新候选结果单独绑定"
+      "result": "本轮新后端定向及完整检查通过；精确运行/源码/skip 见 results.json，不代独审/CI",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "category": "webhook/job replay",
@@ -70,7 +75,8 @@
       "caseName": "A2 仓库解析重放仅产生一份上下文",
       "assertion": "重复 tick 和重建 Worker 精确一次；保留现有 webhook 正负对照",
       "owner": "A2 执行者",
-      "result": "未运行；新候选结果单独绑定"
+      "result": "本轮新后端定向及完整检查通过；精确运行/源码/skip 见 results.json，不代独审/CI",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "category": "concurrent request",
@@ -79,7 +85,8 @@
       "caseName": "撤权与上下文落库按持锁顺序串行",
       "assertion": "两真实连接观测 pg_blocking_pids，撤权先锁拒绝/发布先锁提交；stage4 筛选游标不换域",
       "owner": "A2 执行者",
-      "result": "未运行；新候选结果单独绑定"
+      "result": "本轮新后端定向及完整检查通过；精确运行/源码/skip 见 results.json，不代独审/CI",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "category": "server restart/outbox recovery",
@@ -88,39 +95,46 @@
       "caseName": "checkpoint 后撤权重启无上下文发布：%s",
       "assertion": "结果 checkpoint 后重建 Worker 不再读供应商，重验权限；正常恢复仍精确一次",
       "owner": "A2 执行者",
-      "result": "未运行；新候选结果单独绑定"
+      "result": "本轮新后端定向及完整检查通过；精确运行/源码/skip 见 results.json，不代独审/CI",
+      "evidence": "docs/reviews/a2-backend/results.json"
     }
   ],
   "supplementalCases": [
     {
       "file": "apps/api/integration/stage4-operations.integration.test.ts",
       "caseName": "Human 可用仓库筛选在分页前排除关闭 provider 与其他 Team",
-      "result": "未运行"
+      "result": "本轮新后端定向检查通过",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "file": "apps/api/integration/stage4-operations.integration.test.ts",
       "caseName": "Human 仓库筛选游标绑定不允许换域续页",
-      "result": "未运行"
+      "result": "本轮新后端定向检查通过",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "file": "apps/api/integration/stage4-operations.integration.test.ts",
       "caseName": "Agent 旧列表权限不变且拒绝 Human 新筛选参数",
-      "result": "未运行"
+      "result": "本轮新后端定向检查通过",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "file": "apps/api/integration/stage3-delivery.integration.test.ts",
       "caseName": "连接同文重放与旧脱敏指纹拒绝降级",
-      "result": "未运行"
+      "result": "本轮新后端定向检查通过",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "file": "apps/api/integration/stage3-delivery.integration.test.ts",
       "caseName": "仓库发布与 C1 事件快照共享事务兼容",
-      "result": "未运行"
+      "result": "本轮新后端定向检查通过",
+      "evidence": "docs/reviews/a2-backend/results.json"
     },
     {
       "file": "packages/contracts/src/repository-configuration-contracts.test.ts",
       "caseName": "仓库Human筛选参数与操作提示响应边界",
-      "result": "未运行"
+      "result": "本轮新后端定向检查通过",
+      "evidence": "docs/reviews/a2-backend/results.json"
     }
   ],
   "originalSixTests": [
@@ -236,7 +250,10 @@
   "lite": {
     "command": "node scripts/verify-a2-backend-lite.mjs",
     "scope": "main 现有 Web/真实代理安装认证/四角色无源码/TLS/context 实际落库与 action 归因；非旧新横幅 UI 链路",
-    "status": "未运行",
-    "risk": "原 Lite RustFS 凭证映射安装缺口保留，不靠绕过认证/代理通过"
+    "status": "本机无源码现有 Web/后端兼容通过；原新横幅闭环正式延期",
+    "risk": "原 Lite RustFS 凭证映射安装缺口保留，不靠绕过认证/代理通过",
+    "runId": "a2-backend-lite-225ab467",
+    "sourceHead": "9de5897ab42b4a3459bf977c7a78c78bc3d11538",
+    "evidence": "docs/reviews/a2-backend/runs/a2-backend-lite-225ab467/receipts.json"
   }
 }

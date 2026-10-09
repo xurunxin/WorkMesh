@@ -27,3 +27,19 @@
 依赖深度列表、深链返回重算、全部满足隐藏、non-unmet 无横幅、Back/Forward/键盘/窄屏/i18n、Lite 到新横幅消失六项及原 UIDoD 全部延后到重设计。原已实现的稳定 key、精确 action/目标/正文确认、等待与动作分离、超时可改、所有读取取消/代际门禁及迟到回调反例保留在归档源码和旧技术证据。后端候选不把这些旧通过冒作新的组合通过。
 
 本轮验收为仓库配置后端安全/异步可追溯、API/contract/policy、拒绝受众/锁序、现有 Web/SDK/MCP 消费兼容与必要 Lite 部署兼容。新检查、独审、最新 Required CI 与 actual main 证据分别记录；没有执行的项目保持未运行。没有新增 M0/F/TA 或后续 MCP 域。
+
+## 新候选实际验证与独审入口
+
+精确差异、Git blob 与 Windows 工作树字节见 [candidate-source.json](candidate-source.json)；[candidate-product.patch.gz](candidate-product.patch.gz) 是相对实际 main `c768e1e3db297d8b91b53dd68b60e723a8a40e7d` 的完整产品 hunk。当前 `apps/web/` 和根 Playwright 配置与该 main 无差异；无新迁移或事件类型。
+
+| 新运行 | 受测源码与实际结果 | 原始回执 |
+| --- | --- | --- |
+| `a2-backend-4d28f519` | `38e2cf8f29c51adafbda11484e713df51d3ea8f2`；契约、锁清单与两个 API 集成文件通过，56 项集成通过、零 skip。运行前后源码不变。 | [receipts.json](runs/a2-backend-4d28f519/receipts.json)、[无损原件索引](runs/a2-backend-4d28f519/archive.json) |
+| `a2-backend-491ca462` | 同一后端源码；route-policy、lint、typecheck、test、integration、E2E、ci:validate 和 Web build 全部 exit 0，现有 Web E2E 69 项通过。期间仅独立 Lite 测试脚本的等待方式改变，该入口未被本批检查消费；变化和前后源哈希均保留。 | [receipts.json](runs/a2-backend-491ca462/receipts.json)、[无损原件索引](runs/a2-backend-491ca462/archive.json) |
+| `a2-backend-lite-225ab467` | `9de5897ab42b4a3459bf977c7a78c78bc3d11538` 精确 Git archive 构建，四角色无源码安装、Web 代理安装/认证、真实配置 POST/重放、Worker 经 HTTPS 读取测试供应商、精确 action/context 查询以及 main 现有工作台打开均通过。 | [receipts.json](runs/a2-backend-lite-225ab467/receipts.json)、[无损原件索引](runs/a2-backend-lite-225ab467/archive.json) |
+
+[results.json](results.json) 汇总每条命令、exit、起止时间和实际 skip；独立 recovery 夹具及其他可选 skip 未执行，不计通过。Lite 只启用本次 Gitea 测试开关，其余功能默认关闭；真实认证和 Web 代理未被 mock，TLS 验证未关闭。镜像内五个 rewrites 已核为 `http://api:3001`，运行时环境无法修正先前编译进产物的 localhost，这就是保留构建期代理修复的原因。此本机兼容通过不替代真实设备/厂商，也不覆盖原新横幅、S3 全面功能或保留的 RustFS 凭证映射风险。
+
+专用检查容器、Lite 安装容器/卷/网络、四角色探针、CA 卷、镜像、HTTPS 服务和临时安装目录已逐项核归属后收尾，见各运行回执及 [Lite 逐路径结果](runs/a2-backend-lite-225ab467/cleanup-path-receipts.json)。原失败、旧视觉、共享资源、被拒清理目标及当前 worktree 保留。
+
+[preservation-verification.json](preservation-verification.json) 和 [delivery-verification.json](delivery-verification.json) 核对来源原字节、历史 Git 对象、压缩原件、当前无 UI 增量和受测源码绑定。新候选尚待另一 Agent 独审及最新 PR Required CI；当前未合入 main，不宣称本卡 backend done。旧三技术阻断仍是旧组合的已闭结论，不代新组合独审。

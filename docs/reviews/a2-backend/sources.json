@@ -40,5 +40,29 @@
     }
   ],
   "historicalEmbeddedHash": "130e166... 属旧早期源，不属于本次完整 Chief 旧卡快照",
-  "preservedEvidence": "docs/reviews/a2/** 原件保持，视觉未接受；旧741/380检查不代新候选"
+  "preservedEvidence": "docs/reviews/a2/** 原件保持，视觉未接受；旧741/380检查不代新候选",
+  "mainObservations": [
+    {
+      "sha": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "observedAt": "2026-10-09T04:21:40Z",
+      "tool": "mcp__tds__git",
+      "args": [
+        "ls-remote",
+        "origin",
+        "refs/heads/main"
+      ],
+      "result": "精确同 c768"
+    },
+    {
+      "sha": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "observedAt": "2026-10-09T04:48:57Z",
+      "tool": "mcp__tds__git",
+      "args": [
+        "ls-remote",
+        "origin",
+        "refs/heads/main"
+      ],
+      "result": "精确同 c768；不使用 FETCH_HEAD"
+    }
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-09T04:36:29.635Z",
+  "generatedAt": "2026-10-09T04:49:05.643Z",
   "runs": [
     {
       "runId": "a2-backend-491ca462",
@@ -244,6 +244,130 @@
             "code": 0,
             "output": "4bdbb49e3556f61a0793a83bea2ece92dc5ac08033ad328c9696f7a87c42d8eb\n",
             "at": "2026-10-09T04:19:40.429Z"
+          }
+        }
+      ],
+      "firstFailure": []
+    },
+    {
+      "runId": "a2-backend-lite-225ab467",
+      "receipt": "runs/a2-backend-lite-225ab467/receipts.json",
+      "sourceBefore": null,
+      "sourceAfter": null,
+      "sourceHead": "9de5897ab42b4a3459bf977c7a78c78bc3d11538",
+      "changedDuringRun": null,
+      "sourceMeaning": "所有 API/Worker/contracts/Web 输入不变；若有增量仅独立 Lite 测试入口的等待/默认关闭准备，新 Lite 以新提交另执行",
+      "commands": [
+        {
+          "command": "C:\\nvm4w\\nodejs\\node.exe -e fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})",
+          "code": 0,
+          "start": "2026-10-09T04:46:45.767Z",
+          "end": "2026-10-09T04:46:45.905Z",
+          "log": "31.log",
+          "summaries": []
+        },
+        {
+          "command": "C:\\nvm4w\\nodejs\\node.exe C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\scripts\\verify-a2-backend-lite-api.mjs",
+          "code": 0,
+          "start": "2026-10-09T04:46:45.906Z",
+          "end": "2026-10-09T04:46:49.117Z",
+          "log": "32.log",
+          "summaries": []
+        }
+      ],
+      "outcome": "本机无源码 Lite 现有 Web/后端兼容通过；原新横幅 UI、真实设备与真实厂商未验收",
+      "resources": [
+        {
+          "type": "directory",
+          "id": null,
+          "target": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-225ab467",
+          "cleanup": {
+            "code": 0,
+            "output": ""
+          }
+        },
+        {
+          "type": "image",
+          "id": "sha256:e9903877d4ea6cd29113431e49b00093b8c30b9ea3374f6c249ad19da429b33d",
+          "target": "workmesh-a2-lite:a2-backend-lite-225ab467",
+          "cleanup": {
+            "code": 0,
+            "output": "Untagged: workmesh-a2-lite:a2-backend-lite-225ab467\nDeleted: sha256:e9903877d4ea6cd29113431e49b00093b8c30b9ea3374f6c249ad19da429b33d\n"
+          }
+        },
+        {
+          "type": "container",
+          "id": "0779411971a6380f1f38d1518e2bbe5147a1c3a25c916d31f82d51eec9557cd8",
+          "target": "a2-backend-lite-225ab467-probe-migrate",
+          "cleanup": {
+            "code": 0,
+            "output": "0779411971a6380f1f38d1518e2bbe5147a1c3a25c916d31f82d51eec9557cd8\n"
+          }
+        },
+        {
+          "type": "container",
+          "id": "c0ca645348a9a46c8072a2df68e59f7b36fc18ad730ec889bacd2f0de8cd9228",
+          "target": "a2-backend-lite-225ab467-probe-api",
+          "cleanup": {
+            "code": 0,
+            "output": "c0ca645348a9a46c8072a2df68e59f7b36fc18ad730ec889bacd2f0de8cd9228\n"
+          }
+        },
+        {
+          "type": "container",
+          "id": "c46538f264e9d08107ae8b7d0c14c010230a0f6922d503240c3c10d6145cf41a",
+          "target": "a2-backend-lite-225ab467-probe-worker",
+          "cleanup": {
+            "code": 0,
+            "output": "c46538f264e9d08107ae8b7d0c14c010230a0f6922d503240c3c10d6145cf41a\n"
+          }
+        },
+        {
+          "type": "container",
+          "id": "2f6cebb5360463cccfae86d42b39c28bd640be6a396978266dddeb64cea9e265",
+          "target": "a2-backend-lite-225ab467-probe-web",
+          "cleanup": {
+            "code": 0,
+            "output": "2f6cebb5360463cccfae86d42b39c28bd640be6a396978266dddeb64cea9e265\n"
+          }
+        },
+        {
+          "type": "file",
+          "id": null,
+          "target": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-backend-lite-225ab467\\workmesh-lite.tar",
+          "cleanup": null
+        },
+        {
+          "type": "volume",
+          "id": null,
+          "target": "a2-backend-lite-225ab467-ca",
+          "cleanup": {
+            "code": 0,
+            "output": "a2-backend-lite-225ab467-ca\n"
+          }
+        },
+        {
+          "type": "container",
+          "id": "a40f61de49faa6c0bc3c182610dd64a09d33f2ef5d57bb736bb7c219c8911dc4",
+          "target": "a2-backend-lite-225ab467-ca-loader",
+          "cleanup": {
+            "code": 0,
+            "output": "a40f61de49faa6c0bc3c182610dd64a09d33f2ef5d57bb736bb7c219c8911dc4\n"
+          }
+        },
+        {
+          "type": "https-provider",
+          "id": null,
+          "target": "host.docker.internal:58265",
+          "cleanup": "已关闭"
+        },
+        {
+          "type": "compose-project",
+          "id": null,
+          "target": "a2-backend-lite-225ab467",
+          "cleanup": {
+            "code": 0,
+            "output": " Container a2-backend-lite-225ab467-worker-1 Stopping \n Container a2-backend-lite-225ab467-web-1 Stopping \n Container a2-backend-lite-225ab467-web-1 Stopped \n Container a2-backend-lite-225ab467-web-1 Removing \n Container a2-backend-lite-225ab467-worker-1 Stopped \n Container a2-backend-lite-225ab467-worker-1 Removing \n Container a2-backend-lite-225ab467-web-1 Removed \n Container a2-backend-lite-225ab467-api-1 Stopping \n Container a2-backend-lite-225ab467-worker-1 Removed \n Container a2-backend-lite-225ab467-api-1 Stopped \n Container a2-backend-lite-225ab467-api-1 Removing \n Container a2-backend-lite-225ab467-api-1 Removed \n Container a2-backend-lite-225ab467-minio-init-1 Stopping \n Container a2-backend-lite-225ab467-redis-1 Stopping \n Container a2-backend-lite-225ab467-migrate-1 Stopping \n Container a2-backend-lite-225ab467-migrate-1 Stopped \n Container a2-backend-lite-225ab467-migrate-1 Removing \n Container a2-backend-lite-225ab467-minio-init-1 Stopped \n Container a2-backend-lite-225ab467-minio-init-1 Removing \n Container a2-backend-lite-225ab467-migrate-1 Removed \n Container a2-backend-lite-225ab467-postgres-1 Stopping \n Container a2-backend-lite-225ab467-minio-init-1 Removed \n Container a2-backend-lite-225ab467-minio-1 Stopping \n Container a2-backend-lite-225ab467-redis-1 Stopped \n Container a2-backend-lite-225ab467-redis-1 Removing \n Container a2-backend-lite-225ab467-redis-1 Removed \n Container a2-backend-lite-225ab467-minio-1 Stopped \n Container a2-backend-lite-225ab467-minio-1 Removing \n Container a2-backend-lite-225ab467-minio-1 Removed \n Container a2-backend-lite-225ab467-postgres-1 Stopped \n Container a2-backend-lite-225ab467-postgres-1 Removing \n Container a2-backend-lite-225ab467-postgres-1 Removed \n Volume a2-backend-lite-225ab467_lite-postgres-data Removing \n Volume a2-backend-lite-225ab467_lite-redis-data Removing \n Network a2-backend-lite-225ab467_default Removing \n Volume a2-backend-lite-225ab467_lite-redis-data Removed \n Volume a2-backend-lite-225ab467_lite-postgres-data Removed \n Volume a2-backend-lite-225ab467_lite-object-data Removing \n Volume a2-backend-lite-225ab467_lite-object-data Removed \n Network a2-backend-lite-225ab467_default Removed \n"
           }
         }
       ],
