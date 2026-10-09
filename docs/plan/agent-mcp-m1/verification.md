@@ -1,0 +1,68 @@
+# 验证、九类 DoD 与闭合矩阵
+
+所有产品测试均未运行。本轮只能产生静态文件/来源核验。下列文件扩展、用例与命令是实施后要求，不能以旧M0通过或新工具数量计新组合通过。各operation的ALLOW/DENY、逐门禁gateCases及九类适用性在 [结构化映射](operation-decisions.json)，原完整九类正文见 [冻结M1](frozen-M1.md)。
+
+## 九类验收的具体闭合条件
+
+| 类别 / 用例 ID | 测试落点与准确场景 | DoD / 不适用边界 |
+| --- | --- | --- |
+| 正常 M1-NORMAL / 每operation-ALLOW | execution-recovery conformance：新C配对后工具初始化、claim queued、准确E握手/ACK、planning、Session/context/Plan/版本、整Plan稳定stepID、executing、Lease取/心跳/续/释放、准确批准、artifact或no-artifact、完成；第二链Human Stop→Runner停止→清理→stopAck→canceled | Native HTTP/MCP/Pi三链事实一致；仅tools客户端能读取全部前提，列表至少两页，当前与Plan版本摘要语义准确，Session完成不暗改Issue状态 |
+| 越权/撤权 M1-AUTH / 每operation-DENY及GATE | API stage1/stage2+SDK/MCP：准确允许正对照后换Connection/Agent/Session/Team/项目/scope/principal，撤Delegation、Team grant、能力、Connection、membership；reviewer发布Plan拒，Agent decide/force/control拒 | 禁止跨目标Token或Human cookie；同Connection可读另一个合法Session时仍不能拿S1的action/key确认S2；两种安装、C/H读取均各有正负对照，页刷新撤权不能以空列表冒成功 |
+| 非法状态 M1-STATE | queued普通GET/写拒而握手允许；stale ACK原兼容；paused/stopping/terminal普通写/GET拒；stopAck只stopping；invalid transition，Human immediate cancel与stopAck竞争 | 不复活E；stopped/terminal诊断heartbeat状态不回升；Human保留路径原行为 |
+| 幂等 M1-IDEM | ack、Plan、Approval请求、Lease acquire/renew/release、complete/stopAck同key/body单事实，异体/key绑定冲突；Session/Lease heartbeat K1/K2/K1不回退，稳态无事件放大；新意图同body新key不被旧动作吞 | stopAck/complete重复200不是必需，终态前置拒绝后精确确认；纯GET无写key义务，反复查无receipt/event/outbox |
+| 旧revision M1-REV | 两Plan发布旧Session revision不覆盖；Lease renew/release旧Lease版本、complete/stopAck旧Session版本、consumeApproval旧Approval版本拒；SDK/MCP保currentRevision/trace；RunnerPlan/state无前置Activity | Session/Plan/Lease版本分列；GET及heartbeat无If-Match写冲突不适用；失败不能盲写重做 |
+| 事务失败 M1-TX / M1-CONFIRM-ZERO | stage1/stage2真实DB故障注入Plan、Lease、Approval request、complete、stopAck的event/outbox写失败，对比state/event/outbox/receipt全回滚；workbench runner原子settle+completion一起回滚；确认成功/各拒绝逐表比内容及数量 | 查询没有新command/job回滚，改验零业务写；authorization_denials原独立INSERT单列；不伪造所有表零写；外部I/O不在本批 |
+| 重放 M1-REPLAY | 原outbox/webhook/lifecycle job重复处理不双完成/批准；同key断网重放保正文；Stop重复只有专用事实；确认多次、MCP重新连接不新建C Session；ADR0068外层settle原key重复 | 不添加新job；新只读投影没有job效果去重需求，重复读零写；内存协议夹具不能冒真实HTTP/Pi运行 |
+| 并发 M1-RACE | stage2两Session独占Lease竞争有holder详情；renew与到期job/Plan两版/Stop和complete、普通写、stopAck竞争；live撤权先commit后确认拒；双客户端C各桥接准确E；暂停或撤权晚到poll/steering不再启动模型 | 真实事务锁等待与提交次序证据；观察pg_blocking_pids，不能只delay；READ ONLY查询明确snapshot时点，非持锁召回承诺；M3外发checkpoint不适用本批 |
+| 重启/恢复/Stop M1-RECOVERY | API/MCP重启后原事实/cursor/Lease/批准仍可读取；Worker expiry保PG权威；Runner被Stop期间makeTool前置Activity会被拒但受控finally仍成功；timeout/abort/异常/强杀、Token到期、清理失败与未知在途保留 | 清理摘要/residualRisks准确，无新模型工具/Prompt，无普通release；强杀finally不保证执行，记录未确认；不是外部CLI或机器恢复验收 |
+
+逐operation的GATE场景选定实际身份分支后执行：credential → role/state → live definition/Team grant/Delegation → capability → exact subject/scope → revision/key → 该operation特有target事实。条件predicate未触发时标该分支不适用并说明条件，不用通用blocked/pending代替具体拒绝。34条映射包括Human/内部前置和新增确认，不将它们当34个新Agent工具。
+
+## 终态确认专门用例
+
+| ID | 构造与判定 | 状态 |
+| --- | --- | --- |
+| M1-CONFIRM-ALLOW | complete和stopAck各读取真实响应后故意在传输层丢弃；原E重放/GET明确terminal拒；live准确C、Connection-backed安装Bearer、native安装及合法Human各确认原key/action，originalResult revision与原DBreceipt相同 | 未运行 |
+| M1-CONFIRM-DENY | 另一Connection（包括相同actor/principal对照）、另一Agent、同Agent另一原生installation、S1 key查S2、错action、撤Connection/grant/双Delegation/principal membership/能力、跨Team/project/work_item、错scope、混合凭据、原E Bearer；原生安装不要求不存在的coordinator Delegation，但目标Delegation撤权仍拒 | 未运行；不泄露原真实资源 |
+| M1-CONFIRM-RETENTION | receipt不存在、response_body清除、replay过期、历史Token关联被删除、Stop摘要丢失/坏JSON、Human cancel终态但无stopAck | 未运行；unavailable或不可见按合同，绝不当未提交 |
+| M1-CONFIRM-ZERO | 每个成功/拒绝重复调用前后逐表内容比较，含last_used_at、C Session创建/续期、Token、业务事实及api/auth幂等；原拒绝账本分列 | 未运行；零签Token/续Session/receipt/event/outbox |
+| M1-PI-SETTLE-LOSS | Pi原子settle提交后丢响应，同外层key/body既有回执恢复；内部completion key没有独立receipt，查询不得虚构；明确completion失败回滚并保持fallback警告 | 未运行；旧settle语义保持 |
+| M1-PI-STOP-LOSS | 真实Pi模型正在合法调用时H Stop；受控finally原E/独立signal发stopAck后丢响应；安装确认；model tools/迟到steering无新执行、准确durable Stop Activity/event | 未运行；不以进程exit0验收 |
+
+## 实际入口与测试文件
+
+扩展 `packages/contracts/src/route-policy.test.ts`、`client-profile-contract.test.ts`、`agent-discovery.test.ts`，新增 execution-contracts DTO测试；SDK index/discovery测试核具名方法、Zod响应、key/If-Match和exact安装slot零refresh；MCP index/http/recovery测试核名单、mode、输入及structured error；Runner workmesh-tools/runner-api/permission矩阵及新增execution-lifecycle测试覆盖闭门和finally。API扩展stage1、stage2及workbench-runner.integration，新增 `execution-result.integration.test.ts` 做逐表零写与所有确认拒绝，均沿现有api integration include运行。
+
+新增 `packages/conformance/src/execution-recovery.conformance.test.ts`、`execution-recovery.fixture.ts`；复用M0完整真实fixture的API/MCP HTTP、MCP SDK客户端、testDB保护和假HTTPS模型Pi驱动，在M1fixture扩展生命周期需要的setup与故障注入，保持M0文件和原用例。服务、客户、模型请求、tools/list、模型实收tools、调用结果、Turn/Plan/Lease/Approval/Stop事实分别保全。不新增厂商真实客户端、外部秘密或外发。
+
+`packages/conformance/vitest.integration.config.ts`明确include M0与M1两个文件，串行、passWithNoTests=false。根 `vitest.config.ts`必须排除新真实套件，不能让pnpm test中的无服务运行碰真实DB。`scripts/ci-policy.mjs`的validateMcpConformanceEntrypoints与测试改为逐必含套件校验，删除任意套件/include/根入口、改passWithNoTests、移除pipefail/always上传或continue-on-error都失败；旧精确字符串replace在列表扩展后不再有效，负例须证明实际删掉了目标套件。
+
+根既有 `test:integration` 已含 `pnpm test:conformance:integration`；后者先require-integration-env、专用testDB reset、再conformance package integration config。沿现有Required `api-integration`先API集成后 `Run real MCP and Pi conformance`，日志继续进入 `ci-logs/mcp-coverage/`并always上传。新M1证据用此目录内独有文件名/子目录，不能被M0覆盖。未修改CI分类或添加skip豁免。
+
+## 产品阶段准备、命令、首败和收尾
+
+先核精确main与消费者差异，登记独有Postgres/Redis/RustFS tmpfs容器、bucket/监听端口、进程及temp目录。沿 `m0-run-services.py/m0-run-check.py` 已核准备/记录模式新增M1专属记录入口，不复用M0受测归档；随机秘密只在子进程内存，master key为准确32字节，RustFS tmpfs可写、CreateBucket+HeadBucket实际ready，数据库名称满足test保护。API服务用development，单元test；Windows精确Node/.node-version、pnpm入口、npm_execpath按现有运行要求仅对子进程配置，测试环境不得污染单元fetch。
+
+专用服务环境先定向SDK/MCP/Runner/合同/API新场景，再按以下根脚本执行（本轮未运行）：
+
+```text
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm test:integration
+pnpm test:e2e
+pnpm check:route-policy
+pnpm check:runner-skill
+pnpm ci:validate
+pnpm ci:test
+```
+
+根integration实际包括DB/API/真实M0+M1conformance/Worker/Recovery，不另拿M0旧检查代新组合。每条保存完整命令、exit/runtime、Node/pnpm、passed/failed/skipped数量、真实开始结束输入指纹、运行字节与Gitblob差异及skip原因；不重跑已通过无变化套件。首败无损保存后另编号重跑；对已被测试期间改动的源码分开绑定，不能冒最终字节早已通过。
+
+finally保全必要脱敏原输出ZIP和可读副本，再按确切ID/owner label/absolute path核己有闲置对象逐项stop/rm/删除，保存实际退出与剩余原因。Windows递归前核workspace/批准明确Temp父范围、realpath/link/活动引用/逐path保全依据；已拒G1/D0/C3目标不碰、不换工具/force/改ACL/父删绕。当前和恢复目录保留，旧worktree只有actualmain、保全齐且无人引用才能正式清理。RequiredCI/独审或资源夹具无法运行时实际记失败/未测，不删除門禁。
+
+## 本阶段结论与后续门禁
+
+仅静态：完整计划一致、来源203个Git全文、当前33已有operation与1新增提案映射、参数/返回/源码锚点、九类矩阵、文档链接/空白/实际CI分类。实际回执见 [review](review.md) 与static-checks；无产品服务、无产品test、无迁移、无API/event修改。JSON/ZIP/脚本使本PR按当前ci-policy可能full，分类如实记录，不借文档阶段改变门禁。
+
+提交准确head停confirm → 平台另一Agent完整合同/方案独审 → blocking/high闭合 → Chief confirm才实施 → 新产品完整适用checks与独立成果审查 → 最新PR RequiredCI → todo实际done/main。文档合入或静态通过不完成本卡。

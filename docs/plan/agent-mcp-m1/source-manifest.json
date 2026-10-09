@@ -1,0 +1,2656 @@
+{
+  "main": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+  "frozen": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+  "commits": {
+    "e49eda142d61bdd248ddc42ec16f5563abd4bbc6": {
+      "tree": "a1c61dbea9e6bb09bbe0a353b6e67e11f4fc0953",
+      "parents": [
+        "69085317c88d84b702af727dc0ac7152589626d8",
+        "883d279d3b5978680672a6c1d7364d421d0afd10"
+      ],
+      "commitObjectSha256": "b30353cb737fb4117eb06d74115cc320a63a7ea0cd5eeb0fdf22400d59076a41"
+    },
+    "c768e1e3db297d8b91b53dd68b60e723a8a40e7d": {
+      "tree": "c3fa200cff5b922f3935059091f34a4894b3418e",
+      "parents": [
+        "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+        "f5a665407f0ff3e6dab84932bcb7d49d56468e42"
+      ],
+      "commitObjectSha256": "930bf5ffedf98329d8fef7c585ebeb405c531cf1c0ec6bff6d07b888713d4b87"
+    },
+    "69085317c88d84b702af727dc0ac7152589626d8": {
+      "tree": "47ad2e3731b8258442c853020bbcfa67390bfb83",
+      "parents": [
+        "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
+        "328434d00268ce39222d677686dde3c64aba4e41"
+      ],
+      "commitObjectSha256": "3bb529cdec2d76f63586c694881b1eb3be383eac06ab2c2258f6ccc08893c3d6"
+    },
+    "883d279d3b5978680672a6c1d7364d421d0afd10": {
+      "tree": "a1c61dbea9e6bb09bbe0a353b6e67e11f4fc0953",
+      "parents": [
+        "67c924b3d8837d81e6b3314e9c3cec7693f3ff34"
+      ],
+      "commitObjectSha256": "730e44cc52f731c02b4c573c7fd92a8505c7ce4b501abf8174f2800d4c223afa"
+    }
+  },
+  "entries": [
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": ".gitattributes",
+      "gitBlobOid": "e4f92278c74b4de31f2f363c926afa94ab6983bf",
+      "bytes": 476,
+      "sha256": "a0dccdea2975b741641fe1f50ca35c33a1cc97c01e6f897ec42054591d3063b0",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/.gitattributes",
+      "workingTree": {
+        "bytes": 487,
+        "sha256": "18fb77b618214d374ef254372d9c1807176d2db01563a8314f3d4ae15b7d46df",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": ".github/workflows/ci.yml",
+      "gitBlobOid": "539561fc9cdc80fe61410c5d2e96df524b4f8b46",
+      "bytes": 33151,
+      "sha256": "0f1a9bea97c2a86ce358d0ab3eccb7414e876c44c8f6367ba1d3397b055e3cf8",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/.github/workflows/ci.yml",
+      "workingTree": {
+        "bytes": 33952,
+        "sha256": "d7e2c9bab848a707d6499c42f75ccddf66fc11d62fe3243aff81bd3d5118663c",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": ".node-version",
+      "gitBlobOid": "e2228113dd09b59b7a0398d4e70af19b5d2aff4c",
+      "bytes": 8,
+      "sha256": "3151949a8b43e7df5385b69fbaeb5652bbdc7f7924e4278d550348f42b103f13",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/.node-version",
+      "workingTree": {
+        "bytes": 9,
+        "sha256": "751fc97484d12d7946b0ec9c74d94ecfa555de9daa35f040f037ae1fadc22958",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "AGENTS.md",
+      "gitBlobOid": "fe9114d161ce694a5fa3d0b4ba0efbf2c8ab1642",
+      "bytes": 9050,
+      "sha256": "25a0c33887733812dd1fc7f488cea57ef2e38a6436c788b5814562f22a88bb25",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/AGENTS.md",
+      "workingTree": {
+        "bytes": 9306,
+        "sha256": "a3eb6f9d3e9ebe6db6887f561f400db76207645d3478a84d83ae4332af20cf96",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "AGENT_PROTOCOL.md",
+      "gitBlobOid": "d419ac172b801fcc3c336f50a8eb1fbb4b2c270d",
+      "bytes": 74424,
+      "sha256": "c27270963fd7e94511f6c87802db990c3470eb05c0856dbd03e897dd83706ff6",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/AGENT_PROTOCOL.md",
+      "workingTree": {
+        "bytes": 76233,
+        "sha256": "16754a2ffed7c10f0fd9a5b7d9a72f29e769d4f3e376aad663206adb3295dea4",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "CONTEXT.md",
+      "gitBlobOid": "ec382a5cbaff07f16bd49acb4336f5d930c0eb23",
+      "bytes": 5072,
+      "sha256": "30a05e460cc2bc337cf98f721b942804c58ff9cd9d1ab1690928e93d554d1499",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/CONTEXT.md",
+      "workingTree": {
+        "bytes": 5177,
+        "sha256": "f4c047a902dcac2b49631d2cc8013c3f8eca09cee29eb500ca60a2716dd2658f",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "OPENAPI.yaml",
+      "gitBlobOid": "f917c9af38c4c74bbf3ad2fcd2b7b50d2789ca7e",
+      "bytes": 519382,
+      "sha256": "4a2f292803403bba63a8cdb5a67187beff99a01bde7e00a6d2799be66685e5c4",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/OPENAPI.yaml",
+      "workingTree": {
+        "bytes": 526828,
+        "sha256": "74b08be7b9849fdb8445870b91fe78547d81a05948dab5559b3d706fdd64e069",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "SCHEMA.sql",
+      "gitBlobOid": "7184e1fa7f52bd33ee960d6a370dccbe7dbb504b",
+      "bytes": 1531,
+      "sha256": "9682e88fb26f7c82452ad383ea5618ad7e150d149c44f44d578fd665feab35d2",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/SCHEMA.sql",
+      "workingTree": {
+        "bytes": 1561,
+        "sha256": "4ba5c8a954907f2df8a75e0ec0ba6aacf24f0f5a4478d152baa5f30be7867a17",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+      "gitBlobOid": "95338ca6becfd4ac213c10a5f09777d2b593cbb6",
+      "bytes": 4132,
+      "sha256": "d25e75002ceb15c24244ad01c2064b3b6e6b053cd4c499eaff3f68dbd50b1f44",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+      "workingTree": {
+        "bytes": 4132,
+        "sha256": "d25e75002ceb15c24244ad01c2064b3b6e6b053cd4c499eaff3f68dbd50b1f44",
+        "relation": "identical"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/agent-runner/src/permission-matrix.test.ts",
+      "gitBlobOid": "588c45377985da9d5bb63802b50ea2a2f766df14",
+      "bytes": 10860,
+      "sha256": "72f8b2f72f4a369275c319b8cc51909446fa858660287d6216e123bba7568ecc",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/permission-matrix.test.ts",
+      "workingTree": {
+        "bytes": 11046,
+        "sha256": "c429ba0622e27a9982506352652b08ca7f4c5c388062a2d3ffe6e0962deee333",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/agent-runner/src/run-session.ts",
+      "gitBlobOid": "a061ca61557cf65e672d3ee30148bae6a2bd0892",
+      "bytes": 21998,
+      "sha256": "a29650ca3cf7b3a50f7abc357df500b06b80ad276e284555285fd3198cb65f13",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/run-session.ts",
+      "workingTree": {
+        "bytes": 22416,
+        "sha256": "d6440a4a87437f7fdc12242305c7a494c8f157b681ceb9993f526dc61c589612",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/agent-runner/src/runner-api.test.ts",
+      "gitBlobOid": "b854ac48711b97ce089d395330e7d4a6ebf1862f",
+      "bytes": 1372,
+      "sha256": "6079177d1d6e6339d9eeb5a1bf35fc182d78e9f33cc21913224380e7d849f987",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/runner-api.test.ts",
+      "workingTree": {
+        "bytes": 1390,
+        "sha256": "c9133c6954293e0efaade075e0efa6d2164a23f9ea2a18e3b154c5b9a85dfb09",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/agent-runner/src/workbench-skill-manifest.ts",
+      "gitBlobOid": "7947d5eaa4b814c39a11d48aafdc74a1929ad295",
+      "bytes": 270,
+      "sha256": "4ee03ef63dfed06192eedd3b53653735ed9aaf84ada0856639d90291b11148ee",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/workbench-skill-manifest.ts",
+      "workingTree": {
+        "bytes": 276,
+        "sha256": "5f1674db9987bbf92c5a994ec881726a6aaab7223217fa9a07c53e2655581296",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/agent-runner/src/workmesh-tools.test.ts",
+      "gitBlobOid": "be83ba06ba8226c030db62a67146d066e115342c",
+      "bytes": 16783,
+      "sha256": "24e05d389903385679bdc5b95d1196398c6d5519d713cedcb7d304b6ae26c510",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/workmesh-tools.test.ts",
+      "workingTree": {
+        "bytes": 17066,
+        "sha256": "5c92c622958c85be4cd82a3590c551e2ccab64e944b81ab29979753b4dd09e46",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/agent-runner/src/workmesh-tools.ts",
+      "gitBlobOid": "793aa8ab8f0fa07488bb64596ac0ab2c37588d39",
+      "bytes": 26697,
+      "sha256": "6b0ce0255ea2cf25cda9c9c902bd53aa0c22d86d1a8e74bee596d38c938142d8",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/agent-runner/src/workmesh-tools.ts",
+      "workingTree": {
+        "bytes": 27100,
+        "sha256": "f1f8b9f0d6bf55ca6f1f01c18a0a51d631babd113db1febbc068474c9f5d0d7c",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/integration/stage1.integration.test.ts",
+      "gitBlobOid": "f50dd22d571d83401bbdbf400283caa061d067ef",
+      "bytes": 37046,
+      "sha256": "38e94d558aa975274c32cea92fcdd92f9cf5d68722b92a338e1a69245d646016",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/integration/stage1.integration.test.ts",
+      "workingTree": {
+        "bytes": 37845,
+        "sha256": "952482449b19d1f4f6f1e904c1d5532e060232a1119eb082d666bf7c6ec85474",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/integration/stage2-collaboration.integration.test.ts",
+      "gitBlobOid": "c1e2c60e6e8b240589e7641fade672ab7a6bce86",
+      "bytes": 192413,
+      "sha256": "f6ba056e6e7ce6a719693d954ad6266fed33169c189e29860212016b0702d076",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/integration/stage2-collaboration.integration.test.ts",
+      "workingTree": {
+        "bytes": 195584,
+        "sha256": "16487f874e7f309d88862b9ce3342112b757d7b7d876c361de15534cca8003f8",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/integration/workbench-runner.integration.test.ts",
+      "gitBlobOid": "191f285d5b7e7c9d4b8c638f19609f251f626856",
+      "bytes": 41607,
+      "sha256": "22bd48f485a3aa0b9f3eb31cf75c77aadd316fe1f48114d457b8e1b4b0e1fa66",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/integration/workbench-runner.integration.test.ts",
+      "workingTree": {
+        "bytes": 42198,
+        "sha256": "a3538e50f5fb67c2014c0e96c765de10d31a93cadf3376086f19a9eef66fcd80",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/agent-connections.ts",
+      "gitBlobOid": "485b47a9863b6daa06eb148ea685b6669e5c5fad",
+      "bytes": 66608,
+      "sha256": "b25b47045718a2be17d3e55cdd3338482a8905b769dbf2e4a6a37e15cf0789d7",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent-connections.ts",
+      "workingTree": {
+        "bytes": 67946,
+        "sha256": "01ef5e1b15275dce163a2d7f33dd33e41b48899552e905f489b830178cb635f7",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/agent/approval-projection.ts",
+      "gitBlobOid": "55d25ef111a9fdf86bbc94acbb26081f46f7ea84",
+      "bytes": 8339,
+      "sha256": "367151351df81e04d4dcfa79c2f10510b9b9ea6a4adfa8d9031eb9f5db3bfadb",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent/approval-projection.ts",
+      "workingTree": {
+        "bytes": 8546,
+        "sha256": "29716eb3c4f18f5daf2d7e5fb599812f2fb1835bc659faae0ab78c87476951c4",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/agent/commands.ts",
+      "gitBlobOid": "b061921e3756bb6eed2d5678800e2ea5e733f807",
+      "bytes": 178302,
+      "sha256": "fa77d98b761f1bbc9753d826c102acc3a03e660a5a94eddf022c5ce7351ef7cd",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent/commands.ts",
+      "workingTree": {
+        "bytes": 181502,
+        "sha256": "2105f5785addee769cad201ec4174359158f2386194ef4ae9c2d13e2123318f8",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/agent/guard.ts",
+      "gitBlobOid": "2f463a1188556d040e52f2615d0ae8ec83cb2b27",
+      "bytes": 21251,
+      "sha256": "0dde3b57f3d6cb64bdf08f00f6a144cd06d20cea8d6f9318addca7041f14660a",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent/guard.ts",
+      "workingTree": {
+        "bytes": 21764,
+        "sha256": "7511ac068b6698c6632a3ae4584efea1974c9ef13c173b655e1cdf410b6872eb",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/agent/routes.ts",
+      "gitBlobOid": "b03070d35b8e4dd6304fe65fceed52db64dfbb92",
+      "bytes": 31586,
+      "sha256": "b7833d2a9483d6dffe8fd2020e362227a27418497bfbeb7f5c3add2de8ec3195",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent/routes.ts",
+      "workingTree": {
+        "bytes": 31963,
+        "sha256": "046179a4e635c65415afff6f5a2e485f8b74488a76e1f6833b69b84f245f5998",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/agent/types.ts",
+      "gitBlobOid": "30a919b8b165cff29bb17dc9b8f7d930e7140b5d",
+      "bytes": 555,
+      "sha256": "e8c5c40c1bf7de86951023b1787783de3884293d62a8b3bb765c8797e45e822b",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/agent/types.ts",
+      "workingTree": {
+        "bytes": 576,
+        "sha256": "340895fe07e8bf1dc0bb80601fcfe15e4aa4e27811cf338d382bfd183145113b",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/authz/authorize.ts",
+      "gitBlobOid": "f5ffbcb065854bc04b39ed0948ac45a5d8991ed4",
+      "bytes": 25428,
+      "sha256": "7b6f36eee65ed3a09494a5cbaef8edf9e8a7090aef1f8b32bc3619384d66957a",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/authz/authorize.ts",
+      "workingTree": {
+        "bytes": 26032,
+        "sha256": "bbf32fe6ba530689b638e018d664f3c53c859126210f44f23a28741e9d6a2da5",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/authz/route-policy.ts",
+      "gitBlobOid": "08707b2731cbff510e51e136158a99bb26666cc6",
+      "bytes": 3495,
+      "sha256": "e95e8f91af35542ff60fefe9132485306b36a20348a2e9a6bb8968ad5132ee64",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/authz/route-policy.ts",
+      "workingTree": {
+        "bytes": 3592,
+        "sha256": "485bbda4e2659dd25dbdd0c516f0141bc393300ec74511af339c17eabf24e256",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/client-profile.ts",
+      "gitBlobOid": "03b689a0ea61dd556f6e20abef6529b7bf442fe2",
+      "bytes": 5993,
+      "sha256": "07ec7d07303dd7a47160eb717042a0a0eda5d37d9325ea737180bb90ccd015ff",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/client-profile.ts",
+      "workingTree": {
+        "bytes": 6119,
+        "sha256": "c275e229cb0a832a67cc4e7fa06004bc795f30072e2c5a888c81b88db72c6dac",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/collaboration/routes.ts",
+      "gitBlobOid": "44d5e3598657c2e250e34df990bd168e7030a815",
+      "bytes": 135066,
+      "sha256": "9a547372813a04a338fa714b41c3eef411f5ca54079a153b0672ecd592bbc605",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/collaboration/routes.ts",
+      "workingTree": {
+        "bytes": 136778,
+        "sha256": "106490cb5ce85e78fea43dce28ca7424caaacab14ad70bb8c19981482bd18190",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/connection-installation-token.ts",
+      "gitBlobOid": "61ae2d637b13b93a8d27521393f62829eb24bbf8",
+      "bytes": 1795,
+      "sha256": "3dbc9cc274a6a157da6073674635bc5806366c1dbacda9b4bc89b868cc702a1d",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/connection-installation-token.ts",
+      "workingTree": {
+        "bytes": 1852,
+        "sha256": "b1a2d4d7eccc75e6b9a4adbfb9e186420e63a5e0899400f32440d6e52e2ba13f",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/heartbeat-idempotency.ts",
+      "gitBlobOid": "aabd510f597157c340dd09fce5e9cdc3dcf82de0",
+      "bytes": 1765,
+      "sha256": "4e0d55fff20e3519b8cf73a29305bcb51ba083c7d90a50ec44c2a8c7c9e266e8",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/heartbeat-idempotency.ts",
+      "workingTree": {
+        "bytes": 1819,
+        "sha256": "c583f9491689d710c6846c08eb09f35705d71a787f75b0d6f818ae5303a6753b",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "gitBlobOid": "c105e7c00e49e93438e1e2f93be2afaf0867b7aa",
+      "bytes": 9637,
+      "sha256": "421ac3ac205074c267e0d0bf33a0e396665c65f755726ba1b38acac19d8ea7a0",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/live-read-authorization.ts",
+      "workingTree": {
+        "bytes": 9856,
+        "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/recovery/projection.ts",
+      "gitBlobOid": "f9591abb44df9a3a1ba6866f228a3f973a5b215e",
+      "bytes": 27378,
+      "sha256": "678740e650b7e842c2b0137af815151edc4dc2d28b91d7b67a391048c7e09d8e",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/recovery/projection.ts",
+      "workingTree": {
+        "bytes": 27728,
+        "sha256": "29b87b07a8d0c69a08da81c615f6e568f895d6038428e7c36f742859f2b89fc1",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/recovery/routes.ts",
+      "gitBlobOid": "355cd7403562e8f14bc2a4bb8598ed240ad4b82b",
+      "bytes": 5033,
+      "sha256": "4f05609aa258427746f428e0d131e0f90cbfe0962764908228952daefbc86d0f",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/recovery/routes.ts",
+      "workingTree": {
+        "bytes": 5148,
+        "sha256": "aeff3440af7ab4417f70ed2e617a3d6ac3cb05d8280df6e2e3fbc9386383730f",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/server.ts",
+      "gitBlobOid": "8a0081106fa6ace90802062d3e04212d69d2aba3",
+      "bytes": 73210,
+      "sha256": "b33702607927fc991b04e945aa2114382da7e0b76036998d194f3b3b8a9440fa",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/server.ts",
+      "workingTree": {
+        "bytes": 74970,
+        "sha256": "e274846906c0ab3b80b219d2005f85a0390860a9b35a688e80806bf797a391fa",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/api/src/workbench-runner.ts",
+      "gitBlobOid": "6dad4870de9d9afcb88a833b024ef2c96b7eb850",
+      "bytes": 26656,
+      "sha256": "5e1772625fc982e34aa91630db8fd1343cd53ec03d9a967ef09c9cd0af276819",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/api/src/workbench-runner.ts",
+      "workingTree": {
+        "bytes": 27064,
+        "sha256": "ce8073989fb24b79519230d47817b35c31810670b52477ae5e2aa13476457e90",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/mcp/src/discovery.ts",
+      "gitBlobOid": "6f1fc9086bc6db3c8ffd341d1ce016248b645b20",
+      "bytes": 12334,
+      "sha256": "06a7bf77867504112cd551856abb338947d4e5d34113ed2fd075bc6ef467f262",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/discovery.ts",
+      "workingTree": {
+        "bytes": 12492,
+        "sha256": "3be158940daa151618459e02f77f057a4f19ad64b28243f66f42afbb30924171",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/mcp/src/http.test.ts",
+      "gitBlobOid": "88fa0cdfc4ce27e3ea5eebb60744a83b87d19b6d",
+      "bytes": 5215,
+      "sha256": "14d4801b7e9d33a1abbc0023f4ca7f73ae2e858c9aa92e7c5337eae84bb48581",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/http.test.ts",
+      "workingTree": {
+        "bytes": 5343,
+        "sha256": "435b7b2b9066ab047ab42d833a217bbea3273b57910bebe8a1d603957f475e12",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/mcp/src/http.ts",
+      "gitBlobOid": "4aeb481531f126ed2c502a40a7ededcd1ce56b38",
+      "bytes": 6838,
+      "sha256": "2460bfee36cf8d674320450d81c13e3b2f841ff78260c4947c7217f55f999ff9",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/http.ts",
+      "workingTree": {
+        "bytes": 6991,
+        "sha256": "bdba07249f3e20c29210574fdd46d66277c454b245088263ba338753ead8c314",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/mcp/src/index.test.ts",
+      "gitBlobOid": "d5bd071aa253aee1dd5406bb936f529ff1a71cfb",
+      "bytes": 65371,
+      "sha256": "2a5c94b4edcd758a89847b792a616c4ecd638ffa6aba9ae0e1508aa3e3dd2290",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/index.test.ts",
+      "workingTree": {
+        "bytes": 66734,
+        "sha256": "f0ed37d6bf7ef60a2755c82816e347618eea16248f8dbc12e8ebbca048522800",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/mcp/src/index.ts",
+      "gitBlobOid": "ed916b74bcd0a80980ae0ed3739ec2ee136e1c94",
+      "bytes": 67745,
+      "sha256": "212a5dc1a2bb4fd162ffc0ee445aeb5a97ce303e66e83851134b33804bf047ee",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/index.ts",
+      "workingTree": {
+        "bytes": 68134,
+        "sha256": "be80b2d3c5b363f524447a5ad80b68dbfd512880d8c10f4ac6b7095d2a0a079f",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "apps/mcp/src/recovery.test.ts",
+      "gitBlobOid": "e4792d051d275bdf75d7c34a9d67fd7f4440f4a3",
+      "bytes": 6291,
+      "sha256": "34c05ee4f50f274bbaa815c706b692109126fd9effb15bb060b9d68ed44e7084",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/apps/mcp/src/recovery.test.ts",
+      "workingTree": {
+        "bytes": 6380,
+        "sha256": "61cd1c8ebb5c42bb97b5ba48a670397ef3ba8f908525bf1e7997a0043431740d",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0001-monorepo-runtime-split.md",
+      "gitBlobOid": "2ffd88783309df50da8a76cbe8b37c46f4d689ce",
+      "bytes": 691,
+      "sha256": "33dbd6519177e4723e7c67dad00c3aab27431c6cedf07e5f7912e3b4021966b4",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0001-monorepo-runtime-split.md",
+      "workingTree": {
+        "bytes": 706,
+        "sha256": "69bbe10d27cacb3bf95ee34eea7ed6878f9af888a47e396c84c19794fd188889",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0002-rest-sse.md",
+      "gitBlobOid": "39975e9a8c6087e8052d10a7623d1e49602f34e7",
+      "bytes": 575,
+      "sha256": "edba698ee94dc9ade419df2656eda0b816ffdcb5e38dc5e6f9d4f7d5a70c6b1b",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0002-rest-sse.md",
+      "workingTree": {
+        "bytes": 590,
+        "sha256": "4cba91335bb3438a1b9a68782e94a620b47c54acbe36db460ef7addc938b2a1d",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0003-postgresql-transaction-outbox.md",
+      "gitBlobOid": "a12d8990dd423245198f9a680c0c3ea07e98e9de",
+      "bytes": 677,
+      "sha256": "42e4a363b77efd152c3edc464cef25b47fa600f00d6a978bd519148692fb83d7",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0003-postgresql-transaction-outbox.md",
+      "workingTree": {
+        "bytes": 692,
+        "sha256": "8b5557e11cb0032274f854328ea940905481be2cb984af804b3b730199ff51df",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0004-actor-model.md",
+      "gitBlobOid": "43854ec7fe0f0dbcf945da0373b0e8db4a4c0467",
+      "bytes": 700,
+      "sha256": "8c0307d5b979af88c945a2423423b6829bef4540a3d4e2ede45985c7f3bbd5a2",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0004-actor-model.md",
+      "workingTree": {
+        "bytes": 715,
+        "sha256": "b7118626c265bfbd7683205a17bb4cb2d51e6659c821a8fcd1b1f9b8e9343216",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0005-authentication-choice.md",
+      "gitBlobOid": "f364ef4ac701272a9e99c3afe55df929db2bf808",
+      "bytes": 731,
+      "sha256": "792445c6174a091203b8eb946a5e15ccada5da51193b22c11808e67273f75a60",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0005-authentication-choice.md",
+      "workingTree": {
+        "bytes": 746,
+        "sha256": "f952f3a6176712a0b8cd66d0aa59c09a273827b3be55abaab3b950210f44d785",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0006-stage0-authorization-and-event-scope.md",
+      "gitBlobOid": "e60141cb75f5eb8daccd6aebd5b891a74f8ae8ce",
+      "bytes": 2162,
+      "sha256": "0ed4c0fdb2ddf7621a8ccd0d7e1098f3cc71f55454300afbbc1d1cef4ac82e95",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0006-stage0-authorization-and-event-scope.md",
+      "workingTree": {
+        "bytes": 2193,
+        "sha256": "e01dbdc2a7309996c0bb9cffaeb6b1f3b6a6617041aa7c271a75a5610d961d25",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0007-redis-outbox-delivery.md",
+      "gitBlobOid": "2027d6866f6c6612a9332c253a5c476f797cf55b",
+      "bytes": 1585,
+      "sha256": "55a14a01a685fead307ec0ac69695b2006c72f75983559492526c864173ef6d3",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0007-redis-outbox-delivery.md",
+      "workingTree": {
+        "bytes": 1609,
+        "sha256": "cd88faa2c65d7695e48ac1733e791e171d3c00727e0055520af800bfb8226332",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0008-agent-session-token-revocation.md",
+      "gitBlobOid": "bfe71633629746d09f99bd034b077a35bfac5822",
+      "bytes": 1483,
+      "sha256": "736a4bbc14480b50914ed834eaffebaa40ab198bbb9adad9cc091c62f292b697",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0008-agent-session-token-revocation.md",
+      "workingTree": {
+        "bytes": 1510,
+        "sha256": "9f4da1580622f649fe851cb087da2256c5274b5beb3f933e67aad06d14df9440",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0009-agent-session-transition-table.md",
+      "gitBlobOid": "20fca408100ef54aacc5d3e337fe0c8622e4b64c",
+      "bytes": 1817,
+      "sha256": "484c7e0f914266f8a9fd28d8ff66755c8fc158e334ee4cbedf66b8b7515eaad9",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0009-agent-session-transition-table.md",
+      "workingTree": {
+        "bytes": 1846,
+        "sha256": "ea9e802a875ace702ae1ed87f3cd9729917f23f50620668fd434b4b038b97805",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0010-agent-activity-immutability-and-redaction.md",
+      "gitBlobOid": "c327215d639abdb42a38a72bd5d92a12955ac90b",
+      "bytes": 1363,
+      "sha256": "32a684f6d091b98725e7f362937eda3ff46c0049bd186d1e679e1b1ae42832a5",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0010-agent-activity-immutability-and-redaction.md",
+      "workingTree": {
+        "bytes": 1390,
+        "sha256": "c8b54da207320a64f230f0044b3e72c6c09a6accd6c6520d3539725391bf9107",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0011-agent-plan-versioning-and-conflict.md",
+      "gitBlobOid": "e676ad5c21c87d00a8d976f2719a7d6c5c4fe070",
+      "bytes": 1850,
+      "sha256": "174011ebdb58367c87f4a912d486d9647b69d9898a26fa1d6c3c07b7bcc7d574",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0011-agent-plan-versioning-and-conflict.md",
+      "workingTree": {
+        "bytes": 1879,
+        "sha256": "b2aa021ba4e84e29d2bdf718e90128fa8ade7d21d712bbc383aa49ee049b7817",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0012-mcp-domain-boundary.md",
+      "gitBlobOid": "f9a0719a326538023e462e546a2f5ef869fa8dd6",
+      "bytes": 1286,
+      "sha256": "31dbeecc6b37d93d207ebcf81ca80cefd082bc82906843bf783c7caa74d1b517",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0012-mcp-domain-boundary.md",
+      "workingTree": {
+        "bytes": 1313,
+        "sha256": "92259a1bc30b7627ba04fede535029ae743097f312491f9d77bdd32f7adb76a2",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0013-lease-semantics.md",
+      "gitBlobOid": "4dff7bd367d37e5545053f2c087c2b0983b0050a",
+      "bytes": 962,
+      "sha256": "6be2820c3d804720824d93834b0dcb6749f779d4e2e8ad4037f8fd261abd7085",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0013-lease-semantics.md",
+      "workingTree": {
+        "bytes": 989,
+        "sha256": "3879a74227692191c5e1a3e735b851e1afdb67cde310f951718fb209a6b0efb0",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0014-handoff-transaction.md",
+      "gitBlobOid": "812ae9ebf89251c36db122d4159c58ba5dc129eb",
+      "bytes": 1625,
+      "sha256": "67630e492331b285683082870e26356f95e0b1ce8d3279c327c8bc88b53ed819",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0014-handoff-transaction.md",
+      "workingTree": {
+        "bytes": 1654,
+        "sha256": "15584d481254f2d82040457e96f93f30d594a4f3daaa76078a99e7ff6e245ba5",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0015-agent-routing.md",
+      "gitBlobOid": "1ff38d18995699112b149bdac46feee6d61f67ce",
+      "bytes": 1444,
+      "sha256": "2c0ca303b9bfdbff057c8ac06c87429ff440d29a92dd54ae3e8258bfc73e8327",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0015-agent-routing.md",
+      "workingTree": {
+        "bytes": 1471,
+        "sha256": "fd28de34a88d93391f3071e6fbaae79714cc128cb99246df73db8069cdd56793",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0016-work-room-projection.md",
+      "gitBlobOid": "720011a4bab1b7ca5b9d20152f2ac3889f459b4a",
+      "bytes": 1512,
+      "sha256": "a14d93aad70431749b013cc5ef63c2c1c47b018d84ff03f5320f9ac402df419a",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0016-work-room-projection.md",
+      "workingTree": {
+        "bytes": 1541,
+        "sha256": "4c0c135bf3183ddbd252475c1672c7134e0d62e2356258c0d84fc699b80fd864",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0017-parent-child-completion-policy.md",
+      "gitBlobOid": "de45cb4c3ff1a392dfb8fca96306ffedd73d799a",
+      "bytes": 1103,
+      "sha256": "62670971d8fee198b39d64fd9234f9394b642a8e32cb7aa11788ff56ea9fa933",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0017-parent-child-completion-policy.md",
+      "workingTree": {
+        "bytes": 1130,
+        "sha256": "25238a1e6299017c02b5ceb3fd4a3d495cabcccbc4e37415efc05821a11d0844",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0018-provider-abstraction-webhook-recovery.md",
+      "gitBlobOid": "9b499ffdf5a06f4376228d2db1d4c95fa846ef67",
+      "bytes": 4195,
+      "sha256": "b9ef0f9cc0c44145677cc7c834932ae70d48daf359d81051cf277bc5a61f1f6c",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0018-provider-abstraction-webhook-recovery.md",
+      "workingTree": {
+        "bytes": 4228,
+        "sha256": "4a1c25e5c71a0999dde54dca56c1fc7247a1af11999d9cfbcd3277c02d4a0875",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0019-repository-context-and-agents-scope.md",
+      "gitBlobOid": "668316d34cd4357982eb8841032c6dc9d60fc210",
+      "bytes": 1856,
+      "sha256": "da740bda67988ffcc9aea1cb2573bc744eb4aa577c844430ae2ca54baeefc774",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0019-repository-context-and-agents-scope.md",
+      "workingTree": {
+        "bytes": 1885,
+        "sha256": "9e515c7d07c2f01eb64c03c2c6a0467edea9fd91a68219c8c99b0f5d6a6d0c00",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0020-exact-head-pull-request-approval.md",
+      "gitBlobOid": "26495e0a45229cea02610ae98e46ecb7e04c981f",
+      "bytes": 2791,
+      "sha256": "1dcb77e0cfebf575d0bd8736d077393e5c4b08b9fa767d9d3b7a287ff04d1e24",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0020-exact-head-pull-request-approval.md",
+      "workingTree": {
+        "bytes": 2826,
+        "sha256": "e58c5b5d22f2254ce363dff0567cd0a500bfbbf88bae5b04b5910ab3364d23d5",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0021-artifact-upload-and-provenance.md",
+      "gitBlobOid": "dfd2e986835c5b363eec2415394e5dcba07f86b7",
+      "bytes": 2369,
+      "sha256": "252f3f8dd9f5ea008b9518a814dd920051d6b6faa8e99007edf11bd4cd6a69c6",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0021-artifact-upload-and-provenance.md",
+      "workingTree": {
+        "bytes": 2400,
+        "sha256": "9a9f40503d143986a54c7f613d10c284b6a364433f71aae582dbcc9a779dea8f",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0022-completion-suggestion-and-project-progress.md",
+      "gitBlobOid": "966b29d8c5ae22f79abd1367d752e9aa48f5b287",
+      "bytes": 1426,
+      "sha256": "6ac6e7d37e69cfb5358f693ee1672150e3abe66506492cffec0f6909e5582e0f",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0022-completion-suggestion-and-project-progress.md",
+      "workingTree": {
+        "bytes": 1455,
+        "sha256": "6668b577783b81a31285e490171d32b5c1acbea750629fb295b00fc6ffb37eec",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0023-automation-versioning-and-effect-execution.md",
+      "gitBlobOid": "f678e20b48c246e1470d04614e1b615e9acb2299",
+      "bytes": 3228,
+      "sha256": "066cf776cfa9ba3719cd0cead4edce9efe9d8442118d1bc6f979732608832263",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0023-automation-versioning-and-effect-execution.md",
+      "workingTree": {
+        "bytes": 3261,
+        "sha256": "065e909ca9b5d796cb7fde74f78b6f8e49f70d529a5372d49fb89f590ce619df",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0024-loop-admission-overlap-and-retry.md",
+      "gitBlobOid": "e64a2d8060ac506b9690cb9ae64471916e75cff3",
+      "bytes": 2217,
+      "sha256": "e075d553b1a404441ca6331320c60ae588f2c316ead94db1926e44bcd3f3df91",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0024-loop-admission-overlap-and-retry.md",
+      "workingTree": {
+        "bytes": 2248,
+        "sha256": "3415a330676ca00cd2f2b6603155092f4ed37cacc6eff79714d4b78abb412b44",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0025-source-linked-project-forecast.md",
+      "gitBlobOid": "29503b301ad132ccd95889bad0b7d68566691be0",
+      "bytes": 1577,
+      "sha256": "6d3d6a59acdf3113302acdf3683b44bbef17bbe3d3c7a2497d397253fd497691",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0025-source-linked-project-forecast.md",
+      "workingTree": {
+        "bytes": 1608,
+        "sha256": "76f5c6ee30871ebe430f025eaf4d5f4323ffb8433c64b03ea3530edcb2bacb7a",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0026-usage-and-cost-normalization.md",
+      "gitBlobOid": "b7918f41e5e36210ff673d428435831230f99e44",
+      "bytes": 2905,
+      "sha256": "a92c9dcefb8784f3459172156d68231f70f2c0d8d01de4a39241a9269ec8b02d",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0026-usage-and-cost-normalization.md",
+      "workingTree": {
+        "bytes": 2936,
+        "sha256": "6090f91c5da10787739d05f20c5ab4ea118eefd446d685c13cbdc2847a670507",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0027-a2a-version-boundary.md",
+      "gitBlobOid": "da84d8e51f0ee08bf6b9c3edb97c420947461260",
+      "bytes": 3663,
+      "sha256": "0d8e0b09085b164d2ede403fc4be98ec920fbbe57fc7a5523f22445e70f8b868",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0027-a2a-version-boundary.md",
+      "workingTree": {
+        "bytes": 3698,
+        "sha256": "dcaf081e63b3a1e457a4159ecd9acef813ae614e695f4a03fb3d9f8c5410ce22",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0028-declarative-route-policy-and-event-audience.md",
+      "gitBlobOid": "250f6580b7a536196c8560d7d98899484a91696e",
+      "bytes": 4661,
+      "sha256": "c45e1c3474a101c933fc2b888a8804859a4a871acd6c58236076fcacbcb4dd64",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0028-declarative-route-policy-and-event-audience.md",
+      "workingTree": {
+        "bytes": 4751,
+        "sha256": "5ef48f79774654d882a11c4044371419975ef4c3ea95802cdf0c757b34880871",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0028-kaneo-frontend-architecture-and-dependency-policy.md",
+      "gitBlobOid": "62b990aac7d68e0737a7ca4f23b6d5c2939ea7e8",
+      "bytes": 8037,
+      "sha256": "0d3f856506fe32cfe26cd88b9ad07acb4aab7e1a8e0d8ddffb13718fbfa731b3",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0028-kaneo-frontend-architecture-and-dependency-policy.md",
+      "workingTree": {
+        "bytes": 8116,
+        "sha256": "261fe3bdc7a5c71351074123646355e1c071273e4be75830ddf4d8e271bf840e",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0029-rich-content-sanitization-and-editor-boundary.md",
+      "gitBlobOid": "d4d95409f30820d0fff6427e8b74962fa78b8b4a",
+      "bytes": 9002,
+      "sha256": "fd7d575bae468ebf8c0de1b7279188086d0460f8093a2ca0e5fd7b386111c0a9",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0029-rich-content-sanitization-and-editor-boundary.md",
+      "workingTree": {
+        "bytes": 9046,
+        "sha256": "900ac53fff49fe5e3df3596ffca30f80a720b3ab0d310c85e9a3ae98d981799d",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0029-secret-aware-authentication-idempotency.md",
+      "gitBlobOid": "fed737f236984bfb171046fe2afe7a79c74bfc9a",
+      "bytes": 4260,
+      "sha256": "2b0aadecc21232814864ba2393ae46fe31bbed2acdf4038d4a27bb6314006b98",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0029-secret-aware-authentication-idempotency.md",
+      "workingTree": {
+        "bytes": 4344,
+        "sha256": "633747f52a10dda0629f75e85725b29e65d7c85df34d04fc9674009fc645808c",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0030-shared-authentication-rate-limits.md",
+      "gitBlobOid": "b6be135cf8c8ec43d420912b5267b0e8396cef7b",
+      "bytes": 4217,
+      "sha256": "c24fff8535de7fd89a9a5550d6bafa75c3299c78c53fcda9a4a111cce7a23f54",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0030-shared-authentication-rate-limits.md",
+      "workingTree": {
+        "bytes": 4302,
+        "sha256": "ee64886b2d983b8d19e5f4cfa0f2d00134703129912f917ef803ead206aff4a1",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0031-authenticated-single-use-bootstrap.md",
+      "gitBlobOid": "76f322c61dc1f833c5ba9f59d5d11f2efa3de920",
+      "bytes": 4364,
+      "sha256": "9da8f901f0c5242383e8c5dd45d5eb42a29816ebe1c88adb55c87af095cd04e5",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0031-authenticated-single-use-bootstrap.md",
+      "workingTree": {
+        "bytes": 4455,
+        "sha256": "9f51a206b4e7e732207d5edce60dd1fe851238621d4a41593e880008d95e6766",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0032-signed-keyset-pagination.md",
+      "gitBlobOid": "90dc653dfb9398364d7626800b0981564c26d751",
+      "bytes": 3129,
+      "sha256": "a0530e1c1bc050c1efc39374db592e2dc692b40a1fb7bb984385e78c6d5edc51",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0032-signed-keyset-pagination.md",
+      "workingTree": {
+        "bytes": 3162,
+        "sha256": "b8fb38cb423d6889a3cfaaa679c773226ad41662418bbb614d9bc37962b15046",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0033-postgres-authoritative-realtime-replay.md",
+      "gitBlobOid": "af861f34c179ccc1b6dc579bcc615b4a05464327",
+      "bytes": 5873,
+      "sha256": "870efadb1a2db8b5013d97bdf8d7e289e72c093bc428748e72c9d88eaeaf03a7",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0033-postgres-authoritative-realtime-replay.md",
+      "workingTree": {
+        "bytes": 5985,
+        "sha256": "ab2e51d435d7e9d33693d389519d291f4e40319fc01cca37643fd47ed57ba8cc",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0034-production-runtime-images.md",
+      "gitBlobOid": "50be9941752f1bb2049cc3ee518741bb1f37a302",
+      "bytes": 4611,
+      "sha256": "2dddf7f35bafe128a0688c4dd739225bd185728bd4fb366caf83558602642384",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0034-production-runtime-images.md",
+      "workingTree": {
+        "bytes": 4646,
+        "sha256": "5367b1453eaa3185b693a33c254227ccf0d055ddda7b0164234853e61107b62b",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0035-retention-archive-and-heartbeat-projections.md",
+      "gitBlobOid": "c0a51a1289923b0d9d5fb78f4bfdefbf9ba1cd3e",
+      "bytes": 5551,
+      "sha256": "71f20c7d552b7827123d4b0f0802fd5490c05eb365b1dccf4f4588187e213295",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0035-retention-archive-and-heartbeat-projections.md",
+      "workingTree": {
+        "bytes": 5656,
+        "sha256": "4a993aafa0c720802a527194a29a0c11f7dd4df7c45c41a234bcb8cc20d00be2",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0036-exact-archive-membership.md",
+      "gitBlobOid": "0267132783bc6675f5c17062c27a91605c39bc65",
+      "bytes": 7695,
+      "sha256": "c57536b04d0125ddd89a3241928e8971342ddb9155aea620480533709e8cc981",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0036-exact-archive-membership.md",
+      "workingTree": {
+        "bytes": 7832,
+        "sha256": "cdea929b4e446de8d26e29bacef57b06ce4b9ba7ede4558d74d96a8a82f8fcde",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0037-agent-inbox-recipients-claims-and-receipts.md",
+      "gitBlobOid": "bc5e363348525c1adadc616590f5ce96c60982c3",
+      "bytes": 8320,
+      "sha256": "9f08b6f7dac5c96769d585ad87e309f4ac1530100d70d30fd2003969902a8817",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0037-agent-inbox-recipients-claims-and-receipts.md",
+      "workingTree": {
+        "bytes": 8467,
+        "sha256": "bc8fdb66fc9ec62ed110726eb53c44b90e5488d8454c05a797577f454a31de57",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0038-atomic-checksummed-v1-migrations.md",
+      "gitBlobOid": "fe08050353b30de8a4efb8f69567bf024c599ac5",
+      "bytes": 2509,
+      "sha256": "768c2c6b803f50e2ad8ceed982c8fddee2985e46e61ffb0cfcb70865d5ae52cf",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0038-atomic-checksummed-v1-migrations.md",
+      "workingTree": {
+        "bytes": 2567,
+        "sha256": "0efb2e122bc1e9c7c1c77f5dc3ab6402ac803711afe87e318018c6ba07ba58f0",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0039-authenticated-complete-recovery-bundles.md",
+      "gitBlobOid": "d668adaa61e50092fd5d1dfa1e7a65d4540288d5",
+      "bytes": 3635,
+      "sha256": "ce047db95be691b092b4a25939b6e930ca43469f99a13ccee086dab3de71076e",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0039-authenticated-complete-recovery-bundles.md",
+      "workingTree": {
+        "bytes": 3708,
+        "sha256": "c52d79199407233631b56146e7bbccb78ad0af3742d54bba215a53d84e064dc9",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0040-transactional-active-executor-projection.md",
+      "gitBlobOid": "9981b8317fdb93e823f08dd40d06d8ccf2bc10aa",
+      "bytes": 3203,
+      "sha256": "f15c0e7272f974652535a5d96f90bb324e51c71598d1211061bc06ca488e5a9d",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0040-transactional-active-executor-projection.md",
+      "workingTree": {
+        "bytes": 3273,
+        "sha256": "d9344bdee0add7f8d8fbe6cdd1d2eab8536f8b063743c16891ff5f579b02c2f7",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0041-versioned-guidance-and-context-pinning.md",
+      "gitBlobOid": "1e4a9afef01fb517912f9efeade09e6f590bde44",
+      "bytes": 2950,
+      "sha256": "d4634ec14e2bafa576b3230543701ba5c50754bba1c71ea5f5cdc89eba1ae883",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0041-versioned-guidance-and-context-pinning.md",
+      "workingTree": {
+        "bytes": 3017,
+        "sha256": "2ac9b1aadbcc999fcd76ff792d3bda3662defd49865c0ccc6cb957fc5b499538",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0042-agent-client-profile-and-derived-capability-manifest.md",
+      "gitBlobOid": "5ad4e5434603fe83555cda3df4e6f507f51d8f7a",
+      "bytes": 2339,
+      "sha256": "a0530dfa3a65ee8e4771d94d8e64ee529f7f54462967b63b6331e00b73a50ce3",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0042-agent-client-profile-and-derived-capability-manifest.md",
+      "workingTree": {
+        "bytes": 2394,
+        "sha256": "c2ea95b82a92da00776713cb6c9874ba707d80d0fca61abbd50c57f87924ebae",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0043-agent-connection-and-coordination-mcp.md",
+      "gitBlobOid": "c57ff2216307a7c21940dd9fc0278954489f30cf",
+      "bytes": 23937,
+      "sha256": "b15dd4f6068b27520afbe55909c1323da0b5038d9e3cda4b038f834ff2cca938",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0043-agent-connection-and-coordination-mcp.md",
+      "workingTree": {
+        "bytes": 24440,
+        "sha256": "7f4ebf52f4a07b414468e9caa5f136d8c6bf291f40d2a08e8a49474b0ac3ab73",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0044-structured-planning-domain-parity.md",
+      "gitBlobOid": "2c53ac07cfc9493963011b219f5d88b74e093744",
+      "bytes": 3823,
+      "sha256": "e02b8367312309eb390ce3144d77fae644db70066b39034e6f3cdd22ec0e4f88",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0044-structured-planning-domain-parity.md",
+      "workingTree": {
+        "bytes": 3867,
+        "sha256": "01f9e76b5f3e4eea9ee352029122d324f827718147c509e08f23432f30cc6954",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0045-webui-redesign-i18n-theme-unification.md",
+      "gitBlobOid": "68abe4588d1257ad0ece6b7807e06a0ec5d15d0b",
+      "bytes": 16377,
+      "sha256": "2dccd62b2d913f2df1329b7f862a1107026bf1d0410ec8994f08401be74fbb77",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0045-webui-redesign-i18n-theme-unification.md",
+      "workingTree": {
+        "bytes": 16673,
+        "sha256": "fb4c0007af69e3a7477ff3c160e051eb7b12fa1776d9972b45a774d493605669",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0046-agent-connection-recovery-and-execution-capacity.md",
+      "gitBlobOid": "81f20d769bc2040f8d7de986bc91a5bc0f12d8e5",
+      "bytes": 7620,
+      "sha256": "85594be22b5deb306b36ab061af7767b549ea4f126a7f79a8f7f10e2be8fce14",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0046-agent-connection-recovery-and-execution-capacity.md",
+      "workingTree": {
+        "bytes": 7702,
+        "sha256": "db6a991b6562f41ca59846fb109a416d7cca90ee33bb5f92566c95f30005e7e4",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0047-agent-task-admission-and-forced-delegation.md",
+      "gitBlobOid": "50419b6291efddc8eabbd754bc6dbd3ce108e030",
+      "bytes": 10221,
+      "sha256": "d47278fd7bc877b2ebe7a5db475e0f087731b211f0c55795104208273858f994",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0047-agent-task-admission-and-forced-delegation.md",
+      "workingTree": {
+        "bytes": 10424,
+        "sha256": "5cf3d7ebcee8cf542c98903434aaf03e12333942e7e3cec221fc283762b711cd",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0048-stale-self-claim-recovery.md",
+      "gitBlobOid": "dcc2aa14ad3b060eec0394b4894adf51d3e0de8c",
+      "bytes": 5421,
+      "sha256": "3f312b051e5e29756b6a8789bd226154566fd08876574e7d71258c461f75e942",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0048-stale-self-claim-recovery.md",
+      "workingTree": {
+        "bytes": 5529,
+        "sha256": "09a4d5d4b022dbe70d2231af38f65f68454266e2e80dfd5327178617d70222be",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0049-terminal-only-self-claim-recovery.md",
+      "gitBlobOid": "54e336506bd2853e71087364d38a16c8de2a5403",
+      "bytes": 4439,
+      "sha256": "c90cafc1afd736538b1fda8e6f0c1e6be138b8ddc9525df134c492bd8fc3f623",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0049-terminal-only-self-claim-recovery.md",
+      "workingTree": {
+        "bytes": 4526,
+        "sha256": "c20ab3b54a94bd6097c33357f477657f97c1036347b90079512f9fbc47ec4e85",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0050-human-attention-authorized-projection.md",
+      "gitBlobOid": "7ddad5687de2d8cd02aece2a1242ee85307997ed",
+      "bytes": 5182,
+      "sha256": "387f0a781f3b394cf0f0a6446441cec1feb2ff5fe12aba9766264495676b492e",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0050-human-attention-authorized-projection.md",
+      "workingTree": {
+        "bytes": 5276,
+        "sha256": "a6489055edefc856d6f8ec0f2aef08480914f40c7fff4e9e27ca172f2419214e",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0051-human-control-plane-read-models.md",
+      "gitBlobOid": "c3a0a9b23b79183fae7ebc6bf892de1f1390719a",
+      "bytes": 2978,
+      "sha256": "2f3e6b7aaef18784082954aa2792323c49c8ef90ad4927950e8a3c13978cde4a",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0051-human-control-plane-read-models.md",
+      "workingTree": {
+        "bytes": 3013,
+        "sha256": "81ce9f1519be88b3bb80328b41c2bca5149b788d1cf6446fbd6b929acdb582a7",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0052-human-control-plane-information-architecture.md",
+      "gitBlobOid": "cecf4709f229b60bdc171a82a13ad5add21198b3",
+      "bytes": 4739,
+      "sha256": "debe5a00cdd57beeb523453b5299d69ad60840fcbf5af766119b553e5bc013a4",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0052-human-control-plane-information-architecture.md",
+      "workingTree": {
+        "bytes": 4837,
+        "sha256": "586b2c3b6e5e9de023c025c8861ac7f2e21f26060fb7f6d3f978f87eb8d2a389",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0053-human-attention-governed-responses.md",
+      "gitBlobOid": "6459e59f1b94c1df069bc6b435fc20fd4720c538",
+      "bytes": 3571,
+      "sha256": "bea8776ae07b2b4cb2f3984b4d9e50cca235acbde42665c8641227c0da31b74a",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0053-human-attention-governed-responses.md",
+      "workingTree": {
+        "bytes": 3649,
+        "sha256": "c4c15c4d83dc7a2b6139520cb685735c9063f13f0729a27ef42b1722a53563c8",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0054-causal-agent-run-explanation.md",
+      "gitBlobOid": "a55f0dcd3cc08d37ca12a0d0975a33f50b179e3a",
+      "bytes": 3371,
+      "sha256": "36c3c581cfd12404ceff45f66b0838a7580ed8c8f1ec5a1a0c5d58cf74ed8077",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0054-causal-agent-run-explanation.md",
+      "workingTree": {
+        "bytes": 3439,
+        "sha256": "3608d4a43b489fe153ab1ebce8c8ed053e1f70fcbdf430af326653b20ad298fc",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0055-governed-agent-session-controls.md",
+      "gitBlobOid": "08834e00284b492769c1a475c604155dda7f8547",
+      "bytes": 2789,
+      "sha256": "f90bd2c48c33a09c4d5d8a3b7569eecff785e21d1e7cc93ccae84f490bb3bcb7",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0055-governed-agent-session-controls.md",
+      "workingTree": {
+        "bytes": 2848,
+        "sha256": "44bf143070c7b4030198c918c484a6bc0e87afa2559beefa79f2055ddae3b6ed",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0056-work-item-execution-workspace.md",
+      "gitBlobOid": "6118c8b6ad2b9df93ef632099879194b810d7c15",
+      "bytes": 2162,
+      "sha256": "acf47037d682a202d16dd8a0b783a4a3d5d43be3d9137b7aca083241520735e1",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0056-work-item-execution-workspace.md",
+      "workingTree": {
+        "bytes": 2214,
+        "sha256": "9f9746a29ca46872a1b8a76f06fdd60863fc0f9316afa827f067b4da183c3fec",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0057-actionable-collaboration-queues.md",
+      "gitBlobOid": "3775663746bd3a812f242e49f0971ee4eed85c21",
+      "bytes": 2823,
+      "sha256": "06b1bb8041fcc162cc05d18400bba61c10b8ea2ad9b4840a345ca32cebad9ca6",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0057-actionable-collaboration-queues.md",
+      "workingTree": {
+        "bytes": 2886,
+        "sha256": "970156f4ddbd8410b441a76834f39e590d3ebcee20cb8031a35e3bbd958863fb",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0058-authorized-recovery-and-freshness-projection.md",
+      "gitBlobOid": "c404428a9d77135607c0b397cac8fb1303b94027",
+      "bytes": 4035,
+      "sha256": "e2beabc72a73530d5bab166cc78fc51df354617e54dff864194a8bceb1664df3",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0058-authorized-recovery-and-freshness-projection.md",
+      "workingTree": {
+        "bytes": 4117,
+        "sha256": "23e45674d364dae1b9d99d81ceb0741ca9502efdd9b3fdb1f14cd8bbdc5e1086",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0059-canonical-navigation-and-evidence-drawer.md",
+      "gitBlobOid": "77159f3bded074617f9ad6cb5f34e5f61414d180",
+      "bytes": 1889,
+      "sha256": "26b22fd8f3a620fee0399ae1d8f76dd580769a67e209ec1c2dbbad4e9ae24ec8",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0059-canonical-navigation-and-evidence-drawer.md",
+      "workingTree": {
+        "bytes": 1919,
+        "sha256": "6533a5ecf9e9ca63d93b3690486a86d7efbca12f6061245b7ff3f03ed48d7552",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0060-optional-graph-integration-boundary.md",
+      "gitBlobOid": "00ee9dfb882beefa9bc1a5149dd89dea619863b0",
+      "bytes": 2682,
+      "sha256": "a51c5d83bf129d2e088d164d78224fe59416fb7254a455f4576d8a03d2605a7f",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0060-optional-graph-integration-boundary.md",
+      "workingTree": {
+        "bytes": 2739,
+        "sha256": "c996022870877909118f94fe33fd9e13e89d0f958bb2a37cf6e8ce78e0f1705f",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0061-human-control-plane-final-acceptance-and-telemetry.md",
+      "gitBlobOid": "b7a55fd8fe453ae939bad75308e27f99bd4ce6da",
+      "bytes": 3085,
+      "sha256": "447b5f3bf24ed2b8220d1fc71b12aa2eff27f9ecf6eb307d0da1b261a4988c6e",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0061-human-control-plane-final-acceptance-and-telemetry.md",
+      "workingTree": {
+        "bytes": 3148,
+        "sha256": "8fa41e8f615f88a35ce4c52491830be7742b5c5db109a7ed2fddb8808da76215",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md",
+      "gitBlobOid": "c014760b7d8d03d1ca30b81b662e371d13370ec4",
+      "bytes": 4005,
+      "sha256": "fdf589485a3e046ac0c9954193c9e2c26b783b6b8c24245f669511ad9e917c50",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md",
+      "workingTree": {
+        "bytes": 4078,
+        "sha256": "ede95acd8464dc70e6540e03ed25c566a8c1cb68df1922c648d1f5f92c8ced00",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0063-multica-inspired-authority-first-human-agent-workspace.md",
+      "gitBlobOid": "65609aa810b9c0869e95720d92ea52b5b0d46708",
+      "bytes": 6804,
+      "sha256": "6b75de0d69d93d29b3e648a612a530f7d25b34792622ccb3f718c36a55903cba",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0063-multica-inspired-authority-first-human-agent-workspace.md",
+      "workingTree": {
+        "bytes": 6942,
+        "sha256": "df3ee49158735646684e1df88d01fd404eb6abc949dca1ff637ee456a5e768ec",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0064-unified-human-control-plane-web-experience.md",
+      "gitBlobOid": "de55fdb6653a9a223bd991be5ae8348957a09a15",
+      "bytes": 4877,
+      "sha256": "35af6982572c2dd13537de1ed84a079480504b48b8a58e50d8d9eec48322e070",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0064-unified-human-control-plane-web-experience.md",
+      "workingTree": {
+        "bytes": 4976,
+        "sha256": "fa88f734564ed3e8d5286474eb66223cac487c2d6c928a2dea8b42edbc3bdbea",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md",
+      "gitBlobOid": "b7ae31353dbf05d0ca5191c3d84e62820177aecf",
+      "bytes": 15616,
+      "sha256": "40d6ae1534023db60875663831d370d6976d998dcb81bbe5a3854b1f380f17ae",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md",
+      "workingTree": {
+        "bytes": 15729,
+        "sha256": "46b0a2e76ab9970dfeca7b3dde34ed16be0195ef78f3ba9cd739756c1c54b524",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0066-versioned-project-and-issue-documents.md",
+      "gitBlobOid": "796cdee05bd67937f580696b9513725ae494a194",
+      "bytes": 3340,
+      "sha256": "62744917190f1ae7aec993e30b18c910c4b21b9d5c2a60e654ec96b9c879d17f",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0066-versioned-project-and-issue-documents.md",
+      "workingTree": {
+        "bytes": 3375,
+        "sha256": "35080bbbb181db61c9b5ad79ce76b6da4a4ac85cc286408f068bfd8fe4e16e41",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0067-governed-pi-workmesh-tools.md",
+      "gitBlobOid": "b80b176e8688c0269204a4f165e46a281c77fd6f",
+      "bytes": 4655,
+      "sha256": "f84e60c19538bfbbb3daa3c6775ce35d6cdac8ce3bce0e06e354d8f8a54465d3",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0067-governed-pi-workmesh-tools.md",
+      "workingTree": {
+        "bytes": 4693,
+        "sha256": "b9d27884633ce6f897fd9ab214ca95ec64e8d7f1c3ee3829c5e4c37825e3435e",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0068-atomic-workbench-turn-session-completion.md",
+      "gitBlobOid": "ff826704199e38904d66b3875ec25b49e6210c6c",
+      "bytes": 3545,
+      "sha256": "d56365f5b66b99826bf5e14bf4e89701e9430defce769c5c6ce4a4e8f0e00514",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0068-atomic-workbench-turn-session-completion.md",
+      "workingTree": {
+        "bytes": 3578,
+        "sha256": "ea0146641b7e7c25027ea2abbc4e3d536f43c8ed55e862f535bf0cf5eb24471a",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0069-embedded-pi-workbench-skill-pin.md",
+      "gitBlobOid": "234fc3b95629f858190653ba41918ab8930b53a1",
+      "bytes": 2413,
+      "sha256": "c5e7e090bd1d38f9a8147fa6cc4833d7c8ec8164a0eaae8962bbc6885d18395f",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0069-embedded-pi-workbench-skill-pin.md",
+      "workingTree": {
+        "bytes": 2442,
+        "sha256": "ec76ae8b961d79cc08d29536070c27f48bd67100a14f64621a919efbaab5f677",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0070-artifact-storage-on-rustfs-and-header-signed-uploads.md",
+      "gitBlobOid": "011b906c23a593f2e95a29d7e39959afb3893b90",
+      "bytes": 5469,
+      "sha256": "7287be92bff8c581223902793c7df8092c62bca3977e60ae8bfa407f0d851ccc",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0070-artifact-storage-on-rustfs-and-header-signed-uploads.md",
+      "workingTree": {
+        "bytes": 5570,
+        "sha256": "a8485edb0df5b6563af0274a1014b73de8229ac6236b850b21a142efe9523054",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0071-lite-single-node-self-hosted-deployment.md",
+      "gitBlobOid": "5309c6e3e4f78cdbe5846bac859e34cd9ff6ac6a",
+      "bytes": 16940,
+      "sha256": "bf5e4e81da36a4f9cc7bf615c3776c66620be50db768c99ff8c5a8f0484fdadc",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0071-lite-single-node-self-hosted-deployment.md",
+      "workingTree": {
+        "bytes": 17257,
+        "sha256": "7b45fe73dc7d4a0ea27c668c076165273d8ab8b538b5d3c5dadcd2ca70384ef9",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0072-redis-free-and-object-store-free-runtime-profiles.md",
+      "gitBlobOid": "fbfb4c866a00d6541c51b17228fe5de715d934d5",
+      "bytes": 16948,
+      "sha256": "5c9db399db9abf65d95b93e99f6e2d091de15c17ce922f160c2868445ba3f22e",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0072-redis-free-and-object-store-free-runtime-profiles.md",
+      "workingTree": {
+        "bytes": 17257,
+        "sha256": "8d7b9a013b1fe99f6dc40040b93808f318017a46c107360242ac286a2f1bcd44",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0073-human-ordered-position-within-a-status-column.md",
+      "gitBlobOid": "a1dba01400d405b269d107d94e38ceb88779114b",
+      "bytes": 7330,
+      "sha256": "e9c84def5c80357ff53c702b86b99ad9af93eb7469088d5f7c9de2ade3a29417",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0073-human-ordered-position-within-a-status-column.md",
+      "workingTree": {
+        "bytes": 7474,
+        "sha256": "a138eaffd80ffd79e4dffa24f6bb7c3ee4efd5284554653d615483061b6ba4d3",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+      "gitBlobOid": "63c3f0aa59402558fa03c5a5ad5e8f5342c79c6f",
+      "bytes": 25497,
+      "sha256": "ccceb3668fd7e9f4b3bef29d1f102d17628135fa2c873478de91fdc26470e739",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+      "workingTree": {
+        "bytes": 25797,
+        "sha256": "b815acec4335722a757c8c750bb2750d58d90da93c2eaa16ca51579fb69c0bc6",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+      "gitBlobOid": "b0bc283a676fbd80eea302bf0b0600102db309a0",
+      "bytes": 17002,
+      "sha256": "f978c11ce175c7a34b0b177ef4155cd4713d1d6cf19959ececf82f29314616ae",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+      "workingTree": {
+        "bytes": 17253,
+        "sha256": "37faae9a63d424f768b513ae34dba9a841c0c573b0d3b3c1479632b43974e368",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "gitBlobOid": "9c6b4ccd48932edd0e12406b931e01c50aa2761c",
+      "bytes": 25862,
+      "sha256": "a0445b2c624436806bb9cdf58c4f3fdcb58ff00ff43ba87ae34338b0a6f5dd7a",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "workingTree": {
+        "bytes": 26194,
+        "sha256": "0427a4ffe9ee4dcb69997ca876c62ecc8fa96ae4cbef9f5b122c5ab8c0e7d8be",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+      "gitBlobOid": "2f9d700414fc9f6701456a2ee921a8ac9726d07b",
+      "bytes": 18365,
+      "sha256": "46d35bafe8558bce1d621016be09522780dc1b61c30a5f8b24f0b60c7dfdadfa",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+      "workingTree": {
+        "bytes": 18644,
+        "sha256": "fc636dfd0c99d956a32260e2378724461a75b131bb3e00669603d04fe99fe9d1",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+      "gitBlobOid": "2fa6fcfc3862fd89bf72ea262fbddd038272c84b",
+      "bytes": 55155,
+      "sha256": "c141d1a9dceba893ea59537626ad4dd1b3021c348389d70ef05cdfbea6e38f99",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+      "workingTree": {
+        "bytes": 55996,
+        "sha256": "c660858c0f7aaef6796f8c4c026f185707116c244c407b53b0e0ce1ccce0569a",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0078-review-round2.md",
+      "gitBlobOid": "058c70e617e1020c521d4cad2b9973789efa4ba0",
+      "bytes": 24468,
+      "sha256": "0f9ec7b53d8ba7dd9e8c11e247c1116fc6dadf932432c77b8cc5b391aca728e9",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0078-review-round2.md",
+      "workingTree": {
+        "bytes": 24657,
+        "sha256": "8d1f0fd90a005b6f2aa0fd3ae7bcafaadc873a5cb75cb8507a9c83699c48f660",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0078-review.md",
+      "gitBlobOid": "d09c30e46c4ae5181298bc7b64a445ebff62188a",
+      "bytes": 40672,
+      "sha256": "2df03d61f25c354b6b663ac405ce9d6fd70c09c94688fdd966f64368d08090ec",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0078-review.md",
+      "workingTree": {
+        "bytes": 40920,
+        "sha256": "9bf4e715fa1241e3063bfec811d999cafa9e80d74ad8c4a598dae56448171a93",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/0079-qualified-agent-discovery-and-recovery.md",
+      "gitBlobOid": "26cf2b41304385b3ddbfd45e192b6ea0d4b90807",
+      "bytes": 4896,
+      "sha256": "8a8647f82c980c92845d83332b896cc1970be5523014b949aae0b3496ddd4bff",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/0079-qualified-agent-discovery-and-recovery.md",
+      "workingTree": {
+        "bytes": 4937,
+        "sha256": "11df662dfa66e78db43f41c7db522bade400032c29121ddc52c05a9f80c78a3e",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/adr/README.md",
+      "gitBlobOid": "9b98ee70c3fd5f521dc7fe060c5f0ea92a597363",
+      "bytes": 16064,
+      "sha256": "4d30c7b6febddb9d00bbf51be8a4b69a247fe35ef872560f3ded734baef3326e",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/adr/README.md",
+      "workingTree": {
+        "bytes": 16185,
+        "sha256": "abee02e6eb97298a8ba8fe44a28a18a3a6b0d5f8b2e8f81737bd70df6f4e79c8",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/README.md",
+      "gitBlobOid": "c39fd5eb83133415f8e347d399987a1932629bb8",
+      "bytes": 4648,
+      "sha256": "2a27e120c45f0c88b05558886e26062d8f01244dbfa7902a33bfc6fb0d0f8560",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/README.md",
+      "workingTree": {
+        "bytes": 4678,
+        "sha256": "41ea108907c3f572343b79181463d021032ef846e4c6fbd5a59a7edd7fe68089",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/ci-integration.md",
+      "gitBlobOid": "64e99959971ac832fa4767694927670d4e3c57a2",
+      "bytes": 5744,
+      "sha256": "8e0bf42a9e739f4e7e17557dd23c6adef58275b0131dbec7a97592b366f60898",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/ci-integration.md",
+      "workingTree": {
+        "bytes": 5780,
+        "sha256": "32ef21718eb512e937d05946328f9cac56814d492cf6d0a04b34ffa346459e95",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/compatibility.md",
+      "gitBlobOid": "68aa4a95503798657aa7c4e38db0f0e1a5fb46c3",
+      "bytes": 17181,
+      "sha256": "3924e4b5e17f99917f32459437b137e853c87be6649cb298d4291f46c12ce5b9",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/compatibility.md",
+      "workingTree": {
+        "bytes": 17321,
+        "sha256": "15f6318b355d68bf95f84beb0637d476fa08a282b139f1fcaa885ec0a8ea094d",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/discovery-contract-draft.md",
+      "gitBlobOid": "8252f2f1aede7c0fd67a3d1b990a57e2ef1f037c",
+      "bytes": 3505,
+      "sha256": "4b054bb3cf9eb3f4817b261fe502849322bba7f09723fd447279d0c96d0b9f25",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/discovery-contract-draft.md",
+      "workingTree": {
+        "bytes": 3542,
+        "sha256": "886c8b1e94a5da3c363fa6c6dbe55d1822ff9831f43e4729878eab47452b0bdb",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/domain-audit.md",
+      "gitBlobOid": "f0024144c135f863457a578a95080c300e3b62f7",
+      "bytes": 229377,
+      "sha256": "83da21681065859a9f626cc9008f1cce0f41b3b71b3ea7c938a0a30d112d96a5",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/domain-audit.md",
+      "workingTree": {
+        "bytes": 229482,
+        "sha256": "9784a2f0d8fbb3657041681de2b4c204a1bddbe5fcb3ab33a1d58e91ba12df17",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/domain-rules.json",
+      "gitBlobOid": "39d9f36d90fcdc15e3706945fecb4f43cf3a9ac7",
+      "bytes": 102800,
+      "sha256": "dc224cf15b2edefc482e6ff60dabe1cad02ba342a81e0b7a42051c79f37f11eb",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/domain-rules.json",
+      "workingTree": {
+        "bytes": 105999,
+        "sha256": "07c26f2138792d23c5b55d52411d28b1b924d28f65a620eaa412fb4f92c699cd",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/implementation.md",
+      "gitBlobOid": "2a9e77fc425a5e349e596d2e2914f2946093b378",
+      "bytes": 17150,
+      "sha256": "4624508d03b3b9a28f8dc6d5db1fa8f002138fec637dd63612a2929cdb07e3f8",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/implementation.md",
+      "workingTree": {
+        "bytes": 17191,
+        "sha256": "5080e912b32600127bdeb60817c4867924913a14793248b08eb475ac79ccdce4",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/operation-decisions.json",
+      "gitBlobOid": "a2b286578af5368163c17fb1cbb14f6983026f87",
+      "bytes": 11319331,
+      "sha256": "97d0b5015d611e5aa06c540d2820ac55b929b1142d588519d29e2929738f9cf1",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/operation-decisions.json",
+      "workingTree": {
+        "bytes": 11600177,
+        "sha256": "b845f8c7e647ce8d3e0146eb4717914956699f0ef788477f5ffddd4b95a6cc6f",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/operation-index.md",
+      "gitBlobOid": "fdf301bbc40f1c81e764f75bed4104e7cb4c90f2",
+      "bytes": 86825,
+      "sha256": "adb265879f8da59395ef63f5d2391a1f09ebe2d2c0a366ad21ea0ad462e65b11",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/operation-index.md",
+      "workingTree": {
+        "bytes": 87108,
+        "sha256": "3dead98fc55c5e2f54d343ff3d7cfa21dedcad7e5581fa6ed6596c71d4512cc2",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-ci407-report.md",
+      "gitBlobOid": "169ee6767e0a3b45bdc7da41823ce5578b7328f9",
+      "bytes": 8120,
+      "sha256": "ce4d6647b204a00336ed793cbaa35b30dfa7ce6230ace3beb00c2d9c003e2b1d",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-ci407-report.md",
+      "workingTree": {
+        "bytes": 8175,
+        "sha256": "08d47dfb1b3a368380266a2b0e55392ace3f721928ef9b16aafeb9be6f2afa07",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-evidence/ci407-clean-receipt.json",
+      "gitBlobOid": "ecfd13265050c4b68f6c1f02be1b140bb0d2c2f3",
+      "bytes": 11495,
+      "sha256": "fde24caba1bafcc5abb36640c990d6281f2538383308c13f88c9fdc7476b10dc",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/ci407-clean-receipt.json",
+      "workingTree": {
+        "bytes": 11829,
+        "sha256": "1bc0e89ab92cde357ba2fe806602e2bd531f5e72a24d75ff7570c514bfeb53f9",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-evidence/review3-checks.json",
+      "gitBlobOid": "670533704b70e742e0d36cea48225e3d08ef6e39",
+      "bytes": 16515,
+      "sha256": "2488fc25bcbcdaab432efb6d086e5f7da9ef0dddb4e5016afb75880bb03529af",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-checks.json",
+      "workingTree": {
+        "bytes": 16962,
+        "sha256": "7a825b254caeb6bff1e2ecc6fe3282bd7f91b52402d34e7573e4a25518ad2599",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-evidence/review3-delivery-observation.json",
+      "gitBlobOid": "9fd3da78bf2086fda8fa776563132df33fe3eb09",
+      "bytes": 1037,
+      "sha256": "02307130bc8a99e41eeb052c834cef72526a6c9342cfa94f7b8af1d037f68a4e",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-delivery-observation.json",
+      "workingTree": {
+        "bytes": 1063,
+        "sha256": "a8c66a2c3f68f6b2754fc4f32759f72ac95a854505ba82f02db972c4cd1d49d3",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-evidence/review3-e2e.json",
+      "gitBlobOid": "a5616f2fe2bc3bf5c511a290416e1718c828fbd4",
+      "bytes": 807,
+      "sha256": "f892dbb3a5dd5263d7d8279439b853009895f8e2db1ff8f214e2a2d8332c6fc3",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-e2e.json",
+      "workingTree": {
+        "bytes": 822,
+        "sha256": "3e749e2379cb3baf601d0e3446d3b9ff5fd5595e0ff23f96c91f80e51db368da",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-evidence/review3-historical-archive-bindings.json",
+      "gitBlobOid": "30261e07a1748ef19c8b29f09c105f72aec64b1f",
+      "bytes": 5057,
+      "sha256": "a70f37d82c561483b11ea5fd62c7137c619a5301a1dc0dc812a191ee69dc72cc",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-historical-archive-bindings.json",
+      "workingTree": {
+        "bytes": 5146,
+        "sha256": "82240e54336a9678ca593f21912120fc87613eba3fb954e2e09cb1a0fe57ab51",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-evidence/review3-integration-final.json",
+      "gitBlobOid": "34d7da6dd1044a2a5be2e296576a153fe72f8b51",
+      "bytes": 830,
+      "sha256": "aa21c77776a80de435bf4048d4774237783839804e82b0723031f248a213e13a",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-integration-final.json",
+      "workingTree": {
+        "bytes": 845,
+        "sha256": "c0066c28d81625de36426a5f90faee00ee4e90782e89a0a59350bb5004c18aa2",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-evidence/review3-real-first.json",
+      "gitBlobOid": "ffb1742229cbb363d3c540b12f6c79de7345d982",
+      "bytes": 835,
+      "sha256": "7fe04912a75ae94423f9b53535e19584d5d4a5b1463a1bd0476b6d3bc3dac1d0",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-real-first.json",
+      "workingTree": {
+        "bytes": 850,
+        "sha256": "75e50bd5718d26a3eaae0d38d889243ed0db02cebabb3e8951fedbb7d337b241",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-evidence/review3-unit-final.json",
+      "gitBlobOid": "727acd492e05ceb81c8b32ddfec7ce0a99dd6f7e",
+      "bytes": 810,
+      "sha256": "ff63b12c0a6c2b04f62fc50ba70fe544add4432825843e07ce3f707f37e94ede",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-evidence/review3-unit-final.json",
+      "workingTree": {
+        "bytes": 825,
+        "sha256": "28a7ee0a35b1165adde7cff56008c71dde09297299b3bb2825aca4fb96090a98",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-recovery-report.md",
+      "gitBlobOid": "68e03c44b428f04f7004f69c4eb139300c7ef40d",
+      "bytes": 8736,
+      "sha256": "cfb6ec511480d060a7415be75a3f9085468a64a14b25e62813e71e5d8b246ccf",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-recovery-report.md",
+      "workingTree": {
+        "bytes": 8792,
+        "sha256": "a46c14bd54b2df9de2fcc5e1a60bcf7eb16c8973243c0cbb41a0120f2c28f0f1",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/product-report.md",
+      "gitBlobOid": "bdc7f151c822fd025673bf82bd563280778d0d9a",
+      "bytes": 9215,
+      "sha256": "b70ebff6830aed04daf435dd816becff7e96da85e8944fd05b769dae01582c39",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/product-report.md",
+      "workingTree": {
+        "bytes": 9287,
+        "sha256": "8e159fb682c5cb88e58cf53d9daa406dbde6ab4f3b427d1040618e9219fbf7eb",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/savedplan.md",
+      "gitBlobOid": "2a9e77fc425a5e349e596d2e2914f2946093b378",
+      "bytes": 17150,
+      "sha256": "4624508d03b3b9a28f8dc6d5db1fa8f002138fec637dd63612a2929cdb07e3f8",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/savedplan.md",
+      "workingTree": {
+        "bytes": 17191,
+        "sha256": "5080e912b32600127bdeb60817c4867924913a14793248b08eb475ac79ccdce4",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/agent-mcp-m0/verification.md",
+      "gitBlobOid": "3c0e005acf3139732f5ef6fa095d368a318aed14",
+      "bytes": 15499,
+      "sha256": "2bde8d72af0298bd552a316834ed0c03324c438bee3821ec3088ec44fee72d20",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/agent-mcp-m0/verification.md",
+      "workingTree": {
+        "bytes": 15581,
+        "sha256": "ef6db7fee9f07a952bd6e864de8a4db8aacb56c5483be259d743e5da34319cda",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/backend-agent-mcp-priority/README.md",
+      "gitBlobOid": "95d56c599bcb9ea20e1ce7105deb694e54fff4e0",
+      "bytes": 9139,
+      "sha256": "b156d436c2222adca9ad25ab0d9224b0388b278bc58743d294c803e7961209a1",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/README.md",
+      "workingTree": {
+        "bytes": 9200,
+        "sha256": "1c4756741e0b69013240f2baa62951c1a3066d09c0b3d8278d0c1232fb3e54ff",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "gitBlobOid": "4d194d771c251de5def0c61ff61ce568f7c7fe61",
+      "bytes": 38635,
+      "sha256": "8fd80172cda4734fcb750e3415c2da38304072f992c58781a2e677ae9eab633f",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "workingTree": {
+        "bytes": 38857,
+        "sha256": "cd3164833198bbdc5ca85cae0cdd48fc718d90cb3c6f714c3a5547ad778fc004",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/backend-agent-mcp-priority/branch-separation.md",
+      "gitBlobOid": "dfbd2d95d962fcfc2ddf0030054b56c3139bd48d",
+      "bytes": 15001,
+      "sha256": "b3981214b3aabb7c760d5408dad2b5d3393dfed444ffba5503a8d7c5e8e5e7ce",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/branch-separation.md",
+      "workingTree": {
+        "bytes": 15090,
+        "sha256": "3ccb18d1b6b495f1109404a54ed764e0462d12f28da2b1838cdbc8fc529626d0",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/backend-agent-mcp-priority/coverage-matrix.md",
+      "gitBlobOid": "0d2ab85cc22e398d95751ffbeea30b26a7f69dc0",
+      "bytes": 26429,
+      "sha256": "34d6527d056df873b33cd3e5344e7b9f5fa8698db59665fa455627a79c751fd2",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/coverage-matrix.md",
+      "workingTree": {
+        "bytes": 26504,
+        "sha256": "b5cc4b4eef8a347f7a4abe5ea1ef529818fc41e179fd10998a1af8424aa1fcd6",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/backend-agent-mcp-priority/operation-index.md",
+      "gitBlobOid": "53b0019d9bced0bbaad8948b3a49e9ce38df5912",
+      "bytes": 162368,
+      "sha256": "7fefa525a0b555094dd521eb3690ef9c3cf0c0a4917eb76a7177a43724879f0a",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/operation-index.md",
+      "workingTree": {
+        "bytes": 164873,
+        "sha256": "d8dda84f4025c91f31c19f96b14af9da964dec13209b972aec745d61f769a246",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/backend-agent-mcp-priority/review.md",
+      "gitBlobOid": "8e7a26b786d7e2d93a7de65161eb5d9db0979685",
+      "bytes": 10968,
+      "sha256": "df3fe6b47f895fef7439c7ecb2433dc6637cd4c4eb3725e035ebb973696ced09",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/review.md",
+      "workingTree": {
+        "bytes": 11048,
+        "sha256": "a80c25b26459dcfd3100212db5e2b64b0a8077b1bc566fb88340d1856a9432d9",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "docs/plan/backend-agent-mcp-priority/sources.md",
+      "gitBlobOid": "615ddaf879cbe1894c13c781d8a5243fa4d69582",
+      "bytes": 50119,
+      "sha256": "e029c6fc747e896516c91cb7285fa6cc4cf9cce4265bd589c405fff9355145a1",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/docs/plan/backend-agent-mcp-priority/sources.md",
+      "workingTree": {
+        "bytes": 50498,
+        "sha256": "977c72867ec4b103c15a47fb11b61dc36f4218fbf4a1506c065a98baa245d7ca",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "package.json",
+      "gitBlobOid": "7652f1cb897f4535ee1fc5f4a93ae34794a99231",
+      "bytes": 4825,
+      "sha256": "d0a65d74e63d8f3629a4521eaa253153635d908c6a3e41e52abccadd409ed34c",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/package.json",
+      "workingTree": {
+        "bytes": 4897,
+        "sha256": "2bcf1b9506418f1d136abf3a0a83f114db4f4404303ccabcde5ff5c07c10deb7",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/agent-sdk/src/discovery.test.ts",
+      "gitBlobOid": "bfb2ca5b238f2c69e5d812cef59eae6be79c9b4f",
+      "bytes": 7176,
+      "sha256": "733726d0d4470ca2ac15d6cb3a0b641b005b41d325e2da8e47709faf655d1b3b",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/agent-sdk/src/discovery.test.ts",
+      "workingTree": {
+        "bytes": 7255,
+        "sha256": "3f866a3717d9378770c1fecca993eafd978d5d6aa50cf22683e42c752c258523",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/agent-sdk/src/index.test.ts",
+      "gitBlobOid": "2ef6e6d969ff3b2be734912bcf5748d96afc37db",
+      "bytes": 44919,
+      "sha256": "9eeae5206dd2b55fed925fe997e82eb573e0b26009dd6ebf272e85f40ab5b283",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/agent-sdk/src/index.test.ts",
+      "workingTree": {
+        "bytes": 45818,
+        "sha256": "1376a48150b3d0348fcd5195e1564aba583cc497aab9f8e65b84409633347ec6",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/agent-sdk/src/index.ts",
+      "gitBlobOid": "204f17bbf907ca57e638f187f6d46de7973fdf8b",
+      "bytes": 72894,
+      "sha256": "e4518a3987c245cf2f8d0dac0babd6df72656238e0ab409167f78dd461c0cd86",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/agent-sdk/src/index.ts",
+      "workingTree": {
+        "bytes": 73764,
+        "sha256": "1697037d2514a3f798ea3a70c768b397d032adea0c8339b4c76b29fc7f60fa4a",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/conformance/package.json",
+      "gitBlobOid": "a4d2998c2e7ddb41d567b7c74ea1c5b9d062e909",
+      "bytes": 816,
+      "sha256": "f2afda0e1c2c55157b1e359eef225c2b99f343e8b8c7642d88950e9ffca85b46",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/conformance/package.json",
+      "workingTree": {
+        "bytes": 845,
+        "sha256": "fdbf989c33c4ec5cf878daeb1ef906ebb66193576a2aa287233872dc097053c3",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/conformance/src/mcp-coverage.conformance.test.ts",
+      "gitBlobOid": "813592cf584e3905e7a9b8f1e92bde2bf6b1a2c3",
+      "bytes": 25295,
+      "sha256": "53af138436459f39b103a7c903ff1c17569e93c125072b79003ab8e650484f12",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/conformance/src/mcp-coverage.conformance.test.ts",
+      "workingTree": {
+        "bytes": 25572,
+        "sha256": "7d561d2240daf3ca73f513706b9577b7a2ab3699addede90ca8010c087acc65e",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/conformance/src/mcp-coverage.fixture.ts",
+      "gitBlobOid": "26b7edd8f5dc0973ce11d3e6b61ccdc85d83fcea",
+      "bytes": 17150,
+      "sha256": "3e0a1c2553f67479e5e0b10acca7c52f8e230492936ced34316e20af75052288",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/conformance/src/mcp-coverage.fixture.ts",
+      "workingTree": {
+        "bytes": 17357,
+        "sha256": "0b37598c84da7da4ba82e0bb9c99a6e732e7da6008364d7a2dc04304e5ed89c4",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/conformance/vitest.integration.config.ts",
+      "gitBlobOid": "5348e55421c7e04d93869a4a73b2d282faccdbf2",
+      "bytes": 266,
+      "sha256": "eebac4c38390c8dbf5b459ae58209213dd8f2c4bd3b49dec5cd61429a730f528",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/conformance/vitest.integration.config.ts",
+      "workingTree": {
+        "bytes": 272,
+        "sha256": "ceae98eed06aa0cd1962a58efab2124c1a6e7cb0af48cd2f9ef2003b538380f4",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/contracts/src/agent-discovery-rules.ts",
+      "gitBlobOid": "61d4a31905d711cde78227f0ce08fd65bde68053",
+      "bytes": 241472,
+      "sha256": "dc345a7e46488ed4e294ad65fd73422d1d4154a02ce339744243773cf59e3693",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/agent-discovery-rules.ts",
+      "workingTree": {
+        "bytes": 241864,
+        "sha256": "3e1aa17f61315e51447be6add281511bba2775c41990b80d2c2d16a5143781cd",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/contracts/src/agent-discovery.ts",
+      "gitBlobOid": "89423dba175b572e7ec82ae17a182b87cf827a20",
+      "bytes": 12026,
+      "sha256": "266cfc73230583cc70784300d0bfb3bc799683f4ab18d3b02d9bba71f4582ee4",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/agent-discovery.ts",
+      "workingTree": {
+        "bytes": 12206,
+        "sha256": "2442db50e1b09276e33714a797d635da0d7ffa0314ac053645479fabe282ab56",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/contracts/src/index.ts",
+      "gitBlobOid": "72658c194647b7f48a8b28cf47ad5b4862c36ce9",
+      "bytes": 187182,
+      "sha256": "2f20d0ede60c3f893f9c932b6f0fc653e6b0fa8a4c4d6f6f1938dc42b7c44ac0",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/index.ts",
+      "workingTree": {
+        "bytes": 190358,
+        "sha256": "e6cab9a412a38795602d02692638d6db236d3bc6f41b16b47bfec1c130d29a04",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/contracts/src/route-policy-bindings.ts",
+      "gitBlobOid": "92e9119dd6a8fd1105fe6b4c21a536f4757c6ed5",
+      "bytes": 32054,
+      "sha256": "914426e99b58e5ceec4d836e1894ebc18fa451743cbdab40bb74ea715503c03d",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/route-policy-bindings.ts",
+      "workingTree": {
+        "bytes": 33270,
+        "sha256": "a0a66ad378dfe08ef8d76b008fa892aef610af2c2ed3f2efd4eb92c0368dccef",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/contracts/src/route-policy.ts",
+      "gitBlobOid": "66b5efc460186b5c0cccef675a09f2df3f955555",
+      "bytes": 24178,
+      "sha256": "fcd4c280fce15be27c870d86de8c2e983ca016db294e84c539270650168fb143",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/contracts/src/route-policy.ts",
+      "workingTree": {
+        "bytes": 24835,
+        "sha256": "2b71c7409679427352b0ceceaf4cfe1d23b25aa2aa976d466cdc23447de6ce7c",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0001_v1_baseline.sql",
+      "gitBlobOid": "4804a88949ad3ed1314cad05f4540cd41d2f96c3",
+      "bytes": 172420,
+      "sha256": "1fc1297ef9b4600d56368c6734b318b41b48776de82d5d9fe307d09427ce3f83",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0001_v1_baseline.sql",
+      "workingTree": {
+        "bytes": 175783,
+        "sha256": "f935f49d9020046b19f3dfbbae144d0947bc66ff1c07a30abffd29a84550dfab",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0002_active_executor_projection.sql",
+      "gitBlobOid": "9b8e3d198fecfc55415c8df8b18733ee4972c129",
+      "bytes": 11126,
+      "sha256": "0742da4ba547e484f463687e67392c3762e3628f2f841473cfde66c2725342d2",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0002_active_executor_projection.sql",
+      "workingTree": {
+        "bytes": 11420,
+        "sha256": "2859643567ffeb7a114d59f961b7afe071c0682668e77e6db3d39d9de97fa688",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0003_versioned_guidance.sql",
+      "gitBlobOid": "0a79d24e425da6fc60c222e754cda39dc4a11cd5",
+      "bytes": 5056,
+      "sha256": "199adac75057ed0a2b285453440359d68aea1ae62cba33b2274ac8e6364fa2e7",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0003_versioned_guidance.sql",
+      "workingTree": {
+        "bytes": 5185,
+        "sha256": "217b849cb4549e4a75cfc7f5ffc550966b3c55c74fce121d0451ee9e57862473",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0004_agent_connections.sql",
+      "gitBlobOid": "c55c391aa324281b0c8567809315be9532c3832e",
+      "bytes": 6630,
+      "sha256": "c31fde289828e87e7919cf114cccd24fb67ace2ee8007539a66273cfb6b90548",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0004_agent_connections.sql",
+      "workingTree": {
+        "bytes": 6747,
+        "sha256": "8c398de636caa11d67633bf6dd04227055d5b5c788d898cf25601005a4adb8fe",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0005_planning_domain_parity.sql",
+      "gitBlobOid": "b9d131625379886184606b83270088d8184da2cd",
+      "bytes": 8197,
+      "sha256": "1810ceb56156b7d0305b03b6b69b65453fb85d8b949afbfc78eed2ebf2295be4",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0005_planning_domain_parity.sql",
+      "workingTree": {
+        "bytes": 8415,
+        "sha256": "cae82c66adb29822b1a89070768d9268973f48557b16879ad0030c819fa3adc9",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0006_human_attachments.sql",
+      "gitBlobOid": "d59f9c7dc8bb77e6c955beb2feaa1c2a90a7cd50",
+      "bytes": 2824,
+      "sha256": "076f92a3257f9ad15c6c9770f31c12755d10a74e7f87b15b0363c391ec050ce5",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0006_human_attachments.sql",
+      "workingTree": {
+        "bytes": 2869,
+        "sha256": "8b702dec842da5dbe80ad362528c0cc095080f3b494004c26d3d643c458e9aea",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0007_active_milestone_name_uniqueness.sql",
+      "gitBlobOid": "a2e34a494a9a14766061b167955a3ecdb92832b0",
+      "bytes": 225,
+      "sha256": "a3313489a85a5aac71192f540cae57f84f29036a023018c7f2d295d7f5a87302",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0007_active_milestone_name_uniqueness.sql",
+      "workingTree": {
+        "bytes": 231,
+        "sha256": "d44cb04e5dc62fd8e9a026c9867e20726e0dfac80c589716ad8a3c9b3fa92af3",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0008_autonomous_control_push_enrollment.sql",
+      "gitBlobOid": "4354ffbdd919054e3f781ff7f3232b1acb023bf1",
+      "bytes": 12046,
+      "sha256": "ca8ecf47510edfda6221de7f6f375c55d20d4cda588d39ff39816ebed24031d3",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0008_autonomous_control_push_enrollment.sql",
+      "workingTree": {
+        "bytes": 12273,
+        "sha256": "3f202aaaf676447a6183670dc92d21907737e74c5bfefbd48295821d2e2e731e",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0009_workbench_llm_connections.sql",
+      "gitBlobOid": "a6f416207fedba2818aee9407588cbd604764013",
+      "bytes": 2740,
+      "sha256": "5d41a6e5035a30619691a8f59e1dbe836345ef0f826a87776b99c6f272ea4b68",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0009_workbench_llm_connections.sql",
+      "workingTree": {
+        "bytes": 2786,
+        "sha256": "28fb5716647820e11eb59aba470d186dbcd0c4311d89a4e6c87a1c5a63b879bb",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0010_workbench_conversations.sql",
+      "gitBlobOid": "031c6450ea0134e1629f4f600b20eb21631b896a",
+      "bytes": 7618,
+      "sha256": "3ed3f9c50099cf8d5f255b79d34c11f7c00881149ee707a9cd49d1461115ff42",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0010_workbench_conversations.sql",
+      "workingTree": {
+        "bytes": 7735,
+        "sha256": "82b6fbafa3827abbb7df9235090e096b124f5e5f4178be6c0cda5af7941e6ff0",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0011_versioned_documents.sql",
+      "gitBlobOid": "66ae58c0168d6b7dc8e38b133bef96de70136b6f",
+      "bytes": 4975,
+      "sha256": "b647d04ded7720ee3b993721f72097c3a2e642bb0c0010bb4b764a9dcb4384b6",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0011_versioned_documents.sql",
+      "workingTree": {
+        "bytes": 5083,
+        "sha256": "83adf2b0b2aab417e336278fbf32895ac6a5f8df7dbb828119e4f135513fd38d",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0012_workbench_turn_lineage_and_tools.sql",
+      "gitBlobOid": "57663bf5ff30322087db3dd9f1de51ff82d1e8af",
+      "bytes": 2870,
+      "sha256": "ca928f0cbd79cb608ad355a4fc60b96a4f418cb3d6a70698876ede53631865d3",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0012_workbench_turn_lineage_and_tools.sql",
+      "workingTree": {
+        "bytes": 2927,
+        "sha256": "1ec0aad2dabdd7e58c0c9f6b3ade1fe833e7186b7754e934ff36cc9346a5052a",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0013_work_item_board_rank.sql",
+      "gitBlobOid": "4f1c0e4e47f8adfc3cf9bfe38a45000777630ad3",
+      "bytes": 2107,
+      "sha256": "2649c369972cd710097923956f42c03e7db663d58cb458dfe7b8fa325ed406fb",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0013_work_item_board_rank.sql",
+      "workingTree": {
+        "bytes": 2151,
+        "sha256": "588c3385b901a3065c1df2489163f0923f645580fdd58f0fba2a799217770b63",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0014_channel_delivery_contract.sql",
+      "gitBlobOid": "4681dfdeaa1e8582fc6bf68b516b66f8d407f9fb",
+      "bytes": 5557,
+      "sha256": "1f8d766b5215c3bbade32c4f52ac790edb004d30a586034df2518cf2794247e7",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0014_channel_delivery_contract.sql",
+      "workingTree": {
+        "bytes": 5645,
+        "sha256": "67998f8ae3de49a02ea250016dcb20c07dfa26afa80cc9fc49a877203bd13dea",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0015_channel_notification_kind.sql",
+      "gitBlobOid": "e44286b27ef3ee785f4b553ee46d6cc7dc59911b",
+      "bytes": 749,
+      "sha256": "632dbc4eb356f6b032cc405a1960cbf006cced66c950763f165f87bd9f4191e5",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0015_channel_notification_kind.sql",
+      "workingTree": {
+        "bytes": 760,
+        "sha256": "79d65a77aca94ff739d136c6db8abac3fa68c4fe24c2fb363d664ce7fe5b4c28",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/db/migrations/v1/0016_approval_notification_kind.sql",
+      "gitBlobOid": "8791ba7e699bc9ad0ce631d785a38be4c224c051",
+      "bytes": 345,
+      "sha256": "01fa357c187faf980e7e1344ccd12de5af3826029d45744732041fc5b56d72e4",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/db/migrations/v1/0016_approval_notification_kind.sql",
+      "workingTree": {
+        "bytes": 350,
+        "sha256": "695e319681601cbf6138cfecd71f9347d4fa28c871a2dce41866947905d4eb4c",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/domain/src/authorization.ts",
+      "gitBlobOid": "03a101405a92263d10555cea94c8ea01289942ab",
+      "bytes": 3870,
+      "sha256": "94c680b6f7ed884eba89e07ba9ff574091ca32043e80861532fec05d95d4f74e",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/domain/src/authorization.ts",
+      "workingTree": {
+        "bytes": 3977,
+        "sha256": "6c21dcafe6bc56758fc940a9ae92a8ff7825e88d4b0f9c0493093b9cee5254ab",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "packages/domain/src/index.ts",
+      "gitBlobOid": "72b95cc21eb75a26341540ef5c1f2dddf106ff69",
+      "bytes": 27645,
+      "sha256": "c77081795ca2b46b3d9277e56471301fbae6e36636439a0462a69d5107859735",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/packages/domain/src/index.ts",
+      "workingTree": {
+        "bytes": 28113,
+        "sha256": "00b551d7eabb17174a12ea6f4e06f3c83656175f8b232f59776d09b5fd0d24d5",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "pnpm-lock.yaml",
+      "gitBlobOid": "0423ec41209b2b788e4d7a032167f3e56c033158",
+      "bytes": 226958,
+      "sha256": "b67ee0297a6e24025157309742ce56e6edca02fd8ae2e8f978f7e9798f5d2c07",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/pnpm-lock.yaml",
+      "workingTree": {
+        "bytes": 233987,
+        "sha256": "2196029f2efd8894feed742cf13e33ba0f0dae3026eb8e5f807650e0da2a14a2",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "scripts/ci-policy.mjs",
+      "gitBlobOid": "29ed1733431c972f262f34c66b5059efd9bd3633",
+      "bytes": 11392,
+      "sha256": "06cddfba12c9379f31f113b4c46bae20d5795c7e71631b0cdaaf8e824d975cfc",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/ci-policy.mjs",
+      "workingTree": {
+        "bytes": 11551,
+        "sha256": "257dbffe07dd4a1c455641e81bd88bc1e36fff195404dc5c3febdfe4f6203aee",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "scripts/ci-policy.test.mjs",
+      "gitBlobOid": "f48bdad4074d28a9810dbe032aaae9765af7481e",
+      "bytes": 12764,
+      "sha256": "ecf357a9294bd600a86fbbf15e503a8a35a057814389d11176d3d38d96453f72",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/ci-policy.test.mjs",
+      "workingTree": {
+        "bytes": 12975,
+        "sha256": "f6b20a376b5da92a9d6a3c1f0c5051210ad22a1fb63e7742b203ad92dddd8c16",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "scripts/generate-agent-discovery.py",
+      "gitBlobOid": "75bcefc278bf898819d6876446a6ca923c9a862a",
+      "bytes": 2673,
+      "sha256": "490338979de2e0e698cf1fb0e20e76b84256d69c7d9bc932cce6d687213e7eca",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/generate-agent-discovery.py",
+      "workingTree": {
+        "bytes": 2719,
+        "sha256": "80c952f03cc24570e7e4c9e027ae546bd08d09818b143430b49610f0921def4d",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "scripts/generate-route-policy-artifacts.mts",
+      "gitBlobOid": "b993e0b7a043700783cdf8d2260ea696000afcee",
+      "bytes": 8958,
+      "sha256": "7244265f57ee258e25ea65790d03f78485d6df9aa8ee45f0a85ac82d202d5d2c",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/generate-route-policy-artifacts.mts",
+      "workingTree": {
+        "bytes": 9149,
+        "sha256": "2672cc7fb90a745053fb0f121aeae288374174216a2f84b987e57cd8315bc08f",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "scripts/generate-runner-skill-manifest.mjs",
+      "gitBlobOid": "693fe62c45d09f715f184a0d356db3c86db0b26b",
+      "bytes": 1517,
+      "sha256": "05d70480456868fa7d0447bda45183e095492e8973df23f4083220a9daaee78b",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/generate-runner-skill-manifest.mjs",
+      "workingTree": {
+        "bytes": 1543,
+        "sha256": "9016fc4ba1a5d8e6b86f23249dc9acec534edbdbffb05af8888cda1ce0a85075",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "scripts/m0-run-check.py",
+      "gitBlobOid": "28ca965eecde9f3a3da03878dbf23c3bf1fe017b",
+      "bytes": 3902,
+      "sha256": "3be0fb0c177f31dc9dda532819ec6d2678039de140f3452fba6efb823db262c7",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/m0-run-check.py",
+      "workingTree": {
+        "bytes": 3970,
+        "sha256": "20cd73a9b2355002cc05b7f91afb6e7ecc1dc5e75b8b9fd63114a0cbe3b6c3bd",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "scripts/m0-run-services.py",
+      "gitBlobOid": "8a5929999d67b69dc7c82883c747c2deaafba24b",
+      "bytes": 5629,
+      "sha256": "583a2cb65e2f4098a7e582d7471e05bcf974ae16b7bf3f2425009654b3be56ee",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/m0-run-services.py",
+      "workingTree": {
+        "bytes": 5732,
+        "sha256": "8e4b6b3610c21ff7bb116d7b055e28ebc9bff3d0785b5ae4b26718f2aa8e5a43",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "scripts/require-integration-env.mjs",
+      "gitBlobOid": "bbc51967ec87a58f7ceec1e74a01775ceb80cf43",
+      "bytes": 640,
+      "sha256": "166188cf462527f2350819b34f5ffa2b0cd60a80d604b09038f3443335c81c73",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/require-integration-env.mjs",
+      "workingTree": {
+        "bytes": 653,
+        "sha256": "bd25e10d3ef38110cbdc37451eea617e5a0cb3c271e6caf57270475cce578825",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "scripts/validate-ci.mjs",
+      "gitBlobOid": "115ce832992b7c974d199c5eda3d85c80490d8f4",
+      "bytes": 33721,
+      "sha256": "d875bfdb55da8b204dc3bd1d2a06e43353f98c40a76da583c8c806f2e912c0d9",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/scripts/validate-ci.mjs",
+      "workingTree": {
+        "bytes": 34288,
+        "sha256": "d299d74d18267960afa1d4ab00cfd5f80e5f7a80537ac9982c229692c199785f",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6",
+      "path": "vitest.config.ts",
+      "gitBlobOid": "1a423e1d02691461731c53041e8c43962b414b45",
+      "bytes": 1499,
+      "sha256": "e8cddbe42003c811d14107f2a417cc3f6ca93fecc26653905394f6fec77a2fc8",
+      "member": "e49eda142d61bdd248ddc42ec16f5563abd4bbc6/vitest.config.ts",
+      "workingTree": {
+        "bytes": 1530,
+        "sha256": "c4e310753ce45159ced0df7bda56c341fb896dc82d277daabbddb81fca56ae9a",
+        "relation": "CRLF"
+      }
+    },
+    {
+      "head": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/README.md",
+      "gitBlobOid": "95d56c599bcb9ea20e1ce7105deb694e54fff4e0",
+      "bytes": 9139,
+      "sha256": "b156d436c2222adca9ad25ab0d9224b0388b278bc58743d294c803e7961209a1",
+      "member": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/README.md"
+    },
+    {
+      "head": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "gitBlobOid": "4d194d771c251de5def0c61ff61ce568f7c7fe61",
+      "bytes": 38635,
+      "sha256": "8fd80172cda4734fcb750e3415c2da38304072f992c58781a2e677ae9eab633f",
+      "member": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md"
+    },
+    {
+      "head": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/branch-separation.md",
+      "gitBlobOid": "dfbd2d95d962fcfc2ddf0030054b56c3139bd48d",
+      "bytes": 15001,
+      "sha256": "b3981214b3aabb7c760d5408dad2b5d3393dfed444ffba5503a8d7c5e8e5e7ce",
+      "member": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/branch-separation.md"
+    },
+    {
+      "head": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/coverage-matrix.md",
+      "gitBlobOid": "0d2ab85cc22e398d95751ffbeea30b26a7f69dc0",
+      "bytes": 26429,
+      "sha256": "34d6527d056df873b33cd3e5344e7b9f5fa8698db59665fa455627a79c751fd2",
+      "member": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/coverage-matrix.md"
+    },
+    {
+      "head": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/operation-index.md",
+      "gitBlobOid": "53b0019d9bced0bbaad8948b3a49e9ce38df5912",
+      "bytes": 162368,
+      "sha256": "7fefa525a0b555094dd521eb3690ef9c3cf0c0a4917eb76a7177a43724879f0a",
+      "member": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/operation-index.md"
+    },
+    {
+      "head": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/review.md",
+      "gitBlobOid": "8e7a26b786d7e2d93a7de65161eb5d9db0979685",
+      "bytes": 10968,
+      "sha256": "df3fe6b47f895fef7439c7ecb2433dc6637cd4c4eb3725e035ebb973696ced09",
+      "member": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/review.md"
+    },
+    {
+      "head": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/sources.md",
+      "gitBlobOid": "615ddaf879cbe1894c13c781d8a5243fa4d69582",
+      "bytes": 50119,
+      "sha256": "e029c6fc747e896516c91cb7285fa6cc4cf9cce4265bd589c405fff9355145a1",
+      "member": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d/docs/plan/backend-agent-mcp-priority/sources.md"
+    }
+  ],
+  "archive": {
+    "path": "source-snapshot.zip",
+    "bytes": 2317869,
+    "sha256": "cbe312f6d4dcdc5955c75f28660e2a89ef13b890807f6c16baa10225e3b38d61"
+  },
+  "originalM1": {
+    "path": "frozen-M1.md",
+    "bytes": 5893,
+    "sha256": "017cec9f175f2f36794a31d6e27d5df1dcc7f27061d8a964ee0caf6794c2dadb",
+    "normalization": "正文不改，移除节分隔末尾空行并补一个LF",
+    "extractedOriginalBytes": 5894,
+    "extractedOriginalSha256": "961b953d45902196bea56ddcdd08ee08b982401c9fbf10c472f5341ac4b22a82"
+  }
+}
