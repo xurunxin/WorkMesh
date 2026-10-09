@@ -755,10 +755,10 @@ paths:
     post:
       {
         x-workmesh-policy-id: route.createComment,
-        x-workmesh-actor-kinds: [human, agent],
+        x-workmesh-actor-kinds: [human],
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
-        security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
+        security: [{ SessionCookie: [] }],
         operationId: createComment,
         parameters:
           [
@@ -781,10 +781,10 @@ paths:
     patch:
       {
         x-workmesh-policy-id: route.updateComment,
-        x-workmesh-actor-kinds: [human, agent],
+        x-workmesh-actor-kinds: [human],
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
-        security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
+        security: [{ SessionCookie: [] }],
         operationId: updateComment,
         parameters:
           [
@@ -4318,6 +4318,7 @@ components:
                         fact: { type: string }
                         allowed: { type: array, items: { type: [string, boolean] } }
                         reason: { type: string }
+                        when: { type: object, additionalProperties: { type: [string, boolean] } }
     QualifiedAgentCapabilityManifest:
       allOf:
         - { $ref: "#/components/schemas/AgentCapabilityManifestFields" }
@@ -4327,9 +4328,96 @@ components:
             discovery: { $ref: "#/components/schemas/QualifiedDiscovery" }
       unevaluatedProperties: false
     AgentCapabilityManifest:
-      allOf:
-        - { $ref: "#/components/schemas/AgentCapabilityManifestFields" }
-      unevaluatedProperties: false
+      type: object
+      additionalProperties: false
+      required: [profileVersion, generatedFrom, authorizationEvaluatedPerRequest, agent, delivery, operations, extensions, errorReactions]
+      properties:
+        profileVersion: { const: "1.0" }
+        generatedFrom: { const: route_policy_manifest }
+        authorizationEvaluatedPerRequest: { const: true }
+        agent:
+          type: object
+          additionalProperties: false
+          required: [actorId, sessionId, sessionState, sessionRevision, effectiveCapabilities, capabilityScope, supportedProtocols]
+          properties:
+            actorId: { type: string, format: uuid }
+            sessionId: { type: string, format: uuid }
+            sessionState: { type: string, enum: [queued, acknowledged, planning, executing, awaiting_input, awaiting_approval, blocked, paused, stopping, stale, completed, failed, canceled] }
+            sessionRevision: { type: integer, minimum: 1 }
+            effectiveCapabilities: { type: array, items: { $ref: "#/components/schemas/Capability" } }
+            capabilityScope: { type: object, additionalProperties: true }
+            supportedProtocols: { type: array, items: { $ref: "#/components/schemas/AgentProtocol" } }
+        delivery:
+          type: object
+          additionalProperties: false
+          required: [push, pull, realtime]
+          properties:
+            push: { type: object, additionalProperties: false, required: [supported, configured], properties: { supported: { const: true }, configured: { type: boolean } } }
+            pull: { type: object, additionalProperties: false, required: [supported, inbox], properties: { supported: { const: true }, inbox: { const: true } } }
+            realtime: { type: object, additionalProperties: false, required: [supported, durableCursor], properties: { supported: { const: true }, durableCursor: { const: true } } }
+        operations:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [operationId, policyId, authentication, transports, requirements, feature, supported, eligibleByCapability]
+            properties:
+              operationId: { type: string }
+              policyId: { type: string }
+              authentication: { type: string, enum: [agent_session, human_or_agent_session, human_or_coordination_connection, coordination_connection, installation_target] }
+              transports:
+                type: object
+                additionalProperties: false
+                required: [rest, sse, mcpBindings]
+                properties:
+                  rest: { type: object, additionalProperties: false, required: [method, path], properties: { method: { type: string }, path: { type: string } } }
+                  sse: { type: boolean }
+                  mcpBindings: { type: array, items: { type: string } }
+              requirements:
+                type: object
+                additionalProperties: false
+                required: [capabilities, activeSession, activeDelegation, liveGrantIntersection, resourceScope, approval, lease, revision, idempotency]
+                properties:
+                  capabilities: { type: array, items: { $ref: "#/components/schemas/Capability" } }
+                  activeSession: { type: boolean }
+                  activeDelegation: { type: boolean }
+                  liveGrantIntersection: { type: boolean }
+                  resourceScope: { type: string, enum: [none, resolved_resource] }
+                  approval: { type: boolean }
+                  lease: { type: boolean }
+                  revision: { type: string, enum: [none, if_match] }
+                  idempotency: { type: string, enum: [none, required] }
+              feature:
+                type: object
+                additionalProperties: false
+                required: [key, tier, enabled]
+                properties:
+                  key: { type: [string, "null"] }
+                  tier: { type: string, enum: [stable, beta, experimental] }
+                  enabled: { type: boolean }
+              supported: { type: boolean }
+              eligibleByCapability: { type: boolean }
+        extensions:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, tier, enabled, negotiationRequired]
+            properties:
+              id: { type: string }
+              tier: { type: string, enum: [beta, experimental] }
+              enabled: { type: boolean }
+              negotiationRequired: { const: true }
+        errorReactions:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [errorCode, reaction, retryableAfterStateChange]
+            properties:
+              errorCode: { type: string }
+              reaction: { type: string, enum: [discard_session_credentials, refresh_credentials_or_stop, stop_and_acknowledge, do_not_retry_out_of_scope, refetch_and_rebase, stop_protected_action, request_or_wait_for_approval, disable_optional_capability, resync_from_server_cursor] }
+              retryableAfterStateChange: { type: boolean }
     AgentCapabilityManifestFields:
       type: object
       required: [profileVersion, generatedFrom, authorizationEvaluatedPerRequest, agent, delivery, operations, extensions, errorReactions]

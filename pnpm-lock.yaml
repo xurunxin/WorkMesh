@@ -338,9 +338,27 @@ importers:
         specifier: workspace:*
         version: link:../contracts
     devDependencies:
+      '@modelcontextprotocol/sdk':
+        specifier: 1.29.0
+        version: 1.29.0(zod@3.25.76)
       '@types/node':
         specifier: ^22.15.2
         version: 22.20.1
+      '@workmesh/agent-runner':
+        specifier: workspace:*
+        version: link:../../apps/agent-runner
+      '@workmesh/api':
+        specifier: workspace:*
+        version: link:../../apps/api
+      '@workmesh/config':
+        specifier: workspace:*
+        version: link:../config
+      '@workmesh/db':
+        specifier: workspace:*
+        version: link:../db
+      '@workmesh/mcp':
+        specifier: workspace:*
+        version: link:../../apps/mcp
       tsx:
         specifier: ^4.19.3
         version: 4.23.1

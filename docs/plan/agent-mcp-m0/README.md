@@ -1,3 +1,16 @@
+# M0产品候选与成果审查入口
+
+本目录属于原todo [#54](todo:pMO6s_SmEL_d81kjKm6S1)。已审方案 `ebde705a2e87f831f6546cbbc94590a07f564bcf` 及平台 doc:Qd1Ks9EH9uEvl1JW3O68D 保持原文；当前沿授权实现产品，不新建计划。下面原规划交付说明作为历史记录保留，其“仅文档”“未运行”仅说明当时状态。
+
+- [产品报告](product-report.md)：实际实现、适用检查、九类DoD、剩余门禁和演示步骤。
+- [实施问题与修正](implementation-findings.md)、[原合同审查全文](implementation-contract-review-original.md)：四项High及两项问题、实际首败和修正，内部合同检查不代平台成果独审。
+- [产品证据目录](product-evidence/)：真实命令、退出/runtime、受测源码ZIP、客户端工具名单与Pi调用/Turn事实、资源准备与归属收尾。
+- [现行协议决策](../../adr/0079-qualified-agent-discovery-and-recovery.md)：仍为Proposed，不扩权限。
+
+产品候选完成适用本机检查后停review，由Chief安排另一Agent平台成果独审；最新候选RequiredCI与实际main证明仍是最终验收门禁。Markdown可用变更审阅的预览按钮查看。
+
+---
+
 # M0受控方案与两项定向复审入口
 
 本目录属于原todo [#54](todo:pMO6s_SmEL_d81kjKm6S1)。仅沿既有授权同步现有平台计划 doc:Qd1Ks9EH9uEvl1JW3O68D 与方案资料，没有edit_plan或创建新计划。提交后停confirm，供另一Agent定向复审领域审计与binding身份两项blocking；不confirm产品、不merge文档完成整卡。前次API/adapter、安装与目标身份路径、RequiredCI接线的已闭边界保持。

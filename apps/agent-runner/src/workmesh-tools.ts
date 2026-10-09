@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import type { ToolDefinition } from '@earendil-works/pi-coding-agent'
 import {
-  acquireLeaseInputSchema, agentCapabilityManifestResponseSchema, appendActivityInputSchema,
+  acquireLeaseInputSchema, qualifiedAgentCapabilityManifestResponseSchema, appendActivityInputSchema,
   completeAgentSessionInputSchema,
   artifactInputSchema,
   createDocumentInputSchema, handoffInputSchema, projectInputSchema, publishPlanInputSchema,
@@ -106,6 +106,12 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
           try { await recordToolActivity(api, attemptId, toolCallId, operationId, 'failed', payloadHash, code) }
           catch { /* Server Stop can revoke activity writes while the original error remains authoritative. */ }
         }
+        // Pi将抛出的异常message交给模型；保全REST错误，而不把拒绝当成功结果。
+        if (error instanceof Error && 'code' in error && typeof error.code === 'string') {
+          throw new Error(JSON.stringify({ error: { code: error.code, message: error.message,
+            details: 'details' in error ? error.details : undefined,
+            correlationId: 'correlationId' in error ? error.correlationId : undefined } }), { cause: error })
+        }
         throw error
       }
       let completionActivityRecorded = true
@@ -124,12 +130,17 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
 
 export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string, onCall: (name: string) => void,
   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Promise<ToolDefinition[]> {
-  const manifest = agentCapabilityManifestResponseSchema.parse(
-    await api.request<unknown>('GET', '/api/v1/agent-capabilities'))
+  const manifest = qualifiedAgentCapabilityManifestResponseSchema.parse(
+    await api.request<unknown>('GET', '/api/v1/agent-capabilities?discovery=qualified'))
   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.sessionState !== 'executing')
     throw new Error('RUNNER_CAPABILITY_SESSION_MISMATCH')
-  const eligible = new Set(manifest.operations
-    .filter(operation => operation.supported && operation.eligibleByCapability)
+  if (manifest.discovery.identity.sessionId !== api.sessionId
+    || manifest.discovery.identity.sessionKind !== 'execution'
+    || manifest.discovery.identity.credentialMode !== 'agent_session'
+    || manifest.discovery.identity.actorId !== manifest.agent.actorId)
+    throw new Error('RUNNER_CAPABILITY_SESSION_MISMATCH')
+  const eligible = new Set(manifest.discovery.operations
+    .filter(operation => operation.variant === null && operation.eligibility.status !== 'blocked')
     .map(operation => operation.operationId))
   const available: ToolDefinition[] = []
   const add = (name: string, operationId: string, description: string,

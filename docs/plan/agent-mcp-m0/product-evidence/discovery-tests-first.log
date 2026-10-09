@@ -1,0 +1,3815 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61
+
+ ✓ packages/contracts/src/client-profile-contract.test.ts (3 tests) 27ms
+Exception in PromiseRejectCallback:
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\agent-sdk\src\index.ts:673
+    for (let attempt = 1; ; attempt += 1) {
+    ^
+
+RangeError: Maximum call stack size exceeded
+
+Exception in PromiseRejectCallback:
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\agent-sdk\src\index.ts:125
+    const response = await this.request("GET", "/api/v1/agent-capabilities?discovery=qualified", void 0, options);
+                                ^
+
+RangeError: Maximum call stack size exceeded
+
+Exception in PromiseRejectCallback:
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\agent-sdk\src\index.ts:673
+    for (let attempt = 1; ; attempt += 1) {
+    ^
+
+RangeError: Maximum call stack size exceeded
+
+Exception in PromiseRejectCallback:
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\agent-sdk\src\index.ts:125
+    const response = await this.request("GET", "/api/v1/agent-capabilities?discovery=qualified", void 0, options);
+                                ^
+
+RangeError: Maximum call stack size exceeded
+
+Exception in PromiseRejectCallback:
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\agent-sdk\src\index.ts:673
+    for (let attempt = 1; ; attempt += 1) {
+    ^
+
+RangeError: Maximum call stack size exceeded
+
+Exception in PromiseRejectCallback:
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\agent-sdk\src\index.ts:125
+    const response = await this.request("GET", "/api/v1/agent-capabilities?discovery=qualified", void 0, options);
+                                ^
+
+RangeError: Maximum call stack size exceeded
+
+Exception in PromiseRejectCallback:
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\agent-sdk\src\index.ts:673
+    for (let attempt = 1; ; attempt += 1) {
+    ^
+
+RangeError: Maximum call stack size exceeded
+
+Exception in PromiseRejectCallback:
+C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61\packages\agent-sdk\src\index.ts:125
+    const response = await this.request("GET", "/api/v1/agent-capabilities?discovery=qualified", void 0, options);
+                                ^
+
+RangeError: Maximum call stack size exceeded
+
+ ❯ packages/contracts/src/agent-discovery.test.ts (14 tests | 1 failed) 209ms
+   × 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收 15ms
+     → expected [ 'acceptA2ATask', …(276) ] to deeply equal [ 'acknowledgeAgentSession,', …(113) ]
+   ✓ 已审发现规则的已知门禁和身份投影 > createProject已知team scope限制在发现层执行 37ms
+   ✓ 已审发现规则的已知门禁和身份投影 > updateProject已知team scope限制在发现层执行 18ms
+   ✓ 已审发现规则的已知门禁和身份投影 > createWorkItem已知team scope限制在发现层执行 16ms
+   ✓ 已审发现规则的已知门禁和身份投影 > updateWorkItem已知team scope限制在发现层执行 14ms
+   ✓ 已审发现规则的已知门禁和身份投影 > createProjectMilestone已知team scope限制在发现层执行 11ms
+   ✓ 已审发现规则的已知门禁和身份投影 > updateMilestone已知team scope限制在发现层执行 12ms
+   ✓ 已审发现规则的已知门禁和身份投影 > deleteMilestone已知team scope限制在发现层执行 17ms
+   ✓ 已审发现规则的已知门禁和身份投影 > createWorkItemRelation已知team scope限制在发现层执行 19ms
+   ✓ 已审发现规则的已知门禁和身份投影 > deleteWorkItemRelation已知team scope限制在发现层执行 11ms
+   ✓ 已审发现规则的已知门禁和身份投影 > reviewer完成/失败缺artifact能力、reviewer计划发布均已知拒绝 17ms
+   ✓ 已审发现规则的已知门禁和身份投影 > provider具名kind按联合能力判定 8ms
+   ✓ 已审发现规则的已知门禁和身份投影 > verify/claim不凭返回sessionId要求目标bridge；optional room保留current路径 8ms
+   ✓ 已审发现规则的已知门禁和身份投影 > 相同API资格按mode分别投影；Context只能使用本次eligible集合 4ms
+ ✓ apps/mcp/src/http.test.ts (9 tests) 68ms
+ ❯ apps/mcp/src/index.test.ts (29 tests | 29 failed) 159ms
+   × WorkMesh MCP adapter > keeps Control Plane read tools in parity with the Agent SDK 26ms
+     → MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+   × WorkMesh MCP adapter > claims an eligible Issue and returns only a recoverable execution bridge receipt 5ms
+     → MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+   × WorkMesh MCP adapter > keeps explicit mutation idempotency keys out of API request bodies 10ms
+     → {"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:738c8bdc-ffe9-4682-9460-0bdb81cfecfc","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}}: expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > bootstraps a fresh coordination Agent and resolves a stable Project reference in two calls 7ms
+     → {"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:8c729bc9-22a3-407e-8a1f-6c0bee8bb27d","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}}: expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > gives a stable UUID suffix precedence over duplicate Project and Milestone names 5ms
+     → {"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:968e1bdb-8394-43a5-a6f6-bed78d496d64","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}}: expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > prepares a deterministic Project import without calling any WorkMesh API 8ms
+     → {"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:db01ef8a-b54e-4eee-9e8f-f609e0b4873e","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}}: expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > resumes apply_project_import after response loss and replays the complete source mapping 4ms
+     → expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > applies a prepared import whose plan is schema-valid but not yet normalized 5ms
+     → {"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:9206887c-f7b9-46ad-ab8a-6db93816de3b","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}}: expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > returns actionable revision conflicts with correlation and current revision 7ms
+     → expected { error: { …(5) } } to deeply equal { error: { …(6) } }
+   × WorkMesh MCP adapter > publishes stable schemas for bootstrap, resolution, prepare, and apply 7ms
+     → MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+   × WorkMesh MCP adapter > returns a generated correlation ID and safe repair action for local import validation errors 6ms
+     → {"content":[{"type":"text","text":"{\"error\":{\"code\":\"MCP_UPSTREAM_ERROR\",\"message\":\"An unexpected MCP adapter error occurred\",\"correlationId\":\"mcp:86f85b0c-e850-4925-a1df-050de3bb27fc\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"}],"structuredContent":{"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:86f85b0c-e850-4925-a1df-050de3bb27fc","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}},"isError":true}: expected { error: { …(5) } } to match object { error: { …(3) } }
+(2 matching properties omitted from actual)
+   × WorkMesh MCP adapter > normalizes pre-handler schema failures into the structured WorkMesh error envelope 3ms
+     → {"content":[{"type":"text","text":"{\"error\":{\"code\":\"MCP_UPSTREAM_ERROR\",\"message\":\"An unexpected MCP adapter error occurred\",\"correlationId\":\"mcp:a78134d6-2486-4ff8-aa31-660656b1b4e7\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"}],"structuredContent":{"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:a78134d6-2486-4ff8-aa31-660656b1b4e7","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}},"isError":true}: expected { error: { …(5) } } to match object { error: { …(3) } }
+(2 matching properties omitted from actual)
+   × WorkMesh MCP adapter > fails verify_connection when the Team live authorization probe is unavailable 3ms
+     → expected { error: { …(5) } } to deeply equal { error: { …(5) } }
+   × WorkMesh MCP adapter > binds every MCP resource and tool to a REST operation policy 7ms
+     → expected [ Array(96) ] to deeply equal [ Array(97) ]
+   × WorkMesh MCP adapter > omits mutation tools in read-only mode 2ms
+     → MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+   × WorkMesh MCP adapter > forwards Human Attention filters through the read-only MCP surface 3ms
+     → expected "spy" to be called with arguments: [ { kind: 'decision', …(2) }, …(1) ]
+
+Number of calls: 0
+
+   × WorkMesh MCP adapter > reads the exact Session revision and transitions to executing through MCP 3ms
+     → MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+   × WorkMesh MCP adapter > preserves the shared Work Item executor projection through MCP 3ms
+     → expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > exposes versioned Guidance as a read-only MCP resource 5ms
+     → MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+   × WorkMesh MCP adapter > exposes Inbox mutations only in read-write mode and routes them through the SDK 2ms
+     → MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+   × WorkMesh MCP adapter > routes an MCP message tool call to the upstream SDK 2ms
+     → expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > preserves upstream authorization denial code and correlation ID 2ms
+     → expected { error: { …(5) } } to deeply equal { error: { …(5) } }
+   × WorkMesh MCP adapter > forwards MCP cursor and limit through the SDK page helper 5ms
+     → expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > uses the shared PostgreSQL bigint cursor boundary 5ms
+     → expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > continues session activities with the opaque cursor returned by page one 4ms
+     → expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > uses direct exact-head code_review evidence and keeps signed uploads file-only 3ms
+     → MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+   × WorkMesh MCP adapter > exposes exact approved CI retry and agent draft-only project updates 3ms
+     → MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+   × WorkMesh MCP adapter > returns a bounded secret-safe bootstrap receipt after live Connection verification 7ms
+     → expected true not to be true // Object.is equality
+   × WorkMesh MCP adapter > exposes structured Milestone, hierarchy, and relation operations to coordination clients 3ms
+     → MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+ ❯ apps/agent-runner/src/permission-matrix.test.ts (6 tests | 6 failed) 21ms
+   × W11 permission-denial matrix > refuses every tool when the capability manifest is not from an executing session 15ms
+     → expected [Function] to throw error including 'RUNNER_CAPABILITY_SESSION_MISMATCH' but got '[\n  {\n    "code": "invalid_literal"…'
+   × W11 permission-denial matrix > gates the toolset on the granted capabilities: work:read alone yields the read-only subset 3ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+   × W11 permission-denial matrix > gates the toolset on the granted capabilities: work:read alone yields the read-only subset 0ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+   × W11 permission-denial matrix > aborts every in-flight tool invocation when the shutdown signal fires 1ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+   × W11 permission-denial matrix > keeps every registered tool inside the matrix 1ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+   × W11 permission-denial matrix > reveals the lease-gated publish tools only while a lease is held 1ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts (10 tests | 10 failed) 29ms
+   × Pi WorkMesh tools > offers only live eligible operations and replays a write with the same durable operation key 9ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+   × Pi WorkMesh tools > validates the document base and refuses a stale or malformed write before any API mutation 1ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  }
+]
+   × Pi WorkMesh tools > hides write tools when live capabilities only allow reading 16ms
+     → [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  }
+]
+   × Pi WorkMesh tools > reports a successful oversized write without returning its full Markdown 1ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision",
+      "currentRevision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision', 'currentRevision'"
+  }
+]
+   × Pi WorkMesh tools > does not misreport a committed write as failed when completion activity is unavailable 0ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+   × Pi WorkMesh tools > binds approval, lease, artifact, and handoff requests to the exact Session 0ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id'"
+  }
+]
+   × Pi WorkMesh tools > publishes a whole plan using the supplied Session revision before appending audit activity 0ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+   × Pi WorkMesh tools > appends one human-visible activity with a sanitized tool reference 0ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id'"
+  }
+]
+   × Pi WorkMesh tools > releases only a versioned lease through the exact Session API authority 1ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "version"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'version'"
+  }
+]
+   × Pi WorkMesh tools > queues evidence-backed completion without ending the Session before the public answer 0ms
+     → [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  }
+]
+ ❯ packages/agent-sdk/src/index.test.ts (33 tests | 3 failed) 1134ms
+   ✓ WorkMeshClient > binds Control Center, explanation, execution summary, and preview routes 6ms
+   ✓ WorkMeshClient > binds structured planning methods to the versioned REST routes and headers 3ms
+   ✓ WorkMeshClient > reads the exact Agent Connection identity with the coordination credential header 2ms
+   ✓ WorkMeshClient > lists exact decimal event cursors above 2^53 2ms
+   ✓ WorkMeshClient > streams typed events and preserves Last-Event-ID exactly 7ms
+   ✓ WorkMeshClient > surfaces CURSOR_EXPIRED without retrying or moving caller state 1ms
+   ✓ WorkMeshClient > retries documented realtime capacity responses with bounded policy 4ms
+   ✓ WorkMeshClient > reads release, features, and the negotiated Agent capability manifest 1ms
+   ✓ WorkMeshClient > uses stable idempotency and does not retry conflicts 2ms
+   ✓ WorkMeshClient > retries a rate limit and never exposes the authorization value to logs 12ms
+   ✓ WorkMeshClient > never refreshes or retries an authorization denial 1ms
+   ✓ WorkMeshClient > reuses the token-exchange key across a retry without logging credentials 15ms
+   × WorkMeshClient > keeps a connection bridge on coordination auth and refreshes each exact execution session request-locally 11ms
+     → Maximum call stack size exceeded
+   × WorkMeshClient > rebuilds exact-session authorization independently in separate stateless bridge clients 20ms
+     → Maximum call stack size exceeded
+   × WorkMeshClient > propagates cancellation through the exact-session refresh before sending the target request 1018ms
+     → expected "spy" to be called once, but got 0 times
+   ✓ WorkMeshClient > waits for the full Retry-After duration without changing the logical authentication attempt 4ms
+   ✓ WorkMeshClient > reuses the original serialized body when caller-owned input mutates during Retry-After 1ms
+   ✓ WorkMeshClient > does not retry or sleep when Retry-After exceeds the explicit limit and preserves error metadata 1ms
+   ✓ WorkMeshClient > falls back to bounded exponential delay for invalid Retry-After invalid 1ms
+   ✓ WorkMeshClient > falls back to bounded exponential delay for invalid Retry-After -1 2ms
+   ✓ WorkMeshClient > bounds automatic retries by the total retry-delay budget 1ms
+   ✓ WorkMeshClient > bounds automatic retries by the attempt limit 1ms
+   ✓ WorkMeshClient > uses installation authority only for pending handoff inspection and idle-target rejection 0ms
+   ✓ WorkMeshClient > passes opaque cursors unchanged and iterates page envelopes 1ms
+   ✓ WorkMeshClient > redacts nested sensitive values before logging 0ms
+   ✓ WorkMeshClient > uses the atomic delegation-and-session endpoint with If-Match 0ms
+   ✓ WorkMeshClient > transitions an Agent Session with its exact current revision 0ms
+   ✓ WorkMeshClient > preserves exact pull-request head provenance for delivery artifacts 0ms
+   ✓ WorkMeshClient > exposes approved CI retry and agent project-update draft without publishing 1ms
+   ✓ WorkMeshClient > uses the native Inbox routes with explicit empty mutation bodies 1ms
+   ✓ WorkMeshClient > reads the authorized Human Attention projection without local classification 0ms
+   ✓ WorkMeshClient > uses a new default key per public mutation while retaining it for retry and explicit callers 11ms
+   ✓ verifyWebhook > accepts a rotated secret and rejects expired deliveries 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 49 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/agent-runner/src/permission-matrix.test.ts > W11 permission-denial matrix > refuses every tool when the capability manifest is not from an executing session
+AssertionError: expected [Function] to throw error including 'RUNNER_CAPABILITY_SESSION_MISMATCH' but got '[\n  {\n    "code": "invalid_literal"…'
+
+- Expected
++ Received
+
+- RUNNER_CAPABILITY_SESSION_MISMATCH
++ [
++   {
++     "code": "invalid_literal",
++     "expected": "1.0",
++     "path": [
++       "profileVersion"
++     ],
++     "message": "Invalid literal value, expected \"1.0\""
++   },
++   {
++     "code": "invalid_literal",
++     "expected": "route_policy_manifest",
++     "path": [
++       "generatedFrom"
++     ],
++     "message": "Invalid literal value, expected \"route_policy_manifest\""
++   },
++   {
++     "code": "invalid_literal",
++     "expected": true,
++     "path": [
++       "authorizationEvaluatedPerRequest"
++     ],
++     "message": "Invalid literal value, expected true"
++   },
++   {
++     "code": "invalid_type",
++     "expected": "object",
++     "received": "undefined",
++     "path": [
++       "agent"
++     ],
++     "message": "Required"
++   },
++   {
++     "code": "invalid_type",
++     "expected": "object",
++     "received": "undefined",
++     "path": [
++       "delivery"
++     ],
++     "message": "Required"
++   },
++   {
++     "code": "invalid_type",
++     "expected": "array",
++     "received": "undefined",
++     "path": [
++       "operations"
++     ],
++     "message": "Required"
++   },
++   {
++     "code": "invalid_type",
++     "expected": "array",
++     "received": "undefined",
++     "path": [
++       "extensions"
++     ],
++     "message": "Required"
++   },
++   {
++     "code": "invalid_type",
++     "expected": "array",
++     "received": "undefined",
++     "path": [
++       "errorReactions"
++     ],
++     "message": "Required"
++   },
++   {
++     "code": "invalid_type",
++     "expected": "object",
++     "received": "undefined",
++     "path": [
++       "discovery"
++     ],
++     "message": "Required"
++   },
++   {
++     "code": "unrecognized_keys",
++     "keys": [
++       "id",
++       "revision"
++     ],
++     "path": [],
++     "message": "Unrecognized key(s) in object: 'id', 'revision'"
++   }
++ ]
+
+ ❯ apps/agent-runner/src/permission-matrix.test.ts:87:7
+     85|     for (const state of nonExecuting) {
+     86|       const api = apiFor(['work:read', 'work:write'], state)
+     87|       await expect(createWorkMeshTools(api, 'attempt-1', () => {}))
+       |       ^
+     88|         .rejects.toThrow('RUNNER_CAPABILITY_SESSION_MISMATCH')
+     89|       expect(api.calls.filter(call => !call.includes('agent-capabiliti…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/49]⎯
+
+ FAIL  apps/agent-runner/src/permission-matrix.test.ts > W11 permission-denial matrix > gates the toolset on the granted capabilities: work:read alone yields the read-only subset
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/permission-matrix.test.ts:94:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/49]⎯
+
+ FAIL  apps/agent-runner/src/permission-matrix.test.ts > W11 permission-denial matrix > gates the toolset on the granted capabilities: work:read alone yields the read-only subset
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/permission-matrix.test.ts:113:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/49]⎯
+
+ FAIL  apps/agent-runner/src/permission-matrix.test.ts > W11 permission-denial matrix > aborts every in-flight tool invocation when the shutdown signal fires
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/permission-matrix.test.ts:147:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/49]⎯
+
+ FAIL  apps/agent-runner/src/permission-matrix.test.ts > W11 permission-denial matrix > keeps every registered tool inside the matrix
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/permission-matrix.test.ts:159:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/49]⎯
+
+ FAIL  apps/agent-runner/src/permission-matrix.test.ts > W11 permission-denial matrix > reveals the lease-gated publish tools only while a lease is held
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/permission-matrix.test.ts:169:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/49]⎯
+
+ FAIL  apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > offers only live eligible operations and replays a write with the same durable operation key
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts:38:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/49]⎯
+
+ FAIL  apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > validates the document base and refuses a stale or malformed write before any API mutation
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts:62:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/49]⎯
+
+ FAIL  apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > hides write tools when live capabilities only allow reading
+ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts:74:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/49]⎯
+
+ FAIL  apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > reports a successful oversized write without returning its full Markdown
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision",
+      "currentRevision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision', 'currentRevision'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts:88:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/49]⎯
+
+ FAIL  apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > does not misreport a committed write as failed when completion activity is unavailable
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts:111:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/49]⎯
+
+ FAIL  apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > binds approval, lease, artifact, and handoff requests to the exact Session
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts:135:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/49]⎯
+
+ FAIL  apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > publishes a whole plan using the supplied Session revision before appending audit activity
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "revision"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'revision'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts:170:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/49]⎯
+
+ FAIL  apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > appends one human-visible activity with a sanitized tool reference
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts:196:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/49]⎯
+
+ FAIL  apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > releases only a versioned lease through the exact Session API authority
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "id",
+      "version"
+    ],
+    "path": [],
+    "message": "Unrecognized key(s) in object: 'id', 'version'"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts:218:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/49]⎯
+
+ FAIL  apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > queues evidence-backed completion without ending the Session before the public answer
+ZodError: [
+  {
+    "code": "invalid_literal",
+    "expected": "1.0",
+    "path": [
+      "profileVersion"
+    ],
+    "message": "Invalid literal value, expected \"1.0\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": "route_policy_manifest",
+    "path": [
+      "generatedFrom"
+    ],
+    "message": "Invalid literal value, expected \"route_policy_manifest\""
+  },
+  {
+    "code": "invalid_literal",
+    "expected": true,
+    "path": [
+      "authorizationEvaluatedPerRequest"
+    ],
+    "message": "Invalid literal value, expected true"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "agent"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "delivery"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "operations"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "extensions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "errorReactions"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "undefined",
+    "path": [
+      "discovery"
+    ],
+    "message": "Required"
+  }
+]
+ ❯ Object.get error [as error] node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31
+ ❯ ZodEffects.parse node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22
+ ❯ createWorkMeshTools apps/agent-runner/src/workmesh-tools.ts:127:67
+    125| export async function createWorkMeshTools(api: RunnerToolApi, attemptI…
+    126|   onCompletionIntent?: (intent: SessionCompletionIntent) => void): Pro…
+    127|   const manifest = qualifiedAgentCapabilityManifestResponseSchema.pars…
+       |                                                                   ^
+    128|     await api.request<unknown>('GET', '/api/v1/agent-capabilities?disc…
+    129|   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.ses…
+ ❯ apps/agent-runner/src/workmesh-tools.test.ts:245:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > keeps Control Plane read tools in parity with the Agent SDK
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > claims an eligible Issue and returns only a recoverable execution bridge receipt
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > publishes stable schemas for bootstrap, resolution, prepare, and apply
+McpError: MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+ ❯ Function.fromError node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/src/types.ts:2330:16
+ ❯ Client._onresponse node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:930:36
+ ❯ InMemoryTransport._transport.onmessage node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:631:22
+ ❯ InMemoryTransport.send node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/src/inMemory.ts:58:34
+ ❯ node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:842:50
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > keeps explicit mutation idempotency keys out of API request bodies
+AssertionError: {"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:738c8bdc-ffe9-4682-9460-0bdb81cfecfc","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}}: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:222:78
+    220|         },
+    221|       })
+    222|       expect(project.isError, JSON.stringify(project.structuredContent…
+       |                                                                              ^
+    223|       expect(created.isError, JSON.stringify(created.structuredContent…
+    224|       expect(lease.isError, JSON.stringify(lease.structuredContent)).n…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > bootstraps a fresh coordination Agent and resolves a stable Project reference in two calls
+AssertionError: {"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:8c729bc9-22a3-407e-8a1f-6c0bee8bb27d","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}}: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:301:78
+    299|     try {
+    300|       const context = await protocol.callTool({ name: 'get_workmesh_co…
+    301|       expect(context.isError, JSON.stringify(context.structuredContent…
+       |                                                                              ^
+    302|       expect(context.structuredContent).toMatchObject({
+    303|         data: {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > gives a stable UUID suffix precedence over duplicate Project and Milestone names
+AssertionError: {"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:968e1bdb-8394-43a5-a6f6-bed78d496d64","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}}: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:370:78
+    368|         arguments: { kind: 'project', ref: 'WM/duplicate-name~00000000…
+    369|       })
+    370|       expect(project.isError, JSON.stringify(project.structuredContent…
+       |                                                                              ^
+    371|       expect(project.structuredContent).toMatchObject({ data: { id: pr…
+    372|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > prepares a deterministic Project import without calling any WorkMesh API
+AssertionError: {"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:db01ef8a-b54e-4eee-9e8f-f609e0b4873e","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}}: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:427:74
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > resumes apply_project_import after response loss and replays the complete source mapping
+AssertionError: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:494:36
+    492|     try {
+    493|       const prepared = await protocol.callTool({ name: 'prepare_projec…
+    494|       expect(prepared.isError).not.toBe(true)
+       |                                    ^
+    495|       const preparation = (prepared.structuredContent as { data: { con…
+    496|       const first = await protocol.callTool({ name: 'apply_project_imp…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > applies a prepared import whose plan is schema-valid but not yet normalized
+AssertionError: {"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:9206887c-f7b9-46ad-ab8a-6db93816de3b","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}}: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:575:80
+    573|     try {
+    574|       const prepared = await protocol.callTool({ name: 'prepare_projec…
+    575|       expect(prepared.isError, JSON.stringify(prepared.structuredConte…
+       |                                                                                ^
+    576|       const preparation = (prepared.structuredContent as { data: { con…
+    577|       expect(preparation.plan.teamRef).toBe('WM')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > returns actionable revision conflicts with correlation and current revision
+AssertionError: expected { error: { …(5) } } to deeply equal { error: { …(6) } }
+
+- Expected
++ Received
+
+  {
+    "error": {
+-     "code": "REVISION_CONFLICT",
+-     "correlationId": "correlation-revision",
+-     "currentRevision": 5,
+-     "details": {
+-       "currentRevision": 5,
+-       "expectedRevision": 2,
+-     },
+-     "message": "Resource has changed",
+-     "safeNextAction": "Refetch the resource, reapply the intended change to revision 5, and retry once with that revision.",
++     "code": "MCP_UPSTREAM_ERROR",
++     "correlationId": "mcp:1459bfc3-3831-48f9-a72c-7cf552913be9",
++     "details": undefined,
++     "message": "An unexpected MCP adapter error occurred",
++     "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.",
+    },
+  }
+
+ ❯ apps/mcp/src/index.test.ts:654:40
+    652|       })
+    653|       expect(result.isError).toBe(true)
+    654|       expect(result.structuredContent).toEqual({
+       |                                        ^
+    655|         error: {
+    656|           code: 'REVISION_CONFLICT',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > returns a generated correlation ID and safe repair action for local import validation errors
+AssertionError: {"content":[{"type":"text","text":"{\"error\":{\"code\":\"MCP_UPSTREAM_ERROR\",\"message\":\"An unexpected MCP adapter error occurred\",\"correlationId\":\"mcp:86f85b0c-e850-4925-a1df-050de3bb27fc\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"}],"structuredContent":{"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:86f85b0c-e850-4925-a1df-050de3bb27fc","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}},"isError":true}: expected { error: { …(5) } } to match object { error: { …(3) } }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "error": {
+-     "code": "IMPORT_REFERENCE_INVALID",
+-     "details": {
+-       "milestoneSourceId": "missing",
+-       "sourceId": "issue-1",
+-     },
+-     "safeNextAction": "Correct the source plan, run prepare_project_import again, and apply only the newly returned hash and plan.",
++     "code": "MCP_UPSTREAM_ERROR",
++     "details": undefined,
++     "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.",
+    },
+  }
+
+ ❯ apps/mcp/src/index.test.ts:711:64
+    709|       })
+    710|       expect(result.isError).toBe(true)
+    711|       expect(result.structuredContent, JSON.stringify(result)).toMatch…
+       |                                                                ^
+    712|         error: {
+    713|           code: 'IMPORT_REFERENCE_INVALID',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > normalizes pre-handler schema failures into the structured WorkMesh error envelope
+AssertionError: {"content":[{"type":"text","text":"{\"error\":{\"code\":\"MCP_UPSTREAM_ERROR\",\"message\":\"An unexpected MCP adapter error occurred\",\"correlationId\":\"mcp:a78134d6-2486-4ff8-aa31-660656b1b4e7\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"}],"structuredContent":{"error":{"code":"MCP_UPSTREAM_ERROR","message":"An unexpected MCP adapter error occurred","correlationId":"mcp:a78134d6-2486-4ff8-aa31-660656b1b4e7","safeNextAction":"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."}},"isError":true}: expected { error: { …(5) } } to match object { error: { …(3) } }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "error": {
+-     "code": "MCP_INPUT_INVALID",
+-     "message": "MCP tool input failed validation",
+-     "safeNextAction": "Correct the arguments against the published MCP tool schema, then retry the call.",
++     "code": "MCP_UPSTREAM_ERROR",
++     "message": "An unexpected MCP adapter error occurred",
++     "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.",
+    },
+  }
+
+ ❯ apps/mcp/src/index.test.ts:734:64
+    732|       })
+    733|       expect(result.isError).toBe(true)
+    734|       expect(result.structuredContent, JSON.stringify(result)).toMatch…
+       |                                                                ^
+    735|         error: {
+    736|           code: 'MCP_INPUT_INVALID',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > fails verify_connection when the Team live authorization probe is unavailable
+AssertionError: expected { error: { …(5) } } to deeply equal { error: { …(5) } }
+
+- Expected
++ Received
+
+  {
+    "error": {
+-     "code": "LIVE_PROBE_UNAVAILABLE",
+-     "correlationId": "correlation-live-probe",
++     "code": "MCP_UPSTREAM_ERROR",
++     "correlationId": "mcp:ed0304b6-9ab5-48ee-a0c8-91b7af8e3855",
+      "details": undefined,
+-     "message": "Team discovery is unavailable",
++     "message": "An unexpected MCP adapter error occurred",
+      "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.",
+    },
+  }
+
+ ❯ apps/mcp/src/index.test.ts:777:40
+    775|       const result = await protocol.callTool({ name: 'verify_connectio…
+    776|       expect(result.isError).toBe(true)
+    777|       expect(result.structuredContent).toEqual({
+       |                                        ^
+    778|         error: {
+    779|           code: 'LIVE_PROBE_UNAVAILABLE',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > binds every MCP resource and tool to a REST operation policy
+AssertionError: expected [ Array(96) ] to deeply equal [ Array(97) ]
+
+- Expected
++ Received
+
+@@ -70,11 +70,10 @@
+    "tool:list_workflow_states",
+    "tool:merge_pull_request",
+    "tool:offer_handoff",
+    "tool:open_pull_request",
+    "tool:post_work_room_message",
+-   "tool:prepare_project_import",
+    "tool:preview_agent_session_control",
+    "tool:propose_plan_step_assignment",
+    "tool:publish_artifact",
+    "tool:publish_delivery_artifact",
+    "tool:publish_plan",
+
+ ❯ apps/mcp/src/index.test.ts:796:51
+    794|       .map(match => `${match[1]?.toLowerCase()}:${match[2]}`)
+    795|       .sort()
+    796|     expect(Object.keys(mcpPolicyBindings).sort()).toEqual(registration…
+       |                                                   ^
+    797|     for (const binding of Object.values(mcpPolicyBindings)) {
+    798|       expect(binding.policyId).toBe(`route.${binding.operationId}`)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > omits mutation tools in read-only mode
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > reads the exact Session revision and transitions to executing through MCP
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > exposes versioned Guidance as a read-only MCP resource
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > exposes Inbox mutations only in read-write mode and routes them through the SDK
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > uses direct exact-head code_review evidence and keeps signed uploads file-only
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > exposes exact approved CI retry and agent draft-only project updates
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > exposes structured Milestone, hierarchy, and relation operations to coordination clients
+McpError: MCP error -32603: options.client.getQualifiedAgentCapabilities is not a function
+ ❯ Function.fromError node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/src/types.ts:2330:16
+ ❯ Client._onresponse node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:930:36
+ ❯ InMemoryTransport._transport.onmessage node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:631:22
+ ❯ InMemoryTransport.send node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/src/inMemory.ts:58:34
+ ❯ node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:842:50
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > forwards Human Attention filters through the read-only MCP surface
+AssertionError: expected "spy" to be called with arguments: [ { kind: 'decision', …(2) }, …(1) ]
+
+Number of calls: 0
+
+ ❯ apps/mcp/src/index.test.ts:841:34
+    839|         arguments: { attentionId: 'v1:decision:decision-1' },
+    840|       })
+    841|       expect(listHumanAttention).toHaveBeenCalledWith(
+       |                                  ^
+    842|         { kind: 'decision', status: 'open', projectId },
+    843|         { cursor: 'opaque', limit: 17 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > preserves the shared Work Item executor projection through MCP
+AssertionError: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:888:34
+    886|         arguments: { workItemId },
+    887|       })
+    888|       expect(result.isError).not.toBe(true)
+       |                                  ^
+    889|       expect(result.structuredContent).toEqual({ data: projected })
+    890|       expect(getWorkItem).toHaveBeenCalledWith(workItemId)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > routes an MCP message tool call to the upstream SDK
+AssertionError: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:972:34
+    970|     try {
+    971|       const result = await protocol.callTool({ name: 'send_message', a…
+    972|       expect(result.isError).not.toBe(true)
+       |                                  ^
+    973|       expect(sendMessage).toHaveBeenCalledWith(sessionId, 'Please veri…
+    974|     } finally { await protocol.close(); await server.close() }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > preserves upstream authorization denial code and correlation ID
+AssertionError: expected { error: { …(5) } } to deeply equal { error: { …(5) } }
+
+- Expected
++ Received
+
+  {
+    "error": {
+-     "code": "RESOURCE_SCOPE_DENIED",
+-     "correlationId": "correlation-denial",
++     "code": "MCP_UPSTREAM_ERROR",
++     "correlationId": "mcp:500895d3-1880-4698-8da3-7c3496e75358",
+      "details": undefined,
+-     "message": "scope denied",
+-     "safeNextAction": "Do not retry the out-of-scope resource; use get_workmesh_context to select a resource inside the bound Team.",
++     "message": "An unexpected MCP adapter error occurred",
++     "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.",
+    },
+  }
+
+ ❯ apps/mcp/src/index.test.ts:994:40
+    992|       })
+    993|       expect(result.isError).toBe(true)
+    994|       expect(result.structuredContent).toEqual({
+       |                                        ^
+    995|         error: {
+    996|           code: 'RESOURCE_SCOPE_DENIED',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > forwards MCP cursor and limit through the SDK page helper
+AssertionError: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:1015:34
+    1013|         arguments: { teamId: '00000000-0000-4000-8000-000000000001', s…
+    1014|       })
+    1015|       expect(result.isError).not.toBe(true)
+       |                                  ^
+    1016|       expect(listWorkItems).toHaveBeenCalledWith(
+    1017|         { teamId: '00000000-0000-4000-8000-000000000001', search: 'hum…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > uses the shared PostgreSQL bigint cursor boundary
+AssertionError: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:1040:36
+    1038|         arguments: { cursor: '9223372036854775807' },
+    1039|       })
+    1040|       expect(accepted.isError).not.toBe(true)
+       |                                    ^
+    1041|       expect(listEvents).toHaveBeenCalledWith({
+    1042|         cursor: '9223372036854775807',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > continues session activities with the opaque cursor returned by page one
+AssertionError: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:1083:33
+    1081|         arguments: { sessionId, limit: 1 },
+    1082|       })
+    1083|       expect(first.isError).not.toBe(true)
+       |                                 ^
+    1084|       expect(first.structuredContent).toEqual({
+    1085|         data: {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/49]⎯
+
+ FAIL  apps/mcp/src/index.test.ts > WorkMesh MCP adapter > returns a bounded secret-safe bootstrap receipt after live Connection verification
+AssertionError: expected true not to be true // Object.is equality
+ ❯ apps/mcp/src/index.test.ts:1287:34
+    1285|     try {
+    1286|       const result = await protocol.callTool({ name: 'verify_connectio…
+    1287|       expect(result.isError).not.toBe(true)
+       |                                  ^
+    1288|       expect(result.structuredContent).toMatchObject({
+    1289|         data: {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/49]⎯
+
+ FAIL  packages/agent-sdk/src/index.test.ts > WorkMeshClient > keeps a connection bridge on coordination auth and refreshes each exact execution session request-locally
+RangeError: Maximum call stack size exceeded
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:618:11
+    616|       && options.refreshSessionId
+    617|       && this.installationToken
+    618|       && (Boolean(this.coordinationToken) || !this.sessionToken)
+       |           ^
+    619|     ) {
+    620|       const recoveryOperation = resolveSdkRoutePolicy(method, new URL(…
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:281:33
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:31
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:622:49
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:281:33
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:31
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:622:49
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:281:33
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/49]⎯
+
+ FAIL  packages/agent-sdk/src/index.test.ts > WorkMeshClient > rebuilds exact-session authorization independently in separate stateless bridge clients
+RangeError: Maximum call stack size exceeded
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:620:63
+    618|       && (Boolean(this.coordinationToken) || !this.sessionToken)
+    619|     ) {
+    620|       const recoveryOperation = resolveSdkRoutePolicy(method, new URL(…
+       |                                                               ^
+    621|       if (this.coordinationToken && !['acknowledgeAgentSession', 'ackn…
+    622|         const { client, manifest } = await this.forExecutionSession(op…
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:281:33
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:31
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:622:49
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:281:33
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:31
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:622:49
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:281:33
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/49]⎯
+
+ FAIL  packages/agent-sdk/src/index.test.ts > WorkMeshClient > propagates cancellation through the exact-session refresh before sending the target request
+AssertionError: expected "spy" to be called once, but got 0 times
+ ❯ packages/agent-sdk/src/index.test.ts:444:42
+    442|       { signal: controller.signal },
+    443|     )
+    444|     await vi.waitFor(() => expect(fetch).toHaveBeenCalledOnce())
+       |                                          ^
+    445|     controller.abort(new Error('caller canceled'))
+    446|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/49]⎯
+
+ FAIL  packages/contracts/src/agent-discovery.test.ts > 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收
+AssertionError: expected [ 'acceptA2ATask', …(276) ] to deeply equal [ 'acknowledgeAgentSession,', …(113) ]
+
+- Expected
++ Received
+
+  [
+-   "acknowledgeAgentSession,",
+-   "acknowledgeAgentSessionStop,",
+-   "appendAgentActivity,",
+-   "approveAgentTeamAccess,",
++   "acceptA2ATask",
++   "acceptHandoff",
++   "acknowledgeAgentSession",
++   "acknowledgeAgentSessionStop",
++   "acknowledgeInboxItem",
++   "acquireLease",
++   "appendAgentActivity",
++   "appendContextDelta",
++   "approveAgentTeamAccess",
++   "archiveDocument",
++   "archiveProjectGuidance",
++   "archiveTeamGuidance",
+    "archiveWorkbenchConversation",
+-   "claimWorkItem,",
++   "archiveWorkspaceGuidance",
++   "cancelArtifactUpload",
++   "cancelHandoff",
++   "carryOverCycleWork",
++   "claimInboxItem",
++   "claimWorkItem",
+    "claimWorkbenchTurn",
+-   "completeAgentSession,",
+-   "consumeApproval,",
+-   "createComment,",
++   "commentOnPlanStep",
++   "completeAgentSession",
++   "completeHandoff",
++   "configureA2ABinding",
++   "confirmAgentConnectionRotation",
++   "connectRepository",
++   "consumeApproval",
++   "createAdvancedView",
++   "createAgentConnection",
++   "createAgentEnrollmentPolicy",
++   "createAgentWebhookEndpoint",
++   "createAutomationRule",
++   "createAutomationRuleVersion",
++   "createBrowserPushSubscription",
++   "createChildAgentSession",
++   "createComment",
++   "createCycle",
++   "createDocument",
++   "createInitiative",
++   "createLoop",
++   "createNotification",
+    "createNotificationChannelTarget",
+-   "createProject,",
+-   "createSavedView,",
+-   "createTeam,",
+-   "createWorkItem,",
++   "createProject",
++   "createProjectDecision",
++   "createProjectDependency",
++   "createProjectHealthUpdate",
++   "createProjectMilestone",
++   "createProjectUpdateDraft",
++   "createProviderConnection",
++   "createReviewDelegation",
++   "createSavedView",
++   "createSessionDecision",
++   "createTeam",
++   "createTemplate",
++   "createTemplateVersion",
++   "createWorkItem",
++   "createWorkItemDecision",
++   "createWorkItemRelation",
+    "createWorkbenchConversation",
+    "createWorkbenchLlmConnection",
+-   "createWorkflowState,",
+-   "decideApproval,",
+-   "delegateAndStartAgentSession,",
+-   "deleteProject,",
+-   "deleteTeam,",
+-   "deleteWorkItem,",
+-   "exchangeAgentSessionToken,",
+-   "failAgentSession,",
++   "createWorkflowState",
++   "decideApproval",
++   "decideCompletionSuggestion",
++   "delegateAndStartAgentSession",
++   "deleteMilestone",
++   "deleteProject",
++   "deleteTeam",
++   "deleteWorkItem",
++   "deleteWorkItemRelation",
++   "diffDocumentRevisions",
++   "diffProjectGuidance",
++   "diffTeamGuidance",
++   "diffWorkspaceGuidance",
++   "downloadVerifiedArtifact",
++   "dryRunAutomationRule",
++   "evaluateAdvancedView",
++   "exchangeAgentSessionToken",
++   "explainAgentSession",
++   "exportDocumentMarkdown",
++   "exportTemplates",
++   "failAgentSession",
++   "finalizeArtifactUpload",
++   "finalizeDecision",
+    "followupWorkbenchTurn",
+-   "getAgent,",
++   "forceReleaseLease",
++   "generateCycles",
++   "getAgent",
+    "getAgentCapabilityManifest",
+-   "getAgentPlan,",
+-   "getAgentSession,",
+-   "getAgentSessionContext,",
+-   "getApproval,",
++   "getAgentConnection",
++   "getAgentPlan",
++   "getAgentSession",
++   "getAgentSessionContext",
++   "getApproval",
++   "getApprovalAutonomyPolicy",
++   "getArtifactUploadStatus",
++   "getAutomationRun",
++   "getBrowserPushConfig",
+    "getConfigurationReadiness",
+-   "getCurrentActor,",
+-   "getDelegation,",
++   "getCurrentActor",
++   "getCurrentAgentConnectionIdentity",
++   "getDecision",
++   "getDelegation",
+    "getDeploymentFeatures",
+-   "getInstallStatus,",
++   "getDocument",
++   "getDocumentRevision",
++   "getHumanAttention",
++   "getInboxItem",
++   "getInitiativeRollup",
++   "getInstallStatus",
++   "getMilestone",
+    "getNotificationChannelConfig",
+-   "getProject,",
+-   "getProjectGuidance,",
++   "getNotificationPreferences",
++   "getProject",
++   "getProjectControlCenter",
++   "getProjectDelivery",
++   "getProjectGuidance",
++   "getProjectHealthHistory",
++   "getRecoveryItem",
++   "getRepositoryContext",
+    "getRetentionStatus",
+    "getServerInfo",
+-   "getTeamGuidance,",
+-   "getWorkItem,",
++   "getTeamGuidance",
++   "getUsageSummary",
++   "getWorkItem",
++   "getWorkItemExecutionSummary",
++   "getWorkMeshAgentWellKnown",
++   "getWorkRoom",
++   "getWorkRoomTimeline",
+    "getWorkbenchAttemptCredential",
+    "getWorkbenchAttemptStatus",
+    "getWorkbenchConversation",
+    "getWorkbenchLlmConnection",
+-   "getWorkspace,",
+-   "getWorkspaceGuidance,",
+-   "health,",
+-   "heartbeatAgentSession,",
+-   "installWorkspace,",
+-   "listAgentActivities,",
+-   "listAgentPlanVersions,",
+-   "listAgentSessions,",
++   "getWorkspace",
++   "getWorkspaceGuidance",
++   "health",
++   "heartbeatAgentSession",
++   "heartbeatLease",
++   "importTemplatesAsDrafts",
++   "inspectExactTargetHandoff",
++   "installWorkspace",
++   "listAdvancedViews",
++   "listAgentActivities",
++   "listAgentConnections",
++   "listAgentEnrollmentPolicies",
++   "listAgentPlanVersions",
++   "listAgentSessions",
+    "listAgentWorkbenchTurns",
+-   "listAgents,",
+-   "listApprovals,",
+-   "listArtifacts,",
++   "listAgents",
++   "listApprovals",
++   "listArtifacts",
++   "listAutomationRules",
++   "listAutomationRuns",
++   "listBrowserPushSubscriptions",
+    "listChannelNotificationDeliveries",
+    "listCollaborationQueueCounts",
+-   "listEvents,",
+-   "listHumanActors,",
++   "listControlCenter",
++   "listCycles",
++   "listDocumentHistory",
++   "listDocuments",
++   "listEvents",
++   "listHandoffs",
++   "listHumanActors",
++   "listHumanAttention",
++   "listInbox",
++   "listInitiatives",
++   "listLeases",
++   "listLoops",
+    "listModelPresets",
+    "listNotificationChannelTargets",
+-   "listProjects,",
+-   "listSavedViews,",
+-   "listTeams,",
+-   "listWorkItemComments,",
+-   "listWorkItems,",
++   "listNotifications",
++   "listProjectGuidanceHistory",
++   "listProjectMilestones",
++   "listProjects",
++   "listRecoveryItems",
++   "listRepositories",
++   "listSavedViews",
++   "listTeamGuidanceHistory",
++   "listTeams",
++   "listTemplates",
++   "listWorkItemArtifacts",
++   "listWorkItemComments",
++   "listWorkItemRelations",
++   "listWorkItems",
+    "listWorkbenchConversations",
+    "listWorkbenchLlmConnections",
+    "listWorkbenchMessages",
+    "listWorkbenchRunnerAssignments",
+    "listWorkbenchTurns",
+-   "listWorkflowStates,",
++   "listWorkflowStates",
++   "listWorkspaceGuidanceHistory",
+    "live",
+-   "login,",
+-   "logout,",
+-   "promptAgentSession,",
+-   "publishAgentPlan,",
+-   "publishArtifact,",
++   "login",
++   "logout",
++   "offerHandoff",
++   "patchAgentConnection",
++   "pinRepositoryContext",
++   "postWorkRoomMessage",
++   "previewAgentSessionControl",
++   "promptAgentSession",
++   "proposePlanAssignment",
++   "publishAgentPlan",
++   "publishArtifact",
++   "publishDeliveryArtifact",
++   "publishProjectGuidance",
++   "publishProjectUpdate",
++   "publishStructuredReview",
++   "publishTeamGuidance",
++   "publishWorkspaceGuidance",
+    "queueWorkbenchTurn",
+    "ready",
++   "receiveGitHubWebhook",
+    "reconcileChannelNotificationDelivery",
+-   "refreshAgentSessionToken,",
+-   "registerAgent,",
+-   "requestApproval,",
+-   "resetInstall,",
+-   "retryAgentSession,",
+-   "revokeAgentTeamAccess,",
+-   "revokeDelegation,",
++   "recordUsage",
++   "redeemAgentConnection",
++   "redeemAgentEnrollment",
++   "refreshAgentSessionToken",
++   "registerAgent",
++   "rejectHandoff",
++   "releaseLease",
++   "renewLease",
++   "replyInboxItem",
++   "requestApproval",
++   "requestArtifactUpload",
++   "requestHandoff",
++   "requestProviderAction",
++   "requestPullRequestMerge",
++   "resetInstall",
++   "resolveWorkRoomMessage",
++   "restoreDocumentRevision",
++   "retryAgentSession",
++   "retryPullRequestCheck",
++   "reverseDecision",
++   "revokeAgentConnection",
++   "revokeAgentEnrollmentPolicy",
++   "revokeAgentTeamAccess",
++   "revokeBrowserPushSubscription",
++   "revokeDelegation",
+    "revokeNotificationChannelTarget",
+    "revokeWorkbenchLlmConnection",
++   "rollbackProjectGuidance",
++   "rollbackTeamGuidance",
++   "rollbackWorkspaceGuidance",
++   "rotateAgentConnection",
++   "rotateAgentWebhookSecret",
++   "runLoopNow",
++   "setAutomationRuleState",
++   "setBudgetPolicy",
++   "setLoopState",
++   "setTemplateState",
++   "setWorkItemCycle",
+    "settleWorkbenchAttempt",
+-   "signalAgentSession,",
++   "signalAgentSession",
+    "startWorkbenchAttempt",
+    "steerWorkbenchTurn",
+    "stopWorkbenchTurn",
+-   "streamEvents,",
+-   "updateAgent,",
+-   "updateComment,",
++   "streamA2ATaskEvents",
++   "streamEvents",
++   "suggestWorkItemCompletion",
++   "supersedeDecision",
++   "transitionAgentSessionState",
++   "triggerAutomationRule",
++   "unarchiveDocument",
++   "updateAgent",
++   "updateApprovalAutonomyPolicy",
++   "updateComment",
++   "updateDocument",
++   "updateMilestone",
+    "updateNotificationChannelTarget",
+-   "updateProject,",
+-   "updateTeam,",
+-   "updateWorkItem,",
++   "updateNotificationPreferences",
++   "updateProject",
++   "updateTeam",
++   "updateWorkItem",
+    "updateWorkbenchConversationContextPins",
+    "updateWorkbenchLlmConnection",
+-   "updateWorkflowState,",
+-   "updateWorkspace,",
++   "updateWorkflowState",
++   "updateWorkspace",
+    "upsertWorkbenchLlmModel",
+-   "{",
+-   "{",
+  ]
+
+ ❯ packages/contracts/src/agent-discovery.test.ts:26:70
+     24|     const text = readFileSync(new URL('../../../OPENAPI.yaml', import.…
+     25|     const ids = [...text.matchAll(/^\s+operationId:\s*(\S+)/gm)].map(m…
+     26|     expect(agentDiscoveryRules.map(rule => rule.operationId).sort()).t…
+       |                                                                      ^
+     27|   })
+     28|   it.each(['createProject', 'updateProject', 'createWorkItem', 'update…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/49]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+RangeError: Maximum call stack size exceeded
+ ❯ new URL node:internal/url:809:14
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:620:63
+    618|       && (Boolean(this.coordinationToken) || !this.sessionToken)
+    619|     ) {
+    620|       const recoveryOperation = resolveSdkRoutePolicy(method, new URL(…
+       |                                                               ^
+    621|       if (this.coordinationToken && !['acknowledgeAgentSession', 'ackn…
+    622|         const { client, manifest } = await this.forExecutionSession(op…
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:281:33
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:31
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:622:49
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:281:33
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:31
+ ❯ WorkMeshClient.request packages/agent-sdk/src/index.ts:622:49
+ ❯ WorkMeshClient.getQualifiedAgentCapabilities packages/agent-sdk/src/index.ts:281:33
+ ❯ WorkMeshClient.forExecutionSession packages/agent-sdk/src/index.ts:300:31
+
+This error originated in "packages/agent-sdk/src/index.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "propagates cancellation through the exact-session refresh before sending the target request". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  5 failed | 2 passed (7)
+      Tests  49 failed | 55 passed (104)
+     Errors  1 error
+   Start at  15:23:27
+   Duration  2.76s (transform 810ms, setup 0ms, collect 4.21s, tests 1.65s, environment 1ms, prepare 2.04s)

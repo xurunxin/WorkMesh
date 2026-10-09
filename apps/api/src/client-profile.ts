@@ -4,7 +4,7 @@ import type { FeatureConfig } from '@workmesh/config'
 import {
   capabilitySchema,
   createAgentCapabilityManifest,
-  deriveOperationEligibility,
+  qualifyAgentCapabilityManifest,
   discoveryIdentitySchema,
   releaseMetadata,
   type Capability,
@@ -120,13 +120,7 @@ export function registerClientProfileRoutes(
       delegationRole: session.delegation_role, delegationScopeType: session.delegation_scope_type,
     })
     if (!identity.success) throw new DomainError('FORBIDDEN', 'Discovery requires a valid exact Session credential mode')
-    return { ...manifest,
-      errorReactions: manifest.errorReactions.map(reaction => reaction.errorCode === 'UNAUTHENTICATED'
-        ? { ...reaction, reaction: 'discard_session_credentials', retryableAfterStateChange: false } : reaction),
-      discovery: deriveOperationEligibility({
-        identity: identity.data, state: session.state, capabilities: effectiveCapabilities,
-        features: options.features, workItemId: session.work_item_id, projectId: session.project_id,
-      }),
-    }
+    return qualifyAgentCapabilityManifest(manifest, { identity: identity.data,
+      features: options.features, workItemId: session.work_item_id, projectId: session.project_id })
   })
 }

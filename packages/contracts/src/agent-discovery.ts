@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { agentDiscoveryBindings, agentDiscoveryRules } from './agent-discovery-rules.js'
 
-export type DiscoveryPredicate = Readonly<{ fact: string; allowed: readonly (string | boolean)[]; reason: string }>
+export type DiscoveryPredicate = Readonly<{ fact: string; allowed: readonly (string | boolean)[]; reason: string; when?: Readonly<Record<string, string | boolean>> }>
 export type DiscoveryRule = Readonly<{
   operationId: string
   predicates: readonly DiscoveryPredicate[]
@@ -43,6 +43,7 @@ export const qualifiedDiscoverySchema = z.object({
     requirements: z.object({
       capabilities: z.array(z.string()), predicates: z.array(z.object({
         fact: z.string(), allowed: z.array(z.union([z.string(), z.boolean()])), reason: z.string(),
+        when: z.record(z.union([z.string(), z.boolean()])).optional(),
       }).strict()),
     }).strict(),
     eligibility: discoveryEligibilitySchema,
@@ -82,6 +83,11 @@ export function deriveOperationEligibility(facts: DiscoveryFacts): QualifiedDisc
       if (humanDomainOperations.has(rule.operationId)) reasons.push('ROLE_REQUIRED')
       if (queryDifferences.has(rule.operationId)) reasons.push('DOMAIN_QUERY_NOT_AGENT_ALIGNED')
       for (const predicate of rule.predicates) {
+        if (predicate.when && Object.entries(predicate.when).some(([key, value]) => known[key] !== undefined && known[key] !== value)) continue
+        if (predicate.when && Object.keys(predicate.when).some(key => known[key] === undefined)) {
+          pending.push(...Object.keys(predicate.when).filter(key => known[key] === undefined))
+          continue
+        }
         const value = known[predicate.fact]
         if (value === undefined) pending.push(predicate.fact)
         else if (!predicate.allowed.includes(value)) reasons.push(predicate.reason)
@@ -103,6 +109,7 @@ export type AdapterDiscoveryIdentity =
 export type AdapterBindingDiscovery = {
   bindingId: string; operationIds: string[]; registered: boolean; deploymentSupported: boolean
   discoverable: boolean; identityVariant: string; eligibility: DiscoveryEligibility
+  identityVariants: Array<{ variant: string; deploymentSupported: boolean; eligibility: DiscoveryEligibility }>
 }
 export type AdapterDiscovery = {
   mode: 'read-only' | 'read-write'; bindings: AdapterBindingDiscovery[]; allowedOperations: string[]
@@ -111,6 +118,7 @@ export type AdapterDiscoveryInputs = {
   registeredBindings: readonly string[]; mode: 'read-only' | 'read-write'
   coordination: boolean; installationBridge: boolean; transport: 'http' | 'stdio' | 'embedded' | 'runner'
   targetQualification?: QualifiedDiscovery
+  targetProvided?: boolean
 }
 
 /** API没有部署配置；此投影由adapter用真实注册表生成，每请求重新计算。 */
@@ -118,31 +126,44 @@ export function projectAdapterDiscovery(identity: AdapterDiscoveryIdentity, inpu
   const bindings = agentDiscoveryBindings.map(rule => {
     const registered = inputs.registeredBindings.includes(rule.bindingId)
     const base = { bindingId: rule.bindingId, operationIds: [...rule.operationIds], registered,
-      deploymentSupported: registered, discoverable: false, identityVariant: 'current_session' }
+      deploymentSupported: registered && rule.mode.includes(inputs.mode) && (!rule.coordination || inputs.coordination),
+      discoverable: false, identityVariant: 'current_session', identityVariants: [] as AdapterBindingDiscovery['identityVariants'] }
     const blocked = (reason: string): AdapterBindingDiscovery => ({ ...base, eligibility: eligibility('blocked', [reason]) })
     if (!registered) return blocked('ADAPTER_NOT_IMPLEMENTED')
     if (!rule.mode.includes(inputs.mode)) return blocked('READ_ONLY')
     if (rule.coordination && !inputs.coordination) return blocked('ADAPTER_NOT_IMPLEMENTED')
     if (rule.execution === 'adapter_internal') return { ...base, discoverable: true, eligibility: eligibility('eligible') }
     const credentialMode = identity.kind === 'exact_session' ? identity.qualification.identity.credentialMode : 'installation_target'
-    const variant = rule.identityVariants.find(item => item.credentialMode.includes(credentialMode))
+    const variants = rule.identityVariants.filter(item => item.credentialMode.includes(credentialMode))
+    // 可选目标的current路径与bridge分别披露；输入省略不能被首个C bridge抹掉。
+    const evaluate = (variant: DiscoveryBindingRule['identityVariants'][number]): DiscoveryEligibility => {
+      if (variant.installationBridgeRequired && !inputs.installationBridge) return eligibility('blocked', ['ADAPTER_NOT_IMPLEMENTED'])
+      if (identity.kind === 'installation_target') return eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], ['exact_installation_target'])
+      if (variant.variant === 'target_execution' && !inputs.targetQualification) {
+        const disabled = rule.operationIds.some(operationId => identity.qualification.operations.find(item => item.operationId === operationId && item.variant === rule.variant)?.eligibility.reasons.includes('FEATURE_DISABLED'))
+        return disabled ? eligibility('blocked', ['FEATURE_DISABLED']) : eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], ['targetSessionId', 'targetQualification'])
+      }
+      const qualification = variant.variant === 'target_execution' ? inputs.targetQualification! : identity.qualification
+      const checks = rule.operationIds.map(operationId => qualification.operations.find(item => item.operationId === operationId && item.variant === rule.variant)?.eligibility
+        ?? eligibility('blocked', ['ADAPTER_NOT_IMPLEMENTED']))
+      const reasons = checks.filter(check => check.status === 'blocked').flatMap(check => check.reasons)
+      const pending = checks.flatMap(check => check.pendingChecks)
+      return reasons.length ? eligibility('blocked', [...new Set(reasons)])
+        : pending.length ? eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], [...new Set(pending)]) : eligibility('eligible')
+    }
+    base.identityVariants = variants.map(variant => ({ variant: variant.variant,
+      deploymentSupported: base.deploymentSupported && (!variant.installationBridgeRequired || inputs.installationBridge),
+      eligibility: evaluate(variant),
+    }))
+    const variant = inputs.targetProvided
+      ? variants.find(item => item.variant === 'target_execution') ?? variants[0]
+      : variants.find(item => item.variant === 'current_session_without_target') ?? variants[0]
     if (!variant) return blocked('CREDENTIAL_MODE_MISMATCH')
     base.identityVariant = variant.variant
-    if (variant.installationBridgeRequired && !inputs.installationBridge) return blocked('ADAPTER_NOT_IMPLEMENTED')
-    if (identity.kind === 'installation_target') {
-      return { ...base, discoverable: true, eligibility: eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], ['exact_installation_target']) }
-    }
-    if (variant.variant === 'target_execution' && !inputs.targetQualification) {
-      return { ...base, discoverable: true, eligibility: eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], ['targetSessionId', 'targetQualification']) }
-    }
-    const qualification = variant.variant === 'target_execution' ? inputs.targetQualification! : identity.qualification
-    const checks = rule.operationIds.map(operationId => qualification.operations.find(item => item.operationId === operationId && item.variant === rule.variant)?.eligibility
-      ?? eligibility('blocked', ['ADAPTER_NOT_IMPLEMENTED']))
-    const reasons = checks.filter(check => check.status === 'blocked').flatMap(check => check.reasons)
-    const pending = checks.flatMap(check => check.pendingChecks)
-    if (reasons.length) return { ...base, eligibility: eligibility('blocked', [...new Set(reasons)]) }
-    return { ...base, discoverable: true, eligibility: pending.length
-      ? eligibility('requires_target_check', ['TARGET_CHECK_REQUIRED'], [...new Set(pending)]) : eligibility('eligible') }
+    base.deploymentSupported = base.deploymentSupported && (!variant.installationBridgeRequired || inputs.installationBridge)
+    if (!base.deploymentSupported) return blocked('ADAPTER_NOT_IMPLEMENTED')
+    const result = evaluate(variant)
+    return { ...base, discoverable: result.status !== 'blocked', eligibility: result }
   })
   return { mode: inputs.mode, bindings, allowedOperations: [...new Set(bindings
     .filter(binding => binding.discoverable && binding.eligibility.status === 'eligible' && binding.identityVariant !== 'target_execution')

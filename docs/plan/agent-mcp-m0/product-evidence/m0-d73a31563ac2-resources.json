@@ -1,0 +1,42 @@
+{
+  "runId": "m0-d73a31563ac2",
+  "resources": [
+    {
+      "role": "postgres",
+      "name": "m0-d73a31563ac2-postgres",
+      "id": "a58368b78f02c632d8e438c68301bfe8e96c972e2693adc81d5937deca997af3",
+      "image": "postgres:16-alpine",
+      "createdAt": "2026-10-09T07:49:46.263149+00:00",
+      "cleaned": true,
+      "hostPort": 52846,
+      "ready": true,
+      "cleanupAt": "2026-10-09T07:50:15.425723+00:00"
+    },
+    {
+      "role": "redis",
+      "name": "m0-d73a31563ac2-redis",
+      "id": "6f4a998719bbf9c5738f7020272979fb683e3939642c6e70fab0d00f4bd23810",
+      "image": "redis:7-alpine",
+      "createdAt": "2026-10-09T07:49:46.549613+00:00",
+      "cleaned": true,
+      "hostPort": 52848,
+      "ready": true,
+      "cleanupAt": "2026-10-09T07:50:14.893674+00:00"
+    },
+    {
+      "role": "rustfs",
+      "name": "m0-d73a31563ac2-rustfs",
+      "id": "9f7136a790cff3b1025cb4ae303e6dd2360d74aaccaee26930b50240f3f1e713",
+      "image": "rustfs/rustfs:1.0.0",
+      "createdAt": "2026-10-09T07:49:46.902430+00:00",
+      "cleaned": true,
+      "hostPort": 52849,
+      "ready": true,
+      "cleanupAt": "2026-10-09T07:50:14.312027+00:00"
+    }
+  ],
+  "imagesShared": true,
+  "volumesCreated": [],
+  "networksCreated": [],
+  "workspacePreserved": true
+}

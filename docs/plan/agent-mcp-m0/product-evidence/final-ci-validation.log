@@ -1,0 +1,108 @@
+
+> workmesh@ ci:validate C:\Users\xurx\.tds\workspaces\01a11ed4-1e73-7802-8bf8-4899c5405f61
+> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs
+
+[ci:validate] OK: 9 jobs, 37 immutable action references, Node 22.19.0, pnpm@9.15.4
+Release workflow validation passed.
+Lite compose validation passed (8 services; 4 roles from one image; 54 documented variables; published: minio, web)
+TAP version 13
+# Subtest: 无Git/网络依赖读取双字节，精确旧路径/版本映射
+ok 1 - 无Git/网络依赖读取双字节，精确旧路径/版本映射
+  ---
+  duration_ms: 4.2835
+  type: 'test'
+  ...
+# Subtest: 相同字节共用member，所有逻辑版本保留
+ok 2 - 相同字节共用member，所有逻辑版本保留
+  ---
+  duration_ms: 0.6668
+  type: 'test'
+  ...
+# Subtest: 拒绝规范化后重复逻辑元组
+ok 3 - 拒绝规范化后重复逻辑元组
+  ---
+  duration_ms: 0.6429
+  type: 'test'
+  ...
+# Subtest: 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符
+ok 4 - 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符
+  ---
+  duration_ms: 0.2972
+  type: 'test'
+  ...
+# Subtest: 拒绝规范化后重复ZIP member
+ok 5 - 拒绝规范化后重复ZIP member
+  ---
+  duration_ms: 0.2163
+  type: 'test'
+  ...
+# Subtest: 拒绝索引缺项/多项
+ok 6 - 拒绝索引缺项/多项
+  ---
+  duration_ms: 0.7888
+  type: 'test'
+  ...
+# Subtest: 拒绝索引重复元组
+ok 7 - 拒绝索引重复元组
+  ---
+  duration_ms: 0.4396
+  type: 'test'
+  ...
+# Subtest: 拒绝归档hash不符
+ok 8 - 拒绝归档hash不符
+  ---
+  duration_ms: 0.2905
+  type: 'test'
+  ...
+# Subtest: 拒绝伪造来源blob ID
+ok 9 - 拒绝伪造来源blob ID
+  ---
+  duration_ms: 0.5242
+  type: 'test'
+  ...
+# Subtest: 拒绝member bytes/hash不符
+ok 10 - 拒绝member bytes/hash不符
+  ---
+  duration_ms: 0.5802
+  type: 'test'
+  ...
+# Subtest: 拒绝软链接
+ok 11 - 拒绝软链接
+  ---
+  duration_ms: 0.4136
+  type: 'test'
+  ...
+# Subtest: 拒绝目录
+ok 12 - 拒绝目录
+  ---
+  duration_ms: 0.2825
+  type: 'test'
+  ...
+# Subtest: 拒绝设备
+ok 13 - 拒绝设备
+  ---
+  duration_ms: 0.266
+  type: 'test'
+  ...
+# Subtest: 拒绝extra元数据/硬链接信息与加密flags
+ok 14 - 拒绝extra元数据/硬链接信息与加密flags
+  ---
+  duration_ms: 0.524
+  type: 'test'
+  ...
+# Subtest: 拒绝本地路径不一致、重叠与解压超额
+ok 15 - 拒绝本地路径不一致、重叠与解压超额
+  ---
+  duration_ms: 1.205
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 176.3694
+{"entries":280,"members":61,"bytes":21268498,"errors":[]}

@@ -35,10 +35,11 @@ const required = (name: string): string => {
   if (!value) throw new Error(`${name}_REQUIRED`)
   return value
 }
-class RunnerApiError extends Error {
-  constructor(readonly status: number, readonly code: string) { super(code) }
+export class RunnerApiError extends Error {
+  constructor(readonly status: number, readonly code: string,
+    message = code, readonly details?: unknown, readonly correlationId?: string) { super(message) }
 }
-class RunnerApi {
+export class RunnerApi {
   readonly #baseUrl: URL
   readonly #sessionId: string
   readonly #installationToken: string
@@ -61,7 +62,7 @@ class RunnerApi {
         'Idempotency-Key': randomUUID(), 'Content-Type': 'application/json' },
       body: '{}', signal: AbortSignal.timeout(10_000),
     })
-    if (!response.ok) throw new RunnerApiError(response.status, 'SESSION_TOKEN_REFRESH_FAILED')
+    if (!response.ok) throw await runnerResponseError(response, 'SESSION_TOKEN_REFRESH_FAILED')
     const payload = await response.json() as TokenExchange
     if (!payload.sessionToken || !Number.isFinite(Date.parse(payload.expiresAt)))
       throw new Error('SESSION_TOKEN_REFRESH_INVALID')
@@ -80,18 +81,26 @@ class RunnerApi {
       body: method === 'GET' || method === 'DELETE' ? undefined : JSON.stringify(body ?? {}),
       signal: AbortSignal.timeout(15_000),
     })
-    let response = await send()
-    if (response.status === 401) { await this.#refresh(); response = await send() }
+    const response = await send()
     if (!response.ok) {
-      let code = `HTTP_${response.status}`
-      try {
-        const result = await response.json() as { error?: { code?: string } }
-        if (result.error?.code) code = result.error.code
-      } catch { /* Never log an upstream response body. */ }
-      throw new RunnerApiError(response.status, code)
+      throw await runnerResponseError(response, `HTTP_${response.status}`)
     }
     return response.json() as Promise<T>
   }
+}
+
+async function runnerResponseError(response: Response, fallback: string): Promise<RunnerApiError> {
+  try {
+    const result: unknown = await response.json()
+    if (result && typeof result === 'object' && 'error' in result
+      && result.error && typeof result.error === 'object') {
+      const error = result.error as Record<string, unknown>
+      return new RunnerApiError(response.status, typeof error.code === 'string' ? error.code : fallback,
+        typeof error.message === 'string' ? error.message : fallback, error.details,
+        typeof error.correlationId === 'string' ? error.correlationId : undefined)
+    }
+  } catch { /* 不记录未经验证的上游正文。 */ }
+  return new RunnerApiError(response.status, fallback)
 }
 
 async function ensureExecuting(api: RunnerApi, knownState?: string): Promise<AgentSession | null> {

@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces } from './ci-policy.mjs'
+import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateMcpConformanceEntrypoints } from './ci-policy.mjs'
+import { readFileSync } from 'node:fs'
+import { parse } from 'yaml'
 
 const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
@@ -44,8 +46,9 @@ test('API and worker changes retain destructive recovery and real browser integr
 test('cross-workspace lock audits are selected without inventing runtime dependency cycles', () => {
   for (const name of ['api', 'worker']) {
     const plan = classify([`apps/${name}/src/agent/commands.ts`])
-    assert.deepEqual(plan.packages, [`@workmesh/${name}`])
-    assert.deepEqual(plan.testPackages, [`@workmesh/${name}`, '@workmesh/db'].sort())
+    const consumers = name === 'api' ? ['@workmesh/conformance'] : []
+    assert.deepEqual(plan.packages, [`@workmesh/${name}`, ...consumers].sort())
+    assert.deepEqual(plan.testPackages, [`@workmesh/${name}`, '@workmesh/db', ...consumers].sort())
     assert.equal(plan.checks['db-integration'], false)
     assert.equal(plan.checks['worker-integration'], name === 'worker')
   }
@@ -133,4 +136,39 @@ test('aggregate only accepts planned skips and rejects incomplete/malformed deci
   assert.throws(() => evaluateResults(null, {}))
   assert.throws(() => evaluateResults(plan, {}))
   assert.throws(() => evaluateResults({ ...plan, checks: {} }, results(plan)))
+})
+
+// 真实MCP/Pi链不得因只改adapter或Runner而漏过必需API job。
+test('MCP discovery consumers require real conformance and propagate failed or skipped job', () => {
+  for (const path of ['apps/mcp/src/index.ts', 'apps/agent-runner/src/workmesh-tools.ts', 'packages/agent-sdk/src/index.ts', 'packages/conformance/src/index.ts']) {
+    const plan = classify([path])
+    assert.equal(plan.checks['api-integration'], true)
+    for (const result of ['failure', 'cancelled', 'skipped']) {
+      const actual = results(plan)
+      actual['api-integration'] = { result }
+      assert.ok(evaluateResults(plan, actual).some(failure => failure.startsWith('api-integration=')))
+    }
+  }
+})
+
+test('real workflow semantic mutations cannot silently omit MCP conformance', () => {
+  const input = {
+    job: parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['api-integration'],
+    rootScripts: JSON.parse(readFileSync(new URL('../package.json', import.meta.url))).scripts,
+    packageScripts: JSON.parse(readFileSync(new URL('../packages/conformance/package.json', import.meta.url))).scripts,
+    integrationConfig: readFileSync(new URL('../packages/conformance/vitest.integration.config.ts', import.meta.url), 'utf8'),
+    unitConfig: readFileSync(new URL('../vitest.config.ts', import.meta.url), 'utf8'),
+  }
+  assert.deepEqual(validateMcpConformanceEntrypoints(input), [])
+  for (const mutate of [
+    value => { value.job.steps = value.job.steps.filter(step => step.name !== 'Run real MCP and Pi conformance') },
+    value => { value.rootScripts['test:integration'] = 'pnpm test:integration:api' },
+    value => { value.integrationConfig = value.integrationConfig.replace('passWithNoTests: false', 'passWithNoTests: true') },
+    value => { value.job.steps.find(step => step.name === 'Run real MCP and Pi conformance')['continue-on-error'] = true },
+    value => { value.job.steps = value.job.steps.filter(step => !step.uses?.startsWith('actions/upload-artifact@')) },
+  ]) {
+    const candidate = structuredClone(input)
+    mutate(candidate)
+    assert.ok(validateMcpConformanceEntrypoints(candidate).length > 0)
+  }
 })

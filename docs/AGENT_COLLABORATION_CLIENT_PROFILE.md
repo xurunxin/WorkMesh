@@ -138,3 +138,19 @@ The command must report six successful adapter/fixture runs and creates
 `report.json`, `junit.xml`, and `transcript.md`. A failure includes the exact
 check, expected/observed error, and required client reaction. Release CI retains
 these files with the Agent protocol smoke evidence.
+
+## 精确身份资格与 MCP 发现
+
+`GET /api/v1/agent-capabilities?discovery=qualified` 显式返回增强 `discovery`；省略参数仍返回原 manifest，未知协商失败。API 的身份、role、scope type、state、live capabilities 与 operation/variant 资格独立于 MCP 配置；只有 adapter 知道真实注册、只读模式、coordination 和 installation bridge。`eligible` 只说明已知前提通过，`requires_target_check` 的 scope/owner/批准/Lease/revision/幂等前提仍待调用验证，不能当授权成功。未知条件分支（如 Inbox reply kind）保留条件，不直接施加 reviewer 限制。
+
+MCP 的 `get_agent_discovery` 返回本次 API manifest 和 adapter 投影；`tools/list`、`resources/list`、`resources/templates/list` 与 `get_workmesh_context.allowedOperations` 共享同次派生规则。只有可发现且 `eligible` 的当前身份操作计入 allowedOperations；目标 E bridge 条件入口不计入。`registered` 是兼容 callback 是否存在，`deploymentSupported` 还检查 mode、coordination 和 bridge 配置，`discoverable` 再检查已知资格；数量不是产品验收率。
+
+Human-only 旧工具保持名称与输入 schema，发现时隐藏，缓存调用返回结构化 `FORBIDDEN`；只读缓存写调用同样拒绝。旧 resource URI 与 capabilities resource 的原响应保持。仅 tool 客户端可使用 `get_server_info`、`get_server_features`、`get_agent_capabilities`、`get_agent_session`、`get_session_context`、`get_session_plan`、三种 `get_*_guidance` 和 `get_repository_context`。三个 Session 读取 alias 输入字段为准确 `id`；guidance 为 `id`，repository 为 `repositoryId`。所有现有读取继续遵守 pagination 与 durable cursor 合同。
+
+`verify_connection` 无输入目标，manifest/current identity/listTeams 全部使用当前 C。`claim_work_item` 用当前 C claim，再用返回的 exchangeToken 兑换新 E；输出 sessionId 不构成输入 bridge。直接 E 只需 Session Token 读取自身 Session resource/tool，不要求 installation bridge；异 Session 失败关闭，不切换身份。C 的精确目标 E 变体获取一次局部 Token，以该 Token 读取目标资格并执行，核 actorId/sessionId/kind；两层 manifest actorId 必须一致，目标 actor 必须等于当前 C actor，禁止写共享 client 身份。省略 Work Room 的可选 sessionId 使用当前 C；其 Team scope不能替代 Room exact owner，当前 C 读取不归属自己的 Work Item/Project Room仍拒绝，不扩张领域权限。
+
+错误保留 `code/message/details/correlationId` 以及可用的 `currentRevision`。受保护 401/403、撤权、Stop、角色拒绝和冲突不刷新、不重发、不盲写。请求前已知到期刷新仍经 live 授权；显式 stale ACK 保留既有 refresh→ACK 恢复，不先读取拒 stale 的 qualified manifest。Stop ACK 以仍有效的准确 E Token、当前 If-Match 和稳定 key 调用；Stop 后禁止 installation refresh，M0 不新增 MCP 清理 bridge。manifest不可读时保留原拒绝，不使用缓存降级。
+
+调用前持久化显式 Idempotency-Key；丢响应、重连和传输重试保持同 key/body。异正文或另一个逻辑新动作使用新 key。复合 import 保持内容 hash、逐命令部分提交及各命令 key；相同内容再次导入仍受原 hash 身份限制，不能冒作另一个新动作。发现/resource读取不新增业务 receipt/outbox。后续 M1–M5 的缺入口仅披露归属。
+
+真实本机 conformance 使用现有安全配对、真实 API/MCP、两种 mode 与直接 E；Pi 连接本机 HTTPS 假模型，核模型实收工具、真实调用和持久 Turn/Document/工具活动。根 `pnpm test:conformance:integration` 与现有 Required `api-integration` 执行该套件；内存 conformance 独立报告。上述语义决策见 `docs/adr/0079-qualified-agent-discovery-and-recovery.md`，状态保持 Proposed，最终成果须独立审查与最新 Required CI。

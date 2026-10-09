@@ -278,9 +278,12 @@ export class WorkMeshClient {
   }
 
   async getQualifiedAgentCapabilities(options: RequestOptions = {}): Promise<QualifiedAgentCapabilityManifest> {
-    const response = await this.request<unknown>('GET', '/api/v1/agent-capabilities?discovery=qualified', undefined, options)
+    const response = await this.request<unknown>('GET', '/api/v1/agent-capabilities?discovery=qualified', undefined, { ...options, skipTokenRefresh: true })
     const parsed = qualifiedAgentCapabilityManifestResponseSchema.safeParse(response)
     if (!parsed.success) throw new WorkMeshSdkError('Invalid qualified discovery response', { code: 'MALFORMED_RESPONSE' })
+    if (parsed.data.agent.actorId !== parsed.data.discovery.identity.actorId
+      || parsed.data.agent.sessionId !== parsed.data.discovery.identity.sessionId)
+      throw new WorkMeshSdkError('Discovery identity disagrees with the manifest', { code: 'SESSION_BINDING_MISMATCH' })
     return parsed.data
   }
 
@@ -294,6 +297,10 @@ export class WorkMeshClient {
   }> {
     if (!this.coordinationToken || !this.installationToken)
       throw new WorkMeshSdkError('An exact target requires the configured Coordination bridge', { code: 'CREDENTIAL_MODE_MISMATCH' })
+    const source = await this.getQualifiedAgentCapabilities(options)
+    if (source.discovery.identity.credentialMode !== 'coordination_connection'
+      || source.discovery.identity.sessionKind !== 'coordination')
+      throw new WorkMeshSdkError('Target bridge requires the current Coordination identity', { code: 'CREDENTIAL_MODE_MISMATCH' })
     const refreshed = await this.request<TokenExchange>('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/token/refresh`, {}, {
       ...options, authorizationToken: this.installationToken, skipTokenRefresh: true,
       idempotencyKey: stableIdempotencyKey(sessionId, 'token-refresh'),
@@ -302,6 +309,7 @@ export class WorkMeshClient {
       fetch: this.requestFetch, retry: this.retry, logger: this.logger })
     const manifest = await client.getQualifiedAgentCapabilities(options)
     if (manifest.agent.sessionId !== sessionId || manifest.discovery.identity.sessionId !== sessionId
+      || manifest.agent.actorId !== source.agent.actorId
       || manifest.discovery.identity.sessionKind !== 'execution'
       || manifest.discovery.identity.credentialMode !== 'agent_session')
       throw new WorkMeshSdkError('The refreshed target identity did not match the requested execution', { code: 'SESSION_BINDING_MISMATCH' })
@@ -612,11 +620,14 @@ export class WorkMeshClient {
       && this.installationToken
       && (Boolean(this.coordinationToken) || !this.sessionToken)
     ) {
-      if (this.coordinationToken) {
+      const recoveryOperation = resolveSdkRoutePolicy(method, new URL(path, `${this.baseUrl}/`).pathname).operationId
+      if (this.coordinationToken && !['acknowledgeAgentSession', 'acknowledgeAgentSessionStop', 'heartbeatAgentSession'].includes(recoveryOperation)) {
         const { client, manifest } = await this.forExecutionSession(options.refreshSessionId, options)
         const policy = resolveSdkRoutePolicy(method, new URL(path, `${this.baseUrl}/`).pathname)
         const variant = policy.operationId === 'requestProviderAction' && body && typeof body === 'object'
-          ? (body as { kind?: string }).kind : undefined
+          ? (body as { kind?: string }).kind
+          : manifest.discovery.identity.delegationRole === 'reviewer'
+            && ['completeAgentSession', 'failAgentSession'].includes(policy.operationId) ? 'reviewer' : undefined
         const check = manifest.discovery.operations.find(operation => operation.operationId === policy.operationId
           && operation.variant === (variant ?? null))
         if (!check || check.eligibility.status === 'blocked')

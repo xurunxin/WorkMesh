@@ -16,9 +16,9 @@ Proposed。受控方案已独审通过并获本轮实施指令；本 ADR 记录�
 
 adapter 以真实 callback 注册表、mode、transport、coordination 配置及 API 资格投影 registered、deploymentSupported、discoverable 和 tool/resource 名单；Context 使用该次投影。只读缓存写调用拒绝，Human-only 旧名/schema 保留但隐藏，旧调用明确 FORBIDDEN。旧 resource URI 与默认 capabilities 内容保持；增加对应读取工具。
 
-verify 无参数且使用当前 C；claim 的返回 Session ID 不是输入。直接 E 凭自身 Token 读取自身，异 Session ID 拒绝且不换身份。C 带精确目标 E 的变体仅在安装 bridge 配置可用时条件广告；取得目标 Token 后读取目标资格，再以同一 Token 调用，不修改共享客户端，未知目标不计入当前 allowedOperations。
+verify 无参数且使用当前 C；claim 的返回 Session ID 不是输入。直接 E 凭自身 Token 读取自身，异 Session ID 拒绝且不换身份。C 带精确目标 E 的变体仅在安装 bridge 配置可用时条件广告；取得目标 Token 后读取目标资格，再以同一 Token 调用，不修改共享客户端，未知目标不计入当前 allowedOperations。两层 manifest actorId 一致，目标 actor 等于当前 C actor；可选 Room 目标省略时使用当前 C，其 Team scope不能代替 exact owner。条件分支事实未知时保留前提，不直接施加尚未选中的 reviewer 限制。
 
-受保护请求的 401、角色/撤权/Stop 拒绝及冲突不触发身份刷新或盲重写；请求前已知到期刷新仍通过 live 门禁。完整错误、追踪与 currentRevision 保留。同一逻辑调用的传输重试、重连保持 key/body；新动作或改变正文使用新身份。旧省略 key 的内容 hash 限制公告，复合 import 保留部分提交与各命令重放。
+受保护请求的 401、角色/撤权/Stop 拒绝及冲突不触发身份刷新或盲重写；请求前已知到期刷新仍通过 live 门禁。显式 stale refresh→ACK 与诊断心跳保持原门禁，不先要求 qualified；Stop 后安装刷新不可走，专用 Stop ACK 使用已有有效 E Token、If-Match 与稳定 key，缺失的 MCP 清理 bridge留给后续批次。完整错误、追踪与 currentRevision 保留。同一逻辑调用的传输重试、重连保持 key/body；新动作或改变正文使用新身份。旧省略 key 的内容 hash 限制公告，复合 import 保留部分提交与各命令重放。
 
 ## Alternatives
 

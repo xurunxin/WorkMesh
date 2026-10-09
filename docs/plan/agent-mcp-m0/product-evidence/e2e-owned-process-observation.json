@@ -1,0 +1,19 @@
+{
+  "observedAt": "2026-10-09T08:09:36.742645+00:00",
+  "exitCode": 0,
+  "processes": [
+    {
+      "port": 3100,
+      "pid": 55252,
+      "parentPid": 21552,
+      "command": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\node_modules\\.pnpm\\next@15.5.22_@playwright+test@1.61.1_@types+node@22.20.1_react-dom@19.2.8_react@19.2.8__react@19.2.8\\node_modules\\next\\dist\\server\\lib\\start-server.js"
+    },
+    {
+      "port": 3101,
+      "pid": 52508,
+      "parentPid": 51336,
+      "command": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe --require C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\node_modules\\.pnpm\\tsx@4.23.1\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/node_modules/.pnpm/tsx@4.23.1/node_modules/tsx/dist/loader.mjs src/server.ts"
+    }
+  ],
+  "scope": "本次Playwright配置的3100/3101，不停止其他进程"
+}

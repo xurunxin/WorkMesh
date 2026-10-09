@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="workmesh-client-profile" tests="54" failures="0">
+    <testcase classname="native-http" name="codex-style.profile.negotiation"><system-out>Negotiated 1.0 from route_policy_manifest; authorization remains live per request.</system-out></testcase>
+    <testcase classname="native-http" name="codex-style.lifecycle.assignment-ack"><system-out>Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8.</system-out></testcase>
+    <testcase classname="native-http" name="codex-style.lifecycle.transition-executing"><system-out>Transitioned Session to executing at revision 9.</system-out></testcase>
+    <testcase classname="native-http" name="codex-style.lifecycle.context-inbox"><system-out>Retrieved exact Context and acknowledged the durable Inbox item.</system-out></testcase>
+    <testcase classname="native-http" name="codex-style.lifecycle.collaborate-evidence-handoff"><system-out>Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff.</system-out></testcase>
+    <testcase classname="native-http" name="codex-style.idempotency.duplicate-mutation"><system-out>Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit.</system-out></testcase>
+    <testcase classname="native-http" name="codex-style.reconnect.cursor-recovery"><system-out>Recovered 2 unique events from cursor 40.</system-out></testcase>
+    <testcase classname="native-http" name="codex-style.hostile.fail-closed-matrix"><system-out>Verified 9 hostile states with actionable fail-closed reactions.</system-out></testcase>
+    <testcase classname="native-http" name="codex-style.lifecycle.complete"><system-out>Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200.</system-out></testcase>
+    <testcase classname="mcp" name="codex-style.profile.negotiation"><system-out>Negotiated 1.0 from route_policy_manifest; authorization remains live per request.</system-out></testcase>
+    <testcase classname="mcp" name="codex-style.lifecycle.assignment-ack"><system-out>Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8.</system-out></testcase>
+    <testcase classname="mcp" name="codex-style.lifecycle.transition-executing"><system-out>Transitioned Session to executing at revision 9.</system-out></testcase>
+    <testcase classname="mcp" name="codex-style.lifecycle.context-inbox"><system-out>Retrieved exact Context and acknowledged the durable Inbox item.</system-out></testcase>
+    <testcase classname="mcp" name="codex-style.lifecycle.collaborate-evidence-handoff"><system-out>Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff.</system-out></testcase>
+    <testcase classname="mcp" name="codex-style.idempotency.duplicate-mutation"><system-out>Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit.</system-out></testcase>
+    <testcase classname="mcp" name="codex-style.reconnect.cursor-recovery"><system-out>Recovered 2 unique events from cursor 40.</system-out></testcase>
+    <testcase classname="mcp" name="codex-style.hostile.fail-closed-matrix"><system-out>Verified 9 hostile states with actionable fail-closed reactions.</system-out></testcase>
+    <testcase classname="mcp" name="codex-style.lifecycle.complete"><system-out>Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200.</system-out></testcase>
+    <testcase classname="native-http" name="opencode-style.profile.negotiation"><system-out>Negotiated 1.0 from route_policy_manifest; authorization remains live per request.</system-out></testcase>
+    <testcase classname="native-http" name="opencode-style.lifecycle.assignment-ack"><system-out>Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8.</system-out></testcase>
+    <testcase classname="native-http" name="opencode-style.lifecycle.transition-executing"><system-out>Transitioned Session to executing at revision 9.</system-out></testcase>
+    <testcase classname="native-http" name="opencode-style.lifecycle.context-inbox"><system-out>Retrieved exact Context and acknowledged the durable Inbox item.</system-out></testcase>
+    <testcase classname="native-http" name="opencode-style.lifecycle.collaborate-evidence-handoff"><system-out>Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff.</system-out></testcase>
+    <testcase classname="native-http" name="opencode-style.idempotency.duplicate-mutation"><system-out>Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit.</system-out></testcase>
+    <testcase classname="native-http" name="opencode-style.reconnect.cursor-recovery"><system-out>Recovered 2 unique events from cursor 40.</system-out></testcase>
+    <testcase classname="native-http" name="opencode-style.hostile.fail-closed-matrix"><system-out>Verified 9 hostile states with actionable fail-closed reactions.</system-out></testcase>
+    <testcase classname="native-http" name="opencode-style.lifecycle.complete"><system-out>Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200.</system-out></testcase>
+    <testcase classname="mcp" name="opencode-style.profile.negotiation"><system-out>Negotiated 1.0 from route_policy_manifest; authorization remains live per request.</system-out></testcase>
+    <testcase classname="mcp" name="opencode-style.lifecycle.assignment-ack"><system-out>Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8.</system-out></testcase>
+    <testcase classname="mcp" name="opencode-style.lifecycle.transition-executing"><system-out>Transitioned Session to executing at revision 9.</system-out></testcase>
+    <testcase classname="mcp" name="opencode-style.lifecycle.context-inbox"><system-out>Retrieved exact Context and acknowledged the durable Inbox item.</system-out></testcase>
+    <testcase classname="mcp" name="opencode-style.lifecycle.collaborate-evidence-handoff"><system-out>Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff.</system-out></testcase>
+    <testcase classname="mcp" name="opencode-style.idempotency.duplicate-mutation"><system-out>Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit.</system-out></testcase>
+    <testcase classname="mcp" name="opencode-style.reconnect.cursor-recovery"><system-out>Recovered 2 unique events from cursor 40.</system-out></testcase>
+    <testcase classname="mcp" name="opencode-style.hostile.fail-closed-matrix"><system-out>Verified 9 hostile states with actionable fail-closed reactions.</system-out></testcase>
+    <testcase classname="mcp" name="opencode-style.lifecycle.complete"><system-out>Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200.</system-out></testcase>
+    <testcase classname="native-http" name="pi-style.profile.negotiation"><system-out>Negotiated 1.0 from route_policy_manifest; authorization remains live per request.</system-out></testcase>
+    <testcase classname="native-http" name="pi-style.lifecycle.assignment-ack"><system-out>Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8.</system-out></testcase>
+    <testcase classname="native-http" name="pi-style.lifecycle.transition-executing"><system-out>Transitioned Session to executing at revision 9.</system-out></testcase>
+    <testcase classname="native-http" name="pi-style.lifecycle.context-inbox"><system-out>Retrieved exact Context and acknowledged the durable Inbox item.</system-out></testcase>
+    <testcase classname="native-http" name="pi-style.lifecycle.collaborate-evidence-handoff"><system-out>Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff.</system-out></testcase>
+    <testcase classname="native-http" name="pi-style.idempotency.duplicate-mutation"><system-out>Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit.</system-out></testcase>
+    <testcase classname="native-http" name="pi-style.reconnect.cursor-recovery"><system-out>Recovered 2 unique events from cursor 40.</system-out></testcase>
+    <testcase classname="native-http" name="pi-style.hostile.fail-closed-matrix"><system-out>Verified 9 hostile states with actionable fail-closed reactions.</system-out></testcase>
+    <testcase classname="native-http" name="pi-style.lifecycle.complete"><system-out>Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200.</system-out></testcase>
+    <testcase classname="mcp" name="pi-style.profile.negotiation"><system-out>Negotiated 1.0 from route_policy_manifest; authorization remains live per request.</system-out></testcase>
+    <testcase classname="mcp" name="pi-style.lifecycle.assignment-ack"><system-out>Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8.</system-out></testcase>
+    <testcase classname="mcp" name="pi-style.lifecycle.transition-executing"><system-out>Transitioned Session to executing at revision 9.</system-out></testcase>
+    <testcase classname="mcp" name="pi-style.lifecycle.context-inbox"><system-out>Retrieved exact Context and acknowledged the durable Inbox item.</system-out></testcase>
+    <testcase classname="mcp" name="pi-style.lifecycle.collaborate-evidence-handoff"><system-out>Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff.</system-out></testcase>
+    <testcase classname="mcp" name="pi-style.idempotency.duplicate-mutation"><system-out>Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit.</system-out></testcase>
+    <testcase classname="mcp" name="pi-style.reconnect.cursor-recovery"><system-out>Recovered 2 unique events from cursor 40.</system-out></testcase>
+    <testcase classname="mcp" name="pi-style.hostile.fail-closed-matrix"><system-out>Verified 9 hostile states with actionable fail-closed reactions.</system-out></testcase>
+    <testcase classname="mcp" name="pi-style.lifecycle.complete"><system-out>Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200.</system-out></testcase>
+</testsuite>

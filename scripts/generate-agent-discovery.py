@@ -7,7 +7,7 @@ source = json.loads((root / 'docs/plan/agent-mcp-m0/operation-decisions.json').r
 rules = []
 for operation in source['operations']:
     qualification = operation['qualifications']
-    predicates = [{key: predicate[key] for key in ('fact', 'allowed', 'reason')} for predicate in qualification['predicates']]
+    predicates = [{key: predicate[key] for key in ('fact', 'allowed', 'reason', 'when') if key in predicate} for predicate in qualification['predicates']]
     if qualification['scope']['typeRequired'] and not any(item['fact'] == 'delegationScopeType' for item in predicates):
         predicates.append(dict(fact='delegationScopeType', allowed=[qualification['scope']['typeRequired']], reason='RESOURCE_SCOPE_DENIED'))
     rules.append(dict(
@@ -43,4 +43,4 @@ for name, data, type_name in [('agentDiscoveryRules', rules, 'DiscoveryRule'), (
     output += f'export const {name}: readonly {type_name}[] = [\n'
     output += ',\n'.join('  ' + json.dumps(row, ensure_ascii=False, separators=(',', ':')) for row in data)
     output += '\n]\n\n'
-(root / 'packages/contracts/src/agent-discovery-rules.ts').write_text(output, encoding='utf-8', newline='\n')
+(root / 'packages/contracts/src/agent-discovery-rules.ts').write_text(output.rstrip() + '\n', encoding='utf-8', newline='\n')

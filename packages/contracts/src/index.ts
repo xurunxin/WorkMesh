@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { qualifiedDiscoverySchema } from './agent-discovery.js'
+import { qualifiedDiscoverySchema, deriveOperationEligibility, type DiscoveryFacts } from './agent-discovery.js'
 import {
   agentLifecycleStatusSchema,
   agentProtocolSchema,
@@ -2580,8 +2580,20 @@ export const agentCapabilityManifestResponseSchema = z.object({
 export type AgentCapabilityManifest = z.infer<typeof agentCapabilityManifestResponseSchema>
 export const qualifiedAgentCapabilityManifestResponseSchema = agentCapabilityManifestResponseSchema.extend({
   discovery: qualifiedDiscoverySchema,
-}).strict()
+}).strict().superRefine((manifest, context) => {
+  if (manifest.agent.actorId !== manifest.discovery.identity.actorId || manifest.agent.sessionId !== manifest.discovery.identity.sessionId)
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'Manifest identity mismatch', path: ['discovery', 'identity'] })
+})
 export type QualifiedAgentCapabilityManifest = z.infer<typeof qualifiedAgentCapabilityManifestResponseSchema>
+export function qualifyAgentCapabilityManifest(manifest: AgentCapabilityManifest,
+  facts: Omit<DiscoveryFacts, 'state' | 'capabilities'>): QualifiedAgentCapabilityManifest {
+  return qualifiedAgentCapabilityManifestResponseSchema.parse({ ...manifest,
+    errorReactions: manifest.errorReactions.map(reaction => reaction.errorCode === 'UNAUTHENTICATED'
+      ? { ...reaction, reaction: 'discard_session_credentials', retryableAfterStateChange: false } : reaction),
+    discovery: deriveOperationEligibility({ ...facts, state: manifest.agent.sessionState,
+      capabilities: manifest.agent.effectiveCapabilities }),
+  })
+}
 export type ClientProfileErrorReaction = z.infer<typeof clientProfileErrorReactionSchema>
 
 type AgentCapabilityManifestInput = Readonly<{

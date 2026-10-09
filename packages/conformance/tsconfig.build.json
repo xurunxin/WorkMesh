@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src"
+  },
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/mcp-coverage.fixture.ts"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "node": "22.19.0",
+  "pnpm": "9.15.4",
+  "clients": [
+    {
+      "path": "packages/conformance/node_modules/@modelcontextprotocol/sdk/package.json",
+      "name": "@modelcontextprotocol/sdk",
+      "version": "1.29.0",
+      "sha256": "7ab20eba8fee70f316516b5b3fc45837294caee7e4dd36f2a1593210b0f003ac"
+    },
+    {
+      "path": "apps/agent-runner/node_modules/@earendil-works/pi-coding-agent/package.json",
+      "name": "@earendil-works/pi-coding-agent",
+      "version": "0.87.1",
+      "sha256": "627631b613ba4ca29eba8df793f5280fd20b19f01d73826e9ffda14c15def5dc"
+    },
+    {
+      "path": "node_modules/@playwright/test/package.json",
+      "name": "@playwright/test",
+      "version": "1.61.1",
+      "sha256": "9d8556509e073169efec663b7f71c13f17d7002b307d00d48bf88ee91c387f3e"
+    }
+  ],
+  "externalConnections": false,
+  "conditions": "本机真实WorkMesh API/MCP与Pi Runner、MCP SDK资源及仅tool使用路径；非外部CLI或机器恢复验收"
+}

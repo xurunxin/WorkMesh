@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseDocument } from 'yaml'
 import { externalTestInputs, externalTypecheckInputs } from './ci-test-inputs.mjs'
-import { readWorkspaces } from './ci-policy.mjs'
+import { readWorkspaces, validateMcpConformanceEntrypoints } from './ci-policy.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8')
@@ -534,7 +534,8 @@ requireCondition(
   'every executable job must activate pnpm@9.15.4 with Corepack',
 )
 const expectedIntegrationScripts = {
-  'test:integration': 'pnpm test:integration:db && pnpm test:integration:api && pnpm test:integration:worker && pnpm test:integration:recovery',
+  'test:integration': 'pnpm test:integration:db && pnpm test:integration:api && pnpm test:conformance:integration && pnpm test:integration:worker && pnpm test:integration:recovery',
+  'test:conformance:integration': 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration',
   'test:integration:db': 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/db test:integration',
   'test:integration:api': 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/api test:integration',
   'test:integration:worker': 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/worker test:integration',
@@ -542,6 +543,14 @@ const expectedIntegrationScripts = {
 }
 for (const [name, command] of Object.entries(expectedIntegrationScripts))
   requireCondition(packageJson.scripts?.[name] === command, `${name} must preserve the reviewed reset and execution order`)
+
+const mcpConfig = readFileSync(resolve(root, 'packages/conformance/vitest.integration.config.ts'), 'utf8')
+const conformanceManifest = JSON.parse(readFileSync(resolve(root, 'packages/conformance/package.json'), 'utf8'))
+failures.push(...validateMcpConformanceEntrypoints({
+  job: parsedWorkflow.jobs?.['api-integration'], rootScripts: packageJson.scripts,
+  packageScripts: conformanceManifest.scripts, integrationConfig: mcpConfig,
+  unitConfig: readFileSync(resolve(root, 'vitest.config.ts'), 'utf8'),
+}))
 
 if (failures.length > 0) {
   console.error('[ci:validate] CI policy validation failed:')

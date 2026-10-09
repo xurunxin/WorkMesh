@@ -1,0 +1,740 @@
+[
+  {
+    "name": "ci-policy-product-2",
+    "receipt": "ci-policy-product-2.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "--test",
+      "scripts/ci-policy.test.mjs"
+    ],
+    "startedAt": "2026-10-09T07:50:57.982845+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 0.3187473999860231,
+    "exitCode": 1,
+    "inputArchive": "ci-policy-product-2-inputs.zip",
+    "inputArchiveSha256": "66c93ab525f91e381470dfb7a6694d29ea5960aa36b354d89779fbedc71c70e3",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "ci-policy-product-3",
+    "receipt": "ci-policy-product-3.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "--test",
+      "scripts/ci-policy.test.mjs"
+    ],
+    "startedAt": "2026-10-09T07:52:26.887127+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 0.3087923999992199,
+    "exitCode": 0,
+    "inputArchive": "ci-policy-product-3-inputs.zip",
+    "inputArchiveSha256": "46e720ef417693144ec3bee2da22aba70af0ad59d6ce0d67968680d2cfb7600f",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "ci-policy-product",
+    "receipt": "ci-policy-product.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "--test",
+      "scripts/ci-policy.test.mjs"
+    ],
+    "startedAt": "2026-10-09T07:43:02.702181+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 0.26405379999778233,
+    "exitCode": 1,
+    "inputArchive": "ci-policy-product-inputs.zip",
+    "inputArchiveSha256": "dd1a54d87543cd2a0d6f661045d620eb9de0058bb791d41886395911bd321919",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "ci-validation-product-2",
+    "receipt": "ci-validation-product-2.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "ci:validate"
+    ],
+    "startedAt": "2026-10-09T07:52:26.887118+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 2.2280586999841034,
+    "exitCode": 0,
+    "inputArchive": "ci-validation-product-2-inputs.zip",
+    "inputArchiveSha256": "818c7c751dbe55bb2f77469a135fa470e0979b8ac5aebb6d9473ca50b39e3b09",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "ci-validation-product",
+    "receipt": "ci-validation-product.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "ci:validate"
+    ],
+    "startedAt": "2026-10-09T07:50:57.982834+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 0.8311639000021387,
+    "exitCode": 1,
+    "inputArchive": "ci-validation-product-inputs.zip",
+    "inputArchiveSha256": "66c93ab525f91e381470dfb7a6694d29ea5960aa36b354d89779fbedc71c70e3",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "conformance-final-typecheck",
+    "receipt": "conformance-final-typecheck.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "--filter",
+      "@workmesh/conformance",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-09T08:06:03.438876+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 13.702893400011817,
+    "exitCode": 0,
+    "inputArchive": "conformance-final-typecheck-inputs.zip",
+    "inputArchiveSha256": "5a7ccca8f54d6c615153b3030499fcf9adace9b929e2c2e23d180486c068b5ad",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "conformance-typecheck",
+    "receipt": "conformance-typecheck.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "--filter",
+      "@workmesh/conformance",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-09T07:42:15.151795+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 12.195790300000226,
+    "exitCode": 2,
+    "inputArchive": "conformance-typecheck-inputs.zip",
+    "inputArchiveSha256": "596857df40797e06718b8caf177c43884bba52c9535faf679eb9997558418099",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "contracts-typecheck-2",
+    "receipt": "contracts-typecheck-2.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "--filter",
+      "@workmesh/contracts",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-09T07:22:57.814689+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 3.6396633999829646,
+    "exitCode": 0,
+    "inputArchive": "contracts-typecheck-2-inputs.zip",
+    "inputArchiveSha256": "4f5955e0ac733c88f3b58a6f74b07ed9a542507b8a3e18a0badc6b2f3ec27a11",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "discovery-tests-first",
+    "receipt": "discovery-tests-first.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "exec",
+      "vitest",
+      "run",
+      "packages/contracts/src/agent-discovery.test.ts",
+      "packages/contracts/src/client-profile-contract.test.ts",
+      "apps/mcp/src/index.test.ts",
+      "apps/mcp/src/http.test.ts",
+      "packages/agent-sdk/src/index.test.ts",
+      "apps/agent-runner/src/workmesh-tools.test.ts",
+      "apps/agent-runner/src/permission-matrix.test.ts"
+    ],
+    "startedAt": "2026-10-09T07:23:20.032059+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 4.585382400022354,
+    "exitCode": 1,
+    "inputArchive": "discovery-tests-first-inputs.zip",
+    "inputArchiveSha256": "7da76103738aed9cea84c4e4ddc200efc086b0312ebbbf60d09bd59edaf226d7",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "discovery-tests-second",
+    "receipt": "discovery-tests-second.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "exec",
+      "vitest",
+      "run",
+      "packages/contracts/src/agent-discovery.test.ts",
+      "apps/mcp/src/index.test.ts",
+      "packages/agent-sdk/src/index.test.ts",
+      "apps/agent-runner/src/workmesh-tools.test.ts",
+      "apps/agent-runner/src/permission-matrix.test.ts"
+    ],
+    "startedAt": "2026-10-09T07:25:10.821676+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 4.621518700005254,
+    "exitCode": 1,
+    "inputArchive": "discovery-tests-second-inputs.zip",
+    "inputArchiveSha256": "ed1b29a3764595a3176594657f61ade0b45e079efb00c257d65b9cc5410b20a9",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "discovery-tests-third",
+    "receipt": "discovery-tests-third.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "exec",
+      "vitest",
+      "run",
+      "packages/contracts/src/agent-discovery.test.ts",
+      "apps/mcp/src/index.test.ts",
+      "packages/agent-sdk/src/index.test.ts",
+      "packages/agent-sdk/src/discovery.test.ts",
+      "apps/agent-runner/src/permission-matrix.test.ts",
+      "apps/agent-runner/src/workmesh-tools.test.ts",
+      "apps/agent-runner/src/runner-api.test.ts"
+    ],
+    "startedAt": "2026-10-09T07:34:17.802391+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 4.758201499993447,
+    "exitCode": 0,
+    "inputArchive": "discovery-tests-third-inputs.zip",
+    "inputArchiveSha256": "a7c0a3bd052c7eac34bba4219077404e337e06602bb409fecf11ce3a3735d34b",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "final-ci-validation",
+    "receipt": "final-ci-validation.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "ci:validate"
+    ],
+    "startedAt": "2026-10-09T08:18:00.034413+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 2.780682600016007,
+    "exitCode": 0,
+    "inputArchive": "final-ci-validation-inputs.zip",
+    "inputArchiveSha256": "0b2e2bf517e00a27f7ffdbc19d57efd06ef275671c861ec487eeb93fd133e993",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "final-lint",
+    "receipt": "final-lint.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "lint"
+    ],
+    "startedAt": "2026-10-09T08:16:25.507494+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 55.88081349999993,
+    "exitCode": 0,
+    "inputArchive": "final-lint-inputs.zip",
+    "inputArchiveSha256": "fabd9f4e4428c1bd3f92d310d19b8175f7447ca110ee6098aa801a0cafde0929",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "final-route-check",
+    "receipt": "final-route-check.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "check:route-policy"
+    ],
+    "startedAt": "2026-10-09T08:13:27.707862+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 2.805621900013648,
+    "exitCode": 0,
+    "inputArchive": "final-route-check-inputs.zip",
+    "inputArchiveSha256": "b0a05628503ca6f6b5ec57852a7e08614d1eb8974c8202b1590169e134b050bc",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "final-runner-skill",
+    "receipt": "final-runner-skill.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "check:runner-skill"
+    ],
+    "startedAt": "2026-10-09T08:15:53.667824+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 0.8601460000209045,
+    "exitCode": 0,
+    "inputArchive": "final-runner-skill-inputs.zip",
+    "inputArchiveSha256": "76b1128a8adb4cf0e42d5fe4ddd97e958837b9f4377374704e2d2112253e0c12",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "final-typecheck",
+    "receipt": "final-typecheck.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-09T08:18:00.034412+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 55.84934390001581,
+    "exitCode": 0,
+    "inputArchive": "final-typecheck-inputs.zip",
+    "inputArchiveSha256": "265c143ea8f50da2376a27fa47c4a3b5c3a3ef37558c8a49f278fe9a2d67888d",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "final-workmesh-skill",
+    "receipt": "final-workmesh-skill.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "check:workmesh-skill"
+    ],
+    "startedAt": "2026-10-09T08:15:43.681894+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 0.7351758999866433,
+    "exitCode": 0,
+    "inputArchive": "final-workmesh-skill-inputs.zip",
+    "inputArchiveSha256": "e752699f22fff20577d5249cc007207a479fa1ac9d8aac4f323c801fe220ab87",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "install-product",
+    "receipt": "install-product.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "startedAt": "2026-10-09T07:42:46.926862+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 1.267439999995986,
+    "exitCode": 0,
+    "inputArchive": "install-product-inputs.zip",
+    "inputArchiveSha256": "1bae94138c6e6a974be7a0a1e37946882f0e73f06da7a77486974e842e3f8b4a",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "lock-update",
+    "receipt": "lock-update.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "install",
+      "--lockfile-only"
+    ],
+    "startedAt": "2026-10-09T07:41:21.666823+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 6.528327099978924,
+    "exitCode": 0,
+    "inputArchive": "lock-update-inputs.zip",
+    "inputArchiveSha256": "1c306b557e023f8c426988df202fb2b541695fd70b8729b9c784e43db8fc1392",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "product-build",
+    "receipt": "product-build.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "build"
+    ],
+    "startedAt": "2026-10-09T08:13:17.627302+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 106.94433050000225,
+    "exitCode": 0,
+    "inputArchive": "product-build-inputs.zip",
+    "inputArchiveSha256": "6e8adf32c309b65b56ceab3e31d59c7ea9a40fa48a625e088e03689a3c169037",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "product-e2e",
+    "receipt": "product-e2e.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:e2e"
+    ],
+    "startedAt": "2026-10-09T08:07:48.338110+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 281.32478439999977,
+    "exitCode": 0,
+    "inputArchive": "product-e2e-inputs.zip",
+    "inputArchiveSha256": "a77b7f2d8ee316d2a11065c673bf7e7d57c6b90bf70e91e9da1da7ba03fa9379",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "product-integration",
+    "receipt": "product-integration.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:integration"
+    ],
+    "startedAt": "2026-10-09T08:00:00.571165+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 300.13378930001636,
+    "exitCode": 0,
+    "inputArchive": "product-integration-inputs.zip",
+    "inputArchiveSha256": "4cfb289a39c026d59d72136f1351b91ea31157790e542b18dc7e3bf95b11e560",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "product-lint",
+    "receipt": "product-lint.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "lint"
+    ],
+    "startedAt": "2026-10-09T07:53:15.220942+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 55.65787560000899,
+    "exitCode": 0,
+    "inputArchive": "product-lint-inputs.zip",
+    "inputArchiveSha256": "5461c22341396024616d9bae07699fd3b65d486b0732b112d19209162e4a4392",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "product-memory-conformance",
+    "receipt": "product-memory-conformance.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:conformance"
+    ],
+    "startedAt": "2026-10-09T08:02:42.291506+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 1.9546120000013616,
+    "exitCode": 0,
+    "inputArchive": "product-memory-conformance-inputs.zip",
+    "inputArchiveSha256": "63fb5832c50c64fc3e5c9046e2bbaebd90ee68009201ca9fb9dec6b963e248cf",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "product-typecheck-2",
+    "receipt": "product-typecheck-2.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-09T07:54:53.191402+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 61.63967350000166,
+    "exitCode": 0,
+    "inputArchive": "product-typecheck-2-inputs.zip",
+    "inputArchiveSha256": "13cfce3d2353e1371605c36a6d9b8c187fed46fb0b46f26666c156d7d4467929",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "product-typecheck",
+    "receipt": "product-typecheck.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-09T07:43:02.722621+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 55.282783200003905,
+    "exitCode": 2,
+    "inputArchive": "product-typecheck-inputs.zip",
+    "inputArchiveSha256": "35036243ff073b56a198465d5c6113cedf3eb6831bfe15deacca8d23058e2f4b",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "product-unit-tests-2",
+    "receipt": "product-unit-tests-2.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test"
+    ],
+    "startedAt": "2026-10-09T07:56:32.621400+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 161.63593680001213,
+    "exitCode": 0,
+    "inputArchive": "product-unit-tests-2-inputs.zip",
+    "inputArchiveSha256": "25c4ac1cb9133c2719bb3045248973c9b0d29c0bd8a88ea39578725f93351cd2",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "product-unit-tests",
+    "receipt": "product-unit-tests.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test"
+    ],
+    "startedAt": "2026-10-09T07:54:53.205940+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 12.239082100015366,
+    "exitCode": 1,
+    "inputArchive": "product-unit-tests-inputs.zip",
+    "inputArchiveSha256": "986e9355af96ba81c8d24076b3bb041ee04b1f6e2fed85a5e29f41557e7651f8",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "real-conformance-error-recovery-2",
+    "receipt": "real-conformance-error-recovery-2.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:conformance:integration"
+    ],
+    "startedAt": "2026-10-09T08:07:08.850727+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 19.760179999982938,
+    "exitCode": 0,
+    "inputArchive": "real-conformance-error-recovery-2-inputs.zip",
+    "inputArchiveSha256": "227ef1bf6c32ae931616c355e68d8cfbe1efa728644b19fdde1d4adbda2765f2",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "real-conformance-error-recovery",
+    "receipt": "real-conformance-error-recovery.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:conformance:integration"
+    ],
+    "startedAt": "2026-10-09T08:05:47.326398+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 16.493699300015578,
+    "exitCode": 1,
+    "inputArchive": "real-conformance-error-recovery-inputs.zip",
+    "inputArchiveSha256": "4e524c2d6d5ef6e85a91eafe1c62abfbf3c5ca240ad66ce7843c426d5cc6dd95",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "real-conformance-fifth",
+    "receipt": "real-conformance-fifth.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:conformance:integration"
+    ],
+    "startedAt": "2026-10-09T07:51:42.499492+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 16.4657167000114,
+    "exitCode": 1,
+    "inputArchive": "real-conformance-fifth-inputs.zip",
+    "inputArchiveSha256": "5651166553ab18b91cb6ede739120b1992261aa6e99d39bdb346c77e73a99908",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "real-conformance-first",
+    "receipt": "real-conformance-first.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:conformance:integration"
+    ],
+    "startedAt": "2026-10-09T07:43:29.475966+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 10.971962899988284,
+    "exitCode": 1,
+    "inputArchive": "real-conformance-first-inputs.zip",
+    "inputArchiveSha256": "ab1b9a4947aad62fe3f844f929de9d79e1643c10c5a0b95d1dd85f39c6f19f94",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "real-conformance-fourth",
+    "receipt": "real-conformance-fourth.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:conformance:integration"
+    ],
+    "startedAt": "2026-10-09T07:49:47.690330+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 17.644246199983172,
+    "exitCode": 1,
+    "inputArchive": "real-conformance-fourth-inputs.zip",
+    "inputArchiveSha256": "23a4c53fd3f0f1304031501029d33d7cd38af971381cd98f8e04004c67f09683",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "real-conformance-second",
+    "receipt": "real-conformance-second.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:conformance:integration"
+    ],
+    "startedAt": "2026-10-09T07:45:19.375952+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 15.404190599976573,
+    "exitCode": 1,
+    "inputArchive": "real-conformance-second-inputs.zip",
+    "inputArchiveSha256": "dc9d2b2bb817fc797601a19968d6e9429c5951fb2290a9aa7b2ce7bb4a51c485",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "real-conformance-sixth",
+    "receipt": "real-conformance-sixth.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:conformance:integration"
+    ],
+    "startedAt": "2026-10-09T07:53:06.812939+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 18.93711239998811,
+    "exitCode": 0,
+    "inputArchive": "real-conformance-sixth-inputs.zip",
+    "inputArchiveSha256": "cae262a740905e807b1d718413c3056525d1c27c5b54bf80603fc15a0aca7ff7",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "real-conformance-third",
+    "receipt": "real-conformance-third.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "test:conformance:integration"
+    ],
+    "startedAt": "2026-10-09T07:47:48.359540+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 16.82886289997259,
+    "exitCode": 1,
+    "inputArchive": "real-conformance-third-inputs.zip",
+    "inputArchiveSha256": "042fa7685c0090d26a894091d3ed791446d0ba953b6aba2aec4fed1aab44c06f",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "route-check",
+    "receipt": "route-check.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "check:route-policy"
+    ],
+    "startedAt": "2026-10-09T07:54:53.206095+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 3.6966551000077743,
+    "exitCode": 0,
+    "inputArchive": "route-check-inputs.zip",
+    "inputArchiveSha256": "986e9355af96ba81c8d24076b3bb041ee04b1f6e2fed85a5e29f41557e7651f8",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "route-generation",
+    "receipt": "route-generation.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "generate:route-policy"
+    ],
+    "startedAt": "2026-10-09T07:43:02.722314+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 2.8225924000144005,
+    "exitCode": 0,
+    "inputArchive": "route-generation-inputs.zip",
+    "inputArchiveSha256": "8f7cfa992cd5f7b6520517024d44b51de08aed512eda62498a2bfa892ace0e0a",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "runner-final-tests",
+    "receipt": "runner-final-tests.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "--filter",
+      "@workmesh/agent-runner",
+      "test"
+    ],
+    "startedAt": "2026-10-09T08:07:26.212132+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 9.80198289998225,
+    "exitCode": 0,
+    "inputArchive": "runner-final-tests-inputs.zip",
+    "inputArchiveSha256": "87fa9e00357f7fe99768eb8b8e643b2bb9e21c34e37b1190cf27603abfabca0c",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "runner-typecheck",
+    "receipt": "runner-typecheck.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "--filter",
+      "@workmesh/agent-runner",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-09T07:24:05.934305+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 5.830743200000143,
+    "exitCode": 0,
+    "inputArchive": "runner-typecheck-inputs.zip",
+    "inputArchiveSha256": "2ebffe32d42a72a846debd0a1680a367b49b2a664bd5506886d875b1099358fd",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  },
+  {
+    "name": "sdk-discovery-tests",
+    "receipt": "sdk-discovery-tests.json",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\.tmp\\m0-node22\\node-v22.19.0-win-x64\\node.exe",
+      "C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs",
+      "exec",
+      "vitest",
+      "run",
+      "packages/agent-sdk/src/discovery.test.ts",
+      "apps/agent-runner/src/runner-api.test.ts"
+    ],
+    "startedAt": "2026-10-09T07:26:48.366000+00:00",
+    "head": "f0fcf961672541c234a7d1ce6194ea1d2b4f01ea",
+    "runtimeSeconds": 4.277301800000714,
+    "exitCode": 0,
+    "inputArchive": "sdk-discovery-tests-inputs.zip",
+    "inputArchiveSha256": "cdb5dcee3ff508384cfc8126bc7a98d7449577d0cfe327cbce5f78294a67fcb5",
+    "node": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\\\.tmp\\\\m0-node22\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+    "redaction": "team secret environment values replaced when present; no environment dump"
+  }
+]

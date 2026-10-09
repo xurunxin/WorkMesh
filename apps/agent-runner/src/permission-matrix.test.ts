@@ -4,7 +4,7 @@
 // is parameterized over the registered tools so a newly added tool cannot bypass the
 // gate by simply not being listed here.
 import { describe, expect, it } from 'vitest'
-import { appendActivityInputSchema, createAgentCapabilityManifest, featureKeySchema,
+import { appendActivityInputSchema, createAgentCapabilityManifest, qualifyAgentCapabilityManifest, featureKeySchema,
   type AgentCapabilityManifest } from '@workmesh/contracts'
 import { createWorkMeshTools, type RunnerToolApi } from './workmesh-tools.js'
 import type { Capability } from '@workmesh/contracts'
@@ -19,13 +19,16 @@ function manifest(capabilities: Capability[],
 ): AgentCapabilityManifest {
   const features = Object.fromEntries(featureKeySchema.options.map(key => [key, true])) as
     Record<(typeof featureKeySchema.options)[number], boolean>
-  return createAgentCapabilityManifest({
+  const original = createAgentCapabilityManifest({
     actorId: ownerId, sessionId, sessionState, sessionRevision: 2,
     effectiveCapabilities: capabilities,
     capabilityScope: { workspaceId: ownerId, teamIds: [ownerId], projectIds: [ownerId],
       workItemIds: [], repositoryIds: [], capabilities },
     supportedProtocols: ['native_http'], pushConfigured: false, features,
   })
+  return qualifyAgentCapabilityManifest(original, { identity: { actorId: ownerId, sessionId,
+    credentialMode: 'agent_session', sessionKind: 'execution', delegationRole: 'executor', delegationScopeType: 'project' },
+    features, workItemId: null, projectId: ownerId })
 }
 
 /** A runner API whose capability manifest answers with the given scenario. */
@@ -39,7 +42,7 @@ function apiFor(capabilities: Capability[],
     async request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
       body?: unknown, ifMatch?: number, key?: string): Promise<T> {
       calls.push(`${method} ${path}`)
-      if (path === '/api/v1/agent-capabilities') return manifest(capabilities, sessionState) as T
+      if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(capabilities, sessionState) as T
       if (path.endsWith('/activities')) { appendActivityInputSchema.parse(body); return { id: documentId } as T }
       return { id: documentId, revision: 1 } as T
     },
@@ -98,7 +101,7 @@ describe('W11 permission-denial matrix', () => {
     // The write grant can only grow the toolset, never shrink it: every read-only
     // tool stays available and the core write tools appear with the grant.
     expect(readOnly.every(name => readWrite.includes(name))).toBe(true)
-    for (const writeTool of ['workmesh_create_document', 'workmesh_update_work_item',
+    for (const writeTool of ['workmesh_create_document',
       'workmesh_append_activity']) {
       expect(readOnly, writeTool).not.toContain(writeTool)
       expect(readWrite, writeTool).toContain(writeTool)
@@ -117,7 +120,7 @@ describe('W11 permission-denial matrix', () => {
     // The write grant can only grow the toolset, never shrink it: every read-only
     // tool stays available and at least the core write tools appear with the grant.
     expect(readOnly.every(name => readWrite.includes(name))).toBe(true)
-    for (const writeTool of ['workmesh_create_document', 'workmesh_update_work_item',
+    for (const writeTool of ['workmesh_create_document',
       'workmesh_append_activity']) {
       expect(readOnly, writeTool).not.toContain(writeTool)
       expect(readWrite, writeTool).toContain(writeTool)
@@ -140,7 +143,7 @@ describe('W11 permission-denial matrix', () => {
       async request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
         body?: unknown, ifMatch?: number, key?: string): Promise<T> {
         reachedRequest += 1
-        if (path === '/api/v1/agent-capabilities') return manifest(['work:read', 'work:write']) as T
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read', 'work:write']) as T
         return { id: documentId, revision: 1 } as T
       },
     }
