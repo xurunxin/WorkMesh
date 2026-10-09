@@ -19,3 +19,12 @@
 ## F4：测量后冻结容量预算
 
 #27 的正确性与有界重建契约已冻结；数值容量验收还没有实测。执行者先固定 Team/Agent/事件数、正文大小、授权变化比例、硬件、tokenizer 与查询计数方法，测量冷 baseline、稳定增量、游标过期与权限重建的 token、查询数、p50/p95 延迟，提交原始结果和预算建议。Chief 确认验收数字后冻结回归阈值，再完成该任务容量阶段。不能凭几名 Agent 就推断不可用，也不能把后续测量要求写成本轮已通过。
+
+
+## C2 本轮官方核实与归档
+
+历史访问失败记录保留。本轮浏览工具访问两页仍失败；本机 HTTPS GET 取得 HTTP 200 与完整正文。实际 URL、UTC 读取日期、响应和提取边界在 [retrieval.json](../../plan/c2-wecom/official/retrieval.json)，浏览失败原件在 [platform-readbacks.json](../../plan/c2-wecom/platform-readbacks.json)。不以第三方摘要补证。
+
+本轮落实既有低敏范围的例行协议选择：群组消息推送 Webhook，普通 markdown 内容最多 4096 UTF-8 字节，每个目标最多 20 条/分钟；通用提醒和 canonical 登录深链，无决策/回调/身份绑定。错误及本部署尚未实测的群策略、网络、网页登录条件见 [产品方案](../../plan/c2-wecom/product-design.md)。无真实发送。
+
+仅文档归档已经计划复核允许；仓库完整产品方案仍待独审与 Chief 另行放行，不把本条追加或官方可读当产品验收成功。

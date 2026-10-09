@@ -1,0 +1,16 @@
+{
+  "说明": "只读诊断时，该轮 runner 已完成服务清理；未将该诊断错误当作清理失败或成功回执。未终止其它任务的监听进程，不推测占用归属。",
+  "run": "20261008T160516Z-c88908",
+  "tool": "exec_command",
+  "chunkId": "72daef",
+  "callId": null,
+  "startedAt": null,
+  "finishedAt": null,
+  "exitCode": 1,
+  "来源": "本轮已返回的完整工具输出；工具没有提供 UTC 起止或 callId，不补造。",
+  "containerId": "feca0cf93a4207980ec2f31c44462902f4c63b9f8c2889e454bb5f569ef23c89",
+  "操作": "Get-CimInstance 读取本轮 Node 可执行文件对应进程；对已登记 PostgreSQL 容器执行两条 pg_stat_activity 只读查询。没有 stop、rm 或文件删除。",
+  "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\nError response from daemon: No such container: feca0cf93a4207980ec2f31c44462902f4c63b9f8c2889e454bb5f569ef23c89\nError response from daemon: No such container: feca0cf93a4207980ec2f31c44462902f4c63b9f8c2889e454bb5f569ef23c89\n",
+  "单条查询退出码": null,
+  "备注": "保留批量调用整体退出码和两条实际错误，不将整体结果冒作逐项退出回执。"
+}

@@ -555,10 +555,9 @@
       ],
       "currentSource": {
         "todoId": "0BkezbmWV6k8vwrlSNuF_",
-        "scopeChangeAt": "2026-10-09T12:00:00+08:00",
-        "sha256": "b10b213d1f1c555985845cd3fa93550b70894639e3e89916d93c052ece0a58ed",
         "snapshotPath": "docs/reviews/a2-backend/current-spec.md",
-        "source": "当前用户完整 Spec 注入；Chief 旧卡读回另存 history/chief-old-spec.md",
+        "sha256": "60331885982c7f472f4e111d8e0fd3f96c08c1165e010dc8ef175a7f731123c4",
+        "source": "当前用户注入完整 Spec：补 Chief C2 actual main 交接；旧 c800 正文先保全，不倒填版本",
         "version": null,
         "binding": "docs/reviews/a2-backend/sources.json"
       },
@@ -571,14 +570,12 @@
       ],
       "currentPlanPath": "docs/plan/backend-agent-mcp-priority/branch-separation.md",
       "testMapping": "docs/reviews/a2-backend/coverage.json",
-      "latestMainImpact": "c768 相对已整合 74f247f 仅 #53 七份文档；产品无主线增量，正常整合精确对象",
+      "latestMainImpact": "C2 修改共享 API 注册、通知事务、Worker 调度/入口/依赖及 Lite 开关/WEB_ORIGIN；A2 路由、DTO、OpenAPI、锁 helper 未变，无冲突整合",
       "execution": {
-        "inputMain": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
-        "record": "docs/reviews/a2-backend/README.md",
-        "results": "docs/reviews/a2-backend/results.json",
-        "status": "新后端本机适用检查和无源码 Lite 兼容通过；待新候选独审、最新 Required CI 与 actual main",
-        "testedBackendHead": "38e2cf8f29c51adafbda11484e713df51d3ea8f2",
-        "testedLiteHead": "9de5897ab42b4a3459bf977c7a78c78bc3d11538"
+        "inputMain": "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
+        "record": "docs/reviews/a2-backend/c2-combination/README.md",
+        "results": "docs/reviews/a2-backend/c2-combination/results.json",
+        "status": "整合后组合检查待执行；旧 c800/CI402 不代新 head"
       },
       "historicalUi": {
         "source": {
@@ -648,6 +645,14 @@
         "id": null,
         "version": null,
         "meaning": "按已审 #53 精确后端路线实施；原批准 UI 计划只作历史"
+      },
+      "historicalC800Execution": {
+        "inputMain": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+        "record": "docs/reviews/a2-backend/README.md",
+        "results": "docs/reviews/a2-backend/results.json",
+        "status": "新后端本机适用检查和无源码 Lite 兼容通过；待新候选独审、最新 Required CI 与 actual main",
+        "testedBackendHead": "38e2cf8f29c51adafbda11484e713df51d3ea8f2",
+        "testedLiteHead": "9de5897ab42b4a3459bf977c7a78c78bc3d11538"
       }
     },
     {
@@ -1182,7 +1187,63 @@
           "output": "fake provider 测试载荷字节上限、错误/频控/timeout/未知发送及C1恢复；转发后当前登录Human鉴权，停用/撤权零外发；网页仍可见，零决策事件/outbox；仅出站所以回调签名/绑定解绑不适用。",
           "acceptance": "逐项用例/原DoD通过，实际适用required检查通过，另一agent独审；Chief确认后交付"
         }
-      ]
+      ],
+      "currentDocumentation": {
+        "executionPlanId": "8K46xBWutJwsqCy89K5Oq",
+        "version": null,
+        "generatedAt": null,
+        "mainSha": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+        "currentSpec": "docs/plan/c2-wecom/current-spec.md",
+        "currentSpecSha256": "542a1d41013a9b06f256ed3dc5388a6bad20e7fff49fff18380b35cb7e67b82d",
+        "synchronizedSpecSha256": "7b5cf6532e847824f102ed4cf6c98cf681047b0dbc831d89b5ac5549fc2f5963",
+        "implementationPlan": "docs/plan/c2-wecom/implementation-plan.md",
+        "sourceMetadata": "docs/plan/c2-wecom/source-metadata.json",
+        "testCoverage": "docs/plan/c2-wecom/test-coverage.json",
+        "status": "文档已归档，待仓库产品方案独审；产品未实施/未运行",
+        "stopAt": "review",
+        "historicalFields": "原 phase、specSha256、sourceSha256、syncStatus、requires 和 stages 保留历史含义",
+        "rawEvidenceIndex": "docs/plan/c2-wecom/raw-evidence-index.json",
+        "reviewFixes": "docs/reviews/c2/review-fixes.json"
+      },
+      "currentProductExecution": {
+        "stage": "review",
+        "input": "docs/reviews/c2/product-input.json",
+        "authorizedDesignHead": "178ac8cb297a78ea830f23845aa1d59972cca149",
+        "actualMainInput": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+        "review": "docs/reviews/c2/product-review.md",
+        "status": "产品本机验证完成；等待独审/视觉停点/当前 CI/actual main，历史规划状态不覆写"
+      },
+      "currentQuotaRecovery": {
+        "review": "docs/reviews/c2/quota-recovery/review.md",
+        "verification": "docs/reviews/c2/quota-recovery/verification.json",
+        "inputHead": "61736fa2298279f76642309ee2e2478439258f80",
+        "actualMainInput": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+        "case": {
+          "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+          "name": "quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效",
+          "matrixIds": [
+            "R1-16-1",
+            "R1-16-8",
+            "R1-16-9"
+          ],
+          "receipt": "docs/reviews/c2/product/20261008T165722Z-99576c/results.json",
+          "result": "真实 Redis Lua 通过；仅 TIME 替换为受控时钟，serial TTL 到期单独模拟；保留原生 Redis TIME 用例"
+        },
+        "status": "本轮五项必需本机检查通过；待独审/latest CI/actual main/Chief"
+      },
+      "currentBackendExecution": {
+        "scope": "后端独立候选；原 UI 延后未验收",
+        "currentSpec": "docs/reviews/c2/backend/current-spec.md",
+        "specSha256": "5203d84061b0b4d654fcec69f6d73839d75d941e7a6e56589b4a5f5cf17aaa76",
+        "preservation": "docs/reviews/c2/backend/preservation.json",
+        "coverage": "docs/reviews/c2/backend/coverage.json",
+        "oldHead": "5c870d9fe3c30736b8ce87292e1d0bf35838ae83",
+        "main": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+        "result": "新候选五项必需检查成功；待新候选独审、最新 Required CI、actual main 与 Chief，不冒整项验收",
+        "review": "docs/reviews/c2/backend/review.md",
+        "verification": "docs/reviews/c2/backend/verification.json",
+        "scopeFirstHead": "b60f50712730a0acdc7406f02331cd7323a1bd7d"
+      }
     },
     {
       "seqNum": 17,

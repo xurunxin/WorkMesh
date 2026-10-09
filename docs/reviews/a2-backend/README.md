@@ -2,6 +2,8 @@
 
 本轮依据用户收窄范围及已合入的 #53 分离方案执行。当前完整规格见 [current-spec.md](current-spec.md)，来源和字节绑定见 [sources.json](sources.json)。旧 UI 未获得视觉接受，不再是本轮后端交付门禁。
 
+当前 C2 actual main 整合与适用组合检查转到 [c2-combination/README.md](c2-combination/README.md)。下方 `c800/c768` 受测与交付记录保留历史含义，不替代整合后源码检查或新 Required CI。
+
 ## 精确保全与分离
 
 [preservation.json](preservation.json) 保存旧 `6f059e3642291f9ab622db37e9de167d070574f2` 的全部 41 个产品增量、8 份文档、完整产品 patch 及四个可读 Git 对象的 tree。Git blob 和 Windows 工作树原字节分别归档；原件没有换哈希或改来源。Chief 提供的完整旧正文见 [history/chief-old-spec.md](history/chief-old-spec.md)，其内嵌早期源哈希只属于原早期源。

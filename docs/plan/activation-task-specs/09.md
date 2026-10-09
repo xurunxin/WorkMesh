@@ -10,7 +10,9 @@
 同todo同主力开发high、同构建分支tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe承接，不run_builds换上下文或克隆旧代码。依据用户本批18:38委托，计划/产品必要独审、blocking/high闭及必需检查通过后按条件合入；F/TA新域、权限及仓库外发布仍另批。本批记录沿Todos＋仓库；已合历史P1/D0/G1/R1/A1/C1/C3/#52/#53不重开。
 
 ## 受控来源与分离方案
-#53已审且实际合入main c768e1e3db297d8b91b53dd68b60e723a8a40e7d/PR209，docs/plan/backend-agent-mcp-priority/branch-separation.md的#9完整节及sources/coverage/batches/review是后端分离依据。开工重新读取refs/heads/main准确SHA及immutable对象，不用FETCH_HEAD冒main。原成果精确6f059e3642291f9ab622db37e9de167d070574f2（仅视觉交付材料增量），审核产品/技术741623eca9d26439e575d6119f7ed97d37df1fde，实际受测产品380aad996489dbdabddd212be8f45edbcdda7209；旧三技术blocking已闭属于旧组合，不代此新后端候选已通过。
+#53已审且实际合入main c768e1e3db297d8b91b53dd68b60e723a8a40e7d/PR209，docs/plan/backend-agent-mcp-priority/branch-separation.md的#9完整节及sources/coverage/batches/review是后端分离依据。开工重新读取refs/heads/main准确SHA及immutable对象，不用FETCH_HEAD冒main。
+
+当前组合交接（Chief独立远端及Git对象核验）：#16 C2后端已实际合入main add4340e9c52575c2fd9615b3b114ac9acd3e30e/PR210，parents为c768e1e3db297d8b91b53dd68b60e723a8a40e7d与独审d80f29ff9b87c387326cfda45eafdcfe6b182eee，tree与d80相同。原本卡已审c800ea7075ddfa4c9c97ac279172a32cb7d20ab8及受测历史基线c768保留历史含义；同分支正常整合当前真实main，按API/contracts/OPENAPI/Worker锁与共享测试、Lite部署的实际差异评估必要组合检查及源码前后绑定。无变化部分不无故重复全套，但新组合必须可复核；新增源码或合同冲突修订必要独审，最新候选PR211新head RequiredCI成功后才能合入，旧CI402@c800不代整合后head。保留原失败、旧UI延期、所有旧证据，不将C2构建分支当main或重开C2。原成果精确6f059e3642291f9ab622db37e9de167d070574f2（仅视觉交付材料增量），审核产品/技术741623eca9d26439e575d6119f7ed97d37df1fde，实际受测产品380aad996489dbdabddd212be8f45edbcdda7209；旧三技术blocking已闭属于旧组合，不代此新后端候选已通过。
 
 原完整规格/原六测试/DoD在旧卡正文（Chief此次message原样交付）、docs/plan/activation-task-specs/09.md、docs/reviews/r1/execution-inputs.json、test-coverage.json及原A2计划/实现/失败/视觉文件。保留原引用/哈希历史含义，不把生成时metadata冒当前阶段。TA本地总计划及包未在main可读，如实留缺口，不以无源码TA引用阻塞本卡或扩大范围。
 

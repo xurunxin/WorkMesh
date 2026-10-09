@@ -1,0 +1,41 @@
+{
+  "observedAt": "2026-10-09T05:09:35.990Z",
+  "previousReviewedHead": "c800ea7075ddfa4c9c97ac279172a32cb7d20ab8",
+  "previousTestedMain": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+  "main": {
+    "sha": "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
+    "observedAt": "2026-10-09T05:07:55Z",
+    "tool": "mcp__tds__git",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "fetchArgs": [
+      "fetch",
+      "origin",
+      "refs/heads/main"
+    ],
+    "meaning": "正常整合真实 main；历史 main 字段及 c800 来源保留历史含义"
+  },
+  "parents": [
+    "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+    "d80f29ff9b87c387326cfda45eafdcfe6b182eee"
+  ],
+  "mainTree": "958206a1eefae9e981de25551524e8e0924c44b5",
+  "reviewTree": "958206a1eefae9e981de25551524e8e0924c44b5",
+  "mainProductDiff": {
+    "path": "main-product.patch.gz",
+    "bytes": 81403,
+    "sha256": "6beb78abe1f7757482fd7eb88c9e5eda6e024b49a7a4af2083d685a330e7bd86"
+  },
+  "currentSpec": {
+    "todoId": "0BkezbmWV6k8vwrlSNuF_",
+    "snapshotPath": "docs/reviews/a2-backend/current-spec.md",
+    "sha256": "60331885982c7f472f4e111d8e0fd3f96c08c1165e010dc8ef175a7f731123c4",
+    "source": "当前用户注入完整 Spec：补 Chief C2 actual main 交接；旧 c800 正文先保全，不倒填版本",
+    "version": null,
+    "binding": "docs/reviews/a2-backend/sources.json"
+  },
+  "merge": "git merge --no-commit --no-ff exact SHA；无冲突，当前分支正常合入对象，不读 FETCH_HEAD"
+}

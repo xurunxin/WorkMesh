@@ -1,0 +1,29 @@
+{
+  "observedAt": "2026-10-09T04:34:31.0304088Z",
+  "listeners": [],
+  "operation": "只读观察",
+  "exitCode": 0,
+  "earlierOccupiedObservation": {
+    "observedAt": null,
+    "timeGap": "第一次只读工具结果未保存精确观察时间，不倒填；created 为实际进程创建时间",
+    "source": "本轮 exec_command 的 Get-NetTCPConnection/Get-CimInstance 实际结果",
+    "listeners": [
+      {
+        "port": 3100,
+        "pid": 38764,
+        "parent": 45944,
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "created": "2026-10-09T12:29:49.608092+08:00"
+      },
+      {
+        "port": 3101,
+        "pid": 38272,
+        "parent": 32944,
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "created": "2026-10-09T12:29:45.937666+08:00"
+      }
+    ],
+    "stopped": false,
+    "reason": "非本轮独有运行时，保留；不复用未知服务"
+  }
+}

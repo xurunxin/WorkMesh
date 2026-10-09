@@ -1,0 +1,56 @@
+{
+  "recordedAt": "2026-10-08 13:17:31 UTC",
+  "tool": "exec_command",
+  "callId": null,
+  "checks": [
+    {
+      "name": "git diff --cached --check",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "c0352b",
+          "wall_time_seconds": 0.6802048,
+          "exit_code": 0,
+          "original_token_count": 17,
+          "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n"
+        }
+      }
+    },
+    {
+      "name": "git diff --check",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "9c6997",
+          "wall_time_seconds": 0.6983851,
+          "exit_code": 0,
+          "original_token_count": 17,
+          "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n"
+        }
+      }
+    },
+    {
+      "name": "archive invariants",
+      "command": "@'\nconst fs=require('node:fs'),cp=require('node:child_process'),crypto=require('node:crypto'),assert=require('node:assert/strict'),path=require('node:path');\nconst root='docs/plan/c2-wecom/',base='5b9c76b5f79917697906520edcd6947bfbfa925f',hash=b=>crypto.createHash('sha256').update(b).digest('hex'),json=p=>JSON.parse(fs.readFileSync(p,'utf8')),blob=p=>cp.execFileSync('git',['show',':'+p],{maxBuffer:12000000}),baseline=p=>cp.execFileSync('git',['show',base+':'+p],{maxBuffer:12000000});\nlet checks=0;const ok=(name,fn)=>{fn();checks++;console.log('PASS '+name)};\nok('原始 spec UTF-8 SHA-256',()=>assert.equal(hash(fs.readFileSync(root+'source-spec.md')),'d10a822ffae21cb94fcce3f9c7c198845bb3f3380358c5915ad5dea9673968fd'));\nok('3 份 savedplan 独立 ID、正文/JSON/暂存 Git blob 字节',()=>{for(const id of ['G27jedfwL5ikAj9GiLO1R','vYxCwh0TMRC3mOrr6cU1K','8K46xBWutJwsqCy89K5Oq']){const p=root+'savedplan-'+id,m=json(p+'.json'),b=fs.readFileSync(p+'.md');assert.equal(m.id,id);assert.equal(m.version,null);assert.equal(m.generatedAt,null);assert.equal(Buffer.byteLength(m.body),b.length);assert.equal(m.body,b.toString('utf8'));assert.equal(hash(b),m.sha256);assert.deepEqual(blob(p+'.md'),b)}});\nok('当前完整 spec 来自工具 Spec 段且同步 16.md',()=>{const r=json(root+'platform-readbacks.json').todo.value.content[0].text;const s=r.split('\\n\\nSpec:\\n')[1].split('\\n\\nSaved plan:\\n')[0];assert.equal(fs.readFileSync(root+'current-spec.md','utf8'),s);assert(fs.readFileSync('docs/plan/activation-task-specs/16.md','utf8').startsWith(s+'\\n\\n'));const prefix=r.split('\\n\\nSaved plan:\\n')[1].split('\\n…(truncated)')[0];assert(fs.readFileSync(root+'savedplan-8K46xBWutJwsqCy89K5Oq.md','utf8').startsWith(prefix))});\nok('官方完整响应、HTML 正文边界、文本哈希及 staged identity',()=>{for(const r of json(root+'official/retrieval.json')){assert.equal(r.status,200);assert.equal(r.responseHeaders['Set-Cookie'],'[REDACTED]');for(const ext of ['response.bin','body-source.txt','body.txt']){const f=root+'official/'+r.id+'.'+ext,b=fs.readFileSync(f);assert.equal(hash(b),r[ext].sha256);assert.equal(b.length,r[ext].bytes);assert.deepEqual(blob(f),b)}const raw=fs.readFileSync(root+'official/'+r.id+'.response.bin','utf8'),src=fs.readFileSync(root+'official/'+r.id+'.body-source.txt','utf8'),e=r.bodyExtraction;assert.equal(raw.slice(e.beginCharacter,e.endCharacterExclusive),src);assert(src.startsWith(e.marker));let depth=0;for(const m of src.matchAll(/<\\/?div\\b[^>]*>/g))depth+=m[0].startsWith('</')?-1:1;assert.equal(depth,0)}});\nok('7 项官方结论定位与日期真实存在',()=>{const e=json(root+'official/protocol-evidence.json');assert.equal(e.facts.length,7);for(const f of e.facts){const s=fs.readFileSync(root+f.bodyPath,'utf8');assert.equal(s.indexOf(f.needle),f.characterOffset);assert.equal(s.slice(0,f.characterOffset).split('\\n').length,f.line);assert(!Number.isNaN(Date.parse(f.readAt)))}});\nok('六原测试/DoD/九类原字段保留与当前文件映射',()=>{const original=json(root+'source-test-coverage.json'),current=json('docs/reviews/r1/test-coverage.json').features.find(t=>t.seqNum===16),m=json(root+'test-coverage.json');assert.equal(current.originalTests.length,6);assert.equal(current.matrix.length,9);for(let i=0;i<6;i++){const {currentMapping,...v}=current.originalTests[i];assert.deepEqual(v,original.originalTests[i]);assert(currentMapping.cases.length)}for(let i=0;i<9;i++){const {currentCases,currentStatus,currentMapping,...v}=current.matrix[i];assert.deepEqual(v,original.matrix[i]);assert.equal(currentStatus,'未实施/未运行');assert(currentCases.length)}for(let i=0;i<current.originalDoD.length;i++){const {currentAcceptance,...v}=current.originalDoD[i];assert.deepEqual(v,original.originalDoD[i]);assert(currentAcceptance.length)}assert.equal(m.dod.length,7);assert.equal(m.returnToCases.length,3)});\nok('R1 coverage 与索引只改 C2，旧依赖/阶段不改',()=>{for(const [f,key] of [['docs/reviews/r1/test-coverage.json','features'],['docs/plan/activation-task-specs/index.json','tasks']]){const old=JSON.parse(baseline(f)),now=json(f),index=now[key].findIndex(t=>t.seqNum===16);if(key==='tasks'){const {currentDocumentation,...historic}=now[key][index];assert.deepEqual(historic,old[key][index])}now[key][index]=old[key][index];assert.deepEqual(now,old)}});\nok('30 个 Git 输入与未修改产品源码匹配',()=>{const m=json(root+'source-metadata.json');assert.equal(m.actualMain,base);assert.equal(m.files.length,30);for(const r of m.files){const b=baseline(r.path);assert.equal(hash(b),r.gitBlob.sha256);assert.equal(b.length,r.gitBlob.bytes);if(!r.path.startsWith('docs/'))assert.equal(fs.readFileSync(r.path,'utf8').replace(/\\r\\n/g,'\\n'),b.toString('utf8'))}});\nok('全部变更仅允许的文档路径',()=>{const all=cp.execFileSync('git',['diff','--cached','--name-only'],{encoding:'utf8'}).trim().split('\\n');assert(all.every(p=>p.startsWith('docs/plan/c2-wecom/')||p.startsWith('docs/reviews/c2/')||['docs/plan/activation-task-specs/16.md','docs/plan/activation-task-specs/index.json','docs/reviews/r1/decisions.md','docs/reviews/r1/test-coverage.json','docs/reviews/r1/test-coverage.md','docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md'].includes(p)))});\nok('所有新 JSON 解析与正文 UTF-8 编码',()=>{const walk=p=>fs.readdirSync(p,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(p+'/'+e.name):[p+'/'+e.name]);for(const f of [...walk(root.replace(/\\/$/,'')),...walk('docs/reviews/c2')]){if(f.endsWith('.json'))json(f);if(!f.endsWith('.bin'))new TextDecoder('utf-8',{fatal:true}).decode(fs.readFileSync(f))}});\nconsole.log(JSON.stringify({passed:checks,failed:0,productTests:'未实施/未运行',externalSends:0}));\n'@ | node",
+      "result": {
+        "chunk_id": "e55089",
+        "wall_time_seconds": 2.9206186,
+        "exit_code": 0,
+        "original_token_count": 177,
+        "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\nPASS 原始 spec UTF-8 SHA-256\nPASS 3 份 savedplan 独立 ID、正文/JSON/暂存 Git blob 字节\nPASS 当前完整 spec 来自工具 Spec 段且同步 16.md\nPASS 官方完整响应、HTML 正文边界、文本哈希及 staged identity\nPASS 7 项官方结论定位与日期真实存在\nPASS 六原测试/DoD/九类原字段保留与当前文件映射\nPASS R1 coverage 与索引只改 C2，旧依赖/阶段不改\nPASS 30 个 Git 输入与未修改产品源码匹配\nPASS 全部变更仅允许的文档路径\nPASS 所有新 JSON 解析与正文 UTF-8 编码\n{\"passed\":10,\"failed\":0,\"productTests\":\"未实施/未运行\",\"externalSends\":0}\n"
+      }
+    }
+  ],
+  "mainRead": {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "5b9c76b5f79917697906520edcd6947bfbfa925f\trefs/heads/main"
+        }
+      ]
+    }
+  },
+  "说明": "原件为本轮工具实际可见返回；chunk_id 不是 callID。Node 只校验文档、来源和暂存 Git blob，不是产品测试。"
+}

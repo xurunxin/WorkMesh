@@ -28,7 +28,7 @@ export type AgentWebhookDelivery = {
 
 type DeliveryRow = AgentWebhookDelivery
 
-export type WebhookResponse = { status: number }
+export type WebhookResponse = { status: number; body?: string }
 export type ResolvedWebhookAddress = { address: string; family: 4 | 6 }
 export type WebhookDnsLookup = (hostname: string) => Promise<ResolvedWebhookAddress[]>
 export type WebhookFetch = (url: string, init: {
@@ -38,6 +38,7 @@ export type WebhookFetch = (url: string, init: {
   redirect: 'error'
   signal: AbortSignal
   resolvedAddresses: readonly ResolvedWebhookAddress[]
+  readBody?: boolean
 }) => Promise<WebhookResponse>
 
 export type AgentWebhookWorker = {
@@ -206,11 +207,17 @@ export const fetchResolvedWebhook: WebhookFetch = async (url, init) => new Promi
     ...(target.protocol === 'https:' ? { servername: target.hostname } : {}),
   }, response => {
     let bytes = 0
+    const chunks: Buffer[] = []
+    response.once('error', reject)
+    response.once('aborted', () => reject(new WebhookDeliveryError('WEBHOOK_RESPONSE_ABORTED')))
     response.on('data', (chunk: Buffer) => {
       bytes += chunk.length
-      if (bytes > 64 * 1024) request.destroy(new WebhookDeliveryError('WEBHOOK_RESPONSE_TOO_LARGE', false))
+      if (bytes > 64 * 1024) {
+        response.destroy(new WebhookDeliveryError('WEBHOOK_RESPONSE_TOO_LARGE', false))
+        request.destroy(new WebhookDeliveryError('WEBHOOK_RESPONSE_TOO_LARGE', false))
+      } else if (init.readBody) chunks.push(chunk)
     })
-    response.once('end', () => resolve({ status: response.statusCode ?? 0 }))
+    response.once('end', () => resolve({ status: response.statusCode ?? 0, ...(init.readBody ? { body: Buffer.concat(chunks).toString('utf8') } : {}) }))
   })
   request.once('error', reject)
   request.end(init.body)

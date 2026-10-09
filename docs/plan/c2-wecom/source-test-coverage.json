@@ -1,0 +1,212 @@
+{
+  "seqNum": 16,
+  "id": "kjOs4t_DtMyrkHTBFmpQ5",
+  "owner": "C2 执行者",
+  "originalTests": [
+    {
+      "id": "todo-16-T1",
+      "text": "出站协议/载荷上限/错误映射/限流/超时与失败恢复。",
+      "originalChecked": false,
+      "target": 16,
+      "testFile": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "#16 原验收1：出站协议/载荷上限/错误映射/限流/超时与失败恢复。",
+      "status": "待执行者新增/扩展断言，未实现",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-16-1 fake企业微信提供方出站提醒+canonical登录深链，配置复用C1无重复CRUD",
+        "R1-16-9 发送成功但ack丢失允许重送并对账；重启不依赖模型执行完成"
+      ],
+      "owner": "C2 执行者",
+      "targetTodoId": "kjOs4t_DtMyrkHTBFmpQ5"
+    },
+    {
+      "id": "todo-16-T2",
+      "text": "深链 canonical 路由、返回/焦点行为；登录后按当前 Human 鉴权。",
+      "originalChecked": false,
+      "target": 16,
+      "testFile": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "#16 原验收2：深链 canonical 路由、返回/焦点行为；登录后按当前 Human 鉴权。",
+      "status": "待执行者新增/扩展断言，未实现",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-16-1 fake企业微信提供方出站提醒+canonical登录深链，配置复用C1无重复CRUD"
+      ],
+      "owner": "C2 执行者",
+      "targetTodoId": "kjOs4t_DtMyrkHTBFmpQ5"
+    },
+    {
+      "id": "todo-16-T3",
+      "text": "目标撤销、停用、离队后抑制；转发后仅当前登录者有权内容可见。",
+      "originalChecked": false,
+      "target": 16,
+      "testFile": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "#16 原验收3：目标撤销、停用、离队后抑制；转发后仅当前登录者有权内容可见。",
+      "status": "待执行者新增/扩展断言，未实现",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-16-1 fake企业微信提供方出站提醒+canonical登录深链，配置复用C1无重复CRUD"
+      ],
+      "owner": "C2 执行者",
+      "targetTodoId": "kjOs4t_DtMyrkHTBFmpQ5"
+    },
+    {
+      "id": "todo-16-T4",
+      "text": "渠道侧零决策写入、零决策 outbox 行，不以不存在的绑定系统做假测试。",
+      "originalChecked": false,
+      "target": 16,
+      "testFile": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "#16 原验收4：渠道侧零决策写入、零决策 outbox 行，不以不存在的绑定系统做假测试。",
+      "status": "待执行者新增/扩展断言，未实现",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-16-1 fake企业微信提供方出站提醒+canonical登录深链，配置复用C1无重复CRUD",
+        "R1-16-9 发送成功但ack丢失允许重送并对账；重启不依赖模型执行完成"
+      ],
+      "owner": "C2 执行者",
+      "targetTodoId": "kjOs4t_DtMyrkHTBFmpQ5"
+    },
+    {
+      "id": "todo-16-T5",
+      "text": "渠道故障时网页仍可见；C1 管理入口复用，无重复 CRUD。",
+      "originalChecked": false,
+      "target": 16,
+      "testFile": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "#16 原验收5：渠道故障时网页仍可见；C1 管理入口复用，无重复 CRUD。",
+      "status": "待执行者新增/扩展断言，未实现",
+      "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+      "matrixCases": [
+        "R1-16-1 fake企业微信提供方出站提醒+canonical登录深链，配置复用C1无重复CRUD",
+        "R1-16-4 同delivery逻辑身份遵循C1重放；不承诺提供方external exactly-once"
+      ],
+      "owner": "C2 执行者",
+      "targetTodoId": "kjOs4t_DtMyrkHTBFmpQ5"
+    },
+    {
+      "id": "todo-16-T6",
+      "text": "若经裁决真实存在非决策回调，才增加相应官方签名/重放测试；仅出站时记录不适用依据。",
+      "originalChecked": false,
+      "target": 16,
+      "testFile": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "#16 原验收6：若经裁决真实存在非决策回调，才增加相应官方签名/重放测试；仅出站时记录不适用依据。",
+      "status": "待执行者新增/扩展断言，未实现",
+      "disposition": "撤回原假定回调验收；本批仅出站，签名/绑定/回调时窗不适用证据保留；不同协议需真实新范围裁决",
+      "matrixCases": [
+        "R1-16-1 fake企业微信提供方出站提醒+canonical登录深链，配置复用C1无重复CRUD",
+        "R1-16-4 同delivery逻辑身份遵循C1重放；不承诺提供方external exactly-once"
+      ],
+      "owner": "C2 执行者",
+      "targetTodoId": "kjOs4t_DtMyrkHTBFmpQ5"
+    }
+  ],
+  "originalDoD": [
+    {
+      "text": "## DoD 与依赖\n单渠道可用、上述适用断言/必需检查通过、渠道不成为正确性关键路径；协议来源/日期、配置说明与证据提交仓库，聊天只总结。\n依赖：G1、P1、R1、C1；不 blocks C3，模型目录为独立链。\n\n",
+      "sha256": "86314657479adffbac36380fa5844b9ac377eb80f3d93f78c5d282157559bc22",
+      "target": 16,
+      "owner": "C2 执行者",
+      "targetTodoId": "kjOs4t_DtMyrkHTBFmpQ5",
+      "acceptance": "原DoD保留，所有合法测试迁移到originalTests；矛盾旧要求按legacy处置和本任务共同契约撤换，不以历史绿灯放行"
+    }
+  ],
+  "matrix": [
+    {
+      "category": "happy path",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "fake企业微信提供方出站提醒+canonical登录深链，配置复用C1无重复CRUD",
+      "file": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "R1-16-1 fake企业微信提供方出站提醒+canonical登录深链，配置复用C1无重复CRUD",
+      "owner": "C2 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "待实现任务运行；本轮不预填功能成功"
+    },
+    {
+      "category": "unauthorized actor",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "转发后仅当前登录Human有权查看；target禁用/撤权/离队前再授权零外发",
+      "file": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "R1-16-2 转发后仅当前登录Human有权查看；target禁用/撤权/离队前再授权零外发",
+      "owner": "C2 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "待实现任务运行；本轮不预填功能成功"
+    },
+    {
+      "category": "invalid state transition",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "端点失败/载荷超限/渠道关闭分类准确，网页仍可用，零决定写入",
+      "file": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "R1-16-3 端点失败/载荷超限/渠道关闭分类准确，网页仍可用，零决定写入",
+      "owner": "C2 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "待实现任务运行；本轮不预填功能成功"
+    },
+    {
+      "category": "duplicate idempotency key",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "同delivery逻辑身份遵循C1重放；不承诺提供方external exactly-once",
+      "file": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "R1-16-4 同delivery逻辑身份遵循C1重放；不承诺提供方external exactly-once",
+      "owner": "C2 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "待实现任务运行；本轮不预填功能成功"
+    },
+    {
+      "category": "stale revision",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "target/source revision陈旧时不发过时敏感内容且不产生审批",
+      "file": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "R1-16-5 target/source revision陈旧时不发过时敏感内容且不产生审批",
+      "owner": "C2 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "待实现任务运行；本轮不预填功能成功"
+    },
+    {
+      "category": "transaction failure",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "复用C1 intent/attempt事务，适配器异常不把未发送记为delivered",
+      "file": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "R1-16-6 复用C1 intent/attempt事务，适配器异常不把未发送记为delivered",
+      "owner": "C2 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "待实现任务运行；本轮不预填功能成功"
+    },
+    {
+      "category": "webhook/job replay",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "仅出站所以入站签名/回调/绑定不适用；发送job重放继承C1 fence",
+      "file": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "R1-16-7 仅出站所以入站签名/回调/绑定不适用；发送job重放继承C1 fence",
+      "owner": "C2 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "待实现任务运行；本轮不预填功能成功"
+    },
+    {
+      "category": "concurrent request",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "多个目标及频控并行发送，旧fence不确认，失败目标独立重试",
+      "file": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "R1-16-8 多个目标及频控并行发送，旧fence不确认，失败目标独立重试",
+      "owner": "C2 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "待实现任务运行；本轮不预填功能成功"
+    },
+    {
+      "category": "server restart/outbox recovery",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "发送成功但ack丢失允许重送并对账；重启不依赖模型执行完成",
+      "file": "apps/worker/src/wecom-notifications.test.ts",
+      "caseName": "R1-16-9 发送成功但ack丢失允许重送并对账；重启不依赖模型执行完成",
+      "owner": "C2 执行者",
+      "fileState": "待创建；归本feature执行者",
+      "result": "待实现任务运行；本轮不预填功能成功"
+    }
+  ]
+}

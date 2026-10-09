@@ -1,0 +1,549 @@
+{
+  "generatedAt": "2026-10-08T16:31:07.229496+00:00",
+  "current": {
+    "stage": "review",
+    "input": "docs/reviews/c2/product-input.json",
+    "authorizedDesignHead": "178ac8cb297a78ea830f23845aa1d59972cca149",
+    "testedBaseHead": "f7c2265b4abd1f06ca97be5c2a16a1568fc2b767",
+    "actualMainInput": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+    "matrix": [
+      {
+        "id": "R1-16-1",
+        "category": "happy path",
+        "applicable": true,
+        "cases": [
+          {
+            "file": "apps/worker/src/wecom-notifications.test.ts",
+            "scenario": "低敏 Markdown、4096 UTF-8 边界、errcode=0 及固定公共地址连接",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          },
+          {
+            "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+            "scenario": "同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          },
+          {
+            "file": "apps/web/e2e/wecom-notifications.spec.ts",
+            "scenario": "当前 Human 登录 canonical 深链与可读正对照",
+            "receipt": "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+          }
+        ],
+        "result": "真实 fake/数据库/Redis/网页检查通过",
+        "evidence": [
+          "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+        ]
+      },
+      {
+        "id": "R1-16-2",
+        "category": "unauthorized actor",
+        "applicable": true,
+        "cases": [
+          {
+            "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+            "scenario": "当前 disabled/inactive/revoked/membership/changed/muted 撤权先提交，真实授权锁后零 fake provider 调用；Stop 先提交",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          },
+          {
+            "file": "apps/web/e2e/wecom-notifications.spec.ts",
+            "scenario": "Bob 转发 GET 404、无上一 Human 缓存，失权后重新登录",
+            "receipt": "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+          }
+        ],
+        "result": "真实 fake/数据库/Redis/网页检查通过",
+        "evidence": [
+          "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+        ]
+      },
+      {
+        "id": "R1-16-3",
+        "category": "invalid state transition",
+        "applicable": true,
+        "cases": [
+          {
+            "file": "apps/worker/src/wecom-notifications.test.ts",
+            "scenario": "秘密端点、非 HTTPS origin、私网 DNS、开放重定向与编码路径拒绝",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          },
+          {
+            "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+            "scenario": "Redis 状态丢失：共享冷却 120 秒，旧 token 不恢复发送",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          }
+        ],
+        "result": "真实 fake/数据库/Redis/网页检查通过",
+        "evidence": [
+          "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+        ]
+      },
+      {
+        "id": "R1-16-4",
+        "category": "duplicate idempotency key",
+        "applicable": true,
+        "cases": [
+          {
+            "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+            "scenario": "同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          },
+          {
+            "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+            "scenario": "admits only exact assigned Human targets and deduplicates concurrent source replay and fan-out",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          }
+        ],
+        "result": "真实 fake/数据库/Redis/网页检查通过",
+        "evidence": [
+          "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+        ]
+      },
+      {
+        "id": "R1-16-5",
+        "category": "stale revision",
+        "applicable": true,
+        "cases": [
+          {
+            "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+            "scenario": "changed target 锁后抑制、旧 claim fence 拒绝",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          },
+          {
+            "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+            "scenario": "allows one current holder, rejects stale prepare/ack and preserves one logical attempt",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          },
+          {
+            "file": "apps/api/integration/notification-channels.integration.test.ts",
+            "scenario": "本人 target CRUD、If-Match 与异体幂等冲突",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          }
+        ],
+        "result": "真实 fake/数据库/Redis/网页检查通过",
+        "evidence": [
+          "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+        ]
+      },
+      {
+        "id": "R1-16-6",
+        "category": "transaction failure",
+        "applicable": true,
+        "cases": [
+          {
+            "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+            "scenario": "checkpoint 事务回滚不外发；发送后进程崩溃重启进入 uncertain，旧 fence 不 ACK",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          },
+          {
+            "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+            "scenario": "recovers source commit, admission rollback and checkpoint commit without partial fan-out",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          }
+        ],
+        "result": "真实 fake/数据库/Redis/网页检查通过",
+        "evidence": [
+          "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+        ]
+      },
+      {
+        "id": "R1-16-7",
+        "category": "webhook/job replay",
+        "applicable": true,
+        "cases": [
+          {
+            "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+            "scenario": "网络未知不自动重送；C1 显式对账复用原 delivery/fence，渠道零决策事件/outbox",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          },
+          {
+            "file": "apps/worker/integration/stage4-automation.integration.test.ts",
+            "scenario": "replays outbox after intent commit without duplicate attempts or notification event recursion",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          }
+        ],
+        "result": "真实 fake/数据库/Redis/网页检查通过",
+        "evidence": [
+          "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+        ]
+      },
+      {
+        "id": "R1-16-8",
+        "category": "concurrent request",
+        "applicable": true,
+        "cases": [
+          {
+            "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+            "scenario": "实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条；并发 Worker 原子额度上限；崩溃后仅 token 过期；授权锁等待跨窗口；可信完成晚于发送截止上界；真实 Redis TIME 与部分 bucket 丢失",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          }
+        ],
+        "result": "真实 fake/数据库/Redis/网页检查通过",
+        "evidence": [
+          "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+        ]
+      },
+      {
+        "id": "R1-16-9",
+        "category": "server restart/outbox recovery",
+        "applicable": true,
+        "cases": [
+          {
+            "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+            "scenario": "C2 实际五秒 Abort 结束请求后进入 uncertain，不自动重送且额度保留 D+60；checkpoint/发送后崩溃与原 fence 对账",
+            "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          },
+          {
+            "file": "apps/web/e2e/wecom-notifications.spec.ts",
+            "scenario": "无提供方/Worker 的网页可见正对照、重新加载、Back/Forward 和关闭焦点",
+            "receipt": "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+          }
+        ],
+        "result": "真实 fake/数据库/Redis/网页检查通过",
+        "evidence": [
+          "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+        ]
+      }
+    ],
+    "originalTests": [
+      {
+        "id": "todo-16-T1",
+        "sourceText": "出站协议/载荷上限/错误映射/限流/超时与失败恢复。",
+        "currentSpecClause": "出站协议、载荷上限、错误映射、频控、timeout 与失败恢复",
+        "matrixIds": [
+          "R1-16-1",
+          "R1-16-3",
+          "R1-16-8",
+          "R1-16-9"
+        ],
+        "result": "通过 fake 验证"
+      },
+      {
+        "id": "todo-16-T2",
+        "sourceText": "深链 canonical 路由、返回/焦点行为；登录后按当前 Human 鉴权。",
+        "currentSpecClause": "canonical、安全登录返回、当前 Human 鉴权和焦点",
+        "matrixIds": [
+          "R1-16-1",
+          "R1-16-2"
+        ],
+        "result": "通过 fake 验证"
+      },
+      {
+        "id": "todo-16-T3",
+        "sourceText": "目标撤销、停用、离队后抑制；转发后仅当前登录者有权内容可见。",
+        "currentSpecClause": "停用、撤销、离队、Stop 后抑制；无权转发者不可见",
+        "matrixIds": [
+          "R1-16-2",
+          "R1-16-5"
+        ],
+        "result": "通过 fake 验证"
+      },
+      {
+        "id": "todo-16-T4",
+        "sourceText": "渠道侧零决策写入、零决策 outbox 行，不以不存在的绑定系统做假测试。",
+        "currentSpecClause": "渠道零决策事件/决策 outbox",
+        "matrixIds": [
+          "R1-16-4",
+          "R1-16-7"
+        ],
+        "result": "通过 fake 验证"
+      },
+      {
+        "id": "todo-16-T5",
+        "sourceText": "渠道故障时网页仍可见；C1 管理入口复用，无重复 CRUD。",
+        "currentSpecClause": "网页故障回退及 C1 管理入口复用",
+        "matrixIds": [
+          "R1-16-9"
+        ],
+        "result": "通过 fake 验证"
+      },
+      {
+        "id": "todo-16-T6",
+        "sourceText": "若经裁决真实存在非决策回调，才增加相应官方签名/重放测试；仅出站时记录不适用依据。",
+        "currentSpecClause": "本卡仅出站，无回调签名/绑定解绑/时窗依赖；保留旧原文及既有修订处置",
+        "matrixIds": [],
+        "result": "不适用：Webhook POST 无入站 endpoint 或 Human 绑定系统"
+      }
+    ],
+    "requiredChecks": [
+      {
+        "label": "lint",
+        "command": [
+          "pnpm.cmd",
+          "lint"
+        ],
+        "exitCode": 0,
+        "source": {
+          "path": "source-29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd.json",
+          "bytes": 277214,
+          "sha256": "29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd",
+          "files": 889
+        },
+        "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+      },
+      {
+        "label": "typecheck",
+        "command": [
+          "pnpm.cmd",
+          "typecheck"
+        ],
+        "exitCode": 0,
+        "source": {
+          "path": "source-29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd.json",
+          "bytes": 277214,
+          "sha256": "29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd",
+          "files": 889
+        },
+        "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+      },
+      {
+        "label": "test",
+        "command": [
+          "pnpm.cmd",
+          "test"
+        ],
+        "exitCode": 0,
+        "source": {
+          "path": "source-29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd.json",
+          "bytes": 277214,
+          "sha256": "29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd",
+          "files": 889
+        },
+        "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+      },
+      {
+        "label": "test-integration",
+        "command": [
+          "pnpm.cmd",
+          "test:integration"
+        ],
+        "exitCode": 0,
+        "source": {
+          "path": "source-29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd.json",
+          "bytes": 277214,
+          "sha256": "29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd",
+          "files": 889
+        },
+        "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+      },
+      {
+        "label": "test-e2e",
+        "command": [
+          "pnpm.cmd",
+          "test:e2e"
+        ],
+        "exitCode": 0,
+        "source": {
+          "path": "source-29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd.json",
+          "bytes": 277214,
+          "sha256": "29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd",
+          "files": 889
+        },
+        "receipt": "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+      }
+    ],
+    "testPlacement": "复用既有 API integration Redis 夹具；C1 Worker 回归保持原文件，CI 工作流/策略未修改。已审产品方案文件原样保留，实际文件映射在本字段追加。",
+    "outbound": "仅 fake provider，未真实外发",
+    "dod": {
+      "单渠道": "fake 全链通过，真实外发未授权/未运行",
+      "适用断言与本机必需检查": "通过；具体 skip 见回执",
+      "网页非关键路径": "fake 故障与普通网页正对照通过",
+      "协议配置证据": "已归档，原始来源与历史检查未改写",
+      "独立成果审查": "待",
+      "视觉停点": "待 Chief 阅读实际前后截图",
+      "当前RequiredCI": "待推送后真实 PR 检查",
+      "actualMain": "产品尚未合入，不宣称整卡完成"
+    },
+    "review": "docs/reviews/c2/product-review.md",
+    "status": "产品本机验证完成；等待独审/视觉停点/当前 CI/actual main，历史规划状态不覆写"
+  },
+  "runs": [
+    {
+      "run": "20261008T141924Z-08b193",
+      "mode": "targeted",
+      "exit": 1,
+      "failure": "prepare-s3 failed",
+      "receipt": "docs/reviews/c2/product/20261008T141924Z-08b193/results.json"
+    },
+    {
+      "run": "20261008T141950Z-1c667a",
+      "mode": "targeted",
+      "exit": 1,
+      "failure": "'gbk' codec can't encode character '\\u2713' in position 98: illegal multibyte sequence",
+      "receipt": "docs/reviews/c2/product/20261008T141950Z-1c667a/results.json"
+    },
+    {
+      "run": "20261008T142039Z-852ed6",
+      "mode": "targeted",
+      "exit": 0,
+      "failure": null,
+      "receipt": "docs/reviews/c2/product/20261008T142039Z-852ed6/results.json"
+    },
+    {
+      "run": "20261008T142326Z-2635b7",
+      "mode": "e2e",
+      "exit": 1,
+      "failure": "c2-e2e failed",
+      "receipt": "docs/reviews/c2/product/20261008T142326Z-2635b7/results.json"
+    },
+    {
+      "run": "20261008T142422Z-800f88",
+      "mode": "e2e",
+      "exit": 1,
+      "failure": "c2-e2e failed",
+      "receipt": "docs/reviews/c2/product/20261008T142422Z-800f88/results.json"
+    },
+    {
+      "run": "20261008T142501Z-23347d",
+      "mode": "e2e",
+      "exit": 1,
+      "failure": "c2-e2e failed",
+      "receipt": "docs/reviews/c2/product/20261008T142501Z-23347d/results.json"
+    },
+    {
+      "run": "20261008T142623Z-6d6fcb",
+      "mode": "e2e",
+      "exit": 1,
+      "failure": "c2-e2e failed",
+      "receipt": "docs/reviews/c2/product/20261008T142623Z-6d6fcb/results.json"
+    },
+    {
+      "run": "20261008T142845Z-d2da88",
+      "mode": "targeted",
+      "exit": 1,
+      "failure": "c1-c2-integration failed",
+      "receipt": "docs/reviews/c2/product/20261008T142845Z-d2da88/results.json"
+    },
+    {
+      "run": "20261008T143103Z-ea28b5",
+      "mode": "full",
+      "exit": 1,
+      "failure": "test failed",
+      "receipt": "docs/reviews/c2/product/20261008T143103Z-ea28b5/results.json"
+    },
+    {
+      "run": "20261008T144059Z-000dbc",
+      "mode": "full",
+      "exit": 1,
+      "failure": "test failed",
+      "receipt": "docs/reviews/c2/product/20261008T144059Z-000dbc/results.json"
+    },
+    {
+      "run": "20261008T145209Z-b49b85",
+      "mode": "full",
+      "exit": 1,
+      "failure": "test-e2e failed",
+      "receipt": "docs/reviews/c2/product/20261008T145209Z-b49b85/results.json"
+    },
+    {
+      "run": "20261008T150955Z-5f8e65",
+      "mode": "targeted",
+      "exit": 0,
+      "failure": null,
+      "receipt": "docs/reviews/c2/product/20261008T150955Z-5f8e65/results.json"
+    },
+    {
+      "run": "20261008T151344Z-0be08d",
+      "mode": "visual",
+      "exit": 1,
+      "failure": "baseline-ui failed",
+      "receipt": "docs/reviews/c2/product/20261008T151344Z-0be08d/results.json"
+    },
+    {
+      "run": "20261008T151539Z-ce775c",
+      "mode": "visual",
+      "exit": 1,
+      "failure": "baseline-ui failed",
+      "receipt": "docs/reviews/c2/product/20261008T151539Z-ce775c/results.json"
+    },
+    {
+      "run": "20261008T151639Z-481561",
+      "mode": "visual",
+      "exit": 1,
+      "failure": "baseline-ui failed",
+      "receipt": "docs/reviews/c2/product/20261008T151639Z-481561/results.json"
+    },
+    {
+      "run": "20261008T151908Z-604b0c",
+      "mode": "visual",
+      "exit": 0,
+      "failure": null,
+      "receipt": "docs/reviews/c2/product/20261008T151908Z-604b0c/results.json"
+    },
+    {
+      "run": "20261008T152058Z-16bf0f",
+      "mode": "full",
+      "exit": 1,
+      "failure": "lint failed",
+      "receipt": "docs/reviews/c2/product/20261008T152058Z-16bf0f/results.json"
+    },
+    {
+      "run": "20261008T152237Z-75d17a",
+      "mode": "full",
+      "exit": 1,
+      "failure": "test failed",
+      "receipt": "docs/reviews/c2/product/20261008T152237Z-75d17a/results.json"
+    },
+    {
+      "run": "20261008T152932Z-28a255",
+      "mode": "full",
+      "exit": 1,
+      "failure": "test failed",
+      "receipt": "docs/reviews/c2/product/20261008T152932Z-28a255/results.json"
+    },
+    {
+      "run": "20261008T153826Z-31123a",
+      "mode": "full",
+      "exit": 1,
+      "failure": "test-e2e failed",
+      "receipt": "docs/reviews/c2/product/20261008T153826Z-31123a/results.json"
+    },
+    {
+      "run": "20261008T155756Z-fd0f13",
+      "mode": "full",
+      "exit": 1,
+      "failure": "web-unit-sequential failed",
+      "receipt": "docs/reviews/c2/product/20261008T155756Z-fd0f13/results.json"
+    },
+    {
+      "run": "20261008T160516Z-c88908",
+      "mode": "full",
+      "exit": 1,
+      "failure": "test-e2e failed",
+      "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+    },
+    {
+      "run": "20261008T162342Z-55df46",
+      "mode": "root-e2e",
+      "exit": 0,
+      "failure": null,
+      "receipt": "docs/reviews/c2/product/20261008T162342Z-55df46/results.json"
+    }
+  ],
+  "visualBaseline": "docs/reviews/c2/product/20261008T151908Z-604b0c/results.json",
+  "history": "原文档 raw ZIP/来源/旧首败和删除回执缺口保持原义，不以汇总补造缺失时间或退出码",
+  "currentQuotaRecovery": {
+    "review": "docs/reviews/c2/quota-recovery/review.md",
+    "verification": "docs/reviews/c2/quota-recovery/verification.json",
+    "inputHead": "61736fa2298279f76642309ee2e2478439258f80",
+    "actualMainInput": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+    "case": {
+      "file": "apps/api/integration/wecom-notifications.integration.test.ts",
+      "name": "quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效",
+      "matrixIds": [
+        "R1-16-1",
+        "R1-16-8",
+        "R1-16-9"
+      ],
+      "receipt": "docs/reviews/c2/product/20261008T165722Z-99576c/results.json",
+      "result": "真实 Redis Lua 通过；仅 TIME 替换为受控时钟，serial TTL 到期单独模拟；保留原生 Redis TIME 用例"
+    },
+    "status": "本轮五项必需本机检查通过；待独审/latest CI/actual main/Chief"
+  }
+}

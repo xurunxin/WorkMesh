@@ -404,3 +404,19 @@ services:
 保存为 `compose.model-presets.yml`，搭配相应基础 Compose 文件与既有部署 env 运行 `docker compose -f docker-compose.production.yml -f compose.model-presets.yml up -d api`。Lite 改用 `docker-compose.lite.yml`；开发类改用 `docker-compose.yml`。保持文件对容器非 root 用户可读；不要设置 URL 或网络共享路径。未指定路径时使用构建产物中的内置目录，不需要挂载文件。
 
 首批只有八家国内提供方及 OpenAI。北京百炼 Key 与业务空间域名、智谱 Coding Plan、方舟接入点、国内/国际凭据均有条件；不构造模板接入点，不从官方格式支持推出 WorkMesh 兼容。出处与逐家核对结果见 `docs/reviews/c3/official-source-review.md`。维护条目必须复读官方调用说明与模型资料，更新核对日期和目录版本；不调用付费推理或验证凭据 API。
+
+## 企业微信出站提醒
+
+`WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS=true` 在 API/Worker 同时开启后，Worker 注册单一企业微信群组 Webhook 适配器；默认关闭。需要既有 Redis profile、`REDIS_URL` 和可从企业微信打开的 HTTPS `WEB_ORIGIN`（仅 origin，不带路径、凭据、查询或 fragment）。noRedis 不支持该渠道。API 的 `configured_providers` 只报告部署能力，不证明 Worker 健康、凭据有效或已成功投递。
+
+当前 Human 在既有个人渠道设置中管理自己的目标，部署方先确认企业及目标群允许“消息推送（原群机器人）”。目标秘密沿用 C1 加密存储，不能写到配置样例、聊天、日志或证据；完整目标必须是 `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=<编码后的秘密>`，不接受其它主机、路径、参数、端口、凭据、fragment、重定向或私网 DNS。网络须允许该 HTTPS 主机并维持正常证书验证。
+
+消息只有固定通用提醒和 WorkMesh canonical 登录深链，Markdown 内容最多 4096 UTF-8 字节；不发送事项正文、人员信息、卡片决策或身份绑定。网页登录后按当前 Human 重新鉴权，转发不授予权限。授权撤销先于发送 checkpoint 提交时零外发，提交后的在途请求不能召回。
+
+当前 main 的未登录消费者会跳到登录页，登录后回首页且不保留事项定位；登录后需重新打开消息链接。安全 returnTo、焦点/BackForward 和新视觉延后至 UI 重设计，未接受或计为本轮通过。本轮保留 HTTPS canonical URL 生成与现有页面/接口的当前 Human 授权兼容检查。
+
+频控按秘密 HMAC 指纹跨 Worker 与重复 target 共用 Redis Lua：最多 20 份额度、另有串行 token。额度至少保留至实际完成或安全终止后 60 秒；未知或崩溃保留至发送截止上界 D+60 秒。Redis 丢状态共同冷却至少 120 秒，Redis 不可用则停止准入。等待不消耗发送失败预算，也不阻止普通网页读取。不得删除频控 key 来加速重试。
+
+有效成功响应才记 delivered；提供方明确拒绝记安全错误码，已发出后的超时、断连或畸形响应进入 uncertain，不能自动重发。个人设置的既有投递对账入口由当前目标 owner 显式确认 delivered、retry 或 dead；retry 复用原 delivery/effectKey，仍重新准入和鉴权，至少一次不能保证外部恰好一次。
+
+协议核实及官方原始字节见 `docs/plan/c2-wecom/README.md`、`official/retrieval.json` 和无损归档。只出站没有入站签名、绑定或回调时窗依赖。本轮验收仅用 fake provider；真实外发须另获用户明确授权。

@@ -24,7 +24,7 @@
   },
   "inputs": [
     {
-      "path": "current-spec.md",
+      "path": "history/current-spec-c800.md",
       "bytes": 7582,
       "sha256": "b10b213d1f1c555985845cd3fa93550b70894639e3e89916d93c052ece0a58ed"
     },
@@ -37,6 +37,11 @@
       "path": "preservation.json",
       "bytes": 42090,
       "sha256": "853a54850d38c4e0d9c1372a8cbf07e8a92a1564a70acd69a50fa5791eb61942"
+    },
+    {
+      "path": "current-spec.md",
+      "bytes": 8416,
+      "sha256": "60331885982c7f472f4e111d8e0fd3f96c08c1165e010dc8ef175a7f731123c4"
     }
   ],
   "historicalEmbeddedHash": "130e166... 属旧早期源，不属于本次完整 Chief 旧卡快照",
@@ -64,5 +69,22 @@
       ],
       "result": "精确同 c768；不使用 FETCH_HEAD"
     }
-  ]
+  ],
+  "currentMain": {
+    "sha": "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
+    "observedAt": "2026-10-09T05:07:55Z",
+    "tool": "mcp__tds__git",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "fetchArgs": [
+      "fetch",
+      "origin",
+      "refs/heads/main"
+    ],
+    "meaning": "正常整合真实 main；历史 main 字段及 c800 来源保留历史含义"
+  },
+  "currentCombination": "c2-combination/README.md"
 }

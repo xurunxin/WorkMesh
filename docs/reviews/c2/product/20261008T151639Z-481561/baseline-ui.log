@@ -1,0 +1,11 @@
+TypeError: Cannot read properties of undefined (reading 'map')
+    at file:///C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/.tmp/c2-product-20261008T151639Z-481561/playwright.baseline.config.ts:1:409
+    at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+    at requireOrImport (C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1147:12)
+    at loadUserConfig (C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1334:46)
+    at loadConfig (C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1341:22)
+    at Object.loadConfigFromFile (C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1553:10)
+    at runTests (C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\cli\testActions.js:46:18)
+    at _Command.<anonymous> (C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\program.js:53:7)

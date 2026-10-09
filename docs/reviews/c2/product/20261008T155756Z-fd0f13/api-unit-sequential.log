@@ -1,0 +1,110 @@
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/api
+   • Running test in 1 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/git-provider:build: cache miss, executing 46ef844f8856803e
+@workmesh/git-provider:build:
+@workmesh/git-provider:build: > @workmesh/git-provider@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\git-provider
+@workmesh/git-provider:build: > tsc -p tsconfig.json
+@workmesh/git-provider:build:
+@workmesh/observability:build: cache miss, executing de1092dedba00ae4
+@workmesh/observability:build:
+@workmesh/observability:build: > @workmesh/observability@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\observability
+@workmesh/observability:build: > tsc -p tsconfig.json
+@workmesh/observability:build:
+@workmesh/artifact-storage:build: cache miss, executing 41ac149882b01c93
+@workmesh/artifact-storage:build:
+@workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\artifact-storage
+@workmesh/artifact-storage:build: > tsc -p tsconfig.json
+@workmesh/artifact-storage:build:
+@workmesh/contracts:build: cache miss, executing 5d1ae81eef37ea94
+@workmesh/contracts:build:
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build:
+@workmesh/config:build: cache miss, executing 310311f3c6ce6f44
+@workmesh/config:build:
+@workmesh/config:build: > @workmesh/config@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\config
+@workmesh/config:build: > tsc -p tsconfig.json
+@workmesh/config:build:
+@workmesh/a2a-adapter:build: cache miss, executing 127d658506b8a2a6
+@workmesh/a2a-adapter:build:
+@workmesh/a2a-adapter:build: > @workmesh/a2a-adapter@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\a2a-adapter
+@workmesh/a2a-adapter:build: > tsc -p tsconfig.json
+@workmesh/a2a-adapter:build:
+@workmesh/domain:build: cache miss, executing 42b4b29af16a5c28
+@workmesh/domain:build:
+@workmesh/domain:build: > @workmesh/domain@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\domain
+@workmesh/domain:build: > tsc -p tsconfig.json
+@workmesh/domain:build:
+@workmesh/db:build: cache miss, executing b5f7f8d0217ffeab
+@workmesh/db:build:
+@workmesh/db:build: > @workmesh/db@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\db
+@workmesh/db:build: > tsc -p tsconfig.json
+@workmesh/db:build:
+@workmesh/recovery:build: cache miss, executing 1f2a5ec1281d3328
+@workmesh/recovery:build:
+@workmesh/recovery:build: > @workmesh/recovery@ build C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\packages\recovery
+@workmesh/recovery:build: > tsc -p tsconfig.build.json
+@workmesh/recovery:build:
+@workmesh/api:test: cache miss, executing 57cfdec554a7fe40
+@workmesh/api:test:
+@workmesh/api:test: > @workmesh/api@ test C:\Users\xurx\.tds\workspaces\01a11b85-41f9-74f5-b456-7083d4d83e5e\apps\api
+@workmesh/api:test: > vitest run --fileParallelism=false
+@workmesh/api:test:
+@workmesh/api:test:
+@workmesh/api:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e/apps/api
+@workmesh/api:test:
+@workmesh/api:test:  ✓ src/auth-rate-limit/server-rate-limit.test.ts (4 tests) 8312ms
+@workmesh/api:test:  ✓ src/health.test.ts (2 tests) 4034ms
+@workmesh/api:test:  ✓ src/authz/route-policy.test.ts (8 tests) 3486ms
+@workmesh/api:test:    ✓ Fastify route policy inventory > registers the complete production route surface  3450ms
+@workmesh/api:test:  ✓ src/origin-routing.test.ts (5 tests) 2824ms
+@workmesh/api:test:  ✓ src/live-read-authorization.test.ts (9 tests) 551ms
+@workmesh/api:test:    ✓ live paged-read authorization > audits all 25 Agent-readable routes derived from the 28-route pagination inventory  535ms
+@workmesh/api:test:  ✓ src/realtime/coordinator.test.ts (4 tests) 312ms
+@workmesh/api:test:  ✓ src/bootstrap-auth.test.ts (14 tests) 691ms
+@workmesh/api:test:    ✓ bootstrap request authentication > accepts only the exact explicit bootstrap header and returns an irreversible stable binding  482ms
+@workmesh/api:test:  ✓ src/model-presets.test.ts (5 tests) 563ms
+@workmesh/api:test:    ✓ 只读部署模型目录 > 并发读取不改变冻结目录  528ms
+@workmesh/api:test:  ✓ load/sse.test.ts (10 tests) 195ms
+@workmesh/api:test:  ✓ src/auth-rate-limit/trusted-proxy.test.ts (5 tests) 460ms
+@workmesh/api:test:    ✓ trusted proxy address derivation > ignores spoofed forwarding headers when the socket peer is not trusted  448ms
+@workmesh/api:test:  ✓ src/auth-idempotency-inventory.test.ts (4 tests) 219ms
+@workmesh/api:test:  ✓ src/realtime/routes.test.ts (7 tests) 54ms
+@workmesh/api:test:  ✓ src/pagination.test.ts (9 tests) 55ms
+@workmesh/api:test:  ✓ src/agent/commands.test.ts (9 tests) 20ms
+@workmesh/api:test:  ✓ src/human-attention/projection.test.ts (9 tests) 105ms
+@workmesh/api:test:  ✓ src/pagination-inventory.test.ts (3 tests) 30ms
+@workmesh/api:test:  ✓ src/agent/guard.test.ts (9 tests) 11ms
+@workmesh/api:test:  ✓ src/auth-rate-limit/auth-rate-limit.test.ts (4 tests) 14ms
+@workmesh/api:test:  ✓ src/agent/approval-projection.test.ts (4 tests) 15ms
+@workmesh/api:test:  ✓ src/commands-lock-order.test.ts (3 tests) 10ms
+@workmesh/api:test:  ✓ src/work-item-executors.test.ts (5 tests) 14ms
+@workmesh/api:test:  ✓ src/workbench-llm-connections.test.ts (3 tests) 9ms
+@workmesh/api:test:  ✓ src/authz/authorize.test.ts (4 tests) 11ms
+@workmesh/api:test:  ✓ load/readiness.test.ts (3 tests) 9ms
+@workmesh/api:test:  ✓ load/evidence-continuation.test.ts (6 tests) 6ms
+@workmesh/api:test:  ✓ src/realtime/event-reader.test.ts (3 tests) 6ms
+@workmesh/api:test:  ✓ src/authz/event-audience.test.ts (6 tests) 5ms
+@workmesh/api:test:  ✓ load/worker-evidence.test.ts (5 tests) 6ms
+@workmesh/api:test:  ✓ src/realtime/cursor.test.ts (7 tests) 5ms
+@workmesh/api:test:  ✓ src/authz/request-metadata.test.ts (5 tests) 3ms
+@workmesh/api:test:  ✓ src/human-attention/routes.test.ts (2 tests) 4ms
+@workmesh/api:test:  ✓ src/auth-idempotency.test.ts (1 test) 3ms
+@workmesh/api:test:  ✓ src/comment-event-semantics.test.ts (1 test) 4ms
+@workmesh/api:test:  ✓ src/recovery/projection.test.ts (1 test) 3ms
+@workmesh/api:test:
+@workmesh/api:test:  Test Files  34 passed (34)
+@workmesh/api:test:       Tests  179 passed (179)
+@workmesh/api:test:    Start at  23:59:46
+@workmesh/api:test:    Duration  78.49s (transform 4.24s, setup 0ms, collect 22.43s, tests 22.05s, environment 7ms, prepare 14.92s)
+@workmesh/api:test:
+
+ Tasks:    10 successful, 10 total
+Cached:    0 cached, 10 total
+  Time:    2m12.261s
+
+ WARNING  no output files found for task @workmesh/api#test. Please check your `outputs` key in `turbo.json`

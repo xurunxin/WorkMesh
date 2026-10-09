@@ -1,0 +1,97 @@
+{
+  "startedAt": "2026-10-08T16:40:09.488946+00:00",
+  "checks": [
+    {
+      "command": [
+        "node",
+        "--version"
+      ],
+      "startedAt": "2026-10-08T16:40:09.488956+00:00",
+      "finishedAt": "2026-10-08T16:40:09.555200+00:00",
+      "exitCode": 0,
+      "stdout": "v24.20.0\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "docs/plan/c2-wecom/verify-archive.mjs"
+      ],
+      "startedAt": "2026-10-08T16:40:09.555213+00:00",
+      "finishedAt": "2026-10-08T16:40:13.204759+00:00",
+      "exitCode": 0,
+      "stdout": "{\"结果\":\"通过\",\"原始映射\":26,\"ZIP成员\":13,\"清单文件\":34,\"本地链接\":39,\"六原测试\":6,\"九类\":9,\"历史规划矩阵\":\"未实施/未运行；保持冻结来源\",\"当前产品结果\":\"另见 docs/reviews/c2/product-review.md，不由本归档检查判定\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+      ],
+      "startedAt": "2026-10-08T16:40:13.204781+00:00",
+      "finishedAt": "2026-10-08T16:40:13.376827+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code",
+        "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+        "--",
+        ".github/workflows/ci.yml",
+        "apps/worker/integration/stage4-automation.integration.test.ts"
+      ],
+      "startedAt": "2026-10-08T16:40:13.376845+00:00",
+      "finishedAt": "2026-10-08T16:40:13.425608+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "gate": "仅本机与归档核验；独审、视觉停点、当前 Required CI 和 actual main 尚待完成",
+  "jsonChecks": {
+    "files": 84,
+    "result": "通过"
+  },
+  "approvedDesign": [
+    {
+      "path": "docs/plan/c2-wecom/implementation-plan.md",
+      "approvedHead": "178ac8cb297a78ea830f23845aa1d59972cca149",
+      "gitBlobSha256": "8369303eb7aedffe3d289a97ce923951843f9629b9580288fc37c694061ceb55",
+      "unchanged": true
+    },
+    {
+      "path": "docs/plan/c2-wecom/product-design.md",
+      "approvedHead": "178ac8cb297a78ea830f23845aa1d59972cca149",
+      "gitBlobSha256": "bb2e6a5eda2ac4fe893e10ebe3e7e6f1de839a719bf4fc1940dc7759ec34f0a5",
+      "unchanged": true
+    }
+  ],
+  "testedSource": {
+    "files": 889,
+    "fingerprint": "29d859f393bb31033811448ce44743e7b12f82e4c28d1490c2db65d7f271e4fd",
+    "actualIndexedBlobCheck": "通过",
+    "index": "tested-source-git-bytes.json"
+  },
+  "zipChecks": {
+    "archives": 49,
+    "crc": "通过",
+    "worktreeVsGitBlob": "逐 ZIP 字节一致"
+  },
+  "temporaryPaths": {
+    "records": 23,
+    "allAbsent": true,
+    "result": "逐路径回执见 temporary-cleanup.json；此处只读确认不存在"
+  },
+  "reviewLinks": "通过",
+  "inputHead": "f7c2265b4abd1f06ca97be5c2a16a1568fc2b767",
+  "finishedAt": "2026-10-08T16:40:16.936523+00:00",
+  "result": "通过"
+}
