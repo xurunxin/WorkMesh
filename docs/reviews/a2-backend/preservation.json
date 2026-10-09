@@ -1,0 +1,826 @@
+{
+  "capturedAt": "2026-10-09T04:07:39.666Z",
+  "originalHead": "6f059e3642291f9ab622db37e9de167d070574f2",
+  "main": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+  "objectProofs": [
+    {
+      "commit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "type": "commit",
+      "tree": "4dcd01f12f30610b15d551f9fdd6d7351925f0e6"
+    },
+    {
+      "commit": "741623eca9d26439e575d6119f7ed97d37df1fde",
+      "type": "commit",
+      "tree": "80d36fdc88e487919e0cf1ae56fe1ce5a43075ce"
+    },
+    {
+      "commit": "380aad996489dbdabddd212be8f45edbcdda7209",
+      "type": "commit",
+      "tree": "f4cca73200724712f339a4d0e29d76db7ce435ee"
+    },
+    {
+      "commit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "type": "commit",
+      "tree": "c3fa200cff5b922f3935059091f34a4894b3418e"
+    }
+  ],
+  "entries": [
+    {
+      "path": "OPENAPI.yaml",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/OPENAPI.yaml.git.gz",
+        "bytes": 511040,
+        "sha256": "3e971cd82c412fb2053e5999e6d86a391654d0a917c30affa7b8efaaa69ef4e8",
+        "gzipSha256": "a21e75f57ff303e787759161d9e8416066bb61da34e7915010c4279a02231233"
+      },
+      "worktree": {
+        "archive": "history/product/OPENAPI.yaml.worktree.gz",
+        "bytes": 518324,
+        "sha256": "fe4cdfb075cf19d1249ecc6ecedc9c53b0c98eb8575c9c9295fbc6690d9ae871",
+        "gzipSha256": "58de796f95cd061d578e655b2a6b4ff2b675e8a9d8656e2aa7670805067a3edc"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "apps/api/integration/stage3-delivery.integration.test.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/api/integration/stage3-delivery.integration.test.ts.git.gz",
+        "bytes": 87087,
+        "sha256": "1e9697a4d79631cd61bce74db9e1852619cc26647e11f726c5eb221cfc851648",
+        "gzipSha256": "888733f18c56c0f30413da043a81d1b74c17cfac00a8f3c8604c0c32eb96fcdb"
+      },
+      "worktree": {
+        "archive": "history/product/apps/api/integration/stage3-delivery.integration.test.ts.worktree.gz",
+        "bytes": 88291,
+        "sha256": "93c3bdc4d230ac7a0270e231fbcd076c55c2d756f8b16121de58f2097c12f0b5",
+        "gzipSha256": "2532ad2129c44fea605f0e868626570b7ad13289880a25e22584436692a0fd54"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/api/integration/stage4-operations.integration.test.ts.git.gz",
+        "bytes": 77919,
+        "sha256": "931a7feb0ba0a8c28ce8ad3b5a28eb15a05c6134f41626816dba70d15bb75ea7",
+        "gzipSha256": "4b7bfff0b68a2b42450f566d3643f62f26c9e4bbd6f098b78a591ed506fe0641"
+      },
+      "worktree": {
+        "archive": "history/product/apps/api/integration/stage4-operations.integration.test.ts.worktree.gz",
+        "bytes": 80095,
+        "sha256": "cbbddd0efc6c9a520ae006e61612f6e9eab4074ea17ffb58f5bdeb8ffb06977d",
+        "gzipSha256": "3e943e6a63890654f039e99f2f890484ce8af430082f46ddd7eea000f1d8ff45"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "apps/api/src/delivery/repository-configuration.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/api/src/delivery/repository-configuration.ts.git.gz",
+        "bytes": 3447,
+        "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7",
+        "gzipSha256": "f7fae3f383b187e56d361cda147bea45fa88b68e38ec17c1b4c08261f292d21f"
+      },
+      "worktree": {
+        "archive": "history/product/apps/api/src/delivery/repository-configuration.ts.git.gz",
+        "bytes": 3447,
+        "sha256": "bf6b160df4f1d6c99c35ba4e9fdc8c923f164d3d02bc6a6264790f29c9c8b6e7",
+        "gzipSha256": "f7fae3f383b187e56d361cda147bea45fa88b68e38ec17c1b4c08261f292d21f",
+        "sameAsGitBlob": true
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "apps/api/src/delivery/routes.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/api/src/delivery/routes.ts.git.gz",
+        "bytes": 95238,
+        "sha256": "0240ae3dc7da5d005bdf8409d641e7e41c186e36e06619a1f045540b05c60a98",
+        "gzipSha256": "01b2d54055781e1d517eb4e7b349a497461b6a3fda580f02c30d9a90c679a4e4"
+      },
+      "worktree": {
+        "archive": "history/product/apps/api/src/delivery/routes.ts.worktree.gz",
+        "bytes": 96822,
+        "sha256": "b95483c83d42ae02869d1f59454dd936ad297b450e9f66c1881e4f4f6179a858",
+        "gzipSha256": "98d717a8c7a77bad85b458dda2f33aec3d9d384f1ad32978fc9f24e49c214a8f"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "apps/web/app/lib/configuration-readiness-navigation.test.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/app/lib/configuration-readiness-navigation.test.ts.git.gz",
+        "bytes": 1647,
+        "sha256": "af098edce5a8f8997634b7f63d0dd84a82e62c68958ec005bbf7954c0506a28d",
+        "gzipSha256": "4bcfafd25c9d869d9b88484fabf5696375c5f8c3fd6c4f1d4be0c0ffe72452ac"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/app/lib/configuration-readiness-navigation.test.ts.git.gz",
+        "bytes": 1647,
+        "sha256": "af098edce5a8f8997634b7f63d0dd84a82e62c68958ec005bbf7954c0506a28d",
+        "gzipSha256": "4bcfafd25c9d869d9b88484fabf5696375c5f8c3fd6c4f1d4be0c0ffe72452ac",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/app/lib/configuration-readiness-navigation.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/app/lib/configuration-readiness-navigation.ts.git.gz",
+        "bytes": 2518,
+        "sha256": "132d761b9dae6b2a9f7c5a6aaee2bc8f003e40ea24cba1c449f1903df1a08d64",
+        "gzipSha256": "c962db6faf06c24ab12bea590a27fc3526709c807c5effea798605ac452e3e84"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/app/lib/configuration-readiness-navigation.ts.git.gz",
+        "bytes": 2518,
+        "sha256": "132d761b9dae6b2a9f7c5a6aaee2bc8f003e40ea24cba1c449f1903df1a08d64",
+        "gzipSha256": "c962db6faf06c24ab12bea590a27fc3526709c807c5effea798605ac452e3e84",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/app/lib/i18n.test.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/app/lib/i18n.test.ts.git.gz",
+        "bytes": 27996,
+        "sha256": "1bc97be0ad848c1a4d0e062b04d770252153b0c388cac961fcd5a5e45a1aae5c",
+        "gzipSha256": "5c7687a2764da0d1a4788ad0a23aa8456068c9ada9530f7f610fa4f43ac4e3fa"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/app/lib/i18n.test.ts.worktree.gz",
+        "bytes": 28482,
+        "sha256": "9063fb3ff396f7ed713a9ebb3f7dd287328a11a4fd213c10c4df623bc22e7631",
+        "gzipSha256": "6693cd1c739f2d868a0fdbba20344c57ec80b9a11f1b85336b2791a644726c65"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/app/lib/i18n.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/app/lib/i18n.tsx.git.gz",
+        "bytes": 202503,
+        "sha256": "e18a59f6b056fa53c9d2d0b3bcfc10f96dfaf24373d72dc3a1e51324541cb139",
+        "gzipSha256": "701da509f3ecb3f00662ffe7bcfab251c9a6b1beab2c39a5618e1192cea7d7eb"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/app/lib/i18n.tsx.worktree.gz",
+        "bytes": 207067,
+        "sha256": "43c387ab269479f247ad0007f686b7c88ef4fe9790776108209d709f145b48e7",
+        "gzipSha256": "4437d78590036876d19f4f9d9dceeadc6779d1a22ee0001affd8c490f64a47c7"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/app/page.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/app/page.tsx.git.gz",
+        "bytes": 47433,
+        "sha256": "e2c0176d5b9678a6c8deaf448985c27ac0cdd8e32eb1a196e0d569e68fdf5d30",
+        "gzipSha256": "1bb7b5fb7d7b11a8b93e555f70515c8b8e4aa8aaf3a49589cdadc80541da078e"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/app/page.tsx.worktree.gz",
+        "bytes": 48163,
+        "sha256": "2c9246f610cbb17b88a9c361ae3c6f829896649a759d65125529611f77f8efbf",
+        "gzipSha256": "4ef72d7cf3185b4b3be54310215af9ee44c566f430f6fc613721cfc5633158d7"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/app/workbench/page.test.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/app/workbench/page.test.tsx.git.gz",
+        "bytes": 2679,
+        "sha256": "3da4c747628df82003066b0bff4ff9ebcb0ee4ed9b29cd247e0f01e13337f4aa",
+        "gzipSha256": "18ffc15e4f948f01fcb9c04c1f4880ec49aec6ec7ecd197c9db632a86e5abac4"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/app/workbench/page.test.tsx.worktree.gz",
+        "bytes": 2734,
+        "sha256": "3705b09ac35f7fc7c475da7ff82d67a16c59305bc574712175c900795c365bab",
+        "gzipSha256": "ab30b6cbbe1f45c4f785976bef61c66aa72856543b5c18a3e3d1b2f100dc1c1f"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/app/workbench/page.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/app/workbench/page.tsx.git.gz",
+        "bytes": 3184,
+        "sha256": "6c542e0d877d2d3ae313670a9da654cb50d3878111caedaf6aa9c3326132d8ae",
+        "gzipSha256": "0b7a457d12c3b4bc5b4ced531700d286a2e5e41973eddf2637bc6d62ea9eb772"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/app/workbench/page.tsx.worktree.gz",
+        "bytes": 3211,
+        "sha256": "eb6dc0d5852ba8c5a53da7f98d8db1bd7cd933f530591a51abccda5bb51d5d79",
+        "gzipSha256": "7c7315860e3f188ffc5c40473609844b83548e64af926064975b58223ff5edab"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/e2e/configuration-readiness.spec.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/e2e/configuration-readiness.spec.ts.git.gz",
+        "bytes": 16437,
+        "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66",
+        "gzipSha256": "e7c23da3ea3a55a86af8a45779f972b57eb156fa743a0f0fc1cfff19930c169d"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/e2e/configuration-readiness.spec.ts.git.gz",
+        "bytes": 16437,
+        "sha256": "44337c8a3a96ee6495db4baaf6ca120e82d60a97a553ae107685d0cf6fd08c66",
+        "gzipSha256": "e7c23da3ea3a55a86af8a45779f972b57eb156fa743a0f0fc1cfff19930c169d",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/e2e/fixtures/configuration-readiness-provider.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/e2e/fixtures/configuration-readiness-provider.ts.git.gz",
+        "bytes": 1336,
+        "sha256": "991b255309731506f3a862bc878b7f7783bacf32f20a623bf8ad05d868b35d5f",
+        "gzipSha256": "d7cd91ba061832d941bd48334408082df0ecfcd94bf0f6e25cdedb78ff59a82d"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/e2e/fixtures/configuration-readiness-provider.ts.git.gz",
+        "bytes": 1336,
+        "sha256": "991b255309731506f3a862bc878b7f7783bacf32f20a623bf8ad05d868b35d5f",
+        "gzipSha256": "d7cd91ba061832d941bd48334408082df0ecfcd94bf0f6e25cdedb78ff59a82d",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/e2e/fixtures/configuration-readiness.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/e2e/fixtures/configuration-readiness.ts.git.gz",
+        "bytes": 9052,
+        "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77",
+        "gzipSha256": "dedef8a92831cbf1618923fb2c62c6f82a60af3102b4af12920cf56641a9765f"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/e2e/fixtures/configuration-readiness.ts.git.gz",
+        "bytes": 9052,
+        "sha256": "b51ac095e6d5e622effba5addd9b4ad57dd7d7bb9e329805b81bd8f75c208f77",
+        "gzipSha256": "dedef8a92831cbf1618923fb2c62c6f82a60af3102b4af12920cf56641a9765f",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/e2e/human-reflow.spec.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/e2e/human-reflow.spec.ts.git.gz",
+        "bytes": 13414,
+        "sha256": "40b50996ee4dfec30b0a2c57b3d4069f2ecb268c2e9ef760223a1f23615ab529",
+        "gzipSha256": "2ea21f27d4029c1c5df2c05053dc85503d8b1899f5d0cad31341cf415e88ed3b"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/e2e/human-reflow.spec.ts.worktree.gz",
+        "bytes": 13620,
+        "sha256": "15c855e449e432a2630fdd4807bd883fa9709a596b040609b67e461ceaad592c",
+        "gzipSha256": "e4499d636400a4ce0fd8a725ef9947d59aa65fcf6d8c580d20783e5f8935d8b3"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/e2e/project-work-preview-server.mjs",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/e2e/project-work-preview-server.mjs.git.gz",
+        "bytes": 93866,
+        "sha256": "c6c096b26be70dd4f82b2816e6f27bc7f9567420b13a50c65c1779ae5147ef8d",
+        "gzipSha256": "95ed20d4e6acd72fa1961874a4c80538fc6a412c82119fde6475bd7ea9927170"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/e2e/project-work-preview-server.mjs.worktree.gz",
+        "bytes": 95552,
+        "sha256": "597d2ca91f259f312161af5113a337d80ca5a5eeee56b05855d19dbb9a85f09e",
+        "gzipSha256": "95df527af02008fd5b642774791ca19f92a2e1fdc3842926b64552639f07e217"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/e2e/stage0.spec.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/e2e/stage0.spec.ts.git.gz",
+        "bytes": 22484,
+        "sha256": "a110839ca44664c9f62e0012c1638c3ee3d7a026402f9e6bdd78e25ff5ac3751",
+        "gzipSha256": "49c07a453c2f0d3c39632918794613de5cd07eab9c212742784d22fa76cee5aa"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/e2e/stage0.spec.ts.worktree.gz",
+        "bytes": 23010,
+        "sha256": "57bdaebb503492e796439580bd4584e725367f7c2313469bca3b13376b9af6d7",
+        "gzipSha256": "ce91c05127724dd6ba8e6c1e4e7bbc657ec11078d0d7720acf6c007d0306d583"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/features/projects/project-repository-configuration-races.test.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/features/projects/project-repository-configuration-races.test.tsx.git.gz",
+        "bytes": 5969,
+        "sha256": "dd7a36112228898cce97fe253f4e36fa4988f76fb0dd51c02eabaf7ffafe9471",
+        "gzipSha256": "9087c74d5efa88f6a1e8a4b9cd91a730e73144b150abc5c5030b34866e7f0999"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/features/projects/project-repository-configuration-races.test.tsx.git.gz",
+        "bytes": 5969,
+        "sha256": "dd7a36112228898cce97fe253f4e36fa4988f76fb0dd51c02eabaf7ffafe9471",
+        "gzipSha256": "9087c74d5efa88f6a1e8a4b9cd91a730e73144b150abc5c5030b34866e7f0999",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/features/projects/project-repository-configuration.module.css",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/features/projects/project-repository-configuration.module.css.git.gz",
+        "bytes": 993,
+        "sha256": "28eb9f145a41bd5f6801905545169d7bfe5da8d6bbab62caea5e30b2cb2c4523",
+        "gzipSha256": "6f2f605f41170637c6eee49c5ca4e85ffc05b11283e21ece7e61a7de71b9a67a"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/features/projects/project-repository-configuration.module.css.git.gz",
+        "bytes": 993,
+        "sha256": "28eb9f145a41bd5f6801905545169d7bfe5da8d6bbab62caea5e30b2cb2c4523",
+        "gzipSha256": "6f2f605f41170637c6eee49c5ca4e85ffc05b11283e21ece7e61a7de71b9a67a",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/features/projects/project-repository-configuration.test.tsx.git.gz",
+        "bytes": 15471,
+        "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe",
+        "gzipSha256": "72143e1dda6f3a925f5f4a04ecd53f599d9afff0fe342a6d1498024493c8003a"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/features/projects/project-repository-configuration.test.tsx.git.gz",
+        "bytes": 15471,
+        "sha256": "85eabfc712b39152bf11b9ae0ba6b3e52a12f6977bf1959d5b7c2d8dd8f8aafe",
+        "gzipSha256": "72143e1dda6f3a925f5f4a04ecd53f599d9afff0fe342a6d1498024493c8003a",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/features/projects/project-repository-configuration.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/features/projects/project-repository-configuration.tsx.git.gz",
+        "bytes": 23737,
+        "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e",
+        "gzipSha256": "3d1a15bb9d51cf85b353d1ee148225d971f461ec5bc6c9a6c86c05311d878842"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/features/projects/project-repository-configuration.tsx.git.gz",
+        "bytes": 23737,
+        "sha256": "233750cecb47f755fb125c34c59303db8ca39760bee85db8b21eafcb31a0b36e",
+        "gzipSha256": "3d1a15bb9d51cf85b353d1ee148225d971f461ec5bc6c9a6c86c05311d878842",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/features/workbench/configuration-readiness.module.css",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/features/workbench/configuration-readiness.module.css.git.gz",
+        "bytes": 886,
+        "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3",
+        "gzipSha256": "fc7c8cf06e0a0959323c5ce3836652837ffedba50760288e8e4ecbaa8ac48f95"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/features/workbench/configuration-readiness.module.css.git.gz",
+        "bytes": 886,
+        "sha256": "38a72a9f31deb165378ea59f1da19c76054ca6684af49905a5ebe124d3797ef3",
+        "gzipSha256": "fc7c8cf06e0a0959323c5ce3836652837ffedba50760288e8e4ecbaa8ac48f95",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/features/workbench/configuration-readiness.test.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/features/workbench/configuration-readiness.test.tsx.git.gz",
+        "bytes": 3328,
+        "sha256": "c8b463a6e4b4c6e79df157787c525421e7620fa12e2a9fbb28980daf89cde678",
+        "gzipSha256": "204be288b56d6a46554ee8ab64d33677799b16dce10db45a958465dacfe3f7a5"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/features/workbench/configuration-readiness.test.tsx.git.gz",
+        "bytes": 3328,
+        "sha256": "c8b463a6e4b4c6e79df157787c525421e7620fa12e2a9fbb28980daf89cde678",
+        "gzipSha256": "204be288b56d6a46554ee8ab64d33677799b16dce10db45a958465dacfe3f7a5",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/features/workbench/configuration-readiness.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/features/workbench/configuration-readiness.tsx.git.gz",
+        "bytes": 5620,
+        "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e",
+        "gzipSha256": "7699fe8a5278d470ca35845c7ce4ee29de2de70093dc47345b7716f50b296158"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/features/workbench/configuration-readiness.tsx.git.gz",
+        "bytes": 5620,
+        "sha256": "09c98f77e76fb55f368755708aee080552859369eb888a0fe4d49cd19d52238e",
+        "gzipSha256": "7699fe8a5278d470ca35845c7ce4ee29de2de70093dc47345b7716f50b296158",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.module.css",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/features/workbench/conversation-workbench.module.css.git.gz",
+        "bytes": 11288,
+        "sha256": "7c578de998794298d315fc85f95c2f9f8544003ca6a856ecba601c9c44171658",
+        "gzipSha256": "4523a68ee26722f7256ade251e28e8f8eea924492c50d19c65f157ed2aeba4f4"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/features/workbench/conversation-workbench.module.css.worktree.gz",
+        "bytes": 11581,
+        "sha256": "722b9e42aeb3098e929636df6b23563df7e1edf1f841a019bc26d7101ceb3975",
+        "gzipSha256": "29e9d2fe060fc9cf2e86ae665c9e25d4a16b5375efb4aad5a745224311207bc7"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.test.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/features/workbench/conversation-workbench.test.tsx.git.gz",
+        "bytes": 10710,
+        "sha256": "0165aaaebb0da154d739bc0e60c08efc672085be975827d8eeff6d18ae99e880",
+        "gzipSha256": "685862cded672f52c7e2f8d828399617241b8ad90b996f2e9a46c9f7ce7b4890"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/features/workbench/conversation-workbench.test.tsx.worktree.gz",
+        "bytes": 10851,
+        "sha256": "bb21b300068eddc81fe70980acf1325884bd55f5bbcfcdd0abab0152cd0dd080",
+        "gzipSha256": "a73b71e32226c7cefdb2554d3fbf4f547c3d933205de730890ca092481fe6710"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.tsx",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/features/workbench/conversation-workbench.tsx.git.gz",
+        "bytes": 34789,
+        "sha256": "3e850cb0ed8467efa986339c7552550040d98fddf986a1ccb6a5cefca48f62b2",
+        "gzipSha256": "7604c10b429d034ce5e71b446480e7688d3359d0990e9346cd99957baa078616"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/features/workbench/conversation-workbench.tsx.worktree.gz",
+        "bytes": 35220,
+        "sha256": "78f1976ba8148dc4dd7507260d4287b3933ab4127a464d6f040830e69a44a37c",
+        "gzipSha256": "2726447c3528dee3f12605bc1ac33195868f01fcaa1117243254f7fb77b581f9"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/playwright.a2-lite.config.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/playwright.a2-lite.config.ts.git.gz",
+        "bytes": 648,
+        "sha256": "4bc1c255350f561b927b8f9b85f511961645d802c74dc07534d51ab3eabcdf33",
+        "gzipSha256": "6b92c3deebfe8bd4542a391ec7fc27ca53d4b70b23a06372d1d1470c77288af3"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/playwright.a2-lite.config.ts.git.gz",
+        "bytes": 648,
+        "sha256": "4bc1c255350f561b927b8f9b85f511961645d802c74dc07534d51ab3eabcdf33",
+        "gzipSha256": "6b92c3deebfe8bd4542a391ec7fc27ca53d4b70b23a06372d1d1470c77288af3",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/web/scripts/check-i18n.mjs",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/web/scripts/check-i18n.mjs.git.gz",
+        "bytes": 35694,
+        "sha256": "bf2d8a643f10c377f7e42b8a18029d5652d72ddd5c2a188c000cd61a48d7c913",
+        "gzipSha256": "15e78a61ffd0f082517029674bbe676cdf585782d1120ad05b14db6cc28d2a70"
+      },
+      "worktree": {
+        "archive": "history/product/apps/web/scripts/check-i18n.mjs.worktree.gz",
+        "bytes": 36439,
+        "sha256": "d1b6050c2d8d6ab1ef0b43da44a75bb5284b7293424ed1fef76b8634d3f67eb2",
+        "gzipSha256": "deec8b7e5bccffa5ef2a6f700da17181ae213f7b994098bfa1ed1bb31e9dc78f"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "apps/worker/src/provider-actions.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/apps/worker/src/provider-actions.ts.git.gz",
+        "bytes": 74385,
+        "sha256": "cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376",
+        "gzipSha256": "33e9e91f41419e99d1254d96d8bc21ea388072418ad6130234bb8260bf206ed7"
+      },
+      "worktree": {
+        "archive": "history/product/apps/worker/src/provider-actions.ts.worktree.gz",
+        "bytes": 75721,
+        "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d",
+        "gzipSha256": "d44b0eb6fde64bf7173f64fd3f5dc0e41f008e4a328fdcc1e67289fabb0f8ab6"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "deploy/lite/README.md",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/deploy/lite/README.md.git.gz",
+        "bytes": 10276,
+        "sha256": "b2804adc08a60d5087a8a501e2241d669c387b09d02802871f1f2dcff235da2a",
+        "gzipSha256": "b64204460fae22a994149cd9f98086c37bced4e1e2e74c77318e2347d9afe1ad"
+      },
+      "worktree": {
+        "archive": "history/product/deploy/lite/README.md.worktree.gz",
+        "bytes": 10509,
+        "sha256": "eefb2d3f36b3e03d4a909750ae02bd6a890095f84ecf5a04ea6bab87b14b515a",
+        "gzipSha256": "b1cbd6362cd4a598af63521dba5840148a036f06826639e37f3099de5c40e187"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "docker-compose.lite.yml",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/docker-compose.lite.yml.git.gz",
+        "bytes": 14650,
+        "sha256": "9d6679d8df506d4f0ad3b11faa051f5326aedef4341a6e5d6d6ffdfe95bf900e",
+        "gzipSha256": "e1aeb8a543317a8eb1399aad8c8f56801e1c1aa271b6cf66fb807e8ad68a8f6a"
+      },
+      "worktree": {
+        "archive": "history/product/docker-compose.lite.yml.worktree.gz",
+        "bytes": 14981,
+        "sha256": "6afd85d7af1b28da003fd4c26a123e2b9e7102a9b73b937b1c500621275e0edb",
+        "gzipSha256": "fc83a0228db1b562562b6e28b2d5d9667c0c67d9c581f4b665c7f526f92f4a15"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "infra/docker/lite.Dockerfile",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/infra/docker/lite.Dockerfile.git.gz",
+        "bytes": 5808,
+        "sha256": "cda11e2c6ee51cd7c4b499aa8e6f8f1b6e7d8f02138e74e93a6b100cd532c5ee",
+        "gzipSha256": "a6fa18f2057dba19b9cd4019991dddae18cca5b6a2ca64e2d87ade1f410ed0b8"
+      },
+      "worktree": {
+        "archive": "history/product/infra/docker/lite.Dockerfile.worktree.gz",
+        "bytes": 5908,
+        "sha256": "ed12490b9f817cb5331d0be986594c93f70deb0b6433a89ec6d853008632ba01",
+        "gzipSha256": "8cae28f54eaa9ec53cbb993be9987d2d8b638fc48048596adbaf21d67d4d93f4"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/packages/contracts/src/index.ts.git.gz",
+        "bytes": 185833,
+        "sha256": "30c064cbd4f8e4434cbf74d6d6853bd160d1d6bafdebd3d122fbc8d2d0d5a1d7",
+        "gzipSha256": "b0702d80ac88789408d7ac4009bc0064314213c71d082743c6b6b86bad4189c8"
+      },
+      "worktree": {
+        "archive": "history/product/packages/contracts/src/index.ts.worktree.gz",
+        "bytes": 188991,
+        "sha256": "e60c51027dc9b198f7f48738e5dcb59a63c9519db7b6e6513865664854d86139",
+        "gzipSha256": "f37e5d7fea39a54e2f57c80b125488f8a48e88a5522035b6d96286ec4a450436"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "packages/contracts/src/pagination-contract.test.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/packages/contracts/src/pagination-contract.test.ts.git.gz",
+        "bytes": 4908,
+        "sha256": "1405bdfd8ff9fec52aad92993ee7127661ee14c23c1f613f20d526f7aefa01ca",
+        "gzipSha256": "d64bf4b1adad4118ac1afb98dc117466f72759663c120bf4f71777624b582824"
+      },
+      "worktree": {
+        "archive": "history/product/packages/contracts/src/pagination-contract.test.ts.worktree.gz",
+        "bytes": 5049,
+        "sha256": "17ccccffcb3147700c4f5f4ab19b79ed59f3b92ad30e7af261d5240c50e4445e",
+        "gzipSha256": "bfbb4a4ae58b1fd2cd60385c408090ae4a36ecfdc94f76d325f8a4f892447dcb"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "packages/contracts/src/repository-configuration-contracts.test.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/packages/contracts/src/repository-configuration-contracts.test.ts.git.gz",
+        "bytes": 1243,
+        "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262",
+        "gzipSha256": "3516cd403ef8fd1b4f2b5763dcea5de6cb2fdc96a6ee64bdaff991c404bb35e0"
+      },
+      "worktree": {
+        "archive": "history/product/packages/contracts/src/repository-configuration-contracts.test.ts.git.gz",
+        "bytes": 1243,
+        "sha256": "6d1c53f3ffed4402082f4bb5411b917a38bdc42f738f5ee5e274e0ae64279262",
+        "gzipSha256": "3516cd403ef8fd1b4f2b5763dcea5de6cb2fdc96a6ee64bdaff991c404bb35e0",
+        "sameAsGitBlob": true
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "packages/contracts/src/repository-configuration-contracts.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/packages/contracts/src/repository-configuration-contracts.ts.git.gz",
+        "bytes": 2465,
+        "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97",
+        "gzipSha256": "902c8e3d367b99dece95a10b780ca0d7d8410d71b0268a2937ba0e7bbb6ab1f1"
+      },
+      "worktree": {
+        "archive": "history/product/packages/contracts/src/repository-configuration-contracts.ts.git.gz",
+        "bytes": 2465,
+        "sha256": "41b37bda37f2976a82dac1748be66a6c80734b25a988aa91a5206902ba007d97",
+        "gzipSha256": "902c8e3d367b99dece95a10b780ca0d7d8410d71b0268a2937ba0e7bbb6ab1f1",
+        "sameAsGitBlob": true
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "packages/db/src/agent-lock-order-manifest.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/packages/db/src/agent-lock-order-manifest.ts.git.gz",
+        "bytes": 27527,
+        "sha256": "3ec8dcee876bcd4d75a25d623fc718d4e60e17f6624999cf40df780074693881",
+        "gzipSha256": "6c22fdd2fd10d8caaa69c7a106601c23043a53cd9efaf3b849f37f185afe2a6b"
+      },
+      "worktree": {
+        "archive": "history/product/packages/db/src/agent-lock-order-manifest.ts.worktree.gz",
+        "bytes": 27777,
+        "sha256": "956a27bbb9882fecc69271973da4f134ba2bc905a20394f2f3d31a0e6797792c",
+        "gzipSha256": "e34a9824fe459d782a424ca197dbc80fb29ec1adfc42f42aba41b08100d0f0e8"
+      },
+      "disposition": "后端或独立 Lite 兼容切片；按功能 hunk 保留，须新候选验证"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/playwright.config.ts.git.gz",
+        "bytes": 5035,
+        "sha256": "b8f533c5f88331915df4502c8fc19919611280cd5b5565fdfd0c892564b38cf2",
+        "gzipSha256": "c50841e26ba31cb7d4323f927095147b3a2f6236b44012e364af7b0d2a512f64"
+      },
+      "worktree": {
+        "archive": "history/product/playwright.config.ts.worktree.gz",
+        "bytes": 5173,
+        "sha256": "19c63f20302ce46d59baa2d79e96bb6fe9ca8c5bc70d0ae070fe0367900dc25b",
+        "gzipSha256": "da4ec55de2d8bf6224791e7a28bd89083c8350774126f790cc9a367cf0359933"
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    },
+    {
+      "path": "scripts/verify-a2-lite.mjs",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "gitBlob": {
+        "archive": "history/product/scripts/verify-a2-lite.mjs.git.gz",
+        "bytes": 21912,
+        "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32",
+        "gzipSha256": "37f77e74c9baedc8e78d58a607b4f55a7de719ea9ebcae0e003d7acf07a4f587"
+      },
+      "worktree": {
+        "archive": "history/product/scripts/verify-a2-lite.mjs.git.gz",
+        "bytes": 21912,
+        "sha256": "e5a8c8a8c0768c5835d1d5cb56f047e8305e2d972a1324328552cabbe4c68b32",
+        "gzipSha256": "37f77e74c9baedc8e78d58a607b4f55a7de719ea9ebcae0e003d7acf07a4f587",
+        "sameAsGitBlob": true
+      },
+      "disposition": "本轮延后 UI/原 UI 验证；保全后候选移除此增量，不删除 Git 历史"
+    }
+  ],
+  "documents": [
+    {
+      "path": "docs/plan/activation-task-specs/09.md",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "archive": "history/documents/docs/plan/activation-task-specs/09.md.worktree.gz",
+      "bytes": 12190,
+      "sha256": "205f141ce3c21dca5d19fc44bcfcf48ee68de661f8217c76439ad1d15578b4ad",
+      "gzipSha256": "c748b3dbb0c21824e5b60fce87fa71009d128924acc77b8ddce3bd2c32697c53"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/index.json",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "archive": "history/documents/docs/plan/activation-task-specs/index.json.worktree.gz",
+      "bytes": 103614,
+      "sha256": "a34a194fadc50c58249483f2badb37340867e88892cf72e5875e5c62f0eb0929",
+      "gzipSha256": "9ea7acfc930283f30502761bd17c9b2887fdd29f2d8e2da89c74d9d64074f5db"
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.json",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "archive": "history/documents/docs/reviews/r1/test-coverage.json.worktree.gz",
+      "bytes": 417432,
+      "sha256": "570b19c1d679773c224b74f5cc5191ae9a969a4ad46e54ad8a998015682d4aa2",
+      "gzipSha256": "84e43384e64e9d819a25926112d309cd1cc3bc61d4952dcc6b02567e7142ade0"
+    },
+    {
+      "path": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "archive": "history/documents/docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md.worktree.gz",
+      "bytes": 24700,
+      "sha256": "0eff9e5c3c06ccae79cb0fbffbe2fa92f1e0ac0966c65003139b83530be77f7d",
+      "gzipSha256": "cd881a0fce66a40bef766a40ac294cb7a5d9236b6c34c01676c0cac8abff75b8"
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness.md",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "archive": "history/documents/docs/plan/a2-configuration-readiness.md.worktree.gz",
+      "bytes": 17436,
+      "sha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2",
+      "gzipSha256": "5a385ab45d3b778de230855f2abd1395cd7cbeb5dba82a40d70ebfdb2f4ab98f"
+    },
+    {
+      "path": "docs/reviews/a2/execution-results.json",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "archive": "history/documents/docs/reviews/a2/execution-results.json.worktree.gz",
+      "bytes": 749285,
+      "sha256": "44326814e76fa499e3d15b4ae045d2cddc8d836f957eb4602b2ee1f1336cd1be",
+      "gzipSha256": "6d8957abff6c7ccbf576ef33e80b350d09de8a30d68f39b0c97607231a4319b4"
+    },
+    {
+      "path": "docs/reviews/a2/visual-review.md",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "archive": "history/documents/docs/reviews/a2/visual-review.md.worktree.gz",
+      "bytes": 2676,
+      "sha256": "b2aff77971f49ebc5894ef5d8e2270ded77a1791b1fe673815b118e656a73e1a",
+      "gzipSha256": "e02410b5a94e7c788931d6e2e445c684f8684e0e9bfa9c97c16f21e66744fb88"
+    },
+    {
+      "path": "docs/reviews/a2/visual-delivery/source.json",
+      "sourceCommit": "6f059e3642291f9ab622db37e9de167d070574f2",
+      "archive": "history/documents/docs/reviews/a2/visual-delivery/source.json.worktree.gz",
+      "bytes": 48858,
+      "sha256": "c4e01c2435d2e555768d88b80406b7aed98a575645b5685f4cc92ca04e1fa711",
+      "gzipSha256": "ff7f5e20d5efa9ff2e981e3ec01117f0c9a8095f55270d417b2335284e8fefc4"
+    }
+  ],
+  "fullProductDiff": {
+    "archive": "history/full-product-diff.patch.gz",
+    "bytes": 231360,
+    "sha256": "628f65225ae7e8e686d50bd9841d57ea3470432485b13d962d3564bc3c41ba48",
+    "gzipSha256": "9ba1bf5b9f8a92aa0676aac64d314e724f99039cecce6960fb99e7c7269bd0e6"
+  },
+  "historicalEvidence": "docs/reviews/a2/**、原批准计划和全部原始失败/恢复/视觉材料保持；索引不将旧检查用于新后端组合",
+  "deferredAcceptance": [
+    "依赖深度列表",
+    "深链返回重算",
+    "全部满足隐藏",
+    "non-unmet 无横幅",
+    "Back/Forward 键盘窄屏 i18n",
+    "Lite 安装到新横幅消失整个 UI 闭环"
+  ],
+  "retainedUiBehavior": "同正文保 key、改体新 key，精确 action/目标/正文确认，waiting 与 action 分离，超时可改，焦点/实时/手动/轮询统一取消及代际门禁，忽略 abort 的迟到成功/失败反例",
+  "visualStatus": "原五项像素失败及双采集未执行缺口保留，人工未接受，不重发旧视觉问卡"
+}

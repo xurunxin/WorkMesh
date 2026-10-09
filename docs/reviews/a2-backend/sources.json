@@ -1,0 +1,44 @@
+{
+  "todoId": "0BkezbmWV6k8vwrlSNuF_",
+  "scopeChangeAt": "2026-10-09T12:00:00+08:00",
+  "source": "本轮平台注入的完整当前 Spec 与 Chief 原样旧 Spec 读回；非事务快照，不冒完整后端 doc 工具读回",
+  "version": null,
+  "planId": null,
+  "planBinding": "既有完整批准 UI 计划保留历史；当前按 main 已审 #53 后端分离路线执行，不自引用生成计划 ID",
+  "main": {
+    "sha": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+    "observedAt": "2026-10-09T04:05:16Z",
+    "tool": "mcp__tds__git",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/heads/main"
+    ],
+    "fetchArgs": [
+      "fetch",
+      "origin",
+      "refs/heads/main"
+    ],
+    "meaning": "精确远端 ref；不以共享 FETCH_HEAD 当 main",
+    "increment": "相对已整合 74f247f 仅 #53 七份规划文档；产品无增量"
+  },
+  "inputs": [
+    {
+      "path": "current-spec.md",
+      "bytes": 7582,
+      "sha256": "b10b213d1f1c555985845cd3fa93550b70894639e3e89916d93c052ece0a58ed"
+    },
+    {
+      "path": "history/chief-old-spec.md",
+      "bytes": 11507,
+      "sha256": "86269151e5c22b6263fb5df35274b1a822c906fe511f2c26e37ee09b61aa74a5"
+    },
+    {
+      "path": "preservation.json",
+      "bytes": 42090,
+      "sha256": "853a54850d38c4e0d9c1372a8cbf07e8a92a1564a70acd69a50fa5791eb61942"
+    }
+  ],
+  "historicalEmbeddedHash": "130e166... 属旧早期源，不属于本次完整 Chief 旧卡快照",
+  "preservedEvidence": "docs/reviews/a2/** 原件保持，视觉未接受；旧741/380检查不代新候选"
+}
