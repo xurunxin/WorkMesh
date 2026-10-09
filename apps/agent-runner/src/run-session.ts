@@ -153,7 +153,7 @@ class RunnerExecutionExitError extends Error {
   constructor(readonly exit: ExecutionExit) { super('RUNNER_ABORTED') }
 }
 class RunnerScratchCleanupError extends Error {
-  constructor(readonly exit: ExecutionExit | undefined, cause: unknown) { super('RUNNER_SCRATCH_CLEANUP_FAILED', { cause }) }
+  constructor(readonly exit: ExecutionExit | undefined, cause: unknown, readonly modelQuiesced: boolean) { super('RUNNER_SCRATCH_CLEANUP_FAILED', { cause }) }
 }
 
 async function runnerResponseError(response: Response, fallback: string): Promise<RunnerApiError> {
@@ -236,6 +236,7 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
   const oldModelKey = process.env.WORKMESH_RUNNER_MODEL_KEY
   let timer: NodeJS.Timeout | undefined, timeout: NodeJS.Timeout | undefined
   const lifecycle = new ExecutionLifecycle()
+  let modelQuiesced = true
   try {
     console.log(JSON.stringify({ runnerResource: { kind: 'scratch', path: root, sessionId: api.sessionId, attemptId, status: 'created' } }))
     for (const directory of [agentDir, stateDir, workDir]) mkdirSync(directory, { recursive: true })
@@ -312,6 +313,7 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
       resourceLoader, sessionManager: SessionManager.inMemory(), noTools: 'builtin',
       customTools: [contextTool, ...guardedTools],
     })
+    modelQuiesced = false
     abortModel = () => { void session.abort() }
     let stopped = false, polling = false
     const onShutdown = () => { lifecycle.close('shutdown'); api.closeExecution(); stopped = true; void session.abort() }
@@ -375,7 +377,10 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
       return { answer, toolCalls, toolNames, toolInvocations, ...(completionIntent ? { completionIntent } : {}) }
     } finally {
       shutdown.removeEventListener('abort', onShutdown)
-      session.dispose()
+      // prompt can reject during Stop before the normal waitForIdle path. Pi's
+      // synchronous dispose only signals abort; await idle before touching scratch.
+      try { await session.abort(); modelQuiesced = true }
+      finally { session.dispose() }
     }
   } finally {
     if (timer) clearInterval(timer)
@@ -385,11 +390,12 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
     if (oldModelKey === undefined) delete process.env.WORKMESH_RUNNER_MODEL_KEY
     else process.env.WORKMESH_RUNNER_MODEL_KEY = oldModelKey
     try {
+      if (!modelQuiesced) throw new Error('RUNNER_MODEL_NOT_IDLE')
       removeScratch(root)
       console.log(JSON.stringify({ runnerResource: { kind: 'scratch', path: root, sessionId: api.sessionId, attemptId, status: 'removed' } }))
     } catch (error) {
       console.error(JSON.stringify({ runnerResource: { kind: 'scratch', path: root, sessionId: api.sessionId, attemptId, status: 'retained' } }))
-      throw new RunnerScratchCleanupError(lifecycle.exit, error)
+      throw new RunnerScratchCleanupError(lifecycle.exit, error, modelQuiesced)
     }
   }
 }
@@ -401,6 +407,7 @@ export async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: Abor
   let settlementUncertain = false
   let cleanupRequired = false
   let cleanupFailed = false
+  let modelQuiesced = true
   try {
     const claim = await api.request<{ runnerAttemptId: string }>('POST',
       `/api/v1/workbench/turns/${item.turnId}/claim`, { executionWaits: true }, undefined, `runner-claim-${item.turnId}`)
@@ -497,6 +504,7 @@ export async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: Abor
     cleanupRequired = true
     const code = error instanceof RunnerApiError ? error.code : error instanceof Error ? error.message : 'RUNNER_UNKNOWN_ERROR'
     cleanupFailed = code === 'RUNNER_SCRATCH_CLEANUP_FAILED'
+    if (error instanceof RunnerScratchCleanupError) modelQuiesced = error.modelQuiesced
     const stoppedOrRevoked = (error instanceof RunnerExecutionExitError || error instanceof RunnerScratchCleanupError)
       && ['stop', 'revoked'].includes(error.exit ?? '')
     if (started && fenceToken && !settlementUncertain && !stoppedOrRevoked && code !== 'RUNNER_FENCE_STALE') {
@@ -512,8 +520,10 @@ export async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: Abor
     return 'failed'
   } finally {
     if (cleanupRequired) {
-      try { await api.stopAfterCleanup(cleanupFailed ? 'Pi model stopped; Runner scratch cleanup failed.' : 'Pi model stopped and the Runner scratch directory cleanup completed.',
+      try { await api.stopAfterCleanup(!modelQuiesced ? 'Pi model idle could not be confirmed; Runner scratch retained.'
+        : cleanupFailed ? 'Pi model stopped; Runner scratch cleanup failed.' : 'Pi model stopped and the Runner scratch directory cleanup completed.',
         [...(settlementUncertain ? ['The Turn settlement response is unconfirmed; reconcile its original operation key.'] : []),
+          ...(!modelQuiesced ? ['The Pi model did not confirm idle; inspect the Runner process before cleaning its owned temporary resources.'] : []),
           ...(cleanupFailed ? ['Runner scratch cleanup failed; its owned temporary resources require operator inspection.'] : [])],
         `runner-stop-cleanup-${attemptId || item.turnId}`) }
       catch { console.error(JSON.stringify({ sessionId: api.sessionId, cleanup: 'unconfirmed', code: 'RUNNER_STOP_CLEANUP_FAILED' })) }

@@ -1,0 +1,76 @@
+
+> @workmesh/agent-runner@ test C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\agent-runner
+> vitest run
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/apps/agent-runner
+
+ ✓ src/model-config.test.ts (2 tests) 3ms
+ ✓ src/configured-model.test.ts (1 test) 3ms
+stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > validates the document base and refuses a stale or malformed write before any API mutation
+{"tool":"workmesh_update_document","stage":"input_validation","paths":["baseContentHash"]}
+
+stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > releases only a versioned lease through the exact Session API authority
+{"tool":"workmesh_release_lease","stage":"input_validation","paths":["ifMatch"]}
+
+ ✓ src/workmesh-tools.test.ts (12 tests) 1262ms
+ ✓ src/permission-matrix.test.ts (6 tests) 1258ms
+   ✓ W11 permission-denial matrix > refuses every tool when the capability manifest is not from an executing session  609ms
+ ✓ src/egress-policy.test.ts (6 tests) 23ms
+ ✓ src/isolation.test.ts (9 tests) 72ms
+ ❯ src/workbench-skill.test.ts (2 tests | 1 failed) 97ms
+   × loads exactly the pinned WorkMesh Skill with no ambient resources 53ms
+     → RUNNER_SKILL_PIN_MISMATCH
+   ✓ rejects a modified Skill before Pi starts 43ms
+ ✓ src/execution-lifecycle.test.ts (4 tests) 7ms
+ ✓ src/runner-api.test.ts (3 tests) 13ms
+ ❯ src/wait-pi.test.ts (1 test | 1 failed) 332ms
+   × 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待 331ms
+     → RUNNER_SKILL_PIN_MISMATCH
+stderr | src/model-errors.test.ts > W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns invalidJson
+Could not parse message into JSON: {not json at all
+From chunk: [ 'data: {not json at all' ]
+
+ ✓ src/model-errors.test.ts (6 tests) 1577ms
+   ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns status500  816ms
+ ✓ src/model-wire.test.ts (6 tests) 1574ms
+   ✓ W08 wire fixtures against the real Pi SDK > reassembles a tool call whose arguments arrive in arbitrary fragments  809ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+Error: RUNNER_SKILL_PIN_MISMATCH
+ ❯ createWorkbenchSkillLoader src/workbench-skill.ts:13:55
+     11|   const content = await readFile(path, 'utf8')
+     12|   const digest = `sha256:${createHash('sha256').update(content).digest…
+     13|   if (digest !== workbenchSkillManifest.sha256) throw new Error('RUNNE…
+       |                                                       ^
+     14|   if (!content.startsWith(`---\nname: ${workbenchSkillManifest.name}\n…
+     15|     throw new Error('RUNNER_SKILL_FRONTMATTER_INVALID')
+ ❯ runPi src/run-session.ts:306:28
+ ❯ src/wait-pi.test.ts:52:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/workbench-skill.test.ts > loads exactly the pinned WorkMesh Skill with no ambient resources
+Error: RUNNER_SKILL_PIN_MISMATCH
+ ❯ createWorkbenchSkillLoader src/workbench-skill.ts:13:55
+     11|   const content = await readFile(path, 'utf8')
+     12|   const digest = `sha256:${createHash('sha256').update(content).digest…
+     13|   if (digest !== workbenchSkillManifest.sha256) throw new Error('RUNNE…
+       |                                                       ^
+     14|   if (!content.startsWith(`---\nname: ${workbenchSkillManifest.name}\n…
+     15|     throw new Error('RUNNER_SKILL_FRONTMATTER_INVALID')
+ ❯ src/workbench-skill.test.ts:16:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 10 passed (12)
+      Tests  2 failed | 56 passed (58)
+   Start at  22:20:35
+   Duration  17.70s (transform 3.11s, setup 0ms, collect 120.30s, tests 6.22s, environment 2ms, prepare 13.60s)
+
+C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\apps\agent-runner:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/agent-runner@ test: `vitest run`
+Exit status 1

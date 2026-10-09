@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { appendEvent, withTx, type Db, executionWaitSchemaAvailable, reconcileWorkbenchExecutionWait } from '@workmesh/db'
+import { appendEvent, withTx, type Db, executionWaitSchemaAvailable, executionWaitsEnabled, reconcileWorkbenchExecutionWait } from '@workmesh/db'
 
 type Transaction = Pick<Db, 'query'>
 
@@ -779,7 +779,7 @@ export function createSessionLifecycleWorker({
   }
 
   const reconcileWorkbenchWaits = async (limit = 100): Promise<number> => {
-    if (!await executionWaitSchemaAvailable(db)) return 0
+    if (!executionWaitsEnabled() || !await executionWaitSchemaAvailable(db)) return 0
     const pending = await db.query<{ id: string; workspace_id: string }>(
       "SELECT id,workspace_id FROM workbench_execution_waits WHERE status='pending' ORDER BY created_at,id LIMIT $1",
       [Math.max(1, Math.min(100, limit))])

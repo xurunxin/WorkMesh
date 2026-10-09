@@ -19,19 +19,25 @@ const redact = (value: string) => value.replace(/wm[ips]_[A-Za-z0-9_-]+/g, '[cre
 export async function createExecutionRecoveryFixture() {
   const fixture = await createMcpCoverageFixture()
   const ownedModels: ReturnType<typeof createServer>[] = []
+  // Public pairing allows one agentSlug per Team. This explicit privileged
+  // adversarial fixture preserves real Agent/principal/Team authority while
+  // giving another Connection an independently valid credential and alias.
   const pairSameAgent = async () => {
-    const agentSlug = (await fixture.db.query<{ slug: string }>('SELECT slug FROM agent_definitions WHERE id=$1', [fixture.agentId])).rows[0]!.slug
-    const paired = await fixture.human<{ connection: { id: string }; connect_url: string }>('POST', '/api/v1/agent-connections', {
-      name: 'M1 other same-Agent Connection', agentSlug, clientType: 'codex', teamId: fixture.teamId,
-      principalHumanActorId: fixture.humanActorId,
-      requestedCapabilities: ['work:read', 'work:write', 'plan:write', 'artifact:write', 'message:write', 'comment:write'], grantAgentDelegate: false,
-    })
-    const redeemed = await fetch(fixture.baseUrl + '/api/v1/agent-connections/redeem', { method: 'POST',
-      headers: { 'idempotency-key': randomUUID(), 'content-type': 'application/json' },
-      body: JSON.stringify({ pairingCode: new URL(paired.connect_url).hash.slice(1), agentSlug, client: { type: 'codex', version: '1.0.0' } }) })
-    if (!redeemed.ok) throw new Error(`M1 same-Agent Connection redeem failed: ${redeemed.status}`)
-    const token = (await redeemed.json() as { installation_token: string }).installation_token
-    return { id: paired.connection.id, token, client: new WorkMeshClient({ baseUrl: fixture.baseUrl, coordinationToken: token, installationToken: token }) }
+    const token = `wmi_${randomBytes(32).toString('base64url')}`
+    const hash = createHash('sha256').update(token).digest('hex')
+    const id = randomUUID()
+    await fixture.db.query(`INSERT INTO agent_connections
+      (id,workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,delegation_id,name,agent_slug,
+       client_type,status,requested_capabilities,granted_capabilities,grant_agent_delegate,skill_version,skill_sha256,created_by_actor_id)
+      SELECT $1,workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,delegation_id,$2,$3,
+        client_type,'active',requested_capabilities,granted_capabilities,grant_agent_delegate,skill_version,skill_sha256,created_by_actor_id
+      FROM agent_connections WHERE id=$4`, [id, `M1 other Connection ${id}`, `m1-same-agent-${id}`, fixture.connectionId])
+    await fixture.db.query(`INSERT INTO agent_connection_credentials(connection_id,token_hash,fingerprint_prefix,status)
+      VALUES($1,$2,$3,'active')`, [id, hash, hash.slice(0, 12)])
+    await fixture.db.query(`INSERT INTO agent_installation_tokens
+      (agent_id,token_hash,expires_at,created_by_actor_id,origin_kind,origin_connection_id)
+      VALUES($1,$2,clock_timestamp()+interval '1 day',$3,'connection',$4)`, [fixture.agentId, hash, fixture.humanActorId, id])
+    return { id, token, client: new WorkMeshClient({ baseUrl: fixture.baseUrl, coordinationToken: token, installationToken: token }) }
   }
   // No public second-native-credential issuance operation exists. This privileged,
   // explicit test setup creates two native credentials for the same real Agent.
@@ -78,14 +84,14 @@ export async function createExecutionRecoveryFixture() {
         const state = (await fixture.db.query<{ revision: number }>('SELECT revision FROM agent_sessions WHERE id=$1', [execution.sessionId])).rows[0]!
         args = { ifMatch: state.revision, summary: 'M1 continuation completed after its verified Human trigger', noArtifactReason: 'Deterministic lifecycle conformance; no product artifact was produced.' }
       }
+      captures.push({ phase, tools: input.tools.map(tool => tool.function.name), returnedToolCalls: phase === 'stop' ? [] : name ? [name] : [],
+        receivedToolResults: input.messages.filter(message => message.role === 'tool').map(message => redact(JSON.stringify(message.content))) })
       if (phase === 'stop') {
         const current = await execution.client.getSession<{ revision: number }>(execution.sessionId)
         await fixture.human('POST', `/api/v1/agent-sessions/${execution.sessionId}/signals`, { signal: 'stop', reason: 'M1 Stop during model execution' }, current.revision)
         name = null
         await new Promise(done => setTimeout(done, 1_500))
       }
-      captures.push({ phase, tools: input.tools.map(tool => tool.function.name), returnedToolCalls: name ? [name] : [],
-        receivedToolResults: input.messages.filter(message => message.role === 'tool').map(message => redact(JSON.stringify(message.content))) })
       if (response.destroyed) return
       response.writeHead(200, { 'content-type': 'text/event-stream' })
       const delta = name ? { role: 'assistant', tool_calls: [{ index: 0, id: `m1-call-${phase}-${call}`, type: 'function', function: { name, arguments: JSON.stringify(args) } }] }
@@ -101,7 +107,7 @@ export async function createExecutionRecoveryFixture() {
     process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST = '127.0.0.1'
     let conversationId: string, turnId: string
     try {
-      const connection = await fixture.human<{ id: string }>('POST', '/api/v1/workbench/llm-connections', { scope: 'workspace', name: 'M1 HTTPS deterministic model', apiType: 'openai-completions', baseUrl: `https://127.0.0.1:${address.port}/v1`, secretMaterial: 'm1-public-fixture-model-key' })
+      const connection = await fixture.human<{ id: string }>('POST', '/api/v1/workbench/llm-connections', { scope: 'workspace', name: `M1 HTTPS deterministic model ${randomUUID()}`, apiType: 'openai-completions', baseUrl: `https://127.0.0.1:${address.port}/v1`, secretMaterial: 'm1-public-fixture-model-key' })
       const selected = await fixture.human<{ id: string }>('POST', `/api/v1/workbench/llm-connections/${connection.id}/models`, { externalModelId: 'm1-model', displayName: 'M1 model', enabled: true, capabilities: { inputModalities: ['text'], toolCalling: true, reasoning: false, contextWindowTokens: 32768, maxOutputTokens: 2048 } }, 1)
       const conversation = await fixture.human<{ id: string }>('POST', '/api/v1/workbench/conversations', { title: 'M1 lifecycle', workItemId: execution.workItemId, agentSessionId: execution.sessionId, llmConnectionId: connection.id, llmModelId: selected.id })
       conversationId = conversation.id

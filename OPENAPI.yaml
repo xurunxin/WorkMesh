@@ -2107,7 +2107,25 @@ paths:
       operationId: listWorkbenchRunnerAssignments
       parameters: [{ name: executionWaits, in: query, schema: { type: boolean, default: false }, description: Opt in to source-bound waiting monitors and unique continuation Turns }]
       description: Runner discovery for one active Agent installation; requires the deployment Runner credential as well.
-      responses: { "200": { description: Owned sessions awaiting ACK or ready for workbench turns, content: { application/json: { schema: { type: object, properties: { items: { type: array, items: { type: object, properties: { sessionId: { type: string, format: uuid }, state: { type: string, enum: [queued, acknowledged, executing] } } } } } } } } } }
+      responses:
+        "200":
+          description: Owned sessions awaiting ACK, ready to execute, or source-bound passive waiting monitors when executionWaits=true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required: [sessionId, state]
+                      properties:
+                        sessionId: { type: string, format: uuid }
+                        state: { type: string, enum: [queued, acknowledged, executing, awaiting_approval, awaiting_input, blocked, paused] }
+                        purpose: { type: string, enum: [execute, monitor], description: Emitted only for executionWaits opt-in }
+                        waitId: { type: string, format: uuid, description: Present only for a source-bound monitor; it grants no execution admission }
   /api/v1/agent-sessions/{id}/workbench-turns:
     get:
       x-workmesh-policy-id: route.listAgentWorkbenchTurns

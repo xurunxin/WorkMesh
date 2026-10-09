@@ -1,10 +1,25 @@
 import { describe, expect, it } from 'vitest'
 import { workbenchExecutionWaitOptInSchema, workbenchSessionWaitSchema,
-  workbenchRunnerSettleInputSchema } from './pi-workbench-contracts.js'
+  workbenchRunnerSettleInputSchema, workbenchTurnQueuedEventPayloadSchema,
+  workbenchTurnSettledEventPayloadSchema, workbenchRunnerAttemptSettledEventPayloadSchema } from './pi-workbench-contracts.js'
 
 const approvalId = '00000000-0000-4000-8000-000000000001'
 const actionPayloadHash = `sha256:${'a'.repeat(64)}`
 describe('execution wait wire admission', () => {
+  it('keeps legacy events and accepts only complete safe continuation lineage', () => {
+    const queued = { conversationId: approvalId, turnId: approvalId, initiatedByActorId: approvalId }
+    expect(workbenchTurnQueuedEventPayloadSchema.parse(queued)).toEqual(queued)
+    const continuation = { ...queued, executionWaitId: approvalId, sourceTurnId: approvalId, triggerKind: 'approval' }
+    expect(workbenchTurnQueuedEventPayloadSchema.parse(continuation)).toEqual(continuation)
+    expect(workbenchTurnQueuedEventPayloadSchema.safeParse({ ...queued, executionWaitId: approvalId }).success).toBe(false)
+    expect(workbenchTurnQueuedEventPayloadSchema.safeParse({ ...continuation, credentialHash: 'secret' }).success).toBe(false)
+    const settled = { conversationId: approvalId, turnId: approvalId, runnerAttemptId: approvalId,
+      outcome: 'settled', stopReason: null, errorCode: null, executionWaitId: approvalId }
+    expect(workbenchTurnSettledEventPayloadSchema.parse(settled)).toEqual(settled)
+    const attempt = { conversationId: approvalId, turnId: approvalId, runnerAttemptId: approvalId,
+      attemptNo: 1, outcome: 'settled', usage: null, executionWaitId: approvalId }
+    expect(workbenchRunnerAttemptSettledEventPayloadSchema.parse(attempt)).toEqual(attempt)
+  })
   it('keeps old claim consumers opted out and rejects unknown switches', () => {
     expect(workbenchExecutionWaitOptInSchema.parse({})).toEqual({ executionWaits: false })
     expect(workbenchExecutionWaitOptInSchema.safeParse({ executionWaits: 'true' }).success).toBe(false)

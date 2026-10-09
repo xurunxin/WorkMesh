@@ -3,6 +3,8 @@ import { appendActivityInputSchema, createAgentCapabilityManifest, qualifyAgentC
   type AgentCapabilityManifest } from '@workmesh/contracts'
 import { createWorkMeshTools, type RunnerToolApi, type SessionCompletionIntent } from './workmesh-tools.js'
 import type { Capability } from '@workmesh/contracts'
+import { ExecutionLifecycle } from './execution-lifecycle.js'
+import { RunnerApiError } from './run-session.js'
 
 const sessionId = '11111111-1111-4111-8111-111111111111'
 const ownerId = '22222222-2222-4222-8222-222222222222'
@@ -25,6 +27,23 @@ function manifest(capabilities: Capability[]): AgentCapabilityManifest {
 }
 
 describe('Pi WorkMesh tools', () => {
+  it.each([new RunnerApiError(500, 'INTERNAL_ERROR'), new SyntaxError('truncated committed response'),
+    new TypeError('committed response lost')])('真实工具包装写响应错误仍阻止自动等待：%s', async failure => {
+    const lifecycle = new ExecutionLifecycle()
+    const api: RunnerToolApi = { sessionId, async request<T>(method: Parameters<RunnerToolApi['request']>[0], path: string): Promise<T> {
+      return lifecycle.request(method, async () => {
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read', 'work:write']) as T
+        throw failure
+      })
+    } }
+    const tools = await createWorkMeshTools(api, 'uncertain-attempt', () => undefined)
+    const state = tools.find(tool => tool.name === 'workmesh_transition_state')!
+    await expect(lifecycle.tool(() => state.execute('state-uncertain',
+      { state: 'planning', reason: '整理计划', ifMatch: 2 }, undefined, undefined, {} as never))).rejects.toThrow()
+    lifecycle.close('wait')
+    expect(lifecycle.reconciled).toBe(false)
+  })
+
   it('等待仅产生意图，不写状态或Activity，普通状态与租约心跳无前置Activity', async () => {
     const calls: Array<{ path: string; ifMatch?: number }> = []
     const waits: unknown[] = []

@@ -75,12 +75,13 @@ try:
     command = [sys.executable, '-X', 'utf8', '-B', str(root / 'scripts/m1-run-check.py'), *sys.argv[1:]]
     exit_code = subprocess.run(command, cwd=root, env=env).returncode
 finally:
-    artifacts = root / 'ci-logs/mcp-coverage'
-    if artifacts.exists():
+    artifact_roots = [root / 'ci-logs/mcp-coverage', root / 'ci-logs/execution-recovery']
+    if any(path.exists() for path in artifact_roots):
         with zipfile.ZipFile(evidence / (run_id + '-client-evidence.zip'), 'w', zipfile.ZIP_DEFLATED) as archive:
-            for path in artifacts.glob('*'):
+          for artifacts in artifact_roots:
+            for path in artifacts.rglob('*'):
                 if path.is_file():
-                    archive.writestr(path.name, path.read_bytes())
+                    archive.writestr(artifacts.name + '/' + path.relative_to(artifacts).as_posix(), path.read_bytes())
     for entry in reversed(resources):
         try:
             log = subprocess.run(['docker', 'logs', entry['id']], capture_output=True, text=True, encoding='utf8')

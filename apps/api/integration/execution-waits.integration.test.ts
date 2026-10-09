@@ -172,6 +172,8 @@ describe('persisted execution wait and Worker continuation', () => {
     else await db.query(`UPDATE delegations SET status='revoked',revoked_at=now(),revoked_by_actor_id=$2
       WHERE id=(SELECT delegation_id FROM agent_sessions WHERE id=$1)`, [f.sessionId, humanId])
     expect(await worker().reconcileWorkbenchWaits()).toBe(0)
+    expect((await db.query<{ status: string; terminal_reason: string }>('SELECT status,terminal_reason FROM workbench_execution_waits WHERE agent_session_id=$1', [f.sessionId])).rows[0])
+      .toEqual({ status: 'canceled', terminal_reason: action === 'stop' ? 'session_closed' : 'authority_revoked' })
     expect((await db.query<{ continuation_turn_id: string | null }>('SELECT continuation_turn_id FROM workbench_execution_waits WHERE agent_session_id=$1', [f.sessionId])).rows[0]!.continuation_turn_id).toBeNull()
     expect((await db.query('SELECT id FROM workbench_runner_attempts WHERE agent_session_id=$1', [f.sessionId])).rowCount).toBe(1)
   }, 120_000)
@@ -277,5 +279,68 @@ describe('persisted execution wait and Worker continuation', () => {
       expect(decided.statusCode, decided.body).toBe(200)
       expect(await worker().reconcileWorkbenchWaits()).toBe(1)
     }
+  }, 120_000)
+
+  it('enforces wait persistence shapes, uniqueness, exact prompt foreign keys and immutable origins in PostgreSQL', async () => {
+    const f = await sessionFixture(), other = await sessionFixture()
+    const waitFor = async (fixture: Awaited<ReturnType<typeof sessionFixture>>) => {
+      const settled = await agent(fixture.token, 'POST', `/api/v1/workbench/runner-attempts/${fixture.attemptId}/settle`, {
+        fenceToken: fixture.fenceToken, assistantMessageMarkdown: 'Waiting for exact input.',
+        settlement: { outcome: 'settled', summaryMarkdown: 'Wait', noArtifactReason: 'Waiting', externalEffectsReconciled: true },
+        sessionWait: { ifMatch: await revision(fixture.sessionId), state: 'awaiting_input', reason: 'Exact input required' },
+      })
+      expect(settled.statusCode, settled.body).toBe(200)
+      return settled.json<{ executionWait: { id: string } }>().executionWait.id
+    }
+    const waitId = await waitFor(f), otherWaitId = await waitFor(other)
+    const clone = (patch: Record<string, unknown>) => db.query(`INSERT INTO workbench_execution_waits
+      SELECT (jsonb_populate_record(NULL::workbench_execution_waits,to_jsonb(source)||$2::jsonb)).*
+      FROM workbench_execution_waits source WHERE id=$1`, [waitId, JSON.stringify({ id: randomUUID(), ...patch })])
+    const canceled = { status: 'canceled', resolved_at: new Date().toISOString(), terminal_reason: 'DDL probe' }
+    await expect(clone({ ...canceled, source_attempt_id: other.attemptId })).rejects.toMatchObject({ code: '23505',
+      constraint: 'workbench_execution_waits_workspace_id_source_turn_id_key' })
+    await expect(clone({ ...canceled, source_turn_id: other.turnId })).rejects.toMatchObject({ code: '23505',
+      constraint: 'workbench_execution_waits_workspace_id_source_attempt_id_key' })
+    // The rows deliberately use different source facts to isolate the pending-Session constraint.
+    await db.query("UPDATE workbench_execution_waits SET status='canceled',resolved_at=now(),terminal_reason='DDL probe' WHERE id=$1", [otherWaitId])
+    await expect(clone({ source_turn_id: other.turnId, source_attempt_id: other.attemptId })).rejects.toMatchObject({ code: '23505',
+      constraint: 'workbench_wait_one_pending_session' })
+    await expect(db.query('UPDATE workbench_execution_waits SET input_message_sequence=NULL WHERE id=$1', [waitId]))
+      .rejects.toMatchObject({ code: '23514' })
+
+    const payload = { action: 'DDL approval binding' }
+    const requested = await agent(f.token, 'POST', '/api/v1/approvals', { sessionId: f.sessionId,
+      approvalType: 'manual_gate', actionName: 'ddl-gate', actionPayloadSanitized: payload,
+      actionPayloadHash: `sha256:${createHash('sha256').update(JSON.stringify(payload)).digest('hex')}`,
+      riskLevel: 'low', rationaleSummary: 'Exact DDL gate', expiresAt: new Date(Date.now()+3600_000).toISOString() })
+    expect(requested.statusCode, requested.body).toBe(200)
+    const original = requested.json<{ id: string; action_payload_hash: string }>()
+    const saveApprovalShape = (hash: string | null) => db.query(`UPDATE workbench_execution_waits
+      SET wait_state='awaiting_approval',approval_id=$2,approval_action_payload_hash=$3,
+        input_event_cursor=NULL,input_message_sequence=NULL WHERE id=$1`, [waitId, original.id, hash])
+    for (const invalid of [null, original.action_payload_hash.slice(7), original.action_payload_hash.replace('sha256:', 'SHA256:')])
+      await expect(saveApprovalShape(invalid)).rejects.toMatchObject({ code: '23514' })
+    await saveApprovalShape(original.action_payload_hash)
+    expect((await db.query<{ approval_action_payload_hash: string }>('SELECT approval_action_payload_hash FROM workbench_execution_waits WHERE id=$1', [waitId])).rows[0]!.approval_action_payload_hash)
+      .toBe(original.action_payload_hash)
+    await db.query(`UPDATE workbench_execution_waits SET wait_state='awaiting_input',approval_id=NULL,
+      approval_action_payload_hash=NULL,input_event_cursor=0,input_message_sequence=1 WHERE id=$1`, [waitId])
+
+    expect((await human('POST', `/api/v1/agent-sessions/${f.sessionId}/prompt`, { bodyMarkdown: 'Exact target prompt.' })).statusCode).toBe(200)
+    expect((await human('POST', `/api/v1/agent-sessions/${other.sessionId}/prompt`, { bodyMarkdown: 'Other Session prompt.' })).statusCode).toBe(200)
+    const prompt = (await db.query<{ id: string }>('SELECT id FROM agent_session_prompts WHERE session_id=$1 ORDER BY created_at DESC LIMIT 1', [f.sessionId])).rows[0]!.id
+    const otherPrompt = (await db.query<{ id: string }>('SELECT id FROM agent_session_prompts WHERE session_id=$1 ORDER BY created_at DESC LIMIT 1', [other.sessionId])).rows[0]!.id
+    await db.query(`UPDATE workbench_execution_waits SET status='continued',resolved_at=now(),
+      continuation_turn_id=$2,trigger_kind='prompt',trigger_prompt_id=$3 WHERE id=$1`, [waitId, f.turnId, prompt])
+    await expect(db.query('UPDATE workbench_execution_waits SET trigger_prompt_id=$2 WHERE id=$1', [waitId, otherPrompt]))
+      .rejects.toMatchObject({ code: '23503' })
+    await expect(db.query(`UPDATE workbench_execution_waits SET status='continued',terminal_reason=NULL,
+      continuation_turn_id=$2,trigger_kind='prompt',trigger_prompt_id=$3 WHERE id=$1`, [otherWaitId, f.turnId, otherPrompt]))
+      .rejects.toMatchObject({ code: '23505', constraint: 'workbench_execution_waits_workspace_id_continuation_turn_id_key' })
+    const installationId = (await db.query<{ source_installation_token_id: string }>('SELECT source_installation_token_id FROM workbench_execution_waits WHERE id=$1', [waitId])).rows[0]!.source_installation_token_id
+    await expect(db.query("UPDATE agent_installation_tokens SET origin_kind=NULL WHERE id=$1", [installationId]))
+      .rejects.toThrow('INSTALLATION_ORIGIN_IMMUTABLE')
+    await expect(db.query('INSERT INTO agent_installation_tokens(agent_id,token_hash,origin_connection_id) VALUES($1,$2,$3)',
+      [agentId, randomUUID(), randomUUID()])).rejects.toMatchObject({ code: '23514' })
   }, 120_000)
 })

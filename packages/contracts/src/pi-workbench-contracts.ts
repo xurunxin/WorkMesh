@@ -496,7 +496,12 @@ export const workbenchTurnQueuedEventPayloadSchema = z.object({
   conversationId: idSchema,
   turnId: idSchema,
   initiatedByActorId: idSchema,
-}).strict()
+  executionWaitId: idSchema.optional(),
+  sourceTurnId: idSchema.optional(),
+  triggerKind: z.enum(['approval', 'prompt', 'message']).optional(),
+}).strict().refine(value => [value.executionWaitId, value.sourceTurnId, value.triggerKind]
+  .every(value => value === undefined) || [value.executionWaitId, value.sourceTurnId, value.triggerKind]
+  .every(value => value !== undefined), { message: 'Continuation lineage must be complete' })
 
 export const workbenchTurnDispatchedEventPayloadSchema = z.object({
   conversationId: idSchema,
@@ -512,6 +517,7 @@ export const workbenchTurnSettledEventPayloadSchema = z.object({
   outcome: terminalTurnStatusSchema,
   stopReason: turnStopReasonSchema.nullable(),
   errorCode: z.string().min(1).max(120).nullable(),
+  executionWaitId: idSchema.optional(),
 }).strict()
 
 export const workbenchRunnerAttemptStartedEventPayloadSchema = z.object({
@@ -528,6 +534,7 @@ export const workbenchRunnerAttemptSettledEventPayloadSchema = z.object({
   attemptNo: z.number().int().positive(),
   outcome: z.enum(['settled', 'aborted', 'failed']),
   usage: workbenchUsageSchema.nullable(),
+  executionWaitId: idSchema.optional(),
 }).strict()
 
 export const workbenchRunnerAttemptSupersededEventPayloadSchema = z.object({

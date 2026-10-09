@@ -134,6 +134,9 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
                      AND connection.team_id=session.team_id AND connection.agent_id=session.agent_id
                      AND connection.agent_actor_id=session.agent_actor_id
                      AND connection.principal_human_actor_id=delegation.principal_human_actor_id
+                     AND coordinator.workspace_id=session.workspace_id AND coordinator.agent_id=session.agent_id
+                     AND coordinator.team_id=session.team_id
+                     AND coordinator.principal_human_actor_id=delegation.principal_human_actor_id
                      AND connection.status IN ('active','rotating') AND 'work:write'=ANY(connection.granted_capabilities)
                      AND 'work:write'=ANY(coordinator.permissions_snapshot)
                      AND coordinator.capability_scope->'teamIds' ? session.team_id::text
@@ -436,25 +439,27 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
         await tx.query(`UPDATE workbench_conversations SET revision=revision+1,updated_at=now()
           WHERE workspace_id=$1 AND id=$2`, [current.workspaceId, turn.conversation_id])
       }
+      const executionWait = body.sessionWait ? await createWorkbenchExecutionWait(tx, {
+        workspaceId: current.workspaceId, sessionId, actorId: current.id, credentialHash: current.credentialHash!,
+        turnId: turn.id, attemptId: attempt.id, conversationId: turn.conversation_id,
+        correlationId: context.correlationId, idempotencyKey: context.idempotencyKey, wait: body.sessionWait,
+      }) : undefined
       await event(tx, current, context, turn, 'workbench.runner_attempt.settled',
         'workbench_runner_attempt', attempt.id,
         { conversationId: turn.conversation_id, turnId: turn.id,
-          runnerAttemptId: attempt.id, attemptNo: attempt.attempt_no, outcome, usage })
+          runnerAttemptId: attempt.id, attemptNo: attempt.attempt_no, outcome, usage,
+          ...(executionWait ? { executionWaitId: executionWait.id } : {}) })
       await event(tx, current, context, turn, 'workbench.turn.settled', 'workbench_turn', turn.id,
         { conversationId: turn.conversation_id, turnId: turn.id,
           runnerAttemptId: attempt.id, outcome: turnStatus, stopReason: null,
-          errorCode: body.settlement.errorCode ?? null })
+          errorCode: body.settlement.errorCode ?? null,
+          ...(executionWait ? { executionWaitId: executionWait.id } : {}) })
       if (body.sessionCompletion) {
         const completion = completeAgentSessionInputSchema.parse(body.sessionCompletion.body)
         await finishSessionInTransaction(tx,
           { ...context, idempotencyKey: body.sessionCompletion.operationKey },
           sessionId, body.sessionCompletion.ifMatch, completion)
       }
-      const executionWait = body.sessionWait ? await createWorkbenchExecutionWait(tx, {
-        workspaceId: current.workspaceId, sessionId, actorId: current.id, credentialHash: current.credentialHash!,
-        turnId: turn.id, attemptId: attempt.id, conversationId: turn.conversation_id,
-        correlationId: context.correlationId, idempotencyKey: context.idempotencyKey, wait: body.sessionWait,
-      }) : undefined
       // W17 telemetry: capture the durable timestamps inside the transaction, but
       // emit only after it commits so a failing log sink can never change the
       // settlement outcome (observability must not affect availability).

@@ -83,6 +83,13 @@ describe('M1 真实 HTTP、MCP、Pi 执行与恢复', () => {
   it.each(['complete', 'stop_ack'] as const)('%s 丢响应后普通终态 E 拒绝，原 Connection 确认零事实，提前 refresh 的其他 Connection 拒绝', async action => {
     const execution = await fixture.createExecution(`M1 exact origin ${action}`)
     const second = await fixture.pairSameAgent()
+    const [firstContext, secondContext] = await Promise.all([
+      fixture.connect('read-only').then(client => tool<{ identity: { actorId: string }; team: { id: string } }>(client, 'get_workmesh_context', {})),
+      fixture.connect('read-only', undefined, second.token).then(client => tool<{ identity: { actorId: string }; team: { id: string } }>(client, 'get_workmesh_context', {})),
+    ])
+    expect(firstContext.identity.actorId).toBe(secondContext.identity.actorId)
+    expect(firstContext.team.id).toBe(fixture.teamId)
+    expect(secondContext.team.id).toBe(fixture.teamId)
     const otherExecution = await fixture.refreshExecution(execution, second.token)
     expect(await otherExecution.client.getSession(execution.sessionId)).toMatchObject({ id: execution.sessionId })
     const key = randomUUID()
@@ -111,7 +118,9 @@ describe('M1 真实 HTTP、MCP、Pi 执行与恢复', () => {
     expect(await fixture.facts()).toEqual(before)
     await fixture.restart()
     expect(await fixture.coordination.getSessionExecutionResult(execution.sessionId, { action, operationKey: key })).toEqual(confirmed)
-    saveExecutionEvidence(`origin-double-connection-${action}.json`, { sessionId: execution.sessionId, firstConnectionId: fixture.connectionId, otherConnectionId: second.id, key, confirmed, before, after: await fixture.facts() })
+    saveExecutionEvidence(`origin-double-connection-${action}.json`, { sessionId: execution.sessionId, firstConnectionId: fixture.connectionId, otherConnectionId: second.id,
+      sourceSetup: 'Explicit privileged second Connection alias: public same agentSlug/Team creation has a unique constraint; real current HTTP validates both live contexts and refreshes',
+      firstContext, secondContext, key, confirmed, before, after: await fixture.facts() })
   })
 
   it('同 Agent 双 native 安装只允许实际原 E 来源，旧 null/unproven 和撤权均关闭', async () => {

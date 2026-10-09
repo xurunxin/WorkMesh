@@ -19,7 +19,7 @@ if not name.replace('-', '').replace('_', '').isalnum() or not command:
 env = dict(os.environ)
 env['PATH'] = str(runtime) + os.pathsep + env['PATH']
 os.environ['PATH'] = env['PATH']
-env['npm_execpath'] = 'C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs'
+env['npm_execpath'] = 'C:/nvm4w/nodejs/node_modules/pnpm/pnpm.exe'
 if command[0] == 'pnpm':
     command[0:1] = [str(runtime / 'node.exe'), 'C:/nvm4w/nodejs/node_modules/pnpm/bin/pnpm.mjs']
 if command[0] == 'node':

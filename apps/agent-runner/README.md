@@ -28,3 +28,6 @@ signal 提交专用 stopAck。该路径不调用普通 Activity、Token refresh 
 ACK 丢响应使用安装身份只读确认原动作；拒绝或缺失来源仅报告无法确认，不盲重写。
 未知在途工具、过期凭据、强杀和清理失败须由 Human 处理残留；强杀不保证 finally。
 Pi 内部 completion 仍由外层 settle 回执恢复。
+写响应的 transport、5xx 或 JSON 解码失败保留未知副作用标记，即使普通工具将错误包装
+为模型可读结果，也不能据此登记自动恢复等待。模型退出的所有路径均先 await Pi idle
+再 dispose/清理 scratch；idle 无法确认时保留本人目录，Stop ACK 报告准确残留。

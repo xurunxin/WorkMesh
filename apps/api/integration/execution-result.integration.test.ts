@@ -121,4 +121,37 @@ describe('exact execution confirmation', () => {
       expect(await fingerprint()).toEqual(before)
     } finally { await db.query('DROP TRIGGER m1_origin_failure ON api_idempotency_keys; DROP FUNCTION m1_reject_origin()') }
   })
+
+  it('rechecks principal, grant, exact scope and installation on every confirmation, with concurrent reads producing zero facts', async () => {
+    const execution = await start(), key = randomUUID()
+    await db.query(`UPDATE agent_session_tokens SET installation_token_id=(SELECT id FROM agent_installation_tokens WHERE token_hash=$2)
+      WHERE token_hash=$1`, [tokenHash(execution.token), tokenHash(installation)])
+    expect((await agent(execution.token, 'POST', `/api/v1/agent-sessions/${execution.sessionId}/complete`, completion, execution.revision, key)).statusCode).toBe(200)
+    const path = confirmation(execution.sessionId, key), before = await fingerprint()
+    const reads = await Promise.all(Array.from({ length: 4 }, () => agent(installation, 'GET', path)))
+    expect(reads.map(x => x.statusCode)).toEqual([200, 200, 200, 200])
+    expect(await fingerprint()).toEqual(before)
+    const delegation = (await db.query<{ id: string; capability_scope: unknown }>(`SELECT d.id,d.capability_scope FROM delegations d
+      JOIN agent_sessions s ON s.delegation_id=d.id WHERE s.id=$1`, [execution.sessionId])).rows[0]!
+    const rejectWithoutWrites = async (expected: number) => {
+      const baseline = await fingerprint()
+      expect((await agent(installation, 'GET', path)).statusCode).toBe(expected)
+      expect(await fingerprint()).toEqual(baseline)
+    }
+    await db.query("UPDATE delegations SET capability_scope=jsonb_set(capability_scope,'{workItemIds}','[]'::jsonb) WHERE id=$1", [delegation.id])
+    try { await rejectWithoutWrites(404) }
+    finally { await db.query('UPDATE delegations SET capability_scope=$2::jsonb WHERE id=$1', [delegation.id, JSON.stringify(delegation.capability_scope)]) }
+    await db.query('UPDATE agent_team_access SET revoked_at=now() WHERE agent_id=$1 AND team_id=$2', [agentId, teamId])
+    try { await rejectWithoutWrites(404) }
+    finally { await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2', [agentId, teamId]) }
+    await db.query('UPDATE actors SET is_active=false WHERE id=$1', [humanId])
+    try { await rejectWithoutWrites(404) }
+    finally { await db.query('UPDATE actors SET is_active=true WHERE id=$1', [humanId]) }
+    await db.query('UPDATE agent_installation_tokens SET revoked_at=now() WHERE token_hash=$1', [tokenHash(installation)])
+    try { await rejectWithoutWrites(401) }
+    finally { await db.query('UPDATE agent_installation_tokens SET revoked_at=NULL WHERE token_hash=$1', [tokenHash(installation)]) }
+    const restored = await agent(installation, 'GET', path)
+    expect(restored.statusCode).toBe(200)
+    expect(restored.json()).toEqual(reads[0]!.json())
+  })
 })

@@ -1,0 +1,149 @@
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\db
+> tsx scripts/reset-test.ts
+
+
+> @workmesh/conformance@ test:integration C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\conformance
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6/packages/conformance
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_approval 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"3d7908b1-136d-4eb0-a18e-1ae924604ff8","conversationId":"e40bcd66-c310-4b06-a0d5-f2991b43e377","attemptNo":1,"sessionId":"cc7a3753-b238-4f21-8b5f-207c5a42eced","correlationId":"4a6e6658-26ef-4caa-8270-022e2381eb40","status":"settled","outcome":"settled","queueWaitMs":2870,"dispatchLagMs":2805,"runDurationMs":472,"totalDurationMs":3342,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_approval 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"68fc6b84-dd84-4df4-b543-39ad70ffd1d3","conversationId":"e40bcd66-c310-4b06-a0d5-f2991b43e377","attemptNo":1,"sessionId":"cc7a3753-b238-4f21-8b5f-207c5a42eced","correlationId":"4d32fd79-88e6-40f6-9889-ad9a8fbe70a7","status":"settled","outcome":"settled","queueWaitMs":2695,"dispatchLagMs":2623,"runDurationMs":438,"totalDurationMs":3133,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_input 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"460ecb5a-cabf-45a4-a76e-810ca9be0266","conversationId":"79c442c5-3c34-4f5f-b443-9250747a1cf9","attemptNo":1,"sessionId":"4abdb5e7-1d8b-4d9f-8323-33179aed46cd","correlationId":"f1843051-d0bb-4720-be1e-30a67b825a70","status":"settled","outcome":"settled","queueWaitMs":2736,"dispatchLagMs":2664,"runDurationMs":399,"totalDurationMs":3135,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_input 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"a260cbea-0666-449e-ac09-19809dfcbfaa","conversationId":"79c442c5-3c34-4f5f-b443-9250747a1cf9","attemptNo":1,"sessionId":"4abdb5e7-1d8b-4d9f-8323-33179aed46cd","correlationId":"06ff4262-4364-4144-a034-aad48c592452","status":"settled","outcome":"settled","queueWaitMs":2760,"dispatchLagMs":2683,"runDurationMs":370,"totalDurationMs":3130,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi blocked 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"d96815c0-8d0a-4a6b-8057-89bdb31b613c","conversationId":"a6e7308d-5425-4972-a25f-ee8c52abbf70","attemptNo":1,"sessionId":"1130a891-31a7-44e3-b000-62ce448deecc","correlationId":"c374e715-2c21-472d-8e06-c81442d2625f","status":"settled","outcome":"settled","queueWaitMs":2397,"dispatchLagMs":2343,"runDurationMs":344,"totalDurationMs":2741,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi blocked 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"ed85f8fd-8655-4af0-9e6a-03d4f3e4e5a4","conversationId":"a6e7308d-5425-4972-a25f-ee8c52abbf70","attemptNo":1,"sessionId":"1130a891-31a7-44e3-b000-62ce448deecc","correlationId":"0ba0ef79-e67a-43f7-b627-ac8690564e80","status":"settled","outcome":"settled","queueWaitMs":2722,"dispatchLagMs":2652,"runDurationMs":358,"totalDurationMs":3080,"totalTokens":null,"errorCode":null}
+
+stdout | src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"12e6909f-a896-4924-b02d-c5ebf14d0e48","conversationId":"568939b8-33d6-4cd1-8988-a5ad473e493a","attemptNo":1,"sessionId":"bd9c0d98-2ae5-4eaf-9c50-6747e8cdbbd2","correlationId":"bb98938f-210e-40f5-9128-6857782e00da","status":"settled","outcome":"settled","queueWaitMs":2634,"dispatchLagMs":2575,"runDurationMs":428,"totalDurationMs":3062,"totalTokens":null,"errorCode":null}
+
+ ❯ src/execution-recovery.conformance.test.ts (9 tests | 4 failed) 155572ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 具名 SDK/MCP 读取 Plan/context/批准/恢复，Lease 心跳续租释放保持准确 version  1295ms
+   × M1 真实 HTTP、MCP、Pi 执行与恢复 > complete 丢响应后普通终态 E 拒绝，原 Connection 确认零事实，提前 refresh 的其他 Connection 拒绝 238ms
+     → Human fixture POST /api/v1/agent-connections: 409 {"error":{"code":"CONFLICT","message":"A conflicting resource already exists","correlationId":"30e24928-2c85-443d-913e-6a81eacd0199"}}
+   × M1 真实 HTTP、MCP、Pi 执行与恢复 > stop_ack 丢响应后普通终态 E 拒绝，原 Connection 确认零事实，提前 refresh 的其他 Connection 拒绝 199ms
+     → Human fixture POST /api/v1/agent-connections: 409 {"error":{"code":"CONFLICT","message":"A conflicting resource already exists","correlationId":"6eacbdd7-66f8-4ef1-90d2-87fc107fb6a9"}}
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 同 Agent 双 native 安装只允许实际原 E 来源，旧 null/unproven 和撤权均关闭  449ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_approval 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成  7475ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi awaiting_input 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成  130676ms
+   ✓ M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi blocked 公开结算→Human 准确触发→唯一续 Turn/新 Attempt→完成  6513ms
+   × M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接 3618ms
+     → expected { …(27) } to match object { status: 'canceled', …(1) }
+(25 matching properties omitted from actual)
+   × M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 模型运行期间 Stop 关闭模型与工具，finally 专用 stopAck 保存清理事实 4211ms
+     → expected [] to have a length of 1 but got +0
+stdout | src/mcp-coverage.conformance.test.ts > 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实
+{"level":"info","message":"Workbench turn telemetry","event":"workbench.turn.telemetry","turnId":"f33848d5-41a7-4d2e-94b7-58f935890297","conversationId":"02c78831-7c83-4c24-ad6a-18cda32694f2","attemptNo":1,"sessionId":"18741f59-b69b-49d0-8936-7ac0f3c114b1","correlationId":"9c354fbd-ad2e-4858-9f3c-e3a8e75e35bf","status":"settled","outcome":"settled","queueWaitMs":2761,"dispatchLagMs":2691,"runDurationMs":483,"totalDurationMs":3244,"totalTokens":null,"errorCode":null}
+
+ ✓ src/mcp-coverage.conformance.test.ts (12 tests) 12160ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 同一C分别发现两种mode，Context与同次投影一致，verify无需目标参数  725ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 仅E Token读取自身resource和等价tool，异Session拒绝后继续合法读取  1103ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 双客户端C bridge绑定两个准确E，省略work room目标保留当前C  998ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 写入重连/同key并发只产生一条事实，异体冲突及旧revision保全currentRevision  765ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 下游事务失败不吞错误且回滚事实；resource重放不新增领域event/outbox  951ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 真实Pi模型收到准确E子集、调用产生Document/工具活动/Turn事实  3748ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > API/MCP重启后重新发现和durable cursor恢复，Stop拒普通调用且SDK专用ACK仍可走  541ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > queued只握手；paused/stopping/terminal拒普通发现，stale保留明确ACK恢复  461ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > stale ACK及stopping/terminal诊断heartbeat经MCP到REST，撤Delegation仍拒绝  772ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 安装交接准确目标可inspect/reject，另一真实Agent和无安装E拒绝  895ms
+   ✓ 真实API、MCP与Pi资格和恢复链 > 发现后撤Connection/Team grant仍拒绝，不以刷新或重新发现恢复授权  307ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > complete 丢响应后普通终态 E 拒绝，原 Connection 确认零事实，提前 refresh 的其他 Connection 拒绝
+Error: Human fixture POST /api/v1/agent-connections: 409 {"error":{"code":"CONFLICT","message":"A conflicting resource already exists","correlationId":"30e24928-2c85-443d-913e-6a81eacd0199"}}
+ ❯ Object.human src/mcp-coverage.fixture.ts:62:29
+     60|     body: body === undefined ? undefined : JSON.stringify(body) })
+     61|     const text = await response.text()
+     62|     if (!response.ok) throw new Error(`Human fixture ${method} ${path}…
+       |                             ^
+     63|     return (text ? JSON.parse(text) : undefined) as T
+     64|   }
+ ❯ Object.pairSameAgent src/execution-recovery.fixture.ts:24:20
+ ❯ src/execution-recovery.conformance.test.ts:85:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > stop_ack 丢响应后普通终态 E 拒绝，原 Connection 确认零事实，提前 refresh 的其他 Connection 拒绝
+Error: Human fixture POST /api/v1/agent-connections: 409 {"error":{"code":"CONFLICT","message":"A conflicting resource already exists","correlationId":"6eacbdd7-66f8-4ef1-90d2-87fc107fb6a9"}}
+ ❯ Object.human src/mcp-coverage.fixture.ts:62:29
+     60|     body: body === undefined ? undefined : JSON.stringify(body) })
+     61|     const text = await response.text()
+     62|     if (!response.ok) throw new Error(`Human fixture ${method} ${path}…
+       |                             ^
+     63|     return (text ? JSON.parse(text) : undefined) as T
+     64|   }
+ ❯ Object.pairSameAgent src/execution-recovery.fixture.ts:24:20
+ ❯ src/execution-recovery.conformance.test.ts:85:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接
+AssertionError: expected { …(27) } to match object { status: 'canceled', …(1) }
+(25 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "continuation_turn_id": null,
+-   "status": "canceled",
++   "status": "pending",
+  }
+
+ ❯ src/execution-recovery.conformance.test.ts:222:30
+    220|     const stopped = await snapshotWait(execution.sessionId)
+    221|     expect(stopped.turns).toHaveLength(1)
+    222|     expect(stopped.waits[0]).toMatchObject({ status: 'canceled', conti…
+       |                              ^
+    223|     saveExecutionEvidence('pi-wait-pause-stop.json', { sessionId: exec…
+    224|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/execution-recovery.conformance.test.ts > M1 真实 HTTP、MCP、Pi 执行与恢复 > 真实 Pi 模型运行期间 Stop 关闭模型与工具，finally 专用 stopAck 保存清理事实
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/execution-recovery.conformance.test.ts:236:25
+    234|     expect(ack[0]?.summary.length).toBeGreaterThan(0)
+    235|     expect((await fixture.db.query("SELECT 1 FROM domain_events WHERE …
+    236|     expect(pi.captures).toHaveLength(1)
+       |                         ^
+    237|     saveExecutionEvidence('pi-stop-finally.json', { sessionId: executi…
+    238|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  4 failed | 17 passed (21)
+   Start at  22:36:23
+   Duration  173.26s (transform 1.23s, setup 0ms, collect 4.65s, tests 167.73s, environment 0ms, prepare 280ms)
+
+C:\Users\xurx\.tds\workspaces\01a12031-e9de-75c4-ab40-b44affcd71f6\packages\conformance:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/conformance@ test:integration: `vitest run --config vitest.integration.config.ts`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.

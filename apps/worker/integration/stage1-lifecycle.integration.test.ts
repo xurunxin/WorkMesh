@@ -105,6 +105,9 @@ describe('stage 1 worker durability', () => {
   afterAll(async () => { await db.end() })
 
   it.each(['native','connection'] as const)('continues one persisted %s input wait across duplicate workers and preserves pause, revoke and source identity', async sourceKind => {
+    const previousWaitsEnabled = process.env.WORKMESH_EXECUTION_WAITS_ENABLED
+    process.env.WORKMESH_EXECUTION_WAITS_ENABLED = 'true'
+    try {
     const data = await fixture()
     await db.query("UPDATE agent_definitions SET requested_capabilities=ARRAY['work:read','work:write'],approved_capabilities=ARRAY['work:read','work:write'] WHERE id=$1", [data.agentId])
     await db.query("UPDATE delegations SET permissions_snapshot=ARRAY['work:read','work:write'],capability_scope=$2 WHERE id=$1",
@@ -112,6 +115,9 @@ describe('stage 1 worker durability', () => {
     await db.query("INSERT INTO agent_team_access(workspace_id,agent_id,team_id,granted_by_actor_id,approved_capabilities) VALUES($1,$2,$3,$4,ARRAY['work:read','work:write'])",
       [data.workspaceId, data.agentId, data.teamId, data.humanActorId])
     const sessionId = await createSession(data, 'awaiting_input')
+    // Older Worker fixtures omit the optional Session team; persisted waits require
+    // the exact production Team binding in addition to Delegation authority.
+    await db.query('UPDATE agent_sessions SET team_id=$2 WHERE id=$1', [sessionId, data.teamId])
     const createConnection = async () => {
       const delegation = (await db.query<{ id: string }>(`INSERT INTO delegations
         (workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,role,scope_type,scope_id,permissions_snapshot,capability_scope)
@@ -167,6 +173,9 @@ describe('stage 1 worker durability', () => {
     await db.query('UPDATE agent_team_access SET revoked_at=now() WHERE agent_id=$1', [data.agentId])
     expect(await first.reconcileWorkbenchWaits()).toBe(0)
     await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1', [data.agentId])
+    process.env.WORKMESH_EXECUTION_WAITS_ENABLED = 'false'
+    expect(await first.reconcileWorkbenchWaits()).toBe(0)
+    process.env.WORKMESH_EXECUTION_WAITS_ENABLED = 'true'
     if (sourceConnectionId) {
       await db.query("UPDATE agent_connection_credentials SET status='revoked',revoked_at=now() WHERE connection_id=$1", [sourceConnectionId])
       await db.query('UPDATE agent_installation_tokens SET revoked_at=now() WHERE id=$1', [installation])
@@ -189,6 +198,10 @@ describe('stage 1 worker durability', () => {
     expect((await db.query<{ role: string; author_actor_id: string; content_markdown: string }>(
       'SELECT role,author_actor_id,content_markdown FROM workbench_messages WHERE turn_id=$1', [result.continuation_turn_id])).rows[0])
       .toMatchObject({ role: 'system', author_actor_id: data.serviceActorId, content_markdown: expect.stringContaining('The exact input.') })
+    } finally {
+      if (previousWaitsEnabled === undefined) delete process.env.WORKMESH_EXECUTION_WAITS_ENABLED
+      else process.env.WORKMESH_EXECUTION_WAITS_ENABLED = previousWaitsEnabled
+    }
   })
 
   it('treats receiver 409 as delivered and the durable ledger rejects duplicate delivery ids', async () => {

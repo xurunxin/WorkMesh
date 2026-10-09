@@ -1240,7 +1240,7 @@ export const claimWorkItemInputSchema = z.object({
 export const agentSessionResponseSchema = z.object({
   id: idSchema, workspace_id: idSchema, agent_id: idSchema, agent_actor_id: idSchema, delegation_id: idSchema,
   work_item_id: idSchema.nullable(), project_id: idSchema.nullable(), plan_step_id: idSchema.nullable(), state: agentSessionStateSchema,
-  state_reason: z.string().nullable(), sequence: z.number().int().nonnegative(), revision: revisionSchema, current_plan_version_id: idSchema.nullable(),
+  state_reason: z.string().nullable(), sequence: z.union([z.number(), z.string().regex(/^\d+$/).transform(Number)]).pipe(z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER)), revision: revisionSchema, current_plan_version_id: idSchema.nullable(),
   context_snapshot_id: idSchema.nullable(), budget: budgetSchema, external_urls: z.array(externalUrlSchema), last_heartbeat_at: timestampSchema.nullable(),
   heartbeat_health: z.enum(['healthy', 'degraded', 'stale']), heartbeat_health_changed_at: timestampSchema,
   heartbeat_checked_at: timestampSchema.nullable(), heartbeat_current_step_id: idSchema.nullable(), heartbeat_usage: z.record(z.unknown()),

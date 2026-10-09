@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { WorkMeshClient } from './index.js'
+import { agentSessionResponseSchema } from '@workmesh/contracts'
 
 const id = '11111111-1111-4111-8111-111111111111'
 const other = '22222222-2222-4222-8222-222222222222'
@@ -18,6 +19,14 @@ const lease = { id, workspace_id: id, session_id: id, holder_actor_id: id, resou
   revoked_at: null, revoked_by_actor_id: null, created_at: timestamp, updated_at: timestamp }
 
 describe('M1 SDK typed execution adapters', () => {
+  it('validates PostgreSQL Session bigint wire values without coercing malformed or unsafe sequences', () => {
+    const sequence = agentSessionResponseSchema.shape.sequence
+    expect(sequence.parse('42')).toBe(42)
+    expect(sequence.parse(42)).toBe(42)
+    expect(sequence.parse('9007199254740991')).toBe(Number.MAX_SAFE_INTEGER)
+    for (const value of ['9007199254740992', Number.MAX_SAFE_INTEGER + 1, '-1', '1.5', '1e2', '', ' 1', null, true])
+      expect(sequence.safeParse(value).success, String(value)).toBe(false)
+  })
   it.each(['complete', 'stop_ack'] as const)('confirms %s using the installation slot with no refresh or write headers', async action => {
     const key = 'original key/+?&'
     const fetch = vi.fn<typeof globalThis.fetch>().mockResolvedValueOnce(response(confirmation(action, key))).mockResolvedValueOnce(response({ id }))

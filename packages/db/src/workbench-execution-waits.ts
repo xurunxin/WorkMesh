@@ -237,7 +237,21 @@ export async function reconcileWorkbenchExecutionWait(tx: PoolClient, input: {
     [input.workspaceId, locator.approval_id])
   const wait = (await tx.query<ExecutionWait>('SELECT * FROM workbench_execution_waits WHERE workspace_id=$1 AND id=$2 FOR UPDATE',
     [input.workspaceId, input.waitId])).rows[0]
-  if (!wait || wait.status !== 'pending' || !conversation || conversation.status !== 'active'
+  if (!wait || wait.status !== 'pending') return 0
+  const closure = (await tx.query<{ state: AgentSessionState; delegation_status: string }>(
+    `SELECT session.state,delegation.status AS delegation_status FROM agent_sessions session
+      JOIN delegations delegation ON delegation.id=session.delegation_id
+      WHERE session.workspace_id=$1 AND session.id=$2`, [input.workspaceId, wait.agent_session_id])).rows[0]
+  if (closure && (closure.delegation_status !== 'active'
+    || ['stopping', 'completed', 'failed', 'canceled'].includes(closure.state))) {
+    // This is the waiting projection of an already committed Stop/closure or
+    // Delegation revocation, not a new execution or a repeated Turn settlement.
+    await tx.query(`UPDATE workbench_execution_waits SET status='canceled',resolved_at=now(),terminal_reason=$3
+      WHERE workspace_id=$1 AND id=$2 AND status='pending'`,
+    [input.workspaceId, wait.id, closure.delegation_status !== 'active' ? 'authority_revoked' : 'session_closed'])
+    return 0
+  }
+  if (!conversation || conversation.status !== 'active'
     || sourceTurn?.status !== 'settled' || sourceAttempt?.status !== 'settled'
     || !sourceAttempt.execution_waits_enabled || !sourceAttempt.external_effects_reconciled) return 0
   const authority = (await tx.query<Authority>(`SELECT session.*,delegation.principal_human_actor_id,
