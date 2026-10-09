@@ -343,7 +343,7 @@ docs差异路径数：790。历史证据保留在原分支；本方案不复制�
 - main经ls-tree查无`docs/plan/2026-10-08-todos-functional-alignment.md`与`docs/plan/todos-alignment-20261008`；可见TA平台卡不是这两个本地全文文件。当前无法验证完整TA本地包及其hash，不猜不可见内容，也不要求用户补Chief已有状态。后续被选TA卡由Chief归档精确受控全文到原todo分支。
 - 本轮工具目录有tds，没有mcp__workmesh__能力。沿R1已授权的Todos＋仓库记录例外交付，未创建真实WorkMesh Project/WorkItem、未冒双轨同步完成；审查及后续裁定留本卡对话，不创建整套流水线。
 - 未读取外部模型目录或私有客户端内部实现，不承诺型号目录/OS已验证；真实客户端验收在后续批次执行。
-- 独立审查由本卡显式授权的另一Agent执行，报告另存review.md。
+- 本轮平台独审针对方案head `32a5c2c1270b1038d65a391a6b771aff42842c85` 提出三项blocking；意见、修订对应与实际检查归档于[review.md](review.md)。此前构建内审查只作辅助，不替代平台独审；未宣称本次修订已获复审通过。
 
 ## 本轮资源
 
@@ -375,3 +375,5 @@ docs差异路径数：790。历史证据保留在原分支；本方案不复制�
 ## 收尾remote ref复核
 
 实际工具读取时间界于 `2026-10-09 02:17:45 UTC` 与 `2026-10-09 02:17:47 UTC`；`mcp__tds__git` 参数 projectId=`DzkLDn6UW-IbfoTJzN9Ro`，args=`["ls-remote","origin","refs/heads/main","refs/heads/tds/conv-01a11ac2-a0a9-7ef6-bd48-3bb37c21a301","refs/heads/tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe","refs/heads/tds/conv-01a11b85-41f9-74f5-b456-7083d4d83e5e"]`。四个SHA与开工来源表完全一致；这次只证明ref读取时的对象，不证明PR审查状态或新的Required CI。
+
+本次平台独审修订再次以相同projectId与四个完整refs执行上述 `ls-remote`，实际时间界于 `2026-10-09 02:37:50 UTC` 与 `02:37:52 UTC`；四个SHA仍与来源表相同。本次被审方案head为 `32a5c2c1270b1038d65a391a6b771aff42842c85`，修订只改方案Markdown。302个完整来源blob与277操作的复核结果、三项平台blocking及修订对应见[审查记录](review.md)；本次没有取得新的平台复审通过或远端CI结果。

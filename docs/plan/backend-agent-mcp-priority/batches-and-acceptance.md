@@ -72,15 +72,27 @@ Stop清理不能直接复用默认 `makeTool`：它会先写普通Activity且检
 
 ## M2：现有规划、文档与协作闭环
 
-**范围**：补Issue评论读取、文档history/diff/restore/export与Guidance只读、里程碑/层级/relation、允许的Decision提案/读取、Room/Inbox和Handoff读取/合法转换、规划完整分页。C普通创建/管理与E精确委派允许子集分别验证；Runner缺parent/milestone等参数不能写成已覆盖。复用现有对象与命令，不改Human-only finalize/accept/Guidance publish。
+**范围**：补Issue评论读取、文档history/diff/restore/export与Guidance只读、里程碑/层级/relation、允许的Decision提案/读取、Room/Inbox和Handoff读取/合法转换、规划完整分页；明确承接已有 `createChildAgentSession` 与 `createReviewDelegation` 的创建、启动、证据与父子完成链。C普通创建/管理与E精确委派允许子集分别验证；Runner缺parent/milestone等参数不能写成已覆盖。复用现有对象与命令，不改Human-only finalize/accept/Guidance publish。
 
 现行评论写虽在policy声明含Agent，handler明确Human-only；M2不把Agent评论写纳入既有权限补齐，M0修正披露，另裁定后才改领域/ADR。
 
-**文件**：SDK typed查询与MCP/Runner适配、contracts共用schema、`apps/api/src/documents.ts/guidance.ts/collaboration/routes.ts/inbox/routes.ts`、domain/DB现有不变量核对；不新增Team room、archive模型或F5跨Session继承。导入组合按现有逐实体key恢复，不宣称全导入事务原子。
+**文件**：SDK typed查询与MCP/Runner适配、contracts共用schema、`apps/api/src/documents.ts/guidance.ts/collaboration/routes.ts/inbox/routes.ts`、`apps/api/src/agent/commands.ts:2880–2900`与Runner `workmesh-tools.ts/run-session.ts`、domain/DB现有不变量核对；不新增Team room、archive模型或F5跨Session继承。导入组合按现有逐实体key恢复，不宣称全导入事务原子。
+
+**子 Session／reviewer 承接决定**：这是ADR0017现有功能，不依赖F2新自主委派。M2补Runner父Session作用域的两种创建工具，复用现有SDK与MCP合同，模型不可指定别的父身份、取得子秘密或扩大能力；子执行交由 `provisionNewSessionDelivery` 的已有准确installation authority／受控adapter，不以返回queued对象当启动成功。目标Agent须已授权且有可用交付身份；名单仍按既有H输入/受控清单限制。普通child目前只授work:read/work:write，不能臆称继承父的全部能力；通用child选择role=reviewer也不能替代专用review delegation的artifact权限与review_shared Lease。
+
+专用reviewer的三方能力交集为父Delegation、目标definition、目标Team grant共同允许work:read/work:write/artifact:write；work:write仅维持ACK/state/heartbeat等窄协议写，仍无plan:write。Runner按角色和live manifest提供Room review_result、code_review发布、读取及完成工具，过滤publish_plan并避免任何自动Plan发布；普通child同样按实际能力执行，不因executor角色默认获得plan:write/artifact:write。M1提供其生命周期与completion/Stop路径，M3提供PR provenance/structured review工具。Room消息使用准确reviewer Session与本人actor，不拿父Session代发；普通Activity不替代Room消息。
+
+**父读子状态的入口缺口**：现行 `agent/routes.ts:144–197` 的Agent Session列表只选自身，get还拒绝非自身Session，不能把M1通用Session get/list当父读子的既有入口。M2推荐增加最小父子状态只读投影，先安全合同/ADR审查：请求者须为仍有效的准确父E，重新验证父Delegation、principal、Team grant、parent_session_id及子创建绑定，只返回child ID、required、state/revision、稳定Plan绑定和允许的结果引用，不返回子token、prompt或扩大普通getSession权限；子终态可确认，父终态/撤权拒绝。路径/operationId/DTO在实施冻结时确定，本卡不冒已有端点。MCP及Runner补同一有界查询；不同父/Team、伪造child ID、父撤权与终态负例必须覆盖。若不采用该最小读合同，只能由具备资格的H／受控身份沿M1确认并如实记父自主查询缺口，不能声明纯工具适配已完成。
+
+**数量、预算与并发的实际差异**：`collaboration/routes.ts:1399–1433`普通child校验父/step活跃数量、缩减继承预算、累计reservation及目标Agent并发；`:1482–1517`review路径校验稳定Plan、三方能力及目标并发，继承父budget并建review_shared Lease，但没有同等父/step限额和reservation写入。M2必须按ADR0017核齐review路径的限额/预算保障及原消费者影响，必要后端修复归本批既有不变量补齐，不标为已通过或F提案；没有这项证据不得声明有界reviewer闭环完成。不擅自新增ReviewDelegationInput的budget参数；若实现需要合同变化，先更新OpenAPI/Zod并提交精确差异审查。
+
+**真实父子调用链（无Git也适用）**：父E沿M1进入planning、发布包含稳定step ID和maxChildSessions的整Plan→读取当前planVersionId/step→`create_child_session`（required/budget）或`create_review_delegation`（reviewerAgentId/ttlSeconds）→读回queued child、精确绑定（review另含review_shared lease）→受控交付→子E能力握手→ACK→合法planning/executing；reviewer不发布实施Plan→读取授权材料→本人 `post_work_room_message(intent=review_result,sessionId=child.id)`→本人 `publish_artifact(type=code_review,sessionId=child.id)`（有Git时采用M3的publish_delivery_artifact）→重新读revision并complete reviewer→父通过本批最小父子状态投影确认required child已completed→父complete。普通executor child按实际能力提供现行完成证据/明确no-artifact说明，不要求其发表review_result。终态丢响应沿M1准确结果确认，不默认父/子终态Bearer可读。
+
+父完成在required child为queued/active/failed/canceled/stale时均返回 `COMPLETION_PLAN_INCOMPLETE` 与 `blockerSessionIds`；不能把终态失败当成功或改required绕过。reviewer缺本人Room消息或本人code_review任一项返回 `REVIEW_COMPLETION_EVIDENCE_REQUIRED`；structured review和noArtifactReason都不豁免。绑定旧Plan/version、非稳定step时先读取当前Plan并报告，不能自动换step重派。
 
 **真实客户端链**：C读Team/workflow→新Project/Issue/里程碑/blocks→普通Document写方案并读回版本hash→E读授权Issue与Guidance→精确Session Inbox claim/read→reply/ACK→提Handoff→H接受后目标E继续→读取Human评论和版本差异→各Session完成并留证据。目标peer Agent ID需经已授权清单或H输入，当前Human-only名单查询不是C已实现自主发现。
 
-**测试落点**：已有planning/document/Inbox/Handoff集成与MCP/Runner测试，`packages/conformance/src/planning-collaboration.conformance.test.ts` 待创建；分页构造超过一页并验证late授权变化，不能仅首页通过。
+**测试落点**：已有planning/document/Inbox/Handoff集成、`apps/api/integration/stage2-collaboration.integration.test.ts`及 `agent-lock-order.integration.test.ts`、MCP/Runner测试，`packages/conformance/src/planning-collaboration.conformance.test.ts` 待创建；分页构造超过一页并验证late授权变化，不能仅首页通过。以下子Session／reviewer用例全部是未来验收，未在本轮运行。
 
 | 验收类 | 具体场景及判定 |
 | --- | --- |
@@ -94,7 +106,21 @@ Stop清理不能直接复用默认 `makeTool`：它会先写普通Activity且检
 | 并发 | 两claimant竞争、两文档编辑、同时插循环边/父关系、reply与Human resolve竞态；按当前域边界精确断言，不静默抢占 |
 | 重启/恢复/Stop | 恢复旧Document/Inbox/导入mapping后继续允许读；失效/停止Session不回复或变换Handoff；durable cursor resync不重发业务写；跨新Session恢复需F5另验 |
 
-**任务DoD**：既有规划与协作闭环不依赖Web点击执行Agent允许步骤；H保留动作与现有缺 peer发现/跨Session前提明确，不能因同名字tool存在隐藏这些限制。
+子Session／reviewer另外逐类验收：
+
+| 验收类 | 具体场景及判定 |
+| --- | --- |
+| 正常 | 两种创建命令准确绑定父当前Plan/version/stable step、预算、required及目标身份；受控交付ACK成功；review_shared与允许读取；本人Room结果+code_review齐备才能完成，随后父完成成功 |
+| 越权/撤权 | 三方能力任一缺失或撤销、installation authority不可用拒绝；跨父/Team/step拒绝；reviewer publishPlan和非code_review Artifact拒绝，其他actor/Session代发review_result不计本人证据；不能自审PR producer |
+| 非法状态 | 旧Plan、无stable identity、错误step、exclusive Lease冲突拒绝；缺消息/缺Artifact/仅structured review分别拒reviewer完成；required child每种未completed状态阻父并给准确IDs；非required子不是该gate阻断条件，不能因调用失败改required |
+| 幂等 | 两种创建同key同body只有一个child/delegation、reservation/lease/交付事件；异体冲突；Room消息/Artifact/完成同key不双写，终态拒绝按M1确认原结果。SDK默认step派生key仍需区分同step多次合法意图，正文/角色/version变化不得沿旧key |
+| 版本 | 当前Plan/version/step整体验证，版本更新后旧输入拒绝；创建REST无If-Match合同，不伪增该header要求；完成用当前revision，旧revision拒绝 |
+| 事务失败 | 创建、budget reservation、review_shared Lease、交付/outbox任一点失败全回滚；证据/父完成失败不推进state，state/event/outbox一致；不提前派发子执行 |
+| job/重放 | 重复provisioning outbox不生成第二子Session/执行授权；证据重放不放大，原父/step归属不变；不会自动把failed required child替换为已完成 |
+| 并发 | 两创建竞争父/step限额、累计预算与目标maxConcurrency，无越界；review与普通child竞争也覆盖；review_shared/exclusive冲突、Plan发布与创建、父complete与child完成按事务提交顺序裁定 |
+| 重启/恢复/Stop | 重启后绑定、预算reservation、Lease及required blocker事实不丢；停止/撤权后普通创建和证据写拒绝，子清理沿M1；父Stop后子是否继续依当前状态/授权重新检查，不假定自动级联；无新增机器shell，进程清理用例不适用 |
+
+**任务DoD**：既有规划与协作、子Session与reviewer完整链不依赖Web点击执行Agent允许步骤；父完成gate、reviewer双证据、稳定Plan与限额/预算/并发及Runner角色适配有实证。H保留动作与现有缺peer发现/跨Session前提明确，不能因同名字tool存在隐藏限制。
 
 ## M3：现有 Git、异步动作与证据交付闭环
 
@@ -104,7 +130,7 @@ Stop清理不能直接复用默认 `makeTool`：它会先写普通Activity且检
 
 **文件**：`apps/api/src/delivery/routes.ts`（可拆专门read模块）、contracts/SDK/MCP/Runner、`apps/worker/src/provider-actions.ts`用已有查询facts，artifact storage/upload worker和git provider能力矩阵作为消费者；fake Agent与fake Git provider。有持久化必要才新增迁移，本方案推荐复用现有action projection零迁移；若改事件/持久化语义补ADR。
 
-**真实客户端链**：H已连接Git/pin context→E发现并读仓库准确base SHA/path scope→acquire Lease→branch→查询exact action→commit(expected head)→查询→openPR→读delivery/current head/checks→上传/发布证据→独立reviewer发布code_review artifact再structured review→E请求精确merge/CI重试批准→H批准→Worker重验后执行→E查询终态→结果摘要。merge不自动deploy、不自动Issue done；file upload不能充code_review授权。
+**真实客户端链**：H已连接Git/pin context→E发现并读仓库准确base SHA/path scope→acquire Lease→branch→查询exact action→commit(expected head)→查询→openPR→读delivery/current head/checks→上传/发布证据→父E按M2稳定Plan调用create_review_delegation→受控交付独立reviewer并ACK/进入合法执行态（不发布Plan）→reviewer读取授权材料、本人发布Room review_result和绑定当前PR/head/provenance的code_review delivery Artifact→本人publish_structured_review→读当前revision并complete reviewer→父确认required reviewer已completed→E请求精确merge/CI重试批准→H批准→Worker重验后执行→E查询终态→父结果摘要与complete。structured review不替代reviewer完成所需Room消息；必须在reviewer仍有有效执行授权时发布，不能先complete再尝试普通写。merge不自动deploy、不自动Issue done；file upload不能充code_review授权。
 
 **测试落点**：扩展stage3 delivery、provider action/worker、artifact upload与MCP/SDK/Runner单元；`packages/conformance/src/delivery-recovery.conformance.test.ts` 待创建。先fake端到端；真实Git provider/文件存储支持度按部署可用条件另实证，不发布外部内容补验收。
 
@@ -112,7 +138,7 @@ Stop清理不能直接复用默认 `makeTool`：它会先写普通Activity且检
 | --- | --- |
 | 正常 | 从准确base/path到PR/current-head证据/review/批准/终态；exact action返回原target/result；upload headers实际可用；无Artifact store场景明确unsupported/限制 |
 | 越权/撤权 | E越路径/仓库/Team查询action拒绝；repo:write_branch有而repo:open_pr无仍拒openPR；外部读取后撤权禁止最终context写；独立reviewer不审自己产生的变更 |
-| 非法状态 | stale expectedHead、未通过check/有BlockingHigh review、无有效merge approval、不支持provider操作拒绝；file artifact不能structured review；sending unknown不自动重发 |
+| 非法状态 | stale expectedHead、未通过check/有BlockingHigh review、无有效merge approval、不支持provider操作拒绝；file artifact不能structured review；只有structured review缺Room消息仍不能complete reviewer，required reviewer未completed仍阻父；sending unknown不自动重发 |
 | 幂等 | provider intents/上传finalize/review/merge重复同key只一action/事实；丢response读原action再恢复；不同body拒绝；外部不支持exactly-once时如实unknown |
 | 旧revision | upload cancel等按现行合同校验；head变化不消费旧review/批准；context异步POST无If-Match，不伪造revision要求；查询不需要If-Match写锁 |
 | 事务失败 | intent提交失败零provider I/O，state/event/outbox全回滚；结果checkpoint与权限拒绝回滚/定向事件；query不写业务事实 |
@@ -126,6 +152,8 @@ Stop清理不能直接复用默认 `makeTool`：它会先写普通Activity且检
 
 **范围**：选择已部署启用的Planning、Template、Automation、Agent Loops、Costs/A2A读取族及现行有限写：`runLoopNow`、`recordUsage`、health/completion提案等。增加typed SDK/MCP与必要Runner适配；Human管理规则/Loop/template/通知、私有view/预算与身份边界不改变；按owner/scope补现有saved view读取/允许创建适配。A2A event stream使用隔离协议adapter，不把其cursor当domain event cursor；若目标客户端只支持tool，给有界查询或明确不支持，不伪装工具能无限流。
 
+**Initiative rollup后端读取修复**：推荐M4包含 `getInitiativeRollup` 的既有Agent读修复，先实现与 `listInitiatives` 一致的live Session、Delegation/Team grant与project/work-item scope授权投影，再补typed SDK/MCP/Runner。当前 `operations/routes.ts:496–569` 仍用Human membership.actor_id=current.id筛项目，不能将合法Agent的零项目聚合当成功。仅扩大到现行允许读取的项目，不给Agent membership或Initiative管理权；保持Human读取、200可见项目上限、COSTS feature及currency/unknown成本语义。未修复前Agent rollup明确暂不支持，发现/交付报告不得标全面可用；不以空聚合掩盖拒绝或缺口。
+
 **文件**：`apps/api/src/operations/routes.ts`、contracts/SDK/MCP/Runner/feature registry、DB stage4与 `packages/a2a-adapter`既有协议；没有TA新机器/日历/CLI计费/出站MCP功能。默认feature关闭仍有明确错误。
 
 **真实客户端链**：授权C/E查询已启用规则/Loop→读取一次run/source/effect/usage事实→允许时runLoopNow→跟踪运行、预算/结果→读项目进展；不能通过自然语言通知或变更rule暗中扩大scope。未启用则客户端明确该链不可用，核心链继续。
@@ -134,8 +162,8 @@ Stop清理不能直接复用默认 `makeTool`：它会先写普通Activity且检
 
 | 验收类 | 具体场景及判定 |
 | --- | --- |
-| 正常 | 遍历分页/滚动引用读rule/run/Loop/usage/Template pin/Initiative，允许run产生准确run/effect及可跟踪结果；缺usage保未知不填0 |
-| 越权/撤权 | 私有advanced view/Template owner与Team scope、预算/Loop作用域重新授权；Human管理工具不授Agent；关闭feature/撤grant后的调用拒绝 |
+| 正常 | 遍历分页/滚动引用读rule/run/Loop/usage/Template pin/Initiative；同一非空Initiative中授权项目rollup必须非零且计数/健康/成本与授权事实一致，Human membership读回归；允许run产生准确run/effect及可跟踪结果；缺usage保未知不填0 |
+| 越权/撤权 | rollup中同Initiative的其他scope项目排除，跨Team/Project负例有可读正对照；先list再撤Delegation/Team grant，rollup必须拒绝（不能返回零值冒成功）；私有advanced view/Template owner、预算/Loop scope重新授权；Human管理不授Agent，关闭feature拒绝 |
 | 非法状态 | 已停用Loop、重叠运行、超预算、错误Template pin/协议版本拒绝；enabled不变成管理权限 |
 | 幂等 | runLoopNow/usage同key同body、异体冲突；同occurrence重复effect不执行第二次；读查询无key写义务 |
 | 旧revision | 对选定revisioned有限写保原版本规则；纯GET无If-Match不适用；Human-onlyrule版本更新用例归现行领域消费者回归，不新增Agent管理 |

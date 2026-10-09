@@ -1,6 +1,6 @@
 # 后端优先：Agent 全功能 MCP 覆盖与独立交付范围方案
 
-状态：可审方案；2026-10-09。任务：[#53](todo:c2myb8a18ksdT50jkJnb8)。本轮基准 head：`74f247f9240eaf21e74ef248f71a445c1d4276d7`。方案本身尚未提交的最终 head 由平台提交产生，不虚构 SHA。
+状态：可审方案；2026-10-09。任务：[#53](todo:c2myb8a18ksdT50jkJnb8)。产品基准 head：`74f247f9240eaf21e74ef248f71a445c1d4276d7`；被本轮平台独审的方案 head：`32a5c2c1270b1038d65a391a6b771aff42842c85`。本次修订的最终 head 由平台提交产生，不虚构 SHA。
 
 ## 已定方向与建议结论
 
@@ -14,9 +14,9 @@
 
 1. **M0：发现、角色及恢复契约一致**。校正可发现工具与实际可调用动作的差异，保留资源型客户端兼容，明确 Session 模式与 Coordination 模式，稳定幂等重试和完整错误信息。
 2. **M1：现有核心执行闭环**。补 Session/Plan/Approval/Lease/Stop 的读取与恢复工具及 Runner 适配，新增最小精确归属终态结果确认合同，尤其 `stop_ack` 和租约续期/释放；不扩张人类控制权限。
-3. **M2：现有协作与规划闭环**。补评论、Inbox/Work Room、Handoff、版本化文档和规划查询，明确 exact Session 收件人与跨会话限制。
+3. **M2：现有协作与规划闭环**。补评论读取、Inbox/Work Room、Handoff、版本化文档、规划查询及已有子 Session／reviewer 的创建与完成链，明确 exact Session 身份和required child父完成阻断。
 4. **M3：已有 Git 与证据交付闭环**。补仓库/交付/上传状态的可发现查询；精确 provider action 终态查询缺少现行 REST，需要先补查询合同与授权。保留 Worker/outbox、独立审查和 exact-head Human 批准。
-5. **M4：已存在的可选领域覆盖**。按已启用部署验自动化/Loop/成本/周期/Initiative/Template 的现有 Agent 读取和允许动作。Human 管理动作保留；不把缺 MCP 误写成从零实现领域。
+5. **M4：已存在的可选领域覆盖**。按已启用部署验自动化/Loop/成本/周期/Initiative/Template 的现有 Agent 读取和允许动作；Initiative rollup先修后端Session scope读取差异再适配，未修标Agent不支持。Human 管理动作保留。
 6. **M5：选定部署与真实客户端联合验收**。运行外部 MCP 客户端与内置 Pi Runner 的同一闭环，记录客户端/OS/版本及证据；公共签名 Skill 发布与无源码分发仍分别走旧卡和既有发布门禁。
 
 M0–M5是本方案提出的完整任务边界，尚未创建任务或启动实现。#5/#9/#16按原todo继续修正与收尾，不复制为M批次任务；它们是相关输入和可并行准备的后端独立交付切片，不作为所有 MCP 补齐工作的统一阻塞。
@@ -54,7 +54,7 @@ MCP现有成功返回为text JSON加 `structuredContent.data`，失败为 `isErr
 
 ## 本轮检查与交付限制
 
-本轮只改 `docs/plan/backend-agent-mcp-priority/*.md`，沿当前 `scripts/ci-policy.mjs` 的docs判定做来源、覆盖、链接、空白和独立审查；不反复运行零收益全产品检查，不把未来用例写为通过。适用检查实际结果写在review.md，最终PR Required CI由平台流程确认，本轮不冒远端CI成功。后续产品批次仍须执行其适用必需检查，失败或skip不记通过。
+本轮只改 `docs/plan/backend-agent-mcp-priority/*.md`，沿当前 `scripts/ci-policy.mjs` 的docs判定做来源、覆盖、链接、空白和独立审查；不反复运行零收益全产品检查，不把未来用例写为通过。修订的来源、索引、链接、空白及CI分类实际结果见[review.md](review.md)；三项平台独审意见的修订对应已归档，修订后平台复审仍待执行。最终PR Required CI由平台流程确认，本轮不冒远端CI成功。后续产品批次仍须执行其适用必需检查，失败或skip不记通过。
 
 R1既有例外允许本批使用Todos＋仓库替代真实WorkMesh双轨记录。本轮没有可调用的WorkMesh MCP控制面，使用本卡对话和这些文件记录方案、取舍与后续问题，没有伪造远端Project/WorkItem。没有新建容器、服务或秘密，当前及旧证据目录保留；资源说明见sources.md。
 
