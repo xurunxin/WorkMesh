@@ -1,0 +1,60 @@
+{
+  "runId": "a2-proxy-a5b51ab5",
+  "resources": [],
+  "results": [
+    {
+      "name": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "--check",
+        "scripts/verify-a2-lite.mjs"
+      ],
+      "startedAt": "2026-10-08T17:12:11.195Z",
+      "endedAt": "2026-10-08T17:12:11.287Z",
+      "code": 0,
+      "log": "0.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "scripts/validate-lite-compose.mjs"
+      ],
+      "startedAt": "2026-10-08T17:12:11.289Z",
+      "endedAt": "2026-10-08T17:12:11.438Z",
+      "code": 0,
+      "log": "1.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "scripts/validate-lite-compose.mjs",
+        "--self-test"
+      ],
+      "startedAt": "2026-10-08T17:12:11.438Z",
+      "endedAt": "2026-10-08T17:12:13.738Z",
+      "code": 0,
+      "log": "2.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "--filter",
+        "@workmesh/config",
+        "test"
+      ],
+      "startedAt": "2026-10-08T17:12:13.739Z",
+      "endedAt": "2026-10-08T17:12:16.549Z",
+      "code": 0,
+      "log": "3.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "ci:validate"
+      ],
+      "startedAt": "2026-10-08T17:12:16.549Z",
+      "endedAt": "2026-10-08T17:12:18.474Z",
+      "code": 0,
+      "log": "4.log"
+    }
+  ]
+}

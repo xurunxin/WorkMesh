@@ -1,0 +1,28 @@
+{
+  "observedAt": "2026-10-08T16:58:38.949Z",
+  "sourceHead": "5f052960325c92154486eab6d1c93689d4489899",
+  "path": "apps/web/features/projects/project-repository-configuration.test.tsx",
+  "sourceAfter": {
+    "bytes": 6721,
+    "sha256": "a9f1b9455532efcbdf6396bacf9028a581134640319a2e893f8e8f7be1c0897b"
+  },
+  "change": "仅移除文件末尾多余空行，断言与实现不变",
+  "command": [
+    "pnpm.cmd",
+    "--filter",
+    "@workmesh/web",
+    "exec",
+    "vitest",
+    "run",
+    "features/projects/project-repository-configuration.test.tsx"
+  ],
+  "result": {
+    "code": 0,
+    "files": 1,
+    "passed": 6,
+    "durationSeconds": 4.55,
+    "toolOutputChunk": "5adee9",
+    "callId": null
+  },
+  "binding": "apply_patch 移除 EOF 空白后立即运行，下一源码变更前读取此原字节；不伪补运行前捕获"
+}

@@ -1,0 +1,9 @@
+{
+  "source": "exec session 72381 的最终退出，输出 chunk 39294e；未提供 callID",
+  "callId": null,
+  "exitCode": 1,
+  "error": "EBUSY: resource busy or locked, open 'C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-24d1b785\\4.log'",
+  "location": "run-checks.mjs:37:38 的周期日志 writeFileSync",
+  "observationGap": "记录器崩溃前浏览器最终退出码未落盘；不得推测为通过或产品失败。原日志与首败现场保留。",
+  "recovery": "只读确认两个端口及已观察 PID 均不存在；未发送终止信号。单独登记归属收尾，不伪补原正常 finally。"
+}

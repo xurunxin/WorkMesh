@@ -1,0 +1,1371 @@
+{
+  "runId": "a2-lite-c4424791",
+  "sha": "3a30e30985b2de92d4dde90d566833297da94cde",
+  "environment": "工作站 Linux Docker；非真实低功耗设备",
+  "installDir": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791",
+  "resources": [
+    {
+      "type": "directory",
+      "target": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791",
+      "owner": "a2-lite-c4424791",
+      "createdAt": "2026-10-08T16:33:26.874Z",
+      "cleanup": {
+        "code": 0,
+        "output": ""
+      },
+      "realPath": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791",
+      "created": true,
+      "preDelete": {
+        "paths": [
+          {
+            "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791",
+            "type": "directory",
+            "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+          },
+          {
+            "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\docker-compose.lite.yml",
+            "type": "file",
+            "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+          },
+          {
+            "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\provider.override.yml",
+            "type": "file",
+            "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+          },
+          {
+            "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\tls",
+            "type": "directory",
+            "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+          },
+          {
+            "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\tls\\ca.pem",
+            "type": "file",
+            "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+          },
+          {
+            "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\tls\\key.pem",
+            "type": "file",
+            "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+          },
+          {
+            "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\workmesh-lite.tar",
+            "type": "file",
+            "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+          }
+        ],
+        "activity": "compose/provider/probe 收尾完成",
+        "at": "2026-10-08T16:39:17.412Z"
+      }
+    },
+    {
+      "type": "image",
+      "target": "workmesh-a2-lite:a2-lite-c4424791",
+      "owner": "a2-lite-c4424791",
+      "createdAt": "2026-10-08T16:33:26.879Z",
+      "cleanup": {
+        "code": 0,
+        "output": "Untagged: workmesh-a2-lite:a2-lite-c4424791\nDeleted: sha256:ec3903990ed43d464eae205ba41167ac0fea47188c5e0c44dd04abf90ceb42db\n"
+      },
+      "id": "sha256:ec3903990ed43d464eae205ba41167ac0fea47188c5e0c44dd04abf90ceb42db",
+      "preDelete": {
+        "owner": "a2-lite-c4424791",
+        "id": "sha256:ec3903990ed43d464eae205ba41167ac0fea47188c5e0c44dd04abf90ceb42db",
+        "referenceIds": [],
+        "activity": "核对专用镜像实际容器引用",
+        "at": "2026-10-08T16:39:17.053Z"
+      }
+    },
+    {
+      "type": "container",
+      "target": "a2-lite-c4424791-probe-migrate",
+      "owner": "a2-lite-c4424791",
+      "createdAt": "2026-10-08T16:37:21.265Z",
+      "cleanup": {
+        "code": 0,
+        "output": "250f662d0e074f144593b996cb8675357ce19e57643ea060eba670cc573d71a7\n"
+      },
+      "id": "250f662d0e074f144593b996cb8675357ce19e57643ea060eba670cc573d71a7",
+      "preDelete": {
+        "owner": "a2-lite-c4424791",
+        "code": 0,
+        "id": "250f662d0e074f144593b996cb8675357ce19e57643ea060eba670cc573d71a7",
+        "at": "2026-10-08T16:39:16.652Z"
+      }
+    },
+    {
+      "type": "container",
+      "target": "a2-lite-c4424791-probe-api",
+      "owner": "a2-lite-c4424791",
+      "createdAt": "2026-10-08T16:37:37.259Z",
+      "cleanup": {
+        "code": 0,
+        "output": "feac2915ce084503606e7581b4a121d41dfe79a3e8b41ea3fef861e544c7e172\n"
+      },
+      "id": "feac2915ce084503606e7581b4a121d41dfe79a3e8b41ea3fef861e544c7e172",
+      "preDelete": {
+        "owner": "a2-lite-c4424791",
+        "code": 0,
+        "id": "feac2915ce084503606e7581b4a121d41dfe79a3e8b41ea3fef861e544c7e172",
+        "at": "2026-10-08T16:39:16.334Z"
+      }
+    },
+    {
+      "type": "container",
+      "target": "a2-lite-c4424791-probe-worker",
+      "owner": "a2-lite-c4424791",
+      "createdAt": "2026-10-08T16:37:50.039Z",
+      "cleanup": {
+        "code": 0,
+        "output": "0dc2e9f5b416ceb191cea83b00fe569a3b2e25760bd5fd063f88b6b0551ca0e7\n"
+      },
+      "id": "0dc2e9f5b416ceb191cea83b00fe569a3b2e25760bd5fd063f88b6b0551ca0e7",
+      "preDelete": {
+        "owner": "a2-lite-c4424791",
+        "code": 0,
+        "id": "0dc2e9f5b416ceb191cea83b00fe569a3b2e25760bd5fd063f88b6b0551ca0e7",
+        "at": "2026-10-08T16:39:16.088Z"
+      }
+    },
+    {
+      "type": "container",
+      "target": "a2-lite-c4424791-probe-web",
+      "owner": "a2-lite-c4424791",
+      "createdAt": "2026-10-08T16:38:02.562Z",
+      "cleanup": {
+        "code": 0,
+        "output": "c277b2c5b28cab92e04fc00400e5d216c522bd946a16c811cafe4627d0f89ccb\n"
+      },
+      "id": "c277b2c5b28cab92e04fc00400e5d216c522bd946a16c811cafe4627d0f89ccb",
+      "preDelete": {
+        "owner": "a2-lite-c4424791",
+        "code": 0,
+        "id": "c277b2c5b28cab92e04fc00400e5d216c522bd946a16c811cafe4627d0f89ccb",
+        "at": "2026-10-08T16:39:15.705Z"
+      }
+    },
+    {
+      "type": "file",
+      "target": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\workmesh-lite.tar",
+      "owner": "a2-lite-c4424791",
+      "createdAt": "2026-10-08T16:38:15.576Z",
+      "cleanup": null
+    },
+    {
+      "type": "https-provider",
+      "target": "host.docker.internal:63930",
+      "owner": "a2-lite-c4424791",
+      "createdAt": "2026-10-08T16:38:21.716Z",
+      "cleanup": "已关闭"
+    },
+    {
+      "type": "compose-project",
+      "target": "a2-lite-c4424791",
+      "owner": "a2-lite-c4424791",
+      "createdAt": "2026-10-08T16:38:21.721Z",
+      "cleanup": {
+        "code": 0,
+        "output": " Container a2-lite-c4424791-web-1 Stopping \n Container a2-lite-c4424791-web-1 Stopped \n Container a2-lite-c4424791-web-1 Removing \n Container a2-lite-c4424791-web-1 Removed \n Container a2-lite-c4424791-api-1 Stopping \n Container a2-lite-c4424791-api-1 Stopped \n Container a2-lite-c4424791-api-1 Removing \n Container a2-lite-c4424791-api-1 Removed \n Container a2-lite-c4424791-migrate-1 Stopping \n Container a2-lite-c4424791-redis-1 Stopping \n Container a2-lite-c4424791-minio-init-1 Stopping \n Container a2-lite-c4424791-redis-1 Stopped \n Container a2-lite-c4424791-redis-1 Removing \n Container a2-lite-c4424791-migrate-1 Stopped \n Container a2-lite-c4424791-migrate-1 Removing \n Container a2-lite-c4424791-minio-init-1 Stopped \n Container a2-lite-c4424791-minio-init-1 Removing \n Container a2-lite-c4424791-migrate-1 Removed \n Container a2-lite-c4424791-postgres-1 Stopping \n Container a2-lite-c4424791-postgres-1 Stopped \n Container a2-lite-c4424791-postgres-1 Removing \n Container a2-lite-c4424791-redis-1 Removed \n Container a2-lite-c4424791-postgres-1 Removed \n Container a2-lite-c4424791-minio-init-1 Removed \n Container a2-lite-c4424791-minio-1 Stopping \n Container a2-lite-c4424791-minio-1 Stopped \n Container a2-lite-c4424791-minio-1 Removing \n Container a2-lite-c4424791-minio-1 Removed \n Volume a2-lite-c4424791_lite-redis-data Removing \n Volume a2-lite-c4424791_lite-object-data Removing \n Network a2-lite-c4424791_default Removing \n Volume a2-lite-c4424791_lite-postgres-data Removing \n Volume a2-lite-c4424791_lite-object-data Removed \n Volume a2-lite-c4424791_lite-redis-data Removed \n Volume a2-lite-c4424791_lite-postgres-data Removed \n Network a2-lite-c4424791_default Removed \n"
+      },
+      "preDelete": {
+        "projectName": "a2-lite-c4424791",
+        "directory": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791",
+        "resources": [
+          {
+            "kind": "container",
+            "id": "4e868dab9882",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:12.490Z"
+          },
+          {
+            "kind": "container",
+            "id": "d3d20ca1ded6",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:12.591Z"
+          },
+          {
+            "kind": "container",
+            "id": "efcaee2cbfe1",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:12.695Z"
+          },
+          {
+            "kind": "container",
+            "id": "9508299f9b29",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:12.793Z"
+          },
+          {
+            "kind": "container",
+            "id": "b8c071d3d796",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:12.890Z"
+          },
+          {
+            "kind": "container",
+            "id": "b498746f0c67",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:12.985Z"
+          },
+          {
+            "kind": "container",
+            "id": "8ce4835ac237",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:13.083Z"
+          },
+          {
+            "kind": "volume",
+            "id": "a2-lite-c4424791_lite-object-data",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:13.313Z"
+          },
+          {
+            "kind": "volume",
+            "id": "a2-lite-c4424791_lite-postgres-data",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:13.417Z"
+          },
+          {
+            "kind": "volume",
+            "id": "a2-lite-c4424791_lite-redis-data",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:13.513Z"
+          },
+          {
+            "kind": "network",
+            "id": "4590aec65823",
+            "owner": "a2-lite-c4424791",
+            "code": 0,
+            "at": "2026-10-08T16:39:13.707Z"
+          }
+        ],
+        "activity": "验收已结束，已保全 ps/logs，逐资源核对 project label",
+        "at": "2026-10-08T16:39:13.707Z"
+      },
+      "postDelete": [
+        {
+          "kind": "container",
+          "id": "4e868dab9882",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:14.449Z"
+        },
+        {
+          "kind": "container",
+          "id": "d3d20ca1ded6",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:14.613Z"
+        },
+        {
+          "kind": "container",
+          "id": "efcaee2cbfe1",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:14.747Z"
+        },
+        {
+          "kind": "container",
+          "id": "9508299f9b29",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:14.863Z"
+        },
+        {
+          "kind": "container",
+          "id": "b8c071d3d796",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:14.983Z"
+        },
+        {
+          "kind": "container",
+          "id": "b498746f0c67",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:15.102Z"
+        },
+        {
+          "kind": "container",
+          "id": "8ce4835ac237",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:15.214Z"
+        },
+        {
+          "kind": "volume",
+          "id": "a2-lite-c4424791_lite-object-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:15.309Z"
+        },
+        {
+          "kind": "volume",
+          "id": "a2-lite-c4424791_lite-postgres-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:15.401Z"
+        },
+        {
+          "kind": "volume",
+          "id": "a2-lite-c4424791_lite-redis-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:15.493Z"
+        },
+        {
+          "kind": "network",
+          "id": "4590aec65823",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-08T16:39:15.605Z"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "name": "docker",
+      "args": [
+        "image",
+        "inspect",
+        "workmesh-a2-lite:a2-lite-c4424791"
+      ],
+      "pid": 35696,
+      "startedAt": "2026-10-08T16:33:26.880Z",
+      "endedAt": "2026-10-08T16:33:27.000Z",
+      "code": 1,
+      "log": "0.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "build",
+        "--progress=plain",
+        "--label",
+        "workmesh.task=a2-lite-c4424791",
+        "--build-arg",
+        "WORKMESH_BUILD_SHA=3a30e30985b2de92d4dde90d566833297da94cde",
+        "-t",
+        "workmesh-a2-lite:a2-lite-c4424791",
+        "-f",
+        "infra/docker/lite.Dockerfile",
+        "-"
+      ],
+      "pid": 43380,
+      "startedAt": "2026-10-08T16:33:27.009Z",
+      "endedAt": "2026-10-08T16:37:21.102Z",
+      "code": 0,
+      "log": "1.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "image",
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "workmesh-a2-lite:a2-lite-c4424791"
+      ],
+      "pid": 42316,
+      "startedAt": "2026-10-08T16:37:21.104Z",
+      "endedAt": "2026-10-08T16:37:21.264Z",
+      "code": 0,
+      "log": "2.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-lite-c4424791-probe-migrate",
+        "--label",
+        "workmesh.task=a2-lite-c4424791",
+        "-e",
+        "WORKMESH_SERVICE=migrate",
+        "-e",
+        "WORKMESH_INSTALLATION_TOKEN",
+        "-e",
+        "WORKMESH_LITE_IMAGE",
+        "-e",
+        "WORKMESH_BUILD_SHA",
+        "-e",
+        "SESSION_SECRET",
+        "-e",
+        "WORKMESH_MASTER_KEY",
+        "-e",
+        "WORKMESH_BOOTSTRAP_TOKEN",
+        "-e",
+        "PAGINATION_CURSOR_KEYS",
+        "-e",
+        "PAGINATION_CURSOR_ACTIVE_KID",
+        "-e",
+        "AUTH_RATE_LIMIT_HMAC_KEY",
+        "-e",
+        "S3_ACCESS_KEY_ID",
+        "-e",
+        "S3_SECRET_ACCESS_KEY",
+        "-e",
+        "S3_BUCKET",
+        "-e",
+        "S3_REGION",
+        "-e",
+        "WORKMESH_BETA_GITEA",
+        "-e",
+        "WORKMESH_BIND_ADDRESS",
+        "-e",
+        "DATABASE_URL",
+        "-e",
+        "REDIS_URL",
+        "-e",
+        "S3_ENDPOINT",
+        "-e",
+        "WEB_ORIGIN",
+        "-e",
+        "NEXT_API_UPSTREAM",
+        "-e",
+        "HOSTNAME",
+        "-e",
+        "PORT",
+        "workmesh-a2-lite:a2-lite-c4424791"
+      ],
+      "pid": 29776,
+      "startedAt": "2026-10-08T16:37:21.266Z",
+      "endedAt": "2026-10-08T16:37:25.040Z",
+      "code": 0,
+      "log": "3.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "logs",
+        "250f662d0e074f144593b996cb8675357ce19e57643ea060eba670cc573d71a7"
+      ],
+      "pid": 43780,
+      "startedAt": "2026-10-08T16:37:37.059Z",
+      "endedAt": "2026-10-08T16:37:37.257Z",
+      "code": 0,
+      "log": "4.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-lite-c4424791-probe-api",
+        "--label",
+        "workmesh.task=a2-lite-c4424791",
+        "-e",
+        "WORKMESH_SERVICE=api",
+        "-e",
+        "WORKMESH_INSTALLATION_TOKEN",
+        "-e",
+        "WORKMESH_LITE_IMAGE",
+        "-e",
+        "WORKMESH_BUILD_SHA",
+        "-e",
+        "SESSION_SECRET",
+        "-e",
+        "WORKMESH_MASTER_KEY",
+        "-e",
+        "WORKMESH_BOOTSTRAP_TOKEN",
+        "-e",
+        "PAGINATION_CURSOR_KEYS",
+        "-e",
+        "PAGINATION_CURSOR_ACTIVE_KID",
+        "-e",
+        "AUTH_RATE_LIMIT_HMAC_KEY",
+        "-e",
+        "S3_ACCESS_KEY_ID",
+        "-e",
+        "S3_SECRET_ACCESS_KEY",
+        "-e",
+        "S3_BUCKET",
+        "-e",
+        "S3_REGION",
+        "-e",
+        "WORKMESH_BETA_GITEA",
+        "-e",
+        "WORKMESH_BIND_ADDRESS",
+        "-e",
+        "DATABASE_URL",
+        "-e",
+        "REDIS_URL",
+        "-e",
+        "S3_ENDPOINT",
+        "-e",
+        "WEB_ORIGIN",
+        "-e",
+        "NEXT_API_UPSTREAM",
+        "-e",
+        "HOSTNAME",
+        "-e",
+        "PORT",
+        "workmesh-a2-lite:a2-lite-c4424791"
+      ],
+      "pid": 38520,
+      "startedAt": "2026-10-08T16:37:37.260Z",
+      "endedAt": "2026-10-08T16:37:37.868Z",
+      "code": 0,
+      "log": "5.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "logs",
+        "feac2915ce084503606e7581b4a121d41dfe79a3e8b41ea3fef861e544c7e172"
+      ],
+      "pid": 7428,
+      "startedAt": "2026-10-08T16:37:49.882Z",
+      "endedAt": "2026-10-08T16:37:50.037Z",
+      "code": 0,
+      "log": "6.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-lite-c4424791-probe-worker",
+        "--label",
+        "workmesh.task=a2-lite-c4424791",
+        "-e",
+        "WORKMESH_SERVICE=worker",
+        "-e",
+        "WORKMESH_INSTALLATION_TOKEN",
+        "-e",
+        "WORKMESH_LITE_IMAGE",
+        "-e",
+        "WORKMESH_BUILD_SHA",
+        "-e",
+        "SESSION_SECRET",
+        "-e",
+        "WORKMESH_MASTER_KEY",
+        "-e",
+        "WORKMESH_BOOTSTRAP_TOKEN",
+        "-e",
+        "PAGINATION_CURSOR_KEYS",
+        "-e",
+        "PAGINATION_CURSOR_ACTIVE_KID",
+        "-e",
+        "AUTH_RATE_LIMIT_HMAC_KEY",
+        "-e",
+        "S3_ACCESS_KEY_ID",
+        "-e",
+        "S3_SECRET_ACCESS_KEY",
+        "-e",
+        "S3_BUCKET",
+        "-e",
+        "S3_REGION",
+        "-e",
+        "WORKMESH_BETA_GITEA",
+        "-e",
+        "WORKMESH_BIND_ADDRESS",
+        "-e",
+        "DATABASE_URL",
+        "-e",
+        "REDIS_URL",
+        "-e",
+        "S3_ENDPOINT",
+        "-e",
+        "WEB_ORIGIN",
+        "-e",
+        "NEXT_API_UPSTREAM",
+        "-e",
+        "HOSTNAME",
+        "-e",
+        "PORT",
+        "workmesh-a2-lite:a2-lite-c4424791"
+      ],
+      "pid": 36044,
+      "startedAt": "2026-10-08T16:37:50.040Z",
+      "endedAt": "2026-10-08T16:37:50.386Z",
+      "code": 0,
+      "log": "7.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "logs",
+        "0dc2e9f5b416ceb191cea83b00fe569a3b2e25760bd5fd063f88b6b0551ca0e7"
+      ],
+      "pid": 28200,
+      "startedAt": "2026-10-08T16:38:02.399Z",
+      "endedAt": "2026-10-08T16:38:02.560Z",
+      "code": 0,
+      "log": "8.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-lite-c4424791-probe-web",
+        "--label",
+        "workmesh.task=a2-lite-c4424791",
+        "-e",
+        "WORKMESH_SERVICE=web",
+        "-e",
+        "WORKMESH_INSTALLATION_TOKEN",
+        "-e",
+        "WORKMESH_LITE_IMAGE",
+        "-e",
+        "WORKMESH_BUILD_SHA",
+        "-e",
+        "SESSION_SECRET",
+        "-e",
+        "WORKMESH_MASTER_KEY",
+        "-e",
+        "WORKMESH_BOOTSTRAP_TOKEN",
+        "-e",
+        "PAGINATION_CURSOR_KEYS",
+        "-e",
+        "PAGINATION_CURSOR_ACTIVE_KID",
+        "-e",
+        "AUTH_RATE_LIMIT_HMAC_KEY",
+        "-e",
+        "S3_ACCESS_KEY_ID",
+        "-e",
+        "S3_SECRET_ACCESS_KEY",
+        "-e",
+        "S3_BUCKET",
+        "-e",
+        "S3_REGION",
+        "-e",
+        "WORKMESH_BETA_GITEA",
+        "-e",
+        "WORKMESH_BIND_ADDRESS",
+        "-e",
+        "DATABASE_URL",
+        "-e",
+        "REDIS_URL",
+        "-e",
+        "S3_ENDPOINT",
+        "-e",
+        "WEB_ORIGIN",
+        "-e",
+        "NEXT_API_UPSTREAM",
+        "-e",
+        "HOSTNAME",
+        "-e",
+        "PORT",
+        "workmesh-a2-lite:a2-lite-c4424791"
+      ],
+      "pid": 42384,
+      "startedAt": "2026-10-08T16:38:02.563Z",
+      "endedAt": "2026-10-08T16:38:03.192Z",
+      "code": 0,
+      "log": "9.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "logs",
+        "c277b2c5b28cab92e04fc00400e5d216c522bd946a16c811cafe4627d0f89ccb"
+      ],
+      "pid": 31748,
+      "startedAt": "2026-10-08T16:38:15.195Z",
+      "endedAt": "2026-10-08T16:38:15.348Z",
+      "code": 0,
+      "log": "10.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "exec",
+        "c277b2c5b28cab92e04fc00400e5d216c522bd946a16c811cafe4627d0f89ccb",
+        "node",
+        "-e",
+        "fetch('http://127.0.0.1:3000/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      ],
+      "pid": 49316,
+      "startedAt": "2026-10-08T16:38:15.349Z",
+      "endedAt": "2026-10-08T16:38:15.575Z",
+      "code": 0,
+      "log": "11.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "save",
+        "-o",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\workmesh-lite.tar",
+        "workmesh-a2-lite:a2-lite-c4424791"
+      ],
+      "pid": 51776,
+      "startedAt": "2026-10-08T16:38:15.577Z",
+      "endedAt": "2026-10-08T16:38:18.611Z",
+      "code": 0,
+      "log": "12.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "load",
+        "-i",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\workmesh-lite.tar"
+      ],
+      "pid": 5064,
+      "startedAt": "2026-10-08T16:38:18.612Z",
+      "endedAt": "2026-10-08T16:38:21.106Z",
+      "code": 0,
+      "log": "13.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "image",
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "workmesh-a2-lite:a2-lite-c4424791"
+      ],
+      "pid": 12748,
+      "startedAt": "2026-10-08T16:38:21.106Z",
+      "endedAt": "2026-10-08T16:38:21.272Z",
+      "code": 0,
+      "log": "14.log"
+    },
+    {
+      "name": "openssl",
+      "args": [
+        "req",
+        "-x509",
+        "-newkey",
+        "rsa:2048",
+        "-nodes",
+        "-keyout",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\tls\\key.pem",
+        "-out",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\tls\\ca.pem",
+        "-days",
+        "1",
+        "-subj",
+        "/CN=host.docker.internal",
+        "-addext",
+        "subjectAltName=DNS:host.docker.internal,DNS:localhost,IP:127.0.0.1"
+      ],
+      "pid": 52272,
+      "startedAt": "2026-10-08T16:38:21.276Z",
+      "endedAt": "2026-10-08T16:38:21.678Z",
+      "code": 0,
+      "log": "15.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "compose",
+        "--project-name",
+        "a2-lite-c4424791",
+        "-f",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\docker-compose.lite.yml",
+        "-f",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\provider.override.yml",
+        "up",
+        "-d",
+        "--wait",
+        "--wait-timeout",
+        "180"
+      ],
+      "pid": 19976,
+      "startedAt": "2026-10-08T16:38:21.722Z",
+      "endedAt": "2026-10-08T16:39:11.682Z",
+      "code": 1,
+      "log": "16.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "compose",
+        "--project-name",
+        "a2-lite-c4424791",
+        "-f",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\docker-compose.lite.yml",
+        "-f",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\provider.override.yml",
+        "ps",
+        "-a",
+        "--format",
+        "json"
+      ],
+      "pid": 7192,
+      "startedAt": "2026-10-08T16:39:11.684Z",
+      "endedAt": "2026-10-08T16:39:12.006Z",
+      "code": 0,
+      "log": "17.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "compose",
+        "--project-name",
+        "a2-lite-c4424791",
+        "-f",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\docker-compose.lite.yml",
+        "-f",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\provider.override.yml",
+        "logs",
+        "--no-color"
+      ],
+      "pid": 44724,
+      "startedAt": "2026-10-08T16:39:12.006Z",
+      "endedAt": "2026-10-08T16:39:12.272Z",
+      "code": 0,
+      "log": "18.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "ps",
+        "-aq",
+        "--filter",
+        "label=com.docker.compose.project=a2-lite-c4424791"
+      ],
+      "pid": 59992,
+      "startedAt": "2026-10-08T16:39:12.273Z",
+      "endedAt": "2026-10-08T16:39:12.389Z",
+      "code": 0,
+      "log": "19.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"com.docker.compose.project\" }}",
+        "4e868dab9882"
+      ],
+      "pid": 37596,
+      "startedAt": "2026-10-08T16:39:12.390Z",
+      "endedAt": "2026-10-08T16:39:12.490Z",
+      "code": 0,
+      "log": "20.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"com.docker.compose.project\" }}",
+        "d3d20ca1ded6"
+      ],
+      "pid": 364,
+      "startedAt": "2026-10-08T16:39:12.490Z",
+      "endedAt": "2026-10-08T16:39:12.590Z",
+      "code": 0,
+      "log": "21.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"com.docker.compose.project\" }}",
+        "efcaee2cbfe1"
+      ],
+      "pid": 38048,
+      "startedAt": "2026-10-08T16:39:12.591Z",
+      "endedAt": "2026-10-08T16:39:12.694Z",
+      "code": 0,
+      "log": "22.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"com.docker.compose.project\" }}",
+        "9508299f9b29"
+      ],
+      "pid": 35132,
+      "startedAt": "2026-10-08T16:39:12.695Z",
+      "endedAt": "2026-10-08T16:39:12.792Z",
+      "code": 0,
+      "log": "23.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"com.docker.compose.project\" }}",
+        "b8c071d3d796"
+      ],
+      "pid": 53652,
+      "startedAt": "2026-10-08T16:39:12.793Z",
+      "endedAt": "2026-10-08T16:39:12.890Z",
+      "code": 0,
+      "log": "24.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"com.docker.compose.project\" }}",
+        "b498746f0c67"
+      ],
+      "pid": 54372,
+      "startedAt": "2026-10-08T16:39:12.890Z",
+      "endedAt": "2026-10-08T16:39:12.984Z",
+      "code": 0,
+      "log": "25.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"com.docker.compose.project\" }}",
+        "8ce4835ac237"
+      ],
+      "pid": 18916,
+      "startedAt": "2026-10-08T16:39:12.985Z",
+      "endedAt": "2026-10-08T16:39:13.082Z",
+      "code": 0,
+      "log": "26.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "volume",
+        "ls",
+        "-q",
+        "--filter",
+        "label=com.docker.compose.project=a2-lite-c4424791"
+      ],
+      "pid": 11856,
+      "startedAt": "2026-10-08T16:39:13.083Z",
+      "endedAt": "2026-10-08T16:39:13.194Z",
+      "code": 0,
+      "log": "27.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{ index .Labels \"com.docker.compose.project\" }}",
+        "a2-lite-c4424791_lite-object-data"
+      ],
+      "pid": 33592,
+      "startedAt": "2026-10-08T16:39:13.195Z",
+      "endedAt": "2026-10-08T16:39:13.313Z",
+      "code": 0,
+      "log": "28.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{ index .Labels \"com.docker.compose.project\" }}",
+        "a2-lite-c4424791_lite-postgres-data"
+      ],
+      "pid": 60448,
+      "startedAt": "2026-10-08T16:39:13.313Z",
+      "endedAt": "2026-10-08T16:39:13.416Z",
+      "code": 0,
+      "log": "29.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{ index .Labels \"com.docker.compose.project\" }}",
+        "a2-lite-c4424791_lite-redis-data"
+      ],
+      "pid": 60880,
+      "startedAt": "2026-10-08T16:39:13.417Z",
+      "endedAt": "2026-10-08T16:39:13.513Z",
+      "code": 0,
+      "log": "30.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "network",
+        "ls",
+        "-q",
+        "--filter",
+        "label=com.docker.compose.project=a2-lite-c4424791"
+      ],
+      "pid": 27524,
+      "startedAt": "2026-10-08T16:39:13.513Z",
+      "endedAt": "2026-10-08T16:39:13.607Z",
+      "code": 0,
+      "log": "31.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "network",
+        "inspect",
+        "--format",
+        "{{ index .Labels \"com.docker.compose.project\" }}",
+        "4590aec65823"
+      ],
+      "pid": 54400,
+      "startedAt": "2026-10-08T16:39:13.608Z",
+      "endedAt": "2026-10-08T16:39:13.706Z",
+      "code": 0,
+      "log": "32.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "compose",
+        "--project-name",
+        "a2-lite-c4424791",
+        "-f",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\docker-compose.lite.yml",
+        "-f",
+        "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-c4424791\\provider.override.yml",
+        "down",
+        "--volumes",
+        "--remove-orphans"
+      ],
+      "pid": 52548,
+      "startedAt": "2026-10-08T16:39:13.707Z",
+      "endedAt": "2026-10-08T16:39:14.299Z",
+      "code": 0,
+      "log": "33.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "4e868dab9882"
+      ],
+      "pid": 23784,
+      "startedAt": "2026-10-08T16:39:14.300Z",
+      "endedAt": "2026-10-08T16:39:14.448Z",
+      "code": 1,
+      "log": "34.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "d3d20ca1ded6"
+      ],
+      "pid": 48892,
+      "startedAt": "2026-10-08T16:39:14.449Z",
+      "endedAt": "2026-10-08T16:39:14.612Z",
+      "code": 1,
+      "log": "35.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "efcaee2cbfe1"
+      ],
+      "pid": 59592,
+      "startedAt": "2026-10-08T16:39:14.613Z",
+      "endedAt": "2026-10-08T16:39:14.746Z",
+      "code": 1,
+      "log": "36.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "9508299f9b29"
+      ],
+      "pid": 61068,
+      "startedAt": "2026-10-08T16:39:14.747Z",
+      "endedAt": "2026-10-08T16:39:14.862Z",
+      "code": 1,
+      "log": "37.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "b8c071d3d796"
+      ],
+      "pid": 9260,
+      "startedAt": "2026-10-08T16:39:14.863Z",
+      "endedAt": "2026-10-08T16:39:14.983Z",
+      "code": 1,
+      "log": "38.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "b498746f0c67"
+      ],
+      "pid": 57848,
+      "startedAt": "2026-10-08T16:39:14.983Z",
+      "endedAt": "2026-10-08T16:39:15.101Z",
+      "code": 1,
+      "log": "39.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "8ce4835ac237"
+      ],
+      "pid": 50000,
+      "startedAt": "2026-10-08T16:39:15.102Z",
+      "endedAt": "2026-10-08T16:39:15.213Z",
+      "code": 1,
+      "log": "40.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "volume",
+        "inspect",
+        "a2-lite-c4424791_lite-object-data"
+      ],
+      "pid": 26112,
+      "startedAt": "2026-10-08T16:39:15.214Z",
+      "endedAt": "2026-10-08T16:39:15.308Z",
+      "code": 1,
+      "log": "41.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "volume",
+        "inspect",
+        "a2-lite-c4424791_lite-postgres-data"
+      ],
+      "pid": 31856,
+      "startedAt": "2026-10-08T16:39:15.309Z",
+      "endedAt": "2026-10-08T16:39:15.400Z",
+      "code": 1,
+      "log": "42.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "volume",
+        "inspect",
+        "a2-lite-c4424791_lite-redis-data"
+      ],
+      "pid": 38876,
+      "startedAt": "2026-10-08T16:39:15.401Z",
+      "endedAt": "2026-10-08T16:39:15.493Z",
+      "code": 1,
+      "log": "43.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "network",
+        "inspect",
+        "4590aec65823"
+      ],
+      "pid": 40232,
+      "startedAt": "2026-10-08T16:39:15.493Z",
+      "endedAt": "2026-10-08T16:39:15.604Z",
+      "code": 1,
+      "log": "44.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"workmesh.task\" }}",
+        "c277b2c5b28cab92e04fc00400e5d216c522bd946a16c811cafe4627d0f89ccb"
+      ],
+      "pid": 39064,
+      "startedAt": "2026-10-08T16:39:15.606Z",
+      "endedAt": "2026-10-08T16:39:15.705Z",
+      "code": 0,
+      "log": "45.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "c277b2c5b28cab92e04fc00400e5d216c522bd946a16c811cafe4627d0f89ccb"
+      ],
+      "pid": 19192,
+      "startedAt": "2026-10-08T16:39:15.706Z",
+      "endedAt": "2026-10-08T16:39:15.965Z",
+      "code": 0,
+      "log": "46.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"workmesh.task\" }}",
+        "0dc2e9f5b416ceb191cea83b00fe569a3b2e25760bd5fd063f88b6b0551ca0e7"
+      ],
+      "pid": 43612,
+      "startedAt": "2026-10-08T16:39:15.967Z",
+      "endedAt": "2026-10-08T16:39:16.087Z",
+      "code": 0,
+      "log": "47.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "0dc2e9f5b416ceb191cea83b00fe569a3b2e25760bd5fd063f88b6b0551ca0e7"
+      ],
+      "pid": 57968,
+      "startedAt": "2026-10-08T16:39:16.089Z",
+      "endedAt": "2026-10-08T16:39:16.219Z",
+      "code": 0,
+      "log": "48.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"workmesh.task\" }}",
+        "feac2915ce084503606e7581b4a121d41dfe79a3e8b41ea3fef861e544c7e172"
+      ],
+      "pid": 6492,
+      "startedAt": "2026-10-08T16:39:16.221Z",
+      "endedAt": "2026-10-08T16:39:16.333Z",
+      "code": 0,
+      "log": "49.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "feac2915ce084503606e7581b4a121d41dfe79a3e8b41ea3fef861e544c7e172"
+      ],
+      "pid": 41348,
+      "startedAt": "2026-10-08T16:39:16.335Z",
+      "endedAt": "2026-10-08T16:39:16.539Z",
+      "code": 0,
+      "log": "50.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"workmesh.task\" }}",
+        "250f662d0e074f144593b996cb8675357ce19e57643ea060eba670cc573d71a7"
+      ],
+      "pid": 30252,
+      "startedAt": "2026-10-08T16:39:16.541Z",
+      "endedAt": "2026-10-08T16:39:16.650Z",
+      "code": 0,
+      "log": "51.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "250f662d0e074f144593b996cb8675357ce19e57643ea060eba670cc573d71a7"
+      ],
+      "pid": 45928,
+      "startedAt": "2026-10-08T16:39:16.653Z",
+      "endedAt": "2026-10-08T16:39:16.785Z",
+      "code": 0,
+      "log": "52.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "image",
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"workmesh.task\" }}",
+        "sha256:ec3903990ed43d464eae205ba41167ac0fea47188c5e0c44dd04abf90ceb42db"
+      ],
+      "pid": 6196,
+      "startedAt": "2026-10-08T16:39:16.787Z",
+      "endedAt": "2026-10-08T16:39:16.931Z",
+      "code": 0,
+      "log": "53.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "ps",
+        "-aq",
+        "--filter",
+        "ancestor=sha256:ec3903990ed43d464eae205ba41167ac0fea47188c5e0c44dd04abf90ceb42db"
+      ],
+      "pid": 18024,
+      "startedAt": "2026-10-08T16:39:16.931Z",
+      "endedAt": "2026-10-08T16:39:17.052Z",
+      "code": 0,
+      "log": "54.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "image",
+        "rm",
+        "workmesh-a2-lite:a2-lite-c4424791"
+      ],
+      "pid": 39068,
+      "startedAt": "2026-10-08T16:39:17.053Z",
+      "endedAt": "2026-10-08T16:39:17.408Z",
+      "code": 0,
+      "log": "55.log"
+    },
+    {
+      "name": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "$entries=Get-Content -LiteralPath $env:WORKMESH_A2_PATH_INVENTORY -Raw -Encoding UTF8 | ConvertFrom-Json; $receipts=@(); $failed=$false; foreach($entry in $entries) { try { Remove-Item -LiteralPath $entry.path -ErrorAction Stop; $receipts+=@{path=$entry.path;code=0;exists=(Test-Path -LiteralPath $entry.path)} } catch { $failed=$true; $receipts+=@{path=$entry.path;code=1;error=$_.Exception.Message} } }; ConvertTo-Json -InputObject $receipts -Depth 5 | Set-Content -LiteralPath $env:WORKMESH_A2_PATH_RECEIPTS -Encoding UTF8; if($failed) {exit 1}"
+      ],
+      "pid": 45616,
+      "startedAt": "2026-10-08T16:39:17.413Z",
+      "endedAt": "2026-10-08T16:39:17.885Z",
+      "code": 0,
+      "log": "56.log"
+    }
+  ],
+  "outcome": "失败或未验收：Error: docker 退出 1",
+  "archive": {
+    "name": "git",
+    "args": [
+      "-c",
+      "core.autocrlf=false",
+      "archive",
+      "--format=tar",
+      "3a30e30985b2de92d4dde90d566833297da94cde"
+    ],
+    "pid": 16184,
+    "startedAt": "2026-10-08T16:33:27.008Z",
+    "code": 0,
+    "endedAt": "2026-10-08T16:33:29.956Z",
+    "stderr": ""
+  }
+}

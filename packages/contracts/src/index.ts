@@ -3154,3 +3154,5 @@ export type AgentLifecycleStatus = z.infer<typeof agentLifecycleStatusSchema>
 export type AgentEnrollmentPolicy = z.infer<typeof agentEnrollmentPolicySchema>
 export type AgentEnrollmentRedeemInput = z.infer<typeof agentEnrollmentRedeemInputSchema>
 export type AgentEnrollmentRedeemResponse = z.infer<typeof agentEnrollmentRedeemResponseSchema>
+
+export * from "./repository-configuration-contracts.js"

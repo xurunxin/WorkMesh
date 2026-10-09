@@ -1,0 +1,300 @@
+{
+  "task": {
+    "seqNum": 9,
+    "todoId": "0BkezbmWV6k8vwrlSNuF_",
+    "title": "[A2] 工作台未满足项列表与空状态主动作（不做向导）",
+    "sourceUpdatedAt": "2026-10-07T15:23:25.992Z",
+    "sourceSha256": "130e16687029a7950d13ebe964a9d230bfa1892e811d77bbfbe050e9201b0286",
+    "path": "docs/plan/activation-task-specs/09.md",
+    "specSha256": "a6a9fdd5b76c1e68769e87e255d645b01de81acb4cd30ce227ba34c091437ba2",
+    "phase": "todo",
+    "owner": "A2 执行者",
+    "withPlan": true,
+    "requires": [
+      1,
+      2,
+      18,
+      3,
+      8
+    ],
+    "acceptanceRequires": [],
+    "blocks": [],
+    "syncStatus": "待Chief同步读回",
+    "gate": "按依赖与审查门禁",
+    "latestSourceUpdatedAt": "2026-10-07T15:23:25.992Z",
+    "latestSourceSha256": "130e16687029a7950d13ebe964a9d230bfa1892e811d77bbfbe050e9201b0286",
+    "latestSourcePhase": "todo",
+    "requiresTodoIds": [
+      "reEr9xXt9JXN26e5SbC7Z",
+      "qJKk_SAxN29AdBHERBl7u",
+      "Tws50k02Pi52R-RJEXP_N",
+      "q_1zKPuGsG-2ZRUwOwQx4",
+      "Hxr1xIdh4poZp3F5laGrT"
+    ],
+    "blocksTodoIds": [],
+    "acceptanceRequiresTodoIds": [],
+    "stages": [
+      {
+        "id": "9-contract",
+        "owner": "A2 执行者",
+        "input": "已审R1完整规格、指定base及全部requires已验收产物；执行者先给出精确plan/head",
+        "output": "有序未满足列表、既有 i18n 固定起始文案与 canonical 页面链接，不新增 wizard/seen/配置写入；未适用项不当故障，unknown 文案不冒称在线。A2 独立验收自己的面，不等待 D4；A2+D4 组合回归归 #13 的独立阶段，以本卡已验收产物为输入。",
+        "acceptance": "方案/变更关口通过，未建测试文件按coverage指定owner创建",
+        "testMapping": "docs/reviews/r1/test-coverage.json"
+      },
+      {
+        "id": "9-delivery",
+        "owner": "A2 执行者",
+        "input": [
+          {
+            "todoId": "reEr9xXt9JXN26e5SbC7Z",
+            "seqNum": 1,
+            "required": "可消费的已验收接口/产物及精确提交"
+          },
+          {
+            "todoId": "qJKk_SAxN29AdBHERBl7u",
+            "seqNum": 2,
+            "required": "可消费的已验收接口/产物及精确提交"
+          },
+          {
+            "todoId": "Tws50k02Pi52R-RJEXP_N",
+            "seqNum": 18,
+            "required": "可消费的已验收接口/产物及精确提交"
+          },
+          {
+            "todoId": "q_1zKPuGsG-2ZRUwOwQx4",
+            "seqNum": 3,
+            "required": "可消费的已验收接口/产物及精确提交"
+          },
+          {
+            "todoId": "Hxr1xIdh4poZp3F5laGrT",
+            "seqNum": 8,
+            "required": "可消费的已验收接口/产物及精确提交"
+          }
+        ],
+        "output": "空白/已配置/部分撤权/非仓库 Team、canonical 返回与焦点、窄屏列表可达；仅对应缺口有主动作；配置成功不自动激活；Lite 安装兼容待验证不得伪称已交付。",
+        "acceptance": "逐项用例/原DoD通过，实际适用required检查通过，另一agent独审；Chief确认后交付"
+      }
+    ],
+    "acceptanceBlocks": [
+      13
+    ],
+    "acceptanceBlocksTodoIds": [
+      "O2iz8mb_26RoIlnpfXwxV"
+    ]
+  },
+  "coverage": {
+    "seqNum": 9,
+    "id": "0BkezbmWV6k8vwrlSNuF_",
+    "owner": "A2 执行者",
+    "originalTests": [
+      {
+        "id": "todo-9-T1",
+        "text": "列表顺序 = 依赖深度",
+        "originalChecked": false,
+        "target": 9,
+        "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+        "caseName": "#9 原验收1：列表顺序 = 依赖深度",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+        ],
+        "owner": "A2 执行者",
+        "targetTodoId": "0BkezbmWV6k8vwrlSNuF_"
+      },
+      {
+        "id": "todo-9-T2",
+        "text": "点击深链后返回会重算",
+        "originalChecked": false,
+        "target": 9,
+        "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+        "caseName": "#9 原验收2：点击深链后返回会重算",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+        ],
+        "owner": "A2 执行者",
+        "targetTodoId": "0BkezbmWV6k8vwrlSNuF_"
+      },
+      {
+        "id": "todo-9-T3",
+        "text": "全部满足时横幅不渲染",
+        "originalChecked": false,
+        "target": 9,
+        "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+        "caseName": "#9 原验收3：全部满足时横幅不渲染",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+        ],
+        "owner": "A2 执行者",
+        "targetTodoId": "0BkezbmWV6k8vwrlSNuF_"
+      },
+      {
+        "id": "todo-9-T4",
+        "text": "非 unmet 的空状态不长横幅",
+        "originalChecked": false,
+        "target": 9,
+        "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+        "caseName": "#9 原验收4：非 unmet 的空状态不长横幅",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+        ],
+        "owner": "A2 执行者",
+        "targetTodoId": "0BkezbmWV6k8vwrlSNuF_"
+      },
+      {
+        "id": "todo-9-T5",
+        "text": "路由回退 / 键盘 / 窄屏 / i18n 回归",
+        "originalChecked": false,
+        "target": 9,
+        "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+        "caseName": "#9 原验收5：路由回退 / 键盘 / 窄屏 / i18n 回归",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+        ],
+        "owner": "A2 执行者",
+        "targetTodoId": "0BkezbmWV6k8vwrlSNuF_"
+      },
+      {
+        "id": "todo-9-T6",
+        "text": "e2e：装完 Lite → 看到缺配置 → 逐项补齐 → 横幅消失",
+        "originalChecked": false,
+        "target": 9,
+        "testFile": "apps/web/e2e/configuration-readiness.spec.ts",
+        "caseName": "#9 原验收6：e2e：装完 Lite → 看到缺配置 → 逐项补齐 → 横幅消失",
+        "status": "待执行者新增/扩展断言，未实现",
+        "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+        "matrixCases": [
+          "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确"
+        ],
+        "owner": "A2 执行者",
+        "targetTodoId": "0BkezbmWV6k8vwrlSNuF_"
+      }
+    ],
+    "originalDoD": [
+      {
+        "text": "## DoD\n未满足项列表可用 + 全部交互断言通过 + 既有 IA 与导航无回归。\n\n",
+        "sha256": "875c810a8387fdf1e330bbe48b4b741b7720d0162bfe830103354f1275cf2db9",
+        "target": 9,
+        "owner": "A2 执行者",
+        "targetTodoId": "0BkezbmWV6k8vwrlSNuF_",
+        "acceptance": "原DoD保留，所有合法测试迁移到originalTests；矛盾旧要求按legacy处置和本任务共同契约撤换，不以历史绿灯放行"
+      }
+    ],
+    "matrix": [
+      {
+        "category": "happy path",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确",
+        "file": "apps/web/e2e/configuration-readiness.spec.ts",
+        "caseName": "R1-9-1 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确",
+        "owner": "A2 执行者",
+        "fileState": "待创建；归本feature执行者",
+        "result": "待实现任务运行；本轮不预填功能成功",
+        "stageId": "9-delivery",
+        "inputTodoIds": []
+      },
+      {
+        "category": "unauthorized actor",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "当前用户不可见配置不渲染为可操作项；失权重读清除旧行",
+        "file": "apps/web/e2e/configuration-readiness.spec.ts",
+        "caseName": "R1-9-2 当前用户不可见配置不渲染为可操作项；失权重读清除旧行",
+        "owner": "A2 执行者",
+        "fileState": "待创建；归本feature执行者",
+        "result": "待实现任务运行；本轮不预填功能成功",
+        "stageId": "9-delivery",
+        "inputTodoIds": []
+      },
+      {
+        "category": "invalid state transition",
+        "applicable": false,
+        "reason": "只读投影和导航，没有领域状态转换。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "A2 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "duplicate idempotency key",
+        "applicable": false,
+        "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "A2 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "stale revision",
+        "applicable": false,
+        "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "A2 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "transaction failure",
+        "applicable": false,
+        "reason": "固定文案/导航不创建配置或seen事务。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "A2 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "webhook/job replay",
+        "applicable": false,
+        "reason": "本地布局/投影渲染，不新增领域变更、revision、job或outbox。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "A2 执行者",
+        "fileState": null,
+        "result": "不适用"
+      },
+      {
+        "category": "concurrent request",
+        "applicable": true,
+        "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+        "assertion": "A2自身异步Team切换不落旧投影，canonical返回/焦点/窄屏列表独立可达，不等待D4",
+        "file": "apps/web/e2e/configuration-readiness.spec.ts",
+        "caseName": "R1-9-8 A2自身异步Team切换不落旧投影，canonical返回/焦点/窄屏列表独立可达，不等待D4",
+        "owner": "A2 执行者",
+        "fileState": "待创建；归本feature执行者",
+        "result": "待实现任务运行；本轮不预填功能成功",
+        "stageId": "9-delivery",
+        "inputTodoIds": []
+      },
+      {
+        "category": "server restart/outbox recovery",
+        "applicable": false,
+        "reason": "不创建outbox；重载列表仍由当前授权查询。",
+        "assertion": null,
+        "file": null,
+        "caseName": null,
+        "owner": "A2 执行者",
+        "fileState": null,
+        "result": "不适用"
+      }
+    ]
+  }
+}

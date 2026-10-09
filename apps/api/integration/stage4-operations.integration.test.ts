@@ -281,6 +281,97 @@ describe("Stage 4 planning and operations API", () => {
     await db.end();
   });
 
+  const repositoryFixtures = async () => {
+    const other = await call(human, 'POST', '/api/v1/teams', { name: 'A2 other Team', key: `A${randomUUID().replaceAll('-', '').slice(0, 6).toUpperCase()}` })
+    expect(other.statusCode, JSON.stringify(other.json())).toBe(200)
+    const otherTeamId = other.json<{ id: string }>().id
+    const create = async (provider: 'github' | 'gitea', team: string, fullName: string) => {
+      const connection = await call(human, 'POST', '/api/v1/provider-connections', { provider, externalAccountId: randomUUID(), displayName: 'A2 provider', webhookSecret: 'a2-integration-secret', installationId: '42', appId: '17', privateKey: 'a2-private-key-material'.repeat(5), baseUrl: 'https://gitea.example.test', accessToken: 'a2-access-token-value' })
+      expect(connection.statusCode, JSON.stringify(connection.json())).toBe(200)
+      const repo = await call(human, 'POST', '/api/v1/repositories', { connectionId: connection.json<{ id: string }>().id, teamId: team, externalId: randomUUID(), fullName, defaultBranch: 'main' })
+      expect(repo.statusCode).toBe(200)
+      return repo.json<{ id: string; connection_id: string }>()
+    }
+    const unavailable = await create('gitea', teamId, 'a2/aaa-gitea')
+    await create('gitea', otherTeamId, 'a2/aaaa-other-team')
+    const github = await create('github', teamId, `a2/github-${randomUUID()}`)
+    const sameName = (await db.query<{ full_name: string }>('SELECT full_name FROM repositories WHERE id=$1', [github.id])).rows[0]!.full_name
+    const second = await create('github', teamId, sameName)
+    const inactive = await create('github', teamId, 'a2/aa-inactive')
+    await db.query('UPDATE repositories SET active=false WHERE id=$1', [inactive.id])
+    return { otherTeamId, unavailable, github, second }
+  }
+  const filteredRequest = (target: ReturnType<typeof buildApp>, url: string) => target.inject({ method: 'GET', url, headers: { cookie: human.cookie } })
+  it('Human 可用仓库筛选在分页前排除关闭 provider 与其他 Team', async () => {
+    const fixture = await repositoryFixtures()
+    const disabled = buildApp({ features: loadFeatureConfig({ WORKMESH_BETA_GITEA: 'false' }) })
+    try {
+      const url = `/api/v1/repositories?teamId=${teamId}&availableOnly=true&limit=1`
+      const seen: string[] = []; let cursor: string | null = null
+      do {
+        const response = await filteredRequest(disabled, url + (cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''))
+        expect(response.statusCode, response.body).toBe(200)
+        const page = response.json<Page<{ id: string; team_id: string; can_configure_context: boolean }>>()
+        for (const item of page.items) { expect(item.team_id).toBe(teamId); expect(item.can_configure_context).toBe(true); seen.push(item.id) }
+        cursor = page.nextCursor
+      } while (cursor)
+      expect(seen.filter(id => id === fixture.github.id || id === fixture.second.id).length).toBe(2)
+      expect(new Set(seen).size).toBe(seen.length); expect(seen).not.toContain(fixture.unavailable.id)
+      for (const suffix of ['', `?teamId=${teamId}`, `?teamId=${teamId}&availableOnly=false`]) expect((await filteredRequest(disabled, `/api/v1/repositories${suffix}`)).json().error.code).toBe('FEATURE_DISABLED')
+      expect((await call(human, 'GET', `/api/v1/repositories?teamId=${teamId}&availableOnly=true`)).json<Page<{ id: string }>>().items.some(item => item.id === fixture.unavailable.id)).toBe(true)
+    } finally { await disabled.close() }
+  })
+  it('Human 仓库筛选游标绑定不允许换域续页', async () => {
+    const fixture = await repositoryFixtures()
+    const disabled = buildApp({ features: loadFeatureConfig({ WORKMESH_BETA_GITEA: 'false' }) })
+    try {
+      const page = (await filteredRequest(disabled, `/api/v1/repositories?teamId=${teamId}&availableOnly=true&limit=1`)).json<Page<{ id: string }>>()
+      expect(page.nextCursor).toBeTruthy()
+      for (const query of [`teamId=${fixture.otherTeamId}&availableOnly=true`, `teamId=${teamId}&availableOnly=false`]) expect((await filteredRequest(disabled, `/api/v1/repositories?${query}&cursor=${encodeURIComponent(page.nextCursor!)}`)).json().error.code).toBe('PAGINATION_CURSOR_MISMATCH')
+      expect((await call(human, 'GET', `/api/v1/repositories?teamId=${teamId}&availableOnly=true&cursor=${encodeURIComponent(page.nextCursor!)}`)).json<{ error: { code: string } }>().error.code).toBe('PAGINATION_CURSOR_MISMATCH')
+      const legacy = await call(human, 'GET', '/api/v1/repositories?limit=1')
+      expect(legacy.statusCode).toBe(200)
+      expect(Object.keys(legacy.json()).sort()).toEqual(['items', 'nextCursor'])
+    } finally { await disabled.close() }
+  })
+  it.each(['membership', 'team'] as const)('Human 仓库分页最终 SQL 重验预检后的撤权：%s', async kind => {
+    await repositoryFixtures()
+    const raced = buildApp({ logger: false, features: loadFeatureConfig({ WORKMESH_BETA_GITEA: 'false' }), beforePagedQuery: async route => {
+      if (route !== '/api/v1/repositories') return
+      if (kind === 'membership') {
+        await db.query("UPDATE actors SET workspace_role='member' WHERE id=$1", [human.actorId])
+        await db.query('DELETE FROM memberships WHERE team_id=$1 AND actor_id=$2', [teamId, human.actorId])
+      } else await db.query('UPDATE teams SET deleted_at=now() WHERE id=$1', [teamId])
+    } })
+    try {
+      const response = await filteredRequest(raced, `/api/v1/repositories?teamId=${teamId}&availableOnly=true&limit=1`)
+      expect(response.statusCode, response.body).toBe(200)
+      expect(response.json()).toEqual({ items: [], nextCursor: null })
+    } finally {
+      await raced.close()
+      await db.query("UPDATE actors SET workspace_role='admin' WHERE id=$1", [human.actorId])
+      await db.query('UPDATE teams SET deleted_at=NULL WHERE id=$1', [teamId])
+      await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'admin') ON CONFLICT(team_id,actor_id) DO UPDATE SET role='admin'", [workspaceId, teamId, human.actorId])
+    }
+  })
+  it('Agent 旧列表权限不变且拒绝 Human 新筛选参数', async () => {
+    const fixture = await repositoryFixtures()
+    const reviewer = await createExecutingReviewer(human, workspaceId, teamId, workItemId, fixture.github.id)
+    const response = await agentCall(reviewer.token, 'GET', '/api/v1/repositories')
+    expect(response.statusCode).toBe(200)
+    expect(response.json<Page<{ id: string; can_configure_context: boolean }>>().items).toEqual([expect.objectContaining({ id: fixture.github.id, can_configure_context: false })])
+    for (const query of [`teamId=${teamId}`, 'availableOnly=true', 'availableOnly=false']) expect((await agentCall(reviewer.token, 'GET', `/api/v1/repositories?${query}`)).json<{ error: { code: string } }>().error.code).toBe('VALIDATION_ERROR')
+    await db.query("UPDATE actors SET workspace_role='member' WHERE id=$1", [human.actorId])
+    await db.query("UPDATE memberships SET role='member' WHERE team_id=$1 AND actor_id=$2", [teamId, human.actorId])
+    await db.query('DELETE FROM memberships WHERE team_id=$1 AND actor_id=$2', [fixture.otherTeamId, human.actorId])
+    try {
+      expect((await call(human, 'GET', `/api/v1/repositories?teamId=${fixture.otherTeamId}&availableOnly=true`)).statusCode).toBe(403)
+      const own = await call(human, 'GET', `/api/v1/repositories?teamId=${teamId}&availableOnly=true`)
+      expect(own.statusCode).toBe(200)
+      expect(own.json<Page<{ can_configure_context: boolean }>>().items.every(item => item.can_configure_context === false)).toBe(true)
+    } finally { await db.query("UPDATE actors SET workspace_role='admin' WHERE id=$1", [human.actorId]); await db.query("UPDATE memberships SET role='admin' WHERE team_id=$1 AND actor_id=$2", [teamId, human.actorId]) }
+  })
+
   it("publishes safe release metadata and discloses feature state only after authentication", async () => {
     const info = (await app.inject({
       method: "GET",

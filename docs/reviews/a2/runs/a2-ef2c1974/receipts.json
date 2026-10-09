@@ -1,0 +1,220 @@
+{
+  "runId": "a2-ef2c1974",
+  "resources": [
+    {
+      "type": "container",
+      "name": "a2-ef2c1974-postgres",
+      "owner": "a2-ef2c1974",
+      "image": "postgres:16-alpine",
+      "plannedAt": "2026-10-08T15:50:17.505Z",
+      "id": "b63c996927fcd1600060af8d26018b014a74f96a1d3eabe993f41626cac5537b",
+      "cleanup": {
+        "code": 0,
+        "output": "b63c996927fcd1600060af8d26018b014a74f96a1d3eabe993f41626cac5537b\n",
+        "at": "2026-10-08T15:50:48.854Z"
+      },
+      "preDelete": {
+        "id": "b63c996927fcd1600060af8d26018b014a74f96a1d3eabe993f41626cac5537b",
+        "owner": "a2-ef2c1974",
+        "exitCode": 0,
+        "mounts": [],
+        "activity": "验收子进程已结束，保全日志与源码后收尾",
+        "at": "2026-10-08T15:50:48.572Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-ef2c1974-redis",
+      "owner": "a2-ef2c1974",
+      "image": "redis:7-alpine",
+      "plannedAt": "2026-10-08T15:50:17.843Z",
+      "id": "afe9f6eaf083f51a2f833d7d4899a3f27846b715fde33c7d35f805c6e5db32d7",
+      "cleanup": {
+        "code": 0,
+        "output": "afe9f6eaf083f51a2f833d7d4899a3f27846b715fde33c7d35f805c6e5db32d7\n",
+        "at": "2026-10-08T15:50:48.252Z"
+      },
+      "preDelete": {
+        "id": "afe9f6eaf083f51a2f833d7d4899a3f27846b715fde33c7d35f805c6e5db32d7",
+        "owner": "a2-ef2c1974",
+        "exitCode": 0,
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "1c74e1a1a17ea028ca487ce553fbae1bc14d53f7007cb97fa97b4eba297f7d1b",
+            "Source": "/var/lib/docker/volumes/1c74e1a1a17ea028ca487ce553fbae1bc14d53f7007cb97fa97b4eba297f7d1b/_data",
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "activity": "验收子进程已结束，保全日志与源码后收尾",
+        "at": "2026-10-08T15:50:47.984Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-ef2c1974-s3",
+      "owner": "a2-ef2c1974",
+      "image": "rustfs/rustfs:1.0.0",
+      "plannedAt": "2026-10-08T15:50:18.227Z",
+      "id": "8faa2e36bc54149f45a1c00ebf25214fe8fe1a5194937bf15da74f5e4cba5075",
+      "cleanup": {
+        "code": 0,
+        "output": "8faa2e36bc54149f45a1c00ebf25214fe8fe1a5194937bf15da74f5e4cba5075\n",
+        "at": "2026-10-08T15:50:47.719Z"
+      },
+      "preDelete": {
+        "id": "8faa2e36bc54149f45a1c00ebf25214fe8fe1a5194937bf15da74f5e4cba5075",
+        "owner": "a2-ef2c1974",
+        "exitCode": 0,
+        "mounts": [],
+        "activity": "验收子进程已结束，保全日志与源码后收尾",
+        "at": "2026-10-08T15:50:47.394Z"
+      }
+    }
+  ],
+  "results": [
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-ef2c1974-postgres",
+        "--label",
+        "workmesh.task=a2-ef2c1974",
+        "-p",
+        "127.0.0.1:54425:5432",
+        "-e",
+        "POSTGRES_PASSWORD",
+        "-e",
+        "POSTGRES_USER=workmesh",
+        "-e",
+        "POSTGRES_DB=workmesh_a2_test",
+        "--tmpfs",
+        "/var/lib/postgresql/data",
+        "postgres:16-alpine"
+      ],
+      "pid": 48244,
+      "start": "2026-10-08T15:50:17.507Z",
+      "end": "2026-10-08T15:50:17.835Z",
+      "code": 0,
+      "log": "0.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-ef2c1974-redis",
+        "--label",
+        "workmesh.task=a2-ef2c1974",
+        "-p",
+        "127.0.0.1:54426:6379",
+        "redis:7-alpine"
+      ],
+      "pid": 5244,
+      "start": "2026-10-08T15:50:17.844Z",
+      "end": "2026-10-08T15:50:18.224Z",
+      "code": 0,
+      "log": "1.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-ef2c1974-s3",
+        "--label",
+        "workmesh.task=a2-ef2c1974",
+        "-p",
+        "127.0.0.1:54427:9000",
+        "-e",
+        "RUSTFS_ACCESS_KEY",
+        "-e",
+        "RUSTFS_SECRET_KEY",
+        "--tmpfs",
+        "/data:rw,mode=1777",
+        "rustfs/rustfs:1.0.0"
+      ],
+      "pid": 49880,
+      "start": "2026-10-08T15:50:18.230Z",
+      "end": "2026-10-08T15:50:18.584Z",
+      "code": 0,
+      "log": "2.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "typecheck"
+      ],
+      "pid": 41492,
+      "start": "2026-10-08T15:50:19.277Z",
+      "end": "2026-10-08T15:50:44.947Z",
+      "code": 2,
+      "log": "3.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "8faa2e36bc54149f45a1c00ebf25214fe8fe1a5194937bf15da74f5e4cba5075"
+      ],
+      "pid": 20052,
+      "start": "2026-10-08T15:50:47.395Z",
+      "end": "2026-10-08T15:50:47.717Z",
+      "code": 0,
+      "log": "4.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "afe9f6eaf083f51a2f833d7d4899a3f27846b715fde33c7d35f805c6e5db32d7"
+      ],
+      "pid": 53328,
+      "start": "2026-10-08T15:50:47.985Z",
+      "end": "2026-10-08T15:50:48.251Z",
+      "code": 0,
+      "log": "5.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "b63c996927fcd1600060af8d26018b014a74f96a1d3eabe993f41626cac5537b"
+      ],
+      "pid": 40468,
+      "start": "2026-10-08T15:50:48.574Z",
+      "end": "2026-10-08T15:50:48.852Z",
+      "code": 0,
+      "log": "6.log"
+    },
+    {
+      "name": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\sanitize-evidence.ps1",
+        "-RunDirectory",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-ef2c1974"
+      ],
+      "pid": 54280,
+      "start": "2026-10-08T15:50:48.858Z",
+      "end": "2026-10-08T15:50:49.919Z",
+      "code": 0,
+      "log": "7.log"
+    }
+  ]
+}

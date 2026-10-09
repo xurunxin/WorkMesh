@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-10-08T19:06:08.934Z",
+  "head": "380aad996489dbdabddd212be8f45edbcdda7209",
+  "runId": "a2-71164f40",
+  "liteRunId": "a2-lite-23646193",
+  "report": "docs/reviews/a2/context-read-generation-review.md",
+  "sourceBefore": "docs/reviews/a2/runs/a2-71164f40/source-before.json",
+  "sourceAfter": "docs/reviews/a2/runs/a2-71164f40/source-after.json",
+  "rule": "本轮 UI 与镜像均实际新执行；服务端、协议及部署历史检查仅复用逐文件证明未变的输入",
+  "gates": [
+    "本次实施独审",
+    "五项人工视觉差异接受",
+    "latest Required CI",
+    "actual main 落地"
+  ]
+}

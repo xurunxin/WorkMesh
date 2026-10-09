@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto'
-import type { Pool } from 'pg'
-import { appendEvent, withTx } from '@workmesh/db'
+import type { Pool, PoolClient } from 'pg'
+import { appendEvent, lockAgentAuthorityPlan, withTx } from '@workmesh/db'
 import {
   assertMergeReady,
   authorizeAgentMutation,
@@ -386,9 +386,9 @@ export function createProviderActionWorker(input: {
   })
   }
 
-  const authorizeRepositoryContextResolution = async (action: ClaimedAction): Promise<boolean> => {
-    if (!await revalidateClaimedProvider(action)) return false
-    return withTx(input.db, async tx => {
+  const authorizeRepositoryContextInTransaction = async (tx: PoolClient, action: ClaimedAction): Promise<boolean> => {
+      // Match C1's workspace-before-resources order; no locks span provider I/O.
+      await tx.query('SELECT id FROM workspaces WHERE id=$1 FOR KEY SHARE', [action.workspace_id])
       const current = await tx.query(
         "SELECT 1 FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
         [action.id, workerId],
@@ -399,6 +399,39 @@ export function createProviderActionWorker(input: {
         workItemId?: string
         sessionId?: string
       }
+      const session = payload.sessionId ? (await tx.query<{
+        agent_id: string; delegation_id: string; team_id: string; work_item_id: string | null; project_id: string | null
+      }>('SELECT agent_id,delegation_id,team_id,work_item_id,project_id FROM agent_sessions WHERE workspace_id=$1 AND id=$2',
+        [action.workspace_id, payload.sessionId])).rows[0] : undefined
+      const workItemIds = [...new Set([payload.workItemId, session?.work_item_id].filter((value): value is string => Boolean(value)))]
+      const items = workItemIds.length ? (await tx.query<{ id: string; project_id: string | null }>(
+        'SELECT id,project_id FROM work_items WHERE workspace_id=$1 AND id=ANY($2::uuid[])', [action.workspace_id, workItemIds],
+      )).rows : []
+      await lockAgentAuthorityPlan(tx, {
+        definitionIds: session ? [session.agent_id] : [],
+        teamGrants: session ? [{ workspaceId: action.workspace_id, agentId: session.agent_id, teamId: session.team_id }] : [],
+        delegationIds: session ? [session.delegation_id] : [],
+        sessionIds: payload.sessionId ? [payload.sessionId] : [], workItemIds,
+        projectIds: [...new Set([payload.projectId, session?.project_id, ...items.map(item => item.project_id)].filter((value): value is string => Boolean(value)))],
+      })
+      await tx.query('SELECT id FROM provider_connections WHERE workspace_id=$1 AND id=$2 FOR SHARE', [action.workspace_id, action.connection_id])
+      await tx.query('SELECT id FROM repositories WHERE workspace_id=$1 AND id=$2 FOR SHARE', [action.workspace_id, action.repository_id])
+      await tx.query('SELECT id FROM teams WHERE workspace_id=$1 AND id=$2 FOR SHARE', [action.workspace_id, action.team_id])
+      await tx.query('SELECT id FROM actors WHERE workspace_id=$1 AND id=$2 FOR SHARE', [action.workspace_id, action.requested_by_actor_id])
+      await tx.query('SELECT actor_id FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3 FOR SHARE',
+        [action.workspace_id, action.team_id, action.requested_by_actor_id])
+      const liveSession = session ? (await tx.query<typeof session>(
+        'SELECT agent_id,delegation_id,team_id,work_item_id,project_id FROM agent_sessions WHERE workspace_id=$1 AND id=$2',
+        [action.workspace_id, payload.sessionId],
+      )).rows[0] : undefined
+      const liveItems = items.length ? (await tx.query<{ id: string; project_id: string | null }>(
+        'SELECT id,project_id FROM work_items WHERE workspace_id=$1 AND id=ANY($2::uuid[])', [action.workspace_id, workItemIds],
+      )).rows : []
+      const bindingsMatch = (!session || Boolean(liveSession && Object.keys(session).every(key =>
+        session[key as keyof typeof session] === liveSession[key as keyof typeof session])))
+        && items.every(item => liveItems.some(live => live.id === item.id && live.project_id === item.project_id))
+        && (payload.sessionId ?? null) === action.session_id && (payload.workItemId ?? null) === action.work_item_id
+        && (payload.projectId ?? null) === action.project_id
       const authorization = (await tx.query<{
         actor_active: boolean
         actor_kind: string
@@ -428,13 +461,14 @@ export function createProviderActionWorker(input: {
                   ELSE false
                 END AS target_valid
            FROM actors a
-           JOIN repositories r ON r.id=$3 AND r.workspace_id=a.workspace_id
-           JOIN provider_connections c ON c.id=r.connection_id AND c.workspace_id=r.workspace_id
+           JOIN repositories r ON r.id=$3 AND r.workspace_id=a.workspace_id AND r.team_id=$7
+           JOIN provider_connections c ON c.id=r.connection_id AND c.workspace_id=r.workspace_id AND c.id=$8
+           JOIN teams t ON t.id=r.team_id AND t.workspace_id=r.workspace_id AND t.deleted_at IS NULL
           WHERE a.id=$1 AND a.workspace_id=$2`,
         [action.requested_by_actor_id, action.workspace_id, action.repository_id,
-          payload.projectId ?? null, payload.workItemId ?? null, payload.sessionId ?? null],
+          payload.projectId ?? null, payload.workItemId ?? null, payload.sessionId ?? null, action.team_id, action.connection_id],
       )).rows[0]
-      if (authorization?.actor_active && authorization.actor_kind === 'human' &&
+      if (bindingsMatch && authorization?.actor_active && authorization.actor_kind === 'human' &&
           authorization.repository_active && authorization.connection_active &&
           authorization.target_valid &&
           (authorization.workspace_role === 'admin' || authorization.maintainer))
@@ -447,7 +481,9 @@ export function createProviderActionWorker(input: {
         [action.id, workerId, reason],
       )
       await appendEvent(tx, {
-        workspaceId: action.workspace_id, teamId: action.team_id,
+        // The target can have moved since this action was requested. Resolve its
+        // current scope, and restrict the denial to its original requester.
+        workspaceId: action.workspace_id, audienceActorId: action.requested_by_actor_id,
         actorId: action.requested_by_actor_id,
         correlationId: `provider-action:${action.id}`,
         idempotencyKey: `${action.id}:authorization-revoked`,
@@ -457,7 +493,11 @@ export function createProviderActionWorker(input: {
         payload: { kind: action.kind, reason: 'REPOSITORY_CONTEXT_RESOLUTION_DENIED' },
       })
       return false
-    })
+  }
+
+  const authorizeRepositoryContextResolution = async (action: ClaimedAction): Promise<boolean> => {
+    if (!await revalidateClaimedProvider(action)) return false
+    return withTx(input.db, tx => authorizeRepositoryContextInTransaction(tx, action))
   }
 
   const checkpointProviderResult = async (
@@ -773,11 +813,15 @@ export function createProviderActionWorker(input: {
 
   const finishAction = async (action: ClaimedAction, result: Record<string, unknown>): Promise<void> => {
     await withTx(input.db, async tx => {
-      const current = await tx.query(
+      if (action.kind === 'resolve_repository_context') {
+        if (!await authorizeRepositoryContextInTransaction(tx, action)) return
+      } else {
+        const current = await tx.query(
         "SELECT 1 FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
         [action.id, workerId],
       )
       if (!current.rowCount) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
+      }
       if (action.kind === 'resolve_repository_context') {
         const payload = action.payload as {
           projectId?: string

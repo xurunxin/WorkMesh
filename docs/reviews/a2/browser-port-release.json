@@ -1,0 +1,14 @@
+{
+  "checkedPorts": [
+    3100,
+    3101,
+    3102,
+    3200,
+    3201
+  ],
+  "query": "Get-NetTCPConnection -State Listen -ErrorAction Stop",
+  "listeners": [],
+  "systemListenerCount": 61,
+  "action": "只读确认端口释放；未停止或复用其他服务",
+  "observedAt": "2026-10-08T15:58:02.8504055Z"
+}

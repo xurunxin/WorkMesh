@@ -1,0 +1,383 @@
+{
+  "runId": "a2-24d1b785",
+  "resources": [
+    {
+      "type": "container",
+      "name": "a2-24d1b785-postgres",
+      "owner": "a2-24d1b785",
+      "image": "postgres:16-alpine",
+      "plannedAt": "2026-10-08T16:12:31.196Z",
+      "id": "6304a9cf7a62ee7d78951215eaa8d2d974cc3b814dfebb99dab50845b3ea73ea",
+      "cleanup": {
+        "code": 0,
+        "output": "6304a9cf7a62ee7d78951215eaa8d2d974cc3b814dfebb99dab50845b3ea73ea\n"
+      },
+      "preDelete": {
+        "id": "6304a9cf7a62ee7d78951215eaa8d2d974cc3b814dfebb99dab50845b3ea73ea",
+        "owner": "a2-24d1b785",
+        "exitCode": 0,
+        "mounts": [],
+        "activity": "测试记录器已退出；只读端口/PID 观察无本轮服务，源码原件及异常已保全",
+        "observation": "post-harness-failure-observation.json",
+        "at": "2026-10-08T16:18:14.921Z"
+      },
+      "postDelete": {
+        "code": 1,
+        "absent": true,
+        "at": "2026-10-08T16:18:15.391Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-24d1b785-redis",
+      "owner": "a2-24d1b785",
+      "image": "redis:7-alpine",
+      "plannedAt": "2026-10-08T16:12:31.914Z",
+      "id": "3c7c149a641ee920c32da6aab405c1d2d995600ef62a76129ae8c297a3f5121c",
+      "cleanup": {
+        "code": 0,
+        "output": "3c7c149a641ee920c32da6aab405c1d2d995600ef62a76129ae8c297a3f5121c\n"
+      },
+      "preDelete": {
+        "id": "3c7c149a641ee920c32da6aab405c1d2d995600ef62a76129ae8c297a3f5121c",
+        "owner": "a2-24d1b785",
+        "exitCode": 0,
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "d0699aeeb0ff3d74cedf3daa5b57380d2ca429cdda71298392704e464ddf318a",
+            "Source": "/var/lib/docker/volumes/d0699aeeb0ff3d74cedf3daa5b57380d2ca429cdda71298392704e464ddf318a/_data",
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "activity": "测试记录器已退出；只读端口/PID 观察无本轮服务，源码原件及异常已保全",
+        "observation": "post-harness-failure-observation.json",
+        "at": "2026-10-08T16:18:14.083Z"
+      },
+      "postDelete": {
+        "code": 1,
+        "absent": true,
+        "at": "2026-10-08T16:18:14.611Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-24d1b785-s3",
+      "owner": "a2-24d1b785",
+      "image": "rustfs/rustfs:1.0.0",
+      "plannedAt": "2026-10-08T16:12:34.549Z",
+      "id": "4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246",
+      "cleanup": {
+        "code": 0,
+        "output": "4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246\n"
+      },
+      "preDelete": {
+        "id": "4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246",
+        "owner": "a2-24d1b785",
+        "exitCode": 0,
+        "mounts": [],
+        "activity": "测试记录器已退出；只读端口/PID 观察无本轮服务，源码原件及异常已保全",
+        "observation": "post-harness-failure-observation.json",
+        "at": "2026-10-08T16:17:44.698Z"
+      },
+      "postDelete": {
+        "code": 1,
+        "absent": true,
+        "at": "2026-10-08T16:18:13.817Z"
+      },
+      "postDeleteHistory": [
+        {
+          "code": 1,
+          "absent": false,
+          "at": "2026-10-08T16:17:45.190Z"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-24d1b785-postgres",
+        "--label",
+        "workmesh.task=a2-24d1b785",
+        "-p",
+        "127.0.0.1:56039:5432",
+        "-e",
+        "POSTGRES_PASSWORD",
+        "-e",
+        "POSTGRES_USER=workmesh",
+        "-e",
+        "POSTGRES_DB=workmesh_a2_test",
+        "--tmpfs",
+        "/var/lib/postgresql/data",
+        "postgres:16-alpine"
+      ],
+      "pid": 40040,
+      "start": "2026-10-08T16:12:31.199Z",
+      "end": "2026-10-08T16:12:31.908Z",
+      "code": 0,
+      "log": "0.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-24d1b785-redis",
+        "--label",
+        "workmesh.task=a2-24d1b785",
+        "-p",
+        "127.0.0.1:56040:6379",
+        "redis:7-alpine"
+      ],
+      "pid": 47312,
+      "start": "2026-10-08T16:12:31.917Z",
+      "end": "2026-10-08T16:12:34.544Z",
+      "code": 0,
+      "log": "1.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-24d1b785-s3",
+        "--label",
+        "workmesh.task=a2-24d1b785",
+        "-p",
+        "127.0.0.1:56041:9000",
+        "-e",
+        "RUSTFS_ACCESS_KEY",
+        "-e",
+        "RUSTFS_SECRET_KEY",
+        "--tmpfs",
+        "/data:rw,mode=1777",
+        "rustfs/rustfs:1.0.0"
+      ],
+      "pid": 50648,
+      "start": "2026-10-08T16:12:34.551Z",
+      "end": "2026-10-08T16:12:34.961Z",
+      "code": 0,
+      "log": "2.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "--filter",
+        "@workmesh/web",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "../../playwright.config.ts",
+        "configuration-readiness.spec.ts",
+        "--list"
+      ],
+      "pid": 47764,
+      "start": "2026-10-08T16:12:36.277Z",
+      "end": "2026-10-08T16:12:39.823Z",
+      "code": 0,
+      "log": "3.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"workmesh.task\" }}",
+        "4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246"
+      ],
+      "start": "2026-10-08T16:17:44.387Z",
+      "end": "2026-10-08T16:17:44.560Z",
+      "code": 0,
+      "log": "recovery-4.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{json .Mounts}}",
+        "4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246"
+      ],
+      "start": "2026-10-08T16:17:44.561Z",
+      "end": "2026-10-08T16:17:44.697Z",
+      "code": 0,
+      "log": "recovery-5.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246"
+      ],
+      "start": "2026-10-08T16:17:44.699Z",
+      "end": "2026-10-08T16:17:45.011Z",
+      "code": 0,
+      "log": "recovery-6.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246"
+      ],
+      "start": "2026-10-08T16:17:45.014Z",
+      "end": "2026-10-08T16:17:45.188Z",
+      "code": 1,
+      "log": "recovery-7.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "4b2ce81d25f1bf6b2dc33d711b5ddf96e4b467ca062645be458a0f9cc9cc2246"
+      ],
+      "start": "2026-10-08T16:18:13.670Z",
+      "end": "2026-10-08T16:18:13.816Z",
+      "code": 1,
+      "log": "recovery-8.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"workmesh.task\" }}",
+        "3c7c149a641ee920c32da6aab405c1d2d995600ef62a76129ae8c297a3f5121c"
+      ],
+      "start": "2026-10-08T16:18:13.819Z",
+      "end": "2026-10-08T16:18:13.944Z",
+      "code": 0,
+      "log": "recovery-9.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{json .Mounts}}",
+        "3c7c149a641ee920c32da6aab405c1d2d995600ef62a76129ae8c297a3f5121c"
+      ],
+      "start": "2026-10-08T16:18:13.945Z",
+      "end": "2026-10-08T16:18:14.082Z",
+      "code": 0,
+      "log": "recovery-10.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "3c7c149a641ee920c32da6aab405c1d2d995600ef62a76129ae8c297a3f5121c"
+      ],
+      "start": "2026-10-08T16:18:14.084Z",
+      "end": "2026-10-08T16:18:14.396Z",
+      "code": 0,
+      "log": "recovery-11.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "3c7c149a641ee920c32da6aab405c1d2d995600ef62a76129ae8c297a3f5121c"
+      ],
+      "start": "2026-10-08T16:18:14.399Z",
+      "end": "2026-10-08T16:18:14.610Z",
+      "code": 1,
+      "log": "recovery-12.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{ index .Config.Labels \"workmesh.task\" }}",
+        "6304a9cf7a62ee7d78951215eaa8d2d974cc3b814dfebb99dab50845b3ea73ea"
+      ],
+      "start": "2026-10-08T16:18:14.613Z",
+      "end": "2026-10-08T16:18:14.757Z",
+      "code": 0,
+      "log": "recovery-13.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{json .Mounts}}",
+        "6304a9cf7a62ee7d78951215eaa8d2d974cc3b814dfebb99dab50845b3ea73ea"
+      ],
+      "start": "2026-10-08T16:18:14.759Z",
+      "end": "2026-10-08T16:18:14.920Z",
+      "code": 0,
+      "log": "recovery-14.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "6304a9cf7a62ee7d78951215eaa8d2d974cc3b814dfebb99dab50845b3ea73ea"
+      ],
+      "start": "2026-10-08T16:18:14.923Z",
+      "end": "2026-10-08T16:18:15.216Z",
+      "code": 0,
+      "log": "recovery-15.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "6304a9cf7a62ee7d78951215eaa8d2d974cc3b814dfebb99dab50845b3ea73ea"
+      ],
+      "start": "2026-10-08T16:18:15.218Z",
+      "end": "2026-10-08T16:18:15.390Z",
+      "code": 1,
+      "log": "recovery-16.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    },
+    {
+      "name": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\sanitize-evidence.ps1",
+        "-RunDirectory",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-24d1b785"
+      ],
+      "start": "2026-10-08T16:18:15.393Z",
+      "end": "2026-10-08T16:18:16.779Z",
+      "code": 0,
+      "log": "recovery-17.log",
+      "purpose": "记录器崩溃后的登记收尾；不补写浏览器退出码"
+    }
+  ],
+  "outcome": "记录器 EBUSY 崩溃；浏览器最终退出码缺失，不计通过；单独归属收尾"
+}

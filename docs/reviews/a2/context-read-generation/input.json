@@ -1,0 +1,90 @@
+{
+  "source": "本轮用户注入第三项 blocking 独审反馈；转录见 reviewer-feedback.md，不冒原平台消息字节",
+  "observedAt": "2026-10-08T18:50:13.527Z",
+  "inputHead": "6402099c54e231619afaab43dc134c57d3ff7f14",
+  "main": "74f247f9240eaf21e74ef248f71a445c1d4276d7",
+  "mainObservation": "docs/reviews/a2/context-read-generation/main-readback.json",
+  "planId": "FkfKZkAdoHUa-nr2Hq1mA",
+  "version": null,
+  "feedbackDocumentId": null,
+  "feedbackVersion": null,
+  "outputPlanId": null,
+  "approvedInputs": [
+    {
+      "path": "docs/plan/a2-configuration-readiness.md",
+      "bytes": 17436,
+      "sha256": "b9586ccbe50666ee7a5530ea9ce8f5a295ec9385b8711d81e0fb14648476c4a2"
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/current-spec.md",
+      "bytes": 11506,
+      "sha256": "7afb314d31400fc4ccb3d63d4ce8e097dec3692fda66f375a171f5c732f68be1"
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/reviews/a2/execution-map.json",
+      "source": "本轮输入 HEAD 的精确 Git blob；不冒作旧运行时工作树字节",
+      "bytes": 22398,
+      "sha256": "9d2172c76f6a37807aa512f7b162c6415a6b2f00045092d702babc72fbe48889",
+      "archive": "docs/reviews/a2/context-read-generation/history/docs__reviews__a2__execution-map.json.gz"
+    },
+    {
+      "path": "docs/reviews/a2/execution-results.json",
+      "source": "本轮输入 HEAD 的精确 Git blob；不冒作旧运行时工作树字节",
+      "bytes": 665518,
+      "sha256": "623e551c6e17ccc021e70afa25b5974335709e9e942c3e992724b03f52449849",
+      "archive": "docs/reviews/a2/context-read-generation/history/docs__reviews__a2__execution-results.json.gz"
+    },
+    {
+      "path": "docs/reviews/a2/checked-source-binding.json",
+      "source": "本轮输入 HEAD 的精确 Git blob；不冒作旧运行时工作树字节",
+      "bytes": 76749,
+      "sha256": "9be18ffd715eb56ebbf269499ccd224d58abc8f726b6bd44f043d1f7d2898ac1",
+      "archive": "docs/reviews/a2/context-read-generation/history/docs__reviews__a2__checked-source-binding.json.gz"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/index.json",
+      "source": "本轮输入 HEAD 的精确 Git blob；不冒作旧运行时工作树字节",
+      "bytes": 103568,
+      "sha256": "98ef728bdb8eb04afa167b46862e2f13c4b549c368703e6853fc1cf6e47eb7d4",
+      "archive": "docs/reviews/a2/context-read-generation/history/docs__plan__activation-task-specs__index.json.gz"
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.json",
+      "source": "本轮输入 HEAD 的精确 Git blob；不冒作旧运行时工作树字节",
+      "bytes": 414273,
+      "sha256": "f1044d8aeb36ae86027dcfdcb41ea4dc2d47853ab6808867ad5d6392d4a5a4b3",
+      "archive": "docs/reviews/a2/context-read-generation/history/docs__reviews__r1__test-coverage.json.gz"
+    },
+    {
+      "path": "docs/plan/a2-configuration-readiness/source.json",
+      "source": "本轮输入 HEAD 的精确 Git blob；不冒作旧运行时工作树字节",
+      "bytes": 37252,
+      "sha256": "63ca824cbf6e1df679bf7e84f80420f282220f0003c906f7e85137b1e2578b16",
+      "archive": "docs/reviews/a2/context-read-generation/history/docs__plan__a2-configuration-readiness__source.json.gz"
+    },
+    {
+      "path": "apps/web/features/projects/project-repository-configuration.tsx",
+      "source": "本轮输入 HEAD 的精确 Git blob；不冒作旧运行时工作树字节",
+      "bytes": 22911,
+      "sha256": "4a46c1a4db518175e51674f93f3d31e4d8f96e9ad3fd1aff13c3645e132d9c2a",
+      "archive": "docs/reviews/a2/context-read-generation/history/apps__web__features__projects__project-repository-configuration.tsx.gz"
+    }
+  ],
+  "initialProbe": {
+    "log": "docs/reviews/a2/context-read-generation/first-failure.log.gz",
+    "result": "测试按钮名误写造成 6 失败；仅为夹具首败，不能证明产品缺陷"
+  },
+  "baselineProbe": {
+    "log": "docs/reviews/a2/context-read-generation/baseline-failure.log.gz",
+    "result": "纠正按钮名后，旧产品 6 失败：三入口均无 AbortSignal；迟到状态与自动确认另在修补后逐项断言"
+  },
+  "feedbackSnapshot": {
+    "path": "docs/reviews/a2/context-read-generation/reviewer-feedback.md",
+    "observedAt": "2026-10-08T18:56:47.638Z",
+    "bytes": 3053,
+    "sha256": "46d09b643b8cbea67a8a396854491b97812817c2c405998464ef723ddb485700",
+    "source": "会话完整审核正文转录，非平台原消息字节"
+  }
+}

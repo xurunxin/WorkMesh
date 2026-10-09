@@ -1,0 +1,185 @@
+{
+  "observedAt": "2026-10-08T18:28:47.284Z",
+  "scope": "本轮五个实际 run 精确 label 的只读核验，无删除；原逐 ID/path 操作回执不被汇总替代",
+  "records": [
+    {
+      "runId": "a2-5e2b151d",
+      "originalReceipt": "runs/a2-5e2b151d/receipts.json",
+      "containers": {
+        "args": [
+          "ps",
+          "-aq",
+          "--filter",
+          "label=workmesh.task=a2-5e2b151d"
+        ],
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "taskContainersAbsent": true
+    },
+    {
+      "runId": "a2-7e910b69",
+      "originalReceipt": "runs/a2-7e910b69/receipts.json",
+      "containers": {
+        "args": [
+          "ps",
+          "-aq",
+          "--filter",
+          "label=workmesh.task=a2-7e910b69"
+        ],
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "taskContainersAbsent": true
+    },
+    {
+      "runId": "a2-e9a97c5f",
+      "originalReceipt": "runs/a2-e9a97c5f/receipts.json",
+      "containers": {
+        "args": [
+          "ps",
+          "-aq",
+          "--filter",
+          "label=workmesh.task=a2-e9a97c5f"
+        ],
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "taskContainersAbsent": true
+    },
+    {
+      "runId": "a2-99deca8f",
+      "originalReceipt": "runs/a2-99deca8f/receipts.json",
+      "containers": {
+        "args": [
+          "ps",
+          "-aq",
+          "--filter",
+          "label=workmesh.task=a2-99deca8f"
+        ],
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "taskContainersAbsent": true
+    },
+    {
+      "runId": "a2-lite-179f2a01",
+      "originalReceipt": "runs/a2-lite-179f2a01/receipts.json",
+      "containers": {
+        "args": [
+          "ps",
+          "-aq",
+          "--filter",
+          "label=workmesh.task=a2-lite-179f2a01"
+        ],
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "taskContainersAbsent": true,
+      "project": {
+        "args": [
+          "ps",
+          "-aq",
+          "--filter",
+          "label=com.docker.compose.project=a2-lite-179f2a01"
+        ],
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "volumes": {
+        "args": [
+          "volume",
+          "ls",
+          "-q",
+          "--filter",
+          "label=com.docker.compose.project=a2-lite-179f2a01"
+        ],
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "networks": {
+        "args": [
+          "network",
+          "ls",
+          "-q",
+          "--filter",
+          "label=com.docker.compose.project=a2-lite-179f2a01"
+        ],
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ca": {
+        "args": [
+          "volume",
+          "inspect",
+          "--format",
+          "{{.Name}}",
+          "a2-lite-179f2a01-ca"
+        ],
+        "code": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: get a2-lite-179f2a01-ca: no such volume"
+      },
+      "image": {
+        "args": [
+          "image",
+          "inspect",
+          "--format",
+          "{{.Id}}",
+          "workmesh-a2-lite:a2-lite-179f2a01"
+        ],
+        "code": 1,
+        "stdout": "",
+        "stderr": "Error response from daemon: No such image: workmesh-a2-lite:a2-lite-179f2a01"
+      },
+      "paths": [
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-179f2a01\\workmesh-lite.tar",
+          "operationCode": 0,
+          "existsNow": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-179f2a01\\tls\\key.pem",
+          "operationCode": 0,
+          "existsNow": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-179f2a01\\tls\\ca.pem",
+          "operationCode": 0,
+          "existsNow": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-179f2a01\\tls",
+          "operationCode": 0,
+          "existsNow": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-179f2a01\\provider.override.yml",
+          "operationCode": 0,
+          "existsNow": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-179f2a01\\docker-compose.lite.yml",
+          "operationCode": 0,
+          "existsNow": false
+        },
+        {
+          "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\a2-lite-179f2a01",
+          "operationCode": 0,
+          "existsNow": false
+        }
+      ],
+      "composeResourcesAbsent": true,
+      "caAndImageAbsent": true,
+      "pathsAbsent": true
+    }
+  ]
+}

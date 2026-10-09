@@ -1,0 +1,17 @@
+{
+  "main": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "source": "平台 git ls-remote origin refs/heads/main 后 fetch 同精确 ref；按 SHA 差异核验",
+  "observedAt": "2026-10-08T13:48:37.415Z",
+  "priorProductHead": "22a27a9fe518",
+  "preservedHistory": "pre-c3-source.json / 原 5b 输入不修改",
+  "conflicts": [
+    "OPENAPI.yaml 新 DTO 与 C3 schema 均保留",
+    "playwright.config.ts 保留 A2 独立关闭 Gitea 的测试控制及 C3 测试开启预置"
+  ],
+  "unchanged": [
+    "A1 查询和三态合同",
+    "C1 锁 helper/事件写入",
+    "仓库读取/指纹/Worker 三修"
+  ],
+  "checks": "本轮组合重新执行；旧通过不冒新 source"
+}

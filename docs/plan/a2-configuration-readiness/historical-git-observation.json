@@ -1,0 +1,15 @@
+{
+  "inputGit": {
+    "worktreeHead": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "fetchedMain": "a2b41e0947ef7af94ac606596bef3c34adaadcfc",
+    "commonBase": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "source": "本轮mcp__tds__git fetch origin main后log/diff/show实读",
+    "impact": "远端历史只从共同基点增加4份cleanup文档，当前远端树无A1；本会话工作树保留A1，实施前正常整合双方并复验，不根据此推测PR状态",
+    "mergedThisTurn": false
+  },
+  "originalObservationTime": null,
+  "originalObservationSource": "原source.json inputGit与本回合早前tool输出；当时未记录独立clock时间",
+  "interpretationStatus": "已撤回：可变FETCH_HEAD未固定为远端main；不将它当远端main历史状态",
+  "preservedDraftPlanHash": "c3e41a8d456deb1c9102910f2c4fa0d704e4c4cf3b843b2df942346f5234cfd1",
+  "correctedBy": "docs/plan/a2-configuration-readiness/main-ref-verification.json"
+}

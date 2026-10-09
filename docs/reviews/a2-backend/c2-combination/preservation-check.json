@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-09T05:17:41.897Z",
+  "head": "dcf8e08feeb1ecfcfe71d5723e7ccb509b74e8c2",
+  "againstReviewedC800": [
+    "docs/reviews/a2",
+    "docs/plan/a2-configuration-readiness.md",
+    "docs/plan/a2-configuration-readiness",
+    "docs/reviews/a2-backend/preservation.json",
+    "docs/reviews/a2-backend/separation-receipts.json",
+    "docs/reviews/a2-backend/history/product",
+    "docs/reviews/a2-backend/results.json",
+    "docs/reviews/a2-backend/candidate-source.json",
+    "docs/reviews/a2-backend/candidate-product.patch.gz",
+    "docs/reviews/a2-backend/delivery-verification.json",
+    "docs/reviews/a2-backend/runs/a2-backend-4d28f519",
+    "docs/reviews/a2-backend/runs/a2-backend-491ca462",
+    "docs/reviews/a2-backend/runs/a2-backend-lite-225ab467"
+  ],
+  "changedHistoricalEvidence": [],
+  "nonA2IndexAndCoverage": "按实际 main 的每个非 A2 条目逐项相同；C2 规格/证据不改写",
+  "method": "以 Git 路径字节差异核不变历史，不无谓重跑旧测试或改原归档"
+}

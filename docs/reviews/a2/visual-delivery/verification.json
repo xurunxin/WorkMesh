@@ -1,0 +1,205 @@
+{
+  "scope": "视觉材料资源/PNG 解码核验；非产品或人工视觉验收",
+  "gitMode": false,
+  "head": "741623eca9d26439e575d6119f7ed97d37df1fde",
+  "start": "2026-10-08T19:36:43.932Z",
+  "resources": [
+    {
+      "type": "static-preview",
+      "owner": "a2-visual-delivery",
+      "host": "127.0.0.1",
+      "port": 53425,
+      "plannedBeforeListen": true,
+      "cleanup": {
+        "browserClosed": true,
+        "serverListening": false,
+        "result": "仅本轮静态预览服务正常关闭，未占用固定端口或终止其他服务"
+      }
+    }
+  ],
+  "sourceSha256": "c4e01c2435d2e555768d88b80406b7aed98a575645b5685f4cc92ca04e1fa711",
+  "htmlSha256": "d80e9f80b64b595c4f40399644c58c868730b744290d5983c9df112a73bddbe3",
+  "cssSha256": "25d778aea7e43b0852e8b408802971ed4c5117da246c9d5211a1076ffbb0f245",
+  "results": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "allRelativeResourcesReachable": true,
+      "decodedPngCount": 25,
+      "horizontalOverflow": false
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "allRelativeResourcesReachable": true,
+      "decodedPngCount": 25,
+      "horizontalOverflow": false
+    }
+  ],
+  "imageCount": 25,
+  "pageErrors": [],
+  "decodedImages": [
+    {
+      "path": "images/d0-workbench-desktop-expected.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/d0-workbench-desktop-actual.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/d0-workbench-desktop-diff.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/d0-board-desktop-expected.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/d0-board-desktop-actual.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/d0-board-desktop-diff.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/d0-project-desktop-expected.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/d0-project-desktop-actual.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/d0-project-desktop-diff.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/d0-workbench-mobile-expected.png",
+      "width": 390,
+      "height": 844,
+      "complete": true
+    },
+    {
+      "path": "images/d0-workbench-mobile-actual.png",
+      "width": 390,
+      "height": 844,
+      "complete": true
+    },
+    {
+      "path": "images/d0-workbench-mobile-diff.png",
+      "width": 390,
+      "height": 844,
+      "complete": true
+    },
+    {
+      "path": "images/d0-board-mobile-expected.png",
+      "width": 390,
+      "height": 897,
+      "complete": true
+    },
+    {
+      "path": "images/d0-board-mobile-actual.png",
+      "width": 390,
+      "height": 897,
+      "complete": true
+    },
+    {
+      "path": "images/d0-board-mobile-diff.png",
+      "width": 390,
+      "height": 897,
+      "complete": true
+    },
+    {
+      "path": "images/current-workbench-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/current-project-desktop.png",
+      "width": 1440,
+      "height": 1000,
+      "complete": true
+    },
+    {
+      "path": "images/current-workbench-zh-CN-light.png",
+      "width": 390,
+      "height": 844,
+      "complete": true
+    },
+    {
+      "path": "images/current-project-zh-CN-light.png",
+      "width": 390,
+      "height": 844,
+      "complete": true
+    },
+    {
+      "path": "images/current-workbench-zh-CN-dark.png",
+      "width": 390,
+      "height": 844,
+      "complete": true
+    },
+    {
+      "path": "images/current-project-zh-CN-dark.png",
+      "width": 390,
+      "height": 844,
+      "complete": true
+    },
+    {
+      "path": "images/recovery-waiting-desktop.png",
+      "width": 1192,
+      "height": 884,
+      "complete": true
+    },
+    {
+      "path": "images/recovery-timeout-desktop.png",
+      "width": 1192,
+      "height": 916,
+      "complete": true
+    },
+    {
+      "path": "images/recovery-edit-desktop.png",
+      "width": 1192,
+      "height": 916,
+      "complete": true
+    },
+    {
+      "path": "images/recovery-edit-mobile.png",
+      "width": 390,
+      "height": 844,
+      "complete": true
+    }
+  ],
+  "galleryPreview": {
+    "path": "gallery-preview.png",
+    "scope": "审阅材料页面渲染，不是产品截图或 D0 基线",
+    "bytes": 1171688,
+    "sha256": "262e8a57c5dfe21dbc382a01527c77c6d7678acb188323fc93aaf9073e3c16c4"
+  },
+  "code": 0,
+  "end": "2026-10-08T19:36:45.464Z"
+}

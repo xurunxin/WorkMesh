@@ -1,0 +1,30 @@
+{
+  "observedAt": "2026-10-09T05:23:55.361Z",
+  "testedHead": "dcf8e08feeb1ecfcfe71d5723e7ccb509b74e8c2",
+  "outputHead": null,
+  "outputMeaning": "最终文档提交 ID 尚未生成；来源/受测/旧 CI 均绑定真实已有对象，不无限自引用补未来 ID",
+  "main": "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
+  "newArchivesVerified": 2017,
+  "candidateFilesVerified": 16,
+  "sourceSnapshotsExact": true,
+  "currentSpecAnd09Exact": true,
+  "postLiteProductDiff": [],
+  "fullPrDiffCheck": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
+      "dcf8e08feeb1ecfcfe71d5723e7ccb509b74e8c2"
+    ],
+    "code": 0,
+    "pendingDocumentationDiffCheck": 0
+  },
+  "ci": "ci404-readback.json：dcf8 十项 success；最终交付 head 的 Required CI 待实读",
+  "review": "当前组合停 review，旧 c800 审查不冒新审查",
+  "cleanup": "逐资源/路径见 results 与运行 receipts；无共享/拒绝目标清理",
+  "relativeReferences": {
+    "count": 6,
+    "allReachable": true
+  }
+}

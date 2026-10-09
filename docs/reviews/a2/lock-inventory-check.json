@@ -1,0 +1,34 @@
+{
+  "source": "functions.exec 返回的 exec_command 实际输出；chunk_id=ddef4a，不将 chunk 冒 call ID",
+  "callId": null,
+  "commands": [
+    {
+      "command": "UPDATE_AGENT_LOCK_MANIFEST=1 pnpm --filter @workmesh/db exec vitest run src/agent-lock-order-inventory.test.ts",
+      "startLocal": "23:22:09",
+      "testsPassed": 8,
+      "summary": "1 test file passed; 8 tests passed",
+      "exitCode": null
+    },
+    {
+      "command": "移除 UPDATE_AGENT_LOCK_MANIFEST 后 pnpm --filter @workmesh/db exec vitest run src/agent-lock-order-inventory.test.ts",
+      "startLocal": "23:22:13",
+      "testsPassed": 8,
+      "summary": "1 test file passed; 8 tests passed",
+      "exitCode": 0
+    }
+  ],
+  "overallShellExitCode": 0,
+  "files": [
+    {
+      "path": "apps/worker/src/provider-actions.ts",
+      "bytes": 75721,
+      "sha256": "daee8bbb5230d0b0c022b34c9b5e838e22e525eac6f5c26edfb68dd28f3ae12d"
+    },
+    {
+      "path": "packages/db/src/agent-lock-order-manifest.ts",
+      "bytes": 27777,
+      "sha256": "956a27bbb9882fecc69271973da4f134ba2bc905a20394f2f3d31a0e6797792c"
+    }
+  ],
+  "review": "仅拒绝事件参数变更，无新 SQL；生成后清单无增量，锁 helper 与 rank 未改。根单元另验完整 inventory。"
+}

@@ -1,0 +1,237 @@
+{
+  "runId": "a2-2c4f9f75",
+  "resources": [
+    {
+      "type": "container",
+      "name": "a2-2c4f9f75-postgres",
+      "owner": "a2-2c4f9f75",
+      "image": "postgres:16-alpine",
+      "plannedAt": "2026-10-08T14:00:33.497Z",
+      "id": "529007d21515c060e3bb878b7c51a1812a2498e34cf979a491b4f059f89bdd8b",
+      "cleanup": {
+        "code": 0,
+        "output": "529007d21515c060e3bb878b7c51a1812a2498e34cf979a491b4f059f89bdd8b\n",
+        "at": "2026-10-08T14:05:39.062Z"
+      },
+      "preDelete": {
+        "id": "529007d21515c060e3bb878b7c51a1812a2498e34cf979a491b4f059f89bdd8b",
+        "owner": "a2-2c4f9f75",
+        "exitCode": 0,
+        "at": "2026-10-08T14:05:38.822Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-2c4f9f75-redis",
+      "owner": "a2-2c4f9f75",
+      "image": "redis:7-alpine",
+      "plannedAt": "2026-10-08T14:00:33.778Z",
+      "id": "708b5e9bdd5ae6d3cb9a3928531114e9c5393ad471e4ef697db496de1bd89d29",
+      "cleanup": {
+        "code": 0,
+        "output": "708b5e9bdd5ae6d3cb9a3928531114e9c5393ad471e4ef697db496de1bd89d29\n",
+        "at": "2026-10-08T14:05:38.704Z"
+      },
+      "preDelete": {
+        "id": "708b5e9bdd5ae6d3cb9a3928531114e9c5393ad471e4ef697db496de1bd89d29",
+        "owner": "a2-2c4f9f75",
+        "exitCode": 0,
+        "at": "2026-10-08T14:05:38.447Z"
+      }
+    },
+    {
+      "type": "container",
+      "name": "a2-2c4f9f75-s3",
+      "owner": "a2-2c4f9f75",
+      "image": "rustfs/rustfs:1.0.0",
+      "plannedAt": "2026-10-08T14:00:34.094Z",
+      "id": "23e70eb42e4e52cdfdcadf6bbdb02ee6de07eef27c7ebfd8003690dacd781d4f",
+      "cleanup": {
+        "code": 0,
+        "output": "23e70eb42e4e52cdfdcadf6bbdb02ee6de07eef27c7ebfd8003690dacd781d4f\n",
+        "at": "2026-10-08T14:05:38.333Z"
+      },
+      "preDelete": {
+        "id": "23e70eb42e4e52cdfdcadf6bbdb02ee6de07eef27c7ebfd8003690dacd781d4f",
+        "owner": "a2-2c4f9f75",
+        "exitCode": 0,
+        "at": "2026-10-08T14:05:38.050Z"
+      }
+    }
+  ],
+  "results": [
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-2c4f9f75-postgres",
+        "--label",
+        "workmesh.task=a2-2c4f9f75",
+        "-p",
+        "127.0.0.1:54441:5432",
+        "-e",
+        "POSTGRES_PASSWORD",
+        "-e",
+        "POSTGRES_USER=workmesh",
+        "-e",
+        "POSTGRES_DB=workmesh_a2_test",
+        "--tmpfs",
+        "/var/lib/postgresql/data",
+        "postgres:16-alpine"
+      ],
+      "start": "2026-10-08T14:00:33.498Z",
+      "end": "2026-10-08T14:00:33.774Z",
+      "code": 0,
+      "log": "0.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-2c4f9f75-redis",
+        "--label",
+        "workmesh.task=a2-2c4f9f75",
+        "-p",
+        "127.0.0.1:54442:6379",
+        "redis:7-alpine"
+      ],
+      "start": "2026-10-08T14:00:33.780Z",
+      "end": "2026-10-08T14:00:34.091Z",
+      "code": 0,
+      "log": "1.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "a2-2c4f9f75-s3",
+        "--label",
+        "workmesh.task=a2-2c4f9f75",
+        "-p",
+        "127.0.0.1:54443:9000",
+        "-e",
+        "RUSTFS_ACCESS_KEY",
+        "-e",
+        "RUSTFS_SECRET_KEY",
+        "--tmpfs",
+        "/data:rw,mode=1777",
+        "rustfs/rustfs:1.0.0"
+      ],
+      "start": "2026-10-08T14:00:34.095Z",
+      "end": "2026-10-08T14:00:34.405Z",
+      "code": 0,
+      "log": "2.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "check:route-policy"
+      ],
+      "start": "2026-10-08T14:00:34.822Z",
+      "end": "2026-10-08T14:00:37.326Z",
+      "code": 0,
+      "log": "3.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "--filter",
+        "@workmesh/web",
+        "check:i18n"
+      ],
+      "start": "2026-10-08T14:00:37.327Z",
+      "end": "2026-10-08T14:01:01.490Z",
+      "code": 1,
+      "log": "4.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "lint"
+      ],
+      "start": "2026-10-08T14:01:01.491Z",
+      "end": "2026-10-08T14:01:43.678Z",
+      "code": 0,
+      "log": "5.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "typecheck"
+      ],
+      "start": "2026-10-08T14:01:43.679Z",
+      "end": "2026-10-08T14:02:19.467Z",
+      "code": 0,
+      "log": "6.log"
+    },
+    {
+      "name": "C:\\nvm4w\\nodejs\\node_modules\\pnpm\\pnpm.exe",
+      "args": [
+        "test"
+      ],
+      "start": "2026-10-08T14:02:19.468Z",
+      "end": "2026-10-08T14:05:37.479Z",
+      "code": 1,
+      "log": "7.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "23e70eb42e4e52cdfdcadf6bbdb02ee6de07eef27c7ebfd8003690dacd781d4f"
+      ],
+      "start": "2026-10-08T14:05:38.050Z",
+      "end": "2026-10-08T14:05:38.332Z",
+      "code": 0,
+      "log": "8.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "708b5e9bdd5ae6d3cb9a3928531114e9c5393ad471e4ef697db496de1bd89d29"
+      ],
+      "start": "2026-10-08T14:05:38.448Z",
+      "end": "2026-10-08T14:05:38.703Z",
+      "code": 0,
+      "log": "9.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "rm",
+        "-f",
+        "-v",
+        "529007d21515c060e3bb878b7c51a1812a2498e34cf979a491b4f059f89bdd8b"
+      ],
+      "start": "2026-10-08T14:05:38.824Z",
+      "end": "2026-10-08T14:05:39.061Z",
+      "code": 0,
+      "log": "10.log"
+    },
+    {
+      "name": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\sanitize-evidence.ps1",
+        "-RunDirectory",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe\\docs\\reviews\\a2\\runs\\a2-2c4f9f75"
+      ],
+      "start": "2026-10-08T14:05:39.063Z",
+      "end": "2026-10-08T14:05:39.600Z",
+      "code": 0,
+      "log": "11.log"
+    }
+  ]
+}

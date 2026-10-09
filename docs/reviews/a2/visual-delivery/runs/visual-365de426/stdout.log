@@ -1,0 +1,21 @@
+(node:56116) Warning: Failed to load the ES module: C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\docs\reviews\a2\visual-delivery\playwright.config.ts. Make sure to set "type": "module" in the nearest package.json file or use the .mjs extension.
+(Use `node --trace-warnings ...` to show where the warning was created)
+C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\docs\reviews\a2\visual-delivery\playwright.config.ts:12
+const directory = (0, _nodePath.dirname)((0, _nodeUrl.fileURLToPath)(import.meta.url));
+                                                                            ^^^^
+
+SyntaxError: Cannot use 'import.meta' outside a module
+    at wrapSafe (node:internal/modules/cjs/loader:1861:18)
+    at Module._compile (node:internal/modules/cjs/loader:1903:20)
+    at Object.<anonymous> (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.require (node:internal/modules/cjs/loader:1674:12)
+    at require (node:internal/modules/helpers:157:16)
+    at requireOrImport (C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1149:18)
+    at loadUserConfig (C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1334:52)
+    at loadConfig (C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1341:28)
+    at Object.loadConfigFromFile (C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\common\index.js:1553:10)
+    at runTests (C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\cli\testActions.js:46:18)
+    at _Command.<anonymous> (C:\Users\xurx\.tds\workspaces\01a11b27-cfac-7ea4-a461-8eef51b750fe\node_modules\.pnpm\playwright@1.61.1\node_modules\playwright\lib\program.js:53:7)
