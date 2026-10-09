@@ -1,32 +1,29 @@
-# 精确来源与生成时序
+# 来源、平台正文和字节绑定
 
-## 平台与Git来源
+## 当前计划与历史
 
-项目：`DzkLDn6UW-IbfoTJzN9Ro`；todo：`pMO6s_SmEL_d81kjKm6S1`；当前平台doc：`K7ASX6igBDq85SckGcuui`。当前版本字段未返回，使用JSON null；doc创建时间未返回，同样为null。计划原消息的时间只作为消息时间，不推导doc存储时间。
+当前平台docID为WS-FdgmfTwloZE8hNXvAb，从本轮conversation实际读回；计划消息实际时间为2026-10-09 05:05:49 UTC，不把消息时间冒作后端doc创建时间。版本字段及doc创建时间未提供，均null。正文取本轮注入的authoritative saved copy，原文写入savedplan.md及implementation.md；工具todos计划仍截断，仅可核可见前缀，不声称已全文读后端doc。本轮不调用edit_plan或创建平台计划。
 
-本轮以平台git工具执行 `ls-remote origin refs/heads/main`，实读精确main为 `c768e1e3db297d8b91b53dd68b60e723a8a40e7d`；工作树初始HEAD同值，初始status为空。原始工具输入/输出保存在 [platform-observation.json](platform-observation.json)。未用origin/main或可变FETCH_HEAD推定主线；没有在共享只读clone写入。
+完整当前spec从本轮todos的Spec至Saved plan分隔符读回，与现有spec.md逐字核；steering追加完整独审、实际平台修订记录和本轮同步授权。原计划doc:K7ASX6igBDq85SckGcuui、原21文件、截断/版本null/时序和原ENOBUFS首败由可达提交00a5e34e48f4a099f7a85dbf8dd41c79d8ee2294保全；history/original-manifest.json列每个blob大小、SHA-256和OID，关键原件另复制，不伪补历史工具原文。
 
-原#53操作索引产品基准 `74f247f9240eaf21e74ef248f71a445c1d4276d7` 到本轮精确main的 `git diff --name-only` 只有 `docs/plan/backend-agent-mcp-priority/` 七份Markdown。当前产品源码因此与原定位基准一致，原索引的基准标注不改写；本目录实际从当前完整OpenAPI和route-policy重算全集，并保留每条原索引行。
+## 基准与实际main
 
-权威来源为CONTEXT、AGENT_PROTOCOL、OPENAPI、SCHEMA及现行已接受ADR。SCHEMA的全部include文件进入来源指纹，未重建已删除PRD。#9/#16未合分支未混入本目录来源。实际main以后更新时按新的精确SHA增量核对，不将本轮操作数量固定为永久指标。
+本工作树产品基准是c768e1e3db297d8b91b53dd68b60e723a8a40e7d，上一文档head是00a5e34e48f4a099f7a85dbf8dd41c79d8ee2294。本轮平台git用ls-remote origin refs/heads/main实读add4340e9c52575c2fd9615b3b114ac9acd3e30e，再fetch主线，并始终以该精确SHA读取差异，不把共享FETCH_HEAD当固定main。
 
-## 正文来源与无损边界
+实际main新增已合PR210的C2后端变化：通知config增加configuredProviders部署披露及server接线、Worker投递/配额恢复、环境/compose和相关合同文档/证据；锁文件增加Worker的zod依赖。相关接口当前OpenAPI/route-policy及MCP/SDK/Runner源码未变，操作集合仍为277。Human通知管理未变为Agent权限。source-manifest.json列完整差异路径，并对M0来源逐项记录base和当前main的blob；通知config/server/lock及ADR0076实际差异不隐藏。没有混入#9/#16未合分支，没有在本轮合并产品代码。产品放行后先整合真正已合main的这些增量并重核组合检查。
 
-- spec：本轮 `todos(id)` 的Spec至Saved plan分隔符之间完整正文，完整尾部可见；末尾采用单一LF，平台原始响应另存。
-- savedplan：本轮用户消息注入的authoritative saved copy，取完整plan body；与todos已经返回的完整前缀逐字一致。todos后半被工具截断，不能声称已完整读后端doc。文件不加入归档标题、时间或版本；implementation与savedplan同字节。
-- docID：conversation中的实际 `[plan](doc:K7ASX6igBDq85SckGcuui)`，不是根据未来生成顺序猜测。
-- 反馈及授权：conversation实读当前补交反馈、问卡及用户选择“允许仅文档落盘（推荐）”；不改平台保存计划。
+#53 approved operation-index来源74f247f9240eaf21e74ef248f71a445c1d4276d7到c768的产品树未变，只追加原分批方案文件。引用#53的原行保留其历史语义，当前277是实际集合基数，非永久指标或端到端通过率。现行CONTEXT、AGENT_PROTOCOL、OpenAPI、SCHEMA及已接受ADR为权威，不重建移除的PRD。
 
-`source-manifest.json` 分别记录58项产品/合同/来源文件的Git object ID、blob大小/SHA-256、工作树大小/SHA-256以及CRLF/LF映射。本目录新文件用UTF-8及LF生成；Windows后续检出可展开CRLF，不能将工作树哈希冒充blob哈希。暂存后的真实blob核验另见review及本轮检查回执。
+## 精确Git与运行字节
 
-## 实际顺序
+source-manifest.json现在逐项保存114项M0涉及的源码、所有API注册入口、现行guard/domain、RequiredCI接线、完整SCHEMA includes和#53来源。每项分列base Git OID/bytes/SHA-256、当前工作树bytes/SHA-256/CRLF计数、映射以及精确当前main的OID/bytes/SHA-256；不能把c768工作树称为已测试add434产品。
 
-平台记录：原计划消息时间为2026-10-09 04:08:52 UTC；补交反馈为04:11:12 UTC；问卡答复与用户授权为04:34:51 UTC。本轮首个clock读数为04:35:28 UTC。远端main和平台资料随后读取，再生成本地文件；不声称这些读取是事务快照。
+本目录新文档UTF-8 LF；Windows后续检出可能CRLF。暂存blob核验见archive-byte-manifest.json，报告自引用排除，不因此免除报告自身Git提交。历史关键原件从原commit读取Git blob复制，指纹不冒作原Windows运行原字节；原报告中的当时worktree映射保持原含义。
 
-savedplan/implementation的实际文件mtime与生成开始/结束时间在 [generation.json](generation.json)。它们是本轮实读文件系统记录，不是倒填的平台生成时间。静态生成脚本首次成功于2026-10-09T04:40:20.758Z，exit=0；它只派生文档，没有连接API/MCP或运行领域写命令。后续核验及提交由review记录，提交SHA以最终实际git输出交付，不自引用预填。
+## 本轮真实生成顺序与边界
 
-## 可重复的文档审计
+先实读当前branch/head、平台conversation/todos、精确main及差异，首个本轮clock工具观察为2026-10-09 05:08:55 UTC，随后保存观察和原归档，再同步当前正文/说明，生成结构化操作与source表，然后执行文档核验、暂存字节检查和Git检查。platform-observation-current.json的recordedAt为读取后的归档时点，不冒工具调用事务时间。生成脚本startedAt/completedAt、实际Node/Python和正文哈希见generation.json；各命令真实返回及首败见sync-check-receipt.json。
 
-`node docs/plan/agent-mcp-m0/archive-audit.mjs` 只在记录的原HEAD生成本目录资料；使用本机Node的stripTypeScriptTypes执行无依赖的纯route-policy派生，PyYAML完整解析OpenAPI，再核对#53表全集。脚本的Node实验性功能警告保留，不计产品失败。
+archive-audit.mjs使用原可达JSON中的完整OpenAPI/policy/原索引输入，重新定位当前源码、生成结构化资格/variant/绑定/反例，并核base到当前工作树产品无变化；archive-check.py再用PyYAML独立解析当前OpenAPI，核集合、具体拒绝、全部证据锚点/OID、历史原件和来源字节。未执行领域命令或产品服务。
 
-本轮未pnpm install；此前规划中Node查yaml失败反映工作树依赖未安装，未改产品或降级为正则验收。当前改用已有PyYAML解析，并记录实际runtime。文档核验不是产品测试；不新增容器、服务、测试数据库、卷、网络或外部连接。
+本轮未pnpm install或运行lint/typecheck/unit/integration/e2e/Pi/conformance/RequiredCI；没有容器、镜像、卷、网络、测试库或长期服务。只运行退出即结束的Git/Node/Python文档进程；受控生成脚本属于交付文件，没有可删临时目录。当前worktree、恢复目录、旧证据保留，不global prune、不force、不移动/父删绕过已拒目标。

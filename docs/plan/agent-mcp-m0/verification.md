@@ -31,7 +31,7 @@
 
 ## 产品实施后的准确运行入口
 
-按仓库规定runtime安装依赖：`pnpm install --frozen-lockfile`。依次执行`pnpm generate:route-policy`、`pnpm check:route-policy`；定向运行contracts、MCP、SDK、Runner现有测试。新增真实套件须通过`pnpm --filter @workmesh/conformance test:integration`执行并接入根`pnpm test:integration`。该脚本是待产品新增的入口，不宣称当前package.json已存在。
+按仓库规定runtime安装依赖：`pnpm install --frozen-lockfile`。依次执行`pnpm generate:route-policy`、`pnpm check:route-policy`；定向运行contracts、MCP、SDK、Runner现有测试。新增真实套件通过根`pnpm test:conformance:integration`及包`pnpm --filter @workmesh/conformance test:integration`执行，串入根`pnpm test:integration`并显式接现有Required `api-integration` job；完整service准备、pipefail、always证据上传、fixture finally和防漏接检查见 [ci-integration.md](ci-integration.md)。该脚本是待产品新增的入口，不宣称当前package.json已存在。
 
 产品候选执行`pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:e2e`、`pnpm test:conformance`。单独conformance内存结果单列。Web消费者兼容按现行必要检查验证，不设计UI、不借UI延后跳过合同消费者回归。
 
@@ -41,6 +41,27 @@ recovery默认可选skip如实记未验收，不计通过；适用必需用例�
 
 ## 本轮文档检查
 
-运行`node docs/plan/agent-mcp-m0/archive-audit.mjs`生成静态全集与来源，再运行`python -X utf8 docs/plan/agent-mcp-m0/archive-check.py`核对文件、字段、来源与链接。暂存后执行`git diff --cached --check`和完整范围`git diff --check <来源head> HEAD`；对实际Git blob与工作树字节分别核验。
+本轮运行`node docs/plan/agent-mcp-m0/archive-audit.mjs`生成结构化全集、binding和来源，再运行`python -X utf8 docs/plan/agent-mcp-m0/archive-check.py`核对文件、字段、来源与链接。暂存后执行`git diff --cached --check`和完整范围`git diff --check <来源head> HEAD`；对实际Git blob与工作树字节分别核验。
 
-CI分类调用当前`classifyChanges`实读，不改policy/属性豁免。所有真实结果与首败保留在review及check-receipt材料；不运行全产品tests，结果不写成产品通过。
+CI分类调用当前`classifyChanges`实读，不改policy/属性豁免。所有真实结果与首败保留在review及sync-check-receipt材料；旧check-receipt保持历史语义；不运行全产品tests，结果不写成产品通过。
+
+## 四项定向复审的精确案例
+
+| ID | 落点 | 输入与具体判定 |
+| --- | --- | --- |
+| M0-MODE-PROJECTION | contracts/client-profile-contract.test.ts；MCP index/http.test.ts；真实conformance | 同Connection/Session同时接read-only/read-write：API qualified结构/资格相同，不含registered/discoverable/mode；adapter写工具名单不同；只读cached写call拒绝，服务端写事实不增 |
+| M0-CONTEXT-PROJECTION | MCP index.test.ts、coordination-product调用测试 | 同次prepare得到的manifest和projection传给context，allowedOperations严格等于current_session、discoverable、eligible API绑定的去重集合；没有额外manifest请求，不含target_execution条件模板、adapter_internal或全API未适配项；两独立请求只在固定live事实下比较 |
+| M0-INSTALLATION-NO-SESSION | contracts/SDK/MCP测试；真实conformance | installation_target无agentSessionId，adapter null联合；Session manifest仍被拒绝，不伪造Delegation、不隐式派生C；exact-target handoff沿自身installation入口验证 |
+| M0-TARGET-UNBOUND | MCP index/http.test.ts | C有安装bridge、写模式允许且E callback实现时，未给目标只条件广告requires_target_check，不进入allowedOperations；缺bridge blocked，缺必填ID输入失败，无token刷新 |
+| M0-TARGET-QUALIFICATION | SDK index.test.ts；MCP http.test.ts；真实conformance | C指向准确E后：一次refresh→目标Bearer qualified→同Token命令；断言manifest确为目标E而非C；角色/state/caps取E值。目标错kind/ID、跨Team/撤权、refresh或manifest失败均终止，不降级、不换身份 |
+| M0-TARGET-CONCURRENCY | SDK/MCP真实conformance | 两客户端同Connection并发指向不同E，捕获Authorization与Session ID绑定，活动各自归属；资格读取后撤权依旧命令拒绝；shared client Token不变 |
+| M0-E-CONNECTION-IDENTITY | contracts/MCP与真实conformance | 普通E Bearer查询current identity固定credential blocked，真实API UNAUTHENTICATED；合法C正对照成功 |
+| M0-REVIEWER-PLAN | contracts/Runner/MCP与真实conformance | reviewer持plan:write、active state仍blocked/ROLE_REQUIRED，真实publishPlan FORBIDDEN；非reviewer仍须revision、scope及awaiting_approval批准，不把正对照扩为无门禁 |
+| M0-BINDING-prepare_project_import | contracts/coordination-product测试 | 当前listProjects映射仅历史；拟内部binding operationIds=[]，prepare不调用REST，read-only可本地规范化；不把prepare计为Project读取资格 |
+| M0-BINDING-verify_connection | MCP index.test.ts | manifest/current identity/listTeams三组成齐全；任一读取失败不能verified=true，不遗漏Team probe；E credential反例拒绝 |
+| M0-PROVIDER-OPEN-PR-CAPS | contracts/MCP/真实conformance代表provider夹具 | kind=open_pull_request仅repo:write_branch不足；联合repo:write_branch+repo:open_pr和context open_pr仍保留Lease/pinned branch/target检查 |
+| M0-PENDING-每operation | contracts/route-policy.test.ts | 未核domain固定blocked/DOMAIN_DIFFERENCE_PENDING；不转换成requires_target_check或eligible。每operation具体输入/理由/源码见negativeTests和sourceEvidence |
+| M0-RUNNER-401 | Runner permission-matrix/workmesh-tools及run-session测试 | 本地到期仅请求前refresh；受保护401、撤权、Stop、错profile之后refresh与重发计数均零；refresh拒绝原envelope及trace不丢，failed活动失败不覆盖它 |
+| M0-CI-WIRING | scripts/ci-policy.test.mjs、validate-ci.mjs及隔离负例 | 四包单文件改动必选api-integration；删除CI调用/根串接/include时检查非零；fixture失败或零测试非零；选中job失败/意外skip聚合失败；always上传包含execution、模型tools和脱敏组件日志 |
+
+逐条negativeTests是待创建/扩展的稳定用例名与断言，不冒称目前已有或本轮运行。静态检查核每项内容，而不是只核数组非空；没有真实Token、数据库、Pi或RequiredCI结果预填。原四项审查仍待另一Agent确认闭合。

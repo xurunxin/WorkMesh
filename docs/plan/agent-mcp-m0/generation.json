@@ -1,29 +1,29 @@
 {
-  "startedAt": "2026-10-09T04:46:47.984Z",
-  "completedAt": "2026-10-09T04:46:56.602Z",
+  "startedAt": "2026-10-09T05:29:37.854Z",
+  "completedAt": "2026-10-09T05:30:05.770Z",
   "sourceHead": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+  "observedMainHead": "add4340e9c52575c2fd9615b3b114ac9acd3e30e",
   "node": "v24.20.0",
   "python": "Python 3.13.15",
-  "pyyaml": "6.0.3",
-  "readOnlyDomainEvaluation": true,
-  "sourceProvenance": "node.stripTypeScriptTypes执行现行纯route-policy派生；PyYAML完整解析OpenAPI；#53表逐行保留",
   "command": "node docs/plan/agent-mcp-m0/archive-audit.mjs",
   "count": 277,
-  "planDocId": "K7ASX6igBDq85SckGcuui",
+  "sourceFiles": 114,
+  "readOnlyDomainEvaluation": true,
+  "productChecksRun": false,
+  "planDocId": "WS-FdgmfTwloZE8hNXvAb",
   "planVersion": null,
-  "planBodySource": "本轮用户消息注入的authoritative saved copy；与todos截断前缀相符，不声称工具全文读回",
+  "planBodySource": "本轮注入的完整authoritative saved copy；工具截断只比对前缀",
   "planFiles": [
     {
       "path": "savedplan.md",
-      "bytes": 7955,
-      "sha256": "8aae2e9c50233366daea59ca7c63ef5335b64a44acbee99fe4429b3e8928a844",
-      "filesystemWriteObservedAt": "2026-10-09T04:37:12.426Z"
+      "bytes": 13100,
+      "sha256": "e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940"
     },
     {
       "path": "implementation.md",
-      "bytes": 7955,
-      "sha256": "8aae2e9c50233366daea59ca7c63ef5335b64a44acbee99fe4429b3e8928a844",
-      "filesystemWriteObservedAt": "2026-10-09T04:37:12.427Z"
+      "bytes": 13100,
+      "sha256": "e368955da5cd11e1a03c2171469eeebc05974ad5a2938a57bee21d7d1a5f7940"
     }
-  ]
+  ],
+  "previousGeneration": "history/original-generation.json"
 }

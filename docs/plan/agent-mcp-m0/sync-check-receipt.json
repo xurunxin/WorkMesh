@@ -1,0 +1,196 @@
+{
+  "recordedAt": "2026-10-09 05:25:10 UTC",
+  "scope": "仅方案静态生成/检查；产品测试未运行",
+  "history": "history/original-check-receipt.json及原ENOBUFS首败保持原始意义",
+  "checks": [
+    {
+      "stage": "首次结构化文档生成",
+      "startedAt": "2026-10-09 05:17:16 UTC",
+      "result": {
+        "chunk_id": "c22546",
+        "wall_time_seconds": 10.0102632,
+        "session_id": 97208,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "stage": "首次结构化文档生成续取",
+      "result": {
+        "chunk_id": "505f31",
+        "wall_time_seconds": 0.0000112,
+        "exit_code": 1,
+        "original_token_count": 243,
+        "output": "file:///C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/docs/plan/agent-mcp-m0/archive-audit.mjs:26\r\n  if (offset < 0) throw Error('证据锚点缺失: ' + path + ' ' + needle)\r\n                        ^\r\n\r\nError: 证据锚点缺失: apps/api/src/server.ts Only humans can create comments\r\n    at evidence (file:///C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/docs/plan/agent-mcp-m0/archive-audit.mjs:26:25)\r\n    at file:///C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/docs/plan/agent-mcp-m0/archive-audit.mjs:110:33\r\n    at Array.map (<anonymous>)\r\n    at file:///C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/docs/plan/agent-mcp-m0/archive-audit.mjs:92:35\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\r\n    at async node:internal/modules/esm/loader:647:26\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)\r\n\r\nNode.js v24.20.0\r\n"
+      }
+    },
+    {
+      "stage": "校正真实Human handler锚点后结构化生成",
+      "result": {
+        "chunk_id": "20dff4",
+        "wall_time_seconds": 10.0051423,
+        "session_id": 81625,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "stage": "结构化生成续取",
+      "result": {
+        "chunk_id": "17d83f",
+        "wall_time_seconds": 5.0027204,
+        "session_id": 81625,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "stage": "结构化生成完成取回",
+      "result": {
+        "chunk_id": "0d5c34",
+        "wall_time_seconds": 0.0000064,
+        "exit_code": 0,
+        "original_token_count": 24,
+        "output": "{\"operations\":277,\"bindings\":107,\"sourceFiles\":111,\"blockedPending\":99,\"noProductWrites\":true}\n"
+      }
+    },
+    {
+      "stage": "核对当前注册条件、public读取、exact行号及Team状态后的生成",
+      "result": {
+        "chunk_id": "7e9c86",
+        "wall_time_seconds": 10.0128395,
+        "session_id": 30627,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "stage": "修正后生成完成",
+      "result": {
+        "chunk_id": "68f8c1",
+        "wall_time_seconds": 0.0000106,
+        "exit_code": 0,
+        "original_token_count": 24,
+        "output": "{\"operations\":277,\"bindings\":107,\"sourceFiles\":111,\"blockedPending\":99,\"noProductWrites\":true}\n"
+      }
+    },
+    {
+      "stage": "首次新版文档核验",
+      "result": {
+        "chunk_id": "a3de98",
+        "wall_time_seconds": 10.0128776,
+        "session_id": 97873,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "stage": "新版文档核验完成取回",
+      "result": {
+        "chunk_id": "72aaf0",
+        "wall_time_seconds": 0.0000125,
+        "exit_code": 1,
+        "original_token_count": 122,
+        "output": "Traceback (most recent call last):\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\docs\\plan\\agent-mcp-m0\\archive-check.py\", line 120, in <module>\r\n    assert (file.parent/unquote(target.split(\"#\",1)[0])).exists(), (file,target)\r\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\r\nAssertionError: (WindowsPath('C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61/docs/plan/agent-mcp-m0/README.md'), 'sync-check-receipt.json')\r\n"
+      }
+    },
+    {
+      "stage": "补具名SDK、resolver分支与来源后的最终静态生成",
+      "result": {
+        "chunk_id": "e2fa42",
+        "wall_time_seconds": 10.0103492,
+        "session_id": 87035,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "stage": "最终静态生成完成取回",
+      "result": {
+        "chunk_id": "b42c7e",
+        "wall_time_seconds": 0.0000076,
+        "exit_code": 0,
+        "original_token_count": 24,
+        "output": "{\"operations\":277,\"bindings\":107,\"sourceFiles\":114,\"blockedPending\":99,\"noProductWrites\":true}\n"
+      }
+    },
+    {
+      "stage": "补已核Document/Review variant后的生成完成",
+      "result": {
+        "chunk_id": "3c94e9",
+        "wall_time_seconds": 0.000028,
+        "exit_code": 0,
+        "original_token_count": 24,
+        "output": "{\"operations\":277,\"bindings\":107,\"sourceFiles\":114,\"blockedPending\":99,\"noProductWrites\":true}\n"
+      }
+    },
+    {
+      "stage": "回执及完整文档落盘后静态重核",
+      "startedAt": "2026-10-09 05:31:52 UTC",
+      "result": {
+        "chunk_id": "cffb3e",
+        "wall_time_seconds": 10.0141742,
+        "session_id": 9849,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "stage": "静态重核完成取回",
+      "result": {
+        "chunk_id": "3b8b9c",
+        "wall_time_seconds": 0.0000073,
+        "exit_code": 1,
+        "original_token_count": 106,
+        "output": "Traceback (most recent call last):\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\docs\\plan\\agent-mcp-m0\\archive-check.py\", line 114, in <module>\r\n    assert b.endswith(b\"\\n\") and not b.endswith(b\"\\n\\n\"),file\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nAssertionError: C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61\\docs\\plan\\agent-mcp-m0\\sync-documents.py\r\n"
+      }
+    },
+    {
+      "stage": "修正文档记录尾部空行后的核验",
+      "result": {
+        "chunk_id": "e9891f",
+        "wall_time_seconds": 10.0174119,
+        "session_id": 51545,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "stage": "修正规范后核验完成取回",
+      "result": {
+        "chunk_id": "f21954",
+        "wall_time_seconds": 0.0000067,
+        "exit_code": 0,
+        "original_token_count": 68,
+        "output": "{\"结果\": \"文档静态核验通过\", \"operationCount\": 277, \"bindings\": 107, \"sourceFiles\": 114, \"localLinks\": 21, \"完整spec\": true, \"保存正文前缀\": true, \"原历史\": true, \"四项修订映射\": true, \"产品测试\": \"未运行\", \"独审\": \"待定向复审\"}\r\n"
+      }
+    },
+    {
+      "stage": "暂存Git blob与工作树字节核对",
+      "result": {
+        "chunk_id": "dd60dd",
+        "wall_time_seconds": 5.0328278,
+        "exit_code": 0,
+        "original_token_count": 263,
+        "output": "{\"stagedDocumentFiles\":34,\"identicalBytes\":true,\"ciClassification\":{\"mode\":\"full\",\"packages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"testPackages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"checks\":{\"source-gates\":true,\"db-integration\":true,\"api-integration\":true,\"worker-integration\":true,\"e2e\":true,\"recovery-integration\":true,\"agent-smoke\":true}},\"productChecksRun\":false}\n"
+      }
+    }
+  ],
+  "patchFailures": [
+    {
+      "stage": "当前正文第一次patch",
+      "result": "multiple operations target .../savedplan.md；原文件未被修改，改用一次Update后成功",
+      "callId": null
+    },
+    {
+      "stage": "注册条件patch",
+      "result": "Failed to find expected lines；原文件未被修改，核对实际片段后成功",
+      "callId": null
+    }
+  ],
+  "runtimeMeaning": "tool返回的wall_time_seconds是该次输出等待片段；生成全过程时间见generation.json，不预填产品runtime/skip。",
+  "status": "正文、来源、操作决定、历史及四项映射静态核验通过；暂存Git blob与工作树字节相同；待独审，不代表产品通过",
+  "currentFullBodyComparedToInjectedAuthoritativeCopy": true,
+  "completedObservation": "2026-10-09 05:38:07 UTC",
+  "firstCheckFailuresPreserved": true
+}

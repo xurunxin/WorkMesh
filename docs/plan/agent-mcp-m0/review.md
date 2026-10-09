@@ -1,33 +1,30 @@
-# 本轮核验与待平台独审
+# 文档同步结果与定向复审门禁
 
-状态：补交文档，待另一Agent平台独审。当前没有本卡独审通过报告、产品放行、产品测试或新PR RequiredCI成功证明。原#53材料中的旧待审文字保持历史语义；当前spec中#53已合入的依据单列，不改写旧文档。
+状态：本轮仅同步已存在的平台修订计划与受控资料，待另一Agent定向复审；原四项blocking尚未由独立审查确认闭合，不进入产品，不确认产品，不合并文档完成整卡。
 
-## 归档准确性
+## 四项修订证据入口
 
-savedplan.md与implementation.md来自本轮消息注入的完整authoritative saved copy，字节相同；平台todos只读回部分计划，已经比对可见前缀。完整spec尾部已从todos实读。平台docID从conversation读取，版本和doc创建时间没有字段，记录null。不调用edit_plan、不循环创建计划、不预填未来ID。
+| 原阻断 | 受控处理 | 核验要求 |
+| --- | --- | --- |
+| API与MCP配置混写 | compatibility.md分离ApiQualifiedDiscovery和AdapterBinding；API无registered/discoverable/mode；Context接同次投影与manifest | 同身份两个mode、Context集合/manifest只读一次、cached写拒绝；M0-MODE-PROJECTION与M0-CONTEXT-PROJECTION |
+| 安装无Session与C资格误判E | 纯installation null联合；C只描述当前C；准确目标一次refresh→E qualified→同Token命令，不改共享client | 无目标条件广告不计allowedOperations；wrong target/state/grant/manifest失败；双目标Token隔离；拒绝后401不刷新 |
+| operation通用占位与错误组成 | 277条逐项凭据/kind/role/state/capability/scope/variant/源码/反例；current/proposed binding分列；E current identity及reviewer计划明确拒绝；prepare内部/verify全组成 | archive-check核具体例子和逐条锚点/OID；未核domain固定blocked，不以集合相等冒全部领域已证明 |
+| 真实套件未接RequiredCI | ci-integration.md接现有api-integration；服务/reset/监听/ready、明确执行/pipefail/非空、失败聚合、always上传及四包选择/防漏接 | 产品轮验证根脚本和workflow实际执行；隔离副本删除入口失败；模型tools及Turn事实，不能只exit=0或内存smoke |
 
-## 实际执行
+完整合同草案、ADR提案与逐操作JSON供另一Agent读取；本代理不自宣布blocking/high已闭合。表中的测试都是待产品实现/执行，本轮没有产品成功断言。
 
-静态生成首次exit=0：实际OpenAPI、route-policy及#53索引全集均277条；来源清单58项。数量是当前集合基数，不是功能通过率。Node stripTypeScriptTypes实验性警告保留。UTF-8文档核验exit=0，完整spec与可见计划前缀一致，来源58项逐blob匹配。
+## 真实静态检查与首败
 
-暂存字节核验首次exit=1，Node execFileSync默认缓冲导致完整operation-decisions.json读取ENOBUFS；完整工具可见首败另存first-byte-check-failure.md。增加文档脚本maxBuffer后实际重核exit=0，各交付文件工作树与暂存blob字节相同。报告自身排除以避免自引用；Git提交仍包含该报告的真实blob。没有截断清单、改属性或改CI。
+原00a5归档的首次Node ENOBUFS、其缓冲修正及全部回执保留原样，见history和根first-byte-check-failure.md。当前文档patch曾因同路径多操作和不匹配片段验证失败，未修改目标，随后按实际片段修正；结构化生成首次因评论handler锚点写错失败，已用真实handler定位纠正，首败完整tool可见输出在sync-check-receipt.json。新版核验首次因尚未落盘的回执链接失败，保留失败后先写真实回执，再重核；随后又检出一次性生成记录末尾空行，修正规范并继续保留该失败；不得把首次失败改成成功。
 
-当前classifyChanges实读mode=full，source/db/api/worker/e2e/recovery/agent-smoke检查均要求；原因是JSON和归档核验脚本并非当前prose白名单。本轮不改规则，不冒称docs-only绿色。远端RequiredCI尚未运行/读取，本轮按仅文档授权不运行全产品tests；提交后由平台真实CI处理，若失败如实保留，不能提前宣称产品完成。
+当前生成器已完成实际OpenAPI集合277、binding 107、来源114的结构化资料。99项domain待核（43项有当前MCP binding）明确blocked；已知额外限制仍单列，不把待核规则推广为授权。缺适配和未来批次只披露前提/未支持，不抢产品实现。该统计不是功能完成率。全部具体运行结果、退出码、等待片段/runtime及最终核验见sync-check-receipt.json；未完成的检查不预填。
 
-pnpm install、lint、typecheck、test、integration、e2e、真实conformance、独立审查、RequiredCI和main合入均未在本轮运行或证明。本轮仅文档scope，所以不以这些未运行项阻止文档交付，也不把文档通过冒充产品通过。
+JSON/脚本会按现行CI触发full，不能因位于docs称作prose绿色；不改CI/属性豁免。没有本卡候选RequiredCI运行证明，没有新的main落地产品事实。当前远端main增量与base分别指纹绑定，未冒组合已运行。
 
-## 审查重点与未闭合项
+本轮正文与注入全文逐字核对通过；archive-check.py静态检查退出0，核277条operation、107项binding、114项来源和原历史。archive-byte-check.mjs退出0，除自引用报告外34份受控文件的工作树与暂存Git blob字节相同；报告自身另随提交核对。上述检查均为文档检查，产品测试未运行。
 
-1. qualified显式协商保持旧strict响应、旧profile；具体增强DTO草案、prepare本地工具例外和名单过滤必须合同独审。不是静默扩权或已接受schema。
-2. Human-only旧工具不列入Agent tools/list，但缓存call保留原schema并明确角色拒绝；C/E、只读、installation target和exact bridge的边界分别验。
-3. Runner任意401刷新路径取消，提前到期刷新仅请求前、经live资格；目标调用被拒后refresh/retry计数为零，完整原错误保留。
-4. 真实API/MCP与Pi模型tools请求必须进入必需集成入口；默认内存conformance和仅创建工具数组的测试不替代它。
-5. #53对deleteProject/deleteWorkItem的Coordination破坏动作拒绝描述，本轮没有找到同名COORDINATOR_DESTRUCTIVE_OPERATION_FORBIDDEN执行分支。当前commands仍调用teamAccess；不能据描述宣称确已拒绝，也不据未找到分支宣称获准。清单列领域差异待核、先不广告；产品前以准确入口和服务端证据澄清，不引入新的授权。
-6. Milestone与relation写均调用authorizeTeamMutation→teamAccess；因此E现有relation adapter也不能仅凭work:write计为可用。与Project/Issue误广告一起按实际角色校正，M2再承接适配闭环。
-7. 终态manifest门禁不放宽；Stop ACK已有SDK/REST可达，MCP/Runner新清理和C/install终态确认仍属M1。未来未实现项不制造M0范围外阻断。
+## 保全及下一门禁
 
-以上是本轮静态核查问题，不代另一Agent独审结论，也不由本代理自行宣布blocking/high已闭合。下一步是另一Agent平台独审，Chief确认后才按原批次实施授权进入产品。
+savedplan.md与implementation.md同字节来自本轮注入完整正文；版本和doc创建时间null；当前docID从conversation实读，没有再次edit_plan或循环造ID。原21文件均保全在原可达commit及history指纹，原spec/反馈/首败不改。
 
-## 资源与保全
-
-未新建Docker容器、镜像、卷、网络、测试数据库、长期服务或临时路径；只运行退出即结束的Git/Node/Python只读核验进程，并在本目录写受控交付文件。资源列表在archive-metadata.json。本轮没有清理、递归删除、移动、force或任何已拒目标重试；当前worktree、旧证据和恢复目录保留。
+本轮只新增/修改docs/plan/agent-mcp-m0/；无迁移、API、事件、角色授权、产品实现、测试服务或Web UI设计。没有清理容器/旧worktree/恢复目录或已拒目标重试；临时资源列表为空。提交后停confirm，交另一Agent同模型/high定向复审这四项和待核广告；Chief确认且blocking/high闭合后再按既有条件授权进入产品。
