@@ -443,3 +443,7 @@ C2 的原六测试、九类与 DoD 保留；R1-16-1/8/9 追加真实 Redis quota
 <!-- C2-BACKEND-SCOPE -->
 
 C2 本轮仅后端及 main 既有消费者兼容；六原测试/九类拆分去向与 UI 延后未验收见 ../c2/backend/coverage.json。旧绿色/首败和原验收保持历史含义。
+
+<!-- C2-BACKEND-CANDIDATE -->
+
+新组合六原测试/九类实际检查与原 UI 延后边界见 ../c2/backend/coverage.json；源码及完整结果见 ../c2/backend/review.md。可选 skip 不计通过，新候选独审/CI/main/Chief 仍待齐。

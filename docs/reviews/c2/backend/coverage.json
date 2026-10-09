@@ -8,7 +8,8 @@
         "apps/worker/src/wecom-notifications.test.ts",
         "apps/api/integration/wecom-notifications.integration.test.ts"
       ],
-      "assertions": "协议、4096 UTF-8、错误、频控、timeout、epoch/quota 恢复/未知截止"
+      "assertions": "协议、4096 UTF-8、错误、频控、timeout、epoch/quota 恢复/未知截止",
+      "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
     },
     {
       "original": 2,
@@ -17,7 +18,9 @@
         "apps/worker/src/wecom-notifications.test.ts",
         "apps/web/e2e/wecom-backend-compatibility.spec.ts"
       ],
-      "assertions": "生成 HTTPS canonical URL 与 main canonicalObjectHref 一致；当前 Human 重鉴权。returnTo/焦点/BackForward 新 UI 完整保全，不计通过"
+      "assertions": "生成 HTTPS canonical URL 与 main canonicalObjectHref 一致；当前 Human 重鉴权。returnTo/焦点/BackForward 新 UI 完整保全，不计通过",
+      "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json",
+      "e2eReceipt": "docs/reviews/c2/product/20261009T043437Z-d26bba/results.json"
     },
     {
       "original": 3,
@@ -26,7 +29,9 @@
         "apps/api/integration/wecom-notifications.integration.test.ts",
         "apps/web/e2e/wecom-backend-compatibility.spec.ts"
       ],
-      "assertions": "撤权/停用/离队/Stop/checkpoint 前零外发；不同当前 Human 同一 URL 的详情 GET 拒绝，有权正对照"
+      "assertions": "撤权/停用/离队/Stop/checkpoint 前零外发；不同当前 Human 同一 URL 的详情 GET 拒绝，有权正对照",
+      "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json",
+      "e2eReceipt": "docs/reviews/c2/product/20261009T043437Z-d26bba/results.json"
     },
     {
       "original": 4,
@@ -35,7 +40,9 @@
         "apps/api/integration/wecom-notifications.integration.test.ts",
         "apps/web/e2e/wecom-backend-compatibility.spec.ts"
       ],
-      "assertions": "decision events/outbox 不增加；渠道只提醒"
+      "assertions": "decision events/outbox 不增加；渠道只提醒",
+      "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json",
+      "e2eReceipt": "docs/reviews/c2/product/20261009T043437Z-d26bba/results.json"
     },
     {
       "original": 5,
@@ -45,13 +52,16 @@
         "apps/api/integration/wecom-notifications.integration.test.ts",
         "apps/web/e2e/wecom-backend-compatibility.spec.ts"
       ],
-      "assertions": "C1 本人目标管理与对账复用；无提供方时 main 网页/接口仍可读，不将 configured 投影当 ready"
+      "assertions": "C1 本人目标管理与对账复用；无提供方时 main 网页/接口仍可读，不将 configured 投影当 ready",
+      "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json",
+      "e2eReceipt": "docs/reviews/c2/product/20261009T043437Z-d26bba/results.json"
     },
     {
       "original": 6,
       "status": "明确不适用",
       "cases": [],
-      "assertions": "本协议只有 Worker 出站 HTTPS POST，没有入站回调、签名、时窗、身份绑定或解绑系统；无假通过"
+      "assertions": "本协议只有 Worker 出站 HTTPS POST，没有入站回调、签名、时窗、身份绑定或解绑系统；无假通过",
+      "currentReceipt": null
     }
   ],
   "nineCategories": [
@@ -63,16 +73,18 @@
         {
           "file": "apps/worker/src/wecom-notifications.test.ts",
           "scenario": "低敏 Markdown、4096 UTF-8 边界、errcode=0 及固定公共地址连接",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         },
         {
           "file": "apps/api/integration/wecom-notifications.integration.test.ts",
           "scenario": "同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         }
       ],
       "ui": "旧 UI 用例延后，原始源码/失败/未接受保全；当前 main consumer 兼容另验",
-      "status": "新候选未运行"
+      "status": "本轮适用用例实际检查通过；旧 UI 仍延后"
     },
     {
       "id": "R1-16-2",
@@ -82,11 +94,12 @@
         {
           "file": "apps/api/integration/wecom-notifications.integration.test.ts",
           "scenario": "当前 disabled/inactive/revoked/membership/changed/muted 撤权先提交，真实授权锁后零 fake provider 调用；Stop 先提交",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         }
       ],
       "ui": "旧 UI 用例延后，原始源码/失败/未接受保全；当前 main consumer 兼容另验",
-      "status": "新候选未运行"
+      "status": "本轮适用用例实际检查通过；旧 UI 仍延后"
     },
     {
       "id": "R1-16-3",
@@ -96,16 +109,18 @@
         {
           "file": "apps/worker/src/wecom-notifications.test.ts",
           "scenario": "秘密端点、非 HTTPS origin、私网 DNS、开放重定向与编码路径拒绝",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         },
         {
           "file": "apps/api/integration/wecom-notifications.integration.test.ts",
           "scenario": "Redis 状态丢失：共享冷却 120 秒，旧 token 不恢复发送",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         }
       ],
       "ui": "旧 UI 用例延后，原始源码/失败/未接受保全；当前 main consumer 兼容另验",
-      "status": "新候选未运行"
+      "status": "本轮适用用例实际检查通过；旧 UI 仍延后"
     },
     {
       "id": "R1-16-4",
@@ -115,16 +130,18 @@
         {
           "file": "apps/api/integration/wecom-notifications.integration.test.ts",
           "scenario": "同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         },
         {
           "file": "apps/worker/integration/stage4-automation.integration.test.ts",
           "scenario": "admits only exact assigned Human targets and deduplicates concurrent source replay and fan-out",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         }
       ],
       "ui": "旧 UI 用例延后，原始源码/失败/未接受保全；当前 main consumer 兼容另验",
-      "status": "新候选未运行"
+      "status": "本轮适用用例实际检查通过；旧 UI 仍延后"
     },
     {
       "id": "R1-16-5",
@@ -134,21 +151,24 @@
         {
           "file": "apps/api/integration/wecom-notifications.integration.test.ts",
           "scenario": "changed target 锁后抑制、旧 claim fence 拒绝",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         },
         {
           "file": "apps/worker/integration/stage4-automation.integration.test.ts",
           "scenario": "allows one current holder, rejects stale prepare/ack and preserves one logical attempt",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         },
         {
           "file": "apps/api/integration/notification-channels.integration.test.ts",
           "scenario": "本人 target CRUD、If-Match 与异体幂等冲突",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         }
       ],
       "ui": "旧 UI 用例延后，原始源码/失败/未接受保全；当前 main consumer 兼容另验",
-      "status": "新候选未运行"
+      "status": "本轮适用用例实际检查通过；旧 UI 仍延后"
     },
     {
       "id": "R1-16-6",
@@ -158,16 +178,18 @@
         {
           "file": "apps/api/integration/wecom-notifications.integration.test.ts",
           "scenario": "checkpoint 事务回滚不外发；发送后进程崩溃重启进入 uncertain，旧 fence 不 ACK",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         },
         {
           "file": "apps/worker/integration/stage4-automation.integration.test.ts",
           "scenario": "recovers source commit, admission rollback and checkpoint commit without partial fan-out",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         }
       ],
       "ui": "旧 UI 用例延后，原始源码/失败/未接受保全；当前 main consumer 兼容另验",
-      "status": "新候选未运行"
+      "status": "本轮适用用例实际检查通过；旧 UI 仍延后"
     },
     {
       "id": "R1-16-7",
@@ -177,16 +199,18 @@
         {
           "file": "apps/api/integration/wecom-notifications.integration.test.ts",
           "scenario": "网络未知不自动重送；C1 显式对账复用原 delivery/fence，渠道零决策事件/outbox",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         },
         {
           "file": "apps/worker/integration/stage4-automation.integration.test.ts",
           "scenario": "replays outbox after intent commit without duplicate attempts or notification event recursion",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         }
       ],
       "ui": "旧 UI 用例延后，原始源码/失败/未接受保全；当前 main consumer 兼容另验",
-      "status": "新候选未运行"
+      "status": "本轮适用用例实际检查通过；旧 UI 仍延后"
     },
     {
       "id": "R1-16-8",
@@ -195,12 +219,13 @@
       "cases": [
         {
           "file": "apps/api/integration/wecom-notifications.integration.test.ts",
-          "scenario": "实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条；并发 Worker 原子额度上限；崩溃后仅 token 过期；授权锁等待跨窗口；可信完成晚于发送截止上界；真实 Redis TIME 与部分 bucket 丢失",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "scenario": "实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条；并发 Worker 原子额度上限；崩溃后仅 token 过期；授权锁等待跨窗口；可信完成晚于发送截止上界；真实 Redis TIME 与部分 bucket 丢失；quota 丢失六路多 Worker 冷却重试不延期、120 秒双目标恢复、旧许可不能释放新 token",
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         }
       ],
       "ui": "旧 UI 用例延后，原始源码/失败/未接受保全；当前 main consumer 兼容另验",
-      "status": "新候选未运行"
+      "status": "本轮适用用例实际检查通过；旧 UI 仍延后"
     },
     {
       "id": "R1-16-9",
@@ -210,11 +235,12 @@
         {
           "file": "apps/api/integration/wecom-notifications.integration.test.ts",
           "scenario": "C2 实际五秒 Abort 结束请求后进入 uncertain，不自动重送且额度保留 D+60；checkpoint/发送后崩溃与原 fence 对账",
-          "receipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json"
+          "historicalReceipt": "docs/reviews/c2/product/20261008T160516Z-c88908/results.json",
+          "currentReceipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json"
         }
       ],
       "ui": "旧 UI 用例延后，原始源码/失败/未接受保全；当前 main consumer 兼容另验",
-      "status": "新候选未运行"
+      "status": "本轮适用用例实际检查通过；旧 UI 仍延后"
     }
   ],
   "compatibility": "main 页面消费者识别生成 URL，已有会话可读/转发拒绝；未登录后丢失定位记录为限制，不修 UI",
@@ -233,5 +259,16 @@
     "Chief 确认"
   ],
   "scopeResult": "旧 UI 视觉不是本轮 DoD；未计通过",
-  "result": "未运行"
+  "result": "本轮五项必需检查通过；新候选独审/最新 CI/main/Chief 仍待齐",
+  "candidateChecks": {
+    "receipt": "docs/reviews/c2/product/20261009T042235Z-6905bf/results.json",
+    "e2eReceipt": "docs/reviews/c2/product/20261009T043437Z-d26bba/results.json",
+    "source": {
+      "path": "source-f45946420b70863e3e41bd3e7d59842c9e085fb1e1f09b1770bbe329d80b686f.json",
+      "bytes": 277222,
+      "sha256": "f45946420b70863e3e41bd3e7d59842c9e085fb1e1f09b1770bbe329d80b686f",
+      "files": 889
+    },
+    "scope": "后端及 main 原消费者；不表示旧 UI 已接受"
+  }
 }

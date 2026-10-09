@@ -140,7 +140,12 @@ def main():
     if REPORT['mode'] == 'visual':
         visual_baseline()
         return
-    if REPORT['mode'] == 'quota-regression':
+    if REPORT['mode'] in ['backend', 'backend-compatibility']:
+        command('regenerate-backend-lock', ['pnpm.cmd', 'install', '--lockfile-only', '--offline', '--ignore-scripts'])
+        command('frozen-backend-lock', ['pnpm.cmd', 'install', '--frozen-lockfile', '--offline', '--ignore-scripts'])
+    if REPORT['mode'] == 'backend-compatibility':
+        checks = [('backend-compatibility-e2e', ['pnpm.cmd', '--filter', '@workmesh/web', 'exec', 'playwright', 'test', '--config', '../../playwright.config.ts', 'e2e/wecom-backend-compatibility.spec.ts'])]
+    elif REPORT['mode'] == 'quota-regression':
         checks = [
             ('reset', ['pnpm.cmd', '--filter', '@workmesh/db', 'test:reset']),
             ('quota-regression', ['pnpm.cmd', '--filter', '@workmesh/api', 'exec', 'vitest', 'run', '--config', '../../vitest.integration.config.ts', 'integration/wecom-notifications.integration.test.ts', '--maxWorkers=1', '-t', 'quota 丢失只触发一次冷却']),

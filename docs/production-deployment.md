@@ -413,6 +413,8 @@ services:
 
 消息只有固定通用提醒和 WorkMesh canonical 登录深链，Markdown 内容最多 4096 UTF-8 字节；不发送事项正文、人员信息、卡片决策或身份绑定。网页登录后按当前 Human 重新鉴权，转发不授予权限。授权撤销先于发送 checkpoint 提交时零外发，提交后的在途请求不能召回。
 
+当前 main 的未登录消费者会跳到登录页，登录后回首页且不保留事项定位；登录后需重新打开消息链接。安全 returnTo、焦点/BackForward 和新视觉延后至 UI 重设计，未接受或计为本轮通过。本轮保留 HTTPS canonical URL 生成与现有页面/接口的当前 Human 授权兼容检查。
+
 频控按秘密 HMAC 指纹跨 Worker 与重复 target 共用 Redis Lua：最多 20 份额度、另有串行 token。额度至少保留至实际完成或安全终止后 60 秒；未知或崩溃保留至发送截止上界 D+60 秒。Redis 丢状态共同冷却至少 120 秒，Redis 不可用则停止准入。等待不消耗发送失败预算，也不阻止普通网页读取。不得删除频控 key 来加速重试。
 
 有效成功响应才记 delivered；提供方明确拒绝记安全错误码，已发出后的超时、断连或畸形响应进入 uncertain，不能自动重发。个人设置的既有投递对账入口由当前目标 owner 显式确认 delivered、retry 或 dead；retry 复用原 delivery/effectKey，仍重新准入和鉴权，至少一次不能保证外部恰好一次。

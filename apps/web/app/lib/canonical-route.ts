@@ -64,22 +64,6 @@ export function evidenceDrawerHref(currentHref: string, evidenceId?: string, sou
   return `${url.pathname}${url.search}${url.hash}`
 }
 
-/** 输入已由 URLSearchParams 解码一次；只返回站内路径，跳转端再次校验。 */
-export function safeLoginReturnTo(value: string | null | undefined, origin: string): string {
-  if (!value || /[\\\u0000-\u0020\u007f]/.test(value) || value.startsWith('//')) return '/'
-  try {
-    const decoded = decodeURIComponent(value)
-    if (/[\\\u0000-\u0020\u007f]/.test(decoded) || decoded.startsWith('//')) return '/'
-    const base = new URL(origin)
-    const url = new URL(value, base)
-    if (!['http:', 'https:'].includes(url.protocol) || url.origin !== base.origin || url.username || url.password) return '/'
-    if (!value.startsWith('/') && !/^https?:\/\//i.test(value)) return '/'
-    const path = decodeURIComponent(url.pathname)
-    if (path.startsWith('//') || /[\\\u0000-\u0020\u007f]/.test(path) || /^\/(?:login|install)(?:\/|$)/i.test(path)) return '/'
-    return safeInternalHref(`${url.pathname}${url.search}${url.hash}`) ?? '/'
-  } catch { return '/' }
-}
-
 export function safeExternalHref(value?: string | null): string | undefined {
   if (!value) return undefined
   try {

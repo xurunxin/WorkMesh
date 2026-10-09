@@ -456,18 +456,6 @@ export function AttentionCenter({
   const [bulkMessage, setBulkMessage] = useState("");
   const [bulkResults, setBulkResults] = useState<Record<string, BulkItemResult>>({});
   const returnFocusRef = useRef<HTMLElement | null>(null);
-  const detailFocusRef = useRef<HTMLHeadingElement | null>(null);
-  const unavailableFocusRef = useRef<HTMLParagraphElement | null>(null);
-  const refreshGenerationRef = useRef(0);
-  const returningFocusRef = useRef(false);
-  useEffect(() => {
-    if (selected) detailFocusRef.current?.focus();
-    else if (returningFocusRef.current) {
-      returningFocusRef.current = false;
-      if (returnFocusRef.current?.isConnected) returnFocusRef.current.focus();
-      else unavailableFocusRef.current?.focus();
-    } else if (route.selectedId && error) unavailableFocusRef.current?.focus();
-  }, [selected?.id, error, route.selectedId]);
   const connectionState = useRealtimeConnectionState();
   const attentionEvidence = useMemo<EvidenceDrawerItem[]>(() =>
     selected?.evidence.map(reference => ({
@@ -533,13 +521,11 @@ export function AttentionCenter({
 
   const refresh = useCallback(
     async (next = route) => {
-      const generation = ++refreshGenerationRef.current;
       setError("");
       try {
         const loaded = await apiRequest<ListResponse<HumanAttentionItem>>(
           attentionListPath(next, projectId),
         );
-        if (generation !== refreshGenerationRef.current) return null;
         setPage(loaded);
         if (next.selectedId) {
           const fromPage = loaded.items.find(
@@ -549,7 +535,6 @@ export function AttentionCenter({
             (await apiRequest<HumanAttentionItem>(
               `/api/v1/human-attention/${encodeURIComponent(next.selectedId)}`,
             ));
-          if (generation !== refreshGenerationRef.current) return null;
           setSelected(loadedSelected);
           void prepareResponse(loadedSelected);
         } else {
@@ -558,8 +543,6 @@ export function AttentionCenter({
         }
         return loaded;
       } catch (reason) {
-        if (generation !== refreshGenerationRef.current) return null;
-        setSelected(null);
         setError(reason instanceof Error ? reason.message : copy.loadError);
         return null;
       }
@@ -600,7 +583,6 @@ export function AttentionCenter({
     writeRoute({ ...draftFilters, cursor: undefined, selectedId: undefined });
   };
   const openItem = (item: HumanAttentionItem, trigger: HTMLElement) => {
-    returningFocusRef.current = false;
     if (!firstAttentionOpenedRef.current) {
       firstAttentionOpenedRef.current = true;
       recordProductMetric("first_attention_detail", (typeof performance === "undefined" ? attentionOpenedAtRef.current : performance.now()) - attentionOpenedAtRef.current, { surface: "attention", actionClass: "open" }, { outcome: "success" });
@@ -611,11 +593,10 @@ export function AttentionCenter({
     writeRoute({ ...route, selectedId: item.id }, false);
   };
   const closeItem = () => {
-    ++refreshGenerationRef.current;
-    returningFocusRef.current = true;
     responseDraftItemIdRef.current = null;
     setSelected(null);
     writeRoute({ ...route, selectedId: undefined }, true);
+    queueMicrotask(() => returnFocusRef.current?.focus());
   };
   const execute = async (
     item: HumanAttentionItem,
@@ -1264,21 +1245,15 @@ export function AttentionCenter({
             }}
           />
         </aside>
-        <main className="attention-decision-context" onKeyDown={(event) => {
-          if (event.key === "Escape" && !event.defaultPrevented && selected) {
-            event.preventDefault();
-            event.stopPropagation();
-            closeItem();
-          }
-        }}>
+        <main className="attention-decision-context">
           {!selected ? (
-            <p className="attention-select-prompt" ref={unavailableFocusRef} tabIndex={-1}>{error || copy.selectPrompt}</p>
+            <p className="attention-select-prompt">{copy.selectPrompt}</p>
           ) : (
             <>
               <header className="attention-detail-heading">
                 <div>
                   <p>{selected.kind.replaceAll("_", " ")} · {selected.severity}</p>
-                  <h3 ref={detailFocusRef} tabIndex={-1}>{selected.title}</h3>
+                  <h3>{selected.title}</h3>
                 </div>
                 <Button onClick={closeItem} type="button" variant="ghost">{copy.cancel}</Button>
               </header>

@@ -326,3 +326,7 @@ Chief 已按独审方案明确放行产品实现，同 todo、同分支正常整
 <!-- C2-BACKEND-SCOPE -->
 
 用户当前验收收窄为企业微信后端单向提醒、canonical HTTPS URL 合同与 main 现有消费者重鉴权兼容。新增登录 returnTo/401 缓存隔离/焦点/BackForward UI 未接受，原成果/失败保全后延至重设计，不作为本轮视觉 DoD。C1 授权锁/intent/attempt/fence/unknown、发送 checkpoint、频控 D+60/完成+60 与 sentinel 冷却恢复协议保持。完整范围、六原测试及九类去向见 ../reviews/c2/backend/。
+
+<!-- C2-BACKEND-CANDIDATE -->
+
+C2 后端独立候选保留原授权/频控/投递语义并已实测新组合；main 当前未登录消费 canonical URL 后定位丢失须重新打开，明确为延后 UI 限制，不改变身份授权或本轮后端 DoD。完整源与后续独审/CI/main 门禁见 ../reviews/c2/backend/review.md。

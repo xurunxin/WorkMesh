@@ -1,17 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { canonicalObjectHref, evidenceDrawerHref, safeExternalHref, safeInternalHref, safeLoginReturnTo } from './canonical-route'
+import { canonicalObjectHref, evidenceDrawerHref, safeExternalHref, safeInternalHref } from './canonical-route'
 
 describe('canonical Human Control Plane routes', () => {
-  it('C2 登录返回保留同源路径、查询和焦点定位', () => {
-    const href = canonicalObjectHref({ kind: 'attention', id: 'v1:inbox_item:one' })!
-    expect(safeLoginReturnTo(href + '#details', 'https://workmesh.test')).toBe(href + '#details')
-    expect(safeLoginReturnTo('https://workmesh.test' + href, 'https://workmesh.test')).toBe(href)
-    expect(safeLoginReturnTo('HTTPS://WORKMESH.TEST' + href, 'https://workmesh.test')).toBe(href)
-    expect(safeLoginReturnTo(new URLSearchParams(new URLSearchParams({ returnTo: href }).toString()).get('returnTo'), 'https://workmesh.test')).toBe(href)
-  })
-  it.each(['https://evil.test/', '//evil.test/', '/\\evil.test', '/%2f%2fevil.test', '/%5cevil.test', '/%0aevil', '/%ff', '/%', '/login', '/%6cogin?returnTo=/', '/install/', 'https://u:p@workmesh.test/', 'javascript:alert(1)', '\n/', 'https://workmesh.test:443@evil.test/'])('C2 拒绝开放重定向、异常编码和登录循环：%s', value => {
-    expect(safeLoginReturnTo(value, 'https://workmesh.test')).toBe('/')
-  })
   it('maps supported identities without manufacturing optional Graph routes', () => {
     expect(canonicalObjectHref({ kind: 'work_item', id: 'work-1', projectId: 'project-1' })).toBe('/?view=issues&workItem=work-1&projectId=project-1')
     expect(canonicalObjectHref({ kind: 'plan_step', id: 'step-1', sessionId: 'session-1', planVersionId: 'plan-1' })).toBe('/agent-sessions/session-1?stepId=step-1&planId=plan-1')

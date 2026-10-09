@@ -13,9 +13,8 @@ vi.mock('./api', () => ({
 
 import { apiRequest, clearCsrfToken } from './api'
 
-const mockLocation = (href = '/'): void => {
-  const url = new URL(href, 'http://workmesh.test')
-  ;(globalThis as unknown as { location: { assign: ReturnType<typeof vi.fn> } }).location = { assign: vi.fn(), pathname: url.pathname, search: url.search, hash: url.hash, origin: url.origin } as unknown as { assign: ReturnType<typeof vi.fn> }
+const mockLocation = (): void => {
+  ;(globalThis as unknown as { location: { assign: ReturnType<typeof vi.fn> } }).location = { assign: vi.fn() }
 }
 
 const deferred = <T,>() => {
@@ -42,7 +41,7 @@ describe('useAuthenticatedActor', () => {
     renderHook(() => useAuthenticatedActor())
     await act(() => Promise.resolve())
     expect(clearCsrfToken).toHaveBeenCalled()
-    expect((globalThis as unknown as { location: { assign: ReturnType<typeof vi.fn> } }).location.assign).toHaveBeenCalledWith('/login?returnTo=%2F')
+    expect((globalThis as unknown as { location: { assign: ReturnType<typeof vi.fn> } }).location.assign).toHaveBeenCalledWith('/login')
   })
 
   it('revokes the active actor before redirecting after a refresh 401', async () => {
@@ -59,18 +58,7 @@ describe('useAuthenticatedActor', () => {
     expect(result.current.actor).toBeNull()
     expect(clearCsrfToken).toHaveBeenCalledTimes(1)
     expect((globalThis as unknown as { location: { assign: ReturnType<typeof vi.fn> } }).location.assign).toHaveBeenCalledTimes(1)
-    expect((globalThis as unknown as { location: { assign: ReturnType<typeof vi.fn> } }).location.assign).toHaveBeenCalledWith('/login?returnTo=%2F')
-  })
-
-  it('401 清理身份并携带当前 canonical 深链，不带上一 Human 身份', async () => {
-    const href = '/?view=inbox&attentionSelected=v1%3Ainbox_item%3A11111111-1111-4111-8111-111111111111'
-    mockLocation(href)
-    ;(apiRequest as ReturnType<typeof vi.fn>).mockRejectedValue(new ApiError(401, 'expired'))
-    const { result } = renderHook(() => useAuthenticatedActor())
-    await act(() => Promise.resolve())
-    expect(result.current.actor).toBeNull()
-    expect(clearCsrfToken).toHaveBeenCalledOnce()
-    expect((globalThis as unknown as { location: { assign: ReturnType<typeof vi.fn> } }).location.assign).toHaveBeenCalledWith(`/login?${new URLSearchParams({ returnTo: href })}`)
+    expect((globalThis as unknown as { location: { assign: ReturnType<typeof vi.fn> } }).location.assign).toHaveBeenCalledWith('/login')
   })
 
   it('aborts and ignores a late actor response after a newer refresh wins', async () => {
