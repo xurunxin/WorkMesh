@@ -1,25 +1,25 @@
 # M2 合入前 PR 与 Required CI 准备
 
-正式复审已由用户转述确认两项 blocking 全闭、无新增 blocking/high。本轮只准备 PR 与 CI 证据，不修改产品代码，不合入或标记 Done。
+正式复审已由用户转述确认两项 blocking 全闭、无新增 blocking/high。本轮已实际创建 PR214 并取得 CI413 终态；产品运行时代码无改动，两份验证夹具／配置的增量另交正式复核。不合入或标记 Done。
 
 ## 精确来源与可用入口
 
 - 仓库：`xurunxin/WorkMesh`。
 - 平台分支：`tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe`。
 - 已审候选：`1fb8c0e49f74f1a6b34ee69158bcbe2292e288ec`；产品提交：`1cfb38178f56005d524d865d80115db3bbcdbecb`。
-- 本轮平台只读 `ls-remote` 的 main：`cfce77546b64c2a8d7d12949261c38e2f666d5ae`，等于候选 merge-base；平台分支远端与已审候选一致。正常无改推送已实际完成。
-- PR 号、实际 PR head/base 和 run ID 尚未取得，均记 null，不能用旧 PR213/CI411 替代。Chief 本轮已核按平台分支查 all-state PR 无结果；本 Agent 没有 `pull_requests` 工具，未冒称自行完成该查询。另实际读取 `refs/pull/*/head`，未见与已审 head 相同的 ref；这不替代完整 PR 状态/分支查询。
+- 原轮平台只读 main 观察为 `cfce77546b64c2a8d7d12949261c38e2f666d5ae`，等于候选 merge-base；该观察原件保留。创建PR前本轮再次实读远端：平台分支7d54、main仍cfce，与PR创建元数据一致。
+- 上轮尚无 PR/run 的观察按原7d54全文保留。本轮使用 gh 仅创建 [PR214](https://github.com/xurunxin/WorkMesh/pull/214)，exit0；创建时 head `7d54a9c7d4b81cfc7486483ec183b1bf1a15f5fa`、base `cfce77546b64c2a8d7d12949261c38e2f666d5ae`。PR head 分支就是平台分支，没有另建分支。实际 [CI413/run38026590315](https://github.com/xurunxin/WorkMesh/actions/runs/38026590315) 已全部 completed/failure，详情和新head后续门禁见 [product-ci413-report.md](product-ci413-report.md)。
 - PR 正文已准备于 [product-pr-body.md](product-pr-body.md)。创建后须读取实际 PR 元数据，再取得最新精确 head 的 Required CI。正常流程若另映射 GitHub 候选分支，须记录平台分支→PR head 分支、准确 SHA/tree/merge-base、双向 diff 与实际 base；本轮未创建或切换其他分支。
 
-## 实际平台能力阻塞
+## 平台工具与 gh 实证更正
 
-当前工具枚举及运行时检查均没有 `pull_requests`、`create_pull_request` 或 `dispatch_workflow`。唯一可用的 PR 写工具 `merge_branch` 明确“opens and merges”，不能作为只开 PR 的接口，且本轮用户明确禁止直接合入。工作树 git 没有远端凭据，不通过 gh/git、另分支或更改 workflow 触发规则绕过平台正常流程。
+平台工具枚举确实没有仅创建 PR 的接口，merge_branch 会执行合入，本轮未调用。但上轮未经检查 gh 就断言完全无入口，判断过早：工作树 Git 无凭据不代表 gh CLI 未登录。原三份报告的完整 Git／Windows 字节保存在 [pr-preparation-7d54-originals.zip](product-evidence/pr-preparation-7d54-originals.zip)，原误判与历史缺口不覆盖。
 
-已正常重新推送已审分支，随后 `workflow_runs(branch=平台分支)` 仍返回无匹配运行。现行 `.github/workflows/ci.yml` 的 push 仅监听 main；PR 创建或正常非合入的 CI 触发入口未提供，因此没有正在运行的健康 CI 可继续轮询。需要 Chief 在正常流程完成仅创建 PR 的步骤并提供准确 PR/run 标识后，主执行才能继续核查最新运行；这是缺执行入口，不是需要重新审批已授权产品范围。
+actual main 的 M1 product-ci410-report.md 确切记载主力用 gh pr create 创建PR213且exit0，这是M1历史来源，不能推断本轮登录。本轮独立核验现有 `C:\Program Files\GitHub CLI\gh.EXE` version2.102.0、auth-status exit0，已有keyring登录可用；令牌行保存前脱敏，未读取令牌值、安装CLI或新登录。按既有授权使用当前受控正文作为body-file，仅创建PR214并持续等CI413各健康job至真实终态。Git和CLI两种事实已分列，当前不再声称“无可用创建入口”。
 
 ## 必需 job 与真实状态
 
-对准确 main→已审 head 全部 651 个差异路径运行现行 `classifyChanges`（仅分类，不是重跑产品 checks），结果 full：全部七个选择门禁均 true。现行工作流共九个 job 定义，E2E 两个 shard，预计十个实际 job。以下均未运行，没有 GitHub job ID，不能标 pending/success 或用本地结果替代：
+上轮对准确main→已审head全部651路径实际分类为full；以下表仅保留创建PR前的历史状态，不能当本轮最新状态。现已实际取得CI413十job：六success，Worker／两个E2E／Required CI failure；准确IDs、step、runtime和首败见CI413报告。两处验证修复后的新head还须取得自己的最新Required CI，不能以本地绿色或旧head部分成功代替。
 
 | job ID | 显示名称 | 本轮 GitHub 状态 |
 | --- | --- | --- |
@@ -40,8 +40,8 @@ API integration 原有 `pnpm test:conformance:integration` 必須运行真实 M0
 
 [product-pr-ci-preparation.json](product-pr-ci-preparation.json) 保存平台原返回、UTC、实际分类命令/退出码、完整九 job 元数据、八份 CI 输入全文字节摘要与 Git blob，以及全部 49 份受测产品 Git/Windows 工作树双列。49 份当前工作树摘要和 Git blob 均逐项等于既有修复 commit-binding；全文 main→候选 `git diff --check` exit 0，开工工作树干净。此核验不是新增产品测试。
 
-本轮新增三份准备文件只属于证据；其提交后的精确 head 由 push 返回及后续 ls-remote 核定，不为写自身 head 循环修改。旧 520-artifact 索引继续绑定旧冻结包，不将新增文件冒称已入旧索引。旧 product-report、所有首败/unknown/skip、原始 ZIP 和受测绑定不覆盖，无产品 blob 改动，无资源启动/删除。
+原三份准备文件是7d54证据增量，旧520-artifact索引仍绑定旧冻结包，不冒新增文件已入旧索引。本轮CI413独立索引及ZIP保全原JSON/logs、创建时49文件及8CI输入全文双字节；修订原49中的1份Worker test fixture（其余48不变），Playwright配置另列，产品运行时代码没有改动。run136/137真实exit0；三份本任务独有容器在exit后按owner/ID保全日志再清，旧product-report／首败／unknown／skip及G1D0C3拒目标不覆盖。
 
 ## 后续获取结果的准确条件
 
-创建后保存 PR number/URL、head branch/SHA、base branch/SHA及合成 merge SHA/tree；运行查询绑定 PR 最新准确 head，拉取各实际 job/step 的 status、conclusion、attempt、日志和 always-upload 证据，绑定 Actions 受测源码与当前产品 blob。健康运行持续观察到真实结束，不中断、不留后台收尾。产品代码变化或 base 实质变化须明确 diff 返回独审；纯证据变化先核全部产品 blob 不变。若真实 CI 失败，保原 run/日志与首败后修具体原因，不松 skip/断言/门禁；本轮无 CI run 可报告成功。
+已保存PR214、CI413和实际checkout `a2e55dd04b9795d51b9655861882f0cce7831470` 的parents/tree证明及全部原件。修订提交后继续绑定最新PR准确head/base及Required CI，健康运行至真实结束，不中断、不留后台。本轮两验证文件差异交正式增量复核；产品／base实质变化仍返回独审。保原failure和unknown，不松断言／skip／门禁，不以CI413报告冒未来head已通过，也不直接合入／Done。

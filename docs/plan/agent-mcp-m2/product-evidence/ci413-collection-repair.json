@@ -1,0 +1,6 @@
+{
+  "nativeExit": 1,
+  "error": "UnicodeDecodeError: gbk can't decode byte 0xad in position 3896152",
+  "stage": "read local run JSON during packaging verification; no product/CI failure",
+  "recovery": "explicit encoding=utf-8 on all JSON reads; archive CRC/member checks already passed; original run136/137 bytes unchanged"
+}

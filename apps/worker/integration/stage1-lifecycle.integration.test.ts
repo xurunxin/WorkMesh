@@ -387,9 +387,6 @@ describe('stage 1 worker durability', () => {
       expect(request.headers['workmesh-signature']).toBe(signWebhook(Buffer.from('integration-secret'), timestamp, body))
       expect(JSON.parse(body).events[0].payload.sessionId).toBe(session)
       received.push(String(request.headers['workmesh-delivery-id']))
-      // PostgreSQL actual time, not fake JS timers: first in-flight HTTP crosses
-      // the short test lease so the already-claimed batch tail expires in queue.
-      if (received.length === 1) await db.query('SELECT pg_sleep(0.08)')
       response.writeHead(204); response.end()
     })
     await new Promise<void>(resolve => receiver.listen(0, '127.0.0.1', resolve))
@@ -398,10 +395,15 @@ describe('stage 1 worker durability', () => {
       if (!address || typeof address === 'string') throw new Error('RECEIVER_PORT_MISSING')
       await db.query('UPDATE agent_webhook_endpoints SET url=$2 WHERE id=$1', [data.endpointId, `http://127.0.0.1:${address.port}/events`])
       const worker = createAgentWebhookWorker({ db, masterKey: key, allowPrivateAgentWebhooks: true })
-      const batch = await worker.claimDeliveries(25, 0.06)
+      const batch = await worker.claimDeliveries()
       expect(batch).toHaveLength(25)
       await worker.deliver(batch[0]!)
       expect(received).toHaveLength(1)
+      // Start queue delay only after real first HTTP succeeds. Cross the actual
+      // default 60s PostgreSQL claim deadline without racing initial authority
+      // checks on a slow CI runner or rewriting any claim/source facts.
+      expect(batch[24]!.leaseExpiresAt).toBeDefined()
+      await db.query(`SELECT pg_sleep(GREATEST(0,EXTRACT(EPOCH FROM ($1::timestamptz-clock_timestamp())))+0.02)`, [batch[24]!.leaseExpiresAt])
       for (const queued of batch.slice(1)) {
         try { await worker.deliver(queued); throw new Error('EXPIRED_SEND_SUCCEEDED') }
         catch (error) {
@@ -429,7 +431,7 @@ describe('stage 1 worker durability', () => {
       receiver.closeAllConnections()
       await new Promise<void>((resolve, reject) => receiver.close(error => error ? reject(error) : resolve()))
     }
-  })
+  }, 90_000)
 
   it('retries, reclaims after a crash, and dead-letters bounded failures without persisting receiver errors', async () => {
     const data = await fixture()

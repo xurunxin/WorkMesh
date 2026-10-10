@@ -1,0 +1,88 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 05:17:04.608 UTC [43] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 05:17:04.612 UTC [43] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 05:17:04.613 UTC [46] LOG:  database system was shut down at 2026-10-10 05:17:04 UTC
+2026-10-10 05:17:04.614 UTC [43] LOG:  database system is ready to accept connections
+ done
+server started
+2026-10-10 05:17:04.726 UTC [60] FATAL:  database "workmesh_m2_test" does not exist
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-10 05:17:04.730 UTC [43] LOG:  received fast shutdown request
+2026-10-10 05:17:04.730 UTC [43] LOG:  aborting any active transactions
+2026-10-10 05:17:04.732 UTC [43] LOG:  background worker "logical replication launcher" (PID 49) exited with exit code 1
+2026-10-10 05:17:04.733 UTC [44] LOG:  shutting down
+2026-10-10 05:17:04.733 UTC [44] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 05:17:04.736 UTC [44] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.001 s, total=0.004 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 05:17:04.738 UTC [43] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 05:17:04.335 UTC [37] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 05:17:04.839 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 05:17:04.839 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 05:17:04.839 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 05:17:04.841 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 05:17:04.842 UTC [65] LOG:  database system was shut down at 2026-10-10 05:17:04 UTC
+2026-10-10 05:17:04.844 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 05:17:13.533 UTC [70] ERROR:  DELEGATION_REQUIRES_HUMAN_PRINCIPAL_AND_AGENT_ACTOR
+2026-10-10 05:17:13.533 UTC [70] CONTEXT:  PL/pgSQL function enforce_delegation_actor_kinds() line 6 at RAISE
+2026-10-10 05:17:13.533 UTC [70] STATEMENT:  INSERT INTO delegations(
+	       workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,role,scope_type,scope_id,
+	       permissions_snapshot,capability_scope
+	     ) VALUES($1,$2,$3,$4,$5,'executor','automation',$6,$7,$8) RETURNING id
+2026-10-10 05:17:14.801 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 05:17:14.893 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 05:17:14.984 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 05:17:15.066 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 05:17:15.158 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 05:17:15.246 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 05:17:15.322 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 05:17:15.380 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 05:17:15.380 UTC [71] WARNING:  there is no transaction in progress
+2026-10-10 05:17:17.883 UTC [70] ERROR:  new row for relation "notification_deliveries" violates check constraint "notification_delivery_kind_required"
+2026-10-10 05:17:17.883 UTC [70] DETAIL:  Failing row contains (d550ff65-033f-44d6-9b20-49b0c5c102cc, null, webhook, pending, 0, 2026-10-10 05:17:17.883367+00, null, null, 0, notification:5e2f42ef-2bad-4b7a-8fcc-5cad14f1cd76:target:4f281c5..., null, null, null, 2026-10-10 05:17:17.883367+00, null, 3d543216-9009-4f5f-a28e-0e02ad6c9965, 5e2f42ef-2bad-4b7a-8fcc-5cad14f1cd76, 4f281c57-983f-4464-82c5-b4b2473846c1, 435e0cd7-5e6e-43b3-b946-5b3f12e1d0eb, 1, null, null, not_sent, null, 0, 1, null).
+2026-10-10 05:17:17.883 UTC [70] STATEMENT:  INSERT INTO notification_deliveries(workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key)
+	        SELECT workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key FROM notification_deliveries WHERE id=$1
+2026-10-10 05:17:18.010 UTC [71] WARNING:  there is no transaction in progress
+2026-10-10 05:17:30.960 UTC [74] ERROR:  duplicate key value violates unique constraint "agent_webhook_deliveries_agent_id_delivery_id_key"
+2026-10-10 05:17:30.960 UTC [74] DETAIL:  Key (agent_id, delivery_id)=(8e2620d7-9024-43f8-95fb-d7030b2fccd3, del_60cbe4f8-dd60-432b-b277-0661f4588760) already exists.
+2026-10-10 05:17:30.960 UTC [74] STATEMENT:  INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) SELECT agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload FROM agent_webhook_deliveries WHERE agent_id=$1 AND delivery_id=$2 RETURNING id
+2026-10-10 05:18:34.920 UTC [79] LOG:  skipping analyze of "agent_definitions" --- lock not available
+2026-10-10 05:18:34.920 UTC [79] LOG:  skipping analyze of "delegations" --- lock not available
+2026-10-10 05:18:34.920 UTC [79] LOG:  skipping analyze of "domain_events" --- lock not available
+2026-10-10 05:18:34.920 UTC [79] LOG:  skipping vacuum of "agent_sessions" --- lock not available
+2026-10-10 05:18:34.920 UTC [79] LOG:  skipping vacuum of "agent_webhook_deliveries" --- lock not available
+2026-10-10 05:18:34.920 UTC [79] LOG:  skipping analyze of "domain_event_resources" --- lock not available
