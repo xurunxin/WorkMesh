@@ -1,4 +1,5 @@
 import { getExecutionResult } from './execution-result.js';
+import { listChildSessionStatus } from './child-session-status.js';
 import type { Pool } from "pg";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import { lookup } from "node:dns/promises";
@@ -81,6 +82,8 @@ async function readableSession(request: FastifyRequest, h: Helpers, sessionId: s
 }
 
 export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
+  app.get('/api/v1/agent-sessions/:id/children', async request =>
+    listChildSessionStatus(h.db, h.paginator, request, id(request)));
   app.get('/api/v1/agent-sessions/:id/execution-result', async request =>
     getExecutionResult(h.db, actor(request), id(request), request.query));
   app.get("/api/v1/agents", async request => {

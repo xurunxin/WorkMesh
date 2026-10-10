@@ -7,6 +7,8 @@ import {
   createDocumentInputSchema, handoffInputSchema, projectInputSchema, publishPlanInputSchema,
   requestApprovalInputSchema, updateDocumentInputSchema, workItemInputSchema,
   workItemPatchSchema, workItemRelationInputSchema,
+  childSessionInputSchema, reviewDelegationInputSchema, childSessionStatusQuerySchema,
+  decisionInputSchema, roomMessageInputSchema, restoreDocumentRevisionInputSchema,
 } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { z } from 'zod'
@@ -28,10 +30,10 @@ const id = z.string().uuid()
 const idParameter = Type.String({ format: 'uuid' })
 const ownerParameter = Type.Union([Type.Literal('project'), Type.Literal('work_item')])
 const resultLimit = 50_000
-const pageParameters = Type.Object({ limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })),
-  cursor: Type.Optional(Type.String({ minLength: 1, maxLength: 4096 })) })
+const pageParameters = Type.Object({ limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 200 })),
+  cursor: Type.Optional(Type.String({ minLength: 1, maxLength: 8192 })) })
 const pageQuery = (input: unknown): string => {
-  const page = z.object({ limit: z.number().int().min(1).max(100).optional(), cursor: z.string().min(1).max(4096).optional() }).strict().parse(input)
+  const page = z.object({ limit: z.number().int().min(1).max(200).optional(), cursor: z.string().min(1).max(8192).optional() }).strict().parse(input)
   return `limit=${page.limit ?? 50}${page.cursor ? `&cursor=${encodeURIComponent(page.cursor)}` : ''}`
 }
 
@@ -48,10 +50,16 @@ function boundedResult(value: unknown): string {
     const revision = object.currentRevision && typeof object.currentRevision === 'object'
       ? object.currentRevision as Record<string, unknown> : {}
     const items = Array.isArray(object.items) ? object.items : undefined
+    // One maximum-size comment/document may exceed the ordinary display budget.
+    // A page is never replaced by IDs while advancing its signed cursor.
+    if (items) {
+      if (items.length === 1 && encoded.length <= 200_000) return encoded
+      throw new Error('TOOL_PAGE_TOO_LARGE: retry the same cursor with a smaller limit; no page was consumed')
+    }
     return JSON.stringify({ truncated: true, message: 'Operation succeeded; fetch a narrower resource for full content.',
       id: object.id ?? null, status: object.status ?? null, revision: object.revision ?? null,
       currentRevision: { id: revision.id ?? null, contentHash: revision.contentHash ?? null },
-      ...(items ? { itemCount: items.length, itemIds: items.slice(0, 100).map(item =>
+      ...(items ? { nextCursor: object.nextCursor ?? null, itemCount: items.length, itemIds: items.slice(0, 100).map(item =>
         item && typeof item === 'object' ? (item as Record<string, unknown>).id ?? null : null) } : {}) })
   }
   return encoded
@@ -71,7 +79,7 @@ async function recordToolActivity(api: RunnerToolApi, attemptId: string, callId:
 }
 
 type ToolRequest = Readonly<{
-  method: 'GET' | 'POST' | 'PATCH' | 'PUT'
+  method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
   path: string
   body?: unknown
   ifMatch?: number
@@ -107,6 +115,16 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
       try {
         result = await api.request<unknown>(request.method, request.path,
           request.body, request.ifMatch, key)
+        if (request.method === 'GET') {
+          const path = new URL(request.path, 'http://workmesh.invalid')
+          for (let retry=0;retry<8;retry++) {
+            const items = result && typeof result === 'object' && 'items' in result ? result.items : undefined
+            if (!Array.isArray(items) || items.length<=1 || JSON.stringify(result).length<=resultLimit) break
+            if (signal?.aborted) throw new Error('RUNNER_ABORTED')
+            path.searchParams.set('limit',String(Math.max(1,Math.floor(items.length/2))))
+            result = await api.request<unknown>('GET',path.pathname+path.search)
+          }
+        }
       } catch (error) {
         if (request.method !== 'GET' && recordCompletion) {
           const code = error instanceof Error ? error.message.slice(0, 100) : 'TOOL_REQUEST_FAILED'
@@ -150,6 +168,8 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
   const eligible = new Set(manifest.discovery.operations
     .filter(operation => operation.variant === null && operation.eligibility.status !== 'blocked')
     .map(operation => operation.operationId))
+  const reviewer = manifest.discovery.identity.delegationRole === 'reviewer'
+  if (reviewer) eligible.delete('publishAgentPlan')
   const available: ToolDefinition[] = []
   const add = (name: string, operationId: string, description: string,
     parameters: ToolDefinition['parameters'], build: (input: unknown, toolCallId: string) => ToolRequest,
@@ -211,10 +231,10 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
         details: { source: 'workmesh_runner' } }
     },
   })
-  add('workmesh_list_projects', 'listProjects', 'List authorized Projects. Use the returned IDs for later operations.',
-    Type.Object({ limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })) }), input => {
-      const { limit } = z.object({ limit: z.number().int().min(1).max(100).optional() }).parse(input)
-      return { method: 'GET', path: `/api/v1/projects?limit=${limit ?? 50}` }
+  add('workmesh_list_projects', 'listProjects', 'List authorized Projects with complete pagination.',
+    Type.Object({ ...pageParameters.properties, teamId: Type.Optional(idParameter) }), input => {
+      const { teamId, ...page } = z.object({ teamId: id.optional(), limit: z.number().int().min(1).max(200).optional(), cursor: z.string().max(8192).optional() }).strict().parse(input)
+      return { method: 'GET', path: `/api/v1/projects?${pageQuery(page)}${teamId ? `&teamId=${teamId}` : ''}` }
     })
   add('workmesh_get_project', 'getProject', 'Read an authorized Project by ID.',
     Type.Object({ projectId: idParameter }), input => {
@@ -241,11 +261,12 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
       if (Object.keys(body).length === 0) throw new Error('TOOL_EMPTY_PROJECT_UPDATE')
       return { method: 'PATCH', path: `/api/v1/projects/${projectId}`, body, ifMatch }
     })
-  add('workmesh_list_work_items', 'listWorkItems',
-    'List Issues authorized for the exact Agent Session. Execution Sessions only see their delegated Issue.',
-    Type.Object({ limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })) }), input => {
-      const { limit } = z.object({ limit: z.number().int().min(1).max(100).optional() }).parse(input)
-      return { method: 'GET', path: `/api/v1/work-items?limit=${limit ?? 50}` }
+  add('workmesh_list_work_items', 'listWorkItems', 'List authorized Issues with filters and complete pagination.',
+    Type.Object({ ...pageParameters.properties, teamId: Type.Optional(idParameter), projectId: Type.Optional(idParameter),
+      milestoneId: Type.Optional(idParameter), parentId: Type.Optional(idParameter), statusId: Type.Optional(idParameter), search: Type.Optional(Type.String({ maxLength: 500 })) }), input => {
+      const { cursor, limit, ...filters } = z.object({ teamId: id.optional(), projectId: id.optional(), milestoneId: id.optional(), parentId: id.optional(), statusId: id.optional(), search: z.string().max(500).optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() }).strict().parse(input)
+      const query = new URLSearchParams(Object.entries(filters).filter((pair): pair is [string, string] => pair[1] !== undefined))
+      return { method: 'GET', path: `/api/v1/work-items?${pageQuery({ cursor, limit })}&${query}` }
     })
   add('workmesh_get_work_item', 'getWorkItem', 'Read an authorized Issue, including its current revision.',
     Type.Object({ workItemId: idParameter }), input => {
@@ -256,7 +277,7 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
     'Create an Issue in the delegated Team. The responsible Human remains a Human; a started state requires one.',
     Type.Object({ teamId: idParameter, title: Type.String({ minLength: 1, maxLength: 500 }),
       statusId: idParameter, description: Type.Optional(Type.String({ maxLength: 50_000 })),
-      projectId: Type.Optional(idParameter), responsibleHumanActorId: Type.Optional(idParameter),
+      projectId: Type.Optional(idParameter), parentId: Type.Optional(idParameter), milestoneId: Type.Optional(idParameter), responsibleHumanActorId: Type.Optional(idParameter),
       priority: Type.Optional(Type.Union([Type.Literal('none'), Type.Literal('low'), Type.Literal('medium'),
         Type.Literal('high'), Type.Literal('urgent')])) }), input => ({
       method: 'POST', path: '/api/v1/work-items', body: workItemInputSchema.parse(input),
@@ -266,13 +287,14 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
     Type.Object({ workItemId: idParameter, ifMatch: Type.Integer({ minimum: 1 }),
       title: Type.Optional(Type.String({ minLength: 1, maxLength: 500 })),
       description: Type.Optional(Type.String({ maxLength: 50_000 })),
-      statusId: Type.Optional(idParameter), projectId: Type.Optional(idParameter),
+      statusId: Type.Optional(idParameter), projectId: Type.Optional(Type.Union([idParameter, Type.Null()])),
+      parentId: Type.Optional(Type.Union([idParameter, Type.Null()])), milestoneId: Type.Optional(Type.Union([idParameter, Type.Null()])),
       responsibleHumanActorId: Type.Optional(idParameter),
       priority: Type.Optional(Type.Union([Type.Literal('none'), Type.Literal('low'), Type.Literal('medium'),
         Type.Literal('high'), Type.Literal('urgent')])) }), input => {
       const parsed = z.object({ workItemId: id, ifMatch: z.number().int().positive(),
         title: z.string().min(1).max(500).optional(), description: z.string().max(50_000).optional(),
-        statusId: id.optional(), projectId: id.optional(), responsibleHumanActorId: id.optional(),
+        statusId: id.optional(), projectId: id.nullable().optional(), parentId: id.nullable().optional(), milestoneId: id.nullable().optional(), responsibleHumanActorId: id.optional(),
         priority: z.enum(['none', 'low', 'medium', 'high', 'urgent']).optional() }).parse(input)
       const { workItemId, ifMatch, ...fields } = parsed
       if (Object.keys(fields).length === 0) throw new Error('TOOL_EMPTY_ISSUE_UPDATE')
@@ -288,10 +310,30 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
       return { method: 'POST', path: `/api/v1/work-items/${parsed.workItemId}/relations`,
         body: workItemRelationInputSchema.parse({ targetWorkItemId: parsed.targetWorkItemId, kind: parsed.kind }) }
     })
-  add('workmesh_list_documents', 'listDocuments', 'List current documents for an authorized Project or Issue.',
-    Type.Object({ ownerType: ownerParameter, ownerId: idParameter }), input => {
-      const { ownerType, ownerId } = z.object({ ownerType: z.enum(['project', 'work_item']), ownerId: id }).parse(input)
-      return { method: 'GET', path: `/api/v1/documents?ownerType=${ownerType}&ownerId=${ownerId}&limit=50` }
+  add('workmesh_create_milestone', 'createProjectMilestone', 'Create a structured milestone in an authorized Project.',
+    Type.Object({ projectId: idParameter, name: Type.String({ minLength: 1, maxLength: 180 }), description: Type.Optional(Type.String({ maxLength: 10000 })), targetDate: Type.Optional(Type.String({ format: 'date' })) }), input => {
+      const { projectId, ...body } = z.object({ projectId: id, name: z.string().min(1).max(180), description: z.string().max(10000).optional(), targetDate: z.string().date().optional() }).strict().parse(input)
+      return { method: 'POST', path: `/api/v1/projects/${projectId}/milestones`, body }
+    })
+  add('workmesh_update_milestone', 'updateMilestone', 'Update a milestone using its current revision.',
+    Type.Object({ milestoneId: idParameter, ifMatch: Type.Integer({ minimum: 1 }), name: Type.Optional(Type.String({ minLength: 1, maxLength: 180 })), description: Type.Optional(Type.Union([Type.String({ maxLength: 10000 }),Type.Null()])), targetDate: Type.Optional(Type.Union([Type.String({ format: 'date' }),Type.Null()])) }), input => {
+      const { milestoneId, ifMatch, ...body } = z.object({ milestoneId: id, ifMatch: z.number().int().positive(), name: z.string().min(1).max(180).optional(), description: z.string().max(10000).nullable().optional(), targetDate: z.string().date().nullable().optional() }).strict().parse(input)
+      return { method: 'PATCH', path: `/api/v1/milestones/${milestoneId}`, body, ifMatch }
+    })
+  add('workmesh_delete_milestone', 'deleteMilestone', 'Delete an empty authorized milestone at its current revision.',
+    Type.Object({ milestoneId: idParameter, ifMatch: Type.Integer({ minimum: 1 }) }), input => {
+      const { milestoneId, ifMatch } = z.object({ milestoneId: id, ifMatch: z.number().int().positive() }).strict().parse(input)
+      return { method: 'DELETE', path: `/api/v1/milestones/${milestoneId}`, ifMatch }
+    })
+  add('workmesh_delete_work_item_relation', 'deleteWorkItemRelation', 'Remove an authorized relation at its current revision.',
+    Type.Object({ workItemId: idParameter, relationId: idParameter, ifMatch: Type.Integer({ minimum: 1 }) }), input => {
+      const { workItemId, relationId, ifMatch } = z.object({ workItemId: id, relationId: id, ifMatch: z.number().int().positive() }).strict().parse(input)
+      return { method: 'DELETE', path: `/api/v1/work-items/${workItemId}/relations/${relationId}`, ifMatch }
+    })
+  add('workmesh_list_documents', 'listDocuments', 'List authorized ordinary Documents with their native UUID cursor.',
+    Type.Object({ ownerType: ownerParameter, ownerId: idParameter, cursor: Type.Optional(idParameter), limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })) }), input => {
+      const { ownerType, ownerId, ...page } = z.object({ ownerType: z.enum(['project','work_item']), ownerId: id, cursor: id.optional(), limit: z.number().int().min(1).max(100).optional() }).strict().parse(input)
+      return { method: 'GET', path: `/api/v1/documents?ownerType=${ownerType}&ownerId=${ownerId}&${pageQuery(page)}` }
     })
   add('workmesh_get_document', 'getDocument', 'Read the exact current document revision and content hash before editing.',
     Type.Object({ documentId: idParameter }), input => {
@@ -319,20 +361,118 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
       return { method: 'PATCH', path: `/api/v1/documents/${documentId}`,
         body: updateDocumentInputSchema.parse(rest), ifMatch }
     })
+  add('workmesh_list_child_sessions', 'listAgentSessionChildren', 'Read minimal direct-child facts for this exact live parent; no child credentials or prompts.',
+    Type.Object({ ...pageParameters.properties, childSessionId: Type.Optional(idParameter) }), input => {
+      const { childSessionId, cursor, limit } = childSessionStatusQuerySchema.parse(input)
+      return { method: 'GET', path: `/api/v1/agent-sessions/${api.sessionId}/children?${pageQuery({ cursor, limit })}${childSessionId ? `&childSessionId=${childSessionId}` : ''}` }
+    })
+  const creationFields = { planStepId: idParameter, planVersionId: idParameter,
+    initialPrompt: Type.String({ minLength: 1, maxLength: 50000 }), budget: Type.Optional(Type.Record(Type.String(), Type.Number({ minimum: 0 }))) }
+  add('workmesh_create_child_session', 'createChildAgentSession', 'Create a bounded required child in the current stable Plan step; an explicit budget reduces inherited limits.',
+    Type.Object({ ...creationFields, agentId: idParameter, required: Type.Optional(Type.Boolean()), role: Type.Optional(Type.Union([Type.Literal('executor'), Type.Literal('reviewer'), Type.Literal('researcher')])) }),
+    input => ({ method: 'POST', path: `/api/v1/agent-sessions/${api.sessionId}/children`, body: childSessionInputSchema.parse(input) }))
+  add('workmesh_create_review_delegation', 'createReviewDelegation', 'Create an independent reviewer with no plan publication capability. Explicitly reduce all constrained budget dimensions to fit remaining reservations.',
+    Type.Object({ ...creationFields, reviewerAgentId: idParameter, ttlSeconds: Type.Optional(Type.Integer({ minimum: 10, maximum: 3600 })) }),
+    input => ({ method: 'POST', path: `/api/v1/agent-sessions/${api.sessionId}/review-delegations`, body: reviewDelegationInputSchema.parse(input) }))
+  const pagedRead = (name: string, operation: string, prefix: string, field?: string) => {
+    add(name, operation, 'Read authorized facts with complete pagination; reads never add activity.',
+      Type.Object({ ...pageParameters.properties, ...(field ? { [field]: idParameter } : {}) }), input => {
+        const parsed: Record<string, unknown> = z.object({ ...(field ? { [field]: id } : {}), limit: z.number().int().min(1).max(200).optional(), cursor: z.string().max(8192).optional() }).strict().parse(input)
+        const resource = field ? id.parse(parsed[field]) : undefined
+        const { [field ?? 'unused']: _resource, ...page } = parsed
+        return { method: 'GET', path: `${prefix.replace('{id}', resource ?? '')}?${pageQuery(page)}` }
+      })
+  }
+  pagedRead('workmesh_list_work_item_comments', 'listWorkItemComments', '/api/v1/work-items/{id}/comments', 'workItemId')
+  pagedRead('workmesh_list_project_milestones', 'listProjectMilestones', '/api/v1/projects/{id}/milestones', 'projectId')
+  pagedRead('workmesh_list_work_item_relations', 'listWorkItemRelations', '/api/v1/work-items/{id}/relations', 'workItemId')
+  pagedRead('workmesh_list_handoffs', 'listHandoffs', '/api/v1/handoffs')
+  add('workmesh_list_inbox_items','listInbox','Read authorized Inbox metadata, including resolved items, with complete pagination.',
+    Type.Object({ ...pageParameters.properties, status: Type.Optional(Type.Union([Type.Literal('open'),Type.Literal('resolved')])) }), input => {
+      const { status, ...page } = z.object({ status: z.enum(['open','resolved']).optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() }).strict().parse(input)
+      return { method: 'GET',path: `/api/v1/inbox?${pageQuery(page)}${status?`&status=${status}`:''}` }
+    })
+  add('workmesh_list_document_history', 'listDocumentHistory', 'Read immutable Document history using its native revision-number cursor.',
+    Type.Object({ documentId: idParameter, cursor: Type.Optional(Type.String({ pattern: '^[1-9][0-9]*$' })), limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })) }), input => {
+      const { documentId, ...page } = z.object({ documentId: id, cursor: z.string().regex(/^[1-9][0-9]*$/).optional(), limit: z.number().int().min(1).max(100).optional() }).strict().parse(input)
+      return { method: 'GET', path: `/api/v1/documents/${documentId}/history?${pageQuery(page)}` }
+    })
+  add('workmesh_get_document_revision', 'getDocumentRevision', 'Read an authorized immutable Document revision.',
+    Type.Object({ documentId: idParameter, revisionId: idParameter }), input => {
+      const body = z.object({ documentId: id, revisionId: id }).strict().parse(input)
+      return { method: 'GET', path: `/api/v1/documents/${body.documentId}/revisions/${body.revisionId}` }
+    })
+  add('workmesh_diff_document_revisions', 'diffDocumentRevisions', 'Compare authorized immutable Document revisions.',
+    Type.Object({ documentId: idParameter, fromRevisionId: idParameter, toRevisionId: idParameter }), input => {
+      const { documentId, ...query } = z.object({ documentId: id, fromRevisionId: id, toRevisionId: id }).strict().parse(input)
+      return { method: 'GET', path: `/api/v1/documents/${documentId}/diff?${new URLSearchParams(query)}` }
+    })
+  add('workmesh_export_document_markdown', 'exportDocumentMarkdown', 'Read authorized Markdown as text.',
+    Type.Object({ documentId: idParameter, revisionId: Type.Optional(idParameter) }), input => {
+      const { documentId, revisionId } = z.object({ documentId: id, revisionId: id.optional() }).strict().parse(input)
+      return { method: 'GET', path: `/api/v1/documents/${documentId}/export${revisionId ? `?revisionId=${revisionId}` : ''}` }
+    })
+  add('workmesh_restore_document_revision', 'restoreDocumentRevision', 'Restore a revision by appending a new revision; current revision and content hash must match.',
+    Type.Object({ documentId: idParameter, ifMatch: Type.Integer({ minimum: 1 }), revisionId: idParameter, baseRevisionId: idParameter, baseContentHash: Type.String({ pattern: '^sha256:[a-f0-9]{64}$' }), changeSummary: Type.String({ minLength: 1, maxLength: 500 }) }), input => {
+      const { documentId, ifMatch, ...body } = z.object({ documentId: id, ifMatch: z.number().int().positive(), revisionId: id, baseRevisionId: id, baseContentHash: z.string(), changeSummary: z.string() }).strict().parse(input)
+      return { method: 'POST', path: `/api/v1/documents/${documentId}/restore`, ifMatch, body: restoreDocumentRevisionInputSchema.parse(body) }
+    })
+  for (const scope of ['workspace','team','project'] as const)
+    add(`workmesh_get_${scope}_guidance`, `get${scope[0]!.toUpperCase()}${scope.slice(1)}Guidance`, 'Read published Guidance. Publication remains Human-only.',
+      Type.Object({ scopeId: idParameter }), input => ({ method: 'GET', path: `/api/v1/${scope}s/${z.object({ scopeId: id }).strict().parse(input).scopeId}/guidance` }))
+  for (const [name, operation, path, field] of [
+    ['workmesh_get_milestone','getMilestone','/api/v1/milestones/','milestoneId'],
+    ['workmesh_get_decision','getDecision','/api/v1/decisions/','decisionId'],
+    ['workmesh_get_inbox_item','getInboxItem','/api/v1/inbox/','inboxItemId'],
+  ] as const) add(name, operation, 'Read one authorized resource.', Type.Object({ [field]: idParameter }), input => ({ method: 'GET', path: path+z.object({ [field]: id }).strict().parse(input)[field] }))
+  for (const [scope, field, operation] of [['work_item','workItemId','createWorkItemDecision'],['project','projectId','createProjectDecision'],['session','sessionId','createSessionDecision']] as const)
+    add(`workmesh_create_${scope}_decision`, operation, 'Propose a Decision; Human-only finalization is never available here.',
+      Type.Object({ ...(scope === 'session' ? {} : { [field]: idParameter }), title: Type.String({ minLength: 1, maxLength: 500 }), rationale: Type.String({ minLength: 1, maxLength: 20000 }), options: Type.Optional(Type.Array(Type.String())), evidence: Type.Optional(Type.Array(Type.String())), selectedOption: Type.Optional(Type.String()), affectedResources: Type.Optional(Type.Array(Type.Object({ resourceType: Type.String(), resourceId: idParameter }))) }), input => {
+        const parsed: Record<string, unknown> = z.object({ ...(scope === 'session' ? {} : { [field]: id }), title: z.string(), rationale: z.string(), options: z.array(z.string()).optional(), evidence: z.array(z.string()).optional(), selectedOption: z.string().optional(), affectedResources: decisionInputSchema.shape.affectedResources }).strict().parse(input)
+        const { [field]: target, ...body } = parsed
+        return { method: 'POST', path: `/api/v1/${scope === 'session' ? 'agent-sessions' : scope === 'project' ? 'projects' : 'work-items'}/${scope === 'session' ? api.sessionId : id.parse(target)}/decisions`, body: decisionInputSchema.parse(body) }
+      })
+  add('workmesh_get_work_room', 'getWorkRoom', 'Read the authorized room metadata; room timeline stays Human-only.',
+    Type.Object({ workItemId: Type.Optional(idParameter), projectId: Type.Optional(idParameter) }), input => {
+      const query = z.object({ workItemId: id.optional(), projectId: id.optional() }).strict().parse(input)
+      const params = new URLSearchParams(query.workItemId ? { workItemId: query.workItemId } : query.projectId ? { projectId: query.projectId } : { sessionId: api.sessionId })
+      return { method: 'GET', path: `/api/v1/rooms?${params}` }
+    })
+  add('workmesh_send_room_message', 'postWorkRoomMessage', 'Send a visible Room message as this Session. Reviewers must publish their own review_result.',
+    Type.Object({ roomId: idParameter, intent: Type.String(), body: Type.String({ minLength: 1, maxLength: 50000 }), recipientActorId: Type.Optional(idParameter), recipientSessionId: Type.Optional(idParameter), recipientActorIds: Type.Optional(Type.Array(idParameter,{minItems:1,maxItems:50})),recipientSessionIds: Type.Optional(Type.Array(idParameter,{minItems:1,maxItems:50})),threadId: Type.Optional(idParameter),payload: Type.Optional(Type.Record(Type.String(),Type.Unknown())),replyToMessageId: Type.Optional(idParameter), requiresResponse: Type.Optional(Type.Boolean()) }), input => {
+      const { roomId, ...body } = z.object({ roomId: id, intent: z.string(), body: z.string(), recipientActorId: id.optional(), recipientSessionId: id.optional(), recipientActorIds: z.array(id).optional(),recipientSessionIds: z.array(id).optional(),threadId: id.optional(),payload: z.record(z.unknown()).optional(),replyToMessageId: id.optional(), requiresResponse: z.boolean().optional() }).strict().parse(input)
+      return { method: 'POST', path: `/api/v1/rooms/${roomId}/messages`, body: roomMessageInputSchema.parse({ ...body, sessionId: api.sessionId }) }
+    })
+  for (const action of ['claim','acknowledge'] as const) add(`workmesh_${action}_inbox_item`, action === 'claim' ? 'claimInboxItem' : 'acknowledgeInboxItem', 'Perform the exact Session Inbox action; metadata is not a claim.',
+    Type.Object({ inboxItemId: idParameter }), input => {
+      const { inboxItemId } = z.object({ inboxItemId: id }).strict().parse(input)
+      return { method: 'POST', path: `/api/v1/inbox/${inboxItemId}/${action}`, body: {} }
+    })
+  add('workmesh_reply_inbox_item','replyInboxItem','Reply as the exact recipient/claimant Session.',
+    Type.Object({ inboxItemId: idParameter, ifMatch: Type.Integer({ minimum: 1 }), body: Type.String({ minLength: 1, maxLength: 50000 }) }), input => {
+      const { inboxItemId, ifMatch, ...body } = z.object({ inboxItemId: id, ifMatch: z.number().int().positive(), body: z.string().min(1).max(50000) }).strict().parse(input)
+      return { method: 'POST', path: `/api/v1/inbox/${inboxItemId}/reply`, body, ifMatch }
+    })
+  add('workmesh_request_handoff', 'requestHandoff', 'Request a source Handoff; acceptance is a Human action.',
+    Type.Object({ handoffId: idParameter, reason: Type.Optional(Type.String()) }), input => {
+      const { handoffId, ...body } = z.object({ handoffId: id, reason: z.string().optional() }).strict().parse(input)
+      return { method: 'POST', path: `/api/v1/handoffs/${handoffId}/request`, body }
+    })
   add('workmesh_publish_artifact', 'publishArtifact',
     'Publish a referenced result or evidence for this exact Session. An artifact is a durable record, not an approval.',
-    Type.Object({ type: Type.Union([Type.Literal('commit'), Type.Literal('pull_request'),
+    Type.Object({ type: reviewer ? Type.Literal('code_review') : Type.Union([Type.Literal('code_review'), Type.Literal('commit'), Type.Literal('pull_request'),
       Type.Literal('test_report'), Type.Literal('document'), Type.Literal('link'),
       Type.Literal('file'), Type.Literal('other')]),
       title: Type.String({ minLength: 1, maxLength: 500 }),
+      metadata: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
       uri: Type.Optional(Type.String({ format: 'uri' })),
       checksum: Type.Optional(Type.String({ pattern: '^sha256:[a-f0-9]{64}$' })) }), input => {
-      const parsed = z.object({ type: z.enum(['commit', 'pull_request', 'test_report', 'document',
-        'link', 'file', 'other']), title: z.string().min(1).max(500), uri: z.string().url().optional(),
-        checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/).optional() }).parse(input)
+      const parsed = z.object({ type: (reviewer ? z.literal('code_review') : z.enum(['code_review', 'commit', 'pull_request', 'test_report', 'document',
+        'link', 'file', 'other'])), title: z.string().min(1).max(500), uri: z.string().url().optional(),
+        checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/).optional(), metadata: z.record(z.unknown()).optional() }).parse(input)
       return { method: 'POST', path: '/api/v1/artifacts',
         body: artifactInputSchema.parse({ sessionId: api.sessionId, ...parsed,
-          sourceTool: 'pi-workmesh-tool', metadata: {} }) }
+          sourceTool: 'pi-workmesh-tool', metadata: parsed.metadata ?? {} }) }
     })
   add('workmesh_request_approval', 'requestApproval',
     'Request human approval for a concrete action. Sanitize and hash the action payload. This tool cannot decide an approval.',

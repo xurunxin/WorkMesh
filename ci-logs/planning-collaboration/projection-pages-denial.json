@@ -1,0 +1,54 @@
+{
+  "first": {
+    "items": [
+      {
+        "id": "a99288ac-58ed-4675-b746-924a38de4193",
+        "parentSessionId": "0291104d-eed0-4943-8793-819e42d53bd4",
+        "requiredForParent": true,
+        "state": "queued",
+        "revision": 1,
+        "planStepId": "3fa4ca64-1ada-4d79-b2ed-1fc69fa1ea86",
+        "planVersionId": "562f58e5-9bf6-4e32-bf87-085caf7fc7d0",
+        "resultArtifactIds": []
+      }
+    ],
+    "nextCursor": "eyJhY3RvcklkIjoiM2EyYjNhNjAtZTIxNi00MGQ5LWJkODktZjkzZTlmOTI0ZGRhIiwiZXhwIjoxNzkxNTk4OTM2LCJmaWx0ZXJIYXNoIjoiYjFmMDM1M2IzM2E2YWZhYmIyNzUzY2FhN2UzOGVkNTE1ZjcyZGNjNzg0OWYxNWYyNmMzMGE0ZjBiNWJhZWIyNyIsImlhdCI6MTc5MTU5ODAzNiwia2lkIjoiZGV2LWVwaGVtZXJhbCIsInJvdXRlIjoiL2FwaS92MS9hZ2VudC1zZXNzaW9ucy86aWQvY2hpbGRyZW4iLCJzb3J0IjoiY3JlYXRlZF9hdDpERVNDLGlkOkRFU0MiLCJ2IjoxLCJ2YWx1ZXMiOlsiMjAyNi0xMC0xMFQwMjowNzoxNi44ODUyMjgrMDA6MDAiLCJhOTkyODhhYy01OGVkLTQ2NzUtYjc0Ni05MjRhMzhkZTQxOTMiXSwid29ya3NwYWNlSWQiOiIwNzU3MjYxNy1mOWQ3LTQyNmUtODFmNC0zMDlkMjRkN2RiNzYifQ.TL2-1ozswsrBrCuiXCRbnd6bntaQiPjKdWGZ2jIIbWs"
+  },
+  "second": {
+    "items": [
+      {
+        "id": "b794eef5-6f4f-4daa-bf55-ce006394d3cf",
+        "parentSessionId": "0291104d-eed0-4943-8793-819e42d53bd4",
+        "requiredForParent": true,
+        "state": "queued",
+        "revision": 1,
+        "planStepId": "3fa4ca64-1ada-4d79-b2ed-1fc69fa1ea86",
+        "planVersionId": "562f58e5-9bf6-4e32-bf87-085caf7fc7d0",
+        "resultArtifactIds": []
+      },
+      {
+        "id": "7dccdb85-bebf-4c32-b9d0-89237bb178d8",
+        "parentSessionId": "0291104d-eed0-4943-8793-819e42d53bd4",
+        "requiredForParent": true,
+        "state": "queued",
+        "revision": 1,
+        "planStepId": "3fa4ca64-1ada-4d79-b2ed-1fc69fa1ea86",
+        "planVersionId": "562f58e5-9bf6-4e32-bf87-085caf7fc7d0",
+        "resultArtifactIds": []
+      }
+    ],
+    "nextCursor": null
+  },
+  "before": {
+    "events": "83",
+    "outbox": "83",
+    "activities": "4",
+    "inbox": "0"
+  },
+  "after": {
+    "events": "83",
+    "outbox": "83",
+    "activities": "4",
+    "inbox": "0"
+  }
+}

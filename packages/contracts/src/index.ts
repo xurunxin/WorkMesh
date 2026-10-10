@@ -1,4 +1,7 @@
 import { z } from 'zod'
+import { childBudgetInputSchema } from './child-session-contracts.js'
+import { leaseResponseSchema } from './execution-contracts.js'
+export * from './child-session-contracts.js'
 import { qualifiedDiscoverySchema, deriveOperationEligibility, type DiscoveryFacts } from './agent-discovery.js'
 import {
   agentLifecycleStatusSchema,
@@ -186,6 +189,11 @@ export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: 
 export const workItemRelationKindSchema = z.enum(['blocks', 'related'])
 export const workItemRelationInputSchema = z.object({ targetWorkItemId: idSchema, kind: workItemRelationKindSchema }).strict()
 export const commentInputSchema = z.object({ body: z.string().min(1).max(50000), parentCommentId: idSchema.optional(), replyToCommentId: idSchema.optional(), mentions: z.array(idSchema).max(20).default([]) })
+export const decisionResponseSchema = z.object({ id: idSchema, title: z.string(), rationale: z.string(), status: z.string() }).passthrough()
+export const handoffResponseSchema = z.object({ id: idSchema, from_session_id: idSchema, status: z.string() }).passthrough()
+export type CommentResponse = z.infer<typeof commentResponseSchema>
+export type DecisionResponse = z.infer<typeof decisionResponseSchema>
+export type HandoffResponse = z.infer<typeof handoffResponseSchema>
 export const commentPatchSchema = z.object({ body: z.string().min(1).max(50000).optional(), isResolved: z.boolean().optional(), deleted: z.boolean().optional() })
 export const savedViewFiltersSchema = z.record(z.unknown())
 export const savedViewInputSchema = z.object({ name: z.string().min(1).max(80), teamId: idSchema.optional(), filters: savedViewFiltersSchema.default({}), layout: savedViewLayoutSchema.default('list') })
@@ -1248,6 +1256,16 @@ export const agentSessionResponseSchema = z.object({
   created_at: timestampSchema, updated_at: timestampSchema,
 })
 export const delegateAndStartAgentSessionResponseSchema = z.object({ delegation: delegationResponseSchema, session: agentSessionResponseSchema })
+export const childAgentSessionResponseSchema = agentSessionResponseSchema.extend({
+  parent_session_id: idSchema, plan_step_version_id: idSchema, required_for_parent: z.boolean(),
+  inherited_budget: childBudgetInputSchema, max_child_sessions: z.number().int().nonnegative(),
+  budget: childBudgetInputSchema,
+}).passthrough()
+export const reviewDelegationResponseSchema = z.object({
+  session: childAgentSessionResponseSchema, lease: leaseResponseSchema,
+}).passthrough()
+export type ChildAgentSession = z.infer<typeof childAgentSessionResponseSchema>
+export type ReviewDelegationResponse = z.infer<typeof reviewDelegationResponseSchema>
 export const claimWorkItemResponseSchema = z.object({
   delegation: delegationResponseSchema,
   session: agentSessionResponseSchema,
@@ -1694,6 +1712,7 @@ export const stage2RouteManifest = [
   { method: 'POST', path: '/api/v1/leases/{id}/force-release', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/plan/comments', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/assignment-proposals', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/agent-sessions/{id}/children', authenticated: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/children', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/context-deltas', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/review-delegations', authenticated: true, mutation: true },

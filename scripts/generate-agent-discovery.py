@@ -83,6 +83,16 @@ for operation in m1['operations']:
                          mode=['read-only', 'read-write'] if operation['rest']['method'] == 'GET' else ['read-write'],
                          coordination=False, identityBinding='installation_target' if confirmation else 'explicit_identity_variants',
                          targetParameter=target, variant=None, identityVariants=variants))
+# M2 preserves frozen inputs and applies the reviewed consumer increment.
+m2 = json.loads((root / 'docs/plan/agent-mcp-m2/product-discovery-decisions.json').read_text(encoding='utf-8'))
+rule_by_id = {rule['operationId']: rule for rule in rules}
+for rule in m2['rules']:
+    rule_by_id[rule['operationId']] = rule
+rules = list(rule_by_id.values())
+binding_by_id = {binding['bindingId']: binding for binding in bindings}
+for binding in m2['bindings']:
+    binding_by_id[binding['bindingId']] = binding
+bindings = list(binding_by_id.values())
 output = '// 由 scripts/generate-agent-discovery.py 从已独审清单生成；修改规则须先核授权源码。\n'
 output += "import type { DiscoveryRule, DiscoveryBindingRule } from './agent-discovery.js'\n\n"
 for name, data, type_name in [('agentDiscoveryRules', rules, 'DiscoveryRule'), ('agentDiscoveryBindings', bindings, 'DiscoveryBindingRule')]:

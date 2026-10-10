@@ -1,7 +1,7 @@
 # 父读子最小状态投影与有界 reviewer 创建
 
 Status
-Proposed。仅规划候选；另一 Agent 独审 blocking／high 闭合并经 Chief confirm 后实施。
+Accepted。规划候选独审三项 blocking 已闭合且无新增 blocking/high；按用户明确执行已审方案的指令实施。产品成果验收与规划审查分开。
 
 Context
 ADR0017 已定义两种创建、稳定 step、有限能力及预算；当前 agent/routes.ts 的 get/list 仅准自身。collaboration/routes.ts 的 createChild 有父／step 限额和 reservation，createReview 仅目标并发、继承预算和 review_shared Lease，父无法靠通用 get 确认子终态。commands.ts 的 finishSessionInTransaction 已要求 required 子 completed 及 reviewer 本人双证据，不重写该门禁。
@@ -25,4 +25,4 @@ Migration
 复用现有表、索引、字段，无新 migration、backfill 或事件类型；上一阶段和 clean 数据库照常回归，SQL 执行计划须验证现有 parent_session_id／Plan 索引满足有界查询。查询按 cursor 分页且限制返回数量；不声称必须新索引。无法证明的历史 child 不猜测绑定，不授正文权。
 
 Spec changes
-本轮只有 Proposed ADR 和 M2 目录草案，AGENT_PROTOCOL.md、OPENAPI.yaml、SCHEMA.sql、产品源码不变。实施门禁通过后将投影 DTO 写入 contracts／OpenAPI／协议，将 M2 discovery 增量合成现行 policy、SDK、MCP、Runner、conformance；原 #53/M0/M1 冻结证据保持不变。
+投影 DTO 写入 contracts／OpenAPI／协议；M2 discovery 增量合成现行 policy、SDK、MCP、Runner、conformance。无 Schema 或 migration 变更；原 #53/M0/M1 和 M2 规划候选原件保全，产品检查另行记录。

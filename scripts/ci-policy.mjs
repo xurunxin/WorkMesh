@@ -42,8 +42,8 @@ export function validateMcpConformanceEntrypoints({ job, rootScripts, packageScr
   require(rootScripts['test:integration']?.includes('pnpm test:conformance:integration'), 'Root integration must run real conformance')
   require(rootScripts['test:conformance:integration'] === 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration', 'MCP fixture must be checked and reset before execution')
   require(packageScripts['test:integration'] === 'vitest run --config vitest.integration.config.ts', 'Real conformance must use its dedicated config')
-  require(integrationConfig.includes("'src/mcp-coverage.conformance.test.ts'") && integrationConfig.includes("'src/execution-recovery.conformance.test.ts'") && integrationConfig.includes('passWithNoTests: false') && integrationConfig.includes('fileParallelism: false'), 'Real conformance must be explicit, nonempty and serial')
-  require(unitConfig.includes('**/mcp-coverage.conformance.test.ts') && unitConfig.includes('**/execution-recovery.conformance.test.ts'), 'Real conformance must be excluded from memory units')
+  require(integrationConfig.includes("'src/mcp-coverage.conformance.test.ts'") && integrationConfig.includes("'src/execution-recovery.conformance.test.ts'") && integrationConfig.includes("'src/planning-collaboration.conformance.test.ts'") && integrationConfig.includes("'src/planning-collaboration.conformance.test.ts'") && integrationConfig.includes('passWithNoTests: false') && integrationConfig.includes('fileParallelism: false'), 'Real conformance must be explicit, nonempty and serial')
+  require(unitConfig.includes('**/mcp-coverage.conformance.test.ts') && unitConfig.includes('**/execution-recovery.conformance.test.ts') && unitConfig.includes('**/planning-collaboration.conformance.test.ts') && unitConfig.includes('**/planning-collaboration.conformance.test.ts'), 'Real conformance must be excluded from memory units')
   return failures
 }
 

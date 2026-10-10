@@ -81,7 +81,7 @@ export class RunnerApi {
   }
   async request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
     body?: unknown, ifMatch?: number, explicitIdempotencyKey?: string): Promise<T> {
-    if (!this.#closed && (!this.#sessionToken || this.#expiresAt - Date.now() < 60_000)) await this.#refresh()
+    if (!this.#closed && !/\/children(?:\?|$)/.test(path) && (!this.#sessionToken || this.#expiresAt - Date.now() < 60_000)) await this.#refresh()
     if (!this.#sessionToken) throw new Error('RUNNER_EXECUTION_TOKEN_UNAVAILABLE')
     const idempotencyKey = explicitIdempotencyKey ?? randomUUID()
     const send = () => fetch(new URL(path, this.#baseUrl), {
@@ -96,7 +96,7 @@ export class RunnerApi {
     if (!response.ok) {
       throw await runnerResponseError(response, `HTTP_${response.status}`)
     }
-    return response.json() as Promise<T>
+    return (response.headers.get('content-type')?.startsWith('text/markdown') ? response.text() : response.json()) as Promise<T>
   }
 
   // Cleanup runs outside model tools and never refreshes or changes the held E credential.
@@ -226,6 +226,7 @@ export function removeScratch(rootPath: string): void {
 
 export async function runPi(api: RunnerApi, credential: Credential, attemptId: string, shutdown: AbortSignal): Promise<{
   answer: string; toolCalls: number; toolNames: string[]
+  usage?: { inputTokens: number; outputTokens: number; cacheReadTokens: number; totalTokens: number }
   toolInvocations: Array<{ toolName: string; callCount: number; sanitizedInputSummary: string }>
   completionIntent?: SessionCompletionIntent
   waitIntent?: SessionWaitIntent
@@ -361,9 +362,13 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
         if (lifecycle.exit !== 'wait') throw error
       }
       await session.waitForIdle()
+      const tokens = session.getSessionStats().tokens
+      // Preserve provider-reported usage; absent reporting is not measured zero.
+      const usage = tokens.total > 0 ? { inputTokens: tokens.input, outputTokens: tokens.output,
+        cacheReadTokens: tokens.cacheRead, totalTokens: tokens.total } : undefined
       if (lifecycle.exit === 'wait' && waitIntent) {
         if (!lifecycle.reconciled) throw new Error('RUNNER_WAIT_EFFECTS_UNRECONCILED')
-        return { answer: waitIntent.reason, toolCalls, toolNames,
+        return { answer: waitIntent.reason, toolCalls, toolNames, usage,
           toolInvocations: [...toolInvocationCounts.entries()].map(([toolName, callCount]) => ({
             toolName, callCount, sanitizedInputSummary: toolInvocationSummaries.get(toolName) ?? 'no arguments' })), waitIntent }
       }
@@ -374,7 +379,7 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
         toolName, callCount,
         sanitizedInputSummary: toolInvocationSummaries.get(toolName) ?? 'no arguments',
       }))
-      return { answer, toolCalls, toolNames, toolInvocations, ...(completionIntent ? { completionIntent } : {}) }
+      return { answer, toolCalls, toolNames, toolInvocations, usage, ...(completionIntent ? { completionIntent } : {}) }
     } finally {
       shutdown.removeEventListener('abort', onShutdown)
       // prompt can reject during Stop before the normal waitForIdle path. Pi's
@@ -417,12 +422,13 @@ export async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: Abor
     fenceToken = credential.fenceToken
     await api.request('POST', `/api/v1/workbench/runner-attempts/${attemptId}/start`, { fenceToken }, undefined, `runner-start-${attemptId}`)
     started = true
-    const { answer, toolCalls, toolNames, toolInvocations, completionIntent, waitIntent } = await runPi(api, credential, attemptId, shutdown)
+    const { answer, toolCalls, toolNames, toolInvocations, usage, completionIntent, waitIntent } = await runPi(api, credential, attemptId, shutdown)
     const settlePath = `/api/v1/workbench/runner-attempts/${attemptId}/settle`
     const settledTurn = {
       fenceToken, assistantMessageMarkdown: answer,
       settlement: { outcome: 'settled', summaryMarkdown: 'Pi completed the WorkMesh turn.',
-        noArtifactReason: 'Text-only answer; no artifact was produced.', externalEffectsReconciled: true },
+        noArtifactReason: 'Text-only answer; no artifact was produced.', externalEffectsReconciled: true,
+        ...(usage ? { usage } : {}) },
       toolInvocations,
     } as const
     const sendSettle = (body: unknown, key: string) =>

@@ -15,7 +15,7 @@ export default defineConfig({
   esbuild: { jsx: 'automatic' },
   test: {
     include: ['**/*.test.ts', '**/*.test.tsx'],
-    exclude: ['**/node_modules/**', '**/integration/**', '**/mcp-coverage.conformance.test.ts', '**/execution-recovery.conformance.test.ts'],
+    exclude: ['**/node_modules/**', '**/integration/**', '**/mcp-coverage.conformance.test.ts', '**/execution-recovery.conformance.test.ts', '**/planning-collaboration.conformance.test.ts'],
     setupFiles: localVitestSetup(),
     passWithNoTests: true,
     // Turbo runs every package's suite in parallel, and each suite was asking

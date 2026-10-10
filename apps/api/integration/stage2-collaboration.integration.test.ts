@@ -250,6 +250,64 @@ describe('Stage 2 collaboration API acceptance', () => {
   afterEach(restoreSessionSubjectConstraint)
   afterAll(async () => { await app.close(); await db.end() })
 
+  it('M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读', async () => {
+    const f = await makeFixture()
+    const child = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/children`, {
+      agentId: f.reviewer.id, planStepId: f.stepB, planVersionId: f.planVersionId, initialPrompt: 'Private child prompt', budget: { maxInputTokens: 60, maxRuntimeSeconds: 100 },
+    })
+    expect(child.statusCode, JSON.stringify(child.json())).toBe(200)
+    const childId = child.json<{ id: string }>().id
+    const revision = (await db.query<{ revision: number }>('SELECT revision FROM agent_sessions WHERE id=$1', [f.parent.id])).rows[0]!.revision
+    for (const state of ['queued','acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked','paused','stopping','stale','failed','canceled']) {
+      // Privileged state setup isolates the completion gate; not an advertised transition.
+      await db.query("UPDATE agent_sessions SET state=$2,ended_at=CASE WHEN $2 IN ('completed','failed','canceled') THEN clock_timestamp() ELSE NULL END WHERE id=$1", [childId,state])
+      const blocked = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/complete`, { summary: 'Incomplete child', noArtifactReason: 'Gate verification' }, { 'if-match': `"revision-${revision}"` })
+      expect(blocked.statusCode).toBe(409)
+      expect(blocked.json()).toMatchObject({ error: { code: 'COMPLETION_PLAN_INCOMPLETE', details: { blockerSessionIds: [childId] } } })
+    }
+    const newPlan = await agentCall(f.parentToken, 'PUT', `/api/v1/agent-sessions/${f.parent.id}/plan`, { changeSummary: 'Keep stable step across versions', steps: [
+      { id: f.stepB, title: 'Stable B', ordinal: 0, dependsOn: [], acceptanceCriteria: [], expectedArtifacts: [], status: 'pending' },
+    ] }, { 'if-match': `"revision-${revision}"` })
+    expect(newPlan.statusCode).toBe(200)
+    await db.query("UPDATE agent_sessions SET state='completed',ended_at=clock_timestamp() WHERE id=$1", [childId])
+    const status = await agentCall(f.parentToken, 'GET', `/api/v1/agent-sessions/${f.parent.id}/children?childSessionId=${childId}`)
+    expect(status.statusCode, JSON.stringify(status.json())).toBe(200)
+    expect(status.json()).toMatchObject({ items: [{ id: childId, state: 'completed', planStepId: f.stepB, planVersionId: f.planVersionId }] })
+    expect(JSON.stringify(status.json())).not.toMatch(/Private child prompt|token|prompt/)
+    const human = await humanCall(f.human, 'GET', `/api/v1/agent-sessions/${f.parent.id}/children`)
+    expect(human.statusCode).toBe(403)
+    await db.query('UPDATE agent_team_access SET revoked_at=clock_timestamp() WHERE agent_id=$1 AND team_id=$2', [f.runner.id,f.teamId])
+    expect((await agentCall(f.parentToken, 'GET', `/api/v1/agent-sessions/${f.parent.id}/children`)).statusCode).not.toBe(200)
+  })
+
+  it('M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚', async () => {
+    const f = await makeFixture()
+    const keyA = randomUUID(), keyB = randomUUID()
+    const childBody = { agentId: f.overflow.id, planStepId: f.stepB, planVersionId: f.planVersionId, initialPrompt: 'Concurrent child', budget: { maxInputTokens: 130, maxRuntimeSeconds: 300 } }
+    const reviewBody = { reviewerAgentId: f.reviewer.id, planStepId: f.stepC, planVersionId: f.planVersionId, initialPrompt: 'Concurrent review', budget: { maxInputTokens: 130, maxRuntimeSeconds: 300 } }
+    const responses = await Promise.all([
+      agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/children`, childBody, { 'idempotency-key': keyA }),
+      agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/review-delegations`, reviewBody, { 'idempotency-key': keyB }),
+    ])
+    expect(responses.map(response=>response.statusCode).sort()).toEqual([200,409])
+    expect(responses.find(response=>response.statusCode===409)!.json()).toMatchObject({ error: { code: 'CHILD_BUDGET_EXCEEDED' } })
+    const winner = responses[0]!.statusCode===200 ? 0 : 1
+    const replay = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/${winner===0?'children':'review-delegations'}`, winner===0?childBody:reviewBody, { 'idempotency-key': winner===0?keyA:keyB })
+    expect(replay.statusCode).toBe(200); expect(replay.json()).toEqual(responses[winner]!.json())
+    expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM session_budget_reservations WHERE parent_session_id=$1', [f.parent.id])).rows[0]!.count).toBe(1)
+    const facts = async () => (await db.query(`SELECT (SELECT count(*) FROM agent_sessions)::text AS sessions,(SELECT count(*) FROM delegations)::text AS delegations,(SELECT count(*) FROM session_budget_reservations)::text AS reservations,(SELECT count(*) FROM leases)::text AS leases,(SELECT count(*) FROM domain_events)::text AS events,(SELECT count(*) FROM outbox_events)::text AS outbox`)).rows[0]
+    const before = await facts()
+    await db.query("CREATE FUNCTION m2_fail_outbox() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'M2 forced outbox failure'; END $$")
+    await db.query('CREATE TRIGGER m2_fail_outbox BEFORE INSERT ON outbox_events FOR EACH ROW EXECUTE FUNCTION m2_fail_outbox()')
+    try {
+      const failed = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/children`, { ...childBody, agentId: f.runner.id, budget: { maxInputTokens: 1, maxRuntimeSeconds: 1 } })
+      expect(failed.statusCode).toBe(500); expect(await facts()).toEqual(before)
+    } finally {
+      await db.query('DROP TRIGGER m2_fail_outbox ON outbox_events')
+      await db.query('DROP FUNCTION m2_fail_outbox()')
+    }
+  })
+
   it('coordinates exclusive and shared leases, child budgets, and durable parent blocking', async () => {
     const f = await makeFixture()
     const workRevision = (await db.query<{revision:number}>('SELECT revision FROM work_items WHERE id=$1',[f.workItemId])).rows[0]!.revision
@@ -285,7 +343,7 @@ describe('Stage 2 collaboration API acceptance', () => {
     await durableEvent('lease.acquired', first.json<{ id: string }>().id)
     await durableEvent('lease.acquired', second.json<{ id: string }>().id)
 
-    const review = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/review-delegations`, { reviewerAgentId: f.reviewer.id, planStepId: f.stepC, planVersionId: f.planVersionId, initialPrompt: 'Review C', ttlSeconds: 60 })
+    const review = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/review-delegations`, { reviewerAgentId: f.reviewer.id, planStepId: f.stepC, planVersionId: f.planVersionId, initialPrompt: 'Review C', ttlSeconds: 60, budget: { maxRuntimeSeconds: 300, maxInputTokens: 100 } })
     expect(review.statusCode, JSON.stringify(review.json())).toBe(200)
     const reviewLease = review.json<{ lease: { id: string; kind: string }; session: { id: string; required_for_parent: boolean } }>()
     expect(reviewLease.lease.kind).toBe('review_shared')

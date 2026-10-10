@@ -149,3 +149,13 @@ SDK 增加 `listSessions`、`listPlanVersions`、`listApprovals/getApproval`、`
 Pi `workmesh_wait` 停止当前模型并公开结算等待回复、Turn/Attempt 和持久条件，不让一个 Attempt 跨原模型时限长占。批准 hash 完整保留真实 `requestApproval` 返回的 `sha256:` 前缀；输入绑定准确 Session prompt 或同 Conversation 合法 Human 消息。Worker 重验 live 权限和真实条件后唯一生成后续 Turn，新 Runner opt-in 再 claim/start；等待期间释放 Lease，继续时重新获取。重复触发、重启和并发不能重复 Attempt；pause 不自动解除，Stop/撤权优先。旧 Runner 默认不领取自动续接。
 
 真实执行与恢复套件接入 `pnpm test:conformance:integration`，同时保留 M0 套件。实现和验证的实际通过范围以 [M1 产品报告](plan/agent-mcp-m1/product-report.md) 为准；工具数量不代表全系统验收。
+
+## M2 规划协作与子 Session
+
+SDK 的 `createReviewDelegation` 接受可选 `budget`；REST、MCP `create_review_delegation` 和 Pi `workmesh_create_review_delegation` 使用同一有效预算执行和累计预留。省略参数仍继承全额，既有预留不自动释放。两种创建的 typed 响应保留原父／step/version／required／budget 绑定与额外字段，review 保持 `{session,lease}` 包装；显式 idempotency key 保持兼容，新的合法创建默认生成独立身份，单次网络重试复用原 key 和 body。
+
+`listChildSessions`／`list_child_sessions`／`workmesh_list_child_sessions` 只接受当前父 live E 身份，无安装 bridge 或 Token refresh 回退。只读直接子的最小状态与授权结果 Artifact IDs，签名分页重核父授权；子终态可读，父终态、pause、Stop、撤权拒绝。普通 Session get/list 没有扩大。
+
+规划工具支持完整分页、层级／Milestone／relation；文档支持 history、指定 revision、diff、restore 新 revision、Markdown export 与 Guidance 读取。评论写、Decision finalize、Handoff accept、Guidance 发布维持 Human-only。Room 正文按本人 Inbox 合法 claim/read/ACK/reply 获取；导入仍逐实体对账。
+
+reviewer 不发布 Plan，必须本人 Room `review_result` 与本人 `code_review` Artifact；所有非 completed required child 保留准确阻父 IDs。实现和真实检查记录见 `docs/plan/agent-mcp-m2/product-report.md`，规划历史与产品结果分别保全。
