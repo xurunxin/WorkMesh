@@ -29,6 +29,7 @@ vi.mock("../heartbeat-idempotency.js", () => ({
 }));
 vi.mock("./guard.js", () => ({
   assertAgentWrite: vi.fn(),
+  assertAgentPrincipalInTx: vi.fn().mockResolvedValue(undefined),
   loadAgentSessionForMutation: vi
     .fn()
     .mockResolvedValue({ team_id: "team-id", state: "queued" }),

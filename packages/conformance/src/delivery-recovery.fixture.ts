@@ -17,8 +17,8 @@ export const saveDeliveryEvidence=(name:string,value:unknown)=>{
 }
 export const sha256=(text:string)=>`sha256:${createHash('sha256').update(text).digest('hex')}`
 export type DeliveryMode='native'|'mcp'|'pi'
-export async function createDeliveryRecoveryFixture(){
-  const f=await createPlanningCollaborationFixture({capabilities:deliveryCapabilities,features:{WORKMESH_BETA_PLANNING:'true'}})
+export async function createDeliveryRecoveryFixture(factory?:()=>ReturnType<typeof createPlanningCollaborationFixture>){
+  const f=await (factory?factory():createPlanningCollaborationFixture({capabilities:deliveryCapabilities,features:{WORKMESH_BETA_PLANNING:'true'}}))
   const provider=new FakeGitProvider(),worker=()=>createProviderActionWorker({db:f.db,resolveProvider:()=>provider,workerId:`m3-${randomUUID()}`})
   const prepare=async(mode:DeliveryMode,budget?:Record<string,number>)=>{
     const project=await f.human<{id:string}>('POST','/api/v1/projects',{teamId:f.teamId,name:`M3 ${mode}`})

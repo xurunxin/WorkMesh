@@ -7,7 +7,7 @@ import { createAgentSession, ModelRuntime, SessionManager } from '@earendil-work
 import { agentSessionExecutionResultResponseSchema, workbenchRunnerCredentialSchema } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { configuredModels } from './configured-model.js'
-import { createWorkMeshTools, type RunnerToolApi, type SessionCompletionIntent, type SessionFailureIntent } from './workmesh-tools.js'
+import { createWorkMeshTools, type RunnerToolApi, type RunnerRequestOptions, type SessionCompletionIntent, type SessionFailureIntent } from './workmesh-tools.js'
 import { createWorkbenchSkillLoader } from './workbench-skill.js'
 import { ExecutionLifecycle, type ExecutionExit, type SessionWaitIntent } from './execution-lifecycle.js'
 
@@ -40,8 +40,28 @@ const required = (name: string): string => {
   return value
 }
 export class RunnerApiError extends Error {
+  unreconciled = false
   constructor(readonly status: number, readonly code: string,
-    message = code, readonly details?: unknown, readonly correlationId?: string) { super(message) }
+    message = code, readonly details?: unknown, readonly correlationId?: string, options?: ErrorOptions) { super(message, options) }
+}
+const replayTransportCodes = new Set(['UND_ERR_SOCKET', 'ECONNRESET', 'EPIPE', 'UND_ERR_CONNECT_TIMEOUT',
+  'UND_ERR_HEADERS_TIMEOUT', 'UND_ERR_BODY_TIMEOUT', 'ETIMEDOUT'])
+function replayableTransportError(error: unknown, timeout: AbortSignal, external?: AbortSignal): boolean {
+  if (external?.aborted || error instanceof RunnerApiError || error instanceof SyntaxError) return false
+  if (timeout.aborted && timeout.reason instanceof DOMException && timeout.reason.name === 'TimeoutError') return true
+  const seen = new Set<unknown>()
+  while (error && typeof error === 'object' && !seen.has(error)) {
+    seen.add(error)
+    if ('code' in error && typeof error.code === 'string' && replayTransportCodes.has(error.code)) return true
+    error = 'cause' in error ? error.cause : undefined
+  }
+  return false
+}
+function unreconciledReplay(first: unknown, second: unknown): Error {
+  const error = second instanceof RunnerApiError
+    ? new RunnerApiError(second.status, second.code, second.message, second.details, second.correlationId, { cause: first })
+    : new Error('RUNNER_TOOL_RESULT_UNRECONCILED', { cause: first })
+  return Object.assign(error, { unreconciled: true })
 }
 export class RunnerApi {
   readonly #baseUrl: URL
@@ -80,23 +100,59 @@ export class RunnerApi {
     this.#expiresAt = Date.parse(payload.expiresAt)
   }
   async request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
-    body?: unknown, ifMatch?: number, explicitIdempotencyKey?: string): Promise<T> {
+    body?: unknown, ifMatch?: number, explicitIdempotencyKey?: string, options?: RunnerRequestOptions): Promise<T> {
+    options?.signal?.throwIfAborted()
     if (!this.#closed && !/\/children(?:\?|$)/.test(path) && (!this.#sessionToken || this.#expiresAt - Date.now() < 60_000)) await this.#refresh()
     if (!this.#sessionToken) throw new Error('RUNNER_EXECUTION_TOKEN_UNAVAILABLE')
     const idempotencyKey = explicitIdempotencyKey ?? randomUUID()
-    const send = () => fetch(new URL(path, this.#baseUrl), {
-      method, headers: { 'Authorization': `Bearer ${this.#sessionToken}`,
+    const token = this.#sessionToken, expiresAt = this.#expiresAt
+    const url = new URL(path, this.#baseUrl)
+    const headers = { 'Authorization': `Bearer ${token}`,
         'X-WorkMesh-Runner-Token': this.#runnerToken,
         'Idempotency-Key': idempotencyKey, 'Content-Type': 'application/json',
-        ...(ifMatch === undefined ? {} : { 'If-Match': `"revision-${ifMatch}"` }) },
-      body: method === 'GET' || method === 'DELETE' ? undefined : JSON.stringify(body ?? {}),
-      signal: AbortSignal.timeout(15_000),
-    })
-    const response = await send()
-    if (!response.ok) {
-      throw await runnerResponseError(response, `HTTP_${response.status}`)
+        ...(ifMatch === undefined ? {} : { 'If-Match': `"revision-${ifMatch}"` }) }
+    const serialized = method === 'GET' || method === 'DELETE' ? undefined : JSON.stringify(body ?? {})
+    const replay = options?.transportReplay
+    // Both the operation and its exact transport route must belong to the allowlist.
+    const eligible = !!replay?.attemptId && (
+      replay.operationId === 'createDocument' && method === 'POST' && path === '/api/v1/documents'
+      || replay.operationId === 'publishAgentPlan' && method === 'PUT' && path === `/api/v1/agent-sessions/${this.#sessionId}/plan`
+      || replay.operationId === 'postWorkRoomMessage' && method === 'POST' && /^\/api\/v1\/rooms\/[0-9a-f-]+\/messages$/.test(path))
+    const deadline = Date.now() + 30_000
+    const timeoutSignal = () => {
+      const remaining = deadline - Date.now()
+      if (remaining <= 0) throw new Error('RUNNER_TOOL_REPLAY_BUDGET_EXHAUSTED')
+      return AbortSignal.timeout(Math.min(15_000, remaining))
     }
-    return (response.headers.get('content-type')?.startsWith('text/markdown') ? response.text() : response.json()) as Promise<T>
+    const combined = (timeout: AbortSignal) => options?.signal ? AbortSignal.any([timeout, options.signal]) : timeout
+    const send = async (timeout: AbortSignal): Promise<T> => {
+      const response = await fetch(url, { method, headers, body: serialized, signal: combined(timeout) })
+      if (!response.ok) throw await runnerResponseError(response, `HTTP_${response.status}`)
+      return (response.headers.get('content-type')?.startsWith('text/markdown') ? await response.text() : await response.json()) as T
+    }
+    const timeout = timeoutSignal()
+    try { return await send(timeout) }
+    catch (first) {
+      if (!eligible || !replayableTransportError(first, timeout, options?.signal)) throw first
+      try {
+        const assertOpen = () => {
+          if (this.#closed || expiresAt <= Date.now()) throw new Error('RUNNER_TOOL_REPLAY_CLOSED')
+          options?.signal?.throwIfAborted()
+          replay?.assertOpen?.()
+          if (Date.now() >= deadline) throw new Error('RUNNER_TOOL_REPLAY_BUDGET_EXHAUSTED')
+        }
+        assertOpen()
+        // Held E only: no refresh, no installation fallback and no activity writes.
+        const statusResponse = await fetch(new URL(`/api/v1/workbench/runner-attempts/${replay!.attemptId}/status`, this.#baseUrl),
+          { headers, signal: combined(timeoutSignal()) })
+        if (!statusResponse.ok) throw await runnerResponseError(statusResponse, `HTTP_${statusResponse.status}`)
+        const status = await statusResponse.json() as AttemptStatus
+        if (status.attemptStatus !== 'running' || status.turnStatus !== 'running' || status.delegationStatus !== 'active'
+          || !['planning', 'executing'].includes(status.sessionState)) throw new Error('RUNNER_TOOL_REPLAY_NOT_RUNNING')
+        assertOpen()
+        return await send(timeoutSignal())
+      } catch (second) { throw unreconciledReplay(first, second) }
+    }
   }
 
   // Cleanup runs outside model tools and never refreshes or changes the held E credential.
@@ -292,7 +348,12 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
     const toolApi: RunnerToolApi = { sessionId: api.sessionId,
       artifactStoreOrigins: process.env.S3_ENDPOINT ? [new URL(process.env.S3_ENDPOINT).origin] : [],
       request: <T>(...args: Parameters<RunnerToolApi['request']>): Promise<T> => {
-        return lifecycle.request(args[0], () => api.request<T>(...args))
+        const [method, path, body, revision, key, options] = args
+        const replay = options?.transportReplay
+        return lifecycle.request(method, () => api.request<T>(method, path, body, revision, key, replay ? {
+          ...options, signal: AbortSignal.any([shutdown, ...(options?.signal ? [options.signal] : [])]),
+          transportReplay: { ...replay, attemptId, assertOpen: () => lifecycle.assertOpen() },
+        } : options))
       },
     }
     const workmeshTools = await createWorkMeshTools(toolApi, attemptId, name => {

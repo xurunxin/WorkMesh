@@ -152,6 +152,10 @@ Pi `workmesh_wait` 停止当前模型并公开结算等待回复、Turn/Attempt 
 
 ## M2 规划协作与子 Session
 
+M5 为 Pi 的 `workmesh_create_document`、`workmesh_publish_plan`、`workmesh_send_room_message` 增加单次 toolCall 内最多一次受限传输重放；同请求 key／序列化正文／准确 E／If-Match 不变，仍消费原幂等回执和当前服务端授权。此内部恢复不改变 REST／MCP 参数，不授予其他 Session、Human 或 provider 写权限；未知效果保留对账要求。
+
+实际客户端演示和复现入口为 [M5 产品报告](plan/agent-mcp-m5/product-report.md)。OpenCode 的现有安装未通过私有技能发现隔离门禁，四条 O/P 联合链尚未通过；协议夹具和 Pi 补充链分别报告，外部签名上传／下载模型工具继续禁用。
+
 SDK 的 `createReviewDelegation` 接受可选 `budget`；REST、MCP `create_review_delegation` 和 Pi `workmesh_create_review_delegation` 使用同一有效预算执行和累计预留。省略参数仍继承全额，既有预留不自动释放。两种创建的 typed 响应保留原父／step/version／required／budget 绑定与额外字段，review 保持 `{session,lease}` 包装；显式 idempotency key 保持兼容，新的合法创建默认生成独立身份，单次网络重试复用原 key 和 body。
 
 `listChildSessions`／`list_child_sessions`／`workmesh_list_child_sessions` 只接受当前父 live E 身份，无安装 bridge 或 Token refresh 回退。只读直接子的最小状态与授权结果 Artifact IDs，签名分页重核父授权；子终态可读，父终态、pause、Stop、撤权拒绝。普通 Session get/list 没有扩大。

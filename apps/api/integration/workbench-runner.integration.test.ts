@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { execFile } from 'node:child_process'
 import { join } from 'node:path'
 import { promisify } from 'node:util'
+import { Pool } from 'pg'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { applyMigrations, createDb } from '@workmesh/db'
 import { deriveTurnTelemetry, emitTurnTelemetry, summarizeWorkbenchSlo, type WorkbenchTurnStatus } from '@workmesh/observability'
@@ -23,6 +24,96 @@ const humanCall = (method: 'GET' | 'POST' | 'PUT', url: string, payload?: object
 const runnerCall = (method: 'GET' | 'POST', url: string, payload?: object, headers: Record<string, string> = {}): Promise<Reply> =>
   app.inject({ method, url, payload, headers: { authorization: `Bearer ${bearer}`,
     'x-workmesh-runner-token': process.env.WORKMESH_RUNNER_SERVICE_TOKEN!, 'idempotency-key': randomUUID(), ...headers } }) as unknown as Promise<Reply>
+
+async function verifyStatusSnapshot(attemptId: string, turnId: string, conversationId: string) {
+  const status = () => runnerCall('GET', `/api/v1/workbench/runner-attempts/${attemptId}/status`)
+  const originalQuery = Pool.prototype.query
+  const marker = 'steering.content_markdown AS pending_steering_message'
+  const principal = (await db.query<{ workspace_id: string; workspace_role: string }>('SELECT workspace_id,workspace_role FROM actors WHERE id=$1', [actorId])).rows[0]!
+  const membership = (await db.query<{ role: string }>('SELECT role FROM memberships WHERE team_id=$1 AND actor_id=$2', [teamId, actorId])).rows[0]
+  const restoreMember = () => db.query('INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING', [principal.workspace_id, teamId, actorId, membership?.role ?? 'maintainer'])
+  const counts = async () => (await db.query('SELECT (SELECT count(*) FROM domain_events) AS events,(SELECT count(*) FROM outbox_events) AS outbox')).rows[0]
+  expect((await status()).json()).toMatchObject({ attemptStatus: 'running', turnStatus: 'running', pendingSteeringMessage: null })
+  // Explicit fixture preparation of unconsumed steering, not a fake HTTP result.
+  const insertSteering = (body: string) => db.query(`WITH allocated AS (
+    UPDATE workbench_conversations SET next_message_sequence=next_message_sequence+1 WHERE id=$2
+    RETURNING next_message_sequence-1 AS sequence)
+    INSERT INTO workbench_messages(workspace_id,conversation_id,turn_id,sequence,role,author_actor_id,content_markdown)
+    SELECT $1,$2,$3,sequence,'user',$4,$5 FROM allocated`, [principal.workspace_id, conversationId, turnId, actorId, body])
+  await insertSteering('snapshot-before-revocation')
+  const before = await counts()
+  await restoreMember()
+  await db.query("UPDATE actors SET workspace_role='member' WHERE id=$1", [actorId])
+  try {
+    // Revoke after the real route preflight, before its final statement starts.
+    for (const fault of ['inactive-principal', 'membership'] as const) {
+      let reached!: () => void, release!: () => void
+      const ready = new Promise<void>(done => { reached = done }), gate = new Promise<void>(done => { release = done })
+      const spy = vi.spyOn(Pool.prototype, 'query').mockImplementation((function(this: Pool, ...args: unknown[]) {
+        if (typeof args[0] === 'string' && args[0].includes(marker)) return (async () => {
+          reached(); await gate; return Reflect.apply(originalQuery, this, args)
+        })()
+        return Reflect.apply(originalQuery, this, args)
+      }) as Pool['query'])
+      const pending = status()
+      try {
+        await Promise.race([ready, new Promise((_, reject) => setTimeout(() => reject(new Error('Status preflight barrier timeout')), 10_000))])
+        if (fault === 'membership') await db.query('DELETE FROM memberships WHERE team_id=$1 AND actor_id=$2', [teamId, actorId])
+        else await db.query('UPDATE actors SET is_active=false WHERE id=$1', [actorId])
+        release()
+        const denied = await pending
+        expect(denied.statusCode, denied.body).toBe(404)
+        expect(denied.json()).toMatchObject({ error: { code: 'NOT_FOUND', correlationId: expect.any(String) } })
+        expect(denied.body).not.toContain('snapshot-before-revocation')
+        console.log(JSON.stringify({ statusSnapshot: 'revocation-before-statement', fault, status: denied.statusCode, code: 'NOT_FOUND' }))
+      } finally {
+        release(); await pending.catch(() => undefined); spy.mockRestore()
+        await db.query('UPDATE actors SET is_active=true WHERE id=$1', [actorId]); await restoreMember()
+      }
+    }
+    // A real PostgreSQL statement has acquired its snapshot before waiting on
+    // this test-only advisory barrier. Revocation commits concurrently; a later
+    // steering message must not enter the already authorized snapshot.
+    const holder = await db.connect(), lock = Math.floor(Math.random() * 1_000_000_000)
+    await holder.query('BEGIN'); await holder.query('SELECT pg_advisory_xact_lock($1::bigint)', [lock])
+    const holderPid = (await holder.query<{ pid: number }>('SELECT pg_backend_pid() AS pid')).rows[0]!.pid
+    const spy = vi.spyOn(Pool.prototype, 'query').mockImplementation((function(this: Pool, ...args: unknown[]) {
+      if (typeof args[0] === 'string' && args[0].includes(marker)) {
+        const sql = `WITH status_snapshot_gate AS MATERIALIZED (SELECT pg_advisory_xact_lock($5::bigint)) ${args[0]}`
+          .replace('FROM workbench_runner_attempts attempt', 'FROM workbench_runner_attempts attempt CROSS JOIN status_snapshot_gate')
+        return Reflect.apply(originalQuery, this, [sql, [...args[1] as unknown[], lock]])
+      }
+      return Reflect.apply(originalQuery, this, args)
+    }) as Pool['query'])
+    const pending = status()
+    try {
+      const deadline = Date.now() + 10_000
+      let blocked: Array<{ pid: number }> = []
+      while (!blocked.length) {
+        blocked = (await db.query<{ pid: number }>("SELECT pid FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid)) AND query LIKE '%status_snapshot_gate%'", [holderPid])).rows
+        if (Date.now() >= deadline) throw new Error('Status snapshot SQL did not reach PostgreSQL barrier')
+        if (!blocked.length) await new Promise(done => setTimeout(done, 20))
+      }
+      await db.query('DELETE FROM memberships WHERE team_id=$1 AND actor_id=$2', [teamId, actorId])
+      await insertSteering('post-revocation-body-must-not-leak')
+      await holder.query('COMMIT')
+      const authorizedSnapshot = await pending
+      expect(authorizedSnapshot.statusCode, authorizedSnapshot.body).toBe(200)
+      expect(authorizedSnapshot.json()).toMatchObject({ pendingSteeringMessage: 'snapshot-before-revocation' })
+      expect(authorizedSnapshot.body).not.toContain('post-revocation-body-must-not-leak')
+      spy.mockRestore()
+      const denied = await status(); expect(denied.statusCode, denied.body).toBe(403)
+      expect(denied.json()).toMatchObject({ error: { code: 'SESSION_SCOPE_DENIED', correlationId: expect.any(String) } })
+      console.log(JSON.stringify({ statusSnapshot: 'statement-before-revocation', holderPid, blocked, firstStatus: 200, nextStatus: 403, bodyFromOriginalSnapshot: true }))
+    } finally {
+      await holder.query('ROLLBACK'); holder.release(); spy.mockRestore(); await pending.catch(() => undefined); await restoreMember()
+    }
+    expect(await counts()).toEqual(before)
+  } finally {
+    await db.query('UPDATE actors SET workspace_role=$2,is_active=true WHERE id=$1', [actorId, principal.workspace_role]); await restoreMember()
+    if (!membership) await db.query('DELETE FROM memberships WHERE team_id=$1 AND actor_id=$2', [teamId, actorId])
+  }
+}
 
 describe('exact-session Pi Runner API', () => {
   beforeAll(async () => {
@@ -132,9 +223,13 @@ describe('exact-session Pi Runner API', () => {
     const started = await runnerCall('POST', `/api/v1/workbench/runner-attempts/${attemptId}/start`,
       { fenceToken: secret.fenceToken })
     expect(started.statusCode, started.body).toBe(200)
+    await verifyStatusSnapshot(attemptId, turnId, conversationId)
     const stopped = await humanCall('POST', `${turnsUrl}/${turnId}/stop`,
       { reason: 'Stop the model call', stopMode: 'immediate' }, { 'if-match': '"revision-3"' })
     expect(stopped.statusCode, stopped.body).toBe(200)
+    const stoppedStatus = await runnerCall('GET', `/api/v1/workbench/runner-attempts/${attemptId}/status`)
+    expect(stoppedStatus.statusCode, stoppedStatus.body).toBe(200)
+    expect(stoppedStatus.json()).toMatchObject({ attemptStatus: 'aborted', turnStatus: 'stopped', sessionState: 'executing', pendingSteeringMessage: null })
     const stale = await runnerCall('POST', `/api/v1/workbench/runner-attempts/${attemptId}/settle`, {
       fenceToken: secret.fenceToken, assistantMessageMarkdown: 'Must not persist',
       settlement: { outcome: 'settled', summaryMarkdown: 'Completed', noArtifactReason: 'Text only' },

@@ -1,0 +1,20 @@
+> webui部分后续考虑彻底重新设计，接下来的任务优先完成后端功能逻辑开发，以及面向agent的mcp工具补齐，要让agent能无障碍使用系统全面的功能
+> 分批补齐既有功能（推荐）
+
+用户2026-10-09 12:00明确批准#53已审实施路线，主力开发gpt-6.1-sol/high执行，独立审查Agent同模型/high复核，沿既有依赖/检查和blocking/high闭后条件合入。此卡是已确认路线的一个完整批次。M3及核心前置已由Chief独立核actualmain/PR/Done齐全，现按既有委托派主力high先withPlan规划；另一Agent方案独审闭blocking/high后Chief confirm，启动规划不表示联合验收已通过。
+
+受控来源：已完成#53/PR209，mainc768e1e3db297d8b91b53dd68b60e723a8a40e7d，docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md中本批完整节，README/coverage-matrix/operation-index/branch-separation/sources/review。全部原测试/DoD与适用理由均须消费精确Git全文，不从工具截断前缀伪造全文或hash，不将UI后续、F/TA新域混入此卡。角色/状态/feature/资源/批准前提严格按CONTEXT/AGENT_PROTOCOL/OPENAPI/SCHEMA和现行ADR；不能补工具时授Agent Human角色或注入Human cookie。
+
+## 本卡范围与前置
+批次：M5；requires/启动条件：M3 [#57](todo:g0q8D1msrOVY2kg-cSdkj) 及其核心前置实际合入。
+前置来源（Chief 2026-10-10 22:52独立平台只读Git/PR/todo观察，非用户原话）：#57 done/PR215 merged；refs/heads/main=87f88b89297c5c1e346f7ef99118c410f4b4a905，parents ef4cb5e1458d911d98433c443dba46e6c224caa0 与 d27cb9be3a19befeae431df08276c9ca94d7dbed，tree a8590e0818418e23fc299056ff3d479c65915c78 与已审候选相同。正式成果三blocking及构建配置增量独审均无blocking/high，最新CI419/run38059540722十job含Required全success。M0/M1/M2前置已逐批合入；M3受控来源docs/plan/agent-mcp-m3的product-report/review-fixes-report/product-pr-ci-report/product-ci418-report及原矩阵/源码证据。417首败/418提交ZIP与419 Actions原件分列，旧数量/环境skip/unknown及未测真实provider限制保留；M5新组合不借旧checks通过。
+规划工件在本次既有授权内直接写文件并提交docs/plan/agent-mcp-m5/完整中文方案、准确当前spec/冻结M5全文、前置源与客户端/OS/版本/可用环境实际盘点、两路径及九类逐行验证/消费者兼容矩阵，停confirm供独审，不先实现产品或标未来验收通过。规划写文件是本次派工要求，无需重复同一写入许可；真正缺设备/客户端/凭据先核本机现状并形成具体缺口/原问题卡，不索取聊天秘密，不新增登录/外部授权/公共发行。开工重新读真实main/newdiff，上述SHA只是已核来源，不冒后续实时ref。
+完整来源为M5节（冻结输入177–201）。用同一已验收后端，选一个实际可用外部MCP客户端及内置Pi Runner，完整规划/接单/执行/协作/批准/Git证据/Stop恢复/完成链，至少无Git核心及有Gitfake交付两路径、两Human/两Agent交接和撤权。实际客户端/OS/版本/部署记录；协议fixture不冒厂商客户端认证，个人Lite/团队/企业支持度逐一列真实结果，不给未测画像勾选。
+
+首轮按已确认既有领域与可用环境落实，缺真实客户端/凭据先看机器环境并形成具体缺口，不能聊天索取秘密或将fixture记真实。不借M5发布公共签名Skill/新外部服务，原#5三OS和#20无源码发行门禁保留，Runner内嵌pin与不可变公共release分别处理。旧9/16后端只在纳入演示时需其新已验收candidate；不等待延后新UI。适用API/MCP/Worker/Runner重启/失响应/幂等/revision/撤权/并发/rollback及Stop清理实证，领域完成不靠模型口头宣称。
+
+## 统一执行及验收要求
+开工读真正refs/heads/main精确SHA、前置落地证据和新差异，先withPlan具体安全合同/消费者兼容/实际运行与测试方案（完整中文受控文件）供另一Agent独审；必需新增最小只读投影要先ADR/合同复核，不假端点已存在。普通已授权实现选择由Chief依委托推进，真正扩大范围/权限/外发布另问。冻结已审#53历史，不修改其原报告冒新通过。
+产品交付须REST/Zod合同/SDK/policyfeature/MCP/derivedmanifest/Runner/conformance同一操作一致；对应完整节九类用例及不适用理由、新受测源码前后指纹/精确命令退出runtime/数量skip/首败/准备恢复清理实证落盘。Git对象与运行字节区分，缺旧原件真实标出，旧head检查不能代新组合。适用必需本机checks、独立成果审查、最新PR RequiredCI与actualdone/main均齐才验收；只报告实际运行支持/不支持/未测，不以工具或API数量冒全功能。
+本批仅Todos＋仓库记录，不伪真实WorkMesh远端记录。旧#9/#16按用户同日裁定只交后端并保全UI，仍由原todo承接；#5三OS/版本分发门禁不缩减；未将这些纳入测试场景时不能强加为所有M批次前置，若纳入须消费其实际新已验收源。F0–F6/TA新增域、真实外发/发布、团队权限及凭据连接不自动获批，不在聊天索取秘密。
+收尾先登记独有测试容器/镜像/卷网络/进程/路径，脱敏保全必要证据后仅清本人闲置资源，不globalprune/共享store/他人服务。Windows递归前核绝对workspace目标/link/活动引用/逐path保全依据，保留原操作退出/实际结果；自动审批拒停目标，不Force/改ACL属性/换工具/拆分/移动或父删绕，G1D0C3已拒目标保护。已合worktree须actualmain/保全齐/无引用才清，当前恢复目录保留。回复仅摘要/head/受控路径，未来测试不标已过。

@@ -1,0 +1,1085 @@
+{
+  "startedAt": "2026-10-10T18:34:27.297897+00:00",
+  "endedAt": "2026-10-10T18:35:01.690072+00:00",
+  "runtimeSeconds": 34.391824099991936,
+  "nativeExit": 0,
+  "headBeforePlatformCommit": "9051da511d0e844a5e57b6263c23f643689bc879",
+  "stagedDiffCheck": {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "stagedRangeDiffCheck": {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "files": [
+    {
+      "path": ".gitignore",
+      "blob": "d29eeab76420dde035f3d931168dfc5795b19905",
+      "gitSha256": "440aec663b2b4c824252fec2ab01bff7c85ad695d9949409b9c0b03166a6ba9a",
+      "runtimeSha256": "84a52e40d7c03295363ebf013869336cf1b41bebeb9f65ade186f476052acc6e",
+      "gitBytes": 866,
+      "runtimeBytes": 895,
+      "sameBytes": false
+    },
+    {
+      "path": "apps/agent-runner/src/runner-api.test.ts",
+      "blob": "82e8590fed6ecc1a74ddc5cdc854009bc0f251b4",
+      "gitSha256": "6228ac202f49d84822097f20096e8951f49b0caae7a49b82f76aca82a03080c8",
+      "runtimeSha256": "5c42ae07fab1d32e04d176557f0e251734a3d3d3d0fa17fed7e96f86ab69f255",
+      "gitBytes": 11533,
+      "runtimeBytes": 11694,
+      "sameBytes": false
+    },
+    {
+      "path": "apps/agent-runner/src/workmesh-tools.test.ts",
+      "blob": "209d66fe7d507d739f0f8ddba20e293c92ac065f",
+      "gitSha256": "f337b07cae6fb5ce80a1d7e23fe92579cfe22aadaba2df16192491b226fbd774",
+      "runtimeSha256": "f264fab2feaef7410964160340f514efeb6b8d08f3d51c23be420d1c00959e04",
+      "gitBytes": 30384,
+      "runtimeBytes": 30822,
+      "sameBytes": false
+    },
+    {
+      "path": "docs/agent-integration.md",
+      "blob": "812583491fe6273bcd87c8fb4b3ae0203b624cb1",
+      "gitSha256": "c76755d459883285e82a64b8032b2278872490e9e53099cf34a695a6954fa266",
+      "runtimeSha256": "7262607ee00ce58fbc671d40a0e4eeb3baa99436d8d79d052d7bf92bbf0d3e1f",
+      "gitBytes": 19752,
+      "runtimeBytes": 19917,
+      "sameBytes": false
+    },
+    {
+      "path": "docs/agent-runner.md",
+      "blob": "29b0c8be276b9d9d150312d3abec4144545b6387",
+      "gitSha256": "5c8858dd9803f7285b1a5937748afd21247bbc05afa3b281e73461f299600c9a",
+      "runtimeSha256": "c8e501860f2c3a09c7d625eb0d7f7ee86d1ee273e0594322080ce22f3da2242f",
+      "gitBytes": 7668,
+      "runtimeBytes": 7712,
+      "sameBytes": false
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/README.md",
+      "blob": "d844533211b29410a487b30255f598d890124f71",
+      "gitSha256": "95871e3ff0de95c420b2432bfb860bb3802f22743bf9fc85d417132bac5fb9c8",
+      "runtimeSha256": "95871e3ff0de95c420b2432bfb860bb3802f22743bf9fc85d417132bac5fb9c8",
+      "gitBytes": 3876,
+      "runtimeBytes": 3876,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/product-execution-feedback.md",
+      "blob": "817ea187c7729183aa801743fc2c1a204b5934d6",
+      "gitSha256": "9718bd83df8501f2f8c0b22c169b022e7910c463b30efa9f65bc02491b870471",
+      "runtimeSha256": "9718bd83df8501f2f8c0b22c169b022e7910c463b30efa9f65bc02491b870471",
+      "gitBytes": 2377,
+      "runtimeBytes": 2377,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/product-main-observation.json",
+      "blob": "3c2b3ffd1751c70878d1dbc5328ffc5b862f1e86",
+      "gitSha256": "e870a06d357f33692dc2f9e1961f44f058f96cafe9ad6fda62eb642976f00c28",
+      "runtimeSha256": "e870a06d357f33692dc2f9e1961f44f058f96cafe9ad6fda62eb642976f00c28",
+      "gitBytes": 804,
+      "runtimeBytes": 804,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/product-membership-probe.md",
+      "blob": "5a28772a824236f923dcc6abf29149a2ac5e7751",
+      "gitSha256": "2d22170e7b27619837991548cede0593b1461815b4b88a6fd5a170d70d300c29",
+      "runtimeSha256": "2d22170e7b27619837991548cede0593b1461815b4b88a6fd5a170d70d300c29",
+      "gitBytes": 2117,
+      "runtimeBytes": 2117,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/product-platform-readback-provenance.json",
+      "blob": "d0d2a5eec3279a920e897497c5a4fb6d7906c0e1",
+      "gitSha256": "42491d21b7d9894d64620b615789b10ae1a11589974df6fd47a4e9d086d1c2e6",
+      "runtimeSha256": "42491d21b7d9894d64620b615789b10ae1a11589974df6fd47a4e9d086d1c2e6",
+      "gitBytes": 600,
+      "runtimeBytes": 600,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/product-platform-todo-readback-raw.zip",
+      "blob": "53aab54ab9f24bf73e1335ef0202e9a0cfaf5908",
+      "gitSha256": "2cdd73d75534a8bcc5ff17ea37b552b98fc47ee3f32920ae51d2d950a4ae9da9",
+      "runtimeSha256": "2cdd73d75534a8bcc5ff17ea37b552b98fc47ee3f32920ae51d2d950a4ae9da9",
+      "gitBytes": 8100,
+      "runtimeBytes": 8100,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/product-platform-todo-readback.txt",
+      "blob": "381dfa7a13da3bb340f694311ce450226b62f6b2",
+      "gitSha256": "a7373403ec7fcd41d4fd8669afcd95b0012684fa68bddcd9484091ffea0ebbf1",
+      "runtimeSha256": "a7373403ec7fcd41d4fd8669afcd95b0012684fa68bddcd9484091ffea0ebbf1",
+      "gitBytes": 14513,
+      "runtimeBytes": 14513,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-check-profile.json",
+      "blob": "75dc62a25db9a76f034aca1f5adc2cb0e77fbfaf",
+      "gitSha256": "45e850f05f4eb7009edaba6c71c392cdc0de6e95f5baa91e699e1b9ac4cafb07",
+      "runtimeSha256": "45e850f05f4eb7009edaba6c71c392cdc0de6e95f5baa91e699e1b9ac4cafb07",
+      "gitBytes": 645,
+      "runtimeBytes": 645,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-check-summary.json",
+      "blob": "55debf2f1199d0c09ddab6c303d0d4a074f7383a",
+      "gitSha256": "a350a4ae8528964ce8907494c832f9fd2e2fd2e15b9ed05d8c78c7f96efbc759",
+      "runtimeSha256": "a350a4ae8528964ce8907494c832f9fd2e2fd2e15b9ed05d8c78c7f96efbc759",
+      "gitBytes": 34003,
+      "runtimeBytes": 34003,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-checks.json",
+      "blob": "49c49a5f8569ccc22acf5cf3a97f6ed74173bf17",
+      "gitSha256": "abc9bc7b2a916f10b4eb89d3445ee12b391d77aebc7c1b571bc457323c41055d",
+      "runtimeSha256": "abc9bc7b2a916f10b4eb89d3445ee12b391d77aebc7c1b571bc457323c41055d",
+      "gitBytes": 57851,
+      "runtimeBytes": 57851,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-cleanup.json",
+      "blob": "91ba5abff9bfa72581d85972f7e417665b8a5508",
+      "gitSha256": "f4f6b12f691709599a9f990bb0ed67404722c0dc4258a0219b6e92a2dab9cf35",
+      "runtimeSha256": "f4f6b12f691709599a9f990bb0ed67404722c0dc4258a0219b6e92a2dab9cf35",
+      "gitBytes": 7862,
+      "runtimeBytes": 7862,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-environment.json",
+      "blob": "174c0233d1c2561484be67bce3cc945b124247bf",
+      "gitSha256": "7286805c04ccfbd087921aae2a26ee6a75c7f086560bad43e9e23eb298638308",
+      "runtimeSha256": "2fe9c97502aa9626f402852ed9876891a770d99afd9726880e0c5f7fc8fe90eb",
+      "gitBytes": 794,
+      "runtimeBytes": 818,
+      "sameBytes": false
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-evidence-index.json",
+      "blob": "46e06514300569cac249d2910c33d1265b80a408",
+      "gitSha256": "7706cdd3e038b37394832f5b06cbbea5f767d50b180c6e974dfe6de29b83ad9c",
+      "runtimeSha256": "7706cdd3e038b37394832f5b06cbbea5f767d50b180c6e974dfe6de29b83ad9c",
+      "gitBytes": 871448,
+      "runtimeBytes": 871448,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-evidence.py",
+      "blob": "0b0933904a6c8b779e33bf3affa8554daa9c702e",
+      "gitSha256": "cc52c07c937692b497b02661b918d0aa457ff4be441ae296157837596408fb23",
+      "runtimeSha256": "cc52c07c937692b497b02661b918d0aa457ff4be441ae296157837596408fb23",
+      "gitBytes": 13820,
+      "runtimeBytes": 13820,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-evidence/4bd4d8ab7d766735a663b41572e1f91fb14c18fe66e45ab8898ea60dc41348a3.zip",
+      "blob": "801de2a25727b9d44bff4d640325f96bee394e02",
+      "gitSha256": "4bd4d8ab7d766735a663b41572e1f91fb14c18fe66e45ab8898ea60dc41348a3",
+      "runtimeSha256": "4bd4d8ab7d766735a663b41572e1f91fb14c18fe66e45ab8898ea60dc41348a3",
+      "gitBytes": 20436056,
+      "runtimeBytes": 20436056,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-evidence/afa336449b6c9e074756eb6245ec45620621f47814f4d8ec38690e223791bad2.zip",
+      "blob": "748f16a61a8cc2f5487642a49207b8d91374ceed",
+      "gitSha256": "afa336449b6c9e074756eb6245ec45620621f47814f4d8ec38690e223791bad2",
+      "runtimeSha256": "afa336449b6c9e074756eb6245ec45620621f47814f4d8ec38690e223791bad2",
+      "gitBytes": 19555022,
+      "runtimeBytes": 19555022,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-gaps.md",
+      "blob": "b977c10474de0c08363bef322870193d450d5d5c",
+      "gitSha256": "6fb9ef87f00048438df5ce0c51e92a02f116b3dda9f61e2cdcbe382a802c2c8d",
+      "runtimeSha256": "6fb9ef87f00048438df5ce0c51e92a02f116b3dda9f61e2cdcbe382a802c2c8d",
+      "gitBytes": 5220,
+      "runtimeBytes": 5220,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-history-restoration.json",
+      "blob": "1fe117b1e65bcb2dd48e16ef50e073b4efc362a4",
+      "gitSha256": "4e713758c1ffb6fcfc4d88971538d25db124e0069fd2ec352f85ab685b2dccc9",
+      "runtimeSha256": "4e713758c1ffb6fcfc4d88971538d25db124e0069fd2ec352f85ab685b2dccc9",
+      "gitBytes": 10489,
+      "runtimeBytes": 10489,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-matrix.md",
+      "blob": "e9917c28b047263aec42b905a72674475beef273",
+      "gitSha256": "9694d048fb240bbf592dec28e6465e87d2c6898e367834cb4aef1ed6ad09aa19",
+      "runtimeSha256": "9694d048fb240bbf592dec28e6465e87d2c6898e367834cb4aef1ed6ad09aa19",
+      "gitBytes": 4324,
+      "runtimeBytes": 4324,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-opencode-timeout.json",
+      "blob": "8abf20c83b49a7521138ddf1e0dfffc5375bd7f8",
+      "gitSha256": "682a97f96ffd8e59424e75232ed3f9aa413ba27d9ce2f22e9c4df47d13030017",
+      "runtimeSha256": "7b7297a28f06af4f64e5c3f65322092d621d96273e10d4243b1846d3c484eb98",
+      "gitBytes": 579,
+      "runtimeBytes": 593,
+      "sameBytes": false
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-owner.json",
+      "blob": "28994753c515ce502975e58377f002fd9c9a4033",
+      "gitSha256": "cd7ce8f989770fab7752a5064de22a08d3a63ce16bba266ac8ad615d02b9ea80",
+      "runtimeSha256": "cd7ce8f989770fab7752a5064de22a08d3a63ce16bba266ac8ad615d02b9ea80",
+      "gitBytes": 2511,
+      "runtimeBytes": 2511,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-process-readback.json",
+      "blob": "92d69b9c53caf0d23d5c6ab236c5573912edb42f",
+      "gitSha256": "0fef9e1cf87cb4aa7bcda7b16860a78a199d722e5ef809ea9f4501b7e1323a7c",
+      "runtimeSha256": "cb3dee72e567a0742b805868a75741bef91250f3d17d4e05a96b47a88d60f0bc",
+      "gitBytes": 408,
+      "runtimeBytes": 417,
+      "sameBytes": false
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-recovery-preparation.json",
+      "blob": "3a2576d7cc7945356521143b3115be27babd322b",
+      "gitSha256": "32836ece1e7800902733525854e75fb12c030d3ff4b5498688b173bb7d8d7a6f",
+      "runtimeSha256": "32836ece1e7800902733525854e75fb12c030d3ff4b5498688b173bb7d8d7a6f",
+      "gitBytes": 828,
+      "runtimeBytes": 828,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-report.md",
+      "blob": "c7d046d602027fa366a7e1a569e44ad7cc74e588",
+      "gitSha256": "5c2122e16abb58e2cb5cc011a0d8092142a8638170071e1370328e27834cd14b",
+      "runtimeSha256": "5c2122e16abb58e2cb5cc011a0d8092142a8638170071e1370328e27834cd14b",
+      "gitBytes": 12549,
+      "runtimeBytes": 12549,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-runtime.py",
+      "blob": "d62ee38758f1a52de8a9aba30f2f90bbe4c4f8d6",
+      "gitSha256": "03803c1fd31234e16133620aead6154ad3d5ebda78bef633a830175a159d8acc",
+      "runtimeSha256": "03803c1fd31234e16133620aead6154ad3d5ebda78bef633a830175a159d8acc",
+      "gitBytes": 7335,
+      "runtimeBytes": 7335,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-spec.md",
+      "blob": "c4cffe5e31493e57f6a077d66f5a1a9e5a482205",
+      "gitSha256": "33064a9bf4ca373fcc6ccaf17136c5d1fd19ee672133d00b2c313d3e713c1cf6",
+      "runtimeSha256": "33064a9bf4ca373fcc6ccaf17136c5d1fd19ee672133d00b2c313d3e713c1cf6",
+      "gitBytes": 7554,
+      "runtimeBytes": 7554,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-verification.py",
+      "blob": "2725eede47bded05794e6e377549483bfd277abd",
+      "gitSha256": "edfb519b03f42d2481ea2a31a95f4bdf117b786d92841f678a4a6d4675f2975d",
+      "runtimeSha256": "edfb519b03f42d2481ea2a31a95f4bdf117b786d92841f678a4a6d4675f2975d",
+      "gitBytes": 7035,
+      "runtimeBytes": 7035,
+      "sameBytes": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/sources.md",
+      "blob": "8a9560f1bbaf078738a263631f3eb32e8d8b2a5e",
+      "gitSha256": "3dc7d63fcfc6051689b9474734ba4b485bf80d125c08275bfe7b9af740ce0f9d",
+      "runtimeSha256": "3dc7d63fcfc6051689b9474734ba4b485bf80d125c08275bfe7b9af740ce0f9d",
+      "gitBytes": 7791,
+      "runtimeBytes": 7791,
+      "sameBytes": true
+    },
+    {
+      "path": "packages/conformance/package.json",
+      "blob": "0c24ba15a908ad4dceae468202ef1cd3bf7aed75",
+      "gitSha256": "e6e5c905b3b4385076d5d5ba0d3264c98fa3399a2afe2e8e3e26419234ce5ea6",
+      "runtimeSha256": "46c0c857ad8c597ea721c43243b1e9e33fbb373a570bccbd5d709f79d4fec91a",
+      "gitBytes": 963,
+      "runtimeBytes": 995,
+      "sameBytes": false
+    },
+    {
+      "path": "packages/conformance/src/delivery-recovery.fixture.ts",
+      "blob": "d91afc5ca99537255e50d2887c42e0b2885cb548",
+      "gitSha256": "3e5dea49c4509cf95e7c79483026b188588ea2525a5295b6a96345ba44730ab8",
+      "runtimeSha256": "30570559338f7f3ab24429c01c04a3b96458bba093b825c1ae877b5b32ee329f",
+      "gitBytes": 6619,
+      "runtimeBytes": 6685,
+      "sameBytes": false
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.acceptance.ts",
+      "blob": "5cb1007a12bc4eb1e22186cfbcc0809c920f8b23",
+      "gitSha256": "4902078568c0d6fd62be10bff6e55550a5f7e386648f009651815fb0c76e3ccd",
+      "runtimeSha256": "4902078568c0d6fd62be10bff6e55550a5f7e386648f009651815fb0c76e3ccd",
+      "gitBytes": 2075,
+      "runtimeBytes": 2075,
+      "sameBytes": true
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.conformance.test.ts",
+      "blob": "f36449950f989e113e3c9f649ef371cd2773f9c3",
+      "gitSha256": "22c7dc29e95587c4fdc16ec2ee84bb4b6299ba95fb28b8c754d3bd490e2255d4",
+      "runtimeSha256": "22c7dc29e95587c4fdc16ec2ee84bb4b6299ba95fb28b8c754d3bd490e2255d4",
+      "gitBytes": 40864,
+      "runtimeBytes": 40864,
+      "sameBytes": true
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.drivers.ts",
+      "blob": "cb0d36b9b239ab5b73bd4223724dbfa9810fa15b",
+      "gitSha256": "d9c8d1bdaf98cf1d35b294b7e131ed16a79566be6a880c15ce48993c2357389b",
+      "runtimeSha256": "d9c8d1bdaf98cf1d35b294b7e131ed16a79566be6a880c15ce48993c2357389b",
+      "gitBytes": 8092,
+      "runtimeBytes": 8092,
+      "sameBytes": true
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.external.ts",
+      "blob": "1f8e9ab433f556d27b213e92170e7ccbd18ac18d",
+      "gitSha256": "cf41dad8d141ab9c7934056523f8b02c9035e3e3fdfecbdcb75a2451d253e032",
+      "runtimeSha256": "cf41dad8d141ab9c7934056523f8b02c9035e3e3fdfecbdcb75a2451d253e032",
+      "gitBytes": 3586,
+      "runtimeBytes": 3586,
+      "sameBytes": true
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.fixture.ts",
+      "blob": "17c874ef6574f00396b3140d257ff743b2137aba",
+      "gitSha256": "e14033229556168f7c42ac64f6c401f8ce3438c2861ace63f4ff3560a28208ba",
+      "runtimeSha256": "e14033229556168f7c42ac64f6c401f8ce3438c2861ace63f4ff3560a28208ba",
+      "gitBytes": 12580,
+      "runtimeBytes": 12580,
+      "sameBytes": true
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.model.ts",
+      "blob": "34d98b7334f33b0b516c5cfe38e94ef8374d578c",
+      "gitSha256": "6eaf73ce5b6face0559d97f1b39e971f3cdde09b45f0699c3d2f752c9d42383f",
+      "runtimeSha256": "6eaf73ce5b6face0559d97f1b39e971f3cdde09b45f0699c3d2f752c9d42383f",
+      "gitBytes": 3179,
+      "runtimeBytes": 3179,
+      "sameBytes": true
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.reporter.ts",
+      "blob": "205b037cf11c9cc9a207b3703b93ab1b2da0377a",
+      "gitSha256": "dd49876fd3cbd8f7fbd3ac587e451c6938e516d69315cae71d8058db9dcfd0b0",
+      "runtimeSha256": "dd49876fd3cbd8f7fbd3ac587e451c6938e516d69315cae71d8058db9dcfd0b0",
+      "gitBytes": 888,
+      "runtimeBytes": 888,
+      "sameBytes": true
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.service.ts",
+      "blob": "a8dc3add98158059776c9e5e598d5e813071370c",
+      "gitSha256": "4064800df57882b08e1f5c0ce65979882aa76d294024cc4b8fa24c9337a7a332",
+      "runtimeSha256": "4064800df57882b08e1f5c0ce65979882aa76d294024cc4b8fa24c9337a7a332",
+      "gitBytes": 685,
+      "runtimeBytes": 685,
+      "sameBytes": true
+    },
+    {
+      "path": "packages/conformance/src/planning-collaboration.fixture.ts",
+      "blob": "eaa7b836a1089f7807fdac3941aff4bef6d9430a",
+      "gitSha256": "b793d59131be0d196d67de8af164efae3d6b85fe4408595ca4da65922faed3e5",
+      "runtimeSha256": "6fb11e10bce7265d08d7b71e8b78fe2ab79de068c0206aa6dd793ba7775472db",
+      "gitBytes": 14376,
+      "runtimeBytes": 14537,
+      "sameBytes": false
+    },
+    {
+      "path": "packages/conformance/tsconfig.build.json",
+      "blob": "52640dfba9c78e85ff9bf47782dcc88ed1ddcbc4",
+      "gitSha256": "0cbea53cd812f3a2ca22b489f21d0f3e91708b9638316f6389f4cf4efc2d914c",
+      "runtimeSha256": "9ad516ea06439a865ea637822cde0b78ce9eb5c8fe8aaf2de0eca4f226db5f59",
+      "gitBytes": 543,
+      "runtimeBytes": 563,
+      "sameBytes": false
+    },
+    {
+      "path": "packages/conformance/vitest.integration.config.ts",
+      "blob": "6b9a449946f5b3a13569dcda35e192739961eb81",
+      "gitSha256": "e89b152b6d1096e21955fdc9935ef397d3e5d8a9dce3aaf443c7d0281e82531d",
+      "runtimeSha256": "3540963fc540ce4b1bae447ec89e4225a494b7cee025ffdf3f5e3869e8f64982",
+      "gitBytes": 448,
+      "runtimeBytes": 454,
+      "sameBytes": false
+    },
+    {
+      "path": "scripts/ci-policy.mjs",
+      "blob": "9983256c9697ea645447f4df4c43fc15ad1f1605",
+      "gitSha256": "40af5183b18cf9b684fb154afe7419c05e99a8a6e9ef05eb2c9db6cfb4a94ac7",
+      "runtimeSha256": "21c35fe507e5eaa0a6b4b64e4885801b9b6a0ae644c440498026ece335a0e28f",
+      "gitBytes": 12042,
+      "runtimeBytes": 12202,
+      "sameBytes": false
+    },
+    {
+      "path": "scripts/ci-policy.test.mjs",
+      "blob": "326daf8f15f5583c0dd865b68ebb5093bfd3a187",
+      "gitSha256": "0fdb0a6096a27c5db7ece21a748c9aa7f493a57ef984b448fb863f528e670942",
+      "runtimeSha256": "5f2d4213e89914bc95dfcc3e1d11da86e65a80683362a88dd626c9a4431e90a9",
+      "gitBytes": 13077,
+      "runtimeBytes": 13291,
+      "sameBytes": false
+    },
+    {
+      "path": "vitest.config.ts",
+      "blob": "177ddfd7d2df1b2d028509602b44523391a97d26",
+      "gitSha256": "dcfeb72a18bae8a22e13c5ac49eb6857d2ae8646122e639a3d5dbb53bdede655",
+      "runtimeSha256": "9eab23174af29468cc9b52a6f229238f06f96db1b89874e946c27c79c28df7ff",
+      "gitBytes": 1677,
+      "runtimeBytes": 1708,
+      "sameBytes": false
+    }
+  ],
+  "checkBindings": [
+    {
+      "label": "joint-extended-typecheck",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/delivery-recovery.fixture.ts",
+        "packages/conformance/src/joint-clients.acceptance.ts",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.drivers.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts",
+        "packages/conformance/src/planning-collaboration.fixture.ts",
+        "packages/conformance/tsconfig.build.json"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-negative-and-handoff",
+      "exit": 1,
+      "runtimeDeltaSinceCheck": [
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/delivery-recovery.fixture.ts",
+        "packages/conformance/src/joint-clients.acceptance.ts",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.drivers.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts",
+        "packages/conformance/src/planning-collaboration.fixture.ts",
+        "packages/conformance/tsconfig.build.json"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-fixed-two-cases",
+      "exit": 255,
+      "runtimeDeltaSinceCheck": [
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/delivery-recovery.fixture.ts",
+        "packages/conformance/src/joint-clients.acceptance.ts",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.drivers.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts",
+        "packages/conformance/src/planning-collaboration.fixture.ts",
+        "packages/conformance/tsconfig.build.json"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-handoff-correct-denial",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/delivery-recovery.fixture.ts",
+        "packages/conformance/src/joint-clients.acceptance.ts",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.drivers.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts",
+        "packages/conformance/src/planning-collaboration.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-final-typecheck",
+      "exit": 2,
+      "runtimeDeltaSinceCheck": [
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts",
+        "packages/conformance/src/planning-collaboration.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-ci-policy",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts",
+        "packages/conformance/src/planning-collaboration.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-all-fourteen",
+      "exit": 1,
+      "runtimeDeltaSinceCheck": [
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts",
+        "packages/conformance/src/planning-collaboration.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-current-typecheck",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-route-policy",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "opencode-isolation-gate",
+      "exit": 1,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-runner-skill",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-workmesh-skill",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-ci-validate",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-lint",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-typecheck",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-build-conformance",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-unit",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-source-build",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-integration",
+      "exit": 1,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-real-revocation",
+      "exit": 1,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-real-revocation-observed",
+      "exit": 1,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-real-delegation-revoke",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-revocation-lint",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-integration-ci-profile",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "ci-logs/delivery-recovery/explicit-review-budget-replay.json",
+        "ci-logs/delivery-recovery/mcp-chain.json",
+        "ci-logs/delivery-recovery/mcp-principal-membership.json",
+        "ci-logs/delivery-recovery/mcp-query-boundaries.json",
+        "ci-logs/delivery-recovery/mcp-transfer-health.json",
+        "ci-logs/delivery-recovery/native-chain.json",
+        "ci-logs/delivery-recovery/native-principal-membership.json",
+        "ci-logs/delivery-recovery/native-query-boundaries.json",
+        "ci-logs/delivery-recovery/native-transfer-health.json",
+        "ci-logs/delivery-recovery/pi-chain.json",
+        "ci-logs/delivery-recovery/pi-principal-membership.json",
+        "ci-logs/delivery-recovery/pi-query-boundaries.json",
+        "ci-logs/delivery-recovery/pi-transfer-health.json",
+        "ci-logs/delivery-recovery/review-initial-authorization.json",
+        "ci-logs/delivery-recovery/review-replay-child.json",
+        "ci-logs/delivery-recovery/review-replay-context.json",
+        "ci-logs/delivery-recovery/review-replay-definition.json",
+        "ci-logs/delivery-recovery/review-replay-gitea.json",
+        "ci-logs/delivery-recovery/review-replay-grant.json",
+        "ci-logs/delivery-recovery/review-replay-parent.json",
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.external.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-direct-boundaries",
+      "exit": 1,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts",
+        "packages/conformance/src/joint-clients.fixture.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-direct-boundaries-corrected",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "docs/plan/agent-mcp-m5/product-runtime.py",
+        "packages/conformance/src/joint-clients.conformance.test.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-second-denial-durable",
+      "exit": 1,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md",
+        "packages/conformance/src/joint-clients.conformance.test.ts"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "joint-second-denial-durable-corrected",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md",
+        "docs/agent-runner.md"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "final-conformance-typecheck",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "final-conformance-build",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "required-e2e",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [
+        "docs/agent-integration.md"
+      ],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "final-conformance-lint",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "final-joint-nineteen",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "final-staged-whitespace-first",
+      "exit": 2,
+      "runtimeDeltaSinceCheck": [],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    },
+    {
+      "label": "final-staged-whitespace-corrected",
+      "exit": 0,
+      "runtimeDeltaSinceCheck": [],
+      "meaning": "逐文件字节关联；不是逐行执行覆盖，新增测试不能借旧检查数量"
+    }
+  ],
+  "archiveMembersVerified": 1263,
+  "staticCiClassification": {
+    "mainObserved": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+    "paths": [
+      ".gitignore",
+      "apps/agent-runner/src/execution-lifecycle.test.ts",
+      "apps/agent-runner/src/execution-lifecycle.ts",
+      "apps/agent-runner/src/run-session.ts",
+      "apps/agent-runner/src/runner-api.test.ts",
+      "apps/agent-runner/src/workmesh-tools.test.ts",
+      "apps/agent-runner/src/workmesh-tools.ts",
+      "docs/adr/0084-runner-tool-bounded-transport-replay.md",
+      "docs/agent-integration.md",
+      "docs/agent-runner.md",
+      "docs/plan/agent-mcp-m5/.gitignore",
+      "docs/plan/agent-mcp-m5/README.md",
+      "docs/plan/agent-mcp-m5/acceptance-matrix.md",
+      "docs/plan/agent-mcp-m5/adr-proposal.md",
+      "docs/plan/agent-mcp-m5/build-operation-matrix.py",
+      "docs/plan/agent-mcp-m5/capture-planning.py",
+      "docs/plan/agent-mcp-m5/capture-review-base.py",
+      "docs/plan/agent-mcp-m5/capture-runtime.py",
+      "docs/plan/agent-mcp-m5/client-runtime.json",
+      "docs/plan/agent-mcp-m5/consumer-matrix.md",
+      "docs/plan/agent-mcp-m5/current-discovery.json",
+      "docs/plan/agent-mcp-m5/current-openapi-operations.json",
+      "docs/plan/agent-mcp-m5/environment.json",
+      "docs/plan/agent-mcp-m5/environment.md",
+      "docs/plan/agent-mcp-m5/finalize-planning.py",
+      "docs/plan/agent-mcp-m5/frozen-m5.md",
+      "docs/plan/agent-mcp-m5/implementation.md",
+      "docs/plan/agent-mcp-m5/input/candidate-before-review.zip",
+      "docs/plan/agent-mcp-m5/input/client-runtime-originals.zip",
+      "docs/plan/agent-mcp-m5/input/environment-initial.json",
+      "docs/plan/agent-mcp-m5/input/environment-originals-first.zip",
+      "docs/plan/agent-mcp-m5/input/environment-originals.zip",
+      "docs/plan/agent-mcp-m5/input/feedback.md",
+      "docs/plan/agent-mcp-m5/input/final-platform-readback.json",
+      "docs/plan/agent-mcp-m5/input/main-observation.json",
+      "docs/plan/agent-mcp-m5/input/planning-checks-originals.zip",
+      "docs/plan/agent-mcp-m5/input/planning-commit-verification-originals.zip",
+      "docs/plan/agent-mcp-m5/input/planning-final-static-originals.zip",
+      "docs/plan/agent-mcp-m5/input/platform-observations.json",
+      "docs/plan/agent-mcp-m5/input/platform-plan-before-sync.md",
+      "docs/plan/agent-mcp-m5/input/platform-savedplan.md",
+      "docs/plan/agent-mcp-m5/input/platform-sync-edits.json",
+      "docs/plan/agent-mcp-m5/input/product-execution-feedback.md",
+      "docs/plan/agent-mcp-m5/input/product-main-observation.json",
+      "docs/plan/agent-mcp-m5/input/product-membership-probe.md",
+      "docs/plan/agent-mcp-m5/input/product-platform-readback-provenance.json",
+      "docs/plan/agent-mcp-m5/input/product-platform-todo-readback-raw.zip",
+      "docs/plan/agent-mcp-m5/input/product-platform-todo-readback.txt",
+      "docs/plan/agent-mcp-m5/input/review-checks-originals.zip",
+      "docs/plan/agent-mcp-m5/input/review-commit-verification-originals.zip",
+      "docs/plan/agent-mcp-m5/input/reviewer-feedback.md",
+      "docs/plan/agent-mcp-m5/input/source-snapshot.zip",
+      "docs/plan/agent-mcp-m5/input/sync-feedback.md",
+      "docs/plan/agent-mcp-m5/input/sync-main-observation.json",
+      "docs/plan/agent-mcp-m5/input/sync-platform-observations.json",
+      "docs/plan/agent-mcp-m5/journeys.md",
+      "docs/plan/agent-mcp-m5/operation-matrix.md",
+      "docs/plan/agent-mcp-m5/operation-selection.json",
+      "docs/plan/agent-mcp-m5/planning-checks.json",
+      "docs/plan/agent-mcp-m5/planning-ci-classification.json",
+      "docs/plan/agent-mcp-m5/planning-commit-verification.json",
+      "docs/plan/agent-mcp-m5/planning-final-static.json",
+      "docs/plan/agent-mcp-m5/planning-first-failures.md",
+      "docs/plan/agent-mcp-m5/planning-static-verification.json",
+      "docs/plan/agent-mcp-m5/product-check-profile.json",
+      "docs/plan/agent-mcp-m5/product-check-summary.json",
+      "docs/plan/agent-mcp-m5/product-checks.json",
+      "docs/plan/agent-mcp-m5/product-cleanup.json",
+      "docs/plan/agent-mcp-m5/product-environment.json",
+      "docs/plan/agent-mcp-m5/product-evidence-index.json",
+      "docs/plan/agent-mcp-m5/product-evidence.py",
+      "docs/plan/agent-mcp-m5/product-evidence/4bd4d8ab7d766735a663b41572e1f91fb14c18fe66e45ab8898ea60dc41348a3.zip",
+      "docs/plan/agent-mcp-m5/product-evidence/afa336449b6c9e074756eb6245ec45620621f47814f4d8ec38690e223791bad2.zip",
+      "docs/plan/agent-mcp-m5/product-gaps.md",
+      "docs/plan/agent-mcp-m5/product-history-restoration.json",
+      "docs/plan/agent-mcp-m5/product-matrix.md",
+      "docs/plan/agent-mcp-m5/product-opencode-timeout.json",
+      "docs/plan/agent-mcp-m5/product-owner.json",
+      "docs/plan/agent-mcp-m5/product-process-readback.json",
+      "docs/plan/agent-mcp-m5/product-recovery-preparation.json",
+      "docs/plan/agent-mcp-m5/product-report.md",
+      "docs/plan/agent-mcp-m5/product-runtime.py",
+      "docs/plan/agent-mcp-m5/product-spec.md",
+      "docs/plan/agent-mcp-m5/product-verification.py",
+      "docs/plan/agent-mcp-m5/record-planning-checks.py",
+      "docs/plan/agent-mcp-m5/record-review-checks.py",
+      "docs/plan/agent-mcp-m5/resources.md",
+      "docs/plan/agent-mcp-m5/review-base-manifest.json",
+      "docs/plan/agent-mcp-m5/review-checks.json",
+      "docs/plan/agent-mcp-m5/review-commit-verification.json",
+      "docs/plan/agent-mcp-m5/review-response.md",
+      "docs/plan/agent-mcp-m5/review-static-verification.json",
+      "docs/plan/agent-mcp-m5/savedplan.md",
+      "docs/plan/agent-mcp-m5/security-contract.md",
+      "docs/plan/agent-mcp-m5/source-manifest.json",
+      "docs/plan/agent-mcp-m5/sources.md",
+      "docs/plan/agent-mcp-m5/spec.md",
+      "docs/plan/agent-mcp-m5/support-matrix.md",
+      "docs/plan/agent-mcp-m5/sync-current-plan.py",
+      "docs/plan/agent-mcp-m5/verification.md",
+      "docs/plan/agent-mcp-m5/verify-planning.py",
+      "packages/conformance/package.json",
+      "packages/conformance/src/delivery-recovery.fixture.ts",
+      "packages/conformance/src/joint-clients.acceptance.ts",
+      "packages/conformance/src/joint-clients.conformance.test.ts",
+      "packages/conformance/src/joint-clients.drivers.ts",
+      "packages/conformance/src/joint-clients.external.ts",
+      "packages/conformance/src/joint-clients.fixture.ts",
+      "packages/conformance/src/joint-clients.model.ts",
+      "packages/conformance/src/joint-clients.reporter.ts",
+      "packages/conformance/src/joint-clients.service.ts",
+      "packages/conformance/src/planning-collaboration.fixture.ts",
+      "packages/conformance/tsconfig.build.json",
+      "packages/conformance/vitest.integration.config.ts",
+      "scripts/ci-policy.mjs",
+      "scripts/ci-policy.test.mjs",
+      "vitest.config.ts"
+    ],
+    "exit": 0,
+    "plan": {
+      "mode": "full",
+      "packages": [
+        "@workmesh/a2a-adapter",
+        "@workmesh/agent-runner",
+        "@workmesh/agent-sdk",
+        "@workmesh/api",
+        "@workmesh/artifact-storage",
+        "@workmesh/config",
+        "@workmesh/conformance",
+        "@workmesh/contracts",
+        "@workmesh/db",
+        "@workmesh/domain",
+        "@workmesh/fake-agent",
+        "@workmesh/git-provider",
+        "@workmesh/mcp",
+        "@workmesh/observability",
+        "@workmesh/recovery",
+        "@workmesh/ui",
+        "@workmesh/web",
+        "@workmesh/worker"
+      ],
+      "testPackages": [
+        "@workmesh/a2a-adapter",
+        "@workmesh/agent-runner",
+        "@workmesh/agent-sdk",
+        "@workmesh/api",
+        "@workmesh/artifact-storage",
+        "@workmesh/config",
+        "@workmesh/conformance",
+        "@workmesh/contracts",
+        "@workmesh/db",
+        "@workmesh/domain",
+        "@workmesh/fake-agent",
+        "@workmesh/git-provider",
+        "@workmesh/mcp",
+        "@workmesh/observability",
+        "@workmesh/recovery",
+        "@workmesh/ui",
+        "@workmesh/web",
+        "@workmesh/worker"
+      ],
+      "checks": {
+        "source-gates": true,
+        "db-integration": true,
+        "api-integration": true,
+        "worker-integration": true,
+        "e2e": true,
+        "recovery-integration": true,
+        "agent-smoke": true
+      }
+    },
+    "meaning": "提交前实跑分类器；不是最新PR RequiredCI运行或通过证据"
+  },
+  "receiptExcludedFromOwnManifest": "docs/plan/agent-mcp-m5/product-final-verification.json",
+  "commitReadback": "提交后沿本回执逐 blob 实读；本文件不伪预写未来 head 或结果",
+  "fullM5Acceptance": "未完成；OpenCode隔离门禁失败与membership合同缺口保留"
+}

@@ -1,0 +1,904 @@
+{
+  "at": "2026-10-10T21:23:57.804897+00:00",
+  "owner": "m5-5dbe32e19a",
+  "recordedCommands": [
+    {
+      "label": "e2e-descendants",
+      "pid": null,
+      "startedAt": null,
+      "nativeExit": null,
+      "endedAt": null,
+      "missingPidRecordedAsUnknown": true
+    },
+    {
+      "label": "final-conformance-build",
+      "pid": 52356,
+      "startedAt": "2026-10-10T18:20:42.900696+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:20:45.721198+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "final-conformance-lint",
+      "pid": 46984,
+      "startedAt": "2026-10-10T18:25:10.313757+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:25:26.049632+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "final-conformance-typecheck",
+      "pid": 31704,
+      "startedAt": "2026-10-10T18:20:15.448594+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:20:26.821169+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "final-joint-nineteen",
+      "pid": 31104,
+      "startedAt": "2026-10-10T18:24:59.127326+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:27:55.422588+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "final-staged-whitespace-corrected",
+      "pid": 45868,
+      "startedAt": "2026-10-10T18:31:03.014326+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:31:03.106742+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "final-staged-whitespace-first",
+      "pid": 37076,
+      "startedAt": "2026-10-10T18:30:12.891589+00:00",
+      "nativeExit": 2,
+      "endedAt": "2026-10-10T18:30:12.991098+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-atomic-first",
+      "pid": 41324,
+      "startedAt": "2026-10-10T20:50:20.873758+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:51:04.427140+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-combination-evidence-final",
+      "pid": 22764,
+      "startedAt": "2026-10-10T21:18:06.174779+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T21:18:08.862477+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-complete-current",
+      "pid": 32760,
+      "startedAt": "2026-10-10T20:58:29.746056+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T21:13:35.526804+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-events-correct-table",
+      "pid": 19516,
+      "startedAt": "2026-10-10T20:46:03.705052+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T20:47:14.117706+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-events-current-plan",
+      "pid": 18656,
+      "startedAt": "2026-10-10T20:52:17.606445+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:53:58.622650+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-events-first",
+      "pid": 12668,
+      "startedAt": "2026-10-10T20:42:21.393297+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T20:43:18.785527+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-evidence-gate-reject-selected",
+      "pid": 19788,
+      "startedAt": "2026-10-10T21:15:19.263552+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T21:15:21.596541+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-external-contract-decoded",
+      "pid": 38860,
+      "startedAt": "2026-10-10T20:26:28.177751+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T20:29:55.305974+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-external-contract-first",
+      "pid": 4184,
+      "startedAt": "2026-10-10T20:12:56.168384+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T20:14:11.697471+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-external-stop-discovery",
+      "pid": 54068,
+      "startedAt": "2026-10-10T20:43:35.853704+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:45:21.552247+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-o-g-null-error",
+      "pid": 3580,
+      "startedAt": "2026-10-10T20:17:13.683679+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:20:44.727042+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-o-g-worker-first",
+      "pid": 27544,
+      "startedAt": "2026-10-10T20:14:33.868324+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T20:16:54.257135+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-o-n-canonical-approval",
+      "pid": 26676,
+      "startedAt": "2026-10-10T20:00:56.846189+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:04:43.496676+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-o-n-child-contract",
+      "pid": 17396,
+      "startedAt": "2026-10-10T19:54:05.223488+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T19:55:39.447265+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-o-n-first",
+      "pid": 33028,
+      "startedAt": "2026-10-10T19:46:14.527674+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T19:47:40.220675+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-o-n-native-mcp-ready",
+      "pid": 19488,
+      "startedAt": "2026-10-10T19:56:31.702190+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T19:56:37.740311+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-o-n-private-mcp-import",
+      "pid": 22508,
+      "startedAt": "2026-10-10T19:56:52.655472+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T20:00:12.981995+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-o-n-tool-binding",
+      "pid": 52760,
+      "startedAt": "2026-10-10T19:48:13.926520+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T19:50:38.240736+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-p-g-first",
+      "pid": 2856,
+      "startedAt": "2026-10-10T20:21:09.701997+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:26:15.571757+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-p-n-first",
+      "pid": 45648,
+      "startedAt": "2026-10-10T20:05:09.756636+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:07:56.639337+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-revision-first",
+      "pid": 19284,
+      "startedAt": "2026-10-10T20:08:40.791239+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:11:10.532627+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-scope-first",
+      "pid": 22784,
+      "startedAt": "2026-10-10T20:48:26.664338+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T20:49:13.855144+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-scope-project-owner",
+      "pid": 40556,
+      "startedAt": "2026-10-10T20:56:18.916002+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:57:59.534110+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-scope-responsible-human",
+      "pid": 31688,
+      "startedAt": "2026-10-10T20:54:51.431032+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T20:55:52.050356+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-second-denial-durable-corrected",
+      "pid": 17716,
+      "startedAt": "2026-10-10T18:19:22.443560+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:19:32.025709+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "joint-second-denial-durable",
+      "pid": 37356,
+      "startedAt": "2026-10-10T18:19:00.505277+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T18:19:10.004615+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "required-e2e",
+      "pid": 45312,
+      "startedAt": "2026-10-10T18:19:53.467004+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:24:28.392553+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-api-boundary-recheck",
+      "pid": 7020,
+      "startedAt": "2026-10-10T19:33:29.473963+00:00",
+      "nativeExit": null,
+      "endedAt": null,
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-api-status-final",
+      "pid": 48088,
+      "startedAt": "2026-10-10T19:46:04.141359+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:51:57.567364+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-api-typecheck",
+      "pid": 7020,
+      "startedAt": "2026-10-10T18:52:14.736035+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:52:32.427623+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-api-unit-fixed",
+      "pid": 31940,
+      "startedAt": "2026-10-10T18:55:08.195271+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:55:34.313552+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-api-unit",
+      "pid": 44960,
+      "startedAt": "2026-10-10T18:53:55.783188+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T18:54:26.393786+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-auth-api-integration",
+      "pid": 42020,
+      "startedAt": "2026-10-10T19:18:58.312524+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T19:25:07.595525+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-combined-integration",
+      "pid": 33256,
+      "startedAt": "2026-10-10T20:18:38.091780+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T20:45:20.057815+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-conformance-typecheck",
+      "pid": 32452,
+      "startedAt": "2026-10-10T18:55:36.119271+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:55:49.697308+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-continuation-lint-current",
+      "pid": 14480,
+      "startedAt": "2026-10-10T21:15:24.186305+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T21:15:36.476837+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-continuation-type-current",
+      "pid": 13956,
+      "startedAt": "2026-10-10T21:14:38.349561+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T21:14:50.424395+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-current-e2e",
+      "pid": 44864,
+      "startedAt": "2026-10-10T20:21:49.741672+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:28:36.901482+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-delivery-principal-timing",
+      "pid": 51608,
+      "startedAt": "2026-10-10T20:49:23.321143+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:49:54.130960+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-e2e-owned-reset",
+      "pid": 12604,
+      "startedAt": "2026-10-10T20:21:34.309222+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:21:38.055230+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-event-consumers-typecheck",
+      "pid": 37648,
+      "startedAt": "2026-10-10T20:17:54.062158+00:00",
+      "nativeExit": 2,
+      "endedAt": "2026-10-10T20:18:09.462899+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-event-tools-typecheck",
+      "pid": 24356,
+      "startedAt": "2026-10-10T20:16:11.900903+00:00",
+      "nativeExit": 2,
+      "endedAt": "2026-10-10T20:16:30.482041+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-events-contract-typecheck",
+      "pid": 32748,
+      "startedAt": "2026-10-10T20:19:17.389191+00:00",
+      "nativeExit": 2,
+      "endedAt": "2026-10-10T20:19:29.747712+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-faults-typecheck",
+      "pid": 27280,
+      "startedAt": "2026-10-10T19:54:31.354362+00:00",
+      "nativeExit": 2,
+      "endedAt": "2026-10-10T19:54:46.086636+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-build-conformance",
+      "pid": 34360,
+      "startedAt": "2026-10-10T20:22:31.545913+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:22:38.091040+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-ci-taxonomy",
+      "pid": 37332,
+      "startedAt": "2026-10-10T20:26:37.028971+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:26:38.080421+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-ci-validate",
+      "pid": 25696,
+      "startedAt": "2026-10-10T20:29:01.460789+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:29:03.905164+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-conformance-typecheck",
+      "pid": 51388,
+      "startedAt": "2026-10-10T20:24:34.979676+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:25:01.493900+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-discovery-policy",
+      "pid": 22260,
+      "startedAt": "2026-10-10T20:21:58.947414+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:22:00.991513+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-joint-fixtures-type",
+      "pid": 38344,
+      "startedAt": "2026-10-10T20:45:35.443558+00:00",
+      "nativeExit": 2,
+      "endedAt": "2026-10-10T20:45:47.680882+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-resumed-recovery",
+      "pid": 26740,
+      "startedAt": "2026-10-10T21:16:39.667009+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T21:16:46.228997+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-resumed-worker",
+      "pid": 36084,
+      "startedAt": "2026-10-10T21:10:07.341083+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T21:16:37.111903+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-root-lint-current",
+      "pid": 48000,
+      "startedAt": "2026-10-10T20:52:44.049204+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:53:14.134932+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-root-lint",
+      "pid": 38548,
+      "startedAt": "2026-10-10T20:03:29.294479+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:04:19.441561+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-root-type-current",
+      "pid": 11992,
+      "startedAt": "2026-10-10T20:52:31.368350+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:53:21.195310+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-root-typecheck",
+      "pid": 13212,
+      "startedAt": "2026-10-10T20:03:29.335966+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:04:20.170327+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-root-unit-current",
+      "pid": 31040,
+      "startedAt": "2026-10-10T20:56:38.972154+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:56:58.247417+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-root-unit",
+      "pid": 41168,
+      "startedAt": "2026-10-10T20:03:29.350726+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:04:26.383754+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-runner-skill",
+      "pid": 18172,
+      "startedAt": "2026-10-10T20:22:06.947109+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:22:07.830867+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-runner-typecheck",
+      "pid": 47072,
+      "startedAt": "2026-10-10T20:24:43.855960+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:24:58.134449+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-final-type-fixtures-fixed",
+      "pid": 6888,
+      "startedAt": "2026-10-10T20:48:37.861802+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:48:51.021311+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-guard-unit",
+      "pid": 34820,
+      "startedAt": "2026-10-10T19:34:16.466709+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:34:20.122881+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-integration-evidence-final",
+      "pid": 50492,
+      "startedAt": "2026-10-10T21:18:02.872185+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T21:18:03.639088+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-integration-final-constituents",
+      "pid": 8008,
+      "startedAt": "2026-10-10T21:10:05.702837+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T21:16:47.644774+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-joint-final-status-combination",
+      "pid": 51080,
+      "startedAt": "2026-10-10T20:05:21.600227+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:08:52.881633+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-joint-regression",
+      "pid": 36468,
+      "startedAt": "2026-10-10T19:04:59.231690+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:08:42.512944+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-journeys-current-typecheck",
+      "pid": 11276,
+      "startedAt": "2026-10-10T19:35:45.543824+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:35:59.777364+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-journeys-typecheck",
+      "pid": 27576,
+      "startedAt": "2026-10-10T19:21:50.211880+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:22:05.439110+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-lock-inventory-before",
+      "pid": 40468,
+      "startedAt": "2026-10-10T18:53:12.848454+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T18:53:16.613021+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-lock-inventory-final",
+      "pid": 34708,
+      "startedAt": "2026-10-10T18:58:31.766978+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:58:38.292451+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-lock-inventory-update-final",
+      "pid": 13268,
+      "startedAt": "2026-10-10T18:56:40.338076+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:56:44.193404+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-lock-inventory-update",
+      "pid": 3244,
+      "startedAt": "2026-10-10T18:53:24.032687+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T18:53:27.511883+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-lock-manifest-current",
+      "pid": 35072,
+      "startedAt": "2026-10-10T19:34:52.146056+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:34:56.130821+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-mcp-recovery-conformance-current",
+      "pid": 9192,
+      "startedAt": "2026-10-10T21:09:10.615715+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T21:09:32.644351+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-mcp-recovery-tests",
+      "pid": 49640,
+      "startedAt": "2026-10-10T20:43:04.586652+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:43:09.269927+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-mcp-recovery-type",
+      "pid": 42324,
+      "startedAt": "2026-10-10T20:42:55.500121+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:43:00.669920+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-membership-real-member-context",
+      "pid": 36336,
+      "startedAt": "2026-10-10T18:59:26.084412+00:00",
+      "nativeExit": null,
+      "endedAt": null,
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-membership-real-member-exact",
+      "pid": 44484,
+      "startedAt": "2026-10-10T19:03:43.150739+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:03:56.376925+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-membership-real-member-prepared",
+      "pid": 39872,
+      "startedAt": "2026-10-10T18:58:52.652895+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T18:59:02.118785+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-membership-real-member",
+      "pid": 17940,
+      "startedAt": "2026-10-10T18:57:45.621959+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T18:57:52.273570+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-membership-real",
+      "pid": 38232,
+      "startedAt": "2026-10-10T18:57:34.758684+00:00",
+      "nativeExit": 255,
+      "endedAt": "2026-10-10T18:57:34.862235+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-native-mcp-typecheck",
+      "pid": 15964,
+      "startedAt": "2026-10-10T19:55:49.653092+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:56:04.062405+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-native-retention-type",
+      "pid": 31928,
+      "startedAt": "2026-10-10T20:56:29.794061+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:56:43.200137+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-provider-guard-typecheck",
+      "pid": 31328,
+      "startedAt": "2026-10-10T20:13:25.515723+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:13:40.356059+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-provider-process-typecheck",
+      "pid": 33356,
+      "startedAt": "2026-10-10T20:12:42.158739+00:00",
+      "nativeExit": 2,
+      "endedAt": "2026-10-10T20:12:55.076287+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-recovery-empty-current",
+      "pid": 40860,
+      "startedAt": "2026-10-10T21:17:29.439254+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T21:17:35.995944+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-required-lint",
+      "pid": 37068,
+      "startedAt": "2026-10-10T19:11:00.334927+00:00",
+      "nativeExit": null,
+      "endedAt": null,
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-required-typecheck",
+      "pid": 54096,
+      "startedAt": "2026-10-10T19:09:46.708427+00:00",
+      "nativeExit": null,
+      "endedAt": null,
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-required-unit",
+      "pid": 24840,
+      "startedAt": "2026-10-10T19:09:57.577988+00:00",
+      "nativeExit": null,
+      "endedAt": null,
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-resumed-conformance",
+      "pid": 39224,
+      "startedAt": "2026-10-10T20:51:39.740821+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T21:05:53.723077+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-resumed-integration",
+      "pid": 26696,
+      "startedAt": "2026-10-10T20:51:38.596441+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T21:05:55.495745+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-resumed-lint",
+      "pid": 34132,
+      "startedAt": "2026-10-10T19:15:53.823389+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:17:21.762737+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-resumed-typecheck",
+      "pid": 4380,
+      "startedAt": "2026-10-10T19:14:36.254113+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:16:06.906402+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-resumed-unit",
+      "pid": 47384,
+      "startedAt": "2026-10-10T19:14:46.705551+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:17:36.122679+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-runner-events-permissions",
+      "pid": 52940,
+      "startedAt": "2026-10-10T20:17:24.901513+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:17:37.244384+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-safety-typecheck",
+      "pid": 18140,
+      "startedAt": "2026-10-10T20:02:27.983261+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:02:41.832027+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-source-build-current",
+      "pid": 40232,
+      "startedAt": "2026-10-10T20:43:49.376479+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:45:25.560374+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-status-final-typecheck",
+      "pid": 26428,
+      "startedAt": "2026-10-10T19:48:44.235065+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:49:01.390298+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-status-lock-inventory",
+      "pid": 37528,
+      "startedAt": "2026-10-10T19:59:12.396408+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:59:16.222596+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-status-snapshot-real-fixed",
+      "pid": 38792,
+      "startedAt": "2026-10-10T19:45:10.997091+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T19:45:16.857177+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-status-snapshot-real-sequence",
+      "pid": 45796,
+      "startedAt": "2026-10-10T19:45:36.110651+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T19:45:41.629037+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-status-snapshot-real",
+      "pid": 41168,
+      "startedAt": "2026-10-10T19:44:54.917425+00:00",
+      "nativeExit": 1,
+      "endedAt": "2026-10-10T19:45:00.769176+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-status-snapshot-typecheck",
+      "pid": 52856,
+      "startedAt": "2026-10-10T19:44:44.768354+00:00",
+      "nativeExit": 2,
+      "endedAt": "2026-10-10T19:44:59.730793+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-worker-current-typecheck",
+      "pid": 22472,
+      "startedAt": "2026-10-10T20:01:09.350207+00:00",
+      "nativeExit": 0,
+      "endedAt": "2026-10-10T20:01:25.106531+00:00",
+      "missingPidRecordedAsUnknown": false
+    },
+    {
+      "label": "review-worker-fault-typecheck",
+      "pid": 47308,
+      "startedAt": "2026-10-10T19:58:35.185039+00:00",
+      "nativeExit": 2,
+      "endedAt": "2026-10-10T19:58:48.086869+00:00",
+      "missingPidRecordedAsUnknown": false
+    }
+  ],
+  "historicalNullMeansUnknownNotPass": true,
+  "firstAuditError": "legacy process envelope lacked pid; original envelope retained; no exit invented"
+}

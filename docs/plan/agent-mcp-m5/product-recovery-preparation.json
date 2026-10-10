@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-10T18:05:49.100177+00:00",
+  "reason": "existing recovery suite requires versioning and ObjectLock; owned preparatory buckets were initially empty without these flags",
+  "owner": "m5-5dbe32e19a",
+  "results": [
+    {
+      "bucket": "m5-5dbe32e19a-source",
+      "operation": "versioning",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "bucket": "m5-5dbe32e19a-source",
+      "operation": "object-lock",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "bucket": "m5-5dbe32e19a-target",
+      "operation": "versioning",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "bucket": "m5-5dbe32e19a-target",
+      "operation": "object-lock",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "bucketDeletes": 0
+}

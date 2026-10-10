@@ -1,0 +1,268 @@
+{
+  "at": "2026-10-10T21:21:38.308094+00:00",
+  "basisHead": "8b42873c48358dfda26f0bf1f65341781f608ddb",
+  "checks": [
+    {
+      "label": "review-api-status-final",
+      "exit": 0,
+      "runtimeSeconds": 353.4233688999957,
+      "sourceReceipt": {
+        "path": ".tmp\\m5-runtime\\sources\\review-api-status-final.json",
+        "beforeDigest": "56f4ef206514325c4f0497a14fcfbd723e90c1328a8f7ae863985e243bcee77d",
+        "afterDigest": "d4879c3221b5336cdaba4c55c17da8a8b925d05f1de98299d772490d36d9f015",
+        "unchanged": false,
+        "sha256": "86e623f269796fffe9e6899037d0b4f46110e8c800d7d2dd958be8f193caf0e1"
+      },
+      "consumedEntries": 307,
+      "allConsumedBeforeAfterCurrentEqual": true,
+      "scope": "API precise packages / E2E API+web+non-conformance packages / root non-conformance packages; conformance final typecheck separately"
+    },
+    {
+      "label": "review-current-e2e",
+      "exit": 0,
+      "runtimeSeconds": 407.1569664999988,
+      "sourceReceipt": {
+        "path": ".tmp\\m5-runtime\\sources\\review-current-e2e.json",
+        "beforeDigest": "873dc02e25ef0dfd9cad540e5994c7c5a84fa35a5609e66ad633a3f3a8e9ff04",
+        "afterDigest": "119fbe91674769f4eedc29d88116fcc7810b5d06514b486eda6afb9e7d9d98d7",
+        "unchanged": false,
+        "sha256": "a3102c079b903f54a6feb7e78ad0de8b4f97d0b1e435df9ae4fc0669db4964ae"
+      },
+      "consumedEntries": 802,
+      "allConsumedBeforeAfterCurrentEqual": true,
+      "scope": "API precise packages / E2E API+web+non-conformance packages / root non-conformance packages; conformance final typecheck separately"
+    },
+    {
+      "label": "review-source-build-current",
+      "exit": 0,
+      "runtimeSeconds": 96.18322019999323,
+      "sourceReceipt": {
+        "path": ".tmp\\m5-runtime\\sources\\review-source-build-current.json",
+        "beforeDigest": "bda21734943aa96108f4fffeb733fa530e3ee47629711343f22d10519476b31c",
+        "afterDigest": "e6cf882fe8452f2c4fdbb0ab5950c87722714b4b332c189a09f525cfa33e8a81",
+        "unchanged": false,
+        "sha256": "f30e15288855f9662cc21167a4c910dc43e4657b0f872d6ea0378f001dea7bab"
+      },
+      "consumedEntries": 914,
+      "allConsumedBeforeAfterCurrentEqual": true,
+      "scope": "API precise packages / E2E API+web+non-conformance packages / root non-conformance packages; conformance final typecheck separately"
+    },
+    {
+      "label": "review-final-root-unit-current",
+      "exit": 0,
+      "runtimeSeconds": 19.275111499999184,
+      "sourceReceipt": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-root-unit-current.json",
+        "beforeDigest": "b2ee3593633ff43c83697cf8b757c345b27db489539da418df879258e6f874b5",
+        "afterDigest": "b2ee3593633ff43c83697cf8b757c345b27db489539da418df879258e6f874b5",
+        "unchanged": true,
+        "sha256": "7dd4e6e532a9fd1243d332ce67fc1a079bc7cdd572b6ac4493c9634c8640a750"
+      },
+      "consumedEntries": 914,
+      "allConsumedBeforeAfterCurrentEqual": true,
+      "scope": "API precise packages / E2E API+web+non-conformance packages / root non-conformance packages; conformance final typecheck separately"
+    },
+    {
+      "label": "review-final-root-lint-current",
+      "exit": 0,
+      "runtimeSeconds": 30.085492500002147,
+      "sourceReceipt": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-root-lint-current.json",
+        "beforeDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "afterDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "unchanged": true,
+        "sha256": "e38a7546777f5e5cc78dcf66e70d4da857185b565080d3016d929a56b456855a"
+      },
+      "consumedEntries": 914,
+      "allConsumedBeforeAfterCurrentEqual": true,
+      "scope": "API precise packages / E2E API+web+non-conformance packages / root non-conformance packages; conformance final typecheck separately"
+    },
+    {
+      "label": "review-final-root-type-current",
+      "exit": 0,
+      "runtimeSeconds": 49.82659650000278,
+      "sourceReceipt": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-root-type-current.json",
+        "beforeDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "afterDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "unchanged": true,
+        "sha256": "e38a7546777f5e5cc78dcf66e70d4da857185b565080d3016d929a56b456855a"
+      },
+      "consumedEntries": 914,
+      "allConsumedBeforeAfterCurrentEqual": true,
+      "scope": "API precise packages / E2E API+web+non-conformance packages / root non-conformance packages; conformance final typecheck separately"
+    },
+    {
+      "label": "review-continuation-type-current",
+      "exit": 0,
+      "runtimeSeconds": 12.074736599999596,
+      "sourceReceipt": {
+        "path": ".tmp\\m5-runtime\\sources\\review-continuation-type-current.json",
+        "beforeDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": true,
+        "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+      },
+      "consumedEntries": 951,
+      "allConsumedBeforeAfterCurrentEqual": true,
+      "scope": "API precise packages / E2E API+web+non-conformance packages / root non-conformance packages; conformance final typecheck separately"
+    }
+  ],
+  "changedProductAndAdrBytes": [
+    {
+      "path": "apps/agent-runner/src/permission-matrix.test.ts",
+      "bytes": 15455,
+      "runtimeSha256": "cf915360fa96bf1e3f20cdfa779b75c986f360e60445ba4989c9ad46f8ce54a0",
+      "runtimeBlob": "9d6d336140f4310dc2fac49741c6252f6ef595cd",
+      "candidateGitBlob": "427619a3d7926491a0d03e2cc807f1843cae1862",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "apps/agent-runner/src/workmesh-tools.ts",
+      "bytes": 70681,
+      "runtimeSha256": "6de23b739ba3a6d2bf886df66d4cce03d688e52d3e637455be9e5bd984abefee",
+      "runtimeBlob": "10e8c62e4bc136d54bef3769a71f868fd050cabf",
+      "candidateGitBlob": "b7f1658f067869d83d48bbb0d0b15db275f1127d",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "apps/api/integration/workbench-runner.integration.test.ts",
+      "bytes": 49463,
+      "runtimeSha256": "9faae1fa7adf54aae740b0b6e382c62d2c574149f52b3107182c5d8fc5a34ee0",
+      "runtimeBlob": "49514a36da5618a07db9f0cea472aaa228640e08",
+      "candidateGitBlob": "b686f05d89389a569084d52235def0018bb4ec1f",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "apps/api/src/workbench-runner.ts",
+      "bytes": 34092,
+      "runtimeSha256": "d4ac49e004abe8ec53ae5acbd5a43b4bad5b1d714a490ba3ea355a42bdac64db",
+      "runtimeBlob": "6f6b6740418861406c183c542a4bb51ae5c16048",
+      "candidateGitBlob": "2d2dc515f3ed8db97b001b84309b3d52122278eb",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "apps/mcp/src/discovery.ts",
+      "bytes": 17338,
+      "runtimeSha256": "60fc7e5e99bcd2df7528d67e609d4d341edc556ad0d711a76b3c12f8d61f5161",
+      "runtimeBlob": "e6fc76974f5ecdd5b68b257410d47d5a195d6866",
+      "candidateGitBlob": "9084eaed52c4acc54f8c806a111197525b6de587",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "apps/mcp/src/recovery.test.ts",
+      "bytes": 13523,
+      "runtimeSha256": "f815a6c42c47bfafe828cd7904b4af89df6f95553ae61309b4b4082ddf520e81",
+      "runtimeBlob": "df29dd9581914d14d4d558f3a911b368b384b939",
+      "candidateGitBlob": "d7a0b8b6196fdd0e354e275e7333e7d4009650b1",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "docs/adr/0085-mcp-original-execution-recovery-discovery.md",
+      "bytes": 2257,
+      "runtimeSha256": "f4cd52f65f01121c37d86612a0d3e61f561586a34ff39f4d8e5981c5b0dcbf50",
+      "runtimeBlob": "3aca66d052d458195318ea64df5edb06cbc18f11",
+      "candidateGitBlob": "3aca66d052d458195318ea64df5edb06cbc18f11",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/delivery-recovery.conformance.test.ts",
+      "bytes": 37236,
+      "runtimeSha256": "abdf65b2fe4d72c7c1136c1f6a726d4eb1321f31a719cd5df5bf862d758bad0d",
+      "runtimeBlob": "4acd9888732f33607374cc572d00f5af21531b74",
+      "candidateGitBlob": "78925e90263fa04cce546e153def7f0b7f4ec381",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.acceptance.ts",
+      "bytes": 12955,
+      "runtimeSha256": "dcaeb9af7a92aeec1073a7815b84343f0f5cd613d718bb9af74f9123ce34e3b2",
+      "runtimeBlob": "74933a629ec356c04495b547d15e435c44ee81c4",
+      "candidateGitBlob": "ee995e900d9837ed800f26e28f2ea40c53ff5e3f",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.drivers.ts",
+      "bytes": 27987,
+      "runtimeSha256": "154844b5f0300c7e3023dc7272846ea43a1b0ee11a34e296b035a9ebb0f5fa10",
+      "runtimeBlob": "0f75ea99fc8d6abacfa03fcf7e59fabf8913e50c",
+      "candidateGitBlob": "0f75ea99fc8d6abacfa03fcf7e59fabf8913e50c",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.external.ts",
+      "bytes": 6202,
+      "runtimeSha256": "8410de7fd864e832c275062ae6807dc3d3048dd1a92466e67ebc237d3ea59528",
+      "runtimeBlob": "b181f32d6a2a6bc736d35e2a1ea2b5e83996189e",
+      "candidateGitBlob": "b181f32d6a2a6bc736d35e2a1ea2b5e83996189e",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.faults.fixture.ts",
+      "bytes": 30863,
+      "runtimeSha256": "0276dc5de21d51a96f32b819d9a13f1e066817dc7b1bc17abb2e13deeb46c3f6",
+      "runtimeBlob": "ecaf08e1b4825dd9211aa804f786188c8d4c84ce",
+      "candidateGitBlob": "045b9b4a595a347a7ec2239df179a2dff725a0e6",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.fixture.ts",
+      "bytes": 17150,
+      "runtimeSha256": "268a4a5f24208d3a56ef0315b4936187cbd34a6dea1a3df610d63455cb30d76a",
+      "runtimeBlob": "211e9ec07fee696da148d45002d11fc4fc568346",
+      "candidateGitBlob": "1f62ea69d07b46c94fe22812ac76ceb47f08d2d3",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.journeys.fixture.ts",
+      "bytes": 25368,
+      "runtimeSha256": "f62d4fa29812b2c8a799724f7bd3e7fc7eadb288b6296d4ef97ed1ed48c9cf03",
+      "runtimeBlob": "2a8a52d07bda4e3bb1f8b88b85c834091cc50cdf",
+      "candidateGitBlob": "d7110aa50be9678cb66b20d1a6a8fef51c06020c",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.provider.fixture.ts",
+      "bytes": 4249,
+      "runtimeSha256": "35e93f4a1b3c0293711a9bbbf099cd01f96e10c12273c499e1c289b88ddcea91",
+      "runtimeBlob": "1a4a91603fef798d0dc8fb73b9f733f492d46281",
+      "candidateGitBlob": "1a4a91603fef798d0dc8fb73b9f733f492d46281",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/joint-clients.service.ts",
+      "bytes": 3808,
+      "runtimeSha256": "e5b573bcfb407372659dfe5e875052041e36ff4c6022f3e5efdaaf1befcc6504",
+      "runtimeBlob": "d0aa8cf9131fe60b2cc7bbaf67e663f17e393d1d",
+      "candidateGitBlob": "d0aa8cf9131fe60b2cc7bbaf67e663f17e393d1d",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/mcp-coverage.conformance.test.ts",
+      "bytes": 26221,
+      "runtimeSha256": "ff2de6f0d10b16644f79503e5e193cfe9ba84ab902c34b13a2b50a716ad7b9bd",
+      "runtimeBlob": "b32decef59ef93f3faae5929bfecdba1a3e25d2e",
+      "candidateGitBlob": "8325de2eb59a3eb0b7e0639bd7f19283400b064d",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/src/planning-collaboration.fixture.ts",
+      "bytes": 17457,
+      "runtimeSha256": "5a2cf29617a122e711f424abbd6ede87280acf4232864d48884ce3aa31b53fb6",
+      "runtimeBlob": "9563396d67fa4bc0685c96bc787123888a0b8ec7",
+      "candidateGitBlob": "6df951b4638104d9a45d9485ef08fff0baf1d11c",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    },
+    {
+      "path": "packages/conformance/tsconfig.build.json",
+      "bytes": 699,
+      "runtimeSha256": "cda1c41c0e1ae28760d5643aeccbb7b4a3f22c48cf0721b01a339a56f3dd8578",
+      "runtimeBlob": "92f6388ca0b8635c3fe8d0e673a0e6227c84048a",
+      "candidateGitBlob": "61aa2dcbae5deeb160c60196b283bcd2e16f908f",
+      "meaning": "exact current Windows bytes and Git-filtered proposed blob; not a future commit/ref"
+    }
+  ],
+  "candidateHead": null,
+  "formalIndependentReview": "pending",
+  "remainingMissingHistoricalBodies": "prior uncommitted intermediate captures are not reconstructed; entry continuation reverse-edit provenance separately declared"
+}

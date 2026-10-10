@@ -1,0 +1,62 @@
+{
+  "at": "2026-10-10T21:16:23.921005+00:00",
+  "containers": [
+    {
+      "containerId": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+      "ownerLabel": "m5-5dbe32e19a",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-10T18:29:35.843996Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 15888,
+        "Restarting": false,
+        "Running": true,
+        "StartedAt": "2026-10-10T18:51:34.0835502Z",
+        "Status": "running"
+      },
+      "inspectExit": 0
+    },
+    {
+      "containerId": "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+      "ownerLabel": "m5-5dbe32e19a",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-10T18:29:36.2941437Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 15969,
+        "Restarting": false,
+        "Running": true,
+        "StartedAt": "2026-10-10T18:51:34.2412965Z",
+        "Status": "running"
+      },
+      "inspectExit": 0
+    },
+    {
+      "containerId": "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+      "ownerLabel": "m5-5dbe32e19a",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-10T18:29:36.6446251Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 16038,
+        "Restarting": false,
+        "Running": true,
+        "StartedAt": "2026-10-10T18:51:34.4515382Z",
+        "Status": "running"
+      },
+      "inspectExit": 0
+    }
+  ],
+  "purpose": "actual current state, not registration; healthy checks preserved",
+  "previousCleanupField": "本人精确ID容器已停止；容器/卷/镜像/网络/恢复目录保留",
+  "recursivelyDeleted": false
+}

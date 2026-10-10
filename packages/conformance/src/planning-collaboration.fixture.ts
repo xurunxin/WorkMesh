@@ -20,6 +20,7 @@ export const savePlanningEvidence = (name: string, value: unknown) => {
   writeFileSync(resolve(root, name), redact(JSON.stringify(value, null, 2)) + '\n')
 }
 export type ModelCall = { name: string; arguments: Record<string, unknown> }
+export type ModelInput = { tools: Array<{ function: { name: string } }>; messages: Array<{ role: string; content?: unknown }> }
 
 export async function createPlanningCollaborationFixture(options:{capabilities?:Capability[];features?:Parameters<typeof loadFeatureConfig>[0]}={}) {
   const fixture = await createMcpCoverageFixture(options)
@@ -27,6 +28,7 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
   const receivers: ReturnType<typeof createReceiver>[] = []
   const delivered = new Map<string, { exchangeToken: string }>()
   const deliveries = new Set<string>()
+  const originalDeliveries = new Map<string, { raw: string; secret: Buffer; deliveryId: string; url: string }>()
   let duplicateDeliveries = 0
   const worker = () => createAgentWebhookWorker({ db: fixture.db, allowPrivateAgentWebhooks: true })
   const receive = async (sessionId: string, installationToken: string): Promise<Execution> => {
@@ -58,7 +60,7 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
         const deliveryId = String(request.headers['workmesh-delivery-id'])
         if (deliveries.has(deliveryId)) { duplicateDeliveries++; response.writeHead(409); response.end(); return }
         const envelope = JSON.parse(raw) as { events: Array<{ type: string; payload: { sessionId: string; exchangeToken: string } }> }
-        for (const event of envelope.events) if (event.type==='agent.session.created') delivered.set(event.payload.sessionId,event.payload)
+        for (const event of envelope.events) if (event.type==='agent.session.created') { delivered.set(event.payload.sessionId,event.payload); originalDeliveries.set(event.payload.sessionId, { raw, secret, deliveryId, url: `http://127.0.0.1:${(receiver.address() as {port:number}).port}/m2-controlled-recipient` }) }
         savePlanningEvidence(`delivery-${deliveryId}.json`,{ deliveryId, events: envelope.events.map(event=>({type:event.type,sessionId:event.payload.sessionId})), hmacVerified: true, timestampInWindow: true, port: (receiver.address() as {port:number}).port })
         deliveries.add(deliveryId); response.writeHead(204); response.end()
       } catch { response.writeHead(400); response.end() }
@@ -79,14 +81,28 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
     }
     return target
   }
+  const replayDelivery = async (sessionId: string) => {
+    const original = originalDeliveries.get(sessionId)
+    if (!original) throw new Error('M5_ORIGINAL_SIGNED_DELIVERY_REQUIRED')
+    const send = async (timestamp: number, signature: string) => {
+      const response = await fetch(original.url, { method: 'POST', headers: { 'workmesh-timestamp': String(timestamp), 'workmesh-signature': signature, 'workmesh-delivery-id': original.deliveryId }, body: original.raw })
+      return response.status
+    }
+    const now = Math.floor(Date.now() / 1000)
+    const duplicate = await send(now, signWebhook(original.secret, now, original.raw))
+    const stale = await send(now - 600, signWebhook(original.secret, now - 600, original.raw))
+    const invalid = await send(now, 'invalid-signature')
+    return { sessionId, deliveryId: original.deliveryId, duplicate, stale, invalid, duplicateDeliveries, originalByteLength: Buffer.byteLength(original.raw) }
+  }
   const registerTarget = async (capabilities:Capability[]=['work:read','work:write','artifact:write']) => attachReceiver(await fixture.pairTarget(capabilities))
   const registerCurrentReceiver = async () => attachReceiver({agentId:fixture.agentId,token:fixture.connectionToken})
-  const runnerProxy = async (options:{loseFailResponse?:boolean;afterSettlement?:()=>Promise<void>;afterResponse?:(path:string,status:number)=>Promise<void>}) => {
+  const runnerProxy = async (options:{loseFailResponse?:boolean;afterSettlement?:()=>Promise<void>;beforeRequest?:(path:string,method:string)=>Promise<void>;afterResponse?:(path:string,status:number)=>Promise<void>}) => {
     const proxy=createReceiver(async(request,response)=>{
       try {
         const chunks:Buffer[]=[];for await(const chunk of request)chunks.push(Buffer.from(chunk))
         const headers:Record<string,string>={}
         for(const [name,value] of Object.entries(request.headers))if(value && !['host','connection','content-length'].includes(name))headers[name]=Array.isArray(value)?value.join(','):value
+        await options.beforeRequest?.(request.url??'/',request.method??'GET')
         const upstream=await fetch(fixture.baseUrl+(request.url??'/'),{method:request.method,headers,
           ...(['GET','HEAD'].includes(request.method??'GET')?{}:{body:Buffer.concat(chunks)})})
         const body=Buffer.from(await upstream.arrayBuffer())
@@ -102,13 +118,13 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
     receivers.push(proxy);proxy.listen(0,'127.0.0.1');await once(proxy,'listening')
     return `http://127.0.0.1:${(proxy.address() as {port:number}).port}`
   }
-  const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>, options:{apiUrl?:string;beforeRun?:()=>Promise<void>}={}) => {
+  const pi = async (execution: Execution, installationToken: string, calls: Array<(input: ModelInput) => Promise<ModelCall>>, options:{apiUrl?:string;beforeRun?:()=>Promise<void>;contextHuman?:typeof fixture.human;resumeAfterWait?:()=>Promise<void>}={}) => {
     const captures: Array<{ tools: string[]; results: string[]; messages: string; call: ModelCall | null }> = []
     const model = createServer({ key: readFileSync(new URL('./fixtures/model-test-key.pem', import.meta.url)), cert: readFileSync(new URL('./fixtures/model-test-ca.pem', import.meta.url)) }, async (request, response) => {
       try {
-      let body = ''; for await (const chunk of request) body += String(chunk)
-      const input = JSON.parse(body) as { tools: Array<{ function: { name: string } }>; messages: Array<{ role: string; content?: unknown }> }
-      const call = await calls[captures.length]?.() ?? null
+      const chunks: Buffer[] = []; for await (const chunk of request) chunks.push(Buffer.from(chunk))
+      const input = JSON.parse(Buffer.concat(chunks).toString('utf8')) as ModelInput
+      const call = await calls[captures.length]?.(input) ?? null
       captures.push({ tools: input.tools.map(tool => tool.function.name), messages: redact(JSON.stringify(input.messages)), results: input.messages.filter(item => item.role === 'tool').map(item => redact(JSON.stringify(item.content))), call })
       response.writeHead(200, { 'content-type': 'text/event-stream' })
       const delta = call ? { role: 'assistant', tool_calls: [{ index: 0, id: `m2-call-${captures.length}`, type: 'function', function: { name: call.name, arguments: JSON.stringify(call.arguments) } }] } : { role: 'assistant', content: 'M2 verified operational result.' }
@@ -125,15 +141,30 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
     try {
       const connection = await fixture.human<{ id: string }>('POST', '/api/v1/workbench/llm-connections', { scope: 'workspace', name: `M2 ${randomUUID()}`, apiType: 'openai-completions', baseUrl: `https://127.0.0.1:${address.port}/v1`, secretMaterial: 'm2-public-fixture-key' })
       const selected = await fixture.human<{ id: string }>('POST', `/api/v1/workbench/llm-connections/${connection.id}/models`, { externalModelId: 'm2-model', displayName: 'M2 model', enabled: true, capabilities: { inputModalities: ['text'], toolCalling: true, reasoning: false, contextWindowTokens: 32768, maxOutputTokens: 2048 } }, 1)
-      const conversation = await fixture.human<{ id: string }>('POST', '/api/v1/workbench/conversations', { title: 'M2 verified lifecycle', workItemId: execution.workItemId, agentSessionId: execution.sessionId, llmConnectionId: connection.id, llmModelId: selected.id })
-      const queued = await fixture.human<{ turn: { id: string } }>('POST', `/api/v1/workbench/conversations/${conversation.id}/turns`, { messageMarkdown: 'Use the exact approved tools and produce auditable evidence.' }, 1)
+      const contextHuman = options.contextHuman ?? fixture.human
+      const conversation = await contextHuman<{ id: string }>('POST', '/api/v1/workbench/conversations', { title: 'M2 verified lifecycle', workItemId: execution.workItemId, agentSessionId: execution.sessionId, llmConnectionId: connection.id, llmModelId: selected.id })
+      const queued = await contextHuman<{ turn: { id: string } }>('POST', `/api/v1/workbench/conversations/${conversation.id}/turns`, { messageMarkdown: 'Use the exact approved tools and produce auditable evidence.' }, 1)
       const root = resolve(import.meta.dirname, '../../../apps/agent-runner')
       const env: NodeJS.ProcessEnv = { ...process.env, WORKMESH_API_URL: options.apiUrl??fixture.baseUrl, WORKMESH_AGENT_INSTALLATION_TOKEN: installationToken, WORKMESH_AGENT_SESSION_ID: execution.sessionId, NODE_EXTRA_CA_CERTS: resolve(import.meta.dirname, 'fixtures/model-test-ca.pem') }
       delete env.DATABASE_URL; delete env.WORKMESH_MASTER_KEY; delete env.WORKMESH_BOOTSTRAP_TOKEN
       await options.beforeRun?.()
+      const argv = [resolve(root, 'node_modules/tsx/dist/cli.mjs'), resolve(root, 'src/run-session.ts'), '--once']
+      const startedAt = new Date().toISOString(), started = performance.now()
       try {
-        const output = await exec(process.execPath, [resolve(root, 'node_modules/tsx/dist/cli.mjs'), resolve(root, 'src/run-session.ts'), '--once'], { cwd: root, env, timeout: 60_000, maxBuffer: 1_000_000 })
-        savePlanningEvidence(`pi-${queued.turn.id}.json`, { captures, stdout: output.stdout, stderr: output.stderr, turnId: queued.turn.id, sessionId: execution.sessionId })
+        const running = exec(process.execPath, argv, { cwd: root, env, timeout: 60_000, maxBuffer: 1_000_000 })
+        savePlanningEvidence(`pi-${queued.turn.id}-process.json`, { pid: running.child.pid, argv: [process.execPath, ...argv], startedAt, turnId: queued.turn.id, sessionId: execution.sessionId, owned: true })
+        const output = await running
+        savePlanningEvidence(`pi-${queued.turn.id}.json`, { captures, stdout: output.stdout, stderr: output.stderr, turnId: queued.turn.id, sessionId: execution.sessionId, pid: running.child.pid, nativeExit: 0, startedAt, endedAt: new Date().toISOString(), runtimeMs: performance.now() - started })
+        if (options.resumeAfterWait) {
+          // Reuse the persisted conversation and the Worker-created continuation;
+          // never manufacture another Human Turn to bypass the durable wait.
+          await options.resumeAfterWait()
+          const continuationStarted = performance.now(), continuationAt = new Date().toISOString()
+          const continuation = exec(process.execPath, argv, { cwd: root, env, timeout: 60_000, maxBuffer: 1_000_000 })
+          savePlanningEvidence(`pi-${queued.turn.id}-continuation-process.json`, { pid: continuation.child.pid, argv: [process.execPath, ...argv], startedAt: continuationAt, sessionId: execution.sessionId, owned: true })
+          const resumed = await continuation
+          savePlanningEvidence(`pi-${queued.turn.id}-continuation.json`, { captures, stdout: resumed.stdout, stderr: resumed.stderr, sessionId: execution.sessionId, pid: continuation.child.pid, nativeExit: 0, startedAt: continuationAt, endedAt: new Date().toISOString(), runtimeMs: performance.now() - continuationStarted })
+        }
         return captures
       } catch (error) {
         const failure = error as Error & { stdout?: string; stderr?: string; code?: number }
@@ -145,9 +176,10 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
       else process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST = previous
     }
   }
-  return { ...fixture, receive, registerTarget, registerCurrentReceiver, pi,
+  return { ...fixture, replayDelivery, receive, attachReceiver, registerTarget, registerCurrentReceiver, pi,
     loseFailResponse:()=>runnerProxy({loseFailResponse:true}),afterSettlement:(afterSettlement:()=>Promise<void>)=>runnerProxy({afterSettlement}),
     afterResponse:(afterResponse:(path:string,status:number)=>Promise<void>)=>runnerProxy({afterResponse}),
+    interceptRequests:(beforeRequest:(path:string,method:string)=>Promise<void>,afterResponse:(path:string,status:number)=>Promise<void>)=>runnerProxy({beforeRequest,afterResponse}),
     webhookWorker: worker, deliveryCounts:()=>({accepted:deliveries.size,duplicates:duplicateDeliveries}), close: async () => {
     for (const receiver of receivers) { receiver.closeAllConnections(); if (receiver.listening) await new Promise<void>((done,reject)=>receiver.close(error=>error?reject(error):done())) }
     for (const model of models) { model.closeAllConnections(); if (model.listening) await new Promise<void>((done, reject) => model.close(error => error ? reject(error) : done())) }

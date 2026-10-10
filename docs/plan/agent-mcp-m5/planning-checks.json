@@ -1,0 +1,1581 @@
+{
+  "productTestsRun": false,
+  "scope": "本轮规划静态核验，产品及联合验收未运行",
+  "recordedAt": "2026-10-10T15:35:51.251168+00:00",
+  "failure": null,
+  "checks": [
+    {
+      "name": "operation-matrix",
+      "argv": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "docs/plan/agent-mcp-m5/build-operation-matrix.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:29.560043+00:00",
+      "endedAt": "2026-10-10T15:35:30.277089+00:00",
+      "runtimeSeconds": 0.7170432999992045,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "operation-matrix/stdout",
+        "bytes": 78,
+        "sha256": "282ec5700293fb080bdc2ee66501c40c13a9e59c501fbb0312fb50776eea1da0"
+      },
+      "stderr": {
+        "member": "operation-matrix/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "full-source-and-plan",
+      "argv": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "docs/plan/agent-mcp-m5/verify-planning.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:30.277135+00:00",
+      "endedAt": "2026-10-10T15:35:48.569414+00:00",
+      "runtimeSeconds": 18.292213199994876,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "full-source-and-plan/stdout",
+        "bytes": 507,
+        "sha256": "98065c6c3808216176c0df35b963f04454b12ac8af887eb047bf351a5e88dc1a"
+      },
+      "stderr": {
+        "member": "full-source-and-plan/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "stage-authorized-planning-files",
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "docs/plan/agent-mcp-m5"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:48.569453+00:00",
+      "endedAt": "2026-10-10T15:35:48.924285+00:00",
+      "runtimeSeconds": 0.3548424000036903,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "stage-authorized-planning-files/stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "member": "stage-authorized-planning-files/stderr",
+        "bytes": 4453,
+        "sha256": "54625a074e1007860d6c19a3b5ff50dcf8bd9d1a4812f73977e6835a98c0a6bd"
+      }
+    },
+    {
+      "name": "staged-whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:48.924331+00:00",
+      "endedAt": "2026-10-10T15:35:49.008030+00:00",
+      "runtimeSeconds": 0.08371239999542013,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "staged-whitespace/stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "member": "staged-whitespace/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "staged-paths",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only",
+        "-z"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.008075+00:00",
+      "endedAt": "2026-10-10T15:35:49.053309+00:00",
+      "runtimeSeconds": 0.045242400010465644,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "staged-paths/stdout",
+        "bytes": 1640,
+        "sha256": "7fbeae0ac442a1529e29466b182b8d917bb4cd1b3033f9965d4b8d9d493d91ca"
+      },
+      "stderr": {
+        "member": "staged-paths/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "actual-ci-classification",
+      "argv": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import {classifyChanges,readWorkspaces} from './scripts/ci-policy.mjs';const paths=JSON.parse(process.argv[1]);console.log(JSON.stringify({paths,...classifyChanges(paths,readWorkspaces())}));",
+        "[\"docs/plan/agent-mcp-m5/.gitignore\", \"docs/plan/agent-mcp-m5/README.md\", \"docs/plan/agent-mcp-m5/acceptance-matrix.md\", \"docs/plan/agent-mcp-m5/build-operation-matrix.py\", \"docs/plan/agent-mcp-m5/capture-planning.py\", \"docs/plan/agent-mcp-m5/capture-runtime.py\", \"docs/plan/agent-mcp-m5/client-runtime.json\", \"docs/plan/agent-mcp-m5/consumer-matrix.md\", \"docs/plan/agent-mcp-m5/current-discovery.json\", \"docs/plan/agent-mcp-m5/current-openapi-operations.json\", \"docs/plan/agent-mcp-m5/environment.json\", \"docs/plan/agent-mcp-m5/environment.md\", \"docs/plan/agent-mcp-m5/frozen-m5.md\", \"docs/plan/agent-mcp-m5/implementation.md\", \"docs/plan/agent-mcp-m5/input/client-runtime-originals.zip\", \"docs/plan/agent-mcp-m5/input/environment-initial.json\", \"docs/plan/agent-mcp-m5/input/environment-originals-first.zip\", \"docs/plan/agent-mcp-m5/input/environment-originals.zip\", \"docs/plan/agent-mcp-m5/input/feedback.md\", \"docs/plan/agent-mcp-m5/input/platform-observations.json\", \"docs/plan/agent-mcp-m5/input/platform-savedplan.md\", \"docs/plan/agent-mcp-m5/input/source-snapshot.zip\", \"docs/plan/agent-mcp-m5/journeys.md\", \"docs/plan/agent-mcp-m5/operation-matrix.md\", \"docs/plan/agent-mcp-m5/operation-selection.json\", \"docs/plan/agent-mcp-m5/planning-first-failures.md\", \"docs/plan/agent-mcp-m5/planning-static-verification.json\", \"docs/plan/agent-mcp-m5/record-planning-checks.py\", \"docs/plan/agent-mcp-m5/resources.md\", \"docs/plan/agent-mcp-m5/savedplan.md\", \"docs/plan/agent-mcp-m5/security-contract.md\", \"docs/plan/agent-mcp-m5/source-manifest.json\", \"docs/plan/agent-mcp-m5/sources.md\", \"docs/plan/agent-mcp-m5/spec.md\", \"docs/plan/agent-mcp-m5/support-matrix.md\", \"docs/plan/agent-mcp-m5/verification.md\", \"docs/plan/agent-mcp-m5/verify-planning.py\"]"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.053395+00:00",
+      "endedAt": "2026-10-10T15:35:49.150749+00:00",
+      "runtimeSeconds": 0.09736729999713134,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "actual-ci-classification/stdout",
+        "bytes": 2682,
+        "sha256": "35bfb40990f00a426c007898bd3f9e47352c9bf96e55be8795f3c55b4ae35ada"
+      },
+      "stderr": {
+        "member": "actual-ci-classification/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-0",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/.gitignore"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.152237+00:00",
+      "endedAt": "2026-10-10T15:35:49.196955+00:00",
+      "runtimeSeconds": 0.04472420000820421,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-0/stdout",
+        "bytes": 13,
+        "sha256": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b"
+      },
+      "stderr": {
+        "member": "index-0/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-1",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/README.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.197773+00:00",
+      "endedAt": "2026-10-10T15:35:49.244891+00:00",
+      "runtimeSeconds": 0.047111399995628744,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-1/stdout",
+        "bytes": 2907,
+        "sha256": "afcb618ddaa0d0ffbcfa05c0410028ecad31ec00dc245fabbf51883581873c24"
+      },
+      "stderr": {
+        "member": "index-1/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-2",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/acceptance-matrix.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.245234+00:00",
+      "endedAt": "2026-10-10T15:35:49.290492+00:00",
+      "runtimeSeconds": 0.04526709999481682,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-2/stdout",
+        "bytes": 6544,
+        "sha256": "db2b01c1003b2893ca550d02c9286e559cc57ac7a4b6c16769d314715a8b1e59"
+      },
+      "stderr": {
+        "member": "index-2/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-3",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/build-operation-matrix.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.290974+00:00",
+      "endedAt": "2026-10-10T15:35:49.334868+00:00",
+      "runtimeSeconds": 0.043844400002853945,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-3/stdout",
+        "bytes": 7961,
+        "sha256": "c78e6fdd8f24faad01569bb564f12140540ada6921f72188c556829e6b00310e"
+      },
+      "stderr": {
+        "member": "index-3/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-4",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/capture-planning.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.335217+00:00",
+      "endedAt": "2026-10-10T15:35:49.384218+00:00",
+      "runtimeSeconds": 0.04900749999796972,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-4/stdout",
+        "bytes": 13793,
+        "sha256": "949843ccc767a14aee252300a0db059023bb5beaa4ecb90d15206d104bcc5272"
+      },
+      "stderr": {
+        "member": "index-4/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-5",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/capture-runtime.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.384619+00:00",
+      "endedAt": "2026-10-10T15:35:49.428499+00:00",
+      "runtimeSeconds": 0.04388929999549873,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-5/stdout",
+        "bytes": 2048,
+        "sha256": "361f3b7ea2c05a3bb07c77236214073b192a871ee24f18cdfe377a68d880ef35"
+      },
+      "stderr": {
+        "member": "index-5/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-6",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/client-runtime.json"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.428990+00:00",
+      "endedAt": "2026-10-10T15:35:49.471783+00:00",
+      "runtimeSeconds": 0.042809499995200895,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-6/stdout",
+        "bytes": 1056,
+        "sha256": "404800f08e3fe3696aae4af16e7cb20946d4a71c7953e93eefe38c2e0897b846"
+      },
+      "stderr": {
+        "member": "index-6/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-7",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/consumer-matrix.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.472631+00:00",
+      "endedAt": "2026-10-10T15:35:49.520920+00:00",
+      "runtimeSeconds": 0.04828279999492224,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-7/stdout",
+        "bytes": 4659,
+        "sha256": "1abb57411a7be0d84d1bcea923839a824f326965014f97bd850a976c1b7d5a02"
+      },
+      "stderr": {
+        "member": "index-7/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-8",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/current-discovery.json"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.521471+00:00",
+      "endedAt": "2026-10-10T15:35:49.566202+00:00",
+      "runtimeSeconds": 0.04473600001074374,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-8/stdout",
+        "bytes": 471111,
+        "sha256": "ba29a58d8e19682d2d3c0db7ac2fed01243fea7a3d41f0061780815741542098"
+      },
+      "stderr": {
+        "member": "index-8/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-9",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/current-openapi-operations.json"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.568133+00:00",
+      "endedAt": "2026-10-10T15:35:49.611576+00:00",
+      "runtimeSeconds": 0.04344560000754427,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-9/stdout",
+        "bytes": 220699,
+        "sha256": "8b516789a6ea0352e1bc7e3a1e44d3c9836cfb04fcac8e5c51de3dae2ca824f8"
+      },
+      "stderr": {
+        "member": "index-9/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-10",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/environment.json"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.612440+00:00",
+      "endedAt": "2026-10-10T15:35:49.658288+00:00",
+      "runtimeSeconds": 0.04585409999708645,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-10/stdout",
+        "bytes": 12420,
+        "sha256": "b63184ff52d7f16c0b3d73c1b92b88b7885699402f23aa623413e39506760f80"
+      },
+      "stderr": {
+        "member": "index-10/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-11",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/environment.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.658734+00:00",
+      "endedAt": "2026-10-10T15:35:49.703078+00:00",
+      "runtimeSeconds": 0.044347400005790405,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-11/stdout",
+        "bytes": 4150,
+        "sha256": "47f3d55247f678b5d3faf1468e9ad8f694454abed3a208dcb4e08c17f8d30c8f"
+      },
+      "stderr": {
+        "member": "index-11/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-12",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/frozen-m5.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.703421+00:00",
+      "endedAt": "2026-10-10T15:35:49.745850+00:00",
+      "runtimeSeconds": 0.04243519999727141,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-12/stdout",
+        "bytes": 3446,
+        "sha256": "4c2b808509f568f3dce22688e1b9bf6b3d704b912a491c1473c348da94c57aa6"
+      },
+      "stderr": {
+        "member": "index-12/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-13",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/implementation.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.746186+00:00",
+      "endedAt": "2026-10-10T15:35:49.790123+00:00",
+      "runtimeSeconds": 0.04394460000912659,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-13/stdout",
+        "bytes": 8892,
+        "sha256": "668f5045bbdd69d67c19c9ca1bd0392c86270ccf2278dfefe9a364c883943680"
+      },
+      "stderr": {
+        "member": "index-13/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-14",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/client-runtime-originals.zip"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.790715+00:00",
+      "endedAt": "2026-10-10T15:35:49.835407+00:00",
+      "runtimeSeconds": 0.04468790000828449,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-14/stdout",
+        "bytes": 2849,
+        "sha256": "41aa5a5fc677c1134b5e22f03d5b4bd51a24e399ff1e36957530fce8fdf67599"
+      },
+      "stderr": {
+        "member": "index-14/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-15",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/environment-initial.json"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.835752+00:00",
+      "endedAt": "2026-10-10T15:35:49.880309+00:00",
+      "runtimeSeconds": 0.04456610001216177,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-15/stdout",
+        "bytes": 9475,
+        "sha256": "28c5c11e176db6827a14791ed3e8096ebd8b740a1fd66dede1d947364c9d5ecb"
+      },
+      "stderr": {
+        "member": "index-15/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-16",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/environment-originals-first.zip"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.880778+00:00",
+      "endedAt": "2026-10-10T15:35:49.924376+00:00",
+      "runtimeSeconds": 0.04360199999064207,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-16/stdout",
+        "bytes": 31715,
+        "sha256": "6643243dc2e79a2b293be4b6259cf43799ac73fbaebb63c9fd9e0f317ccc75ba"
+      },
+      "stderr": {
+        "member": "index-16/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-17",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/environment-originals.zip"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.924818+00:00",
+      "endedAt": "2026-10-10T15:35:49.976939+00:00",
+      "runtimeSeconds": 0.05215170000155922,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-17/stdout",
+        "bytes": 39020,
+        "sha256": "1fb169849b3069f4d6ca7fa27dac8fc3917cf21d4b5ed42cf56f2e4688b7d73f"
+      },
+      "stderr": {
+        "member": "index-17/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-18",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/feedback.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:49.977617+00:00",
+      "endedAt": "2026-10-10T15:35:50.022072+00:00",
+      "runtimeSeconds": 0.04445799998939037,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-18/stdout",
+        "bytes": 1971,
+        "sha256": "4a86beaf25ff526f4c7d1c44c6bd1114cebbda5748fd80eebf05588860cc46a8"
+      },
+      "stderr": {
+        "member": "index-18/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-19",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/platform-observations.json"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.022634+00:00",
+      "endedAt": "2026-10-10T15:35:50.067536+00:00",
+      "runtimeSeconds": 0.044900199995026924,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-19/stdout",
+        "bytes": 31835,
+        "sha256": "11ea7d3e27e1711bef5388b09ad4eed43fa932181fee8c4a689737dacfa9b385"
+      },
+      "stderr": {
+        "member": "index-19/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-20",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/platform-savedplan.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.068454+00:00",
+      "endedAt": "2026-10-10T15:35:50.116208+00:00",
+      "runtimeSeconds": 0.04775050000171177,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-20/stdout",
+        "bytes": 5363,
+        "sha256": "5b7903bf3a49b0c548721d78bc89ca4c5b06413dabe77e97601c621ba0f897bc"
+      },
+      "stderr": {
+        "member": "index-20/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-21",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/source-snapshot.zip"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.116928+00:00",
+      "endedAt": "2026-10-10T15:35:50.198263+00:00",
+      "runtimeSeconds": 0.08133790000283625,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-21/stdout",
+        "bytes": 6824994,
+        "sha256": "6cf399d19837dac0b68b051d82fa3fdd69a25f39dec2f0d88f14287c2f8d524b"
+      },
+      "stderr": {
+        "member": "index-21/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-22",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/journeys.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.217574+00:00",
+      "endedAt": "2026-10-10T15:35:50.262815+00:00",
+      "runtimeSeconds": 0.045243799992022105,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-22/stdout",
+        "bytes": 7234,
+        "sha256": "6526e41a970c3db15a3bcc44218b7985ace70fa7f9b0082fcae55ff84b95babd"
+      },
+      "stderr": {
+        "member": "index-22/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-23",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/operation-matrix.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.264222+00:00",
+      "endedAt": "2026-10-10T15:35:50.313758+00:00",
+      "runtimeSeconds": 0.049532200006069615,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-23/stdout",
+        "bytes": 44845,
+        "sha256": "a1b2d5bbac8a7a35f1b9a1be80adcc4b41c5fae8a3106f815673b44637f9e7d2"
+      },
+      "stderr": {
+        "member": "index-23/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-24",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/operation-selection.json"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.314220+00:00",
+      "endedAt": "2026-10-10T15:35:50.357958+00:00",
+      "runtimeSeconds": 0.04374509998888243,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-24/stdout",
+        "bytes": 86869,
+        "sha256": "6cc9bb3bd85b30a26fd26ed34b2fe8bef636361344755fd22dc4c335c26df6d5"
+      },
+      "stderr": {
+        "member": "index-24/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-25",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/planning-first-failures.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.358711+00:00",
+      "endedAt": "2026-10-10T15:35:50.406663+00:00",
+      "runtimeSeconds": 0.04795449999801349,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-25/stdout",
+        "bytes": 1819,
+        "sha256": "d0e4f1f40b730d0ad9509eca359c92f13586b2538bd509706d41c1d009ed5008"
+      },
+      "stderr": {
+        "member": "index-25/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-26",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/planning-static-verification.json"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.407281+00:00",
+      "endedAt": "2026-10-10T15:35:50.452529+00:00",
+      "runtimeSeconds": 0.045250499999383464,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-26/stdout",
+        "bytes": 6420,
+        "sha256": "0fd75c15ebe5c4f82822d2a1e52dbf863bf2981b5d04fa62beb7199ee6f73612"
+      },
+      "stderr": {
+        "member": "index-26/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-27",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/record-planning-checks.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.452931+00:00",
+      "endedAt": "2026-10-10T15:35:50.496521+00:00",
+      "runtimeSeconds": 0.04359610000392422,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-27/stdout",
+        "bytes": 3734,
+        "sha256": "725791763151d4047e28b17c226c6dc22b340739af0847fe3f5917c1e394f5eb"
+      },
+      "stderr": {
+        "member": "index-27/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-28",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/resources.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.496910+00:00",
+      "endedAt": "2026-10-10T15:35:50.539984+00:00",
+      "runtimeSeconds": 0.04307960000005551,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-28/stdout",
+        "bytes": 2779,
+        "sha256": "6a3703e9be4311f945cb5e33f43efe2650c0c3db6229c4792e5b27cdf0fbfae0"
+      },
+      "stderr": {
+        "member": "index-28/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-29",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/savedplan.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.540507+00:00",
+      "endedAt": "2026-10-10T15:35:50.586808+00:00",
+      "runtimeSeconds": 0.046304700008477084,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-29/stdout",
+        "bytes": 5945,
+        "sha256": "9db49335176c2f51a18bc9eddeda55892cd4e74fae0308469b9579cb5e9dfcc7"
+      },
+      "stderr": {
+        "member": "index-29/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-30",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/security-contract.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.587382+00:00",
+      "endedAt": "2026-10-10T15:35:50.631166+00:00",
+      "runtimeSeconds": 0.043782099994132295,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-30/stdout",
+        "bytes": 5575,
+        "sha256": "0a4348d4f0cf9d2664bdae5ac0cf0e9014e378e29f34bcc74a5825a57ee3169d"
+      },
+      "stderr": {
+        "member": "index-30/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-31",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/source-manifest.json"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.631521+00:00",
+      "endedAt": "2026-10-10T15:35:50.684987+00:00",
+      "runtimeSeconds": 0.05347319999418687,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-31/stdout",
+        "bytes": 1403676,
+        "sha256": "d7a8c4c5a0498c031a88a02bf916a33170f5a977912dd1e0748fea9d578b88b9"
+      },
+      "stderr": {
+        "member": "index-31/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-32",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/sources.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.688800+00:00",
+      "endedAt": "2026-10-10T15:35:50.738714+00:00",
+      "runtimeSeconds": 0.04991560000053141,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-32/stdout",
+        "bytes": 4509,
+        "sha256": "772f8ccb18c8a0c6cefee8c3ea1b0e6d909bd3a30fc23b50a9c47f29216b026a"
+      },
+      "stderr": {
+        "member": "index-32/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-33",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/spec.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.739147+00:00",
+      "endedAt": "2026-10-10T15:35:50.783971+00:00",
+      "runtimeSeconds": 0.04482960001041647,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-33/stdout",
+        "bytes": 5812,
+        "sha256": "408dfad447a8850459ccb4b745b0464978c8a833182b20d9d0ca03b220412ce5"
+      },
+      "stderr": {
+        "member": "index-33/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-34",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/support-matrix.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.784410+00:00",
+      "endedAt": "2026-10-10T15:35:50.836963+00:00",
+      "runtimeSeconds": 0.05255579999356996,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-34/stdout",
+        "bytes": 3032,
+        "sha256": "08887af3c893047001872385bfab5f93dfc314bb7f4582711798fb38172465b8"
+      },
+      "stderr": {
+        "member": "index-34/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-35",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/verification.md"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.837308+00:00",
+      "endedAt": "2026-10-10T15:35:50.880390+00:00",
+      "runtimeSeconds": 0.043088099992019124,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-35/stdout",
+        "bytes": 3150,
+        "sha256": "ea40471f246193c315e28e54dfe65bb1b896d0bac77999e7c01b7cacaf517ad9"
+      },
+      "stderr": {
+        "member": "index-35/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "index-36",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/verify-planning.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T15:35:50.880723+00:00",
+      "endedAt": "2026-10-10T15:35:50.923489+00:00",
+      "runtimeSeconds": 0.04277320000983309,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "index-36/stdout",
+        "bytes": 6063,
+        "sha256": "61c30e1d1ac6e7c1ab1656243883bad945d2dc8344f1d34da20551dfb96a3b05"
+      },
+      "stderr": {
+        "member": "index-36/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "classification": {
+    "paths": [
+      "docs/plan/agent-mcp-m5/.gitignore",
+      "docs/plan/agent-mcp-m5/README.md",
+      "docs/plan/agent-mcp-m5/acceptance-matrix.md",
+      "docs/plan/agent-mcp-m5/build-operation-matrix.py",
+      "docs/plan/agent-mcp-m5/capture-planning.py",
+      "docs/plan/agent-mcp-m5/capture-runtime.py",
+      "docs/plan/agent-mcp-m5/client-runtime.json",
+      "docs/plan/agent-mcp-m5/consumer-matrix.md",
+      "docs/plan/agent-mcp-m5/current-discovery.json",
+      "docs/plan/agent-mcp-m5/current-openapi-operations.json",
+      "docs/plan/agent-mcp-m5/environment.json",
+      "docs/plan/agent-mcp-m5/environment.md",
+      "docs/plan/agent-mcp-m5/frozen-m5.md",
+      "docs/plan/agent-mcp-m5/implementation.md",
+      "docs/plan/agent-mcp-m5/input/client-runtime-originals.zip",
+      "docs/plan/agent-mcp-m5/input/environment-initial.json",
+      "docs/plan/agent-mcp-m5/input/environment-originals-first.zip",
+      "docs/plan/agent-mcp-m5/input/environment-originals.zip",
+      "docs/plan/agent-mcp-m5/input/feedback.md",
+      "docs/plan/agent-mcp-m5/input/platform-observations.json",
+      "docs/plan/agent-mcp-m5/input/platform-savedplan.md",
+      "docs/plan/agent-mcp-m5/input/source-snapshot.zip",
+      "docs/plan/agent-mcp-m5/journeys.md",
+      "docs/plan/agent-mcp-m5/operation-matrix.md",
+      "docs/plan/agent-mcp-m5/operation-selection.json",
+      "docs/plan/agent-mcp-m5/planning-first-failures.md",
+      "docs/plan/agent-mcp-m5/planning-static-verification.json",
+      "docs/plan/agent-mcp-m5/record-planning-checks.py",
+      "docs/plan/agent-mcp-m5/resources.md",
+      "docs/plan/agent-mcp-m5/savedplan.md",
+      "docs/plan/agent-mcp-m5/security-contract.md",
+      "docs/plan/agent-mcp-m5/source-manifest.json",
+      "docs/plan/agent-mcp-m5/sources.md",
+      "docs/plan/agent-mcp-m5/spec.md",
+      "docs/plan/agent-mcp-m5/support-matrix.md",
+      "docs/plan/agent-mcp-m5/verification.md",
+      "docs/plan/agent-mcp-m5/verify-planning.py"
+    ],
+    "mode": "full",
+    "packages": [
+      "@workmesh/a2a-adapter",
+      "@workmesh/agent-runner",
+      "@workmesh/agent-sdk",
+      "@workmesh/api",
+      "@workmesh/artifact-storage",
+      "@workmesh/config",
+      "@workmesh/conformance",
+      "@workmesh/contracts",
+      "@workmesh/db",
+      "@workmesh/domain",
+      "@workmesh/fake-agent",
+      "@workmesh/git-provider",
+      "@workmesh/mcp",
+      "@workmesh/observability",
+      "@workmesh/recovery",
+      "@workmesh/ui",
+      "@workmesh/web",
+      "@workmesh/worker"
+    ],
+    "testPackages": [
+      "@workmesh/a2a-adapter",
+      "@workmesh/agent-runner",
+      "@workmesh/agent-sdk",
+      "@workmesh/api",
+      "@workmesh/artifact-storage",
+      "@workmesh/config",
+      "@workmesh/conformance",
+      "@workmesh/contracts",
+      "@workmesh/db",
+      "@workmesh/domain",
+      "@workmesh/fake-agent",
+      "@workmesh/git-provider",
+      "@workmesh/mcp",
+      "@workmesh/observability",
+      "@workmesh/recovery",
+      "@workmesh/ui",
+      "@workmesh/web",
+      "@workmesh/worker"
+    ],
+    "checks": {
+      "source-gates": true,
+      "db-integration": true,
+      "api-integration": true,
+      "worker-integration": true,
+      "e2e": true,
+      "recovery-integration": true,
+      "agent-smoke": true
+    }
+  },
+  "stagedByteBindings": [
+    {
+      "path": "docs/plan/agent-mcp-m5/.gitignore",
+      "blobId": "c18dd8d83ceed1806b50b0aaa46beb7e335fff13",
+      "index": {
+        "bytes": 13,
+        "sha256": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b"
+      },
+      "worktree": {
+        "bytes": 13,
+        "sha256": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/README.md",
+      "blobId": "5bb78fceb16d679e06a0a89c13f159d334fc186e",
+      "index": {
+        "bytes": 2907,
+        "sha256": "afcb618ddaa0d0ffbcfa05c0410028ecad31ec00dc245fabbf51883581873c24"
+      },
+      "worktree": {
+        "bytes": 2907,
+        "sha256": "afcb618ddaa0d0ffbcfa05c0410028ecad31ec00dc245fabbf51883581873c24"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/acceptance-matrix.md",
+      "blobId": "150a269d1468e8d732dc9f0d97fee7f0e6f366b4",
+      "index": {
+        "bytes": 6544,
+        "sha256": "db2b01c1003b2893ca550d02c9286e559cc57ac7a4b6c16769d314715a8b1e59"
+      },
+      "worktree": {
+        "bytes": 6544,
+        "sha256": "db2b01c1003b2893ca550d02c9286e559cc57ac7a4b6c16769d314715a8b1e59"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/build-operation-matrix.py",
+      "blobId": "78213f3bf2fdc2aba8938d2010b324e2c6d317f8",
+      "index": {
+        "bytes": 7961,
+        "sha256": "c78e6fdd8f24faad01569bb564f12140540ada6921f72188c556829e6b00310e"
+      },
+      "worktree": {
+        "bytes": 7961,
+        "sha256": "c78e6fdd8f24faad01569bb564f12140540ada6921f72188c556829e6b00310e"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/capture-planning.py",
+      "blobId": "0ba5fa421ec81d1c0addc2b479c5d7aced56eb59",
+      "index": {
+        "bytes": 13793,
+        "sha256": "949843ccc767a14aee252300a0db059023bb5beaa4ecb90d15206d104bcc5272"
+      },
+      "worktree": {
+        "bytes": 13793,
+        "sha256": "949843ccc767a14aee252300a0db059023bb5beaa4ecb90d15206d104bcc5272"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/capture-runtime.py",
+      "blobId": "82caf176f313527a522bba23de01cb5a87a95222",
+      "index": {
+        "bytes": 2048,
+        "sha256": "361f3b7ea2c05a3bb07c77236214073b192a871ee24f18cdfe377a68d880ef35"
+      },
+      "worktree": {
+        "bytes": 2048,
+        "sha256": "361f3b7ea2c05a3bb07c77236214073b192a871ee24f18cdfe377a68d880ef35"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/client-runtime.json",
+      "blobId": "aa3f9e231959a3f0334c822c47fc5aedd04d9022",
+      "index": {
+        "bytes": 1056,
+        "sha256": "404800f08e3fe3696aae4af16e7cb20946d4a71c7953e93eefe38c2e0897b846"
+      },
+      "worktree": {
+        "bytes": 1056,
+        "sha256": "404800f08e3fe3696aae4af16e7cb20946d4a71c7953e93eefe38c2e0897b846"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/consumer-matrix.md",
+      "blobId": "24014a2cf7fab10785512b1ef4ccb2777c954fdc",
+      "index": {
+        "bytes": 4659,
+        "sha256": "1abb57411a7be0d84d1bcea923839a824f326965014f97bd850a976c1b7d5a02"
+      },
+      "worktree": {
+        "bytes": 4659,
+        "sha256": "1abb57411a7be0d84d1bcea923839a824f326965014f97bd850a976c1b7d5a02"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/current-discovery.json",
+      "blobId": "f9e204944141f1dcbdc9e5bba011b5b0a67a926c",
+      "index": {
+        "bytes": 471111,
+        "sha256": "ba29a58d8e19682d2d3c0db7ac2fed01243fea7a3d41f0061780815741542098"
+      },
+      "worktree": {
+        "bytes": 471111,
+        "sha256": "ba29a58d8e19682d2d3c0db7ac2fed01243fea7a3d41f0061780815741542098"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/current-openapi-operations.json",
+      "blobId": "c9621119fbdb652998c75b3d4814fa23b584b97e",
+      "index": {
+        "bytes": 220699,
+        "sha256": "8b516789a6ea0352e1bc7e3a1e44d3c9836cfb04fcac8e5c51de3dae2ca824f8"
+      },
+      "worktree": {
+        "bytes": 220699,
+        "sha256": "8b516789a6ea0352e1bc7e3a1e44d3c9836cfb04fcac8e5c51de3dae2ca824f8"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/environment.json",
+      "blobId": "68435fe6d5cda09cc90bab7dc339dc4c2acfd2e1",
+      "index": {
+        "bytes": 12420,
+        "sha256": "b63184ff52d7f16c0b3d73c1b92b88b7885699402f23aa623413e39506760f80"
+      },
+      "worktree": {
+        "bytes": 12420,
+        "sha256": "b63184ff52d7f16c0b3d73c1b92b88b7885699402f23aa623413e39506760f80"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/environment.md",
+      "blobId": "4e0ce13580d48839560b3683445f5fb57b89c530",
+      "index": {
+        "bytes": 4150,
+        "sha256": "47f3d55247f678b5d3faf1468e9ad8f694454abed3a208dcb4e08c17f8d30c8f"
+      },
+      "worktree": {
+        "bytes": 4150,
+        "sha256": "47f3d55247f678b5d3faf1468e9ad8f694454abed3a208dcb4e08c17f8d30c8f"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/frozen-m5.md",
+      "blobId": "7acd12010cff22bcdee08c022b1791d4ea0daa20",
+      "index": {
+        "bytes": 3446,
+        "sha256": "4c2b808509f568f3dce22688e1b9bf6b3d704b912a491c1473c348da94c57aa6"
+      },
+      "worktree": {
+        "bytes": 3446,
+        "sha256": "4c2b808509f568f3dce22688e1b9bf6b3d704b912a491c1473c348da94c57aa6"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/implementation.md",
+      "blobId": "eb379f4dc1db1cfc13ad5dbf7dd82864be5d12f8",
+      "index": {
+        "bytes": 8892,
+        "sha256": "668f5045bbdd69d67c19c9ca1bd0392c86270ccf2278dfefe9a364c883943680"
+      },
+      "worktree": {
+        "bytes": 8892,
+        "sha256": "668f5045bbdd69d67c19c9ca1bd0392c86270ccf2278dfefe9a364c883943680"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/client-runtime-originals.zip",
+      "blobId": "911fa31eac7f74ddd9c9abbb58c6ab23f85903cf",
+      "index": {
+        "bytes": 2849,
+        "sha256": "41aa5a5fc677c1134b5e22f03d5b4bd51a24e399ff1e36957530fce8fdf67599"
+      },
+      "worktree": {
+        "bytes": 2849,
+        "sha256": "41aa5a5fc677c1134b5e22f03d5b4bd51a24e399ff1e36957530fce8fdf67599"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/environment-initial.json",
+      "blobId": "015e25fd6bb77c4142edd57707dedd100d1de421",
+      "index": {
+        "bytes": 9475,
+        "sha256": "28c5c11e176db6827a14791ed3e8096ebd8b740a1fd66dede1d947364c9d5ecb"
+      },
+      "worktree": {
+        "bytes": 9475,
+        "sha256": "28c5c11e176db6827a14791ed3e8096ebd8b740a1fd66dede1d947364c9d5ecb"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/environment-originals-first.zip",
+      "blobId": "8344b65925d10b5cff0d1e4cc9a81760168e800f",
+      "index": {
+        "bytes": 31715,
+        "sha256": "6643243dc2e79a2b293be4b6259cf43799ac73fbaebb63c9fd9e0f317ccc75ba"
+      },
+      "worktree": {
+        "bytes": 31715,
+        "sha256": "6643243dc2e79a2b293be4b6259cf43799ac73fbaebb63c9fd9e0f317ccc75ba"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/environment-originals.zip",
+      "blobId": "5349deeab179b083a623fbb240129d3b7cd420e7",
+      "index": {
+        "bytes": 39020,
+        "sha256": "1fb169849b3069f4d6ca7fa27dac8fc3917cf21d4b5ed42cf56f2e4688b7d73f"
+      },
+      "worktree": {
+        "bytes": 39020,
+        "sha256": "1fb169849b3069f4d6ca7fa27dac8fc3917cf21d4b5ed42cf56f2e4688b7d73f"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/feedback.md",
+      "blobId": "80c88f64cd71e32eed9105f5bb8c1d7bbf98b913",
+      "index": {
+        "bytes": 1971,
+        "sha256": "4a86beaf25ff526f4c7d1c44c6bd1114cebbda5748fd80eebf05588860cc46a8"
+      },
+      "worktree": {
+        "bytes": 1971,
+        "sha256": "4a86beaf25ff526f4c7d1c44c6bd1114cebbda5748fd80eebf05588860cc46a8"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/platform-observations.json",
+      "blobId": "924fa5c5e34280156162a4ad29aed65c86a9cdd2",
+      "index": {
+        "bytes": 31835,
+        "sha256": "11ea7d3e27e1711bef5388b09ad4eed43fa932181fee8c4a689737dacfa9b385"
+      },
+      "worktree": {
+        "bytes": 31835,
+        "sha256": "11ea7d3e27e1711bef5388b09ad4eed43fa932181fee8c4a689737dacfa9b385"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/platform-savedplan.md",
+      "blobId": "567bbfe9e5f7dc394cd37f07bcb8df4f2a1e6a9f",
+      "index": {
+        "bytes": 5363,
+        "sha256": "5b7903bf3a49b0c548721d78bc89ca4c5b06413dabe77e97601c621ba0f897bc"
+      },
+      "worktree": {
+        "bytes": 5363,
+        "sha256": "5b7903bf3a49b0c548721d78bc89ca4c5b06413dabe77e97601c621ba0f897bc"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/source-snapshot.zip",
+      "blobId": "7dd2e819db4bda9f299a2c5a56a74d1d44fa001d",
+      "index": {
+        "bytes": 6824994,
+        "sha256": "6cf399d19837dac0b68b051d82fa3fdd69a25f39dec2f0d88f14287c2f8d524b"
+      },
+      "worktree": {
+        "bytes": 6824994,
+        "sha256": "6cf399d19837dac0b68b051d82fa3fdd69a25f39dec2f0d88f14287c2f8d524b"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/journeys.md",
+      "blobId": "fdb49c9113b1daf844f9aab27f710d8066fff76f",
+      "index": {
+        "bytes": 7234,
+        "sha256": "6526e41a970c3db15a3bcc44218b7985ace70fa7f9b0082fcae55ff84b95babd"
+      },
+      "worktree": {
+        "bytes": 7234,
+        "sha256": "6526e41a970c3db15a3bcc44218b7985ace70fa7f9b0082fcae55ff84b95babd"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/operation-matrix.md",
+      "blobId": "da1a105d55ad76320572ef3ceb3ddb7b83a92a66",
+      "index": {
+        "bytes": 44845,
+        "sha256": "a1b2d5bbac8a7a35f1b9a1be80adcc4b41c5fae8a3106f815673b44637f9e7d2"
+      },
+      "worktree": {
+        "bytes": 44845,
+        "sha256": "a1b2d5bbac8a7a35f1b9a1be80adcc4b41c5fae8a3106f815673b44637f9e7d2"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/operation-selection.json",
+      "blobId": "30cb95ce9e7a5bcd97f12469289c8eaebb9a3dc1",
+      "index": {
+        "bytes": 86869,
+        "sha256": "6cc9bb3bd85b30a26fd26ed34b2fe8bef636361344755fd22dc4c335c26df6d5"
+      },
+      "worktree": {
+        "bytes": 86869,
+        "sha256": "6cc9bb3bd85b30a26fd26ed34b2fe8bef636361344755fd22dc4c335c26df6d5"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-first-failures.md",
+      "blobId": "2488d7d7a6b95e37822b14f51aa7881bffe5c3a5",
+      "index": {
+        "bytes": 1819,
+        "sha256": "d0e4f1f40b730d0ad9509eca359c92f13586b2538bd509706d41c1d009ed5008"
+      },
+      "worktree": {
+        "bytes": 1819,
+        "sha256": "d0e4f1f40b730d0ad9509eca359c92f13586b2538bd509706d41c1d009ed5008"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-static-verification.json",
+      "blobId": "3c322d38de71a4dad97f88ccbb445fa78670a96b",
+      "index": {
+        "bytes": 6420,
+        "sha256": "0fd75c15ebe5c4f82822d2a1e52dbf863bf2981b5d04fa62beb7199ee6f73612"
+      },
+      "worktree": {
+        "bytes": 6420,
+        "sha256": "0fd75c15ebe5c4f82822d2a1e52dbf863bf2981b5d04fa62beb7199ee6f73612"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/record-planning-checks.py",
+      "blobId": "714832468b561ea437b390b858cd8e1bf4bfac2d",
+      "index": {
+        "bytes": 3734,
+        "sha256": "725791763151d4047e28b17c226c6dc22b340739af0847fe3f5917c1e394f5eb"
+      },
+      "worktree": {
+        "bytes": 3734,
+        "sha256": "725791763151d4047e28b17c226c6dc22b340739af0847fe3f5917c1e394f5eb"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/resources.md",
+      "blobId": "79ccdf842afe79581b80d69ac20aa0851916d0b2",
+      "index": {
+        "bytes": 2779,
+        "sha256": "6a3703e9be4311f945cb5e33f43efe2650c0c3db6229c4792e5b27cdf0fbfae0"
+      },
+      "worktree": {
+        "bytes": 2779,
+        "sha256": "6a3703e9be4311f945cb5e33f43efe2650c0c3db6229c4792e5b27cdf0fbfae0"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/savedplan.md",
+      "blobId": "0fd71b73eb991422335aa512ab8d5943a6ea76df",
+      "index": {
+        "bytes": 5945,
+        "sha256": "9db49335176c2f51a18bc9eddeda55892cd4e74fae0308469b9579cb5e9dfcc7"
+      },
+      "worktree": {
+        "bytes": 5945,
+        "sha256": "9db49335176c2f51a18bc9eddeda55892cd4e74fae0308469b9579cb5e9dfcc7"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/security-contract.md",
+      "blobId": "bf7c68e72f015b63633686085c6136d1d428c95d",
+      "index": {
+        "bytes": 5575,
+        "sha256": "0a4348d4f0cf9d2664bdae5ac0cf0e9014e378e29f34bcc74a5825a57ee3169d"
+      },
+      "worktree": {
+        "bytes": 5575,
+        "sha256": "0a4348d4f0cf9d2664bdae5ac0cf0e9014e378e29f34bcc74a5825a57ee3169d"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/source-manifest.json",
+      "blobId": "25f6a1be9c3b9deb113e718b4f2e5c9776d5f5ab",
+      "index": {
+        "bytes": 1403676,
+        "sha256": "d7a8c4c5a0498c031a88a02bf916a33170f5a977912dd1e0748fea9d578b88b9"
+      },
+      "worktree": {
+        "bytes": 1403676,
+        "sha256": "d7a8c4c5a0498c031a88a02bf916a33170f5a977912dd1e0748fea9d578b88b9"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/sources.md",
+      "blobId": "7eff0a4b9709ef4fd3ff94d5963ae024de2ac01f",
+      "index": {
+        "bytes": 4509,
+        "sha256": "772f8ccb18c8a0c6cefee8c3ea1b0e6d909bd3a30fc23b50a9c47f29216b026a"
+      },
+      "worktree": {
+        "bytes": 4509,
+        "sha256": "772f8ccb18c8a0c6cefee8c3ea1b0e6d909bd3a30fc23b50a9c47f29216b026a"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/spec.md",
+      "blobId": "e8e2b9a87e5de174c17c1df3a31ef5d47e7f8576",
+      "index": {
+        "bytes": 5812,
+        "sha256": "408dfad447a8850459ccb4b745b0464978c8a833182b20d9d0ca03b220412ce5"
+      },
+      "worktree": {
+        "bytes": 5812,
+        "sha256": "408dfad447a8850459ccb4b745b0464978c8a833182b20d9d0ca03b220412ce5"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/support-matrix.md",
+      "blobId": "c0cc7671f30d93435ea78ecdcfdc132b8b0b40bd",
+      "index": {
+        "bytes": 3032,
+        "sha256": "08887af3c893047001872385bfab5f93dfc314bb7f4582711798fb38172465b8"
+      },
+      "worktree": {
+        "bytes": 3032,
+        "sha256": "08887af3c893047001872385bfab5f93dfc314bb7f4582711798fb38172465b8"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/verification.md",
+      "blobId": "baabf92ac08d01560f2ac583a5a4a807efa7b402",
+      "index": {
+        "bytes": 3150,
+        "sha256": "ea40471f246193c315e28e54dfe65bb1b896d0bac77999e7c01b7cacaf517ad9"
+      },
+      "worktree": {
+        "bytes": 3150,
+        "sha256": "ea40471f246193c315e28e54dfe65bb1b896d0bac77999e7c01b7cacaf517ad9"
+      },
+      "equal": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/verify-planning.py",
+      "blobId": "7146febb8d109f85f85ef3355c34f41129eebd11",
+      "index": {
+        "bytes": 6063,
+        "sha256": "61c30e1d1ac6e7c1ab1656243883bad945d2dc8344f1d34da20551dfb96a3b05"
+      },
+      "worktree": {
+        "bytes": 6063,
+        "sha256": "61c30e1d1ac6e7c1ab1656243883bad945d2dc8344f1d34da20551dfb96a3b05"
+      },
+      "equal": true
+    }
+  ],
+  "archive": {
+    "path": "input/planning-checks-originals.zip",
+    "bytes": 7066576,
+    "sha256": "e7a7601896e2c0447677d44a7c5d097996795563499d4d4ee47e12628017db76"
+  },
+  "receiptBoundary": "暂存核验对应上述实际path与byte；本回执、原件ZIP及随后新增的分类回执在末次提交核验另行覆盖。静态核验file列表不自绑定自身，commit回执不自引用其最终head。"
+}

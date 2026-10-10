@@ -1,0 +1,1650 @@
+{
+  "mode": "pre",
+  "recordedAt": "2026-10-10T16:15:21.791949+00:00",
+  "main": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+  "reviewedBase": "32a544fecab58601a1ab9ff3e794896a813b9f22",
+  "candidateHead": null,
+  "productTestsRun": false,
+  "blockingFindings": {
+    "B1": "待_oY复核",
+    "B2": "待_oY复核",
+    "B3": "待_oY复核"
+  },
+  "failure": null,
+  "checks": [
+    {
+      "name": "baseline-preserved",
+      "argv": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "docs/plan/agent-mcp-m5/capture-review-base.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:14:52.261557+00:00",
+      "endedAt": "2026-10-10T16:14:52.394609+00:00",
+      "runtimeSeconds": 0.13306290000036824,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "baseline-preserved/stdout",
+        "bytes": 120,
+        "sha256": "846c22a890251a596bf3bfbeed2a34b8e28edd5733f7bb35f459923e1f1acb74"
+      },
+      "stderr": {
+        "member": "baseline-preserved/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "plan-full-copy-and-edits",
+      "argv": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "docs/plan/agent-mcp-m5/sync-current-plan.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:14:52.394655+00:00",
+      "endedAt": "2026-10-10T16:14:52.447012+00:00",
+      "runtimeSeconds": 0.05236690001038369,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "plan-full-copy-and-edits/stdout",
+        "bytes": 145,
+        "sha256": "b77c38f921872e869a28c49294c6e6728c6a6c87b91024cc4f09c34f0dc51209"
+      },
+      "stderr": {
+        "member": "plan-full-copy-and-edits/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "operation-matrix",
+      "argv": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "docs/plan/agent-mcp-m5/build-operation-matrix.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:14:52.447039+00:00",
+      "endedAt": "2026-10-10T16:14:53.191087+00:00",
+      "runtimeSeconds": 0.744054299997515,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "operation-matrix/stdout",
+        "bytes": 78,
+        "sha256": "282ec5700293fb080bdc2ee66501c40c13a9e59c501fbb0312fb50776eea1da0"
+      },
+      "stderr": {
+        "member": "operation-matrix/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "full-source-and-review-plan",
+      "argv": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "docs/plan/agent-mcp-m5/verify-planning.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:14:53.191114+00:00",
+      "endedAt": "2026-10-10T16:15:18.041241+00:00",
+      "runtimeSeconds": 24.85003549999965,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "full-source-and-review-plan/stdout",
+        "bytes": 726,
+        "sha256": "2da6661137b256324ed5b1bb1f3b3bea0882614ed8b3b0818c822301b176d387"
+      },
+      "stderr": {
+        "member": "full-source-and-review-plan/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "stage-authorized-planning",
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "docs/plan/agent-mcp-m5"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:15:18.041278+00:00",
+      "endedAt": "2026-10-10T16:15:18.486662+00:00",
+      "runtimeSeconds": 0.44539190000796225,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "stage-authorized-planning/stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "member": "stage-authorized-planning/stderr",
+        "bytes": 3569,
+        "sha256": "9b493b13c7350b612166ec10da00ab6dbcca171ac94d8f6bcef63ef2b685b849"
+      }
+    },
+    {
+      "name": "staged-whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:15:18.486692+00:00",
+      "endedAt": "2026-10-10T16:15:18.543384+00:00",
+      "runtimeSeconds": 0.0567012999963481,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "staged-whitespace/stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "member": "staged-whitespace/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "main-to-index-whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+        "--check"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:15:18.543414+00:00",
+      "endedAt": "2026-10-10T16:15:18.648794+00:00",
+      "runtimeSeconds": 0.10538950000773184,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "main-to-index-whitespace/stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "member": "main-to-index-whitespace/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "changed-paths",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only",
+        "-z"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:15:18.648823+00:00",
+      "endedAt": "2026-10-10T16:15:18.694807+00:00",
+      "runtimeSeconds": 0.045993499996257015,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "changed-paths/stdout",
+        "bytes": 1234,
+        "sha256": "063f0fa19c1e248b93699eeea9186af4d6cba8015021ed8147f6de02de2e4f6f"
+      },
+      "stderr": {
+        "member": "changed-paths/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "pr-main-to-index-paths",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+        "--name-only",
+        "-z"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:15:18.694840+00:00",
+      "endedAt": "2026-10-10T16:15:18.752518+00:00",
+      "runtimeSeconds": 0.05771370000729803,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "pr-main-to-index-paths/stdout",
+        "bytes": 2899,
+        "sha256": "62fd8a0e64cb036d81695e92a00fbe39c660d03430dc97d578e091f96aaed3f4"
+      },
+      "stderr": {
+        "member": "pr-main-to-index-paths/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "all-index-planning-files",
+      "argv": [
+        "git",
+        "ls-files",
+        "-z",
+        "--",
+        "docs/plan/agent-mcp-m5"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:15:18.752690+00:00",
+      "endedAt": "2026-10-10T16:15:18.802348+00:00",
+      "runtimeSeconds": 0.04967249999754131,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "all-index-planning-files/stdout",
+        "bytes": 2899,
+        "sha256": "62fd8a0e64cb036d81695e92a00fbe39c660d03430dc97d578e091f96aaed3f4"
+      },
+      "stderr": {
+        "member": "all-index-planning-files/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "actual-complete-pr-ci-classification",
+      "argv": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import {classifyChanges,readWorkspaces} from './scripts/ci-policy.mjs';const paths=JSON.parse(process.argv[1]);console.log(JSON.stringify({paths,...classifyChanges(paths,readWorkspaces())}));",
+        "[\"docs/plan/agent-mcp-m5/.gitignore\", \"docs/plan/agent-mcp-m5/README.md\", \"docs/plan/agent-mcp-m5/acceptance-matrix.md\", \"docs/plan/agent-mcp-m5/adr-proposal.md\", \"docs/plan/agent-mcp-m5/build-operation-matrix.py\", \"docs/plan/agent-mcp-m5/capture-planning.py\", \"docs/plan/agent-mcp-m5/capture-review-base.py\", \"docs/plan/agent-mcp-m5/capture-runtime.py\", \"docs/plan/agent-mcp-m5/client-runtime.json\", \"docs/plan/agent-mcp-m5/consumer-matrix.md\", \"docs/plan/agent-mcp-m5/current-discovery.json\", \"docs/plan/agent-mcp-m5/current-openapi-operations.json\", \"docs/plan/agent-mcp-m5/environment.json\", \"docs/plan/agent-mcp-m5/environment.md\", \"docs/plan/agent-mcp-m5/finalize-planning.py\", \"docs/plan/agent-mcp-m5/frozen-m5.md\", \"docs/plan/agent-mcp-m5/implementation.md\", \"docs/plan/agent-mcp-m5/input/candidate-before-review.zip\", \"docs/plan/agent-mcp-m5/input/client-runtime-originals.zip\", \"docs/plan/agent-mcp-m5/input/environment-initial.json\", \"docs/plan/agent-mcp-m5/input/environment-originals-first.zip\", \"docs/plan/agent-mcp-m5/input/environment-originals.zip\", \"docs/plan/agent-mcp-m5/input/feedback.md\", \"docs/plan/agent-mcp-m5/input/final-platform-readback.json\", \"docs/plan/agent-mcp-m5/input/main-observation.json\", \"docs/plan/agent-mcp-m5/input/planning-checks-originals.zip\", \"docs/plan/agent-mcp-m5/input/planning-commit-verification-originals.zip\", \"docs/plan/agent-mcp-m5/input/planning-final-static-originals.zip\", \"docs/plan/agent-mcp-m5/input/platform-observations.json\", \"docs/plan/agent-mcp-m5/input/platform-plan-before-sync.md\", \"docs/plan/agent-mcp-m5/input/platform-savedplan.md\", \"docs/plan/agent-mcp-m5/input/platform-sync-edits.json\", \"docs/plan/agent-mcp-m5/input/reviewer-feedback.md\", \"docs/plan/agent-mcp-m5/input/source-snapshot.zip\", \"docs/plan/agent-mcp-m5/input/sync-feedback.md\", \"docs/plan/agent-mcp-m5/input/sync-main-observation.json\", \"docs/plan/agent-mcp-m5/input/sync-platform-observations.json\", \"docs/plan/agent-mcp-m5/journeys.md\", \"docs/plan/agent-mcp-m5/operation-matrix.md\", \"docs/plan/agent-mcp-m5/operation-selection.json\", \"docs/plan/agent-mcp-m5/planning-checks.json\", \"docs/plan/agent-mcp-m5/planning-ci-classification.json\", \"docs/plan/agent-mcp-m5/planning-commit-verification.json\", \"docs/plan/agent-mcp-m5/planning-final-static.json\", \"docs/plan/agent-mcp-m5/planning-first-failures.md\", \"docs/plan/agent-mcp-m5/planning-static-verification.json\", \"docs/plan/agent-mcp-m5/record-planning-checks.py\", \"docs/plan/agent-mcp-m5/record-review-checks.py\", \"docs/plan/agent-mcp-m5/resources.md\", \"docs/plan/agent-mcp-m5/review-base-manifest.json\", \"docs/plan/agent-mcp-m5/review-response.md\", \"docs/plan/agent-mcp-m5/review-static-verification.json\", \"docs/plan/agent-mcp-m5/savedplan.md\", \"docs/plan/agent-mcp-m5/security-contract.md\", \"docs/plan/agent-mcp-m5/source-manifest.json\", \"docs/plan/agent-mcp-m5/sources.md\", \"docs/plan/agent-mcp-m5/spec.md\", \"docs/plan/agent-mcp-m5/support-matrix.md\", \"docs/plan/agent-mcp-m5/sync-current-plan.py\", \"docs/plan/agent-mcp-m5/verification.md\", \"docs/plan/agent-mcp-m5/verify-planning.py\"]"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "startedAt": "2026-10-10T16:15:18.802451+00:00",
+      "endedAt": "2026-10-10T16:15:18.896793+00:00",
+      "runtimeSeconds": 0.09435210000083316,
+      "nativeExit": 0,
+      "stdout": {
+        "member": "actual-complete-pr-ci-classification/stdout",
+        "bytes": 3989,
+        "sha256": "d6cc94e2c226a07b7cd8db65dfe8e7288bac2b0253bad56599e1a3d74ed50fbd"
+      },
+      "stderr": {
+        "member": "actual-complete-pr-ci-classification/stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "ciClassification": {
+    "paths": [
+      "docs/plan/agent-mcp-m5/.gitignore",
+      "docs/plan/agent-mcp-m5/README.md",
+      "docs/plan/agent-mcp-m5/acceptance-matrix.md",
+      "docs/plan/agent-mcp-m5/adr-proposal.md",
+      "docs/plan/agent-mcp-m5/build-operation-matrix.py",
+      "docs/plan/agent-mcp-m5/capture-planning.py",
+      "docs/plan/agent-mcp-m5/capture-review-base.py",
+      "docs/plan/agent-mcp-m5/capture-runtime.py",
+      "docs/plan/agent-mcp-m5/client-runtime.json",
+      "docs/plan/agent-mcp-m5/consumer-matrix.md",
+      "docs/plan/agent-mcp-m5/current-discovery.json",
+      "docs/plan/agent-mcp-m5/current-openapi-operations.json",
+      "docs/plan/agent-mcp-m5/environment.json",
+      "docs/plan/agent-mcp-m5/environment.md",
+      "docs/plan/agent-mcp-m5/finalize-planning.py",
+      "docs/plan/agent-mcp-m5/frozen-m5.md",
+      "docs/plan/agent-mcp-m5/implementation.md",
+      "docs/plan/agent-mcp-m5/input/candidate-before-review.zip",
+      "docs/plan/agent-mcp-m5/input/client-runtime-originals.zip",
+      "docs/plan/agent-mcp-m5/input/environment-initial.json",
+      "docs/plan/agent-mcp-m5/input/environment-originals-first.zip",
+      "docs/plan/agent-mcp-m5/input/environment-originals.zip",
+      "docs/plan/agent-mcp-m5/input/feedback.md",
+      "docs/plan/agent-mcp-m5/input/final-platform-readback.json",
+      "docs/plan/agent-mcp-m5/input/main-observation.json",
+      "docs/plan/agent-mcp-m5/input/planning-checks-originals.zip",
+      "docs/plan/agent-mcp-m5/input/planning-commit-verification-originals.zip",
+      "docs/plan/agent-mcp-m5/input/planning-final-static-originals.zip",
+      "docs/plan/agent-mcp-m5/input/platform-observations.json",
+      "docs/plan/agent-mcp-m5/input/platform-plan-before-sync.md",
+      "docs/plan/agent-mcp-m5/input/platform-savedplan.md",
+      "docs/plan/agent-mcp-m5/input/platform-sync-edits.json",
+      "docs/plan/agent-mcp-m5/input/reviewer-feedback.md",
+      "docs/plan/agent-mcp-m5/input/source-snapshot.zip",
+      "docs/plan/agent-mcp-m5/input/sync-feedback.md",
+      "docs/plan/agent-mcp-m5/input/sync-main-observation.json",
+      "docs/plan/agent-mcp-m5/input/sync-platform-observations.json",
+      "docs/plan/agent-mcp-m5/journeys.md",
+      "docs/plan/agent-mcp-m5/operation-matrix.md",
+      "docs/plan/agent-mcp-m5/operation-selection.json",
+      "docs/plan/agent-mcp-m5/planning-checks.json",
+      "docs/plan/agent-mcp-m5/planning-ci-classification.json",
+      "docs/plan/agent-mcp-m5/planning-commit-verification.json",
+      "docs/plan/agent-mcp-m5/planning-final-static.json",
+      "docs/plan/agent-mcp-m5/planning-first-failures.md",
+      "docs/plan/agent-mcp-m5/planning-static-verification.json",
+      "docs/plan/agent-mcp-m5/record-planning-checks.py",
+      "docs/plan/agent-mcp-m5/record-review-checks.py",
+      "docs/plan/agent-mcp-m5/resources.md",
+      "docs/plan/agent-mcp-m5/review-base-manifest.json",
+      "docs/plan/agent-mcp-m5/review-response.md",
+      "docs/plan/agent-mcp-m5/review-static-verification.json",
+      "docs/plan/agent-mcp-m5/savedplan.md",
+      "docs/plan/agent-mcp-m5/security-contract.md",
+      "docs/plan/agent-mcp-m5/source-manifest.json",
+      "docs/plan/agent-mcp-m5/sources.md",
+      "docs/plan/agent-mcp-m5/spec.md",
+      "docs/plan/agent-mcp-m5/support-matrix.md",
+      "docs/plan/agent-mcp-m5/sync-current-plan.py",
+      "docs/plan/agent-mcp-m5/verification.md",
+      "docs/plan/agent-mcp-m5/verify-planning.py"
+    ],
+    "mode": "full",
+    "packages": [
+      "@workmesh/a2a-adapter",
+      "@workmesh/agent-runner",
+      "@workmesh/agent-sdk",
+      "@workmesh/api",
+      "@workmesh/artifact-storage",
+      "@workmesh/config",
+      "@workmesh/conformance",
+      "@workmesh/contracts",
+      "@workmesh/db",
+      "@workmesh/domain",
+      "@workmesh/fake-agent",
+      "@workmesh/git-provider",
+      "@workmesh/mcp",
+      "@workmesh/observability",
+      "@workmesh/recovery",
+      "@workmesh/ui",
+      "@workmesh/web",
+      "@workmesh/worker"
+    ],
+    "testPackages": [
+      "@workmesh/a2a-adapter",
+      "@workmesh/agent-runner",
+      "@workmesh/agent-sdk",
+      "@workmesh/api",
+      "@workmesh/artifact-storage",
+      "@workmesh/config",
+      "@workmesh/conformance",
+      "@workmesh/contracts",
+      "@workmesh/db",
+      "@workmesh/domain",
+      "@workmesh/fake-agent",
+      "@workmesh/git-provider",
+      "@workmesh/mcp",
+      "@workmesh/observability",
+      "@workmesh/recovery",
+      "@workmesh/ui",
+      "@workmesh/web",
+      "@workmesh/worker"
+    ],
+    "checks": {
+      "source-gates": true,
+      "db-integration": true,
+      "api-integration": true,
+      "worker-integration": true,
+      "e2e": true,
+      "recovery-integration": true,
+      "agent-smoke": true
+    }
+  },
+  "byteBindings": [
+    {
+      "path": "docs/plan/agent-mcp-m5/.gitignore",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/.gitignore"
+      ],
+      "nativeExit": 0,
+      "blobId": "c18dd8d83ceed1806b50b0aaa46beb7e335fff13",
+      "object": {
+        "bytes": 13,
+        "sha256": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b"
+      },
+      "worktree": {
+        "bytes": 13,
+        "sha256": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/README.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/README.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "d2964db7ff4475d217e98baefd086d4053fcc73d",
+      "object": {
+        "bytes": 3410,
+        "sha256": "f213262eb3567e7f184d25b34c8cf7f2c3443986943affd3473247302d8cfc3c"
+      },
+      "worktree": {
+        "bytes": 3410,
+        "sha256": "f213262eb3567e7f184d25b34c8cf7f2c3443986943affd3473247302d8cfc3c"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/acceptance-matrix.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/acceptance-matrix.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "1100a011482067fe9cff3d19e2124a60e49d136f",
+      "object": {
+        "bytes": 6612,
+        "sha256": "24297f90fd3c54c32bf8191b0b2b1c4096112ef91e461b35187b7dfd75780a23"
+      },
+      "worktree": {
+        "bytes": 6612,
+        "sha256": "24297f90fd3c54c32bf8191b0b2b1c4096112ef91e461b35187b7dfd75780a23"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/adr-proposal.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/adr-proposal.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "b060db1eba92b4eda5e7f6811f341309fc45a637",
+      "object": {
+        "bytes": 2525,
+        "sha256": "f48d933cb8da4605192063081db0d34c8ad6b5755af51d330c91de71381f61dc"
+      },
+      "worktree": {
+        "bytes": 2525,
+        "sha256": "f48d933cb8da4605192063081db0d34c8ad6b5755af51d330c91de71381f61dc"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/build-operation-matrix.py",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/build-operation-matrix.py"
+      ],
+      "nativeExit": 0,
+      "blobId": "d1e220ed6987e82f1779617b6af60d4d3bf494ba",
+      "object": {
+        "bytes": 8580,
+        "sha256": "9c1d7c55880f9acc2f7ef9885588756d6e11a00aceb5ed771dd338a0f1736733"
+      },
+      "worktree": {
+        "bytes": 8580,
+        "sha256": "9c1d7c55880f9acc2f7ef9885588756d6e11a00aceb5ed771dd338a0f1736733"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/capture-planning.py",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/capture-planning.py"
+      ],
+      "nativeExit": 0,
+      "blobId": "5199cba91069344482f2aec79c42fce775585bf7",
+      "object": {
+        "bytes": 13820,
+        "sha256": "e35d95388d3857208c2c116f4b16f99312c5296749222a31826fbb76bf08c01d"
+      },
+      "worktree": {
+        "bytes": 13820,
+        "sha256": "e35d95388d3857208c2c116f4b16f99312c5296749222a31826fbb76bf08c01d"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/capture-review-base.py",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/capture-review-base.py"
+      ],
+      "nativeExit": 0,
+      "blobId": "0134ba80d78156b9f995b50615352d685113b3c2",
+      "object": {
+        "bytes": 2470,
+        "sha256": "d1e06c0703a5a5e97c5100b670f793407e962f6a9eafba770eade93cc3a03021"
+      },
+      "worktree": {
+        "bytes": 2470,
+        "sha256": "d1e06c0703a5a5e97c5100b670f793407e962f6a9eafba770eade93cc3a03021"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/capture-runtime.py",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/capture-runtime.py"
+      ],
+      "nativeExit": 0,
+      "blobId": "82caf176f313527a522bba23de01cb5a87a95222",
+      "object": {
+        "bytes": 2048,
+        "sha256": "361f3b7ea2c05a3bb07c77236214073b192a871ee24f18cdfe377a68d880ef35"
+      },
+      "worktree": {
+        "bytes": 2048,
+        "sha256": "361f3b7ea2c05a3bb07c77236214073b192a871ee24f18cdfe377a68d880ef35"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/client-runtime.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/client-runtime.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "aa3f9e231959a3f0334c822c47fc5aedd04d9022",
+      "object": {
+        "bytes": 1056,
+        "sha256": "404800f08e3fe3696aae4af16e7cb20946d4a71c7953e93eefe38c2e0897b846"
+      },
+      "worktree": {
+        "bytes": 1056,
+        "sha256": "404800f08e3fe3696aae4af16e7cb20946d4a71c7953e93eefe38c2e0897b846"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/consumer-matrix.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/consumer-matrix.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "d3db65472d93a4ef6c2f43e307d0b8ea4e6e81b8",
+      "object": {
+        "bytes": 5709,
+        "sha256": "a8e386ccf6dcf78337886bcaeacfb807393cd8130267f6544d2e38656e22ab12"
+      },
+      "worktree": {
+        "bytes": 5709,
+        "sha256": "a8e386ccf6dcf78337886bcaeacfb807393cd8130267f6544d2e38656e22ab12"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/current-discovery.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/current-discovery.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "f9e204944141f1dcbdc9e5bba011b5b0a67a926c",
+      "object": {
+        "bytes": 471111,
+        "sha256": "ba29a58d8e19682d2d3c0db7ac2fed01243fea7a3d41f0061780815741542098"
+      },
+      "worktree": {
+        "bytes": 471111,
+        "sha256": "ba29a58d8e19682d2d3c0db7ac2fed01243fea7a3d41f0061780815741542098"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/current-openapi-operations.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/current-openapi-operations.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "c9621119fbdb652998c75b3d4814fa23b584b97e",
+      "object": {
+        "bytes": 220699,
+        "sha256": "8b516789a6ea0352e1bc7e3a1e44d3c9836cfb04fcac8e5c51de3dae2ca824f8"
+      },
+      "worktree": {
+        "bytes": 220699,
+        "sha256": "8b516789a6ea0352e1bc7e3a1e44d3c9836cfb04fcac8e5c51de3dae2ca824f8"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/environment.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/environment.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "68435fe6d5cda09cc90bab7dc339dc4c2acfd2e1",
+      "object": {
+        "bytes": 12420,
+        "sha256": "b63184ff52d7f16c0b3d73c1b92b88b7885699402f23aa623413e39506760f80"
+      },
+      "worktree": {
+        "bytes": 12420,
+        "sha256": "b63184ff52d7f16c0b3d73c1b92b88b7885699402f23aa623413e39506760f80"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/environment.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/environment.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "4e0ce13580d48839560b3683445f5fb57b89c530",
+      "object": {
+        "bytes": 4150,
+        "sha256": "47f3d55247f678b5d3faf1468e9ad8f694454abed3a208dcb4e08c17f8d30c8f"
+      },
+      "worktree": {
+        "bytes": 4150,
+        "sha256": "47f3d55247f678b5d3faf1468e9ad8f694454abed3a208dcb4e08c17f8d30c8f"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/finalize-planning.py",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/finalize-planning.py"
+      ],
+      "nativeExit": 0,
+      "blobId": "8c786c15a058c2d083672da38888402464e65c3b",
+      "object": {
+        "bytes": 4370,
+        "sha256": "5298824bb871555b21e638ced6803164e914ef0e8ddf76d479e2a5b6adf83fec"
+      },
+      "worktree": {
+        "bytes": 4370,
+        "sha256": "5298824bb871555b21e638ced6803164e914ef0e8ddf76d479e2a5b6adf83fec"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/frozen-m5.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/frozen-m5.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "7acd12010cff22bcdee08c022b1791d4ea0daa20",
+      "object": {
+        "bytes": 3446,
+        "sha256": "4c2b808509f568f3dce22688e1b9bf6b3d704b912a491c1473c348da94c57aa6"
+      },
+      "worktree": {
+        "bytes": 3446,
+        "sha256": "4c2b808509f568f3dce22688e1b9bf6b3d704b912a491c1473c348da94c57aa6"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/implementation.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/implementation.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "0176096f8bf8df0ea7bf73afd913e84022c3da11",
+      "object": {
+        "bytes": 11675,
+        "sha256": "ffe057276729ac39fc0df5e5460b31dd1ed1837460e52b3ae572ba776945df7c"
+      },
+      "worktree": {
+        "bytes": 11675,
+        "sha256": "ffe057276729ac39fc0df5e5460b31dd1ed1837460e52b3ae572ba776945df7c"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/candidate-before-review.zip",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/candidate-before-review.zip"
+      ],
+      "nativeExit": 0,
+      "blobId": "0285601176113e5ebc5744462cb7b2d2cd800048",
+      "object": {
+        "bytes": 14177254,
+        "sha256": "1b00badb4930c8f39b80f9fef2d487ddca7e3976d4759a85e42366317e91f84c"
+      },
+      "worktree": {
+        "bytes": 14177254,
+        "sha256": "1b00badb4930c8f39b80f9fef2d487ddca7e3976d4759a85e42366317e91f84c"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/client-runtime-originals.zip",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/client-runtime-originals.zip"
+      ],
+      "nativeExit": 0,
+      "blobId": "911fa31eac7f74ddd9c9abbb58c6ab23f85903cf",
+      "object": {
+        "bytes": 2849,
+        "sha256": "41aa5a5fc677c1134b5e22f03d5b4bd51a24e399ff1e36957530fce8fdf67599"
+      },
+      "worktree": {
+        "bytes": 2849,
+        "sha256": "41aa5a5fc677c1134b5e22f03d5b4bd51a24e399ff1e36957530fce8fdf67599"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/environment-initial.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/environment-initial.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "015e25fd6bb77c4142edd57707dedd100d1de421",
+      "object": {
+        "bytes": 9475,
+        "sha256": "28c5c11e176db6827a14791ed3e8096ebd8b740a1fd66dede1d947364c9d5ecb"
+      },
+      "worktree": {
+        "bytes": 9475,
+        "sha256": "28c5c11e176db6827a14791ed3e8096ebd8b740a1fd66dede1d947364c9d5ecb"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/environment-originals-first.zip",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/environment-originals-first.zip"
+      ],
+      "nativeExit": 0,
+      "blobId": "8344b65925d10b5cff0d1e4cc9a81760168e800f",
+      "object": {
+        "bytes": 31715,
+        "sha256": "6643243dc2e79a2b293be4b6259cf43799ac73fbaebb63c9fd9e0f317ccc75ba"
+      },
+      "worktree": {
+        "bytes": 31715,
+        "sha256": "6643243dc2e79a2b293be4b6259cf43799ac73fbaebb63c9fd9e0f317ccc75ba"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/environment-originals.zip",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/environment-originals.zip"
+      ],
+      "nativeExit": 0,
+      "blobId": "5349deeab179b083a623fbb240129d3b7cd420e7",
+      "object": {
+        "bytes": 39020,
+        "sha256": "1fb169849b3069f4d6ca7fa27dac8fc3917cf21d4b5ed42cf56f2e4688b7d73f"
+      },
+      "worktree": {
+        "bytes": 39020,
+        "sha256": "1fb169849b3069f4d6ca7fa27dac8fc3917cf21d4b5ed42cf56f2e4688b7d73f"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/feedback.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/feedback.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "80c88f64cd71e32eed9105f5bb8c1d7bbf98b913",
+      "object": {
+        "bytes": 1971,
+        "sha256": "4a86beaf25ff526f4c7d1c44c6bd1114cebbda5748fd80eebf05588860cc46a8"
+      },
+      "worktree": {
+        "bytes": 1971,
+        "sha256": "4a86beaf25ff526f4c7d1c44c6bd1114cebbda5748fd80eebf05588860cc46a8"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/final-platform-readback.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/final-platform-readback.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "fd814b07f4704d3af91f047a1d67f1b716a495f5",
+      "object": {
+        "bytes": 12553,
+        "sha256": "679f6d83508d7a271b50e9b11563874286aecec47a8e83c5395850001f7e6f17"
+      },
+      "worktree": {
+        "bytes": 12553,
+        "sha256": "679f6d83508d7a271b50e9b11563874286aecec47a8e83c5395850001f7e6f17"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/main-observation.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/main-observation.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "08b67ac916f832887a5e8fefa23f3d40e184d372",
+      "object": {
+        "bytes": 384,
+        "sha256": "d3b78fbb445ee6cfbdbaedf141e2a776267736b2edcde85cd1e73ac1bf189e79"
+      },
+      "worktree": {
+        "bytes": 384,
+        "sha256": "d3b78fbb445ee6cfbdbaedf141e2a776267736b2edcde85cd1e73ac1bf189e79"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/planning-checks-originals.zip",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/planning-checks-originals.zip"
+      ],
+      "nativeExit": 0,
+      "blobId": "c03a7ee2703a22b00384205715c7aaa70bf7addb",
+      "object": {
+        "bytes": 7066576,
+        "sha256": "e7a7601896e2c0447677d44a7c5d097996795563499d4d4ee47e12628017db76"
+      },
+      "worktree": {
+        "bytes": 7066576,
+        "sha256": "e7a7601896e2c0447677d44a7c5d097996795563499d4d4ee47e12628017db76"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/planning-commit-verification-originals.zip",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/planning-commit-verification-originals.zip"
+      ],
+      "nativeExit": 0,
+      "blobId": "9457a9a3fbfea91f9c8b8c02e4ceb854e30f64fc",
+      "object": {
+        "bytes": 2132,
+        "sha256": "d684d0e44c67dced1389b9cd5598e3d9e6e64dde1b631c6d37e2e2afa8774c4c"
+      },
+      "worktree": {
+        "bytes": 2132,
+        "sha256": "d684d0e44c67dced1389b9cd5598e3d9e6e64dde1b631c6d37e2e2afa8774c4c"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/planning-final-static-originals.zip",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/planning-final-static-originals.zip"
+      ],
+      "nativeExit": 0,
+      "blobId": "da73a58d116e1239b2cbd28fccfa4ec732fcd9a7",
+      "object": {
+        "bytes": 3492,
+        "sha256": "311ffc169981f001336b0ee9883471600852b22872a2b0488084c279f2465ca2"
+      },
+      "worktree": {
+        "bytes": 3492,
+        "sha256": "311ffc169981f001336b0ee9883471600852b22872a2b0488084c279f2465ca2"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/platform-observations.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/platform-observations.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "924fa5c5e34280156162a4ad29aed65c86a9cdd2",
+      "object": {
+        "bytes": 31835,
+        "sha256": "11ea7d3e27e1711bef5388b09ad4eed43fa932181fee8c4a689737dacfa9b385"
+      },
+      "worktree": {
+        "bytes": 31835,
+        "sha256": "11ea7d3e27e1711bef5388b09ad4eed43fa932181fee8c4a689737dacfa9b385"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/platform-plan-before-sync.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/platform-plan-before-sync.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "d5b09cb4585f5b73b3b13f76162973011447e45f",
+      "object": {
+        "bytes": 11889,
+        "sha256": "983703066865198dbdf573e03d252d83676a03a80ffd2a8c2e9c3d5bd72e0e1f"
+      },
+      "worktree": {
+        "bytes": 11889,
+        "sha256": "983703066865198dbdf573e03d252d83676a03a80ffd2a8c2e9c3d5bd72e0e1f"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/platform-savedplan.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/platform-savedplan.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "567bbfe9e5f7dc394cd37f07bcb8df4f2a1e6a9f",
+      "object": {
+        "bytes": 5363,
+        "sha256": "5b7903bf3a49b0c548721d78bc89ca4c5b06413dabe77e97601c621ba0f897bc"
+      },
+      "worktree": {
+        "bytes": 5363,
+        "sha256": "5b7903bf3a49b0c548721d78bc89ca4c5b06413dabe77e97601c621ba0f897bc"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/platform-sync-edits.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/platform-sync-edits.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "334ad3f032dc24c49c34d2f7939f2d82f0be7513",
+      "object": {
+        "bytes": 2840,
+        "sha256": "c37eedb3a656c0f56df9bf51c8ada044fdad0f93bc4e9df6a97ed2ca487f5b7b"
+      },
+      "worktree": {
+        "bytes": 2840,
+        "sha256": "c37eedb3a656c0f56df9bf51c8ada044fdad0f93bc4e9df6a97ed2ca487f5b7b"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/reviewer-feedback.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/reviewer-feedback.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "997e8cc139a04e83ef26d3ca21ee5893f906c73f",
+      "object": {
+        "bytes": 2386,
+        "sha256": "68a1428267ef32384a032379f349126f2ce3e08b332e46a9cd2c0b7f9edbba57"
+      },
+      "worktree": {
+        "bytes": 2386,
+        "sha256": "68a1428267ef32384a032379f349126f2ce3e08b332e46a9cd2c0b7f9edbba57"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/source-snapshot.zip",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/source-snapshot.zip"
+      ],
+      "nativeExit": 0,
+      "blobId": "e88400dfc5e9316d7343e0a984db4a535a58d5a2",
+      "object": {
+        "bytes": 6842174,
+        "sha256": "d849071f7a619be85b5b90026b60a72a82f9c1ba24a09dd3e32a9577a8d5abbc"
+      },
+      "worktree": {
+        "bytes": 6842174,
+        "sha256": "d849071f7a619be85b5b90026b60a72a82f9c1ba24a09dd3e32a9577a8d5abbc"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/sync-feedback.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/sync-feedback.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "fd9504e512fd0fd814fef4712e075b8587b0da5f",
+      "object": {
+        "bytes": 2026,
+        "sha256": "81f04100e8b217665680f42c323355868f3bd6c3cfc0aece58e47f89d58a2046"
+      },
+      "worktree": {
+        "bytes": 2026,
+        "sha256": "81f04100e8b217665680f42c323355868f3bd6c3cfc0aece58e47f89d58a2046"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/sync-main-observation.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/sync-main-observation.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "47d9b982db8e53e971b759bea805250a2acd6052",
+      "object": {
+        "bytes": 617,
+        "sha256": "82372056993073dcfe7a893a3f173a1f3e3073dd5a9c9aa6a2ff38e3126bcffb"
+      },
+      "worktree": {
+        "bytes": 617,
+        "sha256": "82372056993073dcfe7a893a3f173a1f3e3073dd5a9c9aa6a2ff38e3126bcffb"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/sync-platform-observations.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/input/sync-platform-observations.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "650260b9a37ac9508925893374c8dc18babcd77e",
+      "object": {
+        "bytes": 27824,
+        "sha256": "47a8cb5ac0e7469e40a9807986a58b67125380967d2e638f391facceb044c03d"
+      },
+      "worktree": {
+        "bytes": 27824,
+        "sha256": "47a8cb5ac0e7469e40a9807986a58b67125380967d2e638f391facceb044c03d"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/journeys.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/journeys.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "f50caa3dedff8d97f1a8335c4bf9bcf1722b6743",
+      "object": {
+        "bytes": 8849,
+        "sha256": "fda4ba86fb55370284819aae6a42f2f8c34cec609021239974e8a9a2c5cef678"
+      },
+      "worktree": {
+        "bytes": 8849,
+        "sha256": "fda4ba86fb55370284819aae6a42f2f8c34cec609021239974e8a9a2c5cef678"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/operation-matrix.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/operation-matrix.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "69278aa62f0adaefe848b4ae7faf0f3d12ceab3f",
+      "object": {
+        "bytes": 45421,
+        "sha256": "45edd91e9a1f2ee53c7ece4699d84c46c7bd3fc1baa702cdba468cbeba4dc1a2"
+      },
+      "worktree": {
+        "bytes": 45421,
+        "sha256": "45edd91e9a1f2ee53c7ece4699d84c46c7bd3fc1baa702cdba468cbeba4dc1a2"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/operation-selection.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/operation-selection.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "5db0d9340c313fbef1f5e724ed1884cc9e614b58",
+      "object": {
+        "bytes": 87445,
+        "sha256": "92c0e470094f51208e374f58a6749a2f43c917ac54a7617fea34f5d4309a4787"
+      },
+      "worktree": {
+        "bytes": 87445,
+        "sha256": "92c0e470094f51208e374f58a6749a2f43c917ac54a7617fea34f5d4309a4787"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-checks.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/planning-checks.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "2e2e3188229ac7832fe6ccdd8b8b4d1e24ace3f0",
+      "object": {
+        "bytes": 54459,
+        "sha256": "7d67041bf45ea477193026ef7d82762985bb8765aab7f5f8d897c28c16fb9833"
+      },
+      "worktree": {
+        "bytes": 54459,
+        "sha256": "7d67041bf45ea477193026ef7d82762985bb8765aab7f5f8d897c28c16fb9833"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-ci-classification.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/planning-ci-classification.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "2a2e01daf3d5e5728922c50f495d37cca5729474",
+      "object": {
+        "bytes": 3122,
+        "sha256": "c77f75fc4a114aa3f2000fec0c099f9f0ee8639d4389c9d14c854d331043141d"
+      },
+      "worktree": {
+        "bytes": 3122,
+        "sha256": "c77f75fc4a114aa3f2000fec0c099f9f0ee8639d4389c9d14c854d331043141d"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-commit-verification.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/planning-commit-verification.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "0a5cd2bcd690f14fe14efac63ba8bdc5e9e2ca2e",
+      "object": {
+        "bytes": 42271,
+        "sha256": "3172f9f15ce622fe19023d55b8cc1144d359b7a402adb43cca810527af4d3f38"
+      },
+      "worktree": {
+        "bytes": 42271,
+        "sha256": "3172f9f15ce622fe19023d55b8cc1144d359b7a402adb43cca810527af4d3f38"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-final-static.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/planning-final-static.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "541472fa3d3a6c6c2a81a9d78c020c722fd5154f",
+      "object": {
+        "bytes": 42561,
+        "sha256": "c56953f0f44dea3087494400d2dc332d212310687bd7ca3b12bfdff140adfe77"
+      },
+      "worktree": {
+        "bytes": 42561,
+        "sha256": "c56953f0f44dea3087494400d2dc332d212310687bd7ca3b12bfdff140adfe77"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-first-failures.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/planning-first-failures.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "52d1436cfd53fa8787c55e6c7b4b28d36aaf6006",
+      "object": {
+        "bytes": 2127,
+        "sha256": "109e5f8c7359b3750af0f447af317ad778e3c785eba925f442b0f32cede52d8e"
+      },
+      "worktree": {
+        "bytes": 2127,
+        "sha256": "109e5f8c7359b3750af0f447af317ad778e3c785eba925f442b0f32cede52d8e"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-static-verification.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/planning-static-verification.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "e299a5228773e27e72b5b38e10a1ea68ed5c76b3",
+      "object": {
+        "bytes": 7528,
+        "sha256": "4ab855c64ba6e8a6dd66f1f570bf11879f862407b434f5238200f36daca06123"
+      },
+      "worktree": {
+        "bytes": 7528,
+        "sha256": "4ab855c64ba6e8a6dd66f1f570bf11879f862407b434f5238200f36daca06123"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/record-planning-checks.py",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/record-planning-checks.py"
+      ],
+      "nativeExit": 0,
+      "blobId": "714832468b561ea437b390b858cd8e1bf4bfac2d",
+      "object": {
+        "bytes": 3734,
+        "sha256": "725791763151d4047e28b17c226c6dc22b340739af0847fe3f5917c1e394f5eb"
+      },
+      "worktree": {
+        "bytes": 3734,
+        "sha256": "725791763151d4047e28b17c226c6dc22b340739af0847fe3f5917c1e394f5eb"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/record-review-checks.py",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/record-review-checks.py"
+      ],
+      "nativeExit": 0,
+      "blobId": "eea8b46c001dc2a791bab73eac3aa8f80a69e2cb",
+      "object": {
+        "bytes": 5529,
+        "sha256": "62ba4892ee6be004594ce34fd04ef6c922ae3cd8f35ff355ae67ac00c11a2f3b"
+      },
+      "worktree": {
+        "bytes": 5529,
+        "sha256": "62ba4892ee6be004594ce34fd04ef6c922ae3cd8f35ff355ae67ac00c11a2f3b"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/resources.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/resources.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "79ccdf842afe79581b80d69ac20aa0851916d0b2",
+      "object": {
+        "bytes": 2779,
+        "sha256": "6a3703e9be4311f945cb5e33f43efe2650c0c3db6229c4792e5b27cdf0fbfae0"
+      },
+      "worktree": {
+        "bytes": 2779,
+        "sha256": "6a3703e9be4311f945cb5e33f43efe2650c0c3db6229c4792e5b27cdf0fbfae0"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/review-base-manifest.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/review-base-manifest.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "41eb31f1b7e9ecab6706b4aef65cbd02b9751e36",
+      "object": {
+        "bytes": 29729,
+        "sha256": "79e7062d3163d301cc85974d2ee21febd104b92ffb828b65fc2f8e2e98cf11cb"
+      },
+      "worktree": {
+        "bytes": 29729,
+        "sha256": "79e7062d3163d301cc85974d2ee21febd104b92ffb828b65fc2f8e2e98cf11cb"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/review-response.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/review-response.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "4d27bf2d66ae65b5fea952361935463d5fea20e3",
+      "object": {
+        "bytes": 3931,
+        "sha256": "35c28e60bb6427fa278c10abbd8e8f7be5fba1224271e554472d34cd2cf927bc"
+      },
+      "worktree": {
+        "bytes": 3931,
+        "sha256": "35c28e60bb6427fa278c10abbd8e8f7be5fba1224271e554472d34cd2cf927bc"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/review-static-verification.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/review-static-verification.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "a733f8406ef5cc728fc04ac9525b34ad8a3a9e3f",
+      "object": {
+        "bytes": 10370,
+        "sha256": "5bf1c0a9e6f2a782c41c522911cf0376b3108e8975e0a290ac97fd3dbdcf8009"
+      },
+      "worktree": {
+        "bytes": 10370,
+        "sha256": "5bf1c0a9e6f2a782c41c522911cf0376b3108e8975e0a290ac97fd3dbdcf8009"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/savedplan.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/savedplan.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "29e30731c01a718e0bf477740fdba8f143dd8bef",
+      "object": {
+        "bytes": 12742,
+        "sha256": "b2c4477b0cf73794924feb635279ff76ecdf32241b034fe68010187ce5ede452"
+      },
+      "worktree": {
+        "bytes": 12742,
+        "sha256": "b2c4477b0cf73794924feb635279ff76ecdf32241b034fe68010187ce5ede452"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/security-contract.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/security-contract.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "b77cb313a59311963a2d754d2fe58cd4f29f5ebe",
+      "object": {
+        "bytes": 10423,
+        "sha256": "627b06f851ba6c68911aa5be56e78b839765ac35525717337df81129d8667bd6"
+      },
+      "worktree": {
+        "bytes": 10423,
+        "sha256": "627b06f851ba6c68911aa5be56e78b839765ac35525717337df81129d8667bd6"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/source-manifest.json",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/source-manifest.json"
+      ],
+      "nativeExit": 0,
+      "blobId": "3ecc381816eda9ad63fb84991cfd8e42006b7ab1",
+      "object": {
+        "bytes": 1404391,
+        "sha256": "9b4b7f0b10b1cc62720ce41b78ee47c7908afb58d193aaa35739cca14fcf98b7"
+      },
+      "worktree": {
+        "bytes": 1404391,
+        "sha256": "9b4b7f0b10b1cc62720ce41b78ee47c7908afb58d193aaa35739cca14fcf98b7"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/sources.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/sources.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "58a38be2d81001c943788a4df487ad15b3a9400f",
+      "object": {
+        "bytes": 6382,
+        "sha256": "85ed555100f9fd267aefe8f67d9c137d663bf3ac09754cc3476f2dc8700f697b"
+      },
+      "worktree": {
+        "bytes": 6382,
+        "sha256": "85ed555100f9fd267aefe8f67d9c137d663bf3ac09754cc3476f2dc8700f697b"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/spec.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/spec.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "e8e2b9a87e5de174c17c1df3a31ef5d47e7f8576",
+      "object": {
+        "bytes": 5812,
+        "sha256": "408dfad447a8850459ccb4b745b0464978c8a833182b20d9d0ca03b220412ce5"
+      },
+      "worktree": {
+        "bytes": 5812,
+        "sha256": "408dfad447a8850459ccb4b745b0464978c8a833182b20d9d0ca03b220412ce5"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/support-matrix.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/support-matrix.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "c0cc7671f30d93435ea78ecdcfdc132b8b0b40bd",
+      "object": {
+        "bytes": 3032,
+        "sha256": "08887af3c893047001872385bfab5f93dfc314bb7f4582711798fb38172465b8"
+      },
+      "worktree": {
+        "bytes": 3032,
+        "sha256": "08887af3c893047001872385bfab5f93dfc314bb7f4582711798fb38172465b8"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/sync-current-plan.py",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/sync-current-plan.py"
+      ],
+      "nativeExit": 0,
+      "blobId": "56c97b392267487e5421fd371c861128e2dc91a7",
+      "object": {
+        "bytes": 1051,
+        "sha256": "364bb60fd4c1e2dc9d684a632ea5deb9c1efc124d2f6984e096ef76421d1a2f9"
+      },
+      "worktree": {
+        "bytes": 1051,
+        "sha256": "364bb60fd4c1e2dc9d684a632ea5deb9c1efc124d2f6984e096ef76421d1a2f9"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/verification.md",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/verification.md"
+      ],
+      "nativeExit": 0,
+      "blobId": "e56bfa951ea0c746974739da41c3c2af996955fb",
+      "object": {
+        "bytes": 4919,
+        "sha256": "007d836a2ad8d25b19ec4445317ca0b840a5b5ce9f129519929499a90c7b7c09"
+      },
+      "worktree": {
+        "bytes": 4919,
+        "sha256": "007d836a2ad8d25b19ec4445317ca0b840a5b5ce9f129519929499a90c7b7c09"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/verify-planning.py",
+      "argv": [
+        "git",
+        "show",
+        ":docs/plan/agent-mcp-m5/verify-planning.py"
+      ],
+      "nativeExit": 0,
+      "blobId": "f34ea4e369780d91bc12b63979ee296cd3ca05a2",
+      "object": {
+        "bytes": 8406,
+        "sha256": "6d809739e378130ba3492d75b09c04b40e3b8275852ed9ac440c0aaed22ebb86"
+      },
+      "worktree": {
+        "bytes": 8406,
+        "sha256": "6d809739e378130ba3492d75b09c04b40e3b8275852ed9ac440c0aaed22ebb86"
+      },
+      "equal": true,
+      "rawByteSource": "准确Git对象可完整重读；只登记指纹，不把摘要称stdout原件"
+    }
+  ],
+  "changedFiles": [
+    "docs/plan/agent-mcp-m5/README.md",
+    "docs/plan/agent-mcp-m5/acceptance-matrix.md",
+    "docs/plan/agent-mcp-m5/adr-proposal.md",
+    "docs/plan/agent-mcp-m5/build-operation-matrix.py",
+    "docs/plan/agent-mcp-m5/capture-review-base.py",
+    "docs/plan/agent-mcp-m5/consumer-matrix.md",
+    "docs/plan/agent-mcp-m5/implementation.md",
+    "docs/plan/agent-mcp-m5/input/candidate-before-review.zip",
+    "docs/plan/agent-mcp-m5/input/platform-plan-before-sync.md",
+    "docs/plan/agent-mcp-m5/input/platform-sync-edits.json",
+    "docs/plan/agent-mcp-m5/input/reviewer-feedback.md",
+    "docs/plan/agent-mcp-m5/input/sync-feedback.md",
+    "docs/plan/agent-mcp-m5/input/sync-main-observation.json",
+    "docs/plan/agent-mcp-m5/input/sync-platform-observations.json",
+    "docs/plan/agent-mcp-m5/journeys.md",
+    "docs/plan/agent-mcp-m5/operation-matrix.md",
+    "docs/plan/agent-mcp-m5/operation-selection.json",
+    "docs/plan/agent-mcp-m5/record-review-checks.py",
+    "docs/plan/agent-mcp-m5/review-base-manifest.json",
+    "docs/plan/agent-mcp-m5/review-response.md",
+    "docs/plan/agent-mcp-m5/review-static-verification.json",
+    "docs/plan/agent-mcp-m5/savedplan.md",
+    "docs/plan/agent-mcp-m5/security-contract.md",
+    "docs/plan/agent-mcp-m5/sources.md",
+    "docs/plan/agent-mcp-m5/sync-current-plan.py",
+    "docs/plan/agent-mcp-m5/verification.md",
+    "docs/plan/agent-mcp-m5/verify-planning.py"
+  ],
+  "archive": {
+    "path": "input/review-checks-originals.zip",
+    "bytes": 6258,
+    "sha256": "ffa1f1cb5e7f7525ed8322bfa562282b8e185049ec304411441e4d29ed93f1d8"
+  },
+  "receiptBoundary": "本回执与ZIP在上述检查之后生成，下次只追加/更新对应回执；最终head在聊天及只读Git实报，不为自引用循环补写。旧planning回执保持原时点。"
+}

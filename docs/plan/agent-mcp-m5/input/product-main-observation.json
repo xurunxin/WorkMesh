@@ -1,0 +1,22 @@
+{
+  "source": "本轮平台只读 Git fetch origin main 后读取 FETCH_HEAD，不是 stale origin/main",
+  "fetch": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Fetched main — reference it as FETCH_HEAD, e.g. [\"log\", \"--oneline\", \"-10\", \"FETCH_HEAD\"]."
+      }
+    ]
+  },
+  "show": {
+    "content": [
+      {
+        "type": "text",
+        "text": "87f88b89297c5c1e346f7ef99118c410f4b4a905\nef4cb5e1458d911d98433c443dba46e6c224caa0 d27cb9be3a19befeae431df08276c9ca94d7dbed\na8590e0818418e23fc299056ff3d479c65915c78"
+      }
+    ]
+  },
+  "branchStartHead": "9051da511d0e844a5e57b6263c23f643689bc879",
+  "approvedPlanHead": "ddddcfca8d7ef387df58be993c88ffe7d62391dd",
+  "separation": "主线观察不能代本批产品测试；当前工作树字节与 Git blob 分列"
+}

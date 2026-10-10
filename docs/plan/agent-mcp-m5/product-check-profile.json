@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-10T17:27:20.036205+00:00",
+  "source": ".github/workflows/ci.yml api-integration and e2e environment",
+  "authLimits": {
+    "AUTH_RATE_LIMIT_ENDPOINT_BURST": "10000",
+    "AUTH_RATE_LIMIT_SOCKET_BURST": "10000",
+    "AUTH_RATE_LIMIT_CLIENT_IP_BURST": "10000",
+    "AUTH_RATE_LIMIT_SUBJECT_BURST": "1000",
+    "AUTH_RATE_LIMIT_INSTALL_BURST": "100"
+  },
+  "removedOuterPrivateHostAllowlist": "127.0.0.1",
+  "privateModels": "fixture grants loopback only while preparing and executing its controlled model",
+  "productionPolicyChanged": false,
+  "sharedRedisFlushed": false,
+  "firstFailurePreserved": "required-integration"
+}

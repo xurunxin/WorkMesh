@@ -1,0 +1,54 @@
+{
+  "receipt": {
+    "label": "review-final-ci-validate-delivery",
+    "argv": [
+      "pnpm.cmd",
+      "ci:validate"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T21:23:59.154984+00:00",
+    "endedAt": "2026-10-10T21:24:01.152325+00:00",
+    "runtimeSeconds": 1.997311900006025,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-final-ci-validate-delivery-stdout.txt",
+        "bytes": 1482,
+        "sha256": "59b1fadc5b35c5ee355c410511a0c8cdaf8c1b3e8b1cee123e88c5a3d419e6fc",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-final-ci-validate-delivery-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-final-ci-validate-delivery.json",
+      "beforeDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+      "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+      "unchanged": true,
+      "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+    }
+  },
+  "logs": [
+    {
+      "channel": "stdout",
+      "path": "input\\final-ci-validate-stdout.txt",
+      "sha256": "59b1fadc5b35c5ee355c410511a0c8cdaf8c1b3e8b1cee123e88c5a3d419e6fc"
+    },
+    {
+      "channel": "stderr",
+      "path": "input\\final-ci-validate-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "sourceManifestReusedFrom": {
+    "archive": "product-evidence/688619100163eb75c2f4301262835cc6d3a36416a0382f5095d8469cd082afd0.zip",
+    "member": ".tmp/m5-runtime/sources/joint-combination-evidence-final.json",
+    "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+  },
+  "sameRuntimeBytesProved": true,
+  "noDuplicateFullSnapshot": true
+}

@@ -3,6 +3,13 @@ import { ExecutionLifecycle, sessionWaitIntentSchema } from './execution-lifecyc
 import { promptFor } from './run-session.js'
 
 describe('执行等待闭门和恢复上下文', () => {
+  it('原请求失响应后二次403仍不确定，不能以二次拒绝清除首次effect',async()=>{
+    const lifecycle=new ExecutionLifecycle()
+    const rejection=Object.assign(new Error('second rejected',{cause:new Error('original transport')}),{status:403,code:'DELEGATION_NOT_ACTIVE',unreconciled:true})
+    await expect(lifecycle.tool(()=>lifecycle.request('POST',async()=>{throw rejection}))).rejects.toBe(rejection)
+    lifecycle.close('wait')
+    expect(lifecycle.reconciled).toBe(false)
+  })
   it('停止优先于等待，拒绝新工具并等已开始工具静止', async () => {
     const lifecycle = new ExecutionLifecycle()
     let finish!: () => void

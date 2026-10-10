@@ -1,0 +1,19 @@
+{
+  "sourceDoc": "doc:QAcj7PdkfqiTL-yH2pwkf",
+  "sourceKind": "本轮完整注入方案；工具todos只返回截断前缀",
+  "edits": [
+    {
+      "old": "下一次方案独审前，将本轮 reviewer 原文、修订副本及 N4–N6／F2／F4／F5 同步到本目录 `savedplan.md`、`implementation.md`、`journeys.md`、`security-contract.md`、`consumer-matrix.md`、`acceptance-matrix.md` 和对应操作索引；新增 `review-response.md` 逐条关联源码、准备身份、时序、断言与证据。以可达提交保全原候选，重做规划静态及提交字节核验，不倒写旧回执。本轮按要求只修订平台计划，不修改文件；同步规划包后仍停 confirm，独审 blocking／high 闭合且 Chief confirm 前不实现 Runner 修复或运行产品验收。",
+      "new": "本轮直接按既有授权完成并提交规划包同步：将 reviewer 原文、当前完整平台方案及本轮反馈、N4–N6／F2／F4／F5 合同写入本目录 `savedplan.md`、`implementation.md`、`journeys.md`、`security-contract.md`、`consumer-matrix.md`、`acceptance-matrix.md`、`sources.md`、`verification.md` 和对应操作索引；新增 `review-response.md` 逐条关联源码、准备身份、时序、断言与未来证据。保全原候选完整 Git byte、旧审核／首败及回执，分列注入全文、工具截断读回和独立 doc 原件缺口，重做规划静态及提交字节核验。提交准确新 head 与 README 复审入口后停 confirm 供 _oY 复核；三项 blocking 当前仍未正式闭合，不以 edit_plan 接受或本轮自述宣告闭合。独审 blocking／high 闭合且 Chief confirm 前不实现 Runner 修复或运行产品验收。",
+      "accepted": true
+    },
+    {
+      "old": "仅识别连接中断或本请求自身传输超时后重发一次；所有已收到的 HTTP 拒绝（含 5xx）、JSON 解码错误、模型取消均不自动重发。",
+      "new": "可重试传输错误精确限定为 cause 链中 `UND_ERR_SOCKET`、`ECONNRESET`、`EPIPE`、`UND_ERR_CONNECT_TIMEOUT`、`UND_ERR_HEADERS_TIMEOUT`、`UND_ERR_BODY_TIMEOUT`、`ETIMEDOUT`，以及本请求自有超时 signal 的 `TimeoutError`；单纯 TypeError、DNS／TLS／参数错误、所有已收到的 HTTP 拒绝（含 5xx）、JSON 解码错误、模型取消均不自动重发。总截止从第一次业务发送开始固定，状态查询与第二次发送共用剩余预算及工具／shutdown signal，单次 HTTP 最长十五秒；原 E 状态查询不走 refresh。重试只位于一次 `RunnerApi.request` 内，不重新进入 `makeTool`：started／最终 succeeded 或 failed Activity 各一次，普通 GET 与准入查询不额外写 Activity。",
+      "accepted": true
+    }
+  ],
+  "independentDocOriginalObtained": false,
+  "docCreatedAt": null,
+  "docRevision": null
+}

@@ -1,0 +1,68 @@
+{
+  "owner": "m5-5dbe32e19a",
+  "registeredAt": "2026-10-10T21:17:26.972736+00:00",
+  "sourceDatabase": "m5_5dbe32e19a_current_1c665b7b_source_test",
+  "targetDatabase": "m5_5dbe32e19a_current_1c665b7b_target_test",
+  "sourceBucket": "m5-5dbe32e19a-current-1c665b7b-source",
+  "targetBucket": "m5-5dbe32e19a-current-1c665b7b-target",
+  "operations": [
+    {
+      "kind": "createdb",
+      "target": "m5_5dbe32e19a_current_1c665b7b_source_test",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "kind": "createdb",
+      "target": "m5_5dbe32e19a_current_1c665b7b_target_test",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "kind": "create",
+      "target": "m5-5dbe32e19a-current-1c665b7b-source",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "kind": "versioning",
+      "target": "m5-5dbe32e19a-current-1c665b7b-source",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "kind": "object-lock",
+      "target": "m5-5dbe32e19a-current-1c665b7b-source",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "kind": "create",
+      "target": "m5-5dbe32e19a-current-1c665b7b-target",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "kind": "versioning",
+      "target": "m5-5dbe32e19a-current-1c665b7b-target",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "kind": "object-lock",
+      "target": "m5-5dbe32e19a-current-1c665b7b-target",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "oldRecoveryResourcesPreserved": true,
+  "deletions": 0
+}
