@@ -1,0 +1,821 @@
+{
+  "recordedAt": "2026-10-10T20:34:15.546742+00:00",
+  "rows": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "logicalBytes": 17839869911,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1480,
+          "logicalBytes": 23404032
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50181,
+          "logicalBytes": 679082062
+        },
+        "构建/缓存": {
+          "files": 834,
+          "logicalBytes": 780818002
+        },
+        "文档与已提交证据检出副本": {
+          "files": 10589,
+          "logicalBytes": 2873109090
+        },
+        "本机临时/验收材料（用途未判定）": {
+          "files": 4736,
+          "logicalBytes": 13483456608
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "8b42873c48358dfda26f0bf1f65341781f608ddb\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 58,
+      "reason": "#58 building；整树、M5 runtime/OpenCode/测试容器和进程保护",
+      "releaseCondition": "真正完成、保全且无活动/恢复引用后登记；本轮不触碰",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 0
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a12766-4132-7d8c-a542-dcbfb2008b49",
+      "logicalBytes": 3024128337,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1469,
+          "logicalBytes": 23195399
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "文档与已提交证据检出副本": {
+          "files": 10798,
+          "logicalBytes": 2990412274
+        },
+        "本机临时/验收材料（用途未判定）": {
+          "files": 332,
+          "logicalBytes": 10520547
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a12766-4132-7d8c-a542-dcbfb2008b49",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "55949dc2800e072cffff9fc25028b64fd64d0ee6\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 60,
+      "reason": "本轮当前构建及依据永久保护",
+      "releaseCondition": "本轮准确独审/RequiredCI/实际合入且结束、保全无恢复引用后才登记未来候选"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "logicalBytes": 2997673676,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1469,
+          "logicalBytes": 23195399
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "文档与已提交证据检出副本": {
+          "files": 10689,
+          "logicalBytes": 2963875116
+        },
+        "本机临时/验收材料（用途未判定）": {
+          "files": 398,
+          "logicalBytes": 10603044
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "8fe64ea658c852267d8f443dff14a4fac94b9e92\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 60,
+      "reason": "旧现场9个只读夹具Git对象门禁失败，整个目标已停止未删除",
+      "releaseCondition": "见blocked-cleanup-old.json精确9path，未取得例外且未补完整保全前不重试、不修改属性"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+      "logicalBytes": 2171560588,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1400,
+          "logicalBytes": 21857861
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50181,
+          "logicalBytes": 679074314
+        },
+        "构建/缓存": {
+          "files": 561,
+          "logicalBytes": 940202833
+        },
+        "文档与已提交证据检出副本": {
+          "files": 8207,
+          "logicalBytes": 530425463
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "328434d00268ce39222d677686dde3c64aba4e41\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 9,
+      "reason": "后端交付后按用户裁定保全 UI/恢复输入；原任务仍承接后续 UI，Done 不解除",
+      "releaseCondition": "先明确逐项 UI/验收原件的持久替代来源及后续消费，取得精确保留例外裁定",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 0
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+      "logicalBytes": 1610079999,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1426,
+          "logicalBytes": 21886655
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50807,
+          "logicalBytes": 750174864
+        },
+        "构建/缓存": {
+          "files": 564,
+          "logicalBytes": 716581882
+        },
+        "文档与已提交证据检出副本": {
+          "files": 1523,
+          "logicalBytes": 121436481
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 5,
+      "reason": "#5 当前 review 与连接器三 OS/发行门禁仍在；非闲置完成交付",
+      "releaseCondition": "完成原待审门禁及明确解除恢复引用后重新评估",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 0
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+      "logicalBytes": 1369858879,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1376,
+          "logicalBytes": 21533174
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 52075,
+          "logicalBytes": 737374536
+        },
+        "构建/缓存": {
+          "files": 907,
+          "logicalBytes": 520930214
+        },
+        "文档与已提交证据检出副本": {
+          "files": 907,
+          "logicalBytes": 90020838
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "901e040a2cd4be83f9b9801bc3087ac150d1cde1\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": "8 历史恢复（含未提交成果）",
+      "reason": "历史恢复输入仍有未提交成果；#5 当前仍 review，#8 Done 不丢弃本机差异",
+      "releaseCondition": "逐个保全未提交成果并取得准确恢复消费已解除的依据；本轮不自动解除明确保护",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 0
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+      "logicalBytes": 1155604546,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1395,
+          "logicalBytes": 21786784
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50233,
+          "logicalBytes": 679793877
+        },
+        "构建/缓存": {
+          "files": 557,
+          "logicalBytes": 258577461
+        },
+        "文档与已提交证据检出副本": {
+          "files": 2025,
+          "logicalBytes": 195446307
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "d80f29ff9b87c387326cfda45eafdcfe6b182eee\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 16,
+      "reason": "后端交付后按用户裁定保全 UI/恢复输入；原任务仍承接后续 UI，Done 不解除",
+      "releaseCondition": "先明确逐项 UI/验收原件的持久替代来源及后续消费，取得精确保留例外裁定",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 0
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+      "logicalBytes": 1043076163,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1392,
+          "logicalBytes": 21730116
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50181,
+          "logicalBytes": 679079187
+        },
+        "构建/缓存": {
+          "files": 627,
+          "logicalBytes": 225057699
+        },
+        "文档与已提交证据检出副本": {
+          "files": 1085,
+          "logicalBytes": 114591227
+        },
+        "本机临时/验收材料（用途未判定）": {
+          "files": 57,
+          "logicalBytes": 2617817
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 17,
+      "reason": "D0/G1/C3 原拒绝目标或保护父目录；新授权未解除原拒绝",
+      "releaseCondition": "保持禁止，不请求同一删除许可；只有明确解除原系统拒绝的依据才可另议",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 0
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+      "logicalBytes": 1013245363,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1378,
+          "logicalBytes": 21624985
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50181,
+          "logicalBytes": 679074045
+        },
+        "构建/缓存": {
+          "files": 513,
+          "logicalBytes": 200289580
+        },
+        "文档与已提交证据检出副本": {
+          "files": 1228,
+          "logicalBytes": 112256636
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": "21 首面检查点",
+      "reason": "#21 首面 checkpoint/看板恢复与未合入 UI 成果明确保护；closed 不代表成果无用",
+      "releaseCondition": "用户明确后续 UI 恢复消费范围，必要成果完整保全并解除准确恢复引用",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 0
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+      "logicalBytes": 937848587,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1382,
+          "logicalBytes": 21678802
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50181,
+          "logicalBytes": 679073966
+        },
+        "构建/缓存": {
+          "files": 328,
+          "logicalBytes": 5030705
+        },
+        "文档与已提交证据检出副本": {
+          "files": 2216,
+          "logicalBytes": 232064997
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 21,
+      "reason": "#21 首面 checkpoint/看板恢复与未合入 UI 成果明确保护；closed 不代表成果无用",
+      "releaseCondition": "用户明确后续 UI 恢复消费范围，必要成果完整保全并解除准确恢复引用",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 0
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+      "logicalBytes": 906884156,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1364,
+          "logicalBytes": 21073612
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50182,
+          "logicalBytes": 679079089
+        },
+        "文档与已提交证据检出副本": {
+          "files": 209,
+          "logicalBytes": 9898554
+        },
+        "本机临时/验收材料（用途未判定）": {
+          "files": 1649,
+          "logicalBytes": 196832784
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "768bbd82fcc52a873168b39a8382d2f14c928abc\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 10,
+      "reason": "D0/G1/C3 原拒绝目标或保护父目录；新授权未解除原拒绝",
+      "releaseCondition": "保持禁止，不请求同一删除许可；只有明确解除原系统拒绝的依据才可另议",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 1650
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "logicalBytes": 837685153,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1372,
+          "logicalBytes": 21481987
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50181,
+          "logicalBytes": 679078828
+        },
+        "文档与已提交证据检出副本": {
+          "files": 837,
+          "logicalBytes": 85226879
+        },
+        "本机临时/验收材料（用途未判定）": {
+          "files": 147,
+          "logicalBytes": 51897342
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 11,
+      "reason": "现有精确保护子目标仍存在，含旧依赖/构建缓存或 RAW/trace 验收恢复输入",
+      "releaseCondition": "逐项核最小保全与准确解除依据；不能凭 Done/年龄解除旧38/36/2保护或父删绕过",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 77
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+      "logicalBytes": 797621388,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1385,
+          "logicalBytes": 21689208
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50181,
+          "logicalBytes": 679079195
+        },
+        "构建/缓存": {
+          "files": 66,
+          "logicalBytes": 1240183
+        },
+        "文档与已提交证据检出副本": {
+          "files": 947,
+          "logicalBytes": 95087310
+        },
+        "本机临时/验收材料（用途未判定）": {
+          "files": 2,
+          "logicalBytes": 525375
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "81090ec01bcbc84edbe101418d833840999a5326\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 15,
+      "reason": "现有精确保护子目标仍存在，含旧依赖/构建缓存或 RAW/trace 验收恢复输入",
+      "releaseCondition": "逐项核最小保全与准确解除依据；不能凭 Done/年龄解除旧38/36/2保护或父删绕过",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 40
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+      "logicalBytes": 797188602,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1371,
+          "logicalBytes": 21149057
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50181,
+          "logicalBytes": 679078269
+        },
+        "文档与已提交证据检出副本": {
+          "files": 240,
+          "logicalBytes": 13628444
+        },
+        "本机临时/验收材料（用途未判定）": {
+          "files": 1757,
+          "logicalBytes": 83332715
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "c7a1af7d7b2e125368b29975867b4d392690fc38\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 18,
+      "reason": "D0/G1/C3 原拒绝目标或保护父目录；新授权未解除原拒绝",
+      "releaseCondition": "保持禁止，不请求同一删除许可；只有明确解除原系统拒绝的依据才可另议",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 1748
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "logicalBytes": 793048437,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1376,
+          "logicalBytes": 21538320
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50181,
+          "logicalBytes": 679078902
+        },
+        "构建/缓存": {
+          "files": 73,
+          "logicalBytes": 1232383
+        },
+        "文档与已提交证据检出副本": {
+          "files": 901,
+          "logicalBytes": 91198715
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "07aa293c35100959caa08f73efcb6110e9aa92f4\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 8,
+      "reason": "现有精确保护子目标仍存在，含旧依赖/构建缓存或 RAW/trace 验收恢复输入",
+      "releaseCondition": "逐项核最小保全与准确解除依据；不能凭 Done/年龄解除旧38/36/2保护或父删绕过",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 38
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+      "logicalBytes": 734891329,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1371,
+          "logicalBytes": 21153266
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 50181,
+          "logicalBytes": 679076212
+        },
+        "文档与已提交证据检出副本": {
+          "files": 393,
+          "logicalBytes": 33916585
+        },
+        "本机临时/验收材料（用途未判定）": {
+          "files": 3,
+          "logicalBytes": 745149
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "550dead055689154359a3406dfce4f0c91c1dad3\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 3,
+      "reason": "现有精确保护子目标仍存在，含旧依赖/构建缓存或 RAW/trace 验收恢复输入",
+      "releaseCondition": "逐项核最小保全与准确解除依据；不能凭 Done/年龄解除旧38/36/2保护或父删绕过",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 2
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f1-74d9-a5e7-0022c903a6e6",
+      "logicalBytes": 377911866,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1378,
+          "logicalBytes": 21495202
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+          "files": 8490,
+          "logicalBytes": 270937366
+        },
+        "文档与已提交证据检出副本": {
+          "files": 845,
+          "logicalBytes": 85467486
+        },
+        "本机临时/验收材料（用途未判定）": {
+          "files": 1,
+          "logicalBytes": 11695
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f1-74d9-a5e7-0022c903a6e6",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "b80593e9918ac7ce05465fd0ac640c809753ac5a\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": "5 历史规划/恢复（含未提交成果）",
+      "reason": "历史恢复输入仍有未提交成果；#5 当前仍 review，#8 Done 不丢弃本机差异",
+      "releaseCondition": "逐个保全未提交成果并取得准确恢复消费已解除的依据；本轮不自动解除明确保护",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 0
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d",
+      "logicalBytes": 151321543,
+      "groups": {
+        "源码与其他文件": {
+          "files": 1391,
+          "logicalBytes": 21735906
+        },
+        "Git 管理/对象（主仓库单列）": {
+          "files": 1,
+          "logicalBytes": 117
+        },
+        "文档与已提交证据检出副本": {
+          "files": 1104,
+          "logicalBytes": 129585520
+        }
+      },
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit": 0,
+        "stdout": "83541ce11da52236cc49ef2dd0ffdfe23775b306\n",
+        "stderr": ""
+      },
+      "complete": true,
+      "todo": 52,
+      "reason": "旧清理审计恢复，含 G1 priorEditRejectionReceipt 的精确受保护原件",
+      "releaseCondition": "原拒绝审计原件继续留存；不得经父目录删除绕过",
+      "source": "retention-review.json＋原main历史source指针",
+      "currentHistoricalProtectionCount": 1
+    }
+  ],
+  "mainRepositorySeparate": {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\DzkLDn6UW-IbfoTJzN9Ro\\repo",
+    "protected": true,
+    "ordinaryFiles": 26494,
+    "logicalBytes": 5751996200,
+    "linksNotFollowed": 0,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1469,
+        "logicalBytes": 23195399
+      },
+      "文档与已提交证据检出副本": {
+        "files": 10689,
+        "logicalBytes": 2964037129
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 332,
+        "logicalBytes": 10520547
+      },
+      "构建/缓存": {
+        "files": 13567,
+        "logicalBytes": 1845522812
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 437,
+        "logicalBytes": 908720313
+      }
+    },
+    "errors": [],
+    "complete": true
+  },
+  "physicalNetReleasedBytes": null
+}

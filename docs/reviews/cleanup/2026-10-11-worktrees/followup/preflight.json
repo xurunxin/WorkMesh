@@ -1,0 +1,271 @@
+{
+  "recordedAt": "2026-10-10T20:16:46.951611+00:00",
+  "main": "2da4918682f5238499131cff2c71ab465fcc080e",
+  "current": "C:\\Users\\xurx\\.tds\\workspaces\\01a12766-4132-7d8c-a542-dcbfb2008b49",
+  "candidates": [
+    {
+      "key": "g1-plan",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a",
+      "todo": 18,
+      "todoId": "Tws50k02Pi52R-RJEXP_N",
+      "branch": "tds/conv-01a115ed-0894-7af5-b31f-4ffe208e198a",
+      "head": "49cd2136fe5109115fb4f3dcff89ed59b0bc7615",
+      "directMainMergeRecords": [
+        "419a1d7af90c09cb9364819977f32ec59cf86f87 660c74a6247544ffac64e7ef8f968d1025b2a668 49cd2136fe5109115fb4f3dcff89ed59b0bc7615 Merge pull request #194 from xurunxin/tds/conv-01a115ed-0894-7af5-b31f-4ffe208e198a"
+      ],
+      "prMeaning": "g1-plan 实际 PR194；g1-build 是后续 G1 主线可达 checkpoint，无该旧 branch 实时 remote ref；升级两树无产品变更 PR；旧清理 PR216 第二父",
+      "logicalBytes": 946316129,
+      "files": 52196,
+      "links": 1918,
+      "junctionsExpectedResidual": 1918,
+      "hardlinkedFileCount": 0,
+      "packages": 609,
+      "sourceKinds": {
+        "tracked": 1487,
+        "git-administration": 1,
+        "tracked-runtime-variant": 4,
+        "preserved-evidence": 85,
+        "rebuildable-output": 50619
+      },
+      "archive": {
+        "path": "additional-g1-plan-3.zip",
+        "bytes": 349250,
+        "sha256": "cf5eaa12bfb526bd2a5b30484e2f8679165c42c59267bdac5c2ba05405a85f17"
+      },
+      "fixtureBindings": [],
+      "sourceMapping": "mapping-g1-plan.json.gz",
+      "historicalProtectionConflicts": [],
+      "operation": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a12766-4132-7d8c-a542-dcbfb2008b49",
+        "worktree",
+        "remove",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a"
+      ],
+      "declaredFinish": "仅正式 Git 成功后，核残留普通文件/新仓库均0、仅原已核junction；非递归 LiteralPath 移除本体及经证普通空目录。任何失败/拒绝停止该目标，不换法。"
+    },
+    {
+      "key": "g1-build",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11661-dbed-70ca-85d6-05851a0213e1",
+      "todo": 18,
+      "todoId": "Tws50k02Pi52R-RJEXP_N",
+      "branch": "tds/conv-01a11661-dbed-70ca-85d6-05851a0213e1",
+      "head": "af583f71f310e68ade588f9922694dfd8aba7a65",
+      "directMainMergeRecords": [],
+      "prMeaning": "g1-plan 实际 PR194；g1-build 是后续 G1 主线可达 checkpoint，无该旧 branch 实时 remote ref；升级两树无产品变更 PR；旧清理 PR216 第二父",
+      "logicalBytes": 946655821,
+      "files": 52290,
+      "links": 1918,
+      "junctionsExpectedResidual": 1918,
+      "hardlinkedFileCount": 0,
+      "packages": 609,
+      "sourceKinds": {
+        "tracked": 1574,
+        "git-administration": 1,
+        "tracked-runtime-variant": 3,
+        "preserved-evidence": 85,
+        "rebuildable-output": 50627
+      },
+      "archive": {
+        "path": "additional-g1-build-3.zip",
+        "bytes": 135867,
+        "sha256": "a6992f08297a3bf89772074f114b686ca2a447e67ac0ff459410fc7d8bb46855"
+      },
+      "fixtureBindings": [],
+      "sourceMapping": "mapping-g1-build.json.gz",
+      "historicalProtectionConflicts": [],
+      "operation": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a12766-4132-7d8c-a542-dcbfb2008b49",
+        "worktree",
+        "remove",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11661-dbed-70ca-85d6-05851a0213e1"
+      ],
+      "declaredFinish": "仅正式 Git 成功后，核残留普通文件/新仓库均0、仅原已核junction；非递归 LiteralPath 移除本体及经证普通空目录。任何失败/拒绝停止该目标，不换法。"
+    },
+    {
+      "key": "upgrade-first",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a0e-d8a0-7474-ad05-791c239b82fe",
+      "todo": 31,
+      "todoId": "g3z2_7RkMHTIKvp_tRd1F",
+      "branch": "tds/conv-01a11a0e-d8a0-7474-ad05-791c239b82fe",
+      "head": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "directMainMergeRecords": [
+        "96e724858e692d262107c34db50b40c3ae7c122c 1078bbcd527550bfabee73093b7ffd0032d3fd24 07aa293c35100959caa08f73efcb6110e9aa92f4 Merge pull request #205 from xurunxin/tds/conv-01a11ac2-7634-752e-8d81-764c9776f801",
+        "1078bbcd527550bfabee73093b7ffd0032d3fd24 9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7 7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f Merge pull request #204 from xurunxin/tds/conv-01a1187a-f4ff-735d-814f-a7b26f8cfdc5"
+      ],
+      "prMeaning": "g1-plan 实际 PR194；g1-build 是后续 G1 主线可达 checkpoint，无该旧 branch 实时 remote ref；升级两树无产品变更 PR；旧清理 PR216 第二父",
+      "logicalBytes": 106749175,
+      "files": 2210,
+      "links": 0,
+      "junctionsExpectedResidual": 0,
+      "hardlinkedFileCount": 0,
+      "packages": 0,
+      "sourceKinds": {
+        "tracked": 2209,
+        "git-administration": 1
+      },
+      "archive": {
+        "path": "additional-upgrade-first-3.zip",
+        "bytes": 22,
+        "sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85"
+      },
+      "fixtureBindings": [],
+      "sourceMapping": "mapping-upgrade-first.json.gz",
+      "historicalProtectionConflicts": [],
+      "operation": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a12766-4132-7d8c-a542-dcbfb2008b49",
+        "worktree",
+        "remove",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11a0e-d8a0-7474-ad05-791c239b82fe"
+      ],
+      "declaredFinish": "仅正式 Git 成功后，核残留普通文件/新仓库均0、仅原已核junction；非递归 LiteralPath 移除本体及经证普通空目录。任何失败/拒绝停止该目标，不换法。"
+    },
+    {
+      "key": "upgrade-final",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a77-e1c5-763d-ad86-a1bcf4d672e6",
+      "todo": 31,
+      "todoId": "g3z2_7RkMHTIKvp_tRd1F",
+      "branch": "tds/conv-01a11a77-e1c5-763d-ad86-a1bcf4d672e6",
+      "head": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "directMainMergeRecords": [
+        "96e724858e692d262107c34db50b40c3ae7c122c 1078bbcd527550bfabee73093b7ffd0032d3fd24 07aa293c35100959caa08f73efcb6110e9aa92f4 Merge pull request #205 from xurunxin/tds/conv-01a11ac2-7634-752e-8d81-764c9776f801",
+        "1078bbcd527550bfabee73093b7ffd0032d3fd24 9ac1a2015da1ae20b9693ac8a62aac6f49dca8d7 7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f Merge pull request #204 from xurunxin/tds/conv-01a1187a-f4ff-735d-814f-a7b26f8cfdc5"
+      ],
+      "prMeaning": "g1-plan 实际 PR194；g1-build 是后续 G1 主线可达 checkpoint，无该旧 branch 实时 remote ref；升级两树无产品变更 PR；旧清理 PR216 第二父",
+      "logicalBytes": 106749175,
+      "files": 2210,
+      "links": 0,
+      "junctionsExpectedResidual": 0,
+      "hardlinkedFileCount": 0,
+      "packages": 0,
+      "sourceKinds": {
+        "tracked": 2209,
+        "git-administration": 1
+      },
+      "archive": {
+        "path": "additional-upgrade-final-3.zip",
+        "bytes": 22,
+        "sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85"
+      },
+      "fixtureBindings": [],
+      "sourceMapping": "mapping-upgrade-final.json.gz",
+      "historicalProtectionConflicts": [],
+      "operation": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a12766-4132-7d8c-a542-dcbfb2008b49",
+        "worktree",
+        "remove",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11a77-e1c5-763d-ad86-a1bcf4d672e6"
+      ],
+      "declaredFinish": "仅正式 Git 成功后，核残留普通文件/新仓库均0、仅原已核junction；非递归 LiteralPath 移除本体及经证普通空目录。任何失败/拒绝停止该目标，不换法。"
+    }
+  ],
+  "blocked": {
+    "recordedAt": "2026-10-10T20:16:44.903038+00:00",
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+    "head": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "rev-parse",
+        "HEAD"
+      ],
+      "startedAt": "2026-10-10T20:08:35.668860+00:00",
+      "endedAt": "2026-10-10T20:08:35.715755+00:00",
+      "exit": 0,
+      "stdout": "8fe64ea658c852267d8f443dff14a4fac94b9e92\n",
+      "stderr": ""
+    },
+    "logicalBytes": 2997673676,
+    "readOnlyFiles": [
+      {
+        "path": ".tmp/cleanup-link-proof-20261011-3/repo.git/objects/f7/2bf2fefbc793f441be46032296ce6203a1e2bb",
+        "bytes": 141,
+        "attributes": 33,
+        "nlink": 1,
+        "sha256": "b77a220d8654cc7d3f6528c50f7514be5b65d019295835092c1e7e2e27c85e1f"
+      },
+      {
+        "path": ".tmp/cleanup-link-proof-20261011-3/repo.git/objects/d7/f30f1797ca47221c68c11c6733c6fe883934fb",
+        "bytes": 56,
+        "attributes": 33,
+        "nlink": 1,
+        "sha256": "72f6a9e9bf4e5b560af80d321ca316f194c0b6193930bffbfa00bc8d79b16db4"
+      },
+      {
+        "path": ".tmp/cleanup-link-proof-20261011-3/repo.git/objects/0b/18d805666e649ae5912971a64bb5cd85867ea5",
+        "bytes": 32,
+        "attributes": 33,
+        "nlink": 1,
+        "sha256": "615917c0405ee52115b5abce8cd2ca53b005744980cf021e1599d4b7d49a65be"
+      },
+      {
+        "path": ".tmp/cleanup-link-proof-20261011-2/repo.git/objects/b4/02ba143dc4625b3376842a60569ccff89f7110",
+        "bytes": 33,
+        "attributes": 33,
+        "nlink": 1,
+        "sha256": "3f7f7b8ff64dbd9f6668bf6398809029a5ce7aa36b006ef01a79d8db8a3fc302"
+      },
+      {
+        "path": ".tmp/cleanup-link-proof-20261011-2/repo.git/objects/93/51238fb657a9c866704681614a0f6cb0b72d8a",
+        "bytes": 57,
+        "attributes": 33,
+        "nlink": 1,
+        "sha256": "d9af683832bcfe18b58bfeba98a886d591dc8c59442f156d88c9be9b9bc18252"
+      },
+      {
+        "path": ".tmp/cleanup-link-proof-20261011-2/repo.git/objects/59/bc612c2bebea94ff6e657a97e83ea870cac8aa",
+        "bytes": 143,
+        "attributes": 33,
+        "nlink": 1,
+        "sha256": "81ca0055cf704159a1ded1bab7ef67331181c0fdbe4ed095cce634d72f8ef24e"
+      },
+      {
+        "path": ".tmp/cleanup-link-proof-20261011/repo.git/objects/d9/1ff58e2122aefc631073a7742bef44e77a656f",
+        "bytes": 144,
+        "attributes": 33,
+        "nlink": 1,
+        "sha256": "a4fdd24f111cabf997dcf9c73d9750cad4f026b079a926047cf5bf1c12bb5713"
+      },
+      {
+        "path": ".tmp/cleanup-link-proof-20261011/repo.git/objects/b4/02ba143dc4625b3376842a60569ccff89f7110",
+        "bytes": 33,
+        "attributes": 33,
+        "nlink": 1,
+        "sha256": "3f7f7b8ff64dbd9f6668bf6398809029a5ce7aa36b006ef01a79d8db8a3fc302"
+      },
+      {
+        "path": ".tmp/cleanup-link-proof-20261011/repo.git/objects/93/51238fb657a9c866704681614a0f6cb0b72d8a",
+        "bytes": 57,
+        "attributes": 33,
+        "nlink": 1,
+        "sha256": "d9af683832bcfe18b58bfeba98a886d591dc8c59442f156d88c9be9b9bc18252"
+      }
+    ],
+    "failure": "preserve.py 在只读 fixture Git object 安全门停止；未发删除，未改属性/ACL",
+    "decision": "停止该目标，本轮不再尝试。旧完整目录保留；其余四个独立候选继续",
+    "releaseCondition": "若后续明确允许处理这些精确只读夹具对象，仍须先补全部现场保全/来源与实时安全门；本轮不以父删/换法/属性修改绕过"
+  },
+  "preservationCommit": "pending-preflight-commit，由 push 原返回和 preflight-binding 解析",
+  "authorization": "本轮用户新增安全清理授权；不继承旧回合不再新增删除限制。原拒绝/明确保护继续。",
+  "references": [
+    "board-opening.json",
+    "todo-current.json",
+    "todo-g1.json",
+    "todo-upgrade.json",
+    "conversation-g1.json",
+    "conversation-upgrade.json",
+    "conversation-m5-opening.json",
+    "conversation-review5-opening.json",
+    "process-preflight.json",
+    "docker-preflight.json"
+  ],
+  "scopeLimit": "没有全局历史 build/recovery registry 或全部 OS handles；此次利用准确已结束任务/会话/daemon/祖先链、活动与恢复对话、全部容器挂载、可见进程和独占读取联合证明，不将未解旧保护泛化放行"
+}

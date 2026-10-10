@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-10-10T20:42:57.3754807Z",
+  "phase": "postflight",
+  "computerName": "DARKFLAME",
+  "gitVersion": "git version 2.55.0.windows.3",
+  "powershellVersion": "7.6.6",
+  "binaries": [
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 46920,
+      "lastWriteTimeUtc": "2026-07-10T06:59:56.0000000Z",
+      "sha256": "7B7971DD13F0C3A284E538601F2F9770B3A87DFACCB5FB52D68141C67ED22364"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\mingw64\\bin\\git.exe",
+      "bytes": 4383048,
+      "lastWriteTimeUtc": "2026-07-10T06:59:56.0000000Z",
+      "sha256": "1A0043555D254618F2D56C936C3D9A1FBFB878BC878416A133C346BC7835EDA9"
+    }
+  ],
+  "meaning": "执行后实际版本/hash观测；执行前另有preflight版本与已合fixture来源，不倒填执行前hash"
+}

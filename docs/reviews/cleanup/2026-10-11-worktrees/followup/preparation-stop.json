@@ -1,0 +1,16 @@
+{
+  "startedAt": "2026-10-10T20:12:36.5841442Z",
+  "pid": 42396,
+  "parent": 31952,
+  "command": "\"C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe\" -B docs/reviews/cleanup/2026-10-11-worktrees/followup/preserve.py",
+  "reason": "本轮保全脚本重复拆分 ignored 全表导致二次复杂度；只终止本人只读准备进程，尚未发删除",
+  "input": [
+    "Stop-Process",
+    "-Id",
+    "42396",
+    "-ErrorAction",
+    "Stop"
+  ],
+  "normalizedResult": 0,
+  "endedAt": "2026-10-10T20:12:36.6370963Z"
+}
