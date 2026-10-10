@@ -1,0 +1,186 @@
+{
+  "status": "仅规划静态回执，不是产品测试或候选Required CI",
+  "firstFailure": "input/static-first-failure.json",
+  "explorationFirstFailure": "input/exploration-first-failure.json",
+  "earlyContractVisibleReturn": {
+    "chunkId": "ba51d6",
+    "exitCode": 0,
+    "acceptedSamples": 54,
+    "rejectedSamples": 92,
+    "provenance": "先前会话可见输出；后续checks/contract有独立完整stdout/stderr与受测字节"
+  },
+  "receipts": [
+    {
+      "name": "ci-policy",
+      "receipt": "checks/ci-policy-1.json",
+      "exitCode": 0,
+      "argv": [
+        "C:\\nvm4w\\nodejs\\node.EXE",
+        "--test",
+        "scripts/ci-policy.test.mjs"
+      ],
+      "rawArchive": {
+        "path": "docs/plan/agent-mcp-m3/checks/ci-policy-1.zip",
+        "bytes": 339746,
+        "sha256": "e9f97adb3c0fdf362956002ca8cfd208c3157b0ae12da13a1f2c489a1d4a5c1c"
+      },
+      "runtime": {
+        "node": "v24.20.0",
+        "nodeExecutable": "C:\\nvm4w\\nodejs\\node.EXE",
+        "python": "3.13.15",
+        "pythonExecutable": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "yamlParser": "PyYAML 6.0.3",
+        "dependencyScope": "NODE_PATH只在此静态子进程指向本任务.runtime；不改系统环境或产品依赖"
+      },
+      "productTestsExecuted": false
+    },
+    {
+      "name": "ci-selection",
+      "receipt": "checks/ci-selection-1.json",
+      "exitCode": 0,
+      "argv": [
+        "C:\\nvm4w\\nodejs\\node.EXE",
+        "docs/plan/agent-mcp-m3/check-ci-selection.mjs"
+      ],
+      "rawArchive": {
+        "path": "docs/plan/agent-mcp-m3/checks/ci-selection-1.zip",
+        "bytes": 340704,
+        "sha256": "8bb8ab9c49f0ef73c30a448cc6f4676a43a635bfe9043248f3c4ce1c4decb67e"
+      },
+      "runtime": {
+        "node": "v24.20.0",
+        "nodeExecutable": "C:\\nvm4w\\nodejs\\node.EXE",
+        "python": "3.13.15",
+        "pythonExecutable": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "yamlParser": "PyYAML 6.0.3",
+        "dependencyScope": "NODE_PATH只在此静态子进程指向本任务.runtime；不改系统环境或产品依赖"
+      },
+      "productTestsExecuted": false
+    },
+    {
+      "name": "ci-validate",
+      "receipt": "checks/ci-validate-1.json",
+      "exitCode": 0,
+      "argv": [
+        "C:\\nvm4w\\nodejs\\node.EXE",
+        "scripts/validate-ci.mjs"
+      ],
+      "rawArchive": {
+        "path": "docs/plan/agent-mcp-m3/checks/ci-validate-1.zip",
+        "bytes": 339895,
+        "sha256": "072d393d8842aa153e7fd5dfc1ae0d89c77a125a0443322bc1aaf9287b1a870c"
+      },
+      "runtime": {
+        "node": "v24.20.0",
+        "nodeExecutable": "C:\\nvm4w\\nodejs\\node.EXE",
+        "python": "3.13.15",
+        "pythonExecutable": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "yamlParser": "PyYAML 6.0.3",
+        "dependencyScope": "NODE_PATH只在此静态子进程指向本任务.runtime；不改系统环境或产品依赖"
+      },
+      "productTestsExecuted": false
+    },
+    {
+      "name": "contract",
+      "receipt": "checks/contract-1.json",
+      "exitCode": 0,
+      "argv": [
+        "C:\\nvm4w\\nodejs\\node.EXE",
+        "docs/plan/agent-mcp-m3/check-contract-proposal.mjs"
+      ],
+      "rawArchive": {
+        "path": "docs/plan/agent-mcp-m3/checks/contract-1.zip",
+        "bytes": 339054,
+        "sha256": "cfd010240afb7a91f5102d5accac63ee4545709a718830bb44cfc870b8bf1c0d"
+      },
+      "runtime": {
+        "node": "v24.20.0",
+        "nodeExecutable": "C:\\nvm4w\\nodejs\\node.EXE",
+        "python": "3.13.15",
+        "pythonExecutable": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "yamlParser": "PyYAML 6.0.3",
+        "dependencyScope": "NODE_PATH只在此静态子进程指向本任务.runtime；不改系统环境或产品依赖"
+      },
+      "productTestsExecuted": false
+    },
+    {
+      "name": "static",
+      "receipt": "checks/static-1.json",
+      "exitCode": 0,
+      "argv": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "docs/plan/agent-mcp-m3/static-check.py"
+      ],
+      "rawArchive": {
+        "path": "docs/plan/agent-mcp-m3/checks/static-1.zip",
+        "bytes": 340079,
+        "sha256": "08bdfef4a8dfad930faea33583031b97a6254224b856419eb8fac873403d2bb3"
+      },
+      "runtime": {
+        "node": "v24.20.0",
+        "nodeExecutable": "C:\\nvm4w\\nodejs\\node.EXE",
+        "python": "3.13.15",
+        "pythonExecutable": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "yamlParser": "PyYAML 6.0.3",
+        "dependencyScope": "NODE_PATH只在此静态子进程指向本任务.runtime；不改系统环境或产品依赖"
+      },
+      "productTestsExecuted": false
+    },
+    {
+      "name": "static",
+      "receipt": "checks/static-2.json",
+      "exitCode": 0,
+      "argv": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "docs/plan/agent-mcp-m3/static-check.py"
+      ],
+      "rawArchive": {
+        "path": "docs/plan/agent-mcp-m3/checks/static-2.zip",
+        "bytes": 390195,
+        "sha256": "4d003f045a6732397c6f9144cdd630ab7729957e88e5d922498b78af93f6945f"
+      },
+      "runtime": {
+        "node": "v24.20.0",
+        "nodeExecutable": "C:\\nvm4w\\nodejs\\node.EXE",
+        "python": "3.13.15",
+        "pythonExecutable": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "yamlParser": "PyYAML 6.0.3",
+        "dependencyScope": "NODE_PATH只在此静态子进程指向本任务.runtime；不改系统环境或产品依赖"
+      },
+      "productTestsExecuted": false
+    },
+    {
+      "name": "static",
+      "receipt": "checks/static-3.json",
+      "exitCode": 0,
+      "argv": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "docs/plan/agent-mcp-m3/static-check.py"
+      ],
+      "rawArchive": {
+        "path": "docs/plan/agent-mcp-m3/checks/static-3.zip",
+        "bytes": 390833,
+        "sha256": "f48426f4007e998de3ff3a23bf5c3a71049370fc1916af0c3c56974c607811e4"
+      },
+      "runtime": {
+        "node": "v24.20.0",
+        "nodeExecutable": "C:\\nvm4w\\nodejs\\node.EXE",
+        "python": "3.13.15",
+        "pythonExecutable": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "yamlParser": "PyYAML 6.0.3",
+        "dependencyScope": "NODE_PATH只在此静态子进程指向本任务.runtime；不改系统环境或产品依赖"
+      },
+      "productTestsExecuted": false
+    }
+  ],
+  "M3ProductChecks": "未运行",
+  "M3RequiredCi": "未取得",
+  "formalIndependentReview": "未进行，停confirm"
+}

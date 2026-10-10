@@ -1,0 +1,94 @@
+{
+  "status": "Proposed；当前无endpoint/新授权",
+  "newOperation": {
+    "operationId": "getProviderAction",
+    "method": "GET",
+    "path": "/api/v1/provider-actions/{id}",
+    "authentication": "human_or_agent_session",
+    "actorKinds": [
+      "human",
+      "agent"
+    ],
+    "mutation": false,
+    "revisioned": false,
+    "capabilitiesAll": [
+      "work:read",
+      "repo:read"
+    ],
+    "resourceResolverId": "provider_action",
+    "feature": "按已授权target provider，gitea为WORKMESH_BETA_GITEA",
+    "visibility": "authz只对本operation归一隐藏target，最终授权SELECT核requester/principal/Session/resource；不使用M1安装identity例外",
+    "mcpBinding": {
+      "name": "get_provider_action",
+      "directE": {
+        "parameters": [
+          "id"
+        ],
+        "identity": "current exact E"
+      },
+      "coordination": {
+        "parameters": [
+          "id",
+          "sessionId"
+        ],
+        "identity": "显式target E局部Token bridge",
+        "implicitTargetFromResponse": false
+      },
+      "readonly": true,
+      "installationTarget": false
+    },
+    "runnerBinding": {
+      "name": "workmesh_get_provider_action",
+      "parameters": [
+        "id"
+      ],
+      "identity": "api.sessionId，不接受他Session"
+    },
+    "discoveryFacts": [
+      "liveAuthority",
+      "sessionKind=execution",
+      "ordinaryReadState",
+      "capabilitiesAll",
+      "requiresTargetCheck=requester/session/repo/context/provider"
+    ]
+  },
+  "reviewPatch": {
+    "repositoryIds": "optional,1..100,unique UUID",
+    "defaultCapabilities": [
+      "work:read",
+      "work:write",
+      "artifact:write"
+    ],
+    "explicitAdditionalCapabilities": [
+      "repo:read"
+    ],
+    "threeWayIntersection": true,
+    "sharedContextOnly": true,
+    "lateParentRevalidation": true,
+    "neverGrant": [
+      "plan:write",
+      "repo:write_branch",
+      "repo:open_pr",
+      "repo:merge",
+      "ci:run"
+    ]
+  },
+  "generation": "保M0/M1/M2输入，新增M3产品决策增量；当前提案不进入生成脚本运行",
+  "humanPreserved": [
+    "connectRepository",
+    "pinRepositoryContext",
+    "decideApproval",
+    "publishProjectUpdate",
+    "decideCompletionSuggestion"
+  ],
+  "conditionalExisting": {
+    "createProjectHealthUpdate": "source=agent,publish=true仍需Human精确批准与If-Match"
+  },
+  "runnerTransfer": {
+    "maxInlineUtf8Bytes": 32768,
+    "userPathOrUrl": false,
+    "redirect": "error",
+    "workmeshCredentialsToStorage": false,
+    "signedMaterialToModel": false
+  }
+}

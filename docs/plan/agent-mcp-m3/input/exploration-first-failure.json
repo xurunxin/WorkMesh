@@ -1,0 +1,11 @@
+{
+  "status": "真实首败保全，不计通过",
+  "stage": "只读探索",
+  "command": "git status --short; git rev-parse HEAD; rg --files docs/plan/agent-mcp-m2 -g '*.py' -g '*static*' -g '*manifest*' -g '*compatibility*'; Get-Content docs/plan/agent-mcp-m2/capture-sources.py -Encoding UTF8 -TotalCount 80",
+  "exitCode": 1,
+  "toolReturnChunkId": "b623e5",
+  "toolCallId": null,
+  "callIdLimitation": "工具仅暴露chunk_id，本轮未取得独立callID",
+  "firstFailure": "读取不存在的 docs/plan/agent-mcp-m2/capture-sources.py；未写文件。随后实读已有generate-evidence.py与static-check.py，不追写首轮成功。",
+  "rawToolReturnLimitation": "完整tool返回在会话可见；本文件保存准确可见命令/退出/错误摘要，不冒原始返回逐字全文。"
+}

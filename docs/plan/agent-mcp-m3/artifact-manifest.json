@@ -1,0 +1,372 @@
+{
+  "role": "收尾候选原字节指纹，非历史Git原件hash；Git原件另见source-manifest",
+  "selfExcluded": "本manifest不自hash，不循环绑定candidatehead；准确head提交后单独交付",
+  "entries": [
+    {
+      "path": "docs/plan/agent-mcp-m3/.gitattributes",
+      "bytes": 131,
+      "sha256": "7156ce14a50fcd9d2b2439067eb8db898eb789068d1ff4753ab99c7027529a8b"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/.gitignore",
+      "bytes": 24,
+      "sha256": "dd779651cafefb9d5718624bce5b1d37b13d3b1a02223b8d0dba210d9d50e80d"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/acceptance-matrix.json",
+      "bytes": 10643,
+      "sha256": "01f0547c8396e7fdfc4718d9741b9c8aab668f5198ffcef7f899c893a632f69d"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/bootstrap-planning-tools.py",
+      "bytes": 1805,
+      "sha256": "de1aec52e0107bdcf982d3a30ef2c64138ad04ccc493227c1f23adac2cefb5c9"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/build-contract-proposal.py",
+      "bytes": 10436,
+      "sha256": "839dda34e7844439a1518ffba3f6b3a11d8ca34d4ab9be62108650481dd958a4"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/build-operation-matrix.py",
+      "bytes": 14803,
+      "sha256": "ade490e568980a46228135d7e3a81e817beb340c685043a23bd10766b051a474"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/capture-sources.py",
+      "bytes": 8818,
+      "sha256": "9d397d50c855f24f1116b5cbefe463e1e9c07a06a1989cc34893e5bee4ea5e26"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/check-ci-selection.mjs",
+      "bytes": 958,
+      "sha256": "20093c088d3024920fc3c519bc72834fca239831b55ed50b4764cf41ef9fed2f"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/check-contract-proposal.mjs",
+      "bytes": 5191,
+      "sha256": "6a7954b63a5f9c4bf212426667def73926bff71279058c6dbf7c86b264a10f27"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/ci-policy-1.json",
+      "bytes": 13227,
+      "sha256": "6f57bc16f79edeb036298ad1724ca8d9f5b27e463a980ecd1c666c9b99bd8523"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/ci-policy-1.zip",
+      "bytes": 339746,
+      "sha256": "e9f97adb3c0fdf362956002ca8cfd208c3157b0ae12da13a1f2c489a1d4a5c1c"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/ci-selection-1.json",
+      "bytes": 16124,
+      "sha256": "d61231bf7693507d40d3d2b62d29a9540b1215a8085392f903ae9cf4b43b8005"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/ci-selection-1.zip",
+      "bytes": 340704,
+      "sha256": "8bb8ab9c49f0ef73c30a448cc6f4676a43a635bfe9043248f3c4ce1c4decb67e"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/ci-validate-1.json",
+      "bytes": 11826,
+      "sha256": "6cec7457032e8b86e183bb10dd104fea75c016c9712af3a3ebad6bb0e9c1e6b8"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/ci-validate-1.zip",
+      "bytes": 339895,
+      "sha256": "072d393d8842aa153e7fd5dfc1ae0d89c77a125a0443322bc1aaf9287b1a870c"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/contract-1.json",
+      "bytes": 11823,
+      "sha256": "c1444c67cbbd5bb540e7c845c3d1315fbd4780a653e895cf2c78f95e5bae381e"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/contract-1.zip",
+      "bytes": 339054,
+      "sha256": "cfd010240afb7a91f5102d5accac63ee4545709a718830bb44cfc870b8bf1c0d"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/static-1.json",
+      "bytes": 12163,
+      "sha256": "6671ff9164bc3e7a1431e51e582a3df3af19ff28e8495786e60b894435b02abd"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/static-1.zip",
+      "bytes": 340079,
+      "sha256": "08bdfef4a8dfad930faea33583031b97a6254224b856419eb8fac873403d2bb3"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/static-2.json",
+      "bytes": 12766,
+      "sha256": "51d3d1f46089642cfca8be2330d20627a547d084a6770af8e6f0b30c81cd9405"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/static-2.zip",
+      "bytes": 390195,
+      "sha256": "4d003f045a6732397c6f9144cdd630ab7729957e88e5d922498b78af93f6945f"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/static-3.json",
+      "bytes": 12766,
+      "sha256": "40e52fb830f552cbd77fcd76d10bef0310872e0a7525a1a4cf80adb71007a72e"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/checks/static-3.zip",
+      "bytes": 390833,
+      "sha256": "f48426f4007e998de3ff3a23bf5c3a71049370fc1916af0c3c56974c607811e4"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/compatibility.md",
+      "bytes": 3564,
+      "sha256": "3666579ca5931604e0f3ee27ebbaa2487231b9835190e4614d6b5252038b1c03"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/current-openapi-operations.json",
+      "bytes": 217710,
+      "sha256": "6471cff6350fa1506eb6bf6667c809f1b267b56aba49e514995685a5fdd8fd16"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/dto-proposal.ts",
+      "bytes": 12799,
+      "sha256": "e259d0e2f282a53e1b238e8f0a5cab42f92ec1db03e410660c35dbeb50262b54"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/dto-shapes.json",
+      "bytes": 43528,
+      "sha256": "d0333cdd4221a2cdc10aadd3e4ee214b7fa87cdc7aefebd918485619326f1381"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/finalize-planning-report.py",
+      "bytes": 7242,
+      "sha256": "c29f80212ebff643895a44a24ab8b0af3e6c502eae7d7331dae61cb54c6109d3"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/frozen-m3.md",
+      "bytes": 4827,
+      "sha256": "8ddd4cdc6f0e006b79b710732ac811396936eca05459511c4d96d92c16dc5870"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/implementation.md",
+      "bytes": 10325,
+      "sha256": "6ebc5b8141a8b31a923a68ab298c6c500d049cb66db9d6bd256e0e6694035550"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/check-recorder-first-failure.json",
+      "bytes": 964,
+      "sha256": "fa76d21039ad9c8176b32329be32249eaae9abe154d10316af5d00b4089b072f"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/chief-feedback.md",
+      "bytes": 1318,
+      "sha256": "7643448a58048f8ac7dfd443bf4c4e148527673763842617f4b5a5b89cd19a9a"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/conversation-readback.json",
+      "bytes": 5447,
+      "sha256": "30417a2cc987e01cd59bd5c6aeedfdf6a419d037f8a287f1afc6d7c970f24d38"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/conversation-readback.txt",
+      "bytes": 5337,
+      "sha256": "0b87d573b40403ba54bee12f11f67354c8c8e6c06d9a9670f75edf71b47e7e6e"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/current-spec-readback.md",
+      "bytes": 6167,
+      "sha256": "de9cdf45a88bc1054f9d1bf616e3890e60609cfaffa9f5ac1a287162e9b2dd69"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/exploration-first-failure.json",
+      "bytes": 805,
+      "sha256": "5560d80de8c94858bbccc37598166bb7031dc1934ba750c217d53f72505916f1"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/m2-ci415-readback.json",
+      "bytes": 1063,
+      "sha256": "e8421dec1cbc033fe289fccd7e8d5299b36c93b24b0cc35baf8d5f0c6328e60f"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/m2-todo-readback.json",
+      "bytes": 14227,
+      "sha256": "eb60ea22563b756d18d8b6c62a686c9237ce68ba856b29d7cb5c345ee1cd6812"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/main-final-readback.json",
+      "bytes": 380,
+      "sha256": "53ce3d70d1a2527c9a85fae0fa0ac122f2bba753e203546c0e0c354f08b7b39e"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/output-probe-failure.json",
+      "bytes": 643,
+      "sha256": "177e1495b3d02a9dbf7a1e8c2b554590c0df39c9d0ed4d78ccbc2950d08e5b01"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/plan-edits.json",
+      "bytes": 5967,
+      "sha256": "4567cfa9b3defc8df8ef8a773a94c290e94a0d419e1fdb7abf065b2381f2bf71"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/planning-tools-bootstrap.json",
+      "bytes": 1058,
+      "sha256": "9e2ada2d5c54eaf07964385e2dcdd9496e7b76372d17bc7abb7284d0abfcc2ab"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/platform-injected-original-plan.md",
+      "bytes": 8588,
+      "sha256": "6ec5379ac180d4854e5eb25748985e1a0821baa789a0e3b8cd6313704328e74e"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/runtime-cleanup.json",
+      "bytes": 177172,
+      "sha256": "ed3a09c873f998d8cec0dc200a9b87683f5a551f677347748fe9abf39bbb86da"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/static-first-failure-script-reconstructed.py",
+      "bytes": 6904,
+      "sha256": "db91dd0b1fa72493446f614276580e06f85241915a5c055d7b692c2229ff5cf1"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/static-first-failure.json",
+      "bytes": 1184,
+      "sha256": "51ceda433c48d83ed96cff5bad299407c769573779c8a58a231470d410a2342b"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/todos-readback.json",
+      "bytes": 13467,
+      "sha256": "84a9126ccb2c27f808ef5eb14c1a1ba1b1b29d16df5d278d52eb5c233faa9b97"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/todos-readback.txt",
+      "bytes": 13324,
+      "sha256": "f7790e6c4346cab4ef0bdb9e9693df9195aa883084388a9665941d49c7f69656"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/input/user-repository-scope-decision.md",
+      "bytes": 630,
+      "sha256": "89a04f448bd5c12911e546a6e6fba23461c43d16790e4a1db15bc40d7ed69ee0"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/lifecycle.md",
+      "bytes": 4671,
+      "sha256": "6eb5c8006890879b25c8f6afef3eab1b33a80f47b4865b578c7ee61e9ef240db"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/openapi-proposal.yaml",
+      "bytes": 15799,
+      "sha256": "43bfd23f865644cdf25c8baf65d1a6f45df21628b4dd99400fdd5b71cdbb1376"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/operation-decisions.json",
+      "bytes": 72891,
+      "sha256": "fc26aa717db7c8a7c086d69c60e3c36d594960642bfa10306145d0c72ae67066"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/operation-matrix.md",
+      "bytes": 12923,
+      "sha256": "1144c51cdd48134f9708cbcf712b0270fd00b73eb94d24ff679e91a54512270c"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/planning-report.md",
+      "bytes": 3976,
+      "sha256": "ea72b1d64095bc7e9980b62d0a393a86bd6dd5419a5e65046c1609e966d1f19f"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/planning-tools/package-lock.json",
+      "bytes": 1527,
+      "sha256": "173c89d5df93f47b835b23a8c56d511fbca4ea5f4fbfdc063a028f04d6b8b2be"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/planning-tools/package.json",
+      "bytes": 156,
+      "sha256": "acd3d2d021afc15e128b4910c79ef60e27dd63183ae3a5defc726b7dcb0ace11"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/policy-proposal.json",
+      "bytes": 2570,
+      "sha256": "f5502770e156ae5badd7a091d414eac64453500c6375d3de94ae0ae5a1127eeb"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/README.md",
+      "bytes": 1832,
+      "sha256": "2794b17108cbc3ab934b0818f214852fb43d0094eda1f88c44ea42ecc8dc2c52"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/resources.json",
+      "bytes": 1244,
+      "sha256": "6d5a430d410555c32d78fa68e2638a1b9e2f5d77d2efb61fcfd058a6e5eb4489"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/run-planning-checks.py",
+      "bytes": 3575,
+      "sha256": "22938c8efcea09b36c305f7791ef2dc5025f7040f1b7ff48861c53d2dc79fd94"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/savedplan.md",
+      "bytes": 10325,
+      "sha256": "6ebc5b8141a8b31a923a68ab298c6c500d049cb66db9d6bd256e0e6694035550"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/scope-compatibility.md",
+      "bytes": 4800,
+      "sha256": "5712fea205765f78aa57880dadc2eedcffa7b91917649896dcc91fd4946b2544"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/security-contract.md",
+      "bytes": 8954,
+      "sha256": "540520988bda9c814935f58fbc1c192acf785ddea2441633fefc1afb466be3b8"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/source-manifest.json",
+      "bytes": 1327105,
+      "sha256": "1239de9fc054312a9abf54c0e0cb7cb49c337edf702cc4ee96c8548ec1a66aad"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/source-map.json",
+      "bytes": 17040,
+      "sha256": "37d49b7fe23f3507f15d75509045e08efeae7be569a662d2ccb007b8b9127bb2"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/source-snapshot.zip",
+      "bytes": 6598764,
+      "sha256": "684299aec67f1705bec69c9fcb969d3e050f5670d47a26ba0eac8502e82a57ad"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/sources.md",
+      "bytes": 4387,
+      "sha256": "41096a4a74b2ecb1cfac57a5548a9b12e3b0d2a34a51fb6257cafa8cb4674cd1"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/spec.md",
+      "bytes": 7524,
+      "sha256": "a662a876c41726dd0c4256a0ea35bc29bd58b534c31948b565f60c5d238145f5"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/static-check.py",
+      "bytes": 8141,
+      "sha256": "a166a1af81045cff7f50230df1ee2d76f39df5378b6af2d121992d425a5d495c"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/static-checks.json",
+      "bytes": 7127,
+      "sha256": "dfcc567393f5c8b91f4f34193ab813b21f81420fdf5b06ba7113a8d4b515ceec"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/verification.md",
+      "bytes": 8485,
+      "sha256": "9b787437f62bb01ba4e34d6942c8333eaf6097c4993952bb669ac51ac9ef343d"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/verify-candidate.py",
+      "bytes": 2858,
+      "sha256": "983766c43e0ea56961fbe034b83f3fc0f654c2c3aabd88cc73162ab41c39c1c0"
+    },
+    {
+      "path": "docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md",
+      "bytes": 3878,
+      "sha256": "97f4c6403191765f54b187e421846e6711b8403e188789890c0aad7723471b23"
+    }
+  ],
+  "productFilesChanged": 0
+}
