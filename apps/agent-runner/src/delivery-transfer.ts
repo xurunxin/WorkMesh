@@ -1,4 +1,7 @@
 import { createHash } from 'node:crypto'
+import { request as httpRequest } from 'node:http'
+import { request as httpsRequest } from 'node:https'
+import { Readable } from 'node:stream'
 import { z } from 'zod'
 
 export const artifactUploadTransferSchema=z.object({id:z.string().uuid(),uploadUrl:z.string().url(),
@@ -19,23 +22,45 @@ export function decodeUploadBytes(base64:string):Buffer {
 }
 export const artifactChecksum=(bytes:Uint8Array)=>`sha256:${createHash('sha256').update(bytes).digest('hex')}`
 
-export async function sendArtifactBytes(value:unknown,base64:string,origins:readonly string[],signal?:AbortSignal,fetcher=globalThis.fetch) {
+// Pi configures a global model dispatcher. Storage requests use an independent
+// native transport, preserving signed headers and never inheriting its proxy.
+async function artifactFetch(url:URL,init:RequestInit):Promise<Response> {
+  return new Promise((resolve,reject)=>{
+    const request=(url.protocol==='https:'?httpsRequest:httpRequest)(url,{
+      method:init.method??'GET',headers:Object.fromEntries(new Headers(init.headers)),signal:init.signal??undefined,
+    },response=>{
+      const headers=new Headers()
+      for(const [name,value] of Object.entries(response.headers)) {
+        if(value!==undefined)headers.set(name,Array.isArray(value)?value.join(', '):value)
+      }
+      const status=response.statusCode??502
+      resolve(new Response([204,205,304].includes(status)?null:Readable.toWeb(response) as ReadableStream<Uint8Array>,{status,headers}))
+    })
+    request.on('error',reject)
+    request.setTimeout(15000,()=>request.destroy(new Error('ARTIFACT_TRANSFER_TIMEOUT')))
+    request.end(init.body)
+  })
+}
+
+export async function sendArtifactBytes(value:unknown,base64:string,origins:readonly string[],signal?:AbortSignal,fetcher=artifactFetch) {
   const upload=artifactUploadTransferSchema.parse(value)
   const url=storeUrl(upload.uploadUrl,origins)
   const bytes=decodeUploadBytes(base64)
   if(upload.requiredChecksum!==artifactChecksum(bytes)||Date.parse(upload.expiresAt)<=Date.now()) throw new Error('ARTIFACT_TRANSFER_EXPIRED_OR_MISMATCH')
   const headers=upload.requiredHeaders
+  if(headers['content-length']!==undefined&&headers['content-length']!==String(bytes.length)) throw new Error('ARTIFACT_TRANSFER_HEADERS_DENIED')
   for(const [name,value] of Object.entries(headers)) {
     if(['cookie','proxy-authorization'].includes(name.toLowerCase())||/^Bearer\s/i.test(value)) throw new Error('ARTIFACT_TRANSFER_HEADERS_DENIED')
   }
   let response:Response
   try { response=await fetcher(url,{method:'PUT',headers,body:new Uint8Array(bytes),redirect:'manual',signal}) }
-  catch { throw new Error('ARTIFACT_TRANSFER_FAILED') }
+  catch {throw new Error('ARTIFACT_TRANSFER_FAILED')}
+  await response.body?.cancel().catch(()=>undefined)
   if(!response.ok) throw new Error('ARTIFACT_TRANSFER_FAILED')
   return {id:upload.id,expiresAt:upload.expiresAt,checksum:upload.requiredChecksum,transfer:'bytes_sent'}
 }
 
-export async function readArtifactBytes(value:unknown,status:unknown,origins:readonly string[],signal?:AbortSignal,fetcher=globalThis.fetch) {
+export async function readArtifactBytes(value:unknown,status:unknown,origins:readonly string[],signal?:AbortSignal,fetcher=artifactFetch) {
   const download=z.object({downloadUrl:z.string().url()}).parse(value)
   const verified=z.object({id:z.string().uuid(),status:z.literal('verified'),sizeBytes:z.number().int().positive().max(transferLimit),
     actualChecksum:z.string().regex(/^sha256:[a-f0-9]{64}$/),mimeType:z.string()}).parse(status)

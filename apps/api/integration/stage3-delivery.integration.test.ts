@@ -251,6 +251,43 @@ describe('Stage 3 delivery API', () => {
   })
 
   const revocations = ['actor', 'workspace-role', 'membership-role', 'membership-delete', 'target-delete', 'target-team', 'team-delete', 'repository', 'repository-connection', 'connection'] as const
+  it('M3六kind五status真实GET白名单投影，合法checkpoint与未知效果分别确认且零业务写',async()=>{
+    const f=await fixture(),branch='workmesh/GEN-1-matrix'
+    const actor=(await db.query<{agent_actor_id:string}>('SELECT agent_actor_id FROM agent_sessions WHERE id=$1',[f.agent.sessionId])).rows[0]!.agent_actor_id
+    const pr=(await db.query<{id:string}>(`INSERT INTO pull_request_projections(workspace_id,repository_id,external_id,number,uri,work_item_id,session_id,producer_actor_id,base_branch,head_branch,base_sha,head_sha,state,draft)
+      VALUES($1,$2,'matrix-pr',77,'https://local.invalid/pr',$3,$4,$5,'main',$6,'base-sha','head','open',false) RETURNING id`,[f.workspaceId,f.repositoryId,f.workItemId,f.agent.sessionId,actor,branch])).rows[0]!.id
+    const context=(await db.query<{id:string}>('SELECT id FROM repository_contexts WHERE repository_id=$1 ORDER BY created_at DESC LIMIT 1',[f.repositoryId])).rows[0]!.id
+    const cases=[
+      {kind:'create_branch',payload:{name:branch,baseSha:'base-sha'},result:{name:branch,headSha:'base-sha'}},
+      {kind:'create_commit',payload:{branch,expectedHeadSha:'base-sha',files:[{path:'apps/api/matrix.ts',content:'secret-file-content'}]},result:{id:'commit',sha:'commit',branch,uri:'https://local.invalid/private'}},
+      {kind:'open_pull_request',payload:{baseBranch:'main',headBranch:branch},result:{id:'matrix-pr',number:77,uri:'https://local.invalid/private',baseBranch:'main',headBranch:branch,baseSha:'base-sha',headSha:'head',state:'open',draft:false}},
+      {kind:'merge_pull_request',payload:{pullRequestId:'matrix-pr',headSha:'head',method:'squash'},result:{merged:true,mergeSha:'merged'}},
+      {kind:'retry_ci_check',payload:{pullRequestId:pr,headSha:'head',checkRunId:'43'},result:{requested:true,checkRunId:'43'}},
+      {kind:'resolve_repository_context',payload:{workItemId:f.workItemId},result:{contextId:context,guidance:[]}},
+    ]
+    const counts=async()=>(await db.query(`SELECT (SELECT count(*) FROM domain_events) AS events,(SELECT count(*) FROM outbox_events) AS outbox,
+      (SELECT count(*) FROM api_idempotency_keys) AS receipts,(SELECT count(*) FROM agent_session_tokens) AS tokens,(SELECT count(*) FROM agent_activities) AS activities`)).rows[0]
+    let observations=0
+    for(const c of cases)for(const status of ['pending','claimed','completed','failed','dead'] as const){
+      const human=c.kind==='resolve_repository_context'
+      // Privileged projection fixture: no worker or provider is called and no claim of a real effect is made.
+      const id=(await db.query<{id:string}>(`INSERT INTO provider_actions(workspace_id,connection_id,repository_id,requested_by_actor_id,session_id,work_item_id,kind,intent_key,payload,status,result,attempt_count,claimed_at,claimed_by,completed_at,last_error)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::provider_action_status,$11,1,clock_timestamp(),'projection-fixture',CASE WHEN $10::provider_action_status='completed' THEN clock_timestamp() ELSE NULL END,'GITHUB_API_ERROR:secret-provider-body') RETURNING id`,
+        [f.workspaceId,f.connectionId,f.repositoryId,human?f.human.actorId:actor,human?null:f.agent.sessionId,f.workItemId,c.kind,randomUUID(),c.payload,status,c.result])).rows[0]!.id
+      const read=()=>human?humanCall(f.human,'GET',`/api/v1/provider-actions/${id}`):agentCall(f.agent.token,'GET',`/api/v1/provider-actions/${id}`)
+      const before=await counts(),response=await read()
+      expect(response.statusCode,JSON.stringify(response.json())).toBe(200)
+      expect(response.json()).toMatchObject({id,kind:c.kind,status,effect:status==='completed'?'committed':'checkpointed',result:expect.any(Object),error:{code:'PROVIDER_ACTION_FAILED'}})
+      for(const forbidden of ['secret-file-content','secret-provider-body','payload','claimed_by','https://local.invalid/private','guidance'])expect(JSON.stringify(response.json())).not.toContain(forbidden)
+      expect(await counts()).toEqual(before)
+      await db.query('UPDATE provider_actions SET result=NULL WHERE id=$1',[id])
+      const unknown=await read();expect(unknown.statusCode).toBe(200)
+      expect(unknown.json()).toMatchObject({effect:'unknown',result:null})
+      if(status==='dead'||status==='completed'||!human&&(status==='pending'||status==='failed'))expect(unknown.json()).toMatchObject({recovery:{kind:'human_reconcile',scheduled:false}})
+      expect(await counts()).toEqual(before);observations++
+    }
+    expect(observations).toBe(30)
+  })
   it.each(['read','branch','path'] as const)('M3 exact action最终快照拒绝当前context的%s收窄且零副作用',async kind=>{
     const f=await fixture()
     const payload=kind==='path'?{branch:'workmesh/GEN-1-exact',expectedHeadSha:'base-sha',message:'private content',files:[{path:'apps/api/a.ts',content:'private file'}]}:{name:'workmesh/GEN-1-exact',baseSha:'base-sha'}

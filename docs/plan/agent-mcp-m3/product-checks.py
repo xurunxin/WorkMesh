@@ -1,16 +1,17 @@
 """执行真实命令，保全退出码、运行字节与原始输出；不代替验收。"""
-import hashlib, json, os, re, subprocess, sys, time, uuid, zipfile
+import hashlib, json, os, re, subprocess, sys, time, uuid, zipfile, platform
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / 'docs/plan/agent-mcp-m3/product-evidence'
 OUT.mkdir(exist_ok=True)
+discovery_inputs={f'docs/plan/agent-mcp-{batch}/{name}.json' for batch,name in [('m0','operation-decisions'),('m1','operation-decisions'),('m2','product-discovery-decisions'),('m3','product-discovery-decisions')]}
 
 def fingerprint():
     names = subprocess.check_output(['git', 'ls-files', '-co', '--exclude-standard', '-z'], cwd=ROOT).split(b'\0')
     return {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest()
             for n in names if n and (p := n.decode('utf-8'))
-            and (ROOT/p).is_file() and not p.startswith('docs/plan/')}
+            and (ROOT/p).is_file() and (not p.startswith('docs/plan/') or p in discovery_inputs)}
 
 def redact(data):
     data = re.sub(rb'\bwm[ips]_[A-Za-z0-9_-]+', b'[REDACTED_CREDENTIAL]', data)
@@ -31,7 +32,10 @@ if __name__ == '__main__':
     if not argv: raise SystemExit('需要准确命令参数')
     before = fingerprint()
     start = time.time()
-    result = subprocess.run(argv, cwd=ROOT, env=env, capture_output=True)
+    child = subprocess.Popen(argv, cwd=ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    (OUT/(run_id+'-process.json')).write_text(json.dumps(dict(id=run_id,ownerPid=os.getpid(),childPid=child.pid,argv=argv,startedUnix=start),ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    stdout,stderr=child.communicate()
+    result = subprocess.CompletedProcess(argv,child.returncode,stdout,stderr)
     runtime = subprocess.run(['node', '-p', 'JSON.stringify({version:process.version,execPath:process.execPath})'], env=env, capture_output=True)
     with zipfile.ZipFile(OUT/(run_id+'.zip'), 'w', zipfile.ZIP_DEFLATED) as z:
         z.writestr('stdout.bin', redact(result.stdout))
@@ -42,7 +46,8 @@ if __name__ == '__main__':
                 for path in directory.rglob('*'):
                     if path.is_file(): z.writestr(path.relative_to(ROOT).as_posix(),redact(path.read_bytes()))
     receipt = dict(id=run_id, argv=argv, cwd=str(ROOT), exit=result.returncode,
-                   elapsedSeconds=time.time()-start, runtime=runtime.stdout.decode('utf-8', errors='replace').strip(),
+                   elapsedSeconds=time.time()-start, startedUnix=start, endedUnix=time.time(), ownerPid=os.getpid(), childPid=child.pid,
+                   environment=dict(platform=platform.platform(),python=platform.python_version(),pnpm='9.15.4；以packageManager及实际pnpm版本回执为准'), runtime=runtime.stdout.decode('utf-8', errors='replace').strip(),
                    before=before, after=fingerprint(), output=run_id+'.zip')
     (OUT/(run_id+'.json')).write_text(json.dumps(receipt, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     print(redact(result.stdout).decode('utf-8', errors='replace')[-14000:])

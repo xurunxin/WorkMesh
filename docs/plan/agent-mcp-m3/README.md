@@ -1,4 +1,10 @@
-# M3 受控规划交付
+# M3 产品与受控规划交付
+
+当前产品入口：[主力整体产品报告](product-report.md)、[四十操作矩阵](product-operation-matrix.md)、[原九类验收](product-acceptance-matrix.md)、[十八恢复行](product-recovery-matrix.md)、[命令及原输出索引](product-check-index.json)、[源字节清单](product-source-manifest.json)、[资源保全清理](product-resources.json)。产品结果以这些实际回执为准；未取得正式成果独审、最新PR Required CI或Done/main，不代表验收。
+
+下文为已审方案的历史规划入口，历史“未运行／停confirm”状态保留其原时点含义。方案候选499ccc1419ba2fbd15171f6ff7c0adc78647c2cc已经独审及Chief确认进入实现，不重复申请规划或实现许可。原文及来源原件继续保留。
+
+## 历史规划交付
 
 状态：规划候选，停 confirm 供 _oY 正式独立方案审查；尚未产品实现，尚未运行 M3 产品测试或取得本候选 Required CI。
 

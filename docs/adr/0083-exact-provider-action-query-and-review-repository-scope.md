@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed。当前只提交规划，停 confirm 供 _oY 独立审查；本提案不表示产品实现或测试通过。
+Proposed。受控方案已独审并经Chief确认进入实现；产品与实际检查见M3 product-report，待正式成果独审。此状态不表示验收、Required CI或合入。
 
 ## Context
 
@@ -30,8 +30,10 @@ ReviewDelegationInput新增可选repositoryIds，显式非空唯一UUID且三方
 
 ## Migration
 
-零数据库迁移、零新领域event；复用provider_actions/result、artifact_links、PR/check/review/approval及JSON capability_scope的既有repositoryIds。现已应用migration/baseline不改；不新增发送状态或事实字段。本次只增加Proposed文档，产品合同/源码未改。
+零数据库迁移、零新领域event；复用provider_actions/result、artifact_links、PR/check/review/approval及JSON capability_scope的既有repositoryIds。现已应用migration/baseline不改；不新增发送状态或事实字段。产品合同与源码已依已审方案实现；attempt_count既有上限8保持单调饱和，CAS额外绑定数据库毫秒精度claimed_at防同worker/attempt到顶ABA。这是源码发现的兼容实现，不称用户新增裁定。
 
 ## Spec changes
 
-未来更新OPENAPI/Zod/route policy、SDK/MCP/发现增量/Runner和协议；ReviewDelegationInput.repositoryIds为用户唯一新增授权裁定。产品变更与九类验证须经独审及Chief confirm，成果再经独审/最新Required CI/actual Done/main。
+对应更新OPENAPI/Zod/route policy、SDK/MCP/发现增量/Runner和协议；ReviewDelegationInput.repositoryIds为用户唯一新增授权裁定。产品变更与九类验证须经独审及Chief confirm，成果再经独审/最新Required CI/actual Done/main。
+
+产品补齐：merge／CI每次beforeMutation在准确锁定PR的同一prepareMutation事务内重验最新context的head_branch／base_branch。受控存储传输复用Node原生HTTP／HTTPS，避免Pi全局dispatcher与内置fetch的content-length兼容失败，不增加依赖或外发目标，保签名headers、证书验证、取消与无重定向。

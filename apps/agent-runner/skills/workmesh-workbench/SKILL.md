@@ -52,3 +52,8 @@ Room metadata 不授正文读取权。使用本人 Inbox 的 metadata→claim→
 
 普通 child 使用有限能力。reviewer 不拥有 `plan:write`，不能发布 Plan；只能发布 `code_review` Artifact，并必须本人发送 Room `review_result`。Artifact 应包含审查 metadata 或真实引用，`noArtifactReason` 或 structured review 不能替代双证据。父用 `workmesh_list_child_sessions` 确认所有 required child 已 completed；其它每种状态都阻止父完成并返回准确 IDs。父终态或撤权不能继续读取子状态，Stop/pause 优先；父 Stop 不表示子已自动停止。
 `workmesh_fail_session` 只请求准确自身 Session 的失败。它与 completion/wait 互斥并关闭后续模型工具；宿主先提交 failed Turn/Attempt，再执行原 `/fail` 命令。两事务之间崩溃或第二个响应不明没有自动恢复，Turn failed 不能证明 Session failed。Stop/撤权优先；后步拒绝不重做 settle 或 Stop cleanup。核查实际 Session 状态并保留原请求 key/revision 与拒绝/不明事实。
+## 精确 Git 与证据交付
+
+先读准确 repository context 的 base/path，取得 Lease，依次 branch/commit/openPR 并用 `workmesh_get_provider_action` 确认原 action。`unknown` 只保留原 ID 人工对账，不换 key 盲重发。当前 head 的独立 reviewer 可显式 `repositoryIds` 获得三方交集的仓库读权；省略不增加原 reviewer 能力。reviewer 无仓库写／plan 写权，在有效 E 下发布本人 Room `review_result`、当前 head `code_review` Artifact 与 structured review，再完成。父确认 required child completed，Human 批准准确 head/checks，Worker 最终重验。merge 不 deploy，也不自动关闭 Issue。
+
+`workmesh_request_artifact_upload` 接收有界规范 base64，签名 URL／headers 由受控模块消费；不传 URL 或本机路径。`workmesh_download_verified_artifact` 只返回已验证、有界且 checksum 匹配字节。单文件最多 1,500,000 字节；store 未配置明确拒绝。上传 file 不代替 code_review 授权。健康记录可草拟，发布仍须准确 Human approval；completion suggestion 仅提案，不代 Human 裁决。

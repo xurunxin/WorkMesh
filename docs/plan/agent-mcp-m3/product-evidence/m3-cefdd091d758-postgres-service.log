@@ -1,0 +1,84 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 12:18:48.688 UTC [43] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 12:18:48.689 UTC [43] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 12:18:48.690 UTC [46] LOG:  database system was shut down at 2026-10-10 12:18:48 UTC
+2026-10-10 12:18:48.693 UTC [43] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-10 12:18:48.821 UTC [43] LOG:  received fast shutdown request
+2026-10-10 12:18:48.821 UTC [43] LOG:  aborting any active transactions
+2026-10-10 12:18:48.826 UTC [43] LOG:  background worker "logical replication launcher" (PID 49) exited with exit code 1
+2026-10-10 12:18:48.826 UTC [44] LOG:  shutting down
+2026-10-10 12:18:48.826 UTC [44] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 12:18:48.833 UTC [44] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.007 s, sync=0.001 s, total=0.008 s; sync files=301, longest=0.001 s, average=0.001 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 12:18:48.839 UTC [43] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 12:18:48.352 UTC [37] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 12:18:48.939 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 12:18:48.939 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 12:18:48.939 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 12:18:48.942 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 12:18:48.944 UTC [59] LOG:  database system was shut down at 2026-10-10 12:18:48 UTC
+2026-10-10 12:18:48.948 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 12:19:17.867 UTC [72] WARNING:  there is no transaction in progress
+2026-10-10 12:19:17.867 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 12:19:18.273 UTC [70] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 12:19:18.273 UTC [70] CONTEXT:  PL/pgSQL function a2_failure_b6179cdd48e74189b44e85c03d8b7a3b() line 1 at RAISE
+2026-10-10 12:19:18.273 UTC [70] STATEMENT:  INSERT INTO repository_contexts(
+	             workspace_id,repository_id,project_id,work_item_id,session_id,base_branch,base_sha,
+	             branch_pattern,allowed_paths,permissions,guidance_manifest_hash,created_by_actor_id)
+	           VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+	           RETURNING id
+2026-10-10 12:19:18.722 UTC [70] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 12:19:18.722 UTC [70] CONTEXT:  PL/pgSQL function a2_failure_d8a61ff3d96840be84fb2343ac584737() line 1 at RAISE
+2026-10-10 12:19:18.722 UTC [70] STATEMENT:  INSERT INTO repository_guidance_entries(
+	               context_id,ordinal,path,blob_sha,content_hash,content)
+	             VALUES($1,$2,$3,$4,$5,$6)
+2026-10-10 12:19:19.362 UTC [70] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 12:19:19.362 UTC [70] CONTEXT:  PL/pgSQL function a2_failure_32dd92d3f25445488a20af40292b793b() line 1 at RAISE
+2026-10-10 12:19:19.362 UTC [70] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 12:19:20.431 UTC [70] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 12:19:20.431 UTC [70] CONTEXT:  PL/pgSQL function a2_failure_d8fc5da494874ec9abc33ab41fe2b417() line 1 at RAISE
+2026-10-10 12:19:20.431 UTC [70] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)

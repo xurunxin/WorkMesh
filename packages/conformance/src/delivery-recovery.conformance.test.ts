@@ -1,7 +1,8 @@
 import {randomUUID} from 'node:crypto'
 import {afterAll,beforeAll,describe,expect,it} from 'vitest'
 import type {ProviderActionProjection,ReviewDelegationResponse} from '@workmesh/contracts'
-import {canonicalMergeApprovalPayload} from '@workmesh/domain'
+import {canonicalMergeApprovalPayload,canonicalActionApprovalPayload} from '@workmesh/domain'
+import {sendArtifactBytes,readArtifactBytes} from '../../../apps/agent-runner/src/delivery-transfer.js'
 import {createDeliveryRecoveryFixture,saveDeliveryEvidence,sha256,type DeliveryMode} from './delivery-recovery.fixture.js'
 
 type Fixture=Awaited<ReturnType<typeof createDeliveryRecoveryFixture>>
@@ -9,7 +10,85 @@ let f:Fixture
 describe('M3 Native HTTP/MCP/Pi精确Git与review闭环',()=>{
   beforeAll(async()=>{f=await createDeliveryRecoveryFixture()})
   afterAll(async()=>{if(f)await f.close()})
-  it.each(['parent','definition','grant','context'] as const)('显式review成功→%s收窄/撤权→原key/body重放拒绝且不重复交付',async kind=>{
+  it.each(['native','mcp','pi'] as DeliveryMode[])('%s精确action最新read/branch/path正负例与Human终态诊断',async mode=>{
+    const s=await f.prepare(mode),p=s.parent
+    const branch=await p.client.requestProviderAction<{id:string}>({kind:'create_branch',repositoryId:s.repositoryId,workItemId:p.workItemId,sessionId:p.sessionId,name:s.branch,baseSha:'base'})
+    await f.worker().tick()
+    if(mode==='native') {
+      await expect(f.coordination.getProviderAction(branch.id)).rejects.toThrow()
+      expect(await f.coordination.getProviderAction(branch.id,{sessionId:p.sessionId})).toMatchObject({id:branch.id,status:'completed'})
+    }
+    if(mode==='mcp') {
+      const coordination=await f.connect('read-write')
+      await expect(f.mcpCall(coordination,'get_provider_action',{id:branch.id})).rejects.toThrow()
+      expect(await f.mcpCall(coordination,'get_provider_action',{id:branch.id,sessionId:p.sessionId})).toMatchObject({id:branch.id,status:'completed'})
+    }
+    const commit=await p.client.requestProviderAction<{id:string}>({kind:'create_commit',repositoryId:s.repositoryId,workItemId:p.workItemId,sessionId:p.sessionId,branch:s.branch,expectedHeadSha:'base',message:'Query original action',files:[{path:'src/query.ts',content:'safe'}]})
+    await f.worker().tick()
+    const read=async(id:string):Promise<ProviderActionProjection>=>mode==='native'?p.client.getProviderAction(id):mode==='mcp'?f.mcpCall(s.mcp,'get_provider_action',{id,sessionId:p.sessionId}):f.piCall(p,f.connectionToken,'workmesh_get_provider_action',{id})
+    const results=[]
+    for(const change of ['read','branch','path'] as const) {
+      const id=change==='path'?commit.id:branch.id
+      expect(await read(id)).toMatchObject({id,status:'completed'})
+      const pin={workItemId:p.workItemId,baseBranch:'main',baseSha:'base',branchPattern:change==='branch'?'private/{workItemKey}-{slug}':'workmesh/{workItemKey}-{slug}',allowedPaths:change==='path'?['elsewhere/**']:['src/**'],permissions:change==='read'?['review']:['read','write_branch','open_pr','review','merge','ci']}
+      await f.human('POST',`/api/v1/repositories/${s.repositoryId}/context`,pin);await f.worker().tick()
+      if(mode==='native')await expect(read(id)).rejects.toMatchObject({code:'NOT_FOUND'})
+      else await expect(read(id)).rejects.toThrow(/NOT_FOUND/)
+      results.push({change,id,denied:true})
+      await f.human('POST',`/api/v1/repositories/${s.repositoryId}/context`,{...pin,branchPattern:'workmesh/{workItemKey}-{slug}',allowedPaths:['src/**'],permissions:['read','write_branch','open_pr','review','merge','ci']});await f.worker().tick()
+      expect(await read(id)).toMatchObject({id,status:'completed'})
+    }
+    const value=await read(commit.id)
+    const revision=(await p.client.getSession<{revision:number}>(p.sessionId)).revision
+    await p.client.complete(p.sessionId,{summary:'Original exact action confirmed',artifactIds:value.artifactIds,checks:[],limitations:[]},{ifMatch:revision})
+    expect(await f.human('GET',`/api/v1/provider-actions/${commit.id}`)).toMatchObject({id:commit.id,status:'completed'})
+    await expect(read(commit.id)).rejects.toThrow()
+    saveDeliveryEvidence(`${mode}-query-boundaries.json`,{results,terminalHumanAllowed:true,terminalERefused:true,explicitCoordinationBridge:mode==='pi'?'不适用：Runner固定当前E':true})
+  })
+  it.each(['native','mcp','pi'] as DeliveryMode[])('%s上传状态/数组/取消/受控下载及health准确Human批准',async mode=>{
+    const s=await f.prepare(mode),p=s.parent
+    const invoke=async<T>(native:()=>Promise<T>,mcp:string,pi:string,args:Record<string,unknown>,piArgs?:Record<string,unknown>):Promise<T>=>mode==='native'?native():mode==='mcp'?f.mcpCall(s.mcp,mcp,args):f.piCall(p,f.connectionToken,pi,piArgs??Object.fromEntries(Object.entries(args).filter(([key])=>!['sessionId','idempotencyKey'].includes(key))))
+    const bytes=Buffer.from('M3 controlled file evidence\n'),base64=bytes.toString('base64'),checksum=sha256(bytes.toString())
+    const input={sessionId:p.sessionId,workItemId:p.workItemId,projectId:s.projectId,repositoryId:s.repositoryId,sourceTool:'M3 real transfer',filename:'evidence.txt',mimeType:'text/plain',sizeBytes:bytes.length,checksum}
+    const request=()=>invoke(()=>p.client.requestArtifactUpload(input,{idempotencyKey:randomUUID()}),'request_artifact_upload','workmesh_request_artifact_upload',{...input,idempotencyKey:randomUUID()},Object.fromEntries(Object.entries({...input,contentBase64:base64}).filter(([key])=>!['sessionId','sizeBytes','checksum'].includes(key))))
+    const upload=await request(),origin=new URL(process.env.S3_ENDPOINT!).origin
+    if(mode!=='pi')await sendArtifactBytes(upload,base64,[origin])
+    const status=()=>invoke(()=>p.client.getArtifactUploadStatus(upload.id),'get_artifact_upload_status','workmesh_get_artifact_upload_status',{uploadId:upload.id,sessionId:p.sessionId})
+    expect(await status()).toMatchObject({id:upload.id,status:'pending',expectedChecksum:checksum})
+    await expect(invoke(()=>p.client.getArtifactDownload(upload.id),'download_verified_artifact','workmesh_download_verified_artifact',{uploadId:upload.id,sessionId:p.sessionId})).rejects.toThrow()
+    await invoke(()=>p.client.finalizeArtifactUpload(upload.id,p.sessionId),'finalize_artifact_upload','workmesh_finalize_artifact_upload',{uploadId:upload.id,sessionId:p.sessionId})
+    await f.verifyUploads();const verified=await status()
+    expect(verified).toMatchObject({status:'verified',actualChecksum:checksum});expect(verified.artifactId).toBeTruthy()
+    const download=await invoke(()=>p.client.getArtifactDownload(upload.id),'download_verified_artifact','workmesh_download_verified_artifact',{uploadId:upload.id,sessionId:p.sessionId})
+    const received=mode==='pi'?download:await readArtifactBytes(download,verified,[origin])
+    expect(received).toMatchObject({contentBase64:base64,sizeBytes:bytes.length,checksum})
+    const artifacts=await invoke(()=>p.client.listWorkItemArtifacts(p.workItemId),'list_work_item_artifacts','workmesh_list_work_item_artifacts',{workItemId:p.workItemId,sessionId:p.sessionId})
+    expect(artifacts).toEqual(expect.arrayContaining([expect.objectContaining({id:verified.artifactId,type:'file'})]))
+    const canceled=await request(),cancelKey=randomUUID()
+    const cancel=()=>invoke(()=>p.client.cancelArtifactUpload(canceled.id,p.sessionId,{idempotencyKey:cancelKey}),'cancel_artifact_upload','workmesh_cancel_artifact_upload',{uploadId:canceled.id,sessionId:p.sessionId,idempotencyKey:cancelKey})
+    expect(await cancel()).toEqual({id:canceled.id,status:'canceled'})
+    expect(await invoke(()=>p.client.getArtifactUploadStatus(canceled.id),'get_artifact_upload_status','workmesh_get_artifact_upload_status',{uploadId:canceled.id,sessionId:p.sessionId})).toMatchObject({status:'canceled'})
+    const health={health:'on_track' as const,summary:'Exact observed file evidence',confidence:0.7,uncertainty:'Only local fake provider tested',sources:[{kind:'work_item' as const,id:p.workItemId,observedAt:new Date().toISOString(),value:{artifactId:verified.artifactId}}],source:'agent' as const,publish:false}
+    const publish=async(body:typeof health & {approvalId?:string})=>{
+      const revision=(await p.client.getProject<{revision:number}>(s.projectId)).revision
+      return invoke(()=>p.client.createProjectHealthUpdate(s.projectId,body,{sessionId:p.sessionId,ifMatch:revision,idempotencyKey:randomUUID()}),'create_project_health_update','workmesh_create_project_health_update',{...body,projectId:s.projectId,sessionId:p.sessionId,revision,idempotencyKey:randomUUID()},{...body,source:undefined,projectId:s.projectId,ifMatch:revision})
+    }
+    await publish(health)
+    await expect(publish({...health,publish:true})).rejects.toThrow()
+    const exact={projectId:s.projectId,health:health.health,summary:health.summary,forecastAt:null,confidence:health.confidence,uncertainty:health.uncertainty,sources:health.sources}
+    const approval=await p.client.requestApproval({sessionId:p.sessionId,approvalType:'project_health',actionName:'project.health.publish',actionPayloadSanitized:exact,actionPayloadHash:sha256(canonicalActionApprovalPayload(exact)),riskLevel:'high',rationaleSummary:'Human exact publication',requiredApprovals:1,expiresAt:new Date(Date.now()+600000).toISOString()}) as unknown as {id:string;revision:number}
+    await f.human('POST',`/api/v1/approvals/${approval.id}/decide`,{decision:'approved',reason:'Exact health facts'},approval.revision)
+    await expect(publish({...health,summary:'Changed after approval',publish:true,approvalId:approval.id})).rejects.toThrow()
+    expect((await f.db.query('SELECT status FROM approvals WHERE id=$1',[approval.id])).rows[0]).toEqual({status:'approved'})
+    await publish({...health,publish:true,approvalId:approval.id})
+    expect((await f.db.query('SELECT status FROM approvals WHERE id=$1',[approval.id])).rows[0]).toEqual({status:'consumed'})
+    const history=await invoke(()=>p.client.getProjectHealthHistory(s.projectId),'get_project_health_history','workmesh_get_project_health_history',{projectId:s.projectId,sessionId:p.sessionId})
+    expect(history.items).toHaveLength(2)
+    const listed=await invoke(()=>p.client.listRepositories(),'list_repositories','workmesh_list_repositories',{sessionId:p.sessionId})
+    expect(listed.items).toEqual(expect.arrayContaining([expect.objectContaining({id:s.repositoryId})]))
+    saveDeliveryEvidence(`${mode}-transfer-health.json`,{uploadId:upload.id,verified,artifactId:verified.artifactId,canceledId:canceled.id,checksum,approvalId:approval.id,history,signedMaterialHiddenFromModel:mode==='pi'})
+  })
+  it.each(['parent','definition','grant','context','child','gitea'] as const)('显式review成功→%s收窄/撤权→原key/body重放拒绝且不重复交付',async kind=>{
     const s=await f.prepare('native'),key=randomUUID()
     const body={reviewerAgentId:s.target.agentId,planStepId:s.reviewStep,planVersionId:s.planId,initialPrompt:'Bounded repository review',ttlSeconds:3600,repositoryIds:[s.repositoryId]}
     const create=()=>s.parent.client.createReviewDelegation(s.parent.sessionId,body,{idempotencyKey:key})
@@ -25,6 +104,10 @@ describe('M3 Native HTTP/MCP/Pi精确Git与review闭环',()=>{
     if(kind==='parent')await f.db.query("UPDATE delegations SET capability_scope=capability_scope || '{\"repositoryIds\":[]}'::jsonb WHERE id=(SELECT delegation_id FROM agent_sessions WHERE id=$1)",[s.parent.sessionId])
     if(kind==='definition')await f.db.query("UPDATE agent_definitions SET approved_capabilities=array_remove(approved_capabilities,'repo:read') WHERE id=$1",[s.target.agentId])
     if(kind==='grant')await f.db.query("UPDATE agent_team_access SET approved_capabilities=array_remove(approved_capabilities,'repo:read') WHERE agent_id=$1 AND team_id=$2",[s.target.agentId,f.teamId])
+    if(kind==='child')await f.db.query("UPDATE delegations SET status='revoked',revoked_at=clock_timestamp() WHERE id=$1",[first.session.delegation_id])
+    // Admin-owned DB fixture changes provider facts while feature remains off;
+    // placeholder ciphertext is never decoded or sent to a real provider.
+    if(kind==='gitea')await f.db.query("UPDATE provider_connections SET provider='gitea',installation_id='local-fixture',credentials_ciphertext=decode('00','hex') WHERE id=$1",[s.connectionId])
     if(kind==='context') {
       await f.human('POST',`/api/v1/repositories/${s.repositoryId}/context`,{sessionId:s.parent.sessionId,baseBranch:'main',baseSha:'base',branchPattern:'workmesh/{workItemKey}-{slug}',allowedPaths:['src/**'],permissions:['read','review']})
       await f.worker().tick()
@@ -34,14 +117,53 @@ describe('M3 Native HTTP/MCP/Pi精确Git与review闭环',()=>{
     expect(await counts()).toEqual(changed)
     saveDeliveryEvidence(`review-replay-${kind}.json`,{childId:first.session.id,before,changed,after:await counts(),originalKeyRejected:true})
   })
+  it('显式review初次创建三方repo:read缺任一、错仓库及非法清单拒绝，恢复后正对照',async()=>{
+    const s=await f.prepare('native'),parent=s.parent.sessionId
+    const body={reviewerAgentId:s.target.agentId,planStepId:s.reviewStep,planVersionId:s.planId,initialPrompt:'Explicit bounded review',repositoryIds:[s.repositoryId]}
+    const create=(input=body)=>s.parent.client.createReviewDelegation(parent,input,{idempotencyKey:randomUUID()})
+    const count=async()=>(await f.db.query(`SELECT (SELECT count(*) FROM agent_sessions) AS children,(SELECT count(*) FROM session_budget_reservations) AS reservations,(SELECT count(*) FROM agent_webhook_deliveries) AS deliveries`)).rows[0]
+    const before=await count()
+    for(const repositoryIds of [[],[s.repositoryId,s.repositoryId],Array.from({length:101},()=>randomUUID()),[randomUUID()]])await expect(create({...body,repositoryIds})).rejects.toThrow()
+    for(const kind of ['parent','definition','grant'] as const){
+      const target=kind==='parent'?{table:'delegations',column:'permissions_snapshot',where:'id=(SELECT delegation_id FROM agent_sessions WHERE id=$1)',values:[parent]}:kind==='definition'?{table:'agent_definitions',column:'approved_capabilities',where:'id=$1',values:[s.target.agentId]}:{table:'agent_team_access',column:'approved_capabilities',where:'agent_id=$1 AND team_id=$2',values:[s.target.agentId,f.teamId]}
+      const original=(await f.db.query(`SELECT ${target.column} AS capabilities FROM ${target.table} WHERE ${target.where}`,target.values)).rows[0]!.capabilities
+      try {
+        await f.db.query(`UPDATE ${target.table} SET ${target.column}=array_remove(${target.column},'repo:read') WHERE ${target.where}`,target.values)
+        await expect(create()).rejects.toMatchObject({status:403});expect(await count()).toEqual(before)
+      } finally {await f.db.query(`UPDATE ${target.table} SET ${target.column}=$${target.values.length+1} WHERE ${target.where}`,[...target.values,original])}
+    }
+    expect(await count()).toEqual(before)
+    const valid=await create();expect(valid.session.parent_session_id).toBe(parent)
+    saveDeliveryEvidence('review-initial-authorization.json',{before,after:await count(),childId:valid.session.id,tripleIntersectionValidated:true,invalidInputsRejected:true})
+  })
+  it('显式repo reviewer父预算100/child60/review40：预算满及普通子完成后合法旧回执不再admission',async()=>{
+    const s=await f.prepare('native',{maxInputTokens:100}),p=s.parent
+    const ordinaryTarget=await f.registerTarget()
+    const child=await p.client.createChildSession(p.sessionId,{agentId:ordinaryTarget.agentId,planStepId:s.step,planVersionId:s.planId,initialPrompt:'Bounded ordinary child',budget:{maxInputTokens:60}})
+    const key=randomUUID(),body={reviewerAgentId:s.target.agentId,planStepId:s.reviewStep,planVersionId:s.planId,initialPrompt:'Bounded explicit repo reviewer',repositoryIds:[s.repositoryId],budget:{maxInputTokens:40}}
+    const create=()=>p.client.createReviewDelegation(p.sessionId,body,{idempotencyKey:key})
+    const review=await create()
+    const budgets=(await f.db.query('SELECT budget FROM agent_sessions WHERE id=ANY($1::uuid[]) ORDER BY id',[[p.sessionId,child.id,review.session.id]])).rows
+    expect(budgets.map(row=>row.budget.maxInputTokens).sort((a:number,b:number)=>a-b)).toEqual([40,60,100])
+    const count=async()=>(await f.db.query(`SELECT (SELECT count(*) FROM agent_sessions WHERE parent_session_id=$1) AS children,
+      (SELECT count(*) FROM session_budget_reservations WHERE parent_session_id=$1) AS reservations,
+      (SELECT count(*) FROM agent_webhook_deliveries WHERE session_id=ANY($2::uuid[])) AS deliveries`,[p.sessionId,[child.id,review.session.id]])).rows[0]
+    const before=await count();expect(await create()).toEqual(review);expect(await count()).toEqual(before)
+    const ordinary=await f.receive(child.id,ordinaryTarget.token)
+    await ordinary.client.complete(ordinary.sessionId,{summary:'Ordinary child completed',artifactIds:[],checks:[],limitations:[],noArtifactReason:'Native bounded budget fixture'},{ifMatch:(await ordinary.client.getSession<{revision:number}>(ordinary.sessionId)).revision})
+    const after=await count();expect(await create()).toEqual(review);expect(await count()).toEqual(after)
+    saveDeliveryEvidence('explicit-review-budget-replay.json',{parentId:p.sessionId,childId:child.id,reviewerId:review.session.id,budgets,before,after,oldReceiptStable:true})
+  })
+
   it.each(['native','mcp','pi'] as DeliveryMode[])('%s准确base/path→Git action→独立reviewer→Human批准→终态',async mode=>{
     const s=await f.prepare(mode),p=s.parent
     const link={sessionId:p.sessionId,workItemId:p.workItemId,projectId:s.projectId,repositoryId:s.repositoryId,planStepId:s.step}
-    const lease=await p.client.acquireLease({sessionId:p.sessionId,resourceType:'work_item',resourceId:p.workItemId,kind:'exclusive',ttlSeconds:3600,reason:'M3 exact delivery'})
-    expect(lease).toHaveProperty('id')
-    const context=await p.client.getRepositoryContext<Array<{base_sha:string;allowed_paths:string[];guidance:unknown[]}>>(s.repositoryId)
-    expect(context[0]).toMatchObject({base_sha:'base',allowed_paths:['src/**']});expect(context[0]!.guidance.length).toBeGreaterThan(0)
     const invoke=async<T>(native:()=>Promise<T>,mcp:string,pi:string,args:Record<string,unknown>):Promise<T>=>mode==='native'?native():mode==='mcp'?f.mcpCall(s.mcp,mcp,args):f.piCall(p,f.connectionToken,pi,Object.fromEntries(Object.entries(args).filter(([key])=>!['sessionId','idempotencyKey'].includes(key))))
+    const leaseBody={sessionId:p.sessionId,resourceType:'work_item' as const,resourceId:p.workItemId,kind:'exclusive' as const,ttlSeconds:3600,reason:'M3 exact delivery'}
+    const lease=await invoke(()=>p.client.acquireLease(leaseBody),'acquire_lease','workmesh_acquire_lease',leaseBody)
+    expect(lease).toHaveProperty('id')
+    const context=await invoke(()=>p.client.getRepositoryContext<Array<{base_sha:string;allowed_paths:string[];guidance:unknown[]}>>(s.repositoryId),'get_repository_context','workmesh_get_repository_context',{repositoryId:s.repositoryId,sessionId:p.sessionId})
+    expect(context[0]).toMatchObject({base_sha:'base',allowed_paths:['src/**']});expect(context[0]!.guidance.length).toBeGreaterThan(0)
     const confirm=async(id:string)=>{
       await f.worker().tick()
       const result=await invoke(()=>p.client.getProviderAction(id),'get_provider_action','workmesh_get_provider_action',{id,sessionId:p.sessionId})
@@ -66,17 +188,32 @@ describe('M3 Native HTTP/MCP/Pi精确Git与review闭环',()=>{
     await f.worker().tick()
     const evidenceInput={...link,pullRequestId:pr,headSha:head,type:'test_report' as const,title:'Current-head checks',checksum:sha256(head),sourceTool:'M3 conformance',result:'passed' as const,metadata:{headSha:head}}
     const evidence=await invoke(()=>p.client.publishDeliveryArtifact<{id:string}>(evidenceInput,{idempotencyKey:randomUUID()}),'publish_delivery_artifact','workmesh_publish_delivery_artifact',evidenceInput)
+    await f.db.query(`INSERT INTO provider_webhook_deliveries(connection_id,repository_id,delivery_id,event_name,body_hash,payload)
+      VALUES($1,$2,$3,'check_run',$4,$5)`,[s.connectionId,s.repositoryId,randomUUID(),sha256('retry:'+head),{check_run:{id:43,name:'optional-retry',status:'completed',conclusion:'failure',head_sha:head,updated_at:new Date().toISOString(),pull_requests:[{number:action.result.number}]}}])
+    await f.worker().tick()
+    const retryPayload={provider:'fake',connectionId:s.connectionId,repositoryId:s.repositoryId,pullRequestId:pr,checkRunId:'43',headSha:head}
+    const retryHash=sha256(canonicalActionApprovalPayload(retryPayload))
+    const retryApproval=await p.client.requestApproval({sessionId:p.sessionId,approvalType:'provider_action',actionName:'provider.ci.retry',actionPayloadSanitized:retryPayload,actionPayloadHash:retryHash,riskLevel:'medium',rationaleSummary:'Exact failed check retry',requiredApprovals:1,expiresAt:new Date(Date.now()+600000).toISOString()}) as unknown as {id:string;revision:number}
+    await f.human('POST',`/api/v1/approvals/${retryApproval.id}/decide`,{decision:'approved',reason:'Exact retry'},retryApproval.revision)
+    const retryInput={sessionId:p.sessionId,approvalId:retryApproval.id,actionPayloadHash:retryHash,headSha:head}
+    const retry=await invoke(()=>p.client.retryCiCheck<{id:string}>(pr,'43',retryInput,{idempotencyKey:randomUUID()}),'retry_ci_check','workmesh_retry_ci_check',{...retryInput,pullRequestId:pr,checkRunId:'43',checkId:'43'})
+    await confirm(retry.id)
+    expect((await f.db.query("SELECT status FROM ci_check_projections WHERE pull_request_id=$1 AND external_id='43'",[pr])).rows[0]).toEqual({status:'failed'})
     const reviewInput={reviewerAgentId:s.target.agentId,planStepId:s.reviewStep,planVersionId:s.planId,initialPrompt:'Review exact repository and current head',ttlSeconds:3600,repositoryIds:[s.repositoryId]}
     const delegated=await invoke(()=>p.client.createReviewDelegation(p.sessionId,reviewInput,{idempotencyKey:randomUUID()}),'create_review_delegation','workmesh_create_review_delegation',{...reviewInput,sessionId:p.sessionId,idempotencyKey:randomUUID()}) as ReviewDelegationResponse
     const reviewer=await f.receive(delegated.session.id,s.target.token)
     const r=await f.connect('read-write',reviewer)
-    const read=await f.mcpCall<{providerPullRequests:Array<{id:string;headSha:string}>}>(r,'get_project_delivery',{projectId:s.projectId,pullRequestId:pr,sessionId:reviewer.sessionId})
+    const reviewInvoke=async<T>(native:()=>Promise<T>,mcp:string,pi:string,args:Record<string,unknown>):Promise<T>=>mode==='native'?native():mode==='mcp'?f.mcpCall(r,mcp,args):f.piCall(reviewer,s.target.token,pi,Object.fromEntries(Object.entries(args).filter(([key])=>!['sessionId','idempotencyKey'].includes(key))))
+    const read=await reviewInvoke(()=>reviewer.client.getProjectDelivery(s.projectId,{pullRequestId:pr}),'get_project_delivery','workmesh_get_project_delivery',{projectId:s.projectId,pullRequestId:pr,sessionId:reviewer.sessionId})
     expect(read.providerPullRequests).toHaveLength(1);expect(read.providerPullRequests[0]).toMatchObject({id:pr,headSha:head})
     const room=(await f.db.query<{id:string}>("SELECT id FROM work_room_channels WHERE subject_kind='session' AND subject_id=$1",[p.sessionId])).rows[0]!.id
-    await f.mcpCall(r,'post_work_room_message',{sessionId:reviewer.sessionId,roomId:room,intent:'review_result',body:'Independent exact-head review approved',payload:{pullRequestId:pr,headSha:head}})
+    const message={sessionId:reviewer.sessionId,intent:'review_result' as const,body:'Independent exact-head review approved',payload:{pullRequestId:pr,headSha:head}}
+    await reviewInvoke(()=>reviewer.client.postRoomMessage(room,message),'post_work_room_message','workmesh_send_room_message',{...message,roomId:room})
     const reviewArtifactInput={...link,sessionId:reviewer.sessionId,planStepId:undefined,pullRequestId:pr,headSha:head,type:'code_review' as const,title:'Independent review',checksum:sha256('review:'+head),sourceTool:'M3 reviewer',result:'passed' as const,metadata:{headSha:head}}
-    const artifact=mode==='pi'?await f.piCall<{id:string}>(reviewer,s.target.token,'workmesh_publish_delivery_artifact',Object.fromEntries(Object.entries(reviewArtifactInput).filter(([key])=>key!=='sessionId'))):await f.mcpCall<{id:string}>(r,'publish_delivery_artifact',reviewArtifactInput)
-    await f.mcpCall(r,'publish_structured_review',{sessionId:reviewer.sessionId,pullRequestId:pr,artifactId:artifact.id,headSha:head,verdict:'approved',summary:'Reviewed actual head and current required checks',findings:[],evidence:[evidence.id]})
+    const artifact=await reviewInvoke(()=>reviewer.client.publishDeliveryArtifact<{id:string}>(reviewArtifactInput),'publish_delivery_artifact','workmesh_publish_delivery_artifact',reviewArtifactInput)
+    const structured={sessionId:reviewer.sessionId,artifactId:artifact.id,headSha:head,verdict:'approved' as const,summary:'Reviewed actual head and current required checks',findings:[],evidence:[evidence.id],metadata:{}}
+    await reviewInvoke(()=>reviewer.client.publishStructuredReview(pr,structured),'publish_structured_review','workmesh_publish_structured_review',{...structured,pullRequestId:pr})
+    expect((await f.db.query('SELECT evidence FROM structured_reviews WHERE pull_request_id=$1 AND artifact_id=$2',[pr,artifact.id])).rows[0]).toEqual({evidence:[evidence.id]})
     const rr=await reviewer.client.getSession<{revision:number}>(reviewer.sessionId)
     await reviewer.client.complete(reviewer.sessionId,{summary:'Independent review delivered',artifactIds:[artifact.id],checks:[],limitations:[]},{ifMatch:rr.revision})
     const children=await p.client.listChildSessions(p.sessionId,{childSessionId:reviewer.sessionId})
@@ -88,6 +225,10 @@ describe('M3 Native HTTP/MCP/Pi精确Git与review闭环',()=>{
     const mergeInput={sessionId:p.sessionId,approvalId:approval.id,actionPayloadHash:hash,headSha:head,method:'squash' as const}
     const merge=await invoke(()=>p.client.requestMerge<{id:string}>(pr,mergeInput,{idempotencyKey:randomUUID()}),'merge_pull_request','workmesh_merge_pull_request',{...mergeInput,pullRequestId:pr,idempotencyKey:randomUUID()})
     await confirm(merge.id)
+    const suggestionInput={workItemId:p.workItemId,pullRequestId:pr,rationale:'Merged exact reviewed head; Human decides completion',evidenceArtifactIds:[evidence.id]}
+    await invoke(()=>p.client.suggestCompletion(s.projectId,suggestionInput,{sessionId:p.sessionId}),'suggest_work_item_completion','workmesh_suggest_work_item_completion',{...suggestionInput,sessionId:p.sessionId,projectId:s.projectId})
+    const draft={health:'on_track' as const,body:'Current reviewed head merged',evidenceArtifactIds:[evidence.id]}
+    await invoke(()=>p.client.draftProjectUpdate(s.projectId,draft,{sessionId:p.sessionId}),'draft_project_update','workmesh_draft_project_update',{...draft,projectId:s.projectId,sessionId:p.sessionId})
     expect((await f.db.query('SELECT status FROM approvals WHERE id=$1',[approval.id])).rows[0]).toEqual({status:'consumed'})
     expect((await f.db.query('SELECT s.category FROM work_items w JOIN workflow_states s ON s.id=w.status_id WHERE w.id=$1',[p.workItemId])).rows[0]!.category).not.toBe('completed')
     const revision=(await p.client.getSession<{revision:number}>(p.sessionId)).revision
@@ -95,6 +236,8 @@ describe('M3 Native HTTP/MCP/Pi精确Git与review闭环',()=>{
     await p.client.complete(p.sessionId,{summary:'Git and independent review delivered',artifactIds:[evidence.id],checks:[],limitations:[]},{ifMatch:revision,idempotencyKey:completionKey})
     const results=await f.coordination.getSessionExecutionResult(p.sessionId,{action:'complete',operationKey:completionKey})
     expect(results).toMatchObject({session:{id:p.sessionId,state:'completed'},action:{confirmation:'confirmed',operationKey:completionKey},originalResult:{sessionId:p.sessionId}})
-    saveDeliveryEvidence(`${mode}-chain.json`,{repositoryId:s.repositoryId,branch:s.branch,context,actions:[branch.id,commit.id,opened.id,merge.id],head,reviewerSessionId:reviewer.sessionId,artifactIds:[evidence.id,artifact.id],approvalId:approval.id,children,results})
+    expect(await f.human('GET',`/api/v1/provider-actions/${merge.id}`)).toMatchObject({status:'completed'})
+    await expect(p.client.getProviderAction(merge.id)).rejects.toThrow()
+    saveDeliveryEvidence(`${mode}-chain.json`,{repositoryId:s.repositoryId,branch:s.branch,context,actions:[branch.id,commit.id,opened.id,retry.id,merge.id],head,reviewerSessionId:reviewer.sessionId,artifactIds:[evidence.id,artifact.id],approvalId:approval.id,children,results})
   })
 })

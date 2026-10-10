@@ -117,6 +117,9 @@ start = policy_text.index('const mcpOperationIds = {')
 end = policy_text.index('} as const', start) + len('} as const')
 current = dict(re.findall(r"'([^']+)': '([^']+)'", policy_text[start:end]))
 registered = set(m2['registeredBindingIds']) | set(m3['registeredBindingIds'])
+missing = {binding['bindingId'] for binding in m3['bindings']} - registered
+if missing:
+    raise ValueError('M3绑定缺真实注册输入：' + ','.join(sorted(missing)))
 current = {key:value for key,value in current.items() if key in registered}
 for binding in bindings:
     if binding['bindingId'] in registered and binding['execution']=='api' and len(binding['operationIds'])==1:

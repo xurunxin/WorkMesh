@@ -52,6 +52,8 @@ try:
     call(['node','-e',script])
     commands=[sys.argv[1:]]
     if commands==[['all']]:commands=[['C:/nvm4w/nodejs/pnpm.cmd',x] for x in ['test:integration','test:e2e']]
+    if commands==[['matrix-then-all']]:commands=[['C:/nvm4w/nodejs/pnpm.cmd','--filter','@workmesh/api','exec','vitest','run','--config','../../vitest.integration.config.ts','integration/stage3-delivery.integration.test.ts','-t','M3六kind五status'],*([['C:/nvm4w/nodejs/pnpm.cmd',x] for x in ['test:integration','test:e2e']])]
+    if commands==[['final-targets']]:commands=[['C:/nvm4w/nodejs/pnpm.cmd','--filter','@workmesh/api','exec','vitest','run','--config','../../vitest.integration.config.ts','integration/stage3-delivery.integration.test.ts'],['C:/nvm4w/nodejs/pnpm.cmd','--filter','@workmesh/conformance','exec','vitest','run','--config','vitest.integration.config.ts','src/delivery-recovery.conformance.test.ts']]
     for command in commands:
         result=subprocess.run([sys.executable,str(Path(__file__).parent/'product-checks.py'),*command],cwd=ROOT,env=env)
         code=result.returncode

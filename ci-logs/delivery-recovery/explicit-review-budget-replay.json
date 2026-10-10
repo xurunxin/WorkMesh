@@ -1,0 +1,33 @@
+{
+  "parentId": "b49c2c5e-3ad7-4c2f-978e-b3d7fc6f894f",
+  "childId": "4e6315c5-e7f4-47ed-83dd-10ca5a47d617",
+  "reviewerId": "cecbc4fd-de4e-45de-8438-da0f76a6d70c",
+  "budgets": [
+    {
+      "budget": {
+        "maxInputTokens": 60
+      }
+    },
+    {
+      "budget": {
+        "maxInputTokens": 100
+      }
+    },
+    {
+      "budget": {
+        "maxInputTokens": 40
+      }
+    }
+  ],
+  "before": {
+    "children": "2",
+    "reservations": "2",
+    "deliveries": "2"
+  },
+  "after": {
+    "children": "2",
+    "reservations": "2",
+    "deliveries": "2"
+  },
+  "oldReceiptStable": true
+}

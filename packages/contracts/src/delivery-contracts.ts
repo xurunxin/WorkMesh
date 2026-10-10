@@ -16,7 +16,7 @@ export const repositoryContextResponseSchema=z.object({id,repository_id:id,base_
   allowed_paths:z.array(z.string()),permissions:z.array(z.string()),guidance:z.array(z.object({
     path:z.string(),blobSha:sha,contentHash:z.string(),content:z.string(),
   }).passthrough())}).passthrough()
-export const deliveryArtifactResponseSchema=z.object({id,type:z.string(),title:z.string(),metadata:z.record(z.unknown())}).passthrough()
+export const deliveryArtifactResponseSchema=z.object({id,type:z.string(),title:z.string(),checksum:z.string().nullable(),source_tool:z.string().nullable()}).passthrough()
 export const artifactUploadResponseSchema=z.object({id,uploadUrl:z.string().url(),expiresAt:z.string().datetime({offset:true}),
   requiredChecksum:z.string().regex(/^sha256:[a-f0-9]{64}$/),requiredHeaders:z.record(z.string())}).passthrough()
 export const artifactUploadCancelResponseSchema=z.object({id,status:z.literal('canceled')}).passthrough()

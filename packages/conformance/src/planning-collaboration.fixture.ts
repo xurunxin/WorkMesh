@@ -8,6 +8,7 @@ import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { WorkMeshClient } from '@workmesh/agent-sdk'
 import type {Capability} from '@workmesh/contracts'
+import type {loadFeatureConfig} from '@workmesh/config'
 import { createMcpCoverageFixture, type Execution } from './mcp-coverage.fixture.js'
 import { createAgentWebhookWorker, signWebhook, signaturesMatch } from '../../../apps/worker/src/agent-webhook.js'
 
@@ -20,7 +21,7 @@ export const savePlanningEvidence = (name: string, value: unknown) => {
 }
 export type ModelCall = { name: string; arguments: Record<string, unknown> }
 
-export async function createPlanningCollaborationFixture(options:{capabilities?:Capability[]}={}) {
+export async function createPlanningCollaborationFixture(options:{capabilities?:Capability[];features?:Parameters<typeof loadFeatureConfig>[0]}={}) {
   const fixture = await createMcpCoverageFixture(options)
   const models: ReturnType<typeof createServer>[] = []
   const receivers: ReturnType<typeof createReceiver>[] = []

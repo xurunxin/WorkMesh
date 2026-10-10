@@ -1838,3 +1838,10 @@ Stop 后关闭所有模型工具与 steering，受控 finally 持原 E Token，�
 `ReviewDelegationInput.budget` 可显式缩减继承预算；省略参数或某维仍继承父值，不自动取剩余额度。有效预算同时用于执行和 reservation，旧 reservation 不自动释放。两种创建共享父累计总量、活跃及 stable step 跨版本限额、目标并发和真实三方能力交集；客户端不配置父/step 上限，现有数据库默认值为 8。
 
 创建响应保留 `parent_session_id`、`plan_step_version_id`、`required_for_parent`、`inherited_budget`、`max_child_sessions` 和既有额外字段。reviewer 没有 `plan:write`，Runner 不自动发布 Plan；完成必须由本人提交 Room `review_result` 和本人 `code_review` Artifact，structured review 和 `noArtifactReason` 均不豁免。所有非 `completed` 的 required child 继续以准确 child IDs 阻止父完成。
+# 精确 Git 动作与审查交付
+
+Agent 通过 `GET /api/v1/provider-actions/{id}` 只读确认本人准确 Session 的原动作。返回安全目标、状态、结果引用与恢复分类；不返回 payload、文件正文、存储密钥或 provider 原始错误。每次查询重验当前授权、仓库 context 和 feature；普通终态 E 不放宽。原 principal Human 在仍有合法权限时可诊断终态动作。`unknown` 只允许人工对账，不能以新 key 重发。
+
+`ReviewDelegationInput.repositoryIds` 显式给出非空唯一仓库清单时，父 Delegation、目标 definition、Team grant 必须共同具有 `repo:read`，且仓库属于父当前范围并使用共同 WorkItem／Project context。省略保持原三项 reviewer 能力。创建、旧 key/body 重放和后续读取均重验；reviewer 不获得仓库写权或 `plan:write`。有效 E 先发布本人 Room `review_result`、当前 head 的 `code_review` delivery Artifact，再发布 structured review；完成后父确认 required child completed，Human 对准确 head/checks 批准。上传 file 不替代审查证据。
+
+Worker 每次仓库写 HTTP 前在完整 authority/resource/PR/check/approval/action 锁内重读，最后检查数据库真实租期与 generation。Stop／撤权先提交则零外发；发送许可先提交的在途请求不能召回，后续写重新授权。五类写 action 有领取历史而无合法 checkpoint 保守停发 `dead`／`PROVIDER_ACTION_OUTCOME_UNKNOWN`；合法 checkpoint 仅本地完成，纯 context GET 有界重试。既有 `attempt_count` 上限保持饱和，CAS 额外绑定精确 `claimed_at`，不新增状态、字段、迁移或事件。

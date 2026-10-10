@@ -8616,14 +8616,18 @@ components:
           type: string
         title:
           type: string
-        metadata:
-          type: object
-          additionalProperties: {}
+        checksum:
+          type: string
+          nullable: true
+        source_tool:
+          type: string
+          nullable: true
       required:
         - id
         - type
         - title
-        - metadata
+        - checksum
+        - source_tool
       additionalProperties: true
     ArtifactUploadResponse:
       type: object

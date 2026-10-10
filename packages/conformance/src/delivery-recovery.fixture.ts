@@ -5,6 +5,8 @@ import type {Client} from '@modelcontextprotocol/sdk/client/index.js'
 import type {Capability} from '@workmesh/contracts'
 import {FakeGitProvider} from '@workmesh/git-provider'
 import {createProviderActionWorker} from '../../../apps/worker/src/provider-actions.js'
+import {createArtifactUploadWorker} from '../../../apps/worker/src/artifact-uploads.js'
+import {artifactStorageFromEnvironment} from '../../artifact-storage/src/index.js'
 import {createPlanningCollaborationFixture,type ModelCall} from './planning-collaboration.fixture.js'
 import type {Execution} from './mcp-coverage.fixture.js'
 
@@ -16,11 +18,11 @@ export const saveDeliveryEvidence=(name:string,value:unknown)=>{
 export const sha256=(text:string)=>`sha256:${createHash('sha256').update(text).digest('hex')}`
 export type DeliveryMode='native'|'mcp'|'pi'
 export async function createDeliveryRecoveryFixture(){
-  const f=await createPlanningCollaborationFixture({capabilities:deliveryCapabilities})
+  const f=await createPlanningCollaborationFixture({capabilities:deliveryCapabilities,features:{WORKMESH_BETA_PLANNING:'true'}})
   const provider=new FakeGitProvider(),worker=()=>createProviderActionWorker({db:f.db,resolveProvider:()=>provider,workerId:`m3-${randomUUID()}`})
-  const prepare=async(mode:DeliveryMode)=>{
+  const prepare=async(mode:DeliveryMode,budget?:Record<string,number>)=>{
     const project=await f.human<{id:string}>('POST','/api/v1/projects',{teamId:f.teamId,name:`M3 ${mode}`})
-    const parent=await f.createExecution(`M3 ${mode} Git evidence`,false,undefined,project.id)
+    const parent=await f.createExecution(`M3 ${mode} Git evidence`,false,budget,project.id)
     const connection=await f.human<{id:string}>('POST','/api/v1/provider-connections',{provider:'fake',externalAccountId:randomUUID(),displayName:'M3 local fake',webhookSecret:'m3-local-public-placeholder'})
     const repository=await f.human<{id:string}>('POST','/api/v1/repositories',{connectionId:connection.id,teamId:f.teamId,externalId:randomUUID(),fullName:'m3/local',defaultBranch:'main',requiredChecks:['required']})
     const external=(await f.db.query<{external_id:string}>('SELECT external_id FROM repositories WHERE id=$1',[repository.id])).rows[0]!.external_id
@@ -49,10 +51,16 @@ export async function createDeliveryRecoveryFixture(){
     const captures=await f.pi(execution,installationToken,[async():Promise<ModelCall>=>({name,arguments:args})])
     const raw=captures.at(-1)?.results.at(-1)
     if(!raw)throw new Error('M3 model did not receive tool result')
-    const outer:unknown=JSON.parse(raw);const result=typeof outer==='string'?JSON.parse(outer) as unknown:outer
-    if(result&&typeof result==='object'&&'error' in result&&result.error)throw new Error(JSON.stringify(result))
     saveDeliveryEvidence(`model-${randomUUID()}.json`,{sessionId:execution.sessionId,name,captures})
+    const outer:unknown=JSON.parse(raw)
+    let result:unknown
+    try {result=typeof outer==='string'?JSON.parse(outer) as unknown:outer}
+    catch {throw new Error(typeof outer==='string'?outer:'M3 malformed model result')}
+    if(captures.flatMap(capture=>capture.results).some(value=>/X-Amz-Signature|"uploadUrl"|"downloadUrl"|"requiredHeaders"/i.test(value)))throw new Error('M3_MODEL_RECEIVED_SIGNED_MATERIAL')
+    if(Array.isArray(result)&&result.length>0&&result.every(issue=>issue&&typeof issue==='object'&&typeof issue.code==='string'&&Array.isArray(issue.path)&&typeof issue.message==='string'))throw new Error(JSON.stringify({validationIssues:result}))
+    if(result&&typeof result==='object'&&'error' in result&&result.error)throw new Error(JSON.stringify(result))
     return result as T
   }
-  return {...f,provider,worker,prepare,mcpCall,piCall}
+  return {...f,provider,worker,prepare,mcpCall,piCall,
+    verifyUploads:()=>createArtifactUploadWorker({db:f.db,storage:artifactStorageFromEnvironment(),workerId:`m3-upload-${randomUUID()}`}).tick()}
 }

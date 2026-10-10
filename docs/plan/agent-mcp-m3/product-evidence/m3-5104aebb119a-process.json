@@ -1,0 +1,19 @@
+{
+  "id": "m3-5104aebb119a",
+  "ownerPid": 41520,
+  "childPid": 8484,
+  "argv": [
+    "C:/nvm4w/nodejs/pnpm.cmd",
+    "--filter",
+    "@workmesh/worker",
+    "exec",
+    "vitest",
+    "run",
+    "--config",
+    "../../vitest.integration.config.ts",
+    "integration/stage3-provider.integration.test.ts",
+    "-t",
+    "M3逐次发送事务"
+  ],
+  "startedUnix": 1791633918.9976602
+}

@@ -1,0 +1,22 @@
+{
+  "observedUnix": 1791635450.9530408,
+  "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b",
+  "processObservation": {
+    "command": "Get-CimInstance Win32_Process | Where-Object { $_.Name -in 'node.exe','python.exe' -and $_.CommandLine -like '*01a1246e-406c-7593-ada6-66996634434b*' } | Select-Object ProcessId,ParentProcessId,Name,CommandLine | ConvertTo-Json -Compress",
+    "nativeExit": 0,
+    "rows": []
+  },
+  "dockerObservation": {
+    "argv": [
+      "docker",
+      "ps",
+      "--filter",
+      "label=workmesh.m3.owner",
+      "--format",
+      "{{.ID}} {{.Names}}"
+    ],
+    "nativeExit": 0,
+    "stdout": ""
+  },
+  "boundary": "当前观察不伪补早期缺PID登记；不清理任何观察到的他人/共享资源。测试与helper不得后台留到末报。E2E认证state/trace留本机忽略路径，不直接上传。"
+}

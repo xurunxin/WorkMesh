@@ -3,6 +3,13 @@ import { describe, expect, it } from 'vitest'
 import { childBudgetInputSchema, childSessionStatusSchema, reviewDelegationInputSchema, childAgentSessionResponseSchema } from './index.js'
 
 describe('M2 子Session合同边界', () => {
+  it('M3 repositoryIds显式1至100个唯一UUID，省略兼容且空/重复/101个拒绝',()=>{
+    const body={reviewerAgentId:randomUUID(),planStepId:randomUUID(),planVersionId:randomUUID(),initialPrompt:'Review'}
+    const ids=Array.from({length:100},()=>randomUUID())
+    expect(reviewDelegationInputSchema.parse(body).repositoryIds).toBeUndefined()
+    for(const repositoryIds of [ids.slice(0,1),ids])expect(reviewDelegationInputSchema.parse({...body,repositoryIds}).repositoryIds).toEqual(repositoryIds)
+    for(const repositoryIds of [[],[ids[0],ids[0]],[...ids,randomUUID()],['not-a-uuid']])expect(reviewDelegationInputSchema.safeParse({...body,repositoryIds}).success).toBe(false)
+  })
   it('可选review预算保留任意原维度，只接受有限非负数字', () => {
     const input = { reviewerAgentId: randomUUID(), planStepId: randomUUID(), planVersionId: randomUUID(), initialPrompt: 'Review' }
     expect(reviewDelegationInputSchema.parse(input).budget).toBeUndefined()

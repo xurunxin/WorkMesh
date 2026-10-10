@@ -676,6 +676,7 @@ const mcpOperationIds = {
   'tool:retry_ci_check': 'retryPullRequestCheck',
   'tool:send_message': 'appendAgentActivity',
   'tool:stop_ack': 'acknowledgeAgentSessionStop',
+  'tool:suggest_work_item_completion': 'suggestWorkItemCompletion',
   'tool:transition_agent_session_state': 'transitionAgentSessionState',
   'tool:update_document': 'updateDocument',
   'tool:update_milestone': 'updateMilestone',

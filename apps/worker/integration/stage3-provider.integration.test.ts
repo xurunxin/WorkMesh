@@ -13,6 +13,14 @@ if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Stage 
 if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Stage 3 worker integration requires a dedicated *test* database.')
 const db = createDb(databaseUrl)
 const fake = new FakeGitProvider()
+
+async function recordAuthorityWait(blockerPid:number,label:string) {
+  const waiting=(await db.query('SELECT pid,pg_blocking_pids(pid) AS blockers,wait_event_type,wait_event,clock_timestamp() AS observed_at FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))',[blockerPid])).rows
+  const pids=[blockerPid,...waiting.map(row=>row.pid as number)]
+  const locks=(await db.query('SELECT pid,locktype,mode,granted,relation::regclass::text AS relation FROM pg_locks WHERE pid=ANY($1::int[]) ORDER BY pid,locktype,mode',[pids])).rows
+  expect(waiting.length).toBeGreaterThan(0)
+  console.info(JSON.stringify({m3AuthorityWait:{label,blockerPid,waiting,locks}}))
+}
 type Fixture = { workspaceId: string; connectionId: string; repositoryId: string; teamId: string }
 type OpenPullRequestFixture = Fixture & {
   humanId: string
@@ -332,6 +340,36 @@ describe('Stage 3 provider webhook worker', () => {
     expect(accesses).toBe(0)
   })
 
+  it.each(['fake','github','gitea'] as const)('M3 %s逐kind合法checkpoint仅本地finish，纯读重领有界恢复',async provider=>{
+    let accesses=0
+    for(const kind of ['create_branch','create_commit','open_pull_request','merge_pull_request','retry_ci_check','resolve_repository_context'] as const) {
+      const approved=kind==='merge_pull_request'||kind==='retry_ci_check'?await approvedActionFixture(kind):null
+      const f=approved??await openPullRequestFixture(await fixture())
+      await db.query('DELETE FROM provider_actions WHERE id=$1',[f.actionId])
+      await db.query('UPDATE provider_connections SET provider=$2 WHERE id=$1',[f.connectionId,provider])
+      const payload={name:'exact',baseSha:'base',branch:'exact',files:[{path:'src/exact.ts',content:'safe'}],baseBranch:'main',headBranch:'exact',pullRequestId:'71',headSha:'head',checkRunId:'43',workItemId:f.workItemId,branchPattern:'workmesh/{workItemKey}-{slug}',allowedPaths:['src/**'],permissions:['read']}
+      const results:Record<typeof kind,Record<string,unknown>>={create_branch:{name:'exact',headSha:'base'},create_commit:{id:'commit',sha:'commit',branch:'exact',uri:'https://local.invalid/commit'},open_pull_request:{id:'checkpoint-pr',number:99,uri:'https://local.invalid/pr',baseBranch:'main',headBranch:'exact',baseSha:'base',headSha:'head',state:'open',draft:false},merge_pull_request:{merged:true,mergeSha:'merge'},retry_ci_check:{requested:true,checkRunId:'43'},resolve_repository_context:{guidance:[]}}
+      const id=(await db.query<{id:string}>(`INSERT INTO provider_actions(workspace_id,connection_id,repository_id,requested_by_actor_id,session_id,work_item_id,kind,intent_key,payload,result,attempt_count,approval_id,expected_head_sha)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,8,$11,'head') RETURNING id`,[f.workspaceId,f.connectionId,f.repositoryId,kind==='resolve_repository_context'?f.humanId:f.agentActorId,kind==='resolve_repository_context'?null:f.sessionId,f.workItemId,kind,randomUUID(),payload,results[kind],approved?.approval??null])).rows[0]!.id
+      const worker=createProviderActionWorker({db,resolveProvider:()=>{accesses++;throw new Error('Checkpoint must not access provider')}})
+      await worker.tick();await worker.tick()
+      const invalid=provider==='gitea'&&kind==='retry_ci_check'
+      expect((await db.query('SELECT status,attempt_count FROM provider_actions WHERE id=$1',[id])).rows[0]).toEqual({status:invalid?'dead':'completed',attempt_count:8})
+      expect(accesses).toBe(0)
+      if(kind==='resolve_repository_context') {
+        // A pure GET action can retry after an old claim; no write adapter is used.
+        const retry=(await db.query<{id:string}>(`INSERT INTO provider_actions(workspace_id,connection_id,repository_id,requested_by_actor_id,work_item_id,kind,intent_key,payload,attempt_count)
+          VALUES($1,$2,$3,$4,$5,'resolve_repository_context',$6,$7,1) RETURNING id`,[f.workspaceId,f.connectionId,f.repositoryId,f.humanId,f.workItemId,randomUUID(),payload])).rows[0]!.id
+        const reader=new FakeGitProvider();reader.seedRepository(f.connectionId,'9001','main','base')
+        reader.seedRepositoryFiles(f.connectionId,'9001','base',{})
+        let reads=0
+        await createProviderActionWorker({db,resolveProvider:()=>{reads++;return reader}}).tick()
+        expect(reads).toBe(1)
+        expect((await db.query('SELECT status,attempt_count FROM provider_actions WHERE id=$1',[retry])).rows[0]).toEqual({status:'completed',attempt_count:2})
+      }
+    }
+  })
+
   it('M3真实GitHub rerequest成功后checkpoint前崩溃，跨真实租期重领HTTP写次数仍为一',async()=>{
     const f=await openPullRequestFixture(await fixture())
     await db.query("UPDATE provider_actions SET status='completed' WHERE id=$1",[f.actionId])
@@ -366,6 +404,7 @@ describe('Stage 3 provider webhook worker', () => {
       while((await db.query<{active:boolean}>("SELECT claimed_at+interval '60 seconds'>clock_timestamp() AS active FROM provider_actions WHERE id=$1",[id])).rows[0]!.active)await new Promise(r=>setTimeout(r,250))
       const second=worker(),recovered=(await second.claimAction())!
       expect(recovered.attempt_count).toBe(2)
+      console.info(JSON.stringify({m3UnknownRecovery:{kind:'retry_ci_check',claimedAt:claim.claimed_at,reclaimedAt:recovered.claimed_at,databaseClock:(await db.query('SELECT clock_timestamp() AS now')).rows[0],defaultLeaseSeconds:60,writesBeforeRecovery:requests.filter(r=>r.endsWith('/rerequest')).length}}))
       await second.executeAction(recovered)
       await expect(first.executeAction(claim)).rejects.toThrow('PROVIDER_ACTION_CLAIM_LOST')
       expect(requests.filter(r=>r.endsWith('/rerequest'))).toHaveLength(1)
@@ -394,6 +433,7 @@ describe('Stage 3 provider webhook worker', () => {
         await new Promise(r=>setTimeout(r,20))
       }
       expect(observed).toBe(true);expect(providerAccess).toBe(0)
+      await recordAuthorityWait(pid,`${change}-commits-first`)
       if(change==='stop')await connection.query("UPDATE agent_sessions SET state='stopping' WHERE id=$1",[f.sessionId])
       else await connection.query("UPDATE delegations SET status='revoked',revoked_at=clock_timestamp(),revoked_by_actor_id=$2 WHERE id=$1",[f.delegationId,f.humanId])
       await connection.query('COMMIT');await running
@@ -441,11 +481,65 @@ describe('Stage 3 provider webhook worker', () => {
           await new Promise(r=>setTimeout(r,20))
         }
         expect(waiting).toBe(true);expect(writes).toHaveLength(1)
+        await recordAuthorityWait(pid,'first-tree-permitted-context-before-second-write')
       }
       await blocker.query('COMMIT');releaseFirst();await running
       expect(writes).toHaveLength(1);expect(writes[0]).toContain('/git/trees')
       expect((await db.query('SELECT status,last_error FROM provider_actions WHERE id=$1',[action.id])).rows[0]).toEqual({status:'dead',last_error:'PROVIDER_ACTION_OUTCOME_UNKNOWN'})
     } finally {releaseFirst();await blocker.query('ROLLBACK');blocker.release();await running;server.closeAllConnections();await new Promise<void>(r=>server.close(()=>r()))}
+  },20000)
+
+  it('M3逐次发送事务持authority锁时Stop实际阻塞，许可先提交仅当前tree在途随后写拒绝',async()=>{
+    const f=await openPullRequestFixture(await fixture())
+    await db.query("UPDATE provider_actions SET kind='create_commit',payload=$2,expected_head_sha='base' WHERE id=$1",[f.actionId,{branch:'workmesh/DEL-1-recovery',expectedHeadSha:'base',message:'Permit then Stop',files:[{path:'apps/test.ts',content:'one'}]}])
+    let tokenReady:()=>void=()=>{},releaseToken:()=>void=()=>{},firstReady:()=>void=()=>{},releaseFirst:()=>void=()=>{}
+    const tokenReceived=new Promise<void>(r=>{tokenReady=r}),tokenReleased=new Promise<void>(r=>{releaseToken=r})
+    const firstReceived=new Promise<void>(r=>{firstReady=r}),firstReleased=new Promise<void>(r=>{releaseFirst=r})
+    const writes:string[]=[]
+    const server=createServer(async(req,res)=>{
+      res.setHeader('content-type','application/json')
+      if(req.url?.endsWith('/access_tokens')){tokenReady();await tokenReleased;res.end(JSON.stringify({token:'local-fixture',expires_at:new Date(Date.now()+3600000).toISOString()}));return}
+      if(req.method==='GET'){res.end(JSON.stringify(req.url?.includes('/ref/')?{object:{sha:'base'}}:{tree:{sha:'base-tree'}}));return}
+      writes.push(`${req.method}:${req.url}`);firstReady();await firstReleased;res.end(JSON.stringify({sha:'new-tree'}))
+    })
+    server.listen(0,'127.0.0.1');await once(server,'listening')
+    const key=generateKeyPairSync('rsa',{modulusLength:2048}).privateKey.export({type:'pkcs8',format:'pem'}).toString()
+    const worker=createProviderActionWorker({db,workerId:'permit-before-stop',resolveProvider:(_p,_c,guard)=>new GitHubAppProvider({appId:'1',installationId:'2',privateKey:key,apiBaseUrl:`http://127.0.0.1:${(server.address() as {port:number}).port}`,beforeMutation:guard})})
+    const claim=(await worker.claimAction())!,lateLock=await db.connect(),stop=await db.connect()
+    const running=worker.executeAction(claim).catch(async error=>{expect((error as Error).message).toBe('PROVIDER_ACTION_AUTHORITY_REVOKED');await worker.failAction(claim,error)})
+    let stopping:Promise<void>|undefined
+    try {
+      await tokenReceived
+      // Park the per-HTTP transaction at its last-ranked action row, after it
+      // owns authority. This is an observed PostgreSQL wait, not a time delay.
+      await lateLock.query('BEGIN');await lateLock.query('SELECT id FROM provider_actions WHERE id=$1 FOR UPDATE',[claim.id])
+      const blocker=(await lateLock.query<{pid:number}>('SELECT pg_backend_pid() AS pid')).rows[0]!.pid
+      releaseToken()
+      let senderPid:number|undefined
+      for(let n=0;n<100;n++){
+        senderPid=(await db.query<{pid:number}>('SELECT pid FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))',[blocker])).rows[0]?.pid
+        if(senderPid)break
+        await new Promise(r=>setTimeout(r,20))
+      }
+      expect(senderPid).toBeTruthy();await recordAuthorityWait(blocker,'per-http-sender-holds-authority')
+      stopping=(async()=>{
+        await stop.query('BEGIN');await stop.query('SELECT id FROM workspaces WHERE id=$1 FOR KEY SHARE',[f.workspaceId])
+        await lockAgentAuthorityPlan(stop,{definitionIds:[f.agentId],teamGrants:[{workspaceId:f.workspaceId,agentId:f.agentId,teamId:f.teamId}],delegationIds:[f.delegationId],sessionIds:[f.sessionId],workItemIds:[f.workItemId],projectIds:[f.projectId]})
+        await stop.query("UPDATE agent_sessions SET state='stopping' WHERE id=$1",[f.sessionId]);await stop.query('COMMIT')
+      })()
+      let observed=false
+      for(let n=0;n<100;n++){
+        observed=!!(await db.query('SELECT 1 FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))',[senderPid])).rowCount
+        if(observed)break
+        await new Promise(r=>setTimeout(r,20))
+      }
+      expect(observed).toBe(true);expect(writes).toEqual([]);await recordAuthorityWait(senderPid!,'stop-waits-for-per-http-authority-commit')
+      await lateLock.query('COMMIT');await firstReceived;await stopping
+      expect(writes).toHaveLength(1);expect(writes[0]).toContain('/git/trees')
+      releaseFirst();await running
+      expect(writes).toHaveLength(1)
+      expect((await db.query('SELECT status,last_error FROM provider_actions WHERE id=$1',[claim.id])).rows[0]).toEqual({status:'dead',last_error:'PROVIDER_ACTION_OUTCOME_UNKNOWN'})
+    } finally {releaseToken();releaseFirst();await lateLock.query('ROLLBACK');await stopping;await running;await stop.query('ROLLBACK');lateLock.release();stop.release();server.closeAllConnections();await new Promise<void>(r=>server.close(()=>r()))}
   },20000)
 
   it.each(['merge_pull_request','retry_ci_check'] as const)('M3 %s合法准入后pin收窄先提交，每次HTTP guard锁后拒绝',async kind=>{
@@ -485,6 +579,7 @@ describe('Stage 3 provider webhook worker', () => {
           await new Promise(r=>setTimeout(r,20))
         }
         expect(waiting).toBe(true);expect(writes).toEqual([])
+        await recordAuthorityWait(pid,`${kind}-${scope}-pin-commits-first`)
         await blocker.query('COMMIT');await running
         expect(writes).toEqual([])
         expect((await db.query('SELECT status,last_error FROM provider_actions WHERE id=$1',[action.id])).rows[0]).toEqual({status:'dead',last_error:'PROVIDER_ACTION_AUTHORITY_REVOKED:REPOSITORY_GUIDANCE_INVALID'})
@@ -503,11 +598,41 @@ describe('Stage 3 provider webhook worker', () => {
     while((await db.query<{active:boolean}>("SELECT claimed_at+interval '60 seconds'>clock_timestamp() AS active FROM provider_actions WHERE id=$1",[f.actionId])).rows[0]!.active)await new Promise(r=>setTimeout(r,250))
     const current=(await worker.claimAction())!
     expect(current.attempt_count).toBe(8);expect(current.claimed_at.getTime()).toBeGreaterThan(stale.claimed_at.getTime())
+    console.info(JSON.stringify({m3GenerationRecovery:{workerId:'same-worker-at-cap',stale:{attempt:stale.attempt_count,claimedAt:stale.claimed_at},current:{attempt:current.attempt_count,claimedAt:current.claimed_at},databaseClock:(await db.query('SELECT clock_timestamp() AS now')).rows[0],defaultLeaseSeconds:60}}))
     await expect(worker.executeAction(stale)).rejects.toThrow('PROVIDER_ACTION_CLAIM_LOST')
     await worker.failAction(stale,new Error('Stale failure must not overwrite new claim'))
     expect((await db.query('SELECT status,claimed_by FROM provider_actions WHERE id=$1',[f.actionId])).rows[0]).toEqual({status:'claimed',claimed_by:'same-worker-at-cap'})
     await worker.executeAction(current);expect(accesses).toBe(0)
     expect((await db.query('SELECT status,attempt_count,result FROM provider_actions WHERE id=$1',[f.actionId])).rows[0]).toEqual({status:'completed',attempt_count:8,result:{name:'workmesh/DEL-1-capped',headSha:'base'}})
+  },90000)
+
+  it('M3完整authority真实锁等待跨默认60秒，锁后租期拒绝且无provider构造或外发',async()=>{
+    const f=await openPullRequestFixture(await fixture()),blocker=await db.connect()
+    let accesses=0
+    const worker=createProviderActionWorker({db,workerId:'lease-lock-wait',resolveProvider:()=>{accesses++;throw new Error('Expired claim must not construct provider')}})
+    const claim=(await worker.claimAction())!
+    let running:Promise<void>|undefined
+    try {
+      await blocker.query('BEGIN')
+      await blocker.query('SELECT id FROM workspaces WHERE id=$1 FOR KEY SHARE',[f.workspaceId])
+      await lockAgentAuthorityPlan(blocker,{definitionIds:[f.agentId],teamGrants:[{workspaceId:f.workspaceId,agentId:f.agentId,teamId:f.teamId}],delegationIds:[f.delegationId],sessionIds:[f.sessionId],workItemIds:[f.workItemId],projectIds:[f.projectId]})
+      const pid=(await blocker.query<{pid:number}>('SELECT pg_backend_pid() AS pid')).rows[0]!.pid
+      running=worker.executeAction(claim).catch(async error=>{
+        expect((error as Error).message).toBe('PROVIDER_ACTION_CLAIM_EXPIRED');await worker.failAction(claim,error)
+      })
+      let observed=false
+      for(let n=0;n<100;n++){
+        observed=!!(await db.query('SELECT 1 FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))',[pid])).rowCount
+        if(observed)break
+        await new Promise(r=>setTimeout(r,20))
+      }
+      expect(observed).toBe(true);await recordAuthorityWait(pid,'lease-live-before-real-lock-wait')
+      while((await db.query<{active:boolean}>("SELECT claimed_at+interval '60 seconds'>clock_timestamp() AS active FROM provider_actions WHERE id=$1",[claim.id])).rows[0]!.active)await new Promise(r=>setTimeout(r,250))
+      await recordAuthorityWait(pid,'lease-expired-still-blocked')
+      expect(accesses).toBe(0);await blocker.query('COMMIT');await running
+      expect(accesses).toBe(0)
+      expect((await db.query('SELECT status,last_error FROM provider_actions WHERE id=$1',[claim.id])).rows[0]).toEqual({status:'dead',last_error:'PROVIDER_ACTION_OUTCOME_UNKNOWN'})
+    } finally {await blocker.query('ROLLBACK');blocker.release();await running}
   },90000)
 
   it('makes duplicate commit webhooks a single projection effect', async () => {

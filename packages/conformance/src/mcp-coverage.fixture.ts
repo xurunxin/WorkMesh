@@ -27,14 +27,14 @@ const safeBody = (value: string): string => value.replace(/wm[ips]_[A-Za-z0-9_-]
 export type Execution = { sessionId: string; workItemId: string; token: string; client: WorkMeshClient }
 
 /** 独有监听端口；数据库必须是已核定test库，根入口先串行reset。 */
-export async function createMcpCoverageFixture(options:{capabilities?:Capability[]}={}) {
+export async function createMcpCoverageFixture(options:{capabilities?:Capability[];features?:Parameters<typeof loadFeatureConfig>[0]}={}) {
   const databaseUrl = process.env.DATABASE_URL
   if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
     throw new Error('MCP conformance requires RUN_INTEGRATION=1 and a dedicated test database')
   if (!process.env.WORKMESH_RUNNER_SERVICE_TOKEN || !process.env.WORKMESH_BOOTSTRAP_TOKEN)
     throw new Error('MCP/Pi conformance credentials are required; no skip fallback')
   const db = createDb(databaseUrl)
-  const features = loadFeatureConfig({ WORKMESH_BETA_COORDINATION_MCP: 'true' })
+  const features = loadFeatureConfig({ ...options.features, WORKMESH_BETA_COORDINATION_MCP: 'true' })
   let app = buildApp({ features, logger: { level: options.capabilities?.includes('repo:read')?'error':'silent' } })
   const servers: Server[] = []
   const clients: Client[] = []

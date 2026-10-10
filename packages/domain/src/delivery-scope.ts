@@ -15,4 +15,3 @@ export function matchesBranchPattern(pattern: string, workItemKey: string, branc
     .replaceAll('\\{slug\\}', '[a-z0-9]+(?:-[a-z0-9]+)*')
   return new RegExp(`^${expression}$`).test(branch)
 }
-

@@ -1,0 +1,3407 @@
+{
+  "status": "本机必需命令全部通过；仍待正式成果独审",
+  "required": {
+    "check:route-policy": "m3-aca09d864a2a",
+    "check:workmesh-skill": "m3-06b3cc796d7e",
+    "check:runner-skill": "m3-29f75384c7de",
+    "ci:test": "m3-d85603dbcfd5",
+    "ci:validate": "m3-a6b46343ea6f",
+    "lint": "m3-817c5199d4ae",
+    "typecheck": "m3-8f242b81228f",
+    "test": "m3-16ebc3f73ad2",
+    "test:integration": "m3-0230adef6a2a",
+    "test:e2e": "m3-f2c2631b3d89"
+  },
+  "finalAffectedTargets": {
+    "API交付": "m3-ce8b651cabc0",
+    "M3三客户端": "m3-20fc715e571e",
+    "Worker发送恢复": "m3-ea7e711e8e57"
+  },
+  "receipts": [
+    {
+      "id": "m3-f147892a2a65",
+      "argv": [
+        "pnpm.cmd",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 67.53887963294983,
+      "runtime": "{\"version\":\"v24.20.0\",\"execPath\":\"C:\\\\nvm4w\\\\nodejs\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-f147892a2a65.json",
+      "rawArchive": "product-evidence/m3-f147892a2a65.zip",
+      "archiveSha256": "a313be08f19378f46dabd5f1513d49b1cec77f60f0ce93f7552ecfac49ddbaef",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "packages/contracts/src/child-session-contracts.ts",
+        "packages/contracts/src/delivery-contracts.ts",
+        "packages/contracts/src/index.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-20bf0cb9dc8e",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 10.487944602966309,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-20bf0cb9dc8e.json",
+      "rawArchive": "product-evidence/m3-20bf0cb9dc8e.zip",
+      "archiveSha256": "d934e5ab2c0731d905991368be25f207c038c08a15c419600fc3c2100b9e6c51",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-bed684bc4c02",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 16.149823665618896,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-bed684bc4c02.json",
+      "rawArchive": "product-evidence/m3-bed684bc4c02.zip",
+      "archiveSha256": "8e18b41479dab4947023db561467387a3df0e5205f872056d1cf049718c26078",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-9c7de1420c62",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 15.215204238891602,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-9c7de1420c62.json",
+      "rawArchive": "product-evidence/m3-9c7de1420c62.zip",
+      "archiveSha256": "3952c185f30205f2e7e80aa2239671b741b1053163172b94cba3a247150af4b8",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-af20ee0d67ca",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 14.903449535369873,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-af20ee0d67ca.json",
+      "rawArchive": "product-evidence/m3-af20ee0d67ca.zip",
+      "archiveSha256": "53596713b989b2a244e888104e20c89d75da39eb2542e628498ded1344d295d3",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-4e409de1e831",
+      "argv": [
+        "node",
+        ".tmp/m3-tools/patch-openapi.mjs"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.2898542881011963,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-4e409de1e831.json",
+      "rawArchive": "product-evidence/m3-4e409de1e831.zip",
+      "archiveSha256": "213047bc0106d8e1d04d9e7d5f2a9ea9e007999812647e0dca3c91e4081265cb",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-327e62ec2842",
+      "argv": [
+        "pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 1.6041920185089111,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-327e62ec2842.json",
+      "rawArchive": "product-evidence/m3-327e62ec2842.zip",
+      "archiveSha256": "8ed742c7426af971369a2cc1eed545e36191c68cc667b9d40afb0574452e4180",
+      "summaries": [],
+      "failures": [
+        "Error: MCP binding tool:get_provider_action references unknown operationId getProviderAction"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-2a86ecb853bb",
+      "argv": [
+        "pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 1.805241584777832,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-2a86ecb853bb.json",
+      "rawArchive": "product-evidence/m3-2a86ecb853bb.zip",
+      "archiveSha256": "29236ffa137f3b3c81f9df899b3ea653e25d87018ee92080a47a530172cefa3c",
+      "summaries": [],
+      "failures": [
+        "Error: OpenAPI operation not found: GET /api/v1/provider-actions/{id}"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-d80acb76551b",
+      "argv": [
+        "pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 2,
+      "elapsedSeconds": 18.48650884628296,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-d80acb76551b.json",
+      "rawArchive": "product-evidence/m3-d80acb76551b.zip",
+      "archiveSha256": "64630fad00a5dfc1a92955cb9713062e65a40226e1bf0ee43db5b9e51d0e9429",
+      "summaries": [
+        "Tasks:    9 successful, 14 total",
+        "Cached:    0 cached, 14 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-ed6fa99f3012",
+      "argv": [
+        "node",
+        ".tmp/m3-tools/patch-openapi.mjs"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.2506580352783203,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-ed6fa99f3012.json",
+      "rawArchive": "product-evidence/m3-ed6fa99f3012.zip",
+      "archiveSha256": "9b6c2e056f47db1c26b9a7e0201389d425eb448989ef1044f3d0ef1be808782e",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-9c52734c271e",
+      "argv": [
+        "pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 1.7689037322998047,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-9c52734c271e.json",
+      "rawArchive": "product-evidence/m3-9c52734c271e.zip",
+      "archiveSha256": "3e0a7540c1b55158f395c112a7ed4cf883acf4fd232230a59cff54582644e436",
+      "summaries": [],
+      "failures": [
+        "Error: OpenAPI operation not found: GET /api/v1/provider-actions/{id}"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-ca53ea437aef",
+      "argv": [
+        "node",
+        ".tmp/m3-tools/patch-openapi.mjs"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.2859644889831543,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-ca53ea437aef.json",
+      "rawArchive": "product-evidence/m3-ca53ea437aef.zip",
+      "archiveSha256": "2a21dee56434a7d3cac96c1fb4f441eeb62d4108f3d411808ffc86782f3c8765",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-a489eefc3a0d",
+      "argv": [
+        "pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 1.9018523693084717,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-a489eefc3a0d.json",
+      "rawArchive": "product-evidence/m3-a489eefc3a0d.zip",
+      "archiveSha256": "e8f0b2319ca5e79b918d5308f99634bd8e93fa9d4a0e42ea29142350121485fe",
+      "summaries": [],
+      "failures": [
+        "Error: OPENAPI.yaml is invalid:"
+      ],
+      "changedSourceDuringCommand": [
+        "apps/worker/src/provider-actions.ts",
+        "packages/git-provider/src/index.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-8d7f329c7a09",
+      "argv": [
+        "pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 58.011364221572876,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-8d7f329c7a09.json",
+      "rawArchive": "product-evidence/m3-8d7f329c7a09.zip",
+      "archiveSha256": "57a8ea5b6b698638b467093c99a358f45a9dc164d8c573b447856f2d6fd96184",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    9 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml",
+        "apps/worker/src/provider-actions.ts",
+        "packages/git-provider/src/index.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-630a3ed9b90d",
+      "argv": [
+        "node",
+        ".tmp/m3-tools/patch-openapi.mjs"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.2802708148956299,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-630a3ed9b90d.json",
+      "rawArchive": "product-evidence/m3-630a3ed9b90d.zip",
+      "archiveSha256": "780d3ac6bca405b9e7a534dc000d894290066d12fde1e37d8a69d4326acdc1ec",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-87628050f260",
+      "argv": [
+        "pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 1.8446125984191895,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-87628050f260.json",
+      "rawArchive": "product-evidence/m3-87628050f260.zip",
+      "archiveSha256": "a66fe2e0033a86b96df07b7d97828437cc0d09f8625e1b8521ab7ec9bb41bbdb",
+      "summaries": [],
+      "failures": [
+        "Error: OPENAPI.yaml is invalid:",
+        "error:"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-3588d623f45e",
+      "argv": [
+        "node",
+        ".tmp/m3-tools/patch-openapi.mjs"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.2979736328125,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-3588d623f45e.json",
+      "rawArchive": "product-evidence/m3-3588d623f45e.zip",
+      "archiveSha256": "2d2f112fe9d965ece0ddb06b2ae5caafcf5897f20b28e4f10ae97b180fd150c9",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-c8e4217e4e12",
+      "argv": [
+        "pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 2.191965341567993,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-c8e4217e4e12.json",
+      "rawArchive": "product-evidence/m3-c8e4217e4e12.zip",
+      "archiveSha256": "2d8ede8abd42acacdae6a2b3ed69551f8b56eac8a28ab614f6bde7046657c007",
+      "summaries": [],
+      "failures": [
+        "Error: OpenAPI operationId mismatch for GET /api/v1/provider-actions/{id}: getProviderAction - human - agent !== getProviderAction"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-b8fdcc71c4af",
+      "argv": [
+        "node",
+        ".tmp/m3-tools/patch-openapi.mjs"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.6281638145446777,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-b8fdcc71c4af.json",
+      "rawArchive": "product-evidence/m3-b8fdcc71c4af.zip",
+      "archiveSha256": "d9b59684fc84787bb97b8a3522e77984bb993d7603a99a872a7be7c6bd860abf",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-9dba8c082bf1",
+      "argv": [
+        "pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 2.9148683547973633,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-9dba8c082bf1.json",
+      "rawArchive": "product-evidence/m3-9dba8c082bf1.zip",
+      "archiveSha256": "4d47553304dcfde9fece92f55928a9f0160142e8f827313851d04ecba342b8f3",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml",
+        "docs/route-policy-matrix.md"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-40bc8c4d09d9",
+      "argv": [
+        "pnpm.cmd",
+        "test:integration:worker"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 158.5349817276001,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-40bc8c4d09d9.json",
+      "rawArchive": "product-evidence/m3-40bc8c4d09d9.zip",
+      "archiveSha256": "8e0f47e2beee463602a683c70685674a9e66980954e98ae87d8c4a678bc9617e",
+      "summaries": [
+        "Test Files  1 failed | 7 passed | 1 skipped (9)",
+        "Tests  5 failed | 116 passed | 1 skipped (122)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > revalidates the provider allowlist before every provider access and recovers released actions",
+        "Error: PROVIDER_ACTION_AUTHORITY_REVOKED",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > reconciles a webhook-first provider PR, retries prerequisite deliveries, and preserves exact provenance through merge",
+        "AssertionError: expected { …(6) } to match object { …(4) }",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > rolls back and then emits exactly one claim-owned terminal event for action, webhook, and upload rejection",
+        "AssertionError: promise resolved \"undefined\" instead of rejecting",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > reconciles a provider-merged webhook race after a crash exactly once without a second merge",
+        "AssertionError: expected { status: 'dead', result: null } to match object { status: 'completed', …(1) }",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > invalidates exact-head authority and terminally fails when the live provider head drifts",
+        "Error: PROVIDER_ACTION_AUTHORITY_REVOKED"
+      ],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml",
+        "apps/api/src/collaboration/routes.ts",
+        "apps/api/src/delivery/provider-action-query.ts",
+        "apps/worker/src/provider-actions.ts",
+        "docs/route-policy-matrix.md"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-87bd91a9f493",
+      "argv": [
+        "pnpm.cmd",
+        "test"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 17.658989191055298,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-87bd91a9f493.json",
+      "rawArchive": "product-evidence/m3-87bd91a9f493.zip",
+      "archiveSha256": "0e9ee4c61deb549388332df5cc11a2f416f21fff20bb2efc983e2e46582ca605",
+      "summaries": [
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/contracts:test: ⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/contracts:test:  Test Files  9 failed | 19 passed (28)",
+        "@workmesh/contracts:test:       Tests  15 failed | 195 passed (210)",
+        "Tasks:    1 successful, 10 total",
+        "Cached:    0 cached, 10 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-81fcf1067207",
+      "argv": [
+        "node",
+        ".tmp/m3-tools/patch-openapi.mjs"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.37097883224487305,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-81fcf1067207.json",
+      "rawArchive": "product-evidence/m3-81fcf1067207.zip",
+      "archiveSha256": "9bec15f258bcd60d31c93f3fc580e1b1e3acb2734f43dbd24726ca67a9667935",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-5d436e134d35",
+      "argv": [
+        "pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 2.041806221008301,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-5d436e134d35.json",
+      "rawArchive": "product-evidence/m3-5d436e134d35.zip",
+      "archiveSha256": "0ed58a9709ca2ff9de90d0e9bd2f79f7d74886d62e68f30ab090d7885209c5ba",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-ae9721685baa",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/contracts",
+        "test"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 9.636404037475586,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-ae9721685baa.json",
+      "rawArchive": "product-evidence/m3-ae9721685baa.zip",
+      "archiveSha256": "05620cef9599cb736dd808931d842355e54b8adf1ba5168072943d0e1c4593e6",
+      "summaries": [
+        "Test Files  3 failed | 26 passed (29)",
+        "Tests  3 failed | 209 passed (212)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/agent-discovery.test.ts > 已审发现规则的已知门禁和身份投影 > provider具名kind按联合能力判定",
+        "AssertionError: expected 'blocked' not to be 'blocked' // Object.is equality",
+        "FAIL  src/route-policy.test.ts > routePolicyManifest > is the unique serializable declaration for every runtime route",
+        "AssertionError: expected [ { method: 'GET', …(17) }, …(279) ] to have a length of 279 but got 280",
+        "FAIL  src/stage3-contracts.test.ts > Stage 3 contracts > keeps the OpenAPI webhook replay and provider-action union in parity with runtime contracts",
+        "AssertionError: expected [ …(3) ] to have a length of 2 but got 3"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-df29e95f36ca",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage3-delivery.integration.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 36.23477101325989,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-df29e95f36ca.json",
+      "rawArchive": "product-evidence/m3-df29e95f36ca.zip",
+      "archiveSha256": "744154401a8e177d52f3dcc1a78bbee92c926bd055612234a8116951f3d80a5f",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  2 failed | 42 passed (44)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3 exact action只读投影精确E/principal授权、隐藏payload/raw错误与撤权；不追加事实",
+        "AssertionError: {\"error\":{\"code\":\"RESOURCE_SCOPE_DENIED\",\"message\":\"Branch name must match the pinned work-item pattern and cannot be the default branch\",\"correlationId\":\"9df635d8-d79b-4115-b983-37ae2a81cdea\"}}: expected 403 to be 200 // Object.is equality",
+        "FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > runs branch, commit, PR, check, independent review, exact-head approval, merge, and suggestion",
+        "AssertionError: expected { status: 'dead', …(1) } to deeply equal { status: 'failed', …(1) }"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-3f9ace449d71",
+      "argv": [
+        "pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 2,
+      "elapsedSeconds": 72.22709012031555,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-3f9ace449d71.json",
+      "rawArchive": "product-evidence/m3-3f9ace449d71.zip",
+      "archiveSha256": "9f0acd2f3d1a41ba316fb834a65157f800cff1479bb884cce1f47f241ae7dfae",
+      "summaries": [
+        "Tasks:    17 successful, 18 total",
+        "Cached:    3 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "packages/conformance/package.json",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts",
+        "packages/conformance/vitest.integration.config.ts",
+        "scripts/ci-policy.mjs",
+        "scripts/ci-policy.test.mjs",
+        "vitest.config.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-7c1e91314e93",
+      "argv": [
+        "pnpm.cmd",
+        "install",
+        "--lockfile-only"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 9.70402479171753,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-7c1e91314e93.json",
+      "rawArchive": "product-evidence/m3-7c1e91314e93.zip",
+      "archiveSha256": "1e78b26a9821a61382fd24dd2564c0e4dafc6ed7dcd2e80770f6c2f06dfdac7b",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "pnpm-lock.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-ab427f492d45",
+      "argv": [
+        "pnpm.cmd",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 1.5649399757385254,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-ab427f492d45.json",
+      "rawArchive": "product-evidence/m3-ab427f492d45.zip",
+      "archiveSha256": "d7cbe294dc7a4a0a4edeba4ccee10e64ea221b46f35b003904fbcbe656bfabcb",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-75ccc713528e",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage3-delivery.integration.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 35.44602417945862,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-75ccc713528e.json",
+      "rawArchive": "product-evidence/m3-75ccc713528e.zip",
+      "archiveSha256": "d1c8eb3ad5ece7b562fa516611372b820fa0d4555c1979d47aa9d6683c140046",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 43 passed (44)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3 exact action只读投影精确E/principal授权、隐藏payload/raw错误与撤权；不追加事实",
+        "AssertionError: expected { error: { …(3) } } to match object { …(2) }"
+      ],
+      "changedSourceDuringCommand": [
+        "apps/worker/src/provider-actions.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-61924485bb27",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/contracts",
+        "test"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 10.631393432617188,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-61924485bb27.json",
+      "rawArchive": "product-evidence/m3-61924485bb27.zip",
+      "archiveSha256": "c783c944e5f99b440acf4828fdafec018c49b330edf3f06b50e0dc4be65d7a34",
+      "summaries": [
+        "Test Files  29 passed (29)",
+        "Tests  212 passed (212)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-03be546f79bc",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/delivery-recovery.conformance.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 28.25282621383667,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-03be546f79bc.json",
+      "rawArchive": "product-evidence/m3-03be546f79bc.zip",
+      "archiveSha256": "428e5145543e99c7336a1f03172078e26a3918fcdb9c4012b831bdc3b428b7cf",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  3 failed (3)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > native准确base/path→Git action→独立reviewer→Human批准→终态",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > mcp准确base/path→Git action→独立reviewer→Human批准→终态",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi准确base/path→Git action→独立reviewer→Human批准→终态",
+        "Error: {\"id\":\"a82b5336-844a-4a8d-a91c-c4c036de0bd9\",\"provider\":\"fake\",\"connectionId\":\"c73573e0-bf8b-4f9b-ac3c-3a5039319146\",\"repositoryId\":\"bcc546c9-e3d3-40fb-b40b-132f20b92d21\",\"requesterActorId\":\"c0524ecb-5a9a-4cdc-b22a-52e4a8ef35f0\",\"sessionId\":\"b2ad5862-05be-443e-be67-83f7c1446400\",\"workItemId\":\"f47aa6f8-2d5b-4e16-99b6-4524b2bb9b9f\",\"projectId\":\"84aa086c-7e7d-46f1-b6e1-81e4a2852660\",\"planStepId\":\"45de9027-be81-46fa-8c28-aa21960023a6\",\"expectedHeadSha\":\"base\",\"approvalId\":null,\"status\":\"completed\",\"effect\":\"committed\",\"artifactIds\":[\"3a244b48-b1f2-4671-a583-9381dfdf4a8f\"],\"createdAt\":\"2026-10-10T10:15:56.124Z\",\"updatedAt\":\"2026-10-10T10:15:56.453Z\",\"completedAt\":\"2026-10-10T10:15:56.453Z\",\"error\":null,\"recovery\":{\"kind\":\"none\",\"scheduled\":false,\"nextQueryAt\":null},\"kind\":\"create_branch\",\"target\":{\"branchName\":\"workmesh/GEN-3-delivery\",\"baseSha\":\"base\"},\"result\":{\"branchName\":\"workmesh/GEN-3-delivery\",\"headSha\":\"base\"}}"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-3af79e78ec70",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 16.521920204162598,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-3af79e78ec70.json",
+      "rawArchive": "product-evidence/m3-3af79e78ec70.zip",
+      "archiveSha256": "db0f561eafdfd8249e46de2c004285a88d1897d6318150edb0b1ef8a777ad6e5",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-94d28145ae4a",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/delivery-recovery.conformance.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 48.31396436691284,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-94d28145ae4a.json",
+      "rawArchive": "product-evidence/m3-94d28145ae4a.zip",
+      "archiveSha256": "2f3223ce6c594bf28c786b538db8076eacdd4a2e63c6574bce6abed0eee4edf4",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  3 failed | 4 passed (7)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > native准确base/path→Git action→独立reviewer→Human批准→终态",
+        "Error: {\"error\":{\"code\":\"INTERNAL_ERROR\",\"message\":\"Unexpected server error\",\"correlationId\":\"e09c9cbd-ff83-4987-ba92-bbbd438c04d4\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > mcp准确base/path→Git action→独立reviewer→Human批准→终态",
+        "Error: {\"error\":{\"code\":\"INTERNAL_ERROR\",\"message\":\"Unexpected server error\",\"correlationId\":\"1bfc2d82-eaa1-4ab5-a3ae-db9440ce7bba\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi准确base/path→Git action→独立reviewer→Human批准→终态",
+        "Error: {\"error\":{\"code\":\"INTERNAL_ERROR\",\"message\":\"Unexpected server error\",\"correlationId\":\"c82b9a41-927d-423a-b588-d71313dbfb77\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-c8c7d438efc4",
+      "argv": [
+        "pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/delivery-recovery.conformance.test.ts",
+        "-t",
+        "native准确"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 8.967053174972534,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-c8c7d438efc4.json",
+      "rawArchive": "product-evidence/m3-c8c7d438efc4.zip",
+      "archiveSha256": "193d87612e08605b5085755ecbe436a0480c08cc66893eebb59ce7b59eaab615",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 6 skipped (7)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > native准确base/path→Git action→独立reviewer→Human批准→终态",
+        "Error: {\"error\":{\"code\":\"INTERNAL_ERROR\",\"message\":\"Unexpected server error\",\"correlationId\":\"52bfb730-8f9f-43ab-b9d1-011c142b53da\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-09860da03cfd",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 64.38852882385254,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-09860da03cfd.json",
+      "rawArchive": "product-evidence/m3-09860da03cfd.zip",
+      "archiveSha256": "6b8f18618d432d77b2912e5d1b7d9b120e8808e27ce894fc68a275ac6a28cb64",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    0 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-9daf31e0f3cf",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "test:integration",
+        "--",
+        "integration/stage3-provider.integration.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 111.68586683273315,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-9daf31e0f3cf.json",
+      "rawArchive": "product-evidence/m3-9daf31e0f3cf.zip",
+      "archiveSha256": "a4a8cf19e25c8ae1f341988338896a51ab94aef941af62f5de8326e68ea30ffb",
+      "summaries": [
+        "Test Files  1 failed | 7 passed | 1 skipped (9)",
+        "Tests  2 failed | 123 passed | 1 skipped (126)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > M3真实GitHub rerequest成功后checkpoint前崩溃，跨真实租期重领HTTP写次数仍为一",
+        "error: new row for relation \"agent_definitions\" violates check constraint \"agent_definitions_check\"",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > invalidates exact-head authority and terminally fails when the live provider head drifts",
+        "error: new row for relation \"artifacts\" violates check constraint \"artifacts_check\""
+      ],
+      "changedSourceDuringCommand": [
+        "apps/mcp/src/index.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-4489c2da5959",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "test:integration",
+        "integration/stage3-provider.integration.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 12.796250581741333,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-4489c2da5959.json",
+      "rawArchive": "product-evidence/m3-4489c2da5959.zip",
+      "archiveSha256": "36805c34cc39a98076381dc5d61b2526d6eec7b0c5e136870d4a0745a1b50456",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  4 failed | 18 passed (22)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > M3真实GitHub rerequest成功后checkpoint前崩溃，跨真实租期重领HTTP写次数仍为一",
+        "error: IMMUTABLE_STAGE3_FACT",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > M3 revoke事务先提交：观察真实锁等待，锁后重读拒绝零外发",
+        "error: new row for relation \"delegations\" violates check constraint \"delegations_check1\"",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > M3发送许可先提交，stop在首个HTTP等待中提交，第二个仓库写零发送",
+        "Error: PROVIDER_ACTION_AUTHORITY_REVOKED",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > M3发送许可先提交，revoke在首个HTTP等待中提交，第二个仓库写零发送",
+        "error: new row for relation \"delegations\" violates check constraint \"delegations_check1\""
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-2f0b36aaaad7",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "--",
+        "src/delivery-recovery.conformance.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 403.38868951797485,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-2f0b36aaaad7.json",
+      "rawArchive": "product-evidence/m3-2f0b36aaaad7.zip",
+      "archiveSha256": "1bd2bff418260f123096ea3f47afe99d9ac894fca8d5d0d77fd7a3dd0cce9670",
+      "summaries": [
+        "Test Files  1 failed | 3 passed (4)",
+        "Tests  3 failed | 45 passed (48)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > native准确base/path→Git action→独立reviewer→Human批准→终态",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > mcp准确base/path→Git action→独立reviewer→Human批准→终态",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi准确base/path→Git action→独立reviewer→Human批准→终态"
+      ],
+      "changedSourceDuringCommand": [
+        "apps/api/src/agent/guard.ts",
+        "apps/api/src/delivery/repository-access.ts",
+        "apps/api/src/delivery/routes.ts",
+        "apps/mcp/src/index.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-6bcde9a86d95",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "src/delivery-recovery.conformance.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 37.22814440727234,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-6bcde9a86d95.json",
+      "rawArchive": "product-evidence/m3-6bcde9a86d95.zip",
+      "archiveSha256": "7b3c50154ed8294119cf091e75829cf15f71aa2ec13ca4de4cc569634b808b08",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  3 failed | 4 passed (7)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > native准确base/path→Git action→独立reviewer→Human批准→终态",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > mcp准确base/path→Git action→独立reviewer→Human批准→终态",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi准确base/path→Git action→独立reviewer→Human批准→终态"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-81a8d8280325",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 64.01669263839722,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-81a8d8280325.json",
+      "rawArchive": "product-evidence/m3-81a8d8280325.zip",
+      "archiveSha256": "58e6fe22c4b39fba35e8bb88cb82922bd6eda0739f77743f05a833cff7026393",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    4 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "apps/api/src/agent/guard.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-5dceb89f3c94",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "test:integration",
+        "integration/stage3-provider.integration.test.ts"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 75.0271258354187,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-5dceb89f3c94.json",
+      "rawArchive": "product-evidence/m3-5dceb89f3c94.zip",
+      "archiveSha256": "9f1004bdf4647b41965b3b6a4b843c64664f91f9a074d23f946c96e76c69cb84",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  22 passed (22)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-e8891170be9f",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "src/delivery-recovery.conformance.test.ts"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 59.803797006607056,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-e8891170be9f.json",
+      "rawArchive": "product-evidence/m3-e8891170be9f.zip",
+      "archiveSha256": "c34375445edf8e37bc1a0c540f6b8468a553c4547a156825abaaae619b9b1fbd",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  7 passed (7)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-058866c3a8b9",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "tsx",
+        "../../.tmp/m3-tools/openapi-responses.mts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 1.6806931495666504,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-058866c3a8b9.json",
+      "rawArchive": "product-evidence/m3-058866c3a8b9.zip",
+      "archiveSha256": "95b913017aeafaafefdbc14d0f51f94b290c9831b443c0e0db8387c5050a68ef",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-8a134bc44a22",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "tsx",
+        "../../.tmp/m3-tools/openapi-responses.mts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 1.727247714996338,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-8a134bc44a22.json",
+      "rawArchive": "product-evidence/m3-8a134bc44a22.zip",
+      "archiveSha256": "10f40e379caaf0b792820dcaae2f364489f148bdf5ba4f859ecf1bad4f8648a9",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-6a79ffc99296",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "tsx",
+        "../../.tmp/m3-tools/openapi-responses.mts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 1.7966036796569824,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-6a79ffc99296.json",
+      "rawArchive": "product-evidence/m3-6a79ffc99296.zip",
+      "archiveSha256": "2793143ba3d356782f61c61b6713642913e29d4c2cd2f9c8c4f4ce42551e8bd7",
+      "summaries": [],
+      "failures": [
+        "Error: No response replacement /api/v1/repositories/{id}/context"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-2bc588d0f3ff",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "test:integration",
+        "integration/stage3-delivery.integration.test.ts"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 29.270817279815674,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-2bc588d0f3ff.json",
+      "rawArchive": "product-evidence/m3-2bc588d0f3ff.zip",
+      "archiveSha256": "8e0534075a8398dc26ab852c5b96b3e8b624dfe1a850dfa8fc6a8f5291df8519",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  44 passed (44)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "packages/db/src/agent-lock-order-manifest.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-c4bb181a14f0",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/db",
+        "test",
+        "src/agent-lock-order-inventory.test.ts"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 4.397235870361328,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-c4bb181a14f0.json",
+      "rawArchive": "product-evidence/m3-c4bb181a14f0.zip",
+      "archiveSha256": "a7d397d4b8538754f2cbaff627c2a3236c764d1d2c91250f1d0353c4781c945c",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  8 passed (8)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "packages/db/src/agent-lock-order-manifest.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-1202c81c090c",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "tsx",
+        "../../.tmp/m3-tools/openapi-responses.mts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 2.5210976600646973,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-1202c81c090c.json",
+      "rawArchive": "product-evidence/m3-1202c81c090c.zip",
+      "archiveSha256": "98d97a941ffaf2a1129c6a6c31b53e8286fa8795fd0ffb28d33936e513ff78e6",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-a16721fbbca2",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "tsx",
+        "../../.tmp/m3-tools/openapi-responses.mts"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 2.0230512619018555,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-a16721fbbca2.json",
+      "rawArchive": "product-evidence/m3-a16721fbbca2.zip",
+      "archiveSha256": "5a2a0b78781e8f4f32d4db1b5d048f67f9fb19ec7b325f9c2499776d0be17f2c",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-523cc06881dd",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "test:integration",
+        "integration/stage3-delivery.integration.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 34.39555644989014,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-523cc06881dd.json",
+      "rawArchive": "product-evidence/m3-523cc06881dd.zip",
+      "archiveSha256": "a46e18ef5465d0dab2a7cbc9a8f367066c911f01c0a6bb77146f35127714ebc3",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  4 failed | 44 passed (48)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3 exact action最终快照拒绝当前context的read收窄且零副作用",
+        "FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3 exact action最终快照拒绝当前context的branch收窄且零副作用",
+        "FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3 exact action最终快照拒绝当前context的path收窄且零副作用",
+        "error: insert or update on table \"provider_actions\" violates foreign key constraint \"provider_actions_workspace_id_requested_by_actor_id_fkey\"",
+        "FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3原principal Human可诊断终态Session action，普通terminal E仍拒绝",
+        "error: column \"completed_at\" of relation \"agent_sessions\" does not exist"
+      ],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-06b88b7774d5",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 20.825883388519287,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-06b88b7774d5.json",
+      "rawArchive": "product-evidence/m3-06b88b7774d5.zip",
+      "archiveSha256": "c94e8122d2fa8854677130fea76f85f88009e4d8b08a3afa3b914c08667d6e66",
+      "summaries": [
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  15 passed (15)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/contracts:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/contracts:test:  Test Files  1 failed | 28 passed (29)",
+        "@workmesh/contracts:test:       Tests  1 failed | 211 passed (212)",
+        "Tasks:    7 successful, 10 total",
+        "Cached:    0 cached, 10 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-9fadbf970685",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "test:integration",
+        "integration/stage3-delivery.integration.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 43.45751762390137,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-9fadbf970685.json",
+      "rawArchive": "product-evidence/m3-9fadbf970685.zip",
+      "archiveSha256": "1a23b3cdfe12ba0c33773938b082c6a185ff51b3f85c059edaf1143b9dbd6f41",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 47 passed (48)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3原principal Human可诊断终态Session action，普通terminal E仍拒绝",
+        "error: new row for relation \"agent_sessions\" violates check constraint \"agent_sessions_check1\""
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-a11dcf76f0cf",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 49.57444381713867,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-a11dcf76f0cf.json",
+      "rawArchive": "product-evidence/m3-a11dcf76f0cf.zip",
+      "archiveSha256": "92b2d44eeccf1c0fcdf765efedf5712fed31312942ecf9dc9fe6a58735168644",
+      "summaries": [
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  15 passed (15)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  212 passed (212)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/agent-runner:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/agent-runner:test:  Test Files  1 failed | 13 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  1 failed | 74 passed (75)",
+        "Tasks:    19 successful, 26 total",
+        "Cached:    6 cached, 26 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-595f865f96d5",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "test:integration",
+        "integration/stage3-provider.integration.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 130.79270219802856,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-595f865f96d5.json",
+      "rawArchive": "product-evidence/m3-595f865f96d5.zip",
+      "archiveSha256": "53f170d9afed0bf9ea5fcfb83ca9c2bad1e0a1065d59e4e70abed4b03f56a825",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  2 failed | 24 passed (26)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > M3 merge_pull_request合法准入后pin收窄先提交，每次HTTP guard锁后拒绝",
+        "error: new row for relation \"artifacts\" violates check constraint \"artifacts_check\"",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > M3 retry_ci_check合法准入后pin收窄先提交，每次HTTP guard锁后拒绝",
+        "AssertionError: expected { status: 'dead', …(1) } to deeply equal { status: 'dead', …(1) }"
+      ],
+      "changedSourceDuringCommand": [
+        "apps/api/src/collaboration/routes.ts",
+        "apps/api/src/server.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-4405895238f6",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "test:integration",
+        "integration/stage3-provider.integration.test.ts",
+        "-t",
+        "pin"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 6.33302116394043,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-4405895238f6.json",
+      "rawArchive": "product-evidence/m3-4405895238f6.zip",
+      "archiveSha256": "97c583f00f81642decbb844088906cfd09a903ca686f5fb6080f867fa8c981fe",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  2 passed | 24 skipped (26)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-0539ce1c0bca",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 59.53431057929993,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-0539ce1c0bca.json",
+      "rawArchive": "product-evidence/m3-0539ce1c0bca.zip",
+      "archiveSha256": "92cb6dd571949f54724b5160a625cea1a76cdba703f3afa075fa5966c46d28e1",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    0 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-2ae203aa82a4",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 63.43900442123413,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-2ae203aa82a4.json",
+      "rawArchive": "product-evidence/m3-2ae203aa82a4.zip",
+      "archiveSha256": "c4e57b8df81f77739656d8121e0aa79fbd691a30243517dbd4a152211fd0dea7",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    4 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-3221f57bda6e",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "src/delivery-recovery.conformance.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 99.72087550163269,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-3221f57bda6e.json",
+      "rawArchive": "product-evidence/m3-3221f57bda6e.zip",
+      "archiveSha256": "81e0ee40f70f2e8e29884d477686c4ce656cbcaa58dcb47c74aadeeed1903e2e",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  6 failed | 7 passed (13)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > native精确action最新read/branch/path正负例与Human终态诊断",
+        "Error: Human fixture POST /api/v1/repositories/4aae3c62-a58d-4f0b-ac3a-89e382f0d3c7/context: 400 {\"error\":{\"code\":\"VALIDATION_ERROR\",\"message\":\"Invalid request\",\"details\":{\"formErrors\":[],\"fieldErrors\":{\"branchPattern\":[\"Branch pattern must include {workItemKey}\"]}},\"correlationId\":\"3a5e95fb-191a-451e-826f-d913745f19ca\"}}",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > mcp精确action最新read/branch/path正负例与Human终态诊断",
+        "Error: Human fixture POST /api/v1/repositories/571c8cec-aa3f-4027-905f-15e4e0e9f5a3/context: 400 {\"error\":{\"code\":\"VALIDATION_ERROR\",\"message\":\"Invalid request\",\"details\":{\"formErrors\":[],\"fieldErrors\":{\"branchPattern\":[\"Branch pattern must include {workItemKey}\"]}},\"correlationId\":\"0c143b59-04d9-4858-aba3-5b8a835044e3\"}}",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi精确action最新read/branch/path正负例与Human终态诊断",
+        "Error: Human fixture POST /api/v1/repositories/0ee8d849-3673-4051-b110-9ceb257b7637/context: 400 {\"error\":{\"code\":\"VALIDATION_ERROR\",\"message\":\"Invalid request\",\"details\":{\"formErrors\":[],\"fieldErrors\":{\"branchPattern\":[\"Branch pattern must include {workItemKey}\"]}},\"correlationId\":\"59ba46ef-3313-4bad-b41d-9f27ff175841\"}}",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > native上传状态/数组/取消/受控下载及health准确Human批准",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > mcp上传状态/数组/取消/受控下载及health准确Human批准",
+        "Error: {\"error\":{\"code\":\"MALFORMED_RESPONSE\",\"message\":\"Invalid execution response\",\"correlationId\":\"mcp:7fac6d5d-2602-4610-8d36-ed2b77d557c0\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi上传状态/数组/取消/受控下载及health准确Human批准"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-8d50c13766d4",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/git-provider",
+        "test"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 3.537912607192993,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-8d50c13766d4.json",
+      "rawArchive": "product-evidence/m3-8d50c13766d4.zip",
+      "archiveSha256": "c50e0719dcb9f465eac2dba90ed217514f4591dc25ad85683592a1385dad0d54",
+      "summaries": [
+        "Test Files  1 failed | 2 passed (3)",
+        "Tests  1 failed | 16 passed (17)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可",
+        "Error: GITEA_GUIDANCE_ENCODING_UNSUPPORTED"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-8043ff735f76",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/git-provider",
+        "test"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 4.351866960525513,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-8043ff735f76.json",
+      "rawArchive": "product-evidence/m3-8043ff735f76.zip",
+      "archiveSha256": "ac978bd623bbd47b94275fc74912e87c78aab75c14c43d4392a7e1622de96aac",
+      "summaries": [
+        "Test Files  3 passed (3)",
+        "Tests  17 passed (17)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-042dc2f35e13",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "src/delivery-recovery.conformance.test.ts",
+        "-t",
+        "上传"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 18.639605045318604,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-042dc2f35e13.json",
+      "rawArchive": "product-evidence/m3-042dc2f35e13.zip",
+      "archiveSha256": "dcc4a8f67a7f685ea87b52b6b61debc7f978f253e8a23e33bacdcb6d53236dc9",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  3 failed | 10 skipped (13)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > native上传状态/数组/取消/受控下载及health准确Human批准",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > mcp上传状态/数组/取消/受控下载及health准确Human批准",
+        "Error: {\"error\":{\"code\":\"FEATURE_DISABLED\",\"message\":\"WORKMESH_BETA_PLANNING is disabled for this deployment\",\"correlationId\":\"776c13e3-9deb-46c6-ab68-ecd6f936a1bb\",\"details\":{\"feature\":\"WORKMESH_BETA_PLANNING\",\"tier\":\"beta\"},\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi上传状态/数组/取消/受控下载及health准确Human批准",
+        "Error: ARTIFACT_TRANSFER_FAILED"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-c432b005a6af",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "src/delivery-recovery.conformance.test.ts",
+        "-t",
+        "上传"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 25.899189233779907,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-c432b005a6af.json",
+      "rawArchive": "product-evidence/m3-c432b005a6af.zip",
+      "archiveSha256": "bdd570a12e4b00395034aa58ee38e33c63224c3a8a72619cd3b901989f812d89",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 2 passed | 10 skipped (13)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi上传状态/数组/取消/受控下载及health准确Human批准",
+        "Error: ARTIFACT_TRANSFER_FAILED"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-04880e23e073",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 74.37971305847168,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-04880e23e073.json",
+      "rawArchive": "product-evidence/m3-04880e23e073.zip",
+      "archiveSha256": "bd4bb6c67dcc2b2bf4763aa50e0214e46ecd1cd7ca566560712b196c4afc205d",
+      "summaries": [
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+        "@workmesh/git-provider:test:       Tests  17 passed (17)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  212 passed (212)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  75 passed (75)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/mcp:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/mcp:test:  Test Files  1 failed | 3 passed (4)",
+        "@workmesh/mcp:test:       Tests  2 failed | 48 passed (50)",
+        "Tasks:    20 successful, 26 total",
+        "Cached:    6 cached, 26 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-141942aeb8e8",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "src/delivery-recovery.conformance.test.ts",
+        "-t",
+        "pi.*上传"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 11.118449926376343,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-141942aeb8e8.json",
+      "rawArchive": "product-evidence/m3-141942aeb8e8.zip",
+      "archiveSha256": "e1c5220de7836608fb8bd332f748f8822eeb38fce5104ab5f148b340b43f02d6",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 12 skipped (13)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi上传状态/数组/取消/受控下载及health准确Human批准",
+        "Error: ARTIFACT_TRANSFER_FAILED"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-3df828309b51",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "src/delivery-recovery.conformance.test.ts",
+        "-t",
+        "pi.*上传"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 10.814196348190308,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-3df828309b51.json",
+      "rawArchive": "product-evidence/m3-3df828309b51.zip",
+      "archiveSha256": "3a881eb4e1ee8cca5c66b0ad0038e96a0bd365e2619d827b74367be7498b61a2",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 12 skipped (13)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi上传状态/数组/取消/受控下载及health准确Human批准",
+        "Error: ARTIFACT_TRANSFER_FAILED"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-d378f76df2f5",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/mcp",
+        "test"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 4.8422088623046875,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-d378f76df2f5.json",
+      "rawArchive": "product-evidence/m3-d378f76df2f5.zip",
+      "archiveSha256": "453b73bb22878b25b06d6fdb4fc9f3b226b9d56bc18f2aebfeec93428cec9c57",
+      "summaries": [
+        "Test Files  1 failed | 3 passed (4)",
+        "Tests  2 failed | 48 passed (50)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/index.test.ts > WorkMesh MCP adapter > binds every MCP resource and tool to a REST operation policy",
+        "AssertionError: expected [ …(136) ] to deeply equal [ …(137) ]",
+        "FAIL  src/index.test.ts > WorkMesh MCP adapter > uses direct exact-head code_review evidence and keeps signed uploads file-only",
+        "AssertionError: expected 'Publish provenance-bearing delivery e…' to contain 'official structured-review path publi…'"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-b5d9ae714f09",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 2.6729254722595215,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-b5d9ae714f09.json",
+      "rawArchive": "product-evidence/m3-b5d9ae714f09.zip",
+      "archiveSha256": "3ed23caecc37076a825078e55b1a036a0b91d2cf38670c13a9c6149a53d77c50",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-97d046eb0172",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "src/delivery-recovery.conformance.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 138.58790040016174,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-97d046eb0172.json",
+      "rawArchive": "product-evidence/m3-97d046eb0172.zip",
+      "archiveSha256": "dd6af3fd771b0abff56b941eeb5741234b9dd855878befa6b4d78cb6cbf3bd96",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 12 passed (13)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi上传状态/数组/取消/受控下载及health准确Human批准",
+        "AssertionError: promise resolved \"[ { code: 'custom', …(2) } ]\" instead of rejecting"
+      ],
+      "changedSourceDuringCommand": [
+        "OPENAPI.yaml",
+        "apps/agent-runner/src/delivery-transfer.test.ts",
+        "apps/mcp/src/index.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-6069c58531da",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "src/delivery-recovery.conformance.test.ts",
+        "-t",
+        "上传|child|gitea"
+      ],
+      "exit": 255,
+      "elapsedSeconds": 0.9881489276885986,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-6069c58531da.json",
+      "rawArchive": "product-evidence/m3-6069c58531da.zip",
+      "archiveSha256": "48efc5e8941c83155505e79d6999e0a760c70c4f4038f48df658029a7f8b7116",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-35b29417c569",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "generate:runner-skill"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 1.523327350616455,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-35b29417c569.json",
+      "rawArchive": "product-evidence/m3-35b29417c569.zip",
+      "archiveSha256": "d844b56ce8da606c908fa8ba72406e15c8c326746c78370636d3fac153385d26",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "apps/agent-runner/src/workbench-skill-manifest.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-c97b35ee183f",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "generate:runner-skill"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 1.516860008239746,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-c97b35ee183f.json",
+      "rawArchive": "product-evidence/m3-c97b35ee183f.zip",
+      "archiveSha256": "94e506505e3f38e73b69be1b737e9c2ff311367526eca6f9dc9857a9d308b1f8",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "apps/agent-runner/src/workbench-skill-manifest.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-2d335c62f9c6",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "test:integration",
+        "integration/stage3-provider.integration.test.ts",
+        "-t",
+        "逐kind"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 7.731596231460571,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-2d335c62f9c6.json",
+      "rawArchive": "product-evidence/m3-2d335c62f9c6.zip",
+      "archiveSha256": "e440440cafef3da63a7f27f4c3ca4b95769e6c82b781c937e31bb0e6ee26c423",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  3 failed | 26 skipped (29)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > M3 fake逐kind合法checkpoint仅本地finish，纯读重领有界恢复",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > M3 github逐kind合法checkpoint仅本地finish，纯读重领有界恢复",
+        "FAIL  integration/stage3-provider.integration.test.ts > Stage 3 provider webhook worker > M3 gitea逐kind合法checkpoint仅本地finish，纯读重领有界恢复",
+        "AssertionError: expected { status: 'failed', attempt_count: 2 } to deeply equal { status: 'completed', …(1) }"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-a12725c7a926",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 59.183943033218384,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-a12725c7a926.json",
+      "rawArchive": "product-evidence/m3-a12725c7a926.zip",
+      "archiveSha256": "de47ccd070408334442ccae6969b83f2754ebf4c93ba759ddf080532b51a707a",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    3 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-ac5f3bba88c5",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "test:integration",
+        "src/delivery-recovery.conformance.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 32.861878871917725,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-ac5f3bba88c5.json",
+      "rawArchive": "product-evidence/m3-ac5f3bba88c5.zip",
+      "archiveSha256": "bce3432b42aa98c93634f492ae95d44498677cf05fdb6353d30f560241afada3",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  4 failed | 11 passed (15)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi精确action最新read/branch/path正负例与Human终态诊断",
+        "Error: M3 model did not receive tool result",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi上传状态/数组/取消/受控下载及health准确Human批准",
+        "Error: M3 model did not receive tool result",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > 显式review成功→gitea收窄/撤权→原key/body重放拒绝且不重复交付",
+        "error: new row for relation \"provider_connections\" violates check constraint \"provider_connections_gitea_credentials_check\"",
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > pi准确base/path→Git action→独立reviewer→Human批准→终态",
+        "Error: M3 model did not receive tool result"
+      ],
+      "changedSourceDuringCommand": [
+        "apps/worker/integration/stage3-provider.integration.test.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-386c33429993",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "test:integration",
+        "integration/stage3-provider.integration.test.ts",
+        "-t",
+        "逐kind"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 5.692599534988403,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-386c33429993.json",
+      "rawArchive": "product-evidence/m3-386c33429993.zip",
+      "archiveSha256": "04820af7ea066ab2ceebce95b2df728d991cf0f0dae3c32700a0241fc2adb1f1",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  3 passed | 26 skipped (29)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-b1cc9c5a2641",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/db",
+        "test",
+        "src/agent-lock-order-inventory.test.ts"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 4.584361791610718,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-b1cc9c5a2641.json",
+      "rawArchive": "product-evidence/m3-b1cc9c5a2641.zip",
+      "archiveSha256": "8257dc02a319d6f0942ac4d7f0dfed61d27873a8b61fd60ca7720dcb9b1cc068",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  8 passed (8)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "packages/db/src/agent-lock-order-manifest.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-fa507277a258",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 25.09919047355652,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-fa507277a258.json",
+      "rawArchive": "product-evidence/m3-fa507277a258.zip",
+      "archiveSha256": "7aa1ffa59910ef9efce5f1631459c8eb6a89633b914b62f8fda62537ba64d5f5",
+      "summaries": [
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+        "@workmesh/git-provider:test:       Tests  17 passed (17)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  212 passed (212)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-runner:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/agent-runner:test:  Test Files  2 failed | 12 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  2 failed | 73 passed (75)",
+        "Tasks:    14 successful, 26 total",
+        "Cached:    8 cached, 26 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-60d567f4aadd",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:route-policy"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 11.588368892669678,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-60d567f4aadd.json",
+      "rawArchive": "product-evidence/m3-60d567f4aadd.zip",
+      "archiveSha256": "c2dd2f120fdc5f96feb9ef585a430e19891ab83fea0965d475e0a6d0d9fa4582",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-4712dd766ce1",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:workmesh-skill"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 5.514451742172241,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-4712dd766ce1.json",
+      "rawArchive": "product-evidence/m3-4712dd766ce1.zip",
+      "archiveSha256": "8e0067b042f686ada27f6187e092afdd79a3c1a80719e729c3cf5b6e9f316e06",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-c56b8e9b864c",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:runner-skill"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 3.168992280960083,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-c56b8e9b864c.json",
+      "rawArchive": "product-evidence/m3-c56b8e9b864c.zip",
+      "archiveSha256": "b7a68dd63ec0897f1f82fb3ee9968f9b7aae19311027911e99b6c3f14910ab6e",
+      "summaries": [],
+      "failures": [
+        "Error: Pi Runner Skill manifest is stale"
+      ],
+      "changedSourceDuringCommand": [
+        "AGENT_PROTOCOL.md",
+        "apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+        "apps/agent-runner/src/workmesh-tools.test.ts",
+        "docs/AGENT_COLLABORATION_CLIENT_PROFILE.md",
+        "docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md",
+        "docs/agent-runner.md"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-8d7f9a20e87c",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "generate:runner-skill"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 1.8667364120483398,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-8d7f9a20e87c.json",
+      "rawArchive": "product-evidence/m3-8d7f9a20e87c.zip",
+      "archiveSha256": "4ce445077ce23232dca30661335a429ae1ba99ff3d0e8a7fba3dc7fd316e5988",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "apps/agent-runner/src/workbench-skill-manifest.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-c75760116ab7",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 185.5834038257599,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-c75760116ab7.json",
+      "rawArchive": "product-evidence/m3-c75760116ab7.zip",
+      "archiveSha256": "da899f7c7e104ccf308dd62ce0768770616a8d526c12441eb0cb861f6adc22b6",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    3 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "AGENT_PROTOCOL.md",
+        "apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+        "apps/agent-runner/src/workbench-skill-manifest.ts",
+        "apps/agent-runner/src/workmesh-tools.test.ts",
+        "docs/AGENT_COLLABORATION_CLIENT_PROFILE.md",
+        "docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md",
+        "docs/agent-runner.md",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-670afd5a2684",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 237.1614248752594,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-670afd5a2684.json",
+      "rawArchive": "product-evidence/m3-670afd5a2684.zip",
+      "archiveSha256": "1121ef1b538b7a65329b53178b26dd07d3baf857a0472637a83e9e74b5a85000",
+      "summaries": [
+        "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+        "@workmesh/git-provider:test:       Tests  17 passed (17)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  212 passed (212)",
+        "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  75 passed (75)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/api:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/api:test:  Test Files  1 failed | 33 passed (34)",
+        "@workmesh/api:test:       Tests  2 failed | 178 passed (180)",
+        "Tasks:    31 successful, 32 total",
+        "Cached:    13 cached, 32 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "AGENT_PROTOCOL.md",
+        "apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+        "apps/agent-runner/src/workbench-skill-manifest.ts",
+        "apps/agent-runner/src/workmesh-tools.test.ts",
+        "docs/AGENT_COLLABORATION_CLIENT_PROFILE.md",
+        "docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md",
+        "docs/agent-runner.md",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-2332385499b0",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:runner-skill"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 1.6261651515960693,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-2332385499b0.json",
+      "rawArchive": "product-evidence/m3-2332385499b0.zip",
+      "archiveSha256": "84349f5968999863865b8892f9d8efb8d54d2f4472cb942875a71935820ba2c3",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-c8a72667490e",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "ci:test"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 2.279510974884033,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-c8a72667490e.json",
+      "rawArchive": "product-evidence/m3-c8a72667490e.zip",
+      "archiveSha256": "d3e704b063a33327b0336677e18003ff5ee4274fda5a29feaa6b5c77f661cd62",
+      "summaries": [
+        "# tests 16",
+        "# pass 16",
+        "# fail 0",
+        "# skipped 0"
+      ],
+      "failures": [
+        "# fail 0"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-c32ee1ae2da3",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/agent-runner",
+        "test",
+        "src/workmesh-tools.test.ts",
+        "src/delivery-transfer.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 6.448433876037598,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-c32ee1ae2da3.json",
+      "rawArchive": "product-evidence/m3-c32ee1ae2da3.zip",
+      "archiveSha256": "fbf575a8cb654d8270dd6986f2fe26519c8e2d02fd77a55b1d15327b12250a61",
+      "summaries": [
+        "Test Files  1 failed | 1 passed (2)",
+        "Tests  1 failed | 23 passed (24)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/workmesh-tools.test.ts > Pi WorkMesh tools > M3未配置Artifact store明确拒绝，零上传意图或下载资料请求",
+        "AssertionError: expected [Function] to throw error including 'ARTIFACT_STORE_NOT_CONFIGURED' but got '[\\n  {\\n    \"code\": \"invalid_type\",\\n…'"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-def726328fe0",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "ci:validate"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 3.1364262104034424,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-def726328fe0.json",
+      "rawArchive": "product-evidence/m3-def726328fe0.zip",
+      "archiveSha256": "92d2c647d4ac8b33a15d1cf8b886bcc30150dc3638695d5c039e59b2440ce4ff",
+      "summaries": [
+        "# tests 15",
+        "# pass 15",
+        "# fail 0",
+        "# skipped 0"
+      ],
+      "failures": [
+        "# fail 0"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-9e77667f440c",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 49.82536005973816,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-9e77667f440c.json",
+      "rawArchive": "product-evidence/m3-9e77667f440c.zip",
+      "archiveSha256": "cfac12c27f219802f5cf0889346c2bb951684954a9145c7c4571c041c84f7e81",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    11 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "apps/api/src/live-read-authorization.test.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-4bc5b6a85993",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "test",
+        "src/live-read-authorization.test.ts"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 3.825298309326172,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-4bc5b6a85993.json",
+      "rawArchive": "product-evidence/m3-4bc5b6a85993.zip",
+      "archiveSha256": "3d01384f4be329e581784a211a0cb3cbcd9266a970ef82bc953ef2b2a18631b4",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 8 passed (9)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/live-read-authorization.test.ts > live paged-read authorization > keeps every flagged final paged SQL statement bound to a live predicate",
+        "AssertionError: missing section end: export type RepositoryRow: expected -1 to be greater than 6949"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-3a0d17e1f51a",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 54.86402606964111,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-3a0d17e1f51a.json",
+      "rawArchive": "product-evidence/m3-3a0d17e1f51a.zip",
+      "archiveSha256": "464118d9cbec256a0d4f1661f96e1ebd3111d9ab413e21440062b0965d98c3c7",
+      "summaries": [
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+        "@workmesh/git-provider:test:       Tests  17 passed (17)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  212 passed (212)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  76 passed (76)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  180 passed (180)",
+        "Tasks:    32 successful, 32 total",
+        "Cached:    25 cached, 32 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-e4b3253b29a6",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/git-provider",
+        "test"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 4.030663251876831,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-e4b3253b29a6.json",
+      "rawArchive": "product-evidence/m3-e4b3253b29a6.zip",
+      "archiveSha256": "3d7c89041507121c07a98b9f527812f498e83c9ec243254b10e61a471afa58a0",
+      "summaries": [
+        "Test Files  3 passed (3)",
+        "Tests  17 passed (17)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-32a1ad74f676",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:integration"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 971.620824098587,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-32a1ad74f676.json",
+      "rawArchive": "product-evidence/m3-32a1ad74f676.zip",
+      "archiveSha256": "f537459fb5401d0bd559430b4ea4663fcb16fd97d5e331eb38f957644b915f63",
+      "summaries": [
+        "Test Files  17 passed (17)",
+        "Tests  81 passed (81)",
+        "Test Files  27 passed (27)",
+        "Tests  275 passed | 1 skipped (276)",
+        "Test Files  1 failed | 3 passed (4)",
+        "Tests  1 failed | 55 passed (56)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > 显式review成功→gitea收窄/撤权→原key/body重放拒绝且不重复交付",
+        "error: column \"base_url\" of relation \"provider_connections\" does not exist"
+      ],
+      "changedSourceDuringCommand": [
+        "AGENT_PROTOCOL.md",
+        "apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+        "apps/agent-runner/src/workbench-skill-manifest.ts",
+        "apps/agent-runner/src/workmesh-tools.test.ts",
+        "apps/api/src/live-read-authorization.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "docs/AGENT_COLLABORATION_CLIENT_PROFILE.md",
+        "docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md",
+        "docs/agent-runner.md",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-94fe59a6da6b",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 40.66973686218262,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-94fe59a6da6b.json",
+      "rawArchive": "product-evidence/m3-94fe59a6da6b.zip",
+      "archiveSha256": "86671a3d86510cb3ce39922466065118205cb3df15a7582f8b706180062722bd",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    12 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-d6b859ee0988",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 46.631256341934204,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-d6b859ee0988.json",
+      "rawArchive": "product-evidence/m3-d6b859ee0988.zip",
+      "archiveSha256": "dda0e50d6edde0125ada492c4a6675de9f12c6a599e29d1d3017d80e5171b156",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    13 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-bcad1483a8bf",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 251.8492453098297,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-bcad1483a8bf.json",
+      "rawArchive": "product-evidence/m3-bcad1483a8bf.zip",
+      "archiveSha256": "1d03608af51876a158a7b104a2cd715c730c9a7ebae0fa03ca28dd0830c38a28",
+      "summaries": [
+        "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+        "@workmesh/git-provider:test:       Tests  17 passed (17)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  213 passed (213)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  76 passed (76)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  180 passed (180)",
+        "Tasks:    32 successful, 32 total",
+        "Cached:    6 cached, 32 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-f39a0497eb60",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:integration"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 492.15646052360535,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-f39a0497eb60.json",
+      "rawArchive": "product-evidence/m3-f39a0497eb60.zip",
+      "archiveSha256": "56646100c331e7d238f2abc8fc8193d4ddaad68955fe16d79a1a5f2182e6ed1e",
+      "summaries": [
+        "Test Files  17 passed (17)",
+        "Tests  81 passed (81)",
+        "Test Files  1 failed | 26 passed (27)",
+        "Tests  1 failed | 275 passed | 1 skipped (277)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3六kind五status真实GET白名单投影，合法checkpoint与未知效果分别确认且零业务写",
+        "error: inconsistent types deduced for parameter $10"
+      ],
+      "changedSourceDuringCommand": [
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts",
+        "packages/contracts/src/child-session-contracts.test.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-628e71101a97",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 56.639039039611816,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-628e71101a97.json",
+      "rawArchive": "product-evidence/m3-628e71101a97.zip",
+      "archiveSha256": "2c426f5db547d6966de4575173414f10dc4b920e91d1588ea042e059fa6d0766",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    4 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "apps/api/integration/stage3-delivery.integration.test.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-b014099e5076",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage3-delivery.integration.test.ts",
+        "-t",
+        "M3六kind五status"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 8.786796569824219,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-b014099e5076.json",
+      "rawArchive": "product-evidence/m3-b014099e5076.zip",
+      "archiveSha256": "0718d3f7b5a8602fadd4451f42d0e9d5b41341d686305af6e8cadd092881e975",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed | 48 skipped (49)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-043560b655a1",
+      "argv": [
+        "git",
+        "diff",
+        "ef4cb5e1458d911d98433c443dba46e6c224caa0",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 2.0447838306427,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791633484.2670765,
+      "endedUnix": 1791633486.3118613,
+      "ownerPid": 50856,
+      "childPid": 10108,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-043560b655a1.json",
+      "rawArchive": "product-evidence/m3-043560b655a1.zip",
+      "archiveSha256": "f21236c43265e953419b5849008298fe8e1719f7b0ac98188fc4411ce82499fe",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-d2cb9f4d7238",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/delivery-recovery.conformance.test.ts",
+        "-t",
+        "显式repo reviewer父预算"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 8.917035818099976,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791633633.7641978,
+      "endedUnix": 1791633642.6812344,
+      "ownerPid": 27400,
+      "childPid": 35032,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-d2cb9f4d7238.json",
+      "rawArchive": "product-evidence/m3-d2cb9f4d7238.zip",
+      "archiveSha256": "fc9f264b43697f8f4f43fe6c3f399eb6323bf85a95061d9273b1c7a633d1969c",
+      "summaries": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 16 skipped (17)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        "FAIL  src/delivery-recovery.conformance.test.ts > M3 Native HTTP/MCP/Pi精确Git与review闭环 > 显式repo reviewer父预算100/child60/review40：预算满及普通子完成后合法旧回执不再admission"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-1e58e5f9fa9e",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/contracts",
+        "test"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 8.75087857246399,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791633642.5368714,
+      "endedUnix": 1791633651.2877505,
+      "ownerPid": 18396,
+      "childPid": 43564,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-1e58e5f9fa9e.json",
+      "rawArchive": "product-evidence/m3-1e58e5f9fa9e.zip",
+      "archiveSha256": "d9b407e3d908b2f50edd1c4bdfd0c82afd538ddf9e2b89d66ff50e085ccec68d",
+      "summaries": [
+        "Test Files  29 passed (29)",
+        "Tests  213 passed (213)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-3682969a7188",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/delivery-recovery.conformance.test.ts",
+        "-t",
+        "显式repo reviewer父预算"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 8.790324687957764,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791633719.482123,
+      "endedUnix": 1791633728.2724485,
+      "ownerPid": 33672,
+      "childPid": 44592,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-3682969a7188.json",
+      "rawArchive": "product-evidence/m3-3682969a7188.zip",
+      "archiveSha256": "a48b428eccfeea24d6a7b4e93aaf0ce481c7b3614327e58565176161003ae2ad",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed | 16 skipped (17)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-1352d6bbec36",
+      "argv": [
+        "python",
+        "scripts/generate-agent-discovery.py"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 1.7082552909851074,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791633788.1681113,
+      "endedUnix": 1791633789.876367,
+      "ownerPid": 48800,
+      "childPid": 50236,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-1352d6bbec36.json",
+      "rawArchive": "product-evidence/m3-1352d6bbec36.zip",
+      "archiveSha256": "69a9edc83bb2a0a08352fd84f7ebfbb3bbec6ecbba26101569f316e9aae9e031",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-e3327659b791",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 77.77537775039673,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791633798.0250754,
+      "endedUnix": 1791633875.8004541,
+      "ownerPid": 40892,
+      "childPid": 51328,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-e3327659b791.json",
+      "rawArchive": "product-evidence/m3-e3327659b791.zip",
+      "archiveSha256": "b7b75448dc2d02cfc3de44eac43eda56e35cbe69fa47c937252034d66e727fd2",
+      "summaries": [
+        "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+        "@workmesh/git-provider:test:       Tests  17 passed (17)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  213 passed (213)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  76 passed (76)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/mcp:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/mcp:test:  Test Files  1 failed | 3 passed (4)",
+        "@workmesh/mcp:test:       Tests  1 failed | 49 passed (50)",
+        "Tasks:    21 successful, 26 total",
+        "Cached:    8 cached, 26 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-807fae80f9fd",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 95.95237874984741,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791633813.6863139,
+      "endedUnix": 1791633909.638693,
+      "ownerPid": 49176,
+      "childPid": 18328,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-807fae80f9fd.json",
+      "rawArchive": "product-evidence/m3-807fae80f9fd.zip",
+      "archiveSha256": "309a6f615f49841aa1ac9bd502ac3bc63ff8874ad88bb257b772097db5a2dbad",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    4 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-5104aebb119a",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage3-provider.integration.test.ts",
+        "-t",
+        "M3逐次发送事务"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 5.867593288421631,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791633918.9976602,
+      "endedUnix": 1791633924.8652549,
+      "ownerPid": 41520,
+      "childPid": 8484,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-5104aebb119a.json",
+      "rawArchive": "product-evidence/m3-5104aebb119a.zip",
+      "archiveSha256": "d4afd2b2fa3bfd5c4aa52aa90b42a9b591533bd86ba59ca468e924d7411057a7",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed | 30 skipped (31)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-9f6264052d42",
+      "argv": [
+        "python",
+        "scripts/generate-agent-discovery.py"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 1.8323509693145752,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634009.9052856,
+      "endedUnix": 1791634011.7376375,
+      "ownerPid": 3176,
+      "childPid": 27080,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-9f6264052d42.json",
+      "rawArchive": "product-evidence/m3-9f6264052d42.zip",
+      "archiveSha256": "b48e743dc577debc08d4ff9e56383a5ff109cf175bf7fb664acdc4192b66f657",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-24dd1b2f816c",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/mcp",
+        "test"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 5.716725826263428,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634023.650657,
+      "endedUnix": 1791634029.3673832,
+      "ownerPid": 50300,
+      "childPid": 27504,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-24dd1b2f816c.json",
+      "rawArchive": "product-evidence/m3-24dd1b2f816c.zip",
+      "archiveSha256": "703a77b8b1d18913959934fa1e59f3f92b41d856cc0a69cd1cd4b0100b49460a",
+      "summaries": [
+        "Test Files  4 passed (4)",
+        "Tests  50 passed (50)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-0f4709d2e978",
+      "argv": [
+        "python",
+        "scripts/generate-agent-discovery.py"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 1.8241009712219238,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634161.1086035,
+      "endedUnix": 1791634162.9327052,
+      "ownerPid": 19636,
+      "childPid": 25716,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-0f4709d2e978.json",
+      "rawArchive": "product-evidence/m3-0f4709d2e978.zip",
+      "archiveSha256": "816141c74dae921c5f6c0419e160e0ea6cb4a57db6e85370c9fde01fc415cd80",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-16ebc3f73ad2",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 203.50458812713623,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634169.4008303,
+      "endedUnix": 1791634372.9054196,
+      "ownerPid": 40736,
+      "childPid": 47340,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-16ebc3f73ad2.json",
+      "rawArchive": "product-evidence/m3-16ebc3f73ad2.zip",
+      "archiveSha256": "69e610ba6c83792129f8966052918bde21452cc000ef35c88f68cffe5e5bda16",
+      "summaries": [
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+        "@workmesh/git-provider:test:       Tests  17 passed (17)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  213 passed (213)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  76 passed (76)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  180 passed (180)",
+        "Tasks:    32 successful, 32 total",
+        "Cached:    0 cached, 32 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-0230adef6a2a",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:integration"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 1084.5841739177704,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "receipt": "product-evidence/m3-0230adef6a2a.json",
+      "rawArchive": "product-evidence/m3-0230adef6a2a.zip",
+      "archiveSha256": "cf48494a290681dd2f96cfb73a877acee5362e90deb41017722b7630f82f40b2",
+      "summaries": [
+        "Test Files  17 passed (17)",
+        "Tests  81 passed (81)",
+        "Test Files  27 passed (27)",
+        "Tests  276 passed | 1 skipped (277)",
+        "Test Files  4 passed (4)",
+        "Tests  57 passed (57)",
+        "Test Files  8 passed | 1 skipped (9)",
+        "Tests  138 passed | 1 skipped (139)",
+        "Test Files  1 skipped (1)",
+        "Tests  1 skipped (1)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [
+        "apps/api/src/delivery/repository-access.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "docs/plan/agent-mcp-m3/product-discovery-decisions.json",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts",
+        "packages/conformance/src/delivery-recovery.fixture.ts",
+        "packages/contracts/src/route-policy.ts",
+        "packages/domain/src/delivery-scope.ts",
+        "scripts/generate-agent-discovery.py"
+      ],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-f2c2631b3d89",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:e2e"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 319.665812253952,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634402.5538812,
+      "endedUnix": 1791634722.2196944,
+      "ownerPid": 51624,
+      "childPid": 13188,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-f2c2631b3d89.json",
+      "rawArchive": "product-evidence/m3-f2c2631b3d89.zip",
+      "archiveSha256": "e61b05ef76e6b6809a57d585132591b7713151b807e25260e8e387f0d3fe081a",
+      "summaries": [
+        "@workmesh/web:test:e2e:   70 passed (5.2m)",
+        "Tasks:    3 successful, 3 total",
+        "Cached:    0 cached, 3 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-ce8b651cabc0",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage3-delivery.integration.test.ts"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 44.319063663482666,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634733.90989,
+      "endedUnix": 1791634778.2289546,
+      "ownerPid": 49332,
+      "childPid": 50584,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-ce8b651cabc0.json",
+      "rawArchive": "product-evidence/m3-ce8b651cabc0.zip",
+      "archiveSha256": "3d5d96add92fef33d7b65eb8089832bedc52e6e087fb333a4f0551824ad0a5bc",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  49 passed (49)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-817c5199d4ae",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 68.20671153068542,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634751.26883,
+      "endedUnix": 1791634819.4755428,
+      "ownerPid": 33564,
+      "childPid": 48980,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-817c5199d4ae.json",
+      "rawArchive": "product-evidence/m3-817c5199d4ae.zip",
+      "archiveSha256": "6dd05efa2ad66d25d0776d330589ccc487229a949658f6a21208183d9e5c993f",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    0 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-8f242b81228f",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 68.86983442306519,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634829.9686136,
+      "endedUnix": 1791634898.838449,
+      "ownerPid": 38908,
+      "childPid": 46500,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-8f242b81228f.json",
+      "rawArchive": "product-evidence/m3-8f242b81228f.zip",
+      "archiveSha256": "29fdb20c6f202791a9f9eaa1c42a6a3977d88082f6affdada660a99018660df7",
+      "summaries": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    0 cached, 18 total"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-aca09d864a2a",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:route-policy"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 3.7452688217163086,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634908.5542505,
+      "endedUnix": 1791634912.29952,
+      "ownerPid": 38120,
+      "childPid": 37312,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-aca09d864a2a.json",
+      "rawArchive": "product-evidence/m3-aca09d864a2a.zip",
+      "archiveSha256": "4ee1ff65f4e86439721bde2b3dbcb7ae358500d521611ab3f5d2495bb443a7fc",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-06b3cc796d7e",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:workmesh-skill"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 2.6020588874816895,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634923.0170732,
+      "endedUnix": 1791634925.619133,
+      "ownerPid": 15232,
+      "childPid": 14692,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-06b3cc796d7e.json",
+      "rawArchive": "product-evidence/m3-06b3cc796d7e.zip",
+      "archiveSha256": "af9a26e8ee695d18a3bd9317e2a104fb429bed591a68e66669feca2a0366bcf0",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-29f75384c7de",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:runner-skill"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 2.359466552734375,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634936.7601771,
+      "endedUnix": 1791634939.1196444,
+      "ownerPid": 19732,
+      "childPid": 48980,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-29f75384c7de.json",
+      "rawArchive": "product-evidence/m3-29f75384c7de.zip",
+      "archiveSha256": "8f9369984b3a9aa0b31302d548e215dba89378381d12af520522c3103e0b6eee",
+      "summaries": [],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-d85603dbcfd5",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "ci:test"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 2.9706475734710693,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634951.2905986,
+      "endedUnix": 1791634954.2612472,
+      "ownerPid": 51652,
+      "childPid": 38336,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-d85603dbcfd5.json",
+      "rawArchive": "product-evidence/m3-d85603dbcfd5.zip",
+      "archiveSha256": "69ba78da2664a797a654653d288e26adfed94db734050edf911aba450598ecd0",
+      "summaries": [
+        "# tests 16",
+        "# pass 16",
+        "# fail 0",
+        "# skipped 0"
+      ],
+      "failures": [
+        "# fail 0"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-a6b46343ea6f",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "ci:validate"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 4.55976939201355,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634967.0322511,
+      "endedUnix": 1791634971.5920215,
+      "ownerPid": 38220,
+      "childPid": 40540,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-a6b46343ea6f.json",
+      "rawArchive": "product-evidence/m3-a6b46343ea6f.zip",
+      "archiveSha256": "4fe1c83c9869b6a8424eda8012ad91c388856188cc9208f84d012132e208cb9d",
+      "summaries": [
+        "# tests 15",
+        "# pass 15",
+        "# fail 0",
+        "# skipped 0"
+      ],
+      "failures": [
+        "# fail 0"
+      ],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-20fc715e571e",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/delivery-recovery.conformance.test.ts"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 193.88221716880798,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791634791.1340933,
+      "endedUnix": 1791634985.016312,
+      "ownerPid": 20640,
+      "childPid": 4980,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-20fc715e571e.json",
+      "rawArchive": "product-evidence/m3-20fc715e571e.zip",
+      "archiveSha256": "8259ea86f14160a9241d2b8636fb8233e9088463864e1dbf55b275ae589744dc",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  17 passed (17)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    },
+    {
+      "id": "m3-ea7e711e8e57",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage3-provider.integration.test.ts"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 195.5838053226471,
+      "runtime": "{\"version\":\"v22.19.0\",\"execPath\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a1246e-406c-7593-ada6-66996634434b\\\\.tmp\\\\m3-tools\\\\node-v22.19.0-win-x64\\\\node.exe\"}",
+      "startedUnix": 1791635152.7685878,
+      "endedUnix": 1791635348.3523958,
+      "ownerPid": 41400,
+      "childPid": 50356,
+      "environment": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.13.15",
+        "pnpm": "9.15.4；以packageManager及实际pnpm版本回执为准"
+      },
+      "receipt": "product-evidence/m3-ea7e711e8e57.json",
+      "rawArchive": "product-evidence/m3-ea7e711e8e57.zip",
+      "archiveSha256": "093a11e3885bb6a79311440b2859140eccec9e102b32979c551b0bf837fb6b40",
+      "summaries": [
+        "Test Files  1 passed (1)",
+        "Tests  31 passed (31)"
+      ],
+      "failures": [],
+      "changedSourceDuringCommand": [],
+      "fingerprintReceipt": "原JSON保存before/after全量SHA256；包含不等于该命令执行了所有文件"
+    }
+  ],
+  "historicalBindingLimit": "早期fingerprint排除docs/plan；中期仅纳入M3 product-discovery-decisions.json，末期纳入四批冻结发现输入。各run原JSON字段为准。完整历史规划原件使用source-snapshot.zip，不冒早期运行已逐字绑定发现增量。",
+  "internalReviewLimit": "内部复核的旧HEAD及未提交字节没有逐文件快照；不得推定为本候选产品测试或正式_oY审查。"
+}

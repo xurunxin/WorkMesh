@@ -862,13 +862,14 @@ describe('live paged-read authorization', () => {
   })
 
   it('keeps every flagged final paged SQL statement bound to a live predicate', async () => {
-    const [server, agents, collaboration, inbox, delivery, operations] = await Promise.all([
+    const [server, agents, collaboration, inbox, delivery, operations, repositoryAccess] = await Promise.all([
       readFile(new URL('./server.ts', import.meta.url), 'utf8'),
       readFile(new URL('./agent/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./collaboration/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./inbox/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./delivery/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./operations/routes.ts', import.meta.url), 'utf8'),
+      readFile(new URL('./delivery/repository-access.ts', import.meta.url), 'utf8'),
     ])
     const protectedSections = [
       section(server,
@@ -901,9 +902,9 @@ describe('live paged-read authorization', () => {
       section(inbox,
         'function listAgentInbox',
         'export function registerInboxRoutes'),
-      section(delivery,
+      section(repositoryAccess,
         'function applicableAgentRepositoryContexts',
-        'async function assertAgentRepositoryWrite'),
+        '\n}'),
       section(operations,
         "app.get('/api/v1/projects/:id/health'",
         "app.get('/api/v1/automation-rules'"),
@@ -925,7 +926,7 @@ describe('live paged-read authorization', () => {
   })
 
   it('audits all 25 Agent-readable routes derived from the 28-route pagination inventory', async () => {
-    const [server, agents, collaboration, inbox, delivery, operations, recovery, inventory] = await Promise.all([
+    const [server, agents, collaboration, inbox, delivery, operations, recovery, inventory, repositoryAccess] = await Promise.all([
       readFile(new URL('./server.ts', import.meta.url), 'utf8'),
       readFile(new URL('./agent/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./collaboration/routes.ts', import.meta.url), 'utf8'),
@@ -934,6 +935,7 @@ describe('live paged-read authorization', () => {
       readFile(new URL('./operations/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./recovery/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./pagination-inventory.test.ts', import.meta.url), 'utf8'),
+      readFile(new URL('./delivery/repository-access.ts', import.meta.url), 'utf8'),
     ])
     const pagedRoutes = [...inventory.matchAll(/^\s+'(\/api\/v1\/[^']+)',\s*$/gm)]
       .map(match => match[1]!)
@@ -1043,7 +1045,8 @@ describe('live paged-read authorization', () => {
       }],
       ['/api/v1/repositories', {
         fileName: 'delivery/routes.ts',
-        source: delivery,
+        // Keep traversing the imported final-SQL helper after its extraction.
+        source: `${delivery}\n${repositoryAccess}`,
         authorization: { calls: ['liveSessionReadPredicate'] },
         query: 'manual-prepared',
       }],
