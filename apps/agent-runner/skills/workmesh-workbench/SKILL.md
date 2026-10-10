@@ -52,4 +52,3 @@ Room metadata 不授正文读取权。使用本人 Inbox 的 metadata→claim→
 
 普通 child 使用有限能力。reviewer 不拥有 `plan:write`，不能发布 Plan；只能发布 `code_review` Artifact，并必须本人发送 Room `review_result`。Artifact 应包含审查 metadata 或真实引用，`noArtifactReason` 或 structured review 不能替代双证据。父用 `workmesh_list_child_sessions` 确认所有 required child 已 completed；其它每种状态都阻止父完成并返回准确 IDs。父终态或撤权不能继续读取子状态，Stop/pause 优先；父 Stop 不表示子已自动停止。
 `workmesh_fail_session` 只请求准确自身 Session 的失败。它与 completion/wait 互斥并关闭后续模型工具；宿主先提交 failed Turn/Attempt，再执行原 `/fail` 命令。两事务之间崩溃或第二个响应不明没有自动恢复，Turn failed 不能证明 Session failed。Stop/撤权优先；后步拒绝不重做 settle 或 Stop cleanup。核查实际 Session 状态并保留原请求 key/revision 与拒绝/不明事实。
-

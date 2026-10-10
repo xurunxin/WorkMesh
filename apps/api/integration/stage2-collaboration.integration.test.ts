@@ -1,6 +1,8 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { applyMigrations, createDb, opaqueToken, tokenHash } from '@workmesh/db'
+import { applyMigrations, createDb, opaqueToken, tokenHash, admitAutomationOccurrence, withTx } from '@workmesh/db'
+import { loadFeatureConfig } from '@workmesh/config'
+import { createAutomationWorker } from '../../worker/src/automation.js'
 import { buildApp } from '../src/server.js'
 import { seedAgentSessionBearer } from './agent-session-test-credentials.js'
 
@@ -639,6 +641,66 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(results.map(row=>row.statusCode).sort()).toEqual([200,409])
     expect((await db.query('SELECT count(*)::int AS count FROM room_message_response_resolutions WHERE message_id=$1',[messageId])).rows[0]).toEqual({count:1})
     expect((await db.query('SELECT status FROM inbox_items WHERE id=$1',[inbox.id])).rows[0]).toEqual({status:'resolved'})
+  })
+
+  it('M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界', async () => {
+    const f=await makeFixture()
+    const graphSql="SELECT pg_advisory_xact_lock(hashtextextended('workmesh-planning:' || $1::text,0))"
+    const hold=async(label:string,operation:()=>Promise<Response>,sql=graphSql,args:unknown[]=[f.workspaceId])=>{
+      const gate=await db.connect();let pending:Promise<Response>|undefined
+      try {
+        await gate.query('BEGIN');await gate.query(sql,args)
+        const holder=(await gate.query('SELECT pg_backend_pid() AS pid')).rows[0]!.pid as number
+        pending=operation();let waiting:Array<{pid:number;query:string}>=[]
+        const deadline=Date.now()+10000
+        while(Date.now()<deadline) {
+          waiting=(await db.query('SELECT pid,query FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))',[holder])).rows
+          if(waiting.length)break
+          await new Promise(resolve=>setTimeout(resolve,10))
+        }
+        expect(waiting.length,label).toBe(1)
+        expect(waiting[0]!.query,label).toContain(sql===graphSql?'workmesh-planning':'FOR KEY SHARE')
+        const held=(await db.query("SELECT c.relname,l.mode FROM pg_locks l JOIN pg_class c ON c.oid=l.relation WHERE l.pid=$1 AND l.granted AND c.relname IN ('teams','work_items','projects','project_milestones','agent_sessions','delegations')",[waiting[0]!.pid])).rows
+        expect(held,label).toEqual([])
+        console.log(JSON.stringify({m2GraphEntry:label,holder,waiting,heldRankedRelations:held}))
+        await gate.query('COMMIT');return await pending
+      } finally {await gate.query('ROLLBACK');gate.release();await Promise.allSettled([pending].filter((x):x is Promise<Response>=>Boolean(x)))}
+    }
+    const project=(await humanCall(f.human,'POST','/api/v1/projects',{teamId:f.teamId,name:'Graph lock project'})).json<{id:string}>()
+    const created=await hold('POST work-items',()=>humanCall(f.human,'POST','/api/v1/work-items',{teamId:f.teamId,title:'Graph lock item',statusId:f.readyId,projectId:project.id,responsibleHumanActorId:f.human.actorId}))
+    expect(created.statusCode).toBe(200);const item=created.json<{id:string;revision:number}>()
+    expect((await hold('PATCH work-items',()=>humanCall(f.human,'PATCH',`/api/v1/work-items/${item.id}`,{title:'Graph lock edited'},{'if-match':`"revision-${item.revision}"`}))).statusCode).toBe(200)
+    const milestone=(await hold('POST milestone',()=>humanCall(f.human,'POST',`/api/v1/projects/${project.id}/milestones`,{name:'Graph lock milestone'}))).json<{id:string;revision:number}>()
+    expect((await hold('PATCH milestone',()=>humanCall(f.human,'PATCH',`/api/v1/milestones/${milestone.id}`,{name:'Graph lock changed'},{'if-match':`"revision-${milestone.revision}"`}))).statusCode).toBe(200)
+    expect((await hold('DELETE milestone',()=>humanCall(f.human,'DELETE',`/api/v1/milestones/${milestone.id}`,undefined,{'if-match':`"revision-${milestone.revision+1}"`}))).statusCode).toBe(200)
+    const relation=(await hold('POST relation',()=>humanCall(f.human,'POST',`/api/v1/work-items/${item.id}/relations`,{targetWorkItemId:f.workItemId,kind:'related'}))).json<{id:string;revision:number}>()
+    expect((await hold('DELETE relation',()=>humanCall(f.human,'DELETE',`/api/v1/work-items/${item.id}/relations/${relation.id}`,undefined,{'if-match':`"revision-${relation.revision}"`}))).statusCode).toBe(200)
+    expect((await hold('DELETE work-items',()=>humanCall(f.human,'DELETE',`/api/v1/work-items/${item.id}`,undefined,{'if-match':`"revision-${item.revision+1}"`}))).statusCode).toBe(200)
+    const action={type:'create_work_item',parameters:{teamId:f.teamId,title:'M2 real Worker graph write'}}
+    const rule=(await db.query('INSERT INTO automation_rules(workspace_id,team_id,name,created_by_actor_id) VALUES($1,$2,$3,$4) RETURNING id',[f.workspaceId,f.teamId,'M2 graph race',f.human.actorId])).rows[0]!.id as string
+    const version=(await db.query("INSERT INTO automation_rule_versions(rule_id,version,trigger,actions,max_attempts,created_by_actor_id) VALUES($1,1,$2,$3,3,$4) RETURNING id",[rule,{type:'event',eventTypes:['work_item.created']},JSON.stringify([action]),f.human.actorId])).rows[0]!.id as string
+    await db.query('UPDATE automation_rules SET current_version_id=$1 WHERE id=$2',[version,rule])
+    const run=await withTx(db,tx=>admitAutomationOccurrence(tx,{meta:{workspaceId:f.workspaceId,actorId:f.human.actorId,correlationId:randomUUID()},ruleId:rule,occurrenceKey:`event:${randomUUID()}`,payload:{},dryRun:false,authorization:{kind:'trusted_worker'}}))
+    const worker=createAutomationWorker({db,workerId:`m2-graph-${randomUUID()}`,features:loadFeatureConfig({WORKMESH_EXPERIMENTAL_AUTOMATION:'true'})})
+    const effect=(await worker.claimEffects()).find(row=>row.runId===run.id)!
+    expect(effect).toBeDefined()
+    const raced=await m2Race('http-versus-real-automation-graph',graphSql,[f.workspaceId],
+      ()=>humanCall(f.human,'POST','/api/v1/work-items',{teamId:f.teamId,title:'HTTP graph competitor',statusId:f.readyId,responsibleHumanActorId:f.human.actorId}),
+      async()=>{await worker.executeEffect(effect);const state=(await db.query('SELECT status,last_error FROM automation_effects WHERE id=$1',[effect.id])).rows[0]!;return {statusCode:200,headers:{},json:<T>()=>state as T}})
+    expect(raced[0]!.statusCode).toBe(200);expect(raced[1]!.json()).toMatchObject({status:'completed',last_error:null})
+    expect((await db.query('SELECT count(*)::int AS count FROM work_items WHERE title=$1',[action.parameters.title])).rows[0]).toEqual({count:1})
+    expect((await hold('workspace exclusive blocks before graph',()=>humanCall(f.human,'POST','/api/v1/work-items',{teamId:f.teamId,title:'Workspace lock recovered',statusId:f.readyId,responsibleHumanActorId:f.human.actorId}),'SELECT id FROM workspaces WHERE id=$1 FOR UPDATE')).statusCode).toBe(200)
+    const extraResponse=await humanCall(f.human,'POST','/api/v1/teams',{name:'Disposable graph Team',key:'M2GRAPH'})
+    expect(extraResponse.statusCode).toBe(200)
+    const extra=extraResponse.json<{id:string;revision:number}>()
+    const extraStateResponse=await humanCall(f.human,'POST',`/api/v1/teams/${extra.id}/states`,{name:'Backlog',category:'backlog',position:0})
+    expect(extraStateResponse.statusCode).toBe(200)
+    const extraState=extraStateResponse.json<{id:string}>().id
+    const teamRace=await m2Race('graph-versus-human-team-delete',graphSql,[f.workspaceId],
+      ()=>humanCall(f.human,'POST','/api/v1/work-items',{teamId:extra.id,title:'Before Team removal',statusId:extraState,responsibleHumanActorId:f.human.actorId}),
+      ()=>humanCall(f.human,'DELETE',`/api/v1/teams/${extra.id}`,undefined,{'if-match':`"revision-${extra.revision}"`}))
+    expect(teamRace.map(row=>row.statusCode)).toEqual([200,200])
+    expect((await humanCall(f.human,'POST','/api/v1/work-items',{teamId:extra.id,title:'After Team removal',statusId:extraState,responsibleHumanActorId:f.human.actorId})).statusCode).toBe(404)
   })
 
   it('M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据', async () => {

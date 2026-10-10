@@ -1,4 +1,10 @@
-# M2 受控方案交付
+# M2 受控交付
+
+当前产品候选入口：[中文成果报告](product-report.md)、[18行九类闭合矩阵](product-closure-matrix.md)、[91操作实际入口与边界](product-operation-results.md)、[全部命令结果](product-check-results.json)、[运行源码前后绑定](product-run-source-binding.json)、[Git／工作树双字节索引](product-source-manifest.json)、[资源准备恢复与清理](product-resource-results.json)。本机结果不替代平台成果独审、最新 PR Required CI 或 actual Done/main。产品阶段仅 Todos＋仓库记录，无虚构 WorkMesh 远端事实。
+
+下面保留规划阶段说明，完整原候选在精确Git历史及归档中；“规划未运行产品”是当时状态，不冒当前产品通过或改写已审历史。
+
+## 规划阶段原说明
 
 本包仅是规划候选，停 confirm 供平台另一 Agent 独审；产品实现、产品测试与本候选 Required CI 均未在此包宣称完成。本轮使用 Todos＋仓库记录，不存在真实 WorkMesh Project／WorkItem 同步记录。
 

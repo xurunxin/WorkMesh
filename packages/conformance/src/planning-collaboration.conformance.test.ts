@@ -157,6 +157,38 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     savePlanningEvidence('planning-import-recovery.json',{prepared,partial,restored,replay,page,tail,cycle,milestones,seen,related,relations,expiredWindowReconciledBySavedMapping:true,automaticReapplyAfterTtl:false})
   })
 
+  it('C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法', async () => {
+    const target=await f.pairTarget(['work:read','work:write','plan:write','artifact:write'])
+    const c=await f.connect('read-write',undefined,target.token)
+    const workspace=(await f.db.query('SELECT workspace_id FROM teams WHERE id=$1',[f.teamId])).rows[0]!.workspace_id as string
+    const state=(await f.coordination.listWorkflowStates<{id:string;name:string}>(f.teamId)).items.find(row=>row.name==='Ready')!.id
+    const gate=await f.db.connect();let pending:ReturnType<Client['callTool']>|undefined
+    try {
+      await gate.query('BEGIN');await gate.query("SELECT pg_advisory_xact_lock(hashtextextended('workmesh-planning:' || $1::text,0))",[workspace])
+      const holder=(await gate.query('SELECT pg_backend_pid() AS pid')).rows[0]!.pid as number
+      pending=c.callTool({name:'create_work_item',arguments:{teamId:f.teamId,statusId:state,title:'M2 revoked graph write',idempotencyKey:randomUUID()}})
+      let waiting:Array<{pid:number;query:string}>=[];const deadline=Date.now()+10000
+      while(Date.now()<deadline){waiting=(await f.db.query('SELECT pid,query FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))',[holder])).rows;if(waiting.length)break;await new Promise(resolve=>setTimeout(resolve,10))}
+      expect(waiting).toHaveLength(1);expect(waiting[0]!.query).toContain('workmesh-planning')
+      await f.human('DELETE',`/api/v1/agents/${target.agentId}/team-access/${f.teamId}`)
+      const before=await facts()
+      await gate.query('COMMIT')
+      const rejected=await pending
+      expect(rejected).toMatchObject({isError:true})
+      expect(await facts()).toEqual(before)
+      expect((await f.db.query('SELECT count(*)::int AS count FROM work_items WHERE title=$1',['M2 revoked graph write'])).rows[0]).toEqual({count:0})
+      savePlanningEvidence('planning-graph-revocation.json',{holder,waiting,rejected,before,after:await facts(),humanRevokeBeforeGraphCommit:true})
+    } finally {
+      await gate.query('ROLLBACK');gate.release();if(pending)await Promise.allSettled([pending])
+    }
+    // Team regrant cannot revive an intentionally revoked original Connection/Token.
+    expect(await c.callTool({name:'create_work_item',arguments:{teamId:f.teamId,statusId:state,title:'M2 still revoked graph write',idempotencyKey:randomUUID()}})).toMatchObject({isError:true})
+    const fresh=await f.connect('read-write')
+    const created=await call<{id:string;revision:number}>(fresh,'create_work_item',{teamId:f.teamId,statusId:state,title:'M2 new authorized graph intent',idempotencyKey:randomUUID()})
+    expect(created).toMatchObject({id:expect.any(String),revision:1})
+    expect(await call(fresh,'get_work_item',{workItemId:created.id})).toMatchObject({title:'M2 new authorized graph intent'})
+  })
+
   it('Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败', async () => {
     const parent=await f.createExecution('M2 named planning tools')
     const step=randomUUID()
@@ -486,12 +518,13 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     try {await worker.deliver({...legacyDelivery,payload:legacyPayload})}catch(error){legacyError=error}
     expect(legacyError).toMatchObject({code:'WEBHOOK_TARGET_REVOKED'})
     await worker.fail(legacyDelivery,legacyError)
-    const legacyState=(await f.db.query('SELECT status,last_error_code FROM agent_webhook_deliveries WHERE id=$1',[legacyDelivery.id])).rows[0]!
-    expect(legacyState).toMatchObject({status:'dead',last_error_code:'WEBHOOK_TARGET_REVOKED'})
+    const legacyState=(await f.db.query('SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',[legacyDelivery.id])).rows[0]!
+    expect(legacyState).toMatchObject({status:'dead',last_error:'WEBHOOK_TARGET_REVOKED'})
     expect(f.deliveryCounts()).toEqual(legacyCounts)
     const recoveryClient=new WorkMeshClient({baseUrl:f.baseUrl,coordinationToken:f.connectionToken,installationToken:f.connectionToken})
-    await recoveryClient.exchangeClaimedSessionToken(legacy.session.id,legacy.exchangeToken,{idempotencyKey:randomUUID()})
-    await recoveryClient.acknowledge(legacy.session.id,{summary:'Original claim receipt; notification stays dead',externalUrls:[]})
+    const recovered=await recoveryClient.exchangeClaimedSessionToken(legacy.session.id,legacy.exchangeToken,{idempotencyKey:randomUUID()})
+    const recoveredE=new WorkMeshClient({baseUrl:f.baseUrl,sessionToken:recovered.sessionToken})
+    await recoveredE.acknowledge(legacy.session.id,{summary:'Original claim receipt; notification stays dead',externalUrls:[]})
     expect((await f.db.query('SELECT state FROM agent_sessions WHERE id=$1',[legacy.session.id])).rows[0]).toEqual({state:'acknowledged'})
     savePlanningEvidence('legacy-self-claim-recovery.json',{sessionId:legacy.session.id,deliveryId:legacyDelivery.id,legacyState,exactOriginalClaimReceiptUsed:true,notificationRepaired:false,httpCountUnchanged:true})
     await f.db.query("UPDATE agent_sessions SET state='canceled',ended_at=clock_timestamp() WHERE id=$1",[legacy.session.id])
@@ -503,6 +536,84 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     try { await expect(worker.deliver(blocked)).rejects.toMatchObject({code:'WEBHOOK_TARGET_REVOKED'});expect(f.deliveryCounts()).toEqual(before) }
     finally { await f.db.query('UPDATE agent_connections SET revoked_at=NULL WHERE id=$1',[connection]) }
     savePlanningEvidence('self-claim-notification.json',{sessionId:first.session.id,exactTokenId:exact,nonceAbsent:true,delivered:true,missingBindingDenied:true,wrongBindingDenied:true,expiredClaimDenied:true,stopDenied:true,revokedSourceDenied:true,before,after:f.deliveryCounts()})
+  })
+
+  it('Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取', async () => {
+    const parent=await f.createExecution('M2 remaining collaboration assertions')
+    const comment=await f.human<{id:string;revision:number}>('POST',`/api/v1/work-items/${parent.workItemId}/comments`,{body:'Original Human author'})
+    // Privileged account fixture, then real login/HTTP with a distinct member identity.
+    const memberId=randomUUID(),email=`${memberId}@m2.test`
+    await f.db.query("INSERT INTO actors(id,workspace_id,kind,workspace_role,email,display_name,password_hash) SELECT $1,workspace_id,'human','member',$2,'M2 comment member',password_hash FROM actors WHERE id=$3",[memberId,email,f.humanActorId])
+    await f.db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) SELECT workspace_id,$1,$2,'member' FROM teams WHERE id=$1",[f.teamId,memberId])
+    const login=await fetch(`${f.baseUrl}/api/v1/auth/login`,{method:'POST',headers:{'content-type':'application/json','idempotency-key':randomUUID()},body:JSON.stringify({email,password:'m0-fixture-password'})})
+    expect(login.status).toBe(200)
+    const cookie=login.headers.get('set-cookie')!.split(';')[0]!,csrf=(await login.json() as {csrfToken:string}).csrfToken
+    const member=(method:string,path:string,body:unknown,key=randomUUID(),revision?:number)=>fetch(f.baseUrl+path,{method,headers:{cookie,'x-csrf-token':csrf,'content-type':'application/json','idempotency-key':key,...(revision?{'if-match':`"revision-${revision}"`}:{})},body:JSON.stringify(body)})
+    const commentFacts=async()=>(await f.db.query('SELECT to_jsonb(c)::text AS fact FROM comments c ORDER BY id')).rows
+    const beforeDenied=await commentFacts()
+    const denied=await member('PATCH',`/api/v1/comments/${comment.id}`,{body:'Wrong member edit'},randomUUID(),comment.revision)
+    expect(denied.status).toBe(403);expect(await denied.json()).toMatchObject({error:{code:'FORBIDDEN'}})
+    expect(await commentFacts()).toEqual(beforeDenied)
+    // Current policy is stricter than the old domain author check: member writes
+    // are refused at the role gate. Use a privileged maintainer fixture for the
+    // legal write positive, without changing the product's Human-only policy.
+    expect((await fetch(`${f.baseUrl}/api/v1/work-items/${parent.workItemId}/comments`,{headers:{cookie}})).status).toBe(200)
+    await f.db.query("UPDATE memberships SET role='maintainer' WHERE team_id=$1 AND actor_id=$2",[f.teamId,memberId])
+    const key=randomUUID(),body={body:'Actual distinct Human member comment'}
+    const original=await member('POST',`/api/v1/work-items/${parent.workItemId}/comments`,body,key)
+    expect(original.status).toBe(200);const created=await original.json() as {id:string;revision:number}
+    const replay=await member('POST',`/api/v1/work-items/${parent.workItemId}/comments`,body,key)
+    expect(replay.status).toBe(200);expect(await replay.json()).toEqual(created)
+    const changed=await member('POST',`/api/v1/work-items/${parent.workItemId}/comments`,{body:'Different same key'},key)
+    expect(changed.status).toBe(409)
+    expect((await member('PATCH',`/api/v1/comments/${created.id}`,{body:'Own allowed edit'},randomUUID(),created.revision)).status).toBe(200)
+    const c=await f.connect('read-write'),e=await f.connect('read-write',parent)
+    const other=await f.createExecution('M2 relation rollback counterpart')
+    const faultFacts=async()=>({facts:await facts(),comments:await commentFacts(),relations:(await f.db.query('SELECT to_jsonb(r)::text AS fact FROM work_item_relations r ORDER BY id')).rows})
+    const beforeFault=await faultFacts()
+    await f.db.query("CREATE FUNCTION m2_collaboration_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'M2 collaboration outbox rollback'; END $$")
+    await f.db.query('CREATE TRIGGER m2_collaboration_fault BEFORE INSERT ON outbox_events FOR EACH ROW EXECUTE FUNCTION m2_collaboration_fault()')
+    try {
+      expect((await member('POST',`/api/v1/work-items/${parent.workItemId}/comments`,{body:'Faulted Human comment'})).status).toBe(500)
+      expect(await faultFacts()).toEqual(beforeFault)
+      expect(await c.callTool({name:'add_work_item_relation',arguments:{workItemId:parent.workItemId,targetWorkItemId:other.workItemId,kind:'related',idempotencyKey:randomUUID()}})).toMatchObject({isError:true})
+      expect(await faultFacts()).toEqual(beforeFault)
+    } finally {await f.db.query('DROP TRIGGER m2_collaboration_fault ON outbox_events');await f.db.query('DROP FUNCTION m2_collaboration_fault()')}
+    expect(await call(c,'add_work_item_relation',{workItemId:parent.workItemId,targetWorkItemId:other.workItemId,kind:'related',idempotencyKey:randomUUID()})).toMatchObject({id:expect.any(String)})
+    const doc=await call<DocumentResponse>(e,'create_document',{ownerType:'work_item',ownerId:parent.workItemId,title:'M2 restart Document',markdown:'Durable historical text\n',idempotencyKey:randomUUID()})
+    const prepared=await call<PreparedProjectImport>(c,'prepare_project_import',{teamRef:f.teamId,defaultStatus:'Ready',project:{sourceId:'restart-project',name:'M2 restart import'},workItems:[{sourceId:'restart-issue',title:'M2 restart mapped issue'}]})
+    const imported=await call<{mapping:{project:{targetId:string};workItems:Array<{targetId:string}>}}>(c,'apply_project_import',{contentHash:prepared.contentHash,plan:prepared.plan})
+    const target=await f.registerTarget(),step=randomUUID()
+    await parent.client.publishPlan(parent.sessionId,{changeSummary:'Restart Inbox peer',steps:[{id:step,title:'Peer',ordinal:0,status:'pending',dependsOn:[],acceptanceCriteria:[],expectedArtifacts:[]}]},{ifMatch:(await parent.client.getSession<{revision:number}>(parent.sessionId)).revision})
+    const plan=await parent.client.getPlan<{id:string}>(parent.sessionId)
+    const child=await parent.client.createChildSession(parent.sessionId,{agentId:target.agentId,planStepId:step,planVersionId:plan.id,initialPrompt:'Restart peer'})
+    const peer=await f.receive(child.id,target.token),peerMcp=await f.connect('read-write',peer,target.token)
+    const room=await call<{id:string}>(e,'get_work_room',{workItemId:parent.workItemId})
+    const actorId=(await f.db.query('SELECT actor_id FROM agent_definitions WHERE id=$1',[target.agentId])).rows[0]!.actor_id as string
+    const message=await call<{id:string}>(e,'post_work_room_message',{roomId:room.id,sessionId:parent.sessionId,recipientActorId:actorId,intent:'ask',body:'Durable claimed Inbox body',requiresResponse:true,idempotencyKey:randomUUID()})
+    const metadata=await call<{items:InboxListItem[]}>(peerMcp,'list_inbox_items',{status:'open'})
+    const inbox=metadata.items.find(row=>row.source_id===message.id)!
+    const inboxFault=async(operation:()=>ReturnType<Client['callTool']>)=>{
+      const before=await faultFacts()
+      await f.db.query("CREATE FUNCTION m2_inbox_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'M2 Inbox outbox rollback'; END $$")
+      await f.db.query('CREATE TRIGGER m2_inbox_fault BEFORE INSERT ON outbox_events FOR EACH ROW EXECUTE FUNCTION m2_inbox_fault()')
+      try {expect(await operation()).toMatchObject({isError:true});expect(await faultFacts()).toEqual(before)}
+      finally {await f.db.query('DROP TRIGGER m2_inbox_fault ON outbox_events');await f.db.query('DROP FUNCTION m2_inbox_fault()')}
+    }
+    await inboxFault(()=>peerMcp.callTool({name:'claim_inbox_item',arguments:{inboxItemId:inbox.id,idempotencyKey:randomUUID()}}))
+    await call(peerMcp,'claim_inbox_item',{inboxItemId:inbox.id,idempotencyKey:randomUUID()})
+    const detail=await call<InboxItemDetail>(peerMcp,'get_inbox_item',{inboxItemId:inbox.id})
+    await inboxFault(()=>peerMcp.callTool({name:'reply_inbox_item',arguments:{inboxItemId:inbox.id,revision:detail.revision,body:'Faulted Inbox reply',payload:{verified:true},idempotencyKey:randomUUID()}}))
+    const beforeRestart=await faultFacts()
+    await f.restart()
+    expect(await faultFacts()).toEqual(beforeRestart)
+    expect(await call(e,'get_document_revision',{documentId:doc.id,revisionId:doc.currentRevision.id})).toMatchObject({markdown:'Durable historical text\n'})
+    expect(await call<DocumentHistoryResponse>(e,'list_document_history',{documentId:doc.id,limit:1})).toMatchObject({revisions:[{id:doc.currentRevision.id}]})
+    expect(await call(peerMcp,'get_inbox_item',{inboxItemId:inbox.id})).toEqual(detail)
+    expect(await call(c,'get_project',{projectId:imported.mapping.project.targetId})).toMatchObject({id:imported.mapping.project.targetId})
+    for(const row of imported.mapping.workItems)expect(await call(c,'get_work_item',{workItemId:row.targetId})).toMatchObject({id:row.targetId})
+    expect(await faultFacts()).toEqual(beforeRestart)
+    savePlanningEvidence('human-comment-faults-and-collaboration-restart.json',{memberId,otherAuthorDenied:denied.status,memberRoleGate:true,maintainerPositivePrivilegedFixture:true,sameKeyReplay:true,differentBodyConflict:changed.status,commentAndRelationRollback:true,claimAndReplyRollback:true,docId:doc.id,imported,inboxId:inbox.id,beforeRestart,afterRestart:await faultFacts(),actualHttpRestart:true})
   })
 
   it('投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt', async () => {

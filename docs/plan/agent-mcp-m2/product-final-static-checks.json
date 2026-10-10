@@ -1,0 +1,113 @@
+{
+  "kind": "交付静态验证及收尾观察，非新产品测试",
+  "checks": [
+    "三份交付脚本当前UTF8字节可编译，无新增pyc",
+    "18条冻结原验收行逐字相等",
+    "91操作精确原顺序、当前policy/MCP/SDK/Runner及实际运行列齐全",
+    "当前产品源码ZIP逐成员/工作树字节与Git原blob索引分别绑定",
+    "仅旧run073未知exit原件保留；本轮健康测试均已退出",
+    "完整main→当前工作树diff --check退出0，无新散落js/d.ts编译生成叶文件"
+  ],
+  "operations": [
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check",
+        "cfce77546b64c2a8d7d12949261c38e2f666d5ae"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791606487.4316077,
+      "endedUnix": 1791606488.5962257,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "ls-files",
+        "--others",
+        "--exclude-standard"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791606488.5962298,
+      "endedUnix": 1791606488.8616252,
+      "stdout": "docs/plan/agent-mcp-m2/product-artifact-manifest.json\ndocs/plan/agent-mcp-m2/product-check-results.json\ndocs/plan/agent-mcp-m2/product-closure-matrix.json\ndocs/plan/agent-mcp-m2/product-closure-matrix.md\ndocs/plan/agent-mcp-m2/product-delivery.py\ndocs/plan/agent-mcp-m2/product-evidence/document-pyc-before.zip\ndocs/plan/agent-mcp-m2/product-evidence/m2-00b366fb629c-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-00b366fb629c-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-00b366fb629c-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-00b366fb629c-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-34b4a2e10f42-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-34b4a2e10f42-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-34b4a2e10f42-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-34b4a2e10f42-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-5cfba50ea0f2-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-5cfba50ea0f2-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-5cfba50ea0f2-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-5cfba50ea0f2-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-75730281ed12-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-75730281ed12-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-75730281ed12-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-75730281ed12-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-90a03d41be77-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-90a03d41be77-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-90a03d41be77-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-90a03d41be77-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-a7e4d43c05ba-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-a7e4d43c05ba-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-a7e4d43c05ba-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-a7e4d43c05ba-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-ba61b5ff1747-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-ba61b5ff1747-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-ba61b5ff1747-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-ba61b5ff1747-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-d37e47a5064a-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-d37e47a5064a-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-d37e47a5064a-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-d37e47a5064a-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-d4703001575e-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-d4703001575e-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-d4703001575e-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-d4703001575e-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-dae199d7031f-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-dae199d7031f-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-dae199d7031f-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-dae199d7031f-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-db82fcb7c516-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-db82fcb7c516-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-db82fcb7c516-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-db82fcb7c516-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-e98a502bcb1e-postgres-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-e98a502bcb1e-redis-service.log\ndocs/plan/agent-mcp-m2/product-evidence/m2-e98a502bcb1e-resources.json\ndocs/plan/agent-mcp-m2/product-evidence/m2-e98a502bcb1e-s3-service.log\ndocs/plan/agent-mcp-m2/product-evidence/run-090-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-090.json\ndocs/plan/agent-mcp-m2/product-evidence/run-091-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-091.json\ndocs/plan/agent-mcp-m2/product-evidence/run-092-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-092.json\ndocs/plan/agent-mcp-m2/product-evidence/run-093-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-093.json\ndocs/plan/agent-mcp-m2/product-evidence/run-094-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-094.json\ndocs/plan/agent-mcp-m2/product-evidence/run-095-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-095.json\ndocs/plan/agent-mcp-m2/product-evidence/run-096-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-096.json\ndocs/plan/agent-mcp-m2/product-evidence/run-097-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-097.json\ndocs/plan/agent-mcp-m2/product-evidence/run-098-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-098.json\ndocs/plan/agent-mcp-m2/product-evidence/run-099-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-099.json\ndocs/plan/agent-mcp-m2/product-evidence/run-100-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-100.json\ndocs/plan/agent-mcp-m2/product-evidence/run-101-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-101.json\ndocs/plan/agent-mcp-m2/product-evidence/run-102-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-102.json\ndocs/plan/agent-mcp-m2/product-evidence/run-103-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-103.json\ndocs/plan/agent-mcp-m2/product-evidence/run-104-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-104.json\ndocs/plan/agent-mcp-m2/product-evidence/run-105-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-105.json\ndocs/plan/agent-mcp-m2/product-evidence/run-106-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-106.json\ndocs/plan/agent-mcp-m2/product-evidence/run-107-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-107.json\ndocs/plan/agent-mcp-m2/product-evidence/run-108-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-108.json\ndocs/plan/agent-mcp-m2/product-evidence/run-109-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-109.json\ndocs/plan/agent-mcp-m2/product-evidence/run-110-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-110.json\ndocs/plan/agent-mcp-m2/product-evidence/run-111-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-111.json\ndocs/plan/agent-mcp-m2/product-evidence/run-112-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-112.json\ndocs/plan/agent-mcp-m2/product-evidence/run-113-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-113.json\ndocs/plan/agent-mcp-m2/product-evidence/run-114-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-114.json\ndocs/plan/agent-mcp-m2/product-evidence/run-115-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-115.json\ndocs/plan/agent-mcp-m2/product-evidence/run-116-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-116.json\ndocs/plan/agent-mcp-m2/product-evidence/run-117-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-117.json\ndocs/plan/agent-mcp-m2/product-evidence/run-118-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-118.json\ndocs/plan/agent-mcp-m2/product-evidence/run-119-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-119.json\ndocs/plan/agent-mcp-m2/product-evidence/run-120-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-120.json\ndocs/plan/agent-mcp-m2/product-evidence/run-121-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-121.json\ndocs/plan/agent-mcp-m2/product-evidence/run-122-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-122.json\ndocs/plan/agent-mcp-m2/product-evidence/run-123-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-123.json\ndocs/plan/agent-mcp-m2/product-evidence/run-124-output.zip\ndocs/plan/agent-mcp-m2/product-evidence/run-124.json\ndocs/plan/agent-mcp-m2/product-evidence/runner-skill-whitespace-before.zip\ndocs/plan/agent-mcp-m2/product-evidence/runner-skill-whitespace-repair.json\ndocs/plan/agent-mcp-m2/product-evidence/service-logs-raw-index.json\ndocs/plan/agent-mcp-m2/product-evidence/service-logs-raw.zip\ndocs/plan/agent-mcp-m2/product-final-check.py\ndocs/plan/agent-mcp-m2/product-operation-results.json\ndocs/plan/agent-mcp-m2/product-operation-results.md\ndocs/plan/agent-mcp-m2/product-report.md\ndocs/plan/agent-mcp-m2/product-resource-results.json\ndocs/plan/agent-mcp-m2/product-run-source-binding.json\ndocs/plan/agent-mcp-m2/product-source-manifest.json\ndocs/plan/agent-mcp-m2/product-source-snapshot.zip\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "ps",
+        "--filter",
+        "label=workmesh.m2.owner",
+        "--format",
+        "{{.Names}} {{.Status}}"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791606488.861656,
+      "endedUnix": 1791606488.920951,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "powershell",
+        "-NoProfile",
+        "-Command",
+        "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*01a121fb-781b-7b58-9bca-a596b92a8cbe*' } | Select-Object ProcessId,ParentProcessId,Name,CreationDate | ConvertTo-Json -Compress"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791606488.927396,
+      "endedUnix": 1791606489.546439,
+      "stdout": "{\"ProcessId\":5736,\"ParentProcessId\":40712,\"Name\":\"powershell.exe\",\"CreationDate\":\"\\/Date(1791606488928)\\/\"}\r\n",
+      "stderr": ""
+    }
+  ],
+  "observedWorkspaceProcesses": {
+    "ProcessId": 5736,
+    "ParentProcessId": 40712,
+    "Name": "powershell.exe",
+    "CreationDate": "/Date(1791606488928)/"
+  },
+  "observedOwnedContainers": "",
+  "resourceRegistries": 49,
+  "registeredContainers": 147,
+  "ownedPycCleanup": [
+    {
+      "path": "docs/plan/agent-mcp-m2/__pycache__/product-collect.cpython-313.pyc",
+      "absoluteTarget": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\docs\\plan\\agent-mcp-m2\\__pycache__\\product-collect.cpython-313.pyc",
+      "before": {
+        "bytes": 34834,
+        "sha256": "a143531560eca0325e6c370b04f5b513f13a2708a48df480bef9bf80dabf2f0c"
+      },
+      "ownership": "本轮明确py_compile两份交付脚本产生的叶文件，不属历史恢复或共享store",
+      "operation": "Path.unlink verified exact owned leaf, not recursive",
+      "afterExists": false,
+      "nativeResult": 0
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/__pycache__/product-delivery.cpython-313.pyc",
+      "absoluteTarget": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\docs\\plan\\agent-mcp-m2\\__pycache__\\product-delivery.cpython-313.pyc",
+      "before": {
+        "bytes": 26895,
+        "sha256": "b6c1079f415a15e370e249e033c332f9ad20d03e56e883a844028599b2ce0598"
+      },
+      "ownership": "本轮明确py_compile两份交付脚本产生的叶文件，不属历史恢复或共享store",
+      "operation": "Path.unlink verified exact owned leaf, not recursive",
+      "afterExists": false,
+      "nativeResult": 0
+    }
+  ],
+  "pycBeforeArchive": {
+    "bytes": 33366,
+    "sha256": "4a294dd10eef7e2a3cd8c6f704e9e15d9195515c7c74cd7342f63ccb952c7743"
+  },
+  "historicalUnknown": [
+    "run-073.json"
+  ],
+  "protectedTargets": "G1D0C3/共享store/镜像/他人服务/当前恢复目录未操作",
+  "completedUnix": 1791606489.5468583
+}

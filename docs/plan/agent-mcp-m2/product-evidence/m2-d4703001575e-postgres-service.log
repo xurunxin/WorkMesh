@@ -1,0 +1,108 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 04:11:32.778 UTC [42] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 04:11:32.779 UTC [42] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 04:11:32.780 UTC [45] LOG:  database system was shut down at 2026-10-10 04:11:32 UTC
+2026-10-10 04:11:32.782 UTC [42] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-10 04:11:32.894 UTC [42] LOG:  received fast shutdown request
+2026-10-10 04:11:32.894 UTC [42] LOG:  aborting any active transactions
+2026-10-10 04:11:32.895 UTC [42] LOG:  background worker "logical replication launcher" (PID 48) exited with exit code 1
+2026-10-10 04:11:32.896 UTC [43] LOG:  shutting down
+2026-10-10 04:11:32.896 UTC [43] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 04:11:32.899 UTC [43] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.001 s, total=0.004 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 04:11:32.902 UTC [42] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 04:11:32.499 UTC [36] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 04:11:33.003 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 04:11:33.003 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 04:11:33.003 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 04:11:33.004 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 04:11:33.005 UTC [64] LOG:  database system was shut down at 2026-10-10 04:11:32 UTC
+2026-10-10 04:11:33.007 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 04:11:45.097 UTC [79] ERROR:  M2 import partial failure
+2026-10-10 04:11:45.097 UTC [79] CONTEXT:  PL/pgSQL function m2_import_failure() line 1 at RAISE
+2026-10-10 04:11:45.097 UTC [79] STATEMENT:  INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id,milestone_id,parent_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id,revision,number
+2026-10-10 04:11:45.285 UTC [79] ERROR:  M2 import partial failure
+2026-10-10 04:11:45.285 UTC [79] CONTEXT:  PL/pgSQL function m2_import_failure() line 1 at RAISE
+2026-10-10 04:11:45.285 UTC [79] STATEMENT:  INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id,milestone_id,parent_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id,revision,number
+2026-10-10 04:11:45.630 UTC [79] ERROR:  M2 import partial failure
+2026-10-10 04:11:45.630 UTC [79] CONTEXT:  PL/pgSQL function m2_import_failure() line 1 at RAISE
+2026-10-10 04:11:45.630 UTC [79] STATEMENT:  INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id,milestone_id,parent_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id,revision,number
+2026-10-10 04:11:46.633 UTC [79] ERROR:  WORK_ITEM_BLOCK_CYCLE
+2026-10-10 04:11:46.633 UTC [79] CONTEXT:  PL/pgSQL function enforce_work_item_relation_invariants() line 36 at RAISE
+2026-10-10 04:11:46.633 UTC [79] STATEMENT:  INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind,created_by_actor_id)
+	         VALUES($1,$2,$3,$4,$5,$6) RETURNING *
+2026-10-10 04:11:46.822 UTC [79] ERROR:  WORK_ITEM_PARENT_CYCLE
+2026-10-10 04:11:46.822 UTC [79] CONTEXT:  PL/pgSQL function enforce_work_item_parent_invariants() line 42 at RAISE
+2026-10-10 04:11:46.822 UTC [79] STATEMENT:  UPDATE work_items SET title=CASE WHEN $1 THEN $2 ELSE title END,description=CASE WHEN $3 THEN $4 ELSE description END,status_id=CASE WHEN $5 THEN $6 ELSE status_id END,priority=CASE WHEN $7 THEN $8 ELSE priority END,due_date=CASE WHEN $9 THEN $10 ELSE due_date END,responsible_human_actor_id=CASE WHEN $11 THEN $12 ELSE responsible_human_actor_id END,labels=CASE WHEN $13 THEN $14 ELSE labels END,project_id=CASE WHEN $15 THEN $16 ELSE project_id END,milestone_id=CASE WHEN $17 THEN $18 ELSE CASE WHEN $15 THEN NULL ELSE milestone_id END END,parent_id=CASE WHEN $19 THEN $20 ELSE parent_id END,board_rank=CASE WHEN $21 THEN $22 ELSE board_rank END,revision=revision+1,updated_at=now() WHERE id=$23 RETURNING id,revision
+2026-10-10 04:11:49.902 UTC [75] WARNING:  there is no transaction in progress
+2026-10-10 04:12:06.322 UTC [75] ERROR:  new row for relation "delegations" violates check constraint "delegations_check1"
+2026-10-10 04:12:06.322 UTC [75] DETAIL:  Failing row contains (d2444fef-de35-44ea-82b0-443de6e2626f, 4e5ce385-6dfc-4845-a257-6ce90a85c79a, 5608cbc0-1f02-4e2b-9f47-75f39b09936f, 89fa4b77-f8bf-43c4-89f8-6208ece629a2, 634dcfdb-5b2e-430f-8c3a-6b78a4e0a11d, aafc199f-b41d-4004-9ac7-073bbfbe8433, 1fc2a303-37ea-4a5e-ac80-74c8f666705b, executor, work_item, 1fc2a303-37ea-4a5e-ac80-74c8f666705b, {work:read,work:write,plan:write,artifact:write,message:write,co..., {"teamIds": ["5608cbc0-1f02-4e2b-9f47-75f39b09936f"], "projectId..., revoked, 1, null, null, null, 2026-10-10 04:12:03.447161+00, 2026-10-10 04:12:03.447161+00).
+2026-10-10 04:12:06.322 UTC [75] STATEMENT:  UPDATE delegations SET status='revoked' WHERE id=(SELECT delegation_id FROM agent_sessions WHERE id=$1)
+2026-10-10 04:12:06.355 UTC [82] ERROR:  new row for relation "delegations" violates check constraint "delegations_check1"
+2026-10-10 04:12:06.355 UTC [82] DETAIL:  Failing row contains (d2444fef-de35-44ea-82b0-443de6e2626f, 4e5ce385-6dfc-4845-a257-6ce90a85c79a, 5608cbc0-1f02-4e2b-9f47-75f39b09936f, 89fa4b77-f8bf-43c4-89f8-6208ece629a2, 634dcfdb-5b2e-430f-8c3a-6b78a4e0a11d, aafc199f-b41d-4004-9ac7-073bbfbe8433, 1fc2a303-37ea-4a5e-ac80-74c8f666705b, executor, work_item, 1fc2a303-37ea-4a5e-ac80-74c8f666705b, {work:read,work:write,plan:write,artifact:write,message:write,co..., {"teamIds": ["5608cbc0-1f02-4e2b-9f47-75f39b09936f"], "projectId..., revoked, 1, null, null, null, 2026-10-10 04:12:03.447161+00, 2026-10-10 04:12:03.447161+00).
+2026-10-10 04:12:06.355 UTC [82] STATEMENT:  UPDATE delegations SET status='revoked' WHERE id=(SELECT delegation_id FROM agent_sessions WHERE id=$1)
+2026-10-10 04:12:38.187 UTC [85] ERROR:  could not obtain lock on row in relation "agent_connections"
+2026-10-10 04:12:38.187 UTC [85] STATEMENT:  SELECT id FROM agent_connections WHERE id=$1 FOR SHARE NOWAIT
+2026-10-10 04:12:38.189 UTC [83] WARNING:  there is no transaction in progress
+2026-10-10 04:12:38.444 UTC [85] ERROR:  canceling statement due to lock timeout
+2026-10-10 04:12:38.444 UTC [85] CONTEXT:  while locking tuple (0,3) in relation "agent_installation_tokens"
+2026-10-10 04:12:38.444 UTC [85] STATEMENT:  SELECT id FROM agent_installation_tokens
+	      WHERE id=ANY($1::uuid[])
+	      ORDER BY id
+	      FOR UPDATE
+2026-10-10 04:12:38.445 UTC [83] WARNING:  there is no transaction in progress
+2026-10-10 04:12:38.531 UTC [83] WARNING:  there is no transaction in progress
+2026-10-10 04:12:40.019 UTC [79] ERROR:  M2 collaboration outbox rollback
+2026-10-10 04:12:40.019 UTC [79] CONTEXT:  PL/pgSQL function m2_collaboration_fault() line 1 at RAISE
+2026-10-10 04:12:40.019 UTC [79] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 04:12:40.181 UTC [79] ERROR:  M2 collaboration outbox rollback
+2026-10-10 04:12:40.181 UTC [79] CONTEXT:  PL/pgSQL function m2_collaboration_fault() line 1 at RAISE
+2026-10-10 04:12:40.181 UTC [79] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 04:12:40.380 UTC [79] ERROR:  M2 collaboration outbox rollback
+2026-10-10 04:12:40.380 UTC [79] CONTEXT:  PL/pgSQL function m2_collaboration_fault() line 1 at RAISE
+2026-10-10 04:12:40.380 UTC [79] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 04:12:40.723 UTC [79] ERROR:  M2 collaboration outbox rollback
+2026-10-10 04:12:40.723 UTC [79] CONTEXT:  PL/pgSQL function m2_collaboration_fault() line 1 at RAISE
+2026-10-10 04:12:40.723 UTC [79] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)

@@ -84,7 +84,7 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	          WHERE child.parent_session_id=parent.id AND child.workspace_id=parent.workspace_id AND child.team_id=parent.team_id
 	            AND child.work_item_id IS NOT DISTINCT FROM parent.work_item_id
 	            AND ($3::uuid IS NULL OR child.id=$3)
-	            
+
 	          ORDER BY child.created_at DESC,child.id DESC LIMIT $9
 	        ) selected
 	      ) children ON true
@@ -251,7 +251,7 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	          WHERE child.parent_session_id=parent.id AND child.workspace_id=parent.workspace_id AND child.team_id=parent.team_id
 	            AND child.work_item_id IS NOT DISTINCT FROM parent.work_item_id
 	            AND ($3::uuid IS NULL OR child.id=$3)
-	            
+
 	          ORDER BY child.created_at DESC,child.id DESC LIMIT $9
 	        ) selected
 	      ) children ON true
@@ -418,7 +418,7 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	          WHERE child.parent_session_id=parent.id AND child.workspace_id=parent.workspace_id AND child.team_id=parent.team_id
 	            AND child.work_item_id IS NOT DISTINCT FROM parent.work_item_id
 	            AND ($3::uuid IS NULL OR child.id=$3)
-	            
+
 	          ORDER BY child.created_at DESC,child.id DESC LIMIT $9
 	        ) selected
 	      ) children ON true

@@ -121,7 +121,7 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 2026-10-10 03:03:48.663 UTC [92] STATEMENT:  ALTER TABLE agent_sessions
 	  ADD CONSTRAINT agent_sessions_external_urls_array_check
 	  CHECK (jsonb_typeof(external_urls) = 'array') NOT VALID;
-	
+
 	ALTER TABLE api_idempotency_keys
 	  ADD CONSTRAINT api_idempotency_ack_session_external_urls_array_check
 	  CHECK (
@@ -133,11 +133,11 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	      false
 	    )
 	  ) NOT VALID;
-	
+
 	UPDATE agent_sessions
 	  SET external_urls = '[]'::jsonb
 	  WHERE external_urls = '{}'::jsonb;
-	
+
 	UPDATE api_idempotency_keys
 	  SET response_body = jsonb_set(
 	    response_body,
@@ -147,17 +147,17 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	  )
 	  WHERE operation = 'acknowledgeAgentSession'
 	    AND response_body->'external_urls' = '{}'::jsonb;
-	
+
 	ALTER TABLE agent_sessions
 	  VALIDATE CONSTRAINT agent_sessions_external_urls_array_check;
-	
+
 	ALTER TABLE api_idempotency_keys
 	  VALIDATE CONSTRAINT api_idempotency_ack_session_external_urls_array_check;
 2026-10-10 03:03:48.800 UTC [92] ERROR:  check constraint "api_idempotency_ack_session_external_urls_array_check" of relation "api_idempotency_keys" is violated by some row
 2026-10-10 03:03:48.800 UTC [92] STATEMENT:  ALTER TABLE agent_sessions
 	  ADD CONSTRAINT agent_sessions_external_urls_array_check
 	  CHECK (jsonb_typeof(external_urls) = 'array') NOT VALID;
-	
+
 	ALTER TABLE api_idempotency_keys
 	  ADD CONSTRAINT api_idempotency_ack_session_external_urls_array_check
 	  CHECK (
@@ -169,11 +169,11 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	      false
 	    )
 	  ) NOT VALID;
-	
+
 	UPDATE agent_sessions
 	  SET external_urls = '[]'::jsonb
 	  WHERE external_urls = '{}'::jsonb;
-	
+
 	UPDATE api_idempotency_keys
 	  SET response_body = jsonb_set(
 	    response_body,
@@ -183,17 +183,17 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	  )
 	  WHERE operation = 'acknowledgeAgentSession'
 	    AND response_body->'external_urls' = '{}'::jsonb;
-	
+
 	ALTER TABLE agent_sessions
 	  VALIDATE CONSTRAINT agent_sessions_external_urls_array_check;
-	
+
 	ALTER TABLE api_idempotency_keys
 	  VALIDATE CONSTRAINT api_idempotency_ack_session_external_urls_array_check;
 2026-10-10 03:03:49.563 UTC [93] ERROR:  check constraint "agent_sessions_external_urls_array_check" of relation "agent_sessions" is violated by some row
 2026-10-10 03:03:49.563 UTC [93] STATEMENT:  ALTER TABLE agent_sessions
 	  ADD CONSTRAINT agent_sessions_external_urls_array_check
 	  CHECK (jsonb_typeof(external_urls) = 'array') NOT VALID;
-	
+
 	ALTER TABLE api_idempotency_keys
 	  ADD CONSTRAINT api_idempotency_ack_session_external_urls_array_check
 	  CHECK (
@@ -205,11 +205,11 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	      false
 	    )
 	  ) NOT VALID;
-	
+
 	UPDATE agent_sessions
 	  SET external_urls = '[]'::jsonb
 	  WHERE external_urls = '{}'::jsonb;
-	
+
 	UPDATE api_idempotency_keys
 	  SET response_body = jsonb_set(
 	    response_body,
@@ -219,17 +219,17 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	  )
 	  WHERE operation = 'acknowledgeAgentSession'
 	    AND response_body->'external_urls' = '{}'::jsonb;
-	
+
 	ALTER TABLE agent_sessions
 	  VALIDATE CONSTRAINT agent_sessions_external_urls_array_check;
-	
+
 	ALTER TABLE api_idempotency_keys
 	  VALIDATE CONSTRAINT api_idempotency_ack_session_external_urls_array_check;
 2026-10-10 03:03:49.688 UTC [93] ERROR:  check constraint "api_idempotency_ack_session_external_urls_array_check" of relation "api_idempotency_keys" is violated by some row
 2026-10-10 03:03:49.688 UTC [93] STATEMENT:  ALTER TABLE agent_sessions
 	  ADD CONSTRAINT agent_sessions_external_urls_array_check
 	  CHECK (jsonb_typeof(external_urls) = 'array') NOT VALID;
-	
+
 	ALTER TABLE api_idempotency_keys
 	  ADD CONSTRAINT api_idempotency_ack_session_external_urls_array_check
 	  CHECK (
@@ -241,11 +241,11 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	      false
 	    )
 	  ) NOT VALID;
-	
+
 	UPDATE agent_sessions
 	  SET external_urls = '[]'::jsonb
 	  WHERE external_urls = '{}'::jsonb;
-	
+
 	UPDATE api_idempotency_keys
 	  SET response_body = jsonb_set(
 	    response_body,
@@ -255,10 +255,10 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	  )
 	  WHERE operation = 'acknowledgeAgentSession'
 	    AND response_body->'external_urls' = '{}'::jsonb;
-	
+
 	ALTER TABLE agent_sessions
 	  VALIDATE CONSTRAINT agent_sessions_external_urls_array_check;
-	
+
 	ALTER TABLE api_idempotency_keys
 	  VALIDATE CONSTRAINT api_idempotency_ack_session_external_urls_array_check;
 2026-10-10 03:03:49.694 UTC [97] FATAL:  terminating autovacuum process due to administrator command
@@ -321,7 +321,7 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	-- old Worker and run the exact target-image S3 reconciliation. It closes the
 	-- race with any residual retention writer for the whole migration.
 	LOCK TABLE retention_job_state IN SHARE ROW EXCLUSIVE MODE;
-	
+
 	DO $$
 	BEGIN
 	  IF EXISTS (
@@ -337,7 +337,7 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	  END IF;
 	END;
 	$$;
-	
+
 	-- Before this migration pending_exact meant only "membership has not been
 	-- materialized yet"; those rows predate durable upload intents and have no
 	-- provisional reservations. Preserve them on the pinned-object legacy path.
@@ -345,14 +345,14 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	   SET membership_state='legacy_unindexed',
 	       updated_at=now()
 	 WHERE membership_state='pending_exact';
-	
+
 	ALTER TABLE event_archive_segments
 	  ALTER COLUMN object_version_id DROP NOT NULL,
 	  ADD COLUMN upload_attempt_count integer NOT NULL DEFAULT 0,
 	  ADD COLUMN last_upload_attempt_at timestamptz,
 	  ADD COLUMN last_upload_fence bigint,
 	  ADD COLUMN planned_fence bigint;
-	
+
 	-- Canonical metadata did not originally require the frozen cutoff. PostgreSQL
 	-- timestamps may retain microseconds while the Node.js Date boundary is
 	-- millisecond-precise, so normalize historical values to that shared precision
@@ -370,7 +370,7 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	         ),
 	         true
 	       );
-	
+
 	-- Replace the original state/timestamp checks and the 0029 membership check
 	-- with one explicit durable-intent state machine. Constraint names generated
 	-- for the old anonymous CHECKs differ between PostgreSQL versions, so identify
@@ -399,7 +399,7 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	  END LOOP;
 	END;
 	$$;
-	
+
 	-- The pre-intent worker represented a failed readback by clearing uploaded_at
 	-- even though the immutable VersionId was already durable. After removing the
 	-- old state/timestamp checks, preserve that recoverable object on the legacy
@@ -411,7 +411,7 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	   AND state='failed'
 	   AND object_version_id IS NOT NULL
 	   AND uploaded_at IS NULL;
-	
+
 	ALTER TABLE event_archive_segments
 	  ADD CONSTRAINT event_archive_segments_object_version_state_check CHECK (
 	    (
@@ -509,19 +509,19 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	    )
 	    AND (metadata->>'fixedCutoffAt')::timestamptz=fixed_cutoff_at
 	  );
-	
+
 	-- At most one durable intent can exist for a Workspace. A deterministic
 	-- conflict stays visible and blocks a replacement until an operator resolves
 	-- it; retries always recover the same stable object key.
 	CREATE UNIQUE INDEX event_archive_segments_one_pending_intent
 	  ON event_archive_segments(workspace_id)
 	  WHERE membership_state='pending_exact';
-	
+
 	CREATE INDEX event_archive_segments_pending_recovery
 	  ON event_archive_segments(workspace_id,created_at,id)
 	  WHERE membership_state='pending_exact'
 	    AND state IN ('planned','uploaded','failed');
-	
+
 	COMMENT ON COLUMN event_archive_segments.planned_fence IS
 	  'Fence that created the durable intent; successors may reconcile it.';
 	COMMENT ON COLUMN event_archive_segments.last_upload_fence IS
@@ -632,7 +632,7 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	         )
 2026-10-10 03:04:07.376 UTC [133] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_check1"
 2026-10-10 03:04:07.376 UTC [133] DETAIL:  Failing row contains (cd37674c-247c-416a-ad1d-c389ac3b121a, 634c31f1-70f6-4120-8061-347a18959f59, 1, 1, 2026-10-10 03:04:07.375915+00, 1, too-short, version-1, 1, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..., sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., {}, planned, 2027-10-09 03:04:07.375915+00, null, null, null, null, 2026-10-10 03:04:07.375915+00, 2026-10-10 03:04:07.375915+00, pending_exact, 0, null, null, null).
-2026-10-10 03:04:07.376 UTC [133] STATEMENT:  
+2026-10-10 03:04:07.376 UTC [133] STATEMENT:
 	      INSERT INTO event_archive_segments(
 	        workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
 	        object_key,object_version_id,object_size_bytes,object_sha256,
@@ -642,13 +642,13 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	        'sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb','sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
 	        now()+interval '364 days'
 	      )
-	    
+
 2026-10-10 03:04:07.647 UTC [135] ERROR:  canceling statement due to statement timeout
 2026-10-10 03:04:07.647 UTC [135] CONTEXT:  while locking tuple (0,3) in relation "event_retention_state"
-2026-10-10 03:04:07.647 UTC [135] STATEMENT:  
+2026-10-10 03:04:07.647 UTC [135] STATEMENT:
 	        SELECT pruned_through_cursor FROM event_retention_state
 	         WHERE workspace_id=$1 FOR UPDATE
-	      
+
 2026-10-10 03:04:07.659 UTC [134] WARNING:  there is no transaction in progress
 2026-10-10 03:04:07.660 UTC [135] WARNING:  there is no transaction in progress
 2026-10-10 03:04:07.919 UTC [134] ERROR:  canceling statement due to statement timeout
@@ -658,11 +658,11 @@ initdb: hint: You can change this by editing pg_hba.conf or using the option -A,
 	   WHERE workspace_id=NEW.workspace_id
 	   FOR SHARE"
 	PL/pgSQL function lock_event_retention_for_append() line 6 at PERFORM
-2026-10-10 03:04:07.919 UTC [134] STATEMENT:  
+2026-10-10 03:04:07.919 UTC [134] STATEMENT:
 	        INSERT INTO domain_events(
 	          workspace_id,event_type,aggregate_type,aggregate_id,actor_id,correlation_id
 	        ) VALUES($1,'workspace.updated','workspace',$1,$2,'cursor-fence')
-	      
+
 2026-10-10 03:04:07.921 UTC [135] WARNING:  there is no transaction in progress
 2026-10-10 03:04:07.921 UTC [134] WARNING:  there is no transaction in progress
 2026-10-10 03:04:15.393 UTC [139] ERROR:  WORK_ITEM_PARENT_SELF

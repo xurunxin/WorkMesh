@@ -38,4 +38,6 @@ Runner 具名 failure 入口复用现有 failAgentSession DTO 与 POST /agent-se
 
 里程碑与关系有序分页保存 PostgreSQL created_at 原微秒值到签名 cursor，响应删除内部游标字段并保原 Date 序列化；sort/filter/actor/workspace/signature/TTL 绑定与原 Paginator 不变。历史已发行的毫秒游标继续按原值校验，但不能恢复丢失微秒；消费者应从首屏重读以取得精确新游标，不能伪造 cursor 或改变权限门禁。
 
+真实反向父层级竞争出现 40P01：原 HTTP PATCH 各持自身 WorkItem/Team 锁后等待另一父外键。修复复用已应用 0005 trigger 的同一 workspace 规划图 advisory namespace，在八个 WorkItem／milestone／relation HTTP 写入口的 mutate 中先 workspace FOR KEY SHARE，再规划图锁，再幂等与资源行锁。Automation create_work_item 在 executeAutomationAction 的 locator/canonical 锁前取同样两锁；Worker executeEffect 的内部动作使用新 withTx，claimEffects 已在另一事务提交，不先持 Team/resource。正常 status/labels/board_rank/cycle 写不触发此 namespace，本次不扩入口。真实 barrier 用 pg_blocking_pids 与 pg_locks 验证前置时尚无 Team／WorkItem／Project 等 ranked relation 锁；反向关系/层级只有一方向提交并返回现有 cycle 拒绝，HTTP 与实际 Worker 创建竞争、Human Team 删除和 workspace 排他协调及撤权后拒写分别记录。不存在公开 workspace DELETE，workspace 排他测试是特权夹具模拟删除协调锁，不能称已执行 workspace 删除。此修复不证明全系统无死锁，也不改变发送 guard 的有界争用回滚语义；原 40P01 和先前错误锁结论保留。
+
 投影 DTO 写入 contracts／OpenAPI／协议；M2 discovery 增量合成现行 policy、SDK、MCP、Runner、conformance。无 Schema 或 migration 变更；原 #53/M0/M1 和 M2 规划候选原件保全，产品检查另行记录。
