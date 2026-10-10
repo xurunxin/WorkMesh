@@ -1,4 +1,5 @@
 # 本轮只读安全核验；不写旧工作树、不执行删除。
+param([string]$ReceiptName = 'safety-before.json')
 $ErrorActionPreference = 'Stop'
 $outDir = $PSScriptRoot
 $record = Get-Content -LiteralPath (Join-Path $outDir 'preservation-53.json') -Raw | ConvertFrom-Json
@@ -37,5 +38,5 @@ $disk = Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'" | Select-Objec
 $daemon = & tds status 2>&1 | Out-String
 $daemonExit = $LASTEXITCODE
 $result = [pscustomobject]@{ recordedAt = [DateTime]::UtcNow.ToString('o'); target = $target; resolved = $resolved; components = $components; targetReferences = $references; processSnapshot = $processSnapshot; exclusiveReadCount = $exclusive; disk = $disk; daemon = $daemon; daemonExit = $daemonExit; limitations = '命令行与可读任务对话引用检查及逐文件独占打开；没有全局 build registry／所有 OS handles 权限；独占打开只证明采样瞬间。进程完整命令行不入库，避免泄漏秘密。' }
-$result | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $outDir 'safety-before.json') -Encoding utf8NoBOM
+$result | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $outDir $ReceiptName) -Encoding utf8NoBOM
 $result | Select-Object recordedAt,target,exclusiveReadCount,disk,daemonExit | ConvertTo-Json -Depth 4
