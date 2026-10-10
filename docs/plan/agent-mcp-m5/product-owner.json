@@ -1,0 +1,44 @@
+{
+  "runId": "m5-5dbe32e19a",
+  "task": "M5",
+  "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+  "startedAt": "2026-10-10T16:33:30.636006+00:00",
+  "containers": [
+    {
+      "kind": "postgres",
+      "name": "m5-5dbe32e19a-postgres",
+      "image": "postgres:16.9-alpine",
+      "port": 50438,
+      "registeredAt": "2026-10-10T16:33:30.636020+00:00",
+      "owner": "m5-5dbe32e19a",
+      "containerId": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+      "nativeExit": 0,
+      "stderr": ""
+    },
+    {
+      "kind": "redis",
+      "name": "m5-5dbe32e19a-redis",
+      "image": "redis:7.4.5-alpine",
+      "port": 50439,
+      "registeredAt": "2026-10-10T16:33:31.160562+00:00",
+      "owner": "m5-5dbe32e19a",
+      "containerId": "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+      "nativeExit": 0,
+      "stderr": ""
+    },
+    {
+      "kind": "store",
+      "name": "m5-5dbe32e19a-store",
+      "image": "rustfs/rustfs:1.0.0",
+      "port": 50440,
+      "registeredAt": "2026-10-10T16:33:32.491359+00:00",
+      "owner": "m5-5dbe32e19a",
+      "containerId": "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+      "nativeExit": 0,
+      "stderr": ""
+    }
+  ],
+  "sharedImagesPreserved": true,
+  "recoveryDirectory": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3\\.tmp\\m5-runtime",
+  "cleanup": "未执行"
+}

@@ -27,6 +27,22 @@ function manifest(capabilities: Capability[]): AgentCapabilityManifest {
 }
 
 describe('Pi WorkMesh tools', () => {
+  it('一次execute只调用一次业务request，重放选项不重复Activity或用于GET',async()=>{
+    const calls:Array<{path:string;options:unknown}>=[]
+    const api:RunnerToolApi={sessionId,async request<T>(_method,path,body,_revision,_key,options):Promise<T>{
+      if(path==='/api/v1/agent-capabilities?discovery=qualified')return manifest(['work:read','work:write','message:write']) as T
+      calls.push({path,options});return (body??{}) as T
+    }}
+    const tools=await createWorkMeshTools(api,'attempt',()=>undefined)
+    await tools.find(t=>t.name==='workmesh_create_document')!.execute('single',{ownerType:'work_item',ownerId,title:'test',markdown:'证据'},undefined,undefined,{} as never)
+    expect(calls.filter(c=>c.path==='/api/v1/documents')).toHaveLength(1)
+    expect(calls.filter(c=>c.path.endsWith('/activities'))).toHaveLength(2)
+    expect(calls.find(c=>c.path==='/api/v1/documents')!.options).toMatchObject({transportReplay:{operationId:'createDocument'}})
+    expect(calls.filter(c=>c.path.endsWith('/activities')).every(c=>c.options===undefined)).toBe(true)
+    calls.length=0
+    await tools.find(t=>t.name==='workmesh_get_document')!.execute('get',{documentId},undefined,undefined,{} as never)
+    expect(calls).toEqual([{path:`/api/v1/documents/${documentId}`,options:undefined}])
+  })
   it('M3未配置Artifact store明确拒绝，零上传意图或下载资料请求',async()=>{
     const calls:string[]=[]
     const api:RunnerToolApi={sessionId,async request<T>(_method:Parameters<RunnerToolApi['request']>[0],path:string):Promise<T>{

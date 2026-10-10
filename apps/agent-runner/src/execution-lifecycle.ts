@@ -12,11 +12,13 @@ export type SessionWaitIntent = z.infer<typeof sessionWaitIntentSchema>
 export type ExecutionExit = 'wait' | 'fail' | 'stop' | 'revoked' | 'shutdown' | 'timeout' | 'external_state'
 const exitPriority: Record<ExecutionExit, number> = { wait: 0, fail: 0, external_state: 1, timeout: 2, shutdown: 3, revoked: 4, stop: 5 }
 const definiteRejection = (error: unknown): boolean => error instanceof Error
+  && !('unreconciled' in error && error.unreconciled === true)
   && 'status' in error && typeof error.status === 'number' && error.status >= 400 && error.status < 500 && error.status !== 408
   && 'code' in error && typeof error.code === 'string' && !error.code.startsWith('HTTP_')
 const uncertainCause = (error: unknown): boolean => {
   const seen = new Set<unknown>()
   while (error instanceof Error && !seen.has(error)) {
+    if ('unreconciled' in error && error.unreconciled === true) return true
     if (error instanceof TypeError || error instanceof DOMException) return true
     seen.add(error)
     error = 'cause' in error ? error.cause : undefined

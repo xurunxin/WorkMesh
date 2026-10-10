@@ -19,11 +19,20 @@ import { z } from 'zod'
 import { sessionWaitIntentSchema, type SessionWaitIntent } from './execution-lifecycle.js'
 import { artifactChecksum, decodeUploadBytes, readArtifactBytes, sendArtifactBytes } from './delivery-transfer.js'
 
+export type RunnerRequestOptions = Readonly<{
+  signal?: AbortSignal
+  transportReplay?: Readonly<{
+    operationId: 'createDocument' | 'publishAgentPlan' | 'postWorkRoomMessage'
+    attemptId?: string
+    assertOpen?: () => void
+  }>
+}>
+
 export interface RunnerToolApi {
   readonly sessionId: string
   readonly artifactStoreOrigins?: readonly string[]
   request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
-    body?: unknown, ifMatch?: number, idempotencyKey?: string): Promise<T>
+    body?: unknown, ifMatch?: number, idempotencyKey?: string, options?: RunnerRequestOptions): Promise<T>
 }
 
 export type SessionCompletionIntent = Readonly<{
@@ -124,8 +133,11 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
       let result: unknown
       try {
         if(request.transfer && !api.artifactStoreOrigins?.length) throw new Error('ARTIFACT_STORE_NOT_CONFIGURED')
+        const replayOperation = operationId === 'createDocument' || operationId === 'publishAgentPlan'
+          || operationId === 'postWorkRoomMessage' ? operationId : undefined
         result = await api.request<unknown>(request.method, request.path,
-          request.body, request.ifMatch, key)
+          request.body, request.ifMatch, key, replayOperation ? { signal,
+            transportReplay: { operationId: replayOperation } } : undefined)
         if(request.transfer?.uploadBase64) result=await sendArtifactBytes(result,request.transfer.uploadBase64,api.artifactStoreOrigins??[],signal)
         if(request.transfer?.downloadUploadId) {
           const status=await api.request<unknown>('GET',`/api/v1/artifact-upload-intents/${request.transfer.downloadUploadId}`)
