@@ -3,7 +3,7 @@ import type { ToolDefinition } from '@earendil-works/pi-coding-agent'
 import {
   acquireLeaseInputSchema, qualifiedAgentCapabilityManifestResponseSchema, appendActivityInputSchema,
   completeAgentSessionInputSchema, consumeApprovalInputSchema,
-  artifactInputSchema,
+  artifactInputSchema, artifactTypeSchema,
   createDocumentInputSchema, handoffInputSchema, projectInputSchema, publishPlanInputSchema,
   requestApprovalInputSchema, updateDocumentInputSchema, workItemInputSchema,
   workItemPatchSchema, workItemRelationInputSchema,
@@ -58,9 +58,7 @@ function boundedResult(value: unknown): string {
     }
     return JSON.stringify({ truncated: true, message: 'Operation succeeded; fetch a narrower resource for full content.',
       id: object.id ?? null, status: object.status ?? null, revision: object.revision ?? null,
-      currentRevision: { id: revision.id ?? null, contentHash: revision.contentHash ?? null },
-      ...(items ? { nextCursor: object.nextCursor ?? null, itemCount: items.length, itemIds: items.slice(0, 100).map(item =>
-        item && typeof item === 'object' ? (item as Record<string, unknown>).id ?? null : null) } : {}) })
+      currentRevision: { id: revision.id ?? null, contentHash: revision.contentHash ?? null } })
   }
   return encoded
 }
@@ -278,6 +276,7 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
     Type.Object({ teamId: idParameter, title: Type.String({ minLength: 1, maxLength: 500 }),
       statusId: idParameter, description: Type.Optional(Type.String({ maxLength: 50_000 })),
       projectId: Type.Optional(idParameter), parentId: Type.Optional(idParameter), milestoneId: Type.Optional(idParameter), responsibleHumanActorId: Type.Optional(idParameter),
+      labels: Type.Optional(Type.Array(Type.String({ minLength: 1, maxLength: 60 }), { maxItems: 30 })), dueDate: Type.Optional(Type.String({ format: 'date-time' })),
       priority: Type.Optional(Type.Union([Type.Literal('none'), Type.Literal('low'), Type.Literal('medium'),
         Type.Literal('high'), Type.Literal('urgent')])) }), input => ({
       method: 'POST', path: '/api/v1/work-items', body: workItemInputSchema.parse(input),
@@ -286,15 +285,19 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
     'Edit an authorized Issue with its exact current revision. Workflow status and Agent Session state are different.',
     Type.Object({ workItemId: idParameter, ifMatch: Type.Integer({ minimum: 1 }),
       title: Type.Optional(Type.String({ minLength: 1, maxLength: 500 })),
-      description: Type.Optional(Type.String({ maxLength: 50_000 })),
+      description: Type.Optional(Type.Union([Type.String({ maxLength: 50_000 }),Type.Null()])),
       statusId: Type.Optional(idParameter), projectId: Type.Optional(Type.Union([idParameter, Type.Null()])),
       parentId: Type.Optional(Type.Union([idParameter, Type.Null()])), milestoneId: Type.Optional(Type.Union([idParameter, Type.Null()])),
-      responsibleHumanActorId: Type.Optional(idParameter),
+      responsibleHumanActorId: Type.Optional(Type.Union([idParameter,Type.Null()])),
+      placement: Type.Optional(Type.Object({beforeItemId:Type.Union([idParameter,Type.Null()])})),
+      labels: Type.Optional(Type.Array(Type.String({ minLength: 1, maxLength: 60 }), { maxItems: 30 })), dueDate: Type.Optional(Type.Union([Type.String({ format: 'date-time' }),Type.Null()])),
       priority: Type.Optional(Type.Union([Type.Literal('none'), Type.Literal('low'), Type.Literal('medium'),
         Type.Literal('high'), Type.Literal('urgent')])) }), input => {
       const parsed = z.object({ workItemId: id, ifMatch: z.number().int().positive(),
-        title: z.string().min(1).max(500).optional(), description: z.string().max(50_000).optional(),
-        statusId: id.optional(), projectId: id.nullable().optional(), parentId: id.nullable().optional(), milestoneId: id.nullable().optional(), responsibleHumanActorId: id.optional(),
+        title: z.string().min(1).max(500).optional(), description: z.string().max(50_000).nullable().optional(),
+        statusId: id.optional(), projectId: id.nullable().optional(), parentId: id.nullable().optional(), milestoneId: id.nullable().optional(), responsibleHumanActorId: id.nullable().optional(),
+        labels: z.array(z.string().min(1).max(60)).max(30).optional(), dueDate: z.string().datetime({offset:true}).nullable().optional(),
+        placement: z.object({beforeItemId:id.nullable()}).optional(),
         priority: z.enum(['none', 'low', 'medium', 'high', 'urgent']).optional() }).parse(input)
       const { workItemId, ifMatch, ...fields } = parsed
       if (Object.keys(fields).length === 0) throw new Error('TOOL_EMPTY_ISSUE_UPDATE')
@@ -368,7 +371,7 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
     })
   const creationFields = { planStepId: idParameter, planVersionId: idParameter,
     initialPrompt: Type.String({ minLength: 1, maxLength: 50000 }), budget: Type.Optional(Type.Record(Type.String(), Type.Number({ minimum: 0 }))) }
-  add('workmesh_create_child_session', 'createChildAgentSession', 'Create a bounded required child in the current stable Plan step; an explicit budget reduces inherited limits.',
+  add('workmesh_create_child_session', 'createChildAgentSession', 'Create a bounded required child in the current stable Plan step; an explicit budget reduces inherited limits. Use workmesh_create_review_delegation for reviewer evidence; ordinary role=reviewer retains limited capability and cannot publish code_review.',
     Type.Object({ ...creationFields, agentId: idParameter, required: Type.Optional(Type.Boolean()), role: Type.Optional(Type.Union([Type.Literal('executor'), Type.Literal('reviewer'), Type.Literal('researcher')])) }),
     input => ({ method: 'POST', path: `/api/v1/agent-sessions/${api.sessionId}/children`, body: childSessionInputSchema.parse(input) }))
   add('workmesh_create_review_delegation', 'createReviewDelegation', 'Create an independent reviewer with no plan publication capability. Explicitly reduce all constrained budget dimensions to fit remaining reservations.',
@@ -427,7 +430,7 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
   ] as const) add(name, operation, 'Read one authorized resource.', Type.Object({ [field]: idParameter }), input => ({ method: 'GET', path: path+z.object({ [field]: id }).strict().parse(input)[field] }))
   for (const [scope, field, operation] of [['work_item','workItemId','createWorkItemDecision'],['project','projectId','createProjectDecision'],['session','sessionId','createSessionDecision']] as const)
     add(`workmesh_create_${scope}_decision`, operation, 'Propose a Decision; Human-only finalization is never available here.',
-      Type.Object({ ...(scope === 'session' ? {} : { [field]: idParameter }), title: Type.String({ minLength: 1, maxLength: 500 }), rationale: Type.String({ minLength: 1, maxLength: 20000 }), options: Type.Optional(Type.Array(Type.String())), evidence: Type.Optional(Type.Array(Type.String())), selectedOption: Type.Optional(Type.String()), affectedResources: Type.Optional(Type.Array(Type.Object({ resourceType: Type.String(), resourceId: idParameter }))) }), input => {
+      Type.Object({ ...(scope === 'session' ? {} : { [field]: idParameter }), title: Type.String({ minLength: 1, maxLength: 500 }), rationale: Type.String({ minLength: 1, maxLength: 20000 }), options: Type.Optional(Type.Array(Type.String())), evidence: Type.Optional(Type.Array(Type.String())), selectedOption: Type.Optional(Type.String()), affectedResources: Type.Optional(Type.Array(Type.Object({ resourceType: Type.String(), resourceId: idParameter, impact: Type.Optional(Type.String({minLength:1,maxLength:2000})) }))) }), input => {
         const parsed: Record<string, unknown> = z.object({ ...(scope === 'session' ? {} : { [field]: id }), title: z.string(), rationale: z.string(), options: z.array(z.string()).optional(), evidence: z.array(z.string()).optional(), selectedOption: z.string().optional(), affectedResources: decisionInputSchema.shape.affectedResources }).strict().parse(input)
         const { [field]: target, ...body } = parsed
         return { method: 'POST', path: `/api/v1/${scope === 'session' ? 'agent-sessions' : scope === 'project' ? 'projects' : 'work-items'}/${scope === 'session' ? api.sessionId : id.parse(target)}/decisions`, body: decisionInputSchema.parse(body) }
@@ -449,8 +452,8 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
       return { method: 'POST', path: `/api/v1/inbox/${inboxItemId}/${action}`, body: {} }
     })
   add('workmesh_reply_inbox_item','replyInboxItem','Reply as the exact recipient/claimant Session.',
-    Type.Object({ inboxItemId: idParameter, ifMatch: Type.Integer({ minimum: 1 }), body: Type.String({ minLength: 1, maxLength: 50000 }) }), input => {
-      const { inboxItemId, ifMatch, ...body } = z.object({ inboxItemId: id, ifMatch: z.number().int().positive(), body: z.string().min(1).max(50000) }).strict().parse(input)
+    Type.Object({ inboxItemId: idParameter, ifMatch: Type.Integer({ minimum: 1 }), body: Type.String({ minLength: 1, maxLength: 50000 }), payload: Type.Optional(Type.Record(Type.String(),Type.Unknown())) }), input => {
+      const { inboxItemId, ifMatch, ...body } = z.object({ inboxItemId: id, ifMatch: z.number().int().positive(), body: z.string().min(1).max(50000), payload: z.record(z.unknown()).optional() }).strict().parse(input)
       return { method: 'POST', path: `/api/v1/inbox/${inboxItemId}/reply`, body, ifMatch }
     })
   add('workmesh_request_handoff', 'requestHandoff', 'Request a source Handoff; acceptance is a Human action.',
@@ -460,15 +463,12 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
     })
   add('workmesh_publish_artifact', 'publishArtifact',
     'Publish a referenced result or evidence for this exact Session. An artifact is a durable record, not an approval.',
-    Type.Object({ type: reviewer ? Type.Literal('code_review') : Type.Union([Type.Literal('code_review'), Type.Literal('commit'), Type.Literal('pull_request'),
-      Type.Literal('test_report'), Type.Literal('document'), Type.Literal('link'),
-      Type.Literal('file'), Type.Literal('other')]),
+    Type.Object({ type: reviewer ? Type.Literal('code_review') : Type.Union(artifactTypeSchema.options.map(value=>Type.Literal(value))),
       title: Type.String({ minLength: 1, maxLength: 500 }),
       metadata: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
       uri: Type.Optional(Type.String({ format: 'uri' })),
       checksum: Type.Optional(Type.String({ pattern: '^sha256:[a-f0-9]{64}$' })) }), input => {
-      const parsed = z.object({ type: (reviewer ? z.literal('code_review') : z.enum(['code_review', 'commit', 'pull_request', 'test_report', 'document',
-        'link', 'file', 'other'])), title: z.string().min(1).max(500), uri: z.string().url().optional(),
+      const parsed = z.object({ type: (reviewer ? z.literal('code_review') : artifactTypeSchema), title: z.string().min(1).max(500), uri: z.string().url().optional(),
         checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/).optional(), metadata: z.record(z.unknown()).optional() }).parse(input)
       return { method: 'POST', path: '/api/v1/artifacts',
         body: artifactInputSchema.parse({ sessionId: api.sessionId, ...parsed,
@@ -525,14 +525,16 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
     }, false, false)
   add('workmesh_offer_handoff', 'offerHandoff',
     'Offer visible, structured work to another Agent. The target and server must accept before work transfers.',
-    Type.Object({ targetAgentId: idParameter, summary: Type.String({ minLength: 1, maxLength: 20000 }),
-      remainingWork: Type.Array(Type.String({ minLength: 1, maxLength: 10000 }), { maxItems: 100 }),
-      acceptanceCriteria: Type.Optional(Type.Array(Type.String({ minLength: 1, maxLength: 2000 }),
-        { maxItems: 100 })) }), input => {
-      const parsed = z.object({ targetAgentId: id, summary: z.string(),
-        remainingWork: z.array(z.string()), acceptanceCriteria: z.array(z.string()).optional() }).parse(input)
+    Type.Object({ targetAgentId: Type.Optional(idParameter), targetSkill: Type.Optional(Type.String({minLength:1,maxLength:160})), summary: Type.String({ minLength: 1, maxLength: 20000 }),
+      scopeType: Type.Optional(Type.Union(['workspace','project','work_item','plan_step'].map(value=>Type.Literal(value)))), scopeId: Type.Optional(idParameter),
+      completedWork: Type.Optional(Type.Array(Type.String({minLength:1,maxLength:10000}),{maxItems:100})), remainingWork: Type.Optional(Type.Array(Type.String({minLength:1,maxLength:10000}),{maxItems:100})),
+      openQuestions: Type.Optional(Type.Array(Type.String({minLength:1,maxLength:2000}),{maxItems:100})), risks: Type.Optional(Type.Array(Type.String({minLength:1,maxLength:2000}),{maxItems:100})),
+      acceptanceCriteria: Type.Optional(Type.Array(Type.String({minLength:1,maxLength:2000}),{maxItems:100})), requestedAction: Type.Optional(Type.String({minLength:1,maxLength:10000})),
+      leaseTransferPolicy: Type.Optional(Type.Union([Type.Literal('retain'),Type.Literal('transfer'),Type.Literal('release')])),artifactIds: Type.Optional(Type.Array(idParameter,{maxItems:100})),contextSnapshotId: Type.Optional(idParameter),requestedCapabilities: Type.Optional(Type.Array(Type.String(),{maxItems:50})),status: Type.Optional(Type.Union([Type.Literal('draft'),Type.Literal('requested')])) }), input => {
+      // Shared schema owns the mutually exclusive target and full structured package.
+      const parsed = handoffInputSchema.parse({ ...(input as Record<string,unknown>), fromSessionId: api.sessionId })
       return { method: 'POST', path: '/api/v1/handoffs',
-        body: handoffInputSchema.parse({ fromSessionId: api.sessionId, ...parsed }) }
+        body: parsed }
     })
   add('workmesh_append_activity', 'appendAgentActivity',
     'Record concise progress, evidence, a visible question, or a warning on this exact Session. Never include secrets or hidden reasoning.',
@@ -557,6 +559,7 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
         title: Type.String({ minLength: 1, maxLength: 500 }),
         ordinal: Type.Integer({ minimum: 0 }),
         description: Type.Optional(Type.String({ maxLength: 20000 })),
+        ownerActorId: Type.Optional(idParameter), cancellationReason: Type.Optional(Type.String({minLength:1,maxLength:2000})), expectedArtifacts: Type.Optional(Type.Array(Type.String(),{maxItems:50})),
         status: Type.Optional(Type.Union([Type.Literal('pending'), Type.Literal('in_progress'),
           Type.Literal('blocked'), Type.Literal('completed'), Type.Literal('canceled')])),
         dependsOn: Type.Optional(Type.Array(idParameter, { maxItems: 100 })),

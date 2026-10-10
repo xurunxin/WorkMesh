@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { applyMigrations, createDb, type Db } from '@workmesh/db'
+import { applyMigrations, createDb, opaqueToken, tokenHash, type Db } from '@workmesh/db'
 import { createAgentWebhookWorker, encryptWebhookSecretForTest } from '../src/agent-webhook.js'
 import { createSessionLifecycleWorker } from '../src/session-lifecycle.js'
 
@@ -69,8 +69,22 @@ const createSession = async (data: Fixture, state = 'queued'): Promise<string> =
 }
 
 const createDelivery = async (data: Fixture, sessionId: string, deliveryId = `del_${randomUUID()}`): Promise<string> => {
-  const event = await db.query<{ id: string }>("INSERT INTO domain_events(workspace_id,event_type,aggregate_type,aggregate_id,actor_id,correlation_id,payload) VALUES($1,'agent.session.created','agent_session',$2,$3,$4,$5) RETURNING id", [data.workspaceId, sessionId, data.serviceActorId, deliveryId, { sessionId }])
-  const delivery = await db.query<{ id: string }>('INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) VALUES($1,$2,1,$3,$4,$5,$6,$7) RETURNING id', [data.agentId, data.endpointId, event.rows[0]!.id, deliveryId, 'agent.session.created', sessionId, { sessionId }])
+  const existing = await db.query('SELECT id FROM agent_webhook_deliveries WHERE agent_id=$1 AND delivery_id=$2',[data.agentId,deliveryId])
+  if(existing.rowCount) {
+    const duplicate = await db.query<{id:string}>('INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) SELECT agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload FROM agent_webhook_deliveries WHERE agent_id=$1 AND delivery_id=$2 RETURNING id',[data.agentId,deliveryId])
+    return duplicate.rows[0]!.id
+  }
+  // Transport tests use a fully authorized native provisioning source, not an unbound payload.
+  await db.query("UPDATE agent_definitions SET requested_capabilities=ARRAY['work:read','work:write'],approved_capabilities=ARRAY['work:read','work:write'] WHERE id=$1",[data.agentId])
+  await db.query("UPDATE delegations SET permissions_snapshot=ARRAY['work:read','work:write'],capability_scope=$2 WHERE id=$1",[data.delegationId,{teamIds:[data.teamId],workItemIds:[data.workItemId]}])
+  await db.query("INSERT INTO agent_team_access(workspace_id,agent_id,team_id,granted_by_actor_id,approved_capabilities) VALUES($1,$2,$3,$4,ARRAY['work:read','work:write']) ON CONFLICT(workspace_id,agent_id,team_id) DO NOTHING",[data.workspaceId,data.agentId,data.teamId,data.humanActorId])
+  await db.query('UPDATE agent_sessions SET team_id=$2 WHERE id=$1',[sessionId,data.teamId])
+  const installation = (await db.query<{id:string}>("INSERT INTO agent_installation_tokens(agent_id,token_hash,origin_kind) VALUES($1,$2,'native') RETURNING id",[data.agentId,tokenHash(opaqueToken())])).rows[0]!.id
+  const exchangeToken = opaqueToken()
+  await db.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at) VALUES($1,$2,$3,$4,$5,clock_timestamp()+interval '1 hour')",[sessionId,data.agentId,installation,tokenHash(opaqueToken()),tokenHash(exchangeToken)])
+  const payload = {sessionId,exchangeToken}
+  const event = await db.query<{ id: string }>("INSERT INTO domain_events(workspace_id,event_type,aggregate_type,aggregate_id,actor_id,correlation_id,payload,session_id) VALUES($1,'agent.session.created','agent_session',$2,$3,$4,$5,$2) RETURNING id", [data.workspaceId, sessionId, data.serviceActorId, deliveryId, payload])
+  const delivery = await db.query<{ id: string }>('INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) VALUES($1,$2,1,$3,$4,$5,$6,$7) RETURNING id', [data.agentId, data.endpointId, event.rows[0]!.id, deliveryId, 'agent.session.created', sessionId, payload])
   return delivery.rows[0]!.id
 }
 

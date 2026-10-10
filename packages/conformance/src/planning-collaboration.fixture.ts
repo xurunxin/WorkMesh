@@ -25,6 +25,7 @@ export async function createPlanningCollaborationFixture() {
   const receivers: ReturnType<typeof createReceiver>[] = []
   const delivered = new Map<string, { exchangeToken: string }>()
   const deliveries = new Set<string>()
+  let duplicateDeliveries = 0
   const worker = () => createAgentWebhookWorker({ db: fixture.db, allowPrivateAgentWebhooks: true })
   const receive = async (sessionId: string, installationToken: string): Promise<Execution> => {
     await worker().tick()
@@ -42,8 +43,7 @@ export async function createPlanningCollaborationFixture() {
     await client.transitionState(sessionId, 'executing', 'M2 lifecycle', { ifMatch: session.revision })
     return { sessionId, workItemId: delivery.work_item_id, token: exchange.sessionToken, client }
   }
-  const registerTarget = async () => {
-    const target = await fixture.pairTarget(['work:read', 'work:write', 'artifact:write'])
+  const attachReceiver = async (target: {agentId:string;token:string}) => {
     let secret: Buffer | undefined
     const receiver = createReceiver(async (request, response) => {
       try {
@@ -54,9 +54,10 @@ export async function createPlanningCollaborationFixture() {
           response.writeHead(401); response.end(); return
         }
         const deliveryId = String(request.headers['workmesh-delivery-id'])
-        if (deliveries.has(deliveryId)) { response.writeHead(409); response.end(); return }
+        if (deliveries.has(deliveryId)) { duplicateDeliveries++; response.writeHead(409); response.end(); return }
         const envelope = JSON.parse(raw) as { events: Array<{ type: string; payload: { sessionId: string; exchangeToken: string } }> }
         for (const event of envelope.events) if (event.type==='agent.session.created') delivered.set(event.payload.sessionId,event.payload)
+        savePlanningEvidence(`delivery-${deliveryId}.json`,{ deliveryId, events: envelope.events.map(event=>({type:event.type,sessionId:event.payload.sessionId})), hmacVerified: true, timestampInWindow: true, port: (receiver.address() as {port:number}).port })
         deliveries.add(deliveryId); response.writeHead(204); response.end()
       } catch { response.writeHead(400); response.end() }
     })
@@ -69,13 +70,15 @@ export async function createPlanningCollaborationFixture() {
       const definition = (await fixture.db.query<{ revision: number }>('SELECT revision FROM agent_definitions WHERE id=$1', [target.agentId])).rows[0]!
       const rotated = await fixture.human<{ secret: string }>('POST', `/api/v1/agents/${target.agentId}/webhook-endpoints/${endpoint.id}/rotate-secret`, {}, definition.revision)
       secret = Buffer.from(rotated.secret)
-      savePlanningEvidence(`receiver-${target.agentId}.json`, { agentId: target.agentId, endpointId: endpoint.id, port: address.port, owned: true, transport: 'http-loopback', hmacVerified: true })
+      savePlanningEvidence(`receiver-${target.agentId}.json`, { agentId: target.agentId, endpointId: endpoint.id, port: address.port, owned: true, transport: 'http-loopback', hmacVerificationEnabled: true })
     } finally {
       if (previous === undefined) delete process.env.ALLOW_PRIVATE_AGENT_WEBHOOKS
       else process.env.ALLOW_PRIVATE_AGENT_WEBHOOKS = previous
     }
     return target
   }
+  const registerTarget = async () => attachReceiver(await fixture.pairTarget(['work:read','work:write','artifact:write']))
+  const registerCurrentReceiver = async () => attachReceiver({agentId:fixture.agentId,token:fixture.connectionToken})
   const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>) => {
     const captures: Array<{ tools: string[]; results: string[]; messages: string; call: ModelCall | null }> = []
     const model = createServer({ key: readFileSync(new URL('./fixtures/model-test-key.pem', import.meta.url)), cert: readFileSync(new URL('./fixtures/model-test-ca.pem', import.meta.url)) }, async (request, response) => {
@@ -118,10 +121,10 @@ export async function createPlanningCollaborationFixture() {
       else process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST = previous
     }
   }
-  return { ...fixture, receive, registerTarget, pi, close: async () => {
+  return { ...fixture, receive, registerTarget, registerCurrentReceiver, pi, webhookWorker: worker, deliveryCounts:()=>({accepted:deliveries.size,duplicates:duplicateDeliveries}), close: async () => {
     for (const receiver of receivers) { receiver.closeAllConnections(); if (receiver.listening) await new Promise<void>((done,reject)=>receiver.close(error=>error?reject(error):done())) }
     for (const model of models) { model.closeAllConnections(); if (model.listening) await new Promise<void>((done, reject) => model.close(error => error ? reject(error) : done())) }
     await fixture.close()
-    savePlanningEvidence('cleanup.json', { modelCount: models.length, modelsClosed: models.every(model => !model.listening), receiverCount: receivers.length, receiversClosed: receivers.every(receiver=>!receiver.listening), signedDeliveryCount: deliveries.size })
+    savePlanningEvidence('cleanup.json', { modelCount: models.length, modelsClosed: models.every(model => !model.listening), receiverCount: receivers.length, receiversClosed: receivers.every(receiver=>!receiver.listening), signedDeliveryCount: deliveries.size, duplicateDeliveries })
   } }
 }

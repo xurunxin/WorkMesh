@@ -24,5 +24,10 @@ Consequences
 Migration
 复用现有表、索引、字段，无新 migration、backfill 或事件类型；上一阶段和 clean 数据库照常回归，SQL 执行计划须验证现有 parent_session_id／Plan 索引满足有界查询。查询按 cursor 分页且限制返回数量；不声称必须新索引。无法证明的历史 child 不猜测绑定，不授正文权。
 
+产品独审增补：创建投递的发送前确认
+真实 receiver 验证暴露既有 agent.session.created 发送路径仅在创建时确认资格、没有发送前撤权与 claim fence。新增 authorizeSessionWebhook，在解析后的 HTTP 目标确定后、发送前，以原 delivery、event、Session、nonce hash、唯一 SessionToken 和安装来源定位；不猜最新 Token。事务设置全程 LOCAL lock_timeout=250ms（包括 canonical 获取阶段），先 workspace FOR KEY SHARE，再完整 lockAgentAuthorityPlan，来源 Connection／credential 使用 FOR SHARE NOWAIT，随后锁 Team／actor／membership、endpoint／secret与 delivery 并重新验证全部绑定、活动资格和 clock_timestamp 租期。Connection DELETE 还会先锁 installation 后锁 coordinator，故整个发送确认的行锁等待均有界，来源锁额外 NOWAIT；55P03／40P01 回滚并释放全部 canonical 锁，沿现有 retryable 投递退避，禁止省略来源锁或将锁竞争当成功。此设计不改既有撤权命令或授权角色。
+
+M1 self_claim／self_claim_recovery 通知保留无 nonce：创建事务取 Token INSERT RETURNING id，把非秘密 sessionTokenId 写入原 delivery payload，只允许该原 event.assignmentMode，按准确原 Token／安装来源重验，不选择最新 Token、不通过通知授交换凭据。缺旧来源绑定失败关闭。nonce 未交换时仅 queued 能启动；已交换的准确原 nonce 允许合法活动 Session 的同 deliveryId 至少一次重放，由 receiver 幂等返回 409，不创建第二授权。paused／stopping／stale／终态或来源失权均拒投递；失权永久失败沿现有 dead 结算。claim 的 attempt_count、workerId、租期及原 payload 同时确认，完成／失败更新也检查 attempt_count，拒同 worker ABA。事务 commit 是发送授权界限，commit 前撤权零 HTTP，commit 后在途请求不能召回；不持事务跨网络。来源锁竞争、installation 先锁的撤权逆序争用回滚及准确 revoker PID 的 pg_blocking_pids 等待后撤权提交、Stop、旧 claim、重启与响应丢失重放由 M2 conformance 验证。内部同模型独审继续核对此修复设计，最终成果仍须平台独审与 Required CI。
+
 Spec changes
 投影 DTO 写入 contracts／OpenAPI／协议；M2 discovery 增量合成现行 policy、SDK、MCP、Runner、conformance。无 Schema 或 migration 变更；原 #53/M0/M1 和 M2 规划候选原件保全，产品检查另行记录。

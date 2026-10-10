@@ -250,6 +250,78 @@ describe('Stage 2 collaboration API acceptance', () => {
   afterEach(restoreSessionSubjectConstraint)
   afterAll(async () => { await app.close(); await db.end() })
 
+  it('M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝', async () => {
+    const f = await makeFixture()
+    expect((await db.query('SELECT max_child_sessions FROM agent_sessions WHERE id=$1',[f.parent.id])).rows[0]).toEqual({max_child_sessions:8})
+    expect((await db.query('SELECT max_child_sessions FROM agent_plan_steps WHERE id=$1 AND plan_version_id=$2',[f.stepB,f.planVersionId])).rows[0]).toEqual({max_child_sessions:8})
+    const body = {agentId:f.reviewer.id,planStepId:f.stepB,planVersionId:f.planVersionId,initialPrompt:'Default bound',budget:{maxInputTokens:0,maxRuntimeSeconds:0}}
+    for(let i=0;i<8;i++) {
+      const created = await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/children`,body)
+      expect(created.statusCode,JSON.stringify(created.json())).toBe(200)
+      // Isolate lifetime parent counting from target capacity: privileged terminal fixture only.
+      await db.query("UPDATE agent_sessions SET state='completed',ended_at=clock_timestamp() WHERE id=$1",[created.json<{id:string}>().id])
+    }
+    const denied = await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/children`,body)
+    expect(denied.statusCode).toBe(409)
+    expect(denied.json()).toMatchObject({error:{code:'CHILD_SESSION_LIMIT',details:{totalChildren:8,maxChildren:8}}})
+    expect((await db.query('SELECT count(*)::int AS count FROM agent_sessions WHERE parent_session_id=$1',[f.parent.id])).rows[0]).toEqual({count:8})
+  })
+
+  it('M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界', async () => {
+    const f = await makeFixture()
+    const body = {agentId:f.reviewer.id,planStepId:f.stepB,planVersionId:f.planVersionId,initialPrompt:'Old version active child',budget:{maxInputTokens:1,maxRuntimeSeconds:1}}
+    const created = await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/children`,body)
+    expect(created.statusCode).toBe(200)
+    const revision = (await db.query('SELECT revision FROM agent_sessions WHERE id=$1',[f.parent.id])).rows[0]!.revision as number
+    expect((await agentCall(f.parentToken,'PUT',`/api/v1/agent-sessions/${f.parent.id}/plan`,{changeSummary:'Keep stable B',steps:[{id:f.stepB,title:'B',ordinal:0,status:'pending',dependsOn:[],acceptanceCriteria:[],expectedArtifacts:[]}]},{'if-match':`"revision-${revision}"`})).statusCode).toBe(200)
+    const currentVersion = (await db.query('SELECT current_plan_version_id FROM agent_sessions WHERE id=$1',[f.parent.id])).rows[0]!.current_plan_version_id as string
+    // Insert a distinct privileged fixture version; never edit immutable published steps.
+    const version = randomUUID()
+    await db.query(`INSERT INTO agent_plan_versions SELECT fixture.* FROM agent_plan_versions original
+      CROSS JOIN LATERAL jsonb_populate_record(NULL::agent_plan_versions,to_jsonb(original)||jsonb_build_object('id',$2::uuid,'revision',original.revision+1,'parent_version_id',original.id,'change_summary','Privileged fixture step cap','created_at',clock_timestamp())) fixture WHERE original.id=$1`,[currentVersion,version])
+    await db.query(`INSERT INTO agent_plan_steps SELECT fixture.* FROM agent_plan_steps original
+      CROSS JOIN LATERAL jsonb_populate_record(NULL::agent_plan_steps,to_jsonb(original)||jsonb_build_object('plan_version_id',$2::uuid,'max_child_sessions',1,'created_at',clock_timestamp(),'updated_at',clock_timestamp())) fixture WHERE original.plan_version_id=$1 AND original.id=$3`,[currentVersion,version,f.stepB])
+    await db.query('UPDATE agent_sessions SET current_plan_version_id=$2 WHERE id=$1',[f.parent.id,version])
+    for (const [suffix,payload] of [['children',{...body,agentId:f.overflow.id,planVersionId:version}],['review-delegations',{reviewerAgentId:f.overflow.id,planStepId:f.stepB,planVersionId:version,initialPrompt:'Bound review',budget:{maxInputTokens:1,maxRuntimeSeconds:1}}]] as const) {
+      const denied = await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/${suffix}`,payload)
+      // Existing REST maps this precise limit code to 400; retain its public status.
+      expect(denied.statusCode).toBe(400);expect(denied.json()).toMatchObject({error:{code:'PLAN_STEP_CHILD_SESSION_LIMIT',details:{planStepId:f.stepB,activeChildren:1,maxChildren:1}}})
+    }
+  })
+
+  it('M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝', async () => {
+    const f = await makeFixture()
+    const reviewBody = {reviewerAgentId:f.reviewer.id,planStepId:f.stepC,planVersionId:f.planVersionId,initialPrompt:'Reservation owner',budget:{maxInputTokens:130,maxRuntimeSeconds:300}}
+    const first = await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/review-delegations`,reviewBody)
+    expect(first.statusCode,JSON.stringify(first.json())).toBe(200)
+    const childId = first.json<{session:{id:string}}>().session.id
+    const smallBody = {agentId:f.overflow.id,planStepId:f.stepB,planVersionId:f.planVersionId,initialPrompt:'Remaining 70',budget:{maxInputTokens:70,maxRuntimeSeconds:300}}
+    const small = await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/children`,smallBody)
+    expect(small.statusCode,JSON.stringify(small.json())).toBe(200)
+    // Simulate a pre-M2 active review. This is a test-only historical fixture.
+    await db.query('DELETE FROM session_budget_reservations WHERE child_session_id=$1',[childId])
+    const denied = await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/children`,{...smallBody,agentId:f.runner.id,budget:{maxInputTokens:1,maxRuntimeSeconds:0}})
+    expect(denied.statusCode).toBe(409);expect(denied.json()).toMatchObject({error:{code:'CHILD_BUDGET_EXCEEDED'}})
+    for (const layer of ['parent','definition','team'] as const) {
+      const table = layer==='parent'?'delegations':layer==='definition'?'agent_definitions':'agent_team_access'
+      const column = layer==='parent'?'permissions_snapshot':'approved_capabilities'
+      const where = layer==='parent'?'id=(SELECT delegation_id FROM agent_sessions WHERE id=$1)':layer==='definition'?'id=$1':'agent_id=$1 AND team_id=$2'
+      const args = layer==='parent'?[f.parent.id]:layer==='definition'?[f.overflow.id]:[f.overflow.id,f.teamId]
+      const original = (await db.query<{caps:string[]}>(`SELECT ${column} AS caps FROM ${table} WHERE ${where}`,args)).rows[0]!.caps
+      await db.query(`UPDATE ${table} SET ${column}=array_remove(${column},'artifact:write') WHERE ${where}`,args)
+      try {
+        const refused = await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/review-delegations`,{...reviewBody,reviewerAgentId:f.overflow.id,budget:{maxInputTokens:0,maxRuntimeSeconds:0}})
+        expect(refused.statusCode,layer+JSON.stringify(refused.json())).toBe(403)
+        expect(refused.json()).toMatchObject({error:{code:'CAPABILITY_DENIED'}})
+      } finally { await db.query(`UPDATE ${table} SET ${column}=$${args.length+1} WHERE ${where}`,[...args,original]) }
+    }
+    const restored = await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/review-delegations`,{...reviewBody,reviewerAgentId:f.overflow.id,budget:{maxInputTokens:0,maxRuntimeSeconds:0}})
+    expect(restored.statusCode,JSON.stringify(restored.json())).toBe(200)
+    await db.query("UPDATE agent_sessions SET state='failed',ended_at=clock_timestamp() WHERE id=$1",[childId])
+    const legacyTerminal = await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/children`,{...smallBody,agentId:f.runner.id,budget:{maxInputTokens:1,maxRuntimeSeconds:0}})
+    expect(legacyTerminal.statusCode,JSON.stringify(legacyTerminal.json())).toBe(200)
+  })
+
   it('M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读', async () => {
     const f = await makeFixture()
     const child = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/children`, {
@@ -260,7 +332,7 @@ describe('Stage 2 collaboration API acceptance', () => {
     const revision = (await db.query<{ revision: number }>('SELECT revision FROM agent_sessions WHERE id=$1', [f.parent.id])).rows[0]!.revision
     for (const state of ['queued','acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked','paused','stopping','stale','failed','canceled']) {
       // Privileged state setup isolates the completion gate; not an advertised transition.
-      await db.query("UPDATE agent_sessions SET state=$2,ended_at=CASE WHEN $2 IN ('completed','failed','canceled') THEN clock_timestamp() ELSE NULL END WHERE id=$1", [childId,state])
+      await db.query("UPDATE agent_sessions SET state=$2::agent_session_state,ended_at=CASE WHEN $2::text IN ('completed','failed','canceled') THEN clock_timestamp() ELSE NULL END WHERE id=$1", [childId,state])
       const blocked = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/complete`, { summary: 'Incomplete child', noArtifactReason: 'Gate verification' }, { 'if-match': `"revision-${revision}"` })
       expect(blocked.statusCode).toBe(409)
       expect(blocked.json()).toMatchObject({ error: { code: 'COMPLETION_PLAN_INCOMPLETE', details: { blockerSessionIds: [childId] } } })
@@ -366,6 +438,9 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(missingDeliverables.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'REVIEW_COMPLETION_EVIDENCE_REQUIRED' } })
     const codeReview = await agentCall(reviewerToken, 'POST', '/api/v1/artifacts', { sessionId: reviewLease.session.id, workItemId: f.workItemId, type: 'code_review', title: 'Step C review', metadata: { verdict: 'approved' } })
     expect(codeReview.statusCode).toBe(200)
+    const artifactOnlyRevision = (await db.query<{revision:number}>('SELECT revision FROM agent_sessions WHERE id=$1',[reviewLease.session.id])).rows[0]!.revision
+    const artifactOnly = await agentCall(reviewerToken,'POST',`/api/v1/agent-sessions/${reviewLease.session.id}/complete`,{summary:'Artifact cannot replace own Room result',artifactIds:[codeReview.json<{id:string}>().id],checks:[],limitations:[],noArtifactReason:'Still no Room'}, {'if-match':`"revision-${artifactOnlyRevision}"`})
+    expect(artifactOnly.statusCode).toBe(409);expect(artifactOnly.json()).toMatchObject({error:{code:'REVIEW_COMPLETION_EVIDENCE_REQUIRED'}})
     const parentRoomId = (await db.query<{ id: string }>("SELECT id FROM work_room_channels WHERE subject_kind='session' AND subject_id=$1", [f.parent.id])).rows[0]!.id
     const reviewResult = await agentCall(reviewerToken, 'POST', `/api/v1/rooms/${parentRoomId}/messages`, { sessionId: reviewLease.session.id, intent: 'review_result', body: 'Step C review passed.', payload: { verdict: 'approved', artifactId: codeReview.json<{ id: string }>().id } })
     expect(reviewResult.statusCode).toBe(200)
@@ -383,6 +458,35 @@ describe('Stage 2 collaboration API acceptance', () => {
     const blocked = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/complete`, { summary: 'cannot complete', artifactIds: [], checks: [{ name: 'unit', status: 'passed', summary: 'ok' }], limitations: [] }, { 'if-match': `"revision-${revision}"` })
     expect(blocked.statusCode, JSON.stringify(blocked.json())).toBe(409)
     expect(blocked.json<{ error: { code: string; details: { blockerSessionIds: string[] } } }>()).toMatchObject({ error: { code: 'COMPLETION_PLAN_INCOMPLETE', details: { blockerSessionIds: [childId] } } })
+  })
+
+  it('M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据', async () => {
+    const f = await makeFixture()
+    const reviewer = await directReviewerSession(f,f.reviewer)
+    const bearer = await tokenFor(reviewer.id,f.reviewer)
+    const ack = await agentCall(bearer,'POST',`/api/v1/agent-sessions/${reviewer.id}/ack`,{summary:'Review gate',externalUrls:[]})
+    expect(ack.statusCode).toBe(200)
+    expect((await agentCall(bearer,'POST',`/api/v1/agent-sessions/${reviewer.id}/state`,{state:'executing',reason:'Evidence gate'}, {'if-match':`"revision-${ack.json<{revision:number}>().revision}"`})).statusCode).toBe(200)
+    const room = (await db.query<{id:string}>("SELECT id FROM work_room_channels WHERE subject_kind='session' AND subject_id=$1",[reviewer.id])).rows[0]!.id
+    expect((await agentCall(bearer,'POST',`/api/v1/rooms/${room}/messages`,{sessionId:reviewer.id,intent:'review_result',body:'Own result without artifact'})).statusCode).toBe(200)
+    const complete = async () => {
+      const revision = (await db.query<{revision:number}>('SELECT revision FROM agent_sessions WHERE id=$1',[reviewer.id])).rows[0]!.revision
+      return agentCall(bearer,'POST',`/api/v1/agent-sessions/${reviewer.id}/complete`,{summary:'Cannot waive code_review',artifactIds:[],checks:[],limitations:[],noArtifactReason:'Attempted waiver'}, {'if-match':`"revision-${revision}"`})
+    }
+    const ownMessageOnly = await complete()
+    expect(ownMessageOnly.statusCode).toBe(409);expect(ownMessageOnly.json()).toMatchObject({error:{code:'REVIEW_COMPLETION_EVIDENCE_REQUIRED'}})
+    const document = await agentCall(bearer,'POST','/api/v1/artifacts',{sessionId:reviewer.id,workItemId:f.workItemId,type:'document',title:'Legacy structured evidence',metadata:{legacy:true}})
+    expect(document.statusCode).toBe(400)
+    const legacyArtifact = (await db.query<{id:string}>("INSERT INTO artifacts(workspace_id,session_id,work_item_id,type,title,producer_actor_id,metadata) VALUES($1,$2,$3,'document','Imported legacy structured artifact',$4,jsonb_build_object('legacy',true)) RETURNING id",[f.workspaceId,reviewer.id,f.workItemId,f.reviewer.actorId])).rows[0]!.id
+    // Privileged imported structured facts are a negative fixture, not an Agent provider/publication permission.
+    const service = (await db.query<{id:string}>("INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'service','M2 local fixture') RETURNING id",[f.workspaceId])).rows[0]!.id
+    const connection = (await db.query<{id:string}>("INSERT INTO provider_connections(workspace_id,provider,external_account_id,display_name,service_actor_id,webhook_secret_ciphertext,credentials_ciphertext) VALUES($1,'github','m2-local','M2 fake provider',$2,'\\x00'::bytea,'\\x00'::bytea) RETURNING id",[f.workspaceId,service])).rows[0]!.id
+    const repository = (await db.query<{id:string}>("INSERT INTO repositories(workspace_id,connection_id,team_id,external_id,full_name,default_branch) VALUES($1,$2,$3,'m2-repo','fixture/m2','main') RETURNING id",[f.workspaceId,connection,f.teamId])).rows[0]!.id
+    const pr = (await db.query<{id:string}>("INSERT INTO pull_request_projections(workspace_id,repository_id,external_id,number,uri,work_item_id,producer_actor_id,base_branch,head_branch,base_sha,head_sha,state) VALUES($1,$2,'m2-pr',1,'https://fixture.invalid/pr/1',$3,$4,'main','fixture','base','head','open') RETURNING id",[f.workspaceId,repository,f.workItemId,f.human.actorId])).rows[0]!.id
+    await db.query("INSERT INTO structured_reviews(pull_request_id,reviewer_session_id,reviewer_actor_id,artifact_id,head_sha,verdict,summary) VALUES($1,$2,$3,$4,'head','approved','Imported structured review cannot waive own code_review')",[pr,reviewer.id,f.reviewer.actorId,legacyArtifact])
+    const structuredOnly = await complete()
+    expect(structuredOnly.statusCode).toBe(409);expect(structuredOnly.json()).toMatchObject({error:{code:'REVIEW_COMPLETION_EVIDENCE_REQUIRED'}})
+    expect((await db.query('SELECT state FROM agent_sessions WHERE id=$1',[reviewer.id])).rows[0]).toEqual({state:'executing'})
   })
 
   it('audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release', async () => {

@@ -1,0 +1,35 @@
+{
+  "owner": "m2-9ee1b0cf22c0",
+  "resources": [
+    {
+      "kind": "postgres",
+      "name": "m2-9ee1b0cf22c0-postgres",
+      "image": "postgres:16-alpine",
+      "status": "removed",
+      "id": "85650b91005f608a8b015388dea944d8a6263a022b9184d4646026d056d0fb9c",
+      "hostPort": 58178,
+      "cleanupExit": 0
+    },
+    {
+      "kind": "redis",
+      "name": "m2-9ee1b0cf22c0-redis",
+      "image": "redis:7-alpine",
+      "status": "removed",
+      "id": "f2176e6cc12e9d1c455cbc9bd41168c17468351ecb6b2a9348c9cfcb9e95d562",
+      "hostPort": 58179,
+      "cleanupExit": 0
+    },
+    {
+      "kind": "s3",
+      "name": "m2-9ee1b0cf22c0-s3",
+      "image": "rustfs/rustfs:1.0.0",
+      "status": "removed",
+      "id": "b8bfb32f381507d8bef8c6c62b1bdb37448cd44489282e3cb2e8f7da944ae7e4",
+      "hostPort": 58180,
+      "cleanupExit": 0
+    }
+  ],
+  "sharedImagesPreserved": true,
+  "volumesCreated": false,
+  "networkCreated": false
+}

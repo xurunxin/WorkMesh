@@ -11,6 +11,16 @@ const qualifiedFixture = (sessionId: string, coordination: boolean) => {
 }
 
 describe('WorkMeshClient', () => {
+  it('independent lease renewals use distinct keys while explicit identity is preserved', async () => {
+    const fetcher = vi.fn().mockImplementation(async () => new Response('{}', { headers: { 'content-type': 'application/json' } }))
+    const client = new WorkMeshClient({baseUrl:'http://api.test',sessionToken:'own-session',fetch:fetcher})
+    await client.mutateLease('lease','renew',{ttlSeconds:60})
+    await client.mutateLease('lease','renew',{ttlSeconds:60})
+    await client.mutateLease('lease','renew',{ttlSeconds:60},{idempotencyKey:'explicit-renew'})
+    const keys = fetcher.mock.calls.map(call=>new Headers(call[1].headers).get('idempotency-key'))
+    expect(keys[0]).toBeTruthy();expect(keys[1]).toBeTruthy();expect(keys[0]).not.toBe(keys[1]);expect(keys[2]).toBe('explicit-renew')
+  })
+
   it('安装拒绝 helper 明确选安装 Bearer，原 Session 拒绝入口保留且不换共享 Token', async () => {
     const fetcher = vi.fn().mockImplementation(async () => new Response('{}', { headers: { 'content-type': 'application/json' } }))
     const client = new WorkMeshClient({ baseUrl: 'http://api.test', sessionToken: 'own-session', installationToken: 'target-installation', fetch: fetcher })

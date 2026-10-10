@@ -1,5 +1,5 @@
 """从已独审受控清单生成发现规则；不从回调文本猜测调用身份。"""
-import json
+import json,re
 from pathlib import Path
 
 root = Path(__file__).resolve().parent.parent
@@ -100,3 +100,17 @@ for name, data, type_name in [('agentDiscoveryRules', rules, 'DiscoveryRule'), (
     output += ',\n'.join('  ' + json.dumps(row, ensure_ascii=False, separators=(',', ':')) for row in data)
     output += '\n]\n\n'
 (root / 'packages/contracts/src/agent-discovery-rules.ts').write_text(output.rstrip() + '\n', encoding='utf-8', newline='\n')
+
+# 单操作 policy 与真实已冻结注册面一致；复合导入保原主操作，全部命令仍由 discovery 判权。
+policy_path = root / 'packages/contracts/src/route-policy.ts'
+policy_text = policy_path.read_text(encoding='utf-8')
+start = policy_text.index('const mcpOperationIds = {')
+end = policy_text.index('} as const', start) + len('} as const')
+current = dict(re.findall(r"'([^']+)': '([^']+)'", policy_text[start:end]))
+registered = set(m2['registeredBindingIds'])
+current = {key:value for key,value in current.items() if key in registered}
+for binding in bindings:
+    if binding['bindingId'] in registered and binding['execution']=='api' and len(binding['operationIds'])==1:
+        current[binding['bindingId']] = binding['operationIds'][0]
+replacement = 'const mcpOperationIds = {\n' + ''.join(f"  '{key}': '{value}',\n" for key,value in sorted(current.items())) + '} as const'
+policy_path.write_text(policy_text[:start]+replacement+policy_text[end:],encoding='utf-8',newline='\n')

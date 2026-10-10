@@ -2114,11 +2114,11 @@ export async function claimWorkItem(
       );
 
       const exchangeToken = opaqueToken();
-      await tx.query(
+      const notificationToken = one((await tx.query<{id:string}>(
         `INSERT INTO agent_session_tokens(
            session_id,agent_id,installation_token_id,token_hash,
            exchange_nonce_hash,expires_at,issued_by_actor_id
-         ) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)`,
+         ) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6) RETURNING id`,
         [
           session.id,
           identity.connection_agent_id,
@@ -2127,7 +2127,7 @@ export async function claimWorkItem(
           tokenHash(exchangeToken),
           meta.actor.id,
         ],
-      );
+      )).rows);
       await tx.query(
         `INSERT INTO agent_session_prompts(
            session_id,author_actor_id,body_markdown
@@ -2164,7 +2164,7 @@ export async function claimWorkItem(
         sessionEventId,
         "agent.session.created",
         String(session.id),
-        { sessionId: session.id, initialPrompt },
+        { sessionId: session.id, initialPrompt, sessionTokenId: notificationToken.id },
       );
       return {
         delegation,

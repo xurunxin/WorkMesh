@@ -27,6 +27,37 @@ function manifest(capabilities: Capability[]): AgentCapabilityManifest {
 }
 
 describe('Pi WorkMesh tools', () => {
+  it('M2长分页重读同cursor缩小limit，保留完整后页与正文，不把事实截成ID', async () => {
+    const paths: string[] = []
+    const api: RunnerToolApi = { sessionId, async request<T>(_method: Parameters<RunnerToolApi['request']>[0],path: string):Promise<T> {
+      if(path==='/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read','work:write']) as T
+      paths.push(path)
+      const limit = Number(new URL(path,'http://fixture.invalid').searchParams.get('limit'))
+      return {items:Array.from({length:limit},(_,i)=>({id:`item-${i}`,body:'x'.repeat(30000)})),nextCursor:`next-${limit}`} as T
+    } }
+    const tools = await createWorkMeshTools(api,'M2 page',()=>undefined)
+    const page = await tools.find(tool=>tool.name==='workmesh_list_work_item_comments')!.execute('page',{workItemId:ownerId,limit:4,cursor:'same-cursor'},undefined,undefined,{} as never)
+    expect(paths).toHaveLength(3)
+    for(const path of paths) expect(new URL(path,'http://fixture.invalid').searchParams.get('cursor')).toBe('same-cursor')
+    const content = page.content[0] as {type:'text';text:string}
+    expect(JSON.parse(content.text)).toEqual({items:[{id:'item-0',body:'x'.repeat(30000)}],nextCursor:'next-1'})
+  })
+
+  it('M2透传Handoff全包/Inbox payload/规划step字段，父身份固定且Human接受工具缺席', async () => {
+    const calls: Array<{path:string;body:unknown}> = []
+    const api: RunnerToolApi = {sessionId,async request<T>(_method: Parameters<RunnerToolApi['request']>[0],path: string,body?: unknown):Promise<T> {
+      if(path==='/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read','work:write','plan:write']) as T
+      calls.push({path,body});return {id:documentId} as T
+    }}
+    const tools = await createWorkMeshTools(api,'M2 contracts',()=>undefined)
+    await tools.find(tool=>tool.name==='workmesh_offer_handoff')!.execute('handoff',{targetSkill:'review',summary:'Structured package',status:'draft',completedWork:['done'],openQuestions:['question'],risks:['risk'],requestedAction:'Review',leaseTransferPolicy:'release',artifactIds:[documentId],contextSnapshotId:baseRevisionId,requestedCapabilities:['work:read','work:write']},undefined,undefined,{} as never)
+    expect(calls.find(call=>call.path==='/api/v1/handoffs')!.body).toMatchObject({fromSessionId:sessionId,targetSkill:'review',remainingWork:[],status:'draft',contextSnapshotId:baseRevisionId})
+    await tools.find(tool=>tool.name==='workmesh_reply_inbox_item')!.execute('reply',{inboxItemId:documentId,ifMatch:2,body:'Reply',payload:{verified:true}},undefined,undefined,{} as never)
+    expect(calls.find(call=>call.path.endsWith('/reply'))!.body).toEqual({body:'Reply',payload:{verified:true}})
+    await tools.find(tool=>tool.name==='workmesh_publish_plan')!.execute('plan',{ifMatch:2,changeSummary:'Plan',steps:[{id:ownerId,title:'Step',ordinal:0,ownerActorId:ownerId,expectedArtifacts:['test_report'],status:'canceled',cancellationReason:'Human changed scope'}]},undefined,undefined,{} as never)
+    expect(calls.find(call=>call.path.endsWith('/plan'))!.body).toMatchObject({steps:[expect.objectContaining({expectedArtifacts:['test_report'],ownerActorId:ownerId,cancellationReason:'Human changed scope'})]})
+    expect(tools.some(tool=>tool.name==='workmesh_accept_handoff')).toBe(false)
+  })
   it.each([new RunnerApiError(500, 'INTERNAL_ERROR'), new SyntaxError('truncated committed response'),
     new TypeError('committed response lost')])('真实工具包装写响应错误仍阻止自动等待：%s', async failure => {
     const lifecycle = new ExecutionLifecycle()
