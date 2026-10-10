@@ -35,3 +35,9 @@ M3 `product-report`／`review-fixes-report`／`product-pr-ci-report`／`product-
 实际client/runtime/helper命令stdout/stderr在环境ZIP与runtimeZIP，日期／运行时／exit在各JSON；官方来源原HTML包括读取时间、requested/finalURL、hash，不以搜索前缀冒全文。未读取secret值／用户凭据正文，未安装／登录／连接外部账号。现有配置只读metadata由resources保护。
 
 原规划实际回执planning-checks/planning-final-static/planning-commit-verification保留原时点；本轮同步回执采用review-checks及review-static/commit-verification，不覆盖旧回执。未来全部产品／客户端／OS／部署用例未运行；规划candidate不是M5产品候选，旧Required CI不能代本轮PR或产品新head。资源owner、无secret读取、无服务/登录/安装、G1D0C3拒目标保留边界仍按resources。
+
+## 已确认后的产品执行来源
+
+上文“未来未运行”“blocking 待复核”等属于原规划回合历史。规划候选 `ddddcfca8d7ef387df58be993c88ffe7d62391dd` 经独立方案复审及 Chief confirm 后启动实施，本轮不重写原历史来冒产品通过。启动 checkpoint 为 `9051da511d0e844a5e57b6263c23f643689bc879`；[完整当前实施规格](product-spec.md) 与 [平台实际读回](input/product-platform-todo-readback.txt) 区分完整 Spec 和截断 Saved plan，[用户执行接续全文](input/product-execution-feedback.md) 是对话注入来源，独立 doc 全文读回缺口仍保留。
+
+本轮重新平台只读 fetch main 的准确 Git 观察在 [product-main-observation](input/product-main-observation.json)，实际 main 仍 `87f88b89297c5c1e346f7ef99118c410f4b4a905`，parents/tree 与既有 M3 来源一致；不当未来实时 ref。源码原件沿 main／checkpoint 与当前提交读取，运行字节由每条检查前后 manifest 绑定，Git blob 和 Windows 字节分列。当前执行结果仅以 [product-report](product-report.md)、[新命令回执](product-checks.json)、[原件索引](product-evidence-index.json) 为准，不引用旧 CI 或局部引用 65 条的 review 作为正式产品结果。OpenCode 私有路径诊断、模型零请求、隔离门禁失败、真实 Pi 子进程／准备／协议对照与未覆盖画像分别归档。

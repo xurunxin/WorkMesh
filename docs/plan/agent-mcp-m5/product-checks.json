@@ -1,0 +1,1627 @@
+[
+  {
+    "label": "isolation-paths",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "tsx",
+      "src/joint-clients.acceptance.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:37:33.168641+00:00",
+    "endedAt": "2026-10-10T16:37:34.503030+00:00",
+    "runtimeSeconds": 1.3343257999949856,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\isolation-paths-stdout.txt",
+        "bytes": 210,
+        "sha256": "48b62c8dc5b3a7ffd60a74631c861adbe69c0fa450cc55c24df4ff0a0d69ac38",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\isolation-paths-stderr.txt",
+        "bytes": 569,
+        "sha256": "8798e3dab30566500bd31a9ed6f8494c9220e6686303ab1d7e70539461b6af4c",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "joint-typecheck",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:40:56.749341+00:00",
+    "endedAt": "2026-10-10T16:41:08.830399+00:00",
+    "runtimeSeconds": 12.08048589999089,
+    "nativeExit": 2,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-typecheck-stdout.txt",
+        "bytes": 458,
+        "sha256": "2fea578fb2ffbbb88b8341a26d117a2601392ae83852f9f40259e58475a06cc4",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-typecheck-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "isolation-paths-parser-fixed",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "tsx",
+      "src/joint-clients.acceptance.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:37:56.435410+00:00",
+    "endedAt": "2026-10-10T16:42:18.883433+00:00",
+    "runtimeSeconds": 262.43545210000593,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\isolation-paths-parser-fixed-stdout.txt",
+        "bytes": 78,
+        "sha256": "8f38a53a2bfb98e3ec217de44585ed06e4325f7a7a26f9a54c8952f4fff9830b",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\isolation-paths-parser-fixed-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "joint-pi-first",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "test:integration",
+      "src/joint-clients.conformance.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:42:19.325128+00:00",
+    "endedAt": "2026-10-10T16:42:36.049341+00:00",
+    "runtimeSeconds": 16.723416299995733,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-pi-first-stdout.txt",
+        "bytes": 3410,
+        "sha256": "b54c3c2d360cb41568aefca87e0019656a11ddd850d8ad7dac8205d769874f6b",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-pi-first-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "isolation-standalone",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "acceptance:joint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:43:39.341382+00:00",
+    "endedAt": "2026-10-10T16:43:40.584435+00:00",
+    "runtimeSeconds": 1.2429941000009421,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\isolation-standalone-stdout.txt",
+        "bytes": 393,
+        "sha256": "e1db1f163fe5555848fee5e754a6cc078623750b18013551e5da07414e2e7867",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\isolation-standalone-stderr.txt",
+        "bytes": 1856,
+        "sha256": "b066692da955f64d0eefda53c5bd38c157e5851ed2ebd7fcd19363448d8dd238",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "runner-typecheck",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/agent-runner",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:43:47.827748+00:00",
+    "endedAt": "2026-10-10T16:43:52.802030+00:00",
+    "runtimeSeconds": 4.974047600000631,
+    "nativeExit": 2,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\runner-typecheck-stdout.txt",
+        "bytes": 922,
+        "sha256": "28b7223f8b7322374baa51582903d97066f428b2e12f51ec727a9705f339e921",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\runner-typecheck-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "isolation-private-service-stopped",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "acceptance:joint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:44:36.556052+00:00",
+    "endedAt": "2026-10-10T16:44:47.635441+00:00",
+    "runtimeSeconds": 11.078863400005503,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\isolation-private-service-stopped-stdout.txt",
+        "bytes": 248,
+        "sha256": "88ae9464a6c7266c074469b10b31aa8679f226f6da4c472def51cddde1ecfcb1",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\isolation-private-service-stopped-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "joint-pi-recovery",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "test:integration",
+      "src/joint-clients.conformance.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:47:05.574479+00:00",
+    "endedAt": "2026-10-10T16:47:55.594890+00:00",
+    "runtimeSeconds": 50.018017399997916,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-pi-recovery-stdout.txt",
+        "bytes": 5258,
+        "sha256": "572443b1ccc3d5491dc23da19ea5985d9059b1b5b7f0f520d4310ee7a1b65548",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-pi-recovery-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "opencode-real-model-first",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "acceptance:joint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:48:22.486986+00:00",
+    "endedAt": "2026-10-10T16:50:06.052800+00:00",
+    "runtimeSeconds": 103.56085650000023,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\opencode-real-model-first-stdout.txt",
+        "bytes": 393,
+        "sha256": "e1db1f163fe5555848fee5e754a6cc078623750b18013551e5da07414e2e7867",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\opencode-real-model-first-stderr.txt",
+        "bytes": 1007,
+        "sha256": "e5187e0bd73c24b985a93aba7fe50ef8e3351f9b3906dd542ce391218af28848",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "opencode-standalone-outside-git",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "acceptance:joint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:52:14.682678+00:00",
+    "endedAt": "2026-10-10T16:52:15.489919+00:00",
+    "runtimeSeconds": 0.8072136999981012,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\opencode-standalone-outside-git-stdout.txt",
+        "bytes": 393,
+        "sha256": "e1db1f163fe5555848fee5e754a6cc078623750b18013551e5da07414e2e7867",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\opencode-standalone-outside-git-stderr.txt",
+        "bytes": 1485,
+        "sha256": "3e3bca4a0228b1e5dbd442f216df67d840c88d873f7be2515383513b559cb3d3",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "opencode-outside-git-fixed",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "acceptance:joint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:52:26.811975+00:00",
+    "endedAt": "2026-10-10T16:54:09.984451+00:00",
+    "runtimeSeconds": 103.16875550000987,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\opencode-outside-git-fixed-stdout.txt",
+        "bytes": 393,
+        "sha256": "e1db1f163fe5555848fee5e754a6cc078623750b18013551e5da07414e2e7867",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\opencode-outside-git-fixed-stderr.txt",
+        "bytes": 2085,
+        "sha256": "c153a4e12a4bce9413a25d8d0a01058e9e9fb9eceeb48b6b5c4abdefca4b4b1d",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "runner-unit-extended",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/agent-runner",
+      "test",
+      "src/runner-api.test.ts",
+      "src/workmesh-tools.test.ts",
+      "src/execution-lifecycle.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T16:54:12.356243+00:00",
+    "endedAt": "2026-10-10T16:54:21.556804+00:00",
+    "runtimeSeconds": 9.200236000004224,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\runner-unit-extended-stdout.txt",
+        "bytes": 961,
+        "sha256": "17139434a55850449c414c77a8195f0c290c6af0dc580e544e44ab35f71ef566",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\runner-unit-extended-stderr.txt",
+        "bytes": 835,
+        "sha256": "5fb0d3a3e10ef73335dc69cc07e99dadcc3f6abacaf0dc9a9dfd2884fa8cf7a7",
+        "redacted": true
+      }
+    }
+  },
+  {
+    "label": "joint-extended-typecheck",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:02:17.008323+00:00",
+    "endedAt": "2026-10-10T17:02:30.322001+00:00",
+    "runtimeSeconds": 12.255469099996844,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-extended-typecheck-stdout.txt",
+        "bytes": 140,
+        "sha256": "f3b9c77e4aff5c8e1d947c12996483c56c0200840f4b7ec256afd657cfd74a5a",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-extended-typecheck-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-extended-typecheck.json",
+      "beforeDigest": "7e5ca81e2e2bf365b983dcf42e60047f20876c9c69a11cbd189abd9cc41f1872",
+      "afterDigest": "7e5ca81e2e2bf365b983dcf42e60047f20876c9c69a11cbd189abd9cc41f1872",
+      "unchanged": true,
+      "sha256": "dfb7703c6a618cfdd3d19b5c807e0bd8c965b44d782d5b5bce209ce856820727"
+    }
+  },
+  {
+    "label": "joint-negative-and-handoff",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:02:35.017751+00:00",
+    "endedAt": "2026-10-10T17:03:34.793609+00:00",
+    "runtimeSeconds": 58.66313230000378,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-negative-and-handoff-stdout.txt",
+        "bytes": 9774,
+        "sha256": "da571c343a38ef6a42f475a31e4be69b3d0eae9a6cbf259dbeb63479c30fc164",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-negative-and-handoff-stderr.txt",
+        "bytes": 1862,
+        "sha256": "cc772adae522ebf2194582f04dc6c9bbdfb5913033de7104dbc1c6f5ecb8925a",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-negative-and-handoff.json",
+      "beforeDigest": "7e5ca81e2e2bf365b983dcf42e60047f20876c9c69a11cbd189abd9cc41f1872",
+      "afterDigest": "7e5ca81e2e2bf365b983dcf42e60047f20876c9c69a11cbd189abd9cc41f1872",
+      "unchanged": true,
+      "sha256": "dfb7703c6a618cfdd3d19b5c807e0bd8c965b44d782d5b5bce209ce856820727"
+    }
+  },
+  {
+    "label": "joint-fixed-two-cases",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts",
+      "-t",
+      "两次丢响应|两Human"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:04:21.203842+00:00",
+    "endedAt": "2026-10-10T17:04:21.889561+00:00",
+    "runtimeSeconds": 0.05189200000313576,
+    "nativeExit": 255,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-fixed-two-cases-stdout.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-fixed-two-cases-stderr.txt",
+        "bytes": 99,
+        "sha256": "34343f859eb4669fac6eaf841403cc75b0bebbecd9d3811314ac2295a5a0d304",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-fixed-two-cases.json",
+      "beforeDigest": "055629bb09d90407f9494be06c78f632be4c1abd79486d74b01490713f230e0a",
+      "afterDigest": "055629bb09d90407f9494be06c78f632be4c1abd79486d74b01490713f230e0a",
+      "unchanged": true,
+      "sha256": "fe5939eef627d115da1c8dfc988d3581273f02ab8325e15ac18d0fdc3cc16497"
+    }
+  },
+  {
+    "label": "joint-handoff-correct-denial",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts",
+      "-t",
+      "两Human"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:04:48.365985+00:00",
+    "endedAt": "2026-10-10T17:05:03.773680+00:00",
+    "runtimeSeconds": 14.226523400007864,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-handoff-correct-denial-stdout.txt",
+        "bytes": 2213,
+        "sha256": "5b9d179d6e15fc74860f89f555a94aa7da49d6215f64611ff53df3c2f5a91557",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-handoff-correct-denial-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-handoff-correct-denial.json",
+      "beforeDigest": "3091a47dafe8de2f654fec93a7cb9d293738f56c0b6e593e3587cf056c78ce53",
+      "afterDigest": "3091a47dafe8de2f654fec93a7cb9d293738f56c0b6e593e3587cf056c78ce53",
+      "unchanged": true,
+      "sha256": "bd65110292281b140fc5dd63a4119debd0bcc27dcf3fb4b90297bb271b865516"
+    }
+  },
+  {
+    "label": "joint-final-typecheck",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:07:46.307606+00:00",
+    "endedAt": "2026-10-10T17:07:58.461609+00:00",
+    "runtimeSeconds": 11.199357899997267,
+    "nativeExit": 2,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-final-typecheck-stdout.txt",
+        "bytes": 3655,
+        "sha256": "880d4f96130a07c01fc748a5b5884f71e22744032fc222b2df083ddb711e977a",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-final-typecheck-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-final-typecheck.json",
+      "beforeDigest": "84555ae92556f9a01eddab41b9af216a4c13d64957862c381ee0c652035f7a98",
+      "afterDigest": "84555ae92556f9a01eddab41b9af216a4c13d64957862c381ee0c652035f7a98",
+      "unchanged": true,
+      "sha256": "ed0914ba9407b0103603a046c3118f06fb6123c861589ad5cb4ff8e1aad8763e"
+    }
+  },
+  {
+    "label": "required-ci-policy",
+    "argv": [
+      "pnpm.cmd",
+      "ci:test"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:08:45.575355+00:00",
+    "endedAt": "2026-10-10T17:08:47.449528+00:00",
+    "runtimeSeconds": 0.8849933000019519,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-ci-policy-stdout.txt",
+        "bytes": 1769,
+        "sha256": "fe3cd3ce3433d0eec51e740d01ed84fd297238761b07d1b5271bcf00e37cf4f6",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-ci-policy-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-ci-policy.json",
+      "beforeDigest": "84555ae92556f9a01eddab41b9af216a4c13d64957862c381ee0c652035f7a98",
+      "afterDigest": "84555ae92556f9a01eddab41b9af216a4c13d64957862c381ee0c652035f7a98",
+      "unchanged": true,
+      "sha256": "ed0914ba9407b0103603a046c3118f06fb6123c861589ad5cb4ff8e1aad8763e"
+    }
+  },
+  {
+    "label": "joint-all-fourteen",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:08:18.102392+00:00",
+    "endedAt": "2026-10-10T17:11:00.582494+00:00",
+    "runtimeSeconds": 161.34267829998862,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-all-fourteen-stdout.txt",
+        "bytes": 27076,
+        "sha256": "e2424154530165e958ba7155c99eceecd9b71f3e5e9f154d41f11c6cf1202881",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-all-fourteen-stderr.txt",
+        "bytes": 674,
+        "sha256": "e61ea74cd44dbe47c47e608a32b65bdafcdfa52c0d75dbae20277154ea3da75c",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-all-fourteen.json",
+      "beforeDigest": "84555ae92556f9a01eddab41b9af216a4c13d64957862c381ee0c652035f7a98",
+      "afterDigest": "84555ae92556f9a01eddab41b9af216a4c13d64957862c381ee0c652035f7a98",
+      "unchanged": true,
+      "sha256": "ed0914ba9407b0103603a046c3118f06fb6123c861589ad5cb4ff8e1aad8763e"
+    }
+  },
+  {
+    "label": "joint-current-typecheck",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:12:28.769750+00:00",
+    "endedAt": "2026-10-10T17:12:41.177281+00:00",
+    "runtimeSeconds": 12.407170899998164,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-current-typecheck-stdout.txt",
+        "bytes": 140,
+        "sha256": "f3b9c77e4aff5c8e1d947c12996483c56c0200840f4b7ec256afd657cfd74a5a",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-current-typecheck-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-current-typecheck.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "required-route-policy",
+    "argv": [
+      "pnpm.cmd",
+      "check:route-policy"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:13:12.488883+00:00",
+    "endedAt": "2026-10-10T17:13:14.513614+00:00",
+    "runtimeSeconds": 2.02465380000649,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-route-policy-stdout.txt",
+        "bytes": 186,
+        "sha256": "3e6eeb817b943f680c5aa34bde29bfca045f9c0eee94002602085ffeafc6b5d4",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-route-policy-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-route-policy.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "opencode-isolation-gate",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "acceptance:joint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:13:01.991174+00:00",
+    "endedAt": "2026-10-10T17:13:17.969425+00:00",
+    "runtimeSeconds": 15.977789500000654,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\opencode-isolation-gate-stdout.txt",
+        "bytes": 393,
+        "sha256": "e1db1f163fe5555848fee5e754a6cc078623750b18013551e5da07414e2e7867",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\opencode-isolation-gate-stderr.txt",
+        "bytes": 992,
+        "sha256": "a3c29c10c3441db49f970ebd69f464e71a26234fe72e55a2ae42201fad9e3e3c",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\opencode-isolation-gate.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "required-runner-skill",
+    "argv": [
+      "pnpm.cmd",
+      "check:runner-skill"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:13:26.276038+00:00",
+    "endedAt": "2026-10-10T17:13:27.214382+00:00",
+    "runtimeSeconds": 0.9382966999983182,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-runner-skill-stdout.txt",
+        "bytes": 239,
+        "sha256": "ca13f6ff37681dc4cc82c8a471a4e1c879521821bdc0f03cd9aee52ef4e113af",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-runner-skill-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-runner-skill.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "required-workmesh-skill",
+    "argv": [
+      "pnpm.cmd",
+      "check:workmesh-skill"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:13:26.245125+00:00",
+    "endedAt": "2026-10-10T17:13:27.110560+00:00",
+    "runtimeSeconds": 0.8653908999986015,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-workmesh-skill-stdout.txt",
+        "bytes": 243,
+        "sha256": "c9724775587bcca2786e67871f5c414417a2a1610773f0ff2b5f2c238125bbd9",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-workmesh-skill-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-workmesh-skill.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "required-ci-validate",
+    "argv": [
+      "pnpm.cmd",
+      "ci:validate"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:13:26.278333+00:00",
+    "endedAt": "2026-10-10T17:13:28.907429+00:00",
+    "runtimeSeconds": 2.6289926000026753,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-ci-validate-stdout.txt",
+        "bytes": 1479,
+        "sha256": "4379e08697066b64a2208e627449dda77217ea69f03c33bf114bb7a8d90ab2e8",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-ci-validate-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-ci-validate.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "required-lint",
+    "argv": [
+      "pnpm.cmd",
+      "lint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:14:12.669241+00:00",
+    "endedAt": "2026-10-10T17:15:24.354683+00:00",
+    "runtimeSeconds": 71.68344490000163,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-lint-stdout.txt",
+        "bytes": 5908,
+        "sha256": "6e075142989db46796fe8db1662235ff880995deb072f2c659b9702e7ac18020",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-lint-stderr.txt",
+        "bytes": 17,
+        "sha256": "884eff4c2cecee914bad9401be4297f8878ee164fa14500831cee50614bfc59d",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-lint.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "required-typecheck",
+    "argv": [
+      "pnpm.cmd",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:14:24.400741+00:00",
+    "endedAt": "2026-10-10T17:15:32.837954+00:00",
+    "runtimeSeconds": 68.43529720000515,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-typecheck-stdout.txt",
+        "bytes": 6462,
+        "sha256": "1dea37ede74b004460ca253c818e412fe6dace66b2f7c35080810b4398a10fd0",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-typecheck-stderr.txt",
+        "bytes": 17,
+        "sha256": "884eff4c2cecee914bad9401be4297f8878ee164fa14500831cee50614bfc59d",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-typecheck.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "required-build-conformance",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "build"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:17:15.177067+00:00",
+    "endedAt": "2026-10-10T17:17:25.620708+00:00",
+    "runtimeSeconds": 10.44333120000374,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-build-conformance-stdout.txt",
+        "bytes": 150,
+        "sha256": "b681c7de69c2c0a97fcda8dd62dd8ee7781098096d122fd98fa944587afeba79",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-build-conformance-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-build-conformance.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "required-unit",
+    "argv": [
+      "pnpm.cmd",
+      "test"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:16:07.565012+00:00",
+    "endedAt": "2026-10-10T17:19:18.925412+00:00",
+    "runtimeSeconds": 191.35507920000236,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-unit-stdout.txt",
+        "bytes": 105851,
+        "sha256": "e9aa471cb2e6e2fa5109102176cfbd2c7266229ec850e0078e391353354354bf",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-unit-stderr.txt",
+        "bytes": 2067,
+        "sha256": "a5e54e8c0f49232afa3f2f09da9ab7ccfa6265be72117b85edddb6c6b6655fa0",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-unit.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "required-source-build",
+    "argv": [
+      "pnpm.cmd",
+      "ci:source",
+      "build"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:17:45.512078+00:00",
+    "endedAt": "2026-10-10T17:19:56.279052+00:00",
+    "runtimeSeconds": 130.76333509999677,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-source-build-stdout.txt",
+        "bytes": 16253,
+        "sha256": "122ac7f96f1ef5e84cb352663509a771eaa2f0cae50a79e008bcd04082e7c809",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-source-build-stderr.txt",
+        "bytes": 17,
+        "sha256": "884eff4c2cecee914bad9401be4297f8878ee164fa14500831cee50614bfc59d",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-source-build.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "required-integration",
+    "argv": [
+      "pnpm.cmd",
+      "test:integration"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:17:33.210178+00:00",
+    "endedAt": "2026-10-10T17:24:20.525644+00:00",
+    "runtimeSeconds": 407.30417920000036,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-integration-stdout.txt",
+        "bytes": 1415831,
+        "sha256": "e223a428b984eb5a67d508bf76d129ed2636a4215fef1ca20804ba17794009f4",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-integration-stderr.txt",
+        "bytes": 34430,
+        "sha256": "65979413d61dd7b27e9f1694a7a2bc20a26ea2ef3044bf8d5a6a0ab042125aa8",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-integration.json",
+      "beforeDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "afterDigest": "1f55a2625128f89967206bdd51c55e94b937465685e4b1952c2650379747b550",
+      "unchanged": true,
+      "sha256": "9b7c769921ab0e71fb360aeee07e4f36efd6c2bea0891812375e599d1b9b4ff3"
+    }
+  },
+  {
+    "label": "joint-real-revocation",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts",
+      "-t",
+      "普通member"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:27:21.527648+00:00",
+    "endedAt": "2026-10-10T17:27:30.654062+00:00",
+    "runtimeSeconds": 9.126195899996674,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-real-revocation-stdout.txt",
+        "bytes": 4301,
+        "sha256": "64fe906c6aa3b9b70f1075670a97147b70090ffc0636afa355195234a7ddd76c",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-real-revocation-stderr.txt",
+        "bytes": 1235,
+        "sha256": "acde5dc709c471f48fd6e55ba59696aa04b50efed033af7b19d9755a6184e48c",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-real-revocation.json",
+      "beforeDigest": "a8700f94eda99643c180bc0df4a8a5ee9eeb3753ff6fc144d74cc849779f3a35",
+      "afterDigest": "a8700f94eda99643c180bc0df4a8a5ee9eeb3753ff6fc144d74cc849779f3a35",
+      "unchanged": true,
+      "sha256": "9ce5bee74bbd326b19ab54d7234c39b45df50c956b0b30501cc3c16265ad8aa4"
+    }
+  },
+  {
+    "label": "joint-real-revocation-observed",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts",
+      "-t",
+      "普通member"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:31:29.137167+00:00",
+    "endedAt": "2026-10-10T17:31:42.327075+00:00",
+    "runtimeSeconds": 13.18960359999619,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-real-revocation-observed-stdout.txt",
+        "bytes": 4302,
+        "sha256": "10f472999a00bc086f4b5a43df50a1fbc1c40c08bc2d179fe1dcc1bd630cc010",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-real-revocation-observed-stderr.txt",
+        "bytes": 1288,
+        "sha256": "38d3f25422c857d0cac9c50b797ba898b34018292d71e31f5d9ef16474e3c07d",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-real-revocation-observed.json",
+      "beforeDigest": "04efc8b0da6db49724a77c0a583bb3d2f54f19d2818e2102800e2682fac3917d",
+      "afterDigest": "04efc8b0da6db49724a77c0a583bb3d2f54f19d2818e2102800e2682fac3917d",
+      "unchanged": true,
+      "sha256": "36445eeb4ed4a4d233c2760b7deda4f61bad230fdc765690b300127cfec3253c"
+    }
+  },
+  {
+    "label": "joint-real-delegation-revoke",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts",
+      "-t",
+      "经Human"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:33:23.894191+00:00",
+    "endedAt": "2026-10-10T17:33:37.684123+00:00",
+    "runtimeSeconds": 13.789609900006326,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-real-delegation-revoke-stdout.txt",
+        "bytes": 823,
+        "sha256": "7d4155c24c773d6e74879ea6eb2dd5e0f07ef9f5308c61a1e567b5d64c6dbedf",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-real-delegation-revoke-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-real-delegation-revoke.json",
+      "beforeDigest": "5fcb70e5e20115ace7ad3fc542313af9dd1b58424297e25ca9e0069d960691e1",
+      "afterDigest": "5fcb70e5e20115ace7ad3fc542313af9dd1b58424297e25ca9e0069d960691e1",
+      "unchanged": true,
+      "sha256": "38fe9685b2617b4c666c806ed78c186d5066025ac00ccab78fd5aaa5914cbd66"
+    }
+  },
+  {
+    "label": "joint-revocation-lint",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "lint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:41:06.242524+00:00",
+    "endedAt": "2026-10-10T17:41:22.694827+00:00",
+    "runtimeSeconds": 16.451916999998502,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-revocation-lint-stdout.txt",
+        "bytes": 135,
+        "sha256": "ab72f48b71b8af634cd04216b8bc47be906233ec69c9d5b63029fd6fca99f5ca",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-revocation-lint-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-revocation-lint.json",
+      "beforeDigest": "262d21dee656f3d216292782d86fde1adda2cc4ef9a25e590e71401cf25427c9",
+      "afterDigest": "262d21dee656f3d216292782d86fde1adda2cc4ef9a25e590e71401cf25427c9",
+      "unchanged": true,
+      "sha256": "4f66d8347693e62e22013e0c67a94c563868320ec0de14ebf344a7bd9c6a94f2"
+    }
+  },
+  {
+    "label": "required-integration-ci-profile",
+    "argv": [
+      "pnpm.cmd",
+      "test:integration"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T17:34:04.790807+00:00",
+    "endedAt": "2026-10-10T18:06:26.870953+00:00",
+    "runtimeSeconds": 1942.0459635000007,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-integration-ci-profile-stdout.txt",
+        "bytes": 2105625,
+        "sha256": "5b2c81145a41a7fe3286aa1217e4ad66625a439df288da7a6523da9d460d5219",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-integration-ci-profile-stderr.txt",
+        "bytes": 869,
+        "sha256": "e3dd38ccaeba91cb1cc206111e7c2c7c5aee8ad8723aae66ceca303989ac9c5c",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-integration-ci-profile.json",
+      "beforeDigest": "262d21dee656f3d216292782d86fde1adda2cc4ef9a25e590e71401cf25427c9",
+      "afterDigest": "28dd607e423beee898c35a7845911369b0c628567b15dab524f995398fe7e4cb",
+      "unchanged": false,
+      "sha256": "19617114a2d7a5b540074dbbe97c0ab3075eaedd51ac4d83f5ad11603125f36c"
+    }
+  },
+  {
+    "label": "joint-direct-boundaries",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts",
+      "-t",
+      "新增"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:13:09.842556+00:00",
+    "endedAt": "2026-10-10T18:13:43.326764+00:00",
+    "runtimeSeconds": 33.4837123999896,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-direct-boundaries-stdout.txt",
+        "bytes": 8153,
+        "sha256": "3ee1faa1168b858306e39ebd1703c76d363645f164c0bf38a05230cc0173bf92",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-direct-boundaries-stderr.txt",
+        "bytes": 1426,
+        "sha256": "a8f021c35aa642ad0a25438ce4c354d5ccadc68607f516fdb515d20e878740ae",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-direct-boundaries.json",
+      "beforeDigest": "6547ac882227269c72dfda84bad0a2a0f5cc637e69df290be85a71d28b72a92c",
+      "afterDigest": "6547ac882227269c72dfda84bad0a2a0f5cc637e69df290be85a71d28b72a92c",
+      "unchanged": true,
+      "sha256": "a336f7714a6507c19b9f4092c2178f60b198bbadf5323b5f6bf52f1f5e79d835"
+    }
+  },
+  {
+    "label": "joint-direct-boundaries-corrected",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts",
+      "-t",
+      "新增真实Pi"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:15:26.511819+00:00",
+    "endedAt": "2026-10-10T18:15:50.202338+00:00",
+    "runtimeSeconds": 23.690165000007255,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-direct-boundaries-corrected-stdout.txt",
+        "bytes": 2822,
+        "sha256": "19f6cc4f171f202b4eaa2f9f28871d77791573dee5b16e753e6facde501ee06b",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-direct-boundaries-corrected-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-direct-boundaries-corrected.json",
+      "beforeDigest": "4159055cf28011ca12eb4f18b8f661902c440d0cef56dba716a9ff817493a942",
+      "afterDigest": "4159055cf28011ca12eb4f18b8f661902c440d0cef56dba716a9ff817493a942",
+      "unchanged": true,
+      "sha256": "ff44fb6b72b13e0dd7a74276451949b675f1d1cc84604d49c5eef8cf1529c81c"
+    }
+  },
+  {
+    "label": "joint-second-denial-durable",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts",
+      "-t",
+      "准入后第二业务HTTP"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:19:00.505277+00:00",
+    "endedAt": "2026-10-10T18:19:10.004615+00:00",
+    "runtimeSeconds": 9.499204300009296,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-second-denial-durable-stdout.txt",
+        "bytes": 5078,
+        "sha256": "0f78f2804f938e345fad84eedb7b320ba81fc7464d286b8748bd6919d0ea6084",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-second-denial-durable-stderr.txt",
+        "bytes": 925,
+        "sha256": "dce4298fd85d34e2051f68fb0f139a93e490631aea0e7bcef568599eed9b97f9",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-second-denial-durable.json",
+      "beforeDigest": "1ff4c4ea4a58d553b59c8caa7a8100c593b1b24b25ae847f69f59079f6e7d69c",
+      "afterDigest": "1ff4c4ea4a58d553b59c8caa7a8100c593b1b24b25ae847f69f59079f6e7d69c",
+      "unchanged": true,
+      "sha256": "d7ae5d768131ceb73ace90d4fd4b04112512df1eff97342e230ddd6f87a29f75"
+    }
+  },
+  {
+    "label": "joint-second-denial-durable-corrected",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts",
+      "-t",
+      "准入后第二业务HTTP"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:19:22.443560+00:00",
+    "endedAt": "2026-10-10T18:19:32.025709+00:00",
+    "runtimeSeconds": 9.582013099992764,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-second-denial-durable-corrected-stdout.txt",
+        "bytes": 1520,
+        "sha256": "bc55cfb6c7b5cd5feeb3659e83470d6b47c59e6db67d1e0b241c02a18613c455",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\joint-second-denial-durable-corrected-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\joint-second-denial-durable-corrected.json",
+      "beforeDigest": "c63afc30f18e0974bc6d62bef47514880a8bd435346f5bbde707f0e370034fc5",
+      "afterDigest": "c63afc30f18e0974bc6d62bef47514880a8bd435346f5bbde707f0e370034fc5",
+      "unchanged": true,
+      "sha256": "8bf0ce46cee3e3e1fe016021f2ad7b93aad3982dd790fd09cfe29fe80dc4eeb0"
+    }
+  },
+  {
+    "label": "final-conformance-typecheck",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:20:15.448594+00:00",
+    "endedAt": "2026-10-10T18:20:26.821169+00:00",
+    "runtimeSeconds": 11.37241900000663,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\final-conformance-typecheck-stdout.txt",
+        "bytes": 140,
+        "sha256": "f3b9c77e4aff5c8e1d947c12996483c56c0200840f4b7ec256afd657cfd74a5a",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\final-conformance-typecheck-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\final-conformance-typecheck.json",
+      "beforeDigest": "6c365ad3d61a6857eda48837eddd50c118066f7af64d60b5c24afa23eb67dab1",
+      "afterDigest": "6c365ad3d61a6857eda48837eddd50c118066f7af64d60b5c24afa23eb67dab1",
+      "unchanged": true,
+      "sha256": "57f8b769403efdc891083a2bfb7ef95077e21bf6f97db012de424fa2f0a4c1b1"
+    }
+  },
+  {
+    "label": "final-conformance-build",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "build"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:20:42.900696+00:00",
+    "endedAt": "2026-10-10T18:20:45.721198+00:00",
+    "runtimeSeconds": 2.820448700003908,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\final-conformance-build-stdout.txt",
+        "bytes": 150,
+        "sha256": "b681c7de69c2c0a97fcda8dd62dd8ee7781098096d122fd98fa944587afeba79",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\final-conformance-build-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\final-conformance-build.json",
+      "beforeDigest": "6c365ad3d61a6857eda48837eddd50c118066f7af64d60b5c24afa23eb67dab1",
+      "afterDigest": "6c365ad3d61a6857eda48837eddd50c118066f7af64d60b5c24afa23eb67dab1",
+      "unchanged": true,
+      "sha256": "57f8b769403efdc891083a2bfb7ef95077e21bf6f97db012de424fa2f0a4c1b1"
+    }
+  },
+  {
+    "label": "required-e2e",
+    "argv": [
+      "pnpm.cmd",
+      "test:e2e"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:19:53.467004+00:00",
+    "endedAt": "2026-10-10T18:24:28.392553+00:00",
+    "runtimeSeconds": 274.92225660000986,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\required-e2e-stdout.txt",
+        "bytes": 2177164,
+        "sha256": "d07e78e9890b89e5c4eb9356a564c7c5a24aaa3205c531c26ef9a73a9cc5a570",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\required-e2e-stderr.txt",
+        "bytes": 17,
+        "sha256": "884eff4c2cecee914bad9401be4297f8878ee164fa14500831cee50614bfc59d",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\required-e2e.json",
+      "beforeDigest": "6c365ad3d61a6857eda48837eddd50c118066f7af64d60b5c24afa23eb67dab1",
+      "afterDigest": "6c365ad3d61a6857eda48837eddd50c118066f7af64d60b5c24afa23eb67dab1",
+      "unchanged": true,
+      "sha256": "57f8b769403efdc891083a2bfb7ef95077e21bf6f97db012de424fa2f0a4c1b1"
+    }
+  },
+  {
+    "label": "final-conformance-lint",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "lint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:25:10.313757+00:00",
+    "endedAt": "2026-10-10T18:25:26.049632+00:00",
+    "runtimeSeconds": 15.735653999989154,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\final-conformance-lint-stdout.txt",
+        "bytes": 135,
+        "sha256": "ab72f48b71b8af634cd04216b8bc47be906233ec69c9d5b63029fd6fca99f5ca",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\final-conformance-lint-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\final-conformance-lint.json",
+      "beforeDigest": "12ab3fd4b19e526c4ab6bd3a7470c48cd47e3995f4cd2185091e9c8002da3edc",
+      "afterDigest": "12ab3fd4b19e526c4ab6bd3a7470c48cd47e3995f4cd2185091e9c8002da3edc",
+      "unchanged": true,
+      "sha256": "f5b5d07346f0c59a422d595bf0fcd281aa40f23fc5d0b70352e25426e872a45f"
+    }
+  },
+  {
+    "label": "final-joint-nineteen",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/joint-clients.conformance.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:24:59.127326+00:00",
+    "endedAt": "2026-10-10T18:27:55.422588+00:00",
+    "runtimeSeconds": 176.29314409999643,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\final-joint-nineteen-stdout.txt",
+        "bytes": 29278,
+        "sha256": "a1e5db5853d0a62b043b8a9047e33b1aaa637bae65e3dd60108cd8170a76016a",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\final-joint-nineteen-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\final-joint-nineteen.json",
+      "beforeDigest": "12ab3fd4b19e526c4ab6bd3a7470c48cd47e3995f4cd2185091e9c8002da3edc",
+      "afterDigest": "12ab3fd4b19e526c4ab6bd3a7470c48cd47e3995f4cd2185091e9c8002da3edc",
+      "unchanged": true,
+      "sha256": "f5b5d07346f0c59a422d595bf0fcd281aa40f23fc5d0b70352e25426e872a45f"
+    }
+  },
+  {
+    "label": "final-staged-whitespace-first",
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:30:12.891589+00:00",
+    "endedAt": "2026-10-10T18:30:12.991098+00:00",
+    "runtimeSeconds": 0.09949139998934697,
+    "nativeExit": 2,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\final-staged-whitespace-first-stdout.txt",
+        "bytes": 211,
+        "sha256": "6d53cfdf4f6a4e475a6f5742ce7004e1b1bef27d491f753c28df6f3eb7c3d375",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\final-staged-whitespace-first-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\final-staged-whitespace-first.json",
+      "beforeDigest": "12ab3fd4b19e526c4ab6bd3a7470c48cd47e3995f4cd2185091e9c8002da3edc",
+      "afterDigest": "12ab3fd4b19e526c4ab6bd3a7470c48cd47e3995f4cd2185091e9c8002da3edc",
+      "unchanged": true,
+      "sha256": "f5b5d07346f0c59a422d595bf0fcd281aa40f23fc5d0b70352e25426e872a45f"
+    }
+  },
+  {
+    "label": "final-staged-whitespace-corrected",
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T18:31:03.014326+00:00",
+    "endedAt": "2026-10-10T18:31:03.106742+00:00",
+    "runtimeSeconds": 0.09239540000271518,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\final-staged-whitespace-corrected-stdout.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\final-staged-whitespace-corrected-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\final-staged-whitespace-corrected.json",
+      "beforeDigest": "12ab3fd4b19e526c4ab6bd3a7470c48cd47e3995f4cd2185091e9c8002da3edc",
+      "afterDigest": "12ab3fd4b19e526c4ab6bd3a7470c48cd47e3995f4cd2185091e9c8002da3edc",
+      "unchanged": true,
+      "sha256": "f5b5d07346f0c59a422d595bf0fcd281aa40f23fc5d0b70352e25426e872a45f"
+    }
+  }
+]

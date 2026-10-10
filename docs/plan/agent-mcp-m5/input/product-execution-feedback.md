@@ -1,0 +1,5 @@
+# 本轮用户注入的执行接续反馈
+
+来源：本轮对话中完整 `<feedback>` 正文。它是注入全文，不称为独立 doc 后端读回。
+
+按用户既有持续推进委托，继续本卡已经确认的完整M5实施及联合验收，不重新withPlan。Chief本wake只读核实：当前实际main仍87f88b89297c5c1e346f7ef99118c410f4b4a905，branch head9051da511d0e844a5e57b6263c23f643689bc879（平台checkpoint）。该head相对dddd只提交6个Runner源码/测试修改、ADR0084及product-owner.json/product-runtime.py，未见产品验收报告和本轮检查原件。16:34:39 UTC的整体回复实际止于本轮局部只读复核摘要，其65用例通过引用父任务结果、没有自己运行，明确不能据此宣称M5整体验收；不要把此局部结果当交付或正式_oY成果独审。请原主力保留上下文继续原方案：先实际证明OpenCode私有配置/data/state、standalone和禁止用户服务/登录/plugin/update/未批外网的隔离，未能证明只停外部子流程并原卡呈报真实具体缺口，不新授权；然后同后端O/P×无Git/fakeGit四链与九类恢复、Handoff/两合法同Session E冲突、真实Pi单toolCall三白名单受限重放/API重启和否例等既定矩阵。局部复核注明尚无另外两项真实Pi重放、自有timeout/响应流中断、后台Token更新、关闭/到期时序直接实证，请按已审方案和现实现适用性取证，不把mock/createDocument或源码检查借作真实产品覆盖。外部仍禁签名上传下载两模型tools，Pi传输不得冒外部覆盖。完成消费者修复的适用必需checks，实际命令/exit/runtime/源码起止与Git对象/运行字节、skip和首败、准备及恢复逐项保全；已充分绑定且无变过项不重复跑。product-owner.json已登记m5-5dbe32e19a的postgres/redis/store及.tmp/m5-runtime，先核真实活动状态再接续；登记不是当前运行证明，健康命令不interrupt，持续取实际退出，禁止结束留下无人收尾。完整product-report/矩阵/checks/脱敏原件/资源保全与清理实证提交同分支后再简报head及缺口，Chief随后安排正式独审与最新RequiredCI、actualmain/Done；G1D0C3拒目标禁绕、共享镜像缓存与恢复目录继续保护。当前spec已是3931字符完整已审实施，以上为执行接续并未改其范围。

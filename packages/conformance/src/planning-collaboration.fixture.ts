@@ -131,9 +131,13 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
       const env: NodeJS.ProcessEnv = { ...process.env, WORKMESH_API_URL: options.apiUrl??fixture.baseUrl, WORKMESH_AGENT_INSTALLATION_TOKEN: installationToken, WORKMESH_AGENT_SESSION_ID: execution.sessionId, NODE_EXTRA_CA_CERTS: resolve(import.meta.dirname, 'fixtures/model-test-ca.pem') }
       delete env.DATABASE_URL; delete env.WORKMESH_MASTER_KEY; delete env.WORKMESH_BOOTSTRAP_TOKEN
       await options.beforeRun?.()
+      const argv = [resolve(root, 'node_modules/tsx/dist/cli.mjs'), resolve(root, 'src/run-session.ts'), '--once']
+      const startedAt = new Date().toISOString(), started = performance.now()
       try {
-        const output = await exec(process.execPath, [resolve(root, 'node_modules/tsx/dist/cli.mjs'), resolve(root, 'src/run-session.ts'), '--once'], { cwd: root, env, timeout: 60_000, maxBuffer: 1_000_000 })
-        savePlanningEvidence(`pi-${queued.turn.id}.json`, { captures, stdout: output.stdout, stderr: output.stderr, turnId: queued.turn.id, sessionId: execution.sessionId })
+        const running = exec(process.execPath, argv, { cwd: root, env, timeout: 60_000, maxBuffer: 1_000_000 })
+        savePlanningEvidence(`pi-${queued.turn.id}-process.json`, { pid: running.child.pid, argv: [process.execPath, ...argv], startedAt, turnId: queued.turn.id, sessionId: execution.sessionId, owned: true })
+        const output = await running
+        savePlanningEvidence(`pi-${queued.turn.id}.json`, { captures, stdout: output.stdout, stderr: output.stderr, turnId: queued.turn.id, sessionId: execution.sessionId, pid: running.child.pid, nativeExit: 0, startedAt, endedAt: new Date().toISOString(), runtimeMs: performance.now() - started })
         return captures
       } catch (error) {
         const failure = error as Error & { stdout?: string; stderr?: string; code?: number }
@@ -145,7 +149,7 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
       else process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST = previous
     }
   }
-  return { ...fixture, receive, registerTarget, registerCurrentReceiver, pi,
+  return { ...fixture, receive, attachReceiver, registerTarget, registerCurrentReceiver, pi,
     loseFailResponse:()=>runnerProxy({loseFailResponse:true}),afterSettlement:(afterSettlement:()=>Promise<void>)=>runnerProxy({afterSettlement}),
     afterResponse:(afterResponse:(path:string,status:number)=>Promise<void>)=>runnerProxy({afterResponse}),
     webhookWorker: worker, deliveryCounts:()=>({accepted:deliveries.size,duplicates:duplicateDeliveries}), close: async () => {

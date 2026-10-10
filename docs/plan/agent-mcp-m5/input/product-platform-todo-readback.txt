@@ -1,0 +1,67 @@
+#58 [M5] 外部 MCP 客户端与内置 Runner 联合验收 (id: OHtiaCWGLuE1ZKuaYcslS)
+Project: WorkMesh
+Phase: building
+Created: 2026-10-09T04:09:06.202Z by 总管 (agent)
+Updated: 2026-10-10T16:35:53.376Z
+Assigned agent: iuKoX-czTc8kH_ERctdlM (thinking: high)
+Has a build — conversation(todoId) for its transcript. Branch: tds/conv-01a1264e-bd35-76d4-b328-03e9b91301f3. Files on its branch: https://todos.dev/app/project/DzkLDn6UW-IbfoTJzN9Ro/files?ref=tds%2Fconv-01a1264e-bd35-76d4-b328-03e9b91301f3 — append &path=<repo-relative file> whenever the link text names one file, or it opens on the branch root with nothing selected
+Its code: git with projectId DzkLDn6UW-IbfoTJzN9Ro, ["fetch", "origin", "tds/conv-01a1264e-bd35-76d4-b328-03e9b91301f3"], then read FETCH_HEAD.
+
+Spec:
+> webui部分后续考虑彻底重新设计，接下来的任务优先完成后端功能逻辑开发，以及面向agent的mcp工具补齐，要让agent能无障碍使用系统全面的功能
+> 分批补齐既有功能（推荐）
+
+用户2026-10-09 12:00明确批准#53已审实施路线，主力开发gpt-6.1-sol/high执行，独立审查Agent同模型/high复核，沿既有依赖/检查和blocking/high闭后条件合入。此卡是已确认路线的一个完整批次。M3及核心前置已由Chief独立核actualmain/PR/Done齐全。完整M5规划候选ddddcfca8d7ef387df58be993c88ffe7d62391dd已于2026-10-11 00:24经另一Agent复审确认B1/B2/B3均解决、可按方案实施，生产者无文件修改。Chief按既有委托confirm，由主力high进入实施及联合验收；确认只启动工作，不表示产品验证或本卡验收完成。
+
+受控来源：已完成#53/PR209，mainc768e1e3db297d8b91b53dd68b60e723a8a40e7d，docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md中本批完整节，README/coverage-matrix/operation-index/branch-separation/sources/review。全部原测试/DoD与适用理由均须消费精确Git全文，不从工具截断前缀伪造全文或hash，不将UI后续、F/TA新域混入此卡。角色/状态/feature/资源/批准前提严格按CONTEXT/AGENT_PROTOCOL/OPENAPI/SCHEMA和现行ADR；不能补工具时授Agent Human角色或注入Human cookie。
+
+## 本卡范围与前置
+批次：M5；requires/启动条件：M3 [#57](todo:g0q8D1msrOVY2kg-cSdkj) 及其核心前置实际合入。
+前置来源（Chief 2026-10-10 22:52独立平台只读Git/PR/todo观察，非用户原话）：#57 done/PR215 merged；refs/heads/main=87f88b89297c5c1e346f7ef99118c410f4b4a905，parents ef4cb5e1458d911d98433c443dba46e6c224caa0 与 d27cb9be3a19befeae431df08276c9ca94d7dbed，tree a8590e0818418e23fc299056ff3d479c65915c78 与已审候选相同。正式成果三blocking及构建配置增量独审均无blocking/high，最新CI419/run38059540722十job含Required全success。M0/M1/M2前置已逐批合入；M3受控来源docs/plan/agent-mcp-m3的product-report/review-fixes-report/product-pr-ci-report/product-ci418-report及原矩阵/源码证据。417首败/418提交ZIP与419 Actions原件分列，旧数量/环境skip/unknown及未测真实provider限制保留；M5新组合不借旧checks通过。
+实施依据为精确ddddcfca8d7ef387df58be993c88ffe7d62391dd的docs/plan/agent-mcp-m5/README及完整spec/frozen177–201/savedplan/implementation、安全合同/ADR提案、environment/两路径/九类/操作与消费者和支持矩阵/verification/review-response及准确源码来源。已结束规划回合只写工件、不实现产品的历史约束不适用于确认后的本轮；按已审方案实现最小消费者修复与联合验证，不再withPlan或重复同一写文件许可。真正缺设备/客户端/凭据先核本机现状并形成具体原问题卡，不索取聊天秘密，不新增安装/登录/外部授权/公共发行。开工重新读真实main/newdiff（Chief本wake仍87f88b89297c5c1e346f7ef99118c410f4b4a905），SHA只作来源不冒未来实时ref。原平台全文读回/注入副本/修订edit与独立doc未得的来源限制，原32a47文件/首败及修订65文件字节原件保持，不伪补历史。
+完整来源为M5节（冻结输入177–201）。用同一已验收后端，选一个实际可用外部MCP客户端及内置Pi Runner，完整规划/接单/执行/协作/批准/Git证据/Stop恢复/完成链，至少无Git核心及有Gitfake交付两路径、两Human/两Agent交接和撤权。实际客户端/OS/版本/部署记录；协议fixture不冒厂商客户端认证，个人Lite/团队/企业支持度逐一列真实结果，不给未测画像勾选。
+
+首轮按已确认既有领域与可用环境落实，缺真实客户端/凭据先看机器环境并形成具体缺口，不能聊天索取秘密或将fixture记真实。不借M5发布公共签名Skill/新外部服务，原#5三OS和#20无源码发行门禁保留，Runner内嵌pin与不可变公共release分别处理。旧9/16后端只在纳入演示时需其新已验收candidate；不等待延后新UI。适用API/MCP/Worker/Runner重启/失响应/幂等/revision/撤权/并发/rollback及Stop清理实证，领域完成不靠模型口头宣称。
+
+## 已独审三项修订
+来源为2026-10-10 23:49方案独审与主力受控修订，经2026-10-11 00:24_oY复审闭合，非用户新增权限裁定：Handoff后旧A来源Delegation已completed，余工由B新Session承接，旧A准确E拒绝单列；保live父读取required child及完成用未Handoff另链。共同Plan冲突使用同owner/Session的两个合法准确E消费者，Pi唯一Attempt控制fence/start时序与两轮屏障，跨Session拒绝另验。Pi普通工具现缺同请求自动重试，按ADR0084提案实施三个内部白名单操作createDocument/publishAgentPlan/postWorkRoomMessage最多一次受限传输重放，同序列body/key/E/headers/If-Match、共同30秒期限及取消/Attempt/lifecycle预算；不refresh身份、不重入Activity，明确HTTP拒绝/JSON/DNS/TLS/provider意图/签名传输/控制/settle/Stopfinally排除，二次失败保首不确定cause。真实Runner单toolCall发第二原HTTP与业务单事实实证，代理重放/新toolCall不能替代。OpenCode私有配置/data/state/standalone无用户服务配置/登录/插件/更新/未批外网的启动门禁必须实际证明；不通过停外部子流程原卡报告。外部MCP上传下载签名资料不向模型暴露，按已审方案禁对应两tools并诚实标传输限制，Pi受控传输结果不借外部全覆盖。
+
+## 统一执行及验收要求
+开工读真正refs/heads/main精确SHA、前置落地证据和新差异，按上述完整已独审方案实施与联合验收；必要范围外新只读投影仍先ADR/合同复核，不假端点已存在。普通已授权实现选择由Chief依委托推进，真正扩大范围/权限/外发布另问。冻结已审#53历史，不修改其原报告冒新通过。
+产品交付须REST/Zod合同/SDK/policyfeature/MCP/derivedmanifest/Runner/conformance同一操作一致；对应完整节九类用例及不适用理由、新受测源码前后指纹/精确命令退出runtime/数量skip/首败/准备恢复清理实证落盘。Git对象与运行字节区分，缺旧原件真实标出，旧head检查不能代新组合。适用必需本机checks、独立成果审查、最新PR RequiredCI与actualdone/main均齐才验收；只报告实际运行支持/不支持/未测，不以工具或API数量冒全功能。
+本批仅Todos＋仓库记录，不伪真实WorkMesh远端记录。旧#9/#16按用户同日裁定只交后端并保全UI，仍由原todo承接；#5三OS/版本分发门禁不缩减；未将这些纳入测试场景时不能强加为所有M批次前置，若纳入须消费其实际新已验收源。F0–F6/TA新增域、真实外发/发布、团队权限及凭据连接不自动获批，不在聊天索取秘密。
+收尾先登记独有测试容器/镜像/卷网络/进程/路径，脱敏保全必要证据后仅清本人闲置资源，不globalprune/共享store/他人服务。Windows递归前核绝对workspace目标/link/活动引用/逐path保全依据，保留原操作退出/实际结果；自动审批拒停目标，不Force/改ACL属性/换工具/拆分/移动或父删绕，G1D0C3已拒目标保护。已合worktree须actualmain/保全齐/无引用才清，当前恢复目录保留。回复仅摘要/head/受控路径，未来测试不标已过。
+
+Saved plan:
+## 上下文与假设
+
+完成 M5 的联合验收设计：证明外部客户端与内置 Runner 能完成既有领域闭环，并正确处理授权、异步结果、冲突和恢复。
+
+已重新读取真实 `main`，当前工作树与 M3 合入源码一致。首轮固定采用 Windows 上的实际 OpenCode 进程及 Pi Runner，以本机受控模型驱动确定性工具调用、fake Git 验证交付。模型夹具、协议夹具和实际客户端运行分别记录。
+
+本轮实际完成并提交 `docs/plan/agent-mcp-m5/` 完整规划工件，停 confirm 供 _oY 方案独审；不把落盘留到产品实现回合。使用 Todos＋仓库记录。UI、M4 可选域、F／TA 新域、真实外发及公共发行不在范围内。
+
+## 规划工件变更
+
+所有新增文件位于 `docs/plan/agent-mcp-m5/`，不修改冻结历史报告。
+
+- **`README.md`、`savedplan.md`、`implementation.md`**：保存内容一致的中文方案、依赖和实施顺序；明确方案独审、Chief confirm、产品实施、成果独审、最新 Required CI、Done／main 各关口。本轮提交后停 confirm。
+- **`spec.md`、`frozen-m5.md`、`sources.md`、`input/`**：归档当前完整规格、冻结输入 M5 全文、平台注入的原 saved plan 全文及本轮反馈、路线七份完整 Git 原件与 M0／M1／M2／M3 落地合同和产品／修复／CI 来源。原计划关联 `doc:KlfDrOUAFsJU7CSWbjbOp`，独立文档原件未取得单列，不能以注入副本冒后端全文读回。分别登记 commit、blob、完整内容哈希和工作树字节；截断、缺旧原件、历史首败和旧 skip 保留原含义。
+- **`environment.md`、`environment.json`**：记录实读客户端路径、OS、可得版本、能力入口、官方文档来源及读取时间，并核现有配置／登录是否需要新外部授权；已有安装不表示已接入。禁止本轮新安装、登录或凭据授权，保护用户配置，后续使用独立本任务临时配置与受控本机模型／fake Git。关键能力缺口形成具体原问题卡。个人 Lite、小团队、企业逐项列出计划测试范围和真实缺口，不把现有他人服务当作测试环境。
+- **`operation-matrix.md`、`consumer-matrix.md`、`security-contract.md`**：逐操作关联 REST／Zod／SDK／policy／feature／MCP／manifest／Runner，注明 C、E、安装身份、Human 前提、revision、幂等身份、分页和结果确认方式。消费 M0 冻结规则及后续受控增量；不依据工具数量判定覆盖。
+- **`acceptance-matrix.md`、`resources.md`**：将冻结九类要求逐行映射到测试、断言、证据和适用理由，规定源码前后指纹、命令退出、模型实收、持久事实及资源清理回执格式。
+
+## 联合验收实施设计
+
+复用 `createMcpCoverageFixture` 的真实 API、授权准备和重启机制，`createPlanningCollaborationFixture` 的签名投递、失响应代理及 Pi 子进程，以及 `createDeliveryRecoveryFixture` 的 `FakeGitProvider`、Worker 和上传验证。`McpReferenceDriver`、`runClientConformance` 继续证明协议兼容；实际 OpenCode 由独立进程驱动，不能以 `opencode-style` 夹具替代。
+
+两客户端分别运行无 Git 核心链和有 Git 交付链：
+
+1. 新建授权 Connection，规划、领取、ACK、执行、文档／Room／Inbox 协作、证据及完成。两 Human 使用独立 REST 登录，两个 Team、两个 Agent 覆盖交接与撤权；Human cookie 不进入客户端或 Runner。无 Git 链 N4 经 `apps/api/src/collaboration/routes.ts` 的 `acceptHandoff` 接受后，A 的来源 Delegation 已 completed；N5–N6 固定由 B 的新 Session 接收上下文、发布本人的新 Plan、申请批准、等待、交付证据并完成。A 的旧 Plan 与 Session 事实保留，旧 E 的读取、Plan／批准／完成请求实际拒绝并由 Human 核对，不恢复其授权或称 A 已完成。父读子后父完成另建未发生 Handoff 的 `createChildAgentSession`／required child 场景，验证父 Delegation 始终 active、子完成后父查询和完成；Git review 链仍沿原设计。
+2. Git 链验证 context、Lease、branch／commit／PR、精确 `getProviderAction`、当前 head 检查、显式限定仓库读范围的 reviewer、Human 批准和 Worker 发送。reviewer 必须交付本人 `review_result`、`code_review` Artifact 和 structured review，完成后父确认 required child。
+3. 覆盖正常、越权、非法状态、幂等、旧 revision、事务失败、重放、并发、重启／Stop。分别重启 MCP／API／Worker／Runner；验证 cursor resync、Lease 丢失、原动作确认、unknown 零盲重发及原 E Token 的 Stop_ACK。ADR0068 原子 settle 回滚和明确拒绝后的可见 warning 必须由数据库及客户端证据证明。
+
+F5 的共同 Plan 固定属于独立冲突夹具中的 Agent B、Session S，采用合法 executor Delegation；不使用 reviewer 或 Handoff 来源 Session。OpenCode 的静态 MCP listener 经 B 的原 installation 取得 S 的准确 E，Token 留在后端；Pi 也用 B 的同一 installation、Session S 经真实 Runner claim／credential／start 取得自身准确 E。两消费者属于同一 Session 的合法调用方，不冒充两 Agent 跨 Session 写。仅一个 Pi Attempt 处于 running，等待其 start 已提交后，两模型分别读取 S 的同一 Session revision 和完整 Plan。用模型／代理屏障使 OpenCode 先提交，再释放 Pi 的旧 If-Match 请求；两客户端交换提交顺序另跑一例。断言真实 revision 冲突、Plan 版本无覆盖、stable step ID 保留，以及失败消费者读最新值后用新 intent 明确合并；伴随活动按原合同单列。新 Attempt 只在原 Attempt durable settle 后创建，旧 fence 的拒例另测。Document 使用两方都有合法写范围的共享资源；Issue 的双合法 C 冲突仅归协议对照，Pi E 角色拒绝另列。两个 Agent 各自 E 写对方 Plan 的真实拒绝单独归 F2，不能记作 F5。
+
+F4 不再把当前普通工具描述成已有 HTTP 重试：`workmesh-tools.ts` 的 `makeTool` 和 `run-session.ts` 的
+…(truncated)

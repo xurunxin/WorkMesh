@@ -23,6 +23,10 @@ Runner 每次发现自己的 queued Session 后，经现有 Agent API 完成 ACK
 
 ## 当前恢复边界
 
+普通工具 `createDocument`、`publishAgentPlan`、`postWorkRoomMessage` 在一次 Pi toolCall 内最多重放一次明确的传输失败请求。Runner 冻结首次业务发送的 method、URL、序列化正文、key、If-Match、准确 E 与 headers，共用三十秒总截止及取消信号；重发前以原 E 核对原 Attempt／Turn／Delegation／Session，不能 refresh 或更换身份。GET、已收到的 HTTP 拒绝（含 5xx）、JSON／DNS／TLS 错误、provider intent、签名传输、控制请求与原 settle／Stop 清理均不进入此机制。
+
+第二次失败保留首次失响应的 cause 和未对账状态，第二次明确拒绝也不能证明第一次未提交。模型回合结算与领域完成、外部效果对账是独立事实；未对账时不能自动完成 Session。实际 Pi、幂等数据库事实及剩余客户端限制见 [M5 产品报告](plan/agent-mcp-m5/product-report.md) 和 [ADR0084](adr/0084-runner-tool-bounded-transport-replay.md)。
+
 Runner 崩溃并使 Session 失去权威，或 Attempt 超过五分钟未结算时，Worker 将 `dispatching` / `running` Attempt 与 Turn 标记为 failed，并在同一事务中记录事件和 outbox。`external_effects_reconciled=false` 保留未知副作用，旧 fence 被拒绝，不自动重做。操作员应核对外部效果，再由 Human 发送新 Turn。尚未提供外部效果对账、租约恢复与预算执行，因此此服务目前只适合受控试运行，不能按本路线图 W18 切换生产旧 UI。
 
 ## 公开发布与评测（W12）

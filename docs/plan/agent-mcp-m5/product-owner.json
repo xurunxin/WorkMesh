@@ -40,5 +40,39 @@
   ],
   "sharedImagesPreserved": true,
   "recoveryDirectory": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3\\.tmp\\m5-runtime",
-  "cleanup": "未执行"
+  "cleanup": "本人精确ID容器已停止；容器/卷/镜像/网络/恢复目录保留",
+  "recoveryResources": {
+    "registeredAt": "2026-10-10T17:17:10.823845+00:00",
+    "sourceDatabase": "m5_5dbe32e19a_source_test",
+    "targetDatabase": "m5_5dbe32e19a_target_test",
+    "sourceBucket": "m5-5dbe32e19a-source",
+    "targetBucket": "m5-5dbe32e19a-target",
+    "nativeResults": [
+      {
+        "operation": "createdb",
+        "database": "m5_5dbe32e19a_source_test",
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "operation": "createdb",
+        "database": "m5_5dbe32e19a_target_test",
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "operation": "create-owned-bucket",
+        "bucket": "m5-5dbe32e19a-source",
+        "exit": 0
+      },
+      {
+        "operation": "create-owned-bucket",
+        "bucket": "m5-5dbe32e19a-target",
+        "exit": 0
+      }
+    ],
+    "playwrightRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3\\.tmp\\m5-runtime\\playwright"
+  }
 }

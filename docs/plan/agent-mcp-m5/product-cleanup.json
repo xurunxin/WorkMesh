@@ -1,0 +1,240 @@
+{
+  "at": "2026-10-10T18:29:37.049655+00:00",
+  "before": [
+    {
+      "id": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+      "name": "/m5-5dbe32e19a-postgres",
+      "state": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 39265,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-10T16:33:30.9843172Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1",
+          "Source": "/var/lib/docker/volumes/bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "networkMode": "bridge",
+      "imageId": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7"
+    },
+    {
+      "id": "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+      "name": "/m5-5dbe32e19a-redis",
+      "state": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 39381,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-10T16:33:32.1037307Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3",
+          "Source": "/var/lib/docker/volumes/ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "networkMode": "bridge",
+      "imageId": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08"
+    },
+    {
+      "id": "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+      "name": "/m5-5dbe32e19a-store",
+      "state": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 39457,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-10T16:33:33.3774509Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920",
+          "Source": "/var/lib/docker/volumes/937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "networkMode": "bridge",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff"
+    }
+  ],
+  "operations": [
+    {
+      "containerId": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+      "argv": [
+        "docker",
+        "stop",
+        "--time",
+        "20",
+        "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737"
+      ],
+      "exit": 0,
+      "stdout": "Flag --time has been deprecated, use --timeout instead\nc012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+      "stderr": ""
+    },
+    {
+      "containerId": "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+      "argv": [
+        "docker",
+        "stop",
+        "--time",
+        "20",
+        "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9"
+      ],
+      "exit": 0,
+      "stdout": "Flag --time has been deprecated, use --timeout instead\n47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+      "stderr": ""
+    },
+    {
+      "containerId": "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+      "argv": [
+        "docker",
+        "stop",
+        "--time",
+        "20",
+        "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67"
+      ],
+      "exit": 0,
+      "stdout": "Flag --time has been deprecated, use --timeout instead\n23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+      "stderr": ""
+    }
+  ],
+  "after": [
+    {
+      "id": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+      "name": "/m5-5dbe32e19a-postgres",
+      "state": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-10T16:33:30.9843172Z",
+        "FinishedAt": "2026-10-10T18:29:35.843996Z"
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1",
+          "Source": "/var/lib/docker/volumes/bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "networkMode": "bridge",
+      "imageId": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7"
+    },
+    {
+      "id": "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+      "name": "/m5-5dbe32e19a-redis",
+      "state": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-10T16:33:32.1037307Z",
+        "FinishedAt": "2026-10-10T18:29:36.2941437Z"
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3",
+          "Source": "/var/lib/docker/volumes/ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "networkMode": "bridge",
+      "imageId": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08"
+    },
+    {
+      "id": "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+      "name": "/m5-5dbe32e19a-store",
+      "state": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-10T16:33:33.3774509Z",
+        "FinishedAt": "2026-10-10T18:29:36.6446251Z"
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920",
+          "Source": "/var/lib/docker/volumes/937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "networkMode": "bridge",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff"
+    }
+  ],
+  "containersRetained": true,
+  "volumesRetained": true,
+  "sharedImagesAndNetworksPreserved": true,
+  "recoveryDirectoryRetained": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3\\.tmp\\m5-runtime",
+  "recursiveDeletes": 0,
+  "G1D0C3": "untouched"
+}

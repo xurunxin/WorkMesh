@@ -1,6 +1,8 @@
 """本任务独有服务与实际检查回执；凭据只留在忽略的 .tmp，不输出。"""
 from pathlib import Path
 import datetime,hashlib,json,os,secrets,socket,subprocess,sys,time,uuid
+sys.stdout.reconfigure(encoding='utf8',errors='replace')
+sys.stderr.reconfigure(encoding='utf8',errors='replace')
 
 ROOT=Path(__file__).resolve().parents[3]
 DOC=ROOT/'docs/plan/agent-mcp-m5';LOCAL=ROOT/'.tmp/m5-runtime'
@@ -11,6 +13,22 @@ def now():return datetime.datetime.now(datetime.timezone.utc).isoformat()
 def port():
  with socket.socket() as s:s.bind(('127.0.0.1',0));return s.getsockname()[1]
 def call(argv,env=None):return subprocess.run(argv,cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+def source_fingerprints():
+ head=call(['git','rev-parse','HEAD']).stdout.decode().strip()
+ tree=call(['git','ls-tree','-rz',head]).stdout.split(b'\0');objects={}
+ for row in tree:
+  if row:
+   meta,path=row.split(b'\t',1);objects[path.decode()]=meta.split()[2].decode()
+ tracked=call(['git','ls-files','-z']).stdout.decode().split('\0')
+ added=call(['git','ls-files','--others','--exclude-standard','-z']).stdout.decode().split('\0')
+ values=[]
+ for path in sorted(set(tracked+added)):
+  if not path or (path.startswith(('docs/plan/','docs/reviews/')) and path!='docs/plan/agent-mcp-m5/product-runtime.py'):continue
+  file=ROOT/path
+  if not file.is_file():continue
+  raw=file.read_bytes();blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+  values.append({'path':path,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'runtimeBlob':blob,'headBlob':objects.get(path),'matchesHead':objects.get(path)==blob})
+ return {'head':head,'entries':values,'digest':hashlib.sha256(json.dumps(values,sort_keys=True).encode()).hexdigest()}
 if sys.argv[1]=='prepare':
  assert not (LOCAL/'environment.json').exists(),'已有恢复目录，禁止覆盖'
  LOCAL.mkdir(parents=True,exist_ok=True)
@@ -44,10 +62,19 @@ if sys.argv[1]=='prepare':
 elif sys.argv[1]=='check':
  env=json.loads((LOCAL/'environment.json').read_text(encoding='utf8'));label=sys.argv[2];argv=sys.argv[3:]
  assert argv and all('wmi_' not in arg for arg in argv)
- started=now();tick=time.monotonic();result=call(argv,env)
+ before=source_fingerprints();started=now();tick=time.monotonic()
+ process=subprocess.Popen(argv,cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+ processpath=LOCAL/'processes'/(label+'.json')
+ processrow={'pid':process.pid,'argv':argv,'cwd':str(ROOT),'startedAt':started,'owner':json.loads((DOC/'product-owner.json').read_text(encoding='utf8'))['runId'],'nativeExit':None}
+ save(processpath,processrow)
+ stdout,stderr=process.communicate();result=subprocess.CompletedProcess(argv,process.returncode,stdout,stderr)
+ runtime=time.monotonic()-tick;ended=now();after=source_fingerprints()
+ processrow.update({'endedAt':ended,'nativeExit':result.returncode});save(processpath,processrow)
  output=LOCAL/'checks';output.mkdir(exist_ok=True)
  values=[v for k,v in env.items() if any(x in k for x in ['TOKEN','SECRET','PASSWORD','MASTER_KEY','DATABASE_URL'])]
- row={'label':label,'argv':argv,'cwd':str(ROOT),'startedAt':started,'endedAt':now(),'runtimeSeconds':time.monotonic()-tick,'nativeExit':result.returncode,'logs':{}}
+ fingerprints=LOCAL/'sources';fingerprints.mkdir(exist_ok=True)
+ sourcepath=fingerprints/(label+'.json');save(sourcepath,{'before':before,'after':after})
+ row={'label':label,'argv':argv,'cwd':str(ROOT),'startedAt':started,'endedAt':ended,'runtimeSeconds':runtime,'nativeExit':result.returncode,'logs':{},'sourceBinding':{'path':str(sourcepath.relative_to(ROOT)),'beforeDigest':before['digest'],'afterDigest':after['digest'],'unchanged':before['digest']==after['digest'],'sha256':hashlib.sha256(sourcepath.read_bytes()).hexdigest()}}
  for channel in ['stdout','stderr']:
   raw=getattr(result,channel).decode('utf8',errors='replace')
   for value in sorted(values,key=len,reverse=True):raw=raw.replace(value,'[redacted]')
@@ -56,6 +83,6 @@ elif sys.argv[1]=='check':
  receipts=DOC/'product-checks.json';previous=json.loads(receipts.read_text(encoding='utf8')) if receipts.exists() else []
  previous.append(row);save(receipts,previous)
  print(json.dumps(row,ensure_ascii=False))
- print(result.stdout.decode('utf8',errors='replace')[-3500:]);print(result.stderr.decode('utf8',errors='replace')[-1000:])
+ print((output/(label+'-stdout.txt')).read_text(encoding='utf8')[-3500:]);print((output/(label+'-stderr.txt')).read_text(encoding='utf8')[-1000:])
  sys.exit(result.returncode)
 else:raise SystemExit('未知模式')

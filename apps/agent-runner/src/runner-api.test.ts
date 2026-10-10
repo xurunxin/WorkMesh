@@ -78,6 +78,36 @@ describe('普通工具原请求传输重放', () => {
     await expect(api.request('POST','/api/v1/documents',{},undefined,'key',replay)).rejects.toMatchObject({cause:first,unreconciled:true})
     expect(fetch).toHaveBeenCalledTimes(3)
   })
+  it.each(['close','expire'] as const)('首次提交失响应后%s禁止业务重放，保留首cause',async kind=>{
+    vi.useFakeTimers()
+    const first=transport()
+    const {api,fetch}=setup(async()=>{if(kind==='close')api.closeExecution();else vi.setSystemTime(new Date('2100-01-01'));throw first})
+    await expect(api.request('POST','/api/v1/documents',{},undefined,'key',replay)).rejects.toMatchObject({cause:first,unreconciled:true})
+    expect(fetch).toHaveBeenCalledTimes(2)
+  })
+  it('后台GET更新held token时，原写重放仍用原冻结E而非可变字段',async()=>{
+    vi.useFakeTimers()
+    vi.stubEnv('WORKMESH_API_URL','http://127.0.0.1:3001')
+    vi.stubEnv('WORKMESH_AGENT_INSTALLATION_TOKEN','fixture-installation')
+    vi.stubEnv('WORKMESH_RUNNER_SERVICE_TOKEN','fixture-runner-service-token-00000001')
+    const api=new RunnerApi(sessionId),first=transport()
+    let refreshCount=0
+    const requests:Array<{path:string;headers:Record<string,string>}>=[]
+    let writes=0
+    const fetch=vi.fn(async(url:URL,options:RequestInit)=>{
+      const headers=options.headers as Record<string,string>;requests.push({path:url.pathname,headers})
+      if(url.pathname.endsWith('/token/refresh'))return json({sessionToken:++refreshCount===1?'original-e':'background-e',expiresAt:new Date(Date.now()+70_000).toISOString()})
+      if(url.pathname.endsWith('/status'))return running()
+      if(options.method==='GET')return json({revision:9})
+      if(++writes===1){vi.setSystemTime(Date.now()+12_000);await api.request('GET',`/api/v1/agent-sessions/${sessionId}`);throw first}
+      return json({id:'original-result'})
+    })
+    vi.stubGlobal('fetch',fetch)
+    await expect(api.request('POST','/api/v1/documents',{},undefined,'key',replay)).resolves.toEqual({id:'original-result'})
+    expect(refreshCount).toBe(2)
+    expect(requests.filter(row=>row.path==='/api/v1/documents').map(row=>row.headers.Authorization)).toEqual(['Bearer original-e','Bearer original-e'])
+    expect(requests.find(row=>row.path.endsWith('/status'))!.headers.Authorization).toBe('Bearer original-e')
+  })
   it.each([['GET','/api/v1/documents'],['POST','/api/v1/provider-actions'],['POST',`/api/v1/workbench/runner-attempts/${sessionId}/settle`]] as const)('非白名单%s %s保持单发',async(method,path)=>{
     const first=transport(),{api,fetch}=setup(first)
     await expect(api.request(method,path,{},undefined,'key',replay)).rejects.toBe(first)

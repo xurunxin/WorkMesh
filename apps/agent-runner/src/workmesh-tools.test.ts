@@ -29,7 +29,7 @@ function manifest(capabilities: Capability[]): AgentCapabilityManifest {
 describe('Pi WorkMesh tools', () => {
   it('一次execute只调用一次业务request，重放选项不重复Activity或用于GET',async()=>{
     const calls:Array<{path:string;options:unknown}>=[]
-    const api:RunnerToolApi={sessionId,async request<T>(_method,path,body,_revision,_key,options):Promise<T>{
+    const api:RunnerToolApi={sessionId,async request<T>(_method:Parameters<RunnerToolApi['request']>[0],path:string,body?:unknown,_revision?:number,_key?:string,options?:Parameters<RunnerToolApi['request']>[5]):Promise<T>{
       if(path==='/api/v1/agent-capabilities?discovery=qualified')return manifest(['work:read','work:write','message:write']) as T
       calls.push({path,options});return (body??{}) as T
     }}
