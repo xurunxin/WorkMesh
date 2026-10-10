@@ -5,7 +5,6 @@ import argparse
 import collections
 import datetime
 import gzip
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -39,7 +38,28 @@ def group(rel):
         return '本机临时/验收材料（用途未判定）'
     return '源码与其他文件'
 
+def directory_gate(path):
+    # absolute 不解析链接；从卷根逐级 lstat，不能先访问可能位于 junction 下的子路径。
+    path = path.absolute()
+    for ancestor in [*reversed(path.parents), path]:
+        try:
+            info = ancestor.lstat()
+        except FileNotFoundError:
+            return {'blockedAt': str(ancestor), 'reason': '路径不存在，未遍历', 'errors': []}
+        except OSError as error:
+            return {'blockedAt': str(ancestor), 'reason': '祖先元数据读取失败，未遍历',
+                    'errors': [{'path': str(ancestor), 'error': str(error)}]}
+        if info.st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+            return {'blockedAt': str(ancestor), 'reason': '祖先或目录本体是 reparse point，未遍历', 'errors': []}
+        if not stat.S_ISDIR(info.st_mode):
+            return {'blockedAt': str(ancestor), 'reason': '路径不是目录，未遍历', 'errors': []}
+    return None
+
 def scan(path):
+    blocked = directory_gate(path)
+    if blocked:
+        return {'ordinaryFiles': 0, 'logicalBytes': 0, 'linksNotFollowed': 0,
+                'groups': {}, 'complete': False, **blocked}
     total, count, links = 0, 0, 0
     groups = collections.defaultdict(lambda: {'files': 0, 'logicalBytes': 0})
     errors = []
@@ -66,7 +86,18 @@ def scan(path):
                         errors.append({'path': rel, 'error': str(e)})
         except OSError as e:
             errors.append({'path': str(directory), 'error': str(e)})
-    return {'ordinaryFiles': count, 'logicalBytes': total, 'linksNotFollowed': links, 'groups': dict(groups), 'errors': errors}
+    return {'ordinaryFiles': count, 'logicalBytes': total, 'linksNotFollowed': links, 'groups': dict(groups), 'errors': errors, 'complete': not errors}
+
+def write_snapshot(dest, data):
+    dest = dest.resolve()
+    cleanup_root = OUT.parent.resolve()
+    if cleanup_root not in dest.parents:
+        raise ValueError('输出必须在此受控清理报告目录下')
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    raw = (json.dumps(data, ensure_ascii=False, indent=2) + '\n').encode()
+    # 独占创建由文件系统原子判定；并发同名写入不能覆盖先生成的原件。
+    with dest.open('xb') as snapshot:
+        snapshot.write(gzip.compress(raw, mtime=0))
 
 def main():
     parser = argparse.ArgumentParser(description='只读盘点本机 WorkMesh；不删除任何路径')
@@ -74,13 +105,26 @@ def main():
     parser.add_argument('--output', type=Path, help='受控清理报告目录中的 JSON.gz；缺省只打印摘要')
     args = parser.parse_args()
     started = utc()
-    rows, exclusions = [], []
+    rows, exclusions, root_errors = [], [], []
+    root_blocked = directory_gate(ROOT)
+    if root_blocked:
+        exclusions.append({'path': str(ROOT), **root_blocked})
+        root_errors.extend(root_blocked['errors'])
+        paths = []
+    else:
+        try:
+            paths = list(ROOT.iterdir())
+        except OSError as error:
+            root_errors.append({'path': str(ROOT), 'error': str(error)})
+            paths = []
     # 只列指定 workspace 根的直接子目录；归属通过 Git remote 实核。
-    for path in ROOT.iterdir():
-        if not path.name.startswith('01a') or not path.is_dir():
+    for path in paths:
+        if not path.name.startswith('01a'):
             continue
-        if path.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT:
-            exclusions.append({'path': str(path), 'reason': '根子目录是 reparse point，未遍历'})
+        blocked = directory_gate(path)
+        if blocked:
+            exclusions.append({'path': str(path), **blocked})
+            root_errors.extend(blocked['errors'])
             continue
         remote = git(path, 'remote', 'get-url', 'origin')
         if remote['exit'] or remote['stdout'].strip() != REPOSITORY:
@@ -89,28 +133,33 @@ def main():
         rows.append({'path': str(path), 'startedAt': utc(), 'remote': remote, 'head': git(path, 'rev-parse', 'HEAD'), **scan(path), 'endedAt': utc()})
     # 主仓库只是只读大小对照，永不成为脚本的回收候选；其它平台缓存不遍历。
     main_repo = ROOT / 'DzkLDn6UW-IbfoTJzN9Ro' / 'repo'
-    main_size = {'path': str(main_repo), 'protected': True, **scan(main_repo)} if main_repo.is_dir() and not main_repo.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT else {'path': str(main_repo), 'protected': True, 'exists': main_repo.exists(), 'reason': '不存在或根为链接，未遍历'}
+    main_size = {'path': str(main_repo), 'protected': True, **scan(main_repo)}
     total = sum(r['logicalBytes'] for r in rows)
+    worktrees_complete = not root_blocked and not root_errors and all(r['complete'] for r in rows)
+    complete = worktrees_complete and main_size['complete']
+    error_count = len(root_errors) + sum(len(r['errors']) for r in rows) + len(main_size['errors'])
     data = {'startedAt': started, 'endedAt': utc(), 'phase': args.phase, 'workspaceRoot': str(ROOT), 'project': REPOSITORY,
-            'worktreeLogicalBytes': total, 'worktreeDecimalGB': total / 10**9, 'worktreeGiB': total / 2**30, 'worktreeCount': len(rows),
+            'complete': complete, 'errors': error_count, 'rootErrors': root_errors,
+            'worktreeLogicalBytes': total if worktrees_complete else None,
+            'worktreeDecimalGB': total / 10**9 if worktrees_complete else None,
+            'worktreeGiB': total / 2**30 if worktrees_complete else None,
+            'observedWorktreeLogicalBytes': total, 'worktreeCount': len(rows),
             'rows': rows, 'mainRepositorySeparate': main_size, 'exclusions': exclusions, 'registration': git(CURRENT, 'worktree', 'list', '--porcelain'),
             'limitations': '逻辑长度不跟链接，hardlink 副本重复计数；不含其它项目、用户目录、共享 store、镜像/业务数据；活动目录扫描不是一致快照；不代表物理分配或可归因净释放。用途分类不能代安全预检。'}
     if args.output:
-        dest = args.output.resolve()
-        cleanup_root = OUT.parent.resolve()
-        if cleanup_root not in dest.parents:
-            raise ValueError('输出必须在此受控清理报告目录下')
-        if dest.exists():
-            raise ValueError('已有快照，禁止覆盖原件；读取原快照或选新的准确阶段名')
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        raw = (json.dumps(data, ensure_ascii=False, indent=2) + '\n').encode()
-        dest.write_bytes(gzip.compress(raw, mtime=0))
+        write_snapshot(args.output, data)
     groups = collections.Counter()
     for row in rows:
         for key, item in row['groups'].items():
             groups[key] += item['logicalBytes']
     top = sorted([{'path': r['path'], 'logicalBytes': r['logicalBytes']} for r in rows], key=lambda r: r['logicalBytes'], reverse=True)[:10]
-    print(json.dumps({'phase': args.phase, 'count': len(rows), 'logicalBytes': total, 'GB': total / 10**9, 'GiB': total / 2**30, 'mainRepoSeparateBytes': main_size.get('logicalBytes'), 'groups': dict(groups), 'top10': top, 'errors': sum(len(r['errors']) for r in rows)}, ensure_ascii=False))
+    print(json.dumps({'phase': args.phase, 'complete': complete, 'count': len(rows),
+                      'logicalBytes': data['worktreeLogicalBytes'], 'GB': data['worktreeDecimalGB'], 'GiB': data['worktreeGiB'],
+                      'observedWorktreeLogicalBytes': total,
+                      'mainRepoSeparateBytes': main_size['logicalBytes'] if main_size['complete'] else None,
+                      'mainRepoObservedBytes': main_size['logicalBytes'], 'mainRepoComplete': main_size['complete'],
+                      'groups': dict(groups), 'top10': top, 'errors': error_count}, ensure_ascii=False))
+    return 0 if complete else 1
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
