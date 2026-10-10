@@ -2,6 +2,11 @@
   "scope": "产品交付文件与证据，不含自身以避免自引用；冻结规划索引保持历史含义",
   "files": [
     {
+      "path": "docs/plan/agent-mcp-m2/product-bind-commit.py",
+      "bytes": 4030,
+      "sha256": "a264a8829dd3c99153745026fea7abc0c2d72c1feef886d04e00e718af8f01cb"
+    },
+    {
       "path": "docs/plan/agent-mcp-m2/product-check-results.json",
       "bytes": 184256,
       "sha256": "5821b9c71ee343f4ce1d19d5570646d9c487a616086d4584877fb94fac634eab"
@@ -14,17 +19,22 @@
     {
       "path": "docs/plan/agent-mcp-m2/product-closure-matrix.json",
       "bytes": 156156,
-      "sha256": "313050fa704d69b9d7eb89185b29abcd2b20694ae2d2566ba36074b97c80628d"
+      "sha256": "4c64faf1dea7fc6977e88897f8b73533286555a2c62b18006ea95393256fe4d0"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-closure-matrix.md",
       "bytes": 9635,
-      "sha256": "1874ef82e89c53a5a0ffa71b1d5df0ef18a5c1be5fe0222e4ad2e6f5f326487b"
+      "sha256": "f8716685dbd23282f912d5cbd24ef57dc2802ec12982421ce99ddf60b81e0502"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-collect.py",
       "bytes": 19029,
       "sha256": "afd123581a6ca311ce5a88e2715b003bdc5cc0b4a47a72d592bb8a8f2b1bf1dd"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-commit-binding.json",
+      "bytes": 2852479,
+      "sha256": "d45b6208c5b2c9ea6c7a23fd40d6b753500ca2f6e0d69ea2e0d4c32ed1bc3efb"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-consumer-inspection.json",
@@ -33,13 +43,18 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-delivery.py",
-      "bytes": 21818,
-      "sha256": "cee478e1ce5369ab4930f65d248c103af62a2a60ab9ea006cdf63d1752cacf53"
+      "bytes": 22551,
+      "sha256": "0e0874a37a4e9b0b1d6dd45e1c576a5ca4de68ec31a2a6f503bc1511d61ecee5"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-discovery-decisions.json",
       "bytes": 57366,
       "sha256": "37b966f2f20055fdca10bf4f4f0ff30e6194fe93c5b935e215e3068c3945c522"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/document-pyc-before.zip",
+      "bytes": 33366,
+      "sha256": "4a294dd10eef7e2a3cd8c6f704e9e15d9195515c7c74cd7342f63ccb952c7743"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-evidence/failed-build-emitted.json",
@@ -2307,6 +2322,11 @@
       "sha256": "6b4d6d095ccf30b888b7b9cb3856703d28089f6840fd0763f27c7b831320e24d"
     },
     {
+      "path": "docs/plan/agent-mcp-m2/product-final-static-checks.json",
+      "bytes": 12504,
+      "sha256": "6ea79d32dc33eaaaf74a186562b6726c285cb46d2360f1b904c0e8d433e6cd2b"
+    },
+    {
       "path": "docs/plan/agent-mcp-m2/product-inspect.mts",
       "bytes": 1485,
       "sha256": "363da16d8a34001e67e97f68f170bf6a3f84cb055a7129c14ccf42dc0f66194b"
@@ -2322,9 +2342,19 @@
       "sha256": "7024a5b85e4bc5b215e6be7423e35e4b2f1310c254b030d55ea263c153e56f18"
     },
     {
+      "path": "docs/plan/agent-mcp-m2/product-package-validation.json",
+      "bytes": 853,
+      "sha256": "60f0f4cf947a6bd6470f9f5e9dd54b895fcff415045104b47ba57f8cc62091d8"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-packaging-events.json",
+      "bytes": 1141,
+      "sha256": "b13101c62594b43e8cd4fdc314d0094d88bccef6d9ed76ae6e6bbe0749221d56"
+    },
+    {
       "path": "docs/plan/agent-mcp-m2/product-report.md",
-      "bytes": 9350,
-      "sha256": "012e16d402ad2a79b9a5b2146ff65fcc39ec65620b38752aef7bb1dcc5621fd7"
+      "bytes": 11179,
+      "sha256": "81813a72a26032274daacfd14e90e1024b58773bdf369fe903d9864f0ba391ed"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-resource-results.json",
@@ -2333,8 +2363,8 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-run-source-binding.json",
-      "bytes": 237358,
-      "sha256": "d8d48bdb65c7a7b22fc1fe58ba4a6de599d6e37d8181eac70a432f20574ca5db"
+      "bytes": 237661,
+      "sha256": "c43cf9f96f8fd23a938f7e7c7d3e2252a8b6bf940473621f713a774ac6292cab"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-run.py",
@@ -2343,13 +2373,18 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-source-manifest.json",
-      "bytes": 38673,
-      "sha256": "7e0017d76f1261204c021c2d43df991caad87f309b01ff77134c35190aa07ed8"
+      "bytes": 38669,
+      "sha256": "b50e1627f4c07ae115c2c37802dd11bf9f811e6d7b83c1cdbc2543d482a41e95"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-source-snapshot.zip",
-      "bytes": 1435291,
-      "sha256": "10eb15fed70d22f86ab12d028013098de124237fa2edde43db10d4f1bb1c6f67"
+      "bytes": 1440720,
+      "sha256": "e0775a3118ccdc9aced68bd73b4690cab8710b68f21ce456bed7d1714aa88822"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-verify-package.py",
+      "bytes": 3258,
+      "sha256": "f66e5f2e776b2de31cb644a004f77d523a8f229b5e9f74f96b62c514b55b7f62"
     }
   ]
 }

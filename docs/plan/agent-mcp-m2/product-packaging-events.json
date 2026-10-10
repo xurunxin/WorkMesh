@@ -1,0 +1,20 @@
+{
+  "kind": "交付辅助打包历史，不是产品测试",
+  "events": [
+    {
+      "command": "relative runpy.run_path('docs/plan/agent-mcp-m2/product-collect.py')[\"artifacts\"]()",
+      "outcome": "相对__file__导致相对BASE下的p无法relative_to绝对ROOT；后续shell命令掩盖Python退出",
+      "availableError": "ValueError: relative path is not in the subpath of the absolute workspace root",
+      "outerShellExit": 0,
+      "pythonNativeExit": null,
+      "limitation": "未单独取得Python原生最终码，不由异常猜补码"
+    },
+    {
+      "command": "absolute runpy.run_path(...)[artifacts]() followed by product-collect.py sources",
+      "outcome": "文件生成完成，当前无此Python进程；源索引实际观察到b0d46f486a57e3e7723f1f92a7c1e3b89bd64243",
+      "nativeExit": null,
+      "limitation": "压缩上下文未保留最后工具结果及session标识；不以文件存在补最终退出码。以下独立绑定命令实际exit另留原件。"
+    }
+  ],
+  "correction": "绝对Path.resolve入口与独立subprocess原生退出记录；产品健康长命令的run原件不改变"
+}

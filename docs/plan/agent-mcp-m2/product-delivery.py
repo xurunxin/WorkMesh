@@ -97,7 +97,7 @@ def main():
 
 以上命令实际argv/cwd/起止时点/退出和原输出SHA在[全部检查结果](product-check-results.json)及product-evidence/run原件。Turbo cache命中明确保留，不把缓存日志重复计数；逐套件Tests/Test Files、skip和node:test汇总从stdout原行提取，不从exit猜数量。根集成真实包含M0/M1/M2，逐套件删除include的CI负例仍在；旧main checks不替新组合。之后仅增补M2测试体时单独跑当前M2组合，[运行前后源码差异](product-run-source-binding.json)分列，不声称全局字节不变。
 
-根run099原汇总：DB 81通过；API 270通过/1 skip；M0/M1/M2 39通过；Worker 120通过/1 skip；recovery 1 skip。E2E run106为70通过。最后M2补测run113为11通过/无skip；Skill EOF修正后unit/build/lint/typecheck与三套conformance另有当前回执，不冒旧pin已受测。根integration/E2E后的实际增量只在M2测试体和Skill EOF/生成pin，UI/API/SDK/Worker业务源码保持；新pin由三套真实Pi消费者组合验证，不为文档回执再重跑无变化的其它根套件。
+根run099原汇总：DB 81通过；API 270通过/1 skip；M0/M1/M2 39通过；Worker 120通过/1 skip；recovery 1 skip。E2E run106为70通过。最后M2补测run113为11通过/无skip；Skill EOF修正后根run122 `pnpm.cmd test:conformance:integration` 实际exit 0、278.921秒，M0 12/M1 17/M2 11合计40通过/无skip，使用当前内嵌pin。unit/build/lint/typecheck当前回执分别为run120/121/123/124，不冒旧pin已受测。根integration/E2E后的实际增量只在M2测试体和Skill EOF/生成pin，UI/API/SDK/Worker业务源码保持；新pin由三套真实Pi消费者组合验证，不为文档回执再重跑无变化的其它根套件。
 
 18条冻结行九类正拒、幂等、版本、回滚、重放、并发及恢复分别见[闭合矩阵](product-closure-matrix.md)。其中API以Fastify真实路由+PostgreSQL断言，conformance以实际监听HTTP/MCP、受控HTTPS假模型和真正Pi子进程，Worker到真实受控receiver；都不是真实外部WorkMesh平台数据。[91操作结果](product-operation-results.md)分REST完成回执、SDK、MCP具名绑定、Runner动态/alias/宿主/Human与安装边界。注册数量只用于一致性核查，未声称91×全部身份×三个消费者穷尽。
 
@@ -110,6 +110,8 @@ def main():
 本轮补测run107的member合法写正例被现行role policy拒绝，保首败后使用明确maintainer特权夹具；run108缺MCP Room必需sessionId，保原structured拒绝后按合同补准确父身份。完整main范围run117空白检查native exit 2（工具外层退出显示另分列），仅多余Skill EOF空行，原Git/工作树字节ZIP保全后删除空行并生成新pin；原规则未放宽，后续完整范围diff --check真实0。旧资料服务日志可读本规范化之前在service-logs-raw.zip保无损脱敏原件，旧内容不倒写为新运行。
 
 测试服务通过product-checks独有owner标签/容器ID，32字节临时主密钥只入进程，S3独有tmpfs bucket先Create/Head验证；原secret长度/RustFS权限首败保留。健康长命令实际退出后才保全脱敏service日志原字节及逐命令准备/恢复/清理原件。共享镜像、store、服务、当前恢复目录及G1D0C3拒目标保留，没有global prune/换工具绕拒。[资源结果](product-resource-results.json)列每owner、ID、端口、准备与删除exit；原登记缺逐命令原件如实标记。Pi/HTTP/MCPlistener关闭、scratch工作区回执在run输出ZIP cleanup/resources字段，不以总exit猜清理成功。
+
+产品源码冻结于 `b0d46f486a57e3e7723f1f92a7c1e3b89bd64243`。49份变更产品/协议/CI/测试文件的run122运行前后Windows字节、当前工作树、提交原blob及Git clean-filter规范化结果逐项比对见[提交绑定](product-commit-binding.json)；原blob和运行字节分别列出，CRLF差异不冒相等。最后证据提交只改本目录文档/索引，准确最终分支head以交付回复为准。打包辅助读取的相对路径首败和未取得的命令退出记录见[打包事件](product-packaging-events.json)，不混入产品测试通过数量。
 
 ## 演示与审查入口
 
