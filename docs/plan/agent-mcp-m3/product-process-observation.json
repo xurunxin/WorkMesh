@@ -1,5 +1,5 @@
 {
-  "observedUnix": 1791635450.9530408,
+  "observedUnix": 1791639206.401765,
   "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b",
   "processObservation": {
     "command": "Get-CimInstance Win32_Process | Where-Object { $_.Name -in 'node.exe','python.exe' -and $_.CommandLine -like '*01a1246e-406c-7593-ada6-66996634434b*' } | Select-Object ProcessId,ParentProcessId,Name,CommandLine | ConvertTo-Json -Compress",

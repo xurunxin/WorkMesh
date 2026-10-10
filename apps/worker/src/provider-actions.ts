@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto'
 import type { Pool, PoolClient } from 'pg'
 import { parseProviderActionCheckpoint } from '@workmesh/contracts'
-import { appendEvent, lockAgentAuthorityPlan, withTx } from '@workmesh/db'
+import { appendEvent, lockAgentAuthorityPlan, principalTeamAuthorityPredicate, withTx } from '@workmesh/db'
 import {
   assertMergeReady, allowedPath, matchesBranchPattern,
   authorizeAgentMutation,
@@ -48,6 +48,7 @@ type ClaimedAction = {
   team_id: string
   default_branch: string
   permittedMutations?: number
+  exhausted_context: boolean
 }
 type ClaimedWebhook = {
   id: string
@@ -185,11 +186,10 @@ export function createProviderActionWorker(input: {
   const claimAction = (): Promise<ClaimedAction | undefined> => withTx(input.db, async tx => {
     const result = await tx.query<ClaimedAction>(
       `WITH candidate AS (
-         SELECT action.id FROM provider_actions action
+         SELECT action.id,(action.kind='resolve_repository_context' AND action.attempt_count>=8 AND action.result IS NULL) AS exhausted_context
+         FROM provider_actions action
          JOIN provider_connections connection ON connection.id=action.connection_id
-          WHERE (action.attempt_count < 8 OR action.result IS NOT NULL
-                 OR (action.kind<>'resolve_repository_context' AND action.attempt_count>0))
-            AND action.available_at<=clock_timestamp()
+          WHERE action.available_at<=clock_timestamp()
             AND connection.provider::text=ANY($2::text[])
             AND (action.status IN ('pending','failed') OR (action.status='claimed' AND action.claimed_at<clock_timestamp()-interval '60 seconds'))
           ORDER BY action.available_at,action.created_at FOR UPDATE OF action SKIP LOCKED LIMIT 1
@@ -198,7 +198,7 @@ export function createProviderActionWorker(input: {
          claimed_by=$1,attempt_count=LEAST(8,a.attempt_count+1),updated_at=now()
        FROM candidate,repositories r,provider_connections c
        WHERE a.id=candidate.id AND r.id=a.repository_id AND c.id=a.connection_id
-       RETURNING a.*,c.provider,r.external_id,r.full_name,r.team_id,r.default_branch`,
+       RETURNING a.*,c.provider,r.external_id,r.full_name,r.team_id,r.default_branch,candidate.exhausted_context`,
       [workerId, allowedProviders],
     )
     return result.rows[0]
@@ -265,6 +265,7 @@ export function createProviderActionWorker(input: {
         repository_connection_id: string
         repository_team_id: string
         repository_active: boolean
+        repository_default_branch: string
         connection_workspace_id: string
         connection_active: boolean
         context_id: string | null
@@ -286,7 +287,7 @@ export function createProviderActionWorker(input: {
                 w.team_id AS work_item_team_id,w.project_id AS work_item_project_id,
                 w.number AS work_item_number,w.deleted_at AS work_item_deleted_at,t.key AS team_key,
                 r.workspace_id AS repository_workspace_id,r.connection_id AS repository_connection_id,
-                r.team_id AS repository_team_id,r.active AS repository_active,
+                r.team_id AS repository_team_id,r.active AS repository_active,r.default_branch AS repository_default_branch,
                 c.workspace_id AS connection_workspace_id,c.active AS connection_active,
                 rc.id AS context_id,rc.base_branch AS context_base_branch,rc.base_sha AS context_base_sha,
                 rc.branch_pattern AS context_branch_pattern,rc.allowed_paths AS context_allowed_paths,
@@ -321,8 +322,7 @@ export function createProviderActionWorker(input: {
           WHERE pa.id=$1 AND pa.claimed_by=$2 AND pa.attempt_count=${action.attempt_count} AND pa.claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND pa.status='claimed'
             AND aa.is_active AND t.deleted_at IS NULL
             AND c.provider::text=$3 AND c.provider::text=ANY($4::text[])
-            AND EXISTS(SELECT 1 FROM actors principal WHERE principal.id=d.principal_human_actor_id
-              AND principal.workspace_id=d.workspace_id AND principal.kind='human' AND principal.is_active)
+            AND ${principalTeamAuthorityPredicate('d.principal_human_actor_id','s.workspace_id','s.team_id')}
             AND (w.project_id IS NULL OR EXISTS(SELECT 1 FROM projects p WHERE p.id=w.project_id
               AND p.workspace_id=w.workspace_id AND p.team_id=w.team_id AND p.deleted_at IS NULL))`,
         [action.id, workerId, action.provider, allowedProviders],
@@ -403,19 +403,19 @@ export function createProviderActionWorker(input: {
       const workItemKey = `${facts.team_key}-${facts.work_item_number}`
       if (action.kind === 'create_branch') {
         const payload = action.payload as { name: string; baseSha: string }
-        if (payload.baseSha !== facts.context_base_sha ||
+        if (payload.name === facts.repository_default_branch || payload.baseSha !== facts.context_base_sha ||
           !facts.context_branch_pattern ||
           !matchesBranchPattern(facts.context_branch_pattern, workItemKey, payload.name))
           throw new DomainError('REPOSITORY_GUIDANCE_INVALID', 'Branch intent no longer matches the latest repository context')
       } else if (action.kind === 'create_commit') {
         const payload = action.payload as { branch: string; files: Array<{ path: string }> }
-        if (!facts.context_branch_pattern ||
+        if (payload.branch === facts.repository_default_branch || !facts.context_branch_pattern ||
           !matchesBranchPattern(facts.context_branch_pattern, workItemKey, payload.branch) ||
           payload.files.some(file => !allowedPath(file.path, facts.context_allowed_paths ?? [])))
           throw new DomainError('REPOSITORY_PATH_DENIED', 'Commit intent no longer matches the latest repository context')
       } else if (action.kind === 'open_pull_request') {
         const payload = action.payload as { baseBranch: string; headBranch: string }
-        if (payload.baseBranch !== facts.context_base_branch ||
+        if (payload.headBranch === facts.repository_default_branch || payload.baseBranch !== facts.context_base_branch ||
           !facts.context_branch_pattern ||
           !matchesBranchPattern(facts.context_branch_pattern, workItemKey, payload.headBranch))
           throw new DomainError('REPOSITORY_GUIDANCE_INVALID', 'Pull-request intent no longer matches the latest repository context')
@@ -424,7 +424,7 @@ export function createProviderActionWorker(input: {
           WHERE repository_id=$1 AND workspace_id=$2 AND work_item_id=$3
             AND ${action.kind==='merge_pull_request' ? 'external_id=$4' : 'id::text=$4'}`,
           [action.repository_id,action.workspace_id,action.work_item_id,action.payload.pullRequestId])).rows[0]
-        if (!pr || pr.base_branch!==facts.context_base_branch || pr.head_branch===action.default_branch
+        if (!pr || pr.base_branch!==facts.context_base_branch || pr.head_branch===facts.repository_default_branch
           || !facts.context_branch_pattern || !matchesBranchPattern(facts.context_branch_pattern,workItemKey,pr.head_branch))
           throw new DomainError('REPOSITORY_GUIDANCE_INVALID','Merge or CI target no longer matches the current repository branch scope')
       }
@@ -1076,6 +1076,13 @@ export function createProviderActionWorker(input: {
     const checkpoint = parseProviderActionCheckpoint(action)
     if (checkpoint) {
       await finishAction(action, checkpoint)
+      return
+    }
+    if (action.exhausted_context) {
+      await withTx(input.db, async tx => {
+        await lockActionAuthority(tx, action, true)
+        await deadLetter(tx, action, 'PROVIDER_ACTION_RETRY_EXHAUSTED')
+      })
       return
     }
     if (action.result || (action.kind !== 'resolve_repository_context' && action.attempt_count > 1)) {

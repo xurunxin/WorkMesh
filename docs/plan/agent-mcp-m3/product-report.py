@@ -33,6 +33,9 @@ integration=latest('test:integration');unit=latest('test');e2e=latest('test:e2e'
 required=['check:route-policy','check:workmesh-skill','check:runner-skill','ci:test','ci:validate','lint','typecheck','test','test:integration','test:e2e']
 checks={name:latest(name) for name in required}
 targets={name:next((r for r in reversed(receipts) if test in r['argv'] and '-t' not in r['argv']),None) for name,test in [('API交付','integration/stage3-delivery.integration.test.ts'),('M3三客户端','src/delivery-recovery.conformance.test.ts'),('Worker发送恢复','integration/stage3-provider.integration.test.ts')]}
+for name,target in targets.items():
+    if integration and (not target or integration['startedUnix']>target.get('startedUnix',0)):
+        targets[name]=integration  # Root command actually runs all three suites.
 ready=all(r and r['exit']==0 for r in checks.values())
 write('product-check-index.json',{'status':'本机必需命令全部通过；仍待正式成果独审' if ready else '检查尚未齐全；不能称完成',
     'required':{name:(r['id'] if r else None) for name,r in checks.items()},'finalAffectedTargets':{name:r['id'] if r else None for name,r in targets.items()},'receipts':receipts,
@@ -49,7 +52,7 @@ rows=[]
 transfer={'requestArtifactUpload','getArtifactUploadStatus','finalizeArtifactUpload','cancelArtifactUpload','listWorkItemArtifacts','downloadVerifiedArtifact','getProjectHealthHistory','createProjectHealthUpdate','listRepositories'}
 git={'getRepositoryContext','requestProviderAction','publishDeliveryArtifact','publishStructuredReview','requestPullRequestMerge','retryPullRequestCheck','getProjectDelivery','createProjectUpdateDraft','suggestWorkItemCompletion','createReviewDelegation','getProviderAction'}
 details={
- 'getProviderAction':('六kind五status真实GET；三客户端read/branch/path收窄恢复；C显式目标桥；Human终态正对照/E终态拒绝','其他Actor/仓库范围/当前context拒绝；秘密payload/raw错误不投影；GET前后events/outbox/receipt/token/activity不增；同Actor另Session未单列该精确action夹具'),
+ 'getProviderAction':('六kind五status真实GET；三客户端read/branch/path收窄及成员撤销恢复；C显式目标桥；Human终态正对照/E终态拒绝；context耗尽停止scheduled','其他Actor/仓库范围/当前context/principal成员拒绝；秘密payload/raw错误不投影；GET前后events/outbox/receipt/token/activity不增；同Actor另Session未单列该精确action夹具'),
  'getRepositoryContext':('三客户端模型/工具实收准确base SHA、paths和guidance','最新read权限撤销；父Session-only context不复制至reviewer'),
  'requestProviderAction':('branch/commit/openPR逐action结果；fake全链及本机provider HTTP每写窗口','branch/path/expected head、openPR独立capability、旧claim无checkpoint拒绝外发'),
  'publishDeliveryArtifact':('当前head test_report及本人code_review Artifact','file不充code_review；敏感字段及跨目标引用拒绝、事务回滚'),
@@ -96,7 +99,7 @@ evidence={
  'S5':([api,collab,worker],'旧head review/approval；stale Plan stableStep；health旧revision；cancel/context POST/GET当前无If-Match'),
  'S6':([api,collab,worker],'context及敏感artifact state/event/outbox全回滚；child各插入阶段/预算/Lease/交付故障；Worker terminal/checkpoint失败回滚；查询零业务写'),
  'S7':([api,worker],'真实raw GitHub bytes与delivery重放；provider/check/review单调投影；上传到期/重复finalize；未知重领零写'),
- 'S8':([worker,collab,m3],'真实PG锁等待两提交序、merge/CI pin收窄branch/base、commit首写后context换代拒后续写；完整authority锁等待跨60秒；sameworker attempt8 claimed_at防ABA；双C bridge'),
+ 'S8':([worker,collab,m3],'真实PG锁等待两提交序、merge/CI pin收窄branch/base、当前默认分支五kind及principal成员撤销先提交零写、commit首写后context/default/membership换代拒后续写；完整authority锁等待跨60秒；sameworker attempt8 claimed_at防ABA；双C bridge'),
  'S9':([worker,m0,m1,m2,m3],'18行恢复；GitHub成功后checkpoint前崩溃，真实60秒重领；合法checkpoint只本地finish；API/MCP重启、Pi Stop/等待恢复及M1原来源结果确认'),
 }
 for r in acceptance['originalRows']:
@@ -116,7 +119,7 @@ for r in recovery['rows']:
     r['productStatus']='本机夹具通过' if integration and integration['exit']==0 else '待当前整套Worker结果'
     r['initialActual']='fake三客户端真实链' if provider=='fake' else '本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测'
     r['recoveryActual']='五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0'
-    if kind=='resolve_repository_context':r['recoveryActual']='各provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。'
+    if kind=='resolve_repository_context':r['recoveryActual']='各provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；第八次claim无checkpoint崩溃跨真实60秒重启后dead/RETRY_EXHAUSTED且provider0，查询停止scheduled；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。'
     if provider=='gitea' and kind=='retry_ci_check':r['initialActual']='不支持：adapter真实拒绝且HTTP0';r['recoveryActual']='没有合法Gitea CI checkpoint；夹具伪造结果验证dead/unknown，旧无checkpoint停发。正常成功恢复不适用，来源parseProviderActionCheckpoint显式禁止。'
     if provider=='gitea' and kind=='create_commit':r['extraBoundary']='单文件create POST/update PUT本机HTTP通过；多文件明确不支持且零HTTP'
 write('product-recovery-matrix.json',recovery)
@@ -143,7 +146,7 @@ for name,r in targets.items():
 changed=subprocess.check_output(['git','diff','--name-only','ef4cb5e1458d911d98433c443dba46e6c224caa0','--','apps','packages','scripts','OPENAPI.yaml','AGENT_PROTOCOL.md'],cwd=ROOT).decode().splitlines()
 changed=sorted(set(changed)|set(subprocess.check_output(['git','ls-files','--others','--exclude-standard','--','apps','packages','scripts'],cwd=ROOT).decode().splitlines()))
 committed=read(HERE/'product-delivery-receipt.json') if (HERE/'product-delivery-receipt.json').exists() else None
-commitNote=('已提交产品源码候选 `'+committed['productCodeHead']+'` 的 1113 个源码文件逐 Git blob 与受测 Windows bytes 核验 exit 0；'+str(committed['archiveCount'])+' 个 ZIP 逐 blob 与原 bytes 一致，全 main→候选范围 whitespace 检查 exit 0。原回执见 [提交后源码核验](product-source-verification.json) 与 [交付核验](product-delivery-receipt.json)。后续提交仅登记这些回执及报告元数据，不改已测源码。') if committed else '提交后源码/归档核验尚未记录，不推定最终 Git head。'
+commitNote=('交付回执的产品源码候选 `'+committed['productCodeHead']+'`，文件数量以 [提交后源码核验](product-source-verification.json) 为准；'+str(committed['archiveCount'])+' 个 ZIP 的原 bytes 核验见 [交付核验](product-delivery-receipt.json)。上轮回执只证明上轮受测源，本轮三 blocking 修复、实际新结果与来源边界见 [成果独审修复报告](review-fixes-report.md)，不能把旧源码核验冒当前代码已测。') if committed else '提交后源码/归档核验尚未记录，不推定最终 Git head。'
 write('product-report.md',f'''# M3 产品交付报告
 
 状态：{'本机必需检查全部通过，停 review 供另一 Agent 正式成果独审' if ready else '正在收齐本机必需检查，尚未完整交付'}。本报告为主力整体汇总，内部只读子任务结论不代正式成果独审。尚无本候选最新 PR Required CI、合入或 Done。
@@ -168,7 +171,7 @@ write('product-report.md',f'''# M3 产品交付报告
 
 {targetTable}
 
-本轮完整单元统计为 1820 passed / 2 skipped，32 Tasks 全部成功、0 cache；integration 为 DB 81、API 276、conformance 57、Worker 138 passed，另有三项环境 skip。M0/M1/M2 三套真实 conformance 与 M3 同组合运行。运行环境固定 Windows / Node 22.19.0 / pnpm 9.15.4；每次 runtime.execPath、准确 elapsed 与起止源码 SHA 在原回执中保存，早期缺少PID/时间字段不伪补。
+本轮数量／skip／cache 使用表中对应最新原输出，修复增量与精确统计见成果独审修复报告；不沿用旧候选数量。M0/M1/M2 三套真实 conformance 与 M3 同组合运行。运行环境固定 Windows / Node 22.19.0 / pnpm 9.15.4；每次 runtime.execPath、准确 elapsed 与起止源码 SHA 在原回执中保存，早期缺少PID/时间字段不伪补。
 
 命令实际argv、exit、runtime、elapsed、stdout/stderr原字节ZIP及before/after指纹见 [完整检查索引](product-check-index.json)；Turbo缓存统计单列，缓存日志不冒本轮重新执行。历史M3 7例与Worker22例保持各自旧受测字节；新增源变化只由本轮受影响结果证明。
 
@@ -188,7 +191,7 @@ integration 的实际 skip 有三项：API 的 live MiniMax 用例须 `RUN_WORKB
 
 主要文件变化（完整差异以Git为准）：
 
-'''+'\n'.join('- `'+p+'`' for p in changed)+'''
+'''+'\n'.join('- `'+p+'`' for p in changed)+f'''
 
 在 change review 对本报告点预览，再打开三份逐行矩阵与原日志索引。复现实证：以 `product-integration.py all` 创建独有PostgreSQL/Redis/RustFS，固定Node22.19/pnpm9.15.4，运行必需integration及E2E；`product-checks.py`分别执行表中命令。服务凭据仅在测试进程环境，报告不含秘密。
 
@@ -200,7 +203,7 @@ integration 的实际 skip 有三项：API 的 live MiniMax 用例须 `RUN_WORKB
 
 owner容器、实际nativeExit、服务日志及清理label核验逐项保全；共享镜像/store/node_modules及当前恢复目录保留，G1D0C3拒目标不操作。原早期每个短时进程没有独立PID登记的缺口如实保留，结束时当前进程观察另列。正式另一Agent成果独审、最新PR Required CI与实际Done/main均未完成，不能称验收或合入。
 
-最后一次 [进程/容器观察](product-process-observation.json) 为检查进程 0、owner 容器 0；36 轮 owner 的 108 个容器各有 label/ID 核验和 nativeExit 0 清理回执，不删共享镜像、卷、网络或 Windows 目录。定向复验首次命令未能启动 recorder 的原输出缺口另见 [启动失败边界](product-startup-gap.md)，不纳入通过数量。
+最后一次 [进程/容器观察](product-process-observation.json) 记录实际检查进程和 owner 容器；{len(owners)} 轮 owner 的 {sum(len(o['resources']) for o in owners)} 个容器各有 label/ID 核验和 nativeExit 清理回执，不删共享镜像、卷、网络或 Windows 目录。定向复验首次命令未能启动 recorder 的原输出缺口另见 [启动失败边界](product-startup-gap.md)，不纳入通过数量。
 ''')
 print(json.dumps({'receipts':len(receipts),'operationRows':len(rows),'acceptanceRows':len(acceptance['originalRows']),'recoveryRows':len(recovery['rows']),'allRequiredPassed':ready},ensure_ascii=False))
 if '--final' in sys.argv and not ready:raise SystemExit('必需检查尚未齐全，不得提交完成声明')

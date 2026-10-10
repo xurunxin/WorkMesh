@@ -23,7 +23,7 @@
 | getProjectHealthHistory | 草稿与Human精确批准发布后history两事实，三客户端实收 | 保分页信封；实时scope/Team读取谓词由分页SQL门禁验证，未单列三客户端跨项目history负例 | Native/MCP/Pi实际操作 |
 | createProjectHealthUpdate | 草稿允许；精确Human批准仅一次消费后发布 | 无approval及批准后summary改动拒绝且批准不消费；旧revision/事务失败依原套件 | Native/MCP/Pi实际操作 |
 | createReviewDelegation | 显式repositoryIds三方repo:read、本人双证据、受控交付；初次创建及锁内replay共用校验 | 父/definition/grant/context/child/provider撤权原key拒绝；合法重放零重复child/reservation/Lease/交付；省略维持M2三项 | Native/MCP/Pi实际操作 |
-| getProviderAction | 六kind五status真实GET；三客户端read/branch/path收窄恢复；C显式目标桥；Human终态正对照/E终态拒绝 | 其他Actor/仓库范围/当前context拒绝；秘密payload/raw错误不投影；GET前后events/outbox/receipt/token/activity不增；同Actor另Session未单列该精确action夹具 | Native/MCP/Pi实际操作；Runner固定本人E，C bridge仅Native/MCP |
+| getProviderAction | 六kind五status真实GET；三客户端read/branch/path收窄及成员撤销恢复；C显式目标桥；Human终态正对照/E终态拒绝；context耗尽停止scheduled | 其他Actor/仓库范围/当前context/principal成员拒绝；秘密payload/raw错误不投影；GET前后events/outbox/receipt/token/activity不增；同Actor另Session未单列该精确action夹具 | Native/MCP/Pi实际操作；Runner固定本人E，C bridge仅Native/MCP |
 | connectRepository | Human setup/pin及既有发布/裁决回归；Agent manifest隐藏和缓存调用拒绝 | 原身份/状态/capability/scope/lease/revision/idempotency及撤权负例保持 | Human REST；Agent端不适用（合同保留，隐藏并拒绝） |
 | pinRepositoryContext | Human setup/pin及既有发布/裁决回归；Agent manifest隐藏和缓存调用拒绝 | 原身份/状态/capability/scope/lease/revision/idempotency及撤权负例保持 | Human REST；Agent端不适用（合同保留，隐藏并拒绝） |
 | publishProjectUpdate | Human setup/pin及既有发布/裁决回归；Agent manifest隐藏和缓存调用拒绝 | 原身份/状态/capability/scope/lease/revision/idempotency及撤权负例保持 | Human REST；Agent端不适用（合同保留，隐藏并拒绝） |

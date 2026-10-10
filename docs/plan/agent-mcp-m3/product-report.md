@@ -6,7 +6,7 @@
 
 实施依据为已独审候选 `499ccc1419ba2fbd15171f6ff7c0adc78647c2cc`。本轮平台只读实际 ref 观察：main `ef4cb5e1458d911d98433c443dba46e6c224caa0`、开工候选 `e73e814dd631a3c5db47afc1ff4d89e5cfaf3941`；这是观察时点，不能冒后续实时 ref。最终受测源码与提交绑定见 [源字节清单](product-source-manifest.json) 及提交后核验，报告自身不循环嵌入其未来 commit SHA。
 
-已提交产品源码候选 `ce864e892d36cd705bd62b861ab5ced5a6e85014` 的 1113 个源码文件逐 Git blob 与受测 Windows bytes 核验 exit 0；127 个 ZIP 逐 blob 与原 bytes 一致，全 main→候选范围 whitespace 检查 exit 0。原回执见 [提交后源码核验](product-source-verification.json) 与 [交付核验](product-delivery-receipt.json)。后续提交仅登记这些回执及报告元数据，不改已测源码。
+交付回执的产品源码候选 `ce864e892d36cd705bd62b861ab5ced5a6e85014`，文件数量以 [提交后源码核验](product-source-verification.json) 为准；127 个 ZIP 的原 bytes 核验见 [交付核验](product-delivery-receipt.json)。上轮回执只证明上轮受测源，本轮三 blocking 修复、实际新结果与来源边界见 [成果独审修复报告](review-fixes-report.md)，不能把旧源码核验冒当前代码已测。
 
 - 新 REST `GET /api/v1/provider-actions/{id}` / `getProviderAction`：六 kind 的严格白名单只读投影，精确 requester/Session/principal/Team/resource/feature与当前context读授权。payload、文件内容、provider raw错误、worker身份和秘密不返回；隐藏目标统一 NOT_FOUND，查询不领取、续租、外发或追加业务事实。Human原principal合法终态诊断与E普通终态拒绝分别验证。
 - reviewer `repositoryIds` 由用户明确选择：三方 `repo:read` 交集与父仓库范围、共享 WorkItem/Project context；省略保 M2 三项。`mutate.beforeReserve` 完整父子锁计划与 `authorizeReplay` 共用校验，撤权/收窄后旧key也拒绝。本人 Room review_result、本人当前head code_review Artifact及structured review在有效E下交付；父等required child completed再确认。
@@ -20,26 +20,26 @@
 
 | 命令 | 回执 | exit | 数量／skip／cache原统计 |
 | --- | --- | --- | --- |
-| pnpm.cmd check:route-policy | [m3-aca09d864a2a](product-evidence/m3-aca09d864a2a.json) | 0 |  |
-| pnpm.cmd check:workmesh-skill | [m3-06b3cc796d7e](product-evidence/m3-06b3cc796d7e.json) | 0 |  |
-| pnpm.cmd check:runner-skill | [m3-29f75384c7de](product-evidence/m3-29f75384c7de.json) | 0 |  |
-| pnpm.cmd ci:test | [m3-d85603dbcfd5](product-evidence/m3-d85603dbcfd5.json) | 0 | # tests 16; # pass 16; # fail 0; # skipped 0 |
-| pnpm.cmd ci:validate | [m3-a6b46343ea6f](product-evidence/m3-a6b46343ea6f.json) | 0 | # tests 15; # pass 15; # fail 0; # skipped 0 |
-| pnpm.cmd lint | [m3-817c5199d4ae](product-evidence/m3-817c5199d4ae.json) | 0 | Tasks:    18 successful, 18 total; Cached:    0 cached, 18 total |
-| pnpm.cmd typecheck | [m3-8f242b81228f](product-evidence/m3-8f242b81228f.json) | 0 | Tasks:    18 successful, 18 total; Cached:    0 cached, 18 total |
-| pnpm.cmd test | [m3-16ebc3f73ad2](product-evidence/m3-16ebc3f73ad2.json) | 0 | @workmesh/web:test:  Test Files  114 passed (114); @workmesh/web:test:       Tests  789 passed (789); @workmesh/conformance:test:  Test Files  1 passed (1); @workmesh/conformance:test:       Tests  1 passed (1); @workmesh/api:test:  Test Files  34 passed (34); @workmesh/api:test:       Tests  180 passed (180); Tasks:    32 successful, 32 total; Cached:    0 cached, 32 total |
-| pnpm.cmd test:integration | [m3-0230adef6a2a](product-evidence/m3-0230adef6a2a.json) | 0 | Test Files  27 passed (27); Tests  276 passed ／ 1 skipped (277); Test Files  4 passed (4); Tests  57 passed (57); Test Files  8 passed ／ 1 skipped (9); Tests  138 passed ／ 1 skipped (139); Test Files  1 skipped (1); Tests  1 skipped (1) |
-| pnpm.cmd test:e2e | [m3-f2c2631b3d89](product-evidence/m3-f2c2631b3d89.json) | 0 | @workmesh/web:test:e2e:   70 passed (5.2m); Tasks:    3 successful, 3 total; Cached:    0 cached, 3 total |
+| pnpm.cmd check:route-policy | [m3-7b3caaeedcaf](product-evidence/m3-7b3caaeedcaf.json) | 0 |  |
+| pnpm.cmd check:workmesh-skill | [m3-d16f3e84338b](product-evidence/m3-d16f3e84338b.json) | 0 |  |
+| pnpm.cmd check:runner-skill | [m3-508b16483c2d](product-evidence/m3-508b16483c2d.json) | 0 |  |
+| pnpm.cmd ci:test | [m3-a1f2b9618ff1](product-evidence/m3-a1f2b9618ff1.json) | 0 | # tests 16; # pass 16; # fail 0; # skipped 0 |
+| pnpm.cmd ci:validate | [m3-e6a6f820f239](product-evidence/m3-e6a6f820f239.json) | 0 | # tests 15; # pass 15; # fail 0; # skipped 0 |
+| pnpm.cmd lint | [m3-bb73020cf8d1](product-evidence/m3-bb73020cf8d1.json) | 0 | Tasks:    18 successful, 18 total; Cached:    17 cached, 18 total |
+| pnpm.cmd typecheck | [m3-7823ad875289](product-evidence/m3-7823ad875289.json) | 0 | Tasks:    18 successful, 18 total; Cached:    15 cached, 18 total |
+| pnpm.cmd test | [m3-95ef5b7584b8](product-evidence/m3-95ef5b7584b8.json) | 0 | @workmesh/api:test:  Test Files  34 passed (34); @workmesh/api:test:       Tests  180 passed (180); @workmesh/conformance:test:  Test Files  1 passed (1); @workmesh/conformance:test:       Tests  1 passed (1); @workmesh/contracts:test:  Test Files  29 passed (29); @workmesh/contracts:test:       Tests  213 passed (213); Tasks:    32 successful, 32 total; Cached:    30 cached, 32 total |
+| pnpm.cmd test:integration | [m3-8c0f15d203fd](product-evidence/m3-8c0f15d203fd.json) | 0 | Test Files  27 passed (27); Tests  278 passed ／ 1 skipped (279); Test Files  4 passed (4); Tests  61 passed (61); Test Files  8 passed ／ 1 skipped (9); Tests  147 passed ／ 1 skipped (148); Test Files  1 skipped (1); Tests  1 skipped (1) |
+| pnpm.cmd test:e2e | [m3-0bcb6acb9f6f](product-evidence/m3-0bcb6acb9f6f.json) | 0 | @workmesh/web:test:e2e:   70 passed (5.4m); Tasks:    3 successful, 3 total; Cached:    0 cached, 3 total |
 
 
 | 最终受影响套件 | 回执 | exit | 实际统计 |
 | --- | --- | --- | --- |
-| API交付 | [m3-ce8b651cabc0](product-evidence/m3-ce8b651cabc0.json) | 0 | Test Files  1 passed (1); Tests  49 passed (49) |
-| M3三客户端 | [m3-20fc715e571e](product-evidence/m3-20fc715e571e.json) | 0 | Test Files  1 passed (1); Tests  17 passed (17) |
-| Worker发送恢复 | [m3-ea7e711e8e57](product-evidence/m3-ea7e711e8e57.json) | 0 | Test Files  1 passed (1); Tests  31 passed (31) |
+| API交付 | [m3-8c0f15d203fd](product-evidence/m3-8c0f15d203fd.json) | 0 | Test Files  17 passed (17); Tests  81 passed (81); Test Files  27 passed (27); Tests  278 passed ／ 1 skipped (279); Test Files  4 passed (4); Tests  61 passed (61); Test Files  8 passed ／ 1 skipped (9); Tests  147 passed ／ 1 skipped (148); Test Files  1 skipped (1); Tests  1 skipped (1) |
+| M3三客户端 | [m3-8c0f15d203fd](product-evidence/m3-8c0f15d203fd.json) | 0 | Test Files  17 passed (17); Tests  81 passed (81); Test Files  27 passed (27); Tests  278 passed ／ 1 skipped (279); Test Files  4 passed (4); Tests  61 passed (61); Test Files  8 passed ／ 1 skipped (9); Tests  147 passed ／ 1 skipped (148); Test Files  1 skipped (1); Tests  1 skipped (1) |
+| Worker发送恢复 | [m3-8c0f15d203fd](product-evidence/m3-8c0f15d203fd.json) | 0 | Test Files  17 passed (17); Tests  81 passed (81); Test Files  27 passed (27); Tests  278 passed ／ 1 skipped (279); Test Files  4 passed (4); Tests  61 passed (61); Test Files  8 passed ／ 1 skipped (9); Tests  147 passed ／ 1 skipped (148); Test Files  1 skipped (1); Tests  1 skipped (1) |
 
 
-本轮完整单元统计为 1820 passed / 2 skipped，32 Tasks 全部成功、0 cache；integration 为 DB 81、API 276、conformance 57、Worker 138 passed，另有三项环境 skip。M0/M1/M2 三套真实 conformance 与 M3 同组合运行。运行环境固定 Windows / Node 22.19.0 / pnpm 9.15.4；每次 runtime.execPath、准确 elapsed 与起止源码 SHA 在原回执中保存，早期缺少PID/时间字段不伪补。
+本轮数量／skip／cache 使用表中对应最新原输出，修复增量与精确统计见成果独审修复报告；不沿用旧候选数量。M0/M1/M2 三套真实 conformance 与 M3 同组合运行。运行环境固定 Windows / Node 22.19.0 / pnpm 9.15.4；每次 runtime.execPath、准确 elapsed 与起止源码 SHA 在原回执中保存，早期缺少PID/时间字段不伪补。
 
 命令实际argv、exit、runtime、elapsed、stdout/stderr原字节ZIP及before/after指纹见 [完整检查索引](product-check-index.json)；Turbo缓存统计单列，缓存日志不冒本轮重新执行。历史M3 7例与Worker22例保持各自旧受测字节；新增源变化只由本轮受影响结果证明。
 
@@ -103,6 +103,8 @@ integration 的实际 skip 有三项：API 的 live MiniMax 用例须 `RUN_WORKB
 - `packages/contracts/src/route-policy.ts`
 - `packages/contracts/src/stage3-contracts.test.ts`
 - `packages/db/src/agent-lock-order-manifest.ts`
+- `packages/db/src/index.ts`
+- `packages/db/src/principal-team-authority.ts`
 - `packages/domain/src/delivery-scope.ts`
 - `packages/domain/src/index.ts`
 - `packages/git-provider/src/index.test.ts`
@@ -122,4 +124,4 @@ integration 的实际 skip 有三项：API 的 live MiniMax 用例须 `RUN_WORKB
 
 owner容器、实际nativeExit、服务日志及清理label核验逐项保全；共享镜像/store/node_modules及当前恢复目录保留，G1D0C3拒目标不操作。原早期每个短时进程没有独立PID登记的缺口如实保留，结束时当前进程观察另列。正式另一Agent成果独审、最新PR Required CI与实际Done/main均未完成，不能称验收或合入。
 
-最后一次 [进程/容器观察](product-process-observation.json) 为检查进程 0、owner 容器 0；36 轮 owner 的 108 个容器各有 label/ID 核验和 nativeExit 0 清理回执，不删共享镜像、卷、网络或 Windows 目录。定向复验首次命令未能启动 recorder 的原输出缺口另见 [启动失败边界](product-startup-gap.md)，不纳入通过数量。
+最后一次 [进程/容器观察](product-process-observation.json) 记录实际检查进程和 owner 容器；44 轮 owner 的 132 个容器各有 label/ID 核验和 nativeExit 清理回执，不删共享镜像、卷、网络或 Windows 目录。定向复验首次命令未能启动 recorder 的原输出缺口另见 [启动失败边界](product-startup-gap.md)，不纳入通过数量。

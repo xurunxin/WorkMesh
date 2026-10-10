@@ -8107,6 +8107,7 @@ components:
                         - PROVIDER_CAPABILITY_UNSUPPORTED
                         - PROVIDER_ACTION_CLAIM_LOST
                         - PROVIDER_ACTION_OUTCOME_UNKNOWN
+                        - PROVIDER_ACTION_RETRY_EXHAUSTED
                         - RESULT_UNAVAILABLE
                 - type: "null"
             recovery: &a17

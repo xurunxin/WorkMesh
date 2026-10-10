@@ -47,8 +47,8 @@ export async function createDeliveryRecoveryFixture(){
     if(result.isError)throw new Error(JSON.stringify(result.structuredContent??result.content))
     return (result.structuredContent as {data:T}).data
   }
-  const piCall=async<T>(execution:Execution,installationToken:string,name:string,args:Record<string,unknown>):Promise<T>=>{
-    const captures=await f.pi(execution,installationToken,[async():Promise<ModelCall>=>({name,arguments:args})])
+  const piCall=async<T>(execution:Execution,installationToken:string,name:string,args:Record<string,unknown>,options:{apiUrl?:string;beforeRun?:()=>Promise<void>;beforeTool?:()=>Promise<void>}={}):Promise<T>=>{
+    const captures=await f.pi(execution,installationToken,[async():Promise<ModelCall>=>{await options.beforeTool?.();return {name,arguments:args}}],options)
     const raw=captures.at(-1)?.results.at(-1)
     if(!raw)throw new Error('M3 model did not receive tool result')
     saveDeliveryEvidence(`model-${randomUUID()}.json`,{sessionId:execution.sessionId,name,captures})

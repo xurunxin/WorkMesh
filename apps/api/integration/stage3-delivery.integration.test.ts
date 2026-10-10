@@ -250,6 +250,40 @@ describe('Stage 3 delivery API', () => {
     expect(await counts()).toEqual(snapshot)
   })
 
+  it('M3精确action原principal成员删除隐藏，恢复与admin免成员正对照',async()=>{
+    const f=await fixture()
+    const queued=await agentCall(f.agent.token,'POST','/api/v1/provider-actions',{kind:'create_branch',repositoryId:f.repositoryId,workItemId:f.workItemId,sessionId:f.agent.sessionId,name:'workmesh/GEN-1-member',baseSha:'base-sha'})
+    expect(queued.statusCode).toBe(200)
+    const action=queued.json<{id:string}>().id,read=()=>agentCall(f.agent.token,'GET',`/api/v1/provider-actions/${action}`)
+    await db.query("UPDATE actors SET workspace_role='member' WHERE id=$1",[f.human.actorId])
+    await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'maintainer') ON CONFLICT(team_id,actor_id) DO NOTHING",[f.workspaceId,f.teamId,f.human.actorId])
+    expect((await read()).statusCode).toBe(200)
+    await db.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',[f.workspaceId,f.teamId,f.human.actorId])
+    const before=(await db.query('SELECT (SELECT count(*) FROM domain_events) AS events,(SELECT count(*) FROM api_idempotency_keys) AS receipts')).rows[0]
+    const denied=await read();expect(denied.statusCode).toBe(404);expect(denied.json()).toMatchObject({error:{code:'NOT_FOUND'}})
+    expect((await db.query('SELECT (SELECT count(*) FROM domain_events) AS events,(SELECT count(*) FROM api_idempotency_keys) AS receipts')).rows[0]).toEqual(before)
+    await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'maintainer')",[f.workspaceId,f.teamId,f.human.actorId])
+    expect((await read()).statusCode).toBe(200)
+    await db.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',[f.workspaceId,f.teamId,f.human.actorId])
+    await db.query("UPDATE actors SET workspace_role='admin' WHERE id=$1",[f.human.actorId]);expect((await read()).statusCode).toBe(200)
+  })
+  it('M3 context耗尽过期claim准确停止scheduled，重启dead查询及合法checkpoint恢复',async()=>{
+    const f=await fixture(),payload={workItemId:f.workItemId,baseBranch:'main',baseSha:'base-sha',branchPattern:'workmesh/{workItemKey}-{slug}',allowedPaths:['apps/**'],permissions:['read']}
+    const id=(await db.query<{id:string}>(`INSERT INTO provider_actions(workspace_id,connection_id,repository_id,requested_by_actor_id,work_item_id,kind,intent_key,payload,status,attempt_count,claimed_at,claimed_by)
+      VALUES($1,$2,$3,$4,$5,'resolve_repository_context',$6,$7,'claimed',8,clock_timestamp()-interval '61 seconds','crashed-context') RETURNING id`,[f.workspaceId,f.connectionId,f.repositoryId,f.human.actorId,f.workItemId,randomUUID(),payload])).rows[0]!.id
+    const read=()=>humanCall(f.human,'GET',`/api/v1/provider-actions/${id}`)
+    expect((await read()).json()).toMatchObject({status:'claimed',recovery:{kind:'human_reconcile',scheduled:false,nextQueryAt:null}})
+    let accesses=0
+    const worker=createProviderActionWorker({db,resolveProvider:()=>{accesses++;throw new Error('Exhausted context must not access provider')}})
+    await worker.tick();await worker.tick();expect(accesses).toBe(0)
+    expect((await read()).json()).toMatchObject({status:'dead',error:{code:'PROVIDER_ACTION_RETRY_EXHAUSTED'},recovery:{kind:'human_reconcile',scheduled:false,nextQueryAt:null}})
+    // Separate exact checkpoint fixture, never rewrite the historical unknown action.
+    const checkpoint=(await db.query<{id:string}>(`INSERT INTO provider_actions(workspace_id,connection_id,repository_id,requested_by_actor_id,work_item_id,kind,intent_key,payload,result,attempt_count)
+      VALUES($1,$2,$3,$4,$5,'resolve_repository_context',$6,$7,$8,8) RETURNING id`,[f.workspaceId,f.connectionId,f.repositoryId,f.human.actorId,f.workItemId,randomUUID(),payload,{guidance:[]}])).rows[0]!.id
+    await worker.tick();expect(accesses).toBe(0)
+    expect((await humanCall(f.human,'GET',`/api/v1/provider-actions/${checkpoint}`)).json()).toMatchObject({status:'completed',effect:'committed',recovery:{kind:'none',scheduled:false}})
+    expect((await read()).json()).toMatchObject({status:'dead',error:{code:'PROVIDER_ACTION_RETRY_EXHAUSTED'}})
+  })
   const revocations = ['actor', 'workspace-role', 'membership-role', 'membership-delete', 'target-delete', 'target-team', 'team-delete', 'repository', 'repository-connection', 'connection'] as const
   it('M3六kind五status真实GET白名单投影，合法checkpoint与未知效果分别确认且零业务写',async()=>{
     const f=await fixture(),branch='workmesh/GEN-1-matrix'

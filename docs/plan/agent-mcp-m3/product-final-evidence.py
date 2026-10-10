@@ -29,7 +29,7 @@ for path in sorted(OUT.glob('m3-*.json')):
         if start<0:continue
         try:obj=json.JSONDecoder().raw_decode(line[start:])[0]
         except ValueError:continue
-        if set(obj)&{'m3AuthorityWait','m3GenerationRecovery','m3UnknownRecovery'}:
+        if set(obj)&{'m3AuthorityWait','m3GenerationRecovery','m3UnknownRecovery','m3ContextExhaustion'}:
             observations.append({'receipt':path.name,'archive':receipt['output'],'exit':receipt['exit'],'observation':obj})
 write('product-lock-observations.json',{'observations':observations,'count':len(observations),'boundary':'直接解析每次真实stdout原字节；含首败及恢复，不把旧日志冒新源码。PG锁pid/blocker/mode/granted及DB租期原值保持。'})
 print(json.dumps({'serviceLogs':len(logs),'lockObservations':len(observations),'exit':0}))

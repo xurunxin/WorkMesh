@@ -1,4 +1,5 @@
 import type { PoolClient } from 'pg'
+import { principalTeamAuthorityPredicate } from '@workmesh/db'
 import type { FeatureConfig } from '@workmesh/config'
 import { parseProviderActionCheckpoint, providerActionProjectionSchema, type ProviderActionProjection } from '@workmesh/contracts'
 import { DomainError,allowedPath,matchesBranchPattern } from '@workmesh/domain'
@@ -68,7 +69,7 @@ export async function getProviderAction(tx: PoolClient, current: ApiActor, actio
         AND (w.project_id IS NULL OR EXISTS(SELECT 1 FROM projects p WHERE p.id=w.project_id AND p.team_id=r.team_id AND p.deleted_at IS NULL))
         ${current.kind==='agent' ? "AND s.state IN ('acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked')" : ''} AND d.status='active'
         AND EXISTS(SELECT 1 FROM actors aa WHERE aa.id=s.agent_actor_id AND aa.kind='agent' AND aa.is_active)
-        AND EXISTS(SELECT 1 FROM actors principal WHERE principal.id=d.principal_human_actor_id AND principal.kind='human' AND principal.is_active)
+        AND ${principalTeamAuthorityPredicate('d.principal_human_actor_id','s.workspace_id','s.team_id')}
         AND 'repo:read'=ANY(d.permissions_snapshot) AND coalesce(d.capability_scope->'repositoryIds','[]'::jsonb) ? r.id::text
         AND coalesce(d.capability_scope->'teamIds','[]'::jsonb) ? r.team_id::text
         AND coalesce(d.capability_scope->'workItemIds','[]'::jsonb) ? w.id::text
@@ -106,9 +107,11 @@ export async function getProviderAction(tx: PoolClient, current: ApiActor, actio
   const effect=result?(row.status==='completed'?'committed':'checkpointed'):'unknown'
   const unprovenHistory=row.kind!=='resolve_repository_context'&&!result&&row.attempt_count>0
     && (row.status==='pending'||row.status==='failed'||row.claim_expired)
-  const human= row.status==='dead'||row.status==='completed'&& !result || unprovenHistory
+  const exhaustedContext=row.kind==='resolve_repository_context'&&!raw&&row.attempt_count>=8
+    && (row.status==='pending'||row.status==='failed'||row.claim_expired)
+  const human= row.status==='dead'||row.status==='completed'&& !result || unprovenHistory || exhaustedContext
   const poll=effect!=='committed'&&!human
-  const codes = ['PROVIDER_ACTION_OUTCOME_UNKNOWN','PROVIDER_ACTION_AUTHORITY_REVOKED','PROVIDER_HEAD_SHA_MISMATCH','MERGE_APPROVAL_EXPIRED','MERGE_APPROVAL_MISMATCH','MERGE_CHECKS_BLOCKED','PROVIDER_CAPABILITY_UNSUPPORTED','PROVIDER_ACTION_CLAIM_LOST'] as const
+  const codes = ['PROVIDER_ACTION_RETRY_EXHAUSTED','PROVIDER_ACTION_OUTCOME_UNKNOWN','PROVIDER_ACTION_AUTHORITY_REVOKED','PROVIDER_HEAD_SHA_MISMATCH','MERGE_APPROVAL_EXPIRED','MERGE_APPROVAL_MISMATCH','MERGE_CHECKS_BLOCKED','PROVIDER_CAPABILITY_UNSUPPORTED','PROVIDER_ACTION_CLAIM_LOST'] as const
   const code=codes.find(code=>row.last_error===code||row.last_error?.startsWith(code+':'))
   const projected=providerActionProjectionSchema.safeParse({
     id:row.id,provider:row.provider,connectionId:row.connection_id,repositoryId:row.repository_id,requesterActorId:row.requested_by_actor_id,

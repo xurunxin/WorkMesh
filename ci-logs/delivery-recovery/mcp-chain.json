@@ -1,10 +1,10 @@
 {
-  "repositoryId": "38cbd7af-b13f-460a-9af9-d5987a0adf8d",
-  "branch": "workmesh/GEN-16-delivery",
+  "repositoryId": "7b1bbce6-48ee-4e2b-8402-f934bfd6b004",
+  "branch": "workmesh/GEN-19-delivery",
   "context": [
     {
-      "id": "cbdd2e47-0f35-4579-b45b-2b837111e6ce",
-      "repository_id": "38cbd7af-b13f-460a-9af9-d5987a0adf8d",
+      "id": "a0e487b4-5d05-46ea-bd9f-2fe5ad0472d5",
+      "repository_id": "7b1bbce6-48ee-4e2b-8402-f934bfd6b004",
       "base_branch": "main",
       "base_sha": "base",
       "allowed_paths": [
@@ -32,43 +32,43 @@
           "content": "# Allowed source\n"
         }
       ],
-      "workspace_id": "7e19514c-0fb4-4837-82fb-d763b43a5171",
+      "workspace_id": "78044b9a-c5ca-4865-8947-8fe21a0c20de",
       "project_id": null,
-      "work_item_id": "43666c5d-62e6-4050-99b1-aba2ef5eba4a",
+      "work_item_id": "040978f9-460d-498a-9008-0ebaa3f1ec0d",
       "session_id": null,
       "branch_pattern": "workmesh/{workItemKey}-{slug}",
       "guidance_manifest_hash": "sha256:35794a62e6695ed29ad39f517e12409eb8c4aa340e277cb96cf45a198de16028",
-      "created_by_actor_id": "68bd4a92-73a2-49a9-abba-511b47964e90",
-      "created_at": "2026-10-10T12:21:44.602Z",
-      "provider_action_id": "696b3984-73b7-4f33-91ba-909126270af1"
+      "created_by_actor_id": "c006cb62-60b1-4b6d-b503-ea6cb812a2e8",
+      "created_at": "2026-10-10T13:16:41.562Z",
+      "provider_action_id": "f2567641-56cc-484f-a522-9c2bad00b657"
     }
   ],
   "actions": [
-    "10c62ebf-95c0-42d2-86fc-97b782b3b9ba",
-    "1214262e-9b82-4182-a25f-fb74a19b255d",
-    "3367a302-27f4-4eac-a75a-382587bb21ed",
-    "c9012086-0228-4b11-8eb0-e6b5eb850975",
-    "12dc7170-42c0-4c4c-9bd7-eee5cc8f1d36"
+    "94ed6bd5-e9c3-4c55-bee3-c8cd313c0580",
+    "28d47833-6be7-4c9f-809a-e3e8ef7a458c",
+    "d00b6e33-ea66-4206-ac63-e07a7589ab97",
+    "4e5598b8-ac59-4ea4-9d8f-0eb77de5a730",
+    "a5751ede-3333-47f5-923b-ede5a61a70b0"
   ],
   "head": "7f0ea1a5c3ebe9042434ea986bf84361f75b6af7a0bc94189369a1a3c80884ee",
-  "reviewerSessionId": "7052abbd-da80-46f6-8b8b-664d733323c6",
+  "reviewerSessionId": "e38338f2-21da-47d3-9bf7-48d0f1c77942",
   "artifactIds": [
-    "b5378caa-9bc6-4bef-ac2f-36ba93baf6ff",
-    "9cf1f380-7ced-4d8e-8b97-0ed458ba6296"
+    "6f2b8da2-d9b0-43bf-b44c-4360fc07d2f0",
+    "06d223c5-ecef-45b4-92ea-abec78dc6e31"
   ],
-  "approvalId": "64debe5a-3d97-4f4d-8de6-b9bed515aa61",
+  "approvalId": "f80832f2-365e-45b5-8a8a-4b4fc08cc709",
   "children": {
     "items": [
       {
-        "id": "7052abbd-da80-46f6-8b8b-664d733323c6",
-        "parentSessionId": "3ad15e0d-7a31-479c-90e8-3fafac772b66",
+        "id": "e38338f2-21da-47d3-9bf7-48d0f1c77942",
+        "parentSessionId": "11dd217f-b4d4-4759-92f6-e5e1ca708f7f",
         "requiredForParent": true,
         "state": "completed",
         "revision": 4,
-        "planStepId": "d84a3d7e-9f25-4b20-a8e8-3d36cd0197f4",
-        "planVersionId": "8a17db25-62da-46bc-8427-de9868d73bf3",
+        "planStepId": "58a32e5c-cd14-4d5b-a162-35bff1469875",
+        "planVersionId": "ead33078-0e62-4c4a-9142-77efb45a2fd9",
         "resultArtifactIds": [
-          "9cf1f380-7ced-4d8e-8b97-0ed458ba6296"
+          "06d223c5-ecef-45b4-92ea-abec78dc6e31"
         ]
       }
     ],
@@ -76,29 +76,29 @@
   },
   "results": {
     "session": {
-      "id": "3ad15e0d-7a31-479c-90e8-3fafac772b66",
+      "id": "11dd217f-b4d4-4759-92f6-e5e1ca708f7f",
       "state": "completed",
       "revision": 5
     },
     "action": {
       "kind": "complete",
-      "operationKey": "18384287-98f2-4ac7-95cd-4ed7adefb2d5",
+      "operationKey": "cc8bd084-4069-4261-8485-ab26b680fc03",
       "confirmation": "confirmed",
       "unavailableReason": null
     },
     "originalResult": {
       "operationId": "completeAgentSession",
-      "sessionId": "3ad15e0d-7a31-479c-90e8-3fafac772b66",
+      "sessionId": "11dd217f-b4d4-4759-92f6-e5e1ca708f7f",
       "revision": 5,
       "state": "completed",
       "resultReference": {
         "type": "agent_session",
-        "id": "3ad15e0d-7a31-479c-90e8-3fafac772b66",
+        "id": "11dd217f-b4d4-4759-92f6-e5e1ca708f7f",
         "revision": 5
       },
       "eventReference": {
-        "id": "c10e20d7-f822-4603-b482-05ddc0dd52d0",
-        "cursor": "1618"
+        "id": "7b2183f6-7fd3-40bf-810d-bc4e060980c1",
+        "cursor": "1738"
       }
     },
     "cleanup": null

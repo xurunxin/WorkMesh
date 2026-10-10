@@ -1,4 +1,5 @@
 import type { PoolClient } from 'pg'
+import { principalTeamAuthorityPredicate } from '@workmesh/db'
 import { DomainError } from '@workmesh/domain'
 import type { ApiActor } from '../agent/types.js'
 import type { PreparedPage } from '../pagination.js'
@@ -35,6 +36,7 @@ export function reviewRepositoryParentPredicate(s: string, r: string, rc: string
       JOIN work_items wi ON wi.id=parent.work_item_id AND wi.workspace_id=parent.workspace_id AND wi.deleted_at IS NULL
       JOIN actors principal ON principal.id=pd.principal_human_actor_id AND principal.kind='human' AND principal.is_active
      WHERE parent.id=${s}.parent_session_id AND parent.workspace_id=${s}.workspace_id
+       AND ${principalTeamAuthorityPredicate('pd.principal_human_actor_id','parent.workspace_id','parent.team_id')}
        AND parent.team_id=${s}.team_id AND parent.work_item_id=${s}.work_item_id
        AND parent.state IN ('acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked')
        AND 'repo:read'=ANY(pd.permissions_snapshot) AND 'repo:read'=ANY(ad.approved_capabilities)
@@ -62,6 +64,15 @@ export async function assertReviewRepositoryScope(
   )).rows
   await tx.query('SELECT id FROM provider_connections WHERE id=ANY($1::uuid[]) ORDER BY id FOR SHARE', [[...new Set(locators.map(r => r.connection_id))].sort()])
   await tx.query('SELECT id FROM repositories WHERE workspace_id=$1 AND id=ANY($2::uuid[]) ORDER BY id FOR SHARE', [current.workspaceId, sorted])
+  const source=(await tx.query<{team_id:string;principal_human_actor_id:string}>(`SELECT s.team_id,d.principal_human_actor_id
+    FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id WHERE s.id=$1 AND s.workspace_id=$2`,[current.agentSessionId,current.workspaceId])).rows[0]
+  if(!source) throw new DomainError('REPOSITORY_ACCESS_DENIED','Review parent authority is unavailable')
+  await tx.query('SELECT id FROM teams WHERE id=$1 AND workspace_id=$2 FOR SHARE',[source.team_id,current.workspaceId])
+  await tx.query('SELECT id FROM actors WHERE id=$1 AND workspace_id=$2 FOR SHARE',[source.principal_human_actor_id,current.workspaceId])
+  await tx.query('SELECT actor_id FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3 FOR SHARE',[current.workspaceId,source.team_id,source.principal_human_actor_id])
+  const authorized=await tx.query(`SELECT 1 FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
+    WHERE s.id=$1 AND s.workspace_id=$2 AND ${principalTeamAuthorityPredicate('d.principal_human_actor_id','s.workspace_id','s.team_id')}`,[current.agentSessionId,current.workspaceId])
+  if(!authorized.rowCount) throw new DomainError('REPOSITORY_ACCESS_DENIED','Review principal no longer has Team authority')
   const contexts = (await applicableAgentRepositoryContexts(tx, current)).rows
   for (const repositoryId of sorted) {
     const context = contexts.find(context => context.id === repositoryId)

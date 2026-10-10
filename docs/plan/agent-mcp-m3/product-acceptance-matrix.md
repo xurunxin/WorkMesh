@@ -11,5 +11,5 @@
 | S5 旧revision | 旧head review/approval；stale Plan stableStep；health旧revision；cancel/context POST/GET当前无If-Match | head与revisioned写适用；GET/context POST/upload cancel无If-Match不适用 |
 | S6 事务失败 | context及敏感artifact state/event/outbox全回滚；child各插入阶段/预算/Lease/交付故障；Worker terminal/checkpoint失败回滚；查询零业务写 | intent/evidence/review/upload/approval state-event-outbox回滚适用；纯GET command回滚不适用，审计例外分列 |
 | S7 重放 | 真实raw GitHub bytes与delivery重放；provider/check/review单调投影；上传到期/重复finalize；未知重领零写 | 原job/webhook/checkpoint重放适用；GET无新job不适用 |
-| S8 并发 | 真实PG锁等待两提交序、merge/CI pin收窄branch/base、commit首写后context换代拒后续写；完整authority锁等待跨60秒；sameworker attempt8 claimed_at防ABA；双C bridge | PG真实锁/租期/双worker与head竞争必须实证 |
+| S8 并发 | 真实PG锁等待两提交序、merge/CI pin收窄branch/base、当前默认分支五kind及principal成员撤销先提交零写、commit首写后context/default/membership换代拒后续写；完整authority锁等待跨60秒；sameworker attempt8 claimed_at防ABA；双C bridge | PG真实锁/租期/双worker与head竞争必须实证 |
 | S9 重启/恢复/Stop | 18行恢复；GitHub成功后checkpoint前崩溃，真实60秒重领；合法checkpoint只本地finish；API/MCP重启、Pi Stop/等待恢复及M1原来源结果确认 | 外发前授权提交/结果checkpoint先后、未知/Stop/M1专用确认必须实证 |

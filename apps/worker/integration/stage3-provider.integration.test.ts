@@ -442,8 +442,12 @@ describe('Stage 3 provider webhook worker', () => {
     } finally {await connection.query('ROLLBACK');connection.release();await running}
   })
 
-  it.each(['stop','revoke','context'] as const)('M3发送许可先提交，%s在首个HTTP等待中提交，第二个仓库写零发送',async change=>{
+  it.each(['stop','revoke','context','default','membership'] as const)('M3发送许可先提交，%s在首个HTTP等待中提交，第二个仓库写零发送',async change=>{
     const f=await openPullRequestFixture(await fixture())
+    if(change==='membership') {
+      await db.query("UPDATE actors SET workspace_role='member' WHERE id=$1",[f.humanId])
+      await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'maintainer')",[f.workspaceId,f.teamId,f.humanId])
+    }
     await db.query("UPDATE provider_actions SET kind='create_commit',payload=$2,expected_head_sha='base' WHERE id=$1",[f.actionId,{branch:'workmesh/DEL-1-recovery',expectedHeadSha:'base',message:'Guard each write',files:[{path:'apps/test.ts',content:'one'}]}])
     let releaseFirst:()=>void=()=>{},receivedFirst:()=>void=()=>{}
     const firstReceived=new Promise<void>(r=>{receivedFirst=r}),firstReleased=new Promise<void>(r=>{releaseFirst=r})
@@ -469,7 +473,9 @@ describe('Stage 3 provider webhook worker', () => {
       else if(change==='revoke') await blocker.query("UPDATE delegations SET status='revoked',revoked_at=clock_timestamp(),revoked_by_actor_id=$2 WHERE id=$1",[f.delegationId,f.humanId])
       else {
         await blocker.query('SELECT id FROM repositories WHERE id=$1 FOR UPDATE',[f.repositoryId])
-        await blocker.query(`INSERT INTO repository_contexts(workspace_id,repository_id,work_item_id,base_branch,base_sha,branch_pattern,allowed_paths,permissions,guidance_manifest_hash,created_by_actor_id)
+        if(change==='default')await blocker.query("UPDATE repositories SET default_branch='workmesh/DEL-1-recovery' WHERE id=$1",[f.repositoryId])
+        else if(change==='membership')await blocker.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',[f.workspaceId,f.teamId,f.humanId])
+        else await blocker.query(`INSERT INTO repository_contexts(workspace_id,repository_id,work_item_id,base_branch,base_sha,branch_pattern,allowed_paths,permissions,guidance_manifest_hash,created_by_actor_id)
           SELECT workspace_id,repository_id,work_item_id,base_branch,base_sha,'private/{slug}',allowed_paths,permissions,guidance_manifest_hash,created_by_actor_id
           FROM repository_contexts WHERE repository_id=$1 ORDER BY created_at DESC,id DESC LIMIT 1`,[f.repositoryId])
         const pid=(await blocker.query<{pid:number}>('SELECT pg_backend_pid() AS pid')).rows[0]!.pid
@@ -481,7 +487,7 @@ describe('Stage 3 provider webhook worker', () => {
           await new Promise(r=>setTimeout(r,20))
         }
         expect(waiting).toBe(true);expect(writes).toHaveLength(1)
-        await recordAuthorityWait(pid,'first-tree-permitted-context-before-second-write')
+        await recordAuthorityWait(pid,`first-tree-permitted-${change}-before-second-write`)
       }
       await blocker.query('COMMIT');releaseFirst();await running
       expect(writes).toHaveLength(1);expect(writes[0]).toContain('/git/trees')
@@ -587,6 +593,62 @@ describe('Stage 3 provider webhook worker', () => {
       } finally {releaseToken();await blocker.query('ROLLBACK');blocker.release();await running;server.closeAllConnections();await new Promise<void>(r=>server.close(()=>r()))}
     }
   },30000)
+
+  it.each(['create_branch','create_commit','open_pull_request','merge_pull_request','retry_ci_check','membership'] as const)('M3当前默认分支或成员资格 %s 先提交，真实HTTP许可锁竞争零仓库写',async kind=>{
+    const f=kind==='merge_pull_request'||kind==='retry_ci_check'?await approvedActionFixture(kind):await openPullRequestFixture(await fixture())
+    const branch='workmesh/DEL-1-recovery'
+    if(kind==='create_branch')await db.query("UPDATE provider_actions SET kind=$2,payload=$3 WHERE id=$1",[f.actionId,kind,{name:branch,baseSha:'base'}])
+    if(kind==='create_commit')await db.query("UPDATE provider_actions SET kind=$2,payload=$3,expected_head_sha='base' WHERE id=$1",[f.actionId,kind,{branch,expectedHeadSha:'base',message:'Live default',files:[{path:'apps/test.ts',content:'one'}]}])
+    if(kind==='membership') {
+      await db.query("UPDATE actors SET workspace_role='member' WHERE id=$1",[f.humanId])
+      await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'maintainer')",[f.workspaceId,f.teamId,f.humanId])
+    }
+    let readyToken:()=>void=()=>{},releaseToken:()=>void=()=>{}
+    const ready=new Promise<void>(r=>{readyToken=r}),released=new Promise<void>(r=>{releaseToken=r}),writes:string[]=[]
+    const server=createServer(async(req,res)=>{
+      res.setHeader('content-type','application/json')
+      if(req.url?.endsWith('/access_tokens')){readyToken();await released;res.end(JSON.stringify({token:'local-fixture',expires_at:new Date(Date.now()+3600000).toISOString()}));return}
+      if(req.method==='GET'&&req.url?.includes('/pulls?')){res.end('[]');return}
+      if(req.method!=='GET')writes.push(`${req.method}:${req.url}`)
+      res.end(JSON.stringify(req.url?.includes('/ref/')?{object:{sha:'base'}}:req.url?.includes('/commits/')?{tree:{sha:'base-tree'}}:{id:71,number:71,html_url:'https://example.test/71',state:'open',draft:false,merged:false,base:{ref:'main',sha:'base'},head:{ref:branch,sha:'head'}}))
+    })
+    server.listen(0,'127.0.0.1');await once(server,'listening')
+    const key=generateKeyPairSync('rsa',{modulusLength:2048}).privateKey.export({type:'pkcs8',format:'pem'}).toString()
+    const worker=createProviderActionWorker({db,workerId:'live-repository-facts',resolveProvider:(_p,_c,guard)=>new GitHubAppProvider({appId:'1',installationId:'2',privateKey:key,apiBaseUrl:`http://127.0.0.1:${(server.address() as {port:number}).port}`,beforeMutation:guard})})
+    const action=(await worker.claimAction())!,running=worker.executeAction(action).catch(async error=>{expect((error as Error).message).toBe('PROVIDER_ACTION_AUTHORITY_REVOKED');await worker.failAction(action,error)})
+    const blocker=await db.connect()
+    try {
+      await Promise.race([ready,new Promise<never>((_r,j)=>setTimeout(()=>j(new Error('Initial gate did not admit')),10000))])
+      await blocker.query('BEGIN')
+      if(kind==='membership')await blocker.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',[f.workspaceId,f.teamId,f.humanId])
+      else await blocker.query('UPDATE repositories SET default_branch=$2 WHERE id=$1',[f.repositoryId,branch])
+      const pid=(await blocker.query<{pid:number}>('SELECT pg_backend_pid() AS pid')).rows[0]!.pid
+      releaseToken()
+      let observed=false
+      for(let n=0;n<100;n++) {observed=!!(await db.query('SELECT 1 FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))',[pid])).rowCount;if(observed)break;await new Promise(r=>setTimeout(r,20))}
+      expect(observed).toBe(true);expect(writes).toEqual([]);await recordAuthorityWait(pid,`${kind}-current-default-or-membership-commits-first`)
+      await blocker.query('COMMIT');await running;expect(writes).toEqual([])
+      expect((await db.query('SELECT status FROM provider_actions WHERE id=$1',[action.id])).rows[0]).toEqual({status:'dead'})
+    } finally {releaseToken();await blocker.query('ROLLBACK');blocker.release();await running;server.closeAllConnections();await new Promise<void>(r=>server.close(()=>r()))}
+  },20000)
+
+  it('M3 context第八次claim崩溃后跨真实60秒重启终态CAS，无provider且不再排队',async()=>{
+    const f=await openPullRequestFixture(await fixture())
+    await db.query("UPDATE provider_actions SET kind='resolve_repository_context',requested_by_actor_id=$2,session_id=NULL,payload=$3,attempt_count=7 WHERE id=$1",[f.actionId,f.humanId,{workItemId:f.workItemId,baseBranch:'main',baseSha:'base',branchPattern:'workmesh/{workItemKey}-{slug}',allowedPaths:['apps/**'],permissions:['read']}])
+    let accesses=0
+    const worker=()=>createProviderActionWorker({db,workerId:'context-same-worker-at-cap',resolveProvider:()=>{accesses++;throw new Error('Exhausted context must not access provider')}})
+    const oldWorker=worker(),stale=(await oldWorker.claimAction())!
+    expect(stale.attempt_count).toBe(8);expect(stale.exhausted_context).toBe(false)
+    while((await db.query<{active:boolean}>("SELECT claimed_at+interval '60 seconds'>clock_timestamp() AS active FROM provider_actions WHERE id=$1",[f.actionId])).rows[0]!.active)await new Promise(r=>setTimeout(r,250))
+    const restarted=worker(),current=(await restarted.claimAction())!
+    expect(current.attempt_count).toBe(8);expect(current.exhausted_context).toBe(true);expect(current.claimed_at.getTime()).toBeGreaterThan(stale.claimed_at.getTime())
+    await oldWorker.failAction(stale,new Error('Old generation must not overwrite exhausted claim'))
+    expect((await db.query('SELECT status FROM provider_actions WHERE id=$1',[f.actionId])).rows[0]).toEqual({status:'claimed'})
+    await restarted.executeAction(current);await restarted.tick();expect(accesses).toBe(0)
+    expect((await db.query('SELECT status,last_error,attempt_count,result FROM provider_actions WHERE id=$1',[f.actionId])).rows[0]).toEqual({status:'dead',last_error:'PROVIDER_ACTION_RETRY_EXHAUSTED',attempt_count:8,result:null})
+    expect((await db.query("SELECT count(*)::int AS n FROM domain_events WHERE aggregate_id=$1 AND event_type='provider.action.dead_lettered'",[f.actionId])).rows[0]).toEqual({n:1})
+    console.info(JSON.stringify({m3ContextExhaustion:{stale:stale.claimed_at,current:current.claimed_at,attempt:8,providerAccesses:accesses,defaultLeaseSeconds:60}}))
+  },90000)
 
   it('M3同worker attempt上限饱和，真实租期重领由claimed_at防ABA且合法checkpoint仅本地完成',async()=>{
     const f=await openPullRequestFixture(await fixture())

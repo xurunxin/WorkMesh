@@ -37,3 +37,5 @@ ReviewDelegationInput新增可选repositoryIds，显式非空唯一UUID且三方
 对应更新OPENAPI/Zod/route policy、SDK/MCP/发现增量/Runner和协议；ReviewDelegationInput.repositoryIds为用户唯一新增授权裁定。产品变更与九类验证须经独审及Chief confirm，成果再经独审/最新Required CI/actual Done/main。
 
 产品补齐：merge／CI每次beforeMutation在准确锁定PR的同一prepareMutation事务内重验最新context的head_branch／base_branch。受控存储传输复用Node原生HTTP／HTTPS，避免Pi全局dispatcher与内置fetch的content-length兼容失败，不增加依赖或外发目标，保签名headers、证书验证、取消与无重定向。
+
+成果独审修复：逐次发送重读已锁仓库的当前默认分支；principal 的活跃 Human＋workspace admin／准确 Team membership 复用现行授权规则，覆盖发送、action 查询与显式 reviewer 创建／重放／父授权读取。context 第八次领取崩溃后无 checkpoint 的过期重领进入既有 dead 状态，返回稳定 `PROVIDER_ACTION_RETRY_EXHAUSTED`，零 provider 调用且不再提示 scheduled；合法 checkpoint 优先本地完成。耗尽标记只来自本次 claim 的旧 attempt 值，不新增持久化字段、迁移或事件。这些是原安全合同的实现修复，不称用户新增授权裁定；原方案历史全文不改。

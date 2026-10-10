@@ -45,6 +45,59 @@ describe('M3 Native HTTP/MCP/Pi精确Git与review闭环',()=>{
     await expect(read(commit.id)).rejects.toThrow()
     saveDeliveryEvidence(`${mode}-query-boundaries.json`,{results,terminalHumanAllowed:true,terminalERefused:true,explicitCoordinationBridge:mode==='pi'?'不适用：Runner固定当前E':true})
   })
+  it.each(['native','mcp','pi'] as DeliveryMode[])('%s principal Team成员撤销：action隐藏、review创建与重放及子仓库读拒绝，恢复正对照',async mode=>{
+    const s=await f.prepare(mode),p=s.parent
+    const principal=(await f.db.query<{id:string;workspace_id:string;workspace_role:string}>('SELECT a.id,a.workspace_id,a.workspace_role FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id JOIN actors a ON a.id=d.principal_human_actor_id WHERE s.id=$1',[p.sessionId])).rows[0]!
+    await f.db.query("UPDATE actors SET workspace_role='member' WHERE id=$1",[principal.id])
+    await f.db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'maintainer') ON CONFLICT(team_id,actor_id) DO NOTHING",[principal.workspace_id,f.teamId,principal.id])
+    let removed=false
+    const addMembership=()=>f.db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'maintainer') ON CONFLICT(team_id,actor_id) DO NOTHING",[principal.workspace_id,f.teamId,principal.id])
+    const removeMembership=()=>f.db.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',[principal.workspace_id,f.teamId,principal.id])
+    const deniedResponses:Array<{path:string;status:number}>=[]
+    const proxy=await f.afterResponse(async(path,status)=>{
+      if(removed && status>=400 && (path.startsWith('/api/v1/provider-actions/')||path.endsWith('/context')||path.endsWith('/review-delegations'))) {
+        deniedResponses.push({path,status});await addMembership()
+      }
+    })
+    const pi=async<T>(execution:typeof p,token:string,name:string,args:Record<string,unknown>):Promise<T>=>{
+      // Human config is admin-only; restore the original member identity before
+      // Runner admission. Revoke after model admission, restore after the actual
+      // denied API response so the next model request can receive that error.
+      await f.db.query("UPDATE actors SET workspace_role='admin' WHERE id=$1",[principal.id])
+      try {return await f.piCall(execution,token,name,args,{apiUrl:proxy,beforeRun:async()=>{await addMembership();await f.db.query("UPDATE actors SET workspace_role='member' WHERE id=$1",[principal.id])},beforeTool:async()=>{if(removed)await removeMembership()}})}
+      finally {await f.db.query("UPDATE actors SET workspace_role='member' WHERE id=$1",[principal.id]);if(removed)await removeMembership()}
+    }
+    try {
+      const branch=await p.client.requestProviderAction<{id:string}>({kind:'create_branch',repositoryId:s.repositoryId,workItemId:p.workItemId,sessionId:p.sessionId,name:s.branch,baseSha:'base'})
+      await f.worker().tick()
+      const read=()=>mode==='native'?p.client.getProviderAction(branch.id):mode==='mcp'?f.mcpCall<ProviderActionProjection>(s.mcp,'get_provider_action',{id:branch.id,sessionId:p.sessionId}):pi<ProviderActionProjection>(p,f.connectionToken,'workmesh_get_provider_action',{id:branch.id})
+      expect(await read()).toMatchObject({id:branch.id,status:'completed'})
+      const key=randomUUID(),body={reviewerAgentId:s.target.agentId,planStepId:s.reviewStep,planVersionId:s.planId,initialPrompt:'Membership bounded review',repositoryIds:[s.repositoryId]}
+      const create=(idempotencyKey=key)=>mode==='native'?p.client.createReviewDelegation(p.sessionId,body,{idempotencyKey}):mode==='mcp'?f.mcpCall<ReviewDelegationResponse>(s.mcp,'create_review_delegation',{...body,sessionId:p.sessionId,idempotencyKey}):pi<ReviewDelegationResponse>(p,f.connectionToken,'workmesh_create_review_delegation',body)
+      // Pi writes get their stable operation key from the actual persisted tool call.
+      const review=await create(),reviewer=await f.receive(review.session.id,s.target.token),mcp=await f.connect('read-write',reviewer)
+      const childRead=()=>mode==='native'?reviewer.client.getRepositoryContext<unknown[]>(s.repositoryId):mode==='mcp'?f.mcpCall<unknown[]>(mcp,'get_repository_context',{repositoryId:s.repositoryId,sessionId:reviewer.sessionId}):pi<unknown[]>(reviewer,s.target.token,'workmesh_get_repository_context',{repositoryId:s.repositoryId})
+      expect(await childRead()).toHaveLength(1)
+      const replayKey=mode==='pi'?(await f.db.query<{idempotency_key:string}>("SELECT idempotency_key FROM api_idempotency_keys WHERE workspace_id=$1 AND response_body->'session'->>'id'=$2",[principal.workspace_id,review.session.id])).rows[0]?.idempotency_key:key
+      const replay=()=>p.client.createReviewDelegation(p.sessionId,body,{idempotencyKey:replayKey!})
+      expect(replayKey).toBeTruthy();expect(await replay()).toEqual(review)
+      const count=async()=>(await f.db.query('SELECT count(*)::int AS children FROM agent_sessions WHERE parent_session_id=$1',[p.sessionId])).rows[0]
+      const before=await count()
+      await f.db.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',[principal.workspace_id,f.teamId,principal.id]);removed=true
+      await expect(read()).rejects.toThrow()
+      await expect(childRead()).rejects.toThrow()
+      await expect(replay()).rejects.toMatchObject({status:403})
+      await expect(create(randomUUID())).rejects.toThrow()
+      expect(await count()).toEqual(before)
+      await f.db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'maintainer')",[principal.workspace_id,f.teamId,principal.id]);removed=false
+      expect(await read()).toMatchObject({id:branch.id,status:'completed'});expect(await childRead()).toHaveLength(1);expect(await replay()).toEqual(review);expect(await count()).toEqual(before)
+      if(mode==='pi')expect(deniedResponses).toHaveLength(3)
+      saveDeliveryEvidence(`${mode}-principal-membership.json`,{actionId:branch.id,childId:review.session.id,deniedAfterRemoval:true,restored:true,before,after:await count(),deniedResponses,piReplayViaExactPersistedKey:mode==='pi'})
+    } finally {
+      if(removed)await f.db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'maintainer') ON CONFLICT(team_id,actor_id) DO NOTHING",[principal.workspace_id,f.teamId,principal.id])
+      await f.db.query('UPDATE actors SET workspace_role=$2 WHERE id=$1',[principal.id,principal.workspace_role])
+    }
+  })
   it.each(['native','mcp','pi'] as DeliveryMode[])('%s上传状态/数组/取消/受控下载及health准确Human批准',async mode=>{
     const s=await f.prepare(mode),p=s.parent
     const invoke=async<T>(native:()=>Promise<T>,mcp:string,pi:string,args:Record<string,unknown>,piArgs?:Record<string,unknown>):Promise<T>=>mode==='native'?native():mode==='mcp'?f.mcpCall(s.mcp,mcp,args):f.piCall(p,f.connectionToken,pi,piArgs??Object.fromEntries(Object.entries(args).filter(([key])=>!['sessionId','idempotencyKey'].includes(key))))

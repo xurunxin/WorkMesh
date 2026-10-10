@@ -1845,3 +1845,5 @@ Agent 通过 `GET /api/v1/provider-actions/{id}` 只读确认本人准确 Sessio
 `ReviewDelegationInput.repositoryIds` 显式给出非空唯一仓库清单时，父 Delegation、目标 definition、Team grant 必须共同具有 `repo:read`，且仓库属于父当前范围并使用共同 WorkItem／Project context。省略保持原三项 reviewer 能力。创建、旧 key/body 重放和后续读取均重验；reviewer 不获得仓库写权或 `plan:write`。有效 E 先发布本人 Room `review_result`、当前 head 的 `code_review` delivery Artifact，再发布 structured review；完成后父确认 required child completed，Human 对准确 head/checks 批准。上传 file 不替代审查证据。
 
 Worker 每次仓库写 HTTP 前在完整 authority/resource/PR/check/approval/action 锁内重读，最后检查数据库真实租期与 generation。Stop／撤权先提交则零外发；发送许可先提交的在途请求不能召回，后续写重新授权。五类写 action 有领取历史而无合法 checkpoint 保守停发 `dead`／`PROVIDER_ACTION_OUTCOME_UNKNOWN`；合法 checkpoint 仅本地完成，纯 context GET 有界重试。既有 `attempt_count` 上限保持饱和，CAS 额外绑定精确 `claimed_at`，不新增状态、字段、迁移或事件。
+
+发送事务从已锁仓库读取当前 `default_branch`，禁止 branch／commit／openPR／merge／CI 的目标 head 写入当前默认分支。principal 必须仍为活跃 Human，且为 workspace admin 或准确 Team 的现成员；Worker、精确 action 查询、显式 reviewer 创建／重放及父授权读取共同消费这条既有规则。context 的最后一次新领取仍可执行纯读；第八次领取崩溃后过期重领无 checkpoint 则 CAS 终止为 `dead`／`PROVIDER_ACTION_RETRY_EXHAUSTED`，不访问 provider，查询 `scheduled=false`。合法 checkpoint 优先仅本地完成。

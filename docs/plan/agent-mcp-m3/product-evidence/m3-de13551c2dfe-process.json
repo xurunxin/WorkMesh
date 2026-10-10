@@ -1,0 +1,19 @@
+{
+  "id": "m3-de13551c2dfe",
+  "ownerPid": 3996,
+  "childPid": 1040,
+  "argv": [
+    "C:/nvm4w/nodejs/pnpm.cmd",
+    "--filter",
+    "@workmesh/api",
+    "exec",
+    "vitest",
+    "run",
+    "--config",
+    "../../vitest.integration.config.ts",
+    "integration/stage3-delivery.integration.test.ts",
+    "-t",
+    "M3精确action原principal|M3 context耗尽"
+  ],
+  "startedUnix": 1791636978.3966057
+}

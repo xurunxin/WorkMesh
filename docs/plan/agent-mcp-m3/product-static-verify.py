@@ -66,12 +66,19 @@ assert all(r['waiting'] and r['locks'] and any(x['wait_event_type']=='Lock' and 
 by_label={r['label']:r for r in waits}
 for label in ['stop-commits-first','revoke-commits-first','per-http-sender-holds-authority','stop-waits-for-per-http-authority-commit','merge_pull_request-branch-pin-commits-first','merge_pull_request-base-pin-commits-first','retry_ci_check-branch-pin-commits-first','retry_ci_check-base-pin-commits-first']:
     assert label in by_label
+for kind in ['create_branch','create_commit','open_pull_request','merge_pull_request','retry_ci_check','membership']:
+    assert kind+'-current-default-or-membership-commits-first' in by_label
+for change in ['default','membership']:
+    assert 'first-tree-permitted-'+change+'-before-second-write' in by_label
 def seconds(a,b):return (datetime.fromisoformat(b)-datetime.fromisoformat(a)).total_seconds()
 for r in observations:
     if 'm3UnknownRecovery' in r:
         x=r['m3UnknownRecovery'];assert seconds(x['claimedAt'],x['reclaimedAt'])>=60 and x['writesBeforeRecovery']==1
     if 'm3GenerationRecovery' in r:
         x=r['m3GenerationRecovery'];assert x['stale']['attempt']==x['current']['attempt']==8 and seconds(x['stale']['claimedAt'],x['current']['claimedAt'])>=60
+    if 'm3ContextExhaustion' in r:
+        x=r['m3ContextExhaustion'];assert x['attempt']==8 and x['providerAccesses']==0 and seconds(x['stale'],x['current'])>=60
+assert any('m3ContextExhaustion' in r for r in observations)
 assert seconds(by_label['lease-live-before-real-lock-wait']['waiting'][0]['observed_at'],by_label['lease-expired-still-blocked']['waiting'][0]['observed_at'])>=60
 counts['actualLockObservations']=len(waits)
 models=list((ROOT/'ci-logs/delivery-recovery').glob('model-*.json'))

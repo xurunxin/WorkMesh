@@ -20,7 +20,7 @@
         "apps/api/integration/stage3-delivery.integration.test.ts"
       ],
       "actualObservation": "三链、真实store、六kind五status；M2有限预算100/60/40作为兼容回归；M3显式repo reviewer单独受控交付",
-      "receipt": "m3-0230adef6a2a"
+      "receipt": "m3-8c0f15d203fd"
     },
     {
       "id": "S2",
@@ -44,7 +44,7 @@
         "apps/api/integration/stage2-collaboration.integration.test.ts"
       ],
       "actualObservation": "初次三方读权缺任一及replay六撤权；当前context read/branch/path；context解析十类撤权；self-review与跨scope拒绝",
-      "receipt": "m3-0230adef6a2a"
+      "receipt": "m3-8c0f15d203fd"
     },
     {
       "id": "S3",
@@ -67,7 +67,7 @@
         "apps/worker/integration/stage3-provider.integration.test.ts"
       ],
       "actualObservation": "旧head/checks/Blocking/High/approval；file不可review；Room/本人code_review各不可豁免，required child所有非completed阻父",
-      "receipt": "m3-0230adef6a2a"
+      "receipt": "m3-8c0f15d203fd"
     },
     {
       "id": "S4",
@@ -91,7 +91,7 @@
         "apps/worker/integration/stage3-provider.integration.test.ts"
       ],
       "actualObservation": "重复意图/上传/structured review/merge/子创建；合法review原key并发零重复事实、撤权后重放拒绝；unknown零新外发",
-      "receipt": "m3-0230adef6a2a"
+      "receipt": "m3-8c0f15d203fd"
     },
     {
       "id": "S5",
@@ -114,7 +114,7 @@
         "apps/worker/integration/stage3-provider.integration.test.ts"
       ],
       "actualObservation": "旧head review/approval；stale Plan stableStep；health旧revision；cancel/context POST/GET当前无If-Match",
-      "receipt": "m3-0230adef6a2a"
+      "receipt": "m3-8c0f15d203fd"
     },
     {
       "id": "S6",
@@ -137,7 +137,7 @@
         "apps/worker/integration/stage3-provider.integration.test.ts"
       ],
       "actualObservation": "context及敏感artifact state/event/outbox全回滚；child各插入阶段/预算/Lease/交付故障；Worker terminal/checkpoint失败回滚；查询零业务写",
-      "receipt": "m3-0230adef6a2a"
+      "receipt": "m3-8c0f15d203fd"
     },
     {
       "id": "S7",
@@ -159,7 +159,7 @@
         "apps/worker/integration/stage3-provider.integration.test.ts"
       ],
       "actualObservation": "真实raw GitHub bytes与delivery重放；provider/check/review单调投影；上传到期/重复finalize；未知重领零写",
-      "receipt": "m3-0230adef6a2a"
+      "receipt": "m3-8c0f15d203fd"
     },
     {
       "id": "S8",
@@ -181,8 +181,8 @@
         "apps/api/integration/stage2-collaboration.integration.test.ts",
         "packages/conformance/src/delivery-recovery.conformance.test.ts"
       ],
-      "actualObservation": "真实PG锁等待两提交序、merge/CI pin收窄branch/base、commit首写后context换代拒后续写；完整authority锁等待跨60秒；sameworker attempt8 claimed_at防ABA；双C bridge",
-      "receipt": "m3-0230adef6a2a"
+      "actualObservation": "真实PG锁等待两提交序、merge/CI pin收窄branch/base、当前默认分支五kind及principal成员撤销先提交零写、commit首写后context/default/membership换代拒后续写；完整authority锁等待跨60秒；sameworker attempt8 claimed_at防ABA；双C bridge",
+      "receipt": "m3-8c0f15d203fd"
     },
     {
       "id": "S9",
@@ -207,7 +207,7 @@
         "packages/conformance/src/delivery-recovery.conformance.test.ts"
       ],
       "actualObservation": "18行恢复；GitHub成功后checkpoint前崩溃，真实60秒重领；合法checkpoint只本地finish；API/MCP重启、Pi Stop/等待恢复及M1原来源结果确认",
-      "receipt": "m3-0230adef6a2a"
+      "receipt": "m3-8c0f15d203fd"
     }
   ],
   "originalDoD": "**任务DoD**：至少fake provider完整交付链Native HTTP/MCP/Pi一致，所有异步命令可准确确认；每个真实provider“支持/不支持/未测”有实际依据。#9切片新组合证据单独绑定，不借其旧UI验收。",

@@ -1,7 +1,25 @@
 {
   "archive": "product-service-logs.zip",
-  "archiveSha256": "12b5aa016386c75eb3fad1cd628a0d6155bfab456314128e091dd0e45b6dbc41",
+  "archiveSha256": "ca89aaffcc603110d1a2075fe6a6635c2b106cbfdbd14d1dc174c8792d76feee",
   "files": [
+    {
+      "path": "product-evidence/m3-0048e4013a58-postgres-service.log",
+      "rawSha256": "e9d6385d7c9bbe48a21f4003fcd0cd704ae6e5b4c0b1af0f57bcd7fdea8a5475",
+      "readableSha256": "e00dbc30b9356a3c6d575dca1dcb67c27eb85eb533ecd16d77686d9bf36af2c9",
+      "rawSize": 112409
+    },
+    {
+      "path": "product-evidence/m3-0048e4013a58-redis-service.log",
+      "rawSha256": "4083a8786c51c2f4ac9fb40e76b4a81b16221f67ce805a4034f311e22337a016",
+      "readableSha256": "4083a8786c51c2f4ac9fb40e76b4a81b16221f67ce805a4034f311e22337a016",
+      "rawSize": 2329
+    },
+    {
+      "path": "product-evidence/m3-0048e4013a58-s3-service.log",
+      "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "rawSize": 104
+    },
     {
       "path": "product-evidence/m3-02dc7bf27b89-postgres-service.log",
       "rawSha256": "e4961d5ee22a447d162cb57d4a1662ca155ff1bd7321a3e5db01a2f3a79b4765",
@@ -70,6 +88,42 @@
     },
     {
       "path": "product-evidence/m3-14d4703fd2eb-s3-service.log",
+      "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "rawSize": 104
+    },
+    {
+      "path": "product-evidence/m3-1b7e335bf534-postgres-service.log",
+      "rawSha256": "aab4021ec42695ea7802a55fe272f5959cdd36839e705be12a247c7d1417272d",
+      "readableSha256": "aab4021ec42695ea7802a55fe272f5959cdd36839e705be12a247c7d1417272d",
+      "rawSize": 3228
+    },
+    {
+      "path": "product-evidence/m3-1b7e335bf534-redis-service.log",
+      "rawSha256": "94403d329ea6a87c510695c95a138dd21f37274ea400963a67f002f3e23c0e7c",
+      "readableSha256": "94403d329ea6a87c510695c95a138dd21f37274ea400963a67f002f3e23c0e7c",
+      "rawSize": 599
+    },
+    {
+      "path": "product-evidence/m3-1b7e335bf534-s3-service.log",
+      "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "rawSize": 104
+    },
+    {
+      "path": "product-evidence/m3-27da1c7bf16e-postgres-service.log",
+      "rawSha256": "94108ec42d1d84c6226ebc38d05bf0c8604826dbe95f843f96223d82e9a17d7a",
+      "readableSha256": "94108ec42d1d84c6226ebc38d05bf0c8604826dbe95f843f96223d82e9a17d7a",
+      "rawSize": 3228
+    },
+    {
+      "path": "product-evidence/m3-27da1c7bf16e-redis-service.log",
+      "rawSha256": "cc20e3d8af72badb10f3a47ea8c02b54f5143353dd5d5aab39f59fb85eb3088f",
+      "readableSha256": "cc20e3d8af72badb10f3a47ea8c02b54f5143353dd5d5aab39f59fb85eb3088f",
+      "rawSize": 599
+    },
+    {
+      "path": "product-evidence/m3-27da1c7bf16e-s3-service.log",
       "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
       "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
       "rawSize": 104
@@ -178,6 +232,42 @@
     },
     {
       "path": "product-evidence/m3-467b46497efb-s3-service.log",
+      "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "rawSize": 104
+    },
+    {
+      "path": "product-evidence/m3-4a016f4592f2-postgres-service.log",
+      "rawSha256": "c521930b436ed2337d30986606d56a5240748e579a6766c66dc668081b66a404",
+      "readableSha256": "c521930b436ed2337d30986606d56a5240748e579a6766c66dc668081b66a404",
+      "rawSize": 3228
+    },
+    {
+      "path": "product-evidence/m3-4a016f4592f2-redis-service.log",
+      "rawSha256": "4d66150c358ec1a6af5a587d47d3e58f00cce26b1e0892476b28adce72e44bd3",
+      "readableSha256": "4d66150c358ec1a6af5a587d47d3e58f00cce26b1e0892476b28adce72e44bd3",
+      "rawSize": 599
+    },
+    {
+      "path": "product-evidence/m3-4a016f4592f2-s3-service.log",
+      "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "rawSize": 104
+    },
+    {
+      "path": "product-evidence/m3-634683ba26fb-postgres-service.log",
+      "rawSha256": "780a6b9551b3079d81d4435779b050838a710ac7e79b67e55a3f4afbecc175c3",
+      "readableSha256": "780a6b9551b3079d81d4435779b050838a710ac7e79b67e55a3f4afbecc175c3",
+      "rawSize": 3228
+    },
+    {
+      "path": "product-evidence/m3-634683ba26fb-redis-service.log",
+      "rawSha256": "dd3cffc46e74581a483bfc8aac55fdd7b26733ed780617547e15060e6283b901",
+      "readableSha256": "dd3cffc46e74581a483bfc8aac55fdd7b26733ed780617547e15060e6283b901",
+      "rawSize": 599
+    },
+    {
+      "path": "product-evidence/m3-634683ba26fb-s3-service.log",
       "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
       "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
       "rawSize": 104
@@ -327,6 +417,24 @@
       "rawSize": 104
     },
     {
+      "path": "product-evidence/m3-8fbc7ad99409-postgres-service.log",
+      "rawSha256": "e836b5f73c0383c993f6ac81a0778c2ccaf87663acd3b5105f34e09b36193780",
+      "readableSha256": "e836b5f73c0383c993f6ac81a0778c2ccaf87663acd3b5105f34e09b36193780",
+      "rawSize": 3228
+    },
+    {
+      "path": "product-evidence/m3-8fbc7ad99409-redis-service.log",
+      "rawSha256": "3da3dc4e5a90026b7d936e1aacadfa459bd02f51dfb6929fdb7a1d3a2a1e447c",
+      "readableSha256": "3da3dc4e5a90026b7d936e1aacadfa459bd02f51dfb6929fdb7a1d3a2a1e447c",
+      "rawSize": 599
+    },
+    {
+      "path": "product-evidence/m3-8fbc7ad99409-s3-service.log",
+      "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "rawSize": 104
+    },
+    {
       "path": "product-evidence/m3-97167a48cfdc-postgres-service.log",
       "rawSha256": "35a7f2012aa3d4c0e7323fd8afbf8f13bc43259c3dccc48fe46aed261ae2b6de",
       "readableSha256": "35a7f2012aa3d4c0e7323fd8afbf8f13bc43259c3dccc48fe46aed261ae2b6de",
@@ -399,6 +507,24 @@
       "rawSize": 104
     },
     {
+      "path": "product-evidence/m3-c3851a3bbdc7-postgres-service.log",
+      "rawSha256": "7c293aae87a75cc4ff963de296fabaed874970b857c184fac266c6137b30f8fe",
+      "readableSha256": "7c293aae87a75cc4ff963de296fabaed874970b857c184fac266c6137b30f8fe",
+      "rawSize": 3939
+    },
+    {
+      "path": "product-evidence/m3-c3851a3bbdc7-redis-service.log",
+      "rawSha256": "96f90279e0477fdf355146a61fed4a9c2e1efc443236e6a89b3387bbdfbed2fa",
+      "readableSha256": "96f90279e0477fdf355146a61fed4a9c2e1efc443236e6a89b3387bbdfbed2fa",
+      "rawSize": 599
+    },
+    {
+      "path": "product-evidence/m3-c3851a3bbdc7-s3-service.log",
+      "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "rawSize": 104
+    },
+    {
       "path": "product-evidence/m3-c7481da3def3-postgres-service.log",
       "rawSha256": "7ad44e956821eba0b8fcd07843b661c9077eeff0dc6ce8c279b0ef4319432179",
       "readableSha256": "7ad44e956821eba0b8fcd07843b661c9077eeff0dc6ce8c279b0ef4319432179",
@@ -430,6 +556,24 @@
     },
     {
       "path": "product-evidence/m3-cb2afc8a6495-s3-service.log",
+      "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+      "rawSize": 104
+    },
+    {
+      "path": "product-evidence/m3-cb548679cad3-postgres-service.log",
+      "rawSha256": "bf934321cc65921bdfae8d82185bc96683fde60eb562689ce0101843e0a67835",
+      "readableSha256": "bf934321cc65921bdfae8d82185bc96683fde60eb562689ce0101843e0a67835",
+      "rawSize": 3702
+    },
+    {
+      "path": "product-evidence/m3-cb548679cad3-redis-service.log",
+      "rawSha256": "0ea74fc080cc9c6079d2dda0a5f816d6bd4bd2c11bf1e398a543cdc11c94a186",
+      "readableSha256": "0ea74fc080cc9c6079d2dda0a5f816d6bd4bd2c11bf1e398a543cdc11c94a186",
+      "rawSize": 599
+    },
+    {
+      "path": "product-evidence/m3-cb548679cad3-s3-service.log",
       "rawSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
       "readableSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
       "rawSize": 104

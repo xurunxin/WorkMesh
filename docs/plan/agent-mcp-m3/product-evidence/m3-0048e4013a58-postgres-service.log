@@ -1,0 +1,1254 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 13:01:39.922 UTC [41] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 13:01:39.962 UTC [41] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 13:01:39.963 UTC [44] LOG:  database system was shut down at 2026-10-10 13:01:39 UTC
+2026-10-10 13:01:39.966 UTC [41] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-10 13:01:40.056 UTC [41] LOG:  received fast shutdown request
+2026-10-10 13:01:40.056 UTC [41] LOG:  aborting any active transactions
+2026-10-10 13:01:40.063 UTC [41] LOG:  background worker "logical replication launcher" (PID 47) exited with exit code 1
+2026-10-10 13:01:40.064 UTC [42] LOG:  shutting down
+2026-10-10 13:01:40.064 UTC [42] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 13:01:40.070 UTC [42] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.001 s, total=0.006 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 13:01:40.074 UTC [41] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 13:01:39.527 UTC [35] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 13:01:40.174 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 13:01:40.174 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 13:01:40.174 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 13:01:40.231 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 13:01:40.233 UTC [57] LOG:  database system was shut down at 2026-10-10 13:01:40 UTC
+2026-10-10 13:01:40.236 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 13:03:12.453 UTC [71] ERROR:  relation "migration_missing_relation" does not exist at character 13
+2026-10-10 13:03:12.453 UTC [71] STATEMENT:  INSERT INTO migration_missing_relation(id) VALUES(1)
+2026-10-10 13:03:24.466 UTC [76] ERROR:  duplicate key value violates unique constraint "context_snapshots_workspace_content_hash_key"
+2026-10-10 13:03:24.466 UTC [76] DETAIL:  Key (workspace_id, content_hash)=(1ff0d687-410c-4c70-af01-8619db33a1ef, sha256:shared) already exists.
+2026-10-10 13:03:24.466 UTC [76] STATEMENT:  INSERT INTO context_snapshots(workspace_id,manifest,content_hash) VALUES($1,'{}','sha256:shared')
+2026-10-10 13:03:24.816 UTC [77] ERROR:  new row for relation "agent_sessions" violates check constraint "agent_sessions_retry_count_nonnegative"
+2026-10-10 13:03:24.816 UTC [77] DETAIL:  Failing row contains (fd0f8ed4-4f8d-499b-bf09-359d0472822c, d8d4793e-13ed-46bf-9f21-347f3f56220d, 67531ecf-d3f1-4b17-9255-c1fce5936266, 1e8805c2-de54-45a4-aa47-5c5ee13728e0, 3015abc5-4c8a-49f8-a424-a0ffee61d2ba, 91270d73-9c57-47d4-a459-26e91cd8ea09, null, fdedccfd-65bc-40ac-99ba-244a5f692076, null, null, queued, null, 0, 1, null, null, {}, [], null, null, null, null, null, [], null, null, null, null, 2026-10-10 13:03:24.816424+00, 2026-10-10 13:03:24.816424+00, null, null, -1, 8, {}, f, null, null, healthy, 2026-10-10 13:03:24.816424+00, null, null, {}, null, null).
+2026-10-10 13:03:24.816 UTC [77] STATEMENT:  INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,retry_count) VALUES($1,$2,$3,$4,$5,$6,-1)
+2026-10-10 13:03:24.827 UTC [78] ERROR:  new row for relation "agent_sessions" violates check constraint "agent_sessions_retry_not_self"
+2026-10-10 13:03:24.827 UTC [78] DETAIL:  Failing row contains (d28d2e12-fcec-4b3a-859d-8f222a97e01c, d8d4793e-13ed-46bf-9f21-347f3f56220d, 67531ecf-d3f1-4b17-9255-c1fce5936266, 1e8805c2-de54-45a4-aa47-5c5ee13728e0, 3015abc5-4c8a-49f8-a424-a0ffee61d2ba, 91270d73-9c57-47d4-a459-26e91cd8ea09, null, fdedccfd-65bc-40ac-99ba-244a5f692076, null, null, queued, null, 0, 1, null, null, {}, [], null, null, null, null, null, [], null, null, null, null, 2026-10-10 13:03:24.824244+00, 2026-10-10 13:03:24.824244+00, d28d2e12-fcec-4b3a-859d-8f222a97e01c, null, 1, 8, {}, f, null, null, healthy, 2026-10-10 13:03:24.824244+00, null, null, {}, null, null).
+2026-10-10 13:03:24.827 UTC [78] STATEMENT:  INSERT INTO agent_sessions(id,workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,retry_of_session_id,retry_count) VALUES($1,$2,$3,$4,$5,$6,$7,$1,1)
+2026-10-10 13:03:26.992 UTC [79] ERROR:  insert or update on table "work_items" violates foreign key constraint "work_items_workspace_team_fk"
+2026-10-10 13:03:26.992 UTC [79] DETAIL:  Key (workspace_id, team_id)=(b937a040-7153-4f85-8f2f-e18dd8f43a11, 8f3940bf-d9fc-42a3-a092-d7aeebd3b981) is not present in table "teams".
+2026-10-10 13:03:26.992 UTC [79] STATEMENT:  INSERT INTO work_items(workspace_id,team_id,number,title,status_id) VALUES($1,$2,1,'Invalid',$3)
+2026-10-10 13:03:27.027 UTC [80] ERROR:  insert or update on table "comments" violates foreign key constraint "comments_same_channel_parent_fk"
+2026-10-10 13:03:27.027 UTC [80] DETAIL:  Key (channel_id, parent_comment_id)=(e5b8d1b7-4fd5-4b81-9962-ffd57957494b, c80f11e9-b389-4b03-9650-37a2c8a2ff24) is not present in table "comments".
+2026-10-10 13:03:27.027 UTC [80] STATEMENT:  INSERT INTO comments(workspace_id,channel_id,author_actor_id,parent_comment_id,body) VALUES($1,$2,$3,$4,$5)
+2026-10-10 13:03:27.042 UTC [81] ERROR:  COMMENT_MENTION_REQUIRES_HUMAN_ACTOR
+2026-10-10 13:03:27.042 UTC [81] CONTEXT:  PL/pgSQL function enforce_human_comment_mention() line 7 at RAISE
+2026-10-10 13:03:27.042 UTC [81] STATEMENT:  INSERT INTO comment_mentions(workspace_id,comment_id,actor_id) VALUES($1,$2,$3)
+2026-10-10 13:03:32.485 UTC [83] ERROR:  duplicate key value violates unique constraint "actors_workspace_id_email_key"
+2026-10-10 13:03:32.485 UTC [83] DETAIL:  Key (workspace_id, email)=(37dcc672-ecc1-44d5-ad94-fc3c6d6816ee, bob@example.test) already exists.
+2026-10-10 13:03:32.485 UTC [83] STATEMENT:  INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash) VALUES($1,'human','admin',$2,$3,$4) RETURNING id
+2026-10-10 13:03:32.490 UTC [83] ERROR:  new row for relation "outbox_events" violates check constraint "outbox_events_attempt_count_range"
+2026-10-10 13:03:32.490 UTC [83] DETAIL:  Failing row contains (b2aa92dc-c42c-4eba-909e-336f7a8cb974, 347422cd-c688-421c-ab2f-db6873193ed8, workspace.installed, 37dcc672-ecc1-44d5-ad94-fc3c6d6816ee, pending, 9, 2026-10-10 13:03:31.83419+00, null, null, null, null, 2026-10-10 13:03:31.83419+00).
+2026-10-10 13:03:32.490 UTC [83] STATEMENT:  UPDATE outbox_events SET attempt_count=9 WHERE id=$1
+2026-10-10 13:03:34.933 UTC [82] ERROR:  insert or update on table "delegations" violates foreign key constraint "delegations_workspace_id_team_id_work_item_id_fkey"
+2026-10-10 13:03:34.933 UTC [82] DETAIL:  Key (workspace_id, team_id, work_item_id)=(a8d16520-5474-414e-88ac-ee544d17b882, b0d1f0f4-35c7-4836-8e37-11de1a45fce5, 45918c5a-9baa-436f-87c9-42c8b02b494e) is not present in table "work_items".
+2026-10-10 13:03:34.933 UTC [82] STATEMENT:  INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6)
+2026-10-10 13:03:34.952 UTC [85] ERROR:  duplicate key value violates unique constraint "delegations_one_active_executor_per_work_item"
+2026-10-10 13:03:34.952 UTC [85] DETAIL:  Key (work_item_id)=(45918c5a-9baa-436f-87c9-42c8b02b494e) already exists.
+2026-10-10 13:03:34.952 UTC [85] STATEMENT:  INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6)
+2026-10-10 13:03:34.967 UTC [86] ERROR:  IMMUTABLE_STAGE1_FACT
+2026-10-10 13:03:34.967 UTC [86] CONTEXT:  PL/pgSQL function prevent_stage1_fact_mutation() line 1 at RAISE
+2026-10-10 13:03:34.967 UTC [86] STATEMENT:  UPDATE context_snapshots SET manifest='{"changed":true}' WHERE id=$1
+2026-10-10 13:03:35.000 UTC [87] ERROR:  IMMUTABLE_STAGE1_FACT
+2026-10-10 13:03:35.000 UTC [87] CONTEXT:  PL/pgSQL function prevent_stage1_fact_mutation() line 1 at RAISE
+2026-10-10 13:03:35.000 UTC [87] STATEMENT:  UPDATE agent_plan_versions SET change_summary='Mutated' WHERE id=$1
+2026-10-10 13:03:35.012 UTC [88] ERROR:  duplicate key value violates unique constraint "agent_activities_session_id_sequence_key"
+2026-10-10 13:03:35.012 UTC [88] DETAIL:  Key (session_id, sequence)=(6164441d-d6b7-404e-ae47-2b42dc26becb, 1) already exists.
+2026-10-10 13:03:35.012 UTC [88] STATEMENT:  INSERT INTO agent_activities(session_id,actor_id,sequence,kind,summary) VALUES($1,$2,1,'ack','Duplicate')
+2026-10-10 13:03:37.154 UTC [89] ERROR:  duplicate key value violates unique constraint "agent_session_tokens_one_live_exchange"
+2026-10-10 13:03:37.154 UTC [89] DETAIL:  Key (session_id)=(956b6630-a894-4bcf-81ae-b52b86ab3279) already exists.
+2026-10-10 13:03:37.154 UTC [89] STATEMENT:  INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at) VALUES($1,$2,$3,'token-two','nonce-two',now()+interval '5 minutes')
+2026-10-10 13:03:37.171 UTC [90] ERROR:  duplicate key value violates unique constraint "agent_webhook_deliveries_agent_id_delivery_id_key"
+2026-10-10 13:03:37.171 UTC [90] DETAIL:  Key (agent_id, delivery_id)=(4fb0bab5-f619-4250-b443-f11cad197d05, delivery-1) already exists.
+2026-10-10 13:03:37.171 UTC [90] STATEMENT:  INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,delivery_id,event_type,session_id) VALUES($1,$2,1,'delivery-1','agent.session.created',$3)
+2026-10-10 13:03:43.041 UTC [95] ERROR:  new row for relation "agent_sessions" violates check constraint "agent_sessions_external_urls_array_check"
+2026-10-10 13:03:43.041 UTC [95] DETAIL:  Failing row contains (78609065-4041-4c9d-9bbd-89112a24fe5c, 191b9a16-c658-41be-ba05-28055ee77d7b, 8650508c-67be-4376-b3bc-66c18f3dfca9, c3ca5d2c-929a-4be8-9ef7-fe39ed460a49, b4fc6875-898c-4ade-bcc7-984bdef1c949, 3f7d3d7a-d73c-4e84-b387-452f3430297f, null, 3aca17d1-ff50-4668-bfa5-d9b595d3086f, null, null, queued, null, 0, 1, null, null, {}, {}, null, null, null, null, null, [], null, null, null, null, 2026-10-10 13:03:43.040742+00, 2026-10-10 13:03:43.040742+00, null, null, 0, 8, {}, f, null, null, healthy, 2026-10-10 13:03:43.040742+00, null, null, {}, null, null).
+2026-10-10 13:03:43.041 UTC [95] STATEMENT:  INSERT INTO agent_sessions(
+	         workspace_id,team_id,agent_id,agent_actor_id,
+	    delegation_id,work_item_id,external_urls
+	       ) VALUES(
+	         $1,$2,$3,$4,$5,$6,$7::jsonb
+	       ) RETURNING id
+2026-10-10 13:03:43.052 UTC [96] ERROR:  new row for relation "api_idempotency_keys" violates check constraint "api_idempotency_ack_session_external_urls_array_check"
+2026-10-10 13:03:43.052 UTC [96] DETAIL:  Failing row contains (191b9a16-c658-41be-ba05-28055ee77d7b, b4fc6875-898c-4ade-bcc7-984bdef1c949, clean-invalid-ack, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., 200, {"external_urls": {}}, 2026-10-10 13:03:43.051362+00, acknowledgeAgentSession, 2026-10-11 13:03:43.051362+00, 2026-11-09 13:03:43.051362+00).
+2026-10-10 13:03:43.052 UTC [96] STATEMENT:  INSERT INTO api_idempotency_keys(
+	       workspace_id,actor_id,idempotency_key,operation,request_hash,
+	       response_status,response_body
+	     ) VALUES($1,$2,$3,$4,$5,$6,$7::jsonb)
+2026-10-10 13:03:43.396 UTC [93] ERROR:  check constraint "agent_sessions_external_urls_array_check" of relation "agent_sessions" is violated by some row
+2026-10-10 13:03:43.396 UTC [93] STATEMENT:  ALTER TABLE agent_sessions
+	  ADD CONSTRAINT agent_sessions_external_urls_array_check
+	  CHECK (jsonb_typeof(external_urls) = 'array') NOT VALID;
+
+	ALTER TABLE api_idempotency_keys
+	  ADD CONSTRAINT api_idempotency_ack_session_external_urls_array_check
+	  CHECK (
+	    operation <> 'acknowledgeAgentSession'
+	    OR response_body IS NULL
+	    OR COALESCE(
+	      jsonb_typeof(response_body) = 'object'
+	      AND jsonb_typeof(response_body->'external_urls') = 'array',
+	      false
+	    )
+	  ) NOT VALID;
+
+	UPDATE agent_sessions
+	  SET external_urls = '[]'::jsonb
+	  WHERE external_urls = '{}'::jsonb;
+
+	UPDATE api_idempotency_keys
+	  SET response_body = jsonb_set(
+	    response_body,
+	    '{external_urls}',
+	    '[]'::jsonb,
+	    false
+	  )
+	  WHERE operation = 'acknowledgeAgentSession'
+	    AND response_body->'external_urls' = '{}'::jsonb;
+
+	ALTER TABLE agent_sessions
+	  VALIDATE CONSTRAINT agent_sessions_external_urls_array_check;
+
+	ALTER TABLE api_idempotency_keys
+	  VALIDATE CONSTRAINT api_idempotency_ack_session_external_urls_array_check;
+2026-10-10 13:03:43.518 UTC [93] ERROR:  check constraint "api_idempotency_ack_session_external_urls_array_check" of relation "api_idempotency_keys" is violated by some row
+2026-10-10 13:03:43.518 UTC [93] STATEMENT:  ALTER TABLE agent_sessions
+	  ADD CONSTRAINT agent_sessions_external_urls_array_check
+	  CHECK (jsonb_typeof(external_urls) = 'array') NOT VALID;
+
+	ALTER TABLE api_idempotency_keys
+	  ADD CONSTRAINT api_idempotency_ack_session_external_urls_array_check
+	  CHECK (
+	    operation <> 'acknowledgeAgentSession'
+	    OR response_body IS NULL
+	    OR COALESCE(
+	      jsonb_typeof(response_body) = 'object'
+	      AND jsonb_typeof(response_body->'external_urls') = 'array',
+	      false
+	    )
+	  ) NOT VALID;
+
+	UPDATE agent_sessions
+	  SET external_urls = '[]'::jsonb
+	  WHERE external_urls = '{}'::jsonb;
+
+	UPDATE api_idempotency_keys
+	  SET response_body = jsonb_set(
+	    response_body,
+	    '{external_urls}',
+	    '[]'::jsonb,
+	    false
+	  )
+	  WHERE operation = 'acknowledgeAgentSession'
+	    AND response_body->'external_urls' = '{}'::jsonb;
+
+	ALTER TABLE agent_sessions
+	  VALIDATE CONSTRAINT agent_sessions_external_urls_array_check;
+
+	ALTER TABLE api_idempotency_keys
+	  VALIDATE CONSTRAINT api_idempotency_ack_session_external_urls_array_check;
+2026-10-10 13:03:43.923 UTC [94] ERROR:  check constraint "agent_sessions_external_urls_array_check" of relation "agent_sessions" is violated by some row
+2026-10-10 13:03:43.923 UTC [94] STATEMENT:  ALTER TABLE agent_sessions
+	  ADD CONSTRAINT agent_sessions_external_urls_array_check
+	  CHECK (jsonb_typeof(external_urls) = 'array') NOT VALID;
+
+	ALTER TABLE api_idempotency_keys
+	  ADD CONSTRAINT api_idempotency_ack_session_external_urls_array_check
+	  CHECK (
+	    operation <> 'acknowledgeAgentSession'
+	    OR response_body IS NULL
+	    OR COALESCE(
+	      jsonb_typeof(response_body) = 'object'
+	      AND jsonb_typeof(response_body->'external_urls') = 'array',
+	      false
+	    )
+	  ) NOT VALID;
+
+	UPDATE agent_sessions
+	  SET external_urls = '[]'::jsonb
+	  WHERE external_urls = '{}'::jsonb;
+
+	UPDATE api_idempotency_keys
+	  SET response_body = jsonb_set(
+	    response_body,
+	    '{external_urls}',
+	    '[]'::jsonb,
+	    false
+	  )
+	  WHERE operation = 'acknowledgeAgentSession'
+	    AND response_body->'external_urls' = '{}'::jsonb;
+
+	ALTER TABLE agent_sessions
+	  VALIDATE CONSTRAINT agent_sessions_external_urls_array_check;
+
+	ALTER TABLE api_idempotency_keys
+	  VALIDATE CONSTRAINT api_idempotency_ack_session_external_urls_array_check;
+2026-10-10 13:03:44.104 UTC [94] ERROR:  check constraint "api_idempotency_ack_session_external_urls_array_check" of relation "api_idempotency_keys" is violated by some row
+2026-10-10 13:03:44.104 UTC [94] STATEMENT:  ALTER TABLE agent_sessions
+	  ADD CONSTRAINT agent_sessions_external_urls_array_check
+	  CHECK (jsonb_typeof(external_urls) = 'array') NOT VALID;
+
+	ALTER TABLE api_idempotency_keys
+	  ADD CONSTRAINT api_idempotency_ack_session_external_urls_array_check
+	  CHECK (
+	    operation <> 'acknowledgeAgentSession'
+	    OR response_body IS NULL
+	    OR COALESCE(
+	      jsonb_typeof(response_body) = 'object'
+	      AND jsonb_typeof(response_body->'external_urls') = 'array',
+	      false
+	    )
+	  ) NOT VALID;
+
+	UPDATE agent_sessions
+	  SET external_urls = '[]'::jsonb
+	  WHERE external_urls = '{}'::jsonb;
+
+	UPDATE api_idempotency_keys
+	  SET response_body = jsonb_set(
+	    response_body,
+	    '{external_urls}',
+	    '[]'::jsonb,
+	    false
+	  )
+	  WHERE operation = 'acknowledgeAgentSession'
+	    AND response_body->'external_urls' = '{}'::jsonb;
+
+	ALTER TABLE agent_sessions
+	  VALIDATE CONSTRAINT agent_sessions_external_urls_array_check;
+
+	ALTER TABLE api_idempotency_keys
+	  VALIDATE CONSTRAINT api_idempotency_ack_session_external_urls_array_check;
+2026-10-10 13:03:44.118 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:03:44.288 UTC [55] LOG:  checkpoint complete: wrote 13960 buffers (85.2%); 0 WAL file(s) added, 0 removed, 20 recycled; write=0.059 s, sync=0.068 s, total=0.171 s; sync files=28331, longest=0.001 s, average=0.001 s; distance=321342 kB, estimate=321342 kB; lsn=0/152F5680, redo lsn=0/152F5648
+2026-10-10 13:03:44.298 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:03:44.299 UTC [55] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.001 s; sync files=2, longest=0.001 s, average=0.001 s; distance=1 kB, estimate=289208 kB; lsn=0/152F5DA0, redo lsn=0/152F5D68
+2026-10-10 13:03:44.315 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:03:44.315 UTC [55] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.001 s; sync files=2, longest=0.001 s, average=0.001 s; distance=1 kB, estimate=260287 kB; lsn=0/152F64D8, redo lsn=0/152F64A0
+2026-10-10 13:03:44.321 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:03:44.321 UTC [55] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.001 s; sync files=2, longest=0.001 s, average=0.001 s; distance=1 kB, estimate=234258 kB; lsn=0/152F6BF8, redo lsn=0/152F6BC0
+2026-10-10 13:03:49.949 UTC [98] ERROR:  INBOX_REPLY_MESSAGE_SCOPE_MISMATCH
+2026-10-10 13:03:49.949 UTC [98] CONTEXT:  PL/pgSQL function enforce_inbox_receipt_scope() line 45 at RAISE
+2026-10-10 13:03:49.949 UTC [98] STATEMENT:  INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'new-foreign','new-foreign')
+2026-10-10 13:03:49.976 UTC [99] ERROR:  INBOX_REPLY_MESSAGE_SCOPE_MISMATCH
+2026-10-10 13:03:49.976 UTC [99] CONTEXT:  PL/pgSQL function enforce_inbox_receipt_scope() line 45 at RAISE
+2026-10-10 13:03:49.976 UTC [99] STATEMENT:  INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'new-unrelated','new-unrelated')
+2026-10-10 13:03:52.059 UTC [100] ERROR:  insert or update on table "room_message_session_recipients" violates foreign key constraint "room_message_session_recipients_workspace_id_message_id_fkey"
+2026-10-10 13:03:52.059 UTC [100] DETAIL:  Key (workspace_id, message_id)=(bb2e6f55-27cf-4818-9b06-1dcfdf60492c, 8deb1c6c-6c92-4f20-af94-64901d9f43e1) is not present in table "room_messages".
+2026-10-10 13:03:52.059 UTC [100] STATEMENT:  INSERT INTO room_message_session_recipients(message_id,workspace_id,session_id,actor_id) VALUES($1,$2,$3,$4)
+2026-10-10 13:03:52.072 UTC [102] ERROR:  INBOX_RECEIPT_RECIPIENT_MISMATCH
+2026-10-10 13:03:52.072 UTC [102] CONTEXT:  PL/pgSQL function enforce_inbox_receipt_scope() line 27 at RAISE
+2026-10-10 13:03:52.072 UTC [102] STATEMENT:  INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'read','cross-workspace','cross-workspace')
+2026-10-10 13:03:52.092 UTC [103] ERROR:  INBOX_RECEIPT_RECIPIENT_MISMATCH
+2026-10-10 13:03:52.092 UTC [103] CONTEXT:  PL/pgSQL function enforce_inbox_receipt_scope() line 27 at RAISE
+2026-10-10 13:03:52.092 UTC [103] STATEMENT:  INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'read','sibling','sibling')
+2026-10-10 13:03:52.125 UTC [104] ERROR:  INBOX_RECEIPT_RECIPIENT_MISMATCH
+2026-10-10 13:03:52.125 UTC [104] CONTEXT:  PL/pgSQL function enforce_inbox_receipt_scope() line 27 at RAISE
+2026-10-10 13:03:52.125 UTC [104] STATEMENT:  INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'read','foreign-actor','foreign-actor')
+2026-10-10 13:03:52.150 UTC [105] ERROR:  INBOX_REPLY_MESSAGE_SCOPE_MISMATCH
+2026-10-10 13:03:52.150 UTC [105] CONTEXT:  PL/pgSQL function enforce_inbox_receipt_scope() line 45 at RAISE
+2026-10-10 13:03:52.150 UTC [105] STATEMENT:  INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'wrong-room','wrong-room')
+2026-10-10 13:03:52.169 UTC [106] ERROR:  INBOX_REPLY_MESSAGE_SCOPE_MISMATCH
+2026-10-10 13:03:52.169 UTC [106] CONTEXT:  PL/pgSQL function enforce_inbox_receipt_scope() line 45 at RAISE
+2026-10-10 13:03:52.169 UTC [106] STATEMENT:  INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'foreign-author','foreign-author')
+2026-10-10 13:03:52.190 UTC [107] ERROR:  INBOX_REPLY_MESSAGE_SCOPE_MISMATCH
+2026-10-10 13:03:52.190 UTC [107] CONTEXT:  PL/pgSQL function enforce_inbox_receipt_scope() line 45 at RAISE
+2026-10-10 13:03:52.190 UTC [107] STATEMENT:  INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'unrelated-message','unrelated-message')
+2026-10-10 13:03:52.210 UTC [108] ERROR:  new row for relation "handoffs" violates check constraint "handoffs_check"
+2026-10-10 13:03:52.210 UTC [108] DETAIL:  Failing row contains (1a4b9633-8914-4590-83a3-15fcc0e0f14a, 069d15ef-62b7-4031-a3e7-c59d98a10ffd, f7221bac-e1c1-4742-b7d9-bd6d7b968280, null, null, null, null, invalid, [], [], null, {}, [], [], [], null, retain, {}, draft, null, null, null, null, null, {}, 1, 2026-10-10 13:03:52.209623+00, null, null, null).
+2026-10-10 13:03:52.210 UTC [108] STATEMENT:  INSERT INTO handoffs(workspace_id,from_session_id,summary,target_skill,target_agent_id) VALUES($1,$2,'invalid',NULL,NULL)
+2026-10-10 13:03:52.218 UTC [109] ERROR:  new row for relation "handoffs" violates check constraint "handoffs_check"
+2026-10-10 13:03:52.218 UTC [109] DETAIL:  Failing row contains (31265379-344e-4224-8313-aa9f71224fca, 069d15ef-62b7-4031-a3e7-c59d98a10ffd, f7221bac-e1c1-4742-b7d9-bd6d7b968280, 19cf1c39-78ee-4e23-972c-8788be4d2055, skill, null, null, invalid, [], [], null, {}, [], [], [], null, retain, {}, draft, null, null, null, null, null, {}, 1, 2026-10-10 13:03:52.217591+00, null, null, null).
+2026-10-10 13:03:52.218 UTC [109] STATEMENT:  INSERT INTO handoffs(workspace_id,from_session_id,summary,target_skill,target_agent_id) VALUES($1,$2,'invalid','skill',$3)
+2026-10-10 13:03:52.234 UTC [110] ERROR:  duplicate key value violates unique constraint "routing_attempts_workspace_id_handoff_id_attempt_key_key"
+2026-10-10 13:03:52.234 UTC [110] DETAIL:  Key (workspace_id, handoff_id, attempt_key)=(069d15ef-62b7-4031-a3e7-c59d98a10ffd, 8fe9d125-f095-437e-b393-bf4d8d5d4824, attempt-1) already exists.
+2026-10-10 13:03:52.234 UTC [110] STATEMENT:  INSERT INTO routing_attempts(workspace_id,handoff_id,source_session_id,attempt_key,candidate_count,outcome) VALUES($1,$2,$3,'attempt-1',0,'no_candidate')
+2026-10-10 13:03:52.245 UTC [111] ERROR:  IMMUTABLE_STAGE2_FACT
+2026-10-10 13:03:52.245 UTC [111] CONTEXT:  PL/pgSQL function prevent_stage2_fact_mutation() line 1 at RAISE
+2026-10-10 13:03:52.245 UTC [111] STATEMENT:  UPDATE routing_attempts SET failure_code='CHANGED' WHERE handoff_id=$1
+2026-10-10 13:03:52.262 UTC [112] ERROR:  duplicate key value violates unique constraint "decision_transition_consumptions_target_decision_id_key"
+2026-10-10 13:03:52.262 UTC [112] DETAIL:  Key (target_decision_id)=(17c018c1-b12d-4fb0-87da-241240fb391b) already exists.
+2026-10-10 13:03:52.262 UTC [112] STATEMENT:  INSERT INTO decision_transition_consumptions(target_decision_id,transition_type,derived_decision_id,consumed_by_actor_id) VALUES($1,'reverse',$2,$3)
+2026-10-10 13:03:52.276 UTC [113] ERROR:  IMMUTABLE_STAGE2_FACT
+2026-10-10 13:03:52.276 UTC [113] CONTEXT:  PL/pgSQL function prevent_stage2_fact_mutation() line 1 at RAISE
+2026-10-10 13:03:52.276 UTC [113] STATEMENT:  UPDATE decision_transition_consumptions SET transition_type='reverse' WHERE target_decision_id=$1
+2026-10-10 13:03:52.291 UTC [114] ERROR:  duplicate key value violates unique constraint "leases_active_exclusive_resource"
+2026-10-10 13:03:52.291 UTC [114] DETAIL:  Key (workspace_id, resource_type, resource_id)=(069d15ef-62b7-4031-a3e7-c59d98a10ffd, plan_step, 50440f7f-a706-429e-841e-6c81b034eb93) already exists.
+2026-10-10 13:03:52.291 UTC [114] STATEMENT:  INSERT INTO leases(workspace_id,session_id,resource_type,resource_id,kind,reason,expires_at) VALUES($1,$2,'plan_step',$3,'exclusive','duplicate',now()+interval '1 minute')
+2026-10-10 13:03:54.934 UTC [116] ERROR:  new row for relation "decisions" violates check constraint "decisions_check"
+2026-10-10 13:03:54.934 UTC [116] DETAIL:  Failing row contains (d3f0505e-7d91-4178-898b-9a7fbfaa9a03, d8331ef6-eac4-4eeb-88bd-541985308ce7, 341ff96b-4456-4f2a-95cc-3f4ab0211d91, null, b19aab66-3d69-4fea-bbef-281795666d01, 27a638b2-de22-4f86-a9c0-11486eb2f54f, null, Pre-upgrade provenance, Old constraint rejects this, [], null, [], proposed, 1, 2026-10-10 13:03:54.93387+00, null).
+2026-10-10 13:03:54.934 UTC [116] STATEMENT:  INSERT INTO decisions(
+	         workspace_id,work_item_id,session_id,proposed_by_actor_id,title,rationale
+	       ) VALUES($1,$2,$3,$4,'Pre-upgrade provenance','Old constraint rejects this')
+2026-10-10 13:03:55.168 UTC [117] ERROR:  new row for relation "decisions" violates check constraint "decisions_subject_check"
+2026-10-10 13:03:55.168 UTC [117] DETAIL:  Failing row contains (f02c12a8-d24a-400e-a558-e6050927c8d8, d8331ef6-eac4-4eeb-88bd-541985308ce7, null, null, null, 27a638b2-de22-4f86-a9c0-11486eb2f54f, null, Missing subject, Must fail, [], null, [], proposed, 1, 2026-10-10 13:03:55.168152+00, null).
+2026-10-10 13:03:55.168 UTC [117] STATEMENT:  INSERT INTO decisions(
+	       workspace_id,proposed_by_actor_id,title,rationale
+	     ) VALUES($1,$2,'Missing subject','Must fail')
+2026-10-10 13:03:55.182 UTC [118] ERROR:  new row for relation "decisions" violates check constraint "decisions_subject_check"
+2026-10-10 13:03:55.182 UTC [118] DETAIL:  Failing row contains (543f079e-ab3d-4766-a6a9-57ea1f18cbbd, d8331ef6-eac4-4eeb-88bd-541985308ce7, 341ff96b-4456-4f2a-95cc-3f4ab0211d91, 981e2c7f-8e0d-4301-b904-9d9ad895c4fe, b19aab66-3d69-4fea-bbef-281795666d01, 27a638b2-de22-4f86-a9c0-11486eb2f54f, null, Multiple resource subjects, Must fail, [], null, [], proposed, 1, 2026-10-10 13:03:55.180027+00, null).
+2026-10-10 13:03:55.182 UTC [118] STATEMENT:  INSERT INTO decisions(
+	       workspace_id,work_item_id,project_id,session_id,
+	       proposed_by_actor_id,title,rationale
+	     ) VALUES($1,$2,$3,$4,$5,'Multiple resource subjects','Must fail')
+2026-10-10 13:03:57.753 UTC [119] ERROR:  new row for relation "decisions" violates check constraint "decisions_subject_check"
+2026-10-10 13:03:57.753 UTC [119] DETAIL:  Failing row contains (77db468b-b421-41e2-a28e-f0d32cce4389, 97333aa9-3a0d-4eb6-bf46-c8a50de2b777, null, null, null, 7112ba39-908f-450d-8825-1c7b54f18518, null, Missing subject, Must fail, [], null, [], proposed, 1, 2026-10-10 13:03:57.753627+00, null).
+2026-10-10 13:03:57.753 UTC [119] STATEMENT:  INSERT INTO decisions(
+	       workspace_id,proposed_by_actor_id,title,rationale
+	     ) VALUES($1,$2,'Missing subject','Must fail')
+2026-10-10 13:03:57.766 UTC [120] ERROR:  new row for relation "decisions" violates check constraint "decisions_subject_check"
+2026-10-10 13:03:57.766 UTC [120] DETAIL:  Failing row contains (85fe9d7b-0ab2-4a7e-996e-57fd35e145e8, 97333aa9-3a0d-4eb6-bf46-c8a50de2b777, 3e33ea72-038b-449e-b615-b0ed8619695a, 4469a102-ce74-4163-8150-e5b6684d6761, de794f27-0ba7-4ac2-b2fd-dfef756b413c, 7112ba39-908f-450d-8825-1c7b54f18518, null, Multiple resource subjects, Must fail, [], null, [], proposed, 1, 2026-10-10 13:03:57.764576+00, null).
+2026-10-10 13:03:57.766 UTC [120] STATEMENT:  INSERT INTO decisions(
+	       workspace_id,work_item_id,project_id,session_id,
+	       proposed_by_actor_id,title,rationale
+	     ) VALUES($1,$2,$3,$4,$5,'Multiple resource subjects','Must fail')
+2026-10-10 13:04:07.383 UTC [125] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_object_version_state_check"
+2026-10-10 13:04:07.383 UTC [125] DETAIL:  Failing row contains (721b2dcd-8848-47e3-8feb-9ef03dda49d1, 99642aa1-e230-4e63-9ef4-ad562f4353c1, 1, 1, 2026-07-01 02:03:04.567+00, 1, durable-plan, null, 1, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..., sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., {"fixedCutoffAt": "2026-07-01T02:03:04.567Z"}, uploaded, 2027-10-11 13:04:07.38042+00, 2026-10-10 13:04:07.383219+00, null, null, null, 2026-10-10 13:04:07.38042+00, 2026-10-10 13:04:07.38042+00, pending_exact, 0, null, null, 7).
+2026-10-10 13:04:07.383 UTC [125] STATEMENT:  UPDATE event_archive_segments
+	            SET state='uploaded',uploaded_at=now()
+	          WHERE id=$1
+2026-10-10 13:04:07.397 UTC [126] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_object_version_state_check"
+2026-10-10 13:04:07.397 UTC [126] DETAIL:  Failing row contains (721b2dcd-8848-47e3-8feb-9ef03dda49d1, 99642aa1-e230-4e63-9ef4-ad562f4353c1, 1, 1, 2026-07-01 02:03:04.567+00, 1, durable-plan, version-before-upload, 1, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..., sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., {"fixedCutoffAt": "2026-07-01T02:03:04.567Z"}, planned, 2027-10-11 13:04:07.38042+00, null, null, null, null, 2026-10-10 13:04:07.38042+00, 2026-10-10 13:04:07.38042+00, pending_exact, 0, null, null, 7).
+2026-10-10 13:04:07.397 UTC [126] STATEMENT:  UPDATE event_archive_segments
+	            SET object_version_id='version-before-upload'
+	          WHERE id=$1
+2026-10-10 13:04:07.411 UTC [127] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_timestamp_state_check"
+2026-10-10 13:04:07.411 UTC [127] DETAIL:  Failing row contains (721b2dcd-8848-47e3-8feb-9ef03dda49d1, 99642aa1-e230-4e63-9ef4-ad562f4353c1, 1, 1, 2026-07-01 02:03:04.567+00, 1, durable-plan, null, 1, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..., sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., {"fixedCutoffAt": "2026-07-01T02:03:04.567Z"}, planned, 2027-10-11 13:04:07.38042+00, 2026-10-10 13:04:07.409167+00, null, null, null, 2026-10-10 13:04:07.38042+00, 2026-10-10 13:04:07.38042+00, pending_exact, 0, null, null, 7).
+2026-10-10 13:04:07.411 UTC [127] STATEMENT:  UPDATE event_archive_segments
+	            SET uploaded_at=now()
+	          WHERE id=$1
+2026-10-10 13:04:07.423 UTC [128] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_fixed_cutoff_metadata_check"
+2026-10-10 13:04:07.423 UTC [128] DETAIL:  Failing row contains (721b2dcd-8848-47e3-8feb-9ef03dda49d1, 99642aa1-e230-4e63-9ef4-ad562f4353c1, 1, 1, 2026-07-01 02:03:04.567+00, 1, durable-plan, null, 1, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..., sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., {"fixedCutoffAt": "2026-07-01T02:03:04.567+00:00"}, planned, 2027-10-11 13:04:07.38042+00, null, null, null, null, 2026-10-10 13:04:07.38042+00, 2026-10-10 13:04:07.38042+00, pending_exact, 0, null, null, 7).
+2026-10-10 13:04:07.423 UTC [128] STATEMENT:  UPDATE event_archive_segments
+	            SET metadata=jsonb_set(
+	              metadata,
+	              '{fixedCutoffAt}',
+	              to_jsonb('2026-07-01T02:03:04.567+00:00'::text)
+	            )
+	          WHERE id=$1
+2026-10-10 13:04:07.447 UTC [129] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_membership_state_check"
+2026-10-10 13:04:07.447 UTC [129] DETAIL:  Failing row contains (721b2dcd-8848-47e3-8feb-9ef03dda49d1, 99642aa1-e230-4e63-9ef4-ad562f4353c1, 1, 1, 2026-07-01 02:03:04.567+00, 1, durable-plan, null, 1, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..., sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., {"fixedCutoffAt": "2026-07-01T02:03:04.567Z"}, failed, 2027-10-11 13:04:07.38042+00, null, null, null, RETENTION_JOB_FAILED, 2026-10-10 13:04:07.38042+00, 2026-10-10 13:04:07.38042+00, pending_exact, 0, null, null, 7).
+2026-10-10 13:04:07.447 UTC [129] STATEMENT:  UPDATE event_archive_segments
+	            SET state='failed',last_error_code='RETENTION_JOB_FAILED'
+	          WHERE id=$1
+2026-10-10 13:04:07.467 UTC [130] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_object_version_state_check"
+2026-10-10 13:04:07.467 UTC [130] DETAIL:  Failing row contains (721b2dcd-8848-47e3-8feb-9ef03dda49d1, 99642aa1-e230-4e63-9ef4-ad562f4353c1, 1, 1, 2026-07-01 02:03:04.567+00, 1, durable-plan, null, 1, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..., sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., {"fixedCutoffAt": "2026-07-01T02:03:04.567Z"}, uploaded, 2027-10-11 13:04:07.38042+00, 2026-10-10 13:04:07.462948+00, null, null, null, 2026-10-10 13:04:07.38042+00, 2026-10-10 13:04:07.38042+00, pending_exact, 1, 2026-10-10 13:04:07.462948+00, 8, 7).
+2026-10-10 13:04:07.467 UTC [130] STATEMENT:  UPDATE event_archive_segments
+	            SET object_version_id=NULL
+	          WHERE id=$1
+2026-10-10 13:04:07.479 UTC [131] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_membership_state_check"
+2026-10-10 13:04:07.479 UTC [131] DETAIL:  Failing row contains (721b2dcd-8848-47e3-8feb-9ef03dda49d1, 99642aa1-e230-4e63-9ef4-ad562f4353c1, 1, 1, 2026-07-01 02:03:04.567+00, 1, durable-plan, null, 1, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..., sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., {"fixedCutoffAt": "2026-07-01T02:03:04.567Z"}, verified, 2027-10-11 13:04:07.38042+00, 2026-10-10 13:04:07.462948+00, 2026-10-10 13:04:07.476796+00, null, null, 2026-10-10 13:04:07.38042+00, 2026-10-10 13:04:07.38042+00, exact, 1, 2026-10-10 13:04:07.462948+00, 8, 7).
+2026-10-10 13:04:07.479 UTC [131] STATEMENT:  UPDATE event_archive_segments
+	            SET state='verified',membership_state='exact',
+	                object_version_id=NULL,verified_at=now()
+	          WHERE id=$1
+2026-10-10 13:04:07.491 UTC [132] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_membership_state_check"
+2026-10-10 13:04:07.491 UTC [132] DETAIL:  Failing row contains (721b2dcd-8848-47e3-8feb-9ef03dda49d1, 99642aa1-e230-4e63-9ef4-ad562f4353c1, 1, 1, 2026-07-01 02:03:04.567+00, 1, durable-plan, null, 1, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..., sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., {"fixedCutoffAt": "2026-07-01T02:03:04.567Z"}, pruned, 2027-10-11 13:04:07.38042+00, 2026-10-10 13:04:07.462948+00, 2026-10-10 13:04:07.488101+00, 2026-10-10 13:04:07.491512+00, null, 2026-10-10 13:04:07.38042+00, 2026-10-10 13:04:07.38042+00, exact, 1, 2026-10-10 13:04:07.462948+00, 8, 7).
+2026-10-10 13:04:07.491 UTC [132] STATEMENT:  UPDATE event_archive_segments
+	            SET state='pruned',object_version_id=NULL,pruned_at=now()
+	          WHERE id=$1
+2026-10-10 13:04:07.593 UTC [124] ERROR:  UPGRADE_BARRIER_RETENTION_CLAIM_ACTIVE
+2026-10-10 13:04:07.593 UTC [124] CONTEXT:  PL/pgSQL function inline_code_block line 10 at RAISE
+2026-10-10 13:04:07.593 UTC [124] STATEMENT:  -- This is a secondary database-side barrier after operators have stopped the
+	-- old Worker and run the exact target-image S3 reconciliation. It closes the
+	-- race with any residual retention writer for the whole migration.
+	LOCK TABLE retention_job_state IN SHARE ROW EXCLUSIVE MODE;
+
+	DO $$
+	BEGIN
+	  IF EXISTS (
+	    SELECT 1
+	      FROM retention_job_state
+	     WHERE job_name<>'worker_runtime'
+	       AND lease_owner IS NOT NULL
+	       AND lease_expires_at>now()
+	  ) THEN
+	    RAISE EXCEPTION USING
+	      ERRCODE='55006',
+	      MESSAGE='UPGRADE_BARRIER_RETENTION_CLAIM_ACTIVE';
+	  END IF;
+	END;
+	$$;
+
+	-- Before this migration pending_exact meant only "membership has not been
+	-- materialized yet"; those rows predate durable upload intents and have no
+	-- provisional reservations. Preserve them on the pinned-object legacy path.
+	UPDATE event_archive_segments
+	   SET membership_state='legacy_unindexed',
+	       updated_at=now()
+	 WHERE membership_state='pending_exact';
+
+	ALTER TABLE event_archive_segments
+	  ALTER COLUMN object_version_id DROP NOT NULL,
+	  ADD COLUMN upload_attempt_count integer NOT NULL DEFAULT 0,
+	  ADD COLUMN last_upload_attempt_at timestamptz,
+	  ADD COLUMN last_upload_fence bigint,
+	  ADD COLUMN planned_fence bigint;
+
+	-- Canonical metadata did not originally require the frozen cutoff. PostgreSQL
+	-- timestamps may retain microseconds while the Node.js Date boundary is
+	-- millisecond-precise, so normalize historical values to that shared precision
+	-- and write the exact UTC ISO spelling produced by Date#toISOString().
+	UPDATE event_archive_segments
+	   SET fixed_cutoff_at=date_trunc('milliseconds',fixed_cutoff_at),
+	       metadata=jsonb_set(
+	         metadata,
+	         '{fixedCutoffAt}',
+	         to_jsonb(
+	           to_char(
+	             date_trunc('milliseconds',fixed_cutoff_at) AT TIME ZONE 'UTC',
+	             'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
+	           )
+	         ),
+	         true
+	       );
+
+	-- Replace the original state/timestamp checks and the 0029 membership check
+	-- with one explicit durable-intent state machine. Constraint names generated
+	-- for the old anonymous CHECKs differ between PostgreSQL versions, so identify
+	-- only checks that reference the replaced columns.
+	DO $$
+	DECLARE
+	  constraint_row record;
+	BEGIN
+	  FOR constraint_row IN
+	    SELECT conname
+	      FROM pg_constraint
+	     WHERE conrelid='event_archive_segments'::regclass
+	       AND contype='c'
+	       AND (
+	         pg_get_constraintdef(oid) ILIKE '%object_version_id%'
+	         OR pg_get_constraintdef(oid) ILIKE '%uploaded_at%'
+	         OR pg_get_constraintdef(oid) ILIKE '%verified_at%'
+	         OR pg_get_constraintdef(oid) ILIKE '%pruned_at%'
+	         OR pg_get_constraintdef(oid) ILIKE '%membership_state%'
+	       )
+	  LOOP
+	    EXECUTE format(
+	      'ALTER TABLE event_archive_segments DROP CONSTRAINT %I',
+	      constraint_row.conname
+	    );
+	  END LOOP;
+	END;
+	$$;
+
+	-- The pre-intent worker represented a failed readback by clearing uploaded_at
+	-- even though the immutable VersionId was already durable. After removing the
+	-- old state/timestamp checks, preserve that recoverable object on the legacy
+	-- path while satisfying the explicit pairing installed below.
+	UPDATE event_archive_segments
+	   SET uploaded_at=COALESCE(uploaded_at,created_at),
+	       updated_at=now()
+	 WHERE membership_state='legacy_unindexed'
+	   AND state='failed'
+	   AND object_version_id IS NOT NULL
+	   AND uploaded_at IS NULL;
+
+	ALTER TABLE event_archive_segments
+	  ADD CONSTRAINT event_archive_segments_object_version_state_check CHECK (
+	    (
+	      state='planned'
+	      AND object_version_id IS NULL
+	    )
+	    OR (
+	      state IN ('uploaded','verified','pruned')
+	      AND object_version_id IS NOT NULL
+	      AND length(btrim(object_version_id)) BETWEEN 1 AND 1024
+	    )
+	    OR (
+	      state='failed'
+	      AND (
+	        object_version_id IS NULL
+	        OR (
+	          object_version_id IS NOT NULL
+	          AND length(btrim(object_version_id)) BETWEEN 1 AND 1024
+	        )
+	      )
+	    )
+	  ),
+	  ADD CONSTRAINT event_archive_segments_timestamp_state_check CHECK (
+	    (state='planned'
+	      AND uploaded_at IS NULL AND verified_at IS NULL AND pruned_at IS NULL)
+	    OR
+	    (state='uploaded'
+	      AND uploaded_at IS NOT NULL AND verified_at IS NULL AND pruned_at IS NULL)
+	    OR
+	    (state='verified'
+	      AND uploaded_at IS NOT NULL AND verified_at IS NOT NULL
+	      AND pruned_at IS NULL)
+	    OR
+	    (state='pruned'
+	      AND uploaded_at IS NOT NULL AND verified_at IS NOT NULL
+	      AND pruned_at IS NOT NULL)
+	    OR
+	    (state='failed'
+	      AND verified_at IS NULL AND pruned_at IS NULL
+	      AND (
+	        (object_version_id IS NULL AND uploaded_at IS NULL)
+	        OR (object_version_id IS NOT NULL AND uploaded_at IS NOT NULL)
+	      ))
+	  ),
+	  ADD CONSTRAINT event_archive_segments_membership_state_check CHECK (
+	    (
+	      membership_state='pending_exact'
+	      AND state IN ('planned','uploaded','failed')
+	      AND planned_fence IS NOT NULL
+	      AND planned_fence >= 0
+	      AND (
+	        state <> 'failed'
+	        OR last_error_code IN (
+	          'RETENTION_OBJECT_IDENTITY_MISMATCH',
+	          'ARCHIVE_FIXED_CUTOFF_MISMATCH',
+	          'ARCHIVE_PLAN_CONFLICT',
+	          'ARCHIVE_MEMBERSHIP_CONFLICT',
+	          'ARCHIVE_OBJECT_MANIFEST_MISMATCH',
+	          'ARCHIVE_SNAPSHOT_RECHECK_FAILED'
+	        )
+	      )
+	    )
+	    OR (
+	      membership_state='exact'
+	      AND state IN ('verified','pruned')
+	      AND object_version_id IS NOT NULL
+	    )
+	    OR (
+	      membership_state='legacy_unindexed'
+	      AND state IN ('uploaded','verified','pruned','failed')
+	      AND object_version_id IS NOT NULL
+	    )
+	  ),
+	  ADD CONSTRAINT event_archive_segments_upload_attempt_check CHECK (
+	    upload_attempt_count >= 0
+	    AND (
+	      (
+	        upload_attempt_count=0
+	        AND last_upload_attempt_at IS NULL
+	        AND last_upload_fence IS NULL
+	      )
+	      OR (
+	        upload_attempt_count>0
+	        AND last_upload_attempt_at IS NOT NULL
+	        AND last_upload_fence IS NOT NULL
+	        AND last_upload_fence >= 0
+	      )
+	    )
+	  ),
+	  ADD CONSTRAINT event_archive_segments_fixed_cutoff_metadata_check CHECK (
+	    jsonb_typeof(metadata->'fixedCutoffAt')='string'
+	    AND metadata->>'fixedCutoffAt'=to_char(
+	      fixed_cutoff_at AT TIME ZONE 'UTC',
+	      'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
+	    )
+	    AND (metadata->>'fixedCutoffAt')::timestamptz=fixed_cutoff_at
+	  );
+
+	-- At most one durable intent can exist for a Workspace. A deterministic
+	-- conflict stays visible and blocks a replacement until an operator resolves
+	-- it; retries always recover the same stable object key.
+	CREATE UNIQUE INDEX event_archive_segments_one_pending_intent
+	  ON event_archive_segments(workspace_id)
+	  WHERE membership_state='pending_exact';
+
+	CREATE INDEX event_archive_segments_pending_recovery
+	  ON event_archive_segments(workspace_id,created_at,id)
+	  WHERE membership_state='pending_exact'
+	    AND state IN ('planned','uploaded','failed');
+
+	COMMENT ON COLUMN event_archive_segments.planned_fence IS
+	  'Fence that created the durable intent; successors may reconcile it.';
+	COMMENT ON COLUMN event_archive_segments.last_upload_fence IS
+	  'Fence that most recently attempted the stable-key conditional upload.';
+	COMMENT ON COLUMN event_archive_segments.upload_attempt_count IS
+	  'Durable count of same-key conditional upload/reconcile attempts.';
+	COMMENT ON INDEX event_archive_segments_one_pending_intent IS
+	  'Prevents a second immutable upload intent while recovery is pending.';
+2026-10-10 13:04:07.698 UTC [133] ERROR:  duplicate key value violates unique constraint "event_archive_segments_one_pending_intent"
+2026-10-10 13:04:07.698 UTC [133] DETAIL:  Key (workspace_id)=(d3cc8354-a1fd-4412-89a2-df8dcda0aa6c) already exists.
+2026-10-10 13:04:07.698 UTC [133] STATEMENT:  INSERT INTO event_archive_segments(
+	           workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+	           object_key,object_size_bytes,object_sha256,snapshot_digest,metadata,
+	           retain_until,planned_fence
+	         ) VALUES($1,2,2,$2,1,'intent-two',1,$3,$4,$5,
+	                  now()+interval '366 days',2)
+2026-10-10 13:04:07.701 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:04:07.736 UTC [55] LOG:  checkpoint complete: wrote 5989 buffers (36.6%); 0 WAL file(s) added, 0 removed, 5 recycled; write=0.021 s, sync=0.009 s, total=0.035 s; sync files=5366, longest=0.001 s, average=0.001 s; distance=80770 kB, estimate=218910 kB; lsn=0/1A1D7420, redo lsn=0/1A1D73E8
+2026-10-10 13:04:07.742 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:04:07.742 UTC [55] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.001 s; sync files=2, longest=0.001 s, average=0.000 s; distance=2 kB, estimate=197019 kB; lsn=0/1A1D7D18, redo lsn=0/1A1D7CE0
+2026-10-10 13:04:07.747 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:04:07.747 UTC [55] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.001 s; sync files=2, longest=0.001 s, average=0.000 s; distance=2 kB, estimate=177317 kB; lsn=0/1A1D8628, redo lsn=0/1A1D85F0
+2026-10-10 13:04:10.884 UTC [134] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_membership_state_check"
+2026-10-10 13:04:10.884 UTC [134] DETAIL:  Failing row contains (78040946-d76c-4e19-a437-e2aa6e7f2868, 8e595424-bfb1-40c1-b315-2316b09adc12, 1002, 1002, 2026-07-01 00:00:00+00, 1, uploaded-cannot-be-exact, version-uploaded, 0, sha256:ccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..., sha256:ddddddddddddddddddddddddddddddddddddddddddddddddddddddddd..., {"fixedCutoffAt": "2026-07-01T00:00:00.000Z"}, uploaded, 2027-10-11 13:04:10.884143+00, 2026-10-10 13:04:10.884143+00, null, null, null, 2026-10-10 13:04:10.884143+00, 2026-10-10 13:04:10.884143+00, exact, 0, null, null, null).
+2026-10-10 13:04:10.884 UTC [134] STATEMENT:  INSERT INTO event_archive_segments(
+	           workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+	           object_key,object_version_id,object_size_bytes,object_sha256,
+	           snapshot_digest,metadata,state,retain_until,uploaded_at,
+	           membership_state
+	         ) VALUES(
+	           $1,1002,1002,$2,1,'uploaded-cannot-be-exact','version-uploaded',0,
+	           $3,$4,$5,'uploaded',now()+interval '366 days',now(),'exact'
+	         )
+2026-10-10 13:04:10.923 UTC [136] ERROR:  new row for relation "event_archive_segments" violates check constraint "event_archive_segments_check1"
+2026-10-10 13:04:10.923 UTC [136] DETAIL:  Failing row contains (27c26183-f6c2-4b4e-96f4-41d87560a8bd, b9ab66e8-4524-471e-96cb-56c5f8c49061, 1, 1, 2026-10-10 13:04:10.923393+00, 1, too-short, version-1, 1, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb..., sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., {}, planned, 2027-10-09 13:04:10.923393+00, null, null, null, null, 2026-10-10 13:04:10.923393+00, 2026-10-10 13:04:10.923393+00, pending_exact, 0, null, null, null).
+2026-10-10 13:04:10.923 UTC [136] STATEMENT:
+	      INSERT INTO event_archive_segments(
+	        workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+	        object_key,object_version_id,object_size_bytes,object_sha256,
+	        snapshot_digest,retain_until
+	      ) VALUES(
+	        $1,1,1,now(),1,'too-short','version-1',1,
+	        'sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb','sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+	        now()+interval '364 days'
+	      )
+
+2026-10-10 13:04:11.206 UTC [138] ERROR:  canceling statement due to statement timeout
+2026-10-10 13:04:11.206 UTC [138] CONTEXT:  while locking tuple (0,3) in relation "event_retention_state"
+2026-10-10 13:04:11.206 UTC [138] STATEMENT:
+	        SELECT pruned_through_cursor FROM event_retention_state
+	         WHERE workspace_id=$1 FOR UPDATE
+
+2026-10-10 13:04:11.231 UTC [137] WARNING:  there is no transaction in progress
+2026-10-10 13:04:11.232 UTC [138] WARNING:  there is no transaction in progress
+2026-10-10 13:04:11.497 UTC [137] ERROR:  canceling statement due to statement timeout
+2026-10-10 13:04:11.497 UTC [137] CONTEXT:  while locking tuple (0,4) in relation "event_retention_state"
+	SQL statement "SELECT 1
+	    FROM event_retention_state
+	   WHERE workspace_id=NEW.workspace_id
+	   FOR SHARE"
+	PL/pgSQL function lock_event_retention_for_append() line 6 at PERFORM
+2026-10-10 13:04:11.497 UTC [137] STATEMENT:
+	        INSERT INTO domain_events(
+	          workspace_id,event_type,aggregate_type,aggregate_id,actor_id,correlation_id
+	        ) VALUES($1,'workspace.updated','workspace',$1,$2,'cursor-fence')
+
+2026-10-10 13:04:11.505 UTC [138] WARNING:  there is no transaction in progress
+2026-10-10 13:04:11.506 UTC [137] WARNING:  there is no transaction in progress
+2026-10-10 13:04:18.374 UTC [141] ERROR:  WORK_ITEM_PARENT_SELF
+2026-10-10 13:04:18.374 UTC [141] CONTEXT:  PL/pgSQL function enforce_work_item_parent_invariants() line 18 at RAISE
+2026-10-10 13:04:18.374 UTC [141] STATEMENT:  UPDATE work_items SET parent_id=id WHERE id=$1
+2026-10-10 13:04:18.378 UTC [142] ERROR:  WORK_ITEM_PARENT_PROJECT_MISMATCH
+2026-10-10 13:04:18.378 UTC [142] CONTEXT:  PL/pgSQL function enforce_work_item_parent_invariants() line 31 at RAISE
+2026-10-10 13:04:18.378 UTC [142] STATEMENT:  UPDATE work_items SET parent_id=$1 WHERE id=$2
+2026-10-10 13:04:18.394 UTC [143] ERROR:  insert or update on table "work_items" violates foreign key constraint "work_items_parent_same_team_fk"
+2026-10-10 13:04:18.394 UTC [143] DETAIL:  Key (workspace_id, team_id, parent_id)=(ca6e8a7a-5c8d-44a5-bf33-4267dd4e4245, 031ae0b5-85a8-4c2e-ab67-5043864314d0, 30391f3f-04d0-4f7d-96c9-d20548d0c7b7) is not present in table "work_items".
+2026-10-10 13:04:18.394 UTC [143] STATEMENT:  UPDATE work_items SET parent_id=$1 WHERE id=$2
+2026-10-10 13:04:18.412 UTC [144] ERROR:  WORK_ITEM_PARENT_CYCLE
+2026-10-10 13:04:18.412 UTC [144] CONTEXT:  PL/pgSQL function enforce_work_item_parent_invariants() line 42 at RAISE
+2026-10-10 13:04:18.412 UTC [144] STATEMENT:  UPDATE work_items SET parent_id=$1 WHERE id=$2
+2026-10-10 13:04:18.452 UTC [146] ERROR:  WORK_ITEM_BLOCK_CYCLE
+2026-10-10 13:04:18.452 UTC [146] CONTEXT:  PL/pgSQL function enforce_work_item_relation_invariants() line 36 at RAISE
+2026-10-10 13:04:18.452 UTC [146] STATEMENT:  INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind)
+	       VALUES($1,$2,$3,$4,'blocks')
+2026-10-10 13:04:18.458 UTC [145] ERROR:  WORK_ITEM_RELATED_ORDER
+2026-10-10 13:04:18.458 UTC [145] CONTEXT:  PL/pgSQL function enforce_work_item_relation_invariants() line 11 at RAISE
+2026-10-10 13:04:18.458 UTC [145] STATEMENT:  INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind)
+	       VALUES($1,$2,$3,$4,'related')
+2026-10-10 13:04:18.470 UTC [147] ERROR:  insert or update on table "work_item_relations" violates foreign key constraint "work_item_relations_workspace_id_team_id_target_work_item__fkey"
+2026-10-10 13:04:18.470 UTC [147] DETAIL:  Key (workspace_id, team_id, target_work_item_id)=(b2b58751-9c93-4e25-a7ba-2477d158e4c3, 66204943-652b-42a9-8184-15d2cefc198d, 062be98d-4e31-4092-9dbc-b7298da8723e) is not present in table "work_items".
+2026-10-10 13:04:18.470 UTC [147] STATEMENT:  INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind)
+	       VALUES($1,$2,$3,$4,'blocks')
+2026-10-10 13:04:18.500 UTC [149] ERROR:  WORK_ITEM_HAS_ACTIVE_CHILDREN
+2026-10-10 13:04:18.500 UTC [149] CONTEXT:  PL/pgSQL function enforce_work_item_unlinked_before_delete() line 12 at RAISE
+2026-10-10 13:04:18.500 UTC [149] STATEMENT:  UPDATE work_items SET deleted_at=now() WHERE id=$1
+2026-10-10 13:04:18.532 UTC [150] ERROR:  WORK_ITEM_HAS_ACTIVE_RELATIONS
+2026-10-10 13:04:18.532 UTC [150] CONTEXT:  PL/pgSQL function enforce_work_item_unlinked_before_delete() line 19 at RAISE
+2026-10-10 13:04:18.532 UTC [150] STATEMENT:  UPDATE work_items SET deleted_at=now() WHERE id=$1
+2026-10-10 13:04:18.534 UTC [148] ERROR:  WORK_ITEM_RELATION_ENDPOINT_DELETED
+2026-10-10 13:04:18.534 UTC [148] CONTEXT:  PL/pgSQL function enforce_work_item_relation_invariants() line 18 at RAISE
+2026-10-10 13:04:18.534 UTC [148] STATEMENT:  INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind)
+	       VALUES($1,$2,$3,$4,'blocks')
+2026-10-10 13:04:18.562 UTC [152] ERROR:  WORK_ITEM_MILESTONE_PROJECT_MISMATCH
+2026-10-10 13:04:18.562 UTC [152] CONTEXT:  PL/pgSQL function enforce_work_item_milestone_invariants() line 20 at RAISE
+2026-10-10 13:04:18.562 UTC [152] STATEMENT:  UPDATE work_items SET milestone_id=$1 WHERE id=$2
+2026-10-10 13:04:18.566 UTC [151] ERROR:  MILESTONE_HAS_ACTIVE_WORK_ITEMS
+2026-10-10 13:04:18.566 UTC [151] CONTEXT:  PL/pgSQL function enforce_milestone_unlinked_before_delete() line 8 at RAISE
+2026-10-10 13:04:18.566 UTC [151] STATEMENT:  UPDATE project_milestones SET deleted_at=now() WHERE id=$1
+2026-10-10 13:04:18.577 UTC [153] ERROR:  WORK_ITEM_MILESTONE_DELETED
+2026-10-10 13:04:18.577 UTC [153] CONTEXT:  PL/pgSQL function enforce_work_item_milestone_invariants() line 17 at RAISE
+2026-10-10 13:04:18.577 UTC [153] STATEMENT:  UPDATE work_items SET milestone_id=$1 WHERE id=$2
+2026-10-10 13:04:18.599 UTC [155] ERROR:  duplicate key value violates unique constraint "project_milestones_active_project_name_unique"
+2026-10-10 13:04:18.599 UTC [155] DETAIL:  Key (project_id, name)=(ccbb4596-e496-4087-bedc-8dc8d0093e5a, Reusable milestone) already exists.
+2026-10-10 13:04:18.599 UTC [155] STATEMENT:  INSERT INTO project_milestones(workspace_id,project_id,name)
+	       VALUES($1,$2,'Reusable milestone')
+2026-10-10 13:04:18.690 UTC [154] ERROR:  WORK_ITEM_PARENT_CYCLE
+2026-10-10 13:04:18.690 UTC [154] CONTEXT:  PL/pgSQL function enforce_work_item_parent_invariants() line 42 at RAISE
+2026-10-10 13:04:18.690 UTC [154] STATEMENT:  UPDATE work_items SET parent_id=$1 WHERE id=$2
+2026-10-10 13:04:18.767 UTC [156] ERROR:  WORK_ITEM_BLOCK_CYCLE
+2026-10-10 13:04:18.767 UTC [156] CONTEXT:  PL/pgSQL function enforce_work_item_relation_invariants() line 36 at RAISE
+2026-10-10 13:04:18.767 UTC [156] STATEMENT:  INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind)
+	         VALUES($1,$2,$3,$4,'blocks')
+2026-10-10 13:04:26.866 UTC [161] ERROR:  duplicate key value violates unique constraint "event_archive_segment_events_workspace_id_event_cursor_key"
+2026-10-10 13:04:26.866 UTC [161] DETAIL:  Key (workspace_id, event_cursor)=(4f4edc49-6036-4c03-abd6-8f47e8444eaa, 1) already exists.
+2026-10-10 13:04:26.866 UTC [161] STATEMENT:  INSERT INTO event_archive_segment_events(
+	           segment_id,workspace_id,ordinal,event_id,event_cursor,record_sha256
+	         ) VALUES($1,$2,1,$3,1,$4)
+2026-10-10 13:04:26.873 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:04:26.926 UTC [55] LOG:  checkpoint complete: wrote 11783 buffers (71.9%); 0 WAL file(s) added, 0 removed, 5 recycled; write=0.041 s, sync=0.008 s, total=0.054 s; sync files=4781, longest=0.001 s, average=0.001 s; distance=89812 kB, estimate=168567 kB; lsn=0/1F98D930, redo lsn=0/1F98D8F8
+2026-10-10 13:04:26.933 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:04:26.933 UTC [55] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.001 s; sync files=2, longest=0.001 s, average=0.000 s; distance=2 kB, estimate=151710 kB; lsn=0/1F98E378, redo lsn=0/1F98E340
+2026-10-10 13:04:29.144 UTC [163] ERROR:  duplicate key value violates unique constraint "leases_active_exclusive_resource"
+2026-10-10 13:04:29.144 UTC [163] DETAIL:  Key (workspace_id, resource_type, resource_id)=(fa5c1839-9a2f-4f30-89da-a0a6d4360737, work_item, 5a9d1fa6-9bd2-4f16-9540-b49eaf89fa7e) already exists.
+2026-10-10 13:04:29.144 UTC [163] STATEMENT:  INSERT INTO leases(workspace_id,session_id,resource_type,resource_id,kind,reason,expires_at) VALUES($1,$2,$3,$4,$5,'integration projection',now()+interval '10 minutes') RETURNING id
+2026-10-10 13:04:31.463 UTC [165] ERROR:  new row for relation "retention_job_state" violates check constraint "retention_worker_identity_pair"
+2026-10-10 13:04:31.463 UTC [165] DETAIL:  Failing row contains (worker_runtime, 721d43f1-bffd-4558-825b-adbcd235b408, null, null, 0, null, 0, null, {}, null, null, null, null, 2026-10-10 13:04:31.46046+00, 00000000-0000-4000-8000-000000000001, null, 0).
+2026-10-10 13:04:31.463 UTC [165] STATEMENT:  UPDATE retention_job_state
+	            SET worker_instance_id=$2
+	          WHERE job_name='worker_runtime' AND workspace_id=$1
+2026-10-10 13:04:31.475 UTC [168] ERROR:  new row for relation "retention_job_state" violates check constraint "retention_worker_identity_conflict_count_nonnegative"
+2026-10-10 13:04:31.475 UTC [168] DETAIL:  Failing row contains (worker_runtime, 721d43f1-bffd-4558-825b-adbcd235b408, null, null, 0, null, 0, null, {}, null, null, null, null, 2026-10-10 13:04:31.46046+00, 00000000-0000-4000-8000-000000000001, aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, -1).
+2026-10-10 13:04:31.475 UTC [168] STATEMENT:  UPDATE retention_job_state
+	            SET worker_identity_conflict_count=-1
+	          WHERE job_name='worker_runtime' AND workspace_id=$1
+2026-10-10 13:04:31.478 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:04:31.489 UTC [55] LOG:  checkpoint complete: wrote 2855 buffers (17.4%); 0 WAL file(s) added, 1 removed, 1 recycled; write=0.008 s, sync=0.003 s, total=0.011 s; sync files=1864, longest=0.001 s, average=0.000 s; distance=31335 kB, estimate=139673 kB; lsn=0/21828168, redo lsn=0/21828130
+2026-10-10 13:04:31.493 UTC [55] LOG:  checkpoint starting: immediate force wait
+2026-10-10 13:04:31.493 UTC [55] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.001 s; sync files=2, longest=0.001 s, average=0.001 s; distance=2 kB, estimate=125706 kB; lsn=0/21828CD0, redo lsn=0/21828C98
+2026-10-10 13:04:34.180 UTC [169] ERROR:  duplicate key value violates unique constraint "auth_idempotency_records_key_fingerprint_subject_fingerprin_key"
+2026-10-10 13:04:34.180 UTC [169] DETAIL:  Key (key_fingerprint, subject_fingerprint)=(aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb) already exists.
+2026-10-10 13:04:34.180 UTC [169] STATEMENT:  INSERT INTO auth_idempotency_records(
+	         key_fingerprint,subject_fingerprint,operation,request_fingerprint,
+	         client_context_fingerprint
+	       ) VALUES($1,$2,'two',$3,$4)
+2026-10-10 13:04:34.190 UTC [170] ERROR:  new row for relation "auth_idempotency_records" violates check constraint "auth_idempotency_records_client_context_fingerprint_check"
+2026-10-10 13:04:34.190 UTC [170] DETAIL:  Failing row contains (c04663f8-ed19-46df-bb04-b77645648a8e, plaintext-key, plaintext-subject, invalid, plaintext-request, plaintext-context, claimed, null, null, null, null, null, null, 2026-10-10 13:19:34.189309+00, 2026-10-11 13:04:34.189309+00, 2026-10-10 13:04:34.189309+00, null, null).
+2026-10-10 13:04:34.190 UTC [170] STATEMENT:  INSERT INTO auth_idempotency_records(
+	         key_fingerprint,subject_fingerprint,operation,request_fingerprint,
+	         client_context_fingerprint
+	       ) VALUES('plaintext-key','plaintext-subject','invalid','plaintext-request','plaintext-context')
+2026-10-10 13:04:34.202 UTC [171] ERROR:  new row for relation "auth_idempotency_records" violates check constraint "auth_idempotency_records_check"
+2026-10-10 13:04:34.202 UTC [171] DETAIL:  Failing row contains (10ffe6ed-28c8-4255-8838-249877a87265, 1111111111111111111111111111111111111111111111111111111111111111, 2222222222222222222222222222222222222222222222222222222222222222, completed, 3333333333333333333333333333333333333333333333333333333333333333, 4444444444444444444444444444444444444444444444444444444444444444, completed, null, null, null, null, null, null, 2026-10-10 13:19:34.197338+00, 2026-10-11 13:04:34.197338+00, 2026-10-10 13:04:34.197338+00, 2026-10-10 13:04:34.197338+00, null).
+2026-10-10 13:04:34.202 UTC [171] STATEMENT:  UPDATE auth_idempotency_records SET replay_wiped_at=NULL WHERE id=$1
+2026-10-10 13:04:57.281 UTC [177] ERROR:  M2 transaction checkpoint fault
+2026-10-10 13:04:57.281 UTC [177] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 13:04:57.281 UTC [177] STATEMENT:  INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,parent_delegation_id) VALUES($1,$2,$3,$4,$5,NULL,'reviewer','plan_step',$6,$7,$8,$9) RETURNING id
+2026-10-10 13:04:57.337 UTC [177] ERROR:  M2 transaction checkpoint fault
+2026-10-10 13:04:57.337 UTC [177] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 13:04:57.337 UTC [177] STATEMENT:  INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,plan_step_id,plan_step_version_id,context_snapshot_id,state,state_reason,budget,inherited_budget,required_for_parent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,true) RETURNING *
+2026-10-10 13:04:57.384 UTC [177] ERROR:  M2 transaction checkpoint fault
+2026-10-10 13:04:57.384 UTC [177] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 13:04:57.384 UTC [177] STATEMENT:  INSERT INTO session_budget_reservations(parent_session_id,child_session_id,allocation,reserved) VALUES($1,$2,$3,$3)
+2026-10-10 13:04:57.429 UTC [177] ERROR:  M2 transaction checkpoint fault
+2026-10-10 13:04:57.429 UTC [177] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 13:04:57.429 UTC [177] STATEMENT:  INSERT INTO leases(workspace_id,session_id,resource_type,resource_id,kind,reason,expires_at) VALUES($1,$2,'plan_step',$3,'review_shared','review delegation',clock_timestamp()+($4::text || ' seconds')::interval) RETURNING *
+2026-10-10 13:04:57.482 UTC [177] ERROR:  M2 transaction checkpoint fault
+2026-10-10 13:04:57.482 UTC [177] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 13:04:57.482 UTC [177] STATEMENT:  INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,issued_by_actor_id) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)
+2026-10-10 13:04:57.545 UTC [177] ERROR:  M2 transaction checkpoint fault
+2026-10-10 13:04:57.545 UTC [177] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 13:04:57.545 UTC [177] STATEMENT:  INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)
+2026-10-10 13:04:57.608 UTC [177] ERROR:  M2 transaction checkpoint fault
+2026-10-10 13:04:57.608 UTC [177] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 13:04:57.608 UTC [177] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 13:04:57.679 UTC [177] ERROR:  M2 transaction checkpoint fault
+2026-10-10 13:04:57.679 UTC [177] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 13:04:57.679 UTC [177] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:04:57.900 UTC [177] ERROR:  M2 evidence outbox fault
+2026-10-10 13:04:57.900 UTC [177] CONTEXT:  PL/pgSQL function m2_evidence_fault() line 1 at RAISE
+2026-10-10 13:04:57.900 UTC [177] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:04:57.954 UTC [177] ERROR:  M2 evidence outbox fault
+2026-10-10 13:04:57.954 UTC [177] CONTEXT:  PL/pgSQL function m2_evidence_fault() line 1 at RAISE
+2026-10-10 13:04:57.954 UTC [177] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:04:58.018 UTC [177] ERROR:  M2 evidence outbox fault
+2026-10-10 13:04:58.018 UTC [177] CONTEXT:  PL/pgSQL function m2_evidence_fault() line 1 at RAISE
+2026-10-10 13:04:58.018 UTC [177] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:05:00.068 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:00.144 UTC [179] ERROR:  M2 forced outbox failure
+2026-10-10 13:05:00.144 UTC [179] CONTEXT:  PL/pgSQL function m2_fail_outbox() line 1 at RAISE
+2026-10-10 13:05:00.144 UTC [179] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:05:03.179 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:03.375 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:04.013 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:04.763 UTC [179] ERROR:  WORK_ITEM_BLOCK_CYCLE
+2026-10-10 13:05:04.763 UTC [179] CONTEXT:  PL/pgSQL function enforce_work_item_relation_invariants() line 36 at RAISE
+2026-10-10 13:05:04.763 UTC [179] STATEMENT:  INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind,created_by_actor_id)
+	         VALUES($1,$2,$3,$4,$5,$6) RETURNING *
+2026-10-10 13:05:04.764 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:04.821 UTC [177] ERROR:  WORK_ITEM_PARENT_CYCLE
+2026-10-10 13:05:04.821 UTC [177] CONTEXT:  PL/pgSQL function enforce_work_item_parent_invariants() line 42 at RAISE
+2026-10-10 13:05:04.821 UTC [177] STATEMENT:  UPDATE work_items SET title=CASE WHEN $1 THEN $2 ELSE title END,description=CASE WHEN $3 THEN $4 ELSE description END,status_id=CASE WHEN $5 THEN $6 ELSE status_id END,priority=CASE WHEN $7 THEN $8 ELSE priority END,due_date=CASE WHEN $9 THEN $10 ELSE due_date END,responsible_human_actor_id=CASE WHEN $11 THEN $12 ELSE responsible_human_actor_id END,labels=CASE WHEN $13 THEN $14 ELSE labels END,project_id=CASE WHEN $15 THEN $16 ELSE project_id END,milestone_id=CASE WHEN $17 THEN $18 ELSE CASE WHEN $15 THEN NULL ELSE milestone_id END END,parent_id=CASE WHEN $19 THEN $20 ELSE parent_id END,board_rank=CASE WHEN $21 THEN $22 ELSE board_rank END,revision=revision+1,updated_at=now() WHERE id=$23 RETURNING id,revision
+2026-10-10 13:05:04.822 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:05.089 UTC [179] ERROR:  duplicate key value violates unique constraint "room_message_response_resolutions_message_id_key"
+2026-10-10 13:05:05.089 UTC [179] DETAIL:  Key (message_id)=(2cf6257a-f7dc-4473-aebb-81a44a885920) already exists.
+2026-10-10 13:05:05.089 UTC [179] STATEMENT:  INSERT INTO room_message_response_resolutions(message_id,resolved_by_actor_id,resolution) VALUES($1,$2,$3)
+2026-10-10 13:05:05.090 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:05.831 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:05.872 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:05.902 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:05.933 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:05.965 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:05.996 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:06.033 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:06.075 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:06.177 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:06.210 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:06.280 UTC [175] WARNING:  there is no transaction in progress
+2026-10-10 13:05:27.831 UTC [185] ERROR:  WORK_ITEM_MILESTONE_PROJECT_MISMATCH
+2026-10-10 13:05:27.831 UTC [185] CONTEXT:  PL/pgSQL function enforce_work_item_milestone_invariants() line 20 at RAISE
+2026-10-10 13:05:27.831 UTC [185] STATEMENT:  INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id,milestone_id,parent_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id,revision,number
+2026-10-10 13:05:27.933 UTC [185] ERROR:  WORK_ITEM_BLOCK_CYCLE
+2026-10-10 13:05:27.933 UTC [185] CONTEXT:  PL/pgSQL function enforce_work_item_relation_invariants() line 36 at RAISE
+2026-10-10 13:05:27.933 UTC [185] STATEMENT:  INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind,created_by_actor_id)
+	         VALUES($1,$2,$3,$4,$5,$6) RETURNING *
+2026-10-10 13:05:30.100 UTC [190] ERROR:  forced assignment rollback fixture
+2026-10-10 13:05:30.100 UTC [190] CONTEXT:  PL/pgSQL function stage5_fail_forced_assignment() line 4 at RAISE
+2026-10-10 13:05:30.100 UTC [190] STATEMENT:  INSERT INTO delegations(
+	             workspace_id,team_id,agent_id,agent_actor_id,
+	             principal_human_actor_id,work_item_id,role,scope_type,scope_id,
+	             permissions_snapshot,capability_scope,status
+	           ) VALUES($1,$2,$3,$4,$5,$6,$7,'work_item',$6,$8,$9,'active')
+	           RETURNING *
+2026-10-10 13:05:30.299 UTC [190] ERROR:  stage5 self-claim delegation boundary failure
+2026-10-10 13:05:30.299 UTC [190] CONTEXT:  PL/pgSQL function stage5_claim_boundary_failure_delegation_fn() line 4 at RAISE
+2026-10-10 13:05:30.299 UTC [190] STATEMENT:  INSERT INTO delegations(
+	             workspace_id,team_id,agent_id,agent_actor_id,
+	             principal_human_actor_id,work_item_id,role,scope_type,scope_id,
+	             permissions_snapshot,capability_scope,status
+	           ) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,$7,$8,'active')
+	           RETURNING *
+2026-10-10 13:05:30.408 UTC [190] ERROR:  stage5 self-claim session boundary failure
+2026-10-10 13:05:30.408 UTC [190] CONTEXT:  PL/pgSQL function stage5_claim_boundary_failure_session_fn() line 4 at RAISE
+2026-10-10 13:05:30.408 UTC [190] STATEMENT:  INSERT INTO agent_sessions(
+	           workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+	           work_item_id,context_snapshot_id,budget,retry_of_session_id,
+	           retry_reason,retry_count
+	         ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+	         RETURNING *
+2026-10-10 13:05:30.520 UTC [190] ERROR:  stage5 self-claim session credential boundary failure
+2026-10-10 13:05:30.520 UTC [190] CONTEXT:  PL/pgSQL function stage5_claim_boundary_failure_session_credential_fn() line 8 at RAISE
+2026-10-10 13:05:30.520 UTC [190] STATEMENT:  INSERT INTO agent_session_tokens(
+	           session_id,agent_id,installation_token_id,token_hash,
+	           exchange_nonce_hash,expires_at,issued_by_actor_id
+	         ) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6) RETURNING id
+2026-10-10 13:05:30.660 UTC [190] ERROR:  stage5 self-claim prompt boundary failure
+2026-10-10 13:05:30.660 UTC [190] CONTEXT:  PL/pgSQL function stage5_claim_boundary_failure_prompt_fn() line 9 at RAISE
+2026-10-10 13:05:30.660 UTC [190] STATEMENT:  INSERT INTO agent_session_prompts(
+	           session_id,author_actor_id,body_markdown
+	         ) VALUES($1,$2,$3)
+2026-10-10 13:05:30.789 UTC [190] ERROR:  stage5 self-claim event boundary failure
+2026-10-10 13:05:30.789 UTC [190] CONTEXT:  PL/pgSQL function stage5_claim_boundary_failure_event_fn() line 5 at RAISE
+2026-10-10 13:05:30.789 UTC [190] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 13:05:30.913 UTC [190] ERROR:  stage5 self-claim outbox boundary failure
+2026-10-10 13:05:30.913 UTC [190] CONTEXT:  PL/pgSQL function stage5_claim_boundary_failure_outbox_fn() line 8 at RAISE
+2026-10-10 13:05:30.913 UTC [190] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:05:33.927 UTC [189] ERROR:  forced coordination recovery failure
+2026-10-10 13:05:33.927 UTC [189] CONTEXT:  PL/pgSQL function stage5_fail_coordination_recovery() line 4 at RAISE
+2026-10-10 13:05:33.927 UTC [189] STATEMENT:  INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,
+	                                    delegation_id,state,state_reason,acknowledged_at,
+	                                    last_heartbeat_at,session_kind,coordination_connection_id)
+	         VALUES($1,$2,$3,$4,$5,'executing','coordination connection',now(),now(),
+	                'coordination',$6)
+	         RETURNING id,revision,sequence
+2026-10-10 13:05:35.611 UTC [192] ERROR:  terminal recovery rollback fixture
+2026-10-10 13:05:35.611 UTC [192] CONTEXT:  PL/pgSQL function stage5_fail_terminal_recovery() line 5 at RAISE
+2026-10-10 13:05:35.611 UTC [192] STATEMENT:  INSERT INTO agent_sessions(
+	           workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+	           work_item_id,context_snapshot_id,budget,retry_of_session_id,
+	           retry_reason,retry_count
+	         ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+	         RETURNING *
+2026-10-10 13:05:36.822 UTC [193] ERROR:  stale recovery rollback fixture
+2026-10-10 13:05:36.822 UTC [193] CONTEXT:  PL/pgSQL function stage5_fail_stale_recovery() line 5 at RAISE
+2026-10-10 13:05:36.822 UTC [193] STATEMENT:  INSERT INTO agent_sessions(
+	           workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+	           work_item_id,context_snapshot_id,budget,retry_of_session_id,
+	           retry_reason,retry_count
+	         ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+	         RETURNING *
+2026-10-10 13:05:44.994 UTC [197] ERROR:  could not obtain lock on row in relation "agent_session_tokens"
+2026-10-10 13:05:44.994 UTC [197] STATEMENT:  SELECT id FROM agent_session_tokens
+	              WHERE id=ANY($1::uuid[])
+	              ORDER BY id
+	              FOR UPDATE NOWAIT
+2026-10-10 13:06:12.450 UTC [205] WARNING:  there is no transaction in progress
+2026-10-10 13:06:12.541 UTC [205] WARNING:  there is no transaction in progress
+2026-10-10 13:06:12.635 UTC [205] WARNING:  there is no transaction in progress
+2026-10-10 13:06:12.720 UTC [205] WARNING:  there is no transaction in progress
+2026-10-10 13:06:12.804 UTC [205] WARNING:  there is no transaction in progress
+2026-10-10 13:06:12.891 UTC [205] WARNING:  there is no transaction in progress
+2026-10-10 13:06:12.999 UTC [205] WARNING:  there is no transaction in progress
+2026-10-10 13:06:13.102 UTC [205] WARNING:  there is no transaction in progress
+2026-10-10 13:06:28.758 UTC [216] ERROR:  M1_WAIT_FAILURE
+2026-10-10 13:06:28.758 UTC [216] CONTEXT:  PL/pgSQL function m1_wait_failure_605b73162d11494ab3a2e7f3bb33805d() line 1 at RAISE
+2026-10-10 13:06:28.758 UTC [216] STATEMENT:  INSERT INTO workbench_execution_waits
+	    (workspace_id,agent_session_id,conversation_id,source_turn_id,source_attempt_id,
+	     requested_by_human_actor_id,source_agent_actor_id,source_kind,source_installation_token_id,
+	     source_connection_id,wait_state,wait_revision,reason,approval_id,approval_action_payload_hash,
+	     input_event_cursor,input_message_sequence)
+	    SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,
+	      CASE WHEN $14::uuid IS NULL THEN COALESCE((SELECT MAX(cursor) FROM domain_events WHERE workspace_id=$1),0) END,
+	      CASE WHEN $14::uuid IS NULL THEN next_message_sequence END
+	    FROM workbench_conversations WHERE workspace_id=$1 AND id=$3 RETURNING id
+2026-10-10 13:06:30.653 UTC [217] ERROR:  duplicate key value violates unique constraint "workbench_execution_waits_workspace_id_source_turn_id_key"
+2026-10-10 13:06:30.653 UTC [217] DETAIL:  Key (workspace_id, source_turn_id)=(7f1e24fb-03d2-40b5-b98a-00ef3bfb0b95, 4ab5d213-3a5f-4bf1-a9cd-ee88330f6ff2) already exists.
+2026-10-10 13:06:30.653 UTC [217] STATEMENT:  INSERT INTO workbench_execution_waits
+	      SELECT (jsonb_populate_record(NULL::workbench_execution_waits,to_jsonb(source)||$2::jsonb)).*
+	      FROM workbench_execution_waits source WHERE id=$1
+2026-10-10 13:06:30.657 UTC [215] ERROR:  duplicate key value violates unique constraint "workbench_execution_waits_workspace_id_source_attempt_id_key"
+2026-10-10 13:06:30.657 UTC [215] DETAIL:  Key (workspace_id, source_attempt_id)=(7f1e24fb-03d2-40b5-b98a-00ef3bfb0b95, 43f5ec15-059c-41f3-82ac-c1eaf5ec1062) already exists.
+2026-10-10 13:06:30.657 UTC [215] STATEMENT:  INSERT INTO workbench_execution_waits
+	      SELECT (jsonb_populate_record(NULL::workbench_execution_waits,to_jsonb(source)||$2::jsonb)).*
+	      FROM workbench_execution_waits source WHERE id=$1
+2026-10-10 13:06:30.673 UTC [219] ERROR:  duplicate key value violates unique constraint "workbench_wait_one_pending_session"
+2026-10-10 13:06:30.673 UTC [219] DETAIL:  Key (workspace_id, agent_session_id)=(7f1e24fb-03d2-40b5-b98a-00ef3bfb0b95, 726ad38d-6b39-44df-aa29-e13cad5eebd1) already exists.
+2026-10-10 13:06:30.673 UTC [219] STATEMENT:  INSERT INTO workbench_execution_waits
+	      SELECT (jsonb_populate_record(NULL::workbench_execution_waits,to_jsonb(source)||$2::jsonb)).*
+	      FROM workbench_execution_waits source WHERE id=$1
+2026-10-10 13:06:30.684 UTC [220] ERROR:  new row for relation "workbench_execution_waits" violates check constraint "workbench_execution_waits_check1"
+2026-10-10 13:06:30.684 UTC [220] DETAIL:  Failing row contains (6cc473b3-4036-4431-8647-8b8fc51cc0d2, 7f1e24fb-03d2-40b5-b98a-00ef3bfb0b95, 726ad38d-6b39-44df-aa29-e13cad5eebd1, 86c3bc14-05c9-418e-a169-121496dc84b9, 4ab5d213-3a5f-4bf1-a9cd-ee88330f6ff2, 43f5ec15-059c-41f3-82ac-c1eaf5ec1062, c9284338-834c-4b29-8a01-088130739c26, 5e98c3d7-50b9-4367-87f4-dd6b070faee7, native, 2f1c8c67-4cf5-4ca9-b25a-d27e7b09fe22, null, awaiting_input, 4, Exact input required, null, null, 2122, null, pending, null, null, null, null, null, null, 2026-10-10 13:06:30.333117+00, null).
+2026-10-10 13:06:30.684 UTC [220] STATEMENT:  UPDATE workbench_execution_waits SET input_message_sequence=NULL WHERE id=$1
+2026-10-10 13:06:30.723 UTC [221] ERROR:  new row for relation "workbench_execution_waits" violates check constraint "workbench_execution_waits_check1"
+2026-10-10 13:06:30.723 UTC [221] DETAIL:  Failing row contains (6cc473b3-4036-4431-8647-8b8fc51cc0d2, 7f1e24fb-03d2-40b5-b98a-00ef3bfb0b95, 726ad38d-6b39-44df-aa29-e13cad5eebd1, 86c3bc14-05c9-418e-a169-121496dc84b9, 4ab5d213-3a5f-4bf1-a9cd-ee88330f6ff2, 43f5ec15-059c-41f3-82ac-c1eaf5ec1062, c9284338-834c-4b29-8a01-088130739c26, 5e98c3d7-50b9-4367-87f4-dd6b070faee7, native, 2f1c8c67-4cf5-4ca9-b25a-d27e7b09fe22, null, awaiting_approval, 4, Exact input required, 1f741d56-f22f-417c-860c-32412a373f0f, null, null, null, pending, null, null, null, null, null, null, 2026-10-10 13:06:30.333117+00, null).
+2026-10-10 13:06:30.723 UTC [221] STATEMENT:  UPDATE workbench_execution_waits
+	      SET wait_state='awaiting_approval',approval_id=$2,approval_action_payload_hash=$3,
+	        input_event_cursor=NULL,input_message_sequence=NULL WHERE id=$1
+2026-10-10 13:06:30.731 UTC [222] ERROR:  new row for relation "workbench_execution_waits" violates check constraint "workbench_execution_waits_check1"
+2026-10-10 13:06:30.731 UTC [222] DETAIL:  Failing row contains (6cc473b3-4036-4431-8647-8b8fc51cc0d2, 7f1e24fb-03d2-40b5-b98a-00ef3bfb0b95, 726ad38d-6b39-44df-aa29-e13cad5eebd1, 86c3bc14-05c9-418e-a169-121496dc84b9, 4ab5d213-3a5f-4bf1-a9cd-ee88330f6ff2, 43f5ec15-059c-41f3-82ac-c1eaf5ec1062, c9284338-834c-4b29-8a01-088130739c26, 5e98c3d7-50b9-4367-87f4-dd6b070faee7, native, 2f1c8c67-4cf5-4ca9-b25a-d27e7b09fe22, null, awaiting_approval, 4, Exact input required, 1f741d56-f22f-417c-860c-32412a373f0f, ccd32451c0a56c27efeada277a40fea0dc6b651bdf37a2ebddcf62d0c186d7e7, null, null, pending, null, null, null, null, null, null, 2026-10-10 13:06:30.333117+00, null).
+2026-10-10 13:06:30.731 UTC [222] STATEMENT:  UPDATE workbench_execution_waits
+	      SET wait_state='awaiting_approval',approval_id=$2,approval_action_payload_hash=$3,
+	        input_event_cursor=NULL,input_message_sequence=NULL WHERE id=$1
+2026-10-10 13:06:30.741 UTC [223] ERROR:  new row for relation "workbench_execution_waits" violates check constraint "workbench_execution_waits_check1"
+2026-10-10 13:06:30.741 UTC [223] DETAIL:  Failing row contains (6cc473b3-4036-4431-8647-8b8fc51cc0d2, 7f1e24fb-03d2-40b5-b98a-00ef3bfb0b95, 726ad38d-6b39-44df-aa29-e13cad5eebd1, 86c3bc14-05c9-418e-a169-121496dc84b9, 4ab5d213-3a5f-4bf1-a9cd-ee88330f6ff2, 43f5ec15-059c-41f3-82ac-c1eaf5ec1062, c9284338-834c-4b29-8a01-088130739c26, 5e98c3d7-50b9-4367-87f4-dd6b070faee7, native, 2f1c8c67-4cf5-4ca9-b25a-d27e7b09fe22, null, awaiting_approval, 4, Exact input required, 1f741d56-f22f-417c-860c-32412a373f0f, SHA256:ccd32451c0a56c27efeada277a40fea0dc6b651bdf37a2ebddcf62d0c..., null, null, pending, null, null, null, null, null, null, 2026-10-10 13:06:30.333117+00, null).
+2026-10-10 13:06:30.741 UTC [223] STATEMENT:  UPDATE workbench_execution_waits
+	      SET wait_state='awaiting_approval',approval_id=$2,approval_action_payload_hash=$3,
+	        input_event_cursor=NULL,input_message_sequence=NULL WHERE id=$1
+2026-10-10 13:06:30.793 UTC [224] ERROR:  insert or update on table "workbench_execution_waits" violates foreign key constraint "workbench_execution_waits_agent_session_id_trigger_prompt__fkey"
+2026-10-10 13:06:30.793 UTC [224] DETAIL:  Key (agent_session_id, trigger_prompt_id)=(726ad38d-6b39-44df-aa29-e13cad5eebd1, 2171c85d-9196-4b57-b837-49bc83c37133) is not present in table "agent_session_prompts".
+2026-10-10 13:06:30.793 UTC [224] STATEMENT:  UPDATE workbench_execution_waits SET trigger_prompt_id=$2 WHERE id=$1
+2026-10-10 13:06:30.802 UTC [225] ERROR:  duplicate key value violates unique constraint "workbench_execution_waits_workspace_id_continuation_turn_id_key"
+2026-10-10 13:06:30.802 UTC [225] DETAIL:  Key (workspace_id, continuation_turn_id)=(7f1e24fb-03d2-40b5-b98a-00ef3bfb0b95, 4ab5d213-3a5f-4bf1-a9cd-ee88330f6ff2) already exists.
+2026-10-10 13:06:30.802 UTC [225] STATEMENT:  UPDATE workbench_execution_waits SET status='continued',terminal_reason=NULL,
+	      continuation_turn_id=$2,trigger_kind='prompt',trigger_prompt_id=$3 WHERE id=$1
+2026-10-10 13:06:30.813 UTC [226] ERROR:  INSTALLATION_ORIGIN_IMMUTABLE
+2026-10-10 13:06:30.813 UTC [226] CONTEXT:  PL/pgSQL function preserve_installation_origin() line 5 at RAISE
+2026-10-10 13:06:30.813 UTC [226] STATEMENT:  UPDATE agent_installation_tokens SET origin_kind=NULL WHERE id=$1
+2026-10-10 13:06:30.827 UTC [227] ERROR:  new row for relation "agent_installation_tokens" violates check constraint "installation_origin_shape"
+2026-10-10 13:06:30.827 UTC [227] DETAIL:  Failing row contains (e2910492-1359-4da5-9a15-5ed19ddee228, 448fd1fd-3aa1-4a2e-976d-bc776160487c, f03f6a80-8a4b-4d08-9ada-62d5ec0ac1ca, null, null, null, null, 2026-10-10 13:06:30.826351+00, null, 15d3516c-a69d-4d14-ad65-c0db9b65e7b3).
+2026-10-10 13:06:30.827 UTC [227] STATEMENT:  INSERT INTO agent_installation_tokens(agent_id,token_hash,origin_connection_id) VALUES($1,$2,$3)
+2026-10-10 13:06:42.845 UTC [239] ERROR:  workbench recovery outbox failure
+2026-10-10 13:06:42.845 UTC [239] CONTEXT:  PL/pgSQL function workbench_recovery_reject_outbox() line 2 at RAISE
+2026-10-10 13:06:42.845 UTC [239] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:06:43.300 UTC [240] ERROR:  atomic completion failure
+2026-10-10 13:06:43.300 UTC [240] CONTEXT:  PL/pgSQL function reject_atomic_session_completion() line 2 at RAISE
+2026-10-10 13:06:43.300 UTC [240] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:06:46.657 UTC [243] ERROR:  M1_ORIGIN_WRITE_FAILURE
+2026-10-10 13:06:46.657 UTC [243] CONTEXT:  PL/pgSQL function m1_reject_origin() line 2 at RAISE
+2026-10-10 13:06:46.657 UTC [243] STATEMENT:  UPDATE api_idempotency_keys SET
+	     execution_source_kind=$4,execution_session_id=$5,execution_session_token_id=$6,
+	     execution_installation_token_id=$7,execution_connection_id=$8
+	     WHERE workspace_id=$1 AND actor_id=$2 AND idempotency_key=$3
+2026-10-10 13:06:46.838 UTC [243] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-10 13:06:46.838 UTC [243] CONTEXT:  PL/pgSQL function m1_atomic_b749e47c1a314d3eb01591d39fe59232() line 2 at RAISE
+2026-10-10 13:06:46.838 UTC [243] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 13:06:46.911 UTC [243] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-10 13:06:46.911 UTC [243] CONTEXT:  PL/pgSQL function m1_atomic_7a9db694d6804bf58f523b03c5544677() line 2 at RAISE
+2026-10-10 13:06:46.911 UTC [243] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:06:47.117 UTC [243] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-10 13:06:47.117 UTC [243] CONTEXT:  PL/pgSQL function m1_atomic_017b9b1231de452f8260065faf1d261d() line 2 at RAISE
+2026-10-10 13:06:47.117 UTC [243] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 13:06:47.192 UTC [243] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-10 13:06:47.192 UTC [243] CONTEXT:  PL/pgSQL function m1_atomic_6287decf17fc4f4b8a274dbb730695c3() line 2 at RAISE
+2026-10-10 13:06:47.192 UTC [243] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:06:47.417 UTC [243] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-10 13:06:47.417 UTC [243] CONTEXT:  PL/pgSQL function m1_atomic_08df5e428cf84b70862e56d98b62de3e() line 2 at RAISE
+2026-10-10 13:06:47.417 UTC [243] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 13:06:47.495 UTC [243] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-10 13:06:47.495 UTC [243] CONTEXT:  PL/pgSQL function m1_atomic_ce03d046485b4679980f77ce213d2bd6() line 2 at RAISE
+2026-10-10 13:06:47.495 UTC [243] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:06:47.701 UTC [243] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-10 13:06:47.701 UTC [243] CONTEXT:  PL/pgSQL function m1_atomic_e937017a134743d5809d69d7c5fc668e() line 2 at RAISE
+2026-10-10 13:06:47.701 UTC [243] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 13:06:47.777 UTC [243] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-10 13:06:47.777 UTC [243] CONTEXT:  PL/pgSQL function m1_atomic_de86b81498704abd898ed0455467f49e() line 2 at RAISE
+2026-10-10 13:06:47.777 UTC [243] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:06:48.011 UTC [243] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-10 13:06:48.011 UTC [243] CONTEXT:  PL/pgSQL function m1_atomic_8c259ffe17654ecfa47af8296a95b7a8() line 2 at RAISE
+2026-10-10 13:06:48.011 UTC [243] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 13:06:48.090 UTC [243] ERROR:  M1_ATOMIC_BOUNDARY_FAILURE
+2026-10-10 13:06:48.090 UTC [243] CONTEXT:  PL/pgSQL function m1_atomic_46920e745e6c4a8da1e6c97a1382b684() line 2 at RAISE
+2026-10-10 13:06:48.090 UTC [243] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:07:17.417 UTC [261] WARNING:  there is no transaction in progress
+2026-10-10 13:07:17.417 UTC [258] WARNING:  there is no transaction in progress
+2026-10-10 13:07:17.878 UTC [258] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 13:07:17.878 UTC [258] CONTEXT:  PL/pgSQL function a2_failure_350b71ccd1134b848bb2423461feb240() line 1 at RAISE
+2026-10-10 13:07:17.878 UTC [258] STATEMENT:  INSERT INTO repository_contexts(
+	             workspace_id,repository_id,project_id,work_item_id,session_id,base_branch,base_sha,
+	             branch_pattern,allowed_paths,permissions,guidance_manifest_hash,created_by_actor_id)
+	           VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+	           RETURNING id
+2026-10-10 13:07:18.323 UTC [258] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 13:07:18.323 UTC [258] CONTEXT:  PL/pgSQL function a2_failure_3db7b6985fdc46a2941562d8b16dcf83() line 1 at RAISE
+2026-10-10 13:07:18.323 UTC [258] STATEMENT:  INSERT INTO repository_guidance_entries(
+	               context_id,ordinal,path,blob_sha,content_hash,content)
+	             VALUES($1,$2,$3,$4,$5,$6)
+2026-10-10 13:07:18.765 UTC [258] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 13:07:18.765 UTC [258] CONTEXT:  PL/pgSQL function a2_failure_0734a136ee554d9f99be1c5197b6c56d() line 1 at RAISE
+2026-10-10 13:07:18.765 UTC [258] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 13:07:19.215 UTC [258] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 13:07:19.215 UTC [258] CONTEXT:  PL/pgSQL function a2_failure_f5d76cae0a3a4b6cb1945e07b918becb() line 1 at RAISE
+2026-10-10 13:07:19.215 UTC [258] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:07:42.738 UTC [288] ERROR:  forced bootstrap integration rollback
+2026-10-10 13:07:42.738 UTC [288] CONTEXT:  PL/pgSQL function bootstrap_install_test_failure() line 5 at RAISE
+2026-10-10 13:07:42.738 UTC [288] STATEMENT:  INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash) VALUES($1,'human','admin',$2,$3,$4) RETURNING id
+2026-10-10 13:07:50.975 UTC [296] ERROR:  IMMUTABLE_DOCUMENT_REVISION
+2026-10-10 13:07:50.975 UTC [296] CONTEXT:  PL/pgSQL function prevent_document_revision_mutation() line 3 at RAISE
+2026-10-10 13:07:50.975 UTC [296] STATEMENT:  UPDATE document_revisions SET markdown=$2 WHERE id=$1
+2026-10-10 13:07:51.415 UTC [299] ERROR:  INVALID_DOCUMENT_PROJECT_OWNER
+2026-10-10 13:07:51.415 UTC [299] CONTEXT:  PL/pgSQL function validate_document_owner() line 17 at RAISE
+2026-10-10 13:07:51.415 UTC [299] STATEMENT:  INSERT INTO documents(workspace_id,team_id,project_id,title,current_revision_id,created_by_actor_id)
+	       VALUES ((SELECT workspace_id FROM projects WHERE id=$1),$2,$1,'Cross Team',$3,$4)
+2026-10-10 13:07:51.447 UTC [298] ERROR:  INJECTED_DOCUMENT_EVENT_FAILURE
+2026-10-10 13:07:51.447 UTC [298] CONTEXT:  PL/pgSQL function fail_test_document_event() line 2 at RAISE
+2026-10-10 13:07:51.447 UTC [298] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 13:07:59.555 UTC [308] ERROR:  duplicate key value violates unique constraint "workflow_states_team_id_name_key"
+2026-10-10 13:07:59.555 UTC [308] DETAIL:  Key (team_id, name)=(7ee237c9-7340-4169-9c8c-6652abeb01a6, Backlog) already exists.
+2026-10-10 13:07:59.555 UTC [308] STATEMENT:  UPDATE workflow_states SET name=COALESCE($1,name),color=COALESCE($2,color),revision=revision+1,updated_at=now() WHERE id=$3 AND workspace_id=$4 AND team_id=$5 AND is_archived=false RETURNING id,revision
+2026-10-10 13:08:02.216 UTC [311] ERROR:  test outbox failure
+2026-10-10 13:08:02.216 UTC [311] CONTEXT:  PL/pgSQL function workbench_test_fail_outbox() line 2 at RAISE
+2026-10-10 13:08:02.216 UTC [311] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:09:31.260 UTC [55] LOG:  checkpoint starting: time
+2026-10-10 13:11:27.029 UTC [333] ERROR:  M1 queued settlement rollback
+2026-10-10 13:11:27.029 UTC [333] CONTEXT:  PL/pgSQL function m1_reject_queued_settlement() line 2 at RAISE
+2026-10-10 13:11:27.029 UTC [333] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 13:12:36.202 UTC [346] ERROR:  M2 import partial failure
+2026-10-10 13:12:36.202 UTC [346] CONTEXT:  PL/pgSQL function m2_import_failure() line 1 at RAISE
+2026-10-10 13:12:36.202 UTC [346] STATEMENT:  INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id,milestone_id,parent_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id,revision,number
+2026-10-10 13:12:36.388 UTC [346] ERROR:  M2 import partial failure
+2026-10-10 13:12:36.388 UTC [346] CONTEXT:  PL/pgSQL function m2_import_failure() line 1 at RAISE
+2026-10-10 13:12:36.388 UTC [346] STATEMENT:  INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id,milestone_id,parent_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id,revision,number
+2026-10-10 13:12:36.711 UTC [346] ERROR:  M2 import partial failure
+2026-10-10 13:12:36.711 UTC [346] CONTEXT:  PL/pgSQL function m2_import_failure() line 1 at RAISE
+2026-10-10 13:12:36.711 UTC [346] STATEMENT:  INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id,milestone_id,parent_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id,revision,number
+2026-10-10 13:12:37.338 UTC [346] ERROR:  WORK_ITEM_BLOCK_CYCLE
+2026-10-10 13:12:37.338 UTC [346] CONTEXT:  PL/pgSQL function enforce_work_item_relation_invariants() line 36 at RAISE
+2026-10-10 13:12:37.338 UTC [346] STATEMENT:  INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind,created_by_actor_id)
+	         VALUES($1,$2,$3,$4,$5,$6) RETURNING *
+2026-10-10 13:12:37.464 UTC [346] ERROR:  WORK_ITEM_PARENT_CYCLE
+2026-10-10 13:12:37.464 UTC [346] CONTEXT:  PL/pgSQL function enforce_work_item_parent_invariants() line 42 at RAISE
+2026-10-10 13:12:37.464 UTC [346] STATEMENT:  UPDATE work_items SET title=CASE WHEN $1 THEN $2 ELSE title END,description=CASE WHEN $3 THEN $4 ELSE description END,status_id=CASE WHEN $5 THEN $6 ELSE status_id END,priority=CASE WHEN $7 THEN $8 ELSE priority END,due_date=CASE WHEN $9 THEN $10 ELSE due_date END,responsible_human_actor_id=CASE WHEN $11 THEN $12 ELSE responsible_human_actor_id END,labels=CASE WHEN $13 THEN $14 ELSE labels END,project_id=CASE WHEN $15 THEN $16 ELSE project_id END,milestone_id=CASE WHEN $17 THEN $18 ELSE CASE WHEN $15 THEN NULL ELSE milestone_id END END,parent_id=CASE WHEN $19 THEN $20 ELSE parent_id END,board_rank=CASE WHEN $21 THEN $22 ELSE board_rank END,revision=revision+1,updated_at=now() WHERE id=$23 RETURNING id,revision
+2026-10-10 13:12:40.208 UTC [344] WARNING:  there is no transaction in progress
+2026-10-10 13:12:56.353 UTC [344] ERROR:  new row for relation "delegations" violates check constraint "delegations_check1"
+2026-10-10 13:12:56.353 UTC [344] DETAIL:  Failing row contains (2aaf110b-9e98-4dd7-bfa4-c8ee200167d8, f309498e-ac46-4628-a2f1-2a40a6b40ddf, 510e76d1-3645-44e6-8b09-63a52aa6fa1c, cf9cdfc7-23f7-4889-9bf7-876df31715dc, f6e74b56-657d-45c2-95b3-28c39a6e3d43, 9d2630b9-56fc-4a13-849f-3f67908418b9, 09b23df9-8862-437a-8bec-3c5e178d2145, executor, work_item, 09b23df9-8862-437a-8bec-3c5e178d2145, {work:read,work:write,plan:write,artifact:write,message:write,co..., {"teamIds": ["510e76d1-3645-44e6-8b09-63a52aa6fa1c"], "projectId..., revoked, 1, null, null, null, 2026-10-10 13:12:52.714666+00, 2026-10-10 13:12:52.714666+00).
+2026-10-10 13:12:56.353 UTC [344] STATEMENT:  UPDATE delegations SET status='revoked' WHERE id=(SELECT delegation_id FROM agent_sessions WHERE id=$1)
+2026-10-10 13:12:56.373 UTC [350] ERROR:  new row for relation "delegations" violates check constraint "delegations_check1"
+2026-10-10 13:12:56.373 UTC [350] DETAIL:  Failing row contains (2aaf110b-9e98-4dd7-bfa4-c8ee200167d8, f309498e-ac46-4628-a2f1-2a40a6b40ddf, 510e76d1-3645-44e6-8b09-63a52aa6fa1c, cf9cdfc7-23f7-4889-9bf7-876df31715dc, f6e74b56-657d-45c2-95b3-28c39a6e3d43, 9d2630b9-56fc-4a13-849f-3f67908418b9, 09b23df9-8862-437a-8bec-3c5e178d2145, executor, work_item, 09b23df9-8862-437a-8bec-3c5e178d2145, {work:read,work:write,plan:write,artifact:write,message:write,co..., {"teamIds": ["510e76d1-3645-44e6-8b09-63a52aa6fa1c"], "projectId..., revoked, 1, null, null, null, 2026-10-10 13:12:52.714666+00, 2026-10-10 13:12:52.714666+00).
+2026-10-10 13:12:56.373 UTC [350] STATEMENT:  UPDATE delegations SET status='revoked' WHERE id=(SELECT delegation_id FROM agent_sessions WHERE id=$1)
+2026-10-10 13:13:33.942 UTC [354] ERROR:  could not obtain lock on row in relation "agent_connections"
+2026-10-10 13:13:33.942 UTC [354] STATEMENT:  SELECT id FROM agent_connections WHERE id=$1 FOR SHARE NOWAIT
+2026-10-10 13:13:33.944 UTC [351] WARNING:  there is no transaction in progress
+2026-10-10 13:13:34.205 UTC [354] ERROR:  canceling statement due to lock timeout
+2026-10-10 13:13:34.205 UTC [354] CONTEXT:  while locking tuple (0,5) in relation "agent_installation_tokens"
+2026-10-10 13:13:34.205 UTC [354] STATEMENT:  SELECT id FROM agent_installation_tokens
+	      WHERE id=ANY($1::uuid[])
+	      ORDER BY id
+	      FOR UPDATE
+2026-10-10 13:13:34.208 UTC [351] WARNING:  there is no transaction in progress
+2026-10-10 13:13:34.293 UTC [351] WARNING:  there is no transaction in progress
+2026-10-10 13:13:35.955 UTC [346] ERROR:  M2 collaboration outbox rollback
+2026-10-10 13:13:35.955 UTC [346] CONTEXT:  PL/pgSQL function m2_collaboration_fault() line 1 at RAISE
+2026-10-10 13:13:35.955 UTC [346] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:13:36.160 UTC [346] ERROR:  M2 collaboration outbox rollback
+2026-10-10 13:13:36.160 UTC [346] CONTEXT:  PL/pgSQL function m2_collaboration_fault() line 1 at RAISE
+2026-10-10 13:13:36.160 UTC [346] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:13:36.364 UTC [346] ERROR:  M2 collaboration outbox rollback
+2026-10-10 13:13:36.364 UTC [346] CONTEXT:  PL/pgSQL function m2_collaboration_fault() line 1 at RAISE
+2026-10-10 13:13:36.364 UTC [346] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:13:36.699 UTC [346] ERROR:  M2 collaboration outbox rollback
+2026-10-10 13:13:36.699 UTC [346] CONTEXT:  PL/pgSQL function m2_collaboration_fault() line 1 at RAISE
+2026-10-10 13:13:36.699 UTC [346] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:13:37.969 UTC [346] ERROR:  M2 Inbox outbox rollback
+2026-10-10 13:13:37.969 UTC [346] CONTEXT:  PL/pgSQL function m2_inbox_fault() line 1 at RAISE
+2026-10-10 13:13:37.969 UTC [346] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:13:38.169 UTC [346] ERROR:  M2 Inbox outbox rollback
+2026-10-10 13:13:38.169 UTC [346] CONTEXT:  PL/pgSQL function m2_inbox_fault() line 1 at RAISE
+2026-10-10 13:13:38.169 UTC [346] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:13:38.517 UTC [346] ERROR:  M2 Inbox outbox rollback
+2026-10-10 13:13:38.517 UTC [346] CONTEXT:  PL/pgSQL function m2_inbox_fault() line 1 at RAISE
+2026-10-10 13:13:38.517 UTC [346] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:13:38.932 UTC [346] ERROR:  M2 Inbox outbox rollback
+2026-10-10 13:13:38.932 UTC [346] CONTEXT:  PL/pgSQL function m2_inbox_fault() line 1 at RAISE
+2026-10-10 13:13:38.932 UTC [346] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:13:39.151 UTC [346] ERROR:  M2 Inbox outbox rollback
+2026-10-10 13:13:39.151 UTC [346] CONTEXT:  PL/pgSQL function m2_inbox_fault() line 1 at RAISE
+2026-10-10 13:13:39.151 UTC [346] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:13:39.507 UTC [346] ERROR:  M2 Inbox outbox rollback
+2026-10-10 13:13:39.507 UTC [346] CONTEXT:  PL/pgSQL function m2_inbox_fault() line 1 at RAISE
+2026-10-10 13:13:39.507 UTC [346] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 13:14:01.659 UTC [55] LOG:  checkpoint complete: wrote 2990 buffers (18.2%); 0 WAL file(s) added, 0 removed, 10 recycled; write=269.832 s, sync=0.343 s, total=270.400 s; sync files=120242, longest=0.001 s, average=0.001 s; distance=160233 kB, estimate=160233 kB; lsn=0/2BE31FC8, redo lsn=0/2B4A3240
+2026-10-10 13:14:31.680 UTC [55] LOG:  checkpoint starting: time
+2026-10-10 13:15:55.586 UTC [55] LOG:  checkpoint complete: wrote 843 buffers (5.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=83.902 s, sync=0.002 s, total=83.907 s; sync files=357, longest=0.001 s, average=0.001 s; distance=10570 kB, estimate=145267 kB; lsn=0/2C2E74D0, redo lsn=0/2BEF5AF0
+2026-10-10 13:18:26.716 UTC [382] ERROR:  M0 injected downstream failure
+2026-10-10 13:18:26.716 UTC [382] CONTEXT:  PL/pgSQL function m0_document_failure() line 1 at RAISE
+2026-10-10 13:18:26.716 UTC [382] STATEMENT:  INSERT INTO documents(id,workspace_id,team_id,project_id,work_item_id,title,current_revision_id,created_by_actor_id)
+	         VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *
+2026-10-10 13:18:26.894 UTC [382] ERROR:  M0 injected downstream failure
+2026-10-10 13:18:26.894 UTC [382] CONTEXT:  PL/pgSQL function m0_document_failure() line 1 at RAISE
+2026-10-10 13:18:26.894 UTC [382] STATEMENT:  INSERT INTO documents(id,workspace_id,team_id,project_id,work_item_id,title,current_revision_id,created_by_actor_id)
+	         VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *
+2026-10-10 13:18:27.220 UTC [382] ERROR:  M0 injected downstream failure
+2026-10-10 13:18:27.220 UTC [382] CONTEXT:  PL/pgSQL function m0_document_failure() line 1 at RAISE
+2026-10-10 13:18:27.220 UTC [382] STATEMENT:  INSERT INTO documents(id,workspace_id,team_id,project_id,work_item_id,title,current_revision_id,created_by_actor_id)
+	         VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *
+2026-10-10 13:18:49.216 UTC [386] ERROR:  duplicate key value violates unique constraint "agent_webhook_deliveries_agent_id_delivery_id_key"
+2026-10-10 13:18:49.216 UTC [386] DETAIL:  Key (agent_id, delivery_id)=(6b5351bc-b426-44c9-a0de-a57023ced422, del_66543671-aaa6-4fff-8001-bb85679b3faf) already exists.
+2026-10-10 13:18:49.216 UTC [386] STATEMENT:  INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) SELECT agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload FROM agent_webhook_deliveries WHERE agent_id=$1 AND delivery_id=$2 RETURNING id
+2026-10-10 13:19:31.805 UTC [55] LOG:  checkpoint starting: time
+2026-10-10 13:19:55.611 UTC [392] ERROR:  DELEGATION_REQUIRES_HUMAN_PRINCIPAL_AND_AGENT_ACTOR
+2026-10-10 13:19:55.611 UTC [392] CONTEXT:  PL/pgSQL function enforce_delegation_actor_kinds() line 6 at RAISE
+2026-10-10 13:19:55.611 UTC [392] STATEMENT:  INSERT INTO delegations(
+	       workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,role,scope_type,scope_id,
+	       permissions_snapshot,capability_scope
+	     ) VALUES($1,$2,$3,$4,$5,'executor','automation',$6,$7,$8) RETURNING id
+2026-10-10 13:19:57.351 UTC [392] WARNING:  there is no transaction in progress
+2026-10-10 13:19:57.448 UTC [392] WARNING:  there is no transaction in progress
+2026-10-10 13:19:57.558 UTC [392] WARNING:  there is no transaction in progress
+2026-10-10 13:19:57.669 UTC [392] WARNING:  there is no transaction in progress
+2026-10-10 13:19:57.780 UTC [392] WARNING:  there is no transaction in progress
+2026-10-10 13:19:57.879 UTC [392] WARNING:  there is no transaction in progress
+2026-10-10 13:19:57.992 UTC [392] WARNING:  there is no transaction in progress
+2026-10-10 13:19:58.068 UTC [392] WARNING:  there is no transaction in progress
+2026-10-10 13:19:58.069 UTC [391] WARNING:  there is no transaction in progress
+2026-10-10 13:20:01.390 UTC [392] ERROR:  new row for relation "notification_deliveries" violates check constraint "notification_delivery_kind_required"
+2026-10-10 13:20:01.390 UTC [392] DETAIL:  Failing row contains (c5981067-3757-46be-8d2a-dfff583483a9, null, webhook, pending, 0, 2026-10-10 13:20:01.389934+00, null, null, 0, notification:930551a5-0b12-421b-840e-37a64b9a8d23:target:4f92f40..., null, null, null, 2026-10-10 13:20:01.389934+00, null, b3140ed9-943a-4eb6-9cb0-400907ff5148, 930551a5-0b12-421b-840e-37a64b9a8d23, 4f92f402-cc2e-4a0b-982b-a0a631328cea, 3a3191ab-8d13-4aee-a050-586c8812923a, 1, null, null, not_sent, null, 0, 1, null).
+2026-10-10 13:20:01.390 UTC [392] STATEMENT:  INSERT INTO notification_deliveries(workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key)
+	        SELECT workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key FROM notification_deliveries WHERE id=$1
+2026-10-10 13:20:01.584 UTC [391] WARNING:  there is no transaction in progress
+2026-10-10 13:21:13.462 UTC [394] WARNING:  there is no transaction in progress
+2026-10-10 13:21:13.802 UTC [394] WARNING:  there is no transaction in progress
+2026-10-10 13:21:14.670 UTC [399] WARNING:  there is no transaction in progress
+2026-10-10 13:21:15.337 UTC [394] WARNING:  there is no transaction in progress
+2026-10-10 13:21:16.123 UTC [399] WARNING:  there is no transaction in progress
+2026-10-10 13:21:16.690 UTC [400] WARNING:  there is no transaction in progress
+2026-10-10 13:21:17.479 UTC [394] WARNING:  there is no transaction in progress
+2026-10-10 13:21:18.154 UTC [394] WARNING:  there is no transaction in progress
+2026-10-10 13:21:18.154 UTC [399] WARNING:  there is no transaction in progress
+2026-10-10 13:21:19.303 UTC [394] WARNING:  there is no transaction in progress
+2026-10-10 13:21:19.954 UTC [400] WARNING:  there is no transaction in progress
+2026-10-10 13:21:20.841 UTC [399] WARNING:  there is no transaction in progress
+2026-10-10 13:21:21.111 UTC [394] WARNING:  there is no transaction in progress
+2026-10-10 13:21:22.027 UTC [400] WARNING:  there is no transaction in progress
+2026-10-10 13:21:22.780 UTC [399] WARNING:  there is no transaction in progress
+2026-10-10 13:21:23.875 UTC [400] WARNING:  there is no transaction in progress
+2026-10-10 13:21:25.104 UTC [394] WARNING:  there is no transaction in progress
+2026-10-10 13:21:26.121 UTC [399] WARNING:  there is no transaction in progress
+2026-10-10 13:21:26.862 UTC [400] WARNING:  there is no transaction in progress
+2026-10-10 13:22:43.711 UTC [55] LOG:  checkpoint complete: wrote 1755 buffers (10.7%); 0 WAL file(s) added, 1 removed, 1 recycled; write=191.841 s, sync=0.052 s, total=191.907 s; sync files=33681, longest=0.001 s, average=0.001 s; distance=32158 kB, estimate=133956 kB; lsn=0/2F596EF0, redo lsn=0/2DE5D638
+2026-10-10 13:24:28.311 UTC [400] WARNING:  there is no transaction in progress
+2026-10-10 13:24:31.388 UTC [55] LOG:  checkpoint starting: time
+2026-10-10 13:25:27.883 UTC [55] LOG:  checkpoint complete: wrote 328 buffers (2.0%); 0 WAL file(s) added, 1 removed, 1 recycled; write=56.437 s, sync=0.021 s, total=56.495 s; sync files=15173, longest=0.001 s, average=0.001 s; distance=27451 kB, estimate=123305 kB; lsn=0/30126058, redo lsn=0/2F92C460
+2026-10-10 13:29:31.873 UTC [55] LOG:  checkpoint starting: time
