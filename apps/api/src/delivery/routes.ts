@@ -1275,11 +1275,13 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
       [projectId, actor(request).workspaceId],
     )).rows)
     await h.readableTeam(request, project.team_id)
-    return h.paginator.query(h.db, request, request.query, {
+    const page = await h.paginator.query(h.db, request, request.query, {
       route: '/api/v1/projects/:id/milestones',
       filters: { projectId },
-      sort: [{ key: 'created_at', sql: 'created_at', direction: 'ASC' }, { key: 'id', sql: 'id', direction: 'ASC' }],
-    }, 'SELECT * FROM project_milestones WHERE project_id=$1 AND workspace_id=$2 AND deleted_at IS NULL', [projectId, actor(request).workspaceId])
+      sort: [{ key: 'created_at', sql: 'created_at', direction: 'ASC', value: row => String(row.__cursor_created_at) }, { key: 'id', sql: 'id', direction: 'ASC' }],
+    }, 'SELECT *,created_at::text AS __cursor_created_at FROM project_milestones WHERE project_id=$1 AND workspace_id=$2 AND deleted_at IS NULL', [projectId, actor(request).workspaceId])
+    // PostgreSQL microseconds must survive cursor creation; the public timestamp stays unchanged.
+    return { ...page, items: page.items.map(({ __cursor_created_at: _cursor, ...item }) => item) }
   })
 
   app.post('/api/v1/projects/:id/milestones', async request => {
@@ -1371,13 +1373,14 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
       [workItemId, actor(request).workspaceId],
     )).rows)
     await h.readableTeam(request, item.team_id)
-    return h.paginator.query(h.db, request, request.query, {
+    const page = await h.paginator.query(h.db, request, request.query, {
       route: '/api/v1/work-items/:id/relations',
       filters: { workItemId },
-      sort: [{ key: 'created_at', sql: 'created_at', direction: 'ASC' }, { key: 'id', sql: 'id', direction: 'ASC' }],
-    }, `SELECT * FROM work_item_relations
+      sort: [{ key: 'created_at', sql: 'created_at', direction: 'ASC', value: row => String(row.__cursor_created_at) }, { key: 'id', sql: 'id', direction: 'ASC' }],
+    }, `SELECT *,created_at::text AS __cursor_created_at FROM work_item_relations
         WHERE workspace_id=$1 AND deleted_at IS NULL
           AND (source_work_item_id=$2 OR target_work_item_id=$2)`, [actor(request).workspaceId, workItemId])
+    return { ...page, items: page.items.map(({ __cursor_created_at: _cursor, ...item }) => item) }
   })
 
   app.post('/api/v1/work-items/:id/relations', async request => {

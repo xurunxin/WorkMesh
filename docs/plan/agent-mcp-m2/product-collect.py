@@ -30,7 +30,13 @@ def clean_emitted():
         path=ROOT/row['path'];resolved=path.resolve()
         assert resolved.is_relative_to(ROOT.resolve()) and str(resolved)==row['absolutePath'] and not path.is_symlink()
         assert digest(path.read_bytes())=={k:row[k] for k in ('bytes','sha256')}
-        assert not git('ls-files', '--',row['path']).strip()
+        tracked=git('ls-files', '--',row['path']).strip()
+        if tracked:
+            checkpoint='521e86d90e0d127182d0d46af842fe7463b88576'
+            blob=git('show',checkpoint+':'+row['path'])
+            assert blob.replace(b'\r\n',b'\n')==path.read_bytes().replace(b'\r\n',b'\n')
+            row['checkpointGit']={'commit':checkpoint,'blob':git('rev-parse',checkpoint+':'+row['path']).decode().strip(),**digest(blob)}
+            row['trackedAfterInterruption']=True
         path.unlink();row['cleanup']={'operation':'unlink exact verified owned leaf','existedAfter':path.exists(),'exit':0}
     data['cleanup']={'healthyCommandsObservedExitedBeforeCleanup':True,'nativeAction':'Python Path.unlink per registered leaf','recursiveDelete':False,'completedUnix':time.time()}
     write(registry,data);print(json.dumps({'removedEmittedFiles':len(data['members'])}))

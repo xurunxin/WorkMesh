@@ -118,6 +118,52 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     savePlanningEvidence('planning-import-recovery.json',{prepared,partial,restored,replay,page,tail,cycle,milestones,seen,related,relations})
   })
 
+  it('Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定', async () => {
+    const parent = await f.createExecution('M2 Pi creation responses', false, {maxInputTokens:100,maxRuntimeSeconds:1000,customUnits:10})
+    const target = await f.registerTarget()
+    const step = randomUUID(), reviewStep = randomUUID()
+    const revision = (await parent.client.getSession<{revision:number}>(parent.sessionId)).revision
+    await parent.client.publishPlan(parent.sessionId,{changeSummary:'Pi creates both bounded children',steps:[step,reviewStep].map((id,ordinal)=>({id,title:`Step ${ordinal}`,ordinal,status:'pending' as const,dependsOn:[],acceptanceCriteria:[],expectedArtifacts:[]}))},{ifMatch:revision})
+    const plan = await parent.client.getPlan<{id:string}>(parent.sessionId)
+    const childCaptures = await f.pi(parent,f.connectionToken,[async()=>({name:'workmesh_create_child_session',arguments:{agentId:target.agentId,planStepId:step,planVersionId:plan.id,initialPrompt:'Pi ordinary child',budget:{maxInputTokens:60,maxRuntimeSeconds:500,customUnits:6}}})])
+    const childRaw = modelResults(childCaptures).find(value=>value && typeof value==='object' && 'parent_session_id' in value)
+    const child = childAgentSessionResponseSchema.parse(childRaw)
+    const compare = async (session:ChildAgentSession) => {
+      const dbRow=(await f.db.query('SELECT * FROM agent_sessions WHERE id=$1',[session.id])).rows[0]!
+      const rest=await parent.client.listChildSessions(parent.sessionId,{childSessionId:session.id})
+      for(const field of [...boundFields,'budget']) expect(session[field as keyof ChildAgentSession],field).toEqual(dbRow[field])
+      expect(rest.items).toContainEqual(expect.objectContaining({id:session.id,parentSessionId:parent.sessionId,planVersionId:plan.id}))
+    }
+    await compare(child)
+    expect(child.budget).toEqual({maxInputTokens:60,maxRuntimeSeconds:500,customUnits:6})
+    const complete = async (sessionId:string):Promise<ModelCall> => ({name:'workmesh_complete_session',arguments:{ifMatch:(await f.db.query('SELECT revision FROM agent_sessions WHERE id=$1',[sessionId])).rows[0]!.revision,summary:'Verified Pi lifecycle',noArtifactReason:'Deterministic text result'}})
+    const execution=await f.receive(child.id,target.token)
+    await f.pi(execution,target.token,[()=>complete(child.id)])
+    const reviewCaptures=await f.pi(parent,f.connectionToken,[async()=>({name:'workmesh_create_review_delegation',arguments:{reviewerAgentId:target.agentId,planStepId:reviewStep,planVersionId:plan.id,initialPrompt:'Pi independent reviewer',ttlSeconds:300,budget:{maxInputTokens:40,maxRuntimeSeconds:500,customUnits:4}}})])
+    const reviewRaw=modelResults(reviewCaptures).find(value=>value && typeof value==='object' && 'session' in value && 'lease' in value)
+    const review=reviewDelegationResponseSchema.parse(reviewRaw)
+    await compare(review.session)
+    expect(review.session.budget).toEqual({maxInputTokens:40,maxRuntimeSeconds:500,customUnits:4})
+    const beforeRestart=await facts()
+    await f.restart()
+    expect(await facts()).toEqual(beforeRestart)
+    const blocked=await fetch(`${f.baseUrl}/api/v1/agent-sessions/${parent.sessionId}/complete`,{method:'POST',headers:{authorization:`Bearer ${parent.token}`,'content-type':'application/json','idempotency-key':randomUUID(),'if-match':`"revision-${(await parent.client.getSession<{revision:number}>(parent.sessionId)).revision}"`},body:JSON.stringify({summary:'Review still required',noArtifactReason:'Gate'})})
+    expect(blocked.status).toBe(409)
+    expect(await blocked.json()).toMatchObject({error:{code:'COMPLETION_PLAN_INCOMPLETE',details:{blockerSessionIds:[review.session.id]}}})
+    const reviewer=await f.receive(review.session.id,target.token)
+    let artifactId:string|undefined
+    const room=(await f.db.query("SELECT id FROM work_room_channels WHERE subject_kind='session' AND subject_id=$1",[parent.sessionId])).rows[0]!.id as string
+    await f.pi(reviewer,target.token,[async()=>({name:'workmesh_publish_artifact',arguments:{type:'code_review',title:'Pi own review',metadata:{verdict:'approved'}}}),async()=>{
+      artifactId=(await f.db.query('SELECT id FROM artifacts WHERE session_id=$1',[reviewer.sessionId])).rows[0]!.id as string
+      return {name:'workmesh_send_room_message',arguments:{roomId:room,intent:'review_result',body:'Pi own independent review',artifactIds:[artifactId]}}
+    },async()=>({...await complete(reviewer.sessionId),arguments:{...(await complete(reviewer.sessionId)).arguments,artifactIds:[artifactId]}})])
+    await f.pi(parent,f.connectionToken,[()=>complete(parent.sessionId)])
+    const durable=(await f.db.query(`SELECT s.state,t.status AS turn_status,a.status AS attempt_status FROM agent_sessions s JOIN workbench_turns t ON t.agent_session_id=s.id JOIN workbench_runner_attempts a ON a.turn_id=t.id WHERE s.id=ANY($1::uuid[]) ORDER BY s.id,t.created_at`,[[parent.sessionId,child.id,review.session.id]])).rows
+    expect(durable.length).toBeGreaterThanOrEqual(5)
+    for(const row of durable) expect(row).toMatchObject({state:'completed',turn_status:'settled',attempt_status:'settled'})
+    savePlanningEvidence('pi-creation-response-and-restart.json',{childCaptures,reviewCaptures,child,review,beforeRestart,durable})
+  })
+
   it('有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段', async () => {
     const parent = await f.createExecution('M2 finite lifecycle', false, { maxInputTokens: 100 })
     const target = await f.registerTarget()
