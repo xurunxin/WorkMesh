@@ -63,11 +63,17 @@ elif sys.argv[1]=='check':
  env=json.loads((LOCAL/'environment.json').read_text(encoding='utf8'));label=sys.argv[2];argv=sys.argv[3:]
  assert argv and all('wmi_' not in arg for arg in argv)
  before=source_fingerprints();started=now();tick=time.monotonic()
- process=subprocess.Popen(argv,cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+ # Keep partial output in the private recovery directory even if a turn is interrupted.
+ # Only the redacted completed files below may enter the public evidence bundle.
+ rawdir=LOCAL/'private-check-output';rawdir.mkdir(exist_ok=True)
+ rawout=rawdir/(label+'-stdout.bin');rawerr=rawdir/(label+'-stderr.bin')
+ stdoutfile=rawout.open('wb');stderrfile=rawerr.open('wb')
+ process=subprocess.Popen(argv,cwd=ROOT,env=env,stdout=stdoutfile,stderr=stderrfile)
  processpath=LOCAL/'processes'/(label+'.json')
  processrow={'pid':process.pid,'argv':argv,'cwd':str(ROOT),'startedAt':started,'owner':json.loads((DOC/'product-owner.json').read_text(encoding='utf8'))['runId'],'nativeExit':None}
  save(processpath,processrow)
- stdout,stderr=process.communicate();result=subprocess.CompletedProcess(argv,process.returncode,stdout,stderr)
+ process.wait();stdoutfile.close();stderrfile.close()
+ result=subprocess.CompletedProcess(argv,process.returncode,rawout.read_bytes(),rawerr.read_bytes())
  runtime=time.monotonic()-tick;ended=now();after=source_fingerprints()
  processrow.update({'endedAt':ended,'nativeExit':result.returncode});save(processpath,processrow)
  output=LOCAL/'checks';output.mkdir(exist_ok=True)

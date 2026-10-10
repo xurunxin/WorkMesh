@@ -21,6 +21,9 @@ export async function createOpenCodeRuntime(options: { executable: string; evide
   const global = join(paths.config, 'opencode'); mkdirSync(global)
   const mcpHeaders = Object.fromEntries(Object.keys(options.mcpHeaders ?? {}).map((key, index) => [key, `{env:M5_MCP_HEADER_${index}}`]))
   const config = { update: 'disable', snapshots: false, model: 'm5-local/controlled',
+    // The native 50 KiB default truncates a one-line qualified manifest to zero lines.
+    // Bound public MCP output while allowing the existing 200k document JSON envelope.
+    tool_output: { max_lines: 2_000, max_bytes: 2_000_000 },
     // V2 compatibility discovery scans HOME independently of the private XDG roots.
     plugins: ['-opencode.config.compatibility'],
     providers: { 'm5-local': { package: '@opencode/ai/providers/openai-compatible', settings: { baseURL: options.modelUrl ?? 'http://127.0.0.1:1/v1', apiKey: 'm5-local-no-account' },
@@ -166,20 +169,34 @@ export async function createOpenCodeRuntime(options: { executable: string; evide
   }
   const observeInventory = async (endpoint: URL, password: string, pid: number, evidenceName: string) => {
     const inventory: Record<string, Array<Record<string, unknown>>> = {}
-    for (const kind of ['skill', 'plugin']) {
-      const url = new URL(`/api/${kind}`, endpoint); url.searchParams.set('location[directory]', paths.work)
-      const response = await fetch(url, { headers: { Authorization: `Basic ${Buffer.from(`opencode:${password}`).toString('base64')}` },
-        redirect: 'error', signal: AbortSignal.timeout(10_000) })
-      if (!response.ok) throw new Error(`M5_OPENCODE_PRIVATE_INVENTORY_HTTP:${kind}:${response.status}`)
-      const envelope: unknown = await response.json()
-      const rows: unknown = envelope && typeof envelope === 'object' && 'data' in envelope ? envelope.data : envelope
-      if (!Array.isArray(rows)) throw new Error(`M5_OPENCODE_PRIVATE_INVENTORY_INVALID:${kind}`)
-      inventory[kind] = rows.map((row: unknown) => {
-        if (!row || typeof row !== 'object') throw new Error(`M5_OPENCODE_PRIVATE_INVENTORY_INVALID:${kind}`)
-        return Object.fromEntries(['id', 'path', 'source', 'state'].flatMap(key => key in row ? [[key, row[key as keyof typeof row]]] : []))
-      })
-    }
-    writeFileSync(join(root, evidenceName), JSON.stringify({ at: new Date().toISOString(), pid, endpoint: endpoint.origin, inventory }, null, 2))
+    const observations: Array<{ at: string; kind: string; rows: number }> = []
+    const configUrl = new URL('/api/config', endpoint); configUrl.searchParams.set('location[directory]', paths.work)
+    const configuration = await fetch(configUrl, { headers: { Authorization: `Basic ${Buffer.from(`opencode:${password}`).toString('base64')}` },
+      redirect: 'error', signal: AbortSignal.timeout(10_000) })
+    if (!configuration.ok) throw new Error(`M5_OPENCODE_NATIVE_CONFIG_HTTP:${configuration.status}`)
+    writeFileSync(join(root, evidenceName.replace('inventory.json', 'config.json')), sanitizeOutput(await configuration.text()))
+    // Location bootstrap returns before asynchronous configuration/plugin hydration settles.
+    // Preserve each empty observation and require a real nonempty inventory before execution.
+    const deadline = Date.now() + 15_000
+    do {
+      for (const kind of ['skill', 'plugin']) {
+        const url = new URL(`/api/${kind}`, endpoint); url.searchParams.set('location[directory]', paths.work)
+        const response = await fetch(url, { headers: { Authorization: `Basic ${Buffer.from(`opencode:${password}`).toString('base64')}` },
+          redirect: 'error', signal: AbortSignal.timeout(10_000) })
+        if (!response.ok) throw new Error(`M5_OPENCODE_PRIVATE_INVENTORY_HTTP:${kind}:${response.status}`)
+        const envelope: unknown = await response.json()
+        const rows: unknown = envelope && typeof envelope === 'object' && 'data' in envelope ? envelope.data : envelope
+        if (!Array.isArray(rows)) throw new Error(`M5_OPENCODE_PRIVATE_INVENTORY_INVALID:${kind}`)
+        inventory[kind] = rows.map((row: unknown) => {
+          if (!row || typeof row !== 'object') throw new Error(`M5_OPENCODE_PRIVATE_INVENTORY_INVALID:${kind}`)
+          return Object.fromEntries(['id', 'path', 'source', 'state'].flatMap(key => key in row ? [[key, row[key as keyof typeof row]]] : []))
+        })
+        observations.push({ at: new Date().toISOString(), kind, rows: rows.length })
+      }
+      writeFileSync(join(root, evidenceName), JSON.stringify({ at: new Date().toISOString(), pid, endpoint: endpoint.origin, observations, inventory }, null, 2))
+      if (inventory.plugin!.length && inventory.skill!.length) break
+      await new Promise(done => setTimeout(done, 250))
+    } while (Date.now() < deadline)
     if (!inventory.plugin!.length || !inventory.skill!.length) throw new Error('M5_OPENCODE_PRIVATE_INVENTORY_EMPTY')
     if (inventory.plugin!.some(row => row.id === 'opencode.config.compatibility')) throw new Error('M5_OPENCODE_USER_SKILL_DISCOVERY: compatibility plugin remains active')
     if (inventory.skill!.some(row => typeof row.path !== 'string' || !row.path.startsWith('/builtin/') && !resolve(row.path).startsWith(root + '\\') && !resolve(row.path).startsWith(root + '/')))
@@ -273,11 +290,6 @@ export async function createOpenCodeRuntime(options: { executable: string; evide
       nativeServer.url = readiness.url
       writeFileSync(join(root, 'native-server-readiness.json'), JSON.stringify({ argv: [options.executable, ...args], pid: child.pid,
         startedAt, readiness, privateEnvironment: true, privateDirectory: paths.work, lifetime: 'owned stdin' }, null, 2))
-      const configUrl = new URL('/api/config', readiness.url); configUrl.searchParams.set('location[directory]', paths.work)
-      const nativeConfig = await fetch(configUrl, { headers: { Authorization: `Basic ${Buffer.from(`opencode:${nativePassword}`).toString('base64')}` },
-        redirect: 'error', signal: AbortSignal.timeout(10_000) })
-      if (!nativeConfig.ok) throw new Error(`M5_OPENCODE_NATIVE_CONFIG_HTTP:${nativeConfig.status}`)
-      writeFileSync(join(root, 'native-server-config.json'), sanitizeOutput(await nativeConfig.text()))
       await observeInventory(new URL(readiness.url), nativePassword, child.pid!, 'native-server-discovery-inventory.json')
       return readiness.url
     }

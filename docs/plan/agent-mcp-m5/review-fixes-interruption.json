@@ -9,7 +9,7 @@
       "test:integration",
       "src/joint-clients.conformance.test.ts",
       "--testNamePattern",
-      "\u6210\u5458\u8d44\u683c"
+      "成员资格"
     ],
     "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
     "startedAt": "2026-10-10T18:59:26.084412+00:00",
@@ -18,5 +18,58 @@
   },
   "observation": "registered PID absent on resumption; no completed helper logs/exit receipt; previous command result unknown",
   "observedAt": "2026-10-10T19:03:41.717519+00:00",
-  "noInterruptionIssuedByAgent": true
+  "noInterruptionIssuedByAgent": true,
+  "additionalInterruptedChecks": [
+    {
+      "label": "review-required-typecheck",
+      "registered": {
+        "pid": 54096,
+        "argv": [
+          "pnpm.cmd",
+          "typecheck"
+        ],
+        "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+        "startedAt": "2026-10-10T19:09:46.708427+00:00",
+        "owner": "m5-5dbe32e19a",
+        "nativeExit": null
+      },
+      "observedAt": "2026-10-10T19:14:33.446559+00:00",
+      "observation": "registered PID absent; tool session lost; completed exit/stdout receipt absent; result unknown",
+      "agentIssuedInterrupt": false
+    },
+    {
+      "label": "review-required-unit",
+      "registered": {
+        "pid": 24840,
+        "argv": [
+          "pnpm.cmd",
+          "test"
+        ],
+        "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+        "startedAt": "2026-10-10T19:09:57.577988+00:00",
+        "owner": "m5-5dbe32e19a",
+        "nativeExit": null
+      },
+      "observedAt": "2026-10-10T19:14:33.801539+00:00",
+      "observation": "registered PID absent; tool session lost; completed exit/stdout receipt absent; result unknown",
+      "agentIssuedInterrupt": false
+    },
+    {
+      "label": "review-required-lint",
+      "registered": {
+        "pid": 37068,
+        "argv": [
+          "pnpm.cmd",
+          "lint"
+        ],
+        "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+        "startedAt": "2026-10-10T19:11:00.334927+00:00",
+        "owner": "m5-5dbe32e19a",
+        "nativeExit": null
+      },
+      "observedAt": "2026-10-10T19:14:34.122327+00:00",
+      "observation": "registered PID absent; tool session lost; completed exit/stdout receipt absent; result unknown",
+      "agentIssuedInterrupt": false
+    }
+  ]
 }

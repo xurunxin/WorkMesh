@@ -1,5 +1,7 @@
 # 外部 MCP 客户端与内置 Runner 联合验收方案
 
+当前实施接续见 [正式成果审查后修复报告](review-fixes-report.md)。普通 E 实时 principal 资格修复与准确 403／恢复正例已有新的 23 项真实补充运行；旧报告中的权限缺口描述保留历史含义。OpenCode 模型接入与四条联合主链仍未完成，局部只读复核不代正式 `_oY` 复审。
+
 状态：规划候选 `ddddcfca8d7ef387df58be993c88ffe7d62391dd` 已经另一 Agent 复审并经 Chief confirm 启动实施。下表规划原件保留当时含义；本轮产品工作见 [产品报告](product-report.md)、[实际矩阵](product-matrix.md)、[本卡缺口](product-gaps.md)、[新命令回执](product-checks.json)、[脱敏原件索引](product-evidence-index.json)、[资源收尾](product-cleanup.json)。M5 联合验收尚未完成，OpenCode 实际隔离门禁失败；已有安装、握手、局部单元测试和前置 CI 不表示联合通过。
 
 本轮平台只读 fetch 所见真实主线 `87f88b89297c5c1e346f7ef99118c410f4b4a905`，准确观察见 [执行主线回执](input/product-main-observation.json)；它是该次观察，不代表未来实时 ref。规划来源见 [来源](sources.md)。仅 Todos＋仓库记录，未创建真实 WorkMesh 远端 Project／WorkItem。

@@ -2091,5 +2091,172 @@
       "unchanged": false,
       "sha256": "07fed8fe44a3d5a56c94522947f4227c9b6b64765292d193b81429e5d1152a8d"
     }
+  },
+  {
+    "label": "review-resumed-typecheck",
+    "argv": [
+      "pnpm.cmd",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T19:14:36.254113+00:00",
+    "endedAt": "2026-10-10T19:16:06.906402+00:00",
+    "runtimeSeconds": 90.65150269999867,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-resumed-typecheck-stdout.txt",
+        "bytes": 6524,
+        "sha256": "249274df83a4e425947085315bd57afb01b6dea52b3ce48b2c1a4091b2641ac9",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-resumed-typecheck-stderr.txt",
+        "bytes": 17,
+        "sha256": "884eff4c2cecee914bad9401be4297f8878ee164fa14500831cee50614bfc59d",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-resumed-typecheck.json",
+      "beforeDigest": "335bcc7b50985653de56c82d835a11ae3397efce27b403379f28898e1af9f968",
+      "afterDigest": "6239f0df6d20cc17e9d91b8ccf2f02f16cbf40e29984854b6272fef6277ffc7c",
+      "unchanged": false,
+      "sha256": "f9c8ef3ac0372935c54097857add4292fd97d168b7c1c948d8c124969bb1a866"
+    }
+  },
+  {
+    "label": "review-resumed-lint",
+    "argv": [
+      "pnpm.cmd",
+      "lint"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T19:15:53.823389+00:00",
+    "endedAt": "2026-10-10T19:17:21.762737+00:00",
+    "runtimeSeconds": 87.93857620000199,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-resumed-lint-stdout.txt",
+        "bytes": 5965,
+        "sha256": "dfc603e44f363ba365d1a9f392cd06edbff35b1974a000ffb02d845d961987dc",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-resumed-lint-stderr.txt",
+        "bytes": 17,
+        "sha256": "884eff4c2cecee914bad9401be4297f8878ee164fa14500831cee50614bfc59d",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-resumed-lint.json",
+      "beforeDigest": "6239f0df6d20cc17e9d91b8ccf2f02f16cbf40e29984854b6272fef6277ffc7c",
+      "afterDigest": "f0ea4266ef1d6218827c0c0840ca395bfb017594e6865d6443ce059d0a94763e",
+      "unchanged": false,
+      "sha256": "e2124c0941f238e9c26b75e851332c361e89e4ad8125fdf9e034397cd1968047"
+    }
+  },
+  {
+    "label": "review-resumed-unit",
+    "argv": [
+      "pnpm.cmd",
+      "test"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T19:14:46.705551+00:00",
+    "endedAt": "2026-10-10T19:17:36.122679+00:00",
+    "runtimeSeconds": 169.41568460001145,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-resumed-unit-stdout.txt",
+        "bytes": 114259,
+        "sha256": "4592f9c55a285338059d6f9197bc8592f9b42e0e163b491a912600c3817046ba",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-resumed-unit-stderr.txt",
+        "bytes": 1143,
+        "sha256": "e126d3936e43a14fea2636c07ee85f01e1e25cf8688384def2b46da2d52e2a17",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-resumed-unit.json",
+      "beforeDigest": "335bcc7b50985653de56c82d835a11ae3397efce27b403379f28898e1af9f968",
+      "afterDigest": "f0ea4266ef1d6218827c0c0840ca395bfb017594e6865d6443ce059d0a94763e",
+      "unchanged": false,
+      "sha256": "6947ce4f8ee612766c2a8ea7aeebf8c96b7e2fa78fcdd94353477ee3b352d2c3"
+    }
+  },
+  {
+    "label": "review-journeys-typecheck",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T19:21:50.211880+00:00",
+    "endedAt": "2026-10-10T19:22:05.439110+00:00",
+    "runtimeSeconds": 15.227077899995493,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-journeys-typecheck-stdout.txt",
+        "bytes": 140,
+        "sha256": "f3b9c77e4aff5c8e1d947c12996483c56c0200840f4b7ec256afd657cfd74a5a",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-journeys-typecheck-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-journeys-typecheck.json",
+      "beforeDigest": "49fa96cb29d319dbf7bd44c0e4c00ed2ab033d2e481aad229d120cd0d0b2abd0",
+      "afterDigest": "9e37344ee916a04fc81eed5604bfdb694886d65c7b9e378f3c503d4855440b79",
+      "unchanged": false,
+      "sha256": "c65795c27a274c58bbaae2824e2fa8860c691a2d7446bd09d5119d2989462d9d"
+    }
+  },
+  {
+    "label": "review-auth-api-integration",
+    "argv": [
+      "pnpm.cmd",
+      "test:integration:api"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T19:18:58.312524+00:00",
+    "endedAt": "2026-10-10T19:25:07.595525+00:00",
+    "runtimeSeconds": 369.2798902000068,
+    "nativeExit": 1,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-auth-api-integration-stdout.txt",
+        "bytes": 1715835,
+        "sha256": "cf177ab575600b284f0fb8589ac623fadafead42c1fabf0958fc4cd825470d4f",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-auth-api-integration-stderr.txt",
+        "bytes": 3708,
+        "sha256": "ac068e21d21facd831be3f3ad8c05ce753f5ee48483321ada35b0f070ba73a81",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-auth-api-integration.json",
+      "beforeDigest": "5455ce2a9593e2ce2b6ff1ffc069a823c3f7156a3d7735ea171686468dc4ec65",
+      "afterDigest": "97766b1f1e54f9f37219100dda8fc90a327c4ac78fff75a2735d8abf66ccf3ff",
+      "unchanged": false,
+      "sha256": "b591199abe895c0e5996936d76a1bb6544adadd928f6726314f5cd9bf233702f"
+    }
   }
 ]

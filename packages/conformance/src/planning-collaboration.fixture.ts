@@ -102,7 +102,7 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
     receivers.push(proxy);proxy.listen(0,'127.0.0.1');await once(proxy,'listening')
     return `http://127.0.0.1:${(proxy.address() as {port:number}).port}`
   }
-  const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>, options:{apiUrl?:string;beforeRun?:()=>Promise<void>;contextHuman?:typeof fixture.human}={}) => {
+  const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>, options:{apiUrl?:string;beforeRun?:()=>Promise<void>;contextHuman?:typeof fixture.human;resumeAfterWait?:()=>Promise<void>}={}) => {
     const captures: Array<{ tools: string[]; results: string[]; messages: string; call: ModelCall | null }> = []
     const model = createServer({ key: readFileSync(new URL('./fixtures/model-test-key.pem', import.meta.url)), cert: readFileSync(new URL('./fixtures/model-test-ca.pem', import.meta.url)) }, async (request, response) => {
       try {
@@ -139,6 +139,16 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
         savePlanningEvidence(`pi-${queued.turn.id}-process.json`, { pid: running.child.pid, argv: [process.execPath, ...argv], startedAt, turnId: queued.turn.id, sessionId: execution.sessionId, owned: true })
         const output = await running
         savePlanningEvidence(`pi-${queued.turn.id}.json`, { captures, stdout: output.stdout, stderr: output.stderr, turnId: queued.turn.id, sessionId: execution.sessionId, pid: running.child.pid, nativeExit: 0, startedAt, endedAt: new Date().toISOString(), runtimeMs: performance.now() - started })
+        if (options.resumeAfterWait) {
+          // Reuse the persisted conversation and the Worker-created continuation;
+          // never manufacture another Human Turn to bypass the durable wait.
+          await options.resumeAfterWait()
+          const continuationStarted = performance.now(), continuationAt = new Date().toISOString()
+          const continuation = exec(process.execPath, argv, { cwd: root, env, timeout: 60_000, maxBuffer: 1_000_000 })
+          savePlanningEvidence(`pi-${queued.turn.id}-continuation-process.json`, { pid: continuation.child.pid, argv: [process.execPath, ...argv], startedAt: continuationAt, sessionId: execution.sessionId, owned: true })
+          const resumed = await continuation
+          savePlanningEvidence(`pi-${queued.turn.id}-continuation.json`, { captures, stdout: resumed.stdout, stderr: resumed.stderr, sessionId: execution.sessionId, pid: continuation.child.pid, nativeExit: 0, startedAt: continuationAt, endedAt: new Date().toISOString(), runtimeMs: performance.now() - continuationStarted })
+        }
         return captures
       } catch (error) {
         const failure = error as Error & { stdout?: string; stderr?: string; code?: number }
