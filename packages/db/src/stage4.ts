@@ -1132,6 +1132,12 @@ export async function executeAutomationAction(
     notificationChannels?: ReadonlyArray<'in_app' | 'browser' | 'webhook'>
   },
 ): Promise<Record<string, unknown>> {
+  // Match the planning HTTP writers before the ranked target/Team locks.
+  // The existing WorkItem INSERT triggers acquire this same planning lock.
+  if (input.action.type === 'create_work_item') {
+    await tx.query('SELECT id FROM workspaces WHERE id=$1 FOR KEY SHARE', [input.meta.workspaceId]);
+    await tx.query("SELECT pg_advisory_xact_lock(hashtextextended('workmesh-planning:' || $1::text,0))", [input.meta.workspaceId]);
+  }
   const locator=await locateAutomationActionAuthority(tx,input)
   const authority=await revalidateAutomationRun(tx,locator)
   const validatedTarget=await revalidateAutomationActionTarget(

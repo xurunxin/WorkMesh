@@ -79,7 +79,27 @@ export async function createPlanningCollaborationFixture() {
   }
   const registerTarget = async () => attachReceiver(await fixture.pairTarget(['work:read','work:write','artifact:write']))
   const registerCurrentReceiver = async () => attachReceiver({agentId:fixture.agentId,token:fixture.connectionToken})
-  const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>) => {
+  const runnerProxy = async (options:{loseFailResponse?:boolean;afterSettlement?:()=>Promise<void>}) => {
+    const proxy=createReceiver(async(request,response)=>{
+      try {
+        const chunks:Buffer[]=[];for await(const chunk of request)chunks.push(Buffer.from(chunk))
+        const headers:Record<string,string>={}
+        for(const [name,value] of Object.entries(request.headers))if(value && !['host','connection','content-length'].includes(name))headers[name]=Array.isArray(value)?value.join(','):value
+        const upstream=await fetch(fixture.baseUrl+(request.url??'/'),{method:request.method,headers,
+          ...(['GET','HEAD'].includes(request.method??'GET')?{}:{body:Buffer.concat(chunks)})})
+        const body=Buffer.from(await upstream.arrayBuffer())
+        if(request.url?.endsWith('/settle') && upstream.ok)await options.afterSettlement?.()
+        if(options.loseFailResponse && request.url?.endsWith('/fail')) {
+          savePlanningEvidence(`fail-response-loss-${randomUUID()}.json`,{upstreamStatus:upstream.status,responseDestroyedAfterUpstreamCommit:true})
+          response.destroy();return
+        }
+        response.writeHead(upstream.status,{'content-type':upstream.headers.get('content-type')??'application/json'});response.end(body)
+      } catch {response.destroy()}
+    })
+    receivers.push(proxy);proxy.listen(0,'127.0.0.1');await once(proxy,'listening')
+    return `http://127.0.0.1:${(proxy.address() as {port:number}).port}`
+  }
+  const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>, options:{apiUrl?:string}={}) => {
     const captures: Array<{ tools: string[]; results: string[]; messages: string; call: ModelCall | null }> = []
     const model = createServer({ key: readFileSync(new URL('./fixtures/model-test-key.pem', import.meta.url)), cert: readFileSync(new URL('./fixtures/model-test-ca.pem', import.meta.url)) }, async (request, response) => {
       try {
@@ -105,7 +125,7 @@ export async function createPlanningCollaborationFixture() {
       const conversation = await fixture.human<{ id: string }>('POST', '/api/v1/workbench/conversations', { title: 'M2 verified lifecycle', workItemId: execution.workItemId, agentSessionId: execution.sessionId, llmConnectionId: connection.id, llmModelId: selected.id })
       const queued = await fixture.human<{ turn: { id: string } }>('POST', `/api/v1/workbench/conversations/${conversation.id}/turns`, { messageMarkdown: 'Use the exact approved tools and produce auditable evidence.' }, 1)
       const root = resolve(import.meta.dirname, '../../../apps/agent-runner')
-      const env: NodeJS.ProcessEnv = { ...process.env, WORKMESH_API_URL: fixture.baseUrl, WORKMESH_AGENT_INSTALLATION_TOKEN: installationToken, WORKMESH_AGENT_SESSION_ID: execution.sessionId, NODE_EXTRA_CA_CERTS: resolve(import.meta.dirname, 'fixtures/model-test-ca.pem') }
+      const env: NodeJS.ProcessEnv = { ...process.env, WORKMESH_API_URL: options.apiUrl??fixture.baseUrl, WORKMESH_AGENT_INSTALLATION_TOKEN: installationToken, WORKMESH_AGENT_SESSION_ID: execution.sessionId, NODE_EXTRA_CA_CERTS: resolve(import.meta.dirname, 'fixtures/model-test-ca.pem') }
       delete env.DATABASE_URL; delete env.WORKMESH_MASTER_KEY; delete env.WORKMESH_BOOTSTRAP_TOKEN
       try {
         const output = await exec(process.execPath, [resolve(root, 'node_modules/tsx/dist/cli.mjs'), resolve(root, 'src/run-session.ts'), '--once'], { cwd: root, env, timeout: 60_000, maxBuffer: 1_000_000 })
@@ -121,7 +141,9 @@ export async function createPlanningCollaborationFixture() {
       else process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST = previous
     }
   }
-  return { ...fixture, receive, registerTarget, registerCurrentReceiver, pi, webhookWorker: worker, deliveryCounts:()=>({accepted:deliveries.size,duplicates:duplicateDeliveries}), close: async () => {
+  return { ...fixture, receive, registerTarget, registerCurrentReceiver, pi,
+    loseFailResponse:()=>runnerProxy({loseFailResponse:true}),afterSettlement:(afterSettlement:()=>Promise<void>)=>runnerProxy({afterSettlement}),
+    webhookWorker: worker, deliveryCounts:()=>({accepted:deliveries.size,duplicates:duplicateDeliveries}), close: async () => {
     for (const receiver of receivers) { receiver.closeAllConnections(); if (receiver.listening) await new Promise<void>((done,reject)=>receiver.close(error=>error?reject(error):done())) }
     for (const model of models) { model.closeAllConnections(); if (model.listening) await new Promise<void>((done, reject) => model.close(error => error ? reject(error) : done())) }
     await fixture.close()

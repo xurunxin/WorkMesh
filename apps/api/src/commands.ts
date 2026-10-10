@@ -308,6 +308,17 @@ async function event(
 
 /** Reserve first so concurrent requests with the same key serialize on the PK.
  * A failed command rolls the reservation back together with all its writes. */
+const planningGraphOperations = new Set([
+  "POST /api/v1/work-items",
+  "PATCH /api/v1/work-items/:id",
+  "DELETE /api/v1/work-items/:id",
+  "POST /api/v1/projects/:id/milestones",
+  "PATCH /api/v1/milestones/:id",
+  "DELETE /api/v1/milestones/:id",
+  "POST /api/v1/work-items/:id/relations",
+  "DELETE /api/v1/work-items/:id/relations/:relationId",
+]);
+
 export async function mutate<T>(
   db: Pool,
   context: CommandContext,
@@ -315,6 +326,16 @@ export async function mutate<T>(
   options: MutationOptions = {},
 ): Promise<T> {
   return withTx(db, async (tx) => {
+    // The existing planning triggers use this same workspace lock. Take it
+    // before row/FK locks, including on replay, so reciprocal parent updates
+    // cannot each hold one endpoint while waiting for the other's FK lock.
+    if (planningGraphOperations.has(context.operation)) {
+      await tx.query("SELECT id FROM workspaces WHERE id=$1 FOR KEY SHARE", [context.actor.workspaceId]);
+      await tx.query(
+        "SELECT pg_advisory_xact_lock(hashtextextended('workmesh-planning:' || $1::text,0))",
+        [context.actor.workspaceId],
+      );
+    }
     // Cross-resource commands may need one deterministic coordination lock
     // before the idempotency insert takes actor/workspace foreign-key locks.
     // Otherwise reciprocal commands can each hold one FK lock before either

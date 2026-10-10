@@ -244,6 +244,46 @@ async function durableEvent(type: string, aggregateId: string): Promise<void> {
   expect(row.rows[0]).toMatchObject({ event_count: 1, outbox_count: 1 })
 }
 
+async function m2Facts():Promise<Record<string,string>> {
+  const facts:Record<string,string>={}
+  for(const table of ['agent_sessions','agent_session_tokens','delegations','session_budget_reservations','leases','agent_session_prompts','domain_events','outbox_events','agent_activities','artifacts','room_messages','inbox_items']) {
+    const rows=(await db.query(`SELECT to_jsonb(fact)::text AS fact FROM ${table} fact ORDER BY to_jsonb(fact)::text`)).rows
+    facts[table]=createHash('sha256').update(JSON.stringify(rows)).digest('hex')
+  }
+  return facts
+}
+
+async function m2Race(label:string,sql:string,args:unknown[],left:()=>Promise<Response>,right:()=>Promise<Response>):Promise<Response[]> {
+  const gate=await db.connect()
+  let first:Promise<Response>|undefined,second:Promise<Response>|undefined
+  try {
+    await gate.query('BEGIN');await gate.query(sql,args)
+    const holder=(await gate.query<{pid:number}>('SELECT pg_backend_pid() AS pid')).rows[0]!.pid
+    const observe=async(count:number) => {
+      const deadline=Date.now()+10000
+      let waiting:Array<{pid:number;blockers:number[];query:string}>=[]
+      do {
+        waiting=(await db.query<{pid:number;blockers:number[];query:string}>(`WITH RECURSIVE blocked AS (
+          SELECT pid,pg_blocking_pids(pid) AS blockers,query FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))
+          UNION SELECT a.pid,pg_blocking_pids(a.pid),a.query FROM pg_stat_activity a JOIN blocked b ON b.pid=ANY(pg_blocking_pids(a.pid)))
+          SELECT * FROM blocked`,[holder])).rows
+        if(waiting.length>=count)return waiting
+        await new Promise(resolve=>setTimeout(resolve,10))
+      } while(Date.now()<deadline)
+      throw new Error(`M2 barrier ${label}: expected ${count} real lock waiters, got ${waiting.length}`)
+    }
+    const record=(side:string)=>(response:Response)=>{if(response.statusCode>=400)console.log(JSON.stringify({m2RaceResult:label,side,status:response.statusCode,error:response.json<{error:unknown}>().error}));return response}
+    first=left().then(record('left'));await observe(1);second=right().then(record('right'))
+    const waiting=await observe(2)
+    console.log(JSON.stringify({m2LockBarrier:label,holder,waiting}))
+    await gate.query('COMMIT')
+    return await Promise.all([first,second])
+  } finally {
+    await gate.query('ROLLBACK');gate.release()
+    await Promise.allSettled([first,second].filter((value):value is Promise<Response>=>Boolean(value)))
+  }
+}
+
 describe('Stage 2 collaboration API acceptance', () => {
   beforeAll(async () => { await applyMigrations(db) }, 300_000)
   beforeEach(async () => { await db.query('TRUNCATE workspaces CASCADE') })
@@ -322,6 +362,67 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(legacyTerminal.statusCode,JSON.stringify(legacyTerminal.json())).toBe(200)
   })
 
+  it('M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照', async () => {
+    const states=['queued','acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked','paused','stopping','stale','failed','canceled']
+    for(const state of states) {
+      const f=await makeFixture()
+      const created=await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/children`,{agentId:f.reviewer.id,planStepId:f.stepB,planVersionId:f.planVersionId,initialPrompt:'Optional child',required:false,budget:{maxInputTokens:0,maxRuntimeSeconds:0}})
+      expect(created.statusCode).toBe(200)
+      const child=created.json<{id:string}>().id
+      await db.query("UPDATE agent_sessions SET state=$2::agent_session_state,ended_at=CASE WHEN $2::text IN ('failed','canceled') THEN clock_timestamp() ELSE NULL END WHERE id=$1",[child,state])
+      const revision=(await db.query('SELECT revision FROM agent_sessions WHERE id=$1',[f.parent.id])).rows[0]!.revision as number
+      const complete=await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/complete`,{summary:`Optional child ${state}`,noArtifactReason:'Nonrequired gate positive control'},{'if-match':`"revision-${revision}"`})
+      expect(complete.statusCode,state+JSON.stringify(complete.json())).toBe(200)
+      expect(complete.json()).toMatchObject({state:'completed'})
+      expect((await db.query('SELECT state,required_for_parent FROM agent_sessions WHERE id=$1',[child])).rows[0]).toEqual({state,required_for_parent:false})
+    }
+  })
+
+  it('M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实', async () => {
+    const f=await makeFixture()
+    const revision=(await db.query('SELECT revision FROM agent_sessions WHERE id=$1',[f.parent.id])).rows[0]!.revision as number
+    expect((await agentCall(f.parentToken,'PUT',`/api/v1/agent-sessions/${f.parent.id}/plan`,{changeSummary:'Supersede stable plan',steps:[{id:f.stepB,title:'Stable B',ordinal:0,status:'pending',dependsOn:[],acceptanceCriteria:[],expectedArtifacts:[]}]},{'if-match':`"revision-${revision}"`})).statusCode).toBe(200)
+    const before=await m2Facts()
+    for(const [suffix,identity] of [['children',{agentId:f.reviewer.id}],['review-delegations',{reviewerAgentId:f.reviewer.id}]] as const) {
+      const result=await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/${suffix}`,{...identity,planStepId:f.stepB,planVersionId:f.planVersionId,initialPrompt:'Stale plan',budget:{maxInputTokens:1,maxRuntimeSeconds:1}})
+      expect(result.statusCode).toBe(409);expect(result.json()).toMatchObject({error:{code:'STALE_PLAN_VERSION'}})
+      expect(await m2Facts()).toEqual(before)
+    }
+  })
+
+  it('M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件', async () => {
+    const f=await makeFixture()
+    const body={reviewerAgentId:f.reviewer.id,planStepId:f.stepC,planVersionId:f.planVersionId,initialPrompt:'Failure checkpoints',budget:{maxInputTokens:40,maxRuntimeSeconds:40}}
+    for(const table of ['delegations','agent_sessions','session_budget_reservations','leases','agent_session_tokens','agent_session_prompts','domain_events','outbox_events']) {
+      const before=await m2Facts()
+      await db.query("CREATE FUNCTION m2_transaction_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'M2 transaction checkpoint fault'; END $$")
+      await db.query(`CREATE TRIGGER m2_transaction_fault BEFORE INSERT ON ${table} FOR EACH ROW EXECUTE FUNCTION m2_transaction_fault()`)
+      try {
+        const result=await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/review-delegations`,body)
+        expect(result.statusCode,table+JSON.stringify(result.json())).toBe(500)
+        expect(await m2Facts(),table).toEqual(before)
+      } finally {await db.query(`DROP TRIGGER m2_transaction_fault ON ${table}`);await db.query('DROP FUNCTION m2_transaction_fault()')}
+    }
+    const result=await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/review-delegations`,body)
+    expect(result.statusCode).toBe(200)
+    const reviewer=result.json<{session:Session}>().session
+    const bearer=await exchangeAndExecute(reviewer,f.reviewer)
+    const room=(await db.query("SELECT id FROM work_room_channels WHERE subject_kind='session' AND subject_id=$1",[f.parent.id])).rows[0]!.id as string
+    const fault=async(run:()=>Promise<Response>) => {
+      const before=await m2Facts()
+      await db.query("CREATE FUNCTION m2_evidence_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'M2 evidence outbox fault'; END $$")
+      await db.query('CREATE TRIGGER m2_evidence_fault BEFORE INSERT ON outbox_events FOR EACH ROW EXECUTE FUNCTION m2_evidence_fault()')
+      try {expect((await run()).statusCode).toBe(500);expect(await m2Facts()).toEqual(before)}
+      finally {await db.query('DROP TRIGGER m2_evidence_fault ON outbox_events');await db.query('DROP FUNCTION m2_evidence_fault()')}
+    }
+    await fault(()=>agentCall(bearer,'POST','/api/v1/artifacts',{sessionId:reviewer.id,workItemId:f.workItemId,type:'code_review',title:'Faulted artifact',metadata:{verdict:'approved'}}))
+    await fault(()=>agentCall(bearer,'POST',`/api/v1/rooms/${room}/messages`,{sessionId:reviewer.id,intent:'review_result',body:'Faulted review result'}))
+    // Privileged completed child isolates the parent-completion transaction from the evidence gate.
+    await db.query("UPDATE agent_sessions SET state='completed',ended_at=clock_timestamp() WHERE id=$1",[reviewer.id])
+    const revision=(await db.query('SELECT revision FROM agent_sessions WHERE id=$1',[f.parent.id])).rows[0]!.revision as number
+    await fault(()=>agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/complete`,{summary:'Faulted parent completion',noArtifactReason:'Checkpoint'},{'if-match':`"revision-${revision}"`}))
+  })
+
   it('M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读', async () => {
     const f = await makeFixture()
     const child = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/children`, {
@@ -357,10 +458,9 @@ describe('Stage 2 collaboration API acceptance', () => {
     const keyA = randomUUID(), keyB = randomUUID()
     const childBody = { agentId: f.overflow.id, planStepId: f.stepB, planVersionId: f.planVersionId, initialPrompt: 'Concurrent child', budget: { maxInputTokens: 130, maxRuntimeSeconds: 300 } }
     const reviewBody = { reviewerAgentId: f.reviewer.id, planStepId: f.stepC, planVersionId: f.planVersionId, initialPrompt: 'Concurrent review', budget: { maxInputTokens: 130, maxRuntimeSeconds: 300 } }
-    const responses = await Promise.all([
-      agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/children`, childBody, { 'idempotency-key': keyA }),
-      agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/review-delegations`, reviewBody, { 'idempotency-key': keyB }),
-    ])
+    const responses = await m2Race('mixed-budget', 'SELECT id FROM agent_definitions WHERE id=$1 FOR UPDATE',[f.runner.id],
+      ()=>agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/children`, childBody, { 'idempotency-key': keyA }),
+      ()=>agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/review-delegations`, reviewBody, { 'idempotency-key': keyB }))
     expect(responses.map(response=>response.statusCode).sort()).toEqual([200,409])
     expect(responses.find(response=>response.statusCode===409)!.json()).toMatchObject({ error: { code: 'CHILD_BUDGET_EXCEEDED' } })
     const winner = responses[0]!.statusCode===200 ? 0 : 1
@@ -458,6 +558,87 @@ describe('Stage 2 collaboration API acceptance', () => {
     const blocked = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/complete`, { summary: 'cannot complete', artifactIds: [], checks: [{ name: 'unit', status: 'passed', summary: 'ok' }], limitations: [] }, { 'if-match': `"revision-${revision}"` })
     expect(blocked.statusCode, JSON.stringify(blocked.json())).toBe(409)
     expect(blocked.json<{ error: { code: string; details: { blockerSessionIds: string[] } } }>()).toMatchObject({ error: { code: 'COMPLETION_PLAN_INCOMPLETE', details: { blockerSessionIds: [childId] } } })
+  })
+
+  it('M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代', async () => {
+    const f=await makeFixture()
+    const session=await directReviewerSession(f,f.reviewer)
+    const bearer=await exchangeAndExecute(session,f.reviewer)
+    const room=(await db.query("SELECT id FROM work_room_channels WHERE subject_kind='session' AND subject_id=$1",[session.id])).rows[0]!.id as string
+    const complete=async()=>agentCall(bearer,'POST',`/api/v1/agent-sessions/${session.id}/complete`,{summary:'Own evidence required',noArtifactReason:'No waiver'},{'if-match':`"revision-${(await db.query('SELECT revision FROM agent_sessions WHERE id=$1',[session.id])).rows[0]!.revision}"`})
+    const assertRejected=async(label:string)=>{const rejected=await complete();expect(rejected.statusCode,label).toBe(409);expect(rejected.json()).toMatchObject({error:{code:'REVIEW_COMPLETION_EVIDENCE_REQUIRED'}})}
+    for(const [label,actorId,sessionId] of [['parent',f.runner.actorId,f.parent.id],['other actor',f.overflow.actorId,session.id],['same actor other Session',f.reviewer.actorId,f.parent.id]] as const) {
+      // Imported hostile facts deliberately bypass write admissibility to isolate exact evidence predicates.
+      const artifact=(await db.query("INSERT INTO artifacts(workspace_id,session_id,work_item_id,producer_actor_id,type,title,metadata) VALUES($1,$2,$3,$4,'code_review','Wrong evidence',jsonb_build_object('fixture',true)) RETURNING id",[f.workspaceId,sessionId,f.workItemId,actorId])).rows[0]!.id as string
+      const message=(await db.query("INSERT INTO room_messages(workspace_id,channel_id,session_id,author_actor_id,intent,body,structured_payload,requires_response) VALUES($1,$2,$3,$4,'review_result','Wrong evidence','{}',false) RETURNING id",[f.workspaceId,room,sessionId,actorId])).rows[0]!.id as string
+      await assertRejected(label)
+      expect(artifact).toBeDefined();expect(message).toBeDefined() // Preserve append-only hostile fixtures.
+    }
+    expect((await agentCall(bearer,'POST',`/api/v1/agent-sessions/${session.id}/activities`,{kind:'status',summary:'Activity is not Room review_result',artifactIds:[],references:[],visibility:'team',ephemeral:false})).statusCode).toBe(200)
+    const artifact=await agentCall(bearer,'POST','/api/v1/artifacts',{sessionId:session.id,workItemId:f.workItemId,type:'code_review',title:'Own review',metadata:{verdict:'approved'}})
+    expect(artifact.statusCode).toBe(200)
+    await assertRejected('own artifact plus Activity lacks own Room')
+    expect((await agentCall(bearer,'POST',`/api/v1/rooms/${room}/messages`,{sessionId:session.id,intent:'review_result',body:'Own Room review'})).statusCode).toBe(200)
+    expect((await complete()).statusCode).toBe(200)
+  })
+
+  it('M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待', async () => {
+    const f=await makeFixture()
+    const revision=(await db.query('SELECT revision FROM agent_sessions WHERE id=$1',[f.parent.id])).rows[0]!.revision as number
+    const race=await m2Race('publish-versus-child','SELECT id FROM agent_definitions WHERE id=$1 FOR UPDATE',[f.runner.id],
+      ()=>agentCall(f.parentToken,'PUT',`/api/v1/agent-sessions/${f.parent.id}/plan`,{changeSummary:'Concurrent stable Plan',steps:[{id:f.stepB,title:'B',ordinal:0,status:'pending',dependsOn:[],acceptanceCriteria:[],expectedArtifacts:[]}]},{'if-match':`"revision-${revision}"`}),
+      ()=>agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/children`,{agentId:f.reviewer.id,planStepId:f.stepB,planVersionId:f.planVersionId,initialPrompt:'Competing old plan',budget:{maxInputTokens:10,maxRuntimeSeconds:60}}))
+    expect(race[0]!.statusCode).toBe(200)
+    expect([200,409]).toContain(race[1]!.statusCode)
+    if(race[1]!.statusCode===409)expect(race[1]!.json()).toMatchObject({error:{code:'STALE_PLAN_VERSION'}})
+    const current=(await db.query('SELECT current_plan_version_id FROM agent_sessions WHERE id=$1',[f.parent.id])).rows[0]!.current_plan_version_id as string
+    const created=race[1]!.statusCode===200?race[1]!:await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/children`,{agentId:f.reviewer.id,planStepId:f.stepB,planVersionId:current,initialPrompt:'Current child',budget:{maxInputTokens:10,maxRuntimeSeconds:60}})
+    expect(created.statusCode).toBe(200)
+    const child=created.json<Session>()
+    const childToken=await exchangeAndExecute(child,f.reviewer)
+    const completion=(token:string,id:string)=>agentCall(token,'POST',`/api/v1/agent-sessions/${id}/complete`,{summary:'Competing completion',noArtifactReason:'Deterministic result'},{'if-match':`"revision-${id===f.parent.id?revision+1:3}"`})
+    const completed=await m2Race('parent-versus-child-completion','SELECT id FROM work_items WHERE id=$1 FOR UPDATE',[f.workItemId],()=>completion(f.parentToken,f.parent.id),()=>completion(childToken,child.id))
+    expect(completed[1]!.statusCode,JSON.stringify(completed[1]!.json())).toBe(200)
+    expect([200,409]).toContain(completed[0]!.statusCode)
+    if(completed[0]!.statusCode===409){expect(completed[0]!.json()).toMatchObject({error:{code:'COMPLETION_PLAN_INCOMPLETE',details:{blockerSessionIds:[child.id]}}});expect((await completion(f.parentToken,f.parent.id)).statusCode).toBe(200)}
+    const g=await makeFixture()
+    const leaseRace=await m2Race('review-shared-versus-exclusive','SELECT id FROM work_items WHERE id=$1 FOR UPDATE',[g.workItemId],
+      ()=>agentCall(g.parentToken,'POST',`/api/v1/agent-sessions/${g.parent.id}/review-delegations`,{reviewerAgentId:g.reviewer.id,planStepId:g.stepC,planVersionId:g.planVersionId,initialPrompt:'Concurrent review lease',budget:{maxInputTokens:0,maxRuntimeSeconds:0}}),
+      ()=>agentCall(g.parentToken,'POST','/api/v1/leases',{sessionId:g.parent.id,resourceType:'plan_step',resourceId:g.stepC,kind:'exclusive',ttlSeconds:60,reason:'Competing exclusive'}))
+    expect(leaseRace.map(row=>row.statusCode).sort()).toEqual([200,409])
+    expect(leaseRace.find(row=>row.statusCode===409)!.json()).toMatchObject({error:{code:'LEASE_CONFLICT'}})
+    expect((await db.query("SELECT count(*)::int AS count FROM leases WHERE resource_id=$1 AND status='active'",[g.stepC])).rows[0]).toEqual({count:1})
+  })
+
+  it('M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算', async () => {
+    const f=await makeFixture()
+    const second=(await humanCall(f.human,'POST','/api/v1/work-items',{teamId:f.teamId,title:'Concurrent graph peer',statusId:f.readyId,responsibleHumanActorId:f.human.actorId})).json<{id:string;revision:number}>()
+    const ids=[f.workItemId,second.id].sort()
+    const edges=await m2Race('reverse-blocks','SELECT id FROM work_items WHERE id=$1 FOR UPDATE',[ids[0]],
+      ()=>humanCall(f.human,'POST',`/api/v1/work-items/${f.workItemId}/relations`,{targetWorkItemId:second.id,kind:'blocks'}),
+      ()=>humanCall(f.human,'POST',`/api/v1/work-items/${second.id}/relations`,{targetWorkItemId:f.workItemId,kind:'blocks'}))
+    expect(edges.map(row=>row.statusCode).sort()).toEqual([200,409])
+    expect(edges.find(row=>row.statusCode===409)!.json()).toMatchObject({error:{code:'WORK_ITEM_BLOCK_CYCLE'}})
+    const rev=(await db.query('SELECT id,revision FROM work_items WHERE id=ANY($1::uuid[])',[ids])).rows
+    const revision=(id:string)=>rev.find(row=>row.id===id)!.revision as number
+    const parents=await m2Race('reverse-parent-hierarchy','SELECT id FROM work_items WHERE id=$1 FOR UPDATE',[ids[0]],
+      ()=>humanCall(f.human,'PATCH',`/api/v1/work-items/${f.workItemId}`,{parentId:second.id},{'if-match':`"revision-${revision(f.workItemId)}"`}),
+      ()=>humanCall(f.human,'PATCH',`/api/v1/work-items/${second.id}`,{parentId:f.workItemId},{'if-match':`"revision-${revision(second.id)}"`}))
+    expect(parents.map(row=>row.statusCode).sort()).toEqual([200,409])
+    expect(parents.find(row=>row.statusCode===409)!.json()).toMatchObject({error:{code:'WORK_ITEM_PARENT_CYCLE'}})
+    const child=(await agentCall(f.parentToken,'POST',`/api/v1/agent-sessions/${f.parent.id}/children`,{agentId:f.reviewer.id,planStepId:f.stepB,planVersionId:f.planVersionId,initialPrompt:'Reply competitor',budget:{maxInputTokens:10,maxRuntimeSeconds:60}})).json<Session>()
+    const token=await exchangeAndExecute(child,f.reviewer)
+    const room=(await humanCall(f.human,'GET',`/api/v1/rooms?workItemId=${f.workItemId}`)).json<{id:string}>().id
+    const message=await agentCall(f.parentToken,'POST',`/api/v1/rooms/${room}/messages`,{sessionId:f.parent.id,intent:'ask',body:'Resolve once',recipientSessionId:child.id,requiresResponse:true})
+    expect(message.statusCode).toBe(200)
+    const messageId=message.json<{id:string}>().id
+    const inbox=(await db.query('SELECT id,revision FROM inbox_items WHERE source_room_message_id=$1 AND recipient_session_id=$2',[messageId,child.id])).rows[0]!
+    const results=await m2Race('reply-versus-human-resolve','SELECT id FROM room_messages WHERE id=$1 FOR UPDATE',[messageId],
+      ()=>agentCall(token,'POST',`/api/v1/inbox/${inbox.id}/reply`,{body:'Actual reply'},{'if-match':`"revision-${inbox.revision}"`}),
+      ()=>humanCall(f.human,'POST',`/api/v1/messages/${messageId}/resolve`,{reason:'Human resolves'},{'if-match':'"revision-1"'}))
+    expect(results.map(row=>row.statusCode).sort()).toEqual([200,409])
+    expect((await db.query('SELECT count(*)::int AS count FROM room_message_response_resolutions WHERE message_id=$1',[messageId])).rows[0]).toEqual({count:1})
+    expect((await db.query('SELECT status FROM inbox_items WHERE id=$1',[inbox.id])).rows[0]).toEqual({status:'resolved'})
   })
 
   it('M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据', async () => {

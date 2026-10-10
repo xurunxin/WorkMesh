@@ -11,7 +11,7 @@ const server = createWorkMeshMcpServer({client,mode:'read-write',coordination:tr
 try {
   const tools = Object.keys((server as unknown as {_registeredTools: Record<string,unknown>})._registeredTools).sort()
   const runner = await readFile(resolve(root,'apps/agent-runner/src/workmesh-tools.ts'),'utf8')
-  const runnerNames = [...runner.matchAll(/name:\s*'(workmesh_[^']+)'/g)].map(match=>match[1]).sort()
+  const runnerNames = [...new Set([...runner.matchAll(/'(workmesh_[a-z_]+)'/g)].map(match=>match[1]))].sort()
   await writeFile(resolve(root,'docs/plan/agent-mcp-m2/product-consumer-inspection.json'),JSON.stringify({
     kind:'本机实际注册与源码检查，不发HTTP，不代产品执行',tools,runnerLiteralNames:runnerNames,
     mcpPolicyBindings,agentDiscoveryBindings,routePolicyManifest,

@@ -34,4 +34,8 @@ M1 self_claim／self_claim_recovery 通知保留无 nonce：创建事务取 Toke
 锁结论仅为有界争用回滚后重试。早先“消除循环”判断不成立，保留在内部审查历史；250ms／NOWAIT 不证明全部 API 删除路径统一锁序，也不把 55P03／40P01 当发送成功。实际 installation／来源 Connection／delegation 争用回执须与 commit 前后的授权边界分列。
 
 Spec changes
+Runner 具名 failure 入口复用现有 failAgentSession DTO 与 POST /agent-sessions/{id}/fail，不扩权限、迁移、事件或终态重放。failure／completion／wait 意图互斥；failure 关闭新工具，Stop／撤权优先，静止后只按 ExecutionLifecycle.reconciled 实值登记外部效果。宿主先以原 fence/key/body 持久 failed Turn／Attempt，再以意图原 ifMatch/key/body 调用 /fail。两个事务分别提交，不承诺原子性：崩溃间隙可留下 failed Turn 与 active Session，无自动重 claim；后一步明确拒绝或网络／解码／5xx 不明分别记录 rejected／unconfirmed，不把终态拒绝当成功确认，不再次 settle 或 Stop cleanup。原失败命令仍重验 live Session／委托／能力／revision；未知响应后只沿既有授权读取诊断，不能猜测原动作已成功或增加 failure execution-result 例外。真实 HTTP/MCP/Pi、旧 revision、Stop／撤权及响应丢失用例交正式成果独审。
+
+里程碑与关系有序分页保存 PostgreSQL created_at 原微秒值到签名 cursor，响应删除内部游标字段并保原 Date 序列化；sort/filter/actor/workspace/signature/TTL 绑定与原 Paginator 不变。历史已发行的毫秒游标继续按原值校验，但不能恢复丢失微秒；消费者应从首屏重读以取得精确新游标，不能伪造 cursor 或改变权限门禁。
+
 投影 DTO 写入 contracts／OpenAPI／协议；M2 discovery 增量合成现行 policy、SDK、MCP、Runner、conformance。无 Schema 或 migration 变更；原 #53/M0/M1 和 M2 规划候选原件保全，产品检查另行记录。

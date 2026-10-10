@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { appendActivityInputSchema, createAgentCapabilityManifest, qualifyAgentCapabilityManifest, featureKeySchema,
   type AgentCapabilityManifest } from '@workmesh/contracts'
-import { createWorkMeshTools, type RunnerToolApi, type SessionCompletionIntent } from './workmesh-tools.js'
+import { createWorkMeshTools, type RunnerToolApi, type SessionCompletionIntent, type SessionFailureIntent } from './workmesh-tools.js'
 import type { Capability } from '@workmesh/contracts'
 import { ExecutionLifecycle } from './execution-lifecycle.js'
 import { RunnerApiError } from './run-session.js'
@@ -339,6 +339,22 @@ describe('Pi WorkMesh tools', () => {
     expect(calls.find(call => call.path === `/api/v1/leases/${documentId}/release`))
       .toMatchObject({ body: { reason: 'Work finished' }, ifMatch: 1,
         key: expect.stringMatching(/^pi-[a-f0-9]{64}$/) })
+  })
+
+  it('queues exact failure intent without treating its acknowledgment as Session failure', async () => {
+    const intents:SessionFailureIntent[]=[]
+    const calls:string[]=[]
+    const api:RunnerToolApi={sessionId,async request<T>(_method:'GET'|'POST'|'PATCH'|'PUT'|'DELETE',path:string):Promise<T>{calls.push(path);return manifest(['work:read','work:write']) as T}}
+    const tools=await createWorkMeshTools(api,'failure-attempt',()=>undefined,undefined,undefined,intent=>intents.push(intent))
+    const fail=tools.find(tool=>tool.name==='workmesh_fail_session')!
+    expect(fail).toBeDefined()
+    await expect(fail.execute('invalid',{ifMatch:0,code:'FAIL',summary:'Invalid revision'},undefined,undefined,{} as never)).rejects.toThrow()
+    const result=await fail.execute('failure-call',{ifMatch:2,code:'TEST_FAILURE',summary:'Explicit failure',retryable:false,evidence:['Public evidence']},undefined,undefined,{} as never)
+    expect(result.content[0]).toMatchObject({text:expect.stringContaining('requested_after_failed_turn_settlement')})
+    expect(intents).toEqual([{ifMatch:2,idempotencyKey:expect.stringMatching(/^pi-[a-f0-9]{64}$/),body:{code:'TEST_FAILURE',summary:'Explicit failure',retryable:false,evidence:['Public evidence']}}])
+    expect(calls).toEqual(['/api/v1/agent-capabilities?discovery=qualified'])
+    const absent=await createWorkMeshTools({...api,async request<T>():Promise<T>{return manifest(['work:read']) as T}},'failure-attempt',()=>undefined,undefined,undefined,()=>undefined)
+    expect(absent.map(tool=>tool.name)).not.toContain('workmesh_fail_session')
   })
 
   it('queues evidence-backed completion without ending the Session before the public answer', async () => {

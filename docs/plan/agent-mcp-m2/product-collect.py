@@ -91,7 +91,7 @@ def operations():
         names=sorted({b['bindingId'][5:] for b in bindings if b['bindingId'].startswith('tool:') and b['bindingId'][5:] in runtime['tools']})
         sdkname=old.get('sdk',{}).get('name')
         runnername=old.get('runner',{}).get('name')
-        runneralias={'deleteWorkItemRelation':'workmesh_delete_work_item_relation','postWorkRoomMessage':'workmesh_send_room_message','getAgentSessionContext':'workmesh_get_context','getAgentPlan':'workmesh_get_plan','listAgentPlanVersions':'workmesh_list_plan_versions'}.get(op,runnername)
+        runneralias={'deleteWorkItemRelation':'workmesh_delete_work_item_relation','postWorkRoomMessage':'workmesh_send_room_message','getAgentSessionContext':'workmesh_get_session_context','getAgentPlan':'workmesh_get_session_plan','listAgentPlanVersions':'workmesh_list_plan_versions','failAgentSession':'workmesh_fail_session','commentOnPlanStep':'workmesh_comment_plan_step','proposePlanStepAssignment':'workmesh_propose_plan_step_assignment','appendContextDelta':'workmesh_append_context_delta'}.get(op,runnername)
         runnerpresent=runneralias in runtime['runnerLiteralNames']
         humanonly=policy.get('actorKinds')==['human']
         boundary='Human-only；不授Agent、不注册Agent写工具' if humanonly else '按现行资格/资源/feature；manifest不替代命令重验'

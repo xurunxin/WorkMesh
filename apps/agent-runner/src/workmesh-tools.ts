@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import type { ToolDefinition } from '@earendil-works/pi-coding-agent'
 import {
   acquireLeaseInputSchema, qualifiedAgentCapabilityManifestResponseSchema, appendActivityInputSchema,
-  completeAgentSessionInputSchema, consumeApprovalInputSchema,
+  completeAgentSessionInputSchema, failAgentSessionInputSchema, consumeApprovalInputSchema,
   artifactInputSchema, artifactTypeSchema,
   createDocumentInputSchema, handoffInputSchema, projectInputSchema, publishPlanInputSchema,
   requestApprovalInputSchema, updateDocumentInputSchema, workItemInputSchema,
@@ -23,6 +23,11 @@ export interface RunnerToolApi {
 
 export type SessionCompletionIntent = Readonly<{
   body: z.infer<typeof completeAgentSessionInputSchema>
+  ifMatch: number
+  idempotencyKey: string
+}>
+export type SessionFailureIntent = Readonly<{
+  body: z.infer<typeof failAgentSessionInputSchema>
   ifMatch: number
   idempotencyKey: string
 }>
@@ -154,7 +159,8 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
 
 export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string, onCall: (name: string) => void,
   onCompletionIntent?: (intent: SessionCompletionIntent) => void,
-  onWaitIntent?: (intent: SessionWaitIntent) => void): Promise<ToolDefinition[]> {
+  onWaitIntent?: (intent: SessionWaitIntent) => void,
+  onFailureIntent?: (intent: SessionFailureIntent) => void): Promise<ToolDefinition[]> {
   const manifest = qualifiedAgentCapabilityManifestResponseSchema.parse(
     await api.request<unknown>('GET', '/api/v1/agent-capabilities?discovery=qualified'))
   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.sessionState !== 'executing')
@@ -622,6 +628,27 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
           message: 'Completion is pending. Give the user a public answer; then inspect the Session state.',
         }) }], details: { source: 'workmesh_runner', operationId: 'completeAgentSession',
           operationKey: intent.idempotencyKey } }
+      },
+    })
+  }
+  if (onFailureIntent && eligible.has('failAgentSession')) {
+    available.push({
+      name: 'workmesh_fail_session', label: 'workmesh fail session',
+      description: 'Request failure of this exact Session. Stops further model tools. The Runner first durably fails this Turn, then calls the existing Session fail command as a separate transaction. Neither request acknowledgment nor Turn failure proves Session failure.',
+      parameters: Type.Object({ifMatch:Type.Integer({minimum:1}),code:Type.String({minLength:1,maxLength:120}),
+        summary:Type.String({minLength:1,maxLength:20000}),retryable:Type.Optional(Type.Boolean()),
+        evidence:Type.Optional(Type.Array(Type.String({minLength:1,maxLength:2000}),{maxItems:100}))}),
+      execute: async (toolCallId,input,signal) => {
+        onCall('workmesh_fail_session')
+        if (signal?.aborted) throw new Error('RUNNER_ABORTED')
+        const {ifMatch,...body}=z.object({ifMatch:z.number().int().positive(),code:z.string(),summary:z.string(),
+          retryable:z.boolean().optional(),evidence:z.array(z.string()).optional()}).strict().parse(input)
+        const intent:SessionFailureIntent={body:failAgentSessionInputSchema.parse(body),ifMatch,
+          idempotencyKey:operationKey(api.sessionId,attemptId,toolCallId,'failAgentSession')}
+        onFailureIntent(intent)
+        return {content:[{type:'text' as const,text:boundedResult({status:'requested_after_failed_turn_settlement',sessionId:api.sessionId,
+          message:'Session failure is pending; inspect durable Session and Turn states separately.'})}],
+          details:{source:'workmesh_runner',operationId:'failAgentSession',operationKey:intent.idempotencyKey}}
       },
     })
   }

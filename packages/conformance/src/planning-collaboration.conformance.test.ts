@@ -34,7 +34,7 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     const execution = await f.createExecution('M2 documents and comments')
     const mcp = await f.connect('read-write',execution)
     const documents: DocumentResponse[] = []
-    for(let i=0;i<3;i++) documents.push(await call<DocumentResponse>(mcp,'create_document',{ownerType:'work_item',ownerId:execution.workItemId,title:`M2 document ${i}`,markdown:'Original\n',idempotencyKey:randomUUID()}))
+    for(let i=0;i<5;i++) documents.push(await call<DocumentResponse>(mcp,'create_document',{ownerType:'work_item',ownerId:execution.workItemId,title:`M2 document ${i}`,markdown:'Original\n',idempotencyKey:randomUUID()}))
     const page = await call<{items:DocumentResponse[];nextCursor:string}>(mcp,'list_documents',{ownerType:'work_item',ownerId:execution.workItemId,limit:1})
     const tail = await execution.client.listDocuments('work_item',execution.workItemId,{limit:100,cursor:page.nextCursor})
     expect(new Set([...page.items,...tail.items].map(item=>item.id))).toEqual(new Set(documents.map(item=>item.id)))
@@ -52,6 +52,19 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     const restored = await call<DocumentResponse>(mcp,'restore_document_revision',{documentId:doc.id,revision:changed.revision,revisionId:doc.currentRevision.id,baseRevisionId:changed.currentRevision.id,baseContentHash:changed.currentRevision.contentHash,changeSummary:'Restore original',idempotencyKey:randomUUID()})
     expect(restored.currentRevision).toMatchObject({revisionNumber:3,restoredFromRevisionId:doc.currentRevision.id,markdown:'Original\n'})
     expect(restored.currentRevision.id).not.toBe(doc.currentRevision.id)
+    const documentFacts=async()=>(await f.db.query('SELECT to_jsonb(d)::text AS fact FROM documents d ORDER BY id')).rows
+    const documentBefore=await documentFacts()
+    for(const wrong of [{baseRevisionId:randomUUID(),baseContentHash:restored.currentRevision.contentHash},{baseRevisionId:restored.currentRevision.id,baseContentHash:`sha256:${'0'.repeat(64)}`}]) {
+      const denied=await mcp.callTool({name:'update_document',arguments:{documentId:doc.id,title:doc.title,markdown:'Wrong base\n',revision:restored.revision,...wrong,changeSummary:'Rejected exact base',idempotencyKey:randomUUID()}})
+      expect(denied).toMatchObject({isError:true,structuredContent:{error:{code:'CONFLICT'}}})
+      expect(await documentFacts()).toEqual(documentBefore)
+    }
+    let latest=restored
+    for(let i=0;i<3;i++)latest=await call<DocumentResponse>(mcp,'update_document',{documentId:doc.id,title:doc.title,markdown:`Additional immutable revision ${i}\n`,revision:latest.revision,baseRevisionId:latest.currentRevision.id,baseContentHash:latest.currentRevision.contentHash,changeSummary:'History pagination',idempotencyKey:randomUUID()})
+    const historyIds:string[]=[]
+    let historyCursor:string|undefined
+    do {const page=await call<DocumentHistoryResponse>(mcp,'list_document_history',{documentId:doc.id,limit:2,...(historyCursor?{cursor:historyCursor}:{})});historyIds.push(...page.revisions.map(row=>row.id));historyCursor=page.nextCursor??undefined}while(historyCursor)
+    expect(historyIds).toHaveLength(6);expect(new Set(historyIds).size).toBe(6)
     const comments: string[] = []
     for(let i=0;i<3;i++) comments.push((await f.human<{id:string}>('POST',`/api/v1/work-items/${execution.workItemId}/comments`,{body:`Human comment ${i}`})).id)
     const commentPage = await call<{items:Array<{id:string}>;nextCursor:string}>(mcp,'list_work_item_comments',{workItemId:execution.workItemId,limit:1})
@@ -93,14 +106,17 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     const a = restored.mapping.workItems.find(item=>item.sourceId==='a')!.targetId
     const b = restored.mapping.workItems.find(item=>item.sourceId==='b')!.targetId
     expect(await call(reconnect,'get_work_item',{workItemId:b})).toMatchObject({parent_id:a,milestone_id:restored.mapping.milestones[0]!.targetId})
-    const cycle = await reconnect.callTool({name:'create_work_item_relation',arguments:{workItemId:b,targetWorkItemId:a,kind:'blocks',idempotencyKey:randomUUID()}})
-    expect(cycle).toMatchObject({isError:true})
+    const cycle = await reconnect.callTool({name:'add_work_item_relation',arguments:{workItemId:b,targetWorkItemId:a,kind:'blocks',idempotencyKey:randomUUID()}})
+    expect(cycle).toMatchObject({isError:true,structuredContent:{error:{code:'WORK_ITEM_BLOCK_CYCLE'}}})
     const parent = await call<{revision:number}>(reconnect,'get_work_item',{workItemId:a})
     expect(await reconnect.callTool({name:'update_work_item',arguments:{workItemId:a,revision:parent.revision,parentId:b,idempotencyKey:randomUUID()}})).toMatchObject({isError:true})
     const milestone = await call<{revision:number}>(reconnect,'get_milestone',{milestoneId:restored.mapping.milestones[0]!.targetId})
     expect(await reconnect.callTool({name:'delete_milestone',arguments:{milestoneId:restored.mapping.milestones[0]!.targetId,revision:milestone.revision,idempotencyKey:randomUUID()}})).toMatchObject({isError:true,structuredContent:{error:{code:'MILESTONE_HAS_ACTIVE_WORK_ITEMS'}}})
     const milestones = [restored.mapping.milestones[0]!.targetId]
     for(let i=0;i<4;i++) milestones.push((await call<{id:string}>(reconnect,'create_milestone',{projectId,name:`M2 extra ${i}`,idempotencyKey:randomUUID()})).id)
+    // Privileged clock fixture: distinct PostgreSQL microseconds within one JavaScript millisecond.
+    const base=(await f.db.query("SELECT date_trunc('milliseconds',clock_timestamp())::text AS stamp")).rows[0]!.stamp as string
+    await f.db.query("WITH ranked AS (SELECT id,row_number() OVER(ORDER BY id) AS n FROM project_milestones WHERE project_id=$1) UPDATE project_milestones m SET created_at=$2::timestamptz+r.n*interval '1 microsecond' FROM ranked r WHERE m.id=r.id",[projectId,base])
     const seen:string[]=[]
     let cursor:string|undefined
     do {
@@ -108,14 +124,75 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
       seen.push(...page.items.map(row=>row.id));cursor=page.nextCursor??undefined
     } while(cursor)
     expect(seen).toHaveLength(5);expect(new Set(seen)).toEqual(new Set(milestones))
-    const related = await call<{id:string;revision:number}>(reconnect,'create_work_item_relation',{workItemId:a,targetWorkItemId:b,kind:'related',idempotencyKey:randomUUID()})
+    const first=await call<{items:unknown[];nextCursor:string}>(reconnect,'list_project_milestones',{projectId,limit:2})
+    expect(first.items.every(row=>!JSON.stringify(row).includes('__cursor_created_at'))).toBe(true)
+    await f.db.query('UPDATE agent_team_access SET revoked_at=clock_timestamp() WHERE agent_id=$1 AND team_id=$2',[f.agentId,f.teamId])
+    try {expect(await reconnect.callTool({name:'list_project_milestones',arguments:{projectId,limit:2,cursor:first.nextCursor}})).toMatchObject({isError:true})}
+    finally {await f.db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2',[f.agentId,f.teamId])}
+    const status=(await f.coordination.listWorkflowStates<{id:string;name:string}>(f.teamId)).items.find(row=>row.name==='Ready')!.id
+    const extra:string[]=[]
+    for(let i=0;i<3;i++)extra.push((await call<{id:string}>(reconnect,'create_work_item',{teamId:f.teamId,projectId,statusId:status,title:`Extra graph issue ${i}`,idempotencyKey:randomUUID()})).id)
+    const issueIds:string[]=[];let issueCursor:string|undefined
+    do {const page=await call<{items:Array<{id:string}>;nextCursor:string|null}>(reconnect,'list_work_items',{projectId,limit:2,...(issueCursor?{cursor:issueCursor}:{})});issueIds.push(...page.items.map(row=>row.id));issueCursor=page.nextCursor??undefined}while(issueCursor)
+    expect(issueIds).toHaveLength(5);expect(new Set(issueIds)).toEqual(new Set([a,b,...extra]))
+    const related = await call<{id:string;revision:number}>(reconnect,'add_work_item_relation',{workItemId:a,targetWorkItemId:b,kind:'related',idempotencyKey:randomUUID()})
+    for(const other of extra)await call(reconnect,'add_work_item_relation',{workItemId:a,targetWorkItemId:other,kind:'related',idempotencyKey:randomUUID()})
     const relations = await call<{items:Array<{id:string;kind:string}>}>(reconnect,'list_work_item_relations',{workItemId:a,limit:200})
+    const relationIds:string[]=[];let relationCursor:string|undefined
+    do {const page=await call<{items:Array<{id:string}>;nextCursor:string|null}>(reconnect,'list_work_item_relations',{workItemId:a,limit:2,...(relationCursor?{cursor:relationCursor}:{})});relationIds.push(...page.items.map(row=>row.id));relationCursor=page.nextCursor??undefined}while(relationCursor)
+    expect(relationIds).toHaveLength(5);expect(new Set(relationIds)).toEqual(new Set(relations.items.map(row=>row.id)))
     expect(relations.items).toContainEqual(expect.objectContaining({id:related.id,kind:'related'}))
     expect(relations.items.some(row=>row.kind==='blocks')).toBe(true)
     await call(reconnect,'remove_work_item_relation',{workItemId:a,relationId:related.id,revision:related.revision,idempotencyKey:randomUUID()})
     expect((await call<{items:Array<{id:string}>}>(reconnect,'list_work_item_relations',{workItemId:a,limit:200})).items.some(row=>row.id===related.id)).toBe(false)
     expect((await f.db.query("SELECT count(*)::int AS count FROM projects WHERE name='M2 import'")).rows[0]).toEqual({count:1})
-    savePlanningEvidence('planning-import-recovery.json',{prepared,partial,restored,replay,page,tail,cycle,milestones,seen,related,relations})
+    // Outside the documented replay window, reconcile the saved mapping through real reads before any write.
+    const expired=await f.db.query("UPDATE api_idempotency_keys SET replay_expires_at=clock_timestamp()-interval '1 second' WHERE idempotency_key LIKE 'project-import:%' RETURNING idempotency_key")
+    expect(expired.rowCount).toBeGreaterThan(0)
+    const beforeReconcile=await facts()
+    expect(await call(reconnect,'get_project',{projectId})).toMatchObject({id:projectId})
+    for(const item of restored.mapping.workItems)expect(await call(reconnect,'get_work_item',{workItemId:item.targetId})).toMatchObject({id:item.targetId})
+    for(const item of restored.mapping.milestones)expect(await call(reconnect,'get_milestone',{milestoneId:item.targetId})).toMatchObject({id:item.targetId})
+    expect(await facts()).toEqual(beforeReconcile)
+    savePlanningEvidence('planning-import-recovery.json',{prepared,partial,restored,replay,page,tail,cycle,milestones,seen,related,relations,expiredWindowReconciledBySavedMapping:true,automaticReapplyAfterTtl:false})
+  })
+
+  it('Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败', async () => {
+    const parent=await f.createExecution('M2 named planning tools')
+    const step=randomUUID()
+    await parent.client.publishPlan(parent.sessionId,{changeSummary:'Tool lifecycle',steps:[{id:step,title:'Tool step',ordinal:0,status:'pending',dependsOn:[],acceptanceCriteria:[],expectedArtifacts:[]}]},{ifMatch:(await parent.client.getSession<{revision:number}>(parent.sessionId)).revision})
+    const plan=await parent.client.getPlan<{id:string}>(parent.sessionId)
+    const hash=`sha256:${'a'.repeat(64)}`
+    const artifact=await parent.client.publishArtifact({sessionId:parent.sessionId,workItemId:parent.workItemId,type:'document',title:'Trusted source',checksum:hash,metadata:{source:'M2 authorized artifact'}}) as {id:string}
+    const base=(await f.db.query('SELECT context_snapshot_id FROM agent_sessions WHERE id=$1',[parent.sessionId])).rows[0]!.context_snapshot_id as string
+    const captures=await f.pi(parent,f.connectionToken,[async()=>({name:'workmesh_comment_plan_step',arguments:{planVersionId:plan.id,planStepId:step,body:'Pi own Plan comment'}}),async()=>({name:'workmesh_propose_plan_step_assignment',arguments:{planStepId:step,skill:'review',rationale:'Proposal for Human approval'}}),async()=>({name:'workmesh_append_context_delta',arguments:{baseSnapshotId:base,rationale:'Append verified artifact',additions:[{sourceType:'artifact',sourceId:artifact.id,hash}]}})])
+    expect(captures[0]!.tools).toEqual(expect.arrayContaining(['workmesh_comment_plan_step','workmesh_propose_plan_step_assignment','workmesh_append_context_delta','workmesh_fail_session']))
+    const results=modelResults(captures)
+    expect(results.some(value=>value && typeof value==='object' && 'snapshot' in value && 'delta' in value)).toBe(true)
+    savePlanningEvidence('pi-named-planning-tools.json',{captures,plan,artifact})
+    for(const scenario of ['success','stale','stop','revoked','response_lost'] as const) {
+      const execution=await f.createExecution(`M2 failure ${scenario}`)
+      let failureCaptures:Awaited<ReturnType<typeof f.pi>>=[]
+      {
+        const apiUrl=scenario==='response_lost'?await f.loseFailResponse():scenario==='stop'||scenario==='revoked'?await f.afterSettlement(async()=>{
+          if(scenario==='stop')await f.human('POST',`/api/v1/agent-sessions/${execution.sessionId}/signals`,{signal:'stop',reason:'Human Stop after failed Turn'},(await f.db.query('SELECT revision FROM agent_sessions WHERE id=$1',[execution.sessionId])).rows[0]!.revision)
+          else await f.db.query("UPDATE delegations SET status='revoked' WHERE id=(SELECT delegation_id FROM agent_sessions WHERE id=$1)",[execution.sessionId])
+        }):undefined
+        failureCaptures=await f.pi(execution,f.connectionToken,[async()=>({name:'workmesh_fail_session',arguments:{ifMatch:(await f.db.query('SELECT revision FROM agent_sessions WHERE id=$1',[execution.sessionId])).rows[0]!.revision-(scenario==='stale'?1:0),code:'M2_EXPLICIT_FAILURE',summary:`Public failure ${scenario}`,retryable:false,evidence:['Deterministic fixture evidence']}})],{apiUrl})
+      }
+      const durable=(await f.db.query(`SELECT s.state,t.status AS turn_status,a.status AS attempt_status,a.external_effects_reconciled FROM agent_sessions s JOIN workbench_turns t ON t.agent_session_id=s.id JOIN workbench_runner_attempts a ON a.turn_id=t.id WHERE s.id=$1`,[execution.sessionId])).rows[0]!
+      expect(durable).toMatchObject({state:scenario==='success'||scenario==='response_lost'?'failed':scenario==='stop'?'stopping':'executing',turn_status:'failed',attempt_status:'failed',external_effects_reconciled:true})
+      const events=(await f.db.query("SELECT event_type FROM domain_events WHERE session_id=$1 AND event_type IN ('agent.session.failed','workbench.turn.settled')",[execution.sessionId])).rows
+      expect(events.filter(row=>row.event_type==='workbench.turn.settled')).toHaveLength(1)
+      expect(events.filter(row=>row.event_type==='agent.session.failed')).toHaveLength(scenario==='success'||scenario==='response_lost'?1:0)
+      savePlanningEvidence(`pi-session-failure-${scenario}.json`,{failureCaptures,durable,events,twoTransactions:true,automaticCrashRecovery:false})
+      // Privileged teardown keeps later source claims independent of intentionally active rejected failures.
+      if(scenario==='stale'||scenario==='revoked'||scenario==='stop')await f.db.query("UPDATE agent_sessions SET state='canceled',ended_at=clock_timestamp() WHERE id=$1",[execution.sessionId])
+    }
+    const mcpExecution=await f.createExecution('M2 MCP fail exact E')
+    const mcp=await f.connect('read-write',mcpExecution)
+    const revision=(await mcpExecution.client.getSession<{revision:number}>(mcpExecution.sessionId)).revision
+    expect(await call(mcp,'fail_session',{sessionId:mcpExecution.sessionId,revision,code:'M2_MCP_FAIL',summary:'Real MCP Session fail',evidence:[],retryable:false})).toMatchObject({state:'failed'})
   })
 
   it('Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定', async () => {
@@ -155,7 +232,7 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     const room=(await f.db.query("SELECT id FROM work_room_channels WHERE subject_kind='session' AND subject_id=$1",[parent.sessionId])).rows[0]!.id as string
     await f.pi(reviewer,target.token,[async()=>({name:'workmesh_publish_artifact',arguments:{type:'code_review',title:'Pi own review',metadata:{verdict:'approved'}}}),async()=>{
       artifactId=(await f.db.query('SELECT id FROM artifacts WHERE session_id=$1',[reviewer.sessionId])).rows[0]!.id as string
-      return {name:'workmesh_send_room_message',arguments:{roomId:room,intent:'review_result',body:'Pi own independent review',artifactIds:[artifactId]}}
+      return {name:'workmesh_send_room_message',arguments:{roomId:room,intent:'review_result',body:'Pi own independent review',payload:{artifactId}}}
     },async()=>({...await complete(reviewer.sessionId),arguments:{...(await complete(reviewer.sessionId)).arguments,artifactIds:[artifactId]}})])
     await f.pi(parent,f.connectionToken,[()=>complete(parent.sessionId)])
     const durable=(await f.db.query(`SELECT s.state,t.status AS turn_status,a.status AS attempt_status FROM agent_sessions s JOIN workbench_turns t ON t.agent_session_id=s.id JOIN workbench_runner_attempts a ON a.turn_id=t.id WHERE s.id=ANY($1::uuid[]) ORDER BY s.id,t.created_at`,[[parent.sessionId,child.id,review.session.id]])).rows
@@ -400,6 +477,24 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     await client.exchangeClaimedSessionToken(first.session.id,first.exchangeToken,{idempotencyKey:randomUUID()})
     // Settle only this fixture to free target admission; notification never conveys token exchange authority.
     await f.db.query("UPDATE agent_sessions SET state='canceled',ended_at=clock_timestamp() WHERE id=$1",[first.session.id])
+    const legacy=await claim('M2 legacy notification original claim recovery')
+    const legacyDelivery=(await worker.claimDeliveries()).find(row=>row.sessionId===legacy.session.id)!
+    const legacyPayload={sessionId:legacy.session.id,initialPrompt:'Legacy missing Token ID'}
+    await f.db.query('UPDATE agent_webhook_deliveries SET payload=$2::jsonb WHERE id=$1',[legacyDelivery.id,JSON.stringify(legacyPayload)])
+    const legacyCounts=f.deliveryCounts()
+    let legacyError:unknown
+    try {await worker.deliver({...legacyDelivery,payload:legacyPayload})}catch(error){legacyError=error}
+    expect(legacyError).toMatchObject({code:'WEBHOOK_TARGET_REVOKED'})
+    await worker.fail(legacyDelivery,legacyError)
+    const legacyState=(await f.db.query('SELECT status,last_error_code FROM agent_webhook_deliveries WHERE id=$1',[legacyDelivery.id])).rows[0]!
+    expect(legacyState).toMatchObject({status:'dead',last_error_code:'WEBHOOK_TARGET_REVOKED'})
+    expect(f.deliveryCounts()).toEqual(legacyCounts)
+    const recoveryClient=new WorkMeshClient({baseUrl:f.baseUrl,coordinationToken:f.connectionToken,installationToken:f.connectionToken})
+    await recoveryClient.exchangeClaimedSessionToken(legacy.session.id,legacy.exchangeToken,{idempotencyKey:randomUUID()})
+    await recoveryClient.acknowledge(legacy.session.id,{summary:'Original claim receipt; notification stays dead',externalUrls:[]})
+    expect((await f.db.query('SELECT state FROM agent_sessions WHERE id=$1',[legacy.session.id])).rows[0]).toEqual({state:'acknowledged'})
+    savePlanningEvidence('legacy-self-claim-recovery.json',{sessionId:legacy.session.id,deliveryId:legacyDelivery.id,legacyState,exactOriginalClaimReceiptUsed:true,notificationRepaired:false,httpCountUnchanged:true})
+    await f.db.query("UPDATE agent_sessions SET state='canceled',ended_at=clock_timestamp() WHERE id=$1",[legacy.session.id])
     const second = await claim('M2 revoked self-claim notice')
     const blocked = (await worker.claimDeliveries()).find(row=>row.sessionId===second.session.id)!
     const connection = (await f.db.query<{id:string}>('SELECT id FROM agent_connections WHERE agent_id=$1',[f.agentId])).rows[0]!.id
