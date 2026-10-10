@@ -74,6 +74,8 @@
 
 必要验证实际通过：JSON 解析、5 份 gzip 往返双哈希/已提交 blob 核对、HEAD 主线可达、逐文件字节与独占读取、末次 scoped 枚举、worktree 登记健康和保护路径存在性检查。先行提交前暂存 `git diff --cached --check` 退出 0；最终完整已提交范围的 diffcheck 回执由 `final-validation.json` 单列。没有运行 lint/typecheck/产品 unit/integration/E2E；本卡明确只要求必要证据及登记验证，没有产品变化。
 
+执行报告/清单与原回执已提交并推送为 `57d600d24f68727659d3c439c9e8b693529335f5`，该完整 main→head `diff --check` 退出 0。最终交付字节索引首次采用“全部与 Git blob 一致”的断言，因 16 份 PowerShell JSON 的 CRLF 实际字节而失败；当时外层最后一个 diffcheck 退出 0 不能代表前序 Python/git add 成功。[first-final-validation-failure.json](first-final-validation-failure.json) 保全原失败和调用定位。修正后 [evidence-index.json](evidence-index.json) 对该提交 59 个交付文件分列 Git/Windows 原字节：43 个 identity、16 个可逆 LF→CRLF，全部实核通过；5 个 gzip 始终逐字节一致。此次修正只影响证据索引，未新增删除或改变原回收结果。最终验证回执/索引/首败补录经正常 turn-end 提交，避免为记录自身 head 循环改写。
+
 只核可读全板、当前任务对话、Windows 进程命令行及文件独占读取，**未声称获得平台全局 build/recovery registry 或所有 OS handles**。无法充分确认恢复用途的目标保留；候选已由当前任务信息、原完成对话、精确文件与当前可见运行引用逐项确认。历史自动审批拒绝、原回执缺口、敏感 RAW 原件均不重写或重新归档入库。
 
 文件变更仅在 `docs/reviews/cleanup/2026-10-11-worktrees/`：中文预检/结果报告、机器清单、原工具回执及本次只读核验脚本。**无数据库迁移、无 API/事件变更、无产品规格偏离**。核验覆盖限制及上述归属更正已明示。

@@ -1,0 +1,67 @@
+{
+  "purpose": "保留最终证据索引的首次失败；不是删除失败或新删除许可",
+  "reason": "首版要求所有工作树字节等于 Git blob；PowerShell 生成 JSON 为 CRLF，Git autocrlf 归一化。嵌套 Python AssertionError 与缺 index 的 git add 失败；外层最后 diffcheck 0 掩盖前序失败，不能算整个验证通过。",
+  "receipts": [
+    {
+      "callId": "call_b5f55eaea098463fa40fb13cf8dd9f94",
+      "source": "C:\\Users\\xurx\\.tds\\codex-home\\sessions\\2026\\10\\11\\rollout-2026-10-11T00-56-55-01a126bf-04bf-7943-9ae6-d7c1c3d13276.jsonl",
+      "dispatchLine": 269,
+      "dispatch": {
+        "timestamp": "2026-10-10T17:11:50.688Z",
+        "ordinal": 268,
+        "type": "response_item",
+        "payload": {
+          "type": "custom_tool_call",
+          "id": "ctc_051b5d1f591fbe1a016aca71c9afbc819a8ef3007fd058921b",
+          "status": "completed",
+          "call_id": "call_b5f55eaea098463fa40fb13cf8dd9f94",
+          "name": "exec",
+          "input": "text(await tools.apply_patch(\"*** Begin Patch\\n*** Update File: docs/reviews/cleanup/2026-10-11-worktrees/report.md\\n@@\\n-本轮删除调用 1 次、成功 1 次、失败 0 次、自动审批拒绝 0 次、空删除批次 0 次、独立 clone 删除 0 次。历史拒绝没有重新派发。9 组本轮主要核验/提交/移除/事后检查实际工具调用及完整原行保全于 original-tool-receipts.json，均有对应返回。\\n+本轮删除调用 1 次、成功 1 次、失败 0 次、自动审批拒绝 0 次、空删除批次 0 次、独立 clone 删除 0 次。历史拒绝没有重新派发。13 组本轮主要核验/提交/移除/盘点等待/归属补核/事后检查实际工具调用及完整原行保全于 original-tool-receipts.json，均有对应返回。\\n*** End Patch\"));\ntext(await tools.exec_command({cmd:\"git add -- docs/reviews/cleanup/2026-10-11-worktrees\\ngit diff --cached --check\\n$env:PYTHONIOENCODING='utf-8'\\npython -B -c \\\"import pathlib,subprocess,hashlib,json; root=pathlib.Path.cwd(); p=root/'docs/reviews/cleanup/2026-10-11-worktrees'; rows=[]; files=sorted(f for f in p.iterdir() if f.is_file() and f.name not in ['evidence-index.json','final-validation.json']); [(rows.append({'path':f.relative_to(root).as_posix(),'windowsBytes':len(f.read_bytes()),'windowsSha256':hashlib.sha256(f.read_bytes()).hexdigest(),'stagedGitBytes':len(b),'stagedGitSha256':hashlib.sha256(b).hexdigest(),'byteEqual':b==f.read_bytes()})) for f in files for b in [subprocess.run(['git','show',':'+f.relative_to(root).as_posix()],capture_output=True,check=True).stdout]]; assert all(r['byteEqual'] for r in rows); (p/'evidence-index.json').write_text(json.dumps({'scope':'本轮交付文件受检暂存 Git blob 与 Windows 工作树字节；不自引用，不包含之后的 final-validation 回执','files':rows},ensure_ascii=False,indent=2)+'\\\\n',encoding='utf-8'); print('staged/worktree byte matches:',len(rows))\\\"\\ngit add -- docs/reviews/cleanup/2026-10-11-worktrees/evidence-index.json\\ngit diff --cached --check\",login:false,max_output_tokens:1400}));\nconst start=await tools.clock__curr_time({});const r=await tools.mcp__tds__push_branch({message:\"docs(cleanup): record safe merged worktree removal and receipts\"});const end=await tools.clock__curr_time({});store(\"final-push\",{input:{message:\"docs(cleanup): record safe merged worktree removal and receipts\"},start,end,output:r});text(r);\n",
+          "internal_chat_message_metadata_passthrough": {
+            "turn_id": "01a126bf-0582-7ac3-8091-4f9464ce598f",
+            "create_time": 1791652297.6888697
+          }
+        }
+      },
+      "dispatchOriginalLine": "{\"timestamp\":\"2026-10-10T17:11:50.688Z\",\"ordinal\":268,\"type\":\"response_item\",\"payload\":{\"type\":\"custom_tool_call\",\"id\":\"ctc_051b5d1f591fbe1a016aca71c9afbc819a8ef3007fd058921b\",\"status\":\"completed\",\"call_id\":\"call_b5f55eaea098463fa40fb13cf8dd9f94\",\"name\":\"exec\",\"input\":\"text(await tools.apply_patch(\\\"*** Begin Patch\\\\n*** Update File: docs/reviews/cleanup/2026-10-11-worktrees/report.md\\\\n@@\\\\n-本轮删除调用 1 次、成功 1 次、失败 0 次、自动审批拒绝 0 次、空删除批次 0 次、独立 clone 删除 0 次。历史拒绝没有重新派发。9 组本轮主要核验/提交/移除/事后检查实际工具调用及完整原行保全于 original-tool-receipts.json，均有对应返回。\\\\n+本轮删除调用 1 次、成功 1 次、失败 0 次、自动审批拒绝 0 次、空删除批次 0 次、独立 clone 删除 0 次。历史拒绝没有重新派发。13 组本轮主要核验/提交/移除/盘点等待/归属补核/事后检查实际工具调用及完整原行保全于 original-tool-receipts.json，均有对应返回。\\\\n*** End Patch\\\"));\\ntext(await tools.exec_command({cmd:\\\"git add -- docs/reviews/cleanup/2026-10-11-worktrees\\\\ngit diff --cached --check\\\\n$env:PYTHONIOENCODING='utf-8'\\\\npython -B -c \\\\\\\"import pathlib,subprocess,hashlib,json; root=pathlib.Path.cwd(); p=root/'docs/reviews/cleanup/2026-10-11-worktrees'; rows=[]; files=sorted(f for f in p.iterdir() if f.is_file() and f.name not in ['evidence-index.json','final-validation.json']); [(rows.append({'path':f.relative_to(root).as_posix(),'windowsBytes':len(f.read_bytes()),'windowsSha256':hashlib.sha256(f.read_bytes()).hexdigest(),'stagedGitBytes':len(b),'stagedGitSha256':hashlib.sha256(b).hexdigest(),'byteEqual':b==f.read_bytes()})) for f in files for b in [subprocess.run(['git','show',':'+f.relative_to(root).as_posix()],capture_output=True,check=True).stdout]]; assert all(r['byteEqual'] for r in rows); (p/'evidence-index.json').write_text(json.dumps({'scope':'本轮交付文件受检暂存 Git blob 与 Windows 工作树字节；不自引用，不包含之后的 final-validation 回执','files':rows},ensure_ascii=False,indent=2)+'\\\\\\\\n',encoding='utf-8'); print('staged/worktree byte matches:',len(rows))\\\\\\\"\\\\ngit add -- docs/reviews/cleanup/2026-10-11-worktrees/evidence-index.json\\\\ngit diff --cached --check\\\",login:false,max_output_tokens:1400}));\\nconst start=await tools.clock__curr_time({});const r=await tools.mcp__tds__push_branch({message:\\\"docs(cleanup): record safe merged worktree removal and receipts\\\"});const end=await tools.clock__curr_time({});store(\\\"final-push\\\",{input:{message:\\\"docs(cleanup): record safe merged worktree removal and receipts\\\"},start,end,output:r});text(r);\\n\",\"internal_chat_message_metadata_passthrough\":{\"turn_id\":\"01a126bf-0582-7ac3-8091-4f9464ce598f\",\"create_time\":1791652297.6888697}}}",
+      "returnLine": 274,
+      "return": {
+        "timestamp": "2026-10-10T17:12:00.391Z",
+        "ordinal": 273,
+        "type": "response_item",
+        "payload": {
+          "type": "custom_tool_call_output",
+          "id": "ctco_01a126cc-d487-7a62-8821-295678d136d4",
+          "call_id": "call_b5f55eaea098463fa40fb13cf8dd9f94",
+          "output": [
+            {
+              "type": "input_text",
+              "text": "Script completed\nWall time 9.7 seconds\nOutput:\n"
+            },
+            {
+              "type": "input_text",
+              "text": "{}"
+            },
+            {
+              "type": "input_text",
+              "text": "{\"chunk_id\":\"07ce7c\",\"wall_time_seconds\":3.7475988,\"exit_code\":0,\"original_token_count\":499,\"output\":\"warning: in the working copy of 'docs/reviews/cleanup/2026-10-11-worktrees/report.md', LF will be replaced by CRLF the next time Git touches it\\nTraceback (most recent call last):\\r\\n  File \\\"<string>\\\", line 1, in <module>\\r\\n    import pathlib,subprocess,hashlib,json; root=pathlib.Path.cwd(); p=root/'docs/reviews/cleanup/2026-10-11-worktrees'; rows=[]; files=sorted(f for f in p.iterdir() if f.is_file() and f.name not in ['evidence-index.json','final-validation.json']); [(rows.append({'path':f.relative_to(root).as_posix(),'windowsBytes':len(f.read_bytes()),'windowsSha256':hashlib.sha256(f.read_bytes()).hexdigest(),'stagedGitBytes':len(b),'stagedGitSha256':hashlib.sha256(b).hexdigest(),'byteEqual':b==f.read_bytes()})) for f in files for b in [subprocess.run(['git','show',':'+f.relative_to(root).as_posix()],capture_output=True,check=True).stdout]]; assert all(r['byteEqual'] for r in rows); (p/'evidence-index.json').write_text(json.dumps({'scope':'本轮交付文件受检暂存 Git blob 与 Windows 工作树字节；不自引用，不包含之后的 final-validation 回执','files':rows},ensure_ascii=False,indent=2)+'\\\\n',encoding='utf-8'); print('staged/worktree byte matches:',len(rows))\\r\\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\r\\nAssertionError\\r\\nfatal: pathspec 'docs/reviews/cleanup/2026-10-11-worktrees/evidence-index.json' did not match any files\\n\"}"
+            },
+            {
+              "type": "input_text",
+              "text": "{\"content\":[{\"type\":\"text\",\"text\":\"Committed 57d600d24f68 and pushed \\\"tds/conv-01a126be-7aba-7b1d-a57a-f58317f89a67\\\" — the remote now has all work up to this point.\"}]}"
+            }
+          ],
+          "internal_chat_message_metadata_passthrough": {
+            "turn_id": "01a126bf-0582-7ac3-8091-4f9464ce598f",
+            "create_time": 1791652320.3916173
+          }
+        },
+        "metadata": {
+          "client_authored": false,
+          "fallback_token_limit_override": 12000
+        }
+      },
+      "returnOriginalLine": "{\"timestamp\":\"2026-10-10T17:12:00.391Z\",\"ordinal\":273,\"type\":\"response_item\",\"payload\":{\"type\":\"custom_tool_call_output\",\"id\":\"ctco_01a126cc-d487-7a62-8821-295678d136d4\",\"call_id\":\"call_b5f55eaea098463fa40fb13cf8dd9f94\",\"output\":[{\"type\":\"input_text\",\"text\":\"Script completed\\nWall time 9.7 seconds\\nOutput:\\n\"},{\"type\":\"input_text\",\"text\":\"{}\"},{\"type\":\"input_text\",\"text\":\"{\\\"chunk_id\\\":\\\"07ce7c\\\",\\\"wall_time_seconds\\\":3.7475988,\\\"exit_code\\\":0,\\\"original_token_count\\\":499,\\\"output\\\":\\\"warning: in the working copy of 'docs/reviews/cleanup/2026-10-11-worktrees/report.md', LF will be replaced by CRLF the next time Git touches it\\\\nTraceback (most recent call last):\\\\r\\\\n  File \\\\\\\"<string>\\\\\\\", line 1, in <module>\\\\r\\\\n    import pathlib,subprocess,hashlib,json; root=pathlib.Path.cwd(); p=root/'docs/reviews/cleanup/2026-10-11-worktrees'; rows=[]; files=sorted(f for f in p.iterdir() if f.is_file() and f.name not in ['evidence-index.json','final-validation.json']); [(rows.append({'path':f.relative_to(root).as_posix(),'windowsBytes':len(f.read_bytes()),'windowsSha256':hashlib.sha256(f.read_bytes()).hexdigest(),'stagedGitBytes':len(b),'stagedGitSha256':hashlib.sha256(b).hexdigest(),'byteEqual':b==f.read_bytes()})) for f in files for b in [subprocess.run(['git','show',':'+f.relative_to(root).as_posix()],capture_output=True,check=True).stdout]]; assert all(r['byteEqual'] for r in rows); (p/'evidence-index.json').write_text(json.dumps({'scope':'本轮交付文件受检暂存 Git blob 与 Windows 工作树字节；不自引用，不包含之后的 final-validation 回执','files':rows},ensure_ascii=False,indent=2)+'\\\\\\\\n',encoding='utf-8'); print('staged/worktree byte matches:',len(rows))\\\\r\\\\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\\\r\\\\nAssertionError\\\\r\\\\nfatal: pathspec 'docs/reviews/cleanup/2026-10-11-worktrees/evidence-index.json' did not match any files\\\\n\\\"}\"},{\"type\":\"input_text\",\"text\":\"{\\\"content\\\":[{\\\"type\\\":\\\"text\\\",\\\"text\\\":\\\"Committed 57d600d24f68 and pushed \\\\\\\"tds/conv-01a126be-7aba-7b1d-a57a-f58317f89a67\\\\\\\" — the remote now has all work up to this point.\\\"}]}\"}],\"internal_chat_message_metadata_passthrough\":{\"turn_id\":\"01a126bf-0582-7ac3-8091-4f9464ce598f\",\"create_time\":1791652320.3916173}},\"metadata\":{\"client_authored\":false,\"fallback_token_limit_override\":12000}}"
+    }
+  ]
+}
