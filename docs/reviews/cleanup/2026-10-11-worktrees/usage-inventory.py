@@ -12,7 +12,7 @@ import stat
 import subprocess
 
 ROOT = Path(r'C:\Users\xurx\.tds\workspaces')
-OUT = Path(__file__).resolve().parent
+OUT = Path(os.path.abspath(__file__)).parent
 CURRENT = OUT.parents[3]
 REPOSITORY = 'https://github.com/xurunxin/WorkMesh.git'
 
@@ -38,20 +38,22 @@ def group(rel):
         return '本机临时/验收材料（用途未判定）'
     return '源码与其他文件'
 
-def directory_gate(path):
+def directory_gate(path, *, allow_missing=False, final_directory=True):
     # absolute 不解析链接；从卷根逐级 lstat，不能先访问可能位于 junction 下的子路径。
     path = path.absolute()
     for ancestor in [*reversed(path.parents), path]:
         try:
             info = ancestor.lstat()
         except FileNotFoundError:
+            if allow_missing:
+                return None
             return {'blockedAt': str(ancestor), 'reason': '路径不存在，未遍历', 'errors': []}
         except OSError as error:
             return {'blockedAt': str(ancestor), 'reason': '祖先元数据读取失败，未遍历',
                     'errors': [{'path': str(ancestor), 'error': str(error)}]}
         if info.st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT:
             return {'blockedAt': str(ancestor), 'reason': '祖先或目录本体是 reparse point，未遍历', 'errors': []}
-        if not stat.S_ISDIR(info.st_mode):
+        if not stat.S_ISDIR(info.st_mode) and (ancestor != path or final_directory or not stat.S_ISREG(info.st_mode)):
             return {'blockedAt': str(ancestor), 'reason': '路径不是目录，未遍历', 'errors': []}
     return None
 
@@ -89,11 +91,18 @@ def scan(path):
     return {'ordinaryFiles': count, 'logicalBytes': total, 'linksNotFollowed': links, 'groups': dict(groups), 'errors': errors, 'complete': not errors}
 
 def write_snapshot(dest, data):
-    dest = dest.resolve()
-    cleanup_root = OUT.parent.resolve()
+    dest = Path(os.path.abspath(dest))
+    cleanup_root = OUT.parent
     if cleanup_root not in dest.parents:
         raise ValueError('输出必须在此受控清理报告目录下')
+    for path, options in [(cleanup_root, {}), (dest, {'allow_missing': True, 'final_directory': False})]:
+        blocked = directory_gate(path, **options)
+        if blocked:
+            raise ValueError(f"输出路径被阻断：{blocked}")
     dest.parent.mkdir(parents=True, exist_ok=True)
+    blocked = directory_gate(dest, allow_missing=True, final_directory=False)
+    if blocked:
+        raise ValueError(f"打开快照前输出路径被阻断：{blocked}")
     raw = (json.dumps(data, ensure_ascii=False, indent=2) + '\n').encode()
     # 独占创建由文件系统原子判定；并发同名写入不能覆盖先生成的原件。
     with dest.open('xb') as snapshot:
@@ -134,17 +143,23 @@ def main():
     # 主仓库只是只读大小对照，永不成为脚本的回收候选；其它平台缓存不遍历。
     main_repo = ROOT / 'DzkLDn6UW-IbfoTJzN9Ro' / 'repo'
     main_size = {'path': str(main_repo), 'protected': True, **scan(main_repo)}
+    registration_blocked = root_blocked or directory_gate(CURRENT)
+    if registration_blocked:
+        registration = {'queried': False, 'exit': None, **registration_blocked}
+    else:
+        registration = {'queried': True, **git(CURRENT, 'worktree', 'list', '--porcelain')}
     total = sum(r['logicalBytes'] for r in rows)
     worktrees_complete = not root_blocked and not root_errors and all(r['complete'] for r in rows)
-    complete = worktrees_complete and main_size['complete']
-    error_count = len(root_errors) + sum(len(r['errors']) for r in rows) + len(main_size['errors'])
+    complete = worktrees_complete and main_size['complete'] and registration['queried'] and registration['exit'] == 0
+    registration_errors = registration_blocked['errors'] if registration_blocked else []
+    error_count = len(root_errors) + sum(len(r['errors']) for r in rows) + len(main_size['errors']) + len(registration_errors)
     data = {'startedAt': started, 'endedAt': utc(), 'phase': args.phase, 'workspaceRoot': str(ROOT), 'project': REPOSITORY,
             'complete': complete, 'errors': error_count, 'rootErrors': root_errors,
             'worktreeLogicalBytes': total if worktrees_complete else None,
             'worktreeDecimalGB': total / 10**9 if worktrees_complete else None,
             'worktreeGiB': total / 2**30 if worktrees_complete else None,
             'observedWorktreeLogicalBytes': total, 'worktreeCount': len(rows),
-            'rows': rows, 'mainRepositorySeparate': main_size, 'exclusions': exclusions, 'registration': git(CURRENT, 'worktree', 'list', '--porcelain'),
+            'rows': rows, 'mainRepositorySeparate': main_size, 'exclusions': exclusions, 'registration': registration,
             'limitations': '逻辑长度不跟链接，hardlink 副本重复计数；不含其它项目、用户目录、共享 store、镜像/业务数据；活动目录扫描不是一致快照；不代表物理分配或可归因净释放。用途分类不能代安全预检。'}
     if args.output:
         write_snapshot(args.output, data)
@@ -158,6 +173,7 @@ def main():
                       'observedWorktreeLogicalBytes': total,
                       'mainRepoSeparateBytes': main_size['logicalBytes'] if main_size['complete'] else None,
                       'mainRepoObservedBytes': main_size['logicalBytes'], 'mainRepoComplete': main_size['complete'],
+                      'registrationQueried': registration['queried'], 'registrationSkipReason': registration_blocked,
                       'groups': dict(groups), 'top10': top, 'errors': error_count}, ensure_ascii=False))
     return 0 if complete else 1
 

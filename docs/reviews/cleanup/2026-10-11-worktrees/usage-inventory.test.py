@@ -4,6 +4,7 @@ sys.dont_write_bytecode = True
 import concurrent.futures
 import contextlib
 import gzip
+import hashlib
 import importlib.util
 import io
 import json
@@ -47,16 +48,73 @@ class InventoryBoundaryTests(unittest.TestCase):
         blocked = inventory.ROOT.parent
         with mock.patch.object(Path, 'lstat', lambda path: directory_info(reparse=path == blocked)), \
                 mock.patch.object(Path, 'iterdir') as iterdir, mock.patch.object(inventory.os, 'scandir') as scandir, \
-                mock.patch.object(inventory, 'git', return_value={'exit': 0}), \
+                mock.patch.object(inventory, 'git', return_value={'exit': 0}) as git, \
                 mock.patch.object(sys, 'argv', ['usage-inventory.py']), contextlib.redirect_stdout(io.StringIO()) as output:
             status = inventory.main()
         iterdir.assert_not_called()
         scandir.assert_not_called()
+        git.assert_not_called()
         summary = json.loads(output.getvalue())
         self.assertEqual(status, 1)
         self.assertFalse(summary['complete'])
         self.assertIsNone(summary['logicalBytes'])
         self.assertIsNone(summary['mainRepoSeparateBytes'])
+
+    def test_current_repository_junction_skips_registration(self):
+        visited = []
+
+        def metadata(path):
+            visited.append(path)
+            return directory_info(reparse=path == inventory.CURRENT)
+
+        with mock.patch.object(Path, 'lstat', metadata), mock.patch.object(Path, 'iterdir', return_value=iter([])), \
+                mock.patch.object(inventory.os, 'scandir', return_value=contextlib.nullcontext(iter([]))), \
+                mock.patch.object(inventory, 'git') as git, mock.patch.object(inventory, 'write_snapshot') as write_snapshot, \
+                mock.patch.object(sys, 'argv', ['usage-inventory.py', '--output', 'simulated.json.gz']), \
+                contextlib.redirect_stdout(io.StringIO()) as output:
+            status = inventory.main()
+        git.assert_not_called()
+        self.assertEqual(status, 1)
+        registration = write_snapshot.call_args.args[1]['registration']
+        self.assertFalse(registration['queried'])
+        self.assertEqual(registration['blockedAt'], str(inventory.CURRENT))
+        self.assertFalse(json.loads(output.getvalue())['complete'])
+
+    def test_output_parent_junction_never_accesses_child_or_writes(self):
+        blocked = inventory.OUT / 'external-junction'
+        dest = blocked / 'new-child' / 'snapshot.json.gz'
+        visited = []
+
+        def metadata(path):
+            visited.append(path)
+            return directory_info(reparse=path == blocked)
+
+        with mock.patch.object(Path, 'lstat', metadata), mock.patch.object(Path, 'resolve') as resolve, \
+                mock.patch.object(Path, 'mkdir') as mkdir, mock.patch.object(Path, 'open') as open_file:
+            with self.assertRaisesRegex(ValueError, 'reparse point'):
+                inventory.write_snapshot(dest, {})
+        resolve.assert_not_called()
+        mkdir.assert_not_called()
+        open_file.assert_not_called()
+        self.assertNotIn(blocked / 'new-child', visited)
+        self.assertNotIn(dest, visited)
+
+    def test_output_controlled_ancestor_junction_never_writes(self):
+        blocked = inventory.OUT.parent
+        dest = inventory.OUT / 'new-child' / 'snapshot.json.gz'
+        visited = []
+
+        def metadata(path):
+            visited.append(path)
+            return directory_info(reparse=path == blocked)
+
+        with mock.patch.object(Path, 'lstat', metadata), mock.patch.object(Path, 'mkdir') as mkdir, \
+                mock.patch.object(Path, 'open') as open_file:
+            with self.assertRaisesRegex(ValueError, 'reparse point'):
+                inventory.write_snapshot(dest, {})
+        mkdir.assert_not_called()
+        open_file.assert_not_called()
+        self.assertNotIn(inventory.OUT, visited)
 
     def run_simulated_inventory(self, scandir_error=None, lstat_error=None):
         target = inventory.ROOT / 'DzkLDn6UW-IbfoTJzN9Ro' / 'repo'
@@ -132,6 +190,12 @@ class InventoryBoundaryTests(unittest.TestCase):
                     with self.assertRaises(FileExistsError):
                         inventory.write_snapshot(dest, {'writer': '不得覆盖'})
                     self.assertEqual(dest.read_bytes(), original)
+                    print(json.dumps({'verification': '并发同名快照', 'iteration': iteration + 1,
+                                      'commands': [worker.args for worker in workers],
+                                      'exitCodes': [worker.returncode for worker in workers],
+                                      'rawOutputs': [{'stdout': 'ready\n' + out, 'stderr': err} for out, err in results],
+                                      'winner': winner, 'snapshotSha256': hashlib.sha256(original).hexdigest(),
+                                      'unchangedAfterRejectedWrite': True}, ensure_ascii=False), flush=True)
                 finally:
                     for worker in workers:
                         if worker.poll() is None:
