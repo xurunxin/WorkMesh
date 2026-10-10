@@ -1,0 +1,721 @@
+{
+  "observedUtc": "2026-10-10 05:05:57 UTC",
+  "pullRefObservation": {"command":["ls-remote","origin","refs/pull/*/head"],"result":{"content":[{"type":"text","text":"0a56afe234de443ae1a09502291b645ba150d6c4\trefs/pull/101/head\n574e98576dc36cbb5e3669c4e03cf862271b4021\trefs/pull/102/head\n4a4ca750e3260ceb3f888a0a05a036d728f475ae\trefs/pull/103/head\nd2a0cf13ad47c4c2f4badffcd679adc2b26edd0a\trefs/pull/104/head\n84fd5ca63dc30cab052188b226a53076134f67b9\trefs/pull/105/head\n84fd5ca63dc30cab052188b226a53076134f67b9\trefs/pull/106/head\n84fd5ca63dc30cab052188b226a53076134f67b9\trefs/pull/107/head\n84fd5ca63dc30cab052188b226a53076134f67b9\trefs/pull/108/head\n84fd5ca63dc30cab052188b226a53076134f67b9\trefs/pull/109/head\n84fd5ca63dc30cab052188b226a53076134f67b9\trefs/pull/110/head\n84fd5ca63dc30cab052188b226a53076134f67b9\trefs/pull/111/head\n84fd5ca63dc30cab052188b226a53076134f67b9\trefs/pull/112/head\n84fd5ca63dc30cab052188b226a53076134f67b9\trefs/pull/113/head\na215ce9f9531142b96230df6c90371326136d600\trefs/pull/114/head\nf95f05062f906c0c705f8314b9848a855890035d\trefs/pull/115/head\n318e45010a615e3560b8979843227c3ac438cf34\trefs/pull/116/head\n02b15cb298abfc1d95310b9964c92627fda0d9ce\trefs/pull/117/head\nd82c6fc76d1112f613bf99165eb383657870c954\trefs/pull/118/head\n5fd90e6db2d59612ab7a0a8f9de7c9cb91b70871\trefs/pull/119/head\nea296aa99cd78ffa36174855d1ffbd8d828bcc15\trefs/pull/120/head\n2a16fae92211ac4cf4d44f9c952c82fa0073dcd8\trefs/pull/141/head\n297d6c76a4136d23f9df9c7374c0a80a6ac23456\trefs/pull/142/head\n39c651f025718586799fb55b3051405462db2675\trefs/pull/143/head\ne5f6626100fabd7be4dfc5d7af1f624342a0e642\trefs/pull/144/head\n448f090ff3a278aa085614467425df4eed9f30cc\trefs/pull/145/head\nf4b735f07c93f454e0b16126b320459630a8aee2\trefs/pull/146/head\n06fdf5dcbade85189074b22da80741be7fe98d0f\trefs/pull/148/head\n21ca0f728e64fb829ede1917fbece9d0c5ce2730\trefs/pull/149/head\n34b638d5008df676de6a5483c93df072293357c7\trefs/pull/150/head\nd9024bab416160385ca79b59c580479b0833ee53\trefs/pull/151/head\nf3838a9ae17d2f45677967bd197218f6088de39c\trefs/pull/152/head\n108e58afe795050f0648061ff9da0cd1719794a0\trefs/pull/153/head\na41463d1f62f2fd790cad72f10975417eaf36f69\trefs/pull/154/head\n78709848051c37b6b616ccd93458c431f3efe654\trefs/pull/155/head\nca1b931118eafee0d3eedb699ab91aa69172b631\trefs/pull/156/head\n6cb164411d705fef29710bb9dc455447071e096f\trefs/pull/157/head\nd44629adadfaa7a53a429d662c7cd697208d85e6\trefs/pull/158/head\n553d1555e2c4598a3cd0e21c330727c376abef4a\trefs/pull/159/head\nbda82de570fddbec8f321687a5353c1eb978d462\trefs/pull/160/head\n9ddfb592094a680dbb3c8c25b0739795be8caf79\trefs/pull/161/head\n36df3ddf9f6fd51523c4f3f0d84d9b00e30f6170\trefs/pull/162/head\n04ef9316fe564b338f237c0a85b23d926fdc71ef\trefs/pull/163/head\nc4ddf4343563f53fc8e2f0ca57ebc3559645ccb9\trefs/pull/164/head\na64402461bea6d04afb8f5b9fe417b057b2a18a4\trefs/pull/165/head\n2b932288385544c0c21dfd1c5e2e7f7f8f114749\trefs/pull/166/head\n5a2c37db3cdb5018d4091b1960c51e182464105b\trefs/pull/167/head\ne41759cff8f81bdcb897ede65f8b590e2ddde615\trefs/pull/168/head\nddb267fcfb7e19e7545616903022ceca1c1959b7\trefs/pull/169/head\n9df7eae8d55528186440ca41943f0f5b02cb1a85\trefs/pull/170/head\n18489382357696ace353f78ad0a5bee5d63aaa2b\trefs/pull/171/head\ndd64789a30824c014b8bf55854366612bb570d1e\trefs/pull/172/head\ne2efbf2da87c64d84d5e23d36ffce9996ea18a2e\trefs/pull/173/head\n97239ce6b63af2539698eda5f3dba37289586980\trefs/pull/174/head\nf7987a559d0935eb1b0c56c4cae536e22aebe563\trefs/pull/175/head\nb43bd063ba2fbda71f3754f46b422c708c136236\trefs/pull/176/head\nce580a00e01bd9800292c419b39b00df7b129d36\trefs/pull/177/head\nad37b586fb73c278b1b801b230f2bc79ed921ae4\trefs/pull/178/head\na0e74f1439343258b0851a7077a3f6475a5edd46\trefs/pull/179/head\n891520066499cb04af4f8771aba0992f18819d0d\trefs/pull/180/head\ned18cedab6a2854d8c6a84dff13c6a59139f72c7\trefs/pull/181/head\n455c2518a8f8c938a55f1f0e62cf7fced7ac3c95\trefs/pull/182/head\n10057fc6fac16d6fa2cbfc1309919b8c2056bcb5\trefs/pull/183/head\n9e2fbfe820f74b2c7800bf1492c7d3f8a87d7675\trefs/pull/184/head\n88a77a0e126db5d5fca4adffb89b439a836d79ae\trefs/pull/185/head\n5b84f9ee87228f186670898d9d8c1956b3946cfa\trefs/pull/186/head\n922060137faa83607e070996bc9068b0ba3648d3\trefs/pull/187/head\n7fd9541b3d0f43b129b2bb8a912e1ad1d7dcf81a\trefs/pull/188/head\na5732b2d61f3ecc185f378c53fa859e0430aecc8\trefs/pull/189/head\n1c68ddbb43e85474027ea01b5528f07e2bf52a16\trefs/pull/190/head\nad7827ddb85be4c6884b9774a1e4140a9d4eae6f\trefs/pull/191/head\n735578d8d0733e04cae5640cedfaf0c6181391c7\trefs/pull/192/head\n3f0467a09b5a46a0937c8458e92a811624c23260\trefs/pull/193/head\n49cd2136fe5109115fb4f3dcff89ed59b0bc7615\trefs/pull/194/head\n768bbd82fcc52a873168b39a8382d2f14c928abc\trefs/pull/195/head\n08ce81a6738407c90cf2629fbb70088a4a899841\trefs/pull/196/head\nd802edec2c8ecf89b11d4a0ad03cf221165044f3\trefs/pull/197/head\n96b66f26ba9d768f799e46c9fa53fa29ecb3397d\trefs/pull/198/head\na4e11bafef31e30fa1f152642f3d92b5da1e1ad7\trefs/pull/199/head\nc7a1af7d7b2e125368b29975867b4d392690fc38\trefs/pull/200/head\nf59679940ee7f657cec97411f68280ca0260b8e8\trefs/pull/201/head\n2134e8c2ff9937b4e072efb6d64a99dac7228b5a\trefs/pull/202/head\n550dead055689154359a3406dfce4f0c91c1dad3\trefs/pull/203/head\n7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f\trefs/pull/204/head\n07aa293c35100959caa08f73efcb6110e9aa92f4\trefs/pull/205/head\n81090ec01bcbc84edbe101418d833840999a5326\trefs/pull/206/head\n3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7\trefs/pull/207/head\n83541ce11da52236cc49ef2dd0ffdfe23775b306\trefs/pull/208/head\nf5a665407f0ff3e6dab84932bcb7d49d56468e42\trefs/pull/209/head\nd80f29ff9b87c387326cfda45eafdcfe6b182eee\trefs/pull/210/head\n328434d00268ce39222d677686dde3c64aba4e41\trefs/pull/211/head\n883d279d3b5978680672a6c1d7364d421d0afd10\trefs/pull/212/head\n3ff46eb20616dc5488ba46b77b27e1fb2d783a93\trefs/pull/213/head\na8fbe1cdd9c06eb0e5b037995a91054d033e0d24\trefs/pull/29/head\nc84e958bebc28b531eed97a7cb0e9855e59c859a\trefs/pull/30/head\n2b0df07b23bb38d5ce7a0e59c82f012e4f664558\trefs/pull/31/head\n275d926f8d657064ce27c4770bbb6e77db88c000\trefs/pull/32/head\nba4c5ea3fb9c56d5624f1454db6cbd6b0eaef142\trefs/pull/33/head\nb8f11badb43664d2ea7231f582843f47ae7a4726\trefs/pull/34/head\n748397500da141d95652907b2d48a50ff068f5ea\trefs/pull/35/head\nfd49aa706d1d88e3ceecb4b47b948d787822c0e8\trefs/pull/36/head\n6d7dbe56e20386451cb590ee59e53425121606be\trefs/pull/37/head\n20f34d71b350d463b835df93be12be73f2c02a95\trefs/pull/38/head\n52cf7880896127362ca2ff038c246455394b7a36\trefs/pull/51/head\n1be6de57c202fae3e8ead322aab7cf70824b9b54\trefs/pull/52/head\n9ef7885aadd7563f7b7df2b94920ddff5bbfa74b\trefs/pull/53/head\n97c0c195f49a45fd56e72fe78d95158df4a7f2d6\trefs/pull/54/head\n61942c08d1a83e28e1b7ad0e91579e755532141a\trefs/pull/55/head\nb34ce25bda1c13d8bd4d94ac3674c04197181ced\trefs/pull/56/head\n88a5868f7f3a8008352703c68265fc9b0b434fce\trefs/pull/57/head\nb04576b02de00be0737b822acfb70ccffb5ebfb8\trefs/pull/58/head\n985362367a87962821f2dba1d181d717b25b9317\trefs/pull/59/head\nf987a0cd9c2d15a51bc1120a10a0c1aa47493f13\trefs/pull/60/head\nc7c85945e7893b206418686d7d996febe68c7935\trefs/pull/61/head\n4e2002ae621d90178bee837cf64ec86b8f6ad5a4\trefs/pull/62/head\n53a4a3316b840762742c431d846473164bfc2523\trefs/pull/63/head\n4f78a65c95e6d3023538f17e0a4ab003b068011b\trefs/pull/64/head\n2fabf0e9a2f8f64a9e1fa5ea06fb91b90b164764\trefs/pull/65/head\nc2286e3142883555c4ba7ace351e2af80ac47f8f\trefs/pull/66/head\n443061e89fddd968b16d7451caea29fcb3c953cd\trefs/pull/67/head\n1e51fd544458cd55d1075d8f4abd3710ffd93f3d\trefs/pull/68/head\n1cbd29b07a2ae66ebae42dead6296beb0b4ba415\trefs/pull/69/head\ne49d37085e321f868664098d5923696c810b7975\trefs/pull/70/head\n9cc4957cca9001a94af888d8d19d88763753ea21\trefs/pull/71/head\n1b054486b99c551ca2656e484da00a5912cb59e1\trefs/pull/72/head\n022452dc2224db53f883e9dbc594c74ce0a5a4be\trefs/pull/73/head\nf8c3e4dc27c299b8f1b52b178f35ef93eda2a89c\trefs/pull/74/head\nffa5af50357161bd3244d6c31ac19f6bccca2dcd\trefs/pull/79/head\nf4284d920c7dfa4c879e630fddbc033eb14a525d\trefs/pull/80/head\nb110c2fa1d65306d561fe553e41c4bb747091317\trefs/pull/81/head\n894a107f0c8f4f920887b8e0e040742e831f477c\trefs/pull/82/head\nfc7d1dcba98e0ea89fee4aabbd0b09a26f27aaad\trefs/pull/84/head\n23840818e47f46331c0f93c3ade9fd0c7c950f75\trefs/pull/86/head"}]},"matchingReviewedHead":false,"limitation":"Ref enumeration does not establish PR branch or open/closed state"},
+  "repository": "xurunxin/WorkMesh",
+  "platformBranch": "tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe",
+  "reviewedHead": "1fb8c0e49f74f1a6b34ee69158bcbe2292e288ec",
+  "observedBase": "cfce77546b64c2a8d7d12949261c38e2f666d5ae",
+  "pr": {
+    "number": null,
+    "url": null,
+    "headBranch": null,
+    "headSha": null,
+    "baseBranch": "main",
+    "baseSha": null,
+    "state": "not_created_by_this_turn",
+    "availability": "Chief reports all-state branch PR query empty; current agent has no PR query/create tool; matching exact reviewed-head pull ref not observed"
+  },
+  "workflow": {
+    "runId": null,
+    "status": "no_matching_branch_run",
+    "observation": {
+      "content": [
+        {
+          "type": "text",
+          "text": "No workflow runs in xurunxin/WorkMesh matching branch \"tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe\"."
+        }
+      ]
+    }
+  },
+  "remoteRefs": {
+    "content": [
+      {
+        "type": "text",
+        "text": "cfce77546b64c2a8d7d12949261c38e2f666d5ae\trefs/heads/main\n1fb8c0e49f74f1a6b34ee69158bcbe2292e288ec\trefs/heads/tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe"
+      }
+    ]
+  },
+  "pushOriginal": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Nothing new to commit — pushed \"tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe\" so the remote is current with the last commit."
+      }
+    ]
+  },
+  "capabilities": {
+    "available": [
+      "mcp__tds__git",
+      "mcp__tds__push_branch",
+      "mcp__tds__workflow_runs",
+      "mcp__tds__rerun_workflow",
+      "mcp__tds__merge_branch"
+    ],
+    "missing": [
+      "mcp__tds__pull_requests",
+      "mcp__tds__create_pull_request",
+      "mcp__tds__dispatch_workflow"
+    ],
+    "forbiddenForThisRequest": "merge_branch opens AND merges; current request explicitly forbids merge. No gh/git credential workaround or alternate branch created."
+  },
+  "classificationCommand": {
+    "chunk_id": "b1b19a",
+    "wall_time_seconds": 0.7688552,
+    "exit_code": 0,
+    "original_token_count": 770,
+    "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n{\"pathsCount\":651,\"classification\":{\"mode\":\"full\",\"packages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"testPackages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"checks\":{\"source-gates\":true,\"db-integration\":true,\"api-integration\":true,\"worker-integration\":true,\"e2e\":true,\"recovery-integration\":true,\"agent-smoke\":true}},\"workflowTrigger\":{\"pull_request\":null,\"push\":{\"branches\":[\"main\"]},\"workflow_dispatch\":null,\"workflow_call\":null,\"schedule\":[{\"cron\":\"0 19 * * 0\"}],\"merge_group\":null},\"jobs\":[{\"id\":\"changes\",\"name\":\"Classify changes and validate CI selection\",\"needs\":null,\"if\":null,\"matrix\":null,\"actualStatus\":\"not_run\",\"runId\":null,\"jobId\":null},{\"id\":\"source-gates\",\"name\":\"Source gates\",\"needs\":\"changes\",\"if\":\"${{ needs.changes.outputs.source-gates == 'true' }}\",\"matrix\":null,\"actualStatus\":\"not_run\",\"runId\":null,\"jobId\":null},{\"id\":\"db-integration\",\"name\":\"Database integration\",\"needs\":\"changes\",\"if\":\"${{ needs.changes.outputs.db-integration == 'true' }}\",\"matrix\":null,\"actualStatus\":\"not_run\",\"runId\":null,\"jobId\":null},{\"id\":\"api-integration\",\"name\":\"API integration\",\"needs\":\"changes\",\"if\":\"${{ needs.changes.outputs.api-integration == 'true' }}\",\"matrix\":null,\"actualStatus\":\"not_run\",\"runId\":null,\"jobId\":null},{\"id\":\"worker-integration\",\"name\":\"Worker integration\",\"needs\":\"changes\",\"if\":\"${{ needs.changes.outputs.worker-integration == 'true' }}\",\"matrix\":null,\"actualStatus\":\"not_run\",\"runId\":null,\"jobId\":null},{\"id\":\"e2e\",\"name\":\"Browser acceptance (${{ matrix.shard }}/2)\",\"needs\":\"changes\",\"if\":\"${{ needs.changes.outputs.e2e == 'true' }}\",\"matrix\":{\"shard\":[1,2]},\"actualStatus\":\"not_run\",\"runId\":null,\"jobId\":null},{\"id\":\"recovery-integration\",\"name\":\"Complete disaster recovery\",\"needs\":\"changes\",\"if\":\"${{ needs.changes.outputs.recovery-integration == 'true' }}\",\"matrix\":null,\"actualStatus\":\"not_run\",\"runId\":null,\"jobId\":null},{\"id\":\"agent-smoke\",\"name\":\"Agent construction and protocol smoke\",\"needs\":\"changes\",\"if\":\"${{ needs.changes.outputs.agent-smoke == 'true' }}\",\"matrix\":null,\"actualStatus\":\"not_run\",\"runId\":null,\"jobId\":null},{\"id\":\"required-ci\",\"name\":\"Required CI\",\"needs\":[\"changes\",\"source-gates\",\"db-integration\",\"api-integration\",\"worker-integration\",\"e2e\",\"recovery-integration\",\"agent-smoke\"],\"if\":\"${{ always() }}\",\"matrix\":null,\"actualStatus\":\"not_run\",\"runId\":null,\"jobId\":null}]}\n"
+  },
+  "classification": {
+    "pathsCount": 651,
+    "classification": {
+      "mode": "full",
+      "packages": [
+        "@workmesh/a2a-adapter",
+        "@workmesh/agent-runner",
+        "@workmesh/agent-sdk",
+        "@workmesh/api",
+        "@workmesh/artifact-storage",
+        "@workmesh/config",
+        "@workmesh/conformance",
+        "@workmesh/contracts",
+        "@workmesh/db",
+        "@workmesh/domain",
+        "@workmesh/fake-agent",
+        "@workmesh/git-provider",
+        "@workmesh/mcp",
+        "@workmesh/observability",
+        "@workmesh/recovery",
+        "@workmesh/ui",
+        "@workmesh/web",
+        "@workmesh/worker"
+      ],
+      "testPackages": [
+        "@workmesh/a2a-adapter",
+        "@workmesh/agent-runner",
+        "@workmesh/agent-sdk",
+        "@workmesh/api",
+        "@workmesh/artifact-storage",
+        "@workmesh/config",
+        "@workmesh/conformance",
+        "@workmesh/contracts",
+        "@workmesh/db",
+        "@workmesh/domain",
+        "@workmesh/fake-agent",
+        "@workmesh/git-provider",
+        "@workmesh/mcp",
+        "@workmesh/observability",
+        "@workmesh/recovery",
+        "@workmesh/ui",
+        "@workmesh/web",
+        "@workmesh/worker"
+      ],
+      "checks": {
+        "source-gates": true,
+        "db-integration": true,
+        "api-integration": true,
+        "worker-integration": true,
+        "e2e": true,
+        "recovery-integration": true,
+        "agent-smoke": true
+      }
+    },
+    "workflowTrigger": {
+      "pull_request": null,
+      "push": {
+        "branches": [
+          "main"
+        ]
+      },
+      "workflow_dispatch": null,
+      "workflow_call": null,
+      "schedule": [
+        {
+          "cron": "0 19 * * 0"
+        }
+      ],
+      "merge_group": null
+    },
+    "jobs": [
+      {
+        "id": "changes",
+        "name": "Classify changes and validate CI selection",
+        "needs": null,
+        "if": null,
+        "matrix": null,
+        "actualStatus": "not_run",
+        "runId": null,
+        "jobId": null
+      },
+      {
+        "id": "source-gates",
+        "name": "Source gates",
+        "needs": "changes",
+        "if": "${{ needs.changes.outputs.source-gates == 'true' }}",
+        "matrix": null,
+        "actualStatus": "not_run",
+        "runId": null,
+        "jobId": null
+      },
+      {
+        "id": "db-integration",
+        "name": "Database integration",
+        "needs": "changes",
+        "if": "${{ needs.changes.outputs.db-integration == 'true' }}",
+        "matrix": null,
+        "actualStatus": "not_run",
+        "runId": null,
+        "jobId": null
+      },
+      {
+        "id": "api-integration",
+        "name": "API integration",
+        "needs": "changes",
+        "if": "${{ needs.changes.outputs.api-integration == 'true' }}",
+        "matrix": null,
+        "actualStatus": "not_run",
+        "runId": null,
+        "jobId": null
+      },
+      {
+        "id": "worker-integration",
+        "name": "Worker integration",
+        "needs": "changes",
+        "if": "${{ needs.changes.outputs.worker-integration == 'true' }}",
+        "matrix": null,
+        "actualStatus": "not_run",
+        "runId": null,
+        "jobId": null
+      },
+      {
+        "id": "e2e",
+        "name": "Browser acceptance (${{ matrix.shard }}/2)",
+        "needs": "changes",
+        "if": "${{ needs.changes.outputs.e2e == 'true' }}",
+        "matrix": {
+          "shard": [
+            1,
+            2
+          ]
+        },
+        "actualStatus": "not_run",
+        "runId": null,
+        "jobId": null
+      },
+      {
+        "id": "recovery-integration",
+        "name": "Complete disaster recovery",
+        "needs": "changes",
+        "if": "${{ needs.changes.outputs.recovery-integration == 'true' }}",
+        "matrix": null,
+        "actualStatus": "not_run",
+        "runId": null,
+        "jobId": null
+      },
+      {
+        "id": "agent-smoke",
+        "name": "Agent construction and protocol smoke",
+        "needs": "changes",
+        "if": "${{ needs.changes.outputs.agent-smoke == 'true' }}",
+        "matrix": null,
+        "actualStatus": "not_run",
+        "runId": null,
+        "jobId": null
+      },
+      {
+        "id": "required-ci",
+        "name": "Required CI",
+        "needs": [
+          "changes",
+          "source-gates",
+          "db-integration",
+          "api-integration",
+          "worker-integration",
+          "e2e",
+          "recovery-integration",
+          "agent-smoke"
+        ],
+        "if": "${{ always() }}",
+        "matrix": null,
+        "actualStatus": "not_run",
+        "runId": null,
+        "jobId": null
+      }
+    ]
+  },
+  "sourceBindingCommand": {
+    "exit": 0
+  },
+  "binding": {
+    "head": "1fb8c0e49f74f1a6b34ee69158bcbe2292e288ec",
+    "productCommit": "1cfb38178f56005d524d865d80115db3bbcdbecb",
+    "productFiles": [
+      {
+        "path": ".gitignore",
+        "gitBlob": "e3bccc25e71b3d28f0f5531aac329a12543ebfca",
+        "gitRawBytes": 724,
+        "gitRawSha256": "e7b693b56510eb882f40df6fb1da4c8ea16657a60226b3598c7438de591c1b4f",
+        "worktreeBytes": 750,
+        "worktreeSha256": "c9e04062a05ebbfdd3b2535e82e27348fe3c41f82860f516c249c1d288cd948b"
+      },
+      {
+        "path": "AGENT_PROTOCOL.md",
+        "gitBlob": "c029877f8eebd53d8ee510c4a8c5618c0f3aafb2",
+        "gitRawBytes": 77502,
+        "gitRawSha256": "415d276d9a76a9658ce186c02aea7625b26086e7bc6f40ea61d0fa12f6145811",
+        "worktreeBytes": 77502,
+        "worktreeSha256": "415d276d9a76a9658ce186c02aea7625b26086e7bc6f40ea61d0fa12f6145811"
+      },
+      {
+        "path": "OPENAPI.yaml",
+        "gitBlob": "09d27351e2629ce753e8fa6d2fd68c3a87b7dcfe",
+        "gitRawBytes": 534024,
+        "gitRawSha256": "bd0da42bf7801f2033fb9bd67c874183dbd562ad4b6ba841a9a113d643e6b7bd",
+        "worktreeBytes": 534024,
+        "worktreeSha256": "bd0da42bf7801f2033fb9bd67c874183dbd562ad4b6ba841a9a113d643e6b7bd"
+      },
+      {
+        "path": "apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+        "gitBlob": "b4ae4bfc857ea14a6d6740ef319bec019fe1d616",
+        "gitRawBytes": 8432,
+        "gitRawSha256": "24950c60d496658fae144510e123408b2d057310c3d19d3ba0bdbedc2d6498da",
+        "worktreeBytes": 8432,
+        "worktreeSha256": "24950c60d496658fae144510e123408b2d057310c3d19d3ba0bdbedc2d6498da"
+      },
+      {
+        "path": "apps/agent-runner/src/execution-lifecycle.ts",
+        "gitBlob": "65987fec564c8a5529d4872cff9d855b1cf1d093",
+        "gitRawBytes": 2748,
+        "gitRawSha256": "fb00ad8988b2cd62dab763eb53678408f316b59ac9b7be5d666c5d15d9a7ecb9",
+        "worktreeBytes": 2806,
+        "worktreeSha256": "0093145c4183d1e6349c115dcd5685733d430d9cb3a5cd38c8df8bd72c33875f"
+      },
+      {
+        "path": "apps/agent-runner/src/permission-matrix.test.ts",
+        "gitBlob": "547714e85a1c0634e5c845a301af9c564685d3f0",
+        "gitRawBytes": 14426,
+        "gitRawSha256": "b2f40df5875a3a9319a77f5a2a9dc3db4305f621583035bcda94e1e6feaa1cd5",
+        "worktreeBytes": 14426,
+        "worktreeSha256": "b2f40df5875a3a9319a77f5a2a9dc3db4305f621583035bcda94e1e6feaa1cd5"
+      },
+      {
+        "path": "apps/agent-runner/src/run-session.ts",
+        "gitBlob": "26bf348028b4cab2a9421e7742b5793bd147c10a",
+        "gitRawBytes": 39749,
+        "gitRawSha256": "96033ea334a3549d4dfd58d2ff52a9df121a653ad1a41b0b6a0da42c200e1037",
+        "worktreeBytes": 40416,
+        "worktreeSha256": "0a7514fe50276543f1b0a50266a07007d95b55ae0bf4ece333eaa2fb217cf9d8"
+      },
+      {
+        "path": "apps/agent-runner/src/wait-pi.test.ts",
+        "gitBlob": "9a680e311201d1d2c10d1521b27118a3e0e64490",
+        "gitRawBytes": 4986,
+        "gitRawSha256": "90c6ac63b0f6f44c10cac64315d42943b291033b70a56d8a3ffe45a06cb36113",
+        "worktreeBytes": 5054,
+        "worktreeSha256": "272ec742f3dcd58fdbc49948a7f712a0973a02e2cb1e9771cc7054b83f513438"
+      },
+      {
+        "path": "apps/agent-runner/src/workbench-skill-manifest.ts",
+        "gitBlob": "d1c76ed8ee31810dbfc02d80cd626cd7378136a1",
+        "gitRawBytes": 270,
+        "gitRawSha256": "9164564d9cf40b09470cf2fcf747fe5c12ab713ea5a4a6e24f548c2c21b5b2a2",
+        "worktreeBytes": 270,
+        "worktreeSha256": "9164564d9cf40b09470cf2fcf747fe5c12ab713ea5a4a6e24f548c2c21b5b2a2"
+      },
+      {
+        "path": "apps/agent-runner/src/workmesh-tools.test.ts",
+        "gitBlob": "414a9a9f0adb6716b17dfc97e2a50a30d9ee8eb9",
+        "gitRawBytes": 27834,
+        "gitRawSha256": "03cb713e4a93237a151d7b87fb85a0d07a36d873289f7e9acb5242c019d76a24",
+        "worktreeBytes": 27834,
+        "worktreeSha256": "03cb713e4a93237a151d7b87fb85a0d07a36d873289f7e9acb5242c019d76a24"
+      },
+      {
+        "path": "apps/agent-runner/src/workmesh-tools.ts",
+        "gitBlob": "0fd5ee00e3ebf045afcbaf97d3ac80039f8a8bec",
+        "gitRawBytes": 56315,
+        "gitRawSha256": "ce486e95d9e18385556fbad6fe69ba8e24f27e463ef7de8e347edec7e495e722",
+        "worktreeBytes": 56315,
+        "worktreeSha256": "ce486e95d9e18385556fbad6fe69ba8e24f27e463ef7de8e347edec7e495e722"
+      },
+      {
+        "path": "apps/api/integration/stage2-collaboration.integration.test.ts",
+        "gitBlob": "c156b0268375fb3488d80b67df91b186d7a20be4",
+        "gitRawBytes": 236163,
+        "gitRawSha256": "32f9165b0756c4f65b12e153d6e92a540e91bd0dc5dbcaeea42c50b822db0661",
+        "worktreeBytes": 236163,
+        "worktreeSha256": "32f9165b0756c4f65b12e153d6e92a540e91bd0dc5dbcaeea42c50b822db0661"
+      },
+      {
+        "path": "apps/api/src/agent/child-session-policy.ts",
+        "gitBlob": "0f2be87204f35bb75e6f2b328bde05e8cee5e0ce",
+        "gitRawBytes": 3594,
+        "gitRawSha256": "d94518256b75f106f505b4587387d8c6848de540ceb22068cecbaddb335c83af",
+        "worktreeBytes": 3594,
+        "worktreeSha256": "d94518256b75f106f505b4587387d8c6848de540ceb22068cecbaddb335c83af"
+      },
+      {
+        "path": "apps/api/src/agent/child-session-status.ts",
+        "gitBlob": "3b0085cb7952c258479fd51b7bd2ee3f6414a8fc",
+        "gitRawBytes": 7304,
+        "gitRawSha256": "de5a296e8ab9d67afc1133d7a81e3f4b5384d317f4c5ecd421f36a950d4b4381",
+        "worktreeBytes": 7304,
+        "worktreeSha256": "de5a296e8ab9d67afc1133d7a81e3f4b5384d317f4c5ecd421f36a950d4b4381"
+      },
+      {
+        "path": "apps/api/src/agent/commands.ts",
+        "gitBlob": "ac097273b9aba0ecb1833f45424714639ff08f20",
+        "gitRawBytes": 179397,
+        "gitRawSha256": "ec513f9078f702fa89752697baa073f882abccd2bc0c3fddc9f5e83104fe9b05",
+        "worktreeBytes": 179397,
+        "worktreeSha256": "ec513f9078f702fa89752697baa073f882abccd2bc0c3fddc9f5e83104fe9b05"
+      },
+      {
+        "path": "apps/api/src/agent/routes.ts",
+        "gitBlob": "de58c68f560638072e30b8dcdd69ca2b9288bf3c",
+        "gitRawBytes": 31999,
+        "gitRawSha256": "1ebf0a218a43b3d36f42f42438a2c09e2457253643f1625d9f086501a939e2d4",
+        "worktreeBytes": 32382,
+        "worktreeSha256": "16d722862ed61845fc04de71e79b994a4913a398bedee292992a90abe9f861ca"
+      },
+      {
+        "path": "apps/api/src/collaboration/routes.ts",
+        "gitBlob": "89f819e42f5d8761e1a8c7ca602b9cf40112df12",
+        "gitRawBytes": 132230,
+        "gitRawSha256": "347ca34210b52e6ba068fcfc3fdec5e933a3e6d2d7de930f9447de217115abb0",
+        "worktreeBytes": 132230,
+        "worktreeSha256": "347ca34210b52e6ba068fcfc3fdec5e933a3e6d2d7de930f9447de217115abb0"
+      },
+      {
+        "path": "apps/api/src/commands.ts",
+        "gitBlob": "8704d60af12c9213ff6d241a05bb06ffe0451451",
+        "gitRawBytes": 40745,
+        "gitRawSha256": "6b63d2b3a110f9b03f8f46587f594beef6bfef60588e14aea5fcc296a83cda39",
+        "worktreeBytes": 41913,
+        "worktreeSha256": "7d6201ea90730926512f4c1e5a2dac29149c57d42371ad5fa31089419041f254"
+      },
+      {
+        "path": "apps/api/src/delivery/routes.ts",
+        "gitBlob": "de117274d19aec0e694ffaed4b8bdb3d4720b21b",
+        "gitRawBytes": 95733,
+        "gitRawSha256": "87d93f51893189c20e6d5f559ae2fbde62128a7fd918f9d30cc719f49db6833a",
+        "worktreeBytes": 97343,
+        "worktreeSha256": "217a7054c22f1257c23424a07500202e9371e756f254f66f3442a147481ba905"
+      },
+      {
+        "path": "apps/mcp/src/index.test.ts",
+        "gitBlob": "10fbb9fd033ac829f89807b579516129372efb8a",
+        "gitRawBytes": 65936,
+        "gitRawSha256": "e859e0a95dec07281a562aac5e23067743222a5f36d0675339302f1d9a754311",
+        "worktreeBytes": 65936,
+        "worktreeSha256": "e859e0a95dec07281a562aac5e23067743222a5f36d0675339302f1d9a754311"
+      },
+      {
+        "path": "apps/mcp/src/index.ts",
+        "gitBlob": "bfcd4ea6f4f6c8f6cc7f41f23b34752793e80f2b",
+        "gitRawBytes": 73286,
+        "gitRawSha256": "000db3ce87d2fb0622102e372176e5556ba10559cdb0fb794dc96e5b4174f52f",
+        "worktreeBytes": 73286,
+        "worktreeSha256": "000db3ce87d2fb0622102e372176e5556ba10559cdb0fb794dc96e5b4174f52f"
+      },
+      {
+        "path": "apps/worker/integration/stage1-lifecycle.integration.test.ts",
+        "gitBlob": "8e2babef462eafb5740070b3cbe48e4fcf49d2b0",
+        "gitRawBytes": 57104,
+        "gitRawSha256": "4bc08489039ba04ead13a7e95cef8d84c337c10464b32ba4646cfd524f127427",
+        "worktreeBytes": 57104,
+        "worktreeSha256": "4bc08489039ba04ead13a7e95cef8d84c337c10464b32ba4646cfd524f127427"
+      },
+      {
+        "path": "apps/worker/src/agent-webhook.test.ts",
+        "gitBlob": "3640b0f2515ae61d87cd2c2b600afbdbb06ec684",
+        "gitRawBytes": 6882,
+        "gitRawSha256": "6150ea3072992dd7a43479e2670d214b06bf51b7c19e9bcec17203b6a80343d8",
+        "worktreeBytes": 7020,
+        "worktreeSha256": "4378acf329048947f6e6c4c88c018984eeb93a62a573e693cafad756612e05b0"
+      },
+      {
+        "path": "apps/worker/src/agent-webhook.ts",
+        "gitBlob": "25a2fc3d334126492fca41e120fb28349f41b8cc",
+        "gitRawBytes": 23190,
+        "gitRawSha256": "32d85159aebd3a7221899f6b0cf2d5a73f51f418cdc3d5f2428b3f1851bf4e15",
+        "worktreeBytes": 23190,
+        "worktreeSha256": "32d85159aebd3a7221899f6b0cf2d5a73f51f418cdc3d5f2428b3f1851bf4e15"
+      },
+      {
+        "path": "apps/worker/src/session-webhook-authorization.ts",
+        "gitBlob": "d4ff3520dbc30b37c2fa4762eb7c453158b78615",
+        "gitRawBytes": 12880,
+        "gitRawSha256": "ff94fe5595be864c94859c59610bb9fb33dd6a0ef1d2ead3fdfd92ba5fd65efc",
+        "worktreeBytes": 12880,
+        "worktreeSha256": "ff94fe5595be864c94859c59610bb9fb33dd6a0ef1d2ead3fdfd92ba5fd65efc"
+      },
+      {
+        "path": "docs/adr/0082-parent-child-status-projection.md",
+        "gitBlob": "dff8f2efa43eb777cfebe3c0ac001211da5850be",
+        "gitRawBytes": 11960,
+        "gitRawSha256": "aaac7fce6d4da49fc0fbd3e5f36bbb1512bc3868ace24c5022c23c231b861680",
+        "worktreeBytes": 11960,
+        "worktreeSha256": "aaac7fce6d4da49fc0fbd3e5f36bbb1512bc3868ace24c5022c23c231b861680"
+      },
+      {
+        "path": "docs/agent-integration.md",
+        "gitBlob": "d025c75d43ab599a640c6f58d15e36414ec8242f",
+        "gitRawBytes": 19048,
+        "gitRawSha256": "ea518aaf6791ae80c649521e55bdba2081bda3bb3ce4650c48fe262045a64e2b",
+        "worktreeBytes": 19048,
+        "worktreeSha256": "ea518aaf6791ae80c649521e55bdba2081bda3bb3ce4650c48fe262045a64e2b"
+      },
+      {
+        "path": "docs/route-policy-matrix.md",
+        "gitBlob": "2e1163670d49bb37fb7e9101d0979b238798301b",
+        "gitRawBytes": 47656,
+        "gitRawSha256": "617be4991b155508871719b0be62a74948aa2f2cd0e03285c427372ac7c406f1",
+        "worktreeBytes": 47656,
+        "worktreeSha256": "617be4991b155508871719b0be62a74948aa2f2cd0e03285c427372ac7c406f1"
+      },
+      {
+        "path": "packages/agent-sdk/src/index.test.ts",
+        "gitBlob": "a49b0fdb7d03771466f1d8f6096e220907ad1edd",
+        "gitRawBytes": 46036,
+        "gitRawSha256": "2e973a9bfeaa86f8955be130a2639a1ebed82e74e22b3f8a5bdc5a36cd0cfaf9",
+        "worktreeBytes": 46036,
+        "worktreeSha256": "2e973a9bfeaa86f8955be130a2639a1ebed82e74e22b3f8a5bdc5a36cd0cfaf9"
+      },
+      {
+        "path": "packages/agent-sdk/src/index.ts",
+        "gitBlob": "188733e191fbeaf9205213c1e0998800a4316094",
+        "gitRawBytes": 81597,
+        "gitRawSha256": "02d179f8809b900c8972378ace39373dca2ad030dd82f51e62589b27c6b87392",
+        "worktreeBytes": 81597,
+        "worktreeSha256": "02d179f8809b900c8972378ace39373dca2ad030dd82f51e62589b27c6b87392"
+      },
+      {
+        "path": "packages/conformance/src/mcp-coverage.fixture.ts",
+        "gitBlob": "ae67557d5ebc9939a57f7cb9ece78bd146068e4b",
+        "gitRawBytes": 17300,
+        "gitRawSha256": "8c31d99329bacf5c962a231d5f89360f172cb6da74f6e7b38c260acb2b137387",
+        "worktreeBytes": 17300,
+        "worktreeSha256": "8c31d99329bacf5c962a231d5f89360f172cb6da74f6e7b38c260acb2b137387"
+      },
+      {
+        "path": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+        "gitBlob": "20eefc6c537df62f0355161efd8852e5337186b4",
+        "gitRawBytes": 75329,
+        "gitRawSha256": "07ecc63dcdd325f95dee4aa5f60e56e4b1c53cb564a3051f7cf4a7510d7da416",
+        "worktreeBytes": 75329,
+        "worktreeSha256": "07ecc63dcdd325f95dee4aa5f60e56e4b1c53cb564a3051f7cf4a7510d7da416"
+      },
+      {
+        "path": "packages/conformance/src/planning-collaboration.fixture.ts",
+        "gitBlob": "5307b4787eb64ac51702b394bfe0621d38825dc1",
+        "gitRawBytes": 13349,
+        "gitRawSha256": "27e87c0395172220118aaae0400ba26d5c8718e6e37a7a18a4f895a07f55da03",
+        "worktreeBytes": 13349,
+        "worktreeSha256": "27e87c0395172220118aaae0400ba26d5c8718e6e37a7a18a4f895a07f55da03"
+      },
+      {
+        "path": "packages/conformance/tsconfig.build.json",
+        "gitBlob": "a5d12ad36b19dd06a8f675bab5e8921efdac4507",
+        "gitRawBytes": 248,
+        "gitRawSha256": "a261ba38c7e3da35b794abea3c755b8d5523ce2084ca9531ec12422d852a968f",
+        "worktreeBytes": 260,
+        "worktreeSha256": "2df9205db870107152f09fd9d380371a83cb8d1ebc412802cb889ad87311a249"
+      },
+      {
+        "path": "packages/conformance/vitest.integration.config.ts",
+        "gitBlob": "bf58f7b48ac2525ebefaa0dc24de173264215a1c",
+        "gitRawBytes": 362,
+        "gitRawSha256": "32746f4ed7186b829cededb0189f58dcd4dcc1449ebc4220f50331ffb6f886d3",
+        "worktreeBytes": 362,
+        "worktreeSha256": "32746f4ed7186b829cededb0189f58dcd4dcc1449ebc4220f50331ffb6f886d3"
+      },
+      {
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "gitBlob": "c74b2339893eab5714d7fb697605c369c50dbeb5",
+        "gitRawBytes": 257349,
+        "gitRawSha256": "57c5c2dcb47616ddbb18a337f2d3496f69f39b45eb6173378a20a6197500d0c8",
+        "worktreeBytes": 257349,
+        "worktreeSha256": "57c5c2dcb47616ddbb18a337f2d3496f69f39b45eb6173378a20a6197500d0c8"
+      },
+      {
+        "path": "packages/contracts/src/child-session-contracts.test.ts",
+        "gitBlob": "3ab1a24f18d79a0404335778a2f597d4b207f122",
+        "gitRawBytes": 2387,
+        "gitRawSha256": "bcdfabe5da5afb2720b2b66c2b7763065953ea59dbe9433d636b2bc5d2879aa7",
+        "worktreeBytes": 2387,
+        "worktreeSha256": "bcdfabe5da5afb2720b2b66c2b7763065953ea59dbe9433d636b2bc5d2879aa7"
+      },
+      {
+        "path": "packages/contracts/src/child-session-contracts.ts",
+        "gitBlob": "817319cf3a6f684ca86feef890e823c8447c4549",
+        "gitRawBytes": 1911,
+        "gitRawSha256": "60fd1bf50199d347fb3bf21837c30a4adb92f008a0f7b71832061ecfaa67a043",
+        "worktreeBytes": 1911,
+        "worktreeSha256": "60fd1bf50199d347fb3bf21837c30a4adb92f008a0f7b71832061ecfaa67a043"
+      },
+      {
+        "path": "packages/contracts/src/client-profile-contract.test.ts",
+        "gitBlob": "6d7155eec681cc3ee3eb9df297aca20e16ede09e",
+        "gitRawBytes": 4178,
+        "gitRawSha256": "980d084bee7de28163260e0fdb960e4120cad64198ea37cbb952979933a4b1d0",
+        "worktreeBytes": 4178,
+        "worktreeSha256": "980d084bee7de28163260e0fdb960e4120cad64198ea37cbb952979933a4b1d0"
+      },
+      {
+        "path": "packages/contracts/src/index.ts",
+        "gitBlob": "a54ba06ad08fb860d6fd5376d67823364789a9cc",
+        "gitRawBytes": 188863,
+        "gitRawSha256": "4afe8d1102f614f0417879558695acd4d9a200f93385e9a2c021964acb07bf70",
+        "worktreeBytes": 188863,
+        "worktreeSha256": "4afe8d1102f614f0417879558695acd4d9a200f93385e9a2c021964acb07bf70"
+      },
+      {
+        "path": "packages/contracts/src/route-policy-bindings.ts",
+        "gitBlob": "4dbbe3d9f71fe2d841dc43538424003302696c28",
+        "gitRawBytes": 32284,
+        "gitRawSha256": "2308217cfecb07f0f53d3add9f160e15b90d83adea138d0c6064859067c67cac",
+        "worktreeBytes": 33502,
+        "worktreeSha256": "3b916bf1566b9dde30d69abb7a8e81ca61a308ea7a71fe6500c8872d7b2451a3"
+      },
+      {
+        "path": "packages/contracts/src/route-policy.test.ts",
+        "gitBlob": "de9bf53741f542e11f4b4d8271d03e57faaba1c0",
+        "gitRawBytes": 15771,
+        "gitRawSha256": "c58a84ba0738ba175400e2327dbe61fb16fc19904c1af40481a5c4ba9c22dc68",
+        "worktreeBytes": 15771,
+        "worktreeSha256": "c58a84ba0738ba175400e2327dbe61fb16fc19904c1af40481a5c4ba9c22dc68"
+      },
+      {
+        "path": "packages/contracts/src/route-policy.ts",
+        "gitBlob": "7c8476d3fd90ea0684db08a060c824f8a5df98b3",
+        "gitRawBytes": 26182,
+        "gitRawSha256": "ee5e9c9466a357f58ab6f2e3d7f75507267bda94fe7805e3176b8954c5100d6c",
+        "worktreeBytes": 26182,
+        "worktreeSha256": "ee5e9c9466a357f58ab6f2e3d7f75507267bda94fe7805e3176b8954c5100d6c"
+      },
+      {
+        "path": "packages/db/src/agent-lock-order-manifest.ts",
+        "gitBlob": "7fc0c78f5693bcfdf02ad46874b58f0a9a211ff2",
+        "gitRawBytes": 28140,
+        "gitRawSha256": "5df3344c39251ab583453e5e576fa1a2a52ef9e5a6806c6fb17a8ac66fca48a6",
+        "worktreeBytes": 28401,
+        "worktreeSha256": "c821d5fa4f8a9f306583e435a044845f4e685378adaf06317f343200e45d381f"
+      },
+      {
+        "path": "packages/db/src/stage4.ts",
+        "gitBlob": "29808e46c1684364bdbdd91f639bf3067d64de98",
+        "gitRawBytes": 58725,
+        "gitRawSha256": "a51a60a91618c7db18e872f41605bd87a5f8e48add1471d5ee6f7fc80709a260",
+        "worktreeBytes": 60148,
+        "worktreeSha256": "d015f67038a77076de3f9e81a4c13a33f6b283cd1ffcdb998b936b1f9e00931b"
+      },
+      {
+        "path": "scripts/ci-policy.mjs",
+        "gitBlob": "4a6fed661e43e962b9d7a8ab714def0679aab240",
+        "gitRawBytes": 11835,
+        "gitRawSha256": "52801bc0845204630e8bb461449960e2122c9cb3d60b17a30698d0dd8f5af7f3",
+        "worktreeBytes": 11835,
+        "worktreeSha256": "52801bc0845204630e8bb461449960e2122c9cb3d60b17a30698d0dd8f5af7f3"
+      },
+      {
+        "path": "scripts/ci-policy.test.mjs",
+        "gitBlob": "b3f8751d8bb78050903c17d3fb161000e177d778",
+        "gitRawBytes": 12991,
+        "gitRawSha256": "9a345dc3d0cb80af982d31d409a64c549f82c0efbd4bfc976b2d8ed229180679",
+        "worktreeBytes": 12991,
+        "worktreeSha256": "9a345dc3d0cb80af982d31d409a64c549f82c0efbd4bfc976b2d8ed229180679"
+      },
+      {
+        "path": "scripts/generate-agent-discovery.py",
+        "gitBlob": "1ba0f6eb6a9265933be9c428387a744f469039f8",
+        "gitRawBytes": 7364,
+        "gitRawSha256": "1a170e08e8c53af887d79ad583cbfdbdf2dc58c8c6f726e7ea76203df993a288",
+        "worktreeBytes": 7364,
+        "worktreeSha256": "1a170e08e8c53af887d79ad583cbfdbdf2dc58c8c6f726e7ea76203df993a288"
+      },
+      {
+        "path": "vitest.config.ts",
+        "gitBlob": "35eb195fbc3574f23e84ae8f40e84f3876f9425e",
+        "gitRawBytes": 1593,
+        "gitRawSha256": "1dd974a1fa903b9a7363a529d4f933ed500e4995acb3810fdbd91b04622eb603",
+        "worktreeBytes": 1593,
+        "worktreeSha256": "1dd974a1fa903b9a7363a529d4f933ed500e4995acb3810fdbd91b04622eb603"
+      }
+    ],
+    "ciSources": [
+      {
+        "path": ".github/workflows/ci.yml",
+        "gitBlob": "539561fc9cdc80fe61410c5d2e96df524b4f8b46",
+        "gitRawBytes": 33151,
+        "gitRawSha256": "0f1a9bea97c2a86ce358d0ab3eccb7414e876c44c8f6367ba1d3397b055e3cf8",
+        "worktreeBytes": 33952,
+        "worktreeSha256": "d7e2c9bab848a707d6499c42f75ccddf66fc11d62fe3243aff81bd3d5118663c"
+      },
+      {
+        "path": "scripts/ci-policy.mjs",
+        "gitBlob": "4a6fed661e43e962b9d7a8ab714def0679aab240",
+        "gitRawBytes": 11835,
+        "gitRawSha256": "52801bc0845204630e8bb461449960e2122c9cb3d60b17a30698d0dd8f5af7f3",
+        "worktreeBytes": 11835,
+        "worktreeSha256": "52801bc0845204630e8bb461449960e2122c9cb3d60b17a30698d0dd8f5af7f3"
+      },
+      {
+        "path": "scripts/ci-policy.test.mjs",
+        "gitBlob": "b3f8751d8bb78050903c17d3fb161000e177d778",
+        "gitRawBytes": 12991,
+        "gitRawSha256": "9a345dc3d0cb80af982d31d409a64c549f82c0efbd4bfc976b2d8ed229180679",
+        "worktreeBytes": 12991,
+        "worktreeSha256": "9a345dc3d0cb80af982d31d409a64c549f82c0efbd4bfc976b2d8ed229180679"
+      },
+      {
+        "path": "package.json",
+        "gitBlob": "7652f1cb897f4535ee1fc5f4a93ae34794a99231",
+        "gitRawBytes": 4825,
+        "gitRawSha256": "d0a65d74e63d8f3629a4521eaa253153635d908c6a3e41e52abccadd409ed34c",
+        "worktreeBytes": 4897,
+        "worktreeSha256": "2bcf1b9506418f1d136abf3a0a83f114db4f4404303ccabcde5ff5c07c10deb7"
+      },
+      {
+        "path": "packages/conformance/vitest.integration.config.ts",
+        "gitBlob": "bf58f7b48ac2525ebefaa0dc24de173264215a1c",
+        "gitRawBytes": 362,
+        "gitRawSha256": "32746f4ed7186b829cededb0189f58dcd4dcc1449ebc4220f50331ffb6f886d3",
+        "worktreeBytes": 362,
+        "worktreeSha256": "32746f4ed7186b829cededb0189f58dcd4dcc1449ebc4220f50331ffb6f886d3"
+      },
+      {
+        "path": "vitest.config.ts",
+        "gitBlob": "35eb195fbc3574f23e84ae8f40e84f3876f9425e",
+        "gitRawBytes": 1593,
+        "gitRawSha256": "1dd974a1fa903b9a7363a529d4f933ed500e4995acb3810fdbd91b04622eb603",
+        "worktreeBytes": 1593,
+        "worktreeSha256": "1dd974a1fa903b9a7363a529d4f933ed500e4995acb3810fdbd91b04622eb603"
+      },
+      {
+        "path": "scripts/ci-bootstrap/package.json",
+        "gitBlob": "1d28685a92a929fb1139893a19fd1acb95ebce42",
+        "gitRawBytes": 102,
+        "gitRawSha256": "65ea6bf969c34df35b9c24ffff13a7688d2f9b101ddc2b6ae59f51d423f513a4",
+        "worktreeBytes": 109,
+        "worktreeSha256": "ef9d4a2fbcf74a72a295476088e3297e5e0aa6504e926e6232410d1b5bfb2239"
+      },
+      {
+        "path": "scripts/ci-bootstrap/package-lock.json",
+        "gitBlob": "2cee4faef200ed2910b0927af75bd657fcde2c52",
+        "gitRawBytes": 669,
+        "gitRawSha256": "f6a6ea0b418bb769e82f3b715d229788d014eace43b7ee088fd05367f7102f69",
+        "worktreeBytes": 697,
+        "worktreeSha256": "f461623a2a406342a85eb0c0d0f2fb5370bcd0e89f2349b26abcffca8f958a78"
+      }
+    ],
+    "diffCheck": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "worktreeStatus": "",
+    "mergeBase": "cfce77546b64c2a8d7d12949261c38e2f666d5ae"
+  },
+  "scope": "Evidence preparation only; no product/CI source/config changes. Existing reports, originals, unknown exits, skips remain historical. New preparation files are not included in the old 520-artifact frozen index.",
+  "completion": "blocked_on_non_merging_PR_creation_capability; no healthy CI running; no CI success or merge/Done claim"
+}
