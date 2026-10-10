@@ -142,6 +142,8 @@ for name,r in targets.items():
     targetTable+='| '+name+' | '+('['+r['id']+']('+r['receipt']+')' if r else '尚无')+' | '+(str(r['exit']) if r else '未结束')+' | '+('; '.join(r['summaries']).replace('|','／') if r else '尚未收齐')+' |\n'
 changed=subprocess.check_output(['git','diff','--name-only','ef4cb5e1458d911d98433c443dba46e6c224caa0','--','apps','packages','scripts','OPENAPI.yaml','AGENT_PROTOCOL.md'],cwd=ROOT).decode().splitlines()
 changed=sorted(set(changed)|set(subprocess.check_output(['git','ls-files','--others','--exclude-standard','--','apps','packages','scripts'],cwd=ROOT).decode().splitlines()))
+committed=read(HERE/'product-delivery-receipt.json') if (HERE/'product-delivery-receipt.json').exists() else None
+commitNote=('已提交产品源码候选 `'+committed['productCodeHead']+'` 的 1113 个源码文件逐 Git blob 与受测 Windows bytes 核验 exit 0；'+str(committed['archiveCount'])+' 个 ZIP 逐 blob 与原 bytes 一致，全 main→候选范围 whitespace 检查 exit 0。原回执见 [提交后源码核验](product-source-verification.json) 与 [交付核验](product-delivery-receipt.json)。后续提交仅登记这些回执及报告元数据，不改已测源码。') if committed else '提交后源码/归档核验尚未记录，不推定最终 Git head。'
 write('product-report.md',f'''# M3 产品交付报告
 
 状态：{'本机必需检查全部通过，停 review 供另一 Agent 正式成果独审' if ready else '正在收齐本机必需检查，尚未完整交付'}。本报告为主力整体汇总，内部只读子任务结论不代正式成果独审。尚无本候选最新 PR Required CI、合入或 Done。
@@ -149,6 +151,8 @@ write('product-report.md',f'''# M3 产品交付报告
 ## 交付与安全合同
 
 实施依据为已独审候选 `499ccc1419ba2fbd15171f6ff7c0adc78647c2cc`。本轮平台只读实际 ref 观察：main `ef4cb5e1458d911d98433c443dba46e6c224caa0`、开工候选 `e73e814dd631a3c5db47afc1ff4d89e5cfaf3941`；这是观察时点，不能冒后续实时 ref。最终受测源码与提交绑定见 [源字节清单](product-source-manifest.json) 及提交后核验，报告自身不循环嵌入其未来 commit SHA。
+
+{commitNote}
 
 - 新 REST `GET /api/v1/provider-actions/{{id}}` / `getProviderAction`：六 kind 的严格白名单只读投影，精确 requester/Session/principal/Team/resource/feature与当前context读授权。payload、文件内容、provider raw错误、worker身份和秘密不返回；隐藏目标统一 NOT_FOUND，查询不领取、续租、外发或追加业务事实。Human原principal合法终态诊断与E普通终态拒绝分别验证。
 - reviewer `repositoryIds` 由用户明确选择：三方 `repo:read` 交集与父仓库范围、共享 WorkItem/Project context；省略保 M2 三项。`mutate.beforeReserve` 完整父子锁计划与 `authorizeReplay` 共用校验，撤权/收窄后旧key也拒绝。本人 Room review_result、本人当前head code_review Artifact及structured review在有效E下交付；父等required child completed再确认。
@@ -195,6 +199,8 @@ integration 的实际 skip 有三项：API 的 live MiniMax 用例须 `RUN_WORKB
 额外组合的真实覆盖边界见九类JSON：100个仓库只做DTO正例、不冒100仓库部署；有限预算100/60/40由M3显式repo与M2兼容分别验证，M3预算满旧key重放及普通child完成后重放不重admission；未把未运行的全部笛卡尔组合改称通过。纯GET幂等写账本/If-Match/写事务故障不适用；Human保留操作不对Agent跑写正例。
 
 owner容器、实际nativeExit、服务日志及清理label核验逐项保全；共享镜像/store/node_modules及当前恢复目录保留，G1D0C3拒目标不操作。原早期每个短时进程没有独立PID登记的缺口如实保留，结束时当前进程观察另列。正式另一Agent成果独审、最新PR Required CI与实际Done/main均未完成，不能称验收或合入。
+
+最后一次 [进程/容器观察](product-process-observation.json) 为检查进程 0、owner 容器 0；36 轮 owner 的 108 个容器各有 label/ID 核验和 nativeExit 0 清理回执，不删共享镜像、卷、网络或 Windows 目录。定向复验首次命令未能启动 recorder 的原输出缺口另见 [启动失败边界](product-startup-gap.md)，不纳入通过数量。
 ''')
 print(json.dumps({'receipts':len(receipts),'operationRows':len(rows),'acceptanceRows':len(acceptance['originalRows']),'recoveryRows':len(recovery['rows']),'allRequiredPassed':ready},ensure_ascii=False))
 if '--final' in sys.argv and not ready:raise SystemExit('必需检查尚未齐全，不得提交完成声明')
