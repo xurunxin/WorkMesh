@@ -224,7 +224,7 @@
           "workmesh_open_pull_request"
         ],
         "capabilities": "repo:read + kind-specific",
-        "gate": "E-only领域；branch/commit需repo:write_branch及write_branch context；openPR需repo:open_pr及open_pr context；base/path/branch/expectedHead准确；不把OpenAPI的human声明冒handler支持",
+        "gate": "E-only领域；branch/commit需repo:write_branch及write_branch context；openPR需repo:open_pr及open_pr context；base/path/branch/expectedHead准确；各仓库写前authority事务；无checkpoint领取历史停发；不把OpenAPI human声明冒handler支持",
         "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
       },
       "currentPresence": {
@@ -861,7 +861,7 @@
           "workmesh_merge_pull_request"
         ],
         "capabilities": "repo:merge + repo:read",
-        "gate": "merge context；currentHead/all required checks/independent review/no blocking-high；Human精确hash批准；reviewer无资格",
+        "gate": "merge context；currentHead/all required checks/independent review/no blocking-high；Human精确hash批准；最终全部门禁/租期同authority tx；无checkpoint不借merged观察恢复；reviewer无资格",
         "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
       },
       "currentPresence": {
@@ -949,7 +949,7 @@
           "workmesh_retry_ci_check"
         ],
         "capabilities": "ci:run + repo:read",
-        "gate": "ci context；当前head failed/skipped准确checkRun；Human精确批准；requested不等于passed",
+        "gate": "ci context；当前head failed/skipped准确checkRun；Human精确批准；最终check/head/approval/租期同authority tx；无checkpoint历史停发rerequest；requested不等于passed",
         "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
       },
       "currentPresence": {
@@ -1394,7 +1394,7 @@
           "workmesh_create_review_delegation"
         ],
         "capabilities": "work:write + 显式三方repo:read",
-        "gate": "精确live父E/stable step/version/预算/限额/三方权限/共享context；repositoryIds省略保持M2",
+        "gate": "精确live父E/stable step/version/预算/限额/三方权限/共享context；beforeReserve先锁准确父子，再authorizeReplay锁内重验三方scope/context；合法重放零重复admission/交付；repositoryIds省略保持M2",
         "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
       },
       "currentPresence": {
@@ -1436,7 +1436,7 @@
           "workmesh_get_provider_action"
         ],
         "capabilities": "work:read + repo:read",
-        "gate": "本人requester/精确E Session/current Team/resource/context/provider feature；H限定原requester/principal；六kind五status；未知只读对账",
+        "gate": "本人requester/精确E Session/current Team/resource/context/provider feature；H限定原requester/principal；六kind五status；无checkpoint重领dead/OUTCOME_UNKNOWN，只读人工对账",
         "credentials": "H或直接E；C显式target E局部bridge；无新增安装GET/terminal E例外"
       },
       "currentPresence": {

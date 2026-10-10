@@ -24,6 +24,8 @@ repositoryIds?: UUID[]，显式 min=1/max=100、禁止重复/null；省略不是
 
 late revocation 或 parent repositoryIds/paths 收窄、context 改为父专有、WorkItem 移 Project、connection/repository deactivation、feature off，必须在读及写的最终授权/锁后重验中拒绝。检查 context 一致避免子退到更宽的共享旧 context。不得只在创建时验证三方交集。
 
+同 key/body重放不能只依赖createReview handler。按 [锁内replay合同](review-replay.md) 为createReview接入mutate.beforeReserve完整锁计划和authorizeReplay，三方repo:read/父当前范围/精确父子binding/同一共享context都在返回旧回执前重验；合法回执不重跑admission或再次建child/reservation/Lease/交付。省略输入保M2权限合同，内部锁序也走同类协调前缀。
+
 ## reviewer 证据与不可借用权限
 
 本人 Room review_result + 当前 PR/head 的本人 code_review delivery Artifact + 本人 structured review，均在合法执行 E 下提交，随后读新 revision complete reviewer。artifact:write 不能授予 repo:write_branch/open_pr/merge/ci:run；reviewer 无 publish_plan，Runner 不自动发 Plan。独立 reviewer actor 不等于变更 producer；同 Actor 不同 Session 也不能自审。

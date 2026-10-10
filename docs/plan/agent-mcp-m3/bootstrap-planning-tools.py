@@ -22,6 +22,6 @@ assert set(packages)=={'','node_modules/typescript','node_modules/yaml','node_mo
 argv=[shutil.which('npm.cmd') or shutil.which('npm'),'ci','--ignore-scripts','--no-audit','--no-fund']
 p=subprocess.run(argv,cwd=runtime,capture_output=True,text=True,encoding='utf-8',errors='replace')
 commands.append({'argv':argv,'cwd':str(runtime),'exitCode':p.returncode,'stdout':p.stdout,'stderr':p.stderr})
-(OUT/'input'/'planning-tools-bootstrap.json').write_text(json.dumps({'commands':commands,'runtime':str(runtime),'scope':'仅本任务规划，未安装全仓产品依赖','cleanup':'核验结束后按路径归属清理；日志/锁文件保全'},ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
+(OUT/'input'/'planning-tools-bootstrap-review.json').write_text(json.dumps({'commands':commands,'runtime':str(runtime),'scope':'本轮独审修订规划，仅三项隔离依赖，不重写上轮bootstrap原件','cleanup':'核验结束后按路径归属清理；日志/锁文件保全'},ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
 assert p.returncode==0,p.stderr
 print(json.dumps({'dependencyCount':3,'packageCount':len(packages),'exitCode':0}))

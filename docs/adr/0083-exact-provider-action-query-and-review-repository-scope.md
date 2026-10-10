@@ -16,7 +16,7 @@ Proposed。当前只提交规划，停 confirm 供 _oY 独立审查；本提案�
 
 ReviewDelegationInput新增可选repositoryIds，显式非空唯一UUID且三方repo:read/父仓库范围共同允许才授repo:read并缩减scope；省略完整保持M2。共享WorkItem/Project context须父子选同原件，父Session-only不复制，现子project_id空用live WorkItem所属Project派生匹配。后续read/review写重验父子绑定与当前scope/context，不比父当前范围更广。reviewer无仓库写/plan:write，只发本人review_result、当前head code_review及structured review，完成后父确认required child completed。
 
-沿现Worker发送前授权事务、expected-head/批准/review/check gates；补锁后真实60秒claim租期与worker/attempt/status CAS，过期未失代无checkpoint有界恢复，失代退出，已外发结果仅原generation checkpoint/本地reconcile，不重复外发。无新durable sending状态，unknown诚实保留。所有细节冻结于[安全合同](../plan/agent-mcp-m3/security-contract.md)、[范围兼容](../plan/agent-mcp-m3/scope-compatibility.md)、[DTO](../plan/agent-mcp-m3/dto-proposal.ts)、[OpenAPI提案](../plan/agent-mcp-m3/openapi-proposal.yaml)。
+普通Git当前未锁authority，新增完整authority-first发送事务，将expected-head/批准/review/check、最终clock_timestamp租期与worker/attempt/status绑定放入同tx，provider各仓库写HTTP通过beforeMutation逐次提交授权后才发。无checkpoint且有领取历史的五类写action按provider/kind保守停发dead/unknown，不能靠CAS、adapter去重或merged观察合成安全重发；合法checkpoint仅本地完成，context纯GET有界重试，attempt不退减，零新durable sending状态。显式reviewer创建及旧回执用beforeReserve/authorizeReplay同一锁内校验，省略保持M2。细节见[恢复矩阵](../plan/agent-mcp-m3/worker-recovery.md)、[发送前事务](../plan/agent-mcp-m3/worker-authority.md)、[replay合同](../plan/agent-mcp-m3/review-replay.md)、[安全合同](../plan/agent-mcp-m3/security-contract.md)、[范围兼容](../plan/agent-mcp-m3/scope-compatibility.md)、[DTO](../plan/agent-mcp-m3/dto-proposal.ts)、[OpenAPI提案](../plan/agent-mcp-m3/openapi-proposal.yaml)。
 
 既有SDK/MCP/Runner/manifest/政策同operation；Human批准与项目update发布、completion裁决保留。health Agent准确批准发布沿原合同。上传file不作code_review权，签名传输在受控adapter，Pi不把短期凭据送模型。
 

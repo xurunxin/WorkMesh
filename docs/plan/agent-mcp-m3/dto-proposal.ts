@@ -23,7 +23,7 @@ z.object({
   "updatedAt": z.string().datetime({ offset: true }),
   "completedAt": z.string().datetime({ offset: true }).nullable(),
   "error": z.object({
-  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "RESULT_UNAVAILABLE"]),
+  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "PROVIDER_ACTION_OUTCOME_UNKNOWN", "RESULT_UNAVAILABLE"]),
 }).strict().nullable(),
   "recovery": z.object({
   "kind": z.enum(["none", "poll_same_action", "human_reconcile"]),
@@ -59,7 +59,7 @@ z.object({
   "updatedAt": z.string().datetime({ offset: true }),
   "completedAt": z.string().datetime({ offset: true }).nullable(),
   "error": z.object({
-  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "RESULT_UNAVAILABLE"]),
+  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "PROVIDER_ACTION_OUTCOME_UNKNOWN", "RESULT_UNAVAILABLE"]),
 }).strict().nullable(),
   "recovery": z.object({
   "kind": z.enum(["none", "poll_same_action", "human_reconcile"]),
@@ -96,7 +96,7 @@ z.object({
   "updatedAt": z.string().datetime({ offset: true }),
   "completedAt": z.string().datetime({ offset: true }).nullable(),
   "error": z.object({
-  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "RESULT_UNAVAILABLE"]),
+  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "PROVIDER_ACTION_OUTCOME_UNKNOWN", "RESULT_UNAVAILABLE"]),
 }).strict().nullable(),
   "recovery": z.object({
   "kind": z.enum(["none", "poll_same_action", "human_reconcile"]),
@@ -136,7 +136,7 @@ z.object({
   "updatedAt": z.string().datetime({ offset: true }),
   "completedAt": z.string().datetime({ offset: true }).nullable(),
   "error": z.object({
-  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "RESULT_UNAVAILABLE"]),
+  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "PROVIDER_ACTION_OUTCOME_UNKNOWN", "RESULT_UNAVAILABLE"]),
 }).strict().nullable(),
   "recovery": z.object({
   "kind": z.enum(["none", "poll_same_action", "human_reconcile"]),
@@ -173,7 +173,7 @@ z.object({
   "updatedAt": z.string().datetime({ offset: true }),
   "completedAt": z.string().datetime({ offset: true }).nullable(),
   "error": z.object({
-  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "RESULT_UNAVAILABLE"]),
+  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "PROVIDER_ACTION_OUTCOME_UNKNOWN", "RESULT_UNAVAILABLE"]),
 }).strict().nullable(),
   "recovery": z.object({
   "kind": z.enum(["none", "poll_same_action", "human_reconcile"]),
@@ -210,7 +210,7 @@ z.object({
   "updatedAt": z.string().datetime({ offset: true }),
   "completedAt": z.string().datetime({ offset: true }).nullable(),
   "error": z.object({
-  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "RESULT_UNAVAILABLE"]),
+  "code": z.enum(["PROVIDER_ACTION_FAILED", "PROVIDER_ACTION_AUTHORITY_REVOKED", "PROVIDER_HEAD_SHA_MISMATCH", "MERGE_APPROVAL_MISMATCH", "MERGE_APPROVAL_EXPIRED", "MERGE_CHECKS_BLOCKED", "PROVIDER_CAPABILITY_UNSUPPORTED", "PROVIDER_ACTION_CLAIM_LOST", "PROVIDER_ACTION_OUTCOME_UNKNOWN", "RESULT_UNAVAILABLE"]),
 }).strict().nullable(),
   "recovery": z.object({
   "kind": z.enum(["none", "poll_same_action", "human_reconcile"]),
@@ -237,6 +237,7 @@ z.object({
   if (value.recovery.kind === "none" && (value.recovery.scheduled || value.recovery.nextQueryAt)) reject("No scheduled recovery")
   if (value.recovery.kind === "poll_same_action" && !value.recovery.nextQueryAt) reject("Next query boundary is required")
   if (value.recovery.kind === "human_reconcile" && (value.recovery.scheduled || value.recovery.nextQueryAt)) reject("Human reconciliation is read only")
+  if (value.error?.code === "PROVIDER_ACTION_OUTCOME_UNKNOWN" && (value.status !== "dead" || value.effect !== "unknown" || value.result !== null || value.recovery.kind !== "human_reconcile" || value.recovery.scheduled || value.recovery.nextQueryAt)) reject("Unproven recovery must stop sending")
 })
 export type ProviderActionProjectionProposal = z.infer<typeof providerActionProjectionProposalSchema>
 // 产品阶段扩展现reviewDelegationInputSchema；不新增普通child仓库权限，也不改其余旧字段/default。

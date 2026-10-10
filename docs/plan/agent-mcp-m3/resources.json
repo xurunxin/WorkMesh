@@ -8,6 +8,13 @@
       "state": "已清理，实际退出0，物理不存在",
       "preservation": "input/planning-tools-bootstrap.json、planning-tools锁文件与checks原输出",
       "actualReceipt": "input/runtime-cleanup.json"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b\\docs\\plan\\agent-mcp-m3\\.runtime",
+      "purpose": "独审修订恢复同一隔离三依赖目录，仅DTO静态",
+      "state": "实际清理exit0，无链接/活动引用，已不存在",
+      "actualReceipt": "input/runtime-cleanup-review.json",
+      "preservation": "input/planning-tools-bootstrap-review.json、锁文件、受测ZIP及逐path清理前hash"
     }
   ],
   "containers": [],
@@ -24,6 +31,7 @@
     "actualExitCode": 0,
     "filesPreservedByFingerprint": 973,
     "sharedStoreTouched": false,
-    "deniedOldTargetsTouched": false
+    "deniedOldTargetsTouched": false,
+    "latestReceipt": "input/runtime-cleanup-review.json"
   }
 }

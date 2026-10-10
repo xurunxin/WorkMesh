@@ -1,0 +1,191 @@
+{
+  "status": "Proposed，不是运行结果",
+  "sourceCommit": "ef4cb5e1458d911d98433c443dba46e6c224caa0",
+  "attemptCountMonotonic": true,
+  "newPersistentFields": 0,
+  "newMigrations": 0,
+  "reusedEvent": "provider.action.dead_lettered",
+  "recoveryError": "PROVIDER_ACTION_OUTCOME_UNKNOWN",
+  "rows": [
+    {
+      "provider": "fake",
+      "kind": "create_branch",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "github",
+      "kind": "create_branch",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "gitea",
+      "kind": "create_branch",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "fake",
+      "kind": "create_commit",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "github",
+      "kind": "create_commit",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "gitea",
+      "kind": "create_commit",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": "gitea仅单文件commit",
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "fake",
+      "kind": "open_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "github",
+      "kind": "open_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "gitea",
+      "kind": "open_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "fake",
+      "kind": "merge_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "github",
+      "kind": "merge_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "gitea",
+      "kind": "merge_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "fake",
+      "kind": "retry_ci_check",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "github",
+      "kind": "retry_ci_check",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "gitea",
+      "kind": "retry_ci_check",
+      "initial": "unsupported",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "unsupported_not_fabricated",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "fake",
+      "kind": "resolve_repository_context",
+      "initial": "read_only",
+      "withoutCheckpointAfterClaim": "bounded_read_retry",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "github",
+      "kind": "resolve_repository_context",
+      "initial": "read_only",
+      "withoutCheckpointAfterClaim": "bounded_read_retry",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    },
+    {
+      "provider": "gitea",
+      "kind": "resolve_repository_context",
+      "initial": "read_only",
+      "withoutCheckpointAfterClaim": "bounded_read_retry",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "未运行"
+    }
+  ]
+}

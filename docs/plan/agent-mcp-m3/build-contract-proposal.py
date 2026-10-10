@@ -14,7 +14,7 @@ short=s(minLength=1,maxLength=500)
 date=s(format='date-time')
 codes=['PROVIDER_ACTION_FAILED','PROVIDER_ACTION_AUTHORITY_REVOKED','PROVIDER_HEAD_SHA_MISMATCH',
        'MERGE_APPROVAL_MISMATCH','MERGE_APPROVAL_EXPIRED','MERGE_CHECKS_BLOCKED','PROVIDER_CAPABILITY_UNSUPPORTED',
-       'PROVIDER_ACTION_CLAIM_LOST','RESULT_UNAVAILABLE']
+       'PROVIDER_ACTION_CLAIM_LOST','PROVIDER_ACTION_OUTCOME_UNKNOWN','RESULT_UNAVAILABLE']
 common={'id':uuid,'provider':s(enum=['fake','github','gitea']), 'connectionId':uuid,'repositoryId':uuid,
  'requesterActorId':uuid,'sessionId':nullable(uuid),'workItemId':nullable(uuid),'projectId':nullable(uuid),
  'planStepId':nullable(uuid),'expectedHeadSha':nullable(sha),'approvalId':nullable(uuid),
@@ -35,7 +35,8 @@ ids={'type':'array','minItems':1,'maxItems':100,'uniqueItems':True,'items':uuid}
 shape={'oneOf':members, 'x-invariants':['committed=>status=completed,result!=null','checkpointed=>status!=completed,result!=null',
   'unknown=>result=null','non-context=>sessionId/workItemId!=null','committed openPR=>projectionId!=null',
   'none=>scheduled=false,nextQueryAt=null','poll_same_action=>nextQueryAt!=null',
-  'human_reconcile=>scheduled=false,nextQueryAt=null']}
+  'human_reconcile=>scheduled=false,nextQueryAt=null',
+  'PROVIDER_ACTION_OUTCOME_UNKNOWN=>dead,unknown,result=null,human_reconcile,scheduled=false,nextQueryAt=null']}
 (OUT/'dto-shapes.json').write_text(json.dumps({'response':shape,'repositoryIds':ids},ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
 proposal={'paths':{'/api/v1/provider-actions/{id}':{'get':{
  'operationId':'getProviderAction','x-workmesh-policy-id':'route.getProviderAction',
@@ -87,6 +88,7 @@ text+='''  const reject = (message: string) => ctx.addIssue({ code: z.ZodIssueCo
   if (value.recovery.kind === "none" && (value.recovery.scheduled || value.recovery.nextQueryAt)) reject("No scheduled recovery")
   if (value.recovery.kind === "poll_same_action" && !value.recovery.nextQueryAt) reject("Next query boundary is required")
   if (value.recovery.kind === "human_reconcile" && (value.recovery.scheduled || value.recovery.nextQueryAt)) reject("Human reconciliation is read only")
+  if (value.error?.code === "PROVIDER_ACTION_OUTCOME_UNKNOWN" && (value.status !== "dead" || value.effect !== "unknown" || value.result !== null || value.recovery.kind !== "human_reconcile" || value.recovery.scheduled || value.recovery.nextQueryAt)) reject("Unproven recovery must stop sending")
 })
 export type ProviderActionProjectionProposal = z.infer<typeof providerActionProjectionProposalSchema>
 // 产品阶段扩展现reviewDelegationInputSchema；不新增普通child仓库权限，也不改其余旧字段/default。
@@ -103,7 +105,15 @@ policy={'status':'Proposed；当前无endpoint/新授权','newOperation':{'opera
  'discoveryFacts':['liveAuthority','sessionKind=execution','ordinaryReadState','capabilitiesAll','requiresTargetCheck=requester/session/repo/context/provider']},
  'reviewPatch':{'repositoryIds':'optional,1..100,unique UUID','defaultCapabilities':['work:read','work:write','artifact:write'],
   'explicitAdditionalCapabilities':['repo:read'],'threeWayIntersection':True,'sharedContextOnly':True,'lateParentRevalidation':True,
-  'neverGrant':['plan:write','repo:write_branch','repo:open_pr','repo:merge','ci:run']},
+  'neverGrant':['plan:write','repo:write_branch','repo:open_pr','repo:merge','ci:run'],
+  'replay':{'beforeReserve':'完整父/目标/准确回执子authority锁先于幂等回执锁',
+    'authorizeReplay':'同一校验器重验三方repo:read/父当前scope/精确父子binding/共享context',
+    'repeatAdmission':False,'omittedRepositoryIds':'M2权限和回执不变，仅内部锁序统一'}},
+ 'workerRecovery':{'matrix':'worker-recovery.md','writeWithoutCheckpointAfterClaim':'dead/PROVIDER_ACTION_OUTCOME_UNKNOWN/human_reconcile',
+  'checkpoint':'只本地完成，零provider HTTP','contextOnly':'原有界纯GET重试','monotonicAttempt':True},
+ 'workerSend':{'contract':'worker-authority.md','guard':'内部action-scoped beforeMutation，逐次仓库写HTTP',
+  'authorityRanks':'复用lockAgentAuthorityPlan完整计划','gates':'merge/CI/最终租期/approval同tx',
+  'providerIoInsideTransaction':False},
  'generation':'保M0/M1/M2输入，新增M3产品决策增量；当前提案不进入生成脚本运行',
  'humanPreserved':['connectRepository','pinRepositoryContext','decideApproval','publishProjectUpdate','decideCompletionSuggestion'],
  'conditionalExisting':{'createProjectHealthUpdate':'source=agent,publish=true仍需Human精确批准与If-Match'},

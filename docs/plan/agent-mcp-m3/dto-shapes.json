@@ -186,6 +186,7 @@
                       "MERGE_CHECKS_BLOCKED",
                       "PROVIDER_CAPABILITY_UNSUPPORTED",
                       "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
                       "RESULT_UNAVAILABLE"
                     ]
                   }
@@ -466,6 +467,7 @@
                       "MERGE_CHECKS_BLOCKED",
                       "PROVIDER_CAPABILITY_UNSUPPORTED",
                       "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
                       "RESULT_UNAVAILABLE"
                     ]
                   }
@@ -752,6 +754,7 @@
                       "MERGE_CHECKS_BLOCKED",
                       "PROVIDER_CAPABILITY_UNSUPPORTED",
                       "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
                       "RESULT_UNAVAILABLE"
                     ]
                   }
@@ -1064,6 +1067,7 @@
                       "MERGE_CHECKS_BLOCKED",
                       "PROVIDER_CAPABILITY_UNSUPPORTED",
                       "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
                       "RESULT_UNAVAILABLE"
                     ]
                   }
@@ -1351,6 +1355,7 @@
                       "MERGE_CHECKS_BLOCKED",
                       "PROVIDER_CAPABILITY_UNSUPPORTED",
                       "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
                       "RESULT_UNAVAILABLE"
                     ]
                   }
@@ -1635,6 +1640,7 @@
                       "MERGE_CHECKS_BLOCKED",
                       "PROVIDER_CAPABILITY_UNSUPPORTED",
                       "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
                       "RESULT_UNAVAILABLE"
                     ]
                   }
@@ -1734,7 +1740,8 @@
       "committed openPR=>projectionId!=null",
       "none=>scheduled=false,nextQueryAt=null",
       "poll_same_action=>nextQueryAt!=null",
-      "human_reconcile=>scheduled=false,nextQueryAt=null"
+      "human_reconcile=>scheduled=false,nextQueryAt=null",
+      "PROVIDER_ACTION_OUTCOME_UNKNOWN=>dead,unknown,result=null,human_reconcile,scheduled=false,nextQueryAt=null"
     ]
   },
   "repositoryIds": {

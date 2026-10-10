@@ -56,6 +56,9 @@ for(const [kind,data] of Object.entries(examples)){
  bad({...sample,recovery:{kind:'poll_same_action',scheduled:false,nextQueryAt:null}})
  if(kind!=='resolve_repository_context')bad({...sample,sessionId:null})
  if(kind==='open_pull_request')bad({...sample,result:{...sample.result,projectionId:null}})
+ for(const provider of ['fake','github','gitea'])good({...sample,provider,status:'dead',effect:'unknown',result:null,completedAt:null,
+   error:{code:'PROVIDER_ACTION_OUTCOME_UNKNOWN'},recovery:{kind:'human_reconcile',scheduled:false,nextQueryAt:null}})
+ bad({...sample,error:{code:'PROVIDER_ACTION_OUTCOME_UNKNOWN'}})
 }
 assert.equal(query.safeParse({}).success,true)
 for(const v of [{sessionId:id},{operationKey:'k'},{claim:true}]){assert.equal(query.safeParse(v).success,false);rejected++}

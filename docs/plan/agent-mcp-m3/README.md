@@ -2,6 +2,8 @@
 
 状态：规划候选，停 confirm 供 _oY 正式独立方案审查；尚未产品实现，尚未运行 M3 产品测试或取得本候选 Required CI。
 
+本次修订回应三条blocking，先读 [独审修订入口](review-response.md)、[Worker恢复矩阵](worker-recovery.md)、[发送前锁与事务](worker-authority.md)、[reviewer锁内replay](review-replay.md)。原候选原件保全，不称已获重新审查批准。
+
 ## 审阅入口
 
 1. [准确 spec](spec.md)、[冻结 M3 全节](frozen-m3.md)、[同步计划](savedplan.md)、[执行副本](implementation.md)。

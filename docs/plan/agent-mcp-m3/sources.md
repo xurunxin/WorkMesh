@@ -12,7 +12,7 @@
 
 todos(id=g0q8D1msrOVY2kg-cSdkj)本轮返回Spec全文，Saved plan在长输出上限截断；input/current-spec-readback.md为可见完整Spec，input/todos-readback.json保原工具返回。conversation实读该doc引用和问题卡/反馈，但不返回计划全文。工具目录有tds，无通用doc read接口；未通过猜URL或敏感凭据绕取。原doc的独立全文、doc创建/版本字段未取得，记null；不拿截断前缀计算全文hash，不伪造原始backend bytes。
 
-savedplan.md与implementation.md是当前edit_plan四处修订的精确正文副本；原可见前缀与注入全文核对，替换记录另存input/plan-edits.json并静态逐项重建当前副本。新的平台保存doc ID在本轮结束前不可取得，不为自引用循环edit_plan。
+savedplan.md与implementation.md是上轮四处、本轮独审三处edit_plan修订的精确正文副本；原可见前缀与注入全文核对，七个替换记录在input/plan-edits.json静态逐项重建，独审三处原文另存input/reviewer-plan-edits.json。新的平台保存doc ID在本轮结束前不可取得，不为自引用循环edit_plan；本轮工具新读回仍有长度限制，input/reviewer-platform-readbacks.json保原封包，不冒doc全文下载。
 
 用户唯一新安全合同裁定见input/user-repository-scope-decision.md，问题卡doc:q-zoO3M6sporQm1UHRMlj2K，选择显式repositoryIds。当前Spec已同步该裁定。input/chief-feedback.md明确本轮规划写入/提交授权；同范围规划不再问同一许可。
 
@@ -26,6 +26,9 @@ savedplan.md与implementation.md是当前edit_plan四处修订的精确正文副
 | upload cancel无If-Match | OPENAPI:cancelArtifactUpload；delivery/routes.ts:/cancel | 现合同事实，不是新增裁定；未来按原key/state核 |
 | health Agent publish准确Human approval | operations/routes.ts:project.health.publish；contracts:projectHealthInputSchema | 与Human-only publishProjectUpdate区分；仍未M3验证 |
 | provider status仅五类 | v1 baseline:provider_action_status；worker:claimAction/checkpointProviderResult/finishAction | unknown派生，不发明sending持久态；零迁移是规划决定 |
+| 无checkpoint重领会再执行adapter，rerequest无去重查询 | worker:claimAction/executeAction；git-provider:GitHubAppProvider.retryCheck | 独审第一条blocking成立；新增五类写历史无checkpoint停发，十八行恢复矩阵待复核 |
+| 普通Git只锁action，authority helper仅context使用 | worker:authorizeProviderSideEffect/authorizeRepositoryContextInTransaction；db:agent-locks.ts | 独审第二条blocking成立；完整authority-first事务及逐仓库写guard待实现 |
+| 旧回执跳handler且createReview未传authorizeReplay | api:commands.ts:mutate；collaboration/routes.ts:command/createReview | 独审第三条blocking成立；beforeReserve/authorizeReplay共同精确重验待实现 |
 | delivery多表LIMIT200 | delivery/routes.ts:getProjectDelivery | 精确head材料不能默截断，scope过滤在取数前 |
 | M0冻结增量合成 | scripts/generate-agent-discovery.py:M1与M2加载 | M3加新增量，不倒写M0，真实套件与CI同时扩 |
 | Pi普通结果50k与GET无活动 | Runner:makeTool/boundedResult | 新关键投影保完整，未来核真实模型，不冒SDK即实收 |

@@ -1,7 +1,43 @@
 {
-  "role": "收尾候选原字节指纹，非历史Git原件hash；Git原件另见source-manifest",
-  "selfExcluded": "本manifest不自hash，不循环绑定candidatehead；准确head提交后单独交付",
-  "entries": [
+  "name": "ci-selection",
+  "argv": [
+    "C:\\nvm4w\\nodejs\\node.EXE",
+    "docs/plan/agent-mcp-m3/check-ci-selection.mjs"
+  ],
+  "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b",
+  "exitCode": 0,
+  "runtime": {
+    "node": "v24.20.0",
+    "nodeExecutable": "C:\\nvm4w\\nodejs\\node.EXE",
+    "python": "3.13.15",
+    "pythonExecutable": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "yamlParser": "PyYAML 6.0.3",
+    "dependencyScope": "NODE_PATH只在此静态子进程指向本任务.runtime；不改系统环境或产品依赖"
+  },
+  "stdout": "{\"paths\":[\"docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md\",\"docs/plan/agent-mcp-m3/README.md\",\"docs/plan/agent-mcp-m3/acceptance-matrix.json\",\"docs/plan/agent-mcp-m3/bootstrap-planning-tools.py\",\"docs/plan/agent-mcp-m3/build-contract-proposal.py\",\"docs/plan/agent-mcp-m3/build-operation-matrix.py\",\"docs/plan/agent-mcp-m3/capture-review-inputs.py\",\"docs/plan/agent-mcp-m3/check-contract-proposal.mjs\",\"docs/plan/agent-mcp-m3/checks/contract-2.json\",\"docs/plan/agent-mcp-m3/checks/contract-2.zip\",\"docs/plan/agent-mcp-m3/dto-proposal.ts\",\"docs/plan/agent-mcp-m3/dto-shapes.json\",\"docs/plan/agent-mcp-m3/history/reviewed-candidate-manifest.json\",\"docs/plan/agent-mcp-m3/history/reviewed-candidate.zip\",\"docs/plan/agent-mcp-m3/implementation.md\",\"docs/plan/agent-mcp-m3/input/plan-edits.json\",\"docs/plan/agent-mcp-m3/input/planning-tools-bootstrap-review.json\",\"docs/plan/agent-mcp-m3/input/reviewer-feedback.md\",\"docs/plan/agent-mcp-m3/input/reviewer-first-failures.json\",\"docs/plan/agent-mcp-m3/input/reviewer-plan-edits.json\",\"docs/plan/agent-mcp-m3/input/reviewer-platform-readbacks.json\",\"docs/plan/agent-mcp-m3/input/reviewer-source-observations.json\",\"docs/plan/agent-mcp-m3/lifecycle.md\",\"docs/plan/agent-mcp-m3/openapi-proposal.yaml\",\"docs/plan/agent-mcp-m3/operation-decisions.json\",\"docs/plan/agent-mcp-m3/operation-matrix.md\",\"docs/plan/agent-mcp-m3/policy-proposal.json\",\"docs/plan/agent-mcp-m3/review-replay.md\",\"docs/plan/agent-mcp-m3/review-response.md\",\"docs/plan/agent-mcp-m3/savedplan.md\",\"docs/plan/agent-mcp-m3/scope-compatibility.md\",\"docs/plan/agent-mcp-m3/security-contract.md\",\"docs/plan/agent-mcp-m3/source-map.json\",\"docs/plan/agent-mcp-m3/sources.md\",\"docs/plan/agent-mcp-m3/static-check.py\",\"docs/plan/agent-mcp-m3/verification.md\",\"docs/plan/agent-mcp-m3/worker-authority.md\",\"docs/plan/agent-mcp-m3/worker-recovery-matrix.json\",\"docs/plan/agent-mcp-m3/worker-recovery.md\"],\"selection\":{\"mode\":\"full\",\"packages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"testPackages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"checks\":{\"source-gates\":true,\"db-integration\":true,\"api-integration\":true,\"worker-integration\":true,\"e2e\":true,\"recovery-integration\":true,\"agent-smoke\":true}},\"productTestsExecuted\":false,\"exitCode\":0}\n",
+  "stderr": "warning: in the working copy of 'docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md', LF will be replaced by CRLF the next time Git touches it\n",
+  "rawArchive": {
+    "path": "docs/plan/agent-mcp-m3/checks/ci-selection-2.zip",
+    "bytes": 885375,
+    "sha256": "04e6715a12be818c95db4ff5a8ba7149776b05ed67e93341ca27eb1a26cad80a"
+  },
+  "rawOutputs": {
+    "stdout": {
+      "bytes": 2940,
+      "sha256": "84375fc75282b1906cb97176d4cc8b61291349dac6cb5f9c017b480c36dc7671"
+    },
+    "stderr": {
+      "bytes": 165,
+      "sha256": "f7fe7d77e276a21c8b3b972fd2586c8f568fe4e76f408f93b55d535166c41207"
+    }
+  },
+  "testedBefore": [
+    {
+      "path": "docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md",
+      "bytes": 4341,
+      "sha256": "d72a22b77984cca0268ab3a49f8c427f5fcafce5c8332887106ee408b168d109"
+    },
     {
       "path": "docs/plan/agent-mcp-m3/.gitattributes",
       "bytes": 131,
@@ -16,6 +52,11 @@
       "path": "docs/plan/agent-mcp-m3/acceptance-matrix.json",
       "bytes": 11053,
       "sha256": "b9155b8ae25a635b217f045d1e606d5007798561b4d79e254523faa7fbfc06e1"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/artifact-manifest.json",
+      "bytes": 13512,
+      "sha256": "ad4b4883b1ef27bf069425d947640fef45cad5a7219d58c62ecc134e91f3a9ce"
     },
     {
       "path": "docs/plan/agent-mcp-m3/bootstrap-planning-tools.py",
@@ -53,116 +94,6 @@
       "sha256": "ff75992e853aa0f0bdefe88db2d4cd253d5df5844ff9d37e0e50003e580f9da2"
     },
     {
-      "path": "docs/plan/agent-mcp-m3/checks/ci-policy-1.json",
-      "bytes": 13227,
-      "sha256": "6f57bc16f79edeb036298ad1724ca8d9f5b27e463a980ecd1c666c9b99bd8523"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/ci-policy-1.zip",
-      "bytes": 339746,
-      "sha256": "e9f97adb3c0fdf362956002ca8cfd208c3157b0ae12da13a1f2c489a1d4a5c1c"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/ci-selection-1.json",
-      "bytes": 16124,
-      "sha256": "d61231bf7693507d40d3d2b62d29a9540b1215a8085392f903ae9cf4b43b8005"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/ci-selection-1.zip",
-      "bytes": 340704,
-      "sha256": "8bb8ab9c49f0ef73c30a448cc6f4676a43a635bfe9043248f3c4ce1c4decb67e"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/ci-selection-2.json",
-      "bytes": 18230,
-      "sha256": "ce59140a35a3a75883b06f8a2a173c2edb1d195680a3fd323dc9da47205f7b3a"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/ci-selection-2.zip",
-      "bytes": 885375,
-      "sha256": "04e6715a12be818c95db4ff5a8ba7149776b05ed67e93341ca27eb1a26cad80a"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/ci-validate-1.json",
-      "bytes": 11826,
-      "sha256": "6cec7457032e8b86e183bb10dd104fea75c016c9712af3a3ebad6bb0e9c1e6b8"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/ci-validate-1.zip",
-      "bytes": 339895,
-      "sha256": "072d393d8842aa153e7fd5dfc1ae0d89c77a125a0443322bc1aaf9287b1a870c"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/contract-1.json",
-      "bytes": 11823,
-      "sha256": "c1444c67cbbd5bb540e7c845c3d1315fbd4780a653e895cf2c78f95e5bae381e"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/contract-1.zip",
-      "bytes": 339054,
-      "sha256": "cfd010240afb7a91f5102d5accac63ee4545709a718830bb44cfc870b8bf1c0d"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/contract-2.json",
-      "bytes": 15191,
-      "sha256": "4d28467ddc79052b2b56a7a72d7fcfe7a10af4ebfbe621a672d87558d2e8cc54"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/contract-2.zip",
-      "bytes": 884717,
-      "sha256": "256f707ec2297a2d11baa72a49d7a9beb1ad45fe47fcae98c6e512ed536f95b8"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/static-1.json",
-      "bytes": 12163,
-      "sha256": "6671ff9164bc3e7a1431e51e582a3df3af19ff28e8495786e60b894435b02abd"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/static-1.zip",
-      "bytes": 340079,
-      "sha256": "08bdfef4a8dfad930faea33583031b97a6254224b856419eb8fac873403d2bb3"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/static-2.json",
-      "bytes": 12766,
-      "sha256": "51d3d1f46089642cfca8be2330d20627a547d084a6770af8e6f0b30c81cd9405"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/static-2.zip",
-      "bytes": 390195,
-      "sha256": "4d003f045a6732397c6f9144cdd630ab7729957e88e5d922498b78af93f6945f"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/static-3.json",
-      "bytes": 12766,
-      "sha256": "40e52fb830f552cbd77fcd76d10bef0310872e0a7525a1a4cf80adb71007a72e"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/static-3.zip",
-      "bytes": 390833,
-      "sha256": "f48426f4007e998de3ff3a23bf5c3a71049370fc1916af0c3c56974c607811e4"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/static-4.json",
-      "bytes": 16009,
-      "sha256": "ffcce27254c61c01aad497d2ade9b34c288083353f833ac0c6231e13945589b9"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/static-4.zip",
-      "bytes": 933074,
-      "sha256": "53cd40d54a68f29ea2ccaf81624674188c1daf23ca0a2851e61a97c5dcd35360"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/static-5.json",
-      "bytes": 16011,
-      "sha256": "eef9406e64bb6aca982eed11f0c0fb50bac395e8891c5d5b5470e5dc6781c461"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/checks/static-5.zip",
-      "bytes": 933515,
-      "sha256": "3a0184a0ccb5bd8a739611f1b2778d4fa9feafc30cd3988492e7c5ea1f29776c"
-    },
-    {
       "path": "docs/plan/agent-mcp-m3/compatibility.md",
       "bytes": 3564,
       "sha256": "3666579ca5931604e0f3ee27ebbaa2487231b9835190e4614d6b5252038b1c03"
@@ -184,8 +115,8 @@
     },
     {
       "path": "docs/plan/agent-mcp-m3/finalize-planning-report.py",
-      "bytes": 8399,
-      "sha256": "d302eef61ced84270594bdec01fe637c5fc83dcbbe3deaec35b7b2e1a6fa491c"
+      "bytes": 7242,
+      "sha256": "c29f80212ebff643895a44a24ab8b0af3e6c502eae7d7331dae61cb54c6109d3"
     },
     {
       "path": "docs/plan/agent-mcp-m3/frozen-m3.md",
@@ -278,11 +209,6 @@
       "sha256": "6ec5379ac180d4854e5eb25748985e1a0821baa789a0e3b8cd6313704328e74e"
     },
     {
-      "path": "docs/plan/agent-mcp-m3/input/review-main-readback.json",
-      "bytes": 275,
-      "sha256": "252d6ee3fb7a56a8da41b4c74b2fb581595dcbe212383cbd5ab432d73647f200"
-    },
-    {
       "path": "docs/plan/agent-mcp-m3/input/reviewer-feedback.md",
       "bytes": 3628,
       "sha256": "af4c0f03f9f50be1139c365a9bc0dbf89f6524a9b8bae5f0e54b1458e49775d1"
@@ -306,11 +232,6 @@
       "path": "docs/plan/agent-mcp-m3/input/reviewer-source-observations.json",
       "bytes": 139594,
       "sha256": "9d0ababe413d8ffa20d330003afac03bd49c4d1d3f478582c328edc1a6aef0df"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m3/input/runtime-cleanup-review.json",
-      "bytes": 177157,
-      "sha256": "565f2d5021cd72bb02515e1ea1ce96479c8a4ade400772e29a51754a1ee8d0a6"
     },
     {
       "path": "docs/plan/agent-mcp-m3/input/runtime-cleanup.json",
@@ -364,8 +285,8 @@
     },
     {
       "path": "docs/plan/agent-mcp-m3/planning-report.md",
-      "bytes": 4946,
-      "sha256": "609944e55496a31d81e97cb7eae1c5b6addc041bb9a4cbd41c281e47963dce42"
+      "bytes": 3976,
+      "sha256": "ea72b1d64095bc7e9980b62d0a393a86bd6dd5419a5e65046c1609e966d1f19f"
     },
     {
       "path": "docs/plan/agent-mcp-m3/planning-tools/package-lock.json",
@@ -389,13 +310,13 @@
     },
     {
       "path": "docs/plan/agent-mcp-m3/resources.json",
-      "bytes": 1771,
-      "sha256": "7225d2efd2d31bdae088452c50e514371deea1474d733663f02684f99f2cfbd4"
+      "bytes": 1244,
+      "sha256": "6d5a430d410555c32d78fa68e2638a1b9e2f5d77d2efb61fcfd058a6e5eb4489"
     },
     {
       "path": "docs/plan/agent-mcp-m3/review-replay.md",
-      "bytes": 4340,
-      "sha256": "11151540607d755295da1a417d4ac37508e2b0eaac2faaebfd3345fe44a872a1"
+      "bytes": 4011,
+      "sha256": "f4bab44985296791cd28acdcdd9d128242a635dab30937bbec592c568ff2bfda"
     },
     {
       "path": "docs/plan/agent-mcp-m3/review-response.md",
@@ -454,8 +375,8 @@
     },
     {
       "path": "docs/plan/agent-mcp-m3/static-checks.json",
-      "bytes": 11336,
-      "sha256": "22765c734dd2bc5e6ef833c8e23a3fe1349013c2de65eef6d0bc36eed4db1a22"
+      "bytes": 7127,
+      "sha256": "dfcc567393f5c8b91f4f34193ab813b21f81420fdf5b06ba7113a8d4b515ceec"
     },
     {
       "path": "docs/plan/agent-mcp-m3/verification.md",
@@ -469,8 +390,8 @@
     },
     {
       "path": "docs/plan/agent-mcp-m3/worker-authority.md",
-      "bytes": 6583,
-      "sha256": "8e8feb93e30eaf46ac2722d3113f2b1b16fa0092cde510e4992856037662994c"
+      "bytes": 6439,
+      "sha256": "546edf6d5934c1d678c87ce85072e91e966141bc8eda47d05704e41d215117a8"
     },
     {
       "path": "docs/plan/agent-mcp-m3/worker-recovery-matrix.json",
@@ -481,12 +402,10 @@
       "path": "docs/plan/agent-mcp-m3/worker-recovery.md",
       "bytes": 6499,
       "sha256": "8e958d1db189fccf27cdf6d9d3b02dcfc6acc469dcdfcbab474201ddac0d56ac"
-    },
-    {
-      "path": "docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md",
-      "bytes": 4341,
-      "sha256": "d72a22b77984cca0268ab3a49f8c427f5fcafce5c8332887106ee408b168d109"
     }
   ],
-  "productFilesChanged": 0
+  "testedAfterEqualsBefore": true,
+  "sourceArchiveNote": "既有source-snapshot.zip不重复嵌入，受测before索引含其原字节hash，可逐项核回。",
+  "productTestsExecuted": false,
+  "skip": "按对应原输出，不从exit0猜数量"
 }

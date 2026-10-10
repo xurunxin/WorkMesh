@@ -22,7 +22,7 @@ def main():
     primary = [
       ('listRepositories','listRepositories','list_repositories','repo:read','最新适用context；活跃仓库/connection；原签名分页，H-only查询过滤不移给E'),
       ('getRepositoryContext','getRepositoryContext','get_repository_context','repo:read','exact repositoryIds/context；完整guidance原件，非授权来源；E或C显式目标E'),
-      ('requestProviderAction','requestProviderAction','create_repository_branch/create_repository_commit/open_pull_request','repo:read + kind-specific','E-only领域；branch/commit需repo:write_branch及write_branch context；openPR需repo:open_pr及open_pr context；base/path/branch/expectedHead准确；不把OpenAPI的human声明冒handler支持'),
+      ('requestProviderAction','requestProviderAction','create_repository_branch/create_repository_commit/open_pull_request','repo:read + kind-specific','E-only领域；branch/commit需repo:write_branch及write_branch context；openPR需repo:open_pr及open_pr context；base/path/branch/expectedHead准确；各仓库写前authority事务；无checkpoint领取历史停发；不把OpenAPI human声明冒handler支持'),
       ('publishDeliveryArtifact','publishDeliveryArtifact','publish_delivery_artifact','artifact:write + 仓库时repo:read','本人E/provenance/workItem/Plan/currentHead；reviewer仅code_review，无repo写；H在现handler不支持'),
       ('requestArtifactUpload','requestArtifactUpload','request_artifact_upload','artifact:write + repo:read','E本人仓库证据；H沿Human附件合同；MIME/50MB/sha256/header签名；reviewer不因读权获得file审查授权'),
       ('getArtifactUploadStatus','getArtifactUploadStatus','get_artifact_upload_status','work:read','own-session E或原requester H；无storage_key/raw error；最终SELECT实时重验'),
@@ -31,14 +31,14 @@ def main():
       ('listWorkItemArtifacts','listWorkItemArtifacts','list_work_item_artifacts','work:read','exact WI；原数组保持；repo外链接取数前过滤，不可代正文已读'),
       ('downloadVerifiedArtifact','getArtifactDownload','download_verified_artifact','work:read','verified/own-session E；H当前Team；签名URL仅受控传输，reviewer不读父upload'),
       ('publishStructuredReview','publishStructuredReview','publish_structured_review','artifact:write + repo:read','review context/currentHead；本人code_review Artifact/provenance；actor独立于producer；file拒绝'),
-      ('requestPullRequestMerge','requestMerge','merge_pull_request','repo:merge + repo:read','merge context；currentHead/all required checks/independent review/no blocking-high；Human精确hash批准；reviewer无资格'),
-      ('retryPullRequestCheck','retryCiCheck','retry_ci_check','ci:run + repo:read','ci context；当前head failed/skipped准确checkRun；Human精确批准；requested不等于passed'),
+      ('requestPullRequestMerge','requestMerge','merge_pull_request','repo:merge + repo:read','merge context；currentHead/all required checks/independent review/no blocking-high；Human精确hash批准；最终全部门禁/租期同authority tx；无checkpoint不借merged观察恢复；reviewer无资格'),
+      ('retryPullRequestCheck','retryCiCheck','retry_ci_check','ci:run + repo:read','ci context；当前head failed/skipped准确checkRun；Human精确批准；最终check/head/approval/租期同authority tx；无checkpoint历史停发rerequest；requested不等于passed'),
       ('getProjectDelivery','getProjectDelivery','get_project_delivery','work:read + repo读取部分repo:read','当前exact Project/WI/repo；新增pullRequestId过滤，当前head阻断事实完整；默认envelope兼容'),
       ('createProjectUpdateDraft','draftProjectUpdate','draft_project_update','work:write','合法Project scope，Agent仅draft，evidence在scope；publish仍H-only'),
       ('suggestWorkItemCompletion','suggestCompletion','suggest_work_item_completion','work:write','E-only领域；exact WI/Project/PR及证据；只是建议，不自动done'),
       ('getProjectHealthHistory','getProjectHealthHistory','get_project_health_history','work:read','原Project绑定/分页/feature；不把Team scope当任意Project权限'),
       ('createProjectHealthUpdate','createProjectHealthUpdate','create_project_health_update','work:write','source=agent/exact Project/来源/If-Match；publish=true另需Human project.health.publish准确批准'),
-      ('createReviewDelegation','createReviewDelegation','create_review_delegation','work:write + 显式三方repo:read','精确live父E/stable step/version/预算/限额/三方权限/共享context；repositoryIds省略保持M2'),
+      ('createReviewDelegation','createReviewDelegation','create_review_delegation','work:write + 显式三方repo:read','精确live父E/stable step/version/预算/限额/三方权限/共享context；beforeReserve先锁准确父子，再authorizeReplay锁内重验三方scope/context；合法重放零重复admission/交付；repositoryIds省略保持M2'),
     ]
     retained = [('connectRepository','无Agent适配','Human连接'), ('pinRepositoryContext','无Agent适配','Human pin'),
       ('publishProjectUpdate','publish_project_update','Human发布'), ('decideCompletionSuggestion','decide_completion_suggestion','Human裁决')]
@@ -63,7 +63,7 @@ def main():
       'decision': '新增只读白名单投影，非已有endpoint', 'currentRest': None,
       'proposedRest': {'method':'GET','path':'/api/v1/provider-actions/{id}'},
       'proposed': {'sdk':'getProviderAction','mcp':['get_provider_action'],'runner':['workmesh_get_provider_action'],
-        'capabilities':'work:read + repo:read','gate':'本人requester/精确E Session/current Team/resource/context/provider feature；H限定原requester/principal；六kind五status；未知只读对账',
+        'capabilities':'work:read + repo:read','gate':'本人requester/精确E Session/current Team/resource/context/provider feature；H限定原requester/principal；六kind五status；无checkpoint重领dead/OUTCOME_UNKNOWN，只读人工对账',
         'credentials':'H或直接E；C显式target E局部bridge；无新增安装GET/terminal E例外'},
       'currentPresence': {'sdkNamedMethod':False,'mcpTools':{'get_provider_action':False},'runnerOperationString':False},
       'tests':['S1','S2','S3','S4','S5','S6','S7','S8','S9'],'productStatus':'未运行'})
@@ -112,7 +112,12 @@ def main():
       'originalFullScope':'frozen-m3.md','additionalUserDecision':'input/user-repository-scope-decision.md',
       'additionalReviewerTests':['三方逐一缺repo:read','省略原三项','1/100/空/重复/101仓库','WI/Project共享与父Session-only拒绝',
         '父context选不同/late收窄/撤权','same Actor不同Session自审拒绝','父100/普通child60/review40预算链',
-        '本人Room+code_review+structured review+child完成后父确认']})
+        '本人Room+code_review+structured review+child完成后父确认',
+        '成功创建后scope收窄/definition或grant撤repo:read/context换代原key重放拒绝',
+        '合法旧回执不再budget/admission/child/reservation/Lease/交付',
+        '真实HTTP rerequest成功后checkpoint前崩溃，跨租期重领不增加写次数',
+        '完整authority锁竞争Stop/撤权与发送授权两提交序',
+        'commit tree/commit/ref每次写HTTP分别guard，后续失权停发']})
     # 符号索引定位精确源码，不把抽取的行当全文。
     wanted={'apps/api/src/delivery/routes.ts':['applicableAgentRepositoryContexts','assertAgentRepositoryWrite','prepareAgentPullRequestAccess','assertDeliveryTarget','requireProviderFeature','/api/v1/artifact-upload-intents/:id/cancel','/api/v1/projects/:id/delivery'],
       'apps/api/src/collaboration/routes.ts':['async function createReview','reviewCaps','provisionNewSessionDelivery'],
@@ -120,9 +125,12 @@ def main():
       'apps/api/src/operations/routes.ts':['project.health.publish','/api/v1/projects/:id/health'],
       'apps/api/src/authz/authorize.ts':['resolveTeam(','resourceInScope'],
       'apps/api/src/live-read-authorization.ts':['liveSessionReadPredicate','liveHumanTeamReadPredicate'],
-      'apps/worker/src/provider-actions.ts':['claimAction','revalidateClaimedProvider','checkpointProviderResult','finishAction','clock_timestamp'],
+      'apps/worker/src/provider-actions.ts':['claimAction','revalidateClaimedProvider','authorizeProviderSideEffect','authorizeRepositoryContextInTransaction','revalidateMergeExecution','revalidateCiRetryExecution','executeAction','checkpointProviderResult','finishAction','clock_timestamp'],
+      'apps/api/src/commands.ts':['authorizeReplay','beforeReserve','previous.response_body'],
+      'packages/db/src/agent-locks.ts':['export async function lockAgentAuthorityPlan','await lockIds'],
+      'apps/worker/src/index.ts':['resolveProvider:'],
       'apps/agent-runner/src/workmesh-tools.ts':['makeTool','operationKey','boundedResult'],
-      'packages/git-provider/src/index.ts':['giteaCapabilityMatrix','UnsupportedProviderCapability'],
+      'packages/git-provider/src/index.ts':['giteaCapabilityMatrix','UnsupportedProviderCapability','async retryCheck','/rerequest','async #request'],
       'packages/artifact-storage/src/index.ts':['createUploadUrl','requiredHeaders'],
       'scripts/ci-policy.mjs':['validateMcpConformanceEntrypoints','Real conformance must be explicit']}
     manifest=json.loads((OUT/'source-manifest.json').read_text(encoding='utf-8'))

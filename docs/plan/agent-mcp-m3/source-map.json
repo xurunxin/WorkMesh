@@ -328,6 +328,91 @@
   },
   {
     "path": "apps/worker/src/provider-actions.ts",
+    "symbol": "authorizeProviderSideEffect",
+    "lines": [
+      181,
+      1107,
+      1138,
+      1153
+    ],
+    "found": true,
+    "blobId": "ee62b3529623270166ed79ed8c7cfc12d02b2748",
+    "gitFingerprint": {
+      "member": "members/cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376",
+      "bytes": 74385,
+      "sha256": "cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "apps/worker/src/provider-actions.ts",
+    "symbol": "authorizeRepositoryContextInTransaction",
+    "lines": [
+      389,
+      500,
+      817
+    ],
+    "found": true,
+    "blobId": "ee62b3529623270166ed79ed8c7cfc12d02b2748",
+    "gitFingerprint": {
+      "member": "members/cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376",
+      "bytes": 74385,
+      "sha256": "cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "apps/worker/src/provider-actions.ts",
+    "symbol": "revalidateMergeExecution",
+    "lines": [
+      595,
+      1134,
+      1139
+    ],
+    "found": true,
+    "blobId": "ee62b3529623270166ed79ed8c7cfc12d02b2748",
+    "gitFingerprint": {
+      "member": "members/cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376",
+      "bytes": 74385,
+      "sha256": "cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "apps/worker/src/provider-actions.ts",
+    "symbol": "revalidateCiRetryExecution",
+    "lines": [
+      755,
+      1116
+    ],
+    "found": true,
+    "blobId": "ee62b3529623270166ed79ed8c7cfc12d02b2748",
+    "gitFingerprint": {
+      "member": "members/cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376",
+      "bytes": 74385,
+      "sha256": "cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "apps/worker/src/provider-actions.ts",
+    "symbol": "executeAction",
+    "lines": [
+      1082,
+      1394,
+      1402
+    ],
+    "found": true,
+    "blobId": "ee62b3529623270166ed79ed8c7cfc12d02b2748",
+    "gitFingerprint": {
+      "member": "members/cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376",
+      "bytes": 74385,
+      "sha256": "cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "apps/worker/src/provider-actions.ts",
     "symbol": "checkpointProviderResult",
     "lines": [
       503,
@@ -369,6 +454,106 @@
       "member": "members/cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376",
       "bytes": 74385,
       "sha256": "cb181f6e14de36401b0cd7840d22a1574acb819f165e992c8c5caf9f593db376"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "apps/api/src/commands.ts",
+    "symbol": "authorizeReplay",
+    "lines": [
+      27,
+      405
+    ],
+    "found": true,
+    "blobId": "8704d60af12c9213ff6d241a05bb06ffe0451451",
+    "gitFingerprint": {
+      "member": "members/6b63d2b3a110f9b03f8f46587f594beef6bfef60588e14aea5fcc296a83cda39",
+      "bytes": 40745,
+      "sha256": "6b63d2b3a110f9b03f8f46587f594beef6bfef60588e14aea5fcc296a83cda39"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "apps/api/src/commands.ts",
+    "symbol": "beforeReserve",
+    "lines": [
+      26,
+      343
+    ],
+    "found": true,
+    "blobId": "8704d60af12c9213ff6d241a05bb06ffe0451451",
+    "gitFingerprint": {
+      "member": "members/6b63d2b3a110f9b03f8f46587f594beef6bfef60588e14aea5fcc296a83cda39",
+      "bytes": 40745,
+      "sha256": "6b63d2b3a110f9b03f8f46587f594beef6bfef60588e14aea5fcc296a83cda39"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "apps/api/src/commands.ts",
+    "symbol": "previous.response_body",
+    "lines": [
+      400,
+      406
+    ],
+    "found": true,
+    "blobId": "8704d60af12c9213ff6d241a05bb06ffe0451451",
+    "gitFingerprint": {
+      "member": "members/6b63d2b3a110f9b03f8f46587f594beef6bfef60588e14aea5fcc296a83cda39",
+      "bytes": 40745,
+      "sha256": "6b63d2b3a110f9b03f8f46587f594beef6bfef60588e14aea5fcc296a83cda39"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "packages/db/src/agent-locks.ts",
+    "symbol": "export async function lockAgentAuthorityPlan",
+    "lines": [
+      66,
+      83
+    ],
+    "found": true,
+    "blobId": "cf734d13b36c61aa820a9b4b5df7e91fcd512994",
+    "gitFingerprint": {
+      "member": "members/d732f393e102d08134535a589bd13f97651c2d9c4ac10aa14487b8d1142c0eb6",
+      "bytes": 3806,
+      "sha256": "d732f393e102d08134535a589bd13f97651c2d9c4ac10aa14487b8d1142c0eb6"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "packages/db/src/agent-locks.ts",
+    "symbol": "await lockIds",
+    "lines": [
+      88,
+      110,
+      111,
+      112,
+      113,
+      115,
+      116
+    ],
+    "found": true,
+    "blobId": "cf734d13b36c61aa820a9b4b5df7e91fcd512994",
+    "gitFingerprint": {
+      "member": "members/d732f393e102d08134535a589bd13f97651c2d9c4ac10aa14487b8d1142c0eb6",
+      "bytes": 3806,
+      "sha256": "d732f393e102d08134535a589bd13f97651c2d9c4ac10aa14487b8d1142c0eb6"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "apps/worker/src/index.ts",
+    "symbol": "resolveProvider:",
+    "lines": [
+      384
+    ],
+    "found": true,
+    "blobId": "d384e01b5797c5fca4b7b5020121d8df29970550",
+    "gitFingerprint": {
+      "member": "members/f5f5028be9d032ae9365b82f4cffff6c19acfe4e0d707add2071c52a20560180",
+      "bytes": 20422,
+      "sha256": "f5f5028be9d032ae9365b82f4cffff6c19acfe4e0d707add2071c52a20560180"
     },
     "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
   },
@@ -450,6 +635,54 @@
       643,
       722,
       860
+    ],
+    "found": true,
+    "blobId": "6584b28b364e1d30d323c76c0d353b817329450f",
+    "gitFingerprint": {
+      "member": "members/e84afde1273efd8408c5b0576fcea7f63d05d30ab64030022eaf58edd996b115",
+      "bytes": 35106,
+      "sha256": "e84afde1273efd8408c5b0576fcea7f63d05d30ab64030022eaf58edd996b115"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "packages/git-provider/src/index.ts",
+    "symbol": "async retryCheck",
+    "lines": [
+      316,
+      493,
+      859
+    ],
+    "found": true,
+    "blobId": "6584b28b364e1d30d323c76c0d353b817329450f",
+    "gitFingerprint": {
+      "member": "members/e84afde1273efd8408c5b0576fcea7f63d05d30ab64030022eaf58edd996b115",
+      "bytes": 35106,
+      "sha256": "e84afde1273efd8408c5b0576fcea7f63d05d30ab64030022eaf58edd996b115"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "packages/git-provider/src/index.ts",
+    "symbol": "/rerequest",
+    "lines": [
+      319
+    ],
+    "found": true,
+    "blobId": "6584b28b364e1d30d323c76c0d353b817329450f",
+    "gitFingerprint": {
+      "member": "members/e84afde1273efd8408c5b0576fcea7f63d05d30ab64030022eaf58edd996b115",
+      "bytes": 35106,
+      "sha256": "e84afde1273efd8408c5b0576fcea7f63d05d30ab64030022eaf58edd996b115"
+    },
+    "limitation": "空lines表示未发现，不冒现有检查；完整文件在source ZIP"
+  },
+  {
+    "path": "packages/git-provider/src/index.ts",
+    "symbol": "async #request",
+    "lines": [
+      150,
+      695
     ],
     "found": true,
     "blobId": "6584b28b364e1d30d323c76c0d353b817329450f",

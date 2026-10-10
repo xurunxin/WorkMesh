@@ -1,0 +1,20 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "C:\\nvm4w\\nodejs\\npm.cmd",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b\\docs\\plan\\agent-mcp-m3\\.runtime",
+      "exitCode": 0,
+      "stdout": "\nadded 3 packages in 2s\n",
+      "stderr": ""
+    }
+  ],
+  "runtime": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b\\docs\\plan\\agent-mcp-m3\\.runtime",
+  "scope": "本轮独审修订规划，仅三项隔离依赖，不重写上轮bootstrap原件",
+  "cleanup": "核验结束后按路径归属清理；日志/锁文件保全"
+}

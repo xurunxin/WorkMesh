@@ -69,7 +69,7 @@ def main():
     assert original.startswith(visible), '原注入全文与工具可见前缀不符'
     rebuilt=original
     edits=load('input/plan-edits.json')['edits']
-    assert len(edits)==4
+    assert len(edits)==7
     for edit in edits:
         assert rebuilt.count(edit['old'])==1
         rebuilt=rebuilt.replace(edit['old'],edit['new'])
@@ -122,6 +122,23 @@ def main():
                 if e['path'].endswith('/source-snapshot.zip'):continue
                 check(archive.read('inputs/'+e['path']),e)
     counts.update(artifactEntries=len(artifact),rawCheckArchives=len(receipts))
+    previous=load('history/reviewed-candidate-manifest.json')
+    raw=previous['archive'];check((ROOT/raw['path']).read_bytes(),raw)
+    with zipfile.ZipFile(ROOT/raw['path']) as archive:
+        check(archive.read('commit'),previous['commitObject'])
+        assert archive.read('commit')==git('cat-file','commit',previous['reviewedCandidate'])
+        assert archive.testzip() is None
+        for entry in previous['entries']:
+            data=archive.read(entry['member']) if 'member' in entry else (ROOT/entry['unchangedArchive']).read_bytes()
+            check(data,entry)
+            assert data==git('cat-file','blob',entry['blobId'])
+    recovery=load('worker-recovery-matrix.json')
+    assert len(recovery['rows'])==18 and recovery['attemptCountMonotonic'] and recovery['newMigrations']==0
+    assert len({(e['provider'],e['kind']) for e in recovery['rows']})==18
+    for e in recovery['rows']:
+        assert e['productStatus']=='未运行' and e['mutationHttpOnRecovery']==0
+        assert e['withoutCheckpointAfterClaim']==('bounded_read_retry' if e['kind']=='resolve_repository_context' else 'stop_dead_unknown')
+    counts.update(preservedPreviousCandidateFiles=len(previous['entries']),providerKindRecoveryRows=len(recovery['rows']))
     print(json.dumps({'status':'规划静态通过，不是产品通过','counts':counts,'exitCode':0},ensure_ascii=False))
 
 if __name__=='__main__':main()

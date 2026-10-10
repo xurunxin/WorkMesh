@@ -28,15 +28,15 @@ effect 为 committed、checkpointed、unknown：status=completed 且合法 resul
 
 error 仅 code，来自封闭 allowlist；不以 split(last_error) 原样放行任意 provider 字串。可识别权限拒绝、head/approval/check、claim lost、provider unsupported 统一映射为稳定安全 code，其余 PROVIDER_ACTION_FAILED。该 code 不证明副作用没有发生。
 
-recovery：completed/committed 为 none；pending/claimed 为 poll_same_action，nextQueryAt=max(服务端当前时刻+有界轮询间隔,available_at)；failed 同时揭示 scheduled 是否还有现有有界重试，客户端仍只 poll_same_action；dead 或 invalid result 为 human_reconcile。任何 outcome unknown 都不提供重新 POST、new key、claim/lease续期或自动重发按钮。现 Worker 对原 action 的 adapter 安全恢复与客户端创建新 action 分别说明，不将读合同冒 provider exactly-once。
+recovery：completed/committed 为 none；初次 pending/claimed 为 poll_same_action，nextQueryAt=max(服务端当前时刻+有界轮询间隔,available_at)。五类写 action 有领取历史且无合法 checkpoint 的任何恢复路径先保守停发转 dead/PROVIDER_ACTION_OUTCOME_UNKNOWN，投影 scheduled=false、human_reconcile；旧 failed 写 action不冒还有安全自动外发。context纯 GET 才保留原有界重试，合法checkpoint只本地完成。完整 provider/kind 分表见 [Worker恢复合同](worker-recovery.md)。任何unknown都不提供重新POST、new key、claim/lease续期或自动重发；不将adapter去重、当前merge观察或读合同冒provider exactly-once。
 
 ## 六类 action 与消费者
 
 本提案覆盖 create_branch/create_commit/open_pull_request/merge_pull_request/retry_ci_check/resolve_repository_context。历史字段 null 如实返回；action 完成与 E Session 终态不同，E 在活跃期间可以确认 action 终态。E complete/stopAck 丢响应仍沿 M1 原安装来源专用 execution-result；Pi completion 沿外层 settle，不放宽本 GET 的终态 E。
 
-查询必须不消耗 merge/CI approval。Worker 复用 revalidateClaimedProvider、发送前 authority/expected head/check/review/approval gate、checkpointProviderResult、finishAction。现 claim 由 claimed_by/status 绑定、60秒后可reclaim，但锁后未校验真实租期且CAS未绑定attempt；本批明确补齐，不宣称旧实现已满足新竞争验收。
+查询不消耗merge/CI approval。现普通authorizeProviderSideEffect只锁action，不具备context resolution使用的authority锁；claim的CAS缺attempt且锁后未核真实租期，无checkpoint重领还会重调adapter。三项缺口均明确改为待实现，不宣称旧实现满足新竞争验收。
 
-新外发前在原authority/相关行锁取齐后，以 clock_timestamp() 重验 claimed_at+原60秒期限、workerId、action.attempt_count。过期但仍持有原generation且无checkpoint：CAS释放为pending，available_at按原有界退避计算，attempt不冒撤权或永久dead；失去generation直接退出零HTTP、零旧事实覆盖。所有checkpoint/finish/fail/reclaim相关CAS同时绑定worker/attempt/status。已外发完成的迟到结果仅在仍持原generation时写安全checkpoint并本地finish；不可凭租期过期再调用provider。重领后新Worker仅沿原adapter可证明的reconcile路径恢复；不可证明仍是unknown。无新状态、期限或发送标记列，零迁移；原首败与重跑实证都须保留。
+按 [完整发送前事务](worker-authority.md) 补普通Git的authority-first锁计划、锁后事实重读、同tx merge/CI门禁及最后clock_timestamp租期/approval核验；每次真实仓库写HTTP前执行action-scoped beforeMutation guard，事务提交后发送，锁不跨provider I/O。按 [恢复合同](worker-recovery.md) 保守停发历史无checkpoint写action，attempt保持单调，失代零覆盖；合法checkpoint只本地完成，不借merged观察合成原结果。零新状态、期限或发送标记列、零迁移；unknown停发用既有dead/last_error/原dead_lettered事件，不是authority_revoked。授权事务先提交允许该次在途请求，Stop/撤权先提交则零仓库写，后续请求各自重验。
 
 authz/authorize.ts 对新getProviderAction只收敛目标可见性边界：正常身份/状态/能力检查保留，隐藏target的所有早期拒绝统一NOT_FOUND或由最终授权SELECT裁定；不得按未授权locator返回不同Team/feature错误。其他operation不沿此例外。
 

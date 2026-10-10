@@ -71,7 +71,27 @@
       "repo:open_pr",
       "repo:merge",
       "ci:run"
-    ]
+    ],
+    "replay": {
+      "beforeReserve": "完整父/目标/准确回执子authority锁先于幂等回执锁",
+      "authorizeReplay": "同一校验器重验三方repo:read/父当前scope/精确父子binding/共享context",
+      "repeatAdmission": false,
+      "omittedRepositoryIds": "M2权限和回执不变，仅内部锁序统一"
+    }
+  },
+  "workerRecovery": {
+    "matrix": "worker-recovery.md",
+    "writeWithoutCheckpointAfterClaim": "dead/PROVIDER_ACTION_OUTCOME_UNKNOWN/human_reconcile",
+    "checkpoint": "只本地完成，零provider HTTP",
+    "contextOnly": "原有界纯GET重试",
+    "monotonicAttempt": true
+  },
+  "workerSend": {
+    "contract": "worker-authority.md",
+    "guard": "内部action-scoped beforeMutation，逐次仓库写HTTP",
+    "authorityRanks": "复用lockAgentAuthorityPlan完整计划",
+    "gates": "merge/CI/最终租期/approval同tx",
+    "providerIoInsideTransaction": false
   },
   "generation": "保M0/M1/M2输入，新增M3产品决策增量；当前提案不进入生成脚本运行",
   "humanPreserved": [

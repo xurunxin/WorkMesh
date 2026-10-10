@@ -1,0 +1,23 @@
+{
+  "failures": [
+    {
+      "stage": "源码定位",
+      "error": "首轮定位使用未展开Windows glob及不存在路径，rg实际返回路径错误；聚合tool长输出截断且未保完整封包，独立exit/chunk未取得，不补猜。随后rg --files定位真实agent-locks.ts，完整源由既有ZIP/Git对象读取。",
+      "actualAggregateExitCode": null,
+      "chunkId": "未在已截断聚合输出中取得，保留缺口"
+    },
+    {
+      "stage": "ADR定位",
+      "error": "读取不存在docs/adr/0068-agent-resource-lock-order.md，后续命令成功令聚合exit0；非终止读取错误不计通过。",
+      "actualAggregateExitCode": 0,
+      "chunkId": "1b58b1"
+    },
+    {
+      "stage": "规划工件同步",
+      "error": "apply_patch verification failed: invalid patch: multiple operations target savedplan.md；整个patch未应用。随后将同文件多处修改合并到一个文件操作。",
+      "actualShellExitCode": null,
+      "toolApprovalRejection": false,
+      "rawToolCallId": null
+    }
+  ]
+}
