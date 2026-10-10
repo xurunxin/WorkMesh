@@ -1238,7 +1238,7 @@ export const buildApp = (options: {
   registerClientProfileRoutes(app, { db, features });
   registerGuidanceRoutes(app, { db, meta: commandContext, header });
   registerDocumentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
-  registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
+  registerCollaborationRoutes(app, { db, features, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerInboxRoutes(app, { db, meta: commandContext, header, paginator });
   registerCollaborationQueueCountRoutes(app, { db });
   registerHumanAttentionRoutes(app, { db, paginator });

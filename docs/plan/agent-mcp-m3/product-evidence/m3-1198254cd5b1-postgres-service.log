@@ -1,0 +1,87 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 10:45:14.723 UTC [41] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 10:45:14.724 UTC [41] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 10:45:14.724 UTC [44] LOG:  database system was shut down at 2026-10-10 10:45:14 UTC
+2026-10-10 10:45:14.726 UTC [41] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-10 10:45:14.843 UTC [41] LOG:  received fast shutdown request
+2026-10-10 10:45:14.843 UTC [41] LOG:  aborting any active transactions
+2026-10-10 10:45:14.844 UTC [41] LOG:  background worker "logical replication launcher" (PID 47) exited with exit code 1
+2026-10-10 10:45:14.844 UTC [42] LOG:  shutting down
+2026-10-10 10:45:14.844 UTC [42] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 10:45:14.848 UTC [42] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.001 s, total=0.004 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 10:45:14.851 UTC [41] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 10:45:14.458 UTC [35] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 10:45:14.952 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 10:45:14.953 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 10:45:14.953 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 10:45:14.955 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 10:45:14.956 UTC [63] LOG:  database system was shut down at 2026-10-10 10:45:14 UTC
+2026-10-10 10:45:14.958 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 10:45:27.280 UTC [74] ERROR:  new row for relation "agent_sessions" violates check constraint "agent_sessions_check1"
+2026-10-10 10:45:27.280 UTC [74] DETAIL:  Failing row contains (526ad6b5-0c17-4ac5-9a6c-1f3737d459db, 0a6a92f5-8851-4396-9aa7-bac4c9938374, b01d9001-0f43-4a47-8b40-82a64642f3ee, f75336d0-f66d-4261-971d-36947d48faaf, 5ff18673-9557-48b1-8b00-bd0e7d127002, c83c780a-3f79-4074-9e29-b3f8af2d0567, null, 7975310f-957c-4306-930b-3f6a1d8477e9, null, null, completed, delivery integration, 2, 3, null, bd4a1a76-88c6-4949-b016-ef09c466bb84, {}, [], 2026-10-10 10:45:27.192142+00, null, null, null, null, [], null, null, null, null, 2026-10-10 10:45:27.144476+00, 2026-10-10 10:45:27.215118+00, null, null, 0, 8, {}, f, null, null, healthy, 2026-10-10 10:45:27.144476+00, null, null, {}, null, null, execution, null).
+2026-10-10 10:45:27.280 UTC [74] STATEMENT:  UPDATE agent_sessions SET state='completed' WHERE id=$1
+2026-10-10 10:45:47.783 UTC [78] WARNING:  there is no transaction in progress
+2026-10-10 10:45:47.784 UTC [76] WARNING:  there is no transaction in progress
+2026-10-10 10:45:48.472 UTC [76] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 10:45:48.472 UTC [76] CONTEXT:  PL/pgSQL function a2_failure_9d924a27dccd46119caceb741cba88aa() line 1 at RAISE
+2026-10-10 10:45:48.472 UTC [76] STATEMENT:  INSERT INTO repository_contexts(
+	             workspace_id,repository_id,project_id,work_item_id,session_id,base_branch,base_sha,
+	             branch_pattern,allowed_paths,permissions,guidance_manifest_hash,created_by_actor_id)
+	           VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+	           RETURNING id
+2026-10-10 10:45:49.083 UTC [76] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 10:45:49.083 UTC [76] CONTEXT:  PL/pgSQL function a2_failure_b7d58cd62aea4fbaa4e9cec2349d5177() line 1 at RAISE
+2026-10-10 10:45:49.083 UTC [76] STATEMENT:  INSERT INTO repository_guidance_entries(
+	               context_id,ordinal,path,blob_sha,content_hash,content)
+	             VALUES($1,$2,$3,$4,$5,$6)
+2026-10-10 10:45:49.760 UTC [76] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 10:45:49.760 UTC [76] CONTEXT:  PL/pgSQL function a2_failure_12e2432512914a06a0bd1f99fd070a27() line 1 at RAISE
+2026-10-10 10:45:49.760 UTC [76] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 10:45:50.414 UTC [76] ERROR:  A2_TEST_TRANSACTION_FAILURE
+2026-10-10 10:45:50.414 UTC [76] CONTEXT:  PL/pgSQL function a2_failure_a2f4b5bac98f41999cac408d35ee44ad() line 1 at RAISE
+2026-10-10 10:45:50.414 UTC [76] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)

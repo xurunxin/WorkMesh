@@ -51,6 +51,14 @@ function apiFor(capabilities: Capability[],
 
 /** Minimal valid input per tool name, so the matrix drives real execution paths. */
 const inputs: Record<string, Record<string, unknown>> = {
+  workmesh_get_artifact_upload_status: {uploadId:documentId},
+  workmesh_list_work_item_artifacts: {workItemId:ownerId},
+  workmesh_download_verified_artifact: {uploadId:documentId},
+  workmesh_get_project_delivery: {projectId:ownerId},
+  workmesh_draft_project_update: {projectId:ownerId,health:'on_track',body:'Draft only'},
+  workmesh_suggest_work_item_completion: {projectId:ownerId,workItemId:documentId,rationale:'Human decides'},
+  workmesh_get_project_health_history: {projectId:ownerId},
+  workmesh_create_project_health_update: {projectId:ownerId,ifMatch:1,health:'on_track',summary:'Bounded facts',confidence:0.5,uncertainty:'Unverified provider',sources:[{kind:'session',id:sessionId,observedAt:new Date().toISOString()}]},
   workmesh_list_child_sessions: {},
   workmesh_create_child_session: {"agentId": ownerId, "planStepId": documentId, "planVersionId": baseRevisionId, "initialPrompt": "Bounded child", "budget": {"maxInputTokens": 60}},
   workmesh_create_review_delegation: {"reviewerAgentId": ownerId, "planStepId": documentId, "planVersionId": baseRevisionId, "initialPrompt": "Bounded review", "budget": {"maxInputTokens": 40}},

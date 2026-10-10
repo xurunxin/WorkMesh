@@ -271,7 +271,7 @@ describe('Stage 3 delivery API', () => {
     const queued=await agentCall(f.agent.token,'POST','/api/v1/provider-actions',{kind:'create_branch',repositoryId:f.repositoryId,workItemId:f.workItemId,sessionId:f.agent.sessionId,name:'workmesh/GEN-1-terminal',baseSha:'base-sha'})
     expect(queued.statusCode).toBe(200)
     const action=queued.json<{id:string}>().id
-    await db.query("UPDATE agent_sessions SET state='completed' WHERE id=$1",[f.agent.sessionId])
+    await db.query("UPDATE agent_sessions SET state='completed',ended_at=clock_timestamp() WHERE id=$1",[f.agent.sessionId])
     expect((await humanCall(f.human,'GET',`/api/v1/provider-actions/${action}`)).statusCode).toBe(200)
     expect((await agentCall(f.agent.token,'GET',`/api/v1/provider-actions/${action}`)).statusCode).toBeGreaterThanOrEqual(400)
     expect((await humanCall(f.human,'GET',`/api/v1/repositories/${f.repositoryId}/context`)).json()).not.toHaveLength(0)

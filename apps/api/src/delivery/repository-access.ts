@@ -54,7 +54,7 @@ export function reviewRepositoryParentPredicate(s: string, r: string, rc: string
 }
 
 export async function assertReviewRepositoryScope(
-  tx: PoolClient, current: ApiActor, repositoryIds: readonly string[],
+  tx: PoolClient, current: ApiActor, repositoryIds: readonly string[], giteaEnabled: boolean,
 ): Promise<void> {
   const sorted = [...repositoryIds].sort()
   const locators = (await tx.query<{ connection_id: string }>(
@@ -65,7 +65,7 @@ export async function assertReviewRepositoryScope(
   const contexts = (await applicableAgentRepositoryContexts(tx, current)).rows
   for (const repositoryId of sorted) {
     const context = contexts.find(context => context.id === repositoryId)
-    if (!context || context.session_id !== null || !context.permissions.includes('read') || !context.permissions.includes('review'))
+    if (!context || (context.provider==='gitea' && !giteaEnabled) || context.session_id !== null || !context.permissions.includes('read') || !context.permissions.includes('review'))
       throw new DomainError('REPOSITORY_ACCESS_DENIED', 'Review requires the latest shared WorkItem or Project repository context')
     // A newly created child has this exact WorkItem but no copied Session pin.
     const parent = (await tx.query<{ work_item_id: string | null; project_id: string | null }>(

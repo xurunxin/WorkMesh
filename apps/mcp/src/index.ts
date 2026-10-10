@@ -157,6 +157,7 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
   server.registerTool('get_project_health_history',{description:'分页读取授权Project健康历史。',inputSchema:{projectId:z.string().uuid(),...deliveryPage}},async input=>tool(()=>deliveryClient.getProjectHealthHistory(input.projectId,input)))
   server.registerTool('cancel_artifact_upload',{description:'取消本人未完成上传；稳定key，无If-Match。',inputSchema:{uploadId:z.string().uuid(),sessionId,idempotencyKey}},async input=>tool(()=>deliveryClient.cancelArtifactUpload(input.uploadId,input.sessionId,{idempotencyKey:input.idempotencyKey})))
   server.registerTool('create_project_health_update',{description:'Agent草拟健康记录；publish=true仍需要Human精确批准。',inputSchema:{...projectHealthInputSchema.innerType().shape,source:z.literal('agent'),projectId:z.string().uuid(),sessionId,revision:z.number().int().positive(),idempotencyKey}},async ({projectId,sessionId,revision,idempotencyKey,...input})=>tool(()=>deliveryClient.createProjectHealthUpdate(projectId,input,{sessionId,ifMatch:revision,idempotencyKey})))
+  server.registerTool('suggest_work_item_completion',{description:'向Human建议完成准确WorkItem；不改变工作流、不代替Human裁决。',inputSchema:{projectId:z.string().uuid(),workItemId:z.string().uuid(),pullRequestId:z.string().uuid().optional(),rationale:z.string().min(1).max(10000),evidenceArtifactIds:z.array(z.string().uuid()).max(100).optional(),sessionId,idempotencyKey}},async ({projectId,sessionId,idempotencyKey,...input})=>tool(()=>deliveryClient.suggestCompletion(projectId,input,{sessionId,idempotencyKey})))
   return server
 }
 

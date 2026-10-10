@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto'
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { Pool, PoolClient } from 'pg'
 import { z } from 'zod'
+import type {FeatureConfig} from '@workmesh/config'
 import {
   agentExecutionCapacitySqlPredicate,
   appendEvent,
@@ -38,7 +39,7 @@ import {
 } from '../live-read-authorization.js'
 import { readGuidance } from '../guidance.js'
 
-type Helpers = { db: Pool; meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta; header: (request: FastifyRequest, name: string) => string | undefined; readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>; paginator: Paginator }
+type Helpers = { db: Pool; features:FeatureConfig; meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta; header: (request: FastifyRequest, name: string) => string | undefined; readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>; paginator: Paginator }
 type Subject = 'work_item' | 'project' | 'session'
 const uuid = z.string().uuid()
 const actor = (request: FastifyRequest) => request.actor as unknown as ApiActor
@@ -1500,7 +1501,7 @@ async function createReview(h:Helpers,request:FastifyRequest) {
     // for ACK/state/heartbeat protocol writes. Reviewers still lack plan:write.
     const reviewCaps=['work:read','work:write','artifact:write',...(body.repositoryIds ? ['repo:read'] : [])]
     if(!source || !access || !reviewCaps.every(cap=>source.permissions_snapshot.includes(cap)&&target.approved_capabilities.includes(cap)&&access.approved_capabilities.includes(cap))) throw new DomainError('CAPABILITY_DENIED','Review capabilities must be authorized by the parent delegation, reviewer, and team grant')
-    if(body.repositoryIds) await assertReviewRepositoryScope(tx,actor(request),body.repositoryIds)
+    if(body.repositoryIds) await assertReviewRepositoryScope(tx,actor(request),body.repositoryIds,h.features.WORKMESH_BETA_GITEA)
     return {parent,target,source,reviewCaps}
   }
   return command(h.db,meta,async tx=>{
@@ -1555,13 +1556,13 @@ async function createReview(h:Helpers,request:FastifyRequest) {
         [child.id,body.repositoryIds,actor(request).workspaceId,parent.work_item_id,parent.project_id??parent.work_item_project_id,parent.id])).rows[0]
       if(!shared?.valid) throw new DomainError('REPOSITORY_ACCESS_DENIED','Original review child shared context no longer matches')
     }
-      const delegation=(await tx.query<{parent_delegation_id:string;principal_human_actor_id:string;role:string;scope_type:string;scope_id:string;permissions_snapshot:string[];capability_scope:{repositoryIds?:string[]}}>(
-        'SELECT parent_delegation_id,principal_human_actor_id,role,scope_type,scope_id,permissions_snapshot,capability_scope FROM delegations WHERE id=$1',[child.delegation_id],
+      const delegation=(await tx.query<{status:string;parent_delegation_id:string;principal_human_actor_id:string;role:string;scope_type:string;scope_id:string;permissions_snapshot:string[];capability_scope:{repositoryIds?:string[]}}>(
+        'SELECT status,parent_delegation_id,principal_human_actor_id,role,scope_type,scope_id,permissions_snapshot,capability_scope FROM delegations WHERE id=$1',[child.delegation_id],
       )).rows[0]
       const same=(a:readonly string[],b:readonly string[])=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort())
       if(child.parent_session_id!==parent.id || child.team_id!==parent.team_id || child.work_item_id!==parent.work_item_id
         || child.agent_id!==target.id || child.agent_actor_id!==target.actor_id || child.plan_step_id!==body.planStepId
-        || child.plan_step_version_id!==body.planVersionId || delegation?.parent_delegation_id!==parent.delegation_id
+        || child.plan_step_version_id!==body.planVersionId || delegation?.status!=='active' || delegation.parent_delegation_id!==parent.delegation_id
         || delegation.principal_human_actor_id!==source.principal_human_actor_id || delegation.role!=='reviewer'
         || delegation.scope_type!=='plan_step' || delegation.scope_id!==body.planStepId || !same(delegation.permissions_snapshot,reviewCaps)
         || (body.repositoryIds && !same(delegation.capability_scope.repositoryIds??[],body.repositoryIds)))
