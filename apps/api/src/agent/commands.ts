@@ -26,7 +26,7 @@ import type {
 } from "@workmesh/contracts";
 import { authIdempotentTransaction } from "../auth-idempotency.js";
 import { isHeartbeatReplay, recordHeartbeatKey } from "../heartbeat-idempotency.js";
-import { assertAgentWrite, loadAgentSessionForMutation } from "./guard.js";
+import { assertAgentWrite, assertAgentPrincipalInTx, loadAgentSessionForMutation } from "./guard.js";
 import type { ApiActor, RequestMeta } from "./types.js";
 import { materializeSessionContextSnapshot } from "../guidance.js";
 import {
@@ -325,8 +325,11 @@ export async function agentMutate<T>(db: Pool, meta: RequestMeta, handler: (tx: 
       if (previous.operation !== meta.operation || previous.request_hash !== meta.requestHash) throw new DomainError("IDEMPOTENCY_KEY_REUSED", "Idempotency-Key was already used for a different request");
       if (previous.replay_expires_at.getTime() <= Date.now()) throw new DomainError("IDEMPOTENCY_REPLAY_EXPIRED", "Idempotency replay material expired; use a new key");
       if (previous.response_body === null) throw new DomainError("IDEMPOTENCY_REPLAY_UNAVAILABLE", "The original response is unavailable");
+      // Replays must retain live principal authority even when the handler is skipped.
+      await assertAgentPrincipalInTx(tx, meta.actor);
       return previous.response_body;
     }
+    await assertAgentPrincipalInTx(tx, meta.actor);
     const response = await handler(tx);
     await tx.query("UPDATE api_idempotency_keys SET response_status=200,response_body=$4 WHERE workspace_id=$1 AND actor_id=$2 AND idempotency_key=$3", [meta.actor.workspaceId, meta.actor.id, meta.idempotencyKey, response]);
     return response;

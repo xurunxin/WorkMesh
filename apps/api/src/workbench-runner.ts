@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { completeAgentSessionInputSchema, workbenchRunnerCredentialSchema, workbenchRunnerSettleInputSchema, workbenchUsageSchema,
   workbenchExecutionWaitOptInSchema, workbenchExecutionWaitQuerySchema } from '@workmesh/contracts'
 import { appendEvent, withTx, executionWaitSchemaAvailable, assertWorkbenchWaitAdmission,
-  continuationForWait, createWorkbenchExecutionWait, executionWaitsEnabled } from '@workmesh/db'
+  continuationForWait, createWorkbenchExecutionWait, executionWaitsEnabled, principalTeamAuthorityPredicate } from '@workmesh/db'
 import { DomainError } from '@workmesh/domain'
 import {
   deriveTurnTelemetry, emitTurnTelemetry, logger,
@@ -337,7 +337,8 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
         delegation.status AS delegation_status FROM workbench_turns turn
         JOIN agent_sessions session ON session.id=turn.agent_session_id
         JOIN delegations delegation ON delegation.id=session.delegation_id
-        WHERE turn.workspace_id=$1 AND turn.id=$2`,
+        WHERE turn.workspace_id=$1 AND turn.id=$2
+          AND ${principalTeamAuthorityPredicate('delegation.principal_human_actor_id', 'session.workspace_id', 'session.team_id')}`,
       [current.workspaceId, attempt.turn_id])).rows, 'Turn')
     // Injected steering: a steering user message written after the attempt started is
     // handed to the runner once. The steer command already emitted the durable

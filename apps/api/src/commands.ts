@@ -1,4 +1,5 @@
 import { hasExecutionOrigin } from './agent/execution-origin.js';
+import { assertAgentPrincipalInTx } from './agent/guard.js';
 import type { Pool, PoolClient } from "pg";
 import { appendEvent, withTx } from "@workmesh/db";
 import { loadRetentionConfig } from "@workmesh/config";
@@ -402,9 +403,12 @@ export async function mutate<T>(
           "IDEMPOTENCY_REPLAY_UNAVAILABLE",
           "Idempotency response is unavailable",
         );
+      // A saved response is protected data, not a grant of historical authority.
+      await assertAgentPrincipalInTx(tx, context.actor);
       await options.authorizeReplay?.(tx);
       return previous.response_body;
     }
+    await assertAgentPrincipalInTx(tx, context.actor);
     const response = await handler(tx);
     await tx.query(
       "UPDATE api_idempotency_keys SET response_status=200,response_body=$1 WHERE workspace_id=$2 AND actor_id=$3 AND idempotency_key=$4",

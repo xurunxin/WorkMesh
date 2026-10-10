@@ -10,12 +10,27 @@ const context: CommandContext = {
     workspaceRole: "member",
     displayName: "Lock-order Agent",
     csrfToken: "",
+    agentSessionId: "00000000-0000-4000-8000-000000000003",
   },
   idempotencyKey: "lock-order",
   correlationId: "lock-order",
   operation: "replyInboxItem",
   requestHash: "request-hash",
 };
+
+const principalQuery = (sql: string) => {
+  if (sql.startsWith('SELECT d.principal_human_actor_id')) return {
+    rowCount: 1, rows: [{ principal_human_actor_id: 'principal', team_id: 'team' }],
+  };
+  if (sql.startsWith('SELECT s.id FROM agent_sessions')) return { rowCount: 1, rows: [{ id: context.actor.agentSessionId }] };
+  return undefined;
+};
+const principalLocks = [
+  expect.stringMatching(/^SELECT d.principal_human_actor_id/),
+  expect.stringMatching(/^SELECT id FROM actors .* FOR SHARE$/),
+  expect.stringMatching(/^SELECT actor_id FROM memberships .* FOR SHARE$/),
+  expect.stringMatching(/^SELECT s.id FROM agent_sessions/),
+];
 
 describe("command coordination lock order", () => {
   it.each([false, true])("runs coordination before reservation with execution-origin schema=%s", async present => {
@@ -24,6 +39,7 @@ describe("command coordination lock order", () => {
       query: vi.fn(async (sql: string) => {
         const normalized = sql.replaceAll(/\s+/g, " ").trim();
         calls.push(normalized);
+        const principal = principalQuery(normalized); if (principal) return principal;
         if (normalized.includes("FROM pg_attribute")) return { rowCount: 1, rows: [{ present }] };
         return {
           rowCount: normalized.startsWith("INSERT INTO api_idempotency_keys")
@@ -59,6 +75,7 @@ describe("command coordination lock order", () => {
       "SELECT pg_advisory_xact_lock(1)",
       expect.stringMatching(/^SELECT EXISTS\(SELECT 1 FROM pg_attribute/),
       expect.stringMatching(/^INSERT INTO api_idempotency_keys/),
+      ...principalLocks,
       "HANDLER",
       expect.stringMatching(/^UPDATE api_idempotency_keys/),
       "COMMIT",
@@ -77,6 +94,7 @@ describe("command coordination lock order", () => {
       query: vi.fn(async (sql: string) => {
         const normalized = sql.replaceAll(/\s+/g, " ").trim();
         calls.push(normalized);
+        const principal = principalQuery(normalized); if (principal) return principal;
         if (normalized.startsWith("INSERT INTO api_idempotency_keys"))
           return { rowCount: 0, rows: [] };
         if (normalized.startsWith("SELECT operation,request_hash"))
@@ -111,6 +129,7 @@ describe("command coordination lock order", () => {
       expect.stringMatching(/^SELECT EXISTS\(SELECT 1 FROM pg_attribute/),
       expect.stringMatching(/^INSERT INTO api_idempotency_keys/),
       expect.stringMatching(/^SELECT operation,request_hash/),
+      ...principalLocks,
       "AUTHORIZE_REPLAY",
       "COMMIT",
     ]);

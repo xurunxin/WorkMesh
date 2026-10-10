@@ -15,10 +15,10 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
   const listeners: Server[] = []
   const processes: Array<{ pid: number | undefined; url: string; exited?: boolean }> = []
   const children: ReturnType<typeof spawn>[] = []
-  const pairClient = async (clientType: 'opencode' | 'pi', capabilities: Capability[] = ['work:read', 'work:write', 'plan:write', 'message:write', 'artifact:write']) => {
+  const pairClient = async (clientType: 'opencode' | 'pi', capabilities: Capability[] = ['work:read', 'work:write', 'plan:write', 'message:write', 'artifact:write'], principalHumanActorId = fixture.humanActorId) => {
     const agentSlug = `m5-${clientType}-${randomUUID().slice(0, 8)}`
     const paired = await fixture.human<{ connection: { id: string }; connect_url: string }>('POST', '/api/v1/agent-connections', {
-      name: `M5 actual ${clientType}`, agentSlug, clientType, teamId: fixture.teamId, principalHumanActorId: fixture.humanActorId,
+      name: `M5 actual ${clientType}`, agentSlug, clientType, teamId: fixture.teamId, principalHumanActorId,
       requestedCapabilities: capabilities, grantAgentDelegate: false,
     })
     const response = await fetch(fixture.baseUrl + '/api/v1/agent-connections/redeem', { method: 'POST', headers: { 'content-type': 'application/json', 'idempotency-key': randomUUID() },
@@ -26,8 +26,8 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
     if (!response.ok) throw new Error(`M5_PAIRING_FAILED:${response.status}`)
     const token = (await response.json() as { installation_token: string }).installation_token
     const agent = (await fixture.db.query<{ agent_id: string }>('SELECT agent_id FROM agent_connections WHERE id=$1', [paired.connection.id])).rows[0]!
-    saveJointEvidence(`connection-${paired.connection.id}.json`, { clientType, agentId: agent.agent_id, connectionId: paired.connection.id, principal: fixture.humanActorId, preparedByHuman: true })
-    return { clientType, token, agentId: agent.agent_id, connectionId: paired.connection.id }
+    saveJointEvidence(`connection-${paired.connection.id}.json`, { clientType, agentId: agent.agent_id, connectionId: paired.connection.id, principal: principalHumanActorId, preparedByHuman: true })
+    return { clientType, token, agentId: agent.agent_id, connectionId: paired.connection.id, principalHumanActorId }
   }
   const refreshExecution = async (connection: { token: string }, sessionId: string, workItemId: string): Promise<Execution> => {
     const response = await fetch(`${fixture.baseUrl}/api/v1/agent-sessions/${sessionId}/token/refresh`, { method: 'POST', headers: { authorization: `Bearer ${connection.token}`, 'content-type': 'application/json', 'idempotency-key': randomUUID() }, body: '{}' })
@@ -35,10 +35,10 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
     const token = (await response.json() as { sessionToken: string }).sessionToken
     return { sessionId, workItemId, token, client: new WorkMeshClient({ baseUrl: fixture.baseUrl, sessionToken: token, installationToken: connection.token }) }
   }
-  const createClientExecution = async (connection: { token: string }, title: string, projectId?: string) => {
+  const createClientExecution = async (connection: { token: string; principalHumanActorId?: string }, title: string, projectId?: string) => {
     const states = await fixture.coordination.listWorkflowStates<{ id: string; name: string }>(fixture.teamId)
     const work = await fixture.human<{ id: string; revision: number }>('POST', '/api/v1/work-items', { teamId: fixture.teamId, title,
-      statusId: states.items.find(row => row.name === 'Ready')!.id, responsibleHumanActorId: fixture.humanActorId, ...(projectId ? { projectId } : {}) })
+      statusId: states.items.find(row => row.name === 'Ready')!.id, responsibleHumanActorId: connection.principalHumanActorId ?? fixture.humanActorId, ...(projectId ? { projectId } : {}) })
     const coordination = new WorkMeshClient({ baseUrl: fixture.baseUrl, coordinationToken: connection.token, installationToken: connection.token })
     const claim = await coordination.claimWorkItem(work.id, {}, { ifMatch: work.revision })
     await coordination.exchangeClaimedSessionToken(claim.session.id, claim.exchangeToken)
@@ -90,6 +90,9 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
     const transport: Array<{ method: string; path: string; key?: string; eHash: string; status: number }> = []
     const errors: string[] = []
     const proxyId = randomUUID()
+    // Private original bytes support explicit test-side reconciliation only.
+    // The proxy never sends a second request on behalf of a Runner tool.
+    const originals: Array<{ path: string; method: string; headers: Record<string, string>; body: Buffer }> = []
     let recovering: Promise<void> | undefined
     const proxy = createServer(async (request, response) => {
       try {
@@ -104,7 +107,10 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
         transport.push({ method, path, key: headers['idempotency-key'], eHash: fingerprint(headers.authorization ?? ''), status: result.status })
         await options.afterResponse?.(path, result.status)
         const matching = match(path, method), responseLost = matching && result.ok && observed.filter(row => row.responseLost).length < (options.losses ?? 1)
-        if (matching) observed.push({ method, path, bodyHash: fingerprint(body), headersHash: fingerprint(JSON.stringify(Object.entries(headers).sort(([a], [b]) => a.localeCompare(b)))), key: headers['idempotency-key'], revision: headers['if-match'], eHash: fingerprint(headers.authorization ?? ''), status: result.status, responseLost })
+        if (matching) {
+          originals.push({ path, method, headers, body })
+          observed.push({ method, path, bodyHash: fingerprint(body), headersHash: fingerprint(JSON.stringify(Object.entries(headers).sort(([a], [b]) => a.localeCompare(b)))), key: headers['idempotency-key'], revision: headers['if-match'], eHash: fingerprint(headers.authorization ?? ''), status: result.status, responseLost })
+        }
         if (responseLost) {
           if (observed.length === 1 && options.afterFirstCommit) { recovering = options.afterFirstCommit(); await recovering; recovering = undefined }
           if (options.lossMode === 'timeout') return
@@ -115,7 +121,15 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
       } catch (error) { errors.push(String(error)); saveJointEvidence(`proxy-errors-${proxyId}.json`, { errors }); response.destroy() }
     })
     listeners.push(proxy); proxy.listen(0, '127.0.0.1'); await once(proxy, 'listening')
-    return { url: `http://127.0.0.1:${(proxy.address() as { port: number }).port}`, observed, transport, errors }
+    return { url: `http://127.0.0.1:${(proxy.address() as { port: number }).port}`, observed, transport, errors,
+      reconcileOriginal: async (index: number, newKey?: string) => {
+        const original = originals[index]
+        if (!original) throw new Error('M5_ORIGINAL_REQUEST_NOT_CAPTURED')
+        const result = await fetch(upstream + original.path, { method: original.method,
+          headers: { ...original.headers, ...(newKey ? { 'idempotency-key': newKey } : {}) }, body: Uint8Array.from(original.body) })
+        return { status: result.status, data: await result.json() as unknown, originalEHash: fingerprint(original.headers.authorization ?? '') }
+      },
+    }
   }
   return { ...fixture, startApi, lossProxy, pairClient, refreshExecution, createClientExecution, secondHuman, close: async () => {
     for (const child of children) if (child.exitCode === null && child.signalCode === null) { const exited = once(child, 'exit'); child.kill(); await exited }

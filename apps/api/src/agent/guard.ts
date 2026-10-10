@@ -1,5 +1,5 @@
 import type { PoolClient } from "pg";
-import { lockAgentAuthorityPlan } from "@workmesh/db";
+import { lockAgentAuthorityPlan, principalTeamAuthorityPredicate } from "@workmesh/db";
 import { authorizeAgentMutation, DomainError } from "@workmesh/domain";
 import type { Capability } from "@workmesh/contracts";
 import type { ApiActor } from "./types.js";
@@ -28,6 +28,36 @@ const inactiveAuthority = (): never => {
     "DELEGATION_NOT_ACTIVE",
     "Agent delegation or team grant is no longer active",
   )
+}
+
+/** Hold the principal's live authority through commit, including receipt replay.
+ * These SHARE locks do not change the ranked Agent authority/resource plan.
+ * Do not lock Team here: Team deletion takes that row before the Agent graph.
+ */
+export async function assertAgentPrincipalInTx(tx: PoolClient, actor: ApiActor): Promise<void> {
+  if (actor.kind !== 'agent') return
+  if (!actor.agentSessionId) return inactiveAuthority()
+  const locator = (await tx.query<{ principal_human_actor_id: string; team_id: string }>(
+    `SELECT d.principal_human_actor_id,s.team_id
+       FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
+      WHERE s.id=$1 AND s.workspace_id=$2 AND s.agent_actor_id=$3`,
+    [actor.agentSessionId, actor.workspaceId, actor.id],
+  )).rows[0]
+  if (!locator) return inactiveAuthority()
+  await tx.query('SELECT id FROM actors WHERE id=$1 AND workspace_id=$2 FOR SHARE',
+    [locator.principal_human_actor_id, actor.workspaceId])
+  await tx.query(
+    'SELECT actor_id FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3 FOR SHARE',
+    [actor.workspaceId, locator.team_id, locator.principal_human_actor_id],
+  )
+  const live = await tx.query(
+    `SELECT s.id FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
+      WHERE s.id=$1 AND s.workspace_id=$2 AND s.agent_actor_id=$3
+        AND d.principal_human_actor_id=$4 AND s.team_id=$5
+        AND ${principalTeamAuthorityPredicate('d.principal_human_actor_id', 's.workspace_id', 's.team_id')}`,
+    [actor.agentSessionId, actor.workspaceId, actor.id, locator.principal_human_actor_id, locator.team_id],
+  )
+  if (!live.rowCount) return inactiveAuthority()
 }
 
 export async function authorizeCommandInTx(
@@ -260,6 +290,7 @@ export async function revalidateLockedAgentSessionForMutation(
   ) {
     throw new DomainError('UNAUTHENTICATED', 'An active Agent Session credential is required')
   }
+  await assertAgentPrincipalInTx(tx, actor)
   const definition = (await tx.query<{
     is_active: boolean
     approved_capabilities: Capability[]

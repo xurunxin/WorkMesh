@@ -5,11 +5,58 @@ import { fingerprint, saveJointEvidence } from './joint-clients.reporter.js'
 import { createDeliveryRecoveryFixture, deliveryCapabilities, sha256 } from './delivery-recovery.fixture.js'
 import type { ProviderActionProjection, ReviewDelegationResponse } from '@workmesh/contracts'
 import { canonicalMergeApprovalPayload } from '@workmesh/domain'
+import { tokenHash } from '@workmesh/db'
+import { mutate } from '../../../apps/api/src/commands.js'
+import { agentMutate } from '../../../apps/api/src/agent/commands.js'
+import { assertAgentPrincipalInTx, loadAgentSessionForMutation } from '../../../apps/api/src/agent/guard.js'
+import type { ApiActor } from '../../../apps/api/src/agent/types.js'
 
 let f: Awaited<ReturnType<typeof createJointClientsFixture>>
 describe('M5 真实Pi单toolCall受限传输重放', () => {
   beforeAll(async () => { f = await createJointClientsFixture() })
   afterAll(async () => { if (f) await f.close() })
+  it('活跃workspace admin无membership仍合法；principal共享锁使删除在事务提交后生效', async () => {
+    const admin = await f.createExecution('M5 admin without Team membership')
+    const membership = (await f.db.query<{ workspace_id: string; role: string }>(
+      'SELECT workspace_id,role FROM memberships WHERE team_id=$1 AND actor_id=$2', [f.teamId, f.humanActorId],
+    )).rows[0]
+    try {
+      await f.db.query('DELETE FROM memberships WHERE team_id=$1 AND actor_id=$2', [f.teamId, f.humanActorId])
+      const result = await admin.client.createDocument({ ownerType: 'work_item', ownerId: admin.workItemId, title: 'Admin positive', markdown: 'Current admin authority' })
+      expect(result.id).toBeTruthy()
+      saveJointEvidence('review-admin-membership-positive.json', { sessionId: admin.sessionId, documentId: result.id, actualREST: true, principalWorkspaceAdmin: true, teamMembershipAbsent: true, actualModel: false })
+    } finally {
+      if (membership) await f.db.query('INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,$4)', [membership.workspace_id, f.teamId, f.humanActorId, membership.role])
+    }
+    const h2 = await f.secondHuman(), connection = await f.pairClient('pi', undefined, h2.id)
+    const execution = await f.createClientExecution(connection, 'M5 membership serializes commit')
+    const row = (await f.db.query<{ agent_actor_id: string; workspace_id: string }>('SELECT agent_actor_id,workspace_id FROM agent_sessions WHERE id=$1', [execution.sessionId])).rows[0]!
+    const actor: ApiActor = { id: row.agent_actor_id, workspaceId: row.workspace_id, kind: 'agent', displayName: 'M5', workspaceRole: 'member', csrfToken: '', agentSessionId: execution.sessionId, credentialHash: tokenHash(execution.token) }
+    const authority = await f.db.connect(), withdrawal = await f.db.connect()
+    let deletion: Promise<unknown> | undefined
+    try {
+      await authority.query('BEGIN')
+      await assertAgentPrincipalInTx(authority, actor)
+      const pid = (await withdrawal.query<{ pid: number }>('SELECT pg_backend_pid() AS pid')).rows[0]!.pid
+      deletion = withdrawal.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3', [row.workspace_id, f.teamId, h2.id])
+      let blockers: number[] = []
+      for (let count = 0; count < 100 && !blockers.length; count++) {
+        blockers = (await authority.query<{ blockers: number[] }>('SELECT pg_blocking_pids($1) AS blockers', [pid])).rows[0]!.blockers
+        if (!blockers.length) await new Promise<void>(done => setTimeout(done, 10))
+      }
+      expect(blockers.length).toBeGreaterThan(0)
+      await authority.query('COMMIT')
+      await deletion
+      await authority.query('BEGIN')
+      await expect(assertAgentPrincipalInTx(authority, actor)).rejects.toMatchObject({ code: 'DELEGATION_NOT_ACTIVE' })
+      saveJointEvidence('review-membership-transaction-lock.json', { sessionId: execution.sessionId, withdrawalBackend: pid, actualBlockers: blockers, deletionCommittedOnlyAfterAuthorityCommit: true, nextTransactionRejected: true })
+    } finally {
+      await authority.query('ROLLBACK')
+      await deletion
+      authority.release(); withdrawal.release()
+      await f.db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'maintainer') ON CONFLICT DO NOTHING", [row.workspace_id, f.teamId, h2.id])
+    }
+  })
   it.each(['document', 'plan', 'room'] as const)('新增完整header指纹：%s首commit失响应→Runner原请求回执→模型实收，业务effect一次', async kind => {
     const execution = await f.createExecution(`M5 ${kind} original request`)
     const room = kind === 'room' ? await execution.client.getRoom<{ id: string }>({ workItemId: execution.workItemId }) : undefined
@@ -172,6 +219,78 @@ describe('M5 真实Pi单toolCall受限传输重放', () => {
       const facts = (await f.db.query('SELECT d.status,t.revoked_at FROM delegations d JOIN agent_sessions s ON s.delegation_id=d.id JOIN agent_session_tokens t ON t.session_id=s.id WHERE s.id=$1', [execution.sessionId])).rows
       expect(facts.every(row => row.status === 'revoked' && row.revoked_at)).toBe(true)
       saveJointEvidence('pi-delegation-revoke-before-replay.json', { captures, requests: proxy.observed, transport: proxy.transport, facts, preparation: 'Human REST revokeDelegation; original principal and installation unchanged', secondBusinessSend: false, originalPrincipalRetained: true, modelErrorReceived: captures.at(-1)?.results.some(result => result.includes('error')) ?? false })
+  })
+  it('成员资格删除拒绝原E status/同key回执/新key写；恢复后原回执单事实，Pi保留首次不确定性', async () => {
+    const human = await f.secondHuman()
+    const connection = await f.pairClient('pi', undefined, human.id)
+    const execution = await f.createClientExecution(connection, 'M5 exact membership withdrawal')
+    const membership = (await f.db.query<{ workspace_id: string; role: string }>(
+      'SELECT workspace_id,role FROM memberships WHERE team_id=$1 AND actor_id=$2', [f.teamId, human.id],
+    )).rows[0]!
+    let deleted = false, restored = false
+    const observations: Array<{ kind: string; status: number; originalEHash: string; data: unknown }> = []
+    const restore = async () => {
+      if (deleted && !restored) {
+        await f.db.query('INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,$4)',
+          [membership.workspace_id, f.teamId, human.id, membership.role])
+        restored = true
+      }
+    }
+    const proxy = await f.lossProxy(f.baseUrl, (path, method) => path === '/api/v1/documents' && method === 'POST', {
+      afterFirstCommit: async () => {
+        await f.db.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',
+          [membership.workspace_id, f.teamId, human.id])
+        deleted = true
+      },
+      afterResponse: async (path, status) => {
+        if (deleted && !restored && path.endsWith('/status')) {
+          expect(status).toBeGreaterThanOrEqual(400)
+          // Explicit diagnostics are separate from the actual single Pi toolCall.
+          observations.push({ kind: 'same-key-denied', ...await proxy.reconcileOriginal(0) })
+          observations.push({ kind: 'new-key-denied', ...await proxy.reconcileOriginal(0, randomUUID()) })
+          expect(observations.every(row => row.status >= 400)).toBe(true)
+          const actor = (await f.db.query<{ id: string; workspace_id: string }>(
+            'SELECT agent_actor_id AS id,workspace_id FROM agent_sessions WHERE id=$1', [execution.sessionId],
+          )).rows[0]!
+          const apiActor: ApiActor = { id: actor.id, workspaceId: actor.workspace_id, kind: 'agent', displayName: 'M5 revoked principal',
+            workspaceRole: 'member', csrfToken: '', agentSessionId: execution.sessionId, credentialHash: tokenHash(execution.token) }
+          const receipt = (await f.db.query<{ operation: string; request_hash: string }>(
+            'SELECT operation,request_hash FROM api_idempotency_keys WHERE actor_id=$1 AND idempotency_key=$2',
+            [actor.id, proxy.observed[0]!.key],
+          )).rows[0]!
+          const context = { actor: apiActor, idempotencyKey: proxy.observed[0]!.key!, correlationId: randomUUID(),
+            operation: receipt.operation, requestHash: receipt.request_hash }
+          // Bypass route preflight to prove both receipt paths and the post-lock guard independently.
+          const mustNotRun = async () => { throw new Error('M5_REPLAY_HANDLER_MUST_NOT_RUN') }
+          await expect(mutate(f.db, context, mustNotRun)).rejects.toMatchObject({ code: 'DELEGATION_NOT_ACTIVE' })
+          await expect(agentMutate(f.db, context, mustNotRun)).rejects.toMatchObject({ code: 'DELEGATION_NOT_ACTIVE' })
+          const tx = await f.db.connect()
+          try {
+            await tx.query('BEGIN')
+            await expect(loadAgentSessionForMutation(tx, apiActor, execution.sessionId)).rejects.toMatchObject({ code: 'DELEGATION_NOT_ACTIVE' })
+          } finally { await tx.query('ROLLBACK'); tx.release() }
+          await restore()
+          observations.push({ kind: 'restored-original-receipt', ...await proxy.reconcileOriginal(0) })
+        }
+      },
+    })
+    try {
+      const captures = await f.pi(execution, connection.token, [async () => ({ name: 'workmesh_create_document',
+        arguments: { ownerType: 'work_item', ownerId: execution.workItemId, title: 'M5 member authority', markdown: 'First commit remains unknown to the failed tool' } })], { apiUrl: proxy.url, contextHuman: human.request })
+      expect(deleted && restored).toBe(true)
+      expect(proxy.errors).toEqual([])
+      expect(proxy.observed).toHaveLength(1)
+      expect(proxy.transport.some(row => row.path.endsWith('/status') && row.status >= 400 && row.eHash === proxy.observed[0]!.eHash)).toBe(true)
+      expect(observations.at(-1)).toMatchObject({ status: 200, originalEHash: proxy.observed[0]!.eHash })
+      expect(captures.at(-1)!.results[0]).toContain('correlationId')
+      const effects = (await f.db.query('SELECT id FROM documents WHERE work_item_id=$1', [execution.workItemId])).rows
+      expect(effects).toHaveLength(1)
+      const events = (await f.db.query('SELECT e.id,e.event_type,o.id AS outbox_id FROM domain_events e JOIN outbox_events o ON o.domain_event_id=e.id WHERE e.idempotency_key=$1', [proxy.observed[0]!.key])).rows
+      expect(events.filter(row => row.event_type === 'document.created')).toHaveLength(1)
+      const attempts = (await f.db.query('SELECT status,external_effects_reconciled FROM workbench_runner_attempts WHERE agent_session_id=$1', [execution.sessionId])).rows
+      expect(attempts).toEqual([expect.objectContaining({ external_effects_reconciled: false })])
+      saveJointEvidence('review-membership-original-e.json', { preparation: 'H2 member/maintainer; same principal, installation and E throughout; privileged membership deletion/restoration only', captures, requests: proxy.observed, transport: proxy.transport, observations, effects, events, attempts, explicitDiagnosticsNotRunnerRetry: true })
+    } finally { await restore() }
   })
   it('新增真实Pi：准入后第二业务HTTP明确拒绝，保首commit不确定cause并模型实收', async () => {
     const execution = await f.createExecution('M5 second exact HTTP denial')

@@ -21,6 +21,8 @@ export async function createOpenCodeRuntime(options: { executable: string; evide
   const global = join(paths.config, 'opencode'); mkdirSync(global)
   const mcpHeaders = Object.fromEntries(Object.keys(options.mcpHeaders ?? {}).map((key, index) => [key, `{env:M5_MCP_HEADER_${index}}`]))
   const config = { update: 'disable', snapshots: false, model: 'm5-local/controlled',
+    // V2 compatibility discovery scans HOME independently of the private XDG roots.
+    plugins: ['-opencode.config.compatibility'],
     providers: { 'm5-local': { package: '@opencode/ai/providers/openai-compatible', settings: { baseURL: options.modelUrl ?? 'http://127.0.0.1:1/v1', apiKey: 'm5-local-no-account' },
       models: { controlled: { name: 'M5 controlled local model', capabilities: { tools: true, input: ['text'], output: ['text'] }, limit: { context: 131072, output: 8192 } } } } },
     permissions: [{ action: '*', resource: '*', effect: 'deny' }, ...(options.allowedTools ?? []).map(name => ({ action: `workmesh_${name}`, resource: '*', effect: 'allow' }))],
@@ -40,24 +42,107 @@ export async function createOpenCodeRuntime(options: { executable: string; evide
   Object.assign(env, { XDG_CONFIG_HOME: paths.config, XDG_DATA_HOME: paths.data, XDG_STATE_HOME: paths.state, XDG_CACHE_HOME: paths.cache,
     APPDATA: paths.config, LOCALAPPDATA: paths.data, TEMP: paths.tmp, TMP: paths.tmp, HTTP_PROXY: proxyUrl, HTTPS_PROXY: proxyUrl, ALL_PROXY: proxyUrl,
     NO_PROXY: '127.0.0.1,localhost,::1', NODE_EXTRA_CA_CERTS: resolve(import.meta.dirname, 'fixtures/model-test-ca.pem') })
+  Object.assign(env, { OPENCODE_CONFIG_PROJECT_DISABLE: '1', OPENCODE_DISABLE_MODELS_FETCH: '1', OPENCODE_LOG_LEVEL: 'DEBUG' })
   Object.values(options.mcpHeaders ?? {}).forEach((value, index) => { env[`M5_MCP_HEADER_${index}`] = value })
   const protectedPath = join(process.env.USERPROFILE ?? process.env.HOME ?? '', '.config/opencode/service.json')
   const protectedBefore = metadata(protectedPath)
+  const userHome = process.env.USERPROFILE ?? process.env.HOME ?? ''
+  const protectedUserFiles = ['.config/opencode/opencode.json', '.config/opencode/opencode.jsonc', '.config/opencode/service.json',
+    '.local/share/opencode/auth.json', '.local/state/opencode/service.json'].map(path => join(userHome, path))
+  const protectedUserFilesBefore = protectedUserFiles.map(metadata)
   const binary = readFileSync(options.executable)
   const resource = { root, executable: options.executable, binaryBytes: binary.length, binarySha256: createHash('sha256').update(binary).digest('hex'),
-    paths, proxyUrl, homeUnchanged: env.HOME === process.env.HOME, userprofileUnchanged: env.USERPROFILE === process.env.USERPROFILE, protectedBefore }
-  const output = async (args: string[]) => {
+    paths, proxyUrl, homeUnchanged: env.HOME === process.env.HOME, userprofileUnchanged: env.USERPROFILE === process.env.USERPROFILE, protectedBefore, protectedUserFilesBefore }
+  type ProcessRecord = { pid: number; parentPid: number; executable: string; argv?: string[]; commandLine?: string; registeredAt: string; exitObservedAt?: string }
+  const processes: ProcessRecord[] = []
+  const sanitizeOutput = (raw: string) => {
+    const redact = (key: string, value: unknown) => /^(reasoning|reasoning_content|thinking|signature|authorization|password|apiKey)$/i.test(key) ? '[redacted]' : value
+    let safe: string
+    try { safe = JSON.stringify(JSON.parse(raw) as unknown, redact) }
+    catch { safe = raw.split(/\r?\n/).filter(line => !/"type"\s*:\s*"(?:reasoning|thinking)"/i.test(line)).map(line => {
+      try { return JSON.stringify(JSON.parse(line) as unknown, redact) } catch { return line }
+    }).join('\n') }
+    for (const value of Object.values(options.mcpHeaders ?? {})) safe = safe.replaceAll(value, '[credential]')
+    return safe.replace(/wm[ips]_[A-Za-z0-9_-]+/g, '[credential]')
+  }
+  const isAlive = (pid: number) => { try { process.kill(pid, 0); return true } catch { return false } }
+  const observeProcesses = async () => {
+    if (process.platform !== 'win32') return
+    const result = await exec('powershell.exe', ['-NoProfile', '-Command', 'Get-CimInstance Win32_Process -Filter "Name = \'opencode.exe\'" | Select-Object ProcessId,ParentProcessId,ExecutablePath,CommandLine | ConvertTo-Json -Compress'], { timeout: 10_000, maxBuffer: 1_000_000 })
+    const parsed: unknown = result.stdout.trim() ? JSON.parse(result.stdout) : []
+    const rows: unknown[] = Array.isArray(parsed) ? parsed : [parsed]
+    for (let pass = 0; pass < rows.length; pass++) for (const row of rows) {
+      if (!row || typeof row !== 'object' || !('ProcessId' in row) || !('ParentProcessId' in row) || !('ExecutablePath' in row)) continue
+      if (typeof row.ProcessId !== 'number' || typeof row.ParentProcessId !== 'number' || typeof row.ExecutablePath !== 'string') continue
+      if (resolve(row.ExecutablePath).toLowerCase() !== resolve(options.executable).toLowerCase() || processes.some(item => item.pid === row.ProcessId)
+        || !processes.some(item => item.pid === row.ParentProcessId && !item.exitObservedAt)) continue
+      processes.push({ pid: row.ProcessId, parentPid: row.ParentProcessId, executable: row.ExecutablePath,
+        commandLine: 'CommandLine' in row && typeof row.CommandLine === 'string' ? row.CommandLine : undefined, registeredAt: new Date().toISOString() })
+    }
+    for (const item of processes) if (!item.exitObservedAt && !isAlive(item.pid)) item.exitObservedAt = new Date().toISOString()
+    writeFileSync(join(root, 'processes.json'), JSON.stringify(processes, null, 2))
+  }
+  const output = async (args: string[], probe?: { stopOnReadiness: boolean }) => {
     const startedAt = new Date().toISOString(), start = performance.now()
-    const value = await exec(options.executable, args, { cwd: paths.work, env, timeout: 90_000, maxBuffer: 8_000_000 })
-    return { argv: [options.executable, ...args], startedAt, endedAt: new Date().toISOString(), runtimeMs: performance.now() - start, nativeExit: 0, ...value }
+    let finished = false
+    let readiness: { at: string; url: string } | undefined
+    const completed = new Promise<{ stdout: string; stderr: string; nativeExit: number | string | null; signal: string | null }>((done, reject) => {
+      const child = execFile(options.executable, args, { cwd: paths.work, env, timeout: 90_000, maxBuffer: 8_000_000 }, (error, stdout, stderr) => {
+        finished = true
+        const rawOutput = { stdout: { bytes: Buffer.byteLength(stdout), sha256: createHash('sha256').update(stdout).digest('hex') },
+          stderr: { bytes: Buffer.byteLength(stderr), sha256: createHash('sha256').update(stderr).digest('hex') } }
+        stdout = sanitizeOutput(stdout); stderr = sanitizeOutput(stderr)
+        const receipt = { argv: [options.executable, ...args], startedAt, endedAt: new Date().toISOString(), runtimeMs: performance.now() - start,
+          pid: child.pid, nativeExit: error?.code ?? 0, signal: error?.signal ?? null, stdout, stderr, rawOutput, rawBytesPreserved: false, readiness }
+        const safeReceipt = JSON.stringify(receipt, (key, value: unknown) => /^(reasoning|reasoning_content|thinking|signature|authorization|password|apiKey)$/i.test(key) ? '[redacted]' : value, 2)
+          .replace(/wm[ips]_[A-Za-z0-9_-]+/g, '[credential]')
+        writeFileSync(join(root, `command-${randomUUID()}.json`), safeReceipt)
+        if (error) { error.message = sanitizeOutput(error.message); Object.assign(error, { stdout, stderr }); reject(error) }
+        else done({ stdout, stderr, nativeExit: 0, signal: null })
+      })
+      if (child.pid) processes.push({ pid: child.pid, parentPid: process.pid, executable: options.executable, argv: [options.executable, ...args], registeredAt: startedAt })
+      if (probe?.stopOnReadiness) {
+        let pending = ''
+        child.stdout?.on('data', (chunk: Buffer) => {
+          pending += chunk.toString('utf8')
+          for (const line of pending.split(/\r?\n/).slice(0, -1)) {
+            try {
+              const value: unknown = JSON.parse(line)
+              if (!value || typeof value !== 'object' || !('url' in value) || typeof value.url !== 'string') continue
+              const url = new URL(value.url)
+              if (url.protocol !== 'http:' || url.hostname !== '127.0.0.1') continue
+              readiness = { at: new Date().toISOString(), url: url.origin }; child.stdin?.end()
+            } catch { /* Readiness is a complete JSON line, not arbitrary stdout. */ }
+          }
+          pending = pending.split(/\r?\n/).at(-1) ?? ''
+        })
+      }
+    })
+    // Keep rejection observed while polling the owned native process tree.
+    void completed.catch(() => undefined)
+    while (!finished) { await observeProcesses(); if (!finished) await new Promise(done => setTimeout(done, 500)) }
+    await observeProcesses()
+    return { argv: [options.executable, ...args], startedAt, endedAt: new Date().toISOString(), runtimeMs: performance.now() - start, readiness, ...await completed }
   }
   const close = async () => {
     for (const socket of sockets) socket.destroy()
     proxy.closeAllConnections(); if (proxy.listening) await new Promise<void>(done => proxy.close(() => done()))
+    await output(['service', 'stop'])
+    await observeProcesses()
+    // Standalone children are not registered services; close only the observed owned tree.
+    for (const item of processes) if (!item.exitObservedAt && isAlive(item.pid)) process.kill(item.pid, 'SIGTERM')
+    const deadline = Date.now() + 30_000
+    while (processes.some(item => !item.exitObservedAt && isAlive(item.pid)) && Date.now() < deadline) {
+      await new Promise(done => setTimeout(done, 250)); await observeProcesses()
+    }
+    await observeProcesses()
     const protectedAfter = metadata(protectedPath)
-    const result = { ...resource, blockedRequests, proxyClosed: !proxy.listening, protectedAfter,
-      protectedUnchanged: JSON.stringify(protectedBefore) === JSON.stringify(protectedAfter), recoveryDirectoryPreserved: true }
+    const protectedUserFilesAfter = protectedUserFiles.map(metadata)
+    const result = { ...resource, blockedRequests, processes, allOwnedProcessesExited: processes.every(item => !!item.exitObservedAt), proxyClosed: !proxy.listening, protectedAfter,
+      protectedUserFilesAfter, protectedUnchanged: JSON.stringify(protectedBefore) === JSON.stringify(protectedAfter)
+        && JSON.stringify(protectedUserFilesBefore) === JSON.stringify(protectedUserFilesAfter), recoveryDirectoryPreserved: true }
     writeFileSync(join(root, 'resources.json'), JSON.stringify(result, null, 2))
+    if (!result.allOwnedProcessesExited) throw new Error('M5_OPENCODE_OWNED_PROCESS_EXIT_NOT_OBSERVED')
     return result
   }
   try {
@@ -74,6 +159,36 @@ export async function createOpenCodeRuntime(options: { executable: string; evide
         throw new Error(`M5_OPENCODE_ISOLATION_GAP:${kind}`)
     }
     const sources = await output(['debug', 'config'])
+    const registration: unknown = JSON.parse(readFileSync(join(paths.state, 'opencode', 'service.json'), 'utf8'))
+    if (!registration || typeof registration !== 'object' || !('url' in registration) || typeof registration.url !== 'string'
+      || !('password' in registration) || typeof registration.password !== 'string' || !('pid' in registration) || typeof registration.pid !== 'number')
+      throw new Error('M5_OPENCODE_PRIVATE_SERVICE_REGISTRATION_INVALID')
+    const endpoint = new URL(registration.url)
+    if (endpoint.protocol !== 'http:' || endpoint.hostname !== '127.0.0.1' || endpoint.username || endpoint.password)
+      throw new Error('M5_OPENCODE_PRIVATE_SERVICE_ENDPOINT_INVALID')
+    if (!processes.some(item => item.pid === registration.pid && !item.exitObservedAt))
+      throw new Error('M5_OPENCODE_PRIVATE_SERVICE_OWNER_NOT_OBSERVED')
+    const inventory: Record<string, Array<Record<string, unknown>>> = {}
+    for (const kind of ['skill', 'plugin']) {
+      const url = new URL(`/api/${kind}`, endpoint); url.searchParams.set('location[directory]', paths.work)
+      const response = await fetch(url, { headers: { Authorization: `Basic ${Buffer.from(`opencode:${registration.password}`).toString('base64')}` },
+        redirect: 'error', signal: AbortSignal.timeout(10_000) })
+      if (!response.ok) throw new Error(`M5_OPENCODE_PRIVATE_INVENTORY_HTTP:${kind}:${response.status}`)
+      const envelope: unknown = await response.json()
+      const rows: unknown = envelope && typeof envelope === 'object' && 'data' in envelope ? envelope.data : envelope
+      if (!Array.isArray(rows)) throw new Error(`M5_OPENCODE_PRIVATE_INVENTORY_INVALID:${kind}`)
+      inventory[kind] = rows.map((row: unknown) => {
+        if (!row || typeof row !== 'object') throw new Error(`M5_OPENCODE_PRIVATE_INVENTORY_INVALID:${kind}`)
+        return Object.fromEntries(['id', 'path', 'source', 'state'].flatMap(key => key in row ? [[key, row[key as keyof typeof row]]] : []))
+      })
+    }
+    writeFileSync(join(root, 'private-discovery-inventory.json'), JSON.stringify({ at: new Date().toISOString(), pid: registration.pid, endpoint: endpoint.origin, inventory }, null, 2))
+    if (!inventory.plugin!.length || !inventory.skill!.length) throw new Error('M5_OPENCODE_PRIVATE_INVENTORY_EMPTY')
+    if (inventory.plugin!.some(row => row.id === 'opencode.config.compatibility')) throw new Error('M5_OPENCODE_USER_SKILL_DISCOVERY: compatibility plugin remains active')
+    if (inventory.skill!.some(row => typeof row.path !== 'string' || !row.path.startsWith('/builtin/') && !resolve(row.path).startsWith(root + '\\') && !resolve(row.path).startsWith(root + '/')))
+      throw new Error('M5_OPENCODE_USER_SKILL_DISCOVERY: registered skill is outside private roots')
+    if (inventory.plugin!.some(row => !row.source || typeof row.source !== 'object' || !('type' in row.source) || row.source.type !== 'builtin'))
+      throw new Error('M5_OPENCODE_USER_PLUGIN_DISCOVERY: non-builtin plugin found in empty private runtime')
     // debug config can start an owned private daemon. Stop it before standalone execution.
     const privateServiceStop = await output(['service', 'stop'])
     writeFileSync(join(root, 'private-debug-service-stop.json'), JSON.stringify(privateServiceStop, null, 2))
@@ -82,10 +197,10 @@ export async function createOpenCodeRuntime(options: { executable: string; evide
     if (!Array.isArray(sourceRecords) || !sourceRecords.length || sourceRecords.some(row => !resolve(row.path).startsWith(root + '\\') && !resolve(row.path).startsWith(root + '/'))
       || !sourceRecords.some(row => row.info?.update === 'disable')) throw new Error('M5_OPENCODE_USER_CONFIG_DISCOVERED')
     const logRoot = join(paths.data, 'opencode', 'log')
-    const protectedSkills = join(process.env.USERPROFILE ?? process.env.HOME ?? '', '.agents', 'skills')
+    const protectedSkills = ['.agents', '.claude'].map(name => join(process.env.USERPROFILE ?? process.env.HOME ?? '', name, 'skills'))
     const discovery = readdirSync(logRoot).filter(name => name.endsWith('.log')).flatMap(name => {
       const file = join(logRoot, name), bytes = readFileSync(file)
-      return bytes.toString('utf8').split(/\r?\n/).filter(line => line.replace(/\\\\/g, '\\').includes(protectedSkills)).map(line => ({ file, sha256: createHash('sha256').update(bytes).digest('hex'), observedLine: line }))
+      return bytes.toString('utf8').split(/\r?\n/).filter(line => protectedSkills.some(path => line.replace(/\\\\/g, '\\').toLowerCase().includes(path.toLowerCase()))).map(line => ({ file, sha256: createHash('sha256').update(bytes).digest('hex'), observedLine: line }))
     })
     if (discovery.length) {
       writeFileSync(join(root, 'isolation-blocker.json'), JSON.stringify({ code: 'M5_OPENCODE_USER_SKILL_DISCOVERY', discovery, modelRun: false, privateServiceStopped: true }, null, 2))

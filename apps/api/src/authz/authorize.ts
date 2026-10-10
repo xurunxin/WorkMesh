@@ -1,6 +1,7 @@
 import crypto from 'node:crypto'
 import type { FastifyRequest } from 'fastify'
 import type { Pool } from 'pg'
+import { principalTeamAuthorityPredicate } from '@workmesh/db'
 import {
   routePolicyManifest,
   type ResourceResolverId,
@@ -310,7 +311,8 @@ async function loadAgentFacts(
      LEFT JOIN agent_team_access ata
        ON ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id
       AND ata.team_id=s.team_id AND ata.revoked_at IS NULL
-     WHERE s.id=$1 AND s.workspace_id=$2 AND s.agent_actor_id=$3`,
+     WHERE s.id=$1 AND s.workspace_id=$2 AND s.agent_actor_id=$3
+       AND ${principalTeamAuthorityPredicate('d.principal_human_actor_id', 's.workspace_id', 's.team_id')}`,
     [actor.agentSessionId, actor.workspaceId, actor.id],
   )).rows[0]
 }

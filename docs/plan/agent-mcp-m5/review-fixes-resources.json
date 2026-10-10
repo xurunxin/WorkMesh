@@ -1,0 +1,73 @@
+{
+  "owner": "m5-5dbe32e19a",
+  "resources": [
+    {
+      "id": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+      "owner": "m5-5dbe32e19a",
+      "before": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-10T16:33:30.9843172Z",
+        "FinishedAt": "2026-10-10T18:29:35.843996Z"
+      },
+      "inspectionExit": 0,
+      "observedAt": "2026-10-10T18:51:33.847878+00:00",
+      "startExit": 0,
+      "startOutput": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+      "startError": ""
+    },
+    {
+      "id": "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+      "owner": "m5-5dbe32e19a",
+      "before": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-10T16:33:32.1037307Z",
+        "FinishedAt": "2026-10-10T18:29:36.2941437Z"
+      },
+      "inspectionExit": 0,
+      "observedAt": "2026-10-10T18:51:33.932453+00:00",
+      "startExit": 0,
+      "startOutput": "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+      "startError": ""
+    },
+    {
+      "id": "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+      "owner": "m5-5dbe32e19a",
+      "before": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-10T16:33:33.3774509Z",
+        "FinishedAt": "2026-10-10T18:29:36.6446251Z"
+      },
+      "inspectionExit": 0,
+      "observedAt": "2026-10-10T18:51:34.016209+00:00",
+      "startExit": 0,
+      "startOutput": "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+      "startError": ""
+    }
+  ],
+  "recoveryPreserved": true,
+  "firstPreparationFailure": "Python default gbk decode failed before resource mutation; pg_isready exit 1 because owned container was stopped"
+}

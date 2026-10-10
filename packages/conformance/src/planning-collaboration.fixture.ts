@@ -102,7 +102,7 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
     receivers.push(proxy);proxy.listen(0,'127.0.0.1');await once(proxy,'listening')
     return `http://127.0.0.1:${(proxy.address() as {port:number}).port}`
   }
-  const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>, options:{apiUrl?:string;beforeRun?:()=>Promise<void>}={}) => {
+  const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>, options:{apiUrl?:string;beforeRun?:()=>Promise<void>;contextHuman?:typeof fixture.human}={}) => {
     const captures: Array<{ tools: string[]; results: string[]; messages: string; call: ModelCall | null }> = []
     const model = createServer({ key: readFileSync(new URL('./fixtures/model-test-key.pem', import.meta.url)), cert: readFileSync(new URL('./fixtures/model-test-ca.pem', import.meta.url)) }, async (request, response) => {
       try {
@@ -125,8 +125,9 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
     try {
       const connection = await fixture.human<{ id: string }>('POST', '/api/v1/workbench/llm-connections', { scope: 'workspace', name: `M2 ${randomUUID()}`, apiType: 'openai-completions', baseUrl: `https://127.0.0.1:${address.port}/v1`, secretMaterial: 'm2-public-fixture-key' })
       const selected = await fixture.human<{ id: string }>('POST', `/api/v1/workbench/llm-connections/${connection.id}/models`, { externalModelId: 'm2-model', displayName: 'M2 model', enabled: true, capabilities: { inputModalities: ['text'], toolCalling: true, reasoning: false, contextWindowTokens: 32768, maxOutputTokens: 2048 } }, 1)
-      const conversation = await fixture.human<{ id: string }>('POST', '/api/v1/workbench/conversations', { title: 'M2 verified lifecycle', workItemId: execution.workItemId, agentSessionId: execution.sessionId, llmConnectionId: connection.id, llmModelId: selected.id })
-      const queued = await fixture.human<{ turn: { id: string } }>('POST', `/api/v1/workbench/conversations/${conversation.id}/turns`, { messageMarkdown: 'Use the exact approved tools and produce auditable evidence.' }, 1)
+      const contextHuman = options.contextHuman ?? fixture.human
+      const conversation = await contextHuman<{ id: string }>('POST', '/api/v1/workbench/conversations', { title: 'M2 verified lifecycle', workItemId: execution.workItemId, agentSessionId: execution.sessionId, llmConnectionId: connection.id, llmModelId: selected.id })
+      const queued = await contextHuman<{ turn: { id: string } }>('POST', `/api/v1/workbench/conversations/${conversation.id}/turns`, { messageMarkdown: 'Use the exact approved tools and produce auditable evidence.' }, 1)
       const root = resolve(import.meta.dirname, '../../../apps/agent-runner')
       const env: NodeJS.ProcessEnv = { ...process.env, WORKMESH_API_URL: options.apiUrl??fixture.baseUrl, WORKMESH_AGENT_INSTALLATION_TOKEN: installationToken, WORKMESH_AGENT_SESSION_ID: execution.sessionId, NODE_EXTRA_CA_CERTS: resolve(import.meta.dirname, 'fixtures/model-test-ca.pem') }
       delete env.DATABASE_URL; delete env.WORKMESH_MASTER_KEY; delete env.WORKMESH_BOOTSTRAP_TOKEN
