@@ -1,0 +1,706 @@
+[
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+    "todo": 10,
+    "branch": "refs/heads/tds/conv-01a115d0-87b0-78cd-921d-750713cdde51",
+    "head": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+    "logicalBytes": 906884156,
+    "links": 1918,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "768bbd82fcc52a873168b39a8382d2f14c928abc",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.501858+00:00",
+      "endedAt": "2026-10-10T17:04:29.560568+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a",
+    "todo": null,
+    "branch": "refs/heads/tds/conv-01a115ed-0894-7af5-b31f-4ffe208e198a",
+    "head": "49cd2136fe5109115fb4f3dcff89ed59b0bc7615",
+    "logicalBytes": 946316129,
+    "links": 1918,
+    "nestedGit": [],
+    "decision": "保留：WorkMesh 仓库归属已确认，但准确 todo/build 历史恢复用途未充分映射，不凭干净状态或主线 HEAD 删除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "49cd2136fe5109115fb4f3dcff89ed59b0bc7615",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.560613+00:00",
+      "endedAt": "2026-10-10T17:04:29.605850+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11661-dbed-70ca-85d6-05851a0213e1",
+    "todo": null,
+    "branch": "refs/heads/tds/conv-01a11661-dbed-70ca-85d6-05851a0213e1",
+    "head": "af583f71f310e68ade588f9922694dfd8aba7a65",
+    "logicalBytes": 946655821,
+    "links": 1918,
+    "nestedGit": [],
+    "decision": "保留：WorkMesh 仓库归属已确认，但准确 todo/build 历史恢复用途未充分映射，不凭干净状态或主线 HEAD 删除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "af583f71f310e68ade588f9922694dfd8aba7a65",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.605892+00:00",
+      "endedAt": "2026-10-10T17:04:29.651595+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+    "todo": 18,
+    "branch": "refs/heads/tds/conv-01a116f7-1027-7c75-90df-32ebc5488752",
+    "head": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+    "logicalBytes": 797188602,
+    "links": 1918,
+    "nestedGit": [
+      ".tmp/g1-shallow-layout/.git"
+    ],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "c7a1af7d7b2e125368b29975867b4d392690fc38",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.651639+00:00",
+      "endedAt": "2026-10-10T17:04:29.696004+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+    "todo": 3,
+    "branch": "refs/heads/tds/conv-01a116f8-8172-7082-8d61-867bd9f0b749",
+    "head": "550dead055689154359a3406dfce4f0c91c1dad3",
+    "logicalBytes": 734891329,
+    "links": 1918,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "550dead055689154359a3406dfce4f0c91c1dad3",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.696044+00:00",
+      "endedAt": "2026-10-10T17:04:29.740067+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+    "todo": 15,
+    "branch": "refs/heads/tds/conv-01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+    "head": "81090ec01bcbc84edbe101418d833840999a5326",
+    "logicalBytes": 797621388,
+    "links": 1918,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "81090ec01bcbc84edbe101418d833840999a5326",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.740125+00:00",
+      "endedAt": "2026-10-10T17:04:29.783622+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f1-74d9-a5e7-0022c903a6e6",
+    "todo": "5 历史规划/恢复（含未提交成果）",
+    "branch": "refs/heads/tds/conv-01a1187a-f0f1-74d9-a5e7-0022c903a6e6",
+    "head": "b80593e9918ac7ce05465fd0ac640c809753ac5a",
+    "logicalBytes": 377911866,
+    "links": 699,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "b80593e9918ac7ce05465fd0ac640c809753ac5a",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.783664+00:00",
+      "endedAt": "2026-10-10T17:04:29.829201+00:00",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "todo-ti53hOGbvnBNrvjXXveGO.json：#5 原规划独审 head b80593e9918ac7ce05465fd0ac640c809753ac5a，等于该登记 HEAD；目录有未提交改动且始终保护"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+    "todo": "8 历史恢复（含未提交成果）",
+    "branch": "refs/heads/tds/conv-01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+    "head": "901e040a2cd4be83f9b9801bc3087ac150d1cde1",
+    "logicalBytes": 1369858879,
+    "links": 1938,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "901e040a2cd4be83f9b9801bc3087ac150d1cde1",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.829243+00:00",
+      "endedAt": "2026-10-10T17:04:29.873229+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+    "todo": 11,
+    "branch": "refs/heads/tds/conv-01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+    "head": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+    "logicalBytes": 837685153,
+    "links": 1918,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.873268+00:00",
+      "endedAt": "2026-10-10T17:04:29.916950+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "todo": 17,
+    "branch": "refs/heads/tds/conv-01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "head": "3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7",
+    "logicalBytes": 1043076163,
+    "links": 1918,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.916995+00:00",
+      "endedAt": "2026-10-10T17:04:29.960412+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+    "todo": "21 首面检查点",
+    "branch": "refs/heads/tds/conv-01a1195f-55ab-7ee9-8baf-c115978d3aec",
+    "head": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5",
+    "logicalBytes": 1013245363,
+    "links": 1918,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:29.960454+00:00",
+      "endedAt": "2026-10-10T17:04:30.003437+00:00",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a0e-d8a0-7474-ad05-791c239b82fe",
+    "todo": null,
+    "branch": "refs/heads/tds/conv-01a11a0e-d8a0-7474-ad05-791c239b82fe",
+    "head": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "logicalBytes": 106749175,
+    "links": 0,
+    "nestedGit": [],
+    "decision": "保留：WorkMesh 仓库归属已确认，但准确 todo/build 历史恢复用途未充分映射，不凭干净状态或主线 HEAD 删除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.003479+00:00",
+      "endedAt": "2026-10-10T17:04:30.048101+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a77-e1c5-763d-ad86-a1bcf4d672e6",
+    "todo": null,
+    "branch": "refs/heads/tds/conv-01a11a77-e1c5-763d-ad86-a1bcf4d672e6",
+    "head": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "logicalBytes": 106749175,
+    "links": 0,
+    "nestedGit": [],
+    "decision": "保留：WorkMesh 仓库归属已确认，但准确 todo/build 历史恢复用途未充分映射，不凭干净状态或主线 HEAD 删除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.048141+00:00",
+      "endedAt": "2026-10-10T17:04:30.090171+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+    "todo": 21,
+    "branch": "refs/heads/tds/conv-01a11a93-c093-7565-9084-724b6bedcade",
+    "head": "fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96",
+    "logicalBytes": 937848587,
+    "links": 1918,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.090210+00:00",
+      "endedAt": "2026-10-10T17:04:30.138935+00:00",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+    "todo": 8,
+    "branch": "refs/heads/tds/conv-01a11ac2-7634-752e-8d81-764c9776f801",
+    "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+    "logicalBytes": 793048437,
+    "links": 1918,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "07aa293c35100959caa08f73efcb6110e9aa92f4",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.138971+00:00",
+      "endedAt": "2026-10-10T17:04:30.186946+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+    "todo": 5,
+    "branch": "refs/heads/tds/conv-01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+    "head": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19",
+    "logicalBytes": 1610079999,
+    "links": 1937,
+    "nestedGit": [],
+    "decision": "保护：待审、活动构建或本清理构建",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.187004+00:00",
+      "endedAt": "2026-10-10T17:04:30.235121+00:00",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d",
+    "todo": 52,
+    "branch": "refs/heads/tds/conv-01a11acb-1a68-7fba-a359-7119603cde7d",
+    "head": "83541ce11da52236cc49ef2dd0ffdfe23775b306",
+    "logicalBytes": 151321543,
+    "links": 0,
+    "nestedGit": [],
+    "decision": "保护：旧清理会话的审计/恢复来源；本轮不解除历史明确保护",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "83541ce11da52236cc49ef2dd0ffdfe23775b306",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.235167+00:00",
+      "endedAt": "2026-10-10T17:04:30.281425+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+    "todo": 9,
+    "branch": "refs/heads/tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe",
+    "head": "328434d00268ce39222d677686dde3c64aba4e41",
+    "logicalBytes": 2171560588,
+    "links": 1919,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "328434d00268ce39222d677686dde3c64aba4e41",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.281470+00:00",
+      "endedAt": "2026-10-10T17:04:30.328420+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+    "todo": 16,
+    "branch": "refs/heads/tds/conv-01a11b85-41f9-74f5-b456-7083d4d83e5e",
+    "head": "d80f29ff9b87c387326cfda45eafdcfe6b182eee",
+    "logicalBytes": 1155604546,
+    "links": 1919,
+    "nestedGit": [],
+    "decision": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "d80f29ff9b87c387326cfda45eafdcfe6b182eee",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.328467+00:00",
+      "endedAt": "2026-10-10T17:04:30.376498+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11e5e-9e0c-704b-a590-3fee492f4f6a",
+    "todo": 53,
+    "branch": "refs/heads/tds/conv-01a11e5e-9e0c-704b-a590-3fee492f4f6a",
+    "head": "f5a665407f0ff3e6dab84932bcb7d49d56468e42",
+    "logicalBytes": 151693775,
+    "links": 0,
+    "nestedGit": [],
+    "decision": "唯一执行候选：主线可达、逐文件保全、无忽略项/链接/嵌套 clone；提交预检后刷新再执行",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "f5a665407f0ff3e6dab84932bcb7d49d56468e42",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.376557+00:00",
+      "endedAt": "2026-10-10T17:04:30.431253+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61",
+    "todo": 54,
+    "branch": "refs/heads/tds/conv-01a11ed4-1e73-7802-8bf8-4899c5405f61",
+    "head": "883d279d3b5978680672a6c1d7364d421d0afd10",
+    "logicalBytes": 2466235470,
+    "links": 1925,
+    "nestedGit": [],
+    "decision": "保留：依赖 junction 与共享 store 边界未证；ignored 日志/缓存/测试结果尚无完整逐 path 保全映射，禁止整体移除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "883d279d3b5978680672a6c1d7364d421d0afd10",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.431299+00:00",
+      "endedAt": "2026-10-10T17:04:30.478965+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6",
+    "todo": 55,
+    "branch": "refs/heads/tds/conv-01a12031-e9de-75c4-ab40-b44affcd71f6",
+    "head": "3ff46eb20616dc5488ba46b77b27e1fb2d783a93",
+    "logicalBytes": 2742944421,
+    "links": 1945,
+    "nestedGit": [],
+    "decision": "保留：依赖 junction 与共享 store 边界未证；ignored 日志/缓存/测试结果尚无完整逐 path 保全映射，禁止整体移除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "3ff46eb20616dc5488ba46b77b27e1fb2d783a93",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.479007+00:00",
+      "endedAt": "2026-10-10T17:04:30.538253+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe",
+    "todo": 56,
+    "branch": "refs/heads/tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe",
+    "head": "fb770b62a926e7c27049c2795eafa6da4e0cb085",
+    "logicalBytes": 3374923543,
+    "links": 1945,
+    "nestedGit": [],
+    "decision": "保留：依赖 junction 与共享 store 边界未证；ignored 日志/缓存/测试结果尚无完整逐 path 保全映射，禁止整体移除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "fb770b62a926e7c27049c2795eafa6da4e0cb085",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.538299+00:00",
+      "endedAt": "2026-10-10T17:04:30.594176+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b",
+    "todo": 57,
+    "branch": "refs/heads/tds/conv-01a1246e-406c-7593-ada6-66996634434b",
+    "head": "d27cb9be3a19befeae431df08276c9ca94d7dbed",
+    "logicalBytes": 4534246620,
+    "links": 1947,
+    "nestedGit": [],
+    "decision": "保留：依赖 junction 与共享 store 边界未证；ignored 日志/缓存/测试结果尚无完整逐 path 保全映射，禁止整体移除",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "d27cb9be3a19befeae431df08276c9ca94d7dbed",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.594218+00:00",
+      "endedAt": "2026-10-10T17:04:30.658009+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "todo": 58,
+    "branch": "refs/heads/tds/conv-01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "head": "9051da511d0e844a5e57b6263c23f643689bc879",
+    "logicalBytes": 4431299857,
+    "links": 1927,
+    "nestedGit": [],
+    "decision": "保护：待审、活动构建或本清理构建",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "9051da511d0e844a5e57b6263c23f643689bc879",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.658055+00:00",
+      "endedAt": "2026-10-10T17:04:30.708232+00:00",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+    "todo": 60,
+    "branch": "refs/heads/tds/conv-01a126be-7aba-7b1d-a57a-f58317f89a67",
+    "head": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+    "logicalBytes": 2880328037,
+    "links": 0,
+    "nestedGit": [],
+    "decision": "保护：待审、活动构建或本清理构建",
+    "ancestorObservation": {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "merge-base",
+        "--is-ancestor",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+      ],
+      "startedAt": "2026-10-10T17:04:30.708272+00:00",
+      "endedAt": "2026-10-10T17:04:30.753351+00:00",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source": "本轮 todo 元数据 + historical-sources.json 所绑定真正 main 的历史清理记录；未映射者明确 null"
+  }
+]

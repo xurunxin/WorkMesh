@@ -1,0 +1,21 @@
+{
+  "input": {
+    "cmd": "$ErrorActionPreference = 'Stop'\n$target = 'C:\\Users\\xurx\\.tds\\workspaces\\01a11e5e-9e0c-704b-a590-3fee492f4f6a'\n$outDir = Join-Path (Get-Location).Path 'docs\\reviews\\cleanup\\2026-10-11-worktrees'\n$head = (& git -C $target rev-parse HEAD | Out-String).Trim()\nif ($LASTEXITCODE -ne 0 -or $head -ne 'f5a665407f0ff3e6dab84932bcb7d49d56468e42') { throw 'HEAD 变化' }\n& git merge-base --is-ancestor $head 87f88b89297c5c1e346f7ef99118c410f4b4a905\nif ($LASTEXITCODE -ne 0) { throw '主线可达性失败' }\n$status = (& git -C $target status --porcelain=v1 --untracked-files=all | Out-String)\nif ($LASTEXITCODE -ne 0 -or $status.Trim()) { throw '工作树不干净' }\n$ignored = (& git -C $target ls-files --others --ignored --exclude-standard --directory | Out-String)\nif ($LASTEXITCODE -ne 0 -or $ignored.Trim()) { throw '新增 ignored 内容' }\n& ./docs/reviews/cleanup/2026-10-11-worktrees/safety.ps1 -ReceiptName 'safety-execution.json'\n& python -B -c \"import sys; sys.path.insert(0,'docs/reviews/cleanup/2026-10-11-worktrees'); from inventory import scan,ROOT; f,l,n,e=scan(ROOT/'01a11e5e-9e0c-704b-a590-3fee492f4f6a'); assert len(f)==2503 and not l and not n and not e; print('LAST_SCAN files=2503 links=0 nested=0 errors=0')\"\nif ($LASTEXITCODE -ne 0) { throw '末次完整枚举失败' }\n$before = Get-CimInstance Win32_LogicalDisk -Filter \"DeviceID='C:'\" | Select-Object DeviceID,FreeSpace,Size\n$start = [DateTime]::UtcNow.ToString('o')\n$gitOutput = (& git worktree remove $target 2>&1 | Out-String)\n$gitExit = $LASTEXITCODE\n$end = [DateTime]::UtcNow.ToString('o')\n$after = Get-CimInstance Win32_LogicalDisk -Filter \"DeviceID='C:'\" | Select-Object DeviceID,FreeSpace,Size\n$result = [pscustomobject]@{ command = @('git','worktree','remove',$target); workingDirectory = (Get-Location).Path; preflightCommit = 'dacefe0effa3'; remoteMainEvidence = 'remote-main-execution.json'; main = '87f88b89297c5c1e346f7ef99118c410f4b4a905'; head = $head; status = $status; ignored = $ignored; forceUsed = $false; start = $start; end = $end; output = $gitOutput; exitCode = $gitExit; existsAfter = (Test-Path -LiteralPath $target); diskBefore = $before; diskAfter = $after }\n$result | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $outDir 'execution-53.json') -Encoding utf8NoBOM\n$result | ConvertTo-Json -Depth 6\nif ($gitExit -ne 0) { exit $gitExit }",
+    "login": false,
+    "yield_time_ms": 1000,
+    "max_output_tokens": 3000
+  },
+  "start": {
+    "current_time": "2026-10-10 17:06:28 UTC"
+  },
+  "end": {
+    "current_time": "2026-10-10 17:06:35 UTC"
+  },
+  "output": {
+    "chunk_id": "cb8212",
+    "wall_time_seconds": 6.9938657,
+    "exit_code": 0,
+    "original_token_count": 302,
+    "output": "{\r\n  \"recordedAt\": \"2026-10-10T17:06:34.1394026Z\",\r\n  \"target\": \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11e5e-9e0c-704b-a590-3fee492f4f6a\",\r\n  \"exclusiveReadCount\": 2502,\r\n  \"disk\": {\r\n    \"DeviceID\": \"C:\",\r\n    \"FreeSpace\": 306329161728,\r\n    \"Size\": 998956331008\r\n  },\r\n  \"daemonExit\": 0\r\n}\r\nLAST_SCAN files=2503 links=0 nested=0 errors=0\r\n{\r\n  \"command\": [\r\n    \"git\",\r\n    \"worktree\",\r\n    \"remove\",\r\n    \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11e5e-9e0c-704b-a590-3fee492f4f6a\"\r\n  ],\r\n  \"workingDirectory\": \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\",\r\n  \"preflightCommit\": \"dacefe0effa3\",\r\n  \"remoteMainEvidence\": \"remote-main-execution.json\",\r\n  \"main\": \"87f88b89297c5c1e346f7ef99118c410f4b4a905\",\r\n  \"head\": \"f5a665407f0ff3e6dab84932bcb7d49d56468e42\",\r\n  \"status\": \"\",\r\n  \"ignored\": \"\",\r\n  \"forceUsed\": false,\r\n  \"start\": \"2026-10-10T17:06:34.3731307Z\",\r\n  \"end\": \"2026-10-10T17:06:35.3679031Z\",\r\n  \"output\": \"\",\r\n  \"exitCode\": 0,\r\n  \"existsAfter\": false,\r\n  \"diskBefore\": {\r\n    \"DeviceID\": \"C:\",\r\n    \"FreeSpace\": 306329088000,\r\n    \"Size\": 998956331008\r\n  },\r\n  \"diskAfter\": {\r\n    \"DeviceID\": \"C:\",\r\n    \"FreeSpace\": 306486734848,\r\n    \"Size\": 998956331008\r\n  }\r\n}\r\n"
+  }
+}

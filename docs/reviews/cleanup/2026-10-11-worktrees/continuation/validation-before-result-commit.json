@@ -1,0 +1,334 @@
+{
+  "recordedAt": "2026-10-10T18:25:51.464829+00:00",
+  "jsonJsonlGzipParsed": [
+    "additional-evidence-54-index.json",
+    "additional-evidence-55-index.json",
+    "additional-evidence-56-index.json",
+    "additional-evidence-57-index.json",
+    "audit.json.gz",
+    "blob-digests.json.gz",
+    "current-task-spec.json",
+    "docker-mounts-after.json",
+    "docker-mounts-before-57.json",
+    "execution-54-tool-completion.json",
+    "execution-54-tool-dispatch.json",
+    "execution-54.json",
+    "execution-55-tool-completion.json",
+    "execution-55-tool-dispatch.json",
+    "execution-55.json",
+    "execution-56-tool-completion.json",
+    "execution-56-tool-dispatch.json",
+    "execution-56.json",
+    "execution-57-tool-dispatch.json",
+    "execution-57.json",
+    "ignored-54.json.gz",
+    "ignored-55.json.gz",
+    "ignored-56.json.gz",
+    "ignored-57.json.gz",
+    "link-proof-first-failure.json",
+    "link-proof-second-failure.json",
+    "link-proof.json",
+    "lock-history-sources.json",
+    "machine.json",
+    "mapping-54.json.gz",
+    "mapping-55.json.gz",
+    "mapping-56.json.gz",
+    "mapping-57.json.gz",
+    "metadata-54.json.gz",
+    "metadata-55.json.gz",
+    "metadata-56.json.gz",
+    "metadata-57.json.gz",
+    "operation-journal-54.jsonl",
+    "operation-journal-55.jsonl",
+    "operation-journal-56.jsonl",
+    "operation-journal-57.jsonl",
+    "original-tool-receipts.json.gz",
+    "postflight.json",
+    "preflight-commit-binding.json",
+    "preflight-push-receipt.json",
+    "preflight.json",
+    "process-execution-54.json",
+    "process-execution-55.json",
+    "process-execution-56.json",
+    "process-execution-57.json",
+    "process-postflight.json",
+    "process-preflight.json",
+    "protected-after.json",
+    "protected-before.json",
+    "references-board-execution-54.json",
+    "references-board-execution-55.json",
+    "references-board-execution-56.json",
+    "references-board-execution-57.json",
+    "references-board-preflight.json",
+    "references-m5-execution-54.json",
+    "references-m5-execution-55.json",
+    "references-m5-execution-56.json",
+    "references-m5-execution-57.json",
+    "references-m5-preflight.json",
+    "references-review5-correct-preflight.json",
+    "references-review5-execution-54.json",
+    "references-review5-execution-55.json",
+    "references-review5-execution-56.json",
+    "references-review5-execution-57.json",
+    "references-review5-preflight.json",
+    "remote-completion-heads.json",
+    "remote-main-execution-54.json",
+    "remote-main-execution-55.json",
+    "remote-main-execution-56.json",
+    "remote-main-execution-57.json",
+    "remote-main.json",
+    "residual-54.json",
+    "residual-55.json",
+    "residual-56.json",
+    "residual-57.json",
+    "results.json",
+    "retained-directories.json",
+    "runtime-source.json",
+    "scan-54.json.gz",
+    "scan-55.json.gz",
+    "scan-56.json.gz",
+    "scan-57.json.gz",
+    "sources-read.json.gz",
+    "todo-AY-kl26cRVICuFRT6uzSe.json",
+    "todo-g0q8D1msrOVY2kg-cSdkj.json",
+    "todo-pMO6s_SmEL_d81kjKm6S1.json",
+    "todo-WZQPIqZlFUUCVJ0-706Wn.json",
+    "usage-after.json.gz",
+    "usage-before.json.gz",
+    "usage-retained-changes.json",
+    "validation-before-result-commit.json",
+    "verification-54.json",
+    "verification-55.json",
+    "verification-56.json",
+    "verification-57.json",
+    "zip-members.json.gz"
+  ],
+  "pythonAstParsed": [
+    "audit.py",
+    "capture-continuation.py",
+    "finish-mapping.py",
+    "map-sources.py",
+    "metadata-proof.py",
+    "metadata_proof_import.py",
+    "postflight.py",
+    "prepare-candidates.py",
+    "residual-check.py",
+    "validate-final.py",
+    "verify-target.py",
+    "write-report.py",
+    "docs\\reviews\\cleanup\\2026-10-11-worktrees\\usage-inventory.py"
+  ],
+  "gzipIndex": [
+    {
+      "path": "audit.json.gz",
+      "gzipBytes": 173347,
+      "gzipSha256": "cb5b0af5b74297b934c472588ef114a12e6bc6f7b51e969424c1ff58d06ac961",
+      "jsonBytes": 4016428,
+      "jsonSha256": "1618ced71a32775cc42f51787520c60996f38b5c523cd8e8fdf265b090ad2296"
+    },
+    {
+      "path": "blob-digests.json.gz",
+      "gzipBytes": 973955,
+      "gzipSha256": "5766d6b1de196d7d35def594f56679fd0a7f8cb3e0bd5317bca996a4045ca032",
+      "jsonBytes": 2336558,
+      "jsonSha256": "93b577c6435af450d47a07303a7e4984c4615bcc4e1090f309d95696eb1b9abe"
+    },
+    {
+      "path": "ignored-54.json.gz",
+      "gzipBytes": 493371,
+      "gzipSha256": "a09de092723bcd63dc58e2150925f27a47ea6259da06b007bd01998881348c3c",
+      "jsonBytes": 10682676,
+      "jsonSha256": "db3b41bdb9e40e89c8240e60e320d15d6fb7b723f847a18e6574dd488aac89c9"
+    },
+    {
+      "path": "ignored-55.json.gz",
+      "gzipBytes": 504160,
+      "gzipSha256": "0e09057c8d45981562db54c2dfc185ec30e54e39b40bbf438954ba261cb0b407",
+      "jsonBytes": 10831968,
+      "jsonSha256": "1743edfabb2bbcc19787bb34a45b9b2a5d4c94dd774ea70154782c6b7ed7fddf"
+    },
+    {
+      "path": "ignored-56.json.gz",
+      "gzipBytes": 538387,
+      "gzipSha256": "c0b51ea486b781b3b7afd6ac69c5158f6a88763196ce01e191be027c16c7e975",
+      "jsonBytes": 10947188,
+      "jsonSha256": "e5c0c0bff41ee70daf4a3a6517011276b348dbf0e9501e0b36573da67c3dba06"
+    },
+    {
+      "path": "ignored-57.json.gz",
+      "gzipBytes": 579038,
+      "gzipSha256": "109c4b063431c6e52e05449ae2327eefbcd1c9835abf7af87330c472656b07a7",
+      "jsonBytes": 11400181,
+      "jsonSha256": "b5956b21fc31a1dc23ba397986d525d13e2177eb70cab893ac666713fb0eeb71"
+    },
+    {
+      "path": "mapping-54.json.gz",
+      "gzipBytes": 4002867,
+      "gzipSha256": "4ff6108689a064cf61a31e64da22fe554fecb3aeb466002fb6ee52bfc396df7f",
+      "jsonBytes": 44968740,
+      "jsonSha256": "f5ca45a806345fe5c13aa41cdce5240073efc7e05b8eb8e8df9540dc5d391254"
+    },
+    {
+      "path": "mapping-55.json.gz",
+      "gzipBytes": 4059761,
+      "gzipSha256": "aaa6be71c33455ea30422ec99d649cabea906259a78c13ee93760da1e2ed23a0",
+      "jsonBytes": 45172425,
+      "jsonSha256": "c9782f2481b8784540c348161ddc28201ba87e5b88528e761e6fc0524870802a"
+    },
+    {
+      "path": "mapping-56.json.gz",
+      "gzipBytes": 4180114,
+      "gzipSha256": "66ee2ee8acbee73109da53f334f01013c2e8b21658113d30367d0dbd6c6f92a0",
+      "jsonBytes": 45940589,
+      "jsonSha256": "78da6c2c88d466add117221367c105d8a03124ff2d6a5ac3aabfd4902d4fd986"
+    },
+    {
+      "path": "mapping-57.json.gz",
+      "gzipBytes": 4474664,
+      "gzipSha256": "7db7b2ba2d4937da5d6b0e0a86f52254b7dff8caceb429ffafcfcc1de15081f8",
+      "jsonBytes": 48668800,
+      "jsonSha256": "c4729404f0f38ce79c3727fa8e9f60d25cd58b43aedae03ffe96beb64b165dd2"
+    },
+    {
+      "path": "metadata-54.json.gz",
+      "gzipBytes": 924184,
+      "gzipSha256": "ccaa8cffe1cf9942b8e22c7cf938d6e29c64c49a474f67782844275f23e34c87",
+      "jsonBytes": 19858375,
+      "jsonSha256": "5a79d912cbc50d269aef274f405e4891175a60ea6ad40a9393a808c57dcc65f4"
+    },
+    {
+      "path": "metadata-55.json.gz",
+      "gzipBytes": 943093,
+      "gzipSha256": "a37baaaec37af748483c517e92a74aa7e84e7366a9fb63ad5199eac2f07c28a6",
+      "jsonBytes": 20116509,
+      "jsonSha256": "ef81cd258b5f6ac33125ea46225614e8d4e123d34678403d5bed5fab9f0e6540"
+    },
+    {
+      "path": "metadata-56.json.gz",
+      "gzipBytes": 970654,
+      "gzipSha256": "d4bbfcc22c76502ddab019e0194f735b97af6d20e648586209658e9046899f3b",
+      "jsonBytes": 20353172,
+      "jsonSha256": "d3446bc7a24a76a8fdaa1a8ae4661adef44bf04c5d12eda1646215dc4553f79e"
+    },
+    {
+      "path": "metadata-57.json.gz",
+      "gzipBytes": 1005418,
+      "gzipSha256": "e1a03537b7f702ed25a6270a85fef764e5bafbae6ab095c9eb503d6994f64729",
+      "jsonBytes": 21156805,
+      "jsonSha256": "2a9efd2c568db5c1f0d40a5dd23a2ebc6107232391cc7f2dfcc842eee7fcab5a"
+    },
+    {
+      "path": "original-tool-receipts.json.gz",
+      "gzipBytes": 155151,
+      "gzipSha256": "83a3d7ae52e215464fe18db18bdcd28b0d91a68f22681e0aeaa5b448da6444f3",
+      "jsonBytes": 935654,
+      "jsonSha256": "0ec0b9fe0aa6cd50ccd89b97b314568232180d8de5e1a10b6eb0d7f59846e95b"
+    },
+    {
+      "path": "scan-54.json.gz",
+      "gzipBytes": 661126,
+      "gzipSha256": "7a0ba749730f9b12c228f88f4236e7cfcd7756ce0572e4ae0c46afcb8663ac46",
+      "jsonBytes": 11897431,
+      "jsonSha256": "1136c860771e1c0b64c4f46416ea7523f461236004c008bc336a68cb20302788"
+    },
+    {
+      "path": "scan-55.json.gz",
+      "gzipBytes": 671154,
+      "gzipSha256": "c127a6ea38560ec5b8d94f39fa29433a71a1ef1a29bb5c6720030711640f54e1",
+      "jsonBytes": 12097094,
+      "jsonSha256": "15ec5966dfa9c8669613aa5cb654d0d720c58bb9ad693345a8b9cc0bb0164065"
+    },
+    {
+      "path": "scan-56.json.gz",
+      "gzipBytes": 688763,
+      "gzipSha256": "54408bf40c6f7aac29b0f34266a6faf2ec09e626c22fc25c9fa05fa25338e683",
+      "jsonBytes": 12224740,
+      "jsonSha256": "0741bca1c2e78b54bba5bd22dcd5111c768628a93d838e2c0959096a8269b371"
+    },
+    {
+      "path": "scan-57.json.gz",
+      "gzipBytes": 732026,
+      "gzipSha256": "b637fa4fcf81a83c86477d9498292eb19fab62334ae23ffb6f6bba1c713f2749",
+      "jsonBytes": 12715687,
+      "jsonSha256": "b575a287a56de0611b38fe721a777e21bf545fc405cef69bfad841cb42f4a538"
+    },
+    {
+      "path": "sources-read.json.gz",
+      "gzipBytes": 217527,
+      "gzipSha256": "51d13526974316acf9263d751d753bdd4c4270ebd447436423db9696e228d4ac",
+      "jsonBytes": 971385,
+      "jsonSha256": "16cb907a0c08a9f1c81a2aae3df44c7aa33f69c8260520dfd630cd6c4543bec9"
+    },
+    {
+      "path": "usage-after.json.gz",
+      "gzipBytes": 4497,
+      "gzipSha256": "391f7be5d54651f59732fd5eca9e8d7a92cf8a297b678ef38153f6bcd5c8447d",
+      "jsonBytes": 39215,
+      "jsonSha256": "afc9a46703bb0875219d0c875364c22e5b5c63652f9d3c40a7048e8d0c0d1dc8"
+    },
+    {
+      "path": "usage-before.json.gz",
+      "gzipBytes": 5358,
+      "gzipSha256": "9569b1ed64c68bafa72a0826bbb821acf30785f407ccd79cca61209705c98c42",
+      "jsonBytes": 46900,
+      "jsonSha256": "e33e2145774dc3275cd5da0b1cbe9c7da55ce9c8b6303b41d4f431e800666cb9"
+    },
+    {
+      "path": "zip-members.json.gz",
+      "gzipBytes": 6812759,
+      "gzipSha256": "60921f3dca5a719f1d815e0a2972a3588cca445ecae0eedcb6c9413b054f0bc5",
+      "jsonBytes": 73931768,
+      "jsonSha256": "bc9a4517d6e1ab80e192d13481b3dec07fd9ac22ca0b4dd01c0e52eef5259e67"
+    }
+  ],
+  "archives": [
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/additional-evidence-54.zip",
+      "bytes": 2579733,
+      "sha256": "5cc6b38f5e48d78df05e1e44814a856341daa963795e13edf01202ee7dddc55b",
+      "crcPassed": true,
+      "members": 125,
+      "preflightBytesUnchanged": true,
+      "finalCRCPassed": true
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/additional-evidence-55.zip",
+      "bytes": 5329182,
+      "sha256": "2d988c1eef5d078ab802c12d04b8f262a0b609f2ede17ca24a6a27141fd11d0b",
+      "crcPassed": true,
+      "members": 151,
+      "preflightBytesUnchanged": true,
+      "finalCRCPassed": true
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/additional-evidence-56.zip",
+      "bytes": 21920484,
+      "sha256": "8b3263f4e34b1681713fe33cb774f8ee95c60ef9953f66c149abb32b459c02b9",
+      "crcPassed": true,
+      "members": 128,
+      "preflightBytesUnchanged": true,
+      "finalCRCPassed": true
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/additional-evidence-57.zip",
+      "bytes": 31788074,
+      "sha256": "fbc330f62cfb4aa4abe6899761e43a7655ccfce16c918dde60e46268473e8c03",
+      "crcPassed": true,
+      "members": 141,
+      "preflightBytesUnchanged": true,
+      "finalCRCPassed": true
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/node-v22.19.0-win-x64.zip",
+      "bytes": 35424607,
+      "sha256": "ea3fad0e67a991d8477d8c01344b56e69c676ccb733f065b22436994b1253f86",
+      "crcPassed": true,
+      "members": 2869,
+      "preflightBytesUnchanged": true,
+      "finalCRCPassed": true
+    }
+  ],
+  "resultsPassed": true,
+  "productTestsRun": false,
+  "reason": "只运行本卡所需证据/解析/登记检查；没有产品变更"
+}

@@ -1,0 +1,14 @@
+{
+  "tool": "tools.exec_command",
+  "input": {
+    "cmd": "$env:PYTHONUTF8='1'\npython -B docs/reviews/cleanup/2026-10-11-worktrees/revision/validate-inventory.py validation-01.json",
+    "max_output_tokens": 1400
+  },
+  "result": {
+    "chunk_id": "50fdae",
+    "wall_time_seconds": 3.2633443,
+    "exit_code": 0,
+    "original_token_count": 154,
+    "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n{\"receipt\": \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\revision\\\\validation-01.json\", \"passed\": true, \"results\": [{\"input\": [\"git\", \"rev-parse\", \"HEAD\"], \"exit\": 0}, {\"input\": [\"C:\\\\Users\\\\xurx\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\python.exe\", \"-B\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\usage-inventory.test.py\"], \"exit\": 0}, {\"input\": [\"git\", \"diff\", \"--check\"], \"exit\": 0}]}\r\n"
+  }
+}
