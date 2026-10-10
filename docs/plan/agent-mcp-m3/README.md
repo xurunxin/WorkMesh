@@ -1,6 +1,6 @@
 # M3 产品与受控规划交付
 
-合入前增量入口：[PR215／CI417 首败与构建修复](product-pr-ci-report.md)。原成果复审已通过；生产构建排除项的修复须增量复核，最新 head 必须取得自己的 Required CI。历史报告的未审／未创建 PR 状态保持原时点含义。
+合入前增量入口：[CI418 完整成功与构建配置审查](product-ci418-report.md)、[PR215／CI417 首败](product-pr-ci-report.md)。原成果复审已通过；生产构建排除项的修复须增量复核，纯证据后继 head 仍必须取得自己的最新 Required CI。历史报告的未审／未创建 PR 状态保持原时点含义。
 
 成果独审的三项 blocking 修复入口：[修复与新验证报告](review-fixes-report.md)。当前默认分支、principal／Team 成员资格和 context 第八次领取崩溃终态均按本轮实际源码与回执复审；[旧候选历史原件](review-fixes-history.json) 保留，不能用旧绿色替代当前修复验证。
 
