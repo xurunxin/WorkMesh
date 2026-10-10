@@ -74,5 +74,100 @@
       }
     ],
     "playwrightRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3\\.tmp\\m5-runtime\\playwright"
-  }
+  },
+  "jointDatabase": {
+    "name": "m5_5dbe32e19a_joint_test",
+    "containerId": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+    "owner": "m5-5dbe32e19a",
+    "registeredAt": "2026-10-10T19:46:02.135145+00:00",
+    "purpose": "separate API regression and real joint clients; independent databases",
+    "nativeExit": 0,
+    "preserve": true,
+    "stdout": "",
+    "stderr": ""
+  },
+  "e2eDatabase": {
+    "name": "m5_5dbe32e19a_e2e_test",
+    "owner": "m5-5dbe32e19a",
+    "containerId": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+    "runDirectory": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3\\.tmp\\m5-runtime\\e2e-current",
+    "registeredBeforeCreate": true,
+    "recoveryPreserved": true
+  },
+  "previousCleanupSummary": "本人精确ID容器已停止；容器/卷/镜像/网络/恢复目录保留",
+  "currentStateReceipt": "product-cleanup.json",
+  "runtimeAliasRetirementReceipt": "product-runtime-links-retire.json",
+  "additionalRecoveryResources": [
+    {
+      "owner": "m5-5dbe32e19a",
+      "registeredAt": "2026-10-10T21:17:26.972736+00:00",
+      "sourceDatabase": "m5_5dbe32e19a_current_1c665b7b_source_test",
+      "targetDatabase": "m5_5dbe32e19a_current_1c665b7b_target_test",
+      "sourceBucket": "m5-5dbe32e19a-current-1c665b7b-source",
+      "targetBucket": "m5-5dbe32e19a-current-1c665b7b-target",
+      "operations": [
+        {
+          "kind": "createdb",
+          "target": "m5_5dbe32e19a_current_1c665b7b_source_test",
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "kind": "createdb",
+          "target": "m5_5dbe32e19a_current_1c665b7b_target_test",
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "kind": "create",
+          "target": "m5-5dbe32e19a-current-1c665b7b-source",
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "kind": "versioning",
+          "target": "m5-5dbe32e19a-current-1c665b7b-source",
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "kind": "object-lock",
+          "target": "m5-5dbe32e19a-current-1c665b7b-source",
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "kind": "create",
+          "target": "m5-5dbe32e19a-current-1c665b7b-target",
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "kind": "versioning",
+          "target": "m5-5dbe32e19a-current-1c665b7b-target",
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "kind": "object-lock",
+          "target": "m5-5dbe32e19a-current-1c665b7b-target",
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "oldRecoveryResourcesPreserved": true,
+      "deletions": 0
+    }
+  ],
+  "resourceComposition": "product-resources-current.md",
+  "currentCommandExits": "product-owned-command-exits.json",
+  "bytePreservation": "product-evidence-index.json"
 }

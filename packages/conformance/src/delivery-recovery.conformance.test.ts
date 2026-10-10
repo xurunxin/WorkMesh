@@ -54,8 +54,12 @@ describe('M3 Native HTTP/MCP/Pi精确Git与review闭环',()=>{
     const addMembership=()=>f.db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'maintainer') ON CONFLICT(team_id,actor_id) DO NOTHING",[principal.workspace_id,f.teamId,principal.id])
     const removeMembership=()=>f.db.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',[principal.workspace_id,f.teamId,principal.id])
     const deniedResponses:Array<{path:string;status:number}>=[]
-    const proxy=await f.afterResponse(async(path,status)=>{
-      if(removed && status>=400 && (path.startsWith('/api/v1/provider-actions/')||path.endsWith('/context')||path.endsWith('/review-delegations'))) {
+    const isBusiness=(path:string)=>path.startsWith('/api/v1/provider-actions/')||path.endsWith('/context')||path.endsWith('/review-delegations')
+    // Revoke at the business request boundary, after the legitimate started
+    // Activity. Revoking before makeTool instead proves Activity denial only.
+    const proxy=await f.interceptRequests(async path=>{if(removed && isBusiness(path))await removeMembership()},async(path,status)=>{
+      if(removed && isBusiness(path)) {
+        expect([403,404]).toContain(status)
         deniedResponses.push({path,status});await addMembership()
       }
     })
@@ -64,7 +68,7 @@ describe('M3 Native HTTP/MCP/Pi精确Git与review闭环',()=>{
       // Runner admission. Revoke after model admission, restore after the actual
       // denied API response so the next model request can receive that error.
       await f.db.query("UPDATE actors SET workspace_role='admin' WHERE id=$1",[principal.id])
-      try {return await f.piCall(execution,token,name,args,{apiUrl:proxy,beforeRun:async()=>{await addMembership();await f.db.query("UPDATE actors SET workspace_role='member' WHERE id=$1",[principal.id])},beforeTool:async()=>{if(removed)await removeMembership()}})}
+      try {return await f.piCall(execution,token,name,args,{apiUrl:proxy,beforeRun:async()=>{await addMembership();await f.db.query("UPDATE actors SET workspace_role='member' WHERE id=$1",[principal.id])}})}
       finally {await f.db.query("UPDATE actors SET workspace_role='member' WHERE id=$1",[principal.id]);if(removed)await removeMembership()}
     }
     try {

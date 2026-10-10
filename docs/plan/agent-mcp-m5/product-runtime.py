@@ -59,10 +59,15 @@ if sys.argv[1]=='prepare':
   time.sleep(.5)
  else:raise SystemExit('独有 Postgres 未 ready')
  print(json.dumps({'owner':run,'registeredContainers':3,'database':'workmesh_test','credentialsPrinted':False}))
-elif sys.argv[1]=='check':
- env=json.loads((LOCAL/'environment.json').read_text(encoding='utf8'));label=sys.argv[2];argv=sys.argv[3:]
+elif sys.argv[1] in ['check','check-joint','check-e2e']:
+ profile={'check-joint':'joint-environment.json','check-e2e':'e2e-environment.json'}.get(sys.argv[1],'environment.json')
+ env=json.loads((LOCAL/profile).read_text(encoding='utf8'));label=sys.argv[2];argv=sys.argv[3:]
  assert argv and all('wmi_' not in arg for arg in argv)
  before=source_fingerprints();started=now();tick=time.monotonic()
+ fingerprints=LOCAL/'sources';fingerprints.mkdir(exist_ok=True)
+ sourcepath=fingerprints/(label+'.json')
+ assert not sourcepath.exists(),'命令 label 已有原件，必须使用新 label，禁止覆盖首败/共享快照'
+ save(sourcepath,{'before':before,'after':None,'processCompleted':False})
  # Keep partial output in the private recovery directory even if a turn is interrupted.
  # Only the redacted completed files below may enter the public evidence bundle.
  rawdir=LOCAL/'private-check-output';rawdir.mkdir(exist_ok=True)
@@ -80,6 +85,16 @@ elif sys.argv[1]=='check':
  values=[v for k,v in env.items() if any(x in k for x in ['TOKEN','SECRET','PASSWORD','MASTER_KEY','DATABASE_URL'])]
  fingerprints=LOCAL/'sources';fingerprints.mkdir(exist_ok=True)
  sourcepath=fingerprints/(label+'.json');save(sourcepath,{'before':before,'after':after})
+ # Keep the original per-command path/bytes. Equal completed manifests share
+ # a task-owned immutable file instead of copying the same source inventory.
+ sourcebytes=sourcepath.read_bytes();sourcehash=hashlib.sha256(sourcebytes).hexdigest()
+ objects=LOCAL/'source-objects';objects.mkdir(exist_ok=True)
+ canonical=objects/(sourcehash+'.json')
+ if canonical.exists():
+  assert canonical.read_bytes()==sourcebytes,'内容寻址快照不一致，停止'
+  assert sourcepath.resolve().is_relative_to(LOCAL.resolve()) and not sourcepath.is_symlink()
+  sourcepath.unlink();os.link(canonical,sourcepath)
+ else:os.link(sourcepath,canonical)
  row={'label':label,'argv':argv,'cwd':str(ROOT),'startedAt':started,'endedAt':ended,'runtimeSeconds':runtime,'nativeExit':result.returncode,'logs':{},'sourceBinding':{'path':str(sourcepath.relative_to(ROOT)),'beforeDigest':before['digest'],'afterDigest':after['digest'],'unchanged':before['digest']==after['digest'],'sha256':hashlib.sha256(sourcepath.read_bytes()).hexdigest()}}
  for channel in ['stdout','stderr']:
   raw=getattr(result,channel).decode('utf8',errors='replace')

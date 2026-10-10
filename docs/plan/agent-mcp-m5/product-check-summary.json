@@ -743,6 +743,1714 @@
         "unchanged": true,
         "sha256": "f5b5d07346f0c59a422d595bf0fcd281aa40f23fc5d0b70352e25426e872a45f"
       }
+    },
+    {
+      "label": "review-api-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 17.691403599994374,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-api-typecheck.json",
+        "beforeDigest": "41cdb995c77162ed9d97a1e817e7f16cd0d9775aff0c6f807f826c664cbe9661",
+        "afterDigest": "e7271ec6a779f2a464000d7daf65c6503d01e9fb8bcff0be6a7c6fd513c36e4f",
+        "unchanged": false,
+        "sha256": "1fd0cdaec3973a05dcd2388b998ed55e2e2110f1d81c1dce269ae1cb2327fa54"
+      }
+    },
+    {
+      "label": "review-lock-inventory-before",
+      "exit": 1,
+      "runtimeSeconds": 3.7645088999997824,
+      "countsFromActualStdout": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 7 passed (8)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-lock-inventory-before.json",
+        "beforeDigest": "62d6805004c8a5c248e18d2ef20a8c8d332a344344b8367a5315abaa911015e4",
+        "afterDigest": "62d6805004c8a5c248e18d2ef20a8c8d332a344344b8367a5315abaa911015e4",
+        "unchanged": true,
+        "sha256": "9e3d6960fb1965c6ad3cdb453a5f2c84190e0114a4437db9189263dc3de8b2a4"
+      }
+    },
+    {
+      "label": "review-lock-inventory-update",
+      "exit": 0,
+      "runtimeSeconds": 3.479138700000476,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  8 passed (8)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-lock-inventory-update.json",
+        "beforeDigest": "62d6805004c8a5c248e18d2ef20a8c8d332a344344b8367a5315abaa911015e4",
+        "afterDigest": "e221e4fb428b7ee5532953ca85ab177cfa397b373172f4e391906ba53cd68b0b",
+        "unchanged": false,
+        "sha256": "858ce37997cf2a1f5fe4471160458866f412b9176dcbac51bacab42277371c65"
+      }
+    },
+    {
+      "label": "review-api-unit",
+      "exit": 1,
+      "runtimeSeconds": 30.610297200008063,
+      "countsFromActualStdout": [
+        "Test Files  2 failed | 32 passed (34)",
+        "Tests  6 failed | 174 passed (180)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-api-unit.json",
+        "beforeDigest": "99ed8c9021a423e0ba2e11e5031a1a4ad7fdf20afe8d14dff611f870c7dd5982",
+        "afterDigest": "9266fa1e25bc896ea5cf5c489cb28eae9ec4dc49c36736b886cb862f88113770",
+        "unchanged": false,
+        "sha256": "aff02d3534adb0e75d5f9f62721540c7fd28cc3e1b610510957cd98c00a0b982"
+      }
+    },
+    {
+      "label": "review-api-unit-fixed",
+      "exit": 0,
+      "runtimeSeconds": 26.118020299996715,
+      "countsFromActualStdout": [
+        "Test Files  34 passed (34)",
+        "Tests  180 passed (180)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-api-unit-fixed.json",
+        "beforeDigest": "8c5163776708c8b41fedf0b5dddf7dfa6210e03f62c636be6869dae698edf8bf",
+        "afterDigest": "e1244d24167c29d2e9ca3b7e096ea67b2c401309d7d3dd1a42189e43bc4a38fc",
+        "unchanged": false,
+        "sha256": "d172a8dc9dec66a62255df0c4814d3c15d4f8c92a8907365ae047477986c5a75"
+      }
+    },
+    {
+      "label": "review-conformance-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 13.577891299995827,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-conformance-typecheck.json",
+        "beforeDigest": "e1244d24167c29d2e9ca3b7e096ea67b2c401309d7d3dd1a42189e43bc4a38fc",
+        "afterDigest": "e1244d24167c29d2e9ca3b7e096ea67b2c401309d7d3dd1a42189e43bc4a38fc",
+        "unchanged": true,
+        "sha256": "6b49fc28321f2a3550c5edb95ab9e4d7738f6254b32947483c55b73f5832d6a1"
+      }
+    },
+    {
+      "label": "review-lock-inventory-update-final",
+      "exit": 0,
+      "runtimeSeconds": 3.855267200007802,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  8 passed (8)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-lock-inventory-update-final.json",
+        "beforeDigest": "9cce6e79f7dd9413bade232d7794bd6e21aca8b878be90012cee88515093db76",
+        "afterDigest": "f46e2910774cb49e67fa97743c10cb11f18e21b1889ec627454ae8d086c0549b",
+        "unchanged": false,
+        "sha256": "da280dfb489c790489eb59ce7482992b21f8b7cd61b2a732a01011937b8e86a6"
+      }
+    },
+    {
+      "label": "review-membership-real",
+      "exit": 255,
+      "runtimeSeconds": 0.10352500001317821,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-membership-real.json",
+        "beforeDigest": "f46e2910774cb49e67fa97743c10cb11f18e21b1889ec627454ae8d086c0549b",
+        "afterDigest": "f46e2910774cb49e67fa97743c10cb11f18e21b1889ec627454ae8d086c0549b",
+        "unchanged": true,
+        "sha256": "ffc95eec178270670b5f30752cc96e6cf55d51652b7319f9d2611c369c6cacb6"
+      }
+    },
+    {
+      "label": "review-membership-real-member",
+      "exit": 1,
+      "runtimeSeconds": 6.651516799989622,
+      "countsFromActualStdout": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 20 skipped (21)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-membership-real-member.json",
+        "beforeDigest": "f46e2910774cb49e67fa97743c10cb11f18e21b1889ec627454ae8d086c0549b",
+        "afterDigest": "f46e2910774cb49e67fa97743c10cb11f18e21b1889ec627454ae8d086c0549b",
+        "unchanged": true,
+        "sha256": "ffc95eec178270670b5f30752cc96e6cf55d51652b7319f9d2611c369c6cacb6"
+      }
+    },
+    {
+      "label": "review-lock-inventory-final",
+      "exit": 0,
+      "runtimeSeconds": 6.525382800013176,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  8 passed (8)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-lock-inventory-final.json",
+        "beforeDigest": "38c1d0c200cffe406b213d9209bfbe1c87d12b1d1a1a9583311339fe0f74dd49",
+        "afterDigest": "38c1d0c200cffe406b213d9209bfbe1c87d12b1d1a1a9583311339fe0f74dd49",
+        "unchanged": true,
+        "sha256": "36ba1c9b806c6f04816a7967da5d24119408e8e9080705091a9202985fae4946"
+      }
+    },
+    {
+      "label": "review-membership-real-member-prepared",
+      "exit": 1,
+      "runtimeSeconds": 9.46577690000413,
+      "countsFromActualStdout": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 20 skipped (21)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-membership-real-member-prepared.json",
+        "beforeDigest": "b36fa314fcd03af97bf34207a22b476ca7da32fcc14200762fb2b96b40666107",
+        "afterDigest": "b36fa314fcd03af97bf34207a22b476ca7da32fcc14200762fb2b96b40666107",
+        "unchanged": true,
+        "sha256": "bf760d515da5fad0358a71774bab7bda17e4a263a0fadf593245b3af2e6e84ee"
+      }
+    },
+    {
+      "label": "review-membership-real-member-exact",
+      "exit": 0,
+      "runtimeSeconds": 13.226042099995539,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed | 20 skipped (21)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-membership-real-member-exact.json",
+        "beforeDigest": "cc3e08366e3f2d32fa9e4540f6d2ca964b1224c0ef5a2355d4e3fef47ac1b6f6",
+        "afterDigest": "cc3e08366e3f2d32fa9e4540f6d2ca964b1224c0ef5a2355d4e3fef47ac1b6f6",
+        "unchanged": true,
+        "sha256": "fcf04a1aef6a41ce491738437d697c241bdfea7a3c32f5d458fee6a69328cf90"
+      }
+    },
+    {
+      "label": "review-joint-regression",
+      "exit": 0,
+      "runtimeSeconds": 223.27924349998648,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  23 passed (23)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-joint-regression.json",
+        "beforeDigest": "c5100cfb03e7dc8e320a2d9b3b6ef729487cf7aa1be1179826801189ff15a1bd",
+        "afterDigest": "b636f22d7e090c331f343b2a2432670438d95c86db3e876e7cef29a975f1a70b",
+        "unchanged": false,
+        "sha256": "07fed8fe44a3d5a56c94522947f4227c9b6b64765292d193b81429e5d1152a8d"
+      }
+    },
+    {
+      "label": "review-resumed-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 90.65150269999867,
+      "countsFromActualStdout": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    15 cached, 18 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-resumed-typecheck.json",
+        "beforeDigest": "335bcc7b50985653de56c82d835a11ae3397efce27b403379f28898e1af9f968",
+        "afterDigest": "6239f0df6d20cc17e9d91b8ccf2f02f16cbf40e29984854b6272fef6277ffc7c",
+        "unchanged": false,
+        "sha256": "f9c8ef3ac0372935c54097857add4292fd97d168b7c1c948d8c124969bb1a866"
+      }
+    },
+    {
+      "label": "review-resumed-lint",
+      "exit": 0,
+      "runtimeSeconds": 87.93857620000199,
+      "countsFromActualStdout": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    14 cached, 18 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-resumed-lint.json",
+        "beforeDigest": "6239f0df6d20cc17e9d91b8ccf2f02f16cbf40e29984854b6272fef6277ffc7c",
+        "afterDigest": "f0ea4266ef1d6218827c0c0840ca395bfb017594e6865d6443ce059d0a94763e",
+        "unchanged": false,
+        "sha256": "e2124c0941f238e9c26b75e851332c361e89e4ad8125fdf9e034397cd1968047"
+      }
+    },
+    {
+      "label": "review-resumed-unit",
+      "exit": 0,
+      "runtimeSeconds": 169.41568460001145,
+      "countsFromActualStdout": [
+        "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+        "@workmesh/git-provider:test:       Tests  17 passed (17)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  110 passed (110)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  213 passed (213)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  180 passed (180)",
+        "Tasks:    32 successful, 32 total",
+        "Cached:    18 cached, 32 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-resumed-unit.json",
+        "beforeDigest": "335bcc7b50985653de56c82d835a11ae3397efce27b403379f28898e1af9f968",
+        "afterDigest": "f0ea4266ef1d6218827c0c0840ca395bfb017594e6865d6443ce059d0a94763e",
+        "unchanged": false,
+        "sha256": "6947ce4f8ee612766c2a8ea7aeebf8c96b7e2fa78fcdd94353477ee3b352d2c3"
+      }
+    },
+    {
+      "label": "review-journeys-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 15.227077899995493,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-journeys-typecheck.json",
+        "beforeDigest": "49fa96cb29d319dbf7bd44c0e4c00ed2ab033d2e481aad229d120cd0d0b2abd0",
+        "afterDigest": "9e37344ee916a04fc81eed5604bfdb694886d65c7b9e378f3c503d4855440b79",
+        "unchanged": false,
+        "sha256": "c65795c27a274c58bbaae2824e2fa8860c691a2d7446bd09d5119d2989462d9d"
+      }
+    },
+    {
+      "label": "review-auth-api-integration",
+      "exit": 1,
+      "runtimeSeconds": 369.2798902000068,
+      "countsFromActualStdout": [
+        "Test Files  2 failed | 25 passed (27)",
+        "Tests  3 failed | 275 passed | 1 skipped (279)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-auth-api-integration.json",
+        "beforeDigest": "5455ce2a9593e2ce2b6ff1ffc069a823c3f7156a3d7735ea171686468dc4ec65",
+        "afterDigest": "97766b1f1e54f9f37219100dda8fc90a327c4ac78fff75a2735d8abf66ccf3ff",
+        "unchanged": false,
+        "sha256": "b591199abe895c0e5996936d76a1bb6544adadd928f6726314f5cd9bf233702f"
+      }
+    },
+    {
+      "label": "review-guard-unit",
+      "exit": 0,
+      "runtimeSeconds": 3.65611889999127,
+      "countsFromActualStdout": [
+        "Test Files  2 passed (2)",
+        "Tests  14 passed (14)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-guard-unit.json",
+        "beforeDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+        "afterDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+        "unchanged": true,
+        "sha256": "a7fc0d5b153851037a421d2a2116314c217d0c25b2c0feaa33ecc4fe7aa9a8ed"
+      }
+    },
+    {
+      "label": "review-lock-manifest-current",
+      "exit": 0,
+      "runtimeSeconds": 3.9847140000056243,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  8 passed (8)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-lock-manifest-current.json",
+        "beforeDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+        "afterDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+        "unchanged": true,
+        "sha256": "a7fc0d5b153851037a421d2a2116314c217d0c25b2c0feaa33ecc4fe7aa9a8ed"
+      }
+    },
+    {
+      "label": "review-journeys-current-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 14.233404300000984,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-journeys-current-typecheck.json",
+        "beforeDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+        "afterDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+        "unchanged": true,
+        "sha256": "a7fc0d5b153851037a421d2a2116314c217d0c25b2c0feaa33ecc4fe7aa9a8ed"
+      }
+    },
+    {
+      "label": "review-status-snapshot-typecheck",
+      "exit": 2,
+      "runtimeSeconds": 14.962305500012008,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-status-snapshot-typecheck.json",
+        "beforeDigest": "5442aa39746868813e704f0b823b78abb391b755a5d9a7b84a5ca9d95ca3c4a6",
+        "afterDigest": "5442aa39746868813e704f0b823b78abb391b755a5d9a7b84a5ca9d95ca3c4a6",
+        "unchanged": true,
+        "sha256": "443791e476805fbeba71c527b48db3ada15ca7977761674cbae0779726932f08"
+      }
+    },
+    {
+      "label": "review-status-snapshot-real",
+      "exit": 1,
+      "runtimeSeconds": 5.851686800000607,
+      "countsFromActualStdout": [
+        "Test Files  1 failed (1)",
+        "Tests  6 skipped (6)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-status-snapshot-real.json",
+        "beforeDigest": "5442aa39746868813e704f0b823b78abb391b755a5d9a7b84a5ca9d95ca3c4a6",
+        "afterDigest": "5442aa39746868813e704f0b823b78abb391b755a5d9a7b84a5ca9d95ca3c4a6",
+        "unchanged": true,
+        "sha256": "443791e476805fbeba71c527b48db3ada15ca7977761674cbae0779726932f08"
+      }
+    },
+    {
+      "label": "review-status-snapshot-real-fixed",
+      "exit": 1,
+      "runtimeSeconds": 5.860021799991955,
+      "countsFromActualStdout": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 5 skipped (6)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-status-snapshot-real-fixed.json",
+        "beforeDigest": "6764de9367acc339999168029669c48148c4fe0afb7c0754cfa726a3cb301937",
+        "afterDigest": "6764de9367acc339999168029669c48148c4fe0afb7c0754cfa726a3cb301937",
+        "unchanged": true,
+        "sha256": "c387f3d239d209ba646824080fb407f47c2e385621ffd6853e34251791969879"
+      }
+    },
+    {
+      "label": "review-status-snapshot-real-sequence",
+      "exit": 0,
+      "runtimeSeconds": 5.518322999996599,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed | 5 skipped (6)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-status-snapshot-real-sequence.json",
+        "beforeDigest": "5394ce46c0ce272a503a7b5246e797c6c5b98b50fcaa851531537f408bcc37b1",
+        "afterDigest": "5394ce46c0ce272a503a7b5246e797c6c5b98b50fcaa851531537f408bcc37b1",
+        "unchanged": true,
+        "sha256": "3f8096c682c2ab33b11271ef9c534467ef4ff5b83efbf910f995b66b91ce196e"
+      }
+    },
+    {
+      "label": "joint-o-n-first",
+      "exit": 1,
+      "runtimeSeconds": 85.69233849999728,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-o-n-first.json",
+        "beforeDigest": "56f4ef206514325c4f0497a14fcfbd723e90c1328a8f7ae863985e243bcee77d",
+        "afterDigest": "56f4ef206514325c4f0497a14fcfbd723e90c1328a8f7ae863985e243bcee77d",
+        "unchanged": true,
+        "sha256": "d22ad7d34780605a6607a1e33cfcee256285424dd829541f75add6c99206d3d9"
+      }
+    },
+    {
+      "label": "review-status-final-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 17.155082199999015,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-status-final-typecheck.json",
+        "beforeDigest": "b23bbd5672960151706ce219c2f09a4459ecf93670b9879a486ba8ff32a5c4d5",
+        "afterDigest": "b23bbd5672960151706ce219c2f09a4459ecf93670b9879a486ba8ff32a5c4d5",
+        "unchanged": true,
+        "sha256": "de05d05bb3494ee0c0ac65e4bc960320c2e1a8c84a4b33f7b6926d73d1aaadd9"
+      }
+    },
+    {
+      "label": "joint-o-n-tool-binding",
+      "exit": 1,
+      "runtimeSeconds": 144.31312579999212,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-o-n-tool-binding.json",
+        "beforeDigest": "b23bbd5672960151706ce219c2f09a4459ecf93670b9879a486ba8ff32a5c4d5",
+        "afterDigest": "d4879c3221b5336cdaba4c55c17da8a8b925d05f1de98299d772490d36d9f015",
+        "unchanged": false,
+        "sha256": "36187dab1d68e91a7b30e369bda0d33c6c9bf02c7cc7d340c0e2c0228a4f84aa"
+      }
+    },
+    {
+      "label": "review-api-status-final",
+      "exit": 0,
+      "runtimeSeconds": 353.4233688999957,
+      "countsFromActualStdout": [
+        "Test Files  27 passed (27)",
+        "Tests  278 passed | 1 skipped (279)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-api-status-final.json",
+        "beforeDigest": "56f4ef206514325c4f0497a14fcfbd723e90c1328a8f7ae863985e243bcee77d",
+        "afterDigest": "d4879c3221b5336cdaba4c55c17da8a8b925d05f1de98299d772490d36d9f015",
+        "unchanged": false,
+        "sha256": "86e623f269796fffe9e6899037d0b4f46110e8c800d7d2dd958be8f193caf0e1"
+      }
+    },
+    {
+      "label": "review-faults-typecheck",
+      "exit": 2,
+      "runtimeSeconds": 14.73213200000464,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-faults-typecheck.json",
+        "beforeDigest": "096e2d12afee214f1fe552a2eccc2345d5a86c06c56cfa4456bb4513155d1cef",
+        "afterDigest": "096e2d12afee214f1fe552a2eccc2345d5a86c06c56cfa4456bb4513155d1cef",
+        "unchanged": true,
+        "sha256": "a658ae28c80417764d7dbce0c4b264e65a0b58c90b11c3c3d4930da4c380884d"
+      }
+    },
+    {
+      "label": "joint-o-n-child-contract",
+      "exit": 1,
+      "runtimeSeconds": 94.22305760000017,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-o-n-child-contract.json",
+        "beforeDigest": "096e2d12afee214f1fe552a2eccc2345d5a86c06c56cfa4456bb4513155d1cef",
+        "afterDigest": "f982666bf0af0afbe6e21756bf79bd436c7eefa69ecc5b883d54d22f50de650f",
+        "unchanged": false,
+        "sha256": "7b8c32bde3cbf1a9eeb13618f5d58ac4a0b11c6119a0ed56110645d661900bde"
+      }
+    },
+    {
+      "label": "review-native-mcp-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 14.40918440000678,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-native-mcp-typecheck.json",
+        "beforeDigest": "f982666bf0af0afbe6e21756bf79bd436c7eefa69ecc5b883d54d22f50de650f",
+        "afterDigest": "f982666bf0af0afbe6e21756bf79bd436c7eefa69ecc5b883d54d22f50de650f",
+        "unchanged": true,
+        "sha256": "2757bbf1bffd6dc873a9f55e7fd772b73234b419da340376f68289c99d586631"
+      }
+    },
+    {
+      "label": "joint-o-n-native-mcp-ready",
+      "exit": 1,
+      "runtimeSeconds": 6.038052600008086,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-o-n-native-mcp-ready.json",
+        "beforeDigest": "9d3b123d0c6c8cc6893340f084ddb0f133bfb50db974eb5345051923cfd01851",
+        "afterDigest": "9d3b123d0c6c8cc6893340f084ddb0f133bfb50db974eb5345051923cfd01851",
+        "unchanged": true,
+        "sha256": "f74492f81df7eee9d3c0de3c3739486a9d55539f612d7144fddb1c3d217b5fe1"
+      }
+    },
+    {
+      "label": "review-worker-fault-typecheck",
+      "exit": 2,
+      "runtimeSeconds": 12.90171819999523,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-worker-fault-typecheck.json",
+        "beforeDigest": "e1445cc1f16f12d66ab616bf0d1666130de045c688441d8ed64efabd2e4810eb",
+        "afterDigest": "e1445cc1f16f12d66ab616bf0d1666130de045c688441d8ed64efabd2e4810eb",
+        "unchanged": true,
+        "sha256": "b2e54a8505184eec329bf8b641825e0ed1fc6b68bfaf4547a02be799a211035a"
+      }
+    },
+    {
+      "label": "review-status-lock-inventory",
+      "exit": 0,
+      "runtimeSeconds": 3.826141400000779,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  8 passed (8)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-status-lock-inventory.json",
+        "beforeDigest": "e1445cc1f16f12d66ab616bf0d1666130de045c688441d8ed64efabd2e4810eb",
+        "afterDigest": "e1445cc1f16f12d66ab616bf0d1666130de045c688441d8ed64efabd2e4810eb",
+        "unchanged": true,
+        "sha256": "b2e54a8505184eec329bf8b641825e0ed1fc6b68bfaf4547a02be799a211035a"
+      }
+    },
+    {
+      "label": "joint-o-n-private-mcp-import",
+      "exit": 1,
+      "runtimeSeconds": 200.3250507000048,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-o-n-private-mcp-import.json",
+        "beforeDigest": "6ec421adb28d2139f8a6d85282666d01fbc9ca279f6f96e51ec768d824017fc5",
+        "afterDigest": "7d671dd4a91533e32560a9cb42d49220a0d97e7b12325fdb663eb96f2609322d",
+        "unchanged": false,
+        "sha256": "42f5bdff9e8b887444c962b416867799db2138027d213d1dc4afba8415c72c7e"
+      }
+    },
+    {
+      "label": "review-worker-current-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 15.756191100008436,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-worker-current-typecheck.json",
+        "beforeDigest": "e320bad4f31a52ea7227595f99056c0dce8a297eb3e4471bd497ac2d56aba438",
+        "afterDigest": "e320bad4f31a52ea7227595f99056c0dce8a297eb3e4471bd497ac2d56aba438",
+        "unchanged": true,
+        "sha256": "a5163cda7609345d58a7bf3088257323ce09dbfda3c645864dd29cf60ad92a40"
+      }
+    },
+    {
+      "label": "review-safety-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 13.848642500001006,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-safety-typecheck.json",
+        "beforeDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "afterDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "unchanged": true,
+        "sha256": "cb726555046e641b3cb537d2ff2b285f72e26274a5bf0979d1f266af512ee0d3"
+      }
+    },
+    {
+      "label": "review-final-root-lint",
+      "exit": 0,
+      "runtimeSeconds": 50.14670250000199,
+      "countsFromActualStdout": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    16 cached, 18 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-root-lint.json",
+        "beforeDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "afterDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "unchanged": true,
+        "sha256": "cb726555046e641b3cb537d2ff2b285f72e26274a5bf0979d1f266af512ee0d3"
+      }
+    },
+    {
+      "label": "review-final-root-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 50.833978199996636,
+      "countsFromActualStdout": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    15 cached, 18 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-root-typecheck.json",
+        "beforeDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "afterDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "unchanged": true,
+        "sha256": "cb726555046e641b3cb537d2ff2b285f72e26274a5bf0979d1f266af512ee0d3"
+      }
+    },
+    {
+      "label": "review-final-root-unit",
+      "exit": 0,
+      "runtimeSeconds": 57.03259389998857,
+      "countsFromActualStdout": [
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+        "@workmesh/git-provider:test:       Tests  17 passed (17)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  110 passed (110)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  213 passed (213)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  181 passed (181)",
+        "Tasks:    32 successful, 32 total",
+        "Cached:    27 cached, 32 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-root-unit.json",
+        "beforeDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "afterDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "unchanged": true,
+        "sha256": "cb726555046e641b3cb537d2ff2b285f72e26274a5bf0979d1f266af512ee0d3"
+      }
+    },
+    {
+      "label": "joint-o-n-canonical-approval",
+      "exit": 0,
+      "runtimeSeconds": 226.64885710000817,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-o-n-canonical-approval.json",
+        "beforeDigest": "e320bad4f31a52ea7227595f99056c0dce8a297eb3e4471bd497ac2d56aba438",
+        "afterDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "unchanged": false,
+        "sha256": "c2202f4cd9e45314444c461c2439391757383295e91b3bc84cc9f07ca676cd1b"
+      }
+    },
+    {
+      "label": "joint-p-n-first",
+      "exit": 0,
+      "runtimeSeconds": 166.88149449999037,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-p-n-first.json",
+        "beforeDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "afterDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "unchanged": true,
+        "sha256": "cb726555046e641b3cb537d2ff2b285f72e26274a5bf0979d1f266af512ee0d3"
+      }
+    },
+    {
+      "label": "review-joint-final-status-combination",
+      "exit": 0,
+      "runtimeSeconds": 211.2798810999957,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  23 passed (23)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-joint-final-status-combination.json",
+        "beforeDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "afterDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "unchanged": true,
+        "sha256": "cb726555046e641b3cb537d2ff2b285f72e26274a5bf0979d1f266af512ee0d3"
+      }
+    },
+    {
+      "label": "joint-revision-first",
+      "exit": 0,
+      "runtimeSeconds": 149.740295399999,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-revision-first.json",
+        "beforeDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "afterDigest": "7aa9e688bef942cf9347a6823b9352028aac6981cb4f7d904a46c54d7417cf80",
+        "unchanged": true,
+        "sha256": "cb726555046e641b3cb537d2ff2b285f72e26274a5bf0979d1f266af512ee0d3"
+      }
+    },
+    {
+      "label": "review-provider-process-typecheck",
+      "exit": 2,
+      "runtimeSeconds": 12.917433299997356,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-provider-process-typecheck.json",
+        "beforeDigest": "16a81d42e11557b7b9b11686d631eeedacf1016a3dfab1ac3837439f5f8cd41b",
+        "afterDigest": "16a81d42e11557b7b9b11686d631eeedacf1016a3dfab1ac3837439f5f8cd41b",
+        "unchanged": true,
+        "sha256": "2a28922cca473ed7f4f420b46cbaf854e91c9442890bb8f61e5280f98f6bbbe1"
+      }
+    },
+    {
+      "label": "review-provider-guard-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 14.840209400004824,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-provider-guard-typecheck.json",
+        "beforeDigest": "f66bb00f50dce42a7e3af2d55e630c80012ab0346eb9e8b4ec5163512da5beab",
+        "afterDigest": "f66bb00f50dce42a7e3af2d55e630c80012ab0346eb9e8b4ec5163512da5beab",
+        "unchanged": true,
+        "sha256": "73b28fe7258db43dac876aafbc94e5634339362d1f4ac7bfb90c5737cd212805"
+      }
+    },
+    {
+      "label": "joint-external-contract-first",
+      "exit": 1,
+      "runtimeSeconds": 75.52853219999815,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-external-contract-first.json",
+        "beforeDigest": "16a81d42e11557b7b9b11686d631eeedacf1016a3dfab1ac3837439f5f8cd41b",
+        "afterDigest": "f66bb00f50dce42a7e3af2d55e630c80012ab0346eb9e8b4ec5163512da5beab",
+        "unchanged": false,
+        "sha256": "88225b61aef678269cf4db7c81f348f09e7751293f593c83f95b9b2ce7ca5775"
+      }
+    },
+    {
+      "label": "review-event-tools-typecheck",
+      "exit": 2,
+      "runtimeSeconds": 18.580987099994672,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-event-tools-typecheck.json",
+        "beforeDigest": "9fdcac1ee37015e64a61f45229119793e377482d8e772dbfcc7d265cdee9d2c4",
+        "afterDigest": "9fdcac1ee37015e64a61f45229119793e377482d8e772dbfcc7d265cdee9d2c4",
+        "unchanged": true,
+        "sha256": "7d267297ab8281cfb9bcc4599a9cdcfe02947920e7bcdb664694eef9dd9402af"
+      }
+    },
+    {
+      "label": "joint-o-g-worker-first",
+      "exit": 1,
+      "runtimeSeconds": 140.38779550000618,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-o-g-worker-first.json",
+        "beforeDigest": "9bb22f5d3a104cfeb5f2567d1fb510c0516b9163d7bc317c6a3a5e195e6b9311",
+        "afterDigest": "9fdcac1ee37015e64a61f45229119793e377482d8e772dbfcc7d265cdee9d2c4",
+        "unchanged": false,
+        "sha256": "9a664875cb5fe4057dc7337cc509d5e11efd161bb461cbd244608c4c22626f1f"
+      }
+    },
+    {
+      "label": "review-runner-events-permissions",
+      "exit": 0,
+      "runtimeSeconds": 12.342760100000305,
+      "countsFromActualStdout": [
+        "Test Files  4 passed (4)",
+        "Tests  74 passed (74)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-runner-events-permissions.json",
+        "beforeDigest": "fa2f0a1b564535f6d3b8f2600f244592f734b21a7921f3a53358f9ea4289c1ba",
+        "afterDigest": "fa2f0a1b564535f6d3b8f2600f244592f734b21a7921f3a53358f9ea4289c1ba",
+        "unchanged": true,
+        "sha256": "f9c991cc4c2c3b014ba21e1aad2f912c6f73217761e2ba5d46635c641876e046"
+      }
+    },
+    {
+      "label": "review-event-consumers-typecheck",
+      "exit": 2,
+      "runtimeSeconds": 15.400603699992644,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-event-consumers-typecheck.json",
+        "beforeDigest": "fa2f0a1b564535f6d3b8f2600f244592f734b21a7921f3a53358f9ea4289c1ba",
+        "afterDigest": "fa2f0a1b564535f6d3b8f2600f244592f734b21a7921f3a53358f9ea4289c1ba",
+        "unchanged": true,
+        "sha256": "f9c991cc4c2c3b014ba21e1aad2f912c6f73217761e2ba5d46635c641876e046"
+      }
+    },
+    {
+      "label": "review-events-contract-typecheck",
+      "exit": 2,
+      "runtimeSeconds": 12.358404500002507,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-events-contract-typecheck.json",
+        "beforeDigest": "f091eb2a087ae9fe866f6efa03a95433a51f16c65eb75916ed1f4c3c4daa9887",
+        "afterDigest": "f091eb2a087ae9fe866f6efa03a95433a51f16c65eb75916ed1f4c3c4daa9887",
+        "unchanged": true,
+        "sha256": "4c9b865aaf6805c36b7cc02e777c0e91ea26e67f7f22f3ec849b9973bb01ea96"
+      }
+    },
+    {
+      "label": "joint-o-g-null-error",
+      "exit": 0,
+      "runtimeSeconds": 211.04188800000702,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-o-g-null-error.json",
+        "beforeDigest": "fa2f0a1b564535f6d3b8f2600f244592f734b21a7921f3a53358f9ea4289c1ba",
+        "afterDigest": "c89eeee7a21e406899395b3c289bb77a6267743aac99978b8025670e55c939c3",
+        "unchanged": false,
+        "sha256": "01051f4936bfe1ac16c6c7dceb364690b9a2b68cf8324d597e4e01bf356d8791"
+      }
+    },
+    {
+      "label": "review-e2e-owned-reset",
+      "exit": 0,
+      "runtimeSeconds": 3.7459574999957113,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-e2e-owned-reset.json",
+        "beforeDigest": "873dc02e25ef0dfd9cad540e5994c7c5a84fa35a5609e66ad633a3f3a8e9ff04",
+        "afterDigest": "873dc02e25ef0dfd9cad540e5994c7c5a84fa35a5609e66ad633a3f3a8e9ff04",
+        "unchanged": true,
+        "sha256": "117a3124b560cd6edab76d230ea1509c25ed8bffaa305008bb66fa9b0b2f96a3"
+      }
+    },
+    {
+      "label": "review-final-discovery-policy",
+      "exit": 0,
+      "runtimeSeconds": 2.0440623000031337,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-discovery-policy.json",
+        "beforeDigest": "873dc02e25ef0dfd9cad540e5994c7c5a84fa35a5609e66ad633a3f3a8e9ff04",
+        "afterDigest": "873dc02e25ef0dfd9cad540e5994c7c5a84fa35a5609e66ad633a3f3a8e9ff04",
+        "unchanged": true,
+        "sha256": "117a3124b560cd6edab76d230ea1509c25ed8bffaa305008bb66fa9b0b2f96a3"
+      }
+    },
+    {
+      "label": "review-final-runner-skill",
+      "exit": 0,
+      "runtimeSeconds": 0.8837258999992628,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-runner-skill.json",
+        "beforeDigest": "873dc02e25ef0dfd9cad540e5994c7c5a84fa35a5609e66ad633a3f3a8e9ff04",
+        "afterDigest": "873dc02e25ef0dfd9cad540e5994c7c5a84fa35a5609e66ad633a3f3a8e9ff04",
+        "unchanged": true,
+        "sha256": "117a3124b560cd6edab76d230ea1509c25ed8bffaa305008bb66fa9b0b2f96a3"
+      }
+    },
+    {
+      "label": "review-final-build-conformance",
+      "exit": 0,
+      "runtimeSeconds": 6.54504930000985,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-build-conformance.json",
+        "beforeDigest": "873dc02e25ef0dfd9cad540e5994c7c5a84fa35a5609e66ad633a3f3a8e9ff04",
+        "afterDigest": "873dc02e25ef0dfd9cad540e5994c7c5a84fa35a5609e66ad633a3f3a8e9ff04",
+        "unchanged": true,
+        "sha256": "117a3124b560cd6edab76d230ea1509c25ed8bffaa305008bb66fa9b0b2f96a3"
+      }
+    },
+    {
+      "label": "review-final-runner-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 14.27834969999094,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-runner-typecheck.json",
+        "beforeDigest": "699ddba768624e01315862b1ac896b9f75727053bb407c023a2418d165951f75",
+        "afterDigest": "699ddba768624e01315862b1ac896b9f75727053bb407c023a2418d165951f75",
+        "unchanged": true,
+        "sha256": "b7388b24f147f59d3829c617913c3d0bea2b46896a2c295f2755cfc4fb418765"
+      }
+    },
+    {
+      "label": "review-final-conformance-typecheck",
+      "exit": 0,
+      "runtimeSeconds": 26.513998900001752,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-conformance-typecheck.json",
+        "beforeDigest": "699ddba768624e01315862b1ac896b9f75727053bb407c023a2418d165951f75",
+        "afterDigest": "699ddba768624e01315862b1ac896b9f75727053bb407c023a2418d165951f75",
+        "unchanged": true,
+        "sha256": "b7388b24f147f59d3829c617913c3d0bea2b46896a2c295f2755cfc4fb418765"
+      }
+    },
+    {
+      "label": "joint-p-g-first",
+      "exit": 0,
+      "runtimeSeconds": 305.86762380000437,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-p-g-first.json",
+        "beforeDigest": "4841910c97120c35a3d4233e11d43a50e8fa924cb293521490b199b851ed7070",
+        "afterDigest": "699ddba768624e01315862b1ac896b9f75727053bb407c023a2418d165951f75",
+        "unchanged": false,
+        "sha256": "237b256d8895991483c3279696284344805c4ebdf66e6345989b6b0faeada881"
+      }
+    },
+    {
+      "label": "review-final-ci-taxonomy",
+      "exit": 0,
+      "runtimeSeconds": 1.0514234000002034,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-ci-taxonomy.json",
+        "beforeDigest": "699ddba768624e01315862b1ac896b9f75727053bb407c023a2418d165951f75",
+        "afterDigest": "699ddba768624e01315862b1ac896b9f75727053bb407c023a2418d165951f75",
+        "unchanged": true,
+        "sha256": "b7388b24f147f59d3829c617913c3d0bea2b46896a2c295f2755cfc4fb418765"
+      }
+    },
+    {
+      "label": "review-current-e2e",
+      "exit": 0,
+      "runtimeSeconds": 407.1569664999988,
+      "countsFromActualStdout": [
+        "@workmesh/web:test:e2e:   70 passed (6.6m)",
+        "Tasks:    3 successful, 3 total",
+        "Cached:    0 cached, 3 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-current-e2e.json",
+        "beforeDigest": "873dc02e25ef0dfd9cad540e5994c7c5a84fa35a5609e66ad633a3f3a8e9ff04",
+        "afterDigest": "119fbe91674769f4eedc29d88116fcc7810b5d06514b486eda6afb9e7d9d98d7",
+        "unchanged": false,
+        "sha256": "a3102c079b903f54a6feb7e78ad0de8b4f97d0b1e435df9ae4fc0669db4964ae"
+      }
+    },
+    {
+      "label": "review-final-ci-validate",
+      "exit": 0,
+      "runtimeSeconds": 2.444331799997599,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-ci-validate.json",
+        "beforeDigest": "119fbe91674769f4eedc29d88116fcc7810b5d06514b486eda6afb9e7d9d98d7",
+        "afterDigest": "119fbe91674769f4eedc29d88116fcc7810b5d06514b486eda6afb9e7d9d98d7",
+        "unchanged": true,
+        "sha256": "5c8c46ee58205ef139d46e71ede4b0bec34b8b2cedc58851cba238fa16807055"
+      }
+    },
+    {
+      "label": "joint-external-contract-decoded",
+      "exit": 1,
+      "runtimeSeconds": 207.126757799997,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-external-contract-decoded.json",
+        "beforeDigest": "699ddba768624e01315862b1ac896b9f75727053bb407c023a2418d165951f75",
+        "afterDigest": "119fbe91674769f4eedc29d88116fcc7810b5d06514b486eda6afb9e7d9d98d7",
+        "unchanged": false,
+        "sha256": "ad82f02ab28200d9a147c33959d975f21dba09d85dd9f75886d7953d907f9018"
+      }
+    },
+    {
+      "label": "review-mcp-recovery-type",
+      "exit": 0,
+      "runtimeSeconds": 5.169735800009221,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-mcp-recovery-type.json",
+        "beforeDigest": "bda21734943aa96108f4fffeb733fa530e3ee47629711343f22d10519476b31c",
+        "afterDigest": "bda21734943aa96108f4fffeb733fa530e3ee47629711343f22d10519476b31c",
+        "unchanged": true,
+        "sha256": "2e40b6b5cb8718ac1252e2417c0bdfa2583ef3446e888d1c40b7f2177167e65e"
+      }
+    },
+    {
+      "label": "review-mcp-recovery-tests",
+      "exit": 0,
+      "runtimeSeconds": 4.683205199995427,
+      "countsFromActualStdout": [
+        "Test Files  4 passed (4)",
+        "Tests  51 passed (51)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-mcp-recovery-tests.json",
+        "beforeDigest": "bda21734943aa96108f4fffeb733fa530e3ee47629711343f22d10519476b31c",
+        "afterDigest": "bda21734943aa96108f4fffeb733fa530e3ee47629711343f22d10519476b31c",
+        "unchanged": true,
+        "sha256": "2e40b6b5cb8718ac1252e2417c0bdfa2583ef3446e888d1c40b7f2177167e65e"
+      }
+    },
+    {
+      "label": "joint-events-first",
+      "exit": 1,
+      "runtimeSeconds": 57.39181700001063,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-events-first.json",
+        "beforeDigest": "657ffd3b77368dd0a693cdb5374c6e336d68f659b57eb854e08bb15c597c0bed",
+        "afterDigest": "bda21734943aa96108f4fffeb733fa530e3ee47629711343f22d10519476b31c",
+        "unchanged": false,
+        "sha256": "518e86115ead7675d83f73209016bd7da8af6d2f3180b6bc96d456ccd99b9c05"
+      }
+    },
+    {
+      "label": "review-combined-integration",
+      "exit": 1,
+      "runtimeSeconds": 1601.9551045999979,
+      "countsFromActualStdout": [
+        "Test Files  17 passed (17)",
+        "Tests  81 passed (81)",
+        "Test Files  27 passed (27)",
+        "Tests  278 passed | 1 skipped (279)",
+        "Test Files  1 failed | 4 passed (5)",
+        "Tests  1 failed | 83 passed (84)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-combined-integration.json",
+        "beforeDigest": "f091eb2a087ae9fe866f6efa03a95433a51f16c65eb75916ed1f4c3c4daa9887",
+        "afterDigest": "e6cf882fe8452f2c4fdbb0ab5950c87722714b4b332c189a09f525cfa33e8a81",
+        "unchanged": false,
+        "sha256": "b9e45a3cbbc230ebab657b138f5644e42e8f1994409b93e9112556054c91ef38"
+      }
+    },
+    {
+      "label": "joint-external-stop-discovery",
+      "exit": 0,
+      "runtimeSeconds": 105.69781239998701,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-external-stop-discovery.json",
+        "beforeDigest": "bda21734943aa96108f4fffeb733fa530e3ee47629711343f22d10519476b31c",
+        "afterDigest": "e6cf882fe8452f2c4fdbb0ab5950c87722714b4b332c189a09f525cfa33e8a81",
+        "unchanged": false,
+        "sha256": "f30e15288855f9662cc21167a4c910dc43e4657b0f872d6ea0378f001dea7bab"
+      }
+    },
+    {
+      "label": "review-source-build-current",
+      "exit": 0,
+      "runtimeSeconds": 96.18322019999323,
+      "countsFromActualStdout": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    12 cached, 18 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-source-build-current.json",
+        "beforeDigest": "bda21734943aa96108f4fffeb733fa530e3ee47629711343f22d10519476b31c",
+        "afterDigest": "e6cf882fe8452f2c4fdbb0ab5950c87722714b4b332c189a09f525cfa33e8a81",
+        "unchanged": false,
+        "sha256": "f30e15288855f9662cc21167a4c910dc43e4657b0f872d6ea0378f001dea7bab"
+      }
+    },
+    {
+      "label": "review-final-joint-fixtures-type",
+      "exit": 2,
+      "runtimeSeconds": 12.237219799993909,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-joint-fixtures-type.json",
+        "beforeDigest": "2ea437255ede556921d6cd0082ec001fe7f0610727a72aae7bc1195d92d067b2",
+        "afterDigest": "2ea437255ede556921d6cd0082ec001fe7f0610727a72aae7bc1195d92d067b2",
+        "unchanged": true,
+        "sha256": "5b3e808823332dc0d2642a2848a51a6f5a004cd4230d97c8d812f0ed7cd140f8"
+      }
+    },
+    {
+      "label": "joint-events-correct-table",
+      "exit": 1,
+      "runtimeSeconds": 70.41216079999867,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-events-correct-table.json",
+        "beforeDigest": "8d3585881d5f01327292ad51858517a025737d1a0f7a6656bde89dbb85dc6bf8",
+        "afterDigest": "4ece7e0026c4b27f823d1095283b0151a6470c1ff74fb5922730386349337c79",
+        "unchanged": false,
+        "sha256": "64f901f10c9c1654c85bf8988215bc94fbe0111afa254b7802ede69bae44ce1a"
+      }
+    },
+    {
+      "label": "review-final-type-fixtures-fixed",
+      "exit": 0,
+      "runtimeSeconds": 13.159398500007228,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-type-fixtures-fixed.json",
+        "beforeDigest": "680fdf1b067c9686489877631ad9ad91d64070eed6ea9740b6d616875f345432",
+        "afterDigest": "680fdf1b067c9686489877631ad9ad91d64070eed6ea9740b6d616875f345432",
+        "unchanged": true,
+        "sha256": "5c47c58f8d5568247d2588e2db7df83ed2f2a8862742f58688d0cc88761b522d"
+      }
+    },
+    {
+      "label": "joint-scope-first",
+      "exit": 1,
+      "runtimeSeconds": 47.19047100000898,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-scope-first.json",
+        "beforeDigest": "680fdf1b067c9686489877631ad9ad91d64070eed6ea9740b6d616875f345432",
+        "afterDigest": "680fdf1b067c9686489877631ad9ad91d64070eed6ea9740b6d616875f345432",
+        "unchanged": true,
+        "sha256": "5c47c58f8d5568247d2588e2db7df83ed2f2a8862742f58688d0cc88761b522d"
+      }
+    },
+    {
+      "label": "review-delivery-principal-timing",
+      "exit": 0,
+      "runtimeSeconds": 30.809593099998892,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed | 19 skipped (20)"
+      ],
+      "selectionFilter": true,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-delivery-principal-timing.json",
+        "beforeDigest": "680fdf1b067c9686489877631ad9ad91d64070eed6ea9740b6d616875f345432",
+        "afterDigest": "cb93e0b53072250749ccac8b6b72a4fb700bfffdcc230e835265c319e97bdfae",
+        "unchanged": false,
+        "sha256": "3080be10f51e697347a5631dc2b6d14d67e8db5ac01ffa2ab2f59e3315fc4466"
+      }
+    },
+    {
+      "label": "joint-atomic-first",
+      "exit": 0,
+      "runtimeSeconds": 43.553075099989655,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-atomic-first.json",
+        "beforeDigest": "1fee5f3e51bb80a73bec3f6bb4293eaa3e7aa36cea829db2d9d82eb382a65ce0",
+        "afterDigest": "1fee5f3e51bb80a73bec3f6bb4293eaa3e7aa36cea829db2d9d82eb382a65ce0",
+        "unchanged": true,
+        "sha256": "9170106a9cca389de2f1932739dddc43d7a89b27053365e63279972e0bb2cb9a"
+      }
+    },
+    {
+      "label": "review-final-root-lint-current",
+      "exit": 0,
+      "runtimeSeconds": 30.085492500002147,
+      "countsFromActualStdout": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    15 cached, 18 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-root-lint-current.json",
+        "beforeDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "afterDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "unchanged": true,
+        "sha256": "e38a7546777f5e5cc78dcf66e70d4da857185b565080d3016d929a56b456855a"
+      }
+    },
+    {
+      "label": "review-final-root-type-current",
+      "exit": 0,
+      "runtimeSeconds": 49.82659650000278,
+      "countsFromActualStdout": [
+        "Tasks:    18 successful, 18 total",
+        "Cached:    13 cached, 18 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-root-type-current.json",
+        "beforeDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "afterDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "unchanged": true,
+        "sha256": "e38a7546777f5e5cc78dcf66e70d4da857185b565080d3016d929a56b456855a"
+      }
+    },
+    {
+      "label": "joint-events-current-plan",
+      "exit": 0,
+      "runtimeSeconds": 101.0155178999994,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-events-current-plan.json",
+        "beforeDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "afterDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "unchanged": true,
+        "sha256": "e38a7546777f5e5cc78dcf66e70d4da857185b565080d3016d929a56b456855a"
+      }
+    },
+    {
+      "label": "joint-scope-responsible-human",
+      "exit": 1,
+      "runtimeSeconds": 60.61890680000943,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-scope-responsible-human.json",
+        "beforeDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "afterDigest": "1e24112ceccc99f6415dd082d3da61d21778aaa2d25f85e626f9fe370894f422",
+        "unchanged": false,
+        "sha256": "ce52ce7155063fd91e0a185b1103f0e6bfd12083243ce0b3ed83360df7b34a3c"
+      }
+    },
+    {
+      "label": "review-native-retention-type",
+      "exit": 0,
+      "runtimeSeconds": 13.40596390000428,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-native-retention-type.json",
+        "beforeDigest": "b2ee3593633ff43c83697cf8b757c345b27db489539da418df879258e6f874b5",
+        "afterDigest": "b2ee3593633ff43c83697cf8b757c345b27db489539da418df879258e6f874b5",
+        "unchanged": true,
+        "sha256": "7dd4e6e532a9fd1243d332ce67fc1a079bc7cdd572b6ac4493c9634c8640a750"
+      }
+    },
+    {
+      "label": "review-final-root-unit-current",
+      "exit": 0,
+      "runtimeSeconds": 19.275111499999184,
+      "countsFromActualStdout": [
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+        "@workmesh/git-provider:test:       Tests  17 passed (17)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/contracts:test:  Test Files  29 passed (29)",
+        "@workmesh/contracts:test:       Tests  213 passed (213)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+        "@workmesh/agent-runner:test:       Tests  110 passed (110)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  181 passed (181)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  51 passed (51)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "Tasks:    32 successful, 32 total",
+        "Cached:    28 cached, 32 total"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-root-unit-current.json",
+        "beforeDigest": "b2ee3593633ff43c83697cf8b757c345b27db489539da418df879258e6f874b5",
+        "afterDigest": "b2ee3593633ff43c83697cf8b757c345b27db489539da418df879258e6f874b5",
+        "unchanged": true,
+        "sha256": "7dd4e6e532a9fd1243d332ce67fc1a079bc7cdd572b6ac4493c9634c8640a750"
+      }
+    },
+    {
+      "label": "joint-scope-project-owner",
+      "exit": 0,
+      "runtimeSeconds": 100.61741250001069,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-scope-project-owner.json",
+        "beforeDigest": "b2ee3593633ff43c83697cf8b757c345b27db489539da418df879258e6f874b5",
+        "afterDigest": "b2ee3593633ff43c83697cf8b757c345b27db489539da418df879258e6f874b5",
+        "unchanged": true,
+        "sha256": "7dd4e6e532a9fd1243d332ce67fc1a079bc7cdd572b6ac4493c9634c8640a750"
+      }
+    },
+    {
+      "label": "review-resumed-conformance",
+      "exit": 1,
+      "runtimeSeconds": 853.9766006999998,
+      "countsFromActualStdout": [
+        "Test Files  1 failed | 4 passed (5)",
+        "Tests  2 failed | 82 passed (84)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-resumed-conformance.json",
+        "beforeDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "afterDigest": "2989c6b5920eea2be2099f53ed8e3432773e7ce71be546be6bfb8f36d39eebf8",
+        "unchanged": false,
+        "sha256": "643261ae17b7c7e00bce3a131849cebc0a76dc8f2b0da8556790613a7948ba0c"
+      }
+    },
+    {
+      "label": "review-resumed-integration",
+      "exit": 1,
+      "runtimeSeconds": 856.8936295000021,
+      "countsFromActualStdout": [
+        "Test Files  1 failed | 4 passed (5)",
+        "Tests  2 failed | 82 passed (84)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-resumed-integration.json",
+        "beforeDigest": "906246dcbac814eebf4404dbf189508766442676cc5858d7ee7c7092665ac586",
+        "afterDigest": "2989c6b5920eea2be2099f53ed8e3432773e7ce71be546be6bfb8f36d39eebf8",
+        "unchanged": false,
+        "sha256": "643261ae17b7c7e00bce3a131849cebc0a76dc8f2b0da8556790613a7948ba0c"
+      }
+    },
+    {
+      "label": "review-mcp-recovery-conformance-current",
+      "exit": 0,
+      "runtimeSeconds": 22.028472999998485,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  12 passed (12)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-mcp-recovery-conformance-current.json",
+        "beforeDigest": "ae69a2351f8dab04aa7b467acd0b67d0b86293aa7295634dd4b27561225f4823",
+        "afterDigest": "ae69a2351f8dab04aa7b467acd0b67d0b86293aa7295634dd4b27561225f4823",
+        "unchanged": true,
+        "sha256": "098ed550af97a73b5eef799957b3e508e1057783f9b5721399990b27bf3cbf56"
+      }
+    },
+    {
+      "label": "joint-complete-current",
+      "exit": 1,
+      "runtimeSeconds": 905.7747902999981,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-complete-current.json",
+        "beforeDigest": "b2ee3593633ff43c83697cf8b757c345b27db489539da418df879258e6f874b5",
+        "afterDigest": "dc7bde615e33caa272a55449e0955677a6df8e77e53fc0c857bf7a87fced4e76",
+        "unchanged": false,
+        "sha256": "b0fd0c86f5021435ea39edefa4bef44e92250d32efc59af6000ad5fe82280d73"
+      }
+    },
+    {
+      "label": "review-continuation-type-current",
+      "exit": 0,
+      "runtimeSeconds": 12.074736599999596,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-continuation-type-current.json",
+        "beforeDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": true,
+        "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+      }
+    },
+    {
+      "label": "joint-evidence-gate-reject-selected",
+      "exit": 1,
+      "runtimeSeconds": 2.332956899990677,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-evidence-gate-reject-selected.json",
+        "beforeDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": true,
+        "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+      }
+    },
+    {
+      "label": "review-continuation-lint-current",
+      "exit": 0,
+      "runtimeSeconds": 12.29043300000194,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-continuation-lint-current.json",
+        "beforeDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": true,
+        "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+      }
+    },
+    {
+      "label": "review-final-resumed-worker",
+      "exit": 0,
+      "runtimeSeconds": 389.7682407999964,
+      "countsFromActualStdout": [
+        "Test Files  8 passed | 1 skipped (9)",
+        "Tests  147 passed | 1 skipped (148)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-resumed-worker.json",
+        "beforeDigest": "ae69a2351f8dab04aa7b467acd0b67d0b86293aa7295634dd4b27561225f4823",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": false,
+        "sha256": "52ca0c5383c6b6cadd0f4a73c7129a846ff8f42879a7ef99834e418a79e8b0a2"
+      }
+    },
+    {
+      "label": "review-final-resumed-recovery",
+      "exit": 1,
+      "runtimeSeconds": 6.561927699993248,
+      "countsFromActualStdout": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed (1)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-resumed-recovery.json",
+        "beforeDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": true,
+        "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+      }
+    },
+    {
+      "label": "review-integration-final-constituents",
+      "exit": 1,
+      "runtimeSeconds": 401.9393034000095,
+      "countsFromActualStdout": [
+        "Test Files  8 passed | 1 skipped (9)",
+        "Tests  147 passed | 1 skipped (148)",
+        "Test Files  1 failed (1)",
+        "Tests  1 failed (1)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-integration-final-constituents.json",
+        "beforeDigest": "ae69a2351f8dab04aa7b467acd0b67d0b86293aa7295634dd4b27561225f4823",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": false,
+        "sha256": "52ca0c5383c6b6cadd0f4a73c7129a846ff8f42879a7ef99834e418a79e8b0a2"
+      }
+    },
+    {
+      "label": "review-recovery-empty-current",
+      "exit": 0,
+      "runtimeSeconds": 6.55662800000573,
+      "countsFromActualStdout": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed (1)"
+      ],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-recovery-empty-current.json",
+        "beforeDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": true,
+        "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+      }
+    },
+    {
+      "label": "review-integration-evidence-final",
+      "exit": 0,
+      "runtimeSeconds": 0.7668799999955809,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-integration-evidence-final.json",
+        "beforeDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": true,
+        "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+      }
+    },
+    {
+      "label": "joint-combination-evidence-final",
+      "exit": 0,
+      "runtimeSeconds": 2.687660700001288,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\joint-combination-evidence-final.json",
+        "beforeDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": true,
+        "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+      }
+    },
+    {
+      "label": "review-final-ci-validate-delivery",
+      "exit": 0,
+      "runtimeSeconds": 1.997311900006025,
+      "countsFromActualStdout": [],
+      "selectionFilter": false,
+      "countsInterpretation": "过滤运行的 skipped 包含未选择用例；完整运行的环境 skip 按原套件原因保留",
+      "sourceBinding": {
+        "path": ".tmp\\m5-runtime\\sources\\review-final-ci-validate-delivery.json",
+        "beforeDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "afterDigest": "4193b8a34aa0662ade3d2eb75ca5fb3d1075cea1c689c6862edabecbea9f0043",
+        "unchanged": true,
+        "sha256": "c8fa41d08212fac67363b54ea0dc5d0d39220414784e9064a751158060ed1c43"
+      }
     }
   ],
   "historicalResultsNotReplaced": true

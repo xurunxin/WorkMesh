@@ -12,7 +12,7 @@ import {
   contextDeltaInputSchema, assignmentProposalInputSchema,
   providerActionInputSchema, deliveryArtifactInputSchema, artifactUploadIntentInputSchema,
   structuredReviewInputSchema, mergeIntentInputSchema, ciRetryInputSchema, projectUpdateInputSchema,
-  completionSuggestionInputSchema, projectHealthInputSchema,
+  completionSuggestionInputSchema, projectHealthInputSchema, durableEventCursorSchema,
 } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { z } from 'zod'
@@ -180,7 +180,7 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
       // the ordinary display summary cannot be resumed by these read tools.
       const completeDocumentRead = request.method === 'GET'
         && ['getDocument', 'getDocumentRevision', 'exportDocumentMarkdown','getProviderAction','getRepositoryContext',
-          'getProjectDelivery','listWorkItemArtifacts','downloadVerifiedArtifact'].includes(operationId)
+          'getProjectDelivery','listWorkItemArtifacts','downloadVerifiedArtifact','listEvents'].includes(operationId)
       if(completeDocumentRead&&JSON.stringify(reported).length>12_000_000)
         throw new Error('TOOL_EVIDENCE_TOO_LARGE: no evidence was consumed; select the exact pullRequestId')
       return { content: [{ type: 'text' as const,
@@ -219,6 +219,12 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
   add('workmesh_get_session', 'getAgentSession',
     'Read the exact current Agent Session, including its revision for plan publication and other guarded commands.',
     Type.Object({}), () => ({ method: 'GET', path: `/api/v1/agent-sessions/${api.sessionId}` }))
+  add('workmesh_list_events', 'listEvents',
+    'Read authorized durable events after a decimal cursor. Persist the returned cursor; after CURSOR_EXPIRED use the server resyncCursor and read current resources. Retry an oversized page with a smaller limit and the same cursor.',
+    Type.Object({ cursor: Type.String({ minLength: 1, maxLength: 19 }), limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 500 })) }), input => {
+      const page = z.object({ cursor: durableEventCursorSchema, limit: z.number().int().min(1).max(500).optional() }).strict().parse(input)
+      return { method: 'GET', path: `/api/v1/events?cursor=${encodeURIComponent(page.cursor)}&limit=${page.limit ?? 25}` }
+    })
   add('workmesh_get_session_context', 'getAgentSessionContext', 'Read the authorized fixed context and current pins for this exact Session.',
     Type.Object({}), () => ({ method: 'GET', path: `/api/v1/agent-sessions/${api.sessionId}/context` }))
   add('workmesh_get_session_plan', 'getAgentPlan', 'Read the current immutable plan for this exact Session.',

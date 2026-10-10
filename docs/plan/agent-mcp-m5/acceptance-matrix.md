@@ -1,6 +1,6 @@
 # 冻结九类逐行运行计划
 
-每行消费 [冻结原文](frozen-m5.md) 的原要求。O为实际OpenCode，P为真实Pi子进程，R为SDK/MCP协议对照；H为Human准备，DB注入与provider夹具单列。当前所有行状态都是未运行，不能因来源静态核验勾选。
+以下保留冻结规划时的逐行运行计划，“未运行”属于当时状态。当前逐行实际结果与协议/模型/准备边界见 [完整产品报告](product-current-report.md) 的九类表及 [当前矩阵](product-current-matrix.md)。O为实际OpenCode，P为真实Pi子进程，R为SDK/MCP协议对照；H为Human准备，DB注入与provider夹具单列，不因静态核验勾选。
 
 | 原验收类／案例 | 实际运行输入与故障边界 | 判定与必存证据 | 消费者／适用理由 |
 | --- | --- | --- | --- |

@@ -162,7 +162,7 @@ describe('真实API、MCP与Pi资格和恢复链', () => {
     saveEvidence('restart-stop.json', { cursor, resumedCursors: resumed.map(event => event.cursor), denied, cleanupEntry: 'SDK stopAcknowledgement' })
   })
 
-  it('queued只握手；paused/stopping/terminal拒普通发现，stale保留明确ACK恢复', async () => {
+  it('queued只握手；非活跃状态无普通发现，准确E仅列有条件Stop恢复，stale保留ACK恢复', async () => {
     const execution = await fixture.createExecution('M0 state gates')
     const client = await fixture.connect('read-write', execution)
     const states: Array<{ state: string; code: string | null }> = []
@@ -177,7 +177,11 @@ describe('真实API、MCP与Pi资格和恢复链', () => {
         states.push({ state, code: null })
       } else {
         await expect(execution.client.getQualifiedAgentCapabilities()).rejects.toMatchObject({ code: 'SESSION_NOT_ACTIVE' })
-        await expect(client.listTools()).rejects.toMatchObject({ data: { error: { code: 'SESSION_NOT_ACTIVE' } } })
+        const recovery = await client.listTools()
+        expect(recovery.tools.map(item => item.name)).toEqual(['stop_ack'])
+        expect(recovery.tools[0]?._meta).toMatchObject({ workmesh: { recoveryOnly: true } })
+        const denied = await client.callTool({ name: 'get_agent_session', arguments: { id: execution.sessionId } })
+        expect(denied).toMatchObject({ isError: true, structuredContent: { error: { code: 'SESSION_NOT_ACTIVE', correlationId: expect.any(String) } } })
         states.push({ state, code: 'SESSION_NOT_ACTIVE' })
       }
     }
@@ -229,7 +233,9 @@ describe('真实API、MCP与Pi资格和恢复链', () => {
     await tool(client, 'heartbeat', { ...heartbeat, idempotencyKey: randomUUID() })
     const state = (await fixture.db.query<{ state: string }>('SELECT state FROM agent_sessions WHERE id=$1', [execution.sessionId])).rows[0]!.state
     expect(['completed', 'failed', 'canceled']).toContain(state)
-    await expect(client.listTools()).rejects.toMatchObject({ data: { error: { code: 'SESSION_NOT_ACTIVE' } } })
+    expect((await client.listTools()).tools.map(item => item.name)).toEqual(['stop_ack'])
+    const terminalRead = await client.callTool({ name: 'get_agent_session', arguments: { id: execution.sessionId } })
+    expect(terminalRead).toMatchObject({ isError: true, structuredContent: { error: { code: 'SESSION_NOT_ACTIVE', correlationId: expect.any(String) } } })
     const grant = (await fixture.db.query<{ id: string; revision: number }>('SELECT d.id,d.revision FROM delegations d JOIN agent_sessions s ON s.delegation_id=d.id WHERE s.id=$1', [execution.sessionId])).rows[0]!
     await fixture.human('POST', `/api/v1/delegations/${grant.id}/revoke`, {}, grant.revision)
     const denied = await client.callTool({ name: 'heartbeat', arguments: { ...heartbeat, idempotencyKey: randomUUID() } })

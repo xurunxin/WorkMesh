@@ -1,10 +1,10 @@
 # 外部 MCP 客户端与内置 Runner 联合验收方案
 
-当前实施接续见 [正式成果审查后修复报告](review-fixes-report.md)。普通 E 实时 principal 资格修复与准确 403／恢复正例已有新的 23 项真实补充运行；旧报告中的权限缺口描述保留历史含义。OpenCode 模型接入与四条联合主链仍未完成，局部只读复核不代正式 `_oY` 复审。
+当前交付见 [完整中文产品报告](product-current-report.md)、[当前矩阵](product-current-matrix.md)、[中文资源报告](product-resources-current.md) 与 [修复来源](review-fixes-report.md)。真实 O/P 四链与九类阶段已完成；原完整入口在补充检查门禁 exit1，保留原件，精确证据续接 exit0。补充集成各阶段当前均通过，正式 `_oY` 成果复审、Required CI 与 actual Done/main 仍待取得。
 
-状态：规划候选 `ddddcfca8d7ef387df58be993c88ffe7d62391dd` 已经另一 Agent 复审并经 Chief confirm 启动实施。下表规划原件保留当时含义；本轮产品工作见 [产品报告](product-report.md)、[实际矩阵](product-matrix.md)、[本卡缺口](product-gaps.md)、[新命令回执](product-checks.json)、[脱敏原件索引](product-evidence-index.json)、[资源收尾](product-cleanup.json)。M5 联合验收尚未完成，OpenCode 实际隔离门禁失败；已有安装、握手、局部单元测试和前置 CI 不表示联合通过。
+状态：规划候选 `ddddcfca8d7ef387df58be993c88ffe7d62391dd` 已经另一 Agent 复审并经 Chief confirm 启动实施。下表规划原件保留当时含义；[旧产品报告](product-report.md)、[旧实际矩阵](product-matrix.md)、[旧缺口](product-gaps.md) 对应较早候选，不能替代上面的 current 入口。新运行见 [命令回执](product-checks.json)、[原件索引](product-evidence-index.json)；资源登记不等于已收尾。M5 尚待当前完整组合与正式关口，不借前置 CI 宣称通过。
 
-本轮平台只读 fetch 所见真实主线 `87f88b89297c5c1e346f7ef99118c410f4b4a905`，准确观察见 [执行主线回执](input/product-main-observation.json)；它是该次观察，不代表未来实时 ref。规划来源见 [来源](sources.md)。仅 Todos＋仓库记录，未创建真实 WorkMesh 远端 Project／WorkItem。
+最新平台只读 fetch 所见主线 `996c940eb6c725fdfe408976ff9570997d1d5bdb`，见 [当前主线回执](input/current-main-observation.json)；此前 `87f88b8` 见 [旧执行观察](input/product-main-observation.json)，各自只代表当次读回。规划来源见 [来源](sources.md)。仅 Todos＋仓库记录，未创建真实 WorkMesh 远端 Project／WorkItem。
 
 ## 受控入口
 
@@ -24,7 +24,7 @@
 
 ## 交付与确认边界
 
-历史规划回合只同步规划、归档及静态核验；原文件正文与可达提交不倒写。已确认后的实施增加 Runner 三个内部白名单的有界传输重放及真实 Pi 验证，没有数据库迁移、公开 API 参数、事件或服务端权限变更。正式成果独审、最新 Required CI、actual Done/main 仍待后续关口；必要新投影或权限合同分叉先原卡另问／ADR 复核。
+历史规划回合只同步规划、归档及静态核验；原件与可达提交不倒写。已确认后的实施增加 Runner 三个内部白名单的有界传输重放，并修复既有普通 E 实时 principal 资格及 status 一致快照；新增只读事件消费者和原 E Stop 恢复发现不授予新权限。没有数据库迁移、新角色或公开 API/事件参数。正式成果独审、最新 Required CI、actual Done/main 仍待后续关口；真实合同分叉仍须原卡裁定。
 
 首轮选择实际 OpenCode 与内置 Pi，由生产者基于本机盘点提出；不代表用户新增厂商认证、账号连接或外发授权。采用本任务独有 loopback 受控模型与 fake Git；共同验证既有域的实际客户端链。企业／其他 OS／真实 provider 账号不扩入本卡，旧三 OS 与发行门禁保留。
 

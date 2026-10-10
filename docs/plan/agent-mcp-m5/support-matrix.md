@@ -1,6 +1,6 @@
 # 客户端与部署支持画像
 
-“待计划运行”不是支持承诺。支持／不支持／未测仅在产品运行后按证据填写，当前全部新组合未测。实际Windows进程与Docker中Linux服务的OS分列，Docker不能证明Linux原生客户端或macOS支持。
+本页下表保留冻结规划时的安排和未测状态；当前实际支持结果以 [完整产品报告](product-current-report.md) 和 [当前矩阵](product-current-matrix.md) 为准。Windows 小团队测试部署的 O/P 四链已实跑，单 Human 核心路径共用同后端；Lite compose/企业/其他 OS/真实账号仍未测，外部模型签名传输仍不支持。实际Windows进程与Docker中Linux服务的OS分列，Docker不能证明Linux原生客户端或macOS支持。
 
 | 画像／客户端 | 首轮确定安排 | 当前真实结果与限制 | 后续通过判据 |
 | --- | --- | --- | --- |

@@ -69,7 +69,7 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
   }
   const startApi = async (port = 0) => {
     const child = spawn(process.execPath, [resolve(import.meta.dirname, '../../../node_modules/tsx/dist/cli.mjs'), resolve(import.meta.dirname, 'joint-clients.service.ts')],
-      { env: { ...process.env, M5_SERVICE_PORT: String(port) }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true })
+      { env: { ...process.env, M5_SERVICE_PORT: String(port) }, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true })
     children.push(child)
     const row = { pid: child.pid, url: '', exited: false }; processes.push(row)
     saveJointEvidence('owned-processes-running.json', { processes })
@@ -83,7 +83,42 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
     })
     row.url = ready
     child.once('exit', () => { row.exited = true })
-    return { child, url: ready, stop: async () => { if (child.exitCode === null) { const exited = once(child, 'exit'); child.kill(); await exited } } }
+    return { child, url: ready, stop: async () => { if (child.exitCode === null) { const exited = once(child, 'exit'); child.stdin?.end(); await exited } } }
+  }
+  const startLifecycleWorker = async (provider?: { url: string; token: string }) => {
+    const kind = provider ? 'provider' : 'lifecycle'
+    const operation = provider ? 'tick' : 'reconcileWorkbenchWaits'
+    const child = spawn(process.execPath, [resolve(import.meta.dirname, '../../../node_modules/tsx/dist/cli.mjs'), resolve(import.meta.dirname, 'joint-clients.service.ts')],
+      { env: { ...process.env, M5_SERVICE_KIND: kind, ...(provider ? { M5_PROVIDER_URL: provider.url, M5_PROVIDER_TOKEN: provider.token } : {}) }, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true })
+    children.push(child)
+    const row = { pid: child.pid, url: kind + '-stdio', exited: false }; processes.push(row)
+    saveJointEvidence('owned-processes-running.json', { processes })
+    child.stderr.resume()
+    const replies = new Map<string, (count: number) => void>()
+    await new Promise<void>((done, reject) => {
+      let buffer = ''; const timer = setTimeout(() => reject(new Error('M5_WORKER_READY_TIMEOUT')), 20_000)
+      child.stdout.on('data', (chunk: Buffer) => {
+        buffer += chunk.toString('utf8'); let newline: number
+        while ((newline = buffer.indexOf('\n')) >= 0) {
+          const line = buffer.slice(0, newline); buffer = buffer.slice(newline + 1)
+          try {
+            const value = JSON.parse(line) as { m5Service?: string; m5WorkerResult?: boolean; id: string; count: number }
+            if (value.m5Service === kind) { clearTimeout(timer); done() }
+            if (value.m5WorkerResult) { replies.get(value.id)?.(value.count); replies.delete(value.id) }
+          } catch { /* unrelated logs do not satisfy readiness */ }
+        }
+      })
+      child.once('exit', code => { row.exited = true; clearTimeout(timer); reject(new Error(`M5_WORKER_EXIT:${code}`)) })
+    })
+    return { pid: child.pid, reconcile: async () => {
+      const id = randomUUID()
+      const result = await new Promise<number>((done, reject) => {
+        const timer = setTimeout(() => { replies.delete(id); reject(new Error('M5_WORKER_RECONCILE_TIMEOUT')) }, 15_000)
+        replies.set(id, count => { clearTimeout(timer); done(count) }); child.stdin.write(JSON.stringify({ id, operation }) + '\n')
+      })
+      saveJointEvidence(`worker-reconcile-${id}.json`, { pid: child.pid, operation, result })
+      return result
+    }, close: async () => { if (child.exitCode === null && child.signalCode === null) { const exited = once(child, 'exit'); child.stdin.end(); await exited; saveJointEvidence(`worker-exit-${child.pid}.json`, { pid: child.pid, nativeExit: child.exitCode, signal: child.signalCode }) } } }
   }
   const lossProxy = async (upstream: string, match: (path: string, method: string) => boolean, options: { losses?: number; lossMode?: 'socket' | 'timeout' | 'body'; serializeRecovery?: boolean; responseTransform?: (path: string, data: Buffer) => Promise<Buffer>; afterFirstCommit?: () => Promise<void>; afterResponse?: (path: string, status: number) => Promise<void> } = {}) => {
     const observed: Array<{ method: string; path: string; bodyHash: string; headersHash: string; key?: string; revision?: string; eHash: string; status: number; responseLost: boolean }> = []
@@ -138,8 +173,8 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
       },
     }
   }
-  return { ...fixture, startApi, lossProxy, pairClient, refreshExecution, createClientExecution, secondHuman, close: async () => {
-    for (const child of children) if (child.exitCode === null && child.signalCode === null) { const exited = once(child, 'exit'); child.kill(); await exited }
+  return { ...fixture, startApi, startLifecycleWorker, lossProxy, pairClient, refreshExecution, createClientExecution, secondHuman, close: async () => {
+    for (const child of children) if (child.exitCode === null && child.signalCode === null) { const exited = once(child, 'exit'); child.stdin?.end(); await exited }
     for (const server of listeners) { server.closeAllConnections(); await new Promise<void>(done => server.close(() => done())) }
     await fixture.close()
     saveJointEvidence('owned-processes.json', { processes, ownedProxyListenersClosed: listeners.every(server => !server.listening), recoveryPreserved: true })

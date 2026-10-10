@@ -110,7 +110,24 @@ export function installDiscovery(server: McpServer, options: {
           // 仅既有 ACK/诊断入口绕过普通发现读取；REST 用原 Token 校验 live 授权、准确 Session 和回执。
           return await handler(request, extra)
         }
-        const prepared = await prepare()
+        // Native clients cache their initial tool list. Keep the existing original-E
+        // recovery command discoverable before Stop; its REST gate still checks the
+        // exact Session, live authority and stopping state on every invocation.
+        const recoveryAvailable = method === 'tools/list' && mode === 'read-write' && !!configuration.session
+        const recoveryEntry = (entry: Record<string, unknown>) => ({ ...entry,
+          description: `${entry.description ?? ''} 恢复入口：仅原执行 E；服务端逐次核 stopping 状态与实时授权，发现不授予权限。`,
+          _meta: { ...(entry._meta as Record<string, unknown> | undefined), workmesh: {
+            operationIds: ['acknowledgeAgentSessionStop'], eligibility: { status: 'requires_target_check', pendingChecks: ['original_execution_token', 'live_authority', 'session_stopping'], reasons: [] },
+            returnContracts: ['OPENAPI.yaml#acknowledgeAgentSessionStop'], recoveryOnly: true,
+          } },
+        })
+        let prepared: PreparedDiscovery
+        try { prepared = await prepare() }
+        catch (error) {
+          if (!recoveryAvailable || !(error instanceof WorkMeshSdkError) || error.code !== 'SESSION_NOT_ACTIVE') throw error
+          const result = await handler(request, extra)
+          return { ...result, tools: Array.isArray(result.tools) ? result.tools.filter(entry => entry.name === 'stop_ack').map(recoveryEntry) : [] }
+        }
         return await scope.run(prepared, async () => {
           if (bindingId && registered.has(bindingId)) guard(bindingId, request.params?.arguments ?? {}, prepared)
           if (method === 'resources/read' && request.params?.uri) {
@@ -121,9 +138,10 @@ export function installDiscovery(server: McpServer, options: {
           const key = method === 'tools/list' ? 'tools' : method === 'resources/list' ? 'resources' : method === 'resources/templates/list' ? 'resourceTemplates' : undefined
           if (!key || !Array.isArray(result[key])) return result
           return { ...result, [key]: (result[key] as Array<Record<string, unknown>>).filter(entry =>
-            entry.name === 'get_agent_discovery' || prepared.projection.bindings.some(binding =>
+            entry.name === 'get_agent_discovery' || recoveryAvailable && entry.name === 'stop_ack' || prepared.projection.bindings.some(binding =>
               binding.bindingId === `${key === 'tools' ? 'tool' : 'resource'}:${entry.name}` && binding.discoverable))
             .map(entry => {
+              if (recoveryAvailable && entry.name === 'stop_ack') return recoveryEntry(entry)
               const binding = prepared.projection.bindings.find(item => item.bindingId === `${key === 'tools' ? 'tool' : 'resource'}:${entry.name}`)
               return { ...entry, _meta: { ...(entry._meta as Record<string, unknown> | undefined),
                 workmesh: { operationIds: binding?.operationIds ?? [], eligibility: binding?.eligibility,

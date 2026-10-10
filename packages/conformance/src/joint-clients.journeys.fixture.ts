@@ -1,9 +1,9 @@
+import { startFakeProviderBackend } from './joint-clients.provider.fixture.js'
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
 import type { DocumentResponse, ProviderActionProjection, ReviewDelegationResponse } from '@workmesh/contracts'
 import type { Execution } from './mcp-coverage.fixture.js'
 import { canonicalMergeApprovalPayload } from '@workmesh/domain'
-import { createSessionLifecycleWorker } from '../../../apps/worker/src/session-lifecycle.js'
 import { createJointClientsFixture } from './joint-clients.fixture.js'
 import { createExternalConsumer } from './joint-clients.external.js'
 import { createDeliveryRecoveryFixture, deliveryCapabilities, sha256 } from './delivery-recovery.fixture.js'
@@ -13,7 +13,7 @@ type Fixture = Awaited<ReturnType<typeof createJointClientsFixture>>
 type Connection = Awaited<ReturnType<Fixture['pairClient']>>
 type Kind = 'opencode' | 'pi'
 const writes = new Set(['publish_plan', 'create_document', 'update_document', 'post_work_room_message', 'claim_inbox_item', 'acknowledge_inbox_item', 'reply_inbox_item', 'offer_handoff', 'create_child_session', 'create_review_delegation', 'request_approval', 'consume_approval', 'publish_artifact', 'complete_session', 'acquire_lease', 'create_repository_branch', 'create_repository_commit', 'open_pull_request', 'merge_pull_request', 'publish_delivery_artifact', 'publish_structured_review', 'transition_agent_session_state'])
-const allowed = ['get_session', 'get_session_context', 'get_session_plan', 'list_documents', 'get_document', 'get_work_room', 'list_inbox_items', 'get_inbox_item', 'list_child_sessions', 'get_approval', 'get_repository_context', 'get_provider_action', ...writes]
+const allowed = ['get_agent_session', 'get_session_context', 'get_session_plan', 'list_documents', 'get_document', 'get_work_room', 'list_inbox_items', 'get_inbox_item', 'list_child_sessions', 'get_approval', 'get_repository_context', 'get_provider_action', ...writes]
 const aliases: Record<string, string> = { publish_plan: 'publish_plan', post_work_room_message: 'send_room_message', transition_agent_session_state: 'transition_state' }
 
 async function consumer(f: Fixture, connection: Connection, execution: Execution) {
@@ -28,7 +28,7 @@ async function consumer(f: Fixture, connection: Connection, execution: Execution
       if (name === 'offer_handoff') args.fromSessionId = execution.sessionId
       if ('ifMatch' in args) { args.revision = args.ifMatch; delete args.ifMatch }
       if (writes.has(name)) args.idempotencyKey ??= randomUUID()
-      result = await external.invoke(name, args)
+      result = await external.invoke(name === 'get_session' ? 'get_agent_session' : name, args)
     } else {
       const args = { ...input }; delete args.idempotencyKey
       const captures = await f.pi(execution, connection.token, [async () => ({ name: `workmesh_${aliases[name] ?? name}`, arguments: args })])
@@ -37,7 +37,7 @@ async function consumer(f: Fixture, connection: Connection, execution: Execution
       const outer: unknown = JSON.parse(raw)
       result = typeof outer === 'string' ? JSON.parse(outer) as unknown : outer
       saveJointEvidence(`journey-pi-${name}-${randomUUID()}.json`, { sessionId: execution.sessionId, captures, result })
-      if (result && typeof result === 'object' && 'error' in result) throw new Error(JSON.stringify(result))
+      if (result && typeof result === 'object' && 'error' in result && result.error !== null) throw new Error(JSON.stringify(result))
     }
     assert.ok(!/X-Amz-Signature|"uploadUrl"|"downloadUrl"|"requiredHeaders"/i.test(JSON.stringify(result)), 'Signed transfer material reached model')
     saveJointEvidence(`journey-result-${randomUUID()}.json`, { client: connection.clientType, sessionId: execution.sessionId, tool: name, result })
@@ -76,11 +76,17 @@ async function waitForApproval(f: Fixture, connection: Connection, e: Execution,
     ], { resumeAfterWait: async () => {
       waiting = (await f.db.query('SELECT id,status,source_turn_id,continuation_turn_id FROM workbench_execution_waits WHERE agent_session_id=$1', [e.sessionId])).rows
       assert.equal((waiting as Array<{ status: string }>).at(-1)?.status, 'pending')
-      const worker = createSessionLifecycleWorker({ db: f.db, workerId: `m5-wait-${randomUUID()}` })
-      assert.equal(await worker.reconcileWorkbenchWaits(), 0)
+      const beforeWorker = await f.startLifecycleWorker()
+      assert.equal(await beforeWorker.reconcile(), 0)
+      await beforeWorker.close()
       await h2.request('POST', `/api/v1/approvals/${approval.id}/decide`, { decision: 'approved', reason: 'H2 approves original action/hash' }, approval.revision)
-      const count = await Promise.all([worker.reconcileWorkbenchWaits(), worker.reconcileWorkbenchWaits()])
-      assert.equal(count.reduce((sum, n) => sum + n, 0), 1)
+      const workers = await Promise.all([f.startLifecycleWorker(), f.startLifecycleWorker()])
+      try {
+        const count = await Promise.all(workers.map(worker => worker.reconcile()))
+        assert.equal(count.reduce((sum, n) => sum + n, 0), 1)
+        assert.ok(workers.every(worker => worker.pid !== beforeWorker.pid))
+        assert.deepEqual(await Promise.all(workers.map(worker => worker.reconcile())), [0, 0])
+      } finally { for (const worker of workers) await worker.close() }
       resumed = (await f.db.query('SELECT id,status,source_turn_id,continuation_turn_id FROM workbench_execution_waits WHERE agent_session_id=$1', [e.sessionId])).rows
     } })
     saveJointEvidence(`joint-pi-public-wait-${e.sessionId}.json`, { waiting, resumed, captures, approvalId: approval.id, approvalHash: approval.action_payload_hash })
@@ -123,8 +129,9 @@ export async function runCoreJourney(kind: Kind) {
     await peer.call('acknowledge_inbox_item', { inboxItemId: item.id })
     const detail = await peer.call<{ revision: number }>('get_inbox_item', { inboxItemId: item.id })
     await peer.call('reply_inbox_item', { inboxItemId: item.id, ifMatch: detail.revision, body: 'Exact claimed peer result verified', payload: { documentId: document.id } })
-    const peerArtifact = await peer.call<{ id: string }>('publish_artifact', { type: 'test_report', title: 'Core peer evidence', metadata: { documentId: document.id } })
-    await peer.call('complete_session', { ifMatch: (await peer.call<{ revision: number }>('get_session')).revision, summary: 'Required child completed', artifactIds: [peerArtifact.id] })
+    // Ordinary children inherit only work:read/work:write. Their visible Inbox
+    // reply is the evidence; artifact authority is not added for this test.
+    await peer.call('complete_session', { ifMatch: (await peer.call<{ revision: number }>('get_session')).revision, summary: 'Required child completed with visible Inbox reply', noArtifactReason: 'Ordinary child has no artifact:write; exact Inbox reply records its result' })
     const children = await actor.call<{ items: Array<{ state: string }> }>('list_child_sessions', { childSessionId: child.id })
     assert.equal(children.items[0]!.state, 'completed')
     await actor.call('publish_plan', { ifMatch: (await actor.call<{ revision: number }>('get_session')).revision, changeSummary: 'Live parent verified required child', steps: [{ id: step, ordinal: 0, title: 'Required peer evidence', status: 'completed' }] })
@@ -134,7 +141,8 @@ export async function runCoreJourney(kind: Kind) {
     await next.call('get_session_context')
     const nextStep = randomUUID()
     await next.call('publish_plan', { ifMatch: (await next.call<{ revision: number }>('get_session')).revision, changeSummary: 'B owns a new Plan', steps: [{ id: nextStep, ordinal: 0, title: 'Deliver approved remaining work', status: 'completed' }] })
-    const payload = { operation: 'm5.core.delivery', sessionId: successor.sessionId, documentId: document.id }
+    // requestApproval hashes recursively sorted object keys, not insertion order.
+    const payload = { documentId: document.id, operation: 'm5.core.delivery', sessionId: successor.sessionId }
     const approval = await next.call<{ id: string; revision: number; action_payload_hash: string }>('request_approval', { approvalType: 'manual', actionName: 'm5.core.delivery', actionPayloadSanitized: payload, actionPayloadHash: sha256(JSON.stringify(payload)), riskLevel: 'low', rationaleSummary: 'Exact controlled core delivery', expiresAt: new Date(Date.now() + 600_000).toISOString() })
     await waitForApproval(f, b, successor, next, h2, approval)
     const approved = await next.call<{ revision: number }>('get_approval', { approvalId: approval.id })
@@ -163,29 +171,36 @@ export async function runGitJourney(kind: Kind) {
     createExecution: (title?: string, _queued?: boolean, _budget?: Record<string, number>, projectId?: string) => source(joint, owner, title ?? 'M5 Git', projectId),
     registerTarget: async capabilities => joint.attachReceiver(await joint.pairClient(kind === 'pi' ? 'opencode' : 'pi', capabilities)),
   }))
+  const backend = await startFakeProviderBackend(git.provider)
+  let worker: Awaited<ReturnType<typeof joint.startLifecycleWorker>> | undefined
+  const workerPids: Array<number | undefined> = []
   try {
     const s = await git.prepare('pi'), p = s.parent, actor = await consumer(joint, owner, p); peers.push(actor)
     const link = { workItemId: p.workItemId, projectId: s.projectId, repositoryId: s.repositoryId, planStepId: s.step }
     await actor.call('get_session_plan')
     await actor.call('acquire_lease', { resourceType: 'work_item', resourceId: p.workItemId, ttlSeconds: 3600, reason: 'Controlled fakeGit delivery' })
     const context = await actor.call<Array<{ base_sha: string }>>('get_repository_context', { repositoryId: s.repositoryId }); assert.equal(context[0]!.base_sha, 'base')
+    worker = await joint.startLifecycleWorker(backend); workerPids.push(worker.pid)
     const confirm = async (id: string) => {
-      await git.worker().tick()
+      await worker!.reconcile()
       const action = await actor.call<ProviderActionProjection>('get_provider_action', { id })
       assert.equal(action.status, 'completed'); assert.equal(action.effect, 'committed'); return action
     }
     const branch = await actor.call<{ id: string }>('create_repository_branch', { ...link, name: s.branch, baseSha: 'base' }); await confirm(branch.id)
     const commit = await actor.call<{ id: string }>('create_repository_commit', { ...link, branch: s.branch, expectedHeadSha: 'base', message: 'M5 controlled client delivery', files: [{ path: 'src/m5.ts', content: 'export const m5 = true\n' }] }); await confirm(commit.id)
+    await worker.close(); worker = await joint.startLifecycleWorker(backend); workerPids.push(worker.pid)
+    assert.notEqual(workerPids[0], workerPids[1])
     const opened = await actor.call<{ id: string }>('open_pull_request', { ...link, baseBranch: 'main', headBranch: s.branch, title: 'M5 actual O/P delivery', body: 'Exact tool evidence', draft: false })
     const action = await confirm(opened.id)
     assert.ok(action.kind === 'open_pull_request' && action.result?.projectionId)
     const pr = action.result.projectionId, head = action.result.headSha
     await git.db.query(`INSERT INTO provider_webhook_deliveries(connection_id,repository_id,delivery_id,event_name,body_hash,payload) VALUES($1,$2,$3,'check_run',$4,$5)`, [s.connectionId, s.repositoryId, randomUUID(), sha256(head), { check_run: { id: 42, name: 'required', status: 'completed', conclusion: 'success', head_sha: head, updated_at: new Date().toISOString(), pull_requests: [{ number: action.result.number }] } }])
-    await git.worker().tick()
+    await worker.reconcile()
     const evidence = await actor.call<{ id: string }>('publish_delivery_artifact', { ...link, pullRequestId: pr, headSha: head, type: 'test_report', title: 'Actual client current-head test', checksum: sha256(head), sourceTool: 'M5 local consumer', result: 'passed', metadata: { headSha: head } })
     const review = await actor.call<ReviewDelegationResponse>('create_review_delegation', { reviewerAgentId: s.target.agentId, planStepId: s.reviewStep, planVersionId: s.planId, initialPrompt: 'Review exact head and approved repository', ttlSeconds: 3600, repositoryIds: [s.repositoryId] })
     const reviewer = await git.receive(review.session.id, s.target.token)
-    const reviewerConnection = { ...owner, token: s.target.token, agentId: s.target.agentId, clientType: (kind === 'pi' ? 'opencode' : 'pi') as Kind }
+    const peerConnection = (await git.db.query<{ id: string; principal_human_actor_id: string }>('SELECT id,principal_human_actor_id FROM agent_connections WHERE agent_id=$1', [s.target.agentId])).rows[0]!
+    const reviewerConnection = { ...owner, connectionId: peerConnection.id, principalHumanActorId: peerConnection.principal_human_actor_id, token: s.target.token, agentId: s.target.agentId, clientType: (kind === 'pi' ? 'opencode' : 'pi') as Kind }
     const peer = await consumer(joint, reviewerConnection, reviewer); peers.push(peer)
     await peer.call('get_repository_context', { repositoryId: s.repositoryId })
     const room = (await git.db.query<{ id: string }>("SELECT id FROM work_room_channels WHERE subject_kind='session' AND subject_id=$1", [p.sessionId])).rows[0]!.id
@@ -203,9 +218,9 @@ export async function runGitJourney(kind: Kind) {
     const final = await h2.request<{ state: string }>('GET', `/api/v1/agent-sessions/${p.sessionId}`); assert.equal(final.state, 'completed')
     assert.equal((await git.db.query('SELECT status FROM approvals WHERE id=$1', [approval.id])).rows[0]!.status, 'consumed')
     const events = (await git.db.query('SELECT e.id,e.event_type,o.id AS outbox_id FROM domain_events e JOIN outbox_events o ON o.domain_event_id=e.id WHERE e.session_id=ANY($1::uuid[])', [[p.sessionId, reviewer.sessionId]])).rows
-    saveJointEvidence(`joint-${kind === 'opencode' ? 'O' : 'P'}-G.json`, { participants: [kind, reviewerConnection.clientType], final, children, parent: p.sessionId, reviewer: reviewer.sessionId, actions: [branch.id, commit.id, opened.id, merged.id], artifacts: [evidence.id, artifact.id], approvalId: approval.id, head, events, preparation: ['Human repository/context', 'privileged executor repository scope', 'SDK initial Plan (actual consumers read it)', 'provider check webhook fixture'] })
+    saveJointEvidence(`joint-${kind === 'opencode' ? 'O' : 'P'}-G.json`, { participants: [kind, reviewerConnection.clientType], final, children, parent: p.sessionId, reviewer: reviewer.sessionId, actions: [branch.id, commit.id, opened.id, merged.id], workerPids, providerCalls: backend.calls, artifacts: [evidence.id, artifact.id], approvalId: approval.id, head, events, preparation: ['Human repository/context', 'privileged executor repository scope', 'SDK initial Plan (actual consumers read it)', 'provider check webhook fixture'] })
   } finally {
-    for (const actor of peers.reverse()) await actor.close(); await git.close()
+    for (const actor of peers.reverse()) await actor.close(); await worker?.close(); await backend.close(); await git.close()
     if (previousWaits === undefined) delete process.env.WORKMESH_EXECUTION_WAITS_ENABLED
     else process.env.WORKMESH_EXECUTION_WAITS_ENABLED = previousWaits
   }

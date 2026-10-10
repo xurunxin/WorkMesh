@@ -95,6 +95,7 @@ const inputs: Record<string, Record<string, unknown>> = {
   workmesh_propose_plan_step_assignment: {planStepId:documentId,skill:'review',rationale:'Propose only'},
   workmesh_append_context_delta: {baseSnapshotId:baseRevisionId,rationale:'Trusted source',additions:[{sourceType:'artifact',sourceId:documentId,hash:`sha256:${'a'.repeat(64)}`}]},
   workmesh_get_session: {},
+  workmesh_list_events: { cursor: '0', limit: 1 },
   workmesh_get_session_context: {},
   workmesh_list_sessions: {},
   workmesh_get_session_plan: {},

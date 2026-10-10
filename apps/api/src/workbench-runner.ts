@@ -328,45 +328,39 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
   app.get('/api/v1/workbench/runner-attempts/:id/status', async request => {
     serviceToken(request, h)
     const current = actor(request); const sessionId = exactAgentSession(current)
-    const attempt = one((await h.db.query<AttemptRow>(
-      'SELECT * FROM workbench_runner_attempts WHERE workspace_id=$1 AND id=$2',
-      [current.workspaceId, id(request)])).rows, 'Runner attempt')
-    if (attempt.agent_session_id !== sessionId) throw new DomainError('NOT_FOUND', 'Runner attempt was not found')
-    const state = one((await h.db.query<{ turn_status: string; session_state: string; delegation_status: string }>(
-      `SELECT turn.status AS turn_status,session.state AS session_state,
-        delegation.status AS delegation_status FROM workbench_turns turn
-        JOIN agent_sessions session ON session.id=turn.agent_session_id
-        JOIN delegations delegation ON delegation.id=session.delegation_id
-        WHERE turn.workspace_id=$1 AND turn.id=$2
-          AND ${principalTeamAuthorityPredicate('delegation.principal_human_actor_id', 'session.workspace_id', 'session.team_id')}`,
-      [current.workspaceId, attempt.turn_id])).rows, 'Turn')
-    // Injected steering: a steering user message written after the attempt started is
-    // handed to the runner once. The steer command already emitted the durable
-    // workbench.turn.steered event; this read-only lookup selects the newest steering
-    // message that has no such event, so the event stream is the dedupe authority and
-    // a poll retry cannot invent facts.
-    let pendingSteeringMessage: string | null = null
-    if (attempt.status === 'running' && state.turn_status === 'running') {
-      const steering = (await h.db.query<{ content_markdown: string }>(
-        `SELECT message.content_markdown FROM workbench_messages message
-           JOIN workbench_runner_attempts attempt ON attempt.workspace_id=message.workspace_id
-            AND attempt.id=$4
-          WHERE message.workspace_id=$1 AND message.turn_id=$2 AND message.role='user'
-            AND message.created_at >= attempt.started_at
-            AND message.author_actor_id = (SELECT initiated_by_actor_id FROM workbench_turns
-              WHERE workspace_id=$1 AND id=$2)
+    // Authorization and the returned steering body share one statement snapshot.
+    // There is no later read that could observe a post-revocation message, and
+    // polling never reserves a receipt or appends a steering event.
+    const state = one((await h.db.query<{ attempt_status: string; turn_status: string;
+      session_state: string; delegation_status: string; pending_steering_message: string | null }>(
+      `SELECT attempt.status AS attempt_status,turn.status AS turn_status,
+        session.state AS session_state,delegation.status AS delegation_status,
+        steering.content_markdown AS pending_steering_message
+       FROM workbench_runner_attempts attempt
+       JOIN workbench_turns turn ON turn.id=attempt.turn_id AND turn.workspace_id=attempt.workspace_id
+       JOIN agent_sessions session ON session.id=attempt.agent_session_id
+        AND session.id=turn.agent_session_id AND session.workspace_id=attempt.workspace_id
+       JOIN delegations delegation ON delegation.id=session.delegation_id
+       LEFT JOIN LATERAL (
+         SELECT message.content_markdown FROM workbench_messages message
+          WHERE attempt.status='running' AND turn.status='running'
+            AND message.workspace_id=attempt.workspace_id AND message.turn_id=turn.id
+            AND message.role='user' AND message.created_at>=attempt.started_at
+            AND message.author_actor_id=turn.initiated_by_actor_id
             AND NOT EXISTS (
               SELECT 1 FROM domain_events event
-              WHERE event.aggregate_type='workbench_turn' AND event.aggregate_id=$3
-                AND event.event_type='workbench.turn.steered'
-                AND event.payload->>'messageId'=message.id::text)
-          ORDER BY message.sequence DESC LIMIT 1`,
-        [current.workspaceId, attempt.turn_id, attempt.turn_id, attempt.id])).rows[0]
-      pendingSteeringMessage = steering?.content_markdown ?? null
-    }
-    return { attemptStatus: attempt.status, turnStatus: state.turn_status,
+               WHERE event.aggregate_type='workbench_turn' AND event.aggregate_id=turn.id
+                 AND event.event_type='workbench.turn.steered'
+                 AND event.payload->>'messageId'=message.id::text)
+          ORDER BY message.sequence DESC LIMIT 1
+       ) steering ON true
+       WHERE attempt.workspace_id=$1 AND attempt.id=$2
+         AND session.id=$3 AND session.agent_actor_id=$4
+         AND ${principalTeamAuthorityPredicate('delegation.principal_human_actor_id', 'session.workspace_id', 'session.team_id')}`,
+      [current.workspaceId, id(request), sessionId, current.id])).rows, 'Runner attempt')
+    return { attemptStatus: state.attempt_status, turnStatus: state.turn_status,
       sessionState: state.session_state, delegationStatus: state.delegation_status,
-      pendingSteeringMessage }
+      pendingSteeringMessage: state.pending_steering_message }
   })
 
   app.post('/api/v1/workbench/runner-attempts/:id/settle', async request => {

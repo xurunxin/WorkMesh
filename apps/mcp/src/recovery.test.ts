@@ -1,6 +1,7 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
-import { WorkMeshClient } from '@workmesh/agent-sdk'
+import { WorkMeshClient, WorkMeshSdkError } from '@workmesh/agent-sdk'
+import { createAgentCapabilityManifest, qualifyAgentCapabilityManifest, capabilitySchema, featureKeySchema } from '@workmesh/contracts'
 import { describe, expect, it, vi } from 'vitest'
 import { createWorkMeshMcpServer } from './index.js'
 
@@ -17,6 +18,33 @@ async function connect(api: WorkMeshClient, mode: 'read-only' | 'read-write' = '
 }
 
 describe('MCP 既有恢复与安装用途调用边界', () => {
+  it('原 E 在执行时可发现带明确前提的 Stop ACK，stopping 仅列恢复入口且不刷新；readonly/C 不得借此恢复', async () => {
+    const features = Object.fromEntries(featureKeySchema.options.map(key => [key, true])) as Record<typeof featureKeySchema.options[number], boolean>
+    const manifest = createAgentCapabilityManifest({ actorId: id, sessionId: id, sessionState: 'executing', sessionRevision: 1,
+      effectiveCapabilities: capabilitySchema.options, capabilityScope: { workspaceId: id, teamIds: [id], projectIds: [], workItemIds: [id], repositoryIds: [], capabilities: capabilitySchema.options },
+      supportedProtocols: ['mcp'], pushConfigured: false, features })
+    const qualified = qualifyAgentCapabilityManifest(manifest, { identity: { actorId: id, sessionId: id, credentialMode: 'agent_session', sessionKind: 'execution', delegationRole: 'executor', delegationScopeType: 'work_item' }, features, workItemId: id, projectId: null })
+    const fetcher = vi.fn()
+    const api = new WorkMeshClient({ baseUrl: 'http://api.test', sessionToken: 'original-e', fetch: fetcher })
+    const qualify = vi.spyOn(api, 'getQualifiedAgentCapabilities').mockResolvedValue(qualified)
+    const mcp = await connect(api)
+    try {
+      const listed = (await mcp.client.listTools()).tools.find(tool => tool.name === 'stop_ack')
+      expect(listed?._meta).toMatchObject({ workmesh: { recoveryOnly: true, eligibility: { status: 'requires_target_check', pendingChecks: ['original_execution_token', 'live_authority', 'session_stopping'] } } })
+      qualify.mockRejectedValue(new WorkMeshSdkError('Ordinary manifest unavailable', { code: 'SESSION_NOT_ACTIVE', status: 409 }))
+      expect((await mcp.client.listTools()).tools.map(tool => tool.name)).toEqual(['stop_ack'])
+      qualify.mockRejectedValue(new WorkMeshSdkError('Revoked', { code: 'SESSION_SCOPE_DENIED', status: 403 }))
+      await expect(mcp.client.listTools()).rejects.toThrow('Revoked')
+      expect(fetcher).not.toHaveBeenCalled()
+    } finally { await mcp.close() }
+    for (const [mode, token] of [['read-only', 'original-e'], ['read-write', undefined]] as const) {
+      const other = new WorkMeshClient({ baseUrl: 'http://api.test', sessionToken: token, coordinationToken: token ? undefined : 'c', fetch: fetcher })
+      vi.spyOn(other, 'getQualifiedAgentCapabilities').mockResolvedValue(qualified)
+      const denied = await connect(other, mode)
+      try { expect((await denied.client.listTools()).tools.map(tool => tool.name)).not.toContain('stop_ack') }
+      finally { await denied.close() }
+    }
+  })
   it('stop_ack 使用原 E，停止后没有 manifest/refresh/Activity，撤权拒绝不换身份', async () => {
     let revoked = false
     const fetcher = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {

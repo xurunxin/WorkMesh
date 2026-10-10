@@ -1,6 +1,6 @@
 """仅本批已登记资源：准备既有恢复检查、脱敏保全和停止 owned 容器；不删除目录或镜像。"""
 from pathlib import Path
-import datetime,hashlib,json,os,re,subprocess,sys,urllib.parse,zipfile
+import datetime,hashlib,json,os,re,subprocess,sys,urllib.parse,uuid,zipfile
 ROOT=Path(__file__).resolve().parents[3]; DOC=ROOT/'docs/plan/agent-mcp-m5'; LOCAL=ROOT/'.tmp/m5-runtime'
 sys.stdout.reconfigure(encoding='utf8',errors='replace')
 def now():return datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -77,10 +77,20 @@ elif sys.argv[1]=='bundle':
  last=LOCAL/'playwright/root-mixed/output/.last-run.json'
  if last.is_file():files.append(last)
  files+=list((LOCAL/'evidence').rglob('*.json'))+list((LOCAL/'evidence').rglob('*.log'))
+ # Only public fixture envelopes and sanitized native receipts, never private
+ # config/data/state/auth trees or the original private-check-output streams.
+ for folder in ['joint-evidence','review-opencode']:
+  base=LOCAL/folder
+  files+=list(base.glob('*.json'))
+  for runtime in base.glob('opencode-*'):
+   if runtime.is_dir():
+    files+=list(runtime.glob('*.json'))+list(runtime.glob('*.log'))
  for folder in ['mcp-coverage','execution-recovery','planning-collaboration','delivery-recovery']:
   files+=list((ROOT/'ci-logs'/folder).rglob('*.json'))
- entries=[]; out=DOC/'product-evidence';out.mkdir(exist_ok=True)
- tmp=LOCAL/'evidence-bundle.zip'
+ entries=[]; out=DOC/'product-evidence';out.mkdir(exist_ok=True);publicMembers={}
+ # A previous generated ZIP can be a hardlink to its immutable public archive.
+ # Never open that name for writing: build a new uniquely owned temporary file.
+ tmp=LOCAL/('evidence-bundle-'+uuid.uuid4().hex+'.zip')
  # Never include environment.json, cookies/auth state, private config, DB files or model secrets.
  secrets=[v for k,v in env.items() if any(key in k for key in ['TOKEN','SECRET','PASSWORD','MASTER_KEY','DATABASE_URL','HMAC_KEY']) and len(v)>8]
  secrets += [urllib.parse.unquote(urllib.parse.urlsplit(value).password or '') for key,value in env.items() if key.endswith('DATABASE_URL')]
@@ -93,18 +103,25 @@ elif sys.argv[1]=='bundle':
    for value in sorted(secrets,key=len,reverse=True):text=text.replace(value,'[redacted]')
    text=re.sub(r'wm[ips]_[A-Za-z0-9_-]+','[credential]',text)
    text=re.sub(r'([?&]X-Amz-(?:Signature|Credential|Security-Token)=)[^&\s"\\]+',r'\1[redacted]',text,flags=re.I)
-   public=text.encode('utf8');member=file.relative_to(ROOT).as_posix()
-   archive.writestr(member,public)
-   entries.append({'sourcePath':member,'member':member,'rawSha256':hashlib.sha256(raw).hexdigest(),'publicSha256':hashlib.sha256(public).hexdigest(),'rawBytes':len(raw),'publicBytes':len(public),'redactionChangedBytes':raw!=public,'modifiedAt':datetime.datetime.fromtimestamp(file.stat().st_mtime,datetime.timezone.utc).isoformat(),'interpretation':'现时运行目录原件；含旧套件历史文件，须按命令与对应源码manifest关联，不以目录存在证明新用例运行'})
+   public=text.encode('utf8');sourcePath=file.relative_to(ROOT).as_posix();publicHash=hashlib.sha256(public).hexdigest()
+   member=publicMembers.get(publicHash)
+   if member is None:
+    member=sourcePath;publicMembers[publicHash]=member
+    info=zipfile.ZipInfo(member,date_time=(1980,1,1,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED
+    archive.writestr(info,public)
+   entries.append({'sourcePath':sourcePath,'member':member,'rawSha256':hashlib.sha256(raw).hexdigest(),'publicSha256':publicHash,'rawBytes':len(raw),'publicBytes':len(public),'redactionChangedBytes':raw!=public,'modifiedAt':datetime.datetime.fromtimestamp(file.stat().st_mtime,datetime.timezone.utc).isoformat(),'interpretation':'现时运行目录原件；逐sourcePath记录时间和原bytes，相同公共bytes复用member；含旧套件历史文件，须按命令与对应源码manifest关联，不以目录存在证明新用例运行'})
  digest=hashlib.sha256(tmp.read_bytes()).hexdigest();target=out/(digest+'.zip')
- target.write_bytes(tmp.read_bytes())
+ if target.exists():
+  assert target.read_bytes()==tmp.read_bytes(),'内容寻址ZIP不一致，停止'
+  tmp.unlink();os.link(target,tmp)
+ else:os.link(tmp,target)
  # Read every member back before binding the archive. Original local bytes stay in recovery.
  with zipfile.ZipFile(target) as archive:
   assert set(archive.namelist())=={row['member'] for row in entries}
   for row in entries:assert hashlib.sha256(archive.read(row['member'])).hexdigest()==row['publicSha256']
  prior=(previous.get('supersededArchives',[])+[{'archive':previous['archive'],'sha256':previous['sha256'],'bytes':previous['bytes'],'createdAt':previous['createdAt'],'meaning':'同轮较早保全包，不含后续命令；原件留存'}]) if previous and previous['sha256']!=digest else []
  save(DOC/'product-evidence-index.json',{'archive':'product-evidence/'+target.name,'sha256':digest,'bytes':target.stat().st_size,'createdAt':now(),'entries':entries,'supersededArchives':prior,'originalLocalBytesPreserved':True,'missing':['earliest checks had no contemporaneous source before/after manifest','intermediate overwritten same-name live captures are not reconstructible','intermediate uncommitted test/driver source bodies were not preserved at every failure; fingerprints do not reconstruct those bodies'],'format':'ZIP preserves public bytes, no newline normalization'})
- print(json.dumps({'archive':target.name,'members':len(entries),'bytes':target.stat().st_size,'allMembersVerified':True}))
+ print(json.dumps({'archive':target.name,'sourcePaths':len(entries),'members':len(publicMembers),'bytes':target.stat().st_size,'allMembersVerified':True}))
 elif sys.argv[1]=='summarize':
  rows=json.loads((DOC/'product-checks.json').read_text(encoding='utf8'));summaries=[]
  for row in rows:

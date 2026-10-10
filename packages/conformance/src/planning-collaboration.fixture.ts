@@ -28,6 +28,7 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
   const receivers: ReturnType<typeof createReceiver>[] = []
   const delivered = new Map<string, { exchangeToken: string }>()
   const deliveries = new Set<string>()
+  const originalDeliveries = new Map<string, { raw: string; secret: Buffer; deliveryId: string; url: string }>()
   let duplicateDeliveries = 0
   const worker = () => createAgentWebhookWorker({ db: fixture.db, allowPrivateAgentWebhooks: true })
   const receive = async (sessionId: string, installationToken: string): Promise<Execution> => {
@@ -59,7 +60,7 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
         const deliveryId = String(request.headers['workmesh-delivery-id'])
         if (deliveries.has(deliveryId)) { duplicateDeliveries++; response.writeHead(409); response.end(); return }
         const envelope = JSON.parse(raw) as { events: Array<{ type: string; payload: { sessionId: string; exchangeToken: string } }> }
-        for (const event of envelope.events) if (event.type==='agent.session.created') delivered.set(event.payload.sessionId,event.payload)
+        for (const event of envelope.events) if (event.type==='agent.session.created') { delivered.set(event.payload.sessionId,event.payload); originalDeliveries.set(event.payload.sessionId, { raw, secret, deliveryId, url: `http://127.0.0.1:${(receiver.address() as {port:number}).port}/m2-controlled-recipient` }) }
         savePlanningEvidence(`delivery-${deliveryId}.json`,{ deliveryId, events: envelope.events.map(event=>({type:event.type,sessionId:event.payload.sessionId})), hmacVerified: true, timestampInWindow: true, port: (receiver.address() as {port:number}).port })
         deliveries.add(deliveryId); response.writeHead(204); response.end()
       } catch { response.writeHead(400); response.end() }
@@ -80,14 +81,28 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
     }
     return target
   }
+  const replayDelivery = async (sessionId: string) => {
+    const original = originalDeliveries.get(sessionId)
+    if (!original) throw new Error('M5_ORIGINAL_SIGNED_DELIVERY_REQUIRED')
+    const send = async (timestamp: number, signature: string) => {
+      const response = await fetch(original.url, { method: 'POST', headers: { 'workmesh-timestamp': String(timestamp), 'workmesh-signature': signature, 'workmesh-delivery-id': original.deliveryId }, body: original.raw })
+      return response.status
+    }
+    const now = Math.floor(Date.now() / 1000)
+    const duplicate = await send(now, signWebhook(original.secret, now, original.raw))
+    const stale = await send(now - 600, signWebhook(original.secret, now - 600, original.raw))
+    const invalid = await send(now, 'invalid-signature')
+    return { sessionId, deliveryId: original.deliveryId, duplicate, stale, invalid, duplicateDeliveries, originalByteLength: Buffer.byteLength(original.raw) }
+  }
   const registerTarget = async (capabilities:Capability[]=['work:read','work:write','artifact:write']) => attachReceiver(await fixture.pairTarget(capabilities))
   const registerCurrentReceiver = async () => attachReceiver({agentId:fixture.agentId,token:fixture.connectionToken})
-  const runnerProxy = async (options:{loseFailResponse?:boolean;afterSettlement?:()=>Promise<void>;afterResponse?:(path:string,status:number)=>Promise<void>}) => {
+  const runnerProxy = async (options:{loseFailResponse?:boolean;afterSettlement?:()=>Promise<void>;beforeRequest?:(path:string,method:string)=>Promise<void>;afterResponse?:(path:string,status:number)=>Promise<void>}) => {
     const proxy=createReceiver(async(request,response)=>{
       try {
         const chunks:Buffer[]=[];for await(const chunk of request)chunks.push(Buffer.from(chunk))
         const headers:Record<string,string>={}
         for(const [name,value] of Object.entries(request.headers))if(value && !['host','connection','content-length'].includes(name))headers[name]=Array.isArray(value)?value.join(','):value
+        await options.beforeRequest?.(request.url??'/',request.method??'GET')
         const upstream=await fetch(fixture.baseUrl+(request.url??'/'),{method:request.method,headers,
           ...(['GET','HEAD'].includes(request.method??'GET')?{}:{body:Buffer.concat(chunks)})})
         const body=Buffer.from(await upstream.arrayBuffer())
@@ -161,9 +176,10 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
       else process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST = previous
     }
   }
-  return { ...fixture, receive, attachReceiver, registerTarget, registerCurrentReceiver, pi,
+  return { ...fixture, replayDelivery, receive, attachReceiver, registerTarget, registerCurrentReceiver, pi,
     loseFailResponse:()=>runnerProxy({loseFailResponse:true}),afterSettlement:(afterSettlement:()=>Promise<void>)=>runnerProxy({afterSettlement}),
     afterResponse:(afterResponse:(path:string,status:number)=>Promise<void>)=>runnerProxy({afterResponse}),
+    interceptRequests:(beforeRequest:(path:string,method:string)=>Promise<void>,afterResponse:(path:string,status:number)=>Promise<void>)=>runnerProxy({beforeRequest,afterResponse}),
     webhookWorker: worker, deliveryCounts:()=>({accepted:deliveries.size,duplicates:duplicateDeliveries}), close: async () => {
     for (const receiver of receivers) { receiver.closeAllConnections(); if (receiver.listening) await new Promise<void>((done,reject)=>receiver.close(error=>error?reject(error):done())) }
     for (const model of models) { model.closeAllConnections(); if (model.listening) await new Promise<void>((done, reject) => model.close(error => error ? reject(error) : done())) }

@@ -1,7 +1,7 @@
 import { execFile, spawn } from 'node:child_process'
 import { createHash, randomUUID } from 'node:crypto'
 import { once } from 'node:events'
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, statSync, writeFileSync, linkSync, unlinkSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { resolve, join } from 'node:path'
 import { promisify } from 'node:util'
@@ -165,6 +165,32 @@ export async function createOpenCodeRuntime(options: { executable: string; evide
     writeFileSync(join(root, 'resources.json'), JSON.stringify(result, null, 2))
     if (!result.allOwnedProcessesExited) throw new Error('M5_OPENCODE_OWNED_PROCESS_EXIT_NOT_OBSERVED')
     if (!result.nativeServerListenerClosed) throw new Error('M5_OPENCODE_OWNED_LISTENER_CLOSE_NOT_OBSERVED')
+    // The native Windows runtime creates hardlinks to itself for each private
+    // daemon. Preserve one immutable task-owned name and the file identity;
+    // retire only derived names after their exact owned processes have exited.
+    const recoveryRoot = process.env.M5_RUNTIME_RECOVERY_ROOT
+    if (recoveryRoot) {
+      const workspace = resolve(import.meta.dirname, '../../..')
+      const canonicalRoot = resolve(recoveryRoot)
+      if (!canonicalRoot.startsWith(resolve(workspace, '.tmp/m5-runtime') + '\\') && !canonicalRoot.startsWith(resolve(workspace, '.tmp/m5-runtime') + '/')) throw new Error('M5_RUNTIME_RECOVERY_ROOT_OUTSIDE_OWNER')
+      mkdirSync(canonicalRoot, { recursive: true })
+      const canonical = join(canonicalRoot, `${resource.binarySha256}.exe`)
+      try { statSync(canonical) } catch { linkSync(options.executable, canonical) }
+      const original = statSync(options.executable, { bigint: true }), retained = statSync(canonical, { bigint: true })
+      if (retained.ino !== original.ino || retained.dev !== original.dev) throw new Error('M5_RUNTIME_CANONICAL_IDENTITY_MISMATCH')
+      const candidates = join(paths.cache, 'opencode')
+      const links: Array<Record<string, unknown>> = []
+      for (const name of readdirSync(candidates).filter(name => /^opencode-service-\d+-[a-f0-9]+\.exe$/.test(name))) {
+        const path = join(candidates, name), value = statSync(path, { bigint: true })
+        if (value.isSymbolicLink() || value.ino !== retained.ino || value.dev !== retained.dev || value.nlink < 2n) continue
+        const record: Record<string, unknown> = { path, canonical, fileId: value.ino.toString(), device: value.dev.toString(), logicalBytes: Number(value.size), sha256: resource.binarySha256, ownedProcessesExited: true, nativeServerListenerClosed: true, deleted: false, physicalBytesFreed: null }
+        links.push(record)
+        writeFileSync(join(root, 'runtime-link-retirement.json'), JSON.stringify({ links, canonicalPreserved: true, recoveryDirectoryPreserved: true }, null, 2))
+        try { unlinkSync(path); record.deleted = true }
+        catch (error) { record.failure = String(error); writeFileSync(join(root, 'runtime-link-retirement.json'), JSON.stringify({ links, canonicalPreserved: true, stopOnFailure: true }, null, 2)); throw error }
+      }
+      writeFileSync(join(root, 'runtime-link-retirement.json'), JSON.stringify({ links, canonicalPreserved: true, physicalBytesFreed: null, recoveryDirectoryPreserved: true }, null, 2))
+    }
     return result
   }
   const observeInventory = async (endpoint: URL, password: string, pid: number, evidenceName: string) => {
@@ -291,6 +317,15 @@ export async function createOpenCodeRuntime(options: { executable: string; evide
       writeFileSync(join(root, 'native-server-readiness.json'), JSON.stringify({ argv: [options.executable, ...args], pid: child.pid,
         startedAt, readiness, privateEnvironment: true, privateDirectory: paths.work, lifetime: 'owned stdin' }, null, 2))
       await observeInventory(new URL(readiness.url), nativePassword, child.pid!, 'native-server-discovery-inventory.json')
+      if (options.mcpUrl) {
+        // Plugin hydration and MCP discovery are independently asynchronous.
+        // Never start a model Turn while its WorkMesh registry is still empty.
+        const mcpDeadline = Date.now() + 15_000
+        while (!/message="mcp connected"[^\r\n]*server=workmesh[^\r\n]*tools=[1-9][0-9]*/.test(stderr) && Date.now() < mcpDeadline)
+          await new Promise(done => setTimeout(done, 100))
+        if (!/message="mcp connected"[^\r\n]*server=workmesh[^\r\n]*tools=[1-9][0-9]*/.test(stderr)) throw new Error('M5_NATIVE_WORKMESH_REGISTRY_NOT_READY')
+        writeFileSync(join(root, 'native-mcp-readiness.json'), JSON.stringify({ pid: child.pid, at: new Date().toISOString(), ready: true, source: 'owned native server connected/nonempty tools log' }, null, 2))
+      }
       return readiness.url
     }
     return { root, resource, effective, sources, blockedRequests, output, close,
