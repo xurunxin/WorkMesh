@@ -140,8 +140,8 @@ TOOL={
 "listInbox":"list_inbox_items","createProjectMilestone":"create_milestone",
 "createWorkItemRelation":"add_work_item_relation","deleteWorkItemRelation":"delete_work_item_relation"}
 CONTRACT={
-"createChildAgentSession":"childSessionInputSchema（从 createChild 内联 Zod 提取） / agentSessionResponseSchema",
-"createReviewDelegation":"reviewDelegationInputSchema（从 createReview 内联 Zod 提取） / {session:agentSessionResponseSchema,lease:leaseResponseSchema}",
+"createChildAgentSession":"childSessionInputSchema / childAgentSessionResponseSchema（创建专用，保绑定字段和原额外字段）",
+"createReviewDelegation":"reviewDelegationInputSchema（新增可选budget） / reviewDelegationResponseSchema {session:childAgentSessionResponseSchema,lease:leaseResponseSchema}",
 "commentOnPlanStep":"现有内联 schema / 原响应",
 "proposePlanAssignment":"assignmentProposalInputSchema / 原响应",
 "appendContextDelta":"contextDeltaInputSchema / 原响应",
@@ -268,6 +268,26 @@ def mapping():
               "positive":"有资格者按真实DTO成功且返回原resource字段，分页读至nextCursor=null；H保留动作Human正对照",
               "negative":"同operation越scope/撤权/非法state拒并保error.code/details/correlationId；无业务写；不能把manifest当授权",
               "futureProductTestStatus":"未运行"}
+            if op in ("createChildAgentSession","createReviewDelegation"):
+                proposal=yaml.safe_load((OUT/"openapi-proposal.yaml").read_text(encoding="utf-8"))
+                row["proposedOpenApiContract"]=proposal["paths"][path]["post"]
+                row["proposedSchemas"]=["childSessionInputSchema" if op=="createChildAgentSession" else "reviewDelegationInputSchema", "childAgentSessionResponseSchema"]
+                if op=="createReviewDelegation":row["proposedSchemas"].append("reviewDelegationResponseSchema")
+                row["proposalSources"]=["dto-proposal.ts","openapi-proposal.yaml","security-contract.md"]
+                row["preserveResponseFields"]=["parent_session_id","plan_step_version_id","required_for_parent","inherited_budget","max_child_sessions"]
+                row["budgetContract"]={"input":"budget?:Record<string,number>","validation":"finite非负；有父cap的维度只可缩减",
+                  "effective":"inheritChildBudget(parent.budget, body.budget ?? {})",
+                  "reservation":"reserveChildBudget按有效值检Σ；Session budget/inherited_budget与allocation/reserved一致",
+                  "omittedDimensions":"仍继承父值","automaticRelease":False,"autoResizeToRemaining":False,
+                  "externalExhaustionCode":"CHILD_BUDGET_EXCEEDED"}
+                row["sdk"]["change"]="保旧显式泛型调用；默认新typed创建schema校验，passthrough原绑定和额外字段"
+                row["sdk"]["defaultReturnType"]="ChildAgentSession" if op=="createChildAgentSession" else "ReviewDelegationResponse"
+                row["mcp"]["inputExtension"]={"budget":"可选finite非负数字record；review新增，ordinary已存在"}
+                row["mcp"]["responseValidation"]="按创建schema，不能用普通Session schema剥字段；structuredContent.data原字段保全"
+                row["runner"]["inputExtension"]={"budget":"同REST原样透传；父固定api.sessionId，不重填全额"}
+                row["clientChildLimitConfiguration"]="父/step默认8；不新增客户端maxChildSessions；低限额测试专用特权夹具"
+                row["positive"]="父maxInputTokens100，ordinary显式60→完成旧reservation仍60→review显式40，四处budget同值，SDK/MCP/Pi保创建字段→双证据→父完成"
+                row["negative"]="review省略budget/41/超父cap/negative/nonfinite/预算竞争拒；回滚/replay不重复预留；默认8第九次拒；权限仍沿原门禁"
             operations.append(row)
     new=json.loads((OUT/"policy-proposal.json").read_text(encoding="utf-8"))
     operations.append(new["operationDecision"])
@@ -281,7 +301,7 @@ def mapping():
       "sourceHead":MAIN,"frozen":FROZEN,"operations":operations,"notFoundIdentifiers":absent,
       "composites":composite,"ownerFieldExtensions":{"createWorkItem":["parentId","milestoneId"],"updateWorkItem":["parentId","milestoneId"],
        "listWorkItems":["projectId","parentId","milestoneId","cursor","limit"],"listInbox":["status","cursor","limit"]},
-      "contractReuse":"实际schema/handler字段全部见ZIP；不以泛化表覆盖现行字段，实施时contracts先行补typed、旧字段透传",
+      "contractReuse":"实际schema/handler字段全部见ZIP；创建使用新child专用schema保五字段及record/passthrough，review可选budget；原OpenAPI与提案分列，不冒新端点已有",
       "notes":["history/diff对Guidance只补路由现行实际允许的读；Human-only绝不改Agent",
        "文字存在/operation数量不能证明功能通过；每操作正拒对应真实test ID",
        "只读无写key/If-Match：幂等mutation和stale write测试不适用，要求零写/版本准确；其他类按family真实夹具",
@@ -293,7 +313,7 @@ def mapping():
           r["contracts"]+"；"+r["sdk"]["name"],r["mcp"]["name"]+" / "+r["runner"]["name"],
           r["credentialsAndScope"]+"；"+r["decision"],r["pagination"]]).replace("\n"," ")+" |")
     lines.extend(["","复合导入 operation 子集与逐实体恢复见 operation-decisions.json.composites；不创建Pi自主导入工具。",
-      "","现有Zod本体保全在source archive。两种创建提取共享schema而保旧必填/默认/响应字段；新增GET具体strict DTO见dto-proposal.ts。现有OpenAPI很多查询只给ID/Json泛响应，产品阶段在原operation补实际query/body及typed返回，不 invent不同cursor或改Human gate。",
+      "","现有Zod本体保全在source archive。两种创建提取共享schema并新增childAgentSessionResponseSchema保全五个绑定字段、预算record和原额外字段；review输入增加可选budget，REST/Zod/SDK/MCP/Runner同值透传、执行Session budget/inherited_budget与allocation/reserved一致。新增GETstrict DTO与两POST合同见dto-proposal.ts/openapi-proposal.yaml；未改当前产品。父/step限额默认8，无客户端配置，低上限仅特权测试夹具。",
       "","Runner规划输入补parentId/milestoneId及filter/cursor/limit，所有分页以nextCursor原样回传；doc history正整数cursor不当UUID；export保留markdown字符串，MCP包结构化content，Pi返回同内容。reviewer不注册publish_plan且publication写交给本人Room和code_review；GET不调用写Activity包装。"])
     write("operation-matrix.md","\n".join(lines)+"\n")
 

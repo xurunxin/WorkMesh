@@ -26,9 +26,17 @@ createChild／createReview 继续走 command→lockCollaborationSessionTargets�
 
 普通 child 能力严格 work:read/work:write，专用 reviewer 严格 work:read/work:write/artifact:write，均为父 Delegation、目标 definition、目标 Team grant 的共同子集；reviewer 无 plan:write。普通 child role=reviewer 不获得专用 reviewer 能力或 Lease，兼容保留输入但明确可能无法完成 reviewer 双证据，调用方应选专用工具。Lease 从来不授权。
 
-普通 budget 沿 inheritChildBudget，仅缩减已声明上限；共享输入校验 finite、非负。两路径锁 parent 和 reserved rows 后验证每维 Σreserved＋requested≤parent cap。保持外部 CHILD_BUDGET_EXCEEDED 码，内部可复用 reserveChildBudget。review 无 budget 新参数，requested=parent.budget 全额，继承 budget 与 inherited_budget 一致；新增一条 reservation。未知维度沿现有普通规则，不自行 invent 新计费维度。既有 reservation 不因 completed／failed 自动清除，避免把潜在消耗重新发放；暂不设计消费／释放账本。
+两路径 budget 沿 inheritChildBudget(parent.budget, body.budget ?? {})；reviewDelegationInputSchema 新增可选 budget:z.record(z.number().finite().nonnegative()).optional()，与普通child共享有限非负数字record。显式维度不能超过父已声明上限，省略维度继承父值，省略或{}不是取余额，而是继承全额；未声明维度沿普通child原规则，不新增计费维度／计费逻辑。对有效预算统一调用reserveChildBudget；超父cap或Σreserved＋requested超过任何声明cap，保持API外部CHILD_BUDGET_EXCEEDED（helper内部CHILD_BUDGET_RESERVATION_EXCEEDED映射），负数／非有限输入在Zod边界VALIDATION_ERROR。
 
-权衡：有限预算 parent 已有正额 reservation 时，review 可能无法准入；完成旧 child 不自动恢复余额。此为本 Agent 根据 ADR0017 的继承和代码现状提出的保守方案，待独审；用户仅批准落盘工件，未选新预算合同。无预算 {} 不伪造零花费，不限制为资金预算。旧 review 无 reservation 的存量不补历史事实；创建准入按现有全部活跃 reviewer budget 加入有效占用计算，排除已有 reservation 的重复计数，直到存量 review 终态，防滚动升级期间旧 reviewer 绕过新限额；不写回历史 row。
+在既有父authority及Session锁下，读取reserved rows加旧无reservation活跃reviewer占用，锁后重验并将有效预算同值写入 child.budget、child.inherited_budget、reservation.allocation、reservation.reserved。provisionNewSessionDelivery不接收budget参数，执行者沿准确child Session/context读取其budget，不能在SDK/MCP/Runner边界重新填parent.budget；真实Pi验证该读取实收40及受控假模型实际usage，不靠只少预留但仍呈现执行预算100通过。现行Session预算利用率是投影，不把它冒作新的模型hard cap机制；本批不新增预算计费/释放/模型限额域。保留原事件类型，在同一事务创建上述事实，不提前投递。
+
+用户在原卡q-ka2GipEunxQuHuFYGap2C批准可选显式缩减budget，此处取代旧候选“全额reservation唯一方案”。父100、普通child60完成后reservation仍60；review显式40的有限预算完整链是必验正例，省略review budget或41为拒例。不能仅用父{}说明有限预算链完整，也没有Human调父预算恢复入口。现有reserved份额不因completed／failed自动清除；额度不足如实拒绝，没有新消费／释放账本。旧review无reservation的存量不补历史事实，按全部活跃review budget加入有效占用，排除已有reservation重复计数，直到存量终态；不回写历史行。本轮修订依然等待独审，不标三blocking已闭。
+
+## 创建响应与上限入口
+
+childAgentSessionResponseSchema扩展agentSessionResponseSchema：五字段parent_session_id／plan_step_version_id必UUID、required_for_parent布尔、inherited_budget数字record、max_child_sessions非负整数；覆盖budget为数字record，`.passthrough()`保留原创建响应额外字段。reviewDelegationResponseSchema={session:childAgentSessionResponseSchema,lease:leaseResponseSchema}并保wrapper额外字段。leaseResponseSchema来自execution-contracts.ts，原schema已在refine前passthrough，不能对ZodEffects再调用passthrough。不将该创建响应用于通用get扩大权限，不返回新增秘密。SDK保原泛型调用兼容、默认typed结果；MCP structuredContent.data和模型实收都要保字段，不再用普通Session schema丢掉创建绑定。
+
+planStepInputSchema／父创建DTO没有maxChildSessions，publishPlan INSERT不写max_child_sessions，DB父／step均默认8。正常HTTP/MCP/Pi链使用默认值；边界默认8造满后第九次创建拒绝；低父总量／step活跃limit=1等仅测试专用特权DB夹具预备，明记真实SQL、归属和原值，不让Agent传该字段、不扩大客户端配置。跨version夹具每新version用相同stable step和明确step DB值，证明计数而非声称DTO配置成功。
 
 所有 mutation 写 Session／Delegation／reservation／review_shared Lease／prompt／room／交付／event／outbox 同事务。review 当前 exclusive 冲突拒绝，TTL 以锁后真实时间核验；回滚不产生外部交付。消息与完成沿原门禁，非 required 不改为 required gate，failed required 不自动替换。
 

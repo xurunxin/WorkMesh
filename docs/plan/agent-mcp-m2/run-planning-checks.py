@@ -11,6 +11,7 @@ let s='';for await (const c of process.stdin)s+=c;
 console.log(JSON.stringify({node:process.version,execPath:process.execPath,
 classification:classifyChanges(JSON.parse(s),readWorkspaces())}));"""
 cmds=[
+ (["python","docs/plan/agent-mcp-m2/generate-evidence.py","--matrix-only"],None),
  (["python","docs/plan/agent-mcp-m2/static-check.py"],None),
  (["git","diff","--check","cfce77546b64c2a8d7d12949261c38e2f666d5ae"],None),
  (["node","--input-type=module","-e",node],json.dumps(paths).encode())
@@ -19,7 +20,8 @@ old=list((OUT/"input").glob("static-run-*.json"))
 i=max([int(p.stem.rsplit("-",1)[1]) for p in old]+[0])+1
 records=[];raws={}
 for n,(cmd,inp) in enumerate(cmds,1):
-    measured=[*OUT.glob("*.py"),ROOT/"scripts/ci-policy.mjs",ROOT/"scripts/ci-policy.test.mjs"]
+    measured=[*OUT.glob("*.py"),OUT/"dto-proposal.ts",OUT/"openapi-proposal.yaml",
+              OUT/"savedplan.md",OUT/"implementation.md",ROOT/"scripts/ci-policy.mjs",ROOT/"scripts/ci-policy.test.mjs"]
     before={str(q.relative_to(ROOT)).replace("\\","/"):sha(q.read_bytes()) for q in measured}
     start=time.time()
     childEnv={**os.environ,"PYTHONIOENCODING":"utf-8"}

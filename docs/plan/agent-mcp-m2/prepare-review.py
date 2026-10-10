@@ -16,7 +16,7 @@ def body(path):
 def rawhash(b):
     return {"bytes":len(b),"sha256":hashlib.sha256(b).hexdigest()}
 
-def provenance():
+def historical_provenance():
     conv=body("input/m2-conversation-readback.json")
     todo=body("input/m2-todo-readback.json")
     original=(OUT/"input/platform-injected-savedplan.md").read_text(encoding="utf-8")
@@ -99,29 +99,29 @@ GENERAL=[
  "跨Session F5恢复不适用；当前Session正常重启必须证据；遵M1Stop优先。",
  "M1 execution-recovery回归＋planning-collaboration")]
 CHILD=[
-("普通和review各创建→queued原绑定→commit后受控交付→exchange own E→ACK→真实Pi执行→completion intent/结算→父query→父complete。有限budget reservation精确，{} happy链；review_shared lease不授权。",
+("有限父maxInputTokens100→普通child显式60→受控交付/ACK/真实Pi完成且reservation60仍在→review显式40→四处budget/reservation同40→本人Room+code_review→完成→父query/complete；SDK/MCP/Pi保全创建五字段、record维度和额外字段。另跑省略review budget/41/101/负数/非有限拒例；{}链只补回归不能代有限链。",
  "普通child无plan/artifact能力；reviewer仅本人Room review_result＋本人code_review完成；无两者或任一缺均REVIEW_COMPLETION_EVIDENCE_REQUIRED。",
  "stage2＋真实MCP/Pi planning-collaboration"),
 ("分别撤parent Delegation、target definition/grant或installation，错parent/Team/step拒；publish_plan/非code_review reviewer拒；他actor/session/父证据不计本人。父query重验Token/principal/member/资源，子terminal可读。",
  "直接E与C/install模式严格区分；不能拿H cookie替；M3 PR producer自审具体场景不在本批新增，保现有身份拒。",
  "auth/lock-order＋conformance角色用例"),
 ("旧version/无stableidentity/错step/exclusive冲突拒；required的12非completed状态逐ID集合阻父，nonrequired相同状态不因该gate阻父；双证据四组合及structured/noArtifactReason分别不豁免。",
- "父projection仅live读集合；queued/paused/stopping/stale/terminal拒，空page不能掩盖撤权。",
+ "父projection仅live读集合；queued/paused/stopping/stale/terminal拒，空page不能掩盖撤权。默认父/step8，第九次拒；低父/step1边界只特权DB测试夹具，记录原值/SQL不当客户端DTO。",
  "finishSessionInTransaction现有gate tests＋projection integration"),
-("两创建samekey/body只有一child/delegation/reservation/lease/交付；differentbody冲突；Room/Artifact/complete回放无双写。defaultkey每新调用新identity，同次网络重试一致；explicit key原样。",
+("两创建samekey/body只有一child/delegation/reservation/lease/交付；预算40改41沿旧key拒幂等冲突；Room/Artifact/complete无双写。defaultkey每新调用新identity，同次网络重试一致；explicit key原样。失败/超额后用新key及预算40可合法创建，不自动改原budget。",
  "terminal重放被M1前置拒则准确origin只读确认，不用终态E get或重新建child。",
  "SDK/MCP＋真实HTTP丢响应及origin确认"),
 ("发布新Plan后旧version/step输入STALE_PLAN_VERSION；稳定step跨version限额统计仍包含旧活跃child。创建无If-Match；完成旧revision拒、重读后用新key意图提交。",
  "父query能见旧绑定，不仅筛currentVersion；未知legacy绑定不能补猜。",
  "Plan/child版本integration"),
-("插Session/delegation/reservation/reviewLease/prompt/provision/event/outbox各fail全回滚且外部零发送；review证据/父完成故障state不推进；读取投影零业务写与无secret allowlist。",
+("旧reservation60保留，review40在Session/delegation/reservation/reviewLease/prompt/provision/event/outbox每fail全回滚，Σ不从60变100、零外部发送；原意图重试仅多一40。review证据/父完成故障不推进state；projection零业务写/无secret。",
  "故障后同key重试合法一份；security denial表单列，成功GET也不写该表。",
  "agent-lock-order／故障夹具＋projection"),
 ("outbox同delivery重放只一child，exactinstallation仍受live授权；Room/Artifact重复不放大；原parent/step不会被重放改写，failed required不自动替completed。",
  "旧/失效trigger及来源null沿M1失败关闭；没有新的事件类型。",
  "Worker交付＋M1 execution-recovery"),
-("ordinary/ordinary、review/review、mixed真实锁等待验证父/跨version step上限、Σreservation及target并发；有限budget复核未reserved legacy review只读占用，不双计；Planpublish/创建、父complete/childcomplete、review_shared/exclusive按提交序裁定。",
- "失败/回滚/同keyreplay不占第二份；reviewfullbudget保守拒是作者待审合同不是用户新选择。",
+("ordinary/ordinary、review/review、mixed真实锁等待验证父/跨version step上限、Σreservation及target并发：父100已有60，两请求40竞争只一成功；mixed child/review均走同锁不越100。未reserved legacy review只读占用不双计；Planpublish/创建、父complete/childcomplete、review_shared/exclusive按提交序裁定。",
+ "失败/回滚/同keyreplay不占第二份；可选显式budget为用户q-ka2GipEunxQuHuFYGap2C裁定；省略全额不足拒是明确兼容限制，非假恢复。",
  "stage2/agent-lock-order＋真实conformance双连接"),
 ("API/Worker/Pi重启binding/reservation/lease/blockers仍在；Stop/pause/撤权拒普通创建/证据，M1正式settle、唯一续Turn、公平扫描及receipt恢复保持；父Stop不默认子cascade，逐子live检查。",
  "无新增机器shell故新shell清理用例不适用；真实Pi child过程/端口仍登记收尾，无共享资源清理。",
@@ -155,6 +155,12 @@ def acceptance():
          "assertion":"terminal子仍占父所有直接子累计总量；create/review共享准入不能因活跃数零绕guard；保留baseline不迁移"},
        "checks":"verification.md原pnpm命令；本轮静态检查不代产品pass",
        "excluded":"UI/F/TA、新Human权限／新机器shell、真实外发/发布；不减少旧三OS/发行门禁"})
+
+def provenance():
+    # 当前修订固定消费完整平台注入及旧候选；不再调用首轮历史生成逻辑。
+    import runpy
+    module=runpy.run_path(str(OUT/"revision-evidence.py"))
+    module["current_provenance"]()
 
 if __name__=="__main__":
     provenance()

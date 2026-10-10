@@ -1,0 +1,20 @@
+{
+  "method": "mcp__tds__git",
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "args": [
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe"
+  ],
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "cfce77546b64c2a8d7d12949261c38e2f666d5ae\trefs/heads/main\n5356b0619bffe3130a377f68e38a2a89931962a1\trefs/heads/tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe"
+      }
+    ]
+  },
+  "nativeExit": null,
+  "nativeRuntime": null
+}

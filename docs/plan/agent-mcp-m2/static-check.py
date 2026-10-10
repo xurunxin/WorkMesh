@@ -1,6 +1,6 @@
 """M2 规划包独立静态校验；不运行产品或假称运行。"""
 from pathlib import Path
-import hashlib,json,re,subprocess,zipfile
+import difflib,hashlib,json,re,subprocess,zipfile
 import yaml
 
 ROOT=Path(__file__).resolve().parents[3]
@@ -78,15 +78,55 @@ def main():
     for edit in load("input/plan-edits.json")["edits"]:
         assert reconstructed.count(edit["old"])==1
         reconstructed=reconstructed.replace(edit["old"],edit["new"])
-    assert reconstructed==(OUT/"savedplan.md").read_text(encoding="utf-8")
+    assert reconstructed==(OUT/"history/reviewed-plan.md").read_text(encoding="utf-8")
+    assert (OUT/"savedplan.md").read_bytes()==(OUT/"input/platform-injected-revised-plan.md").read_bytes()
+    assert (OUT/"savedplan.md").read_bytes()==(OUT/"history/author-revised-plan.md").read_bytes()
+    assert (OUT/"spec.md").read_bytes()==(OUT/"input/current-platform-spec.md").read_bytes()
     provenance=load("input/provenance.json")
     assert provenance["originalPlan"]["docId"]=="5XFjpFz5JO_Sf6_WBAZD6"
     assert provenance["originalPlan"]["toolVisiblePrefixMatchedCharacters"]>0
     assert not provenance["originalPlan"]["platformFullReadbackObtained"]
     assert not provenance["implementation"]["separatePlatformOriginalObtained"]
+    current=provenance["savedCopyAfterEdits"]
+    assert current["docId"]=="prvLepVgLTOEbRNt56WSU"
+    assert current["toolVisiblePrefixMatchedCharacters"]>0
+    assert not current["platformFullReadbackObtained"]
+    same((OUT/"savedplan.md").read_bytes(),current["fullText"])
+    assert provenance["budgetAuthorization"]["questionDocId"]=="q-ka2GipEunxQuHuFYGap2C"
+    assert provenance["originalReview"]["blocking"]==3
+    old=load("history/reviewed-candidate-manifest.json")
+    same((OUT/"history/reviewed-candidate.zip").read_bytes(),old["archive"])
+    with zipfile.ZipFile(OUT/"history/reviewed-candidate.zip") as z:
+        assert z.testzip() is None
+        assert len(old["entries"])==52
+        rawCommit=z.read(old["rawCommit"]["member"])
+        same(rawCommit,old["rawCommit"])
+        assert rawCommit==git("cat-file","commit",old["commit"])
+        oldOids=[e["blobId"] for e in old["entries"]]
+        batch=subprocess.check_output(["git","cat-file","--batch"],input=("\n".join(oldOids)+"\n").encode(),cwd=ROOT)
+        offset=0
+        for e in old["entries"]:
+            end=batch.index(b"\n",offset);oid,kind,n=batch[offset:end].decode().split()
+            assert oid==e["blobId"] and kind=="blob"
+            offset=end+1;actual=batch[offset:offset+int(n)];offset+=int(n)+1
+            archived=z.read(e["member"]);same(archived,e);assert archived==actual
+    counts["reviewedCandidateOriginals"]=52
+    delta=load("history/reviewed-to-current-plan-manifest.json")
+    same((OUT/delta["archive"]["path"]).read_bytes(),delta["archive"])
+    before=(OUT/"history/reviewed-plan.md").read_text(encoding="utf-8")
+    after=(OUT/"savedplan.md").read_text(encoding="utf-8")
+    expected="".join(difflib.unified_diff(before.splitlines(keepends=True),after.splitlines(keepends=True),
+        fromfile="5356/savedplan.md",tofile="platform/savedplan.md")).encode("utf-8")
+    with zipfile.ZipFile(OUT/delta["archive"]["path"]) as z:
+        assert z.testzip() is None and z.namelist()==["plan.diff"]
+        raw=z.read("plan.diff");same(raw,delta["original"]);assert raw==expected
+    readable=("\n".join(line.rstrip() for line in raw.decode("utf-8").splitlines()).rstrip()+"\n").encode("utf-8")
+    same(readable,delta["readable"])
+    assert readable==(OUT/"history/reviewed-to-current-plan.diff").read_bytes()
     assert (OUT/"input/chief-feedback.md").is_file()
     assert "提交规划工件（推荐）" in json.dumps(provenance,ensure_ascii=False)
     counts["visiblePrefixCharacters"]=provenance["originalPlan"]["toolVisiblePrefixMatchedCharacters"]
+    counts["currentPlanVisiblePrefixCharacters"]=current["toolVisiblePrefixMatchedCharacters"]
     operations=load("operation-decisions.json")
     assert operations["notFoundIdentifiers"]==[]
     api=yaml.safe_load((ROOT/"OPENAPI.yaml").read_text(encoding="utf-8"))
@@ -102,6 +142,12 @@ def main():
             assert o[k],(o["operationId"],k)
         assert set(o.get("namedSchemas",[]))<=schemas
         assert o["futureProductTestStatus"]=="未运行"
+        if o["operationId"] in ("createChildAgentSession","createReviewDelegation"):
+            assert "childAgentSessionResponseSchema" in o["contracts"]
+            assert len(o["preserveResponseFields"])==5
+            assert o["budgetContract"]["automaticRelease"] is False
+            assert o["budgetContract"]["autoResizeToRemaining"] is False
+            assert "body.budget" in o["budgetContract"]["effective"]
     must={"createChildAgentSession","createReviewDelegation","listAgentSessionChildren",
        "listWorkItemComments","listProjectMilestones","listWorkItemRelations","listDocumentHistory",
        "getDocumentRevision","diffDocumentRevisions","restoreDocumentRevision","exportDocumentMarkdown",
@@ -129,6 +175,34 @@ def main():
     assert proposal["components"]["schemas"]["ChildSessionStatus"]["additionalProperties"] is False
     assert len(proposal["components"]["schemas"]["ChildSessionStatus"]["properties"])==8
     assert proposal["components"]["schemas"]["ChildSessionStatus"]["properties"]["resultArtifactIds"]["maxItems"]==100
+    reviewInput=proposal["components"]["schemas"]["ReviewDelegationInput"]
+    assert "budget" in reviewInput["properties"] and "budget" not in reviewInput["required"]
+    child=proposal["components"]["schemas"]["ChildAgentSession"]["allOf"][1]
+    requiredFields={"parent_session_id","plan_step_version_id","required_for_parent","inherited_budget","max_child_sessions"}
+    assert requiredFields<=set(child["required"]) and child["additionalProperties"] is True
+    assert proposal["components"]["schemas"]["ReviewDelegationResponse"]["additionalProperties"] is True
+    dto=(OUT/"dto-proposal.ts").read_text(encoding="utf-8")
+    assert "budget: childBudgetInputSchema.optional()" in dto
+    assert "z.record(z.number().finite().nonnegative())" in dto
+    assert "agentSessionResponseSchema.extend({" in dto
+    assert all(f+":" in dto for f in requiredFields)
+    assert "inherited_budget: childBudgetInputSchema" in dto and "budget: childBudgetInputSchema" in dto
+    assert "lease: leaseResponseSchema," in dto and "leaseResponseSchema.passthrough()" not in dto
+    # 解析草案ref必须能在当前合同＋增量合同中找到，不当现行已注册。
+    import copy
+    merged=copy.deepcopy(api)
+    merged["components"]["schemas"].update(proposal["components"]["schemas"])
+    def refs(node):
+        if isinstance(node,dict):
+            for k,v in node.items():
+                if k=="$ref":
+                    assert v.startswith("#/"),v
+                    resolved=merged
+                    for token in v[2:].split("/"):resolved=resolved[token]
+                else:refs(v)
+        elif isinstance(node,list):
+            for v in node:refs(v)
+    refs(proposal)
     artifacts=load("artifact-manifest.json")
     for e in artifacts["entries"]:same((ROOT/e["path"]).read_bytes(),e)
     counts["sealedFiles"]=len(artifacts["entries"])

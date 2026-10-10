@@ -25,17 +25,29 @@
   "implementation": {
     "separatePlatformOriginalObtained": false,
     "docId": null,
-    "source": "implementation.md为本Agent修订后savedplan的仓库byte-equal副本",
-    "limitation": "未给独立platform implementation全文，不伪造原件/Hash"
+    "source": "implementation.md为本轮savedplan仓库byte-equal执行副本",
+    "limitation": "独立platform implementation注入原件未取得"
   },
   "savedCopyAfterEdits": {
     "files": [
       "savedplan.md",
       "implementation.md"
     ],
-    "source": "本轮4次edit_plan成功响应后按精确替换构成，同步本地",
-    "docId": null,
-    "docIdKnownAfterTurn": false
+    "source": "本轮用户消息authoritative saved copy完整注入，并核本轮todos可见前缀",
+    "docId": "prvLepVgLTOEbRNt56WSU",
+    "fullText": {
+      "bytes": 10893,
+      "sha256": "f4b45e634c015436902440b9da2e934095ae333a8a4c98ff5a1f1e1977bccc57"
+    },
+    "platformVersion": null,
+    "platformCreatedAt": null,
+    "platformFullReadbackObtained": false,
+    "toolVisiblePrefixMatchedCharacters": 3079,
+    "input": "input/platform-injected-revised-plan.md",
+    "author": "history/author-revised-plan.md",
+    "difference": "history/reviewed-to-current-plan.diff",
+    "differenceOriginal": "history/reviewed-to-current-plan-manifest.json",
+    "independentImplementationOriginal": false
   },
   "chiefFeedback": {
     "file": "input/chief-feedback.md",
@@ -44,10 +56,14 @@
   },
   "writeAuthorization": {
     "questionDocId": "q-cKVakWbsPo380TgcEY7Ng",
-    "source": "本轮用户回答注入＋conversation",
     "answer": "提交规划工件（推荐）",
+    "source": [
+      "input/current-platform-spec.md",
+      "input/current-chief-feedback.md"
+    ],
+    "persistsAcrossPlanningRevisions": true,
     "productImplementationAuthorizedThisTurn": false,
-    "resolution": "明确覆盖Do not modify any files yet的通用模板冲突；不新增任务"
+    "resolution": "本轮明确允许修改并提交受控规划文件，覆盖模板Do not modify any files yet"
   },
   "m1": {
     "chiefSource": "spec.md中Chief实证摘要",
@@ -64,5 +80,35 @@
     "nativeExit": null,
     "runtime": null,
     "hiddenCallId": null
+  },
+  "historicalProvenance": "history/reviewed-provenance.json原件保全；originalPlan键只描述首轮原件",
+  "budgetAuthorization": {
+    "questionDocId": "q-ka2GipEunxQuHuFYGap2C",
+    "answer": "允许显式缩减预算（推荐）",
+    "source": [
+      "input/current-platform-spec.md",
+      "input/revision-conversation-readback.json"
+    ],
+    "scope": "ReviewDelegationInput可选budget合同、有效执行/预留同值；不释放旧预留"
+  },
+  "originalReview": {
+    "reviewedHead": "5356b0619bffe3130a377f68e38a2a89931962a1",
+    "file": "input/original-review.md",
+    "rawContainer": "input/revision-conversation-readback.json",
+    "blocking": 3,
+    "status": "原审查未关闭；本轮修订等待_oY复审，不自称审核通过"
+  },
+  "currentSpec": {
+    "file": "spec.md",
+    "source": "todos Spec完整段，工具在Saved plan段截断，原返回分别保存",
+    "input": "input/current-platform-spec.md",
+    "hash": {
+      "bytes": 7964,
+      "sha256": "8e69e4c1e63bbfa5ef0310f8393e648a92f770f8f385ecf98f1cbb2d7fab38e3"
+    }
+  },
+  "currentChiefFeedback": {
+    "file": "input/current-chief-feedback.md",
+    "source": "原conversation可见原件，不冒独审裁定"
   }
 }

@@ -2,9 +2,9 @@
 
 ## 父 Session 与受控子启动
 
-Human 通过现有授权 REST 预备两名目标 Agent／Team grant／真实 installation delivery；其 cookie仅在 Human 夹具，绝不注入 Agent／模型。父 E 按 M1 ACK→planning→publishPlan，读取准确 current planVersionId、stable step、revision及 maxChildSessions；exclusive Lease 在 review 前释放或明确验证冲突。父通过自身 MCP／Pi创建工具提交普通 child 或专用 reviewer，工具不接收其他 parent ID。
+Human 通过现有授权 REST 预备两名目标 Agent／Team grant／真实 installation delivery；其cookie仅在Human夹具，绝不注入Agent／模型。父E按M1 ACK→planning→publishPlan，读取准确current planVersionId、stable step和revision。父/step max_child_sessions为DB默认8，现有创建/Plan DTO无该配置字段，低边界仅特权DB测试夹具；exclusive Lease在review前释放或明确验证冲突。父通过自身MCP/Pi创建工具，不能传其他parent ID。
 
-createChild 返回的 queued child／createReview 的 session＋review_shared Lease只是已创建。实际启动必须观察准确目标的 provisionNewSessionDelivery→已提交 outbox→fake webhook／受控 adapter→目标自身 token exchange→ACK→state executing，installation来源与 principal／Team匹配。MCP HTTP逐请求无持久 E上下文，目标子每请求显式自身 Token；父不会收到子 Token。
+createChild返回的queued child／createReview的session＋review_shared Lease只是已创建。两响应由新child schema保全五个创建绑定字段、budget/inherited_budget数字record及原额外字段，MCP/SDK/Pi实收同值。有限父100先普通child显式60；child完成后仍预留60，再createReviewDelegation budget:{maxInputTokens:40}。review省略参数仍全额100并拒，不能自动取余额；其他维度仍按原继承，按需全部明确缩减。实际启动必须观察准确目标provisionNewSessionDelivery→commit outbox→fake webhook/adapter→目标自身exchange→ACK→executing，installation/principal/Team匹配。MCP逐请求显式准确自身Token，父不获子Token。
 
 Pi 子执行采用已存在 workbench fixture 的 Human 建立 authorized Conversation／Turn、真实 claim→credential→start→运行子 Runner；公开 child创建本身不会自动创建 Pi Turn，不能把此夹具步骤或新 F admission假装成既有自动功能。模型只得到 Session允许工具，credential保 adapter内存。原 M1等待／121秒案例沿完整回归，不将父等待长占 Attempt。
 
@@ -14,7 +14,7 @@ Pi 子执行采用已存在 workbench fixture 的 Human 建立 authorized Conver
 
 ## 专用 reviewer
 
-reviewer握手／ACK后进入合法 executing，不发布实施 Plan。本人解析 Room（自身／准确 WorkItem），本人 post_work_room_message(intent=review_result,sessionId=reviewer.id)；随后本人 publish_artifact(type=code_review,sessionId=reviewer.id)。模型真实实收两工具及结果，类型／作者／Session绑定由 API重验。读取最新 revision再通过 M1 completion intent／atomic settle完成 reviewer。
+reviewer握手／ACK后进入合法executing，不发布实施Plan。本人读取Session/context确认有效budget40而非父100；DB budget/inherited_budget及reservation allocation/reserved亦40，不在SDK/MCP/Runner重填parent预算。本人解析Room（自身／准确WorkItem），本人post_work_room_message(intent=review_result,sessionId=reviewer.id)，本人publish_artifact(type=code_review,sessionId=reviewer.id)。模型实收工具及原结果，作者/Session由API重验；读最新revision再M1 completion intent／atomic settle完成。受控假模型实际usage报告保存，不把未测计费/hard cap能力当已验。
 
 只 structured review、不发消息；只消息；只Artifact；父／其他 child代发；只有noArtifactReason，分别断言 REVIEW_COMPLETION_EVIDENCE_REQUIRED或前置身份拒绝。M3 PR/head provenance与structured review能力不在M2新增工具范围；本批通过已有 REST负例验证其不替代双证据，不宣称PR交付全链已验。不得自审PR producer。
 

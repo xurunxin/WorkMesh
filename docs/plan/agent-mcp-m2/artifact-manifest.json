@@ -3,29 +3,36 @@
   "entries": [
     {
       "path": "docs/adr/0082-parent-child-status-projection.md",
-      "bytes": 3582,
-      "sha256": "5edf84af5d08ef767edfcf4e3474a813cd656b9134eadb9eb92eb31266052ccc",
+      "bytes": 4488,
+      "sha256": "eaa280a0edf77bc3e8e360a95d1189c7032792905f666fb930790433297b4c56",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/acceptance-matrix.json",
-      "bytes": 24355,
-      "sha256": "9ebb26844b3eb53535201e442c3154f39e282f59e6ccb4469715b95f382ebb69",
+      "bytes": 24876,
+      "sha256": "88ff18c9f88f0755309043a09ba41ba16419e50fe698d6f642e2226f96c62ffe",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/compatibility.md",
-      "bytes": 3868,
-      "sha256": "1a1c06ca7cc772552afe317d14a60045c862c07340c8a916879fae45f354ed45",
+      "bytes": 4656,
+      "sha256": "b2bdb4bdef21bebdd80fea7572a6166c4a0237c7c3012428bf1b0fcbdd536481",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/dto-proposal.ts",
-      "bytes": 1827,
-      "sha256": "d56363060081bcb7ff262f3236e8dfa1a0369ca09ed6d76dea2420198d87412b",
+      "bytes": 4422,
+      "sha256": "6b72852181e0a850b494eb5d49e34095eefbb76617fc16033655465f474f925e",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/finalize-planning-stage.py",
+      "bytes": 3739,
+      "sha256": "3ca7fb7f233b5e524efdf4b7ab33e773ac55dff3fb9c6cb7cb098c1bb2b13351",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
@@ -38,8 +45,8 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/generate-evidence.py",
-      "bytes": 25465,
-      "sha256": "0799ec2cc76e1782d6703d5e7b990ba51bee82fac6a19d84e51ff8e1fbdaaed0",
+      "bytes": 28249,
+      "sha256": "fee420eeef27af6156376cbc7ddbd2cd52b7e124c5d7c5e4e4eea972e02f6c6a",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
@@ -58,9 +65,79 @@
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
-      "path": "docs/plan/agent-mcp-m2/implementation.md",
+      "path": "docs/plan/agent-mcp-m2/history/author-revised-plan.md",
+      "bytes": 10893,
+      "sha256": "f4b45e634c015436902440b9da2e934095ae333a8a4c98ff5a1f1e1977bccc57",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-candidate-manifest.json",
+      "bytes": 19672,
+      "sha256": "c60f61a3d219d352d695fe987959b16a1621013c71814f7eaa747592b683f222",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-candidate.zip",
+      "bytes": 10567158,
+      "sha256": "c65def93493bec301a047f92a14c720fa6cec21335f4d5de76bd85e0717895a0",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-plan.md",
       "bytes": 8695,
       "sha256": "a1556bb146944f5286c6de4957e6d664f1e3b2c6e4f4f3d423a1b1d641ba8cd9",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-planning-report.md",
+      "bytes": 2964,
+      "sha256": "92e3cb24adaa1020d619e2ece6c60412c17eaa2bf877e80a2157990d321cdd43",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-provenance.json",
+      "bytes": 2457,
+      "sha256": "7cb6158244e356743c63dd5db32a152708a0632a08838558d1aaa85f5869adf7",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-stage-receipt.json",
+      "bytes": 14827,
+      "sha256": "144fa667130d093c00ee19ee55fa416378c1d99e3324317a21a4ac607febf360",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-to-current-plan-manifest.json",
+      "bytes": 592,
+      "sha256": "3f0a62ec35455cdb8a9a222cb21ffd2974151e87ebb08223eadf1cc99d8e3304",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-to-current-plan-original.zip",
+      "bytes": 5700,
+      "sha256": "3b67c02ce77fa1f1a7078edc68e4edf8e1e1d8d26830c50887dcf56695778bc8",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-to-current-plan.diff",
+      "bytes": 13572,
+      "sha256": "ff6d184b52eb1b91370b7796ed8e74d2b42ca7cb5e4c677fdd234187b56a3b4c",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/implementation.md",
+      "bytes": 10893,
+      "sha256": "f4b45e634c015436902440b9da2e934095ae333a8a4c98ff5a1f1e1977bccc57",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
@@ -68,6 +145,20 @@
       "path": "docs/plan/agent-mcp-m2/input/chief-feedback.md",
       "bytes": 2350,
       "sha256": "741c1fad46821d19d52c39e2d7b225f89bbd086bfbeee9b6fcf664ffece367bd",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/current-chief-feedback.md",
+      "bytes": 1509,
+      "sha256": "a39591cd80d9d8a72b70aeab3168f93f3c97b1c67a5c81ca8f4349d64d5f73a8",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/current-platform-spec.md",
+      "bytes": 7964,
+      "sha256": "8e69e4c1e63bbfa5ef0310f8393e648a92f770f8f385ecf98f1cbb2d7fab38e3",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
@@ -114,6 +205,13 @@
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
+      "path": "docs/plan/agent-mcp-m2/input/original-review.md",
+      "bytes": 2704,
+      "sha256": "cf2b8fe642dda8dcf0d21561119c4babb64afe2057fe3a75b49e1eb5a62fc8d3",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
       "path": "docs/plan/agent-mcp-m2/input/plan-edits.json",
       "bytes": 5277,
       "sha256": "2b56a0a7b35af19295184e2745e3ddba8898015ee7548888e4f2deba0963a444",
@@ -128,6 +226,13 @@
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
+      "path": "docs/plan/agent-mcp-m2/input/platform-injected-revised-plan.md",
+      "bytes": 10893,
+      "sha256": "f4b45e634c015436902440b9da2e934095ae333a8a4c98ff5a1f1e1977bccc57",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
       "path": "docs/plan/agent-mcp-m2/input/platform-injected-savedplan.md",
       "bytes": 7980,
       "sha256": "d723b572ff187662ec14de8e485f808556f88839a0ea4dc4c7baba9bc35b0b13",
@@ -136,8 +241,8 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/input/provenance.json",
-      "bytes": 2457,
-      "sha256": "7cb6158244e356743c63dd5db32a152708a0632a08838558d1aaa85f5869adf7",
+      "bytes": 4333,
+      "sha256": "3939a508c4d41ed8818025048f51cfe86b8974511415814de59a8a5ef4604e70",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
@@ -149,72 +254,121 @@
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
+      "path": "docs/plan/agent-mcp-m2/input/revision-conversation-readback.json",
+      "bytes": 15782,
+      "sha256": "3f3f2784a8b5f3c256397c761bc0021b40445bbf4dc3cab7d6701feb9ddf3acc",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/revision-exploration-failures.json",
+      "bytes": 1222,
+      "sha256": "6abdb18bbb87ddba9b3e92a0bbdf4ddf735ea8397a8b270f368a516fc694a0af",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/revision-main-final-observation.json",
+      "bytes": 511,
+      "sha256": "7054ae9e6d0bf7839aa4e8d512aae99f3725db97044d5f46bfefa5b8d51d538a",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/revision-main-observation.json",
+      "bytes": 592,
+      "sha256": "8aaff04c084e8397a27d295017912b782008bc70d1416b8850cff1d1575b7b28",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/revision-todo-readback.json",
+      "bytes": 14225,
+      "sha256": "ed34e78716e60c4e85fdf37de8ac9246a07b44a9573aa0bf1a40fb865f6749f2",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
       "path": "docs/plan/agent-mcp-m2/lifecycle.md",
-      "bytes": 4217,
-      "sha256": "e91761c4e6779520f8b9e4ff120676e3721b3bfcd1f6cebbe4c0c2035545114f",
+      "bytes": 4748,
+      "sha256": "4a45c2c491bd727f2aa849801d184d12fb94e60abb64c1c4d50b3d0c3f69fc7e",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/openapi-proposal.yaml",
-      "bytes": 2538,
-      "sha256": "7a872ee4136c1d6f9ca1a228de6c18594068f71cc044085402f34d3100729735",
+      "bytes": 8132,
+      "sha256": "a5335600038518321bed877695fc445b5627a2ce069f989cb16a736ee3935849",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/operation-decisions.json",
-      "bytes": 494290,
-      "sha256": "5c3b108c1680262de0e5b61a88e3014c00bebebb78c36f236f1bee9e539bb1d7",
+      "bytes": 500068,
+      "sha256": "39d5a9c83626d2cf55af930430dd72909278f8493ee53bd4576431304013acb0",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/operation-matrix.md",
-      "bytes": 37593,
-      "sha256": "a17fbfab2e2b4e527480518e7d900348e975cdba505f2bacdf174cec0646f944",
+      "bytes": 37811,
+      "sha256": "be819ad9745f5ff37389d73e373c57a89c4e0204e3c06a3bc3409ea00938a4e4",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/planning-report.md",
-      "bytes": 2964,
-      "sha256": "92e3cb24adaa1020d619e2ece6c60412c17eaa2bf877e80a2157990d321cdd43",
+      "bytes": 3417,
+      "sha256": "fc6dd6fa1ba61d0b6613a55dd553a23954ec382605a8986b659bebf05e595eb1",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/policy-proposal.json",
-      "bytes": 3035,
-      "sha256": "accd68d7eaf1ca47fb60a73fc3c1a2bee3b50c5bd1d513f6ba6989fac4dec6b0",
+      "bytes": 4095,
+      "sha256": "1670d2543062552a2cb85db14ae6ba32aaf0877c96786defe01c1db7a9d52c32",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/prepare-review.py",
-      "bytes": 13484,
-      "sha256": "b8e9faa2842ea925c245444e03ac80bdbd9d91c9b6a909ab7b09baa2bfd91b69",
+      "bytes": 14249,
+      "sha256": "2529e1421aa0ad3f23949e18bcf06318cd94ad8c95494b64f7a960e391e5d931",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/README.md",
-      "bytes": 2187,
-      "sha256": "111be96e4ef14c613e070d18274860cf2634341eb7169e4c7744d481907ee898",
+      "bytes": 2647,
+      "sha256": "8aa7fbf095532e1baa6a5755dd6592f6a65ae4a0b2cbca79bee79d8e654f9a36",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/review-repair.md",
+      "bytes": 3131,
+      "sha256": "6cf2fd55f6578ef2a9b341e3d0b47febffff6410bd5c6f4afb3d864a40b15bbd",
+      "gitBlobId": null,
+      "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/revision-evidence.py",
+      "bytes": 8382,
+      "sha256": "8988493cb0eda7345426b2ac5702aa56010c8e6cf0c6e1fb081ead69fa7aff99",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/run-planning-checks.py",
-      "bytes": 3349,
-      "sha256": "002d2755a3dabff56c649d42ce71cdf21e901388c5830b42358ff6071ed57ac3",
+      "bytes": 3539,
+      "sha256": "49b3f397deb18e07428a5162eebd3c899d0ffb4a78d8a311c5e0a390c48d5948",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/savedplan.md",
-      "bytes": 8695,
-      "sha256": "a1556bb146944f5286c6de4957e6d664f1e3b2c6e4f4f3d423a1b1d641ba8cd9",
+      "bytes": 10893,
+      "sha256": "f4b45e634c015436902440b9da2e934095ae333a8a4c98ff5a1f1e1977bccc57",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
@@ -227,15 +381,15 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/security-contract.md",
-      "bytes": 8444,
-      "sha256": "276242eaeed4c966131fd0b96c8583c896a7ce63d89c0ffcc2a3ce6f78f30649",
+      "bytes": 10669,
+      "sha256": "d3011cd984c233242cd39efb3c1de695703fe4d8c9758374483fc3df19792c03",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/source-manifest.json",
-      "bytes": 1714023,
-      "sha256": "91d3a1ab921f1f0b1128d667ef13064dd97989803046e64b85f6ba9ab0333866",
+      "bytes": 1714528,
+      "sha256": "3ed1da9f4493ca8e8103e4fa18e99df8d642128ad55eaab267ff4f89d005ba6a",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
@@ -248,29 +402,29 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/sources.md",
-      "bytes": 3918,
-      "sha256": "30dca1a0726642c296706e3221cac441cba01f1f91ef86266531799462ec6284",
+      "bytes": 5808,
+      "sha256": "275247414f2ed02131e5331fd914bea7877c8c1f2e00da0f8e5726b0f093b860",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/spec.md",
-      "bytes": 6807,
-      "sha256": "0263320fff078ac182c564d3d102db7568bde5f56b860e22da2ea080ac4b8bd9",
+      "bytes": 7964,
+      "sha256": "8e69e4c1e63bbfa5ef0310f8393e648a92f770f8f385ecf98f1cbb2d7fab38e3",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/static-check.py",
-      "bytes": 10140,
-      "sha256": "13d7298f38f9152e9c30518da7034a7439e5f466b6fe2ff8966a4fcad55cdaea",
+      "bytes": 14985,
+      "sha256": "aebce88fff0a1a58e2c4e4f07691c48cf146ab71061e77002b0366cd0e700ab8",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     },
     {
       "path": "docs/plan/agent-mcp-m2/verification.md",
-      "bytes": 9588,
-      "sha256": "30b9b0a97d9d3d8463cb39dc44f5cfc28c77f62ada4ca489d80cd43e536d402c",
+      "bytes": 11785,
+      "sha256": "251641bea4ec051d11268fd8b0ab44053d53ce1e4220daa8ce4e8481fc9e64aa",
       "gitBlobId": null,
       "kind": "本轮实际工作树字节；提交时stage另核，不能将SHA256当GitBlob"
     }

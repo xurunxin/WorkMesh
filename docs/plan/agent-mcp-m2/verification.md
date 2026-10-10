@@ -10,7 +10,13 @@ planning-collaboration.fixture 的新增夹具只提供当前 Human 原始启动
 
 ## 父子与安全专门断言
 
-父 P 发布整 Plan，stable step S 跨新 version 仍同 ID，设置 maxChildSessions；父上限及 step 限额以现有 DTO字段控制。正常普通 child 与 reviewer 各跑 lifecycle.md 的完整受控交付／ACK／真实 Pi 链，记录父、子、delegation、plan version、stable step、lease、reservation、installation、delivery 的精确 IDs。创建无 If-Match，不伪要求；旧 Plan 版本输入 STALE_PLAN_VERSION。有限预算的 reviewer 继承全额和 reservation 按提案核实；另用 {} 预算证明两种路径可正常完成，有限预算混合竞争只能合法一个占用，不拿无法准入的设置冒 happy path。
+父 P 发布整 Plan，stable step S 跨新 version 仍同 ID。父与step使用DB默认max_child_sessions=8，不声称现有DTO可设置；默认测试造满八份然后第九次create/review拒，父累计总量测试可先完成前八子仍拒第九个，不混成活跃limit释放。step单独低限额及并发boundary用测试专用特权DB夹具：记录准确parent/version/stable step、原DB值及UPDATE值（如父8／step1或父1／step8），不通过Agent API设置；新Plan版本DB默认8，跨版本step边界由夹具分别设置和标记。目标Agent并发正例通过Human夹具准备足够target能力/交付资格，不让更早的target并发拒绝冒父/step边界。不新增客户端上限参数、不更改默认或迁移。
+
+有限预算主链独立于{}回归：父maxInputTokens=100（其余未设维度省略），普通child明确budget:{maxInputTokens:60}，完成后仍有reservation60；reviewer明确budget:{maxInputTokens:40}，返回/数据库budget和inherited_budget、allocation和reserved全部40，受控交付→own E exchange/ACK→真实Pi读自身Session/context实收budget40→本人双证据→M1 completion intent结算→父查询completed→父完成。受控假模型报告本次真实usage，未知usage不填0，也不把利用率投影冒hard cap机制；不新增计费/预算释放域。记录全部实体IDs和模型实收工具结果。创建无If-Match，旧Plan输入STALE_PLAN_VERSION，双方完成用真实最新revision；此整链必须真实HTTP/MCP/Pi，不能仅{}成功代有限链。
+
+预算负例在保留reservation60的独立父夹具：review省略budget（有效100）/{}同拒、显式41拒、超过父cap101拒；负数/Infinity/NaN Zod输入拒（HTTP JSON不能表达Infinity/NaN时测试schema边界，不能伪称发送合法JSON），多维只减一维却遗漏另一满额维度仍继承而超额拒；当所有受限维度都合法缩减则正例。两请求40竞争只一份；ordinary与review混合竞争共同Σ≤100，回滚后旧60不变，重放不增第二40，不自动改请求预算。既有reserved永不因child完成自动释放，无Human调整父预算恢复API。
+
+创建响应消费：REST ordinary对象／review.session含parent_session_id、plan_step_version_id、required_for_parent、inherited_budget、max_child_sessions及原budget维度/其他字段。SDK默认typed结果、显式旧泛型调用、MCP structuredContent.data及Pi模型真正收到的创建结果逐字段比对，wrapper/lease额外字段不丢；UUID/required/budget/count与DB相等，原日期和sequence沿现有DTO正规化不把正规化冒字段丢失。budget/inherited_budget用record，不能经budgetSchema把未知原数字维度剥掉；缺任何必需创建字段应schema拒而非成功null。通用getSession仍沿原schema与权限，不扩parent读子。
 
 13 个 state 中 completed 是正例，其余 queued、acknowledged、planning、executing、awaiting_input、awaiting_approval、blocked、paused、stopping、stale、failed、canceled 逐项作为 required child 返回 COMPLETION_PLAN_INCOMPLETE，集合准确等于 blockerSessionIds；completed required 不入集合、非required 每状态均不因该 gate 阻断。夹具构造非法到达状态需标记为 gate 单元／事务检查，真实客户端生命周期仍走合法 transition，不宣称所有状态都由任意 Agent 可设置。
 

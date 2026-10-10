@@ -1,6 +1,6 @@
 {
   "kind": "规划静态实跑",
-  "sequence": 9,
+  "sequence": 8,
   "commands": [
     {
       "argv": [
@@ -15,9 +15,9 @@
         "version": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
         "execPath": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
       },
-      "startedUnix": 1791596251.0302734,
-      "endedUnix": 1791596252.1925683,
-      "runtimeSeconds": 1.162294864654541,
+      "startedUnix": 1791596211.0399683,
+      "endedUnix": 1791596212.1818297,
+      "runtimeSeconds": 1.1418614387512207,
       "stdout": {
         "member": "command-1.stdout",
         "bytes": 131,
@@ -31,10 +31,6 @@
       "displayStdout": "{\"source\": \"source-manifest.json\", \"operations\": \"operation-decisions.json\", \"status\": \"生成完成；尚需独立静态核验\"}\r\n",
       "displayStderr": "",
       "sourceBefore": {
-        "docs/plan/agent-mcp-m2/finalize-planning-stage.py": {
-          "bytes": 3739,
-          "sha256": "3ca7fb7f233b5e524efdf4b7ab33e773ac55dff3fb9c6cb7cb098c1bb2b13351"
-        },
         "docs/plan/agent-mcp-m2/generate-evidence.py": {
           "bytes": 28249,
           "sha256": "fee420eeef27af6156376cbc7ddbd2cd52b7e124c5d7c5e4e4eea972e02f6c6a"
@@ -85,10 +81,6 @@
         }
       },
       "sourceAfter": {
-        "docs/plan/agent-mcp-m2/finalize-planning-stage.py": {
-          "bytes": 3739,
-          "sha256": "3ca7fb7f233b5e524efdf4b7ab33e773ac55dff3fb9c6cb7cb098c1bb2b13351"
-        },
         "docs/plan/agent-mcp-m2/generate-evidence.py": {
           "bytes": 28249,
           "sha256": "fee420eeef27af6156376cbc7ddbd2cd52b7e124c5d7c5e4e4eea972e02f6c6a"
@@ -155,26 +147,22 @@
         "version": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
         "execPath": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
       },
-      "startedUnix": 1791596252.1961546,
-      "endedUnix": 1791596254.5334258,
-      "runtimeSeconds": 2.337271213531494,
+      "startedUnix": 1791596212.1845841,
+      "endedUnix": 1791596214.5044208,
+      "runtimeSeconds": 2.3198366165161133,
       "stdout": {
         "member": "command-2.stdout",
         "bytes": 430,
-        "sha256": "52a8cfe4e03908bc14a3b64e17c65b5375d6abf78dfcd59617988290f6d30b49"
+        "sha256": "0738a78161e9f03c95e8c57816fb21ee1570e5fd1fd91dcc5d23a1160901dcd3"
       },
       "stderr": {
         "member": "command-2.stderr",
         "bytes": 0,
         "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
-      "displayStdout": "{\"status\": \"passed\", \"counts\": {\"sourceEntries\": 877, \"archiveMembers\": 1752, \"reviewedCandidateOriginals\": 52, \"visiblePrefixCharacters\": 4000, \"currentPlanVisiblePrefixCharacters\": 3079, \"operationRows\": 91, \"frozenAcceptanceRows\": 18, \"sealedFiles\": 61, \"localMarkdownLinks\": 31, \"productRuntimeTests\": 0}, \"limitation\": \"静态源/文本/路径/DTO核对；不证明SQL、runtime授权、产品测试、RequiredCI或独审\"}\r\n",
+      "displayStdout": "{\"status\": \"passed\", \"counts\": {\"sourceEntries\": 877, \"archiveMembers\": 1752, \"reviewedCandidateOriginals\": 52, \"visiblePrefixCharacters\": 4000, \"currentPlanVisiblePrefixCharacters\": 3079, \"operationRows\": 91, \"frozenAcceptanceRows\": 18, \"sealedFiles\": 60, \"localMarkdownLinks\": 31, \"productRuntimeTests\": 0}, \"limitation\": \"静态源/文本/路径/DTO核对；不证明SQL、runtime授权、产品测试、RequiredCI或独审\"}\r\n",
       "displayStderr": "",
       "sourceBefore": {
-        "docs/plan/agent-mcp-m2/finalize-planning-stage.py": {
-          "bytes": 3739,
-          "sha256": "3ca7fb7f233b5e524efdf4b7ab33e773ac55dff3fb9c6cb7cb098c1bb2b13351"
-        },
         "docs/plan/agent-mcp-m2/generate-evidence.py": {
           "bytes": 28249,
           "sha256": "fee420eeef27af6156376cbc7ddbd2cd52b7e124c5d7c5e4e4eea972e02f6c6a"
@@ -225,10 +213,6 @@
         }
       },
       "sourceAfter": {
-        "docs/plan/agent-mcp-m2/finalize-planning-stage.py": {
-          "bytes": 3739,
-          "sha256": "3ca7fb7f233b5e524efdf4b7ab33e773ac55dff3fb9c6cb7cb098c1bb2b13351"
-        },
         "docs/plan/agent-mcp-m2/generate-evidence.py": {
           "bytes": 28249,
           "sha256": "fee420eeef27af6156376cbc7ddbd2cd52b7e124c5d7c5e4e4eea972e02f6c6a"
@@ -297,9 +281,9 @@
         "version": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
         "execPath": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
       },
-      "startedUnix": 1791596254.5396261,
-      "endedUnix": 1791596254.7085323,
-      "runtimeSeconds": 0.16890621185302734,
+      "startedUnix": 1791596214.5080092,
+      "endedUnix": 1791596214.671836,
+      "runtimeSeconds": 0.16382670402526855,
       "stdout": {
         "member": "command-3.stdout",
         "bytes": 0,
@@ -313,10 +297,6 @@
       "displayStdout": "",
       "displayStderr": "warning: in the working copy of 'docs/plan/agent-mcp-m2/operation-decisions.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/plan/agent-mcp-m2/operation-matrix.md', LF will be replaced by CRLF the next time Git touches it\n",
       "sourceBefore": {
-        "docs/plan/agent-mcp-m2/finalize-planning-stage.py": {
-          "bytes": 3739,
-          "sha256": "3ca7fb7f233b5e524efdf4b7ab33e773ac55dff3fb9c6cb7cb098c1bb2b13351"
-        },
         "docs/plan/agent-mcp-m2/generate-evidence.py": {
           "bytes": 28249,
           "sha256": "fee420eeef27af6156376cbc7ddbd2cd52b7e124c5d7c5e4e4eea972e02f6c6a"
@@ -367,10 +347,6 @@
         }
       },
       "sourceAfter": {
-        "docs/plan/agent-mcp-m2/finalize-planning-stage.py": {
-          "bytes": 3739,
-          "sha256": "3ca7fb7f233b5e524efdf4b7ab33e773ac55dff3fb9c6cb7cb098c1bb2b13351"
-        },
         "docs/plan/agent-mcp-m2/generate-evidence.py": {
           "bytes": 28249,
           "sha256": "fee420eeef27af6156376cbc7ddbd2cd52b7e124c5d7c5e4e4eea972e02f6c6a"
@@ -439,9 +415,9 @@
         "version": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
         "execPath": "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
       },
-      "startedUnix": 1791596254.7155616,
-      "endedUnix": 1791596254.8082101,
-      "runtimeSeconds": 0.09264850616455078,
+      "startedUnix": 1791596214.6750827,
+      "endedUnix": 1791596214.7653182,
+      "runtimeSeconds": 0.09023547172546387,
       "stdout": {
         "member": "command-4.stdout",
         "bytes": 1036,
@@ -455,10 +431,6 @@
       "displayStdout": "{\"node\":\"v24.20.0\",\"execPath\":\"C:\\\\nvm4w\\\\nodejs\\\\node.exe\",\"classification\":{\"mode\":\"full\",\"packages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"testPackages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"checks\":{\"source-gates\":true,\"db-integration\":true,\"api-integration\":true,\"worker-integration\":true,\"e2e\":true,\"recovery-integration\":true,\"agent-smoke\":true}}}\n",
       "displayStderr": "",
       "sourceBefore": {
-        "docs/plan/agent-mcp-m2/finalize-planning-stage.py": {
-          "bytes": 3739,
-          "sha256": "3ca7fb7f233b5e524efdf4b7ab33e773ac55dff3fb9c6cb7cb098c1bb2b13351"
-        },
         "docs/plan/agent-mcp-m2/generate-evidence.py": {
           "bytes": 28249,
           "sha256": "fee420eeef27af6156376cbc7ddbd2cd52b7e124c5d7c5e4e4eea972e02f6c6a"
@@ -509,10 +481,6 @@
         }
       },
       "sourceAfter": {
-        "docs/plan/agent-mcp-m2/finalize-planning-stage.py": {
-          "bytes": 3739,
-          "sha256": "3ca7fb7f233b5e524efdf4b7ab33e773ac55dff3fb9c6cb7cb098c1bb2b13351"
-        },
         "docs/plan/agent-mcp-m2/generate-evidence.py": {
           "bytes": 28249,
           "sha256": "fee420eeef27af6156376cbc7ddbd2cd52b7e124c5d7c5e4e4eea972e02f6c6a"
@@ -569,9 +537,9 @@
     }
   ],
   "archive": {
-    "path": "input/static-run-009-originals.zip",
-    "bytes": 1758,
-    "sha256": "18f3e59645eb477f0f244080e85676d82023862da6d6df14bf225cb25275d4da"
+    "path": "input/static-run-008-originals.zip",
+    "bytes": 1759,
+    "sha256": "d8c6509c58c286dad871a78d860ee41a4b7fb37e3511e78315cba29fd8fadae5"
   },
   "futureProductTests": "全部未运行",
   "firstFailureRetained": "input/planning-first-failures.json及不可覆盖static-run-*"

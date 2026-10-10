@@ -12512,34 +12512,34 @@
           "mcpOperationId": "createChildAgentSession"
         }
       },
-      "contracts": "childSessionInputSchema（从 createChild 内联 Zod 提取） / agentSessionResponseSchema",
-      "namedSchemas": [
-        "agentSessionResponseSchema"
-      ],
-      "schemaSources": [
-        {
-          "name": "agentSessionResponseSchema",
-          "path": "packages/contracts/src/index.ts",
-          "line": 1240
-        }
-      ],
+      "contracts": "childSessionInputSchema / childAgentSessionResponseSchema（创建专用，保绑定字段和原额外字段）",
+      "namedSchemas": [],
+      "schemaSources": [],
       "sdk": {
         "name": "createChildSession",
         "existsByLexicalSource": true,
         "file": "packages/agent-sdk/src/index.ts",
-        "change": "保留签名，补typed返回/分页；新具名adapter按本表实现"
+        "change": "保旧显式泛型调用；默认新typed创建schema校验，passthrough原绑定和额外字段",
+        "defaultReturnType": "ChildAgentSession"
       },
       "mcp": {
         "name": "create_child_session",
         "currentlyRegisteredByLexicalSource": true,
         "file": "apps/mcp/src/index.ts",
-        "change": "保留旧名字/输入；缺具名工具补同名，绑定精确真实凭据"
+        "change": "保留旧名字/输入；缺具名工具补同名，绑定精确真实凭据",
+        "inputExtension": {
+          "budget": "可选finite非负数字record；review新增，ordinary已存在"
+        },
+        "responseValidation": "按创建schema，不能用普通Session schema剥字段；structuredContent.data原字段保全"
       },
       "runner": {
         "name": "workmesh_create_child_session",
         "presentByLiteralName": false,
         "file": "apps/agent-runner/src/workmesh-tools.ts",
-        "change": "按live manifest／role与本表资格注册，parent身份固定api.sessionId"
+        "change": "按live manifest／role与本表资格注册，parent身份固定api.sessionId",
+        "inputExtension": {
+          "budget": "同REST原样透传；父固定api.sessionId，不重填全额"
+        }
       },
       "discovery": "scripts/generate-agent-discovery.py合成M0/M1＋M2增量→policy binding/derived manifest；M0/M1输入不改",
       "decision": "增量适配；领域资格仍由真实 REST重验",
@@ -12567,9 +12567,87 @@
         "M2-C-8",
         "M2-C-9"
       ],
-      "positive": "有资格者按真实DTO成功且返回原resource字段，分页读至nextCursor=null；H保留动作Human正对照",
-      "negative": "同operation越scope/撤权/非法state拒并保error.code/details/correlationId；无业务写；不能把manifest当授权",
-      "futureProductTestStatus": "未运行"
+      "positive": "父maxInputTokens100，ordinary显式60→完成旧reservation仍60→review显式40，四处budget同值，SDK/MCP/Pi保创建字段→双证据→父完成",
+      "negative": "review省略budget/41/超父cap/negative/nonfinite/预算竞争拒；回滚/replay不重复预留；默认8第九次拒；权限仍沿原门禁",
+      "futureProductTestStatus": "未运行",
+      "proposedOpenApiContract": {
+        "operationId": "createChildAgentSession",
+        "x-workmesh-policy-id": "route.createChildAgentSession",
+        "x-workmesh-actor-kinds": [
+          "human",
+          "agent"
+        ],
+        "x-workmesh-feature-key": "none",
+        "x-workmesh-feature-tier": "stable",
+        "security": [
+          {
+            "SessionCookie": []
+          },
+          {
+            "AgentSessionToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChildSessionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "原创建行完整typed返回，保留原绑定与额外字段",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChildAgentSession"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/AgentConcurrencyLimit"
+          }
+        }
+      },
+      "proposedSchemas": [
+        "childSessionInputSchema",
+        "childAgentSessionResponseSchema"
+      ],
+      "proposalSources": [
+        "dto-proposal.ts",
+        "openapi-proposal.yaml",
+        "security-contract.md"
+      ],
+      "preserveResponseFields": [
+        "parent_session_id",
+        "plan_step_version_id",
+        "required_for_parent",
+        "inherited_budget",
+        "max_child_sessions"
+      ],
+      "budgetContract": {
+        "input": "budget?:Record<string,number>",
+        "validation": "finite非负；有父cap的维度只可缩减",
+        "effective": "inheritChildBudget(parent.budget, body.budget ?? {})",
+        "reservation": "reserveChildBudget按有效值检Σ；Session budget/inherited_budget与allocation/reserved一致",
+        "omittedDimensions": "仍继承父值",
+        "automaticRelease": false,
+        "autoResizeToRemaining": false,
+        "externalExhaustionCode": "CHILD_BUDGET_EXCEEDED"
+      },
+      "clientChildLimitConfiguration": "父/step默认8；不新增客户端maxChildSessions；低限额测试专用特权夹具"
     },
     {
       "operationId": "createReviewDelegation",
@@ -12691,34 +12769,34 @@
           "mcpOperationId": "createReviewDelegation"
         }
       },
-      "contracts": "reviewDelegationInputSchema（从 createReview 内联 Zod 提取） / {session:agentSessionResponseSchema,lease:leaseResponseSchema}",
-      "namedSchemas": [
-        "agentSessionResponseSchema"
-      ],
-      "schemaSources": [
-        {
-          "name": "agentSessionResponseSchema",
-          "path": "packages/contracts/src/index.ts",
-          "line": 1240
-        }
-      ],
+      "contracts": "reviewDelegationInputSchema（新增可选budget） / reviewDelegationResponseSchema {session:childAgentSessionResponseSchema,lease:leaseResponseSchema}",
+      "namedSchemas": [],
+      "schemaSources": [],
       "sdk": {
         "name": "createReviewDelegation",
         "existsByLexicalSource": true,
         "file": "packages/agent-sdk/src/index.ts",
-        "change": "保留签名，补typed返回/分页；新具名adapter按本表实现"
+        "change": "保旧显式泛型调用；默认新typed创建schema校验，passthrough原绑定和额外字段",
+        "defaultReturnType": "ReviewDelegationResponse"
       },
       "mcp": {
         "name": "create_review_delegation",
         "currentlyRegisteredByLexicalSource": true,
         "file": "apps/mcp/src/index.ts",
-        "change": "保留旧名字/输入；缺具名工具补同名，绑定精确真实凭据"
+        "change": "保留旧名字/输入；缺具名工具补同名，绑定精确真实凭据",
+        "inputExtension": {
+          "budget": "可选finite非负数字record；review新增，ordinary已存在"
+        },
+        "responseValidation": "按创建schema，不能用普通Session schema剥字段；structuredContent.data原字段保全"
       },
       "runner": {
         "name": "workmesh_create_review_delegation",
         "presentByLiteralName": false,
         "file": "apps/agent-runner/src/workmesh-tools.ts",
-        "change": "按live manifest／role与本表资格注册，parent身份固定api.sessionId"
+        "change": "按live manifest／role与本表资格注册，parent身份固定api.sessionId",
+        "inputExtension": {
+          "budget": "同REST原样透传；父固定api.sessionId，不重填全额"
+        }
       },
       "discovery": "scripts/generate-agent-discovery.py合成M0/M1＋M2增量→policy binding/derived manifest；M0/M1输入不改",
       "decision": "增量适配；领域资格仍由真实 REST重验",
@@ -12746,9 +12824,88 @@
         "M2-C-8",
         "M2-C-9"
       ],
-      "positive": "有资格者按真实DTO成功且返回原resource字段，分页读至nextCursor=null；H保留动作Human正对照",
-      "negative": "同operation越scope/撤权/非法state拒并保error.code/details/correlationId；无业务写；不能把manifest当授权",
-      "futureProductTestStatus": "未运行"
+      "positive": "父maxInputTokens100，ordinary显式60→完成旧reservation仍60→review显式40，四处budget同值，SDK/MCP/Pi保创建字段→双证据→父完成",
+      "negative": "review省略budget/41/超父cap/negative/nonfinite/预算竞争拒；回滚/replay不重复预留；默认8第九次拒；权限仍沿原门禁",
+      "futureProductTestStatus": "未运行",
+      "proposedOpenApiContract": {
+        "operationId": "createReviewDelegation",
+        "x-workmesh-policy-id": "route.createReviewDelegation",
+        "x-workmesh-actor-kinds": [
+          "human",
+          "agent"
+        ],
+        "x-workmesh-feature-key": "none",
+        "x-workmesh-feature-tier": "stable",
+        "security": [
+          {
+            "SessionCookie": []
+          },
+          {
+            "AgentSessionToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDelegationInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "同原session/lease wrapper，执行预算与reservation同值",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDelegationResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/AgentConcurrencyLimit"
+          }
+        }
+      },
+      "proposedSchemas": [
+        "reviewDelegationInputSchema",
+        "childAgentSessionResponseSchema",
+        "reviewDelegationResponseSchema"
+      ],
+      "proposalSources": [
+        "dto-proposal.ts",
+        "openapi-proposal.yaml",
+        "security-contract.md"
+      ],
+      "preserveResponseFields": [
+        "parent_session_id",
+        "plan_step_version_id",
+        "required_for_parent",
+        "inherited_budget",
+        "max_child_sessions"
+      ],
+      "budgetContract": {
+        "input": "budget?:Record<string,number>",
+        "validation": "finite非负；有父cap的维度只可缩减",
+        "effective": "inheritChildBudget(parent.budget, body.budget ?? {})",
+        "reservation": "reserveChildBudget按有效值检Σ；Session budget/inherited_budget与allocation/reserved一致",
+        "omittedDimensions": "仍继承父值",
+        "automaticRelease": false,
+        "autoResizeToRemaining": false,
+        "externalExhaustionCode": "CHILD_BUDGET_EXCEEDED"
+      },
+      "clientChildLimitConfiguration": "父/step默认8；不新增客户端maxChildSessions；低限额测试专用特权夹具"
     },
     {
       "operationId": "getAgentSession",
@@ -15333,7 +15490,7 @@
       "limit"
     ]
   },
-  "contractReuse": "实际schema/handler字段全部见ZIP；不以泛化表覆盖现行字段，实施时contracts先行补typed、旧字段透传",
+  "contractReuse": "实际schema/handler字段全部见ZIP；创建使用新child专用schema保五字段及record/passthrough，review可选budget；原OpenAPI与提案分列，不冒新端点已有",
   "notes": [
     "history/diff对Guidance只补路由现行实际允许的读；Human-only绝不改Agent",
     "文字存在/operation数量不能证明功能通过；每操作正拒对应真实test ID",

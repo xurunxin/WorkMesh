@@ -88,5 +88,27 @@
     "positive": "live父读取已完成child仅最小DTO，零业务写",
     "negative": "父终态/撤权/错父/跨Team/篡改cursor拒；无token/prompt",
     "futureProductTestStatus": "未运行"
+  },
+  "createOperations": {
+    "createChildAgentSession": {
+      "input": "childSessionInputSchema",
+      "output": "childAgentSessionResponseSchema",
+      "budget": "原有可选record参数沿共同inherit/reserve检查",
+      "capability": "沿现work:write精确父及三方目标intersection",
+      "authorityChange": false
+    },
+    "createReviewDelegation": {
+      "path": "POST /api/v1/agent-sessions/{id}/review-delegations",
+      "input": "reviewDelegationInputSchema",
+      "output": "reviewDelegationResponseSchema",
+      "newInput": "budget?:Record<string,number>",
+      "mcp": "create_review_delegation",
+      "runner": "workmesh_create_review_delegation",
+      "sdk": "createReviewDelegation<T=ReviewDelegationResponse>",
+      "parentRunnerBinding": "api.sessionId",
+      "budget": "有效值写budget/inherited_budget和allocation/reserved；consumer不得重填parent.budget",
+      "capability": "沿现work:write精确父及真实三方review目标intersection；reviewer无plan:write",
+      "authorityChange": false
+    }
   }
 }
