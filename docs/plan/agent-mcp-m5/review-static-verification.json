@@ -1,0 +1,297 @@
+{
+  "productTestsRun": false,
+  "main": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+  "sourceEntries": 385,
+  "sourceArchiveMembers": 744,
+  "allSourceBytesVerified": true,
+  "frozenRows": {
+    "startLine": 177,
+    "endLine": 201,
+    "member": "frozen/m5-section.md",
+    "bytes": 3446,
+    "sha256": "4c2b808509f568f3dce22688e1b9bf6b3d704b912a491c1473c348da94c57aa6"
+  },
+  "openapiOperations": 280,
+  "discoveryRules": 280,
+  "discoveryBindings": 138,
+  "selectedOperations": 107,
+  "allSelectedUnrun": true,
+  "originalSavedPlanEqualsFullTodosReadback": true,
+  "independentPlanDocOriginalObtained": false,
+  "currentPlanFullReadback": false,
+  "currentPlanInjectedCopyMatchesVisiblePrefix": true,
+  "currentAcceptedEdits": 2,
+  "priorCandidateFilesVerified": 47,
+  "blockingFindings": {
+    "B1": "待复核",
+    "B2": "待复核",
+    "B3": "待复核"
+  },
+  "acceptanceCategories": 9,
+  "actualClientJourneysPlanned": 4,
+  "localLinks": 53,
+  "verifiedTextFiles": 52,
+  "files": [
+    {
+      "path": "docs/plan/agent-mcp-m5/.gitignore",
+      "bytes": 13,
+      "sha256": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/acceptance-matrix.md",
+      "bytes": 6612,
+      "sha256": "24297f90fd3c54c32bf8191b0b2b1c4096112ef91e461b35187b7dfd75780a23"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/adr-proposal.md",
+      "bytes": 2525,
+      "sha256": "f48d933cb8da4605192063081db0d34c8ad6b5755af51d330c91de71381f61dc"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/build-operation-matrix.py",
+      "bytes": 8580,
+      "sha256": "9c1d7c55880f9acc2f7ef9885588756d6e11a00aceb5ed771dd338a0f1736733"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/capture-planning.py",
+      "bytes": 13820,
+      "sha256": "e35d95388d3857208c2c116f4b16f99312c5296749222a31826fbb76bf08c01d"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/capture-review-base.py",
+      "bytes": 2470,
+      "sha256": "d1e06c0703a5a5e97c5100b670f793407e962f6a9eafba770eade93cc3a03021"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/capture-runtime.py",
+      "bytes": 2048,
+      "sha256": "361f3b7ea2c05a3bb07c77236214073b192a871ee24f18cdfe377a68d880ef35"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/client-runtime.json",
+      "bytes": 1056,
+      "sha256": "404800f08e3fe3696aae4af16e7cb20946d4a71c7953e93eefe38c2e0897b846"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/consumer-matrix.md",
+      "bytes": 5709,
+      "sha256": "a8e386ccf6dcf78337886bcaeacfb807393cd8130267f6544d2e38656e22ab12"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/current-discovery.json",
+      "bytes": 471111,
+      "sha256": "ba29a58d8e19682d2d3c0db7ac2fed01243fea7a3d41f0061780815741542098"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/current-openapi-operations.json",
+      "bytes": 220699,
+      "sha256": "8b516789a6ea0352e1bc7e3a1e44d3c9836cfb04fcac8e5c51de3dae2ca824f8"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/environment.json",
+      "bytes": 12420,
+      "sha256": "b63184ff52d7f16c0b3d73c1b92b88b7885699402f23aa623413e39506760f80"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/environment.md",
+      "bytes": 4150,
+      "sha256": "47f3d55247f678b5d3faf1468e9ad8f694454abed3a208dcb4e08c17f8d30c8f"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/finalize-planning.py",
+      "bytes": 4370,
+      "sha256": "5298824bb871555b21e638ced6803164e914ef0e8ddf76d479e2a5b6adf83fec"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/frozen-m5.md",
+      "bytes": 3446,
+      "sha256": "4c2b808509f568f3dce22688e1b9bf6b3d704b912a491c1473c348da94c57aa6"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/implementation.md",
+      "bytes": 11675,
+      "sha256": "ffe057276729ac39fc0df5e5460b31dd1ed1837460e52b3ae572ba776945df7c"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/environment-initial.json",
+      "bytes": 9475,
+      "sha256": "28c5c11e176db6827a14791ed3e8096ebd8b740a1fd66dede1d947364c9d5ecb"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/feedback.md",
+      "bytes": 1971,
+      "sha256": "4a86beaf25ff526f4c7d1c44c6bd1114cebbda5748fd80eebf05588860cc46a8"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/final-platform-readback.json",
+      "bytes": 12553,
+      "sha256": "679f6d83508d7a271b50e9b11563874286aecec47a8e83c5395850001f7e6f17"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/main-observation.json",
+      "bytes": 384,
+      "sha256": "d3b78fbb445ee6cfbdbaedf141e2a776267736b2edcde85cd1e73ac1bf189e79"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/platform-observations.json",
+      "bytes": 31835,
+      "sha256": "11ea7d3e27e1711bef5388b09ad4eed43fa932181fee8c4a689737dacfa9b385"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/platform-plan-before-sync.md",
+      "bytes": 11889,
+      "sha256": "983703066865198dbdf573e03d252d83676a03a80ffd2a8c2e9c3d5bd72e0e1f"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/platform-savedplan.md",
+      "bytes": 5363,
+      "sha256": "5b7903bf3a49b0c548721d78bc89ca4c5b06413dabe77e97601c621ba0f897bc"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/platform-sync-edits.json",
+      "bytes": 2840,
+      "sha256": "c37eedb3a656c0f56df9bf51c8ada044fdad0f93bc4e9df6a97ed2ca487f5b7b"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/reviewer-feedback.md",
+      "bytes": 2386,
+      "sha256": "68a1428267ef32384a032379f349126f2ce3e08b332e46a9cd2c0b7f9edbba57"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/sync-feedback.md",
+      "bytes": 2026,
+      "sha256": "81f04100e8b217665680f42c323355868f3bd6c3cfc0aece58e47f89d58a2046"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/sync-main-observation.json",
+      "bytes": 617,
+      "sha256": "82372056993073dcfe7a893a3f173a1f3e3073dd5a9c9aa6a2ff38e3126bcffb"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/input/sync-platform-observations.json",
+      "bytes": 27824,
+      "sha256": "47a8cb5ac0e7469e40a9807986a58b67125380967d2e638f391facceb044c03d"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/journeys.md",
+      "bytes": 8849,
+      "sha256": "fda4ba86fb55370284819aae6a42f2f8c34cec609021239974e8a9a2c5cef678"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/operation-matrix.md",
+      "bytes": 45421,
+      "sha256": "45edd91e9a1f2ee53c7ece4699d84c46c7bd3fc1baa702cdba468cbeba4dc1a2"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/operation-selection.json",
+      "bytes": 87445,
+      "sha256": "92c0e470094f51208e374f58a6749a2f43c917ac54a7617fea34f5d4309a4787"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-checks.json",
+      "bytes": 54459,
+      "sha256": "7d67041bf45ea477193026ef7d82762985bb8765aab7f5f8d897c28c16fb9833"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-ci-classification.json",
+      "bytes": 3122,
+      "sha256": "c77f75fc4a114aa3f2000fec0c099f9f0ee8639d4389c9d14c854d331043141d"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-commit-verification.json",
+      "bytes": 42271,
+      "sha256": "3172f9f15ce622fe19023d55b8cc1144d359b7a402adb43cca810527af4d3f38"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-final-static.json",
+      "bytes": 42561,
+      "sha256": "c56953f0f44dea3087494400d2dc332d212310687bd7ca3b12bfdff140adfe77"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-first-failures.md",
+      "bytes": 2127,
+      "sha256": "109e5f8c7359b3750af0f447af317ad778e3c785eba925f442b0f32cede52d8e"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/planning-static-verification.json",
+      "bytes": 7528,
+      "sha256": "4ab855c64ba6e8a6dd66f1f570bf11879f862407b434f5238200f36daca06123"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/README.md",
+      "bytes": 3410,
+      "sha256": "f213262eb3567e7f184d25b34c8cf7f2c3443986943affd3473247302d8cfc3c"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/record-planning-checks.py",
+      "bytes": 3734,
+      "sha256": "725791763151d4047e28b17c226c6dc22b340739af0847fe3f5917c1e394f5eb"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/record-review-checks.py",
+      "bytes": 5529,
+      "sha256": "62ba4892ee6be004594ce34fd04ef6c922ae3cd8f35ff355ae67ac00c11a2f3b"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/resources.md",
+      "bytes": 2779,
+      "sha256": "6a3703e9be4311f945cb5e33f43efe2650c0c3db6229c4792e5b27cdf0fbfae0"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/review-base-manifest.json",
+      "bytes": 29729,
+      "sha256": "79e7062d3163d301cc85974d2ee21febd104b92ffb828b65fc2f8e2e98cf11cb"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/review-response.md",
+      "bytes": 3931,
+      "sha256": "35c28e60bb6427fa278c10abbd8e8f7be5fba1224271e554472d34cd2cf927bc"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/savedplan.md",
+      "bytes": 12742,
+      "sha256": "b2c4477b0cf73794924feb635279ff76ecdf32241b034fe68010187ce5ede452"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/security-contract.md",
+      "bytes": 10423,
+      "sha256": "627b06f851ba6c68911aa5be56e78b839765ac35525717337df81129d8667bd6"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/source-manifest.json",
+      "bytes": 1404391,
+      "sha256": "9b4b7f0b10b1cc62720ce41b78ee47c7908afb58d193aaa35739cca14fcf98b7"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/sources.md",
+      "bytes": 6382,
+      "sha256": "85ed555100f9fd267aefe8f67d9c137d663bf3ac09754cc3476f2dc8700f697b"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/spec.md",
+      "bytes": 5812,
+      "sha256": "408dfad447a8850459ccb4b745b0464978c8a833182b20d9d0ca03b220412ce5"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/support-matrix.md",
+      "bytes": 3032,
+      "sha256": "08887af3c893047001872385bfab5f93dfc314bb7f4582711798fb38172465b8"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/sync-current-plan.py",
+      "bytes": 1051,
+      "sha256": "364bb60fd4c1e2dc9d684a632ea5deb9c1efc124d2f6984e096ef76421d1a2f9"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/verification.md",
+      "bytes": 4919,
+      "sha256": "007d836a2ad8d25b19ec4445317ca0b840a5b5ce9f129519929499a90c7b7c09"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/verify-planning.py",
+      "bytes": 8406,
+      "sha256": "6d809739e378130ba3492d75b09c04b40e3b8275852ed9ac440c0aaed22ebb86"
+    }
+  ],
+  "nativeExit": 0
+}

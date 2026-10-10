@@ -6,7 +6,7 @@
 
 H1／H2 使用隔离的 REST cookie／CSRF 句柄，创建两个 Team；Team1 为共同合法正对照，Team2 的私有资源作为拒例。H1 是两个 Agent Connection 的准确 principal 和 WorkItem responsible Human；H2 合法参与 Team1 协作、批准及 Handoff 接受，H1 无 Team2 membership。管理员准备完成后 H1 回到普通成员，不能用 admin 穿透负例。
 
-Human 经现有 create／redeem／grant／context／LlmConnection／model 接口准备，接单和执行命令由实际客户端调用。Agent B 的目标 ID 由 Human 准备提供，不增加 peer 目录或 Team 权限。两 Agent definition／Team grant 可拥有已批准的 producer 能力，但 reviewer Delegation 的权限必须缩减。原 `pairTarget` 的 codex 标签不代实际 clientType；现行 `agentConnectionClientTypeValues` 明确允许 opencode 与 pi，因此 A 登记 opencode、B 登记 pi，实际 executable／版本另列。
+Human 经现有 create／redeem／grant／context／LlmConnection／model 接口准备，接单和执行命令由实际客户端调用。目标ID由Human提供，不增加peer目录或Team权限。两definition以O/P对应真实opencode/pi clientType，旧pairTarget的codex标签不代实际运行。N链中的A/B分别表示来源/承接角色，O-N是O→P、P-N是P→O；实际definition/Connection/Session ID逐run固定登记，不能把反向链仍记为同一来源。F5另用独立B/S owner夹具，不借Handoff来源已失效权限。reviewer权限缩减保留。
 
 每步保存三个独立证据：模型下一次请求确实携带工具结果；MCP／REST 实际调用的 operationId、key、revision、correlationId；数据库的 state／event／outbox 与资源 ID。OpenCode 公开 JSON transcript、Pi Turn／tool invocation 与协议 driver transcript 分开目录，不记录 hidden reasoning。核心四条链通过判定要求所有必需步骤的领域断言成立；缺 Human 阶段或模型结果不计成功。
 
@@ -19,10 +19,16 @@ Human 经现有 create／redeem／grant／context／LlmConnection／model 接口
 | N1 | C 调发现、identity、可领取列表；创建允许的 Project／Issue，明确 responsible H1 | 原 Human 已建 Connection／Team grant；无 repository，readiness 不得判 repository unmet；截图不是唯一证据 |
 | N2 | 实际 C `claim_work_item`，准确 Session ACK；取得 context，转 planning／executing，发布完整 Plan | exchange／静态 E listener 的本机准备单列；Plan stable step 和 revision 返回到实际模型；另一 Connection 不得领取占用任务 |
 | N3 | 读取／创建／更新共享文档、history／diff／export；Room status／ask／answer、Inbox claim／ack／reply；至少一分页 | 正文含中文、控制字符与最大合法 Markdown边界，模型实收／REST／DB逐值一致；H2 从授权 REST 读取同证据，外 Team 拒绝不泄露 |
-| N4 | acquire／renew／release Lease，记录可见 operational activity；A 向 B offer Handoff | H2 用现有 acceptHandoff，精确目标新 Session 从 signed webhook／pull 收取，ACK并执行；新 child 继承原 H1 principal，负责 Human不变 |
-| N5 | B 发布本人结果／证据并完成；A 查询直接子状态，完成原 Plan；实际 requestApproval，公开等待 | H2 根据准确 action ID／原 hash decide；Pi settle wait 退出旧 Attempt，Worker 唯一续 Turn；OpenCode退出本次 run 后在原 durable Session上新 run 读真实 approval，不要求常驻模型等待 |
-| N6 | actual complete＋Artifact 或合法 noArtifactReason；读原动作确认 | OpenCode direct complete 的原 key／body及来源受控确认；Pi 外层 settle 原子 completion，Human终态读＋原 settle回执确认；原E普通读取／新写必须拒绝，Issue状态不被自动Done |
+| N4 | acquire／renew／release Lease与公开Activity；来源A向B offer Handoff，剩余brief仅引用授权资源 | H2真实acceptHandoff：sourceDelegation completed，新B Delegation/Session及delivery创建；B继承原H1 principal、责任Human不变，收到签名投递后ACK/executing。保全source实际state，不把sourceSession冒completed |
+| N5 | B从本人授权context、Room/Documents及brief创建本人的新Plan；requestApproval、公开等待，再处理准确批准后的剩余工作 | H2按准确approval/action hash决定；若B是Pi，旧Attempt settle wait后Worker唯一续Turn；若B是OpenCode，退出run后在同B durableSession重新run确认，不用新key重复原批准。A不得读写B或旧A Plan来充当此步 |
+| N6 | B发布本人Artifact或合法noArtifactReason，完成B新Session并确认原动作 | B为OpenCode时用原installation/action/key确认；B为Pi时按外层settle原子completion与回执。Human读B终态、A原事实；A的普通E读/Plan/批准/complete真实拒例分列，源Pi生命周期取消/退出不冒后续模型实收；Issue不自动Done |
 | N7 | 两进程分别经历 Stop／失败／重试链 | 原 E Token专用 Stop_ACK、Lease清理／residualRisks；H2 retry生成不同Session ID，旧事实不复活，再跑有效新Session。故障步骤使用独立Session，不能破坏N6正链再冒全部成功 |
+
+N-parent独立于Handoff：parent合法executor/active Delegation发布有pending stable step的Plan，经真实createChildAgentSession指定当前planVersionId/planStepId、另一Agent、required=true、role=researcher（现行child-session-contracts.ts枚举）。child只继承现行work:read/work:write，用文本结果和合法noArtifactReason完成，不假授artifact/plan权限；父在子完成前尝试完成应拒，之后读最小子状态、更新本人Plan并完成。父授权全过程active；Git链required reviewer仍执行本人双证据及structured review。
+
+旧A四项原E REST拒例记R/HTTP，实际来源OpenCode/Pi进程的请求拒绝或取消/退出独立记；没有后续model回合就明确未实收，不恢复completed Delegation以制造实收。F2两真实模型的结构化错误实收由独立可恢复membership用例证明，不能与Handoff失权混计。
+
+F5两轮合法冲突按security-contract的B/S同owner准确E、Pi唯一running Attempt及双方当前revision读取执行；O先/P先分别commit并释放另一旧If-Match，失败方读取最新值/Plan新intent合并。F2不同Session各自E写对方Plan不纳F5分母。F4三项Pi原HTTP重放先实现受限修复，代理只销毁首响应；API实际重启保持原Runner/Attempt及预算，OpenCode MCP重启独立记录，原settle恢复不并入普通工具计数。
 
 ## G：fake Git 完整交付链
 

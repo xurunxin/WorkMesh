@@ -52,6 +52,11 @@ for group,selected in groups.items():
   if op=='getAgentSessionExecutionResult':test+='；原installation来源，terminal E拒绝'
   if op=='createReviewDelegation':test+='；repoIds显式三方交集、省略兼容、重放重验'
   if op=='getProviderAction':test+='；原准确E/H；unknown零重发'
+  if op in ('createDocument','publishAgentPlan','postWorkRoomMessage'):test+='；B3未来受限Pi单toolCall两原HTTP，GET/Activity不重复'
+  if op=='publishAgentPlan':test+='；B2同owner B/S两合法E、唯一running Pi Attempt，O先/P先；跨Session归F2'
+  if op=='acceptHandoff':test+='；B1 sourceDel completed，B新Session承接，旧A拒例另计'
+  if op in ('createChildAgentSession','listAgentSessionChildren'):test+='；N-parent独立父active required researcher child，不借handoff父权限'
+  if op in ('requestApproval','completeAgentSession'):test+='；N5–N6 B新Session，旧A不得继续'
   row=f"| {group}<br>`{op}` | `{operation['method']} {operation['path']}`<br>{operation.get('feature') or 'none'}<br>{','.join(operation['actorKinds']) or 'public/service'} | {transport}<br>{'; '.join(identities) or '按现行REST身份'} | {', '.join(caps) or '按角色/资源，无额外cap'}<br>SDK: `packages/agent-sdk/src/index.ts`<br>{run} | {'key按原操作' if mutation else '只读业务零写'}；{'If-Match' if revision else '无直接If-Match，按完整DTO/源码复核'}<br>{test} |"
   rows.append(row);index.append({'group':group,'operationId':op,'method':operation['method'],'path':operation['path'],'feature':operation.get('feature'),'bindingIds':[b['bindingId'] for b in binds],'identityVariants':[v for b in binds for v in b.get('identityVariants',[])],'capabilities':caps,'runnerLiteralMatches':names,'revisionHeaderInOperation':revision,'testCases':test,'status':'未运行'})
 (OUT/'operation-matrix.md').write_text('\n'.join(header+rows)+'\n',encoding='utf-8',newline='\n')

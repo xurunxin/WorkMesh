@@ -26,6 +26,12 @@ M3 `product-report`／`review-fixes-report`／`product-pr-ci-report`／`product-
 
 ## 环境和本轮验证边界
 
+本轮重新平台fetch main并读FETCH_HEAD，准确main/parents/tree仍同上，实读记录在input/sync-main-observation.json。本轮起始candidate=32a544fecab58601a1ab9ff3e794896a813b9f22；其全部47规划blob与修改前worktree及commit原byte保全于review-base-manifest.json/input/candidate-before-review.zip，旧报告、首败、运行数量/skip/unknown含义不改。原Git候选可达，归档member逐项再核hash和git对象；没有历史中间worktree原件的缺口不补造。
+
+平台先前修订指针doc:QAcj7PdkfqiTL-yH2pwkf，当前注入saved全文保存input/platform-plan-before-sync.md。本轮todos返回Saved plan尾部明确truncated，只核可见前缀逐字相同，不能为其计算后端全文hash或声称完整读回；工具可见内容/conversation/fetch保存在input/sync-platform-observations.json。savedplan.md由完整注入copy施加input/platform-sync-edits.json两个已接受准确替换生成。本轮独立doc原件、创建/revision、新平台全文读回仍未取得/null；文件指纹只证明对应输入文件byte，不证明独立doc原件。
+
+原卡spec.md、冻结177–201和完整source-snapshot/source-manifest不改。本轮feedback与独审原文另存，review-response记录三blocking待_oY正式复核，不把平台编辑或生产者修订冒已闭合。源码采用当前main精确对象，当前运行byte逐项再读比对；旧Git/LF与Windows worktree/CRLF指纹分列，不借旧绿色。
+
 实际client/runtime/helper命令stdout/stderr在环境ZIP与runtimeZIP，日期／运行时／exit在各JSON；官方来源原HTML包括读取时间、requested/finalURL、hash，不以搜索前缀冒全文。未读取secret值／用户凭据正文，未安装／登录／连接外部账号。现有配置只读metadata由resources保护。
 
-本轮实际静态核验见verification与planning-checks，首败见planning-first-failures。未来全部产品／客户端／OS／部署用例未运行；规划candidate不是M5产品候选，旧Required CI不能代本轮PR或产品新head。
+原规划实际回执planning-checks/planning-final-static/planning-commit-verification保留原时点；本轮同步回执采用review-checks及review-static/commit-verification，不覆盖旧回执。未来全部产品／客户端／OS／部署用例未运行；规划candidate不是M5产品候选，旧Required CI不能代本轮PR或产品新head。资源owner、无secret读取、无服务/登录/安装、G1D0C3拒目标保留边界仍按resources。

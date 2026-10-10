@@ -21,9 +21,13 @@ M5 消费 M0／M1／M2／M3 已落主线合同，以同一候选后端跑外部�
 | `packages/conformance/src/joint-clients.acceptance.ts`、`packages/conformance/package.json` | 增加 `acceptance:joint` 脚本 `tsx src/joint-clients.acceptance.ts`，读取 `M5_CLIENT_EXECUTABLE`、`M5_EVIDENCE_ROOT`，强制实际 OpenCode 与 Pi 主链及外部故障子场景；缺关键条件 exit 非零、原问题卡，不跳过。不添加厂商安装器或 runtime 依赖 |
 | `packages/conformance/vitest.integration.config.ts`、`vitest.config.ts`、`packages/conformance/tsconfig.build.json` | 新 integration 套件显式 include、根单元显式 exclude；新跨包 fixture、drivers、model、service、reporter、acceptance 只从生产 build 排除，lint／typecheck 保持包含。保持非空、串行与现有四批套件 |
 | `scripts/ci-policy.mjs`、`scripts/ci-policy.test.mjs` | 必含新真实 integration 套件、root 排除和 build 边界；逐套件删除负例针对每条单独项，不以整串 replace 假删除。沿现有 API integration job、`pipefail` 与 always evidence upload，不新增仅靠报告冒实机的 CI job |
+| `docs/adr/0084-runner-tool-bounded-transport-replay.md` | 实施首步按本包 [ADR提案](adr-proposal.md) 落正式 Proposed ADR，复核重放与不确定结果保全合同；其后的 Runner 修复属于已发现最小消费者缺口，不是当前产品能力。不新增服务器端权限、领域或迁移 |
+| `apps/agent-runner/src/workmesh-tools.ts` | `RunnerToolApi.request` 增加内部传输选项，`makeTool` 仅为 createDocument／publishAgentPlan／postWorkRoomMessage 传入单次重放、工具 signal。单次 execute 只调用一次 RunnerApi.request；不得通过再进入 makeTool 重做 started Activity。GET、provider intent、签名传输、控制动作保持原发送机制 |
+| `apps/agent-runner/src/run-session.ts` | `RunnerApi.request` 在一次前置 refresh 后冻结准确 E、headers、method／URL／body字节／key／revision／expiresAt及截止，再做最多一次符合精确错误白名单的传输重放。`runPi` 的 toolApi 回调核原 Attempt、lifecycle及shutdown；准入 GET 用原冻结 E，不经自动refresh。`RunnerApiError`／普通Error保首次 cause；原外层 `replayableSettle` 和 Stop finally 不改 |
+| `apps/agent-runner/src/runner-api.test.ts`、`workmesh-tools.test.ts`、`execution-lifecycle.test.ts` | 覆盖真实 fetch 层同请求身份、准确 transport cause、两次发送上限／截止、401/403/409/5xx／JSON／DNS/TLS不重发、signal关闭、Activity不重复、第二次拒绝仍 unreconciled、provider与原settle不进新机制。手工重复 execute 只算key稳定单元证据，不能冒真实Pi自动HTTP重放 |
 | `docs/agent-runner.md`、`docs/agent-integration.md`、本目录产品报告／运行证据 | 增补选定两客户端的演示、Human 前提、身份边界和实际支持矩阵；报告四条主链及故障证据，保留原限制。公共 Skill 原字节、Runner 内嵌 pin、无源码发行分别沿原门禁 |
 
-不新增业务、权限、迁移或 API／事件。真实产品缺陷只在本批既有合同内修复，新增投影／权限分叉先 ADR 与独审；修复涉及的 REST／Zod／SDK／policy／MCP／manifest／Runner／conformance 必须同步，不事先列未经发现的产品改动。
+不新增业务、权限、迁移或 API／事件。本轮确认普通工具缺传输重放，只提出上表最小 Runner 修复；当前未实现。新增投影／权限分叉先原卡问题、ADR与独审；对应 REST／Zod／SDK／policy／MCP／manifest／Runner／conformance 同一操作消费原合同，未变的服务端合同不伪造增量。
 
 ## 客户端与后端运行合同
 
@@ -36,6 +40,10 @@ M5 消费 M0／M1／M2／M3 已落主线合同，以同一候选后端跑外部�
 权限规则先拒默认工具，再按场景允许准确 WorkMesh MCP tool；禁 shell／subagent／webfetch／websearch／skill、任意文件操作、共享与插件执行，不传 `--auto`。受控模型只请求 whitelist 内工具。`request_artifact_upload`／`download_verified_artifact` 原 MCP 返回短期签名资料，外部模型链不调用这两个入口；外部交付用既有 `publish_delivery_artifact` 的 test_report／code_review 完整证据链。该传输兼容限制在矩阵注明，不能称外部模型上传已验收。Pi 保留 `delivery-transfer.ts` 安全上传下载实测，资料不进模型；SDK／MCP 受控传输对照单列。
 
 两 Human 的实际账号、角色、Team membership、责任人和 principal 在每个用例前登记。H1 完成管理员准备后回到 Team1 合法成员，H2 为 Team1 maintainer、Team2 授权 Human；A／B 两测试 Connection principal 固定 H1，H2 接受 Handoff 沿当前 `acceptHandoff` 继承原 principal，不改为 H2 伪匹配。撤销 H1 membership 的用例在 Runner 准入后进行，真实拒绝响应返回后才恢复相同 membership，以便模型实际收到错误；不换 principal／installation。
+
+Handoff 的 A/B 是来源／承接角色，实际 O/P definition与Connection ID逐run登记，反向链交换角色。接受后来源Delegation completed，旧A普通读写拒绝；B在新Session发布自己的Plan、请求批准／等待及完成，不读写旧A Plan或恢复A权限。父读子／父完成在另一个未Handoff、父active的required child场景；child沿现行两项work能力，用合法noArtifactReason完成，不伪授plan/artifact能力。共同Plan冲突另用B/S单owner夹具，两个准确E消费者、唯一Pi running Attempt的时序及负例按 [安全合同](security-contract.md)。
+
+失响应代理只转发每个真实客户端请求一次。Pi的三个白名单普通工具由实际单toolCall触发第二个原HTTP；API进程重启用同DB/端口并保原Runner进程／Attempt／请求预算，MCP重启是OpenCode场景，不能归Pi直连。原API/mock app重建、R手工回执和原settle重放各自记录。准备失败、第二次失败或unknown不自动complete，保首次cause及残留；业务effect与started/succeeded/failed Activity各自统计。
 
 ## 验证和收尾
 
