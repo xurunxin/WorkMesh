@@ -1,7 +1,9 @@
 import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
 import type { ApiActor } from './types.js'
+import type { PoolClient } from 'pg'
 import {
+  assertAgentPrincipalInTx,
   assertAgentWrite,
   assertExactAgentProjectBinding,
 } from './guard.js'
@@ -55,6 +57,12 @@ const authorize = (facts: MutationSession): void => assertAgentWrite({
 })
 
 describe('shared Agent mutation resource liveness', () => {
+  it('leaves installation-target Handoffs to their exact target guard but rejects an unbound E', async () => {
+    const tx = { query: () => { throw new Error('Unexpected execution authority lookup') } } as unknown as PoolClient
+    await expect(assertAgentPrincipalInTx(tx, { ...actor, authentication: 'installation_target', agentSessionId: undefined })).resolves.toBeUndefined()
+    await expect(assertAgentPrincipalInTx(tx, { ...actor, agentSessionId: undefined })).rejects.toMatchObject({ code: 'DELEGATION_NOT_ACTIVE' })
+  })
+
   it('rejects a project-only Session whose Project is deleted', () => {
     expect(() => authorize({ ...session, project_exists: false })).toThrow(
       expect.objectContaining({ code: 'RESOURCE_SCOPE_DENIED' }),

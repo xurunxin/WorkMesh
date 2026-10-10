@@ -20,6 +20,7 @@ export const savePlanningEvidence = (name: string, value: unknown) => {
   writeFileSync(resolve(root, name), redact(JSON.stringify(value, null, 2)) + '\n')
 }
 export type ModelCall = { name: string; arguments: Record<string, unknown> }
+export type ModelInput = { tools: Array<{ function: { name: string } }>; messages: Array<{ role: string; content?: unknown }> }
 
 export async function createPlanningCollaborationFixture(options:{capabilities?:Capability[];features?:Parameters<typeof loadFeatureConfig>[0]}={}) {
   const fixture = await createMcpCoverageFixture(options)
@@ -102,13 +103,13 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
     receivers.push(proxy);proxy.listen(0,'127.0.0.1');await once(proxy,'listening')
     return `http://127.0.0.1:${(proxy.address() as {port:number}).port}`
   }
-  const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>, options:{apiUrl?:string;beforeRun?:()=>Promise<void>;contextHuman?:typeof fixture.human;resumeAfterWait?:()=>Promise<void>}={}) => {
+  const pi = async (execution: Execution, installationToken: string, calls: Array<(input: ModelInput) => Promise<ModelCall>>, options:{apiUrl?:string;beforeRun?:()=>Promise<void>;contextHuman?:typeof fixture.human;resumeAfterWait?:()=>Promise<void>}={}) => {
     const captures: Array<{ tools: string[]; results: string[]; messages: string; call: ModelCall | null }> = []
     const model = createServer({ key: readFileSync(new URL('./fixtures/model-test-key.pem', import.meta.url)), cert: readFileSync(new URL('./fixtures/model-test-ca.pem', import.meta.url)) }, async (request, response) => {
       try {
-      let body = ''; for await (const chunk of request) body += String(chunk)
-      const input = JSON.parse(body) as { tools: Array<{ function: { name: string } }>; messages: Array<{ role: string; content?: unknown }> }
-      const call = await calls[captures.length]?.() ?? null
+      const chunks: Buffer[] = []; for await (const chunk of request) chunks.push(Buffer.from(chunk))
+      const input = JSON.parse(Buffer.concat(chunks).toString('utf8')) as ModelInput
+      const call = await calls[captures.length]?.(input) ?? null
       captures.push({ tools: input.tools.map(tool => tool.function.name), messages: redact(JSON.stringify(input.messages)), results: input.messages.filter(item => item.role === 'tool').map(item => redact(JSON.stringify(item.content))), call })
       response.writeHead(200, { 'content-type': 'text/event-stream' })
       const delta = call ? { role: 'assistant', tool_calls: [{ index: 0, id: `m2-call-${captures.length}`, type: 'function', function: { name: call.name, arguments: JSON.stringify(call.arguments) } }] } : { role: 'assistant', content: 'M2 verified operational result.' }

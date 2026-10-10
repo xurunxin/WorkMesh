@@ -19,9 +19,15 @@ M5 尚未验收，四条 O/P 联合主链仍未完成。本报告接续 `aa324ca
 
 ## 客户端门禁与未完成项
 
-当前安装的 OpenCode 原生 CLI 支持 `serve --stdio` 和 `run --server`。本轮仅使用私有 config/data/state、本人 loopback 服务及受控模型，临时服务认证留进程环境，不向模型或仓库暴露。私有发现源、父子 PID/readiness/EOF/退出、原 HTTP/TLS 到达、模型收到 MCP 结果必须分别取得实际证据；已有安装、正确目录或只读模拟 MCP 不证明真实 WorkMesh 身份接入。
+当前安装的 OpenCode 原生 CLI 的 `serve --stdio` 和 `run --server` 已实跑。`actual-identity-v13` wrapper exit 0：真实 API/DB/MCP 完整 JSON 模型实收，准确 connection、Agent actor、principal Human、client type 和 bootstrap verified 均通过。私有同 location 配置及 hydration 清单为 2 个内置技能/85 个 active 内置插件，compatibility 缺席；原生父子退出、监听关闭、用户元数据不变、拒绝代理零请求均有实证。临时服务密码只在进程环境，签名传输两 tools 仍禁。详见 [原生客户端实证](review-fixes-opencode.md)。`native-large-roundtrip-v11` 的 288107 bytes 中文 JSON 模型逐值相等；它是模拟数据传输对照，不能代四链领域验收。v12 actor ID 脚本误用首败及 v13 关闭阶段 ECONNRESET 均保留。
 
 四主链 O-N/P-N/O-G/P-G、真实 O/P 两轮同 Session 冲突、共享 Document 竞争、批准等待及 MCP/Worker/Runner 重启仍待实跑。外部两个签名传输工具保持禁止，双 Pi/SDK 补充结果不能代替 OpenCode。未测画像与原发行门禁保留。
+
+## API 集成首败与边界修订
+
+`review-auth-api-integration` 已实际退出 1：275 通过、3 失败、1 跳过，runtime 369.2798902 秒，原 stdout/stderr 和源指纹保留。三处失败为安装目标 Handoff 拒绝入口被普通 E 守卫误挡、失权 ProviderAction 未维持隐藏资源 404，以及失活 principal 提前返回准确 403 `SESSION_SCOPE_DENIED`。
+
+`assertAgentPrincipalInTx` 仅将 `installation_target` 留给既有准确 target 专用授权，无 Session 的普通 E 仍拒；`getProviderAction` 缺资格事实返回结构化 `NOT_FOUND`，真实终态保原状态拒绝。Inbox 测试对失活 principal 精确断言 403，同时新增不同 Human source 失活的准确 404/零投影副作用，保持来源守卫独立覆盖。新守卫/锁顺序单元实跑 14/14，普通 lock inventory 实跑 8/8；API 集成重新验证命令正在运行，尚未计通过。
 
 ## 检查、来源和资源
 

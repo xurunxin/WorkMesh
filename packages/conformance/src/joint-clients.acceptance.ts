@@ -1,4 +1,5 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
+import { randomUUID } from 'node:crypto'
 import { resolve } from 'node:path'
 import { createOpenCodeRuntime } from './joint-clients.drivers.js'
 import { createJointClientsFixture } from './joint-clients.fixture.js'
@@ -10,6 +11,8 @@ const evidenceRoot = process.env.M5_EVIDENCE_ROOT
 const executable = process.env.M5_CLIENT_EXECUTABLE
 if (!evidenceRoot || !executable) throw new Error('M5_CLIENT_EXECUTABLE_AND_EVIDENCE_ROOT_REQUIRED')
 mkdirSync(evidenceRoot, { recursive: true })
+let stage = 'private-client-gate'
+let actualIdentityRoundTrip = false
 try {
   if (process.argv.includes('--probe-isolation')) {
     const driver = await createOpenCodeRuntime({ executable, evidenceRoot })
@@ -23,6 +26,7 @@ try {
       const connection = await f.pairClient('opencode')
       external = await createExternalConsumer({ baseUrl: f.baseUrl, installationToken: connection.token, allowedTools: ['verify_connection'] })
       const verified = await external.invoke<unknown>('verify_connection', {})
+      actualIdentityRoundTrip = true
       saveJointEvidence('opencode-actual-identity.json', { verified, clientType: 'opencode', actualModelRun: true })
       console.log(JSON.stringify({ actualIdentityRoundTrip: true, fullAcceptance: 'not_run' }))
     } finally { await external?.close(); await f.close() }
@@ -36,14 +40,16 @@ try {
     if (selected && !journeys.some(journey => journey.id === selected)) throw new Error('M5_UNKNOWN_JOURNEY')
     const completed: string[] = []
     for (const journey of journeys.filter(item => !selected || item.id === selected)) {
+      stage = journey.id
       await journey.run(); completed.push(journey.id)
       saveJointEvidence('joint-main-journeys.json', { completed, selected: selected ?? null, fullAcceptance: 'not_completed', faultMatrix: 'not_completed' })
       console.log(JSON.stringify({ completed: journey.id, fullAcceptance: 'not_completed' }))
     }
     // A selected chain is a diagnostic command, never an all-M5 certificate.
+    stage = 'nine-category-fault-matrix'
     if (!selected) throw new Error('M5_JOINT_FAULT_MATRIX_NOT_COMPLETED: main journeys cannot certify nine categories')
   }
 } catch (error) {
-  writeFileSync(resolve(evidenceRoot, 'opencode-isolation-gap.json'), JSON.stringify({ error: String(error), actualModelRun: false, fullAcceptance: 'not_run' }, null, 2))
+  saveJointEvidence(`joint-acceptance-failure-${randomUUID()}.json`, { error: String(error), stage, actualIdentityRoundTrip, fullAcceptance: 'not_completed' })
   throw error
 }

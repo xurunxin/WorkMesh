@@ -36,6 +36,9 @@ const inactiveAuthority = (): never => {
  */
 export async function assertAgentPrincipalInTx(tx: PoolClient, actor: ApiActor): Promise<void> {
   if (actor.kind !== 'agent') return
+  // Installation targets have no execution Session; their exact Handoff
+  // identity and live authority are checked by the target-specific guard.
+  if (actor.authentication === 'installation_target') return
   if (!actor.agentSessionId) return inactiveAuthority()
   const locator = (await tx.query<{ principal_human_actor_id: string; team_id: string }>(
     `SELECT d.principal_human_actor_id,s.team_id

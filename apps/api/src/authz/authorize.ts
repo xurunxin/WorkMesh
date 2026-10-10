@@ -448,7 +448,9 @@ export async function authorizeRequest(
     // locator-derived Team or provider failures must not reveal a hidden ID.
     if (actor.kind === 'agent') {
       const facts=await loadAgentFacts(db,actor)
-      if (!facts || !sessionActiveForOperation(facts.state,policy.operationId))
+      if (!facts)
+        throw new DomainError('NOT_FOUND','Resource not found', { authorizationStage: 'resource_scope', dedupeAuthorizationDenial: true })
+      if (!sessionActiveForOperation(facts.state,policy.operationId))
         throw new DomainError('SESSION_NOT_ACTIVE','Active Agent Session required')
       if (facts.delegation_status!=='active'||!facts.agent_active||!facts.team_capabilities)
         throw new DomainError('DELEGATION_NOT_ACTIVE','Live delegation required')

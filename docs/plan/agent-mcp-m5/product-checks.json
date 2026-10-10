@@ -2258,5 +2258,113 @@
       "unchanged": false,
       "sha256": "b591199abe895c0e5996936d76a1bb6544adadd928f6726314f5cd9bf233702f"
     }
+  },
+  {
+    "label": "review-guard-unit",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/api",
+      "test",
+      "src/agent/guard.test.ts",
+      "src/commands-lock-order.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T19:34:16.466709+00:00",
+    "endedAt": "2026-10-10T19:34:20.122881+00:00",
+    "runtimeSeconds": 3.65611889999127,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-guard-unit-stdout.txt",
+        "bytes": 822,
+        "sha256": "db67f9ad3b3e15bc507f2b1bb0f37e3c05c1189e761d8c444b398db744859620",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-guard-unit-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-guard-unit.json",
+      "beforeDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+      "afterDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+      "unchanged": true,
+      "sha256": "a7fc0d5b153851037a421d2a2116314c217d0c25b2c0feaa33ecc4fe7aa9a8ed"
+    }
+  },
+  {
+    "label": "review-lock-manifest-current",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/db",
+      "test",
+      "src/agent-lock-order-inventory.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T19:34:52.146056+00:00",
+    "endedAt": "2026-10-10T19:34:56.130821+00:00",
+    "runtimeSeconds": 3.9847140000056243,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-lock-manifest-current-stdout.txt",
+        "bytes": 1204,
+        "sha256": "1d0176a5e2a31bf67c9f22705e8f612eef6073078e38951fce2bce6a344acb64",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-lock-manifest-current-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-lock-manifest-current.json",
+      "beforeDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+      "afterDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+      "unchanged": true,
+      "sha256": "a7fc0d5b153851037a421d2a2116314c217d0c25b2c0feaa33ecc4fe7aa9a8ed"
+    }
+  },
+  {
+    "label": "review-journeys-current-typecheck",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "typecheck"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T19:35:45.543824+00:00",
+    "endedAt": "2026-10-10T19:35:59.777364+00:00",
+    "runtimeSeconds": 14.233404300000984,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-journeys-current-typecheck-stdout.txt",
+        "bytes": 140,
+        "sha256": "f3b9c77e4aff5c8e1d947c12996483c56c0200840f4b7ec256afd657cfd74a5a",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-journeys-current-typecheck-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-journeys-current-typecheck.json",
+      "beforeDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+      "afterDigest": "d516a4163cc375c43005ce35fe3afbf5df21c3614818e848f1e79a780627c1a0",
+      "unchanged": true,
+      "sha256": "a7fc0d5b153851037a421d2a2116314c217d0c25b2c0feaa33ecc4fe7aa9a8ed"
+    }
   }
 ]

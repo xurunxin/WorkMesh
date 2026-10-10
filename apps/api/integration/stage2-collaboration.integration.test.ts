@@ -2924,7 +2924,8 @@ describe('Stage 2 collaboration API acceptance', () => {
       body: 'This reply must roll back while the Human source Actor is inactive.', payload: {},
     }, { 'if-match': `"revision-${humanAskDetail.json<{ revision: number }>().revision}"` })
     await db.query('UPDATE actors SET is_active=true WHERE id=$1', [f.human.actorId])
-    await assertDeniedProjection(inactiveHumanSourceReply, 'NOT_FOUND', beforeInactiveHumanSourceReply)
+    expect(inactiveHumanSourceReply.statusCode).toBe(403)
+    await assertDeniedProjection(inactiveHumanSourceReply, 'SESSION_SCOPE_DENIED', beforeInactiveHumanSourceReply)
 
     const memberSource = await memberForTeam(f.workspaceId, f.teamId, 'maintainer')
     const memberAsk = await humanCall(memberSource, 'POST', `/api/v1/rooms/${channelId}/messages`, {
@@ -2939,6 +2940,16 @@ describe('Stage 2 collaboration API acceptance', () => {
       [memberAsk.json<{ id: string }>().id, loserSession.id],
     )).rows[0]!.id
     const memberAskDetail = await agentCall(loserToken, 'GET', `/api/v1/inbox/${memberAskItemId}`)
+    // A distinct inactive source must still be concealed while the E principal
+    // stays qualified; it is not the earlier principal-authorization refusal.
+    const beforeInactiveMemberSource = await projectionCounts()
+    await db.query('UPDATE actors SET is_active=false WHERE id=$1', [memberSource.actorId])
+    const inactiveMemberSourceReply = await agentCall(loserToken, 'POST', `/api/v1/inbox/${memberAskItemId}/reply`, {
+      body: 'An inactive distinct source must remain hidden.', payload: {},
+    }, { 'if-match': `"revision-${memberAskDetail.json<{ revision: number }>().revision}"` })
+    await db.query('UPDATE actors SET is_active=true WHERE id=$1', [memberSource.actorId])
+    expect(inactiveMemberSourceReply.statusCode).toBe(404)
+    await assertDeniedProjection(inactiveMemberSourceReply, 'NOT_FOUND', beforeInactiveMemberSource)
     const beforeRevokedMemberReply = await projectionCounts()
     await db.query(
       'DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',
