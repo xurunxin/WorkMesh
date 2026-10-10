@@ -1,0 +1,23 @@
+# Native HTTP、MCP 与 Pi 真实交付链
+
+全部步骤是未来产品验证，当前未运行。应用授权夹具与产品命令事实分列，真实Human用于其合法批准/初始化，不将cookie给Agent。
+
+1. 独有PostgreSQL/Redis/RustFS、fake GitProvider与本机HTTPS假模型；Human合法连接fake provider、建repository、共享WorkItem或Project context并pin准确baseSHA、allowedPaths及read/write_branch/open_pr/review/merge/ci。Worker完成resolve action；Human通过新GET按原id确认contextId，不能以任意context变化代证明。
+2. 父E经现配对/Token交付、ACK、planning、稳定step Plan和executing；父budget100。可先普通child60完成，原reservation保留，再独立review40。acquireLease到精确work/step，记录Lease并重读revision。
+3. repo context读取准确base/path，create_branch显式key；读同action到committed。create_commit使用expectedHeadSha、只改允许路径；读同action获取sha。open_pull_request绑定正确base/headBranch；读同action到本地PR projection引用，再targeted getProjectDelivery读当前head/checks/provenance。各POST丢response重放原key/body，不新key盲重建。
+4. 父发布绑定当前PR/head/checksum的diff/test delivery evidence；将实际fake provider commit files的审查材料写M2同WorkItem Document，并核其contentHash/源码SHA。requestUpload得到准确签名headers，由受控客户端/Runner inline bytes上传，finalize后新Worker流式校验；读status verified→artifactId/list/download并核bytes。file不能充code_review。
+5. 父按稳定Plan调用createReviewDelegation：repositoryIds仅目标repo、budget40、目标独立Actor。受控HMAC webhook真实HTTP交付准确child，exchange/ACK/合法executing；reviewer无Plan发布。child读共享context、Document当前head材料、targeted delivery，模型实收与REST/DB/commit逐值一致。
+6. reviewer本人Room review_result（M2明确本人session/channel）、本人publishDeliveryArtifact(type=code_review,repository/PR/currentHead/checksum/sourceTool)、本人publishStructuredReview(artifactId/head/verdict/findings)。然后GET准确Session revision并complete；缺任一双证据或自审/旧head必须拒。父listAgentSessionChildren只读准确child completed；required非completed全阻父。
+7. 父准备canonicalMergeApprovalPayload，requestApproval准确provider/connection/repository/providerPR/head/method完整sha256 hash；Human真实HTTP决定精确Approval。父requestMerge原actionId；Worker独立重验live权限、context、review、全部blocking/high、required checks、live provider head与approval后调用provider。批准只在成功/准确checkpoint reconciliation后消费。
+8. 读同merge action确认committed和mergeSha，completion suggestion只提案，Issue workflow与deploy没有自动变化。health草稿/允许准确批准发布分别测试，项目update发布/建议裁决仍Human。父带证据完成，丢completion响应沿M1原来源只读确认；Pi外层settle保持原body/key。
+9. CI retry单独从failed/skipped当前head check开始，Human精确provider/connection/repo/providerPR/checkRun/head批准后请求retry action，Worker复核并查询准确终态。其requested=true不冒check已passed，随后真实fake webhook才能更新check projection。
+
+三条链使用同合同和相同断言，但三种调用的事实/ID/证据分别保存。Pi必须核模型实收工具、参数、结果、完整错误和下一合法读；不能只核manifest或SDK回调。MCP HTTP每请求新client，不依赖前次缓存E身份。
+
+## 崩溃与结果恢复边界
+
+测试中在意图commit前失败，provider调用计数零；在provider成功而响应/checkpoint丢失后，五类写action重领按worker-recovery转dead/unknown，明确零再次写HTTP；不用getPullRequest当前merged合成原动作结果。checkpoint后finish前新Worker仅本地恢复原action，不另建Artifact/approval消费，也不取得provider token或查询provider。context纯GET可按原有界恢复。真实账号未测，fake去重不能代GitHub/Gitea停发断言。
+
+Stop/撤权先commit：新完整authority事务等待并锁后重读拒绝，仓库写HTTP计数零；发送授权事务先commit：只允许该次已准入在途HTTP，Stop后旧Agent普通读写及adapter后续写均拒绝。所有普通写、merge/CI门禁与最终租期在同一发送前tx；HTTP本身不在DB锁内。保存residual risks、准确原action与M1专用清理/结果确认，安装token/GET请求计数单列。实际锁阻塞用pg_locks/pg_blocking_pids证明两提交顺序；跨原60秒租期后旧generation不得新写或覆盖新claim，不以仅调用前Stop或注入delay代竞争。
+
+parent-only context失败是明确支持边界；恢复依赖Human正常pin共享context，不自动复制/升权，不冒本批已连真实Git账号。

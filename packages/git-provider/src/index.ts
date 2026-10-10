@@ -82,12 +82,42 @@ export interface GitProvider {
 }
 
 type Fetch = typeof globalThis.fetch;
+export type ProviderMutationPermit = Readonly<{ deadlineMonotonicMs: number }>;
+export type ProviderMutationGuard = () => Promise<ProviderMutationPermit>;
+
+/** A permit belongs to one request; never renew it implicitly after expiry. */
+function assertMutationPermit(permit: ProviderMutationPermit): void {
+  if (!Number.isFinite(permit.deadlineMonotonicMs) || performance.now() >= permit.deadlineMonotonicMs)
+    throw new Error("PROVIDER_ACTION_CLAIM_EXPIRED");
+}
+
+/** Request-scoped facade: the shared fake backend never retains authority. */
+export function guardedGitProvider(provider: GitProvider, beforeMutation: ProviderMutationGuard): GitProvider & {
+  seedRepository?: (connectionId: string, repositoryId: string, defaultBranch: string, headSha: string) => void;
+} {
+  const write = async <T>(effect: () => Promise<T>): Promise<T> => {
+    const permit = await beforeMutation();
+    assertMutationPermit(permit);
+    return effect();
+  };
+  return {
+    ...(provider instanceof FakeGitProvider ? { seedRepository: provider.seedRepository.bind(provider) } : {}),
+    createBranch: input => write(() => provider.createBranch(input)),
+    createCommit: input => write(() => provider.createCommit(input)),
+    openPullRequest: input => write(() => provider.openPullRequest(input)),
+    mergePullRequest: input => write(() => provider.mergePullRequest(input)),
+    retryCheck: input => write(() => provider.retryCheck(input)),
+    getPullRequest: input => provider.getPullRequest(input),
+    resolveRepositoryGuidance: input => provider.resolveRepositoryGuidance(input),
+  };
+}
 type GitHubAppProviderOptions = {
   appId: string;
   privateKey: string;
   installationId: string;
   apiBaseUrl?: string;
   fetch?: Fetch;
+  beforeMutation?: ProviderMutationGuard;
 };
 
 const base64Url = (value: string | Buffer): string =>
@@ -104,6 +134,7 @@ export class GitHubAppProvider implements GitProvider {
   readonly #installationId: string;
   readonly #apiBaseUrl: string;
   readonly #fetch: Fetch;
+  readonly #beforeMutation?: ProviderMutationGuard;
   #installationToken?: { value: string; expiresAt: number };
 
   constructor(options: GitHubAppProviderOptions) {
@@ -112,6 +143,7 @@ export class GitHubAppProvider implements GitProvider {
     this.#installationId = options.installationId;
     this.#apiBaseUrl = (options.apiBaseUrl ?? "https://api.github.com").replace(/\/$/, "");
     this.#fetch = options.fetch ?? globalThis.fetch;
+    this.#beforeMutation = options.beforeMutation;
   }
 
   #appJwt(): string {
@@ -148,16 +180,22 @@ export class GitHubAppProvider implements GitProvider {
   }
 
   async #request<T>(method: string, path: string, body?: unknown): Promise<T> {
-    const response = await this.#fetch(`${this.#apiBaseUrl}${path}`, {
+    const token = await this.#token();
+    const request: RequestInit = {
       method,
       headers: {
         accept: "application/vnd.github+json",
-        authorization: `Bearer ${await this.#token()}`,
+        authorization: `Bearer ${token}`,
         "content-type": "application/json",
         "x-github-api-version": "2022-11-28",
       },
       body: body === undefined ? undefined : JSON.stringify(body),
-    });
+    };
+    if (method !== "GET" && this.#beforeMutation) {
+      const permit = await this.#beforeMutation();
+      assertMutationPermit(permit);
+    }
+    const response = await this.#fetch(`${this.#apiBaseUrl}${path}`, request);
     if (!response.ok) throw new Error(`GITHUB_API_ERROR:${method}:${path}:${response.status}`);
     if (response.status === 204) return undefined as T;
     const text = await response.text();
@@ -176,6 +214,7 @@ export class GitHubAppProvider implements GitProvider {
     try {
       await this.#request("POST", `/repos/${repo}/git/refs`, { ref: `refs/heads/${input.name}`, sha: input.baseSha });
     } catch (error) {
+      if (!(error instanceof Error) || !error.message.startsWith("GITHUB_API_ERROR:")) throw error;
       const existing = await this.#request<{ object: { sha: string } }>(
         "GET", `/repos/${repo}/git/ref/heads/${input.name.split("/").map(encodeURIComponent).join("/")}`,
       );
@@ -226,6 +265,7 @@ export class GitHubAppProvider implements GitProvider {
     try {
       await this.#request("PATCH", `/repos/${repo}/git/refs/heads/${branchPath}`, { sha: commit.sha, force: false });
     } catch (error) {
+      if (!(error instanceof Error) || !error.message.startsWith("GITHUB_API_ERROR:")) throw error;
       const after = await this.#request<{ object: { sha: string } }>(
         "GET", `/repos/${repo}/git/ref/heads/${branchPath}`,
       );
@@ -267,6 +307,7 @@ export class GitHubAppProvider implements GitProvider {
     const current = await this.getPullRequest(input);
     if (current.headSha !== input.expectedHeadSha) throw new Error("PROVIDER_HEAD_SHA_MISMATCH");
     if (current.state === "merged") {
+      if (this.#beforeMutation) throw new Error("PROVIDER_PULL_REQUEST_NOT_OPEN");
       if (!current.mergeSha) throw new Error("PROVIDER_MERGE_SHA_MISSING");
       return { merged: true, mergeSha: current.mergeSha };
     }
@@ -665,6 +706,7 @@ type GiteaProviderOptions = {
   baseUrl: string;
   accessToken: string;
   fetch?: Fetch;
+  beforeMutation?: ProviderMutationGuard;
 };
 
 /**
@@ -676,6 +718,7 @@ export class GiteaProvider implements GitProvider {
   readonly #baseUrl: string;
   readonly #accessToken: string;
   readonly #fetch: Fetch;
+  readonly #beforeMutation?: ProviderMutationGuard;
 
   constructor(options: GiteaProviderOptions) {
     const base = new URL(options.baseUrl);
@@ -684,6 +727,7 @@ export class GiteaProvider implements GitProvider {
     this.#baseUrl = base.toString().replace(/\/$/, "");
     this.#accessToken = options.accessToken;
     this.#fetch = options.fetch ?? globalThis.fetch;
+    this.#beforeMutation = options.beforeMutation;
   }
 
   #repo(input: RepositoryIdentity): string {
@@ -693,7 +737,7 @@ export class GiteaProvider implements GitProvider {
   }
 
   async #request<T>(method: string, path: string, body?: unknown): Promise<T> {
-    const response = await this.#fetch(`${this.#baseUrl}/api/v1${path}`, {
+    const request: RequestInit = {
       method,
       headers: {
         accept: "application/json",
@@ -701,7 +745,12 @@ export class GiteaProvider implements GitProvider {
         "content-type": "application/json",
       },
       body: body === undefined ? undefined : JSON.stringify(body),
-    });
+    };
+    if (method !== "GET" && this.#beforeMutation) {
+      const permit = await this.#beforeMutation();
+      assertMutationPermit(permit);
+    }
+    const response = await this.#fetch(`${this.#baseUrl}/api/v1${path}`, request);
     if (!response.ok) throw new Error(`GITEA_API_ERROR:${method}:${path}:${response.status}`);
     if (response.status === 204) return undefined as T;
     const text = await response.text();
@@ -818,6 +867,7 @@ export class GiteaProvider implements GitProvider {
 
   async mergePullRequest(input: MergeRequest): Promise<{ merged: true; mergeSha: string }> {
     const current = await this.getPullRequest(input);
+    if (this.#beforeMutation && current.state !== "open") throw new Error("PROVIDER_PULL_REQUEST_NOT_OPEN");
     if (current.headSha !== input.expectedHeadSha) throw new Error("GITEA_PULL_REQUEST_HEAD_CHANGED");
     await this.#request(
       "POST",

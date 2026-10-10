@@ -1,0 +1,11 @@
+{
+  "command": "python docs/plan/agent-mcp-m3/run-planning-checks.py contract ci-policy ci-validate ci-selection static",
+  "exitCode": 1,
+  "toolReturnChunkId": "cbe2d9",
+  "toolCallId": null,
+  "error": "UnicodeEncodeError: 'gbk' codec can't encode character '\\u2714' in position 79: illegal multibyte sequence",
+  "actualProgress": "contract-1与ci-policy-1的原输出ZIP/回执已落盘，两个子进程均exit0；打印ci-policy摘要时记录器失败，后面三个命令未运行。不能将聚合失败计通过。",
+  "testedRecorderBytes": "checks/ci-policy-1.zip内inputs/docs/plan/agent-mcp-m3/run-planning-checks.py为该轮实际脚本原字节",
+  "correction": "仅在记录器进程显式reconfigure stdout/stderr为UTF-8，继续尚未运行的三个命令；没有改产品或已通过测试输入。",
+  "limitation": "本文件保存会话实际可见命令/退出/chunk/错误与进度，不冒完整原tool封包或未取得callID。"
+}

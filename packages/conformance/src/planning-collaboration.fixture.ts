@@ -7,6 +7,8 @@ import { resolve } from 'node:path'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { WorkMeshClient } from '@workmesh/agent-sdk'
+import type {Capability} from '@workmesh/contracts'
+import type {loadFeatureConfig} from '@workmesh/config'
 import { createMcpCoverageFixture, type Execution } from './mcp-coverage.fixture.js'
 import { createAgentWebhookWorker, signWebhook, signaturesMatch } from '../../../apps/worker/src/agent-webhook.js'
 
@@ -19,8 +21,8 @@ export const savePlanningEvidence = (name: string, value: unknown) => {
 }
 export type ModelCall = { name: string; arguments: Record<string, unknown> }
 
-export async function createPlanningCollaborationFixture() {
-  const fixture = await createMcpCoverageFixture()
+export async function createPlanningCollaborationFixture(options:{capabilities?:Capability[];features?:Parameters<typeof loadFeatureConfig>[0]}={}) {
+  const fixture = await createMcpCoverageFixture(options)
   const models: ReturnType<typeof createServer>[] = []
   const receivers: ReturnType<typeof createReceiver>[] = []
   const delivered = new Map<string, { exchangeToken: string }>()
@@ -77,9 +79,9 @@ export async function createPlanningCollaborationFixture() {
     }
     return target
   }
-  const registerTarget = async () => attachReceiver(await fixture.pairTarget(['work:read','work:write','artifact:write']))
+  const registerTarget = async (capabilities:Capability[]=['work:read','work:write','artifact:write']) => attachReceiver(await fixture.pairTarget(capabilities))
   const registerCurrentReceiver = async () => attachReceiver({agentId:fixture.agentId,token:fixture.connectionToken})
-  const runnerProxy = async (options:{loseFailResponse?:boolean;afterSettlement?:()=>Promise<void>}) => {
+  const runnerProxy = async (options:{loseFailResponse?:boolean;afterSettlement?:()=>Promise<void>;afterResponse?:(path:string,status:number)=>Promise<void>}) => {
     const proxy=createReceiver(async(request,response)=>{
       try {
         const chunks:Buffer[]=[];for await(const chunk of request)chunks.push(Buffer.from(chunk))
@@ -88,6 +90,7 @@ export async function createPlanningCollaborationFixture() {
         const upstream=await fetch(fixture.baseUrl+(request.url??'/'),{method:request.method,headers,
           ...(['GET','HEAD'].includes(request.method??'GET')?{}:{body:Buffer.concat(chunks)})})
         const body=Buffer.from(await upstream.arrayBuffer())
+        await options.afterResponse?.(request.url??'/',upstream.status)
         if(request.url?.endsWith('/settle') && upstream.ok)await options.afterSettlement?.()
         if(options.loseFailResponse && request.url?.endsWith('/fail')) {
           savePlanningEvidence(`fail-response-loss-${randomUUID()}.json`,{upstreamStatus:upstream.status,responseDestroyedAfterUpstreamCommit:true})
@@ -99,7 +102,7 @@ export async function createPlanningCollaborationFixture() {
     receivers.push(proxy);proxy.listen(0,'127.0.0.1');await once(proxy,'listening')
     return `http://127.0.0.1:${(proxy.address() as {port:number}).port}`
   }
-  const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>, options:{apiUrl?:string}={}) => {
+  const pi = async (execution: Execution, installationToken: string, calls: Array<() => Promise<ModelCall>>, options:{apiUrl?:string;beforeRun?:()=>Promise<void>}={}) => {
     const captures: Array<{ tools: string[]; results: string[]; messages: string; call: ModelCall | null }> = []
     const model = createServer({ key: readFileSync(new URL('./fixtures/model-test-key.pem', import.meta.url)), cert: readFileSync(new URL('./fixtures/model-test-ca.pem', import.meta.url)) }, async (request, response) => {
       try {
@@ -127,6 +130,7 @@ export async function createPlanningCollaborationFixture() {
       const root = resolve(import.meta.dirname, '../../../apps/agent-runner')
       const env: NodeJS.ProcessEnv = { ...process.env, WORKMESH_API_URL: options.apiUrl??fixture.baseUrl, WORKMESH_AGENT_INSTALLATION_TOKEN: installationToken, WORKMESH_AGENT_SESSION_ID: execution.sessionId, NODE_EXTRA_CA_CERTS: resolve(import.meta.dirname, 'fixtures/model-test-ca.pem') }
       delete env.DATABASE_URL; delete env.WORKMESH_MASTER_KEY; delete env.WORKMESH_BOOTSTRAP_TOKEN
+      await options.beforeRun?.()
       try {
         const output = await exec(process.execPath, [resolve(root, 'node_modules/tsx/dist/cli.mjs'), resolve(root, 'src/run-session.ts'), '--once'], { cwd: root, env, timeout: 60_000, maxBuffer: 1_000_000 })
         savePlanningEvidence(`pi-${queued.turn.id}.json`, { captures, stdout: output.stdout, stderr: output.stderr, turnId: queued.turn.id, sessionId: execution.sessionId })
@@ -143,6 +147,7 @@ export async function createPlanningCollaborationFixture() {
   }
   return { ...fixture, receive, registerTarget, registerCurrentReceiver, pi,
     loseFailResponse:()=>runnerProxy({loseFailResponse:true}),afterSettlement:(afterSettlement:()=>Promise<void>)=>runnerProxy({afterSettlement}),
+    afterResponse:(afterResponse:(path:string,status:number)=>Promise<void>)=>runnerProxy({afterResponse}),
     webhookWorker: worker, deliveryCounts:()=>({accepted:deliveries.size,duplicates:duplicateDeliveries}), close: async () => {
     for (const receiver of receivers) { receiver.closeAllConnections(); if (receiver.listening) await new Promise<void>((done,reject)=>receiver.close(error=>error?reject(error):done())) }
     for (const model of models) { model.closeAllConnections(); if (model.listening) await new Promise<void>((done, reject) => model.close(error => error ? reject(error) : done())) }

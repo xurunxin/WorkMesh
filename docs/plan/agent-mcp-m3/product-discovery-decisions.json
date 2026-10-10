@@ -1,0 +1,2246 @@
+{
+  "source": "已审M3受控合同的产品发现增量；保留M0/M1/M2历史",
+  "rules": [
+    {
+      "operationId": "listRepositories",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        }
+      ],
+      "capabilities": [
+        "repo:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": false
+    },
+    {
+      "operationId": "getRepositoryContext",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        }
+      ],
+      "capabilities": [
+        "repo:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": false
+    },
+    {
+      "operationId": "requestProviderAction",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        },
+        {
+          "fact": "exactRepositoryContext",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "providerFeatureEnabled",
+          "allowed": [
+            true
+          ],
+          "reason": "FEATURE_DISABLED"
+        }
+      ],
+      "capabilities": [
+        "repo:read"
+      ],
+      "feature": null,
+      "variants": [
+        {
+          "variant": "create_branch",
+          "capabilitiesAll": [
+            "repo:write_branch"
+          ]
+        },
+        {
+          "variant": "create_commit",
+          "capabilitiesAll": [
+            "repo:write_branch"
+          ]
+        },
+        {
+          "variant": "open_pull_request",
+          "capabilitiesAll": [
+            "repo:open_pr"
+          ]
+        }
+      ],
+      "write": true
+    },
+    {
+      "operationId": "publishDeliveryArtifact",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        }
+      ],
+      "capabilities": [
+        "artifact:write"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": true
+    },
+    {
+      "operationId": "requestArtifactUpload",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        }
+      ],
+      "capabilities": [
+        "artifact:write"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": true
+    },
+    {
+      "operationId": "getArtifactUploadStatus",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        }
+      ],
+      "capabilities": [
+        "work:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": false
+    },
+    {
+      "operationId": "finalizeArtifactUpload",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        }
+      ],
+      "capabilities": [
+        "artifact:write"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": true
+    },
+    {
+      "operationId": "cancelArtifactUpload",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        }
+      ],
+      "capabilities": [
+        "artifact:write"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": true
+    },
+    {
+      "operationId": "listWorkItemArtifacts",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        }
+      ],
+      "capabilities": [
+        "work:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": false
+    },
+    {
+      "operationId": "downloadVerifiedArtifact",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        }
+      ],
+      "capabilities": [
+        "work:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": false
+    },
+    {
+      "operationId": "publishStructuredReview",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        }
+      ],
+      "capabilities": [
+        "artifact:write",
+        "repo:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": true
+    },
+    {
+      "operationId": "requestPullRequestMerge",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        },
+        {
+          "fact": "exactRepositoryContext",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "providerFeatureEnabled",
+          "allowed": [
+            true
+          ],
+          "reason": "FEATURE_DISABLED"
+        },
+        {
+          "fact": "exactHumanApproval",
+          "allowed": [
+            true
+          ],
+          "reason": "APPROVAL_REQUIRED"
+        }
+      ],
+      "capabilities": [
+        "repo:merge",
+        "repo:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": true
+    },
+    {
+      "operationId": "retryPullRequestCheck",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        },
+        {
+          "fact": "exactRepositoryContext",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "providerFeatureEnabled",
+          "allowed": [
+            true
+          ],
+          "reason": "FEATURE_DISABLED"
+        },
+        {
+          "fact": "exactHumanApproval",
+          "allowed": [
+            true
+          ],
+          "reason": "APPROVAL_REQUIRED"
+        }
+      ],
+      "capabilities": [
+        "ci:run",
+        "repo:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": true
+    },
+    {
+      "operationId": "getProjectDelivery",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        }
+      ],
+      "capabilities": [
+        "work:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": false
+    },
+    {
+      "operationId": "createProjectUpdateDraft",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        }
+      ],
+      "capabilities": [
+        "work:write"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": true
+    },
+    {
+      "operationId": "suggestWorkItemCompletion",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        }
+      ],
+      "capabilities": [
+        "work:write"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": true
+    },
+    {
+      "operationId": "getProjectHealthHistory",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        }
+      ],
+      "capabilities": [
+        "work:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": false
+    },
+    {
+      "operationId": "createProjectHealthUpdate",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "idempotencyValid",
+          "allowed": [
+            true
+          ],
+          "reason": "IDEMPOTENCY_CONFLICT"
+        },
+        {
+          "fact": "exactHumanApproval",
+          "allowed": [
+            true
+          ],
+          "reason": "APPROVAL_REQUIRED",
+          "when": {
+            "publish": true
+          }
+        }
+      ],
+      "capabilities": [
+        "work:write"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": true
+    },
+    {
+      "operationId": "getProviderAction",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "researcher",
+            "reviewer"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        }
+      ],
+      "capabilities": [
+        "work:read",
+        "repo:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": false
+    }
+  ],
+  "bindings": [
+    {
+      "bindingId": "tool:list_repositories",
+      "operationIds": [
+        "listRepositories"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_repository_context",
+      "operationIds": [
+        "getRepositoryContext"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_repository_branch",
+      "operationIds": [
+        "requestProviderAction"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": "create_branch",
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_repository_commit",
+      "operationIds": [
+        "requestProviderAction"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": "create_commit",
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:open_pull_request",
+      "operationIds": [
+        "requestProviderAction"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": "open_pull_request",
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:publish_delivery_artifact",
+      "operationIds": [
+        "publishDeliveryArtifact"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:request_artifact_upload",
+      "operationIds": [
+        "requestArtifactUpload"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_artifact_upload_status",
+      "operationIds": [
+        "getArtifactUploadStatus"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:finalize_artifact_upload",
+      "operationIds": [
+        "finalizeArtifactUpload"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:cancel_artifact_upload",
+      "operationIds": [
+        "cancelArtifactUpload"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_work_item_artifacts",
+      "operationIds": [
+        "listWorkItemArtifacts"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:download_verified_artifact",
+      "operationIds": [
+        "downloadVerifiedArtifact"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:publish_structured_review",
+      "operationIds": [
+        "publishStructuredReview"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:merge_pull_request",
+      "operationIds": [
+        "requestPullRequestMerge"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:retry_ci_check",
+      "operationIds": [
+        "retryPullRequestCheck"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_project_delivery",
+      "operationIds": [
+        "getProjectDelivery"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:draft_project_update",
+      "operationIds": [
+        "createProjectUpdateDraft"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:suggest_work_item_completion",
+      "operationIds": [
+        "suggestWorkItemCompletion"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_project_health_history",
+      "operationIds": [
+        "getProjectHealthHistory"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_project_health_update",
+      "operationIds": [
+        "createProjectHealthUpdate"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_provider_action",
+      "operationIds": [
+        "getProviderAction"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    }
+  ],
+  "registeredBindingIds": [
+    "tool:ack_agent_session",
+    "tool:acknowledge_inbox_item",
+    "tool:acquire_lease",
+    "tool:add_work_item_relation",
+    "tool:append_activity",
+    "tool:append_context_delta",
+    "tool:apply_project_import",
+    "tool:ask",
+    "tool:cancel_artifact_upload",
+    "tool:claim_inbox_item",
+    "tool:claim_work_item",
+    "tool:comment_plan_step",
+    "tool:complete_session",
+    "tool:consume_approval",
+    "tool:create_child_session",
+    "tool:create_document",
+    "tool:create_milestone",
+    "tool:create_project",
+    "tool:create_project_health_update",
+    "tool:create_repository_branch",
+    "tool:create_repository_commit",
+    "tool:create_review_delegation",
+    "tool:create_work_item",
+    "tool:decide_completion_suggestion",
+    "tool:delegate_work_item",
+    "tool:delete_milestone",
+    "tool:diff_document_revisions",
+    "tool:download_verified_artifact",
+    "tool:draft_project_update",
+    "tool:explain_agent_session",
+    "tool:export_document_markdown",
+    "tool:fail_session",
+    "tool:finalize_artifact_upload",
+    "tool:get_agent_capabilities",
+    "tool:get_agent_discovery",
+    "tool:get_agent_session",
+    "tool:get_approval",
+    "tool:get_artifact_upload_status",
+    "tool:get_control_center",
+    "tool:get_current_identity",
+    "tool:get_decision",
+    "tool:get_document",
+    "tool:get_document_revision",
+    "tool:get_human_attention",
+    "tool:get_inbox_item",
+    "tool:get_milestone",
+    "tool:get_project",
+    "tool:get_project_control_center",
+    "tool:get_project_delivery",
+    "tool:get_project_health_history",
+    "tool:get_provider_action",
+    "tool:get_recovery_item",
+    "tool:get_repository_context",
+    "tool:get_server_features",
+    "tool:get_server_info",
+    "tool:get_session_context",
+    "tool:get_session_execution_result",
+    "tool:get_session_plan",
+    "tool:get_work_item",
+    "tool:get_work_item_execution_summary",
+    "tool:get_work_room",
+    "tool:get_workmesh_context",
+    "tool:heartbeat",
+    "tool:heartbeat_lease",
+    "tool:inspect_pending_handoff",
+    "tool:list_agent_sessions",
+    "tool:list_approvals",
+    "tool:list_child_sessions",
+    "tool:list_claimable_work_items",
+    "tool:list_document_history",
+    "tool:list_documents",
+    "tool:list_events",
+    "tool:list_handoffs",
+    "tool:list_human_attention",
+    "tool:list_inbox_items",
+    "tool:list_leases",
+    "tool:list_project_milestones",
+    "tool:list_projects",
+    "tool:list_recovery_items",
+    "tool:list_repositories",
+    "tool:list_session_activities",
+    "tool:list_session_plan_versions",
+    "tool:list_teams",
+    "tool:list_work_item_artifacts",
+    "tool:list_work_item_comments",
+    "tool:list_work_item_relations",
+    "tool:list_work_items",
+    "tool:list_workflow_states",
+    "tool:merge_pull_request",
+    "tool:offer_handoff",
+    "tool:open_pull_request",
+    "tool:post_work_room_message",
+    "tool:prepare_project_import",
+    "tool:preview_agent_session_control",
+    "tool:propose_plan_step_assignment",
+    "tool:publish_artifact",
+    "tool:publish_delivery_artifact",
+    "tool:publish_plan",
+    "tool:publish_project_update",
+    "tool:publish_structured_review",
+    "tool:reject_handoff",
+    "tool:release_lease",
+    "tool:remove_work_item_relation",
+    "tool:renew_lease",
+    "tool:reply_inbox_item",
+    "tool:request_approval",
+    "tool:request_artifact_upload",
+    "tool:request_handoff",
+    "tool:resolve_identifier",
+    "tool:restore_document_revision",
+    "tool:retry_ci_check",
+    "tool:send_message",
+    "tool:stop_ack",
+    "tool:suggest_work_item_completion",
+    "tool:transition_agent_session_state",
+    "tool:update_document",
+    "tool:update_milestone",
+    "tool:update_project",
+    "tool:update_work_item",
+    "tool:verify_connection"
+  ]
+}

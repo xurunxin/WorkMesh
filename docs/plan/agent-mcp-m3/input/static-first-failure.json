@@ -1,0 +1,10 @@
+{
+  "stage": "整包规划静态首败",
+  "command": "python docs/plan/agent-mcp-m3/static-check.py",
+  "exitCode": 1,
+  "toolReturnChunkId": "76313c",
+  "toolCallId": null,
+  "error": "AssertionError: README.md 链接 planning-report.md 尚未存在",
+  "visibleTraceback": "Traceback (most recent call last):\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b\\docs\\plan\\agent-mcp-m3\\static-check.py\", line 105, in <module>\n    if __name__=='__main__':main()\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b\\docs\\plan\\agent-mcp-m3\\static-check.py\", line 93, in main\n    assert (path.parent/target).resolve().is_file(),(path,target)\nAssertionError: (WindowsPath('C:/Users/xurx/.tds/workspaces/01a1246e-406c-7593-ada6-66996634434b/docs/plan/agent-mcp-m3/README.md'), 'planning-report.md')",
+  "provenance": "上述为会话实际可见命令/exit/chunk与traceback正文；未取得独立callID或shell stdout原始字节，不冒完整原tool封包。静态脚本旧字节通过仅撤销本轮新增plan-edits校验重建，标为重建来源；首败时其余工作树未逐项快照，保留缺口。"
+}

@@ -31,3 +31,10 @@ Runner 崩溃并使 Session 失去权威，或 Attempt 超过五分钟未结算�
 - 公开发布：`scripts/generate-workbench-skill-artifact.mjs` 以 `skills/workmesh/public-key.pem` 同源的 ed25519 私钥（`WORKMESH_SKILL_SIGNING_PRIVATE_KEY_FILE`，仅发布者持有）对 `apps/agent-runner/skills/workmesh-workbench/SKILL.md` 的规范 LF 字节签名，产物写入 `apps/web/public/skills/workmesh-workbench-1.0.0.md`，manifest 写入 `packages/contracts/src/workbench-skill-release-manifest.ts`；`node scripts/generate-workbench-skill-artifact.mjs --check` 校验字节、哈希与签名（已提交公钥验证路径）。
 - 评测场景：`docs/workbench-skill-evaluation.md`（S1–S8 + 拒绝矩阵引用）。
 - Session 持久 pin：Runner 以镜像内嵌字节为权威（`SessionManager.inMemory()` + 每会话验证），Pi 上下文可重建、不是业务恢复权威（ADR 0065 决策 3）；公开 manifest（`workbenchSkillReleaseManifest`）使部署方可核对内嵌 pin 与公开签名产物一致。
+# Runner 的 Git 与证据操作
+
+当前 E 可通过 `workmesh_get_provider_action` 确认原动作；未知外部效果只对账，不盲重发。准确 repository context 的 base/path → Lease → branch/commit/openPR → current-head 证据 → 独立 reviewer → Human 批准 → merge/retryCI → 原 action 终态按服务端授权执行。merge 不 deploy、不自动改变 Issue 工作流。
+
+`workmesh_create_review_delegation` 可传显式 `repositoryIds`，三方读能力与父当前范围的交集才授予 reviewer 仓库读权；省略保持原合同。reviewer 无仓库写权、无 `plan:write`，必须本人 Room `review_result`、当前 head `code_review` 和 structured review，父读取 child completed 后继续。
+
+上传工具只接受最多 1,500,000 字节的规范 base64，不接受本机路径或模型 URL；下载只返回已验证、长度及 checksum 匹配的有界字节。操作员配置的 `S3_ENDPOINT` 决定允许 store origin，缺配置明确拒绝。独立 Node HTTP／HTTPS 传输保留 required headers、标准证书验证和取消信号，不携带 WorkMesh Bearer、不跟随重定向，也不继承 Pi 模型 dispatcher 的代理。签名资料只在传输模块内消费。API 的较大文件上限不表示 Runner 能传任意大小文件。

@@ -1,0 +1,166 @@
+{
+  "originalRows": [
+    {
+      "id": "S1",
+      "originalRow": "| 正常 | 从准确base/path到PR/current-head证据/review/批准/终态；exact action返回原target/result；upload headers实际可用；无Artifact store场景明确unsupported/限制 |",
+      "category": "正常",
+      "originalScenario": "从准确base/path到PR/current-head证据/review/批准/终态；exact action返回原target/result；upload headers实际可用；无Artifact store场景明确unsupported/限制",
+      "sourceCommit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "sourcePath": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "applicability": "完整三客户端链和真实store；缺store显式unsupported",
+      "concreteSteps": "verification.md S1",
+      "testEntrypoints": [
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts（待创建）"
+      ],
+      "status": "未运行"
+    },
+    {
+      "id": "S2",
+      "originalRow": "| 越权/撤权 | E越路径/仓库/Team查询action拒绝；repo:write_branch有而repo:open_pr无仍拒openPR；外部读取后撤权禁止最终context写；独立reviewer不审自己产生的变更 |",
+      "category": "越权/撤权",
+      "originalScenario": "E越路径/仓库/Team查询action拒绝；repo:write_branch有而repo:open_pr无仍拒openPR；外部读取后撤权禁止最终context写；独立reviewer不审自己产生的变更",
+      "sourceCommit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "sourcePath": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "applicability": "准确身份/资源/三方scope，撤权负例不可免",
+      "concreteSteps": "verification.md S2",
+      "testEntrypoints": [
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts（待创建）"
+      ],
+      "status": "未运行"
+    },
+    {
+      "id": "S3",
+      "originalRow": "| 非法状态 | stale expectedHead、未通过check/有BlockingHigh review、无有效merge approval、不支持provider操作拒绝；file artifact不能structured review；只有structured review缺Room消息仍不能complete reviewer，required reviewer未completed仍阻父；sending unknown不自动重发 |",
+      "category": "非法状态",
+      "originalScenario": "stale expectedHead、未通过check/有BlockingHigh review、无有效merge approval、不支持provider操作拒绝；file artifact不能structured review；只有structured review缺Room消息仍不能complete reviewer，required reviewer未completed仍阻父；sending unknown不自动重发",
+      "sourceCommit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "sourcePath": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "applicability": "现状态/独立review双证据/unknown；不放宽Human",
+      "concreteSteps": "verification.md S3",
+      "testEntrypoints": [
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts（待创建）"
+      ],
+      "status": "未运行"
+    },
+    {
+      "id": "S4",
+      "originalRow": "| 幂等 | provider intents/上传finalize/review/merge重复同key只一action/事实；丢response读原action再恢复；不同body拒绝；外部不支持exactly-once时如实unknown |",
+      "category": "幂等",
+      "originalScenario": "provider intents/上传finalize/review/merge重复同key只一action/事实；丢response读原action再恢复；不同body拒绝；外部不支持exactly-once时如实unknown",
+      "sourceCommit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "sourcePath": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "applicability": "下游写动作适用；GET无幂等写账本不适用",
+      "concreteSteps": "verification.md S4",
+      "testEntrypoints": [
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts（待创建）"
+      ],
+      "status": "未运行"
+    },
+    {
+      "id": "S5",
+      "originalRow": "| 旧revision | upload cancel等按现行合同校验；head变化不消费旧review/批准；context异步POST无If-Match，不伪造revision要求；查询不需要If-Match写锁 |",
+      "category": "旧revision",
+      "originalScenario": "upload cancel等按现行合同校验；head变化不消费旧review/批准；context异步POST无If-Match，不伪造revision要求；查询不需要If-Match写锁",
+      "sourceCommit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "sourcePath": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "applicability": "head与revisioned写适用；GET/context POST/upload cancel无If-Match不适用",
+      "concreteSteps": "verification.md S5",
+      "testEntrypoints": [
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts（待创建）"
+      ],
+      "status": "未运行"
+    },
+    {
+      "id": "S6",
+      "originalRow": "| 事务失败 | intent提交失败零provider I/O，state/event/outbox全回滚；结果checkpoint与权限拒绝回滚/定向事件；query不写业务事实 |",
+      "category": "事务失败",
+      "originalScenario": "intent提交失败零provider I/O，state/event/outbox全回滚；结果checkpoint与权限拒绝回滚/定向事件；query不写业务事实",
+      "sourceCommit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "sourcePath": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "applicability": "intent/evidence/review/upload/approval state-event-outbox回滚适用；纯GET command回滚不适用，审计例外分列",
+      "concreteSteps": "verification.md S6",
+      "testEntrypoints": [
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts（待创建）"
+      ],
+      "status": "未运行"
+    },
+    {
+      "id": "S7",
+      "originalRow": "| 重放 | 重复provider webhook、outbox/job、worker reclaim/fenced ACK不双提交；PR head更新使旧批准失效；上传到期/重复finalize保持同证据身份 |",
+      "category": "重放",
+      "originalScenario": "重复provider webhook、outbox/job、worker reclaim/fenced ACK不双提交；PR head更新使旧批准失效；上传到期/重复finalize保持同证据身份",
+      "sourceCommit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "sourcePath": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "applicability": "原job/webhook/checkpoint重放适用；GET无新job不适用",
+      "concreteSteps": "verification.md S7",
+      "testEntrypoints": [
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts（待创建）"
+      ],
+      "status": "未运行"
+    },
+    {
+      "id": "S8",
+      "originalRow": "| 并发 | 两commit expected head、review与head换代、批准与撤权/Stop、Worker claim fencing、锁等待超过真实租期；观察实际锁等待，不拿注入delay代证明 |",
+      "category": "并发",
+      "originalScenario": "两commit expected head、review与head换代、批准与撤权/Stop、Worker claim fencing、锁等待超过真实租期；观察实际锁等待，不拿注入delay代证明",
+      "sourceCommit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "sourcePath": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "applicability": "PG真实锁/租期/双worker与head竞争必须实证",
+      "concreteSteps": "verification.md S8",
+      "testEntrypoints": [
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts（待创建）"
+      ],
+      "status": "未运行"
+    },
+    {
+      "id": "S9",
+      "originalRow": "| 重启/恢复/Stop | 外发前checkpoint commit次序正确；Stop/撤权先commit则零外发，checkpoint先commit后的在途调用不能召回要记录；worker崩溃/未知结果只读对账，exact-action terminal恢复不猜context变化 |",
+      "category": "重启/恢复/Stop",
+      "originalScenario": "外发前checkpoint commit次序正确；Stop/撤权先commit则零外发，checkpoint先commit后的在途调用不能召回要记录；worker崩溃/未知结果只读对账，exact-action terminal恢复不猜context变化",
+      "sourceCommit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "sourcePath": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "applicability": "外发前授权提交/结果checkpoint先后、未知/Stop/M1专用确认必须实证",
+      "concreteSteps": "verification.md S9",
+      "testEntrypoints": [
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/conformance/src/delivery-recovery.conformance.test.ts（待创建）"
+      ],
+      "status": "未运行"
+    }
+  ],
+  "originalDoD": "**任务DoD**：至少fake provider完整交付链Native HTTP/MCP/Pi一致，所有异步命令可准确确认；每个真实provider“支持/不支持/未测”有实际依据。#9切片新组合证据单独绑定，不借其旧UI验收。",
+  "originalFullScope": "frozen-m3.md",
+  "additionalUserDecision": "input/user-repository-scope-decision.md",
+  "additionalReviewerTests": [
+    "三方逐一缺repo:read",
+    "省略原三项",
+    "1/100/空/重复/101仓库",
+    "WI/Project共享与父Session-only拒绝",
+    "父context选不同/late收窄/撤权",
+    "same Actor不同Session自审拒绝",
+    "父100/普通child60/review40预算链",
+    "本人Room+code_review+structured review+child完成后父确认",
+    "成功创建后scope收窄/definition或grant撤repo:read/context换代原key重放拒绝",
+    "合法旧回执不再budget/admission/child/reservation/Lease/交付",
+    "真实HTTP rerequest成功后checkpoint前崩溃，跨租期重领不增加写次数",
+    "完整authority锁竞争Stop/撤权与发送授权两提交序",
+    "commit tree/commit/ref每次写HTTP分别guard，后续失权停发"
+  ]
+}

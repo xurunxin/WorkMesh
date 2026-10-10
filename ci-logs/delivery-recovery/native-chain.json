@@ -1,0 +1,106 @@
+{
+  "repositoryId": "753cbfc1-e7bb-466c-a232-a27513a79291",
+  "branch": "workmesh/GEN-18-delivery",
+  "context": [
+    {
+      "id": "9d581b2a-e440-4e59-b899-2a7db144cb36",
+      "repository_id": "753cbfc1-e7bb-466c-a232-a27513a79291",
+      "base_branch": "main",
+      "base_sha": "base",
+      "allowed_paths": [
+        "src/**"
+      ],
+      "permissions": [
+        "read",
+        "write_branch",
+        "open_pr",
+        "review",
+        "merge",
+        "ci"
+      ],
+      "guidance": [
+        {
+          "path": "AGENTS.md",
+          "blobSha": "9e6e3e8d83207a6d487a50ea1d362ce9a9a53a5c78dde6b96050ee0f6bac34f3",
+          "contentHash": "sha256:9e6e3e8d83207a6d487a50ea1d362ce9a9a53a5c78dde6b96050ee0f6bac34f3",
+          "content": "# M3 local guidance\n"
+        },
+        {
+          "path": "src/AGENTS.md",
+          "blobSha": "78b502644d1a0d2cacdfcc8a2ef8d4ad8faac121872f40685949890a16d1d865",
+          "contentHash": "sha256:78b502644d1a0d2cacdfcc8a2ef8d4ad8faac121872f40685949890a16d1d865",
+          "content": "# Allowed source\n"
+        }
+      ],
+      "workspace_id": "78044b9a-c5ca-4865-8947-8fe21a0c20de",
+      "project_id": null,
+      "work_item_id": "b03b0631-348a-477a-a806-637d6a33cbc1",
+      "session_id": null,
+      "branch_pattern": "workmesh/{workItemKey}-{slug}",
+      "guidance_manifest_hash": "sha256:35794a62e6695ed29ad39f517e12409eb8c4aa340e277cb96cf45a198de16028",
+      "created_by_actor_id": "c006cb62-60b1-4b6d-b503-ea6cb812a2e8",
+      "created_at": "2026-10-10T13:16:38.625Z",
+      "provider_action_id": "5972f3ba-0e21-402c-bfc8-cb3062d83b6b"
+    }
+  ],
+  "actions": [
+    "b1e85698-2c50-4cc7-9086-14eea2987dbc",
+    "34169f37-d7f5-4a64-9ed4-63de6fbb3df9",
+    "ad35b40b-7893-462f-af44-735a3e025f15",
+    "e7ee89c9-872a-40b9-9cf8-068c725cc526",
+    "813c2569-62f7-401c-a3b4-38e8beccbf6e"
+  ],
+  "head": "7f0ea1a5c3ebe9042434ea986bf84361f75b6af7a0bc94189369a1a3c80884ee",
+  "reviewerSessionId": "f078eab3-bf26-4cf3-b2aa-5eae8f19b1af",
+  "artifactIds": [
+    "98f0524a-f230-496d-91f6-4d92fa68409e",
+    "13a024f5-4f62-4018-9a3c-5ce6b7dde542"
+  ],
+  "approvalId": "7234bc15-c86a-4003-a9a2-05268fad0e92",
+  "children": {
+    "items": [
+      {
+        "id": "f078eab3-bf26-4cf3-b2aa-5eae8f19b1af",
+        "parentSessionId": "46d78807-a24a-41ec-a500-e449d6a19f3f",
+        "requiredForParent": true,
+        "state": "completed",
+        "revision": 4,
+        "planStepId": "1a2d9938-cc74-4349-b780-e069899221c6",
+        "planVersionId": "6a406323-2061-4a6a-8e61-1db0a4dcf57c",
+        "resultArtifactIds": [
+          "13a024f5-4f62-4018-9a3c-5ce6b7dde542"
+        ]
+      }
+    ],
+    "nextCursor": null
+  },
+  "results": {
+    "session": {
+      "id": "46d78807-a24a-41ec-a500-e449d6a19f3f",
+      "state": "completed",
+      "revision": 5
+    },
+    "action": {
+      "kind": "complete",
+      "operationKey": "c3b4331d-1770-483b-b266-6620bf142c28",
+      "confirmation": "confirmed",
+      "unavailableReason": null
+    },
+    "originalResult": {
+      "operationId": "completeAgentSession",
+      "sessionId": "46d78807-a24a-41ec-a500-e449d6a19f3f",
+      "revision": 5,
+      "state": "completed",
+      "resultReference": {
+        "type": "agent_session",
+        "id": "46d78807-a24a-41ec-a500-e449d6a19f3f",
+        "revision": 5
+      },
+      "eventReference": {
+        "id": "b4c74192-9fbf-4e37-882a-2b609245d3ae",
+        "cursor": "1692"
+      }
+    },
+    "cleanup": null
+  }
+}

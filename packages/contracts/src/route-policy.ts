@@ -433,6 +433,7 @@ function capabilityFor(
   if (operationId === 'claimWorkItem') return ['work:read', 'work:write']
   if (operationId === 'delegateAndStartAgentSession') return ['agent:delegate']
   if (method === 'GET') {
+    if (operationId === 'getProviderAction') return ['work:read','repo:read']
     if (path.includes('/repositories')) return ['repo:read']
     return ['work:read']
   }
@@ -566,6 +567,7 @@ const mcpOperationIds = {
   'tool:append_context_delta': 'appendContextDelta',
   'tool:apply_project_import': 'createProject',
   'tool:ask': 'appendAgentActivity',
+  'tool:cancel_artifact_upload': 'cancelArtifactUpload',
   'tool:claim_inbox_item': 'claimInboxItem',
   'tool:claim_work_item': 'claimWorkItem',
   'tool:comment_plan_step': 'commentOnPlanStep',
@@ -576,6 +578,7 @@ const mcpOperationIds = {
   'tool:create_milestone': 'createProjectMilestone',
   'tool:create_project': 'createProject',
   'tool:create_project_decision': 'createProjectDecision',
+  'tool:create_project_health_update': 'createProjectHealthUpdate',
   'tool:create_repository_branch': 'requestProviderAction',
   'tool:create_repository_commit': 'requestProviderAction',
   'tool:create_review_delegation': 'createReviewDelegation',
@@ -586,6 +589,7 @@ const mcpOperationIds = {
   'tool:delegate_work_item': 'delegateAndStartAgentSession',
   'tool:delete_milestone': 'deleteMilestone',
   'tool:diff_document_revisions': 'diffDocumentRevisions',
+  'tool:download_verified_artifact': 'downloadVerifiedArtifact',
   'tool:draft_project_update': 'createProjectUpdateDraft',
   'tool:explain_agent_session': 'explainAgentSession',
   'tool:export_document_markdown': 'exportDocumentMarkdown',
@@ -594,6 +598,7 @@ const mcpOperationIds = {
   'tool:get_agent_capabilities': 'getAgentCapabilityManifest',
   'tool:get_agent_session': 'getAgentSession',
   'tool:get_approval': 'getApproval',
+  'tool:get_artifact_upload_status': 'getArtifactUploadStatus',
   'tool:get_control_center': 'listControlCenter',
   'tool:get_current_identity': 'getCurrentAgentConnectionIdentity',
   'tool:get_decision': 'getDecision',
@@ -604,7 +609,10 @@ const mcpOperationIds = {
   'tool:get_milestone': 'getMilestone',
   'tool:get_project': 'getProject',
   'tool:get_project_control_center': 'getProjectControlCenter',
+  'tool:get_project_delivery': 'getProjectDelivery',
   'tool:get_project_guidance': 'getProjectGuidance',
+  'tool:get_project_health_history': 'getProjectHealthHistory',
+  'tool:get_provider_action': 'getProviderAction',
   'tool:get_recovery_item': 'getRecoveryItem',
   'tool:get_repository_context': 'getRepositoryContext',
   'tool:get_server_features': 'getDeploymentFeatures',
@@ -635,9 +643,11 @@ const mcpOperationIds = {
   'tool:list_project_milestones': 'listProjectMilestones',
   'tool:list_projects': 'listProjects',
   'tool:list_recovery_items': 'listRecoveryItems',
+  'tool:list_repositories': 'listRepositories',
   'tool:list_session_activities': 'listAgentActivities',
   'tool:list_session_plan_versions': 'listAgentPlanVersions',
   'tool:list_teams': 'listTeams',
+  'tool:list_work_item_artifacts': 'listWorkItemArtifacts',
   'tool:list_work_item_comments': 'listWorkItemComments',
   'tool:list_work_item_relations': 'listWorkItemRelations',
   'tool:list_work_items': 'listWorkItems',
@@ -666,6 +676,7 @@ const mcpOperationIds = {
   'tool:retry_ci_check': 'retryPullRequestCheck',
   'tool:send_message': 'appendAgentActivity',
   'tool:stop_ack': 'acknowledgeAgentSessionStop',
+  'tool:suggest_work_item_completion': 'suggestWorkItemCompletion',
   'tool:transition_agent_session_state': 'transitionAgentSessionState',
   'tool:update_document': 'updateDocument',
   'tool:update_milestone': 'updateMilestone',

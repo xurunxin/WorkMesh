@@ -1,0 +1,2697 @@
+{
+  "status": "Proposed；仅规划，未来产品未运行",
+  "sourceCommit": "ef4cb5e1458d911d98433c443dba46e6c224caa0",
+  "newEndpointCount": 1,
+  "operations": [
+    {
+      "operationId": "listRepositories",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/repositories",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "query",
+            "description": "Human-only Team filter applied before pagination.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "availableOnly",
+            "in": "query",
+            "description": "Human-only filter; true excludes inactive repositories and disabled providers before pagination. Bound to the cursor with the enabled provider set.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/RepositoryConfigurations"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/repositories"
+      },
+      "proposed": {
+        "sdk": "listRepositories",
+        "mcp": [
+          "list_repositories"
+        ],
+        "runner": [
+          "workmesh_list_repositories"
+        ],
+        "capabilities": "repo:read",
+        "gate": "最新适用context；活跃仓库/connection；原签名分页，H-only查询过滤不移给E",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "list_repositories": false
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "getRepositoryContext",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/repositories/{id}/context",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "已落库上下文及原件",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RepositoryContextConfiguration"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/repositories/{id}/context"
+      },
+      "proposed": {
+        "sdk": "getRepositoryContext",
+        "mcp": [
+          "get_repository_context"
+        ],
+        "runner": [
+          "workmesh_get_repository_context"
+        ],
+        "capabilities": "repo:read",
+        "gate": "exact repositoryIds/context；完整guidance原件，非授权来源；E或C显式目标E",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "get_repository_context": false
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "requestProviderAction",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/provider-actions",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProviderActionInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/provider-actions"
+      },
+      "proposed": {
+        "sdk": "requestProviderAction",
+        "mcp": [
+          "create_repository_branch",
+          "create_repository_commit",
+          "open_pull_request"
+        ],
+        "runner": [
+          "workmesh_create_repository_branch",
+          "workmesh_create_repository_commit",
+          "workmesh_open_pull_request"
+        ],
+        "capabilities": "repo:read + kind-specific",
+        "gate": "E-only领域；branch/commit需repo:write_branch及write_branch context；openPR需repo:open_pr及open_pr context；base/path/branch/expectedHead准确；各仓库写前authority事务；无checkpoint领取历史停发；不把OpenAPI human声明冒handler支持",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "create_repository_branch": true,
+          "create_repository_commit": true,
+          "open_pull_request": true
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "publishDeliveryArtifact",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/delivery-artifacts",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeliveryArtifactInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/delivery-artifacts"
+      },
+      "proposed": {
+        "sdk": "publishDeliveryArtifact",
+        "mcp": [
+          "publish_delivery_artifact"
+        ],
+        "runner": [
+          "workmesh_publish_delivery_artifact"
+        ],
+        "capabilities": "artifact:write + 仓库时repo:read",
+        "gate": "本人E/provenance/workItem/Plan/currentHead；reviewer仅code_review，无repo写；H在现handler不支持",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "publish_delivery_artifact": true
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "requestArtifactUpload",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/artifact-upload-intents",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ArtifactUploadIntentInput"
+                  },
+                  {
+                    "$ref": "#/components/schemas/HumanArtifactUploadIntentInput"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/artifact-upload-intents"
+      },
+      "proposed": {
+        "sdk": "requestArtifactUpload",
+        "mcp": [
+          "request_artifact_upload"
+        ],
+        "runner": [
+          "workmesh_request_artifact_upload"
+        ],
+        "capabilities": "artifact:write + repo:read",
+        "gate": "E本人仓库证据；H沿Human附件合同；MIME/50MB/sha256/header签名；reviewer不因读权获得file审查授权",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "request_artifact_upload": true
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "getArtifactUploadStatus",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/artifact-upload-intents/{id}",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactUploadIntentStatus"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/artifact-upload-intents/{id}"
+      },
+      "proposed": {
+        "sdk": "getArtifactUploadStatus",
+        "mcp": [
+          "get_artifact_upload_status"
+        ],
+        "runner": [
+          "workmesh_get_artifact_upload_status"
+        ],
+        "capabilities": "work:read",
+        "gate": "own-session E或原requester H；无storage_key/raw error；最终SELECT实时重验",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": false,
+        "mcpTools": {
+          "get_artifact_upload_status": false
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "finalizeArtifactUpload",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/artifact-upload-intents/{id}/finalize",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/artifact-upload-intents/{id}/finalize"
+      },
+      "proposed": {
+        "sdk": "finalizeArtifactUpload",
+        "mcp": [
+          "finalize_artifact_upload"
+        ],
+        "runner": [
+          "workmesh_finalize_artifact_upload"
+        ],
+        "capabilities": "artifact:write",
+        "gate": "own-session E／原requester H写资格；先expiry事实commit再稳定错误；同key重放",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "finalize_artifact_upload": true
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "cancelArtifactUpload",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/artifact-upload-intents/{id}/cancel",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/artifact-upload-intents/{id}/cancel"
+      },
+      "proposed": {
+        "sdk": "cancelArtifactUpload",
+        "mcp": [
+          "cancel_artifact_upload"
+        ],
+        "runner": [
+          "workmesh_cancel_artifact_upload"
+        ],
+        "capabilities": "artifact:write",
+        "gate": "pending/uploaded可取消，canceled重放；Idempotency-Key，无If-Match；cleanup在commit后",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": false,
+        "mcpTools": {
+          "cancel_artifact_upload": false
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "listWorkItemArtifacts",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/work-items/{id}/artifacts",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/work-items/{id}/artifacts"
+      },
+      "proposed": {
+        "sdk": "listWorkItemArtifacts",
+        "mcp": [
+          "list_work_item_artifacts"
+        ],
+        "runner": [
+          "workmesh_list_work_item_artifacts"
+        ],
+        "capabilities": "work:read",
+        "gate": "exact WI；原数组保持；repo外链接取数前过滤，不可代正文已读",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": false,
+        "mcpTools": {
+          "list_work_item_artifacts": false
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "downloadVerifiedArtifact",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/artifact-upload-intents/{id}/download",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/artifact-upload-intents/{id}/download"
+      },
+      "proposed": {
+        "sdk": "getArtifactDownload",
+        "mcp": [
+          "download_verified_artifact"
+        ],
+        "runner": [
+          "workmesh_download_verified_artifact"
+        ],
+        "capabilities": "work:read",
+        "gate": "verified/own-session E；H当前Team；签名URL仅受控传输，reviewer不读父upload",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "download_verified_artifact": false
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "publishStructuredReview",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/pull-requests/{id}/reviews",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StructuredReviewInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/pull-requests/{id}/reviews"
+      },
+      "proposed": {
+        "sdk": "publishStructuredReview",
+        "mcp": [
+          "publish_structured_review"
+        ],
+        "runner": [
+          "workmesh_publish_structured_review"
+        ],
+        "capabilities": "artifact:write + repo:read",
+        "gate": "review context/currentHead；本人code_review Artifact/provenance；actor独立于producer；file拒绝",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "publish_structured_review": true
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "requestPullRequestMerge",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/pull-requests/{id}/merge",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MergeIntentInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/pull-requests/{id}/merge"
+      },
+      "proposed": {
+        "sdk": "requestMerge",
+        "mcp": [
+          "merge_pull_request"
+        ],
+        "runner": [
+          "workmesh_merge_pull_request"
+        ],
+        "capabilities": "repo:merge + repo:read",
+        "gate": "merge context；currentHead/all required checks/independent review/no blocking-high；Human精确hash批准；最终全部门禁/租期同authority tx；无checkpoint不借merged观察恢复；reviewer无资格",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "merge_pull_request": true
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "retryPullRequestCheck",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/pull-requests/{id}/checks/{checkId}/retry",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiRetryInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "name": "checkId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 500
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/pull-requests/{id}/checks/{checkId}/retry"
+      },
+      "proposed": {
+        "sdk": "retryCiCheck",
+        "mcp": [
+          "retry_ci_check"
+        ],
+        "runner": [
+          "workmesh_retry_ci_check"
+        ],
+        "capabilities": "ci:run + repo:read",
+        "gate": "ci context；当前head failed/skipped准确checkRun；Human精确批准；最终check/head/approval/租期同authority tx；无checkpoint历史停发rerequest；requested不等于passed",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "retry_ci_check": true
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "getProjectDelivery",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/projects/{id}/delivery",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/projects/{id}/delivery"
+      },
+      "proposed": {
+        "sdk": "getProjectDelivery",
+        "mcp": [
+          "get_project_delivery"
+        ],
+        "runner": [
+          "workmesh_get_project_delivery"
+        ],
+        "capabilities": "work:read + repo读取部分repo:read",
+        "gate": "当前exact Project/WI/repo；新增pullRequestId过滤，当前head阻断事实完整；默认envelope兼容",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "get_project_delivery": false
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "createProjectUpdateDraft",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/projects/{id}/updates",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/projects/{id}/updates"
+      },
+      "proposed": {
+        "sdk": "draftProjectUpdate",
+        "mcp": [
+          "draft_project_update"
+        ],
+        "runner": [
+          "workmesh_draft_project_update"
+        ],
+        "capabilities": "work:write",
+        "gate": "合法Project scope，Agent仅draft，evidence在scope；publish仍H-only",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "draft_project_update": true
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "suggestWorkItemCompletion",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/projects/{id}/completion-suggestions",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompletionSuggestionInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/projects/{id}/completion-suggestions"
+      },
+      "proposed": {
+        "sdk": "suggestCompletion",
+        "mcp": [
+          "suggest_work_item_completion"
+        ],
+        "runner": [
+          "workmesh_suggest_work_item_completion"
+        ],
+        "capabilities": "work:write",
+        "gate": "E-only领域；exact WI/Project/PR及证据；只是建议，不自动done",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "suggest_work_item_completion": false
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "getProjectHealthHistory",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/projects/{id}/health",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PagedJson"
+          },
+          "403": {
+            "$ref": "#/components/responses/FeatureDisabled"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/projects/{id}/health"
+      },
+      "proposed": {
+        "sdk": "getProjectHealthHistory",
+        "mcp": [
+          "get_project_health_history"
+        ],
+        "runner": [
+          "workmesh_get_project_health_history"
+        ],
+        "capabilities": "work:read",
+        "gate": "原Project绑定/分页/feature；不把Team scope当任意Project权限",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": false,
+        "mcpTools": {
+          "get_project_health_history": false
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "createProjectHealthUpdate",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/projects/{id}/health",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectHealthInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "403": {
+            "$ref": "#/components/responses/FeatureDisabled"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/projects/{id}/health"
+      },
+      "proposed": {
+        "sdk": "createProjectHealthUpdate",
+        "mcp": [
+          "create_project_health_update"
+        ],
+        "runner": [
+          "workmesh_create_project_health_update"
+        ],
+        "capabilities": "work:write",
+        "gate": "source=agent/exact Project/来源/If-Match；publish=true另需Human project.health.publish准确批准",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": false,
+        "mcpTools": {
+          "create_project_health_update": false
+        },
+        "runnerOperationString": false
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "createReviewDelegation",
+      "family": "M3产品增量",
+      "decision": "typed适配及必要安全补齐",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/agent-sessions/{id}/review-delegations",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDelegationInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "同原session/lease wrapper，执行预算与reservation同值",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDelegationResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/AgentConcurrencyLimit"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/agent-sessions/{id}/review-delegations"
+      },
+      "proposed": {
+        "sdk": "createReviewDelegation",
+        "mcp": [
+          "create_review_delegation"
+        ],
+        "runner": [
+          "workmesh_create_review_delegation"
+        ],
+        "capabilities": "work:write + 显式三方repo:read",
+        "gate": "精确live父E/stable step/version/预算/限额/三方权限/共享context；beforeReserve先锁准确父子，再authorizeReplay锁内重验三方scope/context；合法重放零重复admission/交付；repositoryIds省略保持M2",
+        "credentials": "直接E自身；C适配显式target E局部bridge；H仅按现领域允许的分支"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": true,
+        "mcpTools": {
+          "create_review_delegation": true
+        },
+        "runnerOperationString": true
+      },
+      "presenceLimitation": "仅源码存在性；角色、状态、feature、scope、批准、Lease和产品结果均另验",
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "getProviderAction",
+      "family": "M3新增最小查询",
+      "decision": "新增只读白名单投影，非已有endpoint",
+      "currentRest": null,
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/provider-actions/{id}"
+      },
+      "proposed": {
+        "sdk": "getProviderAction",
+        "mcp": [
+          "get_provider_action"
+        ],
+        "runner": [
+          "workmesh_get_provider_action"
+        ],
+        "capabilities": "work:read + repo:read",
+        "gate": "本人requester/精确E Session/current Team/resource/context/provider feature；H限定原requester/principal；六kind五status；无checkpoint重领dead/OUTCOME_UNKNOWN，只读人工对账",
+        "credentials": "H或直接E；C显式target E局部bridge；无新增安装GET/terminal E例外"
+      },
+      "currentPresence": {
+        "sdkNamedMethod": false,
+        "mcpTools": {
+          "get_provider_action": false
+        },
+        "runnerOperationString": false
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行"
+    },
+    {
+      "operationId": "connectRepository",
+      "family": "Human保留",
+      "decision": "不增加Agent权限/工具",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/repositories",
+        "actorKinds": [
+          "human"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepositoryInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/repositories"
+      },
+      "proposed": {
+        "sdk": "保持原消费者",
+        "mcp": [
+          "无Agent适配"
+        ],
+        "runner": [],
+        "gate": "Human连接；隐藏发现，缓存调用结构化拒绝"
+      },
+      "tests": [
+        "S2",
+        "S3"
+      ],
+      "productStatus": "未运行H回归"
+    },
+    {
+      "operationId": "pinRepositoryContext",
+      "family": "Human保留",
+      "decision": "不增加Agent权限/工具",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/repositories/{id}/context",
+        "actorKinds": [
+          "human"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepositoryContextInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "已持久化的异步解析动作",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositoryContextAction"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenOrFeatureDisabled"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/repositories/{id}/context"
+      },
+      "proposed": {
+        "sdk": "保持原消费者",
+        "mcp": [
+          "无Agent适配"
+        ],
+        "runner": [],
+        "gate": "Human pin；隐藏发现，缓存调用结构化拒绝"
+      },
+      "tests": [
+        "S2",
+        "S3"
+      ],
+      "productStatus": "未运行H回归"
+    },
+    {
+      "operationId": "publishProjectUpdate",
+      "family": "Human保留",
+      "decision": "不增加Agent权限/工具",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/projects/{id}/updates/{updateId}/publish",
+        "actorKinds": [
+          "human"
+        ],
+        "feature": "none",
+        "input": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "name": "updateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/projects/{id}/updates/{updateId}/publish"
+      },
+      "proposed": {
+        "sdk": "保持原消费者",
+        "mcp": [
+          "publish_project_update"
+        ],
+        "runner": [],
+        "gate": "Human发布；隐藏发现，缓存调用结构化拒绝"
+      },
+      "tests": [
+        "S2",
+        "S3"
+      ],
+      "productStatus": "未运行H回归"
+    },
+    {
+      "operationId": "decideCompletionSuggestion",
+      "family": "Human保留",
+      "decision": "不增加Agent权限/工具",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/completion-suggestions/{id}/decision",
+        "actorKinds": [
+          "human"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompletionSuggestionDecisionInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/completion-suggestions/{id}/decision"
+      },
+      "proposed": {
+        "sdk": "保持原消费者",
+        "mcp": [
+          "decide_completion_suggestion"
+        ],
+        "runner": [],
+        "gate": "Human裁决；隐藏发现，缓存调用结构化拒绝"
+      },
+      "tests": [
+        "S2",
+        "S3"
+      ],
+      "productStatus": "未运行H回归"
+    },
+    {
+      "operationId": "listArtifacts",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/artifacts",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "sessionId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "workItemId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Artifacts"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/artifacts"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "publishArtifact",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/artifacts",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "$ref": "#/components/requestBodies/ArtifactInput"
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/CorrelationId"
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Artifact"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/artifacts"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "createChildAgentSession",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/agent-sessions/{id}/children",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChildSessionInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "原创建行完整typed返回，保留原绑定与额外字段",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChildAgentSession"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/AgentConcurrencyLimit"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/agent-sessions/{id}/children"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "listAgentSessionChildren",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/agent-sessions/{id}/children",
+        "actorKinds": [
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "childSessionId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8192
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "精确 live 父 E 读取直接子最小事实；子终态可确认",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChildSessionStatusPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_ERROR 或现行 PAGINATION_CURSOR 错误；统一结构化 error"
+          },
+          "401": {
+            "description": "凭据缺失或过期撤权；统一结构化 error"
+          },
+          "403": {
+            "description": "父非本 E 或父实时资格失败；统一结构化 error"
+          },
+          "404": {
+            "description": "精确 child 不存在或不属父或无证明绑定；统一结构化 error"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/agent-sessions/{id}/children"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "postWorkRoomMessage",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/rooms/{id}/messages",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "$ref": "#/components/requestBodies/RoomMessageInput"
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/CorrelationId"
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Json"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/rooms/{id}/messages"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "getAgentSession",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/agent-sessions/{id}",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/AgentSession"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/agent-sessions/{id}"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "getAgentSessionContext",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/agent-sessions/{id}/context",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SessionContext"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/agent-sessions/{id}/context"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "getAgentPlan",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/agent-sessions/{id}/plan",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PlanVersion"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/agent-sessions/{id}/plan"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "publishAgentPlan",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "PUT",
+        "path": "/api/v1/agent-sessions/{id}/plan",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "$ref": "#/components/requestBodies/PublishPlanInput"
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          },
+          {
+            "$ref": "#/components/parameters/CorrelationId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PlanVersion"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "PUT",
+        "path": "/api/v1/agent-sessions/{id}/plan"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "acquireLease",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/leases",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "$ref": "#/components/requestBodies/AcquireLeaseInput"
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/leases"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "renewLease",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/leases/{id}/renew",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/leases/{id}/renew"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "releaseLease",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/leases/{id}/release",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Json"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/leases/{id}/release"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "requestApproval",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/approvals",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "$ref": "#/components/requestBodies/RequestApprovalInput"
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/CorrelationId"
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Approval"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/approvals"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "getApproval",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/approvals/{id}",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Approval"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/approvals/{id}"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "completeAgentSession",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "POST",
+        "path": "/api/v1/agent-sessions/{id}/complete",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": {
+          "$ref": "#/components/requestBodies/CompleteAgentSessionInput"
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          },
+          {
+            "$ref": "#/components/parameters/CorrelationId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/AgentSession"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "POST",
+        "path": "/api/v1/agent-sessions/{id}/complete"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    },
+    {
+      "operationId": "getAgentSessionExecutionResult",
+      "family": "M1/M2现合同依赖",
+      "decision": "消费已落合同，不借其旧绿色",
+      "currentRest": {
+        "method": "GET",
+        "path": "/api/v1/agent-sessions/{id}/execution-result",
+        "actorKinds": [
+          "human",
+          "agent"
+        ],
+        "feature": "none",
+        "input": null,
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "complete",
+                "stop_ack"
+              ]
+            }
+          },
+          {
+            "name": "operationKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exact retained result or explicit unavailable confirmation; no tokens or ordinary terminal writes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentSessionExecutionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid strict query"
+          },
+          "401": {
+            "description": "Invalid installation identity or E credential"
+          },
+          "404": {
+            "description": "Exact target or action provenance is not visible"
+          }
+        }
+      },
+      "proposedRest": {
+        "method": "GET",
+        "path": "/api/v1/agent-sessions/{id}/execution-result"
+      },
+      "proposed": {
+        "sdk": "沿现具名入口",
+        "mcp": [],
+        "runner": [],
+        "gate": "沿原profile/role/state/scope/approval/lease/revision/来源，不扩Human或terminal E；lifecycle逐步真实调用"
+      },
+      "tests": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9"
+      ],
+      "productStatus": "未运行M3组合"
+    }
+  ],
+  "generationSource": "当前完整OpenAPI的现操作＋M3新增getProviderAction；M0/M1/M2原文件不改",
+  "newTransferBoundary": "Pi有界inline UTF-8 bytes最大32768；原API/SDK/MCP允许MIME/50MB保持；无TA任意文件/URL访问",
+  "notApplicable": {
+    "readOnly": "GET无新幂等写/If-Match/command事务/job；不适用理由详acceptance-matrix",
+    "trueExternal": "真实Git账号外发未授权，本轮未测；fake必须全链，不能豁免负例"
+  }
+}

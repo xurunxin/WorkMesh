@@ -1,0 +1,599 @@
+paths:
+  /api/v1/provider-actions/{id}:
+    get:
+      operationId: getProviderAction
+      x-workmesh-policy-id: route.getProviderAction
+      x-workmesh-actor-kinds:
+      - human
+      - agent
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security:
+      - SessionCookie: []
+      - AgentSessionToken: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema: &id001
+          type: string
+          format: uuid
+      description: Proposed：严格空query；准确原requester/principal/Session/资源只读确认。ordinary
+        terminal E拒绝。Gitea仍按WORKMESH_BETA_GITEA动态门禁。
+      responses:
+        '200':
+          description: 白名单原action投影；GET不刷新Token、不写业务事实
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderActionProjection'
+        '401':
+          description: 凭据无效
+        '403':
+          description: 有效身份的状态/能力/部署门禁拒绝；不泄漏隐藏target
+        '404':
+          description: 目标不存在或不可见
+  /api/v1/projects/{id}/delivery:
+    get:
+      operationId: getProjectDelivery
+      x-additive-parameters:
+      - name: pullRequestId
+        in: query
+        schema: *id001
+      description: 默认旧envelope保留；新增参数精确当前head，scope取数前过滤、完整阻断事实。
+components:
+  schemas:
+    ProviderActionProjection:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - id
+        - provider
+        - connectionId
+        - repositoryId
+        - requesterActorId
+        - sessionId
+        - workItemId
+        - projectId
+        - planStepId
+        - expectedHeadSha
+        - approvalId
+        - status
+        - effect
+        - artifactIds
+        - createdAt
+        - updatedAt
+        - completedAt
+        - error
+        - recovery
+        - kind
+        - target
+        - result
+        properties:
+          id: *id001
+          provider: &id005
+            type: string
+            enum:
+            - fake
+            - github
+            - gitea
+          connectionId: *id001
+          repositoryId: *id001
+          requesterActorId: *id001
+          sessionId: &id006
+            anyOf:
+            - *id001
+            - type: 'null'
+          workItemId: &id007
+            anyOf:
+            - *id001
+            - type: 'null'
+          projectId: &id008
+            anyOf:
+            - *id001
+            - type: 'null'
+          planStepId: &id009
+            anyOf:
+            - *id001
+            - type: 'null'
+          expectedHeadSha: &id010
+            anyOf:
+            - &id003
+              type: string
+              minLength: 1
+              maxLength: 200
+            - type: 'null'
+          approvalId: &id011
+            anyOf:
+            - *id001
+            - type: 'null'
+          status: &id012
+            type: string
+            enum:
+            - pending
+            - claimed
+            - completed
+            - failed
+            - dead
+          effect: &id013
+            type: string
+            enum:
+            - committed
+            - checkpointed
+            - unknown
+          artifactIds: &id014
+            type: array
+            maxItems: 100
+            uniqueItems: true
+            items: *id001
+          createdAt: &id002
+            type: string
+            format: date-time
+          updatedAt: *id002
+          completedAt: &id015
+            anyOf:
+            - *id002
+            - type: 'null'
+          error: &id016
+            anyOf:
+            - type: object
+              additionalProperties: false
+              required:
+              - code
+              properties:
+                code:
+                  type: string
+                  enum:
+                  - PROVIDER_ACTION_FAILED
+                  - PROVIDER_ACTION_AUTHORITY_REVOKED
+                  - PROVIDER_HEAD_SHA_MISMATCH
+                  - MERGE_APPROVAL_MISMATCH
+                  - MERGE_APPROVAL_EXPIRED
+                  - MERGE_CHECKS_BLOCKED
+                  - PROVIDER_CAPABILITY_UNSUPPORTED
+                  - PROVIDER_ACTION_CLAIM_LOST
+                  - PROVIDER_ACTION_OUTCOME_UNKNOWN
+                  - RESULT_UNAVAILABLE
+            - type: 'null'
+          recovery: &id017
+            type: object
+            additionalProperties: false
+            required:
+            - kind
+            - scheduled
+            - nextQueryAt
+            properties:
+              kind:
+                type: string
+                enum:
+                - none
+                - poll_same_action
+                - human_reconcile
+              scheduled:
+                type: boolean
+              nextQueryAt:
+                anyOf:
+                - *id002
+                - type: 'null'
+          kind:
+            const: create_branch
+          target:
+            type: object
+            additionalProperties: false
+            required:
+            - branchName
+            - baseSha
+            properties:
+              branchName: &id004
+                type: string
+                minLength: 1
+                maxLength: 500
+              baseSha: *id003
+          result:
+            anyOf:
+            - type: object
+              additionalProperties: false
+              required:
+              - branchName
+              - headSha
+              properties:
+                branchName: *id004
+                headSha: *id003
+            - type: 'null'
+      - type: object
+        additionalProperties: false
+        required:
+        - id
+        - provider
+        - connectionId
+        - repositoryId
+        - requesterActorId
+        - sessionId
+        - workItemId
+        - projectId
+        - planStepId
+        - expectedHeadSha
+        - approvalId
+        - status
+        - effect
+        - artifactIds
+        - createdAt
+        - updatedAt
+        - completedAt
+        - error
+        - recovery
+        - kind
+        - target
+        - result
+        properties:
+          id: *id001
+          provider: *id005
+          connectionId: *id001
+          repositoryId: *id001
+          requesterActorId: *id001
+          sessionId: *id006
+          workItemId: *id007
+          projectId: *id008
+          planStepId: *id009
+          expectedHeadSha: *id010
+          approvalId: *id011
+          status: *id012
+          effect: *id013
+          artifactIds: *id014
+          createdAt: *id002
+          updatedAt: *id002
+          completedAt: *id015
+          error: *id016
+          recovery: *id017
+          kind:
+            const: create_commit
+          target:
+            type: object
+            additionalProperties: false
+            required:
+            - branchName
+            - expectedHeadSha
+            properties:
+              branchName: *id004
+              expectedHeadSha: *id003
+          result:
+            anyOf:
+            - type: object
+              additionalProperties: false
+              required:
+              - providerCommitId
+              - sha
+              - branchName
+              properties:
+                providerCommitId: *id003
+                sha: *id003
+                branchName: *id004
+            - type: 'null'
+      - type: object
+        additionalProperties: false
+        required:
+        - id
+        - provider
+        - connectionId
+        - repositoryId
+        - requesterActorId
+        - sessionId
+        - workItemId
+        - projectId
+        - planStepId
+        - expectedHeadSha
+        - approvalId
+        - status
+        - effect
+        - artifactIds
+        - createdAt
+        - updatedAt
+        - completedAt
+        - error
+        - recovery
+        - kind
+        - target
+        - result
+        properties:
+          id: *id001
+          provider: *id005
+          connectionId: *id001
+          repositoryId: *id001
+          requesterActorId: *id001
+          sessionId: *id006
+          workItemId: *id007
+          projectId: *id008
+          planStepId: *id009
+          expectedHeadSha: *id010
+          approvalId: *id011
+          status: *id012
+          effect: *id013
+          artifactIds: *id014
+          createdAt: *id002
+          updatedAt: *id002
+          completedAt: *id015
+          error: *id016
+          recovery: *id017
+          kind:
+            const: open_pull_request
+          target:
+            type: object
+            additionalProperties: false
+            required:
+            - baseBranch
+            - headBranch
+            properties:
+              baseBranch: *id004
+              headBranch: *id004
+          result:
+            anyOf:
+            - type: object
+              additionalProperties: false
+              required:
+              - providerPullRequestId
+              - number
+              - projectionId
+              - baseSha
+              - headSha
+              - state
+              properties:
+                providerPullRequestId: *id004
+                number:
+                  type: integer
+                  minimum: 1
+                projectionId:
+                  anyOf:
+                  - *id001
+                  - type: 'null'
+                baseSha: *id003
+                headSha: *id003
+                state:
+                  type: string
+                  enum:
+                  - open
+                  - closed
+                  - merged
+            - type: 'null'
+      - type: object
+        additionalProperties: false
+        required:
+        - id
+        - provider
+        - connectionId
+        - repositoryId
+        - requesterActorId
+        - sessionId
+        - workItemId
+        - projectId
+        - planStepId
+        - expectedHeadSha
+        - approvalId
+        - status
+        - effect
+        - artifactIds
+        - createdAt
+        - updatedAt
+        - completedAt
+        - error
+        - recovery
+        - kind
+        - target
+        - result
+        properties:
+          id: *id001
+          provider: *id005
+          connectionId: *id001
+          repositoryId: *id001
+          requesterActorId: *id001
+          sessionId: *id006
+          workItemId: *id007
+          projectId: *id008
+          planStepId: *id009
+          expectedHeadSha: *id010
+          approvalId: *id011
+          status: *id012
+          effect: *id013
+          artifactIds: *id014
+          createdAt: *id002
+          updatedAt: *id002
+          completedAt: *id015
+          error: *id016
+          recovery: *id017
+          kind:
+            const: merge_pull_request
+          target:
+            type: object
+            additionalProperties: false
+            required:
+            - providerPullRequestId
+            - headSha
+            - method
+            properties:
+              providerPullRequestId: *id004
+              headSha: *id003
+              method:
+                type: string
+                enum:
+                - merge
+                - squash
+                - rebase
+          result:
+            anyOf:
+            - type: object
+              additionalProperties: false
+              required:
+              - merged
+              - mergeSha
+              properties:
+                merged:
+                  const: true
+                mergeSha: *id003
+            - type: 'null'
+      - type: object
+        additionalProperties: false
+        required:
+        - id
+        - provider
+        - connectionId
+        - repositoryId
+        - requesterActorId
+        - sessionId
+        - workItemId
+        - projectId
+        - planStepId
+        - expectedHeadSha
+        - approvalId
+        - status
+        - effect
+        - artifactIds
+        - createdAt
+        - updatedAt
+        - completedAt
+        - error
+        - recovery
+        - kind
+        - target
+        - result
+        properties:
+          id: *id001
+          provider: *id005
+          connectionId: *id001
+          repositoryId: *id001
+          requesterActorId: *id001
+          sessionId: *id006
+          workItemId: *id007
+          projectId: *id008
+          planStepId: *id009
+          expectedHeadSha: *id010
+          approvalId: *id011
+          status: *id012
+          effect: *id013
+          artifactIds: *id014
+          createdAt: *id002
+          updatedAt: *id002
+          completedAt: *id015
+          error: *id016
+          recovery: *id017
+          kind:
+            const: retry_ci_check
+          target:
+            type: object
+            additionalProperties: false
+            required:
+            - providerPullRequestId
+            - headSha
+            - checkRunId
+            properties:
+              providerPullRequestId: *id004
+              headSha: *id003
+              checkRunId: *id004
+          result:
+            anyOf:
+            - type: object
+              additionalProperties: false
+              required:
+              - requested
+              - checkRunId
+              properties:
+                requested:
+                  const: true
+                checkRunId: *id004
+            - type: 'null'
+      - type: object
+        additionalProperties: false
+        required:
+        - id
+        - provider
+        - connectionId
+        - repositoryId
+        - requesterActorId
+        - sessionId
+        - workItemId
+        - projectId
+        - planStepId
+        - expectedHeadSha
+        - approvalId
+        - status
+        - effect
+        - artifactIds
+        - createdAt
+        - updatedAt
+        - completedAt
+        - error
+        - recovery
+        - kind
+        - target
+        - result
+        properties:
+          id: *id001
+          provider: *id005
+          connectionId: *id001
+          repositoryId: *id001
+          requesterActorId: *id001
+          sessionId: *id006
+          workItemId: *id007
+          projectId: *id008
+          planStepId: *id009
+          expectedHeadSha: *id010
+          approvalId: *id011
+          status: *id012
+          effect: *id013
+          artifactIds: *id014
+          createdAt: *id002
+          updatedAt: *id002
+          completedAt: *id015
+          error: *id016
+          recovery: *id017
+          kind:
+            const: resolve_repository_context
+          target:
+            type: object
+            additionalProperties: false
+            required:
+            - resourceKind
+            - resourceId
+            properties:
+              resourceKind:
+                type: string
+                enum:
+                - project
+                - work_item
+                - session
+              resourceId: *id001
+          result:
+            anyOf:
+            - type: object
+              additionalProperties: false
+              required:
+              - contextId
+              properties:
+                contextId: *id001
+            - type: 'null'
+      x-invariants:
+      - committed=>status=completed,result!=null
+      - checkpointed=>status!=completed,result!=null
+      - unknown=>result=null
+      - non-context=>sessionId/workItemId!=null
+      - committed openPR=>projectionId!=null
+      - none=>scheduled=false,nextQueryAt=null
+      - poll_same_action=>nextQueryAt!=null
+      - human_reconcile=>scheduled=false,nextQueryAt=null
+      - PROVIDER_ACTION_OUTCOME_UNKNOWN=>dead,unknown,result=null,human_reconcile,scheduled=false,nextQueryAt=null
+    ExplicitReviewRepositoryIds:
+      type: array
+      minItems: 1
+      maxItems: 100
+      uniqueItems: true
+      items: *id001
+    ReviewDelegationInputPatch:
+      type: object
+      properties:
+        repositoryIds:
+          $ref: '#/components/schemas/ExplicitReviewRepositoryIds'
+      description: 仅对现ReviewDelegationInput增量；repositoryIds非required，省略保持M2。原budget/ttl/default/strip行为不改。

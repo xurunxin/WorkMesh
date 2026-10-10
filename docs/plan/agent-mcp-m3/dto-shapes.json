@@ -1,0 +1,1757 @@
+{
+  "response": {
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "provider",
+          "connectionId",
+          "repositoryId",
+          "requesterActorId",
+          "sessionId",
+          "workItemId",
+          "projectId",
+          "planStepId",
+          "expectedHeadSha",
+          "approvalId",
+          "status",
+          "effect",
+          "artifactIds",
+          "createdAt",
+          "updatedAt",
+          "completedAt",
+          "error",
+          "recovery",
+          "kind",
+          "target",
+          "result"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "fake",
+              "github",
+              "gitea"
+            ]
+          },
+          "connectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "repositoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requesterActorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sessionId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workItemId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "planStepId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expectedHeadSha": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approvalId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "claimed",
+              "completed",
+              "failed",
+              "dead"
+            ]
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "committed",
+              "checkpointed",
+              "unknown"
+            ]
+          },
+          "artifactIds": {
+            "type": "array",
+            "maxItems": 100,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "PROVIDER_ACTION_FAILED",
+                      "PROVIDER_ACTION_AUTHORITY_REVOKED",
+                      "PROVIDER_HEAD_SHA_MISMATCH",
+                      "MERGE_APPROVAL_MISMATCH",
+                      "MERGE_APPROVAL_EXPIRED",
+                      "MERGE_CHECKS_BLOCKED",
+                      "PROVIDER_CAPABILITY_UNSUPPORTED",
+                      "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
+                      "RESULT_UNAVAILABLE"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recovery": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "scheduled",
+              "nextQueryAt"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "poll_same_action",
+                  "human_reconcile"
+                ]
+              },
+              "scheduled": {
+                "type": "boolean"
+              },
+              "nextQueryAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "kind": {
+            "const": "create_branch"
+          },
+          "target": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "branchName",
+              "baseSha"
+            ],
+            "properties": {
+              "branchName": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "baseSha": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            }
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "branchName",
+                  "headSha"
+                ],
+                "properties": {
+                  "branchName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "headSha": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "provider",
+          "connectionId",
+          "repositoryId",
+          "requesterActorId",
+          "sessionId",
+          "workItemId",
+          "projectId",
+          "planStepId",
+          "expectedHeadSha",
+          "approvalId",
+          "status",
+          "effect",
+          "artifactIds",
+          "createdAt",
+          "updatedAt",
+          "completedAt",
+          "error",
+          "recovery",
+          "kind",
+          "target",
+          "result"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "fake",
+              "github",
+              "gitea"
+            ]
+          },
+          "connectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "repositoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requesterActorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sessionId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workItemId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "planStepId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expectedHeadSha": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approvalId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "claimed",
+              "completed",
+              "failed",
+              "dead"
+            ]
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "committed",
+              "checkpointed",
+              "unknown"
+            ]
+          },
+          "artifactIds": {
+            "type": "array",
+            "maxItems": 100,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "PROVIDER_ACTION_FAILED",
+                      "PROVIDER_ACTION_AUTHORITY_REVOKED",
+                      "PROVIDER_HEAD_SHA_MISMATCH",
+                      "MERGE_APPROVAL_MISMATCH",
+                      "MERGE_APPROVAL_EXPIRED",
+                      "MERGE_CHECKS_BLOCKED",
+                      "PROVIDER_CAPABILITY_UNSUPPORTED",
+                      "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
+                      "RESULT_UNAVAILABLE"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recovery": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "scheduled",
+              "nextQueryAt"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "poll_same_action",
+                  "human_reconcile"
+                ]
+              },
+              "scheduled": {
+                "type": "boolean"
+              },
+              "nextQueryAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "kind": {
+            "const": "create_commit"
+          },
+          "target": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "branchName",
+              "expectedHeadSha"
+            ],
+            "properties": {
+              "branchName": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "expectedHeadSha": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            }
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "providerCommitId",
+                  "sha",
+                  "branchName"
+                ],
+                "properties": {
+                  "providerCommitId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "sha": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "branchName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "provider",
+          "connectionId",
+          "repositoryId",
+          "requesterActorId",
+          "sessionId",
+          "workItemId",
+          "projectId",
+          "planStepId",
+          "expectedHeadSha",
+          "approvalId",
+          "status",
+          "effect",
+          "artifactIds",
+          "createdAt",
+          "updatedAt",
+          "completedAt",
+          "error",
+          "recovery",
+          "kind",
+          "target",
+          "result"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "fake",
+              "github",
+              "gitea"
+            ]
+          },
+          "connectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "repositoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requesterActorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sessionId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workItemId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "planStepId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expectedHeadSha": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approvalId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "claimed",
+              "completed",
+              "failed",
+              "dead"
+            ]
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "committed",
+              "checkpointed",
+              "unknown"
+            ]
+          },
+          "artifactIds": {
+            "type": "array",
+            "maxItems": 100,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "PROVIDER_ACTION_FAILED",
+                      "PROVIDER_ACTION_AUTHORITY_REVOKED",
+                      "PROVIDER_HEAD_SHA_MISMATCH",
+                      "MERGE_APPROVAL_MISMATCH",
+                      "MERGE_APPROVAL_EXPIRED",
+                      "MERGE_CHECKS_BLOCKED",
+                      "PROVIDER_CAPABILITY_UNSUPPORTED",
+                      "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
+                      "RESULT_UNAVAILABLE"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recovery": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "scheduled",
+              "nextQueryAt"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "poll_same_action",
+                  "human_reconcile"
+                ]
+              },
+              "scheduled": {
+                "type": "boolean"
+              },
+              "nextQueryAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "kind": {
+            "const": "open_pull_request"
+          },
+          "target": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "baseBranch",
+              "headBranch"
+            ],
+            "properties": {
+              "baseBranch": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "headBranch": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            }
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "providerPullRequestId",
+                  "number",
+                  "projectionId",
+                  "baseSha",
+                  "headSha",
+                  "state"
+                ],
+                "properties": {
+                  "providerPullRequestId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "number": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "projectionId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "baseSha": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "headSha": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "open",
+                      "closed",
+                      "merged"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "provider",
+          "connectionId",
+          "repositoryId",
+          "requesterActorId",
+          "sessionId",
+          "workItemId",
+          "projectId",
+          "planStepId",
+          "expectedHeadSha",
+          "approvalId",
+          "status",
+          "effect",
+          "artifactIds",
+          "createdAt",
+          "updatedAt",
+          "completedAt",
+          "error",
+          "recovery",
+          "kind",
+          "target",
+          "result"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "fake",
+              "github",
+              "gitea"
+            ]
+          },
+          "connectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "repositoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requesterActorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sessionId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workItemId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "planStepId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expectedHeadSha": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approvalId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "claimed",
+              "completed",
+              "failed",
+              "dead"
+            ]
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "committed",
+              "checkpointed",
+              "unknown"
+            ]
+          },
+          "artifactIds": {
+            "type": "array",
+            "maxItems": 100,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "PROVIDER_ACTION_FAILED",
+                      "PROVIDER_ACTION_AUTHORITY_REVOKED",
+                      "PROVIDER_HEAD_SHA_MISMATCH",
+                      "MERGE_APPROVAL_MISMATCH",
+                      "MERGE_APPROVAL_EXPIRED",
+                      "MERGE_CHECKS_BLOCKED",
+                      "PROVIDER_CAPABILITY_UNSUPPORTED",
+                      "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
+                      "RESULT_UNAVAILABLE"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recovery": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "scheduled",
+              "nextQueryAt"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "poll_same_action",
+                  "human_reconcile"
+                ]
+              },
+              "scheduled": {
+                "type": "boolean"
+              },
+              "nextQueryAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "kind": {
+            "const": "merge_pull_request"
+          },
+          "target": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "providerPullRequestId",
+              "headSha",
+              "method"
+            ],
+            "properties": {
+              "providerPullRequestId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "headSha": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "merge",
+                  "squash",
+                  "rebase"
+                ]
+              }
+            }
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "merged",
+                  "mergeSha"
+                ],
+                "properties": {
+                  "merged": {
+                    "const": true
+                  },
+                  "mergeSha": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "provider",
+          "connectionId",
+          "repositoryId",
+          "requesterActorId",
+          "sessionId",
+          "workItemId",
+          "projectId",
+          "planStepId",
+          "expectedHeadSha",
+          "approvalId",
+          "status",
+          "effect",
+          "artifactIds",
+          "createdAt",
+          "updatedAt",
+          "completedAt",
+          "error",
+          "recovery",
+          "kind",
+          "target",
+          "result"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "fake",
+              "github",
+              "gitea"
+            ]
+          },
+          "connectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "repositoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requesterActorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sessionId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workItemId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "planStepId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expectedHeadSha": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approvalId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "claimed",
+              "completed",
+              "failed",
+              "dead"
+            ]
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "committed",
+              "checkpointed",
+              "unknown"
+            ]
+          },
+          "artifactIds": {
+            "type": "array",
+            "maxItems": 100,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "PROVIDER_ACTION_FAILED",
+                      "PROVIDER_ACTION_AUTHORITY_REVOKED",
+                      "PROVIDER_HEAD_SHA_MISMATCH",
+                      "MERGE_APPROVAL_MISMATCH",
+                      "MERGE_APPROVAL_EXPIRED",
+                      "MERGE_CHECKS_BLOCKED",
+                      "PROVIDER_CAPABILITY_UNSUPPORTED",
+                      "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
+                      "RESULT_UNAVAILABLE"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recovery": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "scheduled",
+              "nextQueryAt"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "poll_same_action",
+                  "human_reconcile"
+                ]
+              },
+              "scheduled": {
+                "type": "boolean"
+              },
+              "nextQueryAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "kind": {
+            "const": "retry_ci_check"
+          },
+          "target": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "providerPullRequestId",
+              "headSha",
+              "checkRunId"
+            ],
+            "properties": {
+              "providerPullRequestId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "headSha": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "checkRunId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            }
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "requested",
+                  "checkRunId"
+                ],
+                "properties": {
+                  "requested": {
+                    "const": true
+                  },
+                  "checkRunId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "provider",
+          "connectionId",
+          "repositoryId",
+          "requesterActorId",
+          "sessionId",
+          "workItemId",
+          "projectId",
+          "planStepId",
+          "expectedHeadSha",
+          "approvalId",
+          "status",
+          "effect",
+          "artifactIds",
+          "createdAt",
+          "updatedAt",
+          "completedAt",
+          "error",
+          "recovery",
+          "kind",
+          "target",
+          "result"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "fake",
+              "github",
+              "gitea"
+            ]
+          },
+          "connectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "repositoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requesterActorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sessionId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workItemId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "planStepId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expectedHeadSha": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approvalId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "claimed",
+              "completed",
+              "failed",
+              "dead"
+            ]
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "committed",
+              "checkpointed",
+              "unknown"
+            ]
+          },
+          "artifactIds": {
+            "type": "array",
+            "maxItems": 100,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "PROVIDER_ACTION_FAILED",
+                      "PROVIDER_ACTION_AUTHORITY_REVOKED",
+                      "PROVIDER_HEAD_SHA_MISMATCH",
+                      "MERGE_APPROVAL_MISMATCH",
+                      "MERGE_APPROVAL_EXPIRED",
+                      "MERGE_CHECKS_BLOCKED",
+                      "PROVIDER_CAPABILITY_UNSUPPORTED",
+                      "PROVIDER_ACTION_CLAIM_LOST",
+                      "PROVIDER_ACTION_OUTCOME_UNKNOWN",
+                      "RESULT_UNAVAILABLE"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recovery": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "scheduled",
+              "nextQueryAt"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "poll_same_action",
+                  "human_reconcile"
+                ]
+              },
+              "scheduled": {
+                "type": "boolean"
+              },
+              "nextQueryAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "kind": {
+            "const": "resolve_repository_context"
+          },
+          "target": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "resourceKind",
+              "resourceId"
+            ],
+            "properties": {
+              "resourceKind": {
+                "type": "string",
+                "enum": [
+                  "project",
+                  "work_item",
+                  "session"
+                ]
+              },
+              "resourceId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "contextId"
+                ],
+                "properties": {
+                  "contextId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "x-invariants": [
+      "committed=>status=completed,result!=null",
+      "checkpointed=>status!=completed,result!=null",
+      "unknown=>result=null",
+      "non-context=>sessionId/workItemId!=null",
+      "committed openPR=>projectionId!=null",
+      "none=>scheduled=false,nextQueryAt=null",
+      "poll_same_action=>nextQueryAt!=null",
+      "human_reconcile=>scheduled=false,nextQueryAt=null",
+      "PROVIDER_ACTION_OUTCOME_UNKNOWN=>dead,unknown,result=null,human_reconcile,scheduled=false,nextQueryAt=null"
+    ]
+  },
+  "repositoryIds": {
+    "type": "array",
+    "minItems": 1,
+    "maxItems": 100,
+    "uniqueItems": true,
+    "items": {
+      "type": "string",
+      "format": "uuid"
+    }
+  }
+}

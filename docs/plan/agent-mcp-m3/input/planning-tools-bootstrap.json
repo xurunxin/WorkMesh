@@ -1,0 +1,34 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "C:\\nvm4w\\nodejs\\npm.cmd",
+        "install",
+        "--package-lock-only",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b\\docs\\plan\\agent-mcp-m3\\.runtime",
+      "exitCode": 0,
+      "stdout": "\nup to date in 5s\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\nvm4w\\nodejs\\npm.cmd",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b\\docs\\plan\\agent-mcp-m3\\.runtime",
+      "exitCode": 0,
+      "stdout": "\nadded 3 packages in 2s\n",
+      "stderr": ""
+    }
+  ],
+  "runtime": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b\\docs\\plan\\agent-mcp-m3\\.runtime",
+  "scope": "仅本任务规划，未安装全仓产品依赖",
+  "cleanup": "核验结束后按路径归属清理；日志/锁文件保全"
+}

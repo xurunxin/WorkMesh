@@ -1,0 +1,207 @@
+{
+  "owner": "m3-04afb9d956db",
+  "resources": [
+    {
+      "kind": "postgres",
+      "name": "m3-04afb9d956db-postgres",
+      "image": "postgres:16-alpine",
+      "status": "removed",
+      "id": "91b3f427dc5baa3fd3a318497e296b610f19176433aa455e32c8c2bbf5393d6c",
+      "hostPort": 54661,
+      "cleanupExit": 0
+    },
+    {
+      "kind": "redis",
+      "name": "m3-04afb9d956db-redis",
+      "image": "redis:7-alpine",
+      "status": "removed",
+      "id": "01c2ffc1169fdc34b463aae2b6b80c1241a1b72b020efe8180f1cd0d25c9ec66",
+      "hostPort": 54663,
+      "cleanupExit": 0
+    },
+    {
+      "kind": "s3",
+      "name": "m3-04afb9d956db-s3",
+      "image": "rustfs/rustfs:1.0.0",
+      "status": "removed",
+      "id": "ea8fe1fb0d3d74dd3388947ce9615a0958a1e700ca8b9326a34186e7e2cdba68",
+      "hostPort": 54665,
+      "cleanupExit": 0
+    }
+  ],
+  "operations": [
+    {
+      "argv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "m3-04afb9d956db-postgres",
+        "--label",
+        "workmesh.m3.owner=m3-04afb9d956db",
+        "-p",
+        "127.0.0.1::5432",
+        "--tmpfs",
+        "/var/lib/postgresql/data:rw",
+        "-e",
+        "POSTGRES_USER",
+        "-e",
+        "POSTGRES_PASSWORD",
+        "-e",
+        "POSTGRES_DB",
+        "postgres:16-alpine"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633913.9761794,
+      "endedUnix": 1791633914.1860049
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "91b3f427dc5baa3fd3a318497e296b610f19176433aa455e32c8c2bbf5393d6c"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633914.1874588,
+      "endedUnix": 1791633914.2658908
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "m3-04afb9d956db-redis",
+        "--label",
+        "workmesh.m3.owner=m3-04afb9d956db",
+        "-p",
+        "127.0.0.1::6379",
+        "--tmpfs",
+        "/data:rw",
+        "redis:7-alpine"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633914.2680252,
+      "endedUnix": 1791633914.4918487
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "01c2ffc1169fdc34b463aae2b6b80c1241a1b72b020efe8180f1cd0d25c9ec66"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633914.4931538,
+      "endedUnix": 1791633914.5742788
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "m3-04afb9d956db-s3",
+        "--label",
+        "workmesh.m3.owner=m3-04afb9d956db",
+        "-p",
+        "127.0.0.1::9000",
+        "--tmpfs",
+        "/data:rw,mode=0777",
+        "-e",
+        "RUSTFS_ACCESS_KEY",
+        "-e",
+        "RUSTFS_SECRET_KEY",
+        "rustfs/rustfs:1.0.0"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633914.5762968,
+      "endedUnix": 1791633914.7824204
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "ea8fe1fb0d3d74dd3388947ce9615a0958a1e700ca8b9326a34186e7e2cdba68"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633914.7839935,
+      "endedUnix": 1791633914.8754172
+    },
+    {
+      "argv": [
+        "node",
+        "-e",
+        "const {createRequire}=require('node:module');const r=createRequire(process.cwd()+'/packages/artifact-storage/package.json');const {S3Client,CreateBucketCommand,HeadBucketCommand}=r('@aws-sdk/client-s3');const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}});(async()=>{for(let i=0;i<60;i++){try{await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET,ObjectLockEnabledForBucket:true}));await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET}));c.destroy();return}catch(e){if(i===59)throw e;await new Promise(r=>setTimeout(r,1000))}}})().catch(e=>{console.error(e.name);process.exit(1)})"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633914.9902487,
+      "endedUnix": 1791633915.251593
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "ea8fe1fb0d3d74dd3388947ce9615a0958a1e700ca8b9326a34186e7e2cdba68"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633931.6400714,
+      "endedUnix": 1791633931.7214363
+    },
+    {
+      "argv": [
+        "docker",
+        "rm",
+        "-f",
+        "ea8fe1fb0d3d74dd3388947ce9615a0958a1e700ca8b9326a34186e7e2cdba68"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633931.824711,
+      "endedUnix": 1791633932.0425947
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "01c2ffc1169fdc34b463aae2b6b80c1241a1b72b020efe8180f1cd0d25c9ec66"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633932.044841,
+      "endedUnix": 1791633932.1361105
+    },
+    {
+      "argv": [
+        "docker",
+        "rm",
+        "-f",
+        "01c2ffc1169fdc34b463aae2b6b80c1241a1b72b020efe8180f1cd0d25c9ec66"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633932.2280471,
+      "endedUnix": 1791633932.434322
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "91b3f427dc5baa3fd3a318497e296b610f19176433aa455e32c8c2bbf5393d6c"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633932.4365766,
+      "endedUnix": 1791633932.525202
+    },
+    {
+      "argv": [
+        "docker",
+        "rm",
+        "-f",
+        "91b3f427dc5baa3fd3a318497e296b610f19176433aa455e32c8c2bbf5393d6c"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791633932.6247222,
+      "endedUnix": 1791633932.8630676
+    }
+  ],
+  "sharedImagesPreserved": true,
+  "volumesCreated": false,
+  "networkCreated": false
+}

@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { childBudgetInputSchema } from './child-session-contracts.js'
 import { leaseResponseSchema } from './execution-contracts.js'
 export * from './child-session-contracts.js'
+export * from './delivery-contracts.js'
 import { qualifiedDiscoverySchema, deriveOperationEligibility, type DiscoveryFacts } from './agent-discovery.js'
 import {
   agentLifecycleStatusSchema,
@@ -1927,6 +1928,7 @@ export const stage3RouteManifest = [
   { method: 'GET', path: '/api/v1/repositories/{id}/context', authenticated: true },
   { method: 'POST', path: '/api/v1/repositories/{id}/context', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/provider-actions', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/provider-actions/{id}', authenticated: true },
   { method: 'POST', path: '/api/v1/delivery-artifacts', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/artifact-upload-intents', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/artifact-upload-intents/{id}', authenticated: true },
@@ -2103,6 +2105,8 @@ export const projectHealthInputSchema = z.object({
   if (value.source === 'agent' && value.publish && !value.approvalId)
     context.addIssue({ code: z.ZodIssueCode.custom, message: 'Publishing an agent health update requires exact approval' })
 })
+
+export type ProjectHealthInput = z.input<typeof projectHealthInputSchema>
 
 const boundedCronField = (raw: string, minimum: number, maximum: number): boolean =>
   raw.split(',').every(part => {

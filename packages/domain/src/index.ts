@@ -1,6 +1,7 @@
 import type { AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput, StatusCategory } from '@workmesh/contracts'
 
 export * from './authorization.js'
+export * from './delivery-scope.js'
 export * from './approval.js'
 export * from './session-budget.js'
 

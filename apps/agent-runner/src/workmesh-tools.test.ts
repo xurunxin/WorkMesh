@@ -27,6 +27,17 @@ function manifest(capabilities: Capability[]): AgentCapabilityManifest {
 }
 
 describe('Pi WorkMesh tools', () => {
+  it('M3未配置Artifact store明确拒绝，零上传意图或下载资料请求',async()=>{
+    const calls:string[]=[]
+    const api:RunnerToolApi={sessionId,async request<T>(_method:Parameters<RunnerToolApi['request']>[0],path:string):Promise<T>{
+      if(path==='/api/v1/agent-capabilities?discovery=qualified')return manifest(['work:read','artifact:write']) as T
+      calls.push(path);return {} as T
+    }}
+    const tools=await createWorkMeshTools(api,'M3 no store',()=>undefined)
+    await expect(tools.find(t=>t.name==='workmesh_request_artifact_upload')!.execute('upload',{repositoryId:documentId,workItemId:ownerId,sourceTool:'M3 unit',filename:'evidence.txt',mimeType:'text/plain',contentBase64:Buffer.from('safe').toString('base64')},undefined,undefined,{} as never)).rejects.toThrow('ARTIFACT_STORE_NOT_CONFIGURED')
+    await expect(tools.find(t=>t.name==='workmesh_download_verified_artifact')!.execute('download',{uploadId:documentId},undefined,undefined,{} as never)).rejects.toThrow('ARTIFACT_STORE_NOT_CONFIGURED')
+    expect(calls.filter(path=>!path.endsWith('/activities'))).toEqual([])
+  })
   it('M2计划评论/提案/context delta固定自身身份，验证来源并复用同调用幂等包装',async()=>{
     const calls:Array<{path:string;body:unknown;key?:string}>=[]
     const api:RunnerToolApi={sessionId,async request<T>(_method:Parameters<RunnerToolApi['request']>[0],path:string,body?:unknown,_revision?:number,key?:string):Promise<T>{

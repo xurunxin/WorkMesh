@@ -1,0 +1,9 @@
+{
+  "stage": "读取已有ci-policy回执与ZIP完整性辅助探针",
+  "exitCode": 1,
+  "toolReturnChunkId": "8b7e2c",
+  "toolCallId": null,
+  "error": "UnicodeEncodeError: 'gbk' codec can't encode character '\\u2714' in position 21: illegal multibyte sequence",
+  "actualProgress": "仅在stdout打印已存TAP字符串时失败，未进入ZIP检查，没有改写文件。该辅助探针不计通过；ZIP完整性纳入后续static-check实际核验。",
+  "limitation": "保存会话可见错误、exit、chunk与运行边界，未取得该工具封包原字节；原TAP完整bytes已在checks/ci-policy-1.zip，不依赖本探针。"
+}

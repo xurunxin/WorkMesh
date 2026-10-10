@@ -1998,13 +1998,48 @@ paths:
     post:
       { x-workmesh-policy-id: route.receiveGitHubWebhook, x-workmesh-actor-kinds: [service], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ GitHubWebhookSignature: [] }], operationId: receiveGitHubWebhook, parameters: [{ name: connectionId, in: path, required: true, schema: { type: string, format: uuid } }, { name: X-GitHub-Delivery, in: header, required: true, schema: { type: string, maxLength: 200 } }, { name: X-GitHub-Event, in: header, required: true, schema: { type: string, maxLength: 100 } }, { name: X-Hub-Signature-256, in: header, required: true, schema: { type: string, pattern: "^sha256=[a-f0-9]{64}$" } }], requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: true } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "202": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ProviderSignatureInvalid" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/repositories:
-    get: { x-workmesh-policy-id: route.listRepositories, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listRepositories, parameters: [{ name: teamId, in: query, description: Human-only Team filter applied before pagination., schema: { type: string, format: uuid } }, { name: availableOnly, in: query, description: Human-only filter; true excludes inactive repositories and disabled providers before pagination. Bound to the cursor with the enabled provider set., schema: { type: string, enum: ["true", "false"] } }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/RepositoryConfigurations" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.listRepositories, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listRepositories, parameters: [{ name: teamId, in: query, description: Human-only Team filter applied before pagination., schema: { type: string, format: uuid } }, { name: availableOnly, in: query, description: Human-only filter; true excludes inactive repositories and disabled providers before pagination. Bound to the cursor with the enabled provider set., schema: { type: string, enum: ["true", "false"] } }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { description: Authorized delivery response, content: { application/json: { schema: { type: object, properties: { items: { type: array, items: { $ref: "#/components/schemas/RepositoryResponse" } }, nextCursor: { type: string, nullable: true } }, required: [ items, nextCursor ], additionalProperties: true } } } }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
     post:
       { x-workmesh-policy-id: route.connectRepository, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: connectRepository, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/repositories/{id}/context:
     get: { x-workmesh-policy-id: route.getRepositoryContext, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getRepositoryContext, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { description: 已落库上下文及原件, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/RepositoryContextConfiguration" } } } } }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "404": { $ref: "#/components/responses/NotFound" } } }
     post:
       { x-workmesh-policy-id: route.pinRepositoryContext, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: pinRepositoryContext, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryContextInput" } } } }, responses: { "200": { description: 已持久化的异步解析动作, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryContextAction" } } } }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
+  /api/v1/provider-actions/{id}:
+    get:
+      x-workmesh-policy-id: route.getProviderAction
+      x-workmesh-actor-kinds: [human, agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }, { AgentSessionToken: [] }]
+      operationId: getProviderAction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      description: 精确原 action 的安全只读投影。重验原 requester/principal、准确 Session、当前资源、仓库与
+        provider feature；普通终态 E 拒绝。未知外部效果仅人工对账，不领取、续期或重发 action。
+      responses:
+        "200":
+          description: 白名单原action投影；GET不刷新Token、不写业务事实
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProviderActionProjection"
+        "401":
+          description: 凭据无效
+        "403":
+          description: 有效身份的状态/能力/部署门禁拒绝；不泄漏隐藏target
+        "404":
+          description: 目标不存在或不可见
   /api/v1/provider-actions:
     post:
       { x-workmesh-policy-id: route.requestProviderAction, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: requestProviderAction, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderActionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
@@ -2013,7 +2048,7 @@ paths:
       { x-workmesh-policy-id: route.publishDeliveryArtifact, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: publishDeliveryArtifact, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/DeliveryArtifactInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
   /api/v1/artifact-upload-intents:
     post:
-      { x-workmesh-policy-id: route.requestArtifactUpload, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: requestArtifactUpload, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { oneOf: [{ $ref: "#/components/schemas/ArtifactUploadIntentInput" }, { $ref: "#/components/schemas/HumanArtifactUploadIntentInput" }] } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+      { x-workmesh-policy-id: route.requestArtifactUpload, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: requestArtifactUpload, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { oneOf: [{ $ref: "#/components/schemas/ArtifactUploadIntentInput" }, { $ref: "#/components/schemas/HumanArtifactUploadIntentInput" }] } } } }, responses: { "200": { description: Authorized delivery response, content: { application/json: { schema: { $ref: "#/components/schemas/ArtifactUploadResponse" } } } } } }
   /api/v1/artifact-upload-intents/{id}:
     get:
       { x-workmesh-policy-id: route.getArtifactUploadStatus, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getArtifactUploadStatus, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { description: Upload status, content: { application/json: { schema: { $ref: "#/components/schemas/ArtifactUploadIntentStatus" } } } }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
@@ -2022,13 +2057,13 @@ paths:
       { x-workmesh-policy-id: route.finalizeArtifactUpload, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: finalizeArtifactUpload, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" }, "400": { $ref: "#/components/responses/BadRequest" } } }
   /api/v1/artifact-upload-intents/{id}/cancel:
     post:
-      { x-workmesh-policy-id: route.cancelArtifactUpload, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: cancelArtifactUpload, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+      { x-workmesh-policy-id: route.cancelArtifactUpload, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: cancelArtifactUpload, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { description: Authorized delivery response, content: { application/json: { schema: { $ref: "#/components/schemas/ArtifactUploadCancelResponse" } } } }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/work-items/{id}/artifacts:
     get:
-      { x-workmesh-policy-id: route.listWorkItemArtifacts, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listWorkItemArtifacts, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
+      { x-workmesh-policy-id: route.listWorkItemArtifacts, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listWorkItemArtifacts, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { description: Authorized delivery response, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/DeliveryArtifactResponse" } } } } }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/artifact-upload-intents/{id}/download:
     get:
-      { x-workmesh-policy-id: route.downloadVerifiedArtifact, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: downloadVerifiedArtifact, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+      { x-workmesh-policy-id: route.downloadVerifiedArtifact, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: downloadVerifiedArtifact, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { description: Authorized delivery response, content: { application/json: { schema: { $ref: "#/components/schemas/ArtifactDownloadResponse" } } } } } }
   /api/v1/pull-requests/{id}/reviews:
     post:
       { x-workmesh-policy-id: route.publishStructuredReview, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: publishStructuredReview, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/StructuredReviewInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
@@ -2039,7 +2074,7 @@ paths:
     post:
       { x-workmesh-policy-id: route.retryPullRequestCheck, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: retryPullRequestCheck, parameters: [{ $ref: "#/components/parameters/Id" }, { name: checkId, in: path, required: true, schema: { type: string, maxLength: 500 } }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CiRetryInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/projects/{id}/delivery:
-    get: { x-workmesh-policy-id: route.getProjectDelivery, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getProjectDelivery, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.getProjectDelivery, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getProjectDelivery, parameters: [{ name: pullRequestId, in: query, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/Id" }], responses: { "200": { description: Authorized delivery response, content: { application/json: { schema: { $ref: "#/components/schemas/ProjectDeliveryResponse" } } } }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/projects/{id}/milestones:
     get: { x-workmesh-policy-id: route.listProjectMilestones, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listProjectMilestones, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/Milestones" } } }
     post: { x-workmesh-policy-id: route.createProjectMilestone, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: createProjectMilestone, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/MilestoneInput" } } } }, responses: { "200": { $ref: "#/components/responses/Milestone" } } }
@@ -5455,6 +5490,7 @@ components:
       - planVersionId
       - initialPrompt
       properties:
+        repositoryIds: { type: array, minItems: 1, maxItems: 100, uniqueItems: true, items: { type: string, format: uuid }, description: "显式限定 reviewer 仓库读授权；三方 repo:read 与父范围交集，省略保持既有能力" }
         reviewerAgentId:
           type: string
           format: uuid
@@ -7957,3 +7993,858 @@ components:
           type: array
           items:
             type: string
+
+    ProviderActionProjection:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required:
+            - id
+            - provider
+            - connectionId
+            - repositoryId
+            - requesterActorId
+            - sessionId
+            - workItemId
+            - projectId
+            - planStepId
+            - expectedHeadSha
+            - approvalId
+            - status
+            - effect
+            - artifactIds
+            - createdAt
+            - updatedAt
+            - completedAt
+            - error
+            - recovery
+            - kind
+            - target
+            - result
+          properties:
+            id: &a1
+              type: string
+              format: uuid
+            provider: &a5
+              type: string
+              enum:
+                - fake
+                - github
+                - gitea
+            connectionId: *a1
+            repositoryId: *a1
+            requesterActorId: *a1
+            sessionId: &a6
+              anyOf:
+                - *a1
+                - type: "null"
+            workItemId: &a7
+              anyOf:
+                - *a1
+                - type: "null"
+            projectId: &a8
+              anyOf:
+                - *a1
+                - type: "null"
+            planStepId: &a9
+              anyOf:
+                - *a1
+                - type: "null"
+            expectedHeadSha: &a10
+              anyOf:
+                - &a3
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                - type: "null"
+            approvalId: &a11
+              anyOf:
+                - *a1
+                - type: "null"
+            status: &a12
+              type: string
+              enum:
+                - pending
+                - claimed
+                - completed
+                - failed
+                - dead
+            effect: &a13
+              type: string
+              enum:
+                - committed
+                - checkpointed
+                - unknown
+            artifactIds: &a14
+              type: array
+              maxItems: 100
+              uniqueItems: true
+              items: *a1
+            createdAt: &a2
+              type: string
+              format: date-time
+            updatedAt: *a2
+            completedAt: &a15
+              anyOf:
+                - *a2
+                - type: "null"
+            error: &a16
+              anyOf:
+                - type: object
+                  additionalProperties: false
+                  required:
+                    - code
+                  properties:
+                    code:
+                      type: string
+                      enum:
+                        - PROVIDER_ACTION_FAILED
+                        - PROVIDER_ACTION_AUTHORITY_REVOKED
+                        - PROVIDER_HEAD_SHA_MISMATCH
+                        - MERGE_APPROVAL_MISMATCH
+                        - MERGE_APPROVAL_EXPIRED
+                        - MERGE_CHECKS_BLOCKED
+                        - PROVIDER_CAPABILITY_UNSUPPORTED
+                        - PROVIDER_ACTION_CLAIM_LOST
+                        - PROVIDER_ACTION_OUTCOME_UNKNOWN
+                        - PROVIDER_ACTION_RETRY_EXHAUSTED
+                        - RESULT_UNAVAILABLE
+                - type: "null"
+            recovery: &a17
+              type: object
+              additionalProperties: false
+              required:
+                - kind
+                - scheduled
+                - nextQueryAt
+              properties:
+                kind:
+                  type: string
+                  enum:
+                    - none
+                    - poll_same_action
+                    - human_reconcile
+                scheduled:
+                  type: boolean
+                nextQueryAt:
+                  anyOf:
+                    - *a2
+                    - type: "null"
+            kind:
+              const: create_branch
+            target:
+              type: object
+              additionalProperties: false
+              required:
+                - branchName
+                - baseSha
+              properties:
+                branchName: &a4
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                baseSha: *a3
+            result:
+              anyOf:
+                - type: object
+                  additionalProperties: false
+                  required:
+                    - branchName
+                    - headSha
+                  properties:
+                    branchName: *a4
+                    headSha: *a3
+                - type: "null"
+        - type: object
+          additionalProperties: false
+          required:
+            - id
+            - provider
+            - connectionId
+            - repositoryId
+            - requesterActorId
+            - sessionId
+            - workItemId
+            - projectId
+            - planStepId
+            - expectedHeadSha
+            - approvalId
+            - status
+            - effect
+            - artifactIds
+            - createdAt
+            - updatedAt
+            - completedAt
+            - error
+            - recovery
+            - kind
+            - target
+            - result
+          properties:
+            id: *a1
+            provider: *a5
+            connectionId: *a1
+            repositoryId: *a1
+            requesterActorId: *a1
+            sessionId: *a6
+            workItemId: *a7
+            projectId: *a8
+            planStepId: *a9
+            expectedHeadSha: *a10
+            approvalId: *a11
+            status: *a12
+            effect: *a13
+            artifactIds: *a14
+            createdAt: *a2
+            updatedAt: *a2
+            completedAt: *a15
+            error: *a16
+            recovery: *a17
+            kind:
+              const: create_commit
+            target:
+              type: object
+              additionalProperties: false
+              required:
+                - branchName
+                - expectedHeadSha
+              properties:
+                branchName: *a4
+                expectedHeadSha: *a3
+            result:
+              anyOf:
+                - type: object
+                  additionalProperties: false
+                  required:
+                    - providerCommitId
+                    - sha
+                    - branchName
+                  properties:
+                    providerCommitId: *a3
+                    sha: *a3
+                    branchName: *a4
+                - type: "null"
+        - type: object
+          additionalProperties: false
+          required:
+            - id
+            - provider
+            - connectionId
+            - repositoryId
+            - requesterActorId
+            - sessionId
+            - workItemId
+            - projectId
+            - planStepId
+            - expectedHeadSha
+            - approvalId
+            - status
+            - effect
+            - artifactIds
+            - createdAt
+            - updatedAt
+            - completedAt
+            - error
+            - recovery
+            - kind
+            - target
+            - result
+          properties:
+            id: *a1
+            provider: *a5
+            connectionId: *a1
+            repositoryId: *a1
+            requesterActorId: *a1
+            sessionId: *a6
+            workItemId: *a7
+            projectId: *a8
+            planStepId: *a9
+            expectedHeadSha: *a10
+            approvalId: *a11
+            status: *a12
+            effect: *a13
+            artifactIds: *a14
+            createdAt: *a2
+            updatedAt: *a2
+            completedAt: *a15
+            error: *a16
+            recovery: *a17
+            kind:
+              const: open_pull_request
+            target:
+              type: object
+              additionalProperties: false
+              required:
+                - baseBranch
+                - headBranch
+              properties:
+                baseBranch: *a4
+                headBranch: *a4
+            result:
+              anyOf:
+                - type: object
+                  additionalProperties: false
+                  required:
+                    - providerPullRequestId
+                    - number
+                    - projectionId
+                    - baseSha
+                    - headSha
+                    - state
+                  properties:
+                    providerPullRequestId: *a4
+                    number:
+                      type: integer
+                      minimum: 1
+                    projectionId:
+                      anyOf:
+                        - *a1
+                        - type: "null"
+                    baseSha: *a3
+                    headSha: *a3
+                    state:
+                      type: string
+                      enum:
+                        - open
+                        - closed
+                        - merged
+                - type: "null"
+        - type: object
+          additionalProperties: false
+          required:
+            - id
+            - provider
+            - connectionId
+            - repositoryId
+            - requesterActorId
+            - sessionId
+            - workItemId
+            - projectId
+            - planStepId
+            - expectedHeadSha
+            - approvalId
+            - status
+            - effect
+            - artifactIds
+            - createdAt
+            - updatedAt
+            - completedAt
+            - error
+            - recovery
+            - kind
+            - target
+            - result
+          properties:
+            id: *a1
+            provider: *a5
+            connectionId: *a1
+            repositoryId: *a1
+            requesterActorId: *a1
+            sessionId: *a6
+            workItemId: *a7
+            projectId: *a8
+            planStepId: *a9
+            expectedHeadSha: *a10
+            approvalId: *a11
+            status: *a12
+            effect: *a13
+            artifactIds: *a14
+            createdAt: *a2
+            updatedAt: *a2
+            completedAt: *a15
+            error: *a16
+            recovery: *a17
+            kind:
+              const: merge_pull_request
+            target:
+              type: object
+              additionalProperties: false
+              required:
+                - providerPullRequestId
+                - headSha
+                - method
+              properties:
+                providerPullRequestId: *a4
+                headSha: *a3
+                method:
+                  type: string
+                  enum:
+                    - merge
+                    - squash
+                    - rebase
+            result:
+              anyOf:
+                - type: object
+                  additionalProperties: false
+                  required:
+                    - merged
+                    - mergeSha
+                  properties:
+                    merged:
+                      const: true
+                    mergeSha: *a3
+                - type: "null"
+        - type: object
+          additionalProperties: false
+          required:
+            - id
+            - provider
+            - connectionId
+            - repositoryId
+            - requesterActorId
+            - sessionId
+            - workItemId
+            - projectId
+            - planStepId
+            - expectedHeadSha
+            - approvalId
+            - status
+            - effect
+            - artifactIds
+            - createdAt
+            - updatedAt
+            - completedAt
+            - error
+            - recovery
+            - kind
+            - target
+            - result
+          properties:
+            id: *a1
+            provider: *a5
+            connectionId: *a1
+            repositoryId: *a1
+            requesterActorId: *a1
+            sessionId: *a6
+            workItemId: *a7
+            projectId: *a8
+            planStepId: *a9
+            expectedHeadSha: *a10
+            approvalId: *a11
+            status: *a12
+            effect: *a13
+            artifactIds: *a14
+            createdAt: *a2
+            updatedAt: *a2
+            completedAt: *a15
+            error: *a16
+            recovery: *a17
+            kind:
+              const: retry_ci_check
+            target:
+              type: object
+              additionalProperties: false
+              required:
+                - providerPullRequestId
+                - headSha
+                - checkRunId
+              properties:
+                providerPullRequestId: *a4
+                headSha: *a3
+                checkRunId: *a4
+            result:
+              anyOf:
+                - type: object
+                  additionalProperties: false
+                  required:
+                    - requested
+                    - checkRunId
+                  properties:
+                    requested:
+                      const: true
+                    checkRunId: *a4
+                - type: "null"
+        - type: object
+          additionalProperties: false
+          required:
+            - id
+            - provider
+            - connectionId
+            - repositoryId
+            - requesterActorId
+            - sessionId
+            - workItemId
+            - projectId
+            - planStepId
+            - expectedHeadSha
+            - approvalId
+            - status
+            - effect
+            - artifactIds
+            - createdAt
+            - updatedAt
+            - completedAt
+            - error
+            - recovery
+            - kind
+            - target
+            - result
+          properties:
+            id: *a1
+            provider: *a5
+            connectionId: *a1
+            repositoryId: *a1
+            requesterActorId: *a1
+            sessionId: *a6
+            workItemId: *a7
+            projectId: *a8
+            planStepId: *a9
+            expectedHeadSha: *a10
+            approvalId: *a11
+            status: *a12
+            effect: *a13
+            artifactIds: *a14
+            createdAt: *a2
+            updatedAt: *a2
+            completedAt: *a15
+            error: *a16
+            recovery: *a17
+            kind:
+              const: resolve_repository_context
+            target:
+              type: object
+              additionalProperties: false
+              required:
+                - resourceKind
+                - resourceId
+              properties:
+                resourceKind:
+                  type: string
+                  enum:
+                    - project
+                    - work_item
+                    - session
+                resourceId: *a1
+            result:
+              anyOf:
+                - type: object
+                  additionalProperties: false
+                  required:
+                    - contextId
+                  properties:
+                    contextId: *a1
+                - type: "null"
+      x-invariants:
+        - committed=>status=completed,result!=null
+        - checkpointed=>status!=completed,result!=null
+        - unknown=>result=null
+        - non-context=>sessionId/workItemId!=null
+        - committed openPR=>projectionId!=null
+        - none=>scheduled=false,nextQueryAt=null
+        - poll_same_action=>nextQueryAt!=null
+        - human_reconcile=>scheduled=false,nextQueryAt=null
+        - PROVIDER_ACTION_OUTCOME_UNKNOWN=>dead,unknown,result=null,human_reconcile,scheduled=false,nextQueryAt=null
+
+    RepositoryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        default_branch:
+          type: string
+          minLength: 1
+          maxLength: 500
+      required:
+        - id
+        - full_name
+        - default_branch
+      additionalProperties: true
+    RepositoryContextResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        repository_id:
+          type: string
+          format: uuid
+        base_branch:
+          type: string
+          minLength: 1
+          maxLength: 500
+        base_sha:
+          type: string
+          minLength: 1
+          maxLength: 200
+        allowed_paths:
+          type: array
+          items:
+            type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        guidance:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+              blobSha:
+                type: string
+                minLength: 1
+                maxLength: 200
+              contentHash:
+                type: string
+              content:
+                type: string
+            required:
+              - path
+              - blobSha
+              - contentHash
+              - content
+            additionalProperties: true
+      required:
+        - id
+        - repository_id
+        - base_branch
+        - base_sha
+        - allowed_paths
+        - permissions
+        - guidance
+      additionalProperties: true
+    DeliveryArtifactResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        title:
+          type: string
+        checksum:
+          type: string
+          nullable: true
+        source_tool:
+          type: string
+          nullable: true
+      required:
+        - id
+        - type
+        - title
+        - checksum
+        - source_tool
+      additionalProperties: true
+    ArtifactUploadResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        uploadUrl:
+          type: string
+          format: uri
+        expiresAt:
+          type: string
+          format: date-time
+        requiredChecksum:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        requiredHeaders:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - id
+        - uploadUrl
+        - expiresAt
+        - requiredChecksum
+        - requiredHeaders
+      additionalProperties: true
+    ArtifactUploadCancelResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+            - canceled
+      required:
+        - id
+        - status
+      additionalProperties: true
+    ArtifactDownloadResponse:
+      type: object
+      properties:
+        downloadUrl:
+          type: string
+          format: uri
+      required:
+        - downloadUrl
+      additionalProperties: true
+    ProjectDeliveryResponse:
+      type: object
+      properties:
+        milestones:
+          type: array
+          items:
+            type: object
+            properties: {}
+            required: []
+            additionalProperties: true
+        updates:
+          type: array
+          items:
+            type: object
+            properties: {}
+            required: []
+            additionalProperties: true
+        artifacts:
+          type: array
+          items:
+            type: object
+            properties: {}
+            required: []
+            additionalProperties: true
+        dependencies:
+          type: array
+          items:
+            type: object
+            properties: {}
+            required: []
+            additionalProperties: true
+        completionSuggestions:
+          type: array
+          items:
+            type: object
+            properties: {}
+            required: []
+            additionalProperties: true
+        providerPullRequests:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              headSha:
+                type: string
+                minLength: 1
+                maxLength: 200
+              checks:
+                type: array
+                items:
+                  type: object
+                  properties: {}
+                  required: []
+                  additionalProperties: true
+            required:
+              - id
+              - headSha
+              - checks
+            additionalProperties: true
+        providerReviews:
+          type: array
+          items:
+            type: object
+            properties: {}
+            required: []
+            additionalProperties: true
+        workMeshStructuredReviews:
+          type: array
+          items:
+            type: object
+            properties:
+              pullRequestId:
+                type: string
+                format: uuid
+              headSha:
+                type: string
+                minLength: 1
+                maxLength: 200
+              findings:
+                type: array
+                items:
+                  type: object
+                  properties: {}
+                  required: []
+                  additionalProperties: true
+              authority:
+                type: string
+                enum:
+                  - workmesh_structured_review
+            required:
+              - pullRequestId
+              - headSha
+              - findings
+              - authority
+            additionalProperties: true
+        mergeApprovals:
+          type: array
+          items:
+            type: object
+            properties: {}
+            required: []
+            additionalProperties: true
+      required:
+        - milestones
+        - updates
+        - artifacts
+        - dependencies
+        - completionSuggestions
+        - providerPullRequests
+        - providerReviews
+        - workMeshStructuredReviews
+        - mergeApprovals
+      additionalProperties: true
+    ArtifactUploadStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+            - pending
+            - uploaded
+            - verified
+            - rejected
+            - expired
+            - canceled
+        filename:
+          type: string
+        mimeType:
+          type: string
+        sizeBytes:
+          type: integer
+        expectedChecksum:
+          type: string
+        actualChecksum:
+          type: string
+          nullable: true
+        expiresAt:
+          type: string
+          format: date-time
+        verifiedAt:
+          type: string
+          format: date-time
+          nullable: true
+        artifactId:
+          type: string
+          format: uuid
+          nullable: true
+        lastErrorCode:
+          type: string
+          nullable: true
+      required:
+        - id
+        - status
+        - filename
+        - mimeType
+        - sizeBytes
+        - expectedChecksum
+        - actualChecksum
+        - expiresAt
+        - verifiedAt
+        - artifactId
+        - lastErrorCode
+      additionalProperties: false

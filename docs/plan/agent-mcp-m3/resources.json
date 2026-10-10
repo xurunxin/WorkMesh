@@ -1,0 +1,37 @@
+{
+  "owner": "本次M3规划会话",
+  "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b",
+  "created": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b\\docs\\plan\\agent-mcp-m3\\.runtime",
+      "purpose": "隔离安装三项既有锁定依赖，仅规划DTO/CI静态核验",
+      "state": "已清理，实际退出0，物理不存在",
+      "preservation": "input/planning-tools-bootstrap.json、planning-tools锁文件与checks原输出",
+      "actualReceipt": "input/runtime-cleanup.json"
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b\\docs\\plan\\agent-mcp-m3\\.runtime",
+      "purpose": "独审修订恢复同一隔离三依赖目录，仅DTO静态",
+      "state": "实际清理exit0，无链接/活动引用，已不存在",
+      "actualReceipt": "input/runtime-cleanup-review.json",
+      "preservation": "input/planning-tools-bootstrap-review.json、锁文件、受测ZIP及逐path清理前hash"
+    }
+  ],
+  "containers": [],
+  "images": [],
+  "volumes": [],
+  "networks": [],
+  "services": [],
+  "temporaryProcesses": "静态子进程全部前台运行，由subprocess等待退出，无后台服务",
+  "sharedResources": "npm全局cache/store与既有worktree未删除；恢复目录/G1D0C3保护目标未触碰",
+  "cleanupRequirement": "核绝对workspace内目标/链接/活动引用后，只清本任务闲置.runtime；拒绝即停目标",
+  "cleanup": {
+    "onlyOwnedTarget": true,
+    "runtimeRemoved": true,
+    "actualExitCode": 0,
+    "filesPreservedByFingerprint": 973,
+    "sharedStoreTouched": false,
+    "deniedOldTargetsTouched": false,
+    "latestReceipt": "input/runtime-cleanup-review.json"
+  }
+}

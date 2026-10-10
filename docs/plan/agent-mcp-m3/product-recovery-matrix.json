@@ -1,0 +1,317 @@
+{
+  "status": "Proposed，不是运行结果",
+  "sourceCommit": "ef4cb5e1458d911d98433c443dba46e6c224caa0",
+  "attemptCountMonotonic": true,
+  "newPersistentFields": 0,
+  "newMigrations": 0,
+  "reusedEvent": "provider.action.dead_lettered",
+  "recoveryError": "PROVIDER_ACTION_OUTCOME_UNKNOWN",
+  "rows": [
+    {
+      "provider": "fake",
+      "kind": "create_branch",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "fake三客户端真实链",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "github",
+      "kind": "create_branch",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "gitea",
+      "kind": "create_branch",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "fake",
+      "kind": "create_commit",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "fake三客户端真实链",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "github",
+      "kind": "create_commit",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "gitea",
+      "kind": "create_commit",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": "单文件create POST/update PUT本机HTTP通过；多文件明确不支持且零HTTP",
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "fake",
+      "kind": "open_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "fake三客户端真实链",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "github",
+      "kind": "open_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "gitea",
+      "kind": "open_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "fake",
+      "kind": "merge_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "fake三客户端真实链",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "github",
+      "kind": "merge_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "gitea",
+      "kind": "merge_pull_request",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "fake",
+      "kind": "retry_ci_check",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "fake三客户端真实链",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "github",
+      "kind": "retry_ci_check",
+      "initial": "allowed_if_authorized",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0"
+    },
+    {
+      "provider": "gitea",
+      "kind": "retry_ci_check",
+      "initial": "unsupported",
+      "withoutCheckpointAfterClaim": "stop_dead_unknown",
+      "withValidCheckpoint": "unsupported_not_fabricated",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "不支持：adapter真实拒绝且HTTP0",
+      "recoveryActual": "没有合法Gitea CI checkpoint；夹具伪造结果验证dead/unknown，旧无checkpoint停发。正常成功恢复不适用，来源parseProviderActionCheckpoint显式禁止。"
+    },
+    {
+      "provider": "fake",
+      "kind": "resolve_repository_context",
+      "initial": "read_only",
+      "withoutCheckpointAfterClaim": "bounded_read_retry",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "fake三客户端真实链",
+      "recoveryActual": "该provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。 新增第八次claim耗尽跨60秒组合未按该provider标签单独运行；共享Worker路径由GitHub标签实际验证，不冒本行额外实测。"
+    },
+    {
+      "provider": "github",
+      "kind": "resolve_repository_context",
+      "initial": "read_only",
+      "withoutCheckpointAfterClaim": "bounded_read_retry",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "该provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。 第八次claim无checkpoint崩溃跨真实60秒重启后dead/RETRY_EXHAUSTED且provider0，查询停止scheduled。"
+    },
+    {
+      "provider": "gitea",
+      "kind": "resolve_repository_context",
+      "initial": "read_only",
+      "withoutCheckpointAfterClaim": "bounded_read_retry",
+      "withValidCheckpoint": "local_only",
+      "extraBoundary": null,
+      "mutationHttpOnRecovery": 0,
+      "productStatus": "本机夹具通过",
+      "testEntrypoints": [
+        "apps/worker/integration/stage3-provider.integration.test.ts",
+        "packages/git-provider/src/mutation-http.test.ts"
+      ],
+      "receipt": "m3-8c0f15d203fd",
+      "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
+      "recoveryActual": "该provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。 新增第八次claim耗尽跨60秒组合未按该provider标签单独运行；共享Worker路径由GitHub标签实际验证，不冒本行额外实测。"
+    }
+  ]
+}

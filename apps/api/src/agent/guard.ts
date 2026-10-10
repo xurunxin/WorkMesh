@@ -203,24 +203,39 @@ async function lockCoordinationAuthority(
 
 export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActor, sessionId: string): Promise<SessionFacts> {
   const locator=await locateAgentSessionAuthority(tx,actor,sessionId)
+  const reviewParent = (await tx.query<{parent_session_id:string|null}>(
+    `SELECT s.parent_session_id FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
+      WHERE s.id=$1 AND s.workspace_id=$2 AND d.role='reviewer'`, [sessionId,actor.workspaceId],
+  )).rows[0]?.parent_session_id
+  const parent = reviewParent ? (await tx.query<AgentSessionAuthorityLocator>(
+    `SELECT s.agent_id,s.delegation_id,s.team_id,s.work_item_id,s.project_id,
+      w.project_id AS work_item_project_id,NULL::uuid AS session_token_id,NULL::uuid AS installation_token_id
+      FROM agent_sessions s LEFT JOIN work_items w ON w.id=s.work_item_id
+      WHERE s.id=$1 AND s.workspace_id=$2`, [reviewParent,actor.workspaceId],
+  )).rows[0] : undefined
+  if (reviewParent && !parent) return inactiveAuthority()
+  const parentTokens = reviewParent ? (await tx.query<{id:string;installation_token_id:string|null}>(
+    'SELECT id,installation_token_id FROM agent_session_tokens WHERE session_id=$1 ORDER BY id', [reviewParent],
+  )).rows : []
   await lockCoordinationAuthority(tx, locator, sessionId)
   await lockAgentAuthorityPlan(tx, {
-    definitionIds: [locator.agent_id],
-    teamGrants: [{
+    definitionIds: [locator.agent_id,...(parent ? [parent.agent_id] : [])],
+    teamGrants: [locator,...(parent ? [parent] : [])].map(authority=>({
       workspaceId: actor.workspaceId,
-      agentId: locator.agent_id,
-      teamId: locator.team_id,
-    }],
-    delegationIds: [locator.delegation_id],
-    sessionIds: [sessionId],
-    sessionTokenIds: locator.session_token_id ? [locator.session_token_id] : [],
-    installationTokenIds: locator.installation_token_id
-      ? [locator.installation_token_id]
-      : [],
-    workItemIds: locator.work_item_id ? [locator.work_item_id] : [],
+      agentId: authority.agent_id,
+      teamId: authority.team_id,
+    })),
+    delegationIds: [locator.delegation_id,...(parent ? [parent.delegation_id] : [])],
+    sessionIds: [sessionId,...(reviewParent ? [reviewParent] : [])],
+    sessionTokenIds: [...(locator.session_token_id ? [locator.session_token_id] : []),...parentTokens.map(t=>t.id)],
+    installationTokenIds: [...(locator.installation_token_id ? [locator.installation_token_id] : []),
+      ...parentTokens.flatMap(t=>t.installation_token_id ? [t.installation_token_id] : [])],
+    workItemIds: [locator,...(parent ? [parent] : [])].flatMap(s=>s.work_item_id ? [s.work_item_id] : []),
     projectIds: [
       ...(locator.project_id ? [locator.project_id] : []),
       ...(locator.work_item_project_id ? [locator.work_item_project_id] : []),
+      ...(parent?.project_id ? [parent.project_id] : []),
+      ...(parent?.work_item_project_id ? [parent.work_item_project_id] : []),
     ],
   })
   return revalidateLockedAgentSessionForMutation(tx, actor, sessionId, locator)

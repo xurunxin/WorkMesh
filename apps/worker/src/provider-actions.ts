@@ -1,8 +1,9 @@
 import { createHash, randomUUID } from 'node:crypto'
 import type { Pool, PoolClient } from 'pg'
-import { appendEvent, lockAgentAuthorityPlan, withTx } from '@workmesh/db'
+import { parseProviderActionCheckpoint } from '@workmesh/contracts'
+import { appendEvent, lockAgentAuthorityPlan, principalTeamAuthorityPredicate, withTx } from '@workmesh/db'
 import {
-  assertMergeReady,
+  assertMergeReady, allowedPath, matchesBranchPattern,
   authorizeAgentMutation,
   canonicalActionApprovalPayload,
   DomainError,
@@ -10,13 +11,18 @@ import {
 } from '@workmesh/domain'
 import {
   guidanceCandidatePaths,
+  FakeGitProvider,
+  guardedGitProvider,
+  UnsupportedProviderCapability,
   normalizeGitHubWebhook,
   type GitProvider,
   type ProviderKind,
   type RepositoryGuidanceEntry,
+  type ProviderMutationGuard,
+  type ProviderMutationPermit,
 } from '@workmesh/git-provider'
 
-type ProviderResolver = (provider: ProviderKind, connectionId: string) => GitProvider | Promise<GitProvider>
+type ProviderResolver = (provider: ProviderKind, connectionId: string, executionGuard?: ProviderMutationGuard) => GitProvider | Promise<GitProvider>
 type WorkerCapability = Parameters<typeof authorizeAgentMutation>[0]['capability']
 type ClaimedAction = {
   id: string
@@ -34,12 +40,15 @@ type ClaimedAction = {
   expected_head_sha: string | null
   approval_id: string | null
   attempt_count: number
+  claimed_at: Date
   result: Record<string, unknown> | null
   provider: ProviderKind
   external_id: string
   full_name: string
   team_id: string
   default_branch: string
+  permittedMutations?: number
+  exhausted_context: boolean
 }
 type ClaimedWebhook = {
   id: string
@@ -72,23 +81,6 @@ const isNewerObservation = (
   const currentTime = current.provider_observed_at.getTime()
   return incomingTime > currentTime || (incomingTime === currentTime && rank > current.provider_observation_rank)
 }
-const allowedPath = (path: string, scopes: string[]): boolean => {
-  const normalized = path.replaceAll('\\', '/')
-  if (normalized.startsWith('/') || normalized.split('/').includes('..')) return false
-  return scopes.some((scope) => {
-    const prefix = scope.replaceAll('\\', '/').replace(/\/\*\*$/, '').replace(/\*$/, '')
-    const directory = prefix.replace(/\/$/, '')
-    return directory === '' || normalized === directory || normalized.startsWith(`${directory}/`)
-  })
-}
-const matchesBranchPattern = (pattern: string, workItemKey: string, branch: string): boolean => {
-  const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const expression = escaped
-    .replaceAll('\\{workItemKey\\}', workItemKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-    .replaceAll('\\{slug\\}', '[a-z0-9]+(?:-[a-z0-9]+)*')
-  return new RegExp(`^${expression}$`).test(branch)
-}
-
 export function validateUploadedChecksum(expected: string, actual: string): void {
   if (expected !== actual) throw new Error('ARTIFACT_CHECKSUM_MISMATCH')
 }
@@ -102,20 +94,111 @@ export function createProviderActionWorker(input: {
   const workerId = input.workerId ?? `provider-${randomUUID()}`
   const allowedProviders = input.allowedProviders ?? ['fake', 'github', 'gitea']
 
+  // Locator reads disclose only routing IDs. Every fact is consumed after the
+  // complete authority/resource plan has been locked in canonical order.
+  const lockActionAuthority = async (tx: PoolClient, action: ClaimedAction, pin = false): Promise<void> => {
+    await tx.query('SELECT id FROM workspaces WHERE id=$1 FOR KEY SHARE', [action.workspace_id])
+    const locate = async () => {
+      const sessions = (await tx.query<{
+        id: string; agent_id: string; delegation_id: string; team_id: string;
+        work_item_id: string | null; project_id: string | null; item_project_id: string | null;
+        principal_human_actor_id: string;
+      }>(`SELECT s.id,s.agent_id,s.delegation_id,s.team_id,s.work_item_id,s.project_id,
+                 w.project_id AS item_project_id,d.principal_human_actor_id
+            FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
+            LEFT JOIN work_items w ON w.id=s.work_item_id
+           WHERE s.workspace_id=$1 AND s.id=$2 ORDER BY s.id`, [action.workspace_id, action.session_id])).rows
+      const tokens = (await tx.query<{ id: string; installation_token_id: string | null }>(
+        'SELECT id,installation_token_id FROM agent_session_tokens WHERE session_id=$1 ORDER BY id', [action.session_id],
+      )).rows
+      const items = (await tx.query<{ id: string; project_id: string | null }>(
+        'SELECT id,project_id FROM work_items WHERE workspace_id=$1 AND id=$2', [action.workspace_id, action.work_item_id],
+      )).rows
+      const prs = (await tx.query<{ id: string }>(
+        `SELECT id FROM pull_request_projections WHERE repository_id=$1
+          AND (external_id=$2 OR id::text=$2) ORDER BY id`,
+        [action.repository_id, action.payload.pullRequestId ?? (action.kind==='open_pull_request' ? action.result?.id : null) ?? null],
+      )).rows
+      return { sessions, tokens, items, prs }
+    }
+    const located = await locate()
+    const ids = (values: Array<string | null | undefined>) => [...new Set(values.filter((v): v is string => Boolean(v)))].sort()
+    await lockAgentAuthorityPlan(tx, {
+      definitionIds: located.sessions.map(s => s.agent_id),
+      teamGrants: located.sessions.map(s => ({workspaceId: action.workspace_id, agentId: s.agent_id, teamId: s.team_id})),
+      delegationIds: located.sessions.map(s => s.delegation_id), sessionIds: located.sessions.map(s => s.id),
+      sessionTokenIds: located.tokens.map(t => t.id), installationTokenIds: ids(located.tokens.map(t => t.installation_token_id)),
+      workItemIds: ids([action.work_item_id, ...located.sessions.map(s => s.work_item_id)]),
+      projectIds: ids([action.project_id, ...located.items.map(i => i.project_id), ...located.sessions.flatMap(s => [s.project_id,s.item_project_id])]),
+    })
+    await tx.query('SELECT id FROM provider_connections WHERE id=$1 AND workspace_id=$2 FOR SHARE', [action.connection_id, action.workspace_id])
+    await tx.query(`SELECT id FROM repositories WHERE id=$1 AND workspace_id=$2 FOR ${pin ? 'UPDATE' : 'SHARE'}`, [action.repository_id, action.workspace_id])
+    await tx.query('SELECT id FROM teams WHERE id=$1 AND workspace_id=$2 FOR SHARE', [action.team_id, action.workspace_id])
+    const actors = ids([action.requested_by_actor_id,...located.sessions.map(s => s.principal_human_actor_id)])
+    await tx.query('SELECT id FROM actors WHERE id=ANY($1::uuid[]) ORDER BY id FOR SHARE', [actors])
+    await tx.query('SELECT actor_id FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=ANY($3::uuid[]) ORDER BY actor_id FOR SHARE', [action.workspace_id, action.team_id, actors])
+    await tx.query('SELECT id FROM pull_request_projections WHERE id=ANY($1::uuid[]) ORDER BY id FOR UPDATE', [located.prs.map(p => p.id)])
+    await tx.query('SELECT id FROM ci_check_projections WHERE pull_request_id=ANY($1::uuid[]) ORDER BY id FOR SHARE', [located.prs.map(p => p.id)])
+    await tx.query('SELECT id FROM approvals WHERE id=$1 FOR UPDATE', [action.approval_id])
+    await tx.query('SELECT approval_id FROM merge_approval_bindings WHERE approval_id=$1 FOR UPDATE', [action.approval_id])
+    const current = (await tx.query<{ payload: Record<string,unknown>; session_id: string | null; work_item_id: string | null;
+      project_id: string | null; repository_id: string; connection_id: string; kind: string; requested_by_actor_id: string;
+      expected_head_sha: string | null; approval_id: string | null; plan_step_id: string | null }>(
+      `SELECT payload,session_id,work_item_id,project_id,repository_id,connection_id,kind,requested_by_actor_id,
+              expected_head_sha,approval_id,plan_step_id FROM provider_actions
+        WHERE id=$1 AND claimed_by=$2 AND attempt_count=$3 AND claimed_at=$4 AND status='claimed' FOR UPDATE`,
+      [action.id, workerId, action.attempt_count, action.claimed_at],
+    )).rows[0]
+    if (!current) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
+    if (JSON.stringify(located) !== JSON.stringify(await locate()) ||
+        Object.entries(current).some(([key,value]) => JSON.stringify(value) !== JSON.stringify(action[key as keyof ClaimedAction])))
+      throw new Error('PROVIDER_ACTION_BINDING_CHANGED')
+  }
+
+  const deadLetter = async (tx: PoolClient, action: ClaimedAction, reason: string): Promise<void> => {
+    const changed = await tx.query(
+      `UPDATE provider_actions SET status='dead',claimed_at=NULL,claimed_by=NULL,last_error=$4,updated_at=now()
+        WHERE id=$1 AND claimed_by=$2 AND attempt_count=$3 AND claimed_at=$5 AND status='claimed' RETURNING id`,
+      [action.id, workerId, action.attempt_count, reason, action.claimed_at],
+    )
+    if (!changed.rowCount) return
+    if (process.env.PROVIDER_INJECT_FAILURE_AFTER_TERMINAL_UPDATE === 'true') throw new Error('PROVIDER_INJECTED_TERMINAL_ROLLBACK')
+    await appendEvent(tx, {workspaceId: action.workspace_id, teamId: action.team_id, actorId: action.requested_by_actor_id,
+      correlationId: `provider-action:${action.id}`, idempotencyKey: `${action.id}:dead`,
+      type: 'provider.action.dead_lettered', aggregateType: 'provider_action', aggregateId: action.id,
+      payload: {kind: action.kind, reason}})
+  }
+
+  const requireClaimLease = async (tx: PoolClient, action: ClaimedAction, approval = false): Promise<number> => {
+    const row = (await tx.query<{ remaining_ms: number }>(
+      `SELECT EXTRACT(EPOCH FROM (LEAST(pa.claimed_at+interval '60 seconds',
+                 CASE WHEN $4 THEN a.expires_at ELSE pa.claimed_at+interval '60 seconds' END)-clock_timestamp()))*1000 AS remaining_ms
+         FROM provider_actions pa LEFT JOIN approvals a ON a.id=pa.approval_id
+        WHERE pa.id=$1 AND pa.claimed_by=$2 AND pa.attempt_count=$3 AND pa.claimed_at=$5 AND pa.status='claimed'
+          AND pa.claimed_at+interval '60 seconds'>clock_timestamp()
+          AND (NOT $4 OR (a.status='approved' AND a.consumed_at IS NULL AND a.expires_at>clock_timestamp()))`,
+      [action.id, workerId, action.attempt_count, approval, action.claimed_at],
+    )).rows[0]
+    if (!row || Number(row.remaining_ms) <= 0) throw new Error('PROVIDER_ACTION_CLAIM_EXPIRED')
+    return Number(row.remaining_ms)
+  }
+
   const claimAction = (): Promise<ClaimedAction | undefined> => withTx(input.db, async tx => {
     const result = await tx.query<ClaimedAction>(
       `WITH candidate AS (
-         SELECT action.id FROM provider_actions action
+         SELECT action.id,(action.kind='resolve_repository_context' AND action.attempt_count>=8 AND action.result IS NULL) AS exhausted_context
+         FROM provider_actions action
          JOIN provider_connections connection ON connection.id=action.connection_id
-          WHERE action.attempt_count < 8 AND action.available_at<=now()
+          WHERE action.available_at<=clock_timestamp()
             AND connection.provider::text=ANY($2::text[])
-            AND (action.status IN ('pending','failed') OR (action.status='claimed' AND action.claimed_at<now()-interval '60 seconds'))
+            AND (action.status IN ('pending','failed') OR (action.status='claimed' AND action.claimed_at<clock_timestamp()-interval '60 seconds'))
           ORDER BY action.available_at,action.created_at FOR UPDATE OF action SKIP LOCKED LIMIT 1
        )
-       UPDATE provider_actions a SET status='claimed',claimed_at=now(),claimed_by=$1,attempt_count=a.attempt_count+1,updated_at=now()
+       UPDATE provider_actions a SET status='claimed',claimed_at=date_trunc('milliseconds',clock_timestamp()),
+         claimed_by=$1,attempt_count=LEAST(8,a.attempt_count+1),updated_at=now()
        FROM candidate,repositories r,provider_connections c
        WHERE a.id=candidate.id AND r.id=a.repository_id AND c.id=a.connection_id
-       RETURNING a.*,c.provider,r.external_id,r.full_name,r.team_id,r.default_branch`,
+       RETURNING a.*,c.provider,r.external_id,r.full_name,r.team_id,r.default_branch,candidate.exhausted_context`,
       [workerId, allowedProviders],
     )
     return result.rows[0]
@@ -124,16 +207,21 @@ export function createProviderActionWorker(input: {
   const failAction = async (action: ClaimedAction, error: unknown): Promise<void> => {
     await withTx(input.db, async tx => {
       const current = (await tx.query<{ attempt_count: number }>(
-        "SELECT attempt_count FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
+        `SELECT attempt_count FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND attempt_count=${action.attempt_count} AND claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND status='claimed' FOR UPDATE`,
         [action.id, workerId],
       )).rows[0]
       if (!current) return
+      if (action.kind !== 'resolve_repository_context' && !parseProviderActionCheckpoint(action)) {
+        await deadLetter(tx, action, error instanceof UnsupportedProviderCapability && !action.permittedMutations
+          ? 'PROVIDER_CAPABILITY_UNSUPPORTED' : 'PROVIDER_ACTION_OUTCOME_UNKNOWN')
+        return
+      }
       const terminal = current.attempt_count >= 8
       const reason = errorText(error)
       await tx.query(
         `UPDATE provider_actions SET status=$2,claimed_at=NULL,claimed_by=NULL,last_error=$3,
          available_at=now()+(LEAST(300,5*POWER(2,GREATEST(0,$4-1)))::text||' seconds')::interval,updated_at=now()
-         WHERE id=$1 AND claimed_by=$5 AND status='claimed'`,
+         WHERE id=$1 AND claimed_by=$5 AND attempt_count=${action.attempt_count} AND claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND status='claimed'`,
         [action.id, terminal ? 'dead' : 'failed', reason, current.attempt_count, workerId],
       )
       if (!terminal) return
@@ -147,45 +235,7 @@ export function createProviderActionWorker(input: {
     })
   }
 
-  const revalidateClaimedProvider = async (action: ClaimedAction): Promise<boolean> =>
-    withTx(input.db, async tx => {
-      const current = (await tx.query<{ provider: ProviderKind }>(
-        `SELECT connection.provider
-           FROM provider_actions provider_action
-           JOIN provider_connections connection ON connection.id=provider_action.connection_id
-          WHERE provider_action.id=$1
-            AND provider_action.claimed_by=$2
-            AND provider_action.status='claimed'
-          FOR UPDATE OF provider_action,connection`,
-        [action.id, workerId],
-      )).rows[0]
-      if (!current) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
-      if (allowedProviders.includes(current.provider)) {
-        action.provider = current.provider
-        return true
-      }
-      // A deployment gate is reversible, so release the claim without charging
-      // an execution attempt or emitting a terminal domain fact.
-      const released = await tx.query(
-        `UPDATE provider_actions
-            SET status='pending',claimed_at=NULL,claimed_by=NULL,
-                attempt_count=GREATEST(0,attempt_count-1),available_at=now(),
-                last_error=$3,updated_at=now()
-          WHERE id=$1 AND claimed_by=$2 AND status='claimed'`,
-        [action.id, workerId, `PROVIDER_DISABLED:${current.provider}`],
-      )
-      if (released.rowCount !== 1) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
-      return false
-    })
-
-  const authorizeProviderSideEffect = async (action: ClaimedAction): Promise<boolean> => {
-    if (!await revalidateClaimedProvider(action)) return false
-    return withTx(input.db, async tx => {
-    const current = await tx.query(
-      "SELECT 1 FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
-      [action.id, workerId],
-    )
-    if (!current.rowCount) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
+  const authorizeProviderSideEffectInTransaction = async (tx: PoolClient, action: ClaimedAction): Promise<boolean> => {
     try {
       const facts = (await tx.query<{
         actor_kind: string
@@ -215,6 +265,7 @@ export function createProviderActionWorker(input: {
         repository_connection_id: string
         repository_team_id: string
         repository_active: boolean
+        repository_default_branch: string
         connection_workspace_id: string
         connection_active: boolean
         context_id: string | null
@@ -236,7 +287,7 @@ export function createProviderActionWorker(input: {
                 w.team_id AS work_item_team_id,w.project_id AS work_item_project_id,
                 w.number AS work_item_number,w.deleted_at AS work_item_deleted_at,t.key AS team_key,
                 r.workspace_id AS repository_workspace_id,r.connection_id AS repository_connection_id,
-                r.team_id AS repository_team_id,r.active AS repository_active,
+                r.team_id AS repository_team_id,r.active AS repository_active,r.default_branch AS repository_default_branch,
                 c.workspace_id AS connection_workspace_id,c.active AS connection_active,
                 rc.id AS context_id,rc.base_branch AS context_base_branch,rc.base_sha AS context_base_sha,
                 rc.branch_pattern AS context_branch_pattern,rc.allowed_paths AS context_allowed_paths,
@@ -262,14 +313,19 @@ export function createProviderActionWorker(input: {
               WHERE candidate.workspace_id=s.workspace_id AND candidate.repository_id=r.id
                 AND ((candidate.session_id IS NOT NULL AND candidate.session_id=s.id)
                   OR (candidate.work_item_id IS NOT NULL AND candidate.work_item_id=s.work_item_id)
-                  OR (candidate.project_id IS NOT NULL AND candidate.project_id=s.project_id))
+                  OR (candidate.project_id IS NOT NULL AND candidate.project_id=COALESCE(s.project_id,w.project_id)))
               ORDER BY CASE WHEN candidate.session_id IS NOT NULL THEN 0
                             WHEN candidate.work_item_id IS NOT NULL THEN 1 ELSE 2 END,
                        candidate.created_at DESC,candidate.id DESC
               LIMIT 1
            ) rc ON true
-          WHERE pa.id=$1 AND pa.claimed_by=$2 AND pa.status='claimed'`,
-        [action.id, workerId],
+          WHERE pa.id=$1 AND pa.claimed_by=$2 AND pa.attempt_count=${action.attempt_count} AND pa.claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND pa.status='claimed'
+            AND aa.is_active AND t.deleted_at IS NULL
+            AND c.provider::text=$3 AND c.provider::text=ANY($4::text[])
+            AND ${principalTeamAuthorityPredicate('d.principal_human_actor_id','s.workspace_id','s.team_id')}
+            AND (w.project_id IS NULL OR EXISTS(SELECT 1 FROM projects p WHERE p.id=w.project_id
+              AND p.workspace_id=w.workspace_id AND p.team_id=w.team_id AND p.deleted_at IS NULL))`,
+        [action.id, workerId, action.provider, allowedProviders],
       )).rows[0]
       if (!facts) throw new DomainError('PROVIDER_ACTION_AUTHORITY_REVOKED', 'Provider action authority facts are unavailable')
       const exactTarget =
@@ -340,36 +396,50 @@ export function createProviderActionWorker(input: {
       })
       if (!scope.repositoryIds?.includes(action.repository_id))
         throw new DomainError('RESOURCE_SCOPE_DENIED', 'Repository is outside the live delegation scope')
+      if (!liveCapabilities.includes('repo:read'))
+        throw new DomainError('CAPABILITY_DENIED','Repository reads required for delivery are no longer authorized')
       if (!facts.context_id || !facts.context_permissions?.includes(contextPermission))
         throw new DomainError('CAPABILITY_DENIED', `Latest repository context does not allow ${contextPermission}`)
       const workItemKey = `${facts.team_key}-${facts.work_item_number}`
       if (action.kind === 'create_branch') {
         const payload = action.payload as { name: string; baseSha: string }
-        if (payload.baseSha !== facts.context_base_sha ||
+        if (payload.name === facts.repository_default_branch || payload.baseSha !== facts.context_base_sha ||
           !facts.context_branch_pattern ||
           !matchesBranchPattern(facts.context_branch_pattern, workItemKey, payload.name))
           throw new DomainError('REPOSITORY_GUIDANCE_INVALID', 'Branch intent no longer matches the latest repository context')
       } else if (action.kind === 'create_commit') {
         const payload = action.payload as { branch: string; files: Array<{ path: string }> }
-        if (!facts.context_branch_pattern ||
+        if (payload.branch === facts.repository_default_branch || !facts.context_branch_pattern ||
           !matchesBranchPattern(facts.context_branch_pattern, workItemKey, payload.branch) ||
           payload.files.some(file => !allowedPath(file.path, facts.context_allowed_paths ?? [])))
           throw new DomainError('REPOSITORY_PATH_DENIED', 'Commit intent no longer matches the latest repository context')
       } else if (action.kind === 'open_pull_request') {
         const payload = action.payload as { baseBranch: string; headBranch: string }
-        if (payload.baseBranch !== facts.context_base_branch ||
+        if (payload.headBranch === facts.repository_default_branch || payload.baseBranch !== facts.context_base_branch ||
           !facts.context_branch_pattern ||
           !matchesBranchPattern(facts.context_branch_pattern, workItemKey, payload.headBranch))
           throw new DomainError('REPOSITORY_GUIDANCE_INVALID', 'Pull-request intent no longer matches the latest repository context')
+      } else if (action.kind === 'merge_pull_request' || action.kind === 'retry_ci_check') {
+        const pr=(await tx.query<{base_branch:string;head_branch:string}>(`SELECT base_branch,head_branch FROM pull_request_projections
+          WHERE repository_id=$1 AND workspace_id=$2 AND work_item_id=$3
+            AND ${action.kind==='merge_pull_request' ? 'external_id=$4' : 'id::text=$4'}`,
+          [action.repository_id,action.workspace_id,action.work_item_id,action.payload.pullRequestId])).rows[0]
+        if (!pr || pr.base_branch!==facts.context_base_branch || pr.head_branch===facts.repository_default_branch
+          || !facts.context_branch_pattern || !matchesBranchPattern(facts.context_branch_pattern,workItemKey,pr.head_branch))
+          throw new DomainError('REPOSITORY_GUIDANCE_INVALID','Merge or CI target no longer matches the current repository branch scope')
       }
       return true
     } catch (error) {
+      if (action.permittedMutations) {
+        await deadLetter(tx, action, 'PROVIDER_ACTION_OUTCOME_UNKNOWN')
+        return false
+      }
       const code = error instanceof DomainError ? error.code : 'PROVIDER_ACTION_AUTHORITY_REVOKED'
       const reason = `PROVIDER_ACTION_AUTHORITY_REVOKED:${code}`
       await tx.query(
         `UPDATE provider_actions
             SET status='dead',claimed_at=NULL,claimed_by=NULL,last_error=$3,updated_at=now()
-          WHERE id=$1 AND claimed_by=$2 AND status='claimed'`,
+          WHERE id=$1 AND claimed_by=$2 AND attempt_count=${action.attempt_count} AND claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND status='claimed'`,
         [action.id, workerId, reason],
       )
       await appendEvent(tx, {
@@ -383,55 +453,12 @@ export function createProviderActionWorker(input: {
       })
       return false
     }
-  })
   }
 
   const authorizeRepositoryContextInTransaction = async (tx: PoolClient, action: ClaimedAction): Promise<boolean> => {
-      // Match C1's workspace-before-resources order; no locks span provider I/O.
-      await tx.query('SELECT id FROM workspaces WHERE id=$1 FOR KEY SHARE', [action.workspace_id])
-      const current = await tx.query(
-        "SELECT 1 FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
-        [action.id, workerId],
-      )
-      if (!current.rowCount) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
-      const payload = action.payload as {
-        projectId?: string
-        workItemId?: string
-        sessionId?: string
-      }
-      const session = payload.sessionId ? (await tx.query<{
-        agent_id: string; delegation_id: string; team_id: string; work_item_id: string | null; project_id: string | null
-      }>('SELECT agent_id,delegation_id,team_id,work_item_id,project_id FROM agent_sessions WHERE workspace_id=$1 AND id=$2',
-        [action.workspace_id, payload.sessionId])).rows[0] : undefined
-      const workItemIds = [...new Set([payload.workItemId, session?.work_item_id].filter((value): value is string => Boolean(value)))]
-      const items = workItemIds.length ? (await tx.query<{ id: string; project_id: string | null }>(
-        'SELECT id,project_id FROM work_items WHERE workspace_id=$1 AND id=ANY($2::uuid[])', [action.workspace_id, workItemIds],
-      )).rows : []
-      await lockAgentAuthorityPlan(tx, {
-        definitionIds: session ? [session.agent_id] : [],
-        teamGrants: session ? [{ workspaceId: action.workspace_id, agentId: session.agent_id, teamId: session.team_id }] : [],
-        delegationIds: session ? [session.delegation_id] : [],
-        sessionIds: payload.sessionId ? [payload.sessionId] : [], workItemIds,
-        projectIds: [...new Set([payload.projectId, session?.project_id, ...items.map(item => item.project_id)].filter((value): value is string => Boolean(value)))],
-      })
-      await tx.query('SELECT id FROM provider_connections WHERE workspace_id=$1 AND id=$2 FOR SHARE', [action.workspace_id, action.connection_id])
-      await tx.query('SELECT id FROM repositories WHERE workspace_id=$1 AND id=$2 FOR SHARE', [action.workspace_id, action.repository_id])
-      await tx.query('SELECT id FROM teams WHERE workspace_id=$1 AND id=$2 FOR SHARE', [action.workspace_id, action.team_id])
-      await tx.query('SELECT id FROM actors WHERE workspace_id=$1 AND id=$2 FOR SHARE', [action.workspace_id, action.requested_by_actor_id])
-      await tx.query('SELECT actor_id FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3 FOR SHARE',
-        [action.workspace_id, action.team_id, action.requested_by_actor_id])
-      const liveSession = session ? (await tx.query<typeof session>(
-        'SELECT agent_id,delegation_id,team_id,work_item_id,project_id FROM agent_sessions WHERE workspace_id=$1 AND id=$2',
-        [action.workspace_id, payload.sessionId],
-      )).rows[0] : undefined
-      const liveItems = items.length ? (await tx.query<{ id: string; project_id: string | null }>(
-        'SELECT id,project_id FROM work_items WHERE workspace_id=$1 AND id=ANY($2::uuid[])', [action.workspace_id, workItemIds],
-      )).rows : []
-      const bindingsMatch = (!session || Boolean(liveSession && Object.keys(session).every(key =>
-        session[key as keyof typeof session] === liveSession[key as keyof typeof session])))
-        && items.every(item => liveItems.some(live => live.id === item.id && live.project_id === item.project_id))
-        && (payload.sessionId ?? null) === action.session_id && (payload.workItemId ?? null) === action.work_item_id
-        && (payload.projectId ?? null) === action.project_id
+      const payload = action.payload as { projectId?: string; workItemId?: string; sessionId?: string }
+      const bindingsMatch = (payload.sessionId ?? null) === action.session_id
+        && (payload.workItemId ?? null) === action.work_item_id && (payload.projectId ?? null) === action.project_id
       const authorization = (await tx.query<{
         actor_active: boolean
         actor_kind: string
@@ -463,10 +490,11 @@ export function createProviderActionWorker(input: {
            FROM actors a
            JOIN repositories r ON r.id=$3 AND r.workspace_id=a.workspace_id AND r.team_id=$7
            JOIN provider_connections c ON c.id=r.connection_id AND c.workspace_id=r.workspace_id AND c.id=$8
+             AND c.provider::text=$9 AND c.provider::text=ANY($10::text[])
            JOIN teams t ON t.id=r.team_id AND t.workspace_id=r.workspace_id AND t.deleted_at IS NULL
           WHERE a.id=$1 AND a.workspace_id=$2`,
         [action.requested_by_actor_id, action.workspace_id, action.repository_id,
-          payload.projectId ?? null, payload.workItemId ?? null, payload.sessionId ?? null, action.team_id, action.connection_id],
+          payload.projectId ?? null, payload.workItemId ?? null, payload.sessionId ?? null, action.team_id, action.connection_id,action.provider,allowedProviders],
       )).rows[0]
       if (bindingsMatch && authorization?.actor_active && authorization.actor_kind === 'human' &&
           authorization.repository_active && authorization.connection_active &&
@@ -477,7 +505,7 @@ export function createProviderActionWorker(input: {
       await tx.query(
         `UPDATE provider_actions
             SET status='dead',claimed_at=NULL,claimed_by=NULL,last_error=$3,updated_at=now()
-          WHERE id=$1 AND claimed_by=$2 AND status='claimed'`,
+          WHERE id=$1 AND claimed_by=$2 AND attempt_count=${action.attempt_count} AND claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND status='claimed'`,
         [action.id, workerId, reason],
       )
       await appendEvent(tx, {
@@ -495,10 +523,11 @@ export function createProviderActionWorker(input: {
       return false
   }
 
-  const authorizeRepositoryContextResolution = async (action: ClaimedAction): Promise<boolean> => {
-    if (!await revalidateClaimedProvider(action)) return false
-    return withTx(input.db, tx => authorizeRepositoryContextInTransaction(tx, action))
-  }
+  const authorizeRepositoryContextResolution = async (action: ClaimedAction): Promise<boolean> => withTx(input.db, async tx => {
+    await lockActionAuthority(tx, action)
+    await requireClaimLease(tx, action)
+    return authorizeRepositoryContextInTransaction(tx, action)
+  })
 
   const checkpointProviderResult = async (
     action: ClaimedAction,
@@ -506,19 +535,16 @@ export function createProviderActionWorker(input: {
   ): Promise<void> => {
     const checkpointed = await input.db.query(
       `UPDATE provider_actions SET result=$3,updated_at=now()
-        WHERE id=$1 AND claimed_by=$2 AND status='claimed'`,
+        WHERE id=$1 AND claimed_by=$2 AND attempt_count=${action.attempt_count} AND claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND status='claimed'`,
       [action.id, workerId, result],
     )
     if (checkpointed.rowCount !== 1) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
+    action.result = result
   }
 
   const invalidateMergeForLiveHeadMismatch = async (action: ClaimedAction, liveHeadSha: string): Promise<void> => {
     await withTx(input.db, async tx => {
-      const current = await tx.query(
-        "SELECT 1 FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
-        [action.id, workerId],
-      )
-      if (!current.rowCount) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
+      await lockActionAuthority(tx, action)
       const invalidated = await tx.query<{ approval_id: string }>(
         `UPDATE merge_approval_bindings
             SET invalidated_at=now(),invalidation_reason='live provider head changed'
@@ -534,7 +560,7 @@ export function createProviderActionWorker(input: {
       await tx.query(
         `UPDATE provider_actions
             SET status='dead',claimed_at=NULL,claimed_by=NULL,last_error='PROVIDER_HEAD_SHA_MISMATCH',updated_at=now()
-          WHERE id=$1 AND claimed_by=$2 AND status='claimed'`,
+          WHERE id=$1 AND claimed_by=$2 AND attempt_count=${action.attempt_count} AND claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND status='claimed'`,
         [action.id, workerId],
       )
       await appendEvent(tx, {
@@ -552,56 +578,11 @@ export function createProviderActionWorker(input: {
     })
   }
 
-  const expireMergeApproval = async (action: ClaimedAction): Promise<void> => {
-    await withTx(input.db, async tx => {
-      const current = await tx.query(
-        "SELECT 1 FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
-        [action.id, workerId],
-      )
-      if (!current.rowCount) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
-      await tx.query(
-        `UPDATE approvals
-            SET status='expired',revision=revision+1,updated_at=now()
-          WHERE id=$1 AND status='approved' AND expires_at<=now()`,
-        [action.approval_id],
-      )
-      await tx.query(
-        `UPDATE merge_approval_bindings
-            SET invalidated_at=COALESCE(invalidated_at,now()),
-                invalidation_reason=COALESCE(invalidation_reason,'approval expired before provider merge')
-          WHERE approval_id=$1 AND repository_id=$2`,
-        [action.approval_id, action.repository_id],
-      )
-      await tx.query(
-        `UPDATE provider_actions
-            SET status='dead',claimed_at=NULL,claimed_by=NULL,last_error='MERGE_APPROVAL_EXPIRED',updated_at=now()
-          WHERE id=$1 AND claimed_by=$2 AND status='claimed'`,
-        [action.id, workerId],
-      )
-      await appendEvent(tx, {
-        workspaceId: action.workspace_id, teamId: action.team_id, actorId: action.requested_by_actor_id,
-        correlationId: `provider-action:${action.id}`, idempotencyKey: action.id,
-        type: 'pull_request.merge_approval.invalidated',
-        aggregateType: 'provider_action', aggregateId: action.id,
-        payload: {
-          approvalId: action.approval_id,
-          expectedHeadSha: action.expected_head_sha,
-          reason: 'MERGE_APPROVAL_EXPIRED',
-        },
-      })
-    })
-  }
-
   const revalidateMergeExecution = async (
+    tx: PoolClient,
     action: ClaimedAction,
     payload: { pullRequestId: string; headSha: string; method: 'merge' | 'squash' | 'rebase' },
-    providerAlreadyMerged = false,
-  ): Promise<Date | undefined> => withTx(input.db, async tx => {
-    const current = await tx.query(
-      "SELECT 1 FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
-      [action.id, workerId],
-    )
-    if (!current.rowCount) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
+  ): Promise<Date | undefined> => {
     const gate = (await tx.query<{
       status: string
       expires_at: Date
@@ -640,7 +621,7 @@ export function createProviderActionWorker(input: {
       [action.approval_id],
     )).rows[0]
     if (!gate) throw new Error('MERGE_APPROVAL_INVALIDATED')
-    if (!providerAlreadyMerged && gate.expires_at.getTime() <= Date.now()) {
+    if (gate.expires_at.getTime() <= Date.now()) {
       await tx.query(
         `UPDATE approvals
             SET status='expired',revision=revision+1,updated_at=now()
@@ -657,7 +638,7 @@ export function createProviderActionWorker(input: {
       await tx.query(
         `UPDATE provider_actions
             SET status='dead',claimed_at=NULL,claimed_by=NULL,last_error='MERGE_APPROVAL_EXPIRED',updated_at=now()
-          WHERE id=$1 AND claimed_by=$2 AND status='claimed'`,
+          WHERE id=$1 AND claimed_by=$2 AND attempt_count=${action.attempt_count} AND claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND status='claimed'`,
         [action.id, workerId],
       )
       await appendEvent(tx, {
@@ -687,11 +668,10 @@ export function createProviderActionWorker(input: {
       gate.provider_pull_request_id === payload.pullRequestId &&
       gate.head_sha === payload.headSha &&
       gate.projection_head_sha === payload.headSha &&
-      gate.projection_state === (providerAlreadyMerged ? 'merged' : 'open') &&
+      gate.projection_state === 'open' &&
       gate.method === payload.method &&
       action.expected_head_sha === payload.headSha
     if (!exactBinding) throw new Error('MERGE_APPROVAL_INVALIDATED')
-    if (providerAlreadyMerged) return gate.expires_at
     const checks = (await tx.query<{ name: string; status: string; head_sha: string }>(
       `SELECT configured.name,latest.status,latest.head_sha
          FROM unnest($2::text[]) AS configured(name)
@@ -750,9 +730,10 @@ export function createProviderActionWorker(input: {
       })),
     })
     return gate.expires_at
-  })
+  }
 
   const revalidateCiRetryExecution = async (
+    tx: PoolClient,
     action: ClaimedAction,
     payload: {
       provider: ProviderKind
@@ -762,7 +743,7 @@ export function createProviderActionWorker(input: {
       checkRunId: string
       headSha: string
     },
-  ): Promise<void> => withTx(input.db, async tx => {
+  ): Promise<void> => {
     const gate = (await tx.query<{
       status: string
       expires_at: Date
@@ -785,7 +766,7 @@ export function createProviderActionWorker(input: {
          JOIN pull_request_projections pr ON pr.id=$3 AND pr.repository_id=pa.repository_id
          JOIN ci_check_projections ci ON ci.pull_request_id=pr.id
            AND ci.external_id=$4 AND ci.head_sha=pr.head_sha
-        WHERE pa.id=$1 AND pa.claimed_by=$2 AND pa.status='claimed'
+        WHERE pa.id=$1 AND pa.claimed_by=$2 AND pa.attempt_count=${action.attempt_count} AND pa.claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND pa.status='claimed'
         FOR SHARE OF a,pr,ci`,
       [action.id, workerId, payload.pullRequestId, payload.checkRunId],
     )).rows[0]
@@ -809,19 +790,30 @@ export function createProviderActionWorker(input: {
       gate.projection_state === 'open' &&
       ['failed', 'skipped'].includes(gate.check_status)
     if (!exact) throw new Error('CI_RETRY_APPROVAL_INVALIDATED')
-  })
+  }
+
+  const prepareMutation = async (action: ClaimedAction): Promise<ProviderMutationPermit> => {
+    const started = performance.now()
+    const remaining = await withTx(input.db, async tx => {
+      await lockActionAuthority(tx, action)
+      if (!await authorizeProviderSideEffectInTransaction(tx, action)) return null
+      if (action.kind === 'merge_pull_request') {
+        const expiry = await revalidateMergeExecution(tx, action,
+          action.payload as {pullRequestId: string; headSha: string; method: 'merge'|'squash'|'rebase'})
+        if (!expiry) return null
+      }
+      if (action.kind === 'retry_ci_check') await revalidateCiRetryExecution(tx, action,
+        action.payload as {provider: ProviderKind; connectionId: string; repositoryId: string; pullRequestId: string; checkRunId: string; headSha: string})
+      return requireClaimLease(tx, action, action.kind === 'merge_pull_request' || action.kind === 'retry_ci_check')
+    })
+    if (remaining === null) throw new Error('PROVIDER_ACTION_AUTHORITY_REVOKED')
+    return {deadlineMonotonicMs: started + remaining}
+  }
 
   const finishAction = async (action: ClaimedAction, result: Record<string, unknown>): Promise<void> => {
     await withTx(input.db, async tx => {
-      if (action.kind === 'resolve_repository_context') {
-        if (!await authorizeRepositoryContextInTransaction(tx, action)) return
-      } else {
-        const current = await tx.query(
-        "SELECT 1 FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
-        [action.id, workerId],
-      )
-      if (!current.rowCount) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
-      }
+      await lockActionAuthority(tx, action, action.kind === 'resolve_repository_context')
+      if (action.kind === 'resolve_repository_context' && !await authorizeRepositoryContextInTransaction(tx, action)) return
       if (action.kind === 'resolve_repository_context') {
         const payload = action.payload as {
           projectId?: string
@@ -870,7 +862,7 @@ export function createProviderActionWorker(input: {
           `UPDATE provider_actions
               SET status='completed',result=$3,completed_at=now(),claimed_at=NULL,
                   claimed_by=NULL,updated_at=now()
-            WHERE id=$1 AND claimed_by=$2 AND status='claimed'`,
+            WHERE id=$1 AND claimed_by=$2 AND attempt_count=${action.attempt_count} AND claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND status='claimed'`,
           [action.id, workerId, { contextId: context.id, guidance }],
         )
         await appendEvent(tx, {
@@ -957,7 +949,7 @@ export function createProviderActionWorker(input: {
             const rejected = await tx.query(
               `UPDATE provider_actions
                   SET status='dead',claimed_at=NULL,claimed_by=NULL,last_error=$3,result=$4,updated_at=now()
-                WHERE id=$1 AND claimed_by=$2 AND status='claimed'
+                WHERE id=$1 AND claimed_by=$2 AND attempt_count=${action.attempt_count} AND claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND status='claimed'
                 RETURNING id`,
               [action.id, workerId, reason, result],
             )
@@ -1052,7 +1044,7 @@ export function createProviderActionWorker(input: {
         if (!consumed.rowCount) throw new Error('CI_RETRY_APPROVAL_NOT_CONSUMABLE')
       }
       await tx.query(
-        "UPDATE provider_actions SET status='completed',result=$3,completed_at=now(),claimed_at=NULL,claimed_by=NULL,updated_at=now() WHERE id=$1 AND claimed_by=$2",
+        `UPDATE provider_actions SET status='completed',result=$3,completed_at=now(),claimed_at=NULL,claimed_by=NULL,updated_at=now() WHERE id=$1 AND claimed_by=$2 AND attempt_count=${action.attempt_count} AND claimed_at='${action.claimed_at.toISOString()}'::timestamptz AND status='claimed'`,
         [action.id, workerId, result],
       )
       await appendEvent(tx, {
@@ -1081,10 +1073,36 @@ export function createProviderActionWorker(input: {
 
   const executeAction = async (action: ClaimedAction): Promise<void> => {
     if (process.env.PROVIDER_INJECT_FAILURE_AFTER_CLAIM === 'true') throw new Error('PROVIDER_INJECTED_FAILURE_AFTER_CLAIM')
-    if (action.result) {
-      if (!await revalidateClaimedProvider(action)) return
-      await finishAction(action, action.result)
+    const checkpoint = parseProviderActionCheckpoint(action)
+    if (checkpoint) {
+      await finishAction(action, checkpoint)
       return
+    }
+    if (action.exhausted_context) {
+      await withTx(input.db, async tx => {
+        await lockActionAuthority(tx, action, true)
+        await deadLetter(tx, action, 'PROVIDER_ACTION_RETRY_EXHAUSTED')
+      })
+      return
+    }
+    if (action.result || (action.kind !== 'resolve_repository_context' && action.attempt_count > 1)) {
+      await withTx(input.db, tx => deadLetter(tx, action, 'PROVIDER_ACTION_OUTCOME_UNKNOWN'))
+      return
+    }
+    const executionGuard: ProviderMutationGuard = async () => {
+      const permit = await prepareMutation(action)
+      action.permittedMutations = (action.permittedMutations ?? 0) + 1
+      return permit
+    }
+    const resolveWritingProvider = async (): Promise<GitProvider> => {
+      const provider = await input.resolveProvider(action.provider, action.connection_id, executionGuard)
+      return provider instanceof FakeGitProvider ? guardedGitProvider(provider, executionGuard) : provider
+    }
+    if(action.kind!=='resolve_repository_context') {
+      try {await prepareMutation(action)} catch(error) {
+        if(error instanceof Error&&error.message==='PROVIDER_ACTION_AUTHORITY_REVOKED') return
+        throw error
+      }
     }
     const common = {
       provider: action.provider,
@@ -1104,7 +1122,6 @@ export function createProviderActionWorker(input: {
       })
       result = { guidance }
     } else if (action.kind === 'retry_ci_check') {
-      if (!await authorizeProviderSideEffect(action)) return
       const payload = action.payload as {
         provider: ProviderKind
         connectionId: string
@@ -1113,45 +1130,22 @@ export function createProviderActionWorker(input: {
         checkRunId: string
         headSha: string
       }
-      await revalidateCiRetryExecution(action, payload)
-      const provider = await input.resolveProvider(action.provider, action.connection_id)
+      const provider = await resolveWritingProvider()
       result = await provider.retryCheck({ ...common, checkRunId: payload.checkRunId })
     } else if (action.kind === 'merge_pull_request') {
-      // A provider may have committed the merge before this worker could
-      // checkpoint the result. Inspecting that exact action is recovery, not
-      // authority for another merge; live authority is still revalidated
-      // immediately before any not-yet-performed provider mutation.
-      if (!await revalidateClaimedProvider(action)) return
-      const payload = action.payload as { pullRequestId: string; headSha: string; method: 'merge' | 'squash' | 'rebase' }
-      const provider = await input.resolveProvider(action.provider, action.connection_id)
-      const live = await provider.getPullRequest({ ...common, pullRequestId: payload.pullRequestId })
+      const payload = action.payload as {pullRequestId: string; headSha: string; method: 'merge'|'squash'|'rebase'}
+      const provider = await resolveWritingProvider()
+      const live = await provider.getPullRequest({...common, pullRequestId: payload.pullRequestId})
       if (live.headSha !== payload.headSha) {
         await invalidateMergeForLiveHeadMismatch(action, live.headSha)
         return
       }
-      if (live.state === 'merged') {
-        if (!live.mergeSha) throw new Error('PROVIDER_MERGE_SHA_MISSING')
-        await revalidateMergeExecution(action, payload, true)
-        result = { merged: true, mergeSha: live.mergeSha }
-      } else {
-        if (live.state !== 'open') throw new Error('PROVIDER_PULL_REQUEST_NOT_OPEN')
-        if (!await authorizeProviderSideEffect(action)) return
-        const expiresAt = await revalidateMergeExecution(action, payload)
-        if (!expiresAt) return
-        if (expiresAt.getTime() <= Date.now()) {
-          await expireMergeApproval(action)
-          return
-        }
-        result = await provider.mergePullRequest({
-          ...common,
-          pullRequestId: payload.pullRequestId,
-          expectedHeadSha: payload.headSha,
-          method: payload.method,
-        })
-      }
+      // An unrelated merged observation never establishes this action's result.
+      if (live.state !== 'open') throw new Error('PROVIDER_PULL_REQUEST_NOT_OPEN')
+      result = await provider.mergePullRequest({...common, pullRequestId: payload.pullRequestId,
+        expectedHeadSha: payload.headSha, method: payload.method})
     } else {
-      if (!await authorizeProviderSideEffect(action)) return
-      const provider = await input.resolveProvider(action.provider, action.connection_id)
+      const provider = await resolveWritingProvider()
       if (action.kind === 'create_branch') {
         const payload = action.payload as { name: string; baseSha: string }
         const seedable = provider as GitProvider & {
@@ -1184,6 +1178,7 @@ export function createProviderActionWorker(input: {
     }
     if (process.env.PROVIDER_INJECT_FAILURE_AFTER_PROVIDER_SUCCESS === 'true')
       throw new Error('PROVIDER_INJECTED_FAILURE_AFTER_PROVIDER_SUCCESS')
+    if (!parseProviderActionCheckpoint({...action, result})) throw new Error('PROVIDER_RESULT_INVALID')
     await checkpointProviderResult(action, result)
     if (process.env.PROVIDER_INJECT_FAILURE_AFTER_RESULT_CHECKPOINT === 'true')
       throw new Error('PROVIDER_INJECTED_FAILURE_AFTER_RESULT_CHECKPOINT')

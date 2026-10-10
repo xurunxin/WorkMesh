@@ -27,15 +27,15 @@ const safeBody = (value: string): string => value.replace(/wm[ips]_[A-Za-z0-9_-]
 export type Execution = { sessionId: string; workItemId: string; token: string; client: WorkMeshClient }
 
 /** 独有监听端口；数据库必须是已核定test库，根入口先串行reset。 */
-export async function createMcpCoverageFixture() {
+export async function createMcpCoverageFixture(options:{capabilities?:Capability[];features?:Parameters<typeof loadFeatureConfig>[0]}={}) {
   const databaseUrl = process.env.DATABASE_URL
   if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
     throw new Error('MCP conformance requires RUN_INTEGRATION=1 and a dedicated test database')
   if (!process.env.WORKMESH_RUNNER_SERVICE_TOKEN || !process.env.WORKMESH_BOOTSTRAP_TOKEN)
     throw new Error('MCP/Pi conformance credentials are required; no skip fallback')
   const db = createDb(databaseUrl)
-  const features = loadFeatureConfig({ WORKMESH_BETA_COORDINATION_MCP: 'true' })
-  let app = buildApp({ features, logger: { level: 'silent' } })
+  const features = loadFeatureConfig({ ...options.features, WORKMESH_BETA_COORDINATION_MCP: 'true' })
+  let app = buildApp({ features, logger: { level: options.capabilities?.includes('repo:read')?'error':'silent' } })
   const servers: Server[] = []
   const clients: Client[] = []
   const embedded: Array<ReturnType<typeof createWorkMeshMcpServer>> = []
@@ -82,9 +82,9 @@ export async function createMcpCoverageFixture() {
     }))
     return client
   }
-  const createExecution = async (title = 'M0 execution', queued = false, budget?: Record<string, number>): Promise<Execution> => {
+  const createExecution = async (title = 'M0 execution', queued = false, budget?: Record<string, number>, projectId?:string): Promise<Execution> => {
     const work = await human<{ id: string; revision: number }>('POST', '/api/v1/work-items', {
-      teamId, title, statusId: readyId, responsibleHumanActorId: humanActorId,
+      teamId, title, statusId: readyId, responsibleHumanActorId: humanActorId,...(projectId?{projectId}:{}),
     })
     const coordination = new WorkMeshClient({ baseUrl, coordinationToken: connectionToken, installationToken: connectionToken })
     const claim = await coordination.claimWorkItem(work.id, budget ? { budget } : {}, { ifMatch: work.revision, idempotencyKey: randomUUID() })
@@ -152,7 +152,7 @@ export async function createMcpCoverageFixture() {
     const agentSlug = `m0-${randomUUID().slice(0, 8)}`
     const paired = await human<{ connection: { id: string }; connect_url: string }>('POST', '/api/v1/agent-connections', {
       name: 'M0 conformance', agentSlug, clientType: 'codex', teamId, principalHumanActorId: humanActorId,
-      requestedCapabilities: ['work:read', 'work:write', 'plan:write', 'artifact:write', 'message:write', 'comment:write'], grantAgentDelegate: false,
+      requestedCapabilities: options.capabilities??['work:read', 'work:write', 'plan:write', 'artifact:write', 'message:write', 'comment:write'], grantAgentDelegate: false,
     })
     connectionId = paired.connection.id
     const redeemed = await fetch(baseUrl + '/api/v1/agent-connections/redeem', {

@@ -170,3 +170,10 @@ SDK 具名读取 `listSessions`、`listPlanVersions`、`listApprovals`、`getApp
 `getSessionExecutionResult`/`get_session_execution_result` 使用原安装身份或同一 Connection 的当前 live 安装身份；只读受限解析不创建或续 C Session、不更新 usage、不签 E、不写业务 receipt/event/outbox。query 必须为准确 Session、`action=complete|stop_ack` 和原 operationKey；服务器按原提交事务的 E Token/安装/Connection 来源快照和当前 grant/Delegation/scope 校验，其他 Connection 或同 Agent 的其他 native 安装均拒绝。旧来源 null/unproven 不推测回填。普通终态 E 不恢复读取/写入；Pi 内部 completion 没有独立 complete 回执，继续使用外层 settle 同 key/body 恢复，不能把内部 completion key 当成功确认。
 
 Pi 的 `workmesh_wait` 只产生等待意图：模型与在途工具静止且外部效果已对账后，公开回复、Turn/Attempt 结算、Session 等待态和持久条件同事务提交。等待不占旧 Attempt 或 Lease，也不跨越单模型 Turn 原时限。API/Worker 同时升级并开启内部等待配置后，Runner 显式 opt-in；Worker 精确批准 ID/原 `sha256:` hash 或 Session prompt/会话 Human 输入满足时创建唯一续 Turn，随后 claim/credential/start 再核 live 权限。默认未 opt-in 的旧消费者不领取续 Turn。Human pause 必须显式 resume；Stop、撤权、拒批或过期优先，不自动启动模型。
+# Git 与证据消费者合同
+
+SDK、MCP 和 Runner 对齐精确 action 查询、仓库与 context、交付 current-head 读取、上传状态／取消／下载、completion suggestion 和健康记录允许子集。C 查询目标 E 必须显式传入准确 Session，使用局部 Token bridge；不得根据返回 ID 猜身份或更改共享凭据。受保护拒绝不刷新或盲重发；同一逻辑写保留 key/body。
+
+reviewer 的可选 `repositoryIds` 明确缩减仓库读范围，省略保持原合同；父子绑定、三方 `repo:read`、当前共享 context 与撤权同时适用于原 key 重放。`getProjectDelivery` 指定准确 `pullRequestId` 时读取当前 head 的完整 checks/reviews/findings/approval，不把截断列表当完整审查。Human 批准、completion 裁决和项目 update 发布仍不对 Agent 开放；健康记录的 Agent 发布沿既有精确 Human approval。
+
+SDK／MCP 的短期上传下载资料仅供受控传输；Runner 模型只收到状态和验证后的有界字节。签名 URL、required headers、存储 key 与 Bearer 不进入模型、消息或活动。支持与限制及实际验证见 [M3 产品报告](plan/agent-mcp-m3/product-report.md)。

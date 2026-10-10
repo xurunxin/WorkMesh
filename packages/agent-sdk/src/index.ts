@@ -3,6 +3,7 @@ import type {
   ChildAgentSession, ReviewDelegationResponse, ChildSessionStatusPage, CommentResponse, DecisionResponse, HandoffResponse,
   AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput,
   CiRetryInput, ProviderActionInput, StructuredReviewInput, FeatureRegistry,
+  ProviderActionProjection, RepositoryResponse, RepositoryContextResponse, DeliveryArtifactResponse, ProjectDeliveryResponse, ArtifactUploadResponse, ProjectHealthInput,
   ReleaseInfo, RoutePolicyManifestEntry, ListResponse, EventEnvelope,
   InboxListItem, InboxItemDetail, InboxReplyResponse,
   HumanAttentionItem, HumanAttentionKind, HumanAttentionStatus,
@@ -32,6 +33,9 @@ import {
   agentSessionResponseSchema, listResponseSchema, planVersionHistoryResponseSchema,
   approvalResponseSchema, recoveryItemSchema, recoveryListResponseSchema,
   leaseResponseSchema, agentSessionExecutionResultQuerySchema, agentSessionExecutionResultResponseSchema,
+  providerActionProjectionSchema, artifactUploadIntentStatusResponseSchema, projectHealthInputSchema,
+  repositoryResponseSchema,repositoryContextResponseSchema,deliveryArtifactResponseSchema,projectDeliveryResponseSchema,
+  artifactUploadResponseSchema,artifactUploadCancelResponseSchema,artifactDownloadResponseSchema,
 } from '@workmesh/contracts'
 export { releaseMetadata } from '@workmesh/contracts'
 
@@ -223,7 +227,7 @@ export type ContextDeltaAddition =
 export interface ContextDeltaInput { baseSnapshotId: string; additions: ContextDeltaAddition[]; rationale: string }
 export interface ChildSessionInput { agentId: string; planStepId: string; planVersionId: string; role?: 'executor' | 'reviewer' | 'researcher'; initialPrompt: string; required?: boolean; budget?: Record<string, number> }
 export interface DecisionInput { title: string; rationale: string; options?: string[]; selectedOption?: string; evidence?: string[]; affectedResources?: { resourceType: 'work_item' | 'plan_step' | 'artifact' | 'session'; resourceId: string; impact?: string }[]; sessionId?: string }
-export interface ReviewDelegationInput { reviewerAgentId: string; planStepId: string; planVersionId: string; initialPrompt: string; ttlSeconds?: number; budget?: Record<string, number> }
+export interface ReviewDelegationInput { reviewerAgentId: string; planStepId: string; planVersionId: string; initialPrompt: string; ttlSeconds?: number; budget?: Record<string, number>; repositoryIds?: string[] }
 export interface HandoffInput { fromSessionId: string; targetAgentId?: string; targetSkill?: string; scopeType?: 'workspace' | 'project' | 'work_item' | 'plan_step'; scopeId?: string; summary: string; completedWork?: string[]; remainingWork?: string[]; openQuestions?: string[]; risks?: string[]; acceptanceCriteria?: string[]; requestedAction?: string; leaseTransferPolicy?: 'retain' | 'transfer' | 'release'; artifactIds?: string[]; contextSnapshotId?: string; requestedCapabilities?: Capability[]; status?: 'draft' | 'requested' }
 export interface HandoffTransitionInput { reason?: string }
 export type HandoffMachineRejectReason = 'capability_missing' | 'budget_insufficient' | 'concurrency_limit' | 'context_incomplete' | 'conflict' | 'manual_reject'
@@ -678,17 +682,39 @@ export class WorkMeshClient {
   consumeApproval<T = unknown>(approvalId: string, input: { actionPayloadHash: string }, options: RequestOptions & { sessionId: string; ifMatch: number | string }): Promise<T> {
     return this.request('POST', `/api/v1/approvals/${encodeURIComponent(approvalId)}/consume`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(options.sessionId, `consume-approval:${approvalId}`), refreshSessionId: options.sessionId })
   }
-  listRepositories<T = unknown>(options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/repositories', {}, options), undefined, options) }
-  getRepositoryContext<T = unknown>(repositoryId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/repositories/${encodeURIComponent(repositoryId)}/context`, undefined, options) }
+  listRepositories<T = RepositoryResponse>(options: PageRequestOptions & {sessionId?:string} = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/repositories', {}, options), undefined, {...options,refreshSessionId:options.sessionId}).then(value=>this.validateResponse(listResponseSchema(repositoryResponseSchema),value) as ListResponse<T>) }
+  getRepositoryContext<T = RepositoryContextResponse[]>(repositoryId: string, options: RequestOptions & {sessionId?:string} = {}): Promise<T> { return this.request('GET', `/api/v1/repositories/${encodeURIComponent(repositoryId)}/context`, undefined, {...options,refreshSessionId:options.sessionId}).then(value=>this.validateResponse(repositoryContextResponseSchema.array(),value) as T) }
+  getProviderAction(actionId: string, options: RequestOptions & {sessionId?:string} = {}): Promise<ProviderActionProjection> {
+    return this.request('GET',`/api/v1/provider-actions/${encodeURIComponent(actionId)}`,undefined,
+      {...options,refreshSessionId:options.sessionId}).then(value=>this.validateResponse(providerActionProjectionSchema,value))
+  }
+  getArtifactUploadStatus(uploadId:string,options:RequestOptions & {sessionId?:string}={}) {
+    return this.request('GET',`/api/v1/artifact-upload-intents/${encodeURIComponent(uploadId)}`,undefined,
+      {...options,refreshSessionId:options.sessionId}).then(value=>this.validateResponse(artifactUploadIntentStatusResponseSchema,value))
+  }
+  cancelArtifactUpload<T={id:string;status:'canceled'}>(uploadId:string,sessionId:string,options:RequestOptions={}):Promise<T> {
+    return this.request('POST',`/api/v1/artifact-upload-intents/${encodeURIComponent(uploadId)}/cancel`,{},
+      {...options,idempotencyKey:options.idempotencyKey??randomUUID(),refreshSessionId:sessionId}).then(value=>this.validateResponse(artifactUploadCancelResponseSchema,value) as T)
+  }
+  listWorkItemArtifacts<T=DeliveryArtifactResponse>(workItemId:string,options:RequestOptions & {sessionId?:string}={}):Promise<T[]> {
+    return this.request('GET',`/api/v1/work-items/${encodeURIComponent(workItemId)}/artifacts`,undefined,{...options,refreshSessionId:options.sessionId}).then(value=>this.validateResponse(deliveryArtifactResponseSchema.array(),value) as T[])
+  }
+  getProjectHealthHistory<T=unknown>(projectId:string,options:PageRequestOptions & {sessionId?:string}={}):Promise<ListResponse<T>> {
+    return this.request('GET',pagedPath(`/api/v1/projects/${encodeURIComponent(projectId)}/health`,{},options),undefined,{...options,refreshSessionId:options.sessionId})
+  }
+  createProjectHealthUpdate<T=unknown>(projectId:string,input:ProjectHealthInput,options:RequestOptions & {sessionId:string;ifMatch:number|string}):Promise<T> {
+    return this.request('POST',`/api/v1/projects/${encodeURIComponent(projectId)}/health`,projectHealthInputSchema.parse(input),
+      {...options,idempotencyKey:options.idempotencyKey??randomUUID(),refreshSessionId:options.sessionId})
+  }
   requestProviderAction<T = unknown>(input: ProviderActionInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/provider-actions', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `provider:${input.kind}`), refreshSessionId: input.sessionId }) }
   publishDeliveryArtifact<T = unknown>(input: { workItemId: string; sessionId: string; projectId?: string; planStepId?: string; repositoryId?: string; pullRequestId?: string; headSha?: string; type: ArtifactInput['type'] | 'branch' | 'diff' | 'build' | 'preview'; title: string; uri?: string; checksum: string; sourceTool: string; command?: string; result?: 'passed' | 'failed' | 'skipped'; metadata?: Record<string, unknown> }, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/delivery-artifacts', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `delivery-artifact:${input.type}`), refreshSessionId: input.sessionId }) }
-  requestArtifactUpload<T = unknown>(input: { workItemId: string; sessionId: string; projectId?: string; planStepId?: string; repositoryId: string; pullRequestId?: string; headSha?: string; sourceTool: string; filename: string; mimeType: string; sizeBytes: number; checksum: string }, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/artifact-upload-intents', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `artifact-upload:${input.filename}:${input.checksum}`), refreshSessionId: input.sessionId }) }
+  requestArtifactUpload<T = ArtifactUploadResponse>(input: { workItemId: string; sessionId: string; projectId?: string; planStepId?: string; repositoryId: string; pullRequestId?: string; headSha?: string; sourceTool: string; filename: string; mimeType: string; sizeBytes: number; checksum: string }, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/artifact-upload-intents', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `artifact-upload:${input.filename}:${input.checksum}`), refreshSessionId: input.sessionId }).then(value=>this.validateResponse(artifactUploadResponseSchema,value) as T) }
   finalizeArtifactUpload<T = unknown>(uploadId: string, sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/artifact-upload-intents/${encodeURIComponent(uploadId)}/finalize`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, `artifact-finalize:${uploadId}`), refreshSessionId: sessionId }) }
-  getArtifactDownload<T = unknown>(uploadId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/artifact-upload-intents/${encodeURIComponent(uploadId)}/download`, undefined, options) }
+  getArtifactDownload<T = {downloadUrl:string}>(uploadId: string, options: RequestOptions & {sessionId?:string} = {}): Promise<T> { return this.request('GET', `/api/v1/artifact-upload-intents/${encodeURIComponent(uploadId)}/download`, undefined, {...options,refreshSessionId:options.sessionId}).then(value=>this.validateResponse(artifactDownloadResponseSchema,value) as T) }
   publishStructuredReview<T = unknown>(pullRequestId: string, input: StructuredReviewInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/pull-requests/${encodeURIComponent(pullRequestId)}/reviews`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `review:${pullRequestId}:${input.headSha}`), refreshSessionId: input.sessionId }) }
   requestMerge<T = unknown>(pullRequestId: string, input: { sessionId: string; approvalId: string; actionPayloadHash: string; headSha: string; method: 'merge' | 'squash' | 'rebase' }, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/pull-requests/${encodeURIComponent(pullRequestId)}/merge`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `merge:${pullRequestId}:${input.headSha}`), refreshSessionId: input.sessionId }) }
   retryCiCheck<T = unknown>(pullRequestId: string, checkRunId: string, input: CiRetryInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/pull-requests/${encodeURIComponent(pullRequestId)}/checks/${encodeURIComponent(checkRunId)}/retry`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `ci-retry:${pullRequestId}:${checkRunId}:${input.headSha}`), refreshSessionId: input.sessionId }) }
-  getProjectDelivery<T = unknown>(projectId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/projects/${encodeURIComponent(projectId)}/delivery`, undefined, options) }
+  getProjectDelivery<T = ProjectDeliveryResponse>(projectId: string, options: RequestOptions & {pullRequestId?:string;sessionId?:string} = {}): Promise<T> { return this.request('GET', `/api/v1/projects/${encodeURIComponent(projectId)}/delivery${options.pullRequestId?`?pullRequestId=${encodeURIComponent(options.pullRequestId)}`:''}`, undefined, {...options,refreshSessionId:options.sessionId}).then(value=>this.validateResponse(projectDeliveryResponseSchema,value) as T) }
   draftProjectUpdate<T = unknown>(projectId: string, input: { health: 'on_track' | 'at_risk' | 'off_track'; body: string; evidenceArtifactIds?: string[] }, options: RequestOptions & { sessionId: string }): Promise<T> { return this.request('POST', `/api/v1/projects/${encodeURIComponent(projectId)}/updates`, { ...input, status: 'draft', evidenceArtifactIds: input.evidenceArtifactIds ?? [] }, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(options.sessionId, `draft-project-update:${projectId}`), refreshSessionId: options.sessionId }) }
   publishProjectUpdate<T = unknown>(projectId: string, updateId: string, options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('POST', `/api/v1/projects/${encodeURIComponent(projectId)}/updates/${encodeURIComponent(updateId)}/publish`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(updateId, 'publish-project-update') }) }
   suggestCompletion<T = unknown>(projectId: string, input: { workItemId: string; pullRequestId?: string; rationale: string; evidenceArtifactIds?: string[] }, options: RequestOptions & { sessionId: string }): Promise<T> { return this.request('POST', `/api/v1/projects/${encodeURIComponent(projectId)}/completion-suggestions`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(options.sessionId, `completion-suggestion:${input.workItemId}`), refreshSessionId: options.sessionId }) }

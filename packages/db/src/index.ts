@@ -126,3 +126,4 @@ export * from './stage4.js'
 
 export * from './human-attention-sources.js'
 export * from './channel-notifications.js'
+export * from './principal-team-authority.js'

@@ -290,6 +290,7 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
       },
     }
     const toolApi: RunnerToolApi = { sessionId: api.sessionId,
+      artifactStoreOrigins: process.env.S3_ENDPOINT ? [new URL(process.env.S3_ENDPOINT).origin] : [],
       request: <T>(...args: Parameters<RunnerToolApi['request']>): Promise<T> => {
         return lifecycle.request(args[0], () => api.request<T>(...args))
       },

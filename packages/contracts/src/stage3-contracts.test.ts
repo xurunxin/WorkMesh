@@ -131,7 +131,7 @@ describe('Stage 3 contracts', () => {
     expect(providerAction).toContain('discriminator: { propertyName: kind }')
 
     const repositories = openapi.slice(openapi.indexOf('  /api/v1/repositories:'), openapi.indexOf('  /api/v1/provider-actions:'))
-    expect(repositories.match(/security: \[\{ SessionCookie: \[\] \}, \{ AgentSessionToken: \[\] \}\]/g)).toHaveLength(2)
+    expect(repositories.match(/security: \[\{ SessionCookie: \[\] \}, \{ AgentSessionToken: \[\] \}\]/g)).toHaveLength(3)
     const download = openapi.slice(openapi.indexOf('  /api/v1/artifact-upload-intents/{id}/download:'), openapi.indexOf('  /api/v1/pull-requests/{id}/reviews:'))
     expect(download).toContain('security: [{ SessionCookie: [] }, { AgentSessionToken: [] }]')
     const finalize = openapi.slice(openapi.indexOf('  /api/v1/artifact-upload-intents/{id}/finalize:'), openapi.indexOf('  /api/v1/artifact-upload-intents/{id}/download:'))

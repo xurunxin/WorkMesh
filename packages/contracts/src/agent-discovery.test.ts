@@ -59,7 +59,7 @@ describe('已审发现规则的已知门禁和身份投影', () => {
   it('provider具名kind按联合能力判定', () => {
     const base = facts()
     const execution = facts({ identity: { ...base.identity, credentialMode: 'agent_session', sessionKind: 'execution', delegationRole: 'executor' }, workItemId: id,
-      capabilities: ['work:read', 'repo:write_branch'] })
+      capabilities: ['work:read', 'repo:read', 'repo:write_branch'] })
     const projected = projection(deriveOperationEligibility(execution))
     expect(projected.bindings.find(binding => binding.bindingId === 'tool:open_pull_request')?.eligibility.status).toBe('blocked')
     expect(operation(deriveOperationEligibility({ ...execution, capabilities: [...execution.capabilities, 'repo:open_pr'] }), 'requestProviderAction', 'open_pull_request').eligibility.status).not.toBe('blocked')

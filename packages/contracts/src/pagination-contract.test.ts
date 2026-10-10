@@ -5,7 +5,7 @@ import { parseDocument } from 'yaml'
 type ParameterRef = { $ref?: string }
 type Operation = {
   parameters?: ParameterRef[]
-  responses?: Record<string, { $ref?: string }>
+  responses?: Record<string, { $ref?: string; content?: Record<string,{schema?:unknown}> }>
 }
 type OpenApiDocument = {
   paths: Record<string, { get?: Operation }>
@@ -109,7 +109,13 @@ describe('pagination OpenAPI contract', () => {
             : '#/components/parameters/Limit',
         },
       ]))
-      expect(operation?.responses?.['200']?.$ref, path).toMatch(
+      if (path === '/api/v1/repositories') {
+        expect(operation?.responses?.['200']?.content?.['application/json']?.schema).toMatchObject({
+          type: 'object', required: ['items','nextCursor'],
+          properties: {items: {type:'array',items: {$ref:'#/components/schemas/RepositoryResponse'}},
+            nextCursor: {type:'string',nullable:true}},
+        })
+      } else expect(operation?.responses?.['200']?.$ref, path).toMatch(
         /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentConnections|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|HumanAttentionItems|RecoveryItems|ControlCenter|InboxItems|Milestones|WorkItemRelations|RepositoryConfigurations)$/,
       )
     }
