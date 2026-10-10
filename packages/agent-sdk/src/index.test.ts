@@ -12,13 +12,18 @@ const qualifiedFixture = (sessionId: string, coordination: boolean) => {
 
 describe('WorkMeshClient', () => {
   it('independent lease renewals use distinct keys while explicit identity is preserved', async () => {
-    const fetcher = vi.fn().mockImplementation(async () => new Response('{}', { headers: { 'content-type': 'application/json' } }))
-    const client = new WorkMeshClient({baseUrl:'http://api.test',sessionToken:'own-session',fetch:fetcher})
+    let calls=0
+    const fetcher = vi.fn().mockImplementation(async () => new Response('{}', {status:++calls===4?503:200, headers: { 'content-type': 'application/json' } }))
+    const client = new WorkMeshClient({baseUrl:'http://api.test',sessionToken:'own-session',fetch:fetcher,retry:{baseDelayMs:0}})
     await client.mutateLease('lease','renew',{ttlSeconds:60})
     await client.mutateLease('lease','renew',{ttlSeconds:60})
     await client.mutateLease('lease','renew',{ttlSeconds:60},{idempotencyKey:'explicit-renew'})
+    await client.mutateLease('lease','heartbeat')
+    await client.mutateLease('lease','heartbeat')
     const keys = fetcher.mock.calls.map(call=>new Headers(call[1].headers).get('idempotency-key'))
     expect(keys[0]).toBeTruthy();expect(keys[1]).toBeTruthy();expect(keys[0]).not.toBe(keys[1]);expect(keys[2]).toBe('explicit-renew')
+    expect(keys[3]).toBe(keys[4]);expect(fetcher.mock.calls[3]![1].body).toBe(fetcher.mock.calls[4]![1].body)
+    expect(keys[5]).not.toBe(keys[4])
   })
 
   it('安装拒绝 helper 明确选安装 Bearer，原 Session 拒绝入口保留且不换共享 Token', async () => {

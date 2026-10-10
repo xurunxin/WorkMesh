@@ -27,6 +27,22 @@ function manifest(capabilities: Capability[]): AgentCapabilityManifest {
 }
 
 describe('Pi WorkMesh tools', () => {
+  it('M2计划评论/提案/context delta固定自身身份，验证来源并复用同调用幂等包装',async()=>{
+    const calls:Array<{path:string;body:unknown;key?:string}>=[]
+    const api:RunnerToolApi={sessionId,async request<T>(_method:Parameters<RunnerToolApi['request']>[0],path:string,body?:unknown,_revision?:number,key?:string):Promise<T>{
+      if(path==='/api/v1/agent-capabilities?discovery=qualified')return manifest(['work:read','work:write','plan:write']) as T
+      calls.push({path,body,key});return {id:documentId} as T
+    }}
+    const tools=await createWorkMeshTools(api,'M2 collaboration',()=>undefined)
+    const invoke=async(name:string,input:unknown)=>tools.find(t=>t.name===name)!.execute(name,input,undefined,undefined,{} as never)
+    await invoke('workmesh_comment_plan_step',{planVersionId:ownerId,planStepId:documentId,body:'Exact Plan'})
+    await invoke('workmesh_propose_plan_step_assignment',{planStepId:documentId,skill:'review',rationale:'No automatic assignment'})
+    await invoke('workmesh_append_context_delta',{baseSnapshotId:baseRevisionId,rationale:'Trusted',additions:[{sourceType:'artifact',sourceId:documentId,hash:`sha256:${'a'.repeat(64)}`}]})
+    const writes=calls.filter(c=>!c.path.endsWith('/activities'))
+    expect(writes.map(c=>c.path)).toEqual(['plan/comments','assignment-proposals','context-deltas'].map(s=>`/api/v1/agent-sessions/${sessionId}/${s}`))
+    expect(writes.every(c=>Boolean(c.key))).toBe(true)
+    await expect(invoke('workmesh_propose_plan_step_assignment',{planStepId:documentId,agentId:ownerId,skill:'review',rationale:'Ambiguous'})).rejects.toThrow()
+  })
   it('M2长分页重读同cursor缩小limit，保留完整后页与正文，不把事实截成ID', async () => {
     const paths: string[] = []
     const api: RunnerToolApi = { sessionId, async request<T>(_method: Parameters<RunnerToolApi['request']>[0],path: string):Promise<T> {

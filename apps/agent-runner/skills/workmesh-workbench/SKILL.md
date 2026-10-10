@@ -46,6 +46,8 @@ Room metadata 不授正文读取权。使用本人 Inbox 的 metadata→claim→
 
 ## 普通 child 与独立 reviewer
 
+`workmesh_comment_plan_step` 绑定当前 Plan/version/stable step；`workmesh_propose_plan_step_assignment` 仅提案，不自动分配或创建 Session。`workmesh_append_context_delta` 只追加当前 snapshot 下已授权的来源及准确 hash，Guidance 用可信 URI，内部来源用准确 ID；父身份由 Runner 固定，不接受替换 Session。
+
 父身份固定为当前 Session。先读取当前 Plan/version 和稳定 step，使用 `workmesh_create_child_session` 或 `workmesh_create_review_delegation`。传入显式缩减 budget：未给出的维度仍继承父上限；旧 reservation 不因 child 完成自动释放。例如父 input 100、child 60 后 review 应显式 40，不能省略而隐式继承 100。
 
 普通 child 使用有限能力。reviewer 不拥有 `plan:write`，不能发布 Plan；只能发布 `code_review` Artifact，并必须本人发送 Room `review_result`。Artifact 应包含审查 metadata 或真实引用，`noArtifactReason` 或 structured review 不能替代双证据。父用 `workmesh_list_child_sessions` 确认所有 required child 已 completed；其它每种状态都阻止父完成并返回准确 IDs。父终态或撤权不能继续读取子状态，Stop/pause 优先；父 Stop 不表示子已自动停止。

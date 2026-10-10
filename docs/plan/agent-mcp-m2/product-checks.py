@@ -4,11 +4,16 @@ import json,os,secrets,subprocess,sys,time,uuid
 ROOT=Path(__file__).resolve().parents[3]
 OUT=Path(__file__).parent/'product-evidence'
 owner='m2-'+uuid.uuid4().hex[:12]
-resources=[];env=dict(os.environ)
+resources=[];operations=[];env=dict(os.environ)
 def call(argv,**kw):
-    return subprocess.run(argv,cwd=ROOT,env=env,capture_output=True,text=True,check=True,**kw).stdout.strip()
+    started=time.time()
+    result=subprocess.run(argv,cwd=ROOT,env=env,capture_output=True,text=True,**kw)
+    operations.append({'argv':argv,'nativeExit':result.returncode,'startedUnix':started,'endedUnix':time.time()})
+    save()
+    result.check_returncode()
+    return result.stdout.strip()
 def save():
-    (OUT/(owner+'-resources.json')).write_text(json.dumps({'owner':owner,'resources':resources,'sharedImagesPreserved':True,'volumesCreated':False,'networkCreated':False},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    (OUT/(owner+'-resources.json')).write_text(json.dumps({'owner':owner,'resources':resources,'operations':operations,'sharedImagesPreserved':True,'volumesCreated':False,'networkCreated':False},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 def create(kind,image,port,args):
     name=owner+'-'+kind
     resource={'kind':kind,'name':name,'image':image,'status':'preparing'};resources.append(resource);save()

@@ -9,6 +9,7 @@ import {
   workItemPatchSchema, workItemRelationInputSchema,
   childSessionInputSchema, reviewDelegationInputSchema, childSessionStatusQuerySchema,
   decisionInputSchema, roomMessageInputSchema, restoreDocumentRevisionInputSchema,
+  contextDeltaInputSchema, assignmentProposalInputSchema,
 } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { z } from 'zod'
@@ -551,6 +552,23 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
             inputSanitized: { operationId: 'appendAgentActivity', toolCallId,
               runnerAttemptId: attemptId, payloadHash: contentHash } } }) }
     }, false, false)
+  add('workmesh_comment_plan_step','commentOnPlanStep',
+    'Append a comment to the exact current Plan version and stable step of this Session.',
+    Type.Object({planVersionId:idParameter,planStepId:idParameter,body:Type.String({minLength:1,maxLength:50000}),references:Type.Optional(Type.Array(Type.Unknown(),{maxItems:100}))}), input => ({
+      method:'POST',path:`/api/v1/agent-sessions/${api.sessionId}/plan/comments`,
+      body:z.object({planVersionId:id,planStepId:id,body:z.string().min(1).max(50000),references:z.array(z.unknown()).max(100).default([])}).parse(input),
+    }))
+  add('workmesh_propose_plan_step_assignment','proposePlanAssignment',
+    'Propose an exact Agent or skill for the current stable Plan step; a proposal does not assign or start a Session.',
+    Type.Object({planStepId:idParameter,agentId:Type.Optional(idParameter),skill:Type.Optional(Type.String({minLength:1,maxLength:160})),rationale:Type.String({minLength:1,maxLength:10000})}), input=>({
+      method:'POST',path:`/api/v1/agent-sessions/${api.sessionId}/assignment-proposals`,body:assignmentProposalInputSchema.parse(input),
+    }))
+  add('workmesh_append_context_delta','appendContextDelta',
+    'Append trusted, scoped sources from the exact current snapshot. Supply verified source hashes; the server rejects foreign or stale sources.',
+    Type.Object({baseSnapshotId:idParameter,rationale:Type.String({minLength:1,maxLength:10000}),additions:Type.Array(Type.Object({
+      sourceType:Type.Union(['artifact','message','work_item','plan_step','guidance'].map(value=>Type.Literal(value))),
+      sourceId:Type.Optional(idParameter),uri:Type.Optional(Type.String({format:'uri'})),hash:Type.String({pattern:'^sha256:[a-f0-9]{64}$'}),
+    }),{minItems:1,maxItems:100})}),input=>({method:'POST',path:`/api/v1/agent-sessions/${api.sessionId}/context-deltas`,body:contextDeltaInputSchema.parse(input)}))
   add('workmesh_publish_plan', 'publishAgentPlan',
     'Publish a whole immutable plan version. Keep stable step IDs across revisions. Call workmesh_get_session for its exact current revision first.',
     Type.Object({ ifMatch: Type.Integer({ minimum: 1 }),

@@ -16,7 +16,7 @@ const call = async <T>(client: Client, name: string, arguments_: Record<string, 
 const boundFields = ['parent_session_id','plan_step_version_id','required_for_parent','inherited_budget','max_child_sessions']
 const facts = async () => {
   const hashes: Record<string, { rows: number; sha256: string }> = {}
-  for (const table of ['agent_session_tokens','agent_sessions','delegations','api_idempotency_keys','inbox_item_receipts','workbench_turns','workbench_runner_attempts','domain_events','outbox_events','agent_activities','inbox_items','session_budget_reservations']) {
+  for (const table of ['agent_session_tokens','agent_sessions','delegations','api_idempotency_keys','inbox_item_receipts','workbench_turns','workbench_runner_attempts','domain_events','outbox_events','agent_activities','inbox_items','session_budget_reservations','leases','agent_plan_versions','agent_plan_steps','agent_plan_step_identities','agent_plan_step_dependencies','agent_session_prompts','artifacts','room_messages','room_message_recipients','room_message_session_recipients']) {
     const rows = (await f.db.query<{ fact: string }>(`SELECT to_jsonb(fact)::text AS fact FROM ${table} fact ORDER BY to_jsonb(fact)::text`)).rows
     hashes[table] = { rows: rows.length, sha256: createHash('sha256').update(JSON.stringify(rows.map(row=>row.fact))).digest('hex') }
   }
@@ -95,8 +95,27 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     expect(await call(reconnect,'get_work_item',{workItemId:b})).toMatchObject({parent_id:a,milestone_id:restored.mapping.milestones[0]!.targetId})
     const cycle = await reconnect.callTool({name:'create_work_item_relation',arguments:{workItemId:b,targetWorkItemId:a,kind:'blocks',idempotencyKey:randomUUID()}})
     expect(cycle).toMatchObject({isError:true})
+    const parent = await call<{revision:number}>(reconnect,'get_work_item',{workItemId:a})
+    expect(await reconnect.callTool({name:'update_work_item',arguments:{workItemId:a,revision:parent.revision,parentId:b,idempotencyKey:randomUUID()}})).toMatchObject({isError:true})
+    const milestone = await call<{revision:number}>(reconnect,'get_milestone',{milestoneId:restored.mapping.milestones[0]!.targetId})
+    expect(await reconnect.callTool({name:'delete_milestone',arguments:{milestoneId:restored.mapping.milestones[0]!.targetId,revision:milestone.revision,idempotencyKey:randomUUID()}})).toMatchObject({isError:true,structuredContent:{error:{code:'MILESTONE_HAS_ACTIVE_WORK_ITEMS'}}})
+    const milestones = [restored.mapping.milestones[0]!.targetId]
+    for(let i=0;i<4;i++) milestones.push((await call<{id:string}>(reconnect,'create_milestone',{projectId,name:`M2 extra ${i}`,idempotencyKey:randomUUID()})).id)
+    const seen:string[]=[]
+    let cursor:string|undefined
+    do {
+      const page = await call<{items:Array<{id:string}>;nextCursor:string|null}>(reconnect,'list_project_milestones',{projectId,limit:2,...(cursor?{cursor}:{})})
+      seen.push(...page.items.map(row=>row.id));cursor=page.nextCursor??undefined
+    } while(cursor)
+    expect(seen).toHaveLength(5);expect(new Set(seen)).toEqual(new Set(milestones))
+    const related = await call<{id:string;revision:number}>(reconnect,'create_work_item_relation',{workItemId:a,targetWorkItemId:b,kind:'related',idempotencyKey:randomUUID()})
+    const relations = await call<{items:Array<{id:string;kind:string}>}>(reconnect,'list_work_item_relations',{workItemId:a,limit:200})
+    expect(relations.items).toContainEqual(expect.objectContaining({id:related.id,kind:'related'}))
+    expect(relations.items.some(row=>row.kind==='blocks')).toBe(true)
+    await call(reconnect,'remove_work_item_relation',{workItemId:a,relationId:related.id,revision:related.revision,idempotencyKey:randomUUID()})
+    expect((await call<{items:Array<{id:string}>}>(reconnect,'list_work_item_relations',{workItemId:a,limit:200})).items.some(row=>row.id===related.id)).toBe(false)
     expect((await f.db.query("SELECT count(*)::int AS count FROM projects WHERE name='M2 import'")).rows[0]).toEqual({count:1})
-    savePlanningEvidence('planning-import-recovery.json',{prepared,partial,restored,replay,page,tail,cycle})
+    savePlanningEvidence('planning-import-recovery.json',{prepared,partial,restored,replay,page,tail,cycle,milestones,seen,related,relations})
   })
 
   it('有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段', async () => {
@@ -131,6 +150,15 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     expect(reviewDelegationResponseSchema.parse(review).session.budget).toEqual({ maxInputTokens: 40 })
     for (const field of boundFields) expect(review.session).toHaveProperty(field)
     const reviewer = await f.receive(review.session.id, target.token)
+    const firstHeartbeat = await reviewer.client.heartbeatLease(review.lease.id)
+    await new Promise(resolve => setTimeout(resolve, 15))
+    const secondHeartbeat = await reviewer.client.heartbeatLease(review.lease.id)
+    expect(new Date(secondHeartbeat.heartbeat_at!).getTime()).toBeGreaterThan(new Date(firstHeartbeat.heartbeat_at!).getTime())
+    expect(secondHeartbeat.expires_at).toEqual(firstHeartbeat.expires_at)
+    const firstRenewal = await reviewer.client.renewLease(review.lease.id, {ttlSeconds:300}, {ifMatch:secondHeartbeat.version})
+    const secondRenewal = await reviewer.client.renewLease(review.lease.id, {ttlSeconds:300}, {ifMatch:firstRenewal.version})
+    expect(secondRenewal.version).toBe(firstRenewal.version+1)
+    savePlanningEvidence('lease-independent-calls.json',{firstHeartbeat,secondHeartbeat,firstRenewal,secondRenewal})
     const deliveryCounts = f.deliveryCounts()
     // Privileged crash fixture models loss of the original 204 after receiver exchange/ACK.
     await f.db.query("UPDATE agent_webhook_deliveries SET status='pending',delivered_at=NULL,available_at=clock_timestamp() WHERE session_id=$1 AND event_type='agent.session.created'",[reviewer.sessionId])
@@ -291,7 +319,7 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
 
   it('M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP', async () => {
     await f.registerCurrentReceiver()
-    const ready = (await f.db.query<{id:string}>("SELECT id FROM workflow_states WHERE team_id=$1 AND category='unstarted' LIMIT 1",[f.teamId])).rows[0]!.id
+    const ready = (await f.db.query<{id:string}>("SELECT id FROM workflow_states WHERE team_id=$1 AND category='planned' LIMIT 1",[f.teamId])).rows[0]!.id
     const client = new WorkMeshClient({baseUrl:f.baseUrl,coordinationToken:f.connectionToken,installationToken:f.connectionToken})
     const claim = async (title:string) => {
       const work = await f.human<{id:string;revision:number}>('POST','/api/v1/work-items',{teamId:f.teamId,title,statusId:ready,responsibleHumanActorId:f.humanActorId})
@@ -305,6 +333,22 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     const exact = (await f.db.query<{id:string}>('SELECT id FROM agent_session_tokens WHERE session_id=$1',[first.session.id])).rows[0]!.id
     expect((delivery.payload as {sessionTokenId:string}).sessionTokenId).toBe(exact)
     const counts = f.deliveryCounts()
+    // Historical no-ID and wrong-origin fixtures are deliberately not repaired by guessing a token.
+    const missingBinding = {sessionId:first.session.id,initialPrompt:'Legacy notification without binding'}
+    const wrongBinding = {...delivery.payload as Record<string,unknown>,sessionTokenId:randomUUID()}
+    for (const payload of [missingBinding,wrongBinding]) {
+      await f.db.query('UPDATE agent_webhook_deliveries SET payload=$2::jsonb WHERE id=$1',[delivery.id,JSON.stringify(payload)])
+      await expect(worker.deliver({...delivery,payload})).rejects.toMatchObject({code:'WEBHOOK_TARGET_REVOKED'})
+      expect(f.deliveryCounts()).toEqual(counts)
+    }
+    await f.db.query('UPDATE agent_webhook_deliveries SET payload=$2::jsonb WHERE id=$1',[delivery.id,JSON.stringify(delivery.payload)])
+    await expect(worker.deliver({...delivery,leaseExpiresAt:new Date(0)})).rejects.toMatchObject({code:'WEBHOOK_TARGET_REVOKED'})
+    expect(f.deliveryCounts()).toEqual(counts)
+    await f.human('POST',`/api/v1/agent-sessions/${first.session.id}/signals`,{signal:'stop',reason:'Self-claim notification Stop fence'},first.session.revision)
+    await expect(worker.deliver(delivery)).rejects.toMatchObject({code:'WEBHOOK_TARGET_REVOKED'})
+    expect(f.deliveryCounts()).toEqual(counts)
+    // Privileged fixture restores only the queued state for the same exact original send binding.
+    await f.db.query("UPDATE agent_sessions SET state='queued' WHERE id=$1",[first.session.id])
     await worker.deliver(delivery)
     expect(f.deliveryCounts().accepted).toBe(counts.accepted+1)
     await client.exchangeClaimedSessionToken(first.session.id,first.exchangeToken,{idempotencyKey:randomUUID()})
@@ -317,7 +361,7 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     const before = f.deliveryCounts()
     try { await expect(worker.deliver(blocked)).rejects.toMatchObject({code:'WEBHOOK_TARGET_REVOKED'});expect(f.deliveryCounts()).toEqual(before) }
     finally { await f.db.query('UPDATE agent_connections SET revoked_at=NULL WHERE id=$1',[connection]) }
-    savePlanningEvidence('self-claim-notification.json',{sessionId:first.session.id,exactTokenId:exact,nonceAbsent:true,delivered:true,revokedSourceDenied:true,before,after:f.deliveryCounts()})
+    savePlanningEvidence('self-claim-notification.json',{sessionId:first.session.id,exactTokenId:exact,nonceAbsent:true,delivered:true,missingBindingDenied:true,wrongBindingDenied:true,expiredClaimDenied:true,stopDenied:true,revokedSourceDenied:true,before,after:f.deliveryCounts()})
   })
 
   it('投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt', async () => {

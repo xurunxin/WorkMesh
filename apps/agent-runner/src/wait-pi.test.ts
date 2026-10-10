@@ -43,6 +43,9 @@ it('真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃
     vi.spyOn(api, 'request').mockImplementation(async (_method, path) => {
       paths.push(path)
       if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest
+      if (path === `/api/v1/workbench/runner-attempts/${id}/status`) return {
+        sessionState: 'executing', delegationStatus: 'active', attemptStatus: 'running', turnStatus: 'running',
+      }
       throw new Error('UNEXPECTED_TOOL_REQUEST')
     })
     const credential = workbenchRunnerCredentialSchema.parse({ runnerAttemptId: id, fenceToken: 'fixture-fence-token',
@@ -54,7 +57,8 @@ it('真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃
     expect(result.waitIntent).toEqual({ state: 'awaiting_input', reason: '请提供准确输入' })
     expect(result.answer).toBe('请提供准确输入')
     expect(advertised).toContain('workmesh_wait')
-    expect(paths).toEqual(['/api/v1/agent-capabilities?discovery=qualified'])
+    expect(paths[0]).toBe('/api/v1/agent-capabilities?discovery=qualified')
+    expect(paths.slice(1).every(path => path === `/api/v1/workbench/runner-attempts/${id}/status`)).toBe(true)
     expect(requests).toBe(1)
   } finally {
     server.closeAllConnections()

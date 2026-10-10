@@ -1,0 +1,1030 @@
+import { z } from 'zod';
+import { actionPreviewResponseSchema, agentSessionControlActionSchema, agentSessionControlPreviewInputSchema, controlCenterCollectionSchema, controlCenterResponseSchema, runExplanationCursorPayloadSchema, runExplanationCursorSchema, runExplanationResponseSchema, workItemExecutionSummaryResponseSchema, } from '@workmesh/contracts';
+import { DomainError, deriveSessionBudgetUtilization, evaluateAgentSessionControl, worstSessionBudgetUtilization, } from '@workmesh/domain';
+import { liveHumanTeamReadPredicate, liveSessionReadPredicate, } from '../live-read-authorization.js';
+import { humanAttentionAuthorizationPredicate, } from '../human-attention/routes.js';
+import { humanAttentionProjectionSql, projectHumanAttentionRow, } from '../human-attention/projection.js';
+const QUERY_TIMEOUT_MS = 1_500;
+const INITIAL_LIMIT = 10;
+const MAX_LIMIT = 100;
+const PREVIEW_TTL_MS = 30_000;
+const requestActor = (request) => request.actor;
+const iso = (value) => value instanceof Date ? value.toISOString() : new Date(value).toISOString();
+const dateOnly = (value) => value instanceof Date ? value.toISOString().slice(0, 10) : value.slice(0, 10);
+const idParam = (request, key) => z.object({ [key]: z.string().uuid() }).parse(request.params)[key];
+const boundedQuery = async (db, text, values) => {
+    const client = await db.connect();
+    try {
+        await client.query('BEGIN READ ONLY');
+        await client.query(`SET LOCAL statement_timeout='${QUERY_TIMEOUT_MS}ms'`);
+        const result = await client.query(text, values);
+        await client.query('COMMIT');
+        return result;
+    }
+    catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+    }
+    finally {
+        client.release();
+    }
+};
+const sourceScopePredicate = (current, columns, values) => {
+    if (current.kind === 'human')
+        return liveHumanTeamReadPredicate(current, columns.workspace, columns.team, values);
+    values.push(current.agentSessionId ?? null);
+    const exactSession = `$${values.length}`;
+    const live = liveSessionReadPredicate(current, 'reader.id', 'reader.workspace_id', values);
+    return `EXISTS (
+    SELECT 1
+      FROM agent_sessions reader
+      LEFT JOIN work_items reader_item
+        ON reader_item.id=reader.work_item_id
+       AND reader_item.workspace_id=reader.workspace_id
+       AND reader_item.deleted_at IS NULL
+     WHERE reader.id=${exactSession}
+       AND reader.workspace_id=${columns.workspace}
+       AND ${live}
+       AND (
+         ${columns.session}=reader.id
+         OR (${columns.workItem} IS NOT NULL AND ${columns.workItem}=reader.work_item_id)
+         OR (${columns.project} IS NOT NULL AND ${columns.project}=COALESCE(reader.project_id,reader_item.project_id))
+         OR (reader.session_kind='coordination' AND ${columns.team}=reader.team_id)
+       )
+  )`;
+};
+const digest = (row, observedAt) => ({
+    id: `${row.source_type}:${row.id}`,
+    kind: row.kind,
+    title: row.title,
+    summary: row.summary,
+    projectId: row.project_id,
+    workItemId: row.work_item_id,
+    sessionId: row.session_id,
+    state: row.state,
+    revision: Number(row.revision),
+    source: { type: row.source_type, id: row.id, revision: Number(row.revision) },
+    responsibleHuman: row.responsible_human_id && row.responsible_human_name
+        ? { id: row.responsible_human_id, kind: 'human', displayName: row.responsible_human_name }
+        : null,
+    activeAgent: row.active_agent_id && row.active_agent_name
+        ? { id: row.active_agent_id, kind: 'agent', displayName: row.active_agent_name }
+        : null,
+    workItem: row.work_item_id && row.work_item_title
+        ? { id: row.work_item_id, title: row.work_item_title }
+        : null,
+    currentStep: row.plan_step_id && row.plan_step_title && row.plan_step_status !== null && row.plan_step_status !== undefined && row.plan_step_ordinal !== null && row.plan_step_ordinal !== undefined
+        ? { id: row.plan_step_id, title: row.plan_step_title, status: row.plan_step_status, ordinal: Number(row.plan_step_ordinal) }
+        : null,
+    health: row.heartbeat_health
+        ? { heartbeat: row.heartbeat_health, lastHeartbeatAt: row.last_heartbeat_at ? iso(row.last_heartbeat_at) : null }
+        : null,
+    // Only a session-sourced row carries a run budget. Derived here, in one
+    // projection, so a list of running Sessions never has to fan out to
+    // /explanation per row. A row without a measurable entry stays null and
+    // never renders as a zero.
+    budgetUtilization: row.session_id
+        ? worstSessionBudgetUtilization(deriveSessionBudgetUtilization({
+            budget: row.session_budget ?? {},
+            startedAt: row.session_created_at ? iso(row.session_created_at) : null,
+            observedAt,
+        }))
+        : null,
+    lastActivity: row.last_activity_id && row.last_activity_kind && row.last_activity_summary && row.last_activity_at
+        ? { id: row.last_activity_id, kind: row.last_activity_kind, summary: row.last_activity_summary, createdAt: iso(row.last_activity_at) }
+        : null,
+    pendingHumanActionCount: Number(row.pending_human_action_count ?? 0),
+    evidenceCount: Number(row.evidence_count ?? 0),
+    verified: row.verified === true,
+    updatedAt: iso(row.updated_at),
+});
+const sessionDigestColumns = `
+       ,responsible.id AS responsible_human_id,responsible.display_name AS responsible_human_name,
+        agent.id AS active_agent_id,agent.display_name AS active_agent_name,item.title AS work_item_title,
+        item_state.category::text AS work_item_state,
+        step.id AS plan_step_id,step.title AS plan_step_title,step.status AS plan_step_status,step.ordinal AS plan_step_ordinal,
+        session.heartbeat_health,session.last_heartbeat_at,
+        session.budget AS session_budget,session.created_at AS session_created_at,
+        activity.id AS last_activity_id,activity.kind AS last_activity_kind,
+        activity.summary AS last_activity_summary,activity.created_at AS last_activity_at,
+        ((SELECT count(*) FROM decisions decision WHERE decision.session_id=session.id AND decision.status='proposed')
+          +(SELECT count(*) FROM approvals approval WHERE approval.session_id=session.id AND approval.status='pending' AND approval.expires_at>now())
+          +(SELECT count(*) FROM inbox_items inbox WHERE inbox.session_id=session.id AND inbox.status='open' AND inbox.requires_response=true)) AS pending_human_action_count,
+        (SELECT count(*) FROM artifacts artifact WHERE artifact.session_id=session.id AND artifact.workspace_id=session.workspace_id) AS evidence_count,
+        EXISTS(SELECT 1 FROM artifacts artifact WHERE artifact.session_id=session.id AND artifact.workspace_id=session.workspace_id) AS verified`;
+const sessionDigestJoins = `
+      JOIN actors agent ON agent.id=session.agent_actor_id AND agent.workspace_id=session.workspace_id
+      LEFT JOIN work_items item ON item.id=session.work_item_id AND item.workspace_id=session.workspace_id AND item.deleted_at IS NULL
+      LEFT JOIN workflow_states item_state ON item_state.id=item.status_id AND item_state.workspace_id=session.workspace_id
+      LEFT JOIN actors responsible ON responsible.id=item.responsible_human_actor_id AND responsible.workspace_id=session.workspace_id AND responsible.kind='human'
+      LEFT JOIN LATERAL (
+        SELECT candidate.id,candidate.title,candidate.status,candidate.ordinal
+          FROM agent_plan_steps candidate
+         WHERE candidate.plan_version_id=session.current_plan_version_id
+         ORDER BY (candidate.id=session.heartbeat_current_step_id) DESC,(candidate.status='in_progress') DESC,candidate.ordinal
+         LIMIT 1
+      ) step ON true
+      LEFT JOIN LATERAL (
+        SELECT candidate.id,candidate.kind,candidate.summary,candidate.created_at
+          FROM agent_activities candidate
+         WHERE candidate.session_id=session.id AND candidate.ephemeral=false AND candidate.kind<>'heartbeat'
+         ORDER BY candidate.sequence DESC,candidate.id DESC
+         LIMIT 1
+      ) activity ON true`;
+const collectionSql = (collection) => {
+    if (collection === 'running')
+        return `
+    SELECT session.id,'run'::text AS kind,agent.display_name AS title,
+           COALESCE(NULLIF(session.state_reason,''),concat('Agent Session is ',session.state::text)) AS summary,
+           COALESCE(session.project_id,item.project_id) AS project_id,session.work_item_id,session.id AS session_id,
+           session.state::text AS state,session.revision,'agent_session'::text AS source_type,session.updated_at,
+           session.team_id,session.workspace_id${sessionDigestColumns}
+      FROM agent_sessions session
+      ${sessionDigestJoins}
+     WHERE session.workspace_id=$1
+       AND session.state IN ('queued','acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked','paused','stopping','stale')`;
+    if (collection === 'risks')
+        return `
+    SELECT session.id,'risk'::text AS kind,concat('Session ',session.state::text) AS title,
+           COALESCE(NULLIF(session.error_summary,''),NULLIF(session.state_reason,''),'Execution health needs review') AS summary,
+           COALESCE(session.project_id,item.project_id) AS project_id,session.work_item_id,session.id AS session_id,
+           session.state::text AS state,session.revision,'agent_session'::text AS source_type,session.updated_at,
+           session.team_id,session.workspace_id${sessionDigestColumns}
+      FROM agent_sessions session
+      ${sessionDigestJoins}
+     WHERE session.workspace_id=$1
+       AND (session.state IN ('blocked','failed','stale') OR session.heartbeat_health IN ('degraded','stale'))`;
+    if (collection === 'recently_verified')
+        return `
+    SELECT session.id,'verified_outcome'::text AS kind,COALESCE(item.title,'Completed Agent Session') AS title,
+           COALESCE(NULLIF(session.result_summary,''),'Execution completed with recorded evidence') AS summary,
+           COALESCE(session.project_id,item.project_id) AS project_id,session.work_item_id,session.id AS session_id,
+           session.state::text AS state,session.revision,'agent_session'::text AS source_type,session.updated_at,
+           session.team_id,session.workspace_id${sessionDigestColumns}
+      FROM agent_sessions session
+      ${sessionDigestJoins}
+     WHERE session.workspace_id=$1 AND session.state='completed'
+       AND EXISTS(SELECT 1 FROM artifacts evidence WHERE evidence.session_id=session.id AND evidence.workspace_id=session.workspace_id)`;
+    if (collection === 'ready_work')
+        return `
+    SELECT item.id,'ready_work'::text AS kind,item.title,
+           COALESCE(NULLIF(item.description,''),'Work Item is ready for execution') AS summary,
+           item.project_id,item.id AS work_item_id,NULL::uuid AS session_id,
+           state.category::text AS state,item.revision,'work_item'::text AS source_type,item.updated_at,
+           item.team_id,item.workspace_id,responsible.id AS responsible_human_id,
+           responsible.display_name AS responsible_human_name,item.title AS work_item_title,
+           NULL::uuid AS active_agent_id,NULL::text AS active_agent_name,
+           state.category::text AS work_item_state,NULL::text AS heartbeat_health
+      FROM work_items item
+      JOIN workflow_states state ON state.id=item.status_id AND state.workspace_id=item.workspace_id
+      LEFT JOIN actors responsible ON responsible.id=item.responsible_human_actor_id AND responsible.workspace_id=item.workspace_id AND responsible.kind='human'
+     WHERE item.workspace_id=$1 AND item.deleted_at IS NULL AND state.category='planned'
+       AND NOT EXISTS (SELECT 1 FROM agent_sessions active WHERE active.work_item_id=item.id AND active.workspace_id=item.workspace_id AND active.state NOT IN ('completed','failed','canceled'))`;
+    return `
+    SELECT item.id,'blocked_work'::text AS kind,item.title,
+           COALESCE(NULLIF(blocked.state_reason,''),'Work Item has a blocked Agent execution') AS summary,
+           item.project_id,item.id AS work_item_id,blocked.id AS session_id,
+           blocked.state::text AS state,GREATEST(item.revision,blocked.revision) AS revision,'work_item'::text AS source_type,
+           GREATEST(item.updated_at,blocked.updated_at) AS updated_at,item.team_id,item.workspace_id,
+           responsible.id AS responsible_human_id,responsible.display_name AS responsible_human_name,
+           blocked.agent_actor_id AS active_agent_id,blocked.agent_name AS active_agent_name,
+           item.title AS work_item_title,item_state.category::text AS work_item_state,
+           blocked.heartbeat_health,blocked.last_heartbeat_at
+      FROM work_items item
+      JOIN workflow_states item_state ON item_state.id=item.status_id AND item_state.workspace_id=item.workspace_id
+      LEFT JOIN actors responsible ON responsible.id=item.responsible_human_actor_id AND responsible.workspace_id=item.workspace_id AND responsible.kind='human'
+      JOIN LATERAL (
+        SELECT session.id,session.state,session.state_reason,session.revision,session.updated_at,
+               session.agent_actor_id,agent.display_name AS agent_name,session.heartbeat_health,session.last_heartbeat_at
+          FROM agent_sessions session
+          JOIN actors agent ON agent.id=session.agent_actor_id AND agent.workspace_id=session.workspace_id
+         WHERE session.workspace_id=item.workspace_id AND session.work_item_id=item.id AND session.state='blocked'
+         ORDER BY session.updated_at DESC,session.id DESC LIMIT 1
+      ) blocked ON true
+     WHERE item.workspace_id=$1 AND item.deleted_at IS NULL`;
+};
+const applyTimeWindow = (column, timeWindow, where) => {
+    if (timeWindow === '24h')
+        where.push(`${column}>=now()-interval '24 hours'`);
+    else if (timeWindow === '7d')
+        where.push(`${column}>=now()-interval '7 days'`);
+    else if (timeWindow === '30d')
+        where.push(`${column}>=now()-interval '30 days'`);
+};
+async function readAttentionPage(h, request, projectId, rawPage, filters) {
+    const current = requestActor(request);
+    const values = [current.workspaceId];
+    const where = [humanAttentionAuthorizationPredicate(current, values), "attention.status='open'"];
+    if (projectId) {
+        values.push(projectId);
+        where.push(`attention.project_id=$${values.length}`);
+    }
+    if (filters.responsibleHumanActorId) {
+        values.push(filters.responsibleHumanActorId);
+        where.push(`attention.responsible_human_actor_id=$${values.length}`);
+    }
+    if (filters.agentActorId) {
+        values.push(filters.agentActorId);
+        where.push(`attention.requested_by_actor_id=$${values.length} AND requester.kind='agent'`);
+    }
+    if (filters.risk === 'at_risk')
+        where.push(`(attention.risk_level IN ('high','critical') OR attention.kind IN ('conflict','recovery'))`);
+    if (filters.workItemState) {
+        values.push(filters.workItemState);
+        where.push(`EXISTS (SELECT 1 FROM work_items filtered_item JOIN workflow_states filtered_state ON filtered_state.id=filtered_item.status_id AND filtered_state.workspace_id=filtered_item.workspace_id WHERE filtered_item.id=attention.work_item_id AND filtered_item.workspace_id=attention.workspace_id AND filtered_item.deleted_at IS NULL AND filtered_state.category::text=$${values.length})`);
+    }
+    applyTimeWindow('attention.updated_at', filters.timeWindow, where);
+    const page = h.paginator.prepare(request, rawPage, {
+        route: projectId ? '/api/v1/projects/:projectId/control-center:attention' : '/api/v1/control-center:attention',
+        filters: { projectId: projectId ?? null, collection: 'attention', ...filters },
+        sort: [{ key: 'updated_cursor', sql: `to_char(attention.updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`, direction: 'DESC' }, { key: 'source_id', sql: 'attention.source_id', direction: 'DESC' }],
+    }, values);
+    page.values.push(page.limit + 1);
+    await page.beforeQuery();
+    const result = await boundedQuery(h.db, `${humanAttentionProjectionSql} AND ${where.join(' AND ')}${page.predicate ? ` AND ${page.predicate}` : ''} ORDER BY ${page.orderBy} LIMIT $${page.values.length}`, page.values);
+    const projected = page.finish(result.rows);
+    return { ...projected, items: projected.items.map(row => {
+            const item = projectHumanAttentionRow(row);
+            return {
+                id: item.id, kind: item.kind, title: item.title, summary: item.summary,
+                projectId: item.projectId, workItemId: item.workItemId, sessionId: item.sessionId,
+                state: item.status, revision: item.sourceRevision,
+                source: { type: item.source.type, id: item.source.id, revision: item.sourceRevision },
+                responsibleHuman: item.responsibleHuman,
+                activeAgent: item.requestedBy.kind === 'agent' ? item.requestedBy : null,
+                workItem: null,
+                currentStep: null,
+                health: null,
+                // An attention item is a request about a run, not the run's own digest.
+                // The run's budget is a fact the `running` collection owns, so this
+                // projection states null rather than deriving a second, looser figure.
+                budgetUtilization: null,
+                lastActivity: null,
+                pendingHumanActionCount: item.status === 'open' ? 1 : 0,
+                evidenceCount: item.evidence.length,
+                verified: item.status === 'verified',
+                updatedAt: item.updatedAt,
+            };
+        }) };
+}
+async function readDigestPage(h, request, collection, projectId, rawPage, filters) {
+    const current = requestActor(request);
+    const values = [current.workspaceId];
+    const sql = collectionSql(collection);
+    const scope = sourceScopePredicate(current, {
+        workspace: 'source.workspace_id', team: 'source.team_id', project: 'source.project_id',
+        session: 'source.session_id', workItem: 'source.work_item_id',
+    }, values);
+    const where = [scope];
+    if (projectId) {
+        values.push(projectId);
+        where.push(`source.project_id=$${values.length}`);
+    }
+    if (filters.responsibleHumanActorId) {
+        values.push(filters.responsibleHumanActorId);
+        where.push(`source.responsible_human_id=$${values.length}`);
+    }
+    if (filters.agentActorId) {
+        values.push(filters.agentActorId);
+        where.push(`source.active_agent_id=$${values.length}`);
+    }
+    if (filters.risk === 'at_risk')
+        where.push(`(source.kind='risk' OR source.state IN ('blocked','failed','stale') OR source.heartbeat_health IN ('degraded','stale'))`);
+    if (filters.workItemState) {
+        values.push(filters.workItemState);
+        where.push(`source.work_item_state=$${values.length}`);
+    }
+    applyTimeWindow('source.updated_at', filters.timeWindow, where);
+    const route = projectId ? `/api/v1/projects/:projectId/control-center:${collection}` : `/api/v1/control-center:${collection}`;
+    const page = h.paginator.prepare(request, rawPage, {
+        route,
+        filters: { projectId: projectId ?? null, collection, ...filters },
+        sort: [{ key: 'updated_cursor', sql: `to_char(source.updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`, direction: 'DESC' }, { key: 'id', sql: 'source.id', direction: 'DESC' }],
+    }, values);
+    page.values.push(page.limit + 1);
+    await page.beforeQuery();
+    const result = await boundedQuery(h.db, `SELECT source.*,to_char(source.updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS updated_cursor FROM (${sql}) source WHERE ${where.join(' AND ')}${page.predicate ? ` AND ${page.predicate}` : ''} ORDER BY ${page.orderBy} LIMIT $${page.values.length}`, page.values);
+    const resultPage = page.finish(result.rows);
+    const observedAt = new Date().toISOString();
+    return { ...resultPage, items: resultPage.items.map(row => digest(row, observedAt)) };
+}
+async function buildControlCenter(h, request, reply, projectId) {
+    const query = z.object({
+        collection: controlCenterCollectionSchema.optional(),
+        cursor: z.string().max(8_192).optional(),
+        limit: z.coerce.number().int().min(1).max(MAX_LIMIT).default(20),
+        responsibleHumanActorId: z.string().uuid().optional(),
+        agentActorId: z.string().uuid().optional(),
+        risk: z.literal('at_risk').optional(),
+        workItemState: z.enum(['backlog', 'planned', 'started', 'completed', 'canceled']).optional(),
+        timeWindow: z.enum(['24h', '7d', '30d']).optional(),
+    }).parse(request.query);
+    const filters = {
+        responsibleHumanActorId: query.responsibleHumanActorId,
+        agentActorId: query.agentActorId,
+        risk: query.risk,
+        workItemState: query.workItemState,
+        timeWindow: query.timeWindow,
+    };
+    const current = requestActor(request);
+    let project = null;
+    if (projectId) {
+        const values = [projectId, current.workspaceId];
+        const auth = sourceScopePredicate(current, {
+            workspace: 'project.workspace_id', team: 'project.team_id', project: 'project.id',
+            session: 'NULL::uuid', workItem: 'NULL::uuid',
+        }, values);
+        project = (await boundedQuery(h.db, `SELECT project.id,project.name,project.status,project.target_date,project.lead_actor_id,
+              lead.display_name AS lead_name,project.revision,project.updated_at,
+              work_progress.total AS work_total,work_progress.completed AS work_completed,
+              work_progress.revision AS work_revision,work_progress.updated_at AS work_updated_at
+         FROM projects project
+         LEFT JOIN actors lead ON lead.id=project.lead_actor_id AND lead.workspace_id=project.workspace_id AND lead.kind='human'
+         LEFT JOIN LATERAL (
+           SELECT count(*) FILTER (WHERE state.category <> 'canceled')::int AS total,
+                  count(*) FILTER (WHERE state.category = 'completed')::int AS completed,
+                  max(work.revision) AS revision,max(work.updated_at) AS updated_at
+             FROM work_items work
+             JOIN workflow_states state ON state.id=work.status_id
+            WHERE work.project_id=project.id AND work.workspace_id=project.workspace_id AND work.deleted_at IS NULL
+         ) work_progress ON true
+        WHERE project.id=$1 AND project.workspace_id=$2 AND project.deleted_at IS NULL AND ${auth}`, values)).rows[0] ?? null;
+        if (!project)
+            throw new DomainError('NOT_FOUND', 'Project Control Center not found');
+    }
+    const collections = controlCenterCollectionSchema.options;
+    const pages = await Promise.all(collections.map(async (collection) => {
+        if (query.collection && query.collection !== collection)
+            return [collection, { items: [], nextCursor: null }];
+        const rawPage = { cursor: query.collection === collection ? query.cursor : undefined, limit: query.collection ? query.limit : INITIAL_LIMIT };
+        const page = collection === 'attention'
+            ? await readAttentionPage(h, request, projectId, rawPage, filters)
+            : await readDigestPage(h, request, collection, projectId, rawPage, filters);
+        return [collection, page];
+    }));
+    const sectionMap = Object.fromEntries(pages);
+    const allItems = pages.flatMap(([, page]) => page.items);
+    const revision = Math.max(project?.revision ?? 1, project?.work_revision ?? 1, ...allItems.map(item => item.revision));
+    const sourceUpdatedAt = [...allItems.map(item => item.updatedAt), project?.updated_at, project?.work_updated_at]
+        .filter((value) => value !== null && value !== undefined)
+        .map(iso).sort().at(-1) ?? new Date().toISOString();
+    const observedAt = new Date().toISOString();
+    reply.header('ETag', `"control-center-v1-${revision}-${project?.work_total ?? 0}-${project?.work_completed ?? 0}"`);
+    return controlCenterResponseSchema.parse({
+        projectionVersion: 1,
+        scope: { workspaceId: current.workspaceId, projectId: projectId ?? null },
+        project: project ? {
+            id: project.id,
+            name: project.name,
+            status: project.status,
+            targetDate: project.target_date ? dateOnly(project.target_date) : null,
+            responsibleHuman: project.lead_actor_id && project.lead_name ? { id: project.lead_actor_id, kind: 'human', displayName: project.lead_name } : null,
+            revision: project.revision,
+            progress: { total: project.work_total, completed: project.work_completed },
+        } : null,
+        revision,
+        freshness: { state: 'current', observedAt, sourceUpdatedAt: iso(sourceUpdatedAt) },
+        collections: sectionMap,
+    });
+}
+const controlActions = agentSessionControlActionSchema.options;
+const parseRunExplanationCursor = (value) => {
+    if (!value)
+        return null;
+    if (!runExplanationCursorSchema.safeParse(value).success)
+        throw new DomainError('PAGINATION_CURSOR_INVALID', 'Pagination cursor is invalid');
+    if (!value.startsWith('r1.'))
+        return { kind: 'sequence', sequence: BigInt(value) };
+    try {
+        const encoded = value.slice(3);
+        if (!/^[A-Za-z0-9_-]+$/.test(encoded) || encoded.length % 4 === 1)
+            throw new Error('invalid cursor encoding');
+        const payload = runExplanationCursorPayloadSchema.parse(JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')));
+        return { kind: 'keyset', ...payload, sequence: payload.sequence };
+    }
+    catch {
+        throw new DomainError('PAGINATION_CURSOR_INVALID', 'Pagination cursor is invalid');
+    }
+};
+const encodeRunExplanationCursor = (cursor) => `r1.${Buffer.from(JSON.stringify({ v: 1, ...cursor }), 'utf8').toString('base64url')}`;
+const objectValue = (value) => value !== null && typeof value === 'object' && !Array.isArray(value) ? value : {};
+const stringValue = (value) => typeof value === 'string' && value.length > 0 ? value : null;
+const stringArray = (value) => Array.isArray(value) ? value.filter((item) => typeof item === 'string') : [];
+const activityReferences = (value) => Array.isArray(value)
+    ? value.filter((item) => {
+        const candidate = objectValue(item);
+        return ['work_item', 'plan_step', 'artifact', 'approval'].includes(String(candidate.type)) && z.string().uuid().safeParse(candidate.id).success;
+    })
+    : [];
+const actionTypeFor = (row) => {
+    const tool = objectValue(row.tool_invocation);
+    const name = String(tool.toolName ?? '').toLowerCase();
+    if (row.kind === 'ack')
+        return 'acknowledgement';
+    if (row.kind === 'plan_published' || row.kind === 'plan_changed')
+        return 'plan';
+    if (row.kind === 'question' || row.kind === 'message')
+        return 'message';
+    if (row.kind === 'decision_request')
+        return 'decision';
+    if (row.kind === 'evidence' || row.kind === 'artifact_published')
+        return 'evidence';
+    if (row.kind === 'heartbeat')
+        return 'heartbeat';
+    if (row.kind === 'completion' || row.kind === 'stop_ack' || row.kind === 'status')
+        return 'state_transition';
+    if (/(test|check|lint|build|review|validat)/.test(name))
+        return 'validation';
+    if (/(^|[_.:/-])(get|list|read|find|search|fetch|open|inspect|explain)/.test(name))
+        return 'read';
+    if (/(^|[_.:/-])(create|update|write|edit|patch|delete|remove|merge|push|deploy|publish|apply)/.test(name))
+        return 'write';
+    if (name)
+        return 'tool';
+    return 'other';
+};
+const phaseFor = (row, actionType) => {
+    if (row.kind === 'ack')
+        return 'intake';
+    if (actionType === 'plan')
+        return 'planning';
+    if (actionType === 'validation' || row.kind === 'evidence' || row.kind === 'artifact_published')
+        return 'validation';
+    if (row.kind === 'question' || row.kind === 'decision_request' || row.kind === 'message')
+        return 'human_input';
+    if (row.kind === 'warning' || row.kind === 'error' || row.kind === 'stop_ack')
+        return 'recovery';
+    if (row.kind === 'completion')
+        return 'completion';
+    if (actionType === 'read' || row.kind === 'heartbeat')
+        return 'investigation';
+    return 'implementation';
+};
+const groupActivities = (rows, planVersions, artifacts) => {
+    const artifactById = new Map(artifacts.map(item => [item.id, item]));
+    const groups = [];
+    for (const row of rows) {
+        const sequence = Number(row.sequence);
+        const references = activityReferences(row.references_json);
+        const stepId = references.find(reference => reference.type === 'plan_step')?.id ?? null;
+        const createdAt = iso(row.created_at);
+        const planVersion = [...planVersions].reverse().find(version => version.createdAt <= createdAt && (!stepId || version.steps.some(step => step.id === stepId))) ?? null;
+        const tool = objectValue(row.tool_invocation);
+        const actionType = actionTypeFor(row);
+        const phase = phaseFor(row, actionType);
+        const failed = row.kind === 'error' || tool.status === 'failed';
+        const risk = row.kind === 'error' ? 'high' : row.kind === 'warning' || row.kind === 'decision_request' ? 'medium' : null;
+        const artifactIds = [...new Set([...row.artifact_ids, ...references.filter(reference => reference.type === 'artifact').map(reference => reference.id)])];
+        const evidence = artifactIds.flatMap(id => {
+            const artifact = artifactById.get(id);
+            return artifact ? [{ type: artifact.type, id, title: artifact.title, ...(artifact.uri ? { uri: artifact.uri } : {}) }] : [];
+        });
+        const validationState = actionType === 'validation'
+            ? failed ? 'failed' : tool.status === 'succeeded' ? 'verified' : 'pending'
+            : 'not_verified';
+        const affectedResources = references.filter(reference => reference.type !== 'artifact').map(reference => ({ type: reference.type, id: reference.id }));
+        const lowValue = row.kind === 'heartbeat' || actionType === 'read' || (row.kind === 'action_completed' && !row.tool_invocation && evidence.length === 0 && references.length === 0);
+        const material = failed || !lowValue;
+        const technicalRecord = {
+            id: row.id, sequence, kind: row.kind, summary: row.summary,
+            detailsSummary: row.details_markdown ? row.details_markdown.slice(0, 2_000) : null,
+            actor: { id: row.actor_id, kind: row.actor_kind, displayName: row.actor_name }, createdAt,
+            correlationId: row.correlation_id, eventCursor: row.event_cursor === null ? null : String(row.event_cursor),
+            toolInvocation: row.tool_invocation ?? null, references,
+        };
+        const previous = groups.at(-1);
+        // A missing session sequence may contain a material event (for example an
+        // approval decision) that is not an agent activity. Keep those boundaries
+        // visible instead of folding activities on both sides into one page-spanning
+        // group.
+        const collapsible = sequence === (previous?.lastSequence ?? sequence) + 1
+            && lowValue && !failed && risk === null && previous
+            && previous.phase === phase && previous.actionType === actionType && previous.kind === row.kind
+            && previous.summary === row.summary && previous.actor.id === row.actor_id
+            && previous.planVersionId === (planVersion?.id ?? null) && previous.planStepId === stepId;
+        if (collapsible && previous) {
+            previous.count += 1;
+            previous.lastSequence = sequence;
+            previous.sourceActivityIds.push(row.id);
+            previous.endedAt = createdAt;
+            previous.durationMs = Math.max(0, Date.parse(createdAt) - Date.parse(previous.startedAt));
+            previous.collapsed = true;
+            previous.technicalRecords.push(technicalRecord);
+        }
+        else
+            groups.push({
+                id: `activity-group:${row.id}`, kind: row.kind, phase, actionType, summary: row.summary,
+                trigger: { kind: row.kind, summary: row.summary.slice(0, 2_000), sourceActivityId: row.id },
+                actor: { id: row.actor_id, kind: row.actor_kind, displayName: row.actor_name }, planVersionId: planVersion?.id ?? null, planStepId: stepId, risk,
+                count: 1, firstSequence: sequence, lastSequence: sequence, sourceActivityIds: [row.id], affectedResources, evidence,
+                validation: { state: validationState, summary: actionType === 'validation' ? (stringValue(tool.resultSummary) ?? row.summary) : null },
+                startedAt: createdAt, endedAt: createdAt, cursorAt: row.created_at_cursor, durationMs: 0, collapsed: false, material, failure: failed,
+                attention: ['question', 'decision_request'].includes(row.kind), technicalRecords: [technicalRecord],
+            });
+    }
+    return groups;
+};
+/**
+ * Project the immutable approval decision fact into the same human-visible run
+ * story as Agent Activities. A decision is deliberately not represented as an
+ * invented agent_activity: sourceActivityIds stays empty and the trigger points
+ * at the persisted approval event (or, for legacy rows, the decision fact).
+ */
+const approvalDecisionGroup = (row) => {
+    const decidedAt = iso(row.decided_at);
+    const eventSequence = row.event_session_sequence === null ? null : Number(row.event_session_sequence);
+    const sequence = Number.isSafeInteger(eventSequence) && eventSequence !== null && eventSequence > 0
+        ? eventSequence
+        : 1;
+    const sourceId = row.event_id ?? row.decision_id;
+    const decisionLabel = row.decision === 'approved' ? 'approved' : 'rejected';
+    const reason = row.reason;
+    const actor = { id: row.actor_id, kind: row.actor_kind, displayName: row.actor_name };
+    return {
+        id: `approval-decision-group:${row.decision_id}`,
+        kind: 'approval_decision',
+        phase: 'human_input',
+        actionType: 'approval',
+        summary: `Human ${decisionLabel} approval for ${row.action_name}. Decision reason: ${reason}`,
+        trigger: {
+            kind: 'approval.decision.recorded',
+            summary: `Human ${decisionLabel} decision recorded for ${row.action_name}.`,
+            sourceActivityId: sourceId,
+        },
+        actor,
+        planVersionId: null,
+        planStepId: null,
+        risk: row.risk_level,
+        count: 1,
+        firstSequence: sequence,
+        lastSequence: sequence,
+        sourceActivityIds: [],
+        affectedResources: [
+            { type: 'approval', id: row.approval_id, label: row.action_name },
+            { type: 'agent_session', id: row.session_id },
+            ...(row.work_item_id ? [{ type: 'work_item', id: row.work_item_id }] : []),
+        ],
+        evidence: [],
+        validation: { state: 'not_verified', summary: null },
+        startedAt: decidedAt,
+        endedAt: decidedAt,
+        cursorAt: row.decision_at_cursor,
+        durationMs: 0,
+        collapsed: false,
+        material: true,
+        failure: false,
+        attention: false,
+        technicalRecords: [{
+                id: row.decision_id,
+                sequence,
+                kind: 'approval.decision.recorded',
+                summary: `Immutable Human decision reason: ${reason}`,
+                detailsSummary: null,
+                actor,
+                createdAt: decidedAt,
+                correlationId: row.event_correlation_id,
+                eventCursor: row.event_cursor === null ? null : String(row.event_cursor),
+                toolInvocation: null,
+                references: [{ type: 'approval', id: row.approval_id }],
+            }],
+    };
+};
+async function readRunExplanation(h, request, reply, sessionId) {
+    const query = z.object({
+        cursor: z.string().min(1).max(8_192).optional(), limit: z.coerce.number().int().min(1).max(MAX_LIMIT).default(MAX_LIMIT),
+        phase: z.enum(['intake', 'investigation', 'planning', 'implementation', 'validation', 'human_input', 'recovery', 'completion']).optional(),
+        planStepId: z.string().uuid().optional(), actorId: z.string().uuid().optional(),
+        actionType: z.enum(['acknowledgement', 'read', 'write', 'tool', 'state_transition', 'plan', 'message', 'approval', 'decision', 'evidence', 'validation', 'handoff', 'heartbeat', 'other']).optional(),
+        risk: z.enum(['low', 'medium', 'high', 'critical']).optional(), evidence: z.enum(['present', 'missing']).optional(), failure: z.enum(['true']).optional(),
+        attention: z.enum(['true']).optional(), timeWindow: z.enum(['24h', '7d', '30d']).optional(),
+    }).parse(request.query);
+    const current = requestActor(request);
+    const values = [sessionId, current.workspaceId];
+    const auth = liveSessionReadPredicate(current, 'session.id', 'session.workspace_id', values);
+    const result = await boundedQuery(h.db, `
+    SELECT session.id,session.state,session.revision,session.state_reason,session.created_at,session.updated_at,
+           session.work_item_id,item.title AS work_item_title,item.revision AS work_item_revision,
+           responsible.id AS responsible_id,responsible.display_name AS responsible_name,
+           session.agent_actor_id,agent.display_name AS agent_name,
+           plan.id AS plan_id,plan.revision AS plan_revision,plan.change_summary,
+           step.id AS step_id,step.title AS step_title,step.status AS step_status,step.ordinal AS step_ordinal,
+           project.id AS project_id,project.name AS project_name,project.revision AS project_revision,
+           session.budget,session.result_summary,session.result_evidence,session.heartbeat_health,session.last_heartbeat_at,
+           (SELECT count(*) FROM leases lease WHERE lease.session_id=session.id AND lease.workspace_id=session.workspace_id AND lease.status='active') AS lease_count,
+           (SELECT count(*) FROM approvals approval WHERE approval.session_id=session.id AND approval.workspace_id=session.workspace_id AND approval.status IN ('pending','approved')) AS approval_count
+      FROM agent_sessions session
+      JOIN actors agent ON agent.id=session.agent_actor_id AND agent.workspace_id=session.workspace_id
+      LEFT JOIN work_items item ON item.id=session.work_item_id AND item.workspace_id=session.workspace_id AND item.deleted_at IS NULL
+      LEFT JOIN projects project ON project.id=COALESCE(session.project_id,item.project_id) AND project.workspace_id=session.workspace_id AND project.deleted_at IS NULL
+      LEFT JOIN actors responsible ON responsible.id=item.responsible_human_actor_id AND responsible.workspace_id=session.workspace_id AND responsible.kind='human'
+      LEFT JOIN agent_plan_versions plan ON plan.id=session.current_plan_version_id
+      LEFT JOIN LATERAL (
+        SELECT candidate.id,candidate.title,candidate.status,candidate.ordinal
+          FROM agent_plan_steps candidate
+         WHERE candidate.plan_version_id=session.current_plan_version_id
+         ORDER BY (candidate.id=session.heartbeat_current_step_id) DESC,(candidate.status='in_progress') DESC,candidate.ordinal
+         LIMIT 1
+      ) step ON true
+     WHERE session.id=$1 AND session.workspace_id=$2 AND ${auth}`, values);
+    const row = result.rows[0];
+    if (!row)
+        throw new DomainError('NOT_FOUND', 'Run Explanation not found');
+    const activityValues = [sessionId, current.workspaceId];
+    const activityAuth = liveSessionReadPredicate(current, 'session.id', 'session.workspace_id', activityValues);
+    const artifactValues = [sessionId, current.workspaceId];
+    const artifactAuth = liveSessionReadPredicate(current, 'session.id', 'session.workspace_id', artifactValues);
+    const runCursor = parseRunExplanationCursor(query.cursor);
+    const approvalValues = [sessionId, current.workspaceId];
+    const approvalAuth = liveSessionReadPredicate(current, 'session.id', 'session.workspace_id', approvalValues);
+    let cursorClause = '';
+    if (runCursor?.kind === 'sequence') {
+        cursorClause = `AND source.sequence < $${activityValues.push(runCursor.sequence.toString())}`;
+    }
+    else if (runCursor?.kind === 'keyset') {
+        const sequenceParameter = `$${activityValues.push(runCursor.sequence)}`;
+        const atParameter = `$${activityValues.push(runCursor.at)}`;
+        const sameKey = runCursor.source === 'activity'
+            ? `source.id < $${activityValues.push(runCursor.id)}::uuid`
+            : 'true';
+        cursorClause = `AND (
+      source.sequence < ${sequenceParameter}
+      OR (source.sequence = ${sequenceParameter} AND (
+        source.created_at < ${atParameter}::timestamptz
+        OR (source.created_at = ${atParameter}::timestamptz AND ${sameKey})
+      ))
+    )`;
+    }
+    const activityLimitParameter = `$${activityValues.push(query.limit + 1)}`;
+    let approvalCursorClause = '';
+    if (runCursor?.kind === 'sequence') {
+        approvalCursorClause = `WHERE COALESCE(source.event_session_sequence, 1) < $${approvalValues.push(runCursor.sequence.toString())}`;
+    }
+    else if (runCursor?.kind === 'keyset') {
+        const sequenceParameter = `$${approvalValues.push(runCursor.sequence)}`;
+        const atParameter = `$${approvalValues.push(runCursor.at)}`;
+        const sameKey = runCursor.source === 'approval'
+            ? `source.decision_id < $${approvalValues.push(runCursor.id)}::uuid`
+            : 'false';
+        approvalCursorClause = `WHERE (
+      COALESCE(source.event_session_sequence, 1) < ${sequenceParameter}
+      OR (COALESCE(source.event_session_sequence, 1) = ${sequenceParameter} AND (
+        source.decided_at < ${atParameter}::timestamptz
+        OR (source.decided_at = ${atParameter}::timestamptz AND ${sameKey})
+      ))
+    )`;
+    }
+    const approvalLimitParameter = `$${approvalValues.push(query.limit + 1)}`;
+    const [activityResult, artifactResult, planResult, attention, validationResult, approvalDecisionResult] = await Promise.all([
+        boundedQuery(h.db, `SELECT activity.id,activity.sequence,activity.kind,activity.summary,activity.details_markdown,activity.tool_invocation,activity.artifact_ids,activity.references_json,
+              activity.actor_id,actor.display_name AS actor_name,actor.kind AS actor_kind,activity.created_at,
+              to_char(activity.created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS created_at_cursor,
+              event.correlation_id,event.cursor AS event_cursor
+         FROM agent_sessions session
+         JOIN LATERAL (SELECT source.* FROM agent_activities source WHERE source.session_id=session.id ${cursorClause} ORDER BY source.sequence DESC,source.id DESC LIMIT ${activityLimitParameter}) activity ON true
+         JOIN actors actor ON actor.id=activity.actor_id AND actor.workspace_id=session.workspace_id
+         LEFT JOIN LATERAL (SELECT correlation_id,cursor FROM domain_events event WHERE event.workspace_id=session.workspace_id AND event.aggregate_type='agent_activity' AND event.aggregate_id=activity.id ORDER BY event.cursor DESC LIMIT 1) event ON true
+        WHERE session.id=$1 AND session.workspace_id=$2 AND ${activityAuth} ORDER BY activity.sequence,activity.id`, activityValues),
+        boundedQuery(h.db, `SELECT artifact.id,artifact.type,artifact.title,artifact.uri,artifact.checksum,artifact.source_tool,artifact.repository,artifact.metadata,artifact.created_at FROM agent_sessions session JOIN LATERAL (SELECT source.* FROM artifacts source WHERE source.session_id=session.id AND source.workspace_id=session.workspace_id ORDER BY source.created_at DESC,source.id DESC LIMIT 200) artifact ON true WHERE session.id=$1 AND session.workspace_id=$2 AND ${artifactAuth} ORDER BY artifact.created_at DESC,artifact.id DESC`, artifactValues),
+        boundedQuery(h.db, `SELECT version.id AS version_id,version.revision,version.parent_version_id,version.change_summary,version.created_at AS version_created_at,
+              author.id AS author_id,author.display_name AS author_name,author.kind AS author_kind,
+              step.id AS step_id,step.title AS step_title,step.description AS step_description,step.status AS step_status,step.ordinal AS step_ordinal,
+              step.acceptance_criteria,step.expected_artifacts,
+              COALESCE((SELECT array_agg(dependency.depends_on_step_id ORDER BY dependency.depends_on_step_id) FROM agent_plan_step_dependencies dependency WHERE dependency.plan_version_id=version.id AND dependency.step_id=step.id),'{}'::uuid[]) AS depends_on
+         FROM (SELECT source.* FROM agent_plan_versions source WHERE source.session_id=$1 ORDER BY source.revision DESC LIMIT 50) version
+         JOIN actors author ON author.id=version.author_actor_id
+         LEFT JOIN agent_plan_steps step ON step.plan_version_id=version.id
+        ORDER BY version.revision,step.ordinal,step.id`, [sessionId]),
+        (() => {
+            const attentionValues = [current.workspaceId];
+            const attentionAuth = humanAttentionAuthorizationPredicate(current, attentionValues);
+            attentionValues.push(sessionId);
+            return boundedQuery(h.db, `${humanAttentionProjectionSql} AND ${attentionAuth} AND attention.session_id=$${attentionValues.length} AND attention.status='open' ORDER BY attention.updated_at DESC,attention.source_id DESC LIMIT 100`, attentionValues);
+        })(),
+        boundedQuery(h.db, `SELECT COALESCE(bool_or(kind='error' OR tool_invocation->>'status'='failed'),false) AS failed,
+              COALESCE(bool_or(tool_invocation->>'status'='succeeded' AND lower(COALESCE(tool_invocation->>'toolName','')) ~ '(test|check|lint|build|review|validat)'),false) AS verified
+         FROM agent_activities WHERE session_id=$1`, [sessionId]),
+        boundedQuery(h.db, `SELECT page.*
+         FROM (
+           SELECT source.*
+             FROM (
+           SELECT decision.id AS decision_id,decision.approval_id,approval.session_id,session.work_item_id,
+                  approval.action_name,approval.risk_level::text AS risk_level,
+                  decision.decision,decision.reason,decision.decided_at,
+                  to_char(decision.decided_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS decision_at_cursor,
+                   actor.id AS actor_id,actor.display_name AS actor_name,actor.kind AS actor_kind,
+                   decision_event.id AS event_id,decision_event.cursor AS event_cursor,
+                   decision_event.session_sequence AS event_session_sequence,
+                   decision_event.correlation_id AS event_correlation_id
+             FROM agent_sessions session
+             JOIN approvals approval
+               ON approval.session_id=session.id AND approval.workspace_id=session.workspace_id
+             JOIN approval_decisions decision ON decision.approval_id=approval.id
+             JOIN actors actor ON actor.id=decision.actor_id AND actor.workspace_id=session.workspace_id
+             LEFT JOIN LATERAL (
+               SELECT event.id,event.cursor,event.session_sequence,event.correlation_id
+                 FROM domain_events event
+                WHERE event.workspace_id=session.workspace_id
+                  AND event.aggregate_type='approval'
+                  AND event.aggregate_id=approval.id
+                  AND event.event_type='approval.decision.recorded'
+                  AND event.payload->'decision'->>'actor_id'=decision.actor_id::text
+                  AND event.payload->'decision'->>'decision'=decision.decision
+                  AND event.payload->'decision'->>'reason'=decision.reason
+                ORDER BY event.cursor DESC
+                LIMIT 1
+             ) decision_event ON true
+            WHERE session.id=$1 AND session.workspace_id=$2 AND ${approvalAuth}
+             ) source
+             ${approvalCursorClause}
+            ORDER BY COALESCE(source.event_session_sequence, 1) DESC,source.decided_at DESC,source.decision_id DESC
+            LIMIT ${approvalLimitParameter}
+         ) page
+        ORDER BY COALESCE(page.event_session_sequence, 1),page.decided_at,page.decision_id`, approvalValues),
+    ]);
+    const hasOlder = activityResult.rows.length > query.limit;
+    const activityRows = hasOlder ? activityResult.rows.slice(1) : activityResult.rows;
+    const decisionsHaveOlder = approvalDecisionResult.rows.length > query.limit;
+    const decisionRows = decisionsHaveOlder ? approvalDecisionResult.rows.slice(1) : approvalDecisionResult.rows;
+    const artifacts = artifactResult.rows;
+    const planMap = new Map();
+    for (const item of planResult.rows) {
+        let version = planMap.get(item.version_id);
+        if (!version) {
+            version = { id: item.version_id, revision: item.revision, parentVersionId: item.parent_version_id, changeSummary: item.change_summary, author: { id: item.author_id, kind: item.author_kind, displayName: item.author_name }, createdAt: iso(item.version_created_at), steps: [] };
+            planMap.set(item.version_id, version);
+        }
+        if (item.step_id && item.step_title && item.step_status !== null && item.step_ordinal !== null)
+            version.steps.push({
+                id: item.step_id, title: item.step_title, description: item.step_description, status: item.step_status, ordinal: Number(item.step_ordinal),
+                dependsOn: item.depends_on ?? [], acceptanceCriteria: stringArray(item.acceptance_criteria), expectedArtifacts: item.expected_artifacts ?? [], causalGroupIds: [], evidenceIds: [],
+            });
+    }
+    const planVersions = [...planMap.values()];
+    const mergedGroups = [
+        ...groupActivities(activityRows, planVersions, artifacts),
+        ...decisionRows.map(approvalDecisionGroup),
+    ].sort((left, right) => {
+        const sequence = left.lastSequence - right.lastSequence;
+        return sequence || left.cursorAt.localeCompare(right.cursorAt) || left.id.localeCompare(right.id);
+    });
+    const allGroups = mergedGroups.length > query.limit ? mergedGroups.slice(-query.limit) : mergedGroups;
+    const hasOlderGroups = hasOlder || decisionsHaveOlder || mergedGroups.length > query.limit;
+    for (const version of planVersions)
+        for (const step of version.steps) {
+            step.causalGroupIds = allGroups.filter(group => group.planVersionId === version.id && group.planStepId === step.id).map(group => group.id);
+            step.evidenceIds = [...new Set(allGroups.filter(group => group.planVersionId === version.id && group.planStepId === step.id).flatMap(group => group.evidence.map(item => item.id)))];
+        }
+    const causalGroups = allGroups.filter(group => (!query.phase || group.phase === query.phase)
+        && (!query.planStepId || group.planStepId === query.planStepId)
+        && (!query.actorId || group.actor.id === query.actorId)
+        && (!query.actionType || group.actionType === query.actionType)
+        && (!query.risk || group.risk === query.risk)
+        && (!query.evidence || (query.evidence === 'present' ? group.evidence.length > 0 : group.evidence.length === 0))
+        && (!query.failure || group.failure)
+        && (!query.attention || group.attention)
+        && (!query.timeWindow || Date.parse(group.startedAt) >= Date.now() - ({ '24h': 86_400_000, '7d': 604_800_000, '30d': 2_592_000_000 }[query.timeWindow]))).map(({ cursorAt: _cursorAt, ...group }) => group);
+    const artifactGroupIds = new Map();
+    for (const group of allGroups)
+        for (const item of group.evidence)
+            artifactGroupIds.set(item.id, [...(artifactGroupIds.get(item.id) ?? []), group.id]);
+    const evidenceDetails = artifacts.map(item => {
+        const metadata = objectValue(item.metadata);
+        const repository = objectValue(item.repository);
+        const planStepId = z.string().uuid().safeParse(metadata.planStepId).success ? String(metadata.planStepId) : null;
+        const status = String(metadata.status ?? metadata.validationStatus ?? '').toLowerCase();
+        const validationState = status === 'failed' ? 'failed' : status === 'passed' || ['test_report', 'build', 'code_review'].includes(item.type) ? 'verified' : 'not_verified';
+        const pullRequest = stringValue(metadata.pullRequestUrl);
+        return {
+            type: item.type, id: item.id, title: item.title, ...(item.uri ? { uri: item.uri } : {}), checksum: item.checksum, sourceTool: item.source_tool,
+            createdAt: iso(item.created_at), planStepId, causalGroupIds: artifactGroupIds.get(item.id) ?? [], validationState,
+            repository: Object.keys(repository).length === 0 && !pullRequest ? null : {
+                repository: stringValue(repository.repository) ?? stringValue(repository.url) ?? stringValue(repository.name),
+                branch: stringValue(repository.branch) ?? stringValue(metadata.branch), commit: stringValue(repository.commit) ?? stringValue(metadata.commit),
+                pullRequest: pullRequest && z.string().url().safeParse(pullRequest).success ? pullRequest : null,
+            },
+        };
+    });
+    const failedValidation = validationResult.rows[0].failed || evidenceDetails.some(item => item.validationState === 'failed');
+    const verifiedEvidence = validationResult.rows[0].verified || evidenceDetails.some(item => item.validationState === 'verified');
+    const terminal = ['completed', 'failed', 'canceled'].includes(row.state);
+    const verification = failedValidation ? { state: 'failed', summary: 'At least one validation source reports failure.' }
+        : verifiedEvidence ? { state: 'verified', summary: 'Source-backed validation evidence is available.' }
+            : terminal ? { state: 'not_verified', summary: 'The Session is terminal but has no successful validation evidence.' }
+                : { state: 'pending', summary: 'Execution has not yet published successful validation evidence.' };
+    const observedAt = new Date().toISOString();
+    const policies = controlActions.map(action => evaluateAgentSessionControl(row.state, action));
+    reply.header('ETag', `"run-explanation-v1-${row.revision}"`);
+    const decisionByGroupId = new Map(decisionRows.map(decision => [`approval-decision-group:${decision.decision_id}`, decision]));
+    const nextCursorGroup = allGroups[0];
+    const nextCursorDecision = nextCursorGroup ? decisionByGroupId.get(nextCursorGroup.id) : undefined;
+    const nextCursor = hasOlderGroups && nextCursorGroup
+        ? nextCursorDecision
+            ? encodeRunExplanationCursor({
+                sequence: String(nextCursorGroup.firstSequence),
+                at: nextCursorGroup.cursorAt,
+                source: 'approval',
+                id: nextCursorDecision.decision_id,
+            })
+            : encodeRunExplanationCursor({
+                sequence: String(nextCursorGroup.firstSequence),
+                at: nextCursorGroup.cursorAt,
+                source: 'activity',
+                id: nextCursorGroup.trigger.sourceActivityId,
+            })
+        : null;
+    return runExplanationResponseSchema.parse({
+        projectionVersion: 1,
+        session: (() => {
+            const budget = Object.fromEntries(Object.entries(objectValue(row.budget)).filter((entry) => typeof entry[1] === 'number'));
+            const startedAt = iso(row.created_at);
+            return {
+                id: row.id, state: row.state, revision: row.revision, stateReason: row.state_reason, budget, startedAt,
+                // Derived here so the Web renders one server-owned signal instead of
+                // re-deriving a ratio (and mis-reading an unknown usage figure as zero).
+                budgetUtilization: deriveSessionBudgetUtilization({ budget, startedAt, observedAt }),
+                updatedAt: iso(row.updated_at),
+            };
+        })(),
+        project: row.project_id ? { id: row.project_id, name: row.project_name, revision: row.project_revision } : null,
+        workItem: row.work_item_id ? { id: row.work_item_id, title: row.work_item_title, revision: row.work_item_revision } : null,
+        responsibleHuman: row.responsible_id ? { id: row.responsible_id, kind: 'human', displayName: row.responsible_name } : null,
+        activeAgent: { id: row.agent_actor_id, kind: 'agent', displayName: row.agent_name },
+        plan: row.plan_id ? { id: row.plan_id, revision: row.plan_revision, changeSummary: row.change_summary } : null,
+        currentStep: row.step_id ? { id: row.step_id, title: row.step_title, status: row.step_status, ordinal: row.step_ordinal } : null,
+        planVersions,
+        causalGroups,
+        nextCursor,
+        pendingAttention: attention.rows.map(item => projectHumanAttentionRow(item)),
+        changes: [
+            { type: 'agent_session', id: row.id, revision: row.revision },
+            ...(row.work_item_id ? [{ type: 'work_item', id: row.work_item_id, revision: row.work_item_revision }] : []),
+            ...artifacts.map(item => ({ type: 'artifact', id: item.id, label: item.title })),
+        ],
+        evidence: artifacts.map(item => ({ type: item.type, id: item.id, title: item.title, ...(item.uri ? { uri: item.uri } : {}) })),
+        evidenceDetails,
+        verification,
+        health: { heartbeat: row.heartbeat_health, lastHeartbeatAt: row.last_heartbeat_at ? iso(row.last_heartbeat_at) : null, leaseCount: Number(row.lease_count), pendingApprovalCount: Number(row.approval_count) },
+        freshness: { state: row.heartbeat_health === 'stale' ? 'stale' : 'current', observedAt, sourceUpdatedAt: iso(row.updated_at) },
+        allowedControls: policies,
+    });
+}
+async function readExecutionSummary(h, request, reply, workItemId) {
+    const current = requestActor(request);
+    const values = [workItemId, current.workspaceId];
+    const auth = sourceScopePredicate(current, {
+        workspace: 'item.workspace_id', team: 'item.team_id', project: 'item.project_id', session: 'NULL::uuid', workItem: 'item.id',
+    }, values);
+    const item = (await boundedQuery(h.db, `SELECT item.id,item.title,item.revision,state.name AS status,item.updated_at FROM work_items item JOIN workflow_states state ON state.id=item.status_id WHERE item.id=$1 AND item.workspace_id=$2 AND item.deleted_at IS NULL AND ${auth}`, values)).rows[0];
+    if (!item)
+        throw new DomainError('NOT_FOUND', 'Work Item execution summary not found');
+    const runValues = [workItemId, current.workspaceId];
+    const runAuth = sourceScopePredicate(current, {
+        workspace: 'item.workspace_id', team: 'item.team_id', project: 'item.project_id', session: 'session.id', workItem: 'item.id',
+    }, runValues);
+    const runs = (await boundedQuery(h.db, `
+    SELECT session.id,'run'::text AS kind,agent.display_name AS title,
+           COALESCE(NULLIF(session.result_summary,''),NULLIF(session.state_reason,''),concat('Agent Session is ',session.state::text)) AS summary,
+           COALESCE(session.project_id,item.project_id) AS project_id,session.work_item_id,session.id AS session_id,
+           session.state::text AS state,session.revision,'agent_session'::text AS source_type,session.updated_at,
+           session.team_id,session.workspace_id${sessionDigestColumns}
+      FROM agent_sessions session
+      ${sessionDigestJoins}
+     WHERE session.work_item_id=$1 AND session.workspace_id=$2 AND ${runAuth}
+     ORDER BY session.updated_at DESC,session.id DESC LIMIT 100`, runValues)).rows;
+    const runObservedAt = new Date().toISOString();
+    const artifactValues = [workItemId, current.workspaceId];
+    const artifactAuth = sourceScopePredicate(current, {
+        workspace: 'item.workspace_id', team: 'item.team_id', project: 'item.project_id', session: 'artifact.session_id', workItem: 'item.id',
+    }, artifactValues);
+    const artifacts = (await boundedQuery(h.db, `SELECT artifact.id,artifact.type,artifact.title,artifact.uri FROM artifacts artifact JOIN work_items item ON item.id=artifact.work_item_id AND item.workspace_id=artifact.workspace_id AND item.deleted_at IS NULL WHERE artifact.work_item_id=$1 AND artifact.workspace_id=$2 AND ${artifactAuth} ORDER BY artifact.created_at DESC,artifact.id DESC LIMIT 200`, artifactValues)).rows;
+    const active = new Set(['queued', 'acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval', 'blocked', 'paused', 'stopping', 'stale']);
+    reply.header('ETag', `"execution-summary-v1-${item.revision}"`);
+    return workItemExecutionSummaryResponseSchema.parse({
+        projectionVersion: 1,
+        workItem: { id: item.id, title: item.title, revision: item.revision, status: item.status },
+        activeRuns: runs.filter(row => active.has(row.state)).map(row => digest(row, runObservedAt)),
+        recentRuns: runs.filter(row => !active.has(row.state)).map(row => digest(row, runObservedAt)),
+        evidence: artifacts.map(artifact => ({ type: artifact.type, id: artifact.id, title: artifact.title, ...(artifact.uri ? { uri: artifact.uri } : {}) })),
+        freshness: { state: 'current', observedAt: new Date().toISOString(), sourceUpdatedAt: iso(item.updated_at) },
+    });
+}
+const consequences = (action, leaseCount, stopMode, steeringScope) => {
+    if (action === 'stop')
+        return [
+            { code: 'session.transition.stopping', summary: stopMode === 'immediate' ? 'The Session enters stopping immediately and later ordinary writes are fenced.' : 'The Session enters stopping and the Agent may acknowledge cleanup at the next safe boundary.' },
+            ...(leaseCount ? [{ code: 'lease.release', summary: `${leaseCount} active Lease(s) will be released by the stop command.` }] : []),
+        ];
+    if (action === 'pause')
+        return [{ code: 'session.transition.paused', summary: 'Execution pauses while durable Session history and artifacts remain.' }];
+    if (action === 'resume')
+        return [{ code: 'session.transition.executing', summary: 'Execution resumes after final authority and revision validation.' }];
+    if (action === 'retry')
+        return [{ code: 'session.retry.create', summary: 'A distinct queued retry Session is created; terminal history is not reopened.' }];
+    if (action === 'handoff')
+        return [{ code: 'handoff.offer', summary: 'A scoped Handoff package is offered; acceptance remains a separate command.' }];
+    if (action === 'replan')
+        return [{ code: 'plan.revision.request', summary: 'The Agent is asked to publish a new immutable Plan version for remaining work.' }];
+    if (steeringScope === 'guidance_proposal')
+        return [{ code: 'guidance.navigate', summary: 'Open versioned Guidance editing; no Session prompt is created.' }];
+    if (steeringScope === 'remaining_plan')
+        return [{ code: 'plan.revision.request', summary: 'Request a new immutable Plan version without rewriting completed steps.' }];
+    if (steeringScope === 'current_step')
+        return [{ code: 'session.prompt.step', summary: 'Guidance is bound to the current Plan Step and cannot expand authority.' }];
+    return [{ code: 'session.prompt', summary: 'A Human instruction applies to subsequent Session behavior without rewriting prior facts.' }];
+};
+async function previewControl(h, request, reply, sessionId) {
+    const current = requestActor(request);
+    const input = agentSessionControlPreviewInputSchema.parse(request.body);
+    const values = [sessionId, current.workspaceId];
+    const auth = liveSessionReadPredicate(current, 'session.id', 'session.workspace_id', values);
+    const row = (await boundedQuery(h.db, `
+    SELECT session.id,session.state,session.revision,session.updated_at,session.last_heartbeat_at,session.current_plan_version_id,plan.revision AS plan_revision,
+           current_step.id AS step_id,current_step.title AS step_title,COALESCE(session.project_id,item.project_id) AS project_id,
+           session.work_item_id,session.team_id,delegation.status AS delegation_status,agent.is_active AS agent_active,
+           EXISTS(SELECT 1 FROM agent_team_access access WHERE access.workspace_id=session.workspace_id AND access.agent_id=session.agent_id AND access.team_id=session.team_id AND access.revoked_at IS NULL) AS team_active,
+           EXISTS(SELECT 1 FROM agent_sessions retry WHERE retry.retry_of_session_id=session.id) AS direct_retry_exists,
+           (SELECT count(*) FROM leases lease WHERE lease.workspace_id=session.workspace_id AND lease.session_id=session.id AND lease.status='active') AS lease_count,
+           COALESCE((SELECT array_agg(approval.id ORDER BY approval.id) FROM approvals approval WHERE approval.workspace_id=session.workspace_id AND approval.session_id=session.id AND approval.status IN ('pending','approved')),'{}'::uuid[]) AS approval_ids
+      FROM agent_sessions session
+      JOIN delegations delegation ON delegation.id=session.delegation_id
+      JOIN agent_definitions agent ON agent.id=session.agent_id
+      LEFT JOIN work_items item ON item.id=session.work_item_id AND item.workspace_id=session.workspace_id AND item.deleted_at IS NULL
+      LEFT JOIN agent_plan_versions plan ON plan.id=session.current_plan_version_id
+      LEFT JOIN LATERAL (SELECT step.id,step.title FROM agent_plan_steps step WHERE step.plan_version_id=session.current_plan_version_id AND step.status='in_progress' ORDER BY step.ordinal,step.id LIMIT 1) current_step ON true
+     WHERE session.id=$1 AND session.workspace_id=$2 AND ${auth}`, values)).rows[0];
+    if (!row)
+        throw new DomainError('NOT_FOUND', 'Session control preview not found');
+    const policy = evaluateAgentSessionControl(row.state, input.action);
+    const retryAuthority = input.action !== 'retry' || (row.delegation_status === 'active' && row.agent_active && row.team_active && !row.direct_retry_exists);
+    const leaseCount = Number(row.lease_count);
+    const stopMode = input.action === 'stop' ? input.stopMode ?? 'graceful' : null;
+    const defaultSteeringScope = row.step_id ? 'current_step' : 'session';
+    const steeringScope = input.action === 'steer'
+        ? input.steeringScope ?? defaultSteeringScope
+        : input.action === 'replan' ? 'remaining_plan'
+            : input.action === 'handoff' ? 'session' : null;
+    const supportedSteeringScopes = [
+        { scope: 'current_step', available: Boolean(row.step_id), reasonCode: row.step_id ? 'control.allowed' : 'control.current_step_missing', summary: 'Guide only the active Plan Step; completed history remains immutable.', result: 'prompt' },
+        { scope: 'remaining_plan', available: Boolean(row.current_plan_version_id), reasonCode: row.current_plan_version_id ? 'control.allowed' : 'control.plan_missing', summary: 'Request a new Plan Version for remaining work.', result: 'plan_version_request' },
+        { scope: 'session', available: true, reasonCode: 'control.allowed', summary: 'Apply an instruction to subsequent behavior in this Session.', result: 'prompt' },
+        { scope: 'guidance_proposal', available: Boolean(row.project_id), reasonCode: row.project_id ? 'control.allowed' : 'control.project_missing', summary: 'Open versioned Project Guidance; do not inject text into this Session.', result: 'guidance_navigation' },
+    ];
+    const selectedScopeAvailable = !steeringScope || supportedSteeringScopes.find(item => item.scope === steeringScope)?.available !== false;
+    const allowed = policy.allowed && retryAuthority && selectedScopeAvailable;
+    const observedAt = new Date();
+    const expiresAt = new Date(observedAt.getTime() + PREVIEW_TTL_MS).toISOString();
+    const warnings = [
+        'This preview is advisory; the final command revalidates all authority and current state.',
+        ...(input.action === 'stop' ? ['Uncommitted runtime work may require Agent cleanup before stop acknowledgement.'] : []),
+        ...(!retryAuthority ? ['Retry authority, Agent grant, or direct-retry uniqueness is no longer valid.'] : []),
+    ];
+    const response = {
+        projectionVersion: 1,
+        action: input.action,
+        allowed,
+        reasonCode: allowed ? policy.reasonCode : !retryAuthority ? 'retry.authority_unavailable' : !selectedScopeAvailable ? 'control.scope_unavailable' : policy.reasonCode,
+        sourceRevision: row.revision,
+        currentState: row.state,
+        targetState: policy.targetState,
+        affectedResources: [
+            { type: 'agent_session', id: row.id, revision: row.revision },
+            ...(row.project_id ? [{ type: 'project', id: row.project_id }] : []),
+            ...(row.work_item_id ? [{ type: 'work_item', id: row.work_item_id }] : []),
+        ],
+        consequences: consequences(input.action, leaseCount, stopMode, steeringScope),
+        reversible: input.action === 'pause' || input.action === 'resume' || input.action === 'steer' || input.action === 'replan',
+        releaseLease: input.action === 'stop',
+        preserveArtifacts: true,
+        preserveUncommittedWork: input.action === 'stop' ? 'runtime_dependent' : 'yes',
+        nextWorkItemState: null,
+        invalidatedApprovals: input.action === 'retry' || input.action === 'stop' ? row.approval_ids.map(id => ({ type: 'approval', id })) : [],
+        requiredReason: true,
+        requiredApproval: { required: false, approvalType: null },
+        stopMode,
+        supportedStopModes: input.action === 'stop' ? [
+            { mode: 'graceful', available: true, summary: 'Fence ordinary writes, release Leases, and allow one bounded cleanup acknowledgement.' },
+            { mode: 'immediate', available: true, summary: 'Fence ordinary writes immediately; uncommitted runtime work remains runtime-dependent.' },
+        ] : [],
+        steeringScope,
+        supportedSteeringScopes: ['steer', 'replan', 'handoff'].includes(input.action) ? supportedSteeringScopes : [],
+        currentPlan: row.current_plan_version_id && row.plan_revision ? { id: row.current_plan_version_id, revision: row.plan_revision } : null,
+        currentStep: row.step_id && row.step_title ? { id: row.step_id, title: row.step_title } : null,
+        lastHeartbeatAt: row.last_heartbeat_at ? iso(row.last_heartbeat_at) : null,
+        leaseBehavior: input.action === 'stop' ? 'release_now' : input.action === 'handoff' ? 'retain_for_handoff' : leaseCount ? 'server_controlled' : 'unchanged',
+        recoveryPath: input.action === 'pause' ? 'Resume revalidates Session authority and revision.' : input.action === 'stop' ? 'Retry creates a distinct linked Session after the source becomes terminal.' : input.action === 'retry' ? 'The source Session remains immutable; open the linked retry result.' : input.action === 'handoff' ? 'The source Session remains authoritative until a Handoff is offered and accepted.' : input.action === 'replan' || steeringScope === 'remaining_plan' ? 'Review the new immutable Plan Version before execution continues.' : 'Submit another scoped instruction or use versioned Guidance for durable policy.',
+        resultResource: input.action === 'retry' ? 'new_session' : input.action === 'handoff' ? 'handoff_request' : input.action === 'replan' || steeringScope === 'remaining_plan' ? 'plan_version_request' : steeringScope === 'guidance_proposal' ? 'guidance' : 'same_session',
+        warnings,
+        expiresAt,
+        freshness: { state: 'current', observedAt: observedAt.toISOString(), sourceUpdatedAt: iso(row.updated_at), invalidAfter: expiresAt },
+        advisory: true,
+    };
+    reply.header('ETag', `"control-preview-v1-${row.revision}"`);
+    return actionPreviewResponseSchema.parse(response);
+}
+export function registerControlCenterRoutes(app, h) {
+    app.get('/api/v1/control-center', async (request, reply) => buildControlCenter(h, request, reply));
+    app.get('/api/v1/projects/:projectId/control-center', async (request, reply) => buildControlCenter(h, request, reply, idParam(request, 'projectId')));
+    app.get('/api/v1/agent-sessions/:sessionId/explanation', async (request, reply) => readRunExplanation(h, request, reply, idParam(request, 'sessionId')));
+    app.get('/api/v1/work-items/:workItemId/execution-summary', async (request, reply) => readExecutionSummary(h, request, reply, idParam(request, 'workItemId')));
+    app.post('/api/v1/agent-sessions/:sessionId/control-preview', async (request, reply) => previewControl(h, request, reply, idParam(request, 'sessionId')));
+}

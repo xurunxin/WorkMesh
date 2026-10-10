@@ -1,0 +1,385 @@
+import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { createHash, randomUUID } from 'node:crypto';
+import { WorkMeshSdkError, releaseMetadata } from '@workmesh/agent-sdk';
+import { z } from 'zod';
+import { durableEventCursorSchema, decisionInputSchema, childBudgetInputSchema, artifactTypeSchema, mcpPolicyBindings, workmeshSkillManifest, } from '@workmesh/contracts';
+import { applyProjectImport, applyProjectImportSchema, getWorkMeshContext, prepareProjectImport, projectImportSchema, resolveIdentifier } from './coordination-product.js';
+import { installDiscovery, registerResourceReadTools } from './discovery.js';
+export { mcpPolicyBindings };
+const sessionId = z.string().uuid();
+const idempotencyKey = z.string().min(1).max(255).optional();
+const capability = z.enum(['work:read', 'work:write', 'comment:write', 'plan:write', 'message:write', 'artifact:write', 'repo:read', 'repo:write_branch', 'repo:open_pr', 'repo:merge', 'ci:run', 'deploy:staging', 'deploy:production', 'secrets:use', 'automation:manage', 'admin:*', 'agent:delegate']);
+export function createWorkMeshMcpServer(options) {
+    const server = new McpServer({ name: 'workmesh-mcp', version: releaseMetadata.mcpVersion });
+    const discovery = installDiscovery(server, options, error => tool(async () => { throw error; }));
+    const serverErrorAdapter = server;
+    const sdkToolError = serverErrorAdapter.createToolError.bind(serverErrorAdapter);
+    serverErrorAdapter.createToolError = errorMessage => errorMessage.includes('Input validation error:')
+        ? errorToolResult('MCP_INPUT_INVALID', 'MCP tool input failed validation', { issues: [{ code: 'invalid_arguments', message: errorMessage }] })
+        : sdkToolError(errorMessage);
+    server.registerResource('server-info', 'workmesh://server/info', { description: 'Safe WorkMesh release and build metadata.', mimeType: 'application/json' }, async (uri) => resource(uri, await options.client.getServerInfo()));
+    server.registerResource('server-features', 'workmesh://server/features', { description: 'Authenticated deployment feature support tiers and enabled state.', mimeType: 'application/json' }, async (uri) => resource(uri, await options.client.getFeatures()));
+    server.registerResource('agent-capabilities', 'workmesh://agent/capabilities', { description: 'Negotiated Agent Collaboration Client Profile capabilities for the configured exact Agent Session. Support metadata never replaces live authorization.', mimeType: 'application/json' }, async (uri) => resource(uri, await options.client.getAgentCapabilities()));
+    server.registerResource('agent-session', new ResourceTemplate('workmesh://session/{id}', { list: undefined }), { description: 'Current exact Agent Session state and revision.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getSession(String(variables.id))));
+    server.registerResource('work-item', new ResourceTemplate('workmesh://work-item/{id}', { list: undefined }), { description: 'Current WorkMesh work item and its revision.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getWorkItem(String(variables.id))));
+    server.registerResource('session-context', new ResourceTemplate('workmesh://session/{id}/context', { list: undefined }), { description: 'Bounded context manifest for an agent session.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getSessionContext(String(variables.id))));
+    server.registerResource('session-plan', new ResourceTemplate('workmesh://session/{id}/plan', { list: undefined }), { description: 'Current versioned session plan.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getPlan(String(variables.id))));
+    server.registerResource('session-activity', new ResourceTemplate('workmesh://session/{id}/activity', { list: undefined }), { description: 'Immutable agent activities for a session.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getActivities(String(variables.id))));
+    server.registerResource('workspace-guidance', new ResourceTemplate('workmesh://workspace/{id}/guidance', { list: undefined }), { description: 'Workspace guidance available to the authenticated session.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getGuidance('workspace', String(variables.id))));
+    server.registerResource('team-guidance', new ResourceTemplate('workmesh://team/{id}/guidance', { list: undefined }), { description: 'Team guidance available to the authenticated session.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getGuidance('team', String(variables.id))));
+    server.registerResource('project-guidance', new ResourceTemplate('workmesh://project/{id}/guidance', { list: undefined }), { description: 'Project guidance available to the authenticated session.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getGuidance('project', String(variables.id))));
+    server.registerResource('document-revision', new ResourceTemplate('workmesh://document/{id}/revisions/{revisionId}', { list: undefined }), { description: 'One authorized immutable ordinary Document revision, pinned by its exact ID and content hash.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getDocumentRevision(String(variables.id), String(variables.revisionId))));
+    server.registerResource('repository-context', new ResourceTemplate('workmesh://repository/{id}/context', { list: undefined }), { description: 'Authorized repository, pinned base SHA, path scope, and root-to-leaf AGENTS.md provenance.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getRepositoryContext(String(variables.id))));
+    server.registerTool('list_child_sessions', { description: 'Read bounded direct-child status using the exact live parent execution credential.', inputSchema: { parentSessionId: sessionId, childSessionId: sessionId.optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async ({ parentSessionId, childSessionId, cursor, limit }) => tool(() => options.client.listChildSessions(parentSessionId, { childSessionId }, { cursor, limit })));
+    server.registerTool('list_work_item_comments', { description: 'Read authorized Human comments; comment authorship remains Human-only.', inputSchema: { workItemId: sessionId, cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async ({ workItemId, cursor, limit }) => tool(() => options.client.listWorkItemComments(workItemId, { cursor, limit })));
+    server.registerTool('get_decision', { description: 'Read one authorized Decision.', inputSchema: { decisionId: sessionId } }, async ({ decisionId }) => tool(() => options.client.getDecision(decisionId)));
+    server.registerTool('list_handoffs', { description: 'Read authorized Handoff facts with complete signed pagination.', inputSchema: { cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async (input) => tool(() => options.client.listHandoffs(input)));
+    server.registerTool('export_document_markdown', { description: 'Read an authorized Document revision as Markdown.', inputSchema: { documentId: sessionId, revisionId: sessionId.optional() } }, async ({ documentId, revisionId }) => tool(() => options.client.exportDocumentMarkdown(documentId, revisionId)));
+    server.registerTool('list_work_items', { description: 'List only work items authorized for this session. Use search for title/full-text matching and pass nextCursor back as cursor to continue.', inputSchema: { teamId: z.string().uuid().optional(), search: z.string().max(500).optional(), query: z.string().max(500).optional().describe('Deprecated alias for search.'), statusId: z.string().uuid().optional(), projectId: sessionId.optional(), milestoneId: sessionId.optional(), parentId: sessionId.optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async (input) => {
+        const { cursor, limit, query: legacyQuery, ...filters } = input;
+        const search = input.search ?? legacyQuery;
+        return tool(() => options.client.listWorkItems(search === undefined ? filters : { ...filters, search }, { cursor, limit }));
+    });
+    server.registerTool('list_events', {
+        description: 'List authorized durable domain events after the caller-supplied decimal cursor. The caller owns and persists its checkpoint; MCP keeps no global cursor.',
+        inputSchema: {
+            cursor: durableEventCursorSchema,
+            limit: z.number().int().min(1).max(500).optional(),
+        },
+    }, async (input) => tool(() => options.client.listEvents({
+        cursor: input.cursor,
+        limit: input.limit,
+    })));
+    server.registerTool('list_session_activities', { description: 'List authorized immutable session activities. Pass nextCursor back as cursor to continue.', inputSchema: { sessionId, cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async (input) => tool(() => options.client.getActivities(input.sessionId, {
+        cursor: input.cursor,
+        limit: input.limit,
+    })));
+    server.registerTool('get_work_item', { description: 'Get one authorized work item.', inputSchema: { workItemId: z.string().uuid() } }, async (input) => tool(() => options.client.getWorkItem(input.workItemId)));
+    server.registerTool('list_project_milestones', { description: 'List structured Milestones for an authorized Project. Pass nextCursor back as cursor to continue.', inputSchema: { projectId: z.string().uuid(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async (input) => tool(() => options.client.listProjectMilestones(input.projectId, { cursor: input.cursor, limit: input.limit })));
+    server.registerTool('get_milestone', { description: 'Get one authorized Milestone and its current revision.', inputSchema: { milestoneId: z.string().uuid() } }, async (input) => tool(() => options.client.getMilestone(input.milestoneId)));
+    server.registerTool('list_documents', { description: 'List ordinary versioned Documents owned by one authorized Project or Work Item.', inputSchema: { ownerType: z.enum(['project', 'work_item']), ownerId: z.string().uuid(), cursor: z.string().uuid().optional(), limit: z.number().int().min(1).max(100).optional() } }, async (input) => tool(() => options.client.listDocuments(input.ownerType, input.ownerId, { cursor: input.cursor, limit: input.limit })));
+    server.registerTool('get_document', { description: 'Read the current revision and metadata of one authorized ordinary Document.', inputSchema: { documentId: z.string().uuid() } }, async (input) => tool(() => options.client.getDocument(input.documentId)));
+    server.registerTool('list_document_history', { description: 'List immutable revisions of one authorized Document.', inputSchema: { documentId: z.string().uuid(), cursor: z.string().optional(), limit: z.number().int().min(1).max(100).optional() } }, async (input) => tool(() => options.client.listDocumentHistory(input.documentId, { cursor: input.cursor, limit: input.limit })));
+    server.registerTool('get_document_revision', { description: 'Read a specific immutable Document revision by exact ID.', inputSchema: { documentId: z.string().uuid(), revisionId: z.string().uuid() } }, async (input) => tool(() => options.client.getDocumentRevision(input.documentId, input.revisionId)));
+    server.registerTool('diff_document_revisions', { description: 'Compare two immutable revisions of the same authorized Document.', inputSchema: { documentId: z.string().uuid(), fromRevisionId: z.string().uuid(), toRevisionId: z.string().uuid() } }, async (input) => tool(() => options.client.diffDocumentRevisions(input.documentId, input.fromRevisionId, input.toRevisionId)));
+    server.registerTool('list_work_item_relations', { description: 'List typed blocker and related links touching one authorized Work Item.', inputSchema: { workItemId: z.string().uuid(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async (input) => tool(() => options.client.listWorkItemRelations(input.workItemId, { cursor: input.cursor, limit: input.limit })));
+    registerCoordinationTools(server, options.client, options.mode, discovery.current);
+    server.registerTool('get_work_room', { description: 'Read the human-visible durable Work Room for one work item, project, or session.', inputSchema: { workItemId: z.string().uuid().optional(), projectId: z.string().uuid().optional(), sessionId: z.string().uuid().optional() } }, async (input) => tool(() => options.client.getRoom(input)));
+    server.registerTool('list_inbox_items', { description: 'List Inbox items authorized for the configured exact Agent Session. Unclaimed actor-targeted items expose bounded metadata only.', inputSchema: { status: z.enum(['open', 'resolved']).optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async (input) => tool(() => options.client.listInbox(input.status ?? 'open', { cursor: input.cursor, limit: input.limit })));
+    server.registerTool('get_inbox_item', { description: 'Read full Inbox detail only when the configured exact Session is the recipient or claimant.', inputSchema: { inboxItemId: z.string().uuid() } }, async (input) => tool(() => options.client.getInboxItem(input.inboxItemId)));
+    server.registerTool('list_human_attention', {
+        description: 'List typed Human Attention projections authorized for the configured exact Agent Session. Returned options describe existing commands and never grant authority.',
+        inputSchema: {
+            kind: z.enum(['decision', 'approval', 'clarification', 'conflict', 'recovery', 'completion_review']).optional(),
+            status: z.enum(['open', 'seen', 'decided', 'applying', 'verified', 'failed', 'expired', 'superseded']).optional(),
+            view: z.enum(['active', 'history']).optional(),
+            severity: z.enum(['info', 'low', 'medium', 'high', 'critical']).optional(),
+            urgency: z.enum(['normal', 'soon', 'immediate']).optional(),
+            audience: z.enum(['assigned_to_me', 'visible_to_me', 'workspace_administration']).optional(),
+            requestedByActorId: z.string().uuid().optional(),
+            responsibleHumanActorId: z.string().uuid().optional(),
+            expiresBefore: z.string().datetime({ offset: true }).optional(),
+            expiresAfter: z.string().datetime({ offset: true }).optional(),
+            updatedAfter: z.string().datetime({ offset: true }).optional(),
+            updatedBefore: z.string().datetime({ offset: true }).optional(),
+            projectId: z.string().uuid().optional(),
+            workItemId: z.string().uuid().optional(),
+            sessionId: z.string().uuid().optional(),
+            cursor: z.string().max(8192).optional(),
+            limit: z.number().int().min(1).max(200).optional(),
+        },
+    }, async (input) => {
+        const { cursor, limit, ...filters } = input;
+        return tool(() => options.client.listHumanAttention(filters, { cursor, limit }));
+    });
+    server.registerTool('get_human_attention', {
+        description: 'Read one typed Human Attention projection when its source remains authorized for the configured exact Agent Session.',
+        inputSchema: { attentionId: z.string().min(1).max(255) },
+    }, async (input) => tool(() => options.client.getHumanAttention(input.attentionId)));
+    server.registerTool('get_control_center', {
+        description: 'Read a bounded Workspace control-plane projection. Select one collection and pass nextCursor back to expand it.',
+        inputSchema: { collection: z.enum(['attention', 'running', 'risks', 'recently_verified', 'ready_work', 'blocked_work']).optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(100).optional() },
+    }, async (input) => tool(() => options.client.getControlCenter(input.collection, { cursor: input.cursor, limit: input.limit })));
+    server.registerTool('get_project_control_center', {
+        description: 'Read a bounded Project control-plane projection authorized for the configured identity.',
+        inputSchema: { projectId: z.string().uuid(), collection: z.enum(['attention', 'running', 'risks', 'recently_verified', 'ready_work', 'blocked_work']).optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(100).optional() },
+    }, async (input) => tool(() => options.client.getProjectControlCenter(input.projectId, input.collection, { cursor: input.cursor, limit: input.limit })));
+    server.registerTool('explain_agent_session', {
+        description: 'Read the server-authored causal explanation for one authorized Agent Session. Filters preserve exact provenance and nextCursor loads older groups.',
+        inputSchema: {
+            sessionId, cursor: z.string().regex(/^[1-9][0-9]{0,18}$/).optional(), limit: z.number().int().min(1).max(100).optional(),
+            phase: z.enum(['intake', 'investigation', 'planning', 'implementation', 'validation', 'human_input', 'recovery', 'completion']).optional(),
+            planStepId: z.string().uuid().optional(), actorId: z.string().uuid().optional(),
+            actionType: z.enum(['acknowledgement', 'read', 'write', 'tool', 'state_transition', 'plan', 'message', 'approval', 'decision', 'evidence', 'validation', 'handoff', 'heartbeat', 'other']).optional(),
+            risk: z.enum(['low', 'medium', 'high', 'critical']).optional(), evidence: z.enum(['present', 'missing']).optional(), failure: z.literal('true').optional(),
+            attention: z.literal('true').optional(), timeWindow: z.enum(['24h', '7d', '30d']).optional(),
+        },
+    }, async (input) => {
+        const { sessionId: id, cursor, limit, ...filters } = input;
+        return tool(() => options.client.explainAgentSession(id, filters, { cursor, limit }));
+    });
+    server.registerTool('get_work_item_execution_summary', { description: 'Read bounded current and recent execution facts for one authorized Work Item.', inputSchema: { workItemId: z.string().uuid() } }, async (input) => tool(() => options.client.getWorkItemExecutionSummary(input.workItemId)));
+    server.registerTool('preview_agent_session_control', { description: 'Preview current-revision Session control consequences without reserving authority or mutating state.', inputSchema: { sessionId, action: z.enum(['pause', 'resume', 'stop', 'retry', 'handoff', 'replan', 'steer']), stopMode: z.enum(['graceful', 'immediate']).optional(), steeringScope: z.enum(['current_step', 'remaining_plan', 'session', 'guidance_proposal']).optional() } }, async (input) => tool(() => options.client.previewAgentSessionControl(input.sessionId, input.action, { stopMode: input.stopMode, steeringScope: input.steeringScope })));
+    // callback/schema保留供已缓存客户端明确拒绝；只读部署只过滤list并拒绝call。
+    registerMutations(server, options.client);
+    registerResourceReadTools(server, options.client);
+    return server;
+}
+const coordinationKey = (toolName, payload) => `coordination:${toolName}:${createHash('sha256').update(JSON.stringify(payload)).digest('hex')}`;
+function registerCoordinationTools(server, client, mode, discovery) {
+    server.registerTool('verify_connection', { description: 'Verify the live Connection, derived Coordination Session, capabilities, Team authorization, and pinned WorkMesh Skill.', inputSchema: {} }, async () => tool(async () => {
+        const [manifest, connectionIdentity] = await Promise.all([
+            client.getAgentCapabilities(),
+            client.getCurrentAgentConnectionIdentity(),
+        ]);
+        const expectedTeamIds = manifest.agent.capabilityScope.teamIds;
+        if (expectedTeamIds.length !== 1) {
+            throw new WorkMeshSdkError('A Coordination Connection must resolve to exactly one Team', {
+                code: 'CONNECTION_SCOPE_INVALID',
+                details: { teamCount: expectedTeamIds.length },
+            });
+        }
+        if (connectionIdentity.team_id !== expectedTeamIds[0]
+            || connectionIdentity.agent_actor_id !== manifest.agent.actorId
+            || connectionIdentity.coordination_session.id !== manifest.agent.sessionId
+            || connectionIdentity.granted_capabilities.length !== manifest.agent.effectiveCapabilities.length
+            || connectionIdentity.granted_capabilities.some(capability => !manifest.agent.effectiveCapabilities.includes(capability))) {
+            throw new WorkMeshSdkError('The live Connection identity did not match the capability manifest', {
+                code: 'CONNECTION_IDENTITY_INCONSISTENT',
+                details: {
+                    connectionTeamId: connectionIdentity.team_id,
+                    manifestTeamIds: expectedTeamIds,
+                    connectionActorId: connectionIdentity.agent_actor_id,
+                    manifestActorId: manifest.agent.actorId,
+                    connectionSessionId: connectionIdentity.coordination_session.id,
+                    manifestSessionId: manifest.agent.sessionId,
+                },
+            });
+        }
+        const teams = await client.listTeams({ limit: 1 });
+        if (teams.items.length !== 1 || teams.items[0]?.id !== expectedTeamIds[0]) {
+            throw new WorkMeshSdkError('The live Team authorization probe did not match the Connection scope', {
+                code: 'CONNECTION_LIVE_PROBE_INCONSISTENT',
+                details: { expectedTeamId: expectedTeamIds[0] },
+            });
+        }
+        return {
+            connectionIdentity,
+            manifest,
+            liveProbe: { teamId: expectedTeamIds[0], teamDiscovery: 'ok' },
+            skill: workmeshSkillManifest,
+            bootstrap: {
+                verified: true,
+                transport: 'streamable_http',
+                profileVersion: manifest.profileVersion,
+                identityBoundary: 'Installation identity is not an Agent Session or Delegation.',
+                requiredNextTools: ['get_workmesh_context'],
+                authorityEvaluatedPerRequest: true,
+            },
+        };
+    }));
+    server.registerTool('get_current_identity', { description: 'Return the live Agent actor plus the exact redacted Connection credential identity that authenticated this request.', inputSchema: {} }, async () => tool(async () => {
+        const [manifest, connectionIdentity] = await Promise.all([
+            client.getAgentCapabilities(),
+            client.getCurrentAgentConnectionIdentity(),
+        ]);
+        return { ...manifest.agent, connectionIdentity };
+    }));
+    server.registerTool('get_workmesh_context', { description: 'Bootstrap a fresh Agent in one call with live identity, the bound Team, workflow states, default state, release/features, allowed operations, and a durable replay cursor.', inputSchema: {} }, async () => tool(() => getWorkMeshContext(client, discovery())));
+    server.registerTool('list_claimable_work_items', { description: 'List non-terminal Issues this Connection can atomically claim: unassigned Issues plus an exact same-identity assignment when every non-terminal execution Session is stale or no non-terminal execution remains; live work:read and work:write authorization is revalidated. Pass nextCursor back as cursor.', inputSchema: { cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async (input) => tool(() => client.listClaimableWorkItems({ cursor: input.cursor, limit: input.limit })));
+    server.registerTool('resolve_identifier', { description: 'Resolve a Team key, readable Project or Milestone reference, or native Work Item key such as WM-123 to the current UUID and revision.', inputSchema: { kind: z.enum(['team', 'workflow_state', 'project', 'work_item', 'milestone']), ref: z.string().min(1).max(500), teamRef: z.string().min(1).max(500).optional(), projectRef: z.string().min(1).max(500).optional() } }, async (input) => tool(() => resolveIdentifier(client, input)));
+    server.registerTool('prepare_project_import', { description: 'Validate and normalize a complete Project import without side effects. Returns a deterministic content hash that apply_project_import must verify.', inputSchema: projectImportSchema.shape }, async (input) => tool(async () => prepareProjectImport(input)));
+    server.registerTool('list_teams', { description: 'List Teams visible to this Connection.', inputSchema: { cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async (input) => tool(() => client.listTeams({ cursor: input.cursor, limit: input.limit })));
+    server.registerTool('list_workflow_states', { description: 'List workflow states for the Connection Team.', inputSchema: { teamId: z.string().uuid(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async (input) => tool(() => client.listWorkflowStates(input.teamId, { cursor: input.cursor, limit: input.limit })));
+    server.registerTool('list_projects', { description: 'List authorized Projects.', inputSchema: { teamId: z.string().uuid().optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async (input) => tool(() => client.listProjects({ teamId: input.teamId }, { cursor: input.cursor, limit: input.limit })));
+    server.registerTool('get_project', { description: 'Get one authorized Project.', inputSchema: { projectId: z.string().uuid() } }, async (input) => tool(() => client.getProject(input.projectId)));
+    server.registerTool('apply_project_import', { description: 'Apply an exact prepare_project_import plan with deterministic per-entity server idempotency. Safe to resume after response loss by replaying the same content hash and plan; returns the complete source-to-target mapping.', inputSchema: applyProjectImportSchema.shape }, async (input) => tool(() => applyProjectImport(client, input)));
+    server.registerTool('create_project', { description: 'Create a Project in the Connection Team. This cannot archive or delete Projects.', inputSchema: { teamId: z.string().uuid(), name: z.string().min(1).max(180), summary: z.string().max(500).optional(), description: z.string().max(20_000).nullable().optional(), status: z.string().max(80).optional(), leadActorId: z.string().uuid().nullable().optional(), targetDate: z.string().date().nullable().optional(), idempotencyKey } }, async (input) => { const { idempotencyKey: key, ...body } = input; return tool(() => client.createProject(body, { idempotencyKey: key ?? randomUUID() })); });
+    server.registerTool('update_project', { description: 'Update ordinary Project fields at the current revision. Archive and delete remain Human-only.', inputSchema: { projectId: z.string().uuid(), revision: z.number().int().positive(), name: z.string().min(1).max(180).optional(), summary: z.string().max(500).optional(), description: z.string().max(20_000).nullable().optional(), status: z.string().max(80).optional(), leadActorId: z.string().uuid().nullable().optional(), targetDate: z.string().date().nullable().optional(), idempotencyKey } }, async (input) => { const { projectId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.updateProject(projectId, body, { ifMatch: revision, idempotencyKey: key ?? randomUUID() })); });
+    server.registerTool('create_work_item', { description: 'Create an Issue in the Connection Team, optionally under a structured Project, Milestone, and parent Work Item. If responsibleHumanActorId is omitted, the server pins the Connection principal Human.', inputSchema: { teamId: z.string().uuid(), projectId: z.string().uuid().optional(), milestoneId: z.string().uuid().optional(), parentId: z.string().uuid().optional(), title: z.string().min(1).max(500), description: z.string().max(50_000).optional(), statusId: z.string().uuid(), dueDate: z.string().datetime({ offset: true }).optional(), priority: z.enum(['none', 'low', 'medium', 'high', 'urgent']).optional(), responsibleHumanActorId: z.string().uuid().optional(), labels: z.array(z.string().min(1).max(60)).max(30).optional(), idempotencyKey } }, async (input) => { const { idempotencyKey: key, ...body } = input; return tool(() => client.createWorkItem(body, { idempotencyKey: key ?? randomUUID() })); });
+    server.registerTool('update_work_item', { description: 'Update ordinary Issue fields, hierarchy, and Milestone assignment at the current revision. The server rejects cross-Team, cross-Project, and cyclic hierarchy.', inputSchema: { workItemId: z.string().uuid(), revision: z.number().int().positive(), title: z.string().min(1).max(500).optional(), description: z.string().max(50_000).nullable().optional(), statusId: z.string().uuid().optional(), priority: z.enum(['none', 'low', 'medium', 'high', 'urgent']).optional(), responsibleHumanActorId: z.string().uuid().nullable().optional(), labels: z.array(z.string().min(1).max(60)).max(30).optional(), projectId: z.string().uuid().nullable().optional(), milestoneId: z.string().uuid().nullable().optional(), parentId: z.string().uuid().nullable().optional(), dueDate: z.string().datetime({ offset: true }).nullable().optional(), placement: z.object({ beforeItemId: z.string().uuid().nullable() }).strict().optional(), idempotencyKey } }, async (input) => { const { workItemId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.updateWorkItem(workItemId, body, { ifMatch: revision, idempotencyKey: key ?? randomUUID() })); });
+    server.registerTool('create_milestone', { description: 'Create a structured Milestone in an authorized Project.', inputSchema: { projectId: z.string().uuid(), name: z.string().min(1).max(180), description: z.string().max(10_000).optional(), targetDate: z.string().date().optional(), idempotencyKey } }, async (input) => { const { projectId, idempotencyKey: key, ...body } = input; return tool(() => client.createMilestone(projectId, body, { idempotencyKey: key ?? randomUUID() })); });
+    server.registerTool('update_milestone', { description: 'Update a Milestone at its exact current revision.', inputSchema: { milestoneId: z.string().uuid(), revision: z.number().int().positive(), name: z.string().min(1).max(180).optional(), description: z.string().max(10_000).nullable().optional(), targetDate: z.string().date().nullable().optional(), idempotencyKey } }, async (input) => { const { milestoneId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.updateMilestone(milestoneId, body, { ifMatch: revision, idempotencyKey: key ?? randomUUID() })); });
+    server.registerTool('delete_milestone', { description: 'Soft-delete an empty Milestone at its exact revision. Active Work Items must be moved first.', inputSchema: { milestoneId: z.string().uuid(), revision: z.number().int().positive(), idempotencyKey } }, async (input) => tool(() => client.deleteMilestone(input.milestoneId, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey ?? randomUUID() })));
+    server.registerTool('add_work_item_relation', { description: 'Add an acyclic blocks edge or a canonical related link between Work Items in the same Team.', inputSchema: { workItemId: z.string().uuid(), targetWorkItemId: z.string().uuid(), kind: z.enum(['blocks', 'related']), idempotencyKey } }, async (input) => tool(() => client.createWorkItemRelation(input.workItemId, { targetWorkItemId: input.targetWorkItemId, kind: input.kind }, { idempotencyKey: input.idempotencyKey ?? randomUUID() })));
+    server.registerTool('remove_work_item_relation', { description: 'Soft-delete one typed Work Item relation at its exact revision.', inputSchema: { workItemId: z.string().uuid(), relationId: z.string().uuid(), revision: z.number().int().positive(), idempotencyKey } }, async (input) => tool(() => client.deleteWorkItemRelation(input.workItemId, input.relationId, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey ?? randomUUID() })));
+    server.registerTool('claim_work_item', { description: 'Atomically claim one eligible Issue or continue this same Connection Agent\'s compatible assignment when every non-terminal execution is stale or none remains. Terminal history stays immutable and a fresh queued Session is created. Human forced assignments and any live or incompatible assignment remain authoritative conflicts. Establishes a server-managed exact-Session bridge.', inputSchema: { workItemId: z.string().uuid(), revision: z.number().int().positive(), requestedCapabilities: z.array(capability).min(1).max(50).optional(), initialPrompt: z.string().min(1).max(50_000).optional(), contextSnapshotId: z.string().uuid().optional(), budget: childBudgetInputSchema.optional(), idempotencyKey } }, async (input) => tool(async () => {
+        const claimKey = input.idempotencyKey ?? coordinationKey('claim_work_item', input);
+        const claimed = await client.claimWorkItem(input.workItemId, {
+            requestedCapabilities: input.requestedCapabilities,
+            initialPrompt: input.initialPrompt,
+            contextSnapshotId: input.contextSnapshotId,
+            budget: input.budget,
+        }, { ifMatch: input.revision, idempotencyKey: claimKey });
+        const execution = await client.exchangeClaimedSessionToken(claimed.session.id, claimed.exchangeToken, {
+            idempotencyKey: coordinationKey('claim_work_item_exchange', {
+                workItemId: input.workItemId,
+                claimKey,
+                sessionId: claimed.session.id,
+            }),
+        });
+        return {
+            delegation: claimed.delegation,
+            session: claimed.session,
+            executionAuth: {
+                mode: 'connection_session_bridge',
+                sessionId: claimed.session.id,
+                expiresAt: execution.expiresAt,
+            },
+        };
+    }));
+    const delegateInput = { workItemId: z.string().uuid(), revision: z.number().int().positive(), agentId: z.string().uuid(), principalHumanActorId: z.string().uuid(), role: z.literal('executor').optional(), requestedCapabilities: z.array(capability).min(1).max(50), initialPrompt: z.string().min(1).max(50_000), contextSnapshotId: z.string().uuid().optional(), budget: childBudgetInputSchema.optional(), idempotencyKey };
+    const delegate = (toolName, input) => {
+        const { workItemId, revision, idempotencyKey: key, ...body } = input;
+        return tool(() => client.delegateAndStart(workItemId, { ...body, role: body.role ?? 'executor', budget: body.budget ?? {} }, { ifMatch: revision, idempotencyKey: key ?? coordinationKey(toolName, input) }));
+    };
+    server.registerTool('delegate_work_item', { description: 'Atomically delegate a Work Item and start its Agent Session. Requires the Connection agent:delegate capability and the Work Item responsible Human to match the Connection principal.', inputSchema: delegateInput }, async (input) => delegate('delegate_work_item', input));
+}
+function registerMutations(server, client) {
+    server.registerTool('heartbeat_lease', { description: '诊断本人 Lease；不追加普通 Activity，不授予权限。', inputSchema: { leaseId: z.string().uuid(), sessionId: sessionId.optional(), idempotencyKey } }, async (input) => tool(() => client.heartbeatLease(input.leaseId, { sessionId: input.sessionId, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('renew_lease', { description: '按准确 Lease version 续租，服务端重验本人持有与 live 权限。', inputSchema: { leaseId: z.string().uuid(), sessionId: sessionId.optional(), version: z.number().int().positive(), ttlSeconds: z.number().int().min(10).max(3600).optional(), reason: z.string().min(1).max(2000).optional(), idempotencyKey } }, async (input) => tool(() => client.renewLease(input.leaseId, { ttlSeconds: input.ttlSeconds, reason: input.reason }, { sessionId: input.sessionId, ifMatch: input.version, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('release_lease', { description: '按准确 Lease version 释放本人 Lease；此操作不能代替 Stop 协议。', inputSchema: { leaseId: z.string().uuid(), sessionId: sessionId.optional(), version: z.number().int().positive(), reason: z.string().min(1).optional(), idempotencyKey } }, async (input) => tool(() => client.releaseLease(input.leaseId, { reason: input.reason }, { sessionId: input.sessionId, ifMatch: input.version, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('consume_approval', { description: '消费准确 Human 已批准且未过期的原动作 hash；不能自行批准。', inputSchema: { approvalId: z.string().uuid(), sessionId, actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/), revision: z.number().int().positive(), idempotencyKey } }, async (input) => tool(() => client.consumeApproval(input.approvalId, { actionPayloadHash: input.actionPayloadHash }, { sessionId: input.sessionId, ifMatch: input.revision, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('stop_ack', { description: '使用原执行 E Token 提交受控清理概要和残留风险；不刷新停止 Session、不走普通 Activity。HTTP 无跨请求原 Token 持有保证。', inputSchema: { sessionId, revision: z.number().int().positive(), cleanupSummary: z.string().min(1).max(10_000), residualRisks: z.array(z.string().min(1).max(1_000)).max(50).optional(), idempotencyKey } }, async (input) => tool(() => client.stopAcknowledgement(input.sessionId, { cleanupSummary: input.cleanupSummary, residualRisks: input.residualRisks }, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('create_document', { description: 'Create a versioned ordinary Document under an authorized Project or exact Work Item. This does not publish Guidance.', inputSchema: { ownerType: z.enum(['project', 'work_item']), ownerId: z.string().uuid(), title: z.string().trim().min(1).max(180), markdown: z.string().max(200_000), changeSummary: z.string().trim().min(1).max(500).optional(), idempotencyKey } }, async (input) => { const { idempotencyKey: key, ...body } = input; return tool(() => client.createDocument(body, { idempotencyKey: key })); });
+    server.registerTool('update_document', { description: 'Create a new immutable revision from the exact current revision and hash. Conflicting edits return an error.', inputSchema: { documentId: z.string().uuid(), revision: z.number().int().positive(), title: z.string().trim().min(1).max(180), markdown: z.string().max(200_000), baseRevisionId: z.string().uuid(), baseContentHash: z.string().regex(/^sha256:[a-f0-9]{64}$/), changeSummary: z.string().trim().min(1).max(500).optional(), idempotencyKey } }, async (input) => { const { documentId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.updateDocument(documentId, body, { ifMatch: revision, idempotencyKey: key })); });
+    server.registerTool('restore_document_revision', { description: 'Copy an older authorized Document revision into a new immutable revision. The current revision and hash must still match.', inputSchema: { documentId: z.string().uuid(), revision: z.number().int().positive(), revisionId: z.string().uuid(), baseRevisionId: z.string().uuid(), baseContentHash: z.string().regex(/^sha256:[a-f0-9]{64}$/), changeSummary: z.string().trim().min(1).max(500), idempotencyKey } }, async (input) => { const { documentId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.restoreDocumentRevision(documentId, body, { ifMatch: revision, idempotencyKey: key })); });
+    const deliveryLink = { repositoryId: z.string().uuid(), workItemId: z.string().uuid(), sessionId, projectId: z.string().uuid().optional(), planStepId: z.string().uuid().optional(), idempotencyKey };
+    server.registerTool('create_repository_branch', { description: 'Persist an authorized branch intent against the repository context pinned base SHA. Provider I/O runs asynchronously in the worker.', inputSchema: { ...deliveryLink, name: z.string().min(1).max(500), baseSha: z.string().min(1).max(200) } }, async (input) => tool(() => client.requestProviderAction({ kind: 'create_branch', repositoryId: input.repositoryId, workItemId: input.workItemId, sessionId: input.sessionId, projectId: input.projectId, planStepId: input.planStepId, name: input.name, baseSha: input.baseSha }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('create_repository_commit', { description: 'Persist an expected-head commit intent limited to authorized repository paths.', inputSchema: { ...deliveryLink, branch: z.string().min(1).max(500), expectedHeadSha: z.string().min(1).max(200), message: z.string().min(1).max(10_000), files: z.array(z.object({ path: z.string().min(1).max(2_000), content: z.string().max(2_000_000) })).min(1).max(500) } }, async (input) => tool(() => client.requestProviderAction({ kind: 'create_commit', repositoryId: input.repositoryId, workItemId: input.workItemId, sessionId: input.sessionId, projectId: input.projectId, planStepId: input.planStepId, branch: input.branch, expectedHeadSha: input.expectedHeadSha, message: input.message, files: input.files }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('open_pull_request', { description: 'Persist a pull-request intent; the worker performs provider I/O after commit.', inputSchema: { ...deliveryLink, baseBranch: z.string().min(1).max(500), headBranch: z.string().min(1).max(500), title: z.string().min(1).max(500), body: z.string().max(50_000), draft: z.boolean().optional() } }, async (input) => tool(() => client.requestProviderAction({ kind: 'open_pull_request', repositoryId: input.repositoryId, workItemId: input.workItemId, sessionId: input.sessionId, projectId: input.projectId, planStepId: input.planStepId, baseBranch: input.baseBranch, headBranch: input.headBranch, title: input.title, body: input.body, draft: input.draft ?? true }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('publish_delivery_artifact', { description: 'Publish provenance-bearing delivery evidence bound to the exact repository, pull request, current head, session, and work item. The official structured-review path publishes type code_review here, then passes the returned artifact ID to publish_structured_review. Signed uploads materialize only file artifacts and are not review authority.', inputSchema: { ...deliveryLink, pullRequestId: z.string().uuid(), headSha: z.string().min(1).max(200), type: z.enum(['commit', 'pull_request', 'test_report', 'code_review', 'document', 'link', 'file', 'other', 'branch', 'diff', 'build', 'preview']).describe('Use code_review when this artifact will authorize publish_structured_review; signed uploads always materialize type file instead.'), title: z.string().min(1).max(500), uri: z.string().url().optional(), checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/), sourceTool: z.string().min(1).max(160), command: z.string().max(10_000).optional(), result: z.enum(['passed', 'failed', 'skipped']).optional(), metadata: z.record(z.unknown()).optional() } }, async (input) => tool(() => client.publishDeliveryArtifact({ repositoryId: input.repositoryId, pullRequestId: input.pullRequestId, headSha: input.headSha, workItemId: input.workItemId, sessionId: input.sessionId, projectId: input.projectId, planStepId: input.planStepId, type: input.type, title: input.title, uri: input.uri, checksum: input.checksum, sourceTool: input.sourceTool, command: input.command, result: input.result, metadata: input.metadata ?? {} }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('request_artifact_upload', { description: 'Request a bounded upload intent for verified file evidence with exact repository, pull-request head, session, work-item, checksum, and source-tool provenance. Finalization materializes artifact type file, which cannot satisfy publish_structured_review; use publish_delivery_artifact with type code_review for review authority.', inputSchema: { ...deliveryLink, pullRequestId: z.string().uuid(), headSha: z.string().min(1).max(200), sourceTool: z.string().min(1).max(160), filename: z.string().min(1).max(500), mimeType: z.string().min(1).max(200), sizeBytes: z.number().int().positive().max(52_428_800), checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/) } }, async (input) => tool(() => client.requestArtifactUpload({ repositoryId: input.repositoryId, pullRequestId: input.pullRequestId, headSha: input.headSha, workItemId: input.workItemId, sessionId: input.sessionId, projectId: input.projectId, planStepId: input.planStepId, sourceTool: input.sourceTool, filename: input.filename, mimeType: input.mimeType, sizeBytes: input.sizeBytes, checksum: input.checksum }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('finalize_artifact_upload', { description: 'Finalize a previously uploaded object as verified file evidence. The resulting type file artifact is not structured-review authority; use publish_delivery_artifact with type code_review instead.', inputSchema: { uploadId: z.string().uuid(), sessionId, idempotencyKey } }, async (input) => tool(() => client.finalizeArtifactUpload(input.uploadId, input.sessionId, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('publish_structured_review', { description: 'Publish an independent reviewer result bound to one exact pull-request head. artifactId must come from publish_delivery_artifact with type code_review and matching provenance; uploaded file artifacts are ineligible.', inputSchema: { pullRequestId: z.string().uuid(), sessionId, artifactId: z.string().uuid().describe('Artifact ID returned by publish_delivery_artifact with type code_review; request/finalize_artifact_upload produces ineligible file evidence.'), headSha: z.string().min(1).max(200), verdict: z.enum(['approved', 'changes_requested', 'commented']), summary: z.string().min(1).max(20_000), findings: z.array(z.object({ severity: z.enum(['blocking', 'high', 'medium', 'low']), file: z.string().min(1).max(2_000), line: z.number().int().positive(), summary: z.string().min(1).max(2_000), evidence: z.string().min(1).max(20_000), recommendation: z.string().min(1).max(20_000) })).max(500), evidence: z.array(z.string().min(1).max(20_000)).max(100).optional(), metadata: z.record(z.unknown()).optional(), idempotencyKey } }, async (input) => tool(() => client.publishStructuredReview(input.pullRequestId, { sessionId: input.sessionId, artifactId: input.artifactId, headSha: input.headSha, verdict: input.verdict, summary: input.summary, findings: input.findings, evidence: input.evidence ?? [], metadata: input.metadata ?? {} }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('merge_pull_request', { description: 'Request a worker merge using an approved exact-head canonical hash. This tool cannot consume generic approvals.', inputSchema: { pullRequestId: z.string().uuid(), sessionId, approvalId: z.string().uuid(), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/), headSha: z.string().min(1).max(200), method: z.enum(['merge', 'squash', 'rebase']), idempotencyKey } }, async (input) => tool(() => client.requestMerge(input.pullRequestId, { sessionId: input.sessionId, approvalId: input.approvalId, actionPayloadHash: input.actionPayloadHash, headSha: input.headSha, method: input.method }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('retry_ci_check', { description: 'Request a provider CI re-run only with live ci:run capability, repository CI scope, and a human approval bound to this exact provider check and current PR head.', inputSchema: { pullRequestId: z.string().uuid(), checkRunId: z.string().min(1).max(500), sessionId, approvalId: z.string().uuid(), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/), headSha: z.string().min(1).max(200), idempotencyKey } }, async (input) => tool(() => client.retryCiCheck(input.pullRequestId, input.checkRunId, { sessionId: input.sessionId, approvalId: input.approvalId, actionPayloadHash: input.actionPayloadHash, headSha: input.headSha }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('draft_project_update', { description: 'Draft a project health update in the active agent session scope. Publishing remains a separate human-only transition.', inputSchema: { projectId: z.string().uuid(), sessionId, health: z.enum(['on_track', 'at_risk', 'off_track']), body: z.string().min(1).max(20_000), evidenceArtifactIds: z.array(z.string().uuid()).max(100).optional(), idempotencyKey } }, async (input) => tool(() => client.draftProjectUpdate(input.projectId, { health: input.health, body: input.body, evidenceArtifactIds: input.evidenceArtifactIds }, { sessionId: input.sessionId, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('publish_project_update', { description: 'Human-only transition that publishes an existing draft project update at its exact revision.', inputSchema: { projectId: z.string().uuid(), updateId: z.string().uuid(), revision: z.number().int().positive(), idempotencyKey } }, async (input) => tool(() => client.publishProjectUpdate(input.projectId, input.updateId, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('decide_completion_suggestion', { description: 'Human-only accept or dismiss decision. It records the decision but never transitions the work item.', inputSchema: { suggestionId: z.string().uuid(), decision: z.enum(['accepted', 'dismissed']), revision: z.number().int().positive(), idempotencyKey } }, async (input) => tool(() => client.decideCompletionSuggestion(input.suggestionId, input.decision, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('post_work_room_message', { description: 'Post an auditable typed Work Room message to authorized recipients. Do not use it for hidden agent-private communication.', inputSchema: { roomId: z.string().uuid(), intent: z.enum(['inform', 'ask', 'answer', 'propose', 'decide', 'claim', 'handoff', 'blocker', 'review_request', 'review_result', 'status']), body: z.string().min(1).max(50_000), recipientActorId: z.string().uuid().optional(), recipientActorIds: z.array(z.string().uuid()).min(1).max(50).optional(), recipientSessionId: z.string().uuid().optional(), recipientSessionIds: z.array(z.string().uuid()).min(1).max(50).optional(), replyToMessageId: z.string().uuid().optional(), threadId: z.string().uuid().optional(), payload: z.record(z.unknown()).optional(), sessionId: z.string().uuid(), requiresResponse: z.boolean().optional(), idempotencyKey } }, async (input) => tool(() => client.postRoomMessage(input.roomId, { intent: input.intent, body: input.body, recipientActorId: input.recipientActorId, recipientActorIds: input.recipientActorIds, recipientSessionId: input.recipientSessionId, recipientSessionIds: input.recipientSessionIds, replyToMessageId: input.replyToMessageId, threadId: input.threadId, payload: input.payload, sessionId: input.sessionId, requiresResponse: input.requiresResponse }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('claim_inbox_item', { description: 'Atomically bind an unclaimed Agent-actor Inbox item to the configured exact Session. Claim is coordination and never grants authority.', inputSchema: { inboxItemId: z.string().uuid(), idempotencyKey } }, async (input) => tool(() => client.claimInboxItem(input.inboxItemId, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('acknowledge_inbox_item', { description: 'Append an acknowledgement receipt without resolving or transitioning another domain resource.', inputSchema: { inboxItemId: z.string().uuid(), idempotencyKey } }, async (input) => tool(() => client.acknowledgeInboxItem(input.inboxItemId, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('reply_inbox_item', { description: 'Reply in the source Work Room using server-derived thread and recipients. This does not transition Handoffs, Approvals, Leases, or Work Items.', inputSchema: { inboxItemId: z.string().uuid(), body: z.string().min(1).max(50_000), payload: z.record(z.unknown()).optional(), revision: z.number().int().positive(), idempotencyKey } }, async (input) => tool(() => client.replyInboxItem(input.inboxItemId, { body: input.body, payload: input.payload }, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('comment_plan_step', { description: 'Append an immutable, session-scoped comment to a stable plan step in its plan version.', inputSchema: { sessionId, planVersionId: z.string().uuid(), planStepId: z.string().uuid(), body: z.string().min(1).max(50_000), references: z.array(z.unknown()).max(100).optional(), idempotencyKey } }, async (input) => tool(() => client.commentPlanStep(input.sessionId, { planVersionId: input.planVersionId, planStepId: input.planStepId, body: input.body, references: input.references }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('propose_plan_step_assignment', { description: 'Propose an exact agent or skill assignment for a plan step; this creates an auditable proposal, not an unapproved reassignment.', inputSchema: { sessionId, planStepId: z.string().uuid(), agentId: z.string().uuid().optional(), skill: z.string().min(1).max(160).optional(), rationale: z.string().min(1).max(10_000), idempotencyKey } }, async (input) => tool(() => client.proposeAssignment(input.sessionId, { planStepId: input.planStepId, agentId: input.agentId, skill: input.skill, rationale: input.rationale }, { idempotencyKey: input.idempotencyKey })));
+    for (const [name, field, create] of [
+        ['create_work_item_decision', 'workItemId', 'createWorkItemDecision'],
+        ['create_project_decision', 'projectId', 'createProjectDecision'],
+        ['create_session_decision', 'sessionId', 'createSessionDecision'],
+    ])
+        server.registerTool(name, { description: 'Propose an authorized Decision. Finalization remains Human-only.', inputSchema: { [field]: sessionId, ...decisionInputSchema.omit({ sessionId: true }).shape, idempotencyKey } }, async (input) => {
+            const values = input;
+            const target = sessionId.parse(values[field]);
+            const { [field]: _target, idempotencyKey: key, ...body } = values;
+            return tool(() => client[create](target, decisionInputSchema.parse(body), { idempotencyKey: typeof key === 'string' ? key : undefined }));
+        });
+    server.registerTool('create_child_session', { description: 'Create a bounded child agent session for one stable plan step. Parent budget, delegation, team access, and concurrency are enforced by the server. Use create_review_delegation for reviewer evidence; ordinary role=reviewer retains limited capability and cannot publish code_review.', inputSchema: { parentSessionId: sessionId, agentId: z.string().uuid(), planStepId: z.string().uuid(), planVersionId: z.string().uuid(), role: z.enum(['executor', 'reviewer', 'researcher']).optional(), initialPrompt: z.string().min(1).max(50_000), required: z.boolean().optional(), budget: childBudgetInputSchema.optional(), idempotencyKey } }, async (input) => tool(() => client.createChildSession(input.parentSessionId, { agentId: input.agentId, planStepId: input.planStepId, planVersionId: input.planVersionId, role: input.role, initialPrompt: input.initialPrompt, required: input.required, budget: input.budget }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('append_context_delta', { description: 'Append an immutable, scoped context delta and make its derived snapshot current for this session.', inputSchema: { sessionId, baseSnapshotId: z.string().uuid(), additions: z.array(z.union([
+                z.object({ sourceType: z.enum(['artifact', 'message', 'work_item', 'plan_step']), sourceId: z.string().uuid(), hash: z.string().regex(/^sha256:[a-f0-9]{64}$/) }).strict(),
+                z.object({ sourceType: z.literal('guidance'), uri: z.string().url(), hash: z.string().regex(/^sha256:[a-f0-9]{64}$/) }).strict(),
+            ])).min(1).max(100), rationale: z.string().min(1).max(10_000), idempotencyKey } }, async (input) => tool(() => client.appendContextDelta(input.sessionId, { baseSnapshotId: input.baseSnapshotId, additions: input.additions, rationale: input.rationale }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('create_review_delegation', { description: 'Create a scoped reviewer child session and review-shared plan-step lease. The server grants read, code-review artifacts, and narrowly scoped work:write for lifecycle and own Room review_result; it grants no plan:write.', inputSchema: { sessionId, reviewerAgentId: z.string().uuid(), planStepId: z.string().uuid(), planVersionId: z.string().uuid(), initialPrompt: z.string().min(1).max(50_000), budget: childBudgetInputSchema.optional(), ttlSeconds: z.number().int().min(10).max(3_600).optional(), idempotencyKey } }, async (input) => tool(() => client.createReviewDelegation(input.sessionId, { reviewerAgentId: input.reviewerAgentId, planStepId: input.planStepId, planVersionId: input.planVersionId, initialPrompt: input.initialPrompt, ttlSeconds: input.ttlSeconds, budget: input.budget }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('acquire_lease', { description: 'Acquire a coordination lease after normal session authorization; it never grants permissions.', inputSchema: { sessionId, resourceType: z.enum(['work_item', 'plan_step']), resourceId: z.string().uuid(), kind: z.enum(['exclusive', 'review_shared']).optional(), ttlSeconds: z.number().int().positive().optional(), reason: z.string().min(1), idempotencyKey } }, async (input) => { const { idempotencyKey: key, ...body } = input; return tool(() => client.acquireLease(body, { idempotencyKey: key })); });
+    server.registerTool('offer_handoff', { description: 'Offer a scoped, auditable handoff from the current agent session. Acceptance remains a human control-plane action.', inputSchema: { fromSessionId: sessionId, targetAgentId: z.string().uuid().optional(), targetSkill: z.string().min(1).max(160).optional(), scopeType: z.enum(['workspace', 'project', 'work_item', 'plan_step']).optional(), scopeId: z.string().uuid().optional(), summary: z.string().min(1).max(20_000), completedWork: z.array(z.string().min(1).max(10_000)).max(100).optional(), remainingWork: z.array(z.string().min(1).max(10_000)).max(100).optional(), openQuestions: z.array(z.string().min(1).max(2_000)).max(100).optional(), risks: z.array(z.string().min(1).max(2_000)).max(100).optional(), acceptanceCriteria: z.array(z.string().min(1).max(2_000)).max(100).optional(), requestedAction: z.string().min(1).max(10_000).optional(), leaseTransferPolicy: z.enum(['retain', 'transfer', 'release']).optional(), artifactIds: z.array(z.string().uuid()).max(100).optional(), contextSnapshotId: z.string().uuid().optional(), requestedCapabilities: z.array(capability).max(50).optional(), status: z.enum(['draft', 'requested']).optional(), idempotencyKey } }, async (input) => tool(() => client.offerHandoff({ fromSessionId: input.fromSessionId, targetAgentId: input.targetAgentId, targetSkill: input.targetSkill, scopeType: input.scopeType, scopeId: input.scopeId, summary: input.summary, completedWork: input.completedWork, remainingWork: input.remainingWork, openQuestions: input.openQuestions, risks: input.risks, acceptanceCriteria: input.acceptanceCriteria, requestedAction: input.requestedAction, leaseTransferPolicy: input.leaseTransferPolicy, artifactIds: input.artifactIds, contextSnapshotId: input.contextSnapshotId, requestedCapabilities: input.requestedCapabilities, status: input.status }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('inspect_pending_handoff', { description: 'Inspect the full structured package and immutable context snapshot for an exact-target requested handoff using the configured installation identity. This is read-only and grants no work authority.', inputSchema: { handoffId: z.string().uuid() } }, async (input) => tool(() => client.inspectPendingHandoff(input.handoffId)));
+    server.registerTool('request_handoff', { description: 'Request a previously drafted handoff after server-side source-session authorization.', inputSchema: { handoffId: z.string().uuid(), sourceSessionId: sessionId, reason: z.string().min(1).max(10_000).optional(), idempotencyKey } }, async (input) => tool(() => client.requestHandoff(input.handoffId, { reason: input.reason }, { sessionId: input.sourceSessionId, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('reject_handoff', { description: 'Reject an exact-target handoff using the installation credential and a protocol machine reason.', inputSchema: { handoffId: z.string().uuid(), machineReason: z.enum(['capability_missing', 'budget_insufficient', 'concurrency_limit', 'context_incomplete', 'conflict', 'manual_reject']), idempotencyKey } }, async (input) => tool(() => client.rejectPendingHandoff(input.handoffId, { machineReason: input.machineReason }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('ack_agent_session', { description: 'Acknowledge a queued Session or explicitly restore the exact stale Session while recording ACK metadata and the first-heartbeat baseline. Use claim_work_item instead when replacing an abandoned stale assignment with a new execution.', inputSchema: { sessionId, summary: z.string().min(1).max(2_000), externalUrls: z.array(z.object({ label: z.string().min(1), url: z.string().url() })).optional(), idempotencyKey } }, async (input) => tool(() => client.acknowledge(input.sessionId, { summary: input.summary, externalUrls: input.externalUrls }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('transition_agent_session_state', { description: 'Transition an active exact Agent Session using its current revision. This is not ACK: use ack_agent_session for queued or stale to acknowledged so ACK metadata and heartbeat baseline are recorded.', inputSchema: { sessionId, state: z.enum(['queued', 'acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval', 'blocked', 'paused', 'stopping', 'stale', 'completed', 'failed', 'canceled']), reason: z.string().min(1).max(2_000), revision: z.number().int().positive(), idempotencyKey } }, async (input) => tool(() => client.transitionState(input.sessionId, input.state, input.reason, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey })));
+    server.registerTool('heartbeat', { description: 'Record diagnostic session liveness; it does not grant permission or change workflow state.', inputSchema: { sessionId, currentStepId: z.string().uuid().optional(), usage: z.object({ runtimeSeconds: z.number().int().nonnegative(), inputTokens: z.number().int().nonnegative().optional(), outputTokens: z.number().int().nonnegative().optional(), toolCalls: z.number().int().nonnegative().optional() }), idempotencyKey } }, async (input) => tool(() => client.heartbeat(input.sessionId, { currentStepId: input.currentStepId, usage: input.usage }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('append_activity', { description: 'Append an immutable, operational activity. Never include hidden chain-of-thought or secrets.', inputSchema: { sessionId, kind: z.string().min(1), summary: z.string().min(1).max(10_000), detailsMarkdown: z.string().max(50_000).optional(), toolInvocation: z.unknown().optional(), artifactIds: z.array(z.string().uuid()).optional(), references: z.array(z.unknown()).optional(), visibility: z.enum(['workspace', 'team', 'private']).optional(), ephemeral: z.boolean().optional(), idempotencyKey } }, async (input) => tool(() => client.appendActivity(input.sessionId, { kind: input.kind, summary: input.summary, detailsMarkdown: input.detailsMarkdown, toolInvocation: input.toolInvocation, artifactIds: input.artifactIds, references: input.references, visibility: input.visibility, ephemeral: input.ephemeral }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('publish_plan', { description: 'Publish a new immutable plan version. Requires the current plan revision; conflicts are returned without retry.', inputSchema: { sessionId, revision: z.number().int().positive(), changeSummary: z.string().min(1).max(5_000), approvalId: z.string().uuid().optional(), approvalPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/).optional(), steps: z.array(z.object({ id: z.string().uuid(), title: z.string().min(1), description: z.string().optional(), status: z.enum(['pending', 'in_progress', 'blocked', 'completed', 'canceled']).optional(), ordinal: z.number().int().nonnegative(), ownerActorId: z.string().uuid().optional(), dependsOn: z.array(z.string().uuid()).optional(), acceptanceCriteria: z.array(z.string()).optional(), expectedArtifacts: z.array(artifactTypeSchema).optional(), cancellationReason: z.string().optional() })).min(1), idempotencyKey } }, async (input) => tool(() => client.publishPlan(input.sessionId, { changeSummary: input.changeSummary, approvalId: input.approvalId, approvalPayloadHash: input.approvalPayloadHash, steps: input.steps.map(step => ({ ...step, status: step.status ?? 'pending', dependsOn: step.dependsOn ?? [], acceptanceCriteria: step.acceptanceCriteria ?? [], expectedArtifacts: step.expectedArtifacts ?? [] })) }, { idempotencyKey: input.idempotencyKey, ifMatch: input.revision })));
+    server.registerTool('send_message', { description: 'Append an auditable Agent message activity to the current session; it does not impersonate a human prompt.', inputSchema: { sessionId, bodyMarkdown: z.string().min(1).max(50_000), idempotencyKey } }, async (input) => tool(() => client.sendMessage(input.sessionId, input.bodyMarkdown, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('ask', { description: 'Append an auditable question activity for authorized humans; it does not impersonate a human prompt.', inputSchema: { sessionId, question: z.string().min(1).max(50_000), idempotencyKey } }, async (input) => tool(() => client.askQuestion(input.sessionId, input.question, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('request_approval', { description: 'Request an auditable human approval for a concrete action. Payload must be sanitized and hashed.', inputSchema: { sessionId, approvalType: z.string().min(1), actionName: z.string().min(1), actionPayloadSanitized: z.record(z.unknown()), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/), riskLevel: z.enum(['low', 'medium', 'high', 'critical']), rationaleSummary: z.string().min(1), requiredApprovals: z.number().int().positive().optional(), expiresAt: z.string().datetime({ offset: true }), idempotencyKey } }, async (input) => tool(() => client.requestApproval({ sessionId: input.sessionId, approvalType: input.approvalType, actionName: input.actionName, actionPayloadSanitized: input.actionPayloadSanitized, actionPayloadHash: input.actionPayloadHash, riskLevel: input.riskLevel, rationaleSummary: input.rationaleSummary, requiredApprovals: input.requiredApprovals, expiresAt: input.expiresAt }, { idempotencyKey: input.idempotencyKey })));
+    server.registerTool('publish_artifact', { description: 'Publish immutable, provenance-bearing artifact metadata for the current session.', inputSchema: { sessionId, workItemId: z.string().uuid().optional(), type: artifactTypeSchema, title: z.string().min(1), uri: z.string().url().optional(), checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/).optional(), sourceTool: z.string().optional(), metadata: z.record(z.unknown()).optional(), idempotencyKey } }, async (input) => { const { idempotencyKey: key, ...body } = input; return tool(() => client.publishArtifact(body, { idempotencyKey: key })); });
+    server.registerTool('complete_session', { description: 'Complete a session with evidence or an explicit no-artifact reason.', inputSchema: { sessionId, revision: z.number().int().positive(), summary: z.string().min(1), artifactIds: z.array(z.string().uuid()).optional(), checks: z.array(z.object({ name: z.string().min(1), command: z.string().optional(), status: z.enum(['passed', 'failed', 'skipped']), summary: z.string().min(1) })).optional(), limitations: z.array(z.string()).optional(), noArtifactReason: z.string().optional(), idempotencyKey } }, async (input) => tool(() => client.complete(input.sessionId, { summary: input.summary, artifactIds: input.artifactIds ?? [], checks: input.checks ?? [], limitations: input.limitations ?? [], noArtifactReason: input.noArtifactReason }, { idempotencyKey: input.idempotencyKey, ifMatch: input.revision })));
+    server.registerTool('fail_session', { description: 'Fail an active session with a concise operational explanation and evidence.', inputSchema: { sessionId, revision: z.number().int().positive(), code: z.string().min(1), summary: z.string().min(1), retryable: z.boolean().optional(), evidence: z.array(z.string()).optional(), idempotencyKey } }, async (input) => tool(() => client.fail(input.sessionId, { code: input.code, summary: input.summary, retryable: input.retryable, evidence: input.evidence }, { idempotencyKey: input.idempotencyKey, ifMatch: input.revision })));
+}
+function resource(uri, value) { return { contents: [{ uri: uri.toString(), mimeType: 'application/json', text: JSON.stringify(value) }] }; }
+function currentRevision(details) {
+    if (!details || typeof details !== 'object')
+        return undefined;
+    const value = details.currentRevision;
+    return typeof value === 'number' && Number.isSafeInteger(value) && value > 0 ? value : undefined;
+}
+function safeNextAction(code, revision) {
+    if (code === 'REVISION_CONFLICT') {
+        return revision === undefined
+            ? 'Refetch the resource, reapply the intended change to the returned current revision, and retry once.'
+            : `Refetch the resource, reapply the intended change to revision ${revision}, and retry once with that revision.`;
+    }
+    if (code === 'NETWORK_ERROR')
+        return 'Replay the same operation with the same idempotency key or import content hash.';
+    if (code === 'IDENTIFIER_NOT_FOUND')
+        return 'Call get_workmesh_context, then retry resolve_identifier with a Team key, readable reference, or exact UUID.';
+    if (code === 'IDENTIFIER_AMBIGUOUS')
+        return 'Retry resolve_identifier with an exact stable reference or UUID from the returned candidates.';
+    if (code === 'IDENTIFIER_CONTEXT_REQUIRED')
+        return 'Provide the required Team or Project reference and retry resolution.';
+    if (code === 'MCP_INPUT_INVALID')
+        return 'Correct the arguments against the published MCP tool schema, then retry the call.';
+    if (code === 'IMPORT_HASH_MISMATCH')
+        return 'Run prepare_project_import again and pass its contentHash and plan together without modification.';
+    if (code.startsWith('IMPORT_'))
+        return 'Correct the source plan, run prepare_project_import again, and apply only the newly returned hash and plan.';
+    if (code === 'CURSOR_EXPIRED')
+        return 'Resume from the server-provided resync cursor and rebuild local projections before continuing.';
+    if (code === 'RESOURCE_SCOPE_DENIED')
+        return 'Do not retry the out-of-scope resource; use get_workmesh_context to select a resource inside the bound Team.';
+    if (code === 'IDEMPOTENCY_REPLAY_EXPIRED')
+        return 'Inspect the existing target mapping before choosing a new key; do not blindly create the import again.';
+    return 'Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.';
+}
+function errorToolResult(code, message, details, correlationId = `mcp:${randomUUID()}`) {
+    const error = {
+        code,
+        message,
+        correlationId,
+        details,
+        safeNextAction: safeNextAction(code, undefined),
+    };
+    return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error }) }], structuredContent: { error } };
+}
+async function tool(call) {
+    try {
+        const data = await call();
+        return { content: [{ type: 'text', text: JSON.stringify(data) }], structuredContent: { data } };
+    }
+    catch (error) {
+        const inputError = error instanceof z.ZodError ? error : undefined;
+        const code = error instanceof WorkMeshSdkError
+            ? error.code
+            : inputError
+                ? 'MCP_INPUT_INVALID'
+                : 'MCP_UPSTREAM_ERROR';
+        const upstreamDetails = error instanceof WorkMeshSdkError
+            ? error.details
+            : inputError
+                ? {
+                    issues: inputError.issues.map(issue => ({
+                        path: issue.path,
+                        code: issue.code,
+                        message: issue.message,
+                    })),
+                }
+                : undefined;
+        const revision = currentRevision(upstreamDetails);
+        const details = {
+            code,
+            message: error instanceof WorkMeshSdkError
+                ? error.message
+                : inputError
+                    ? 'MCP tool input failed validation'
+                    : 'An unexpected MCP adapter error occurred',
+            correlationId: error instanceof WorkMeshSdkError && error.correlationId
+                ? error.correlationId
+                : `mcp:${randomUUID()}`,
+            details: upstreamDetails,
+            ...(revision === undefined ? {} : { currentRevision: revision }),
+            safeNextAction: safeNextAction(code, revision),
+        };
+        return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: details }) }], structuredContent: { error: details } };
+    }
+}

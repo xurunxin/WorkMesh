@@ -29,5 +29,9 @@ Migration
 
 M1 self_claim／self_claim_recovery 通知保留无 nonce：创建事务取 Token INSERT RETURNING id，把非秘密 sessionTokenId 写入原 delivery payload，只允许该原 event.assignmentMode，按准确原 Token／安装来源重验，不选择最新 Token、不通过通知授交换凭据。缺旧来源绑定失败关闭。nonce 未交换时仅 queued 能启动；已交换的准确原 nonce 允许合法活动 Session 的同 deliveryId 至少一次重放，由 receiver 幂等返回 409，不创建第二授权。paused／stopping／stale／终态或来源失权均拒投递；失权永久失败沿现有 dead 结算。claim 的 attempt_count、workerId、租期及原 payload 同时确认，完成／失败更新也检查 attempt_count，拒同 worker ABA。事务 commit 是发送授权界限，commit 前撤权零 HTTP，commit 后在途请求不能召回；不持事务跨网络。来源锁竞争、installation 先锁的撤权逆序争用回滚及准确 revoker PID 的 pg_blocking_pids 等待后撤权提交、Stop、旧 claim、重启与响应丢失重放由 M2 conformance 验证。内部同模型独审继续核对此修复设计，最终成果仍须平台独审与 Required CI。
 
+存量兼容限制：部署前无 nonce 且缺 sessionTokenId 的待发 self-claim 通知无法证明原 Token，发送确认失败关闭并按原永久失败策略 dead-letter，不回填历史 event/payload 或挑选最新 Token。已有原 claim 回执及同一合法 C 来源可继续调用原 exchangeClaimedSessionToken，再 ACK／执行；这不是通知恢复。若原回执丢失或原来源撤销，该 Session 没有此通知的自动恢复路径，须 Human 沿既有 Stop／取消及重新合法 claim 流程创建新的事实；不声称旧通知重新发送成功。实际测试分别保存无 ID、错误 ID、过期 claim、Stop、原 Connection 撤权的零 HTTP，以及准确原 ID 的实际签名 receiver 投递。
+
+锁结论仅为有界争用回滚后重试。早先“消除循环”判断不成立，保留在内部审查历史；250ms／NOWAIT 不证明全部 API 删除路径统一锁序，也不把 55P03／40P01 当发送成功。实际 installation／来源 Connection／delegation 争用回执须与 commit 前后的授权边界分列。
+
 Spec changes
 投影 DTO 写入 contracts／OpenAPI／协议；M2 discovery 增量合成现行 policy、SDK、MCP、Runner、conformance。无 Schema 或 migration 变更；原 #53/M0/M1 和 M2 规划候选原件保全，产品检查另行记录。

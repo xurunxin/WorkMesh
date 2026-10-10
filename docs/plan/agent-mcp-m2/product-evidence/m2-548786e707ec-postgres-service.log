@@ -1,0 +1,67 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 03:00:21.952 UTC [42] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 03:00:21.953 UTC [42] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 03:00:21.955 UTC [45] LOG:  database system was shut down at 2026-10-10 03:00:21 UTC
+2026-10-10 03:00:21.957 UTC [42] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-10 03:00:22.067 UTC [42] LOG:  received fast shutdown request
+2026-10-10 03:00:22.067 UTC [42] LOG:  aborting any active transactions
+2026-10-10 03:00:22.068 UTC [42] LOG:  background worker "logical replication launcher" (PID 48) exited with exit code 1
+2026-10-10 03:00:22.070 UTC [43] LOG:  shutting down
+2026-10-10 03:00:22.070 UTC [43] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 03:00:22.073 UTC [43] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.001 s, total=0.004 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 03:00:22.076 UTC [42] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 03:00:21.669 UTC [36] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 03:00:22.177 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 03:00:22.177 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 03:00:22.177 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 03:00:22.178 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 03:00:22.178 UTC [64] LOG:  database system was shut down at 2026-10-10 03:00:22 UTC
+2026-10-10 03:00:22.181 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 03:00:35.188 UTC [76] ERROR:  duplicate key value violates unique constraint "agent_webhook_deliveries_agent_id_delivery_id_key"
+2026-10-10 03:00:35.188 UTC [76] DETAIL:  Key (agent_id, delivery_id)=(a373179f-2b4c-48a4-a376-d80a009ca206, del_9a9f9141-faaf-479e-827e-adbdd8ea0575) already exists.
+2026-10-10 03:00:35.188 UTC [76] STATEMENT:  INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) SELECT agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload FROM agent_webhook_deliveries WHERE agent_id=$1 AND delivery_id=$2 RETURNING id
+2026-10-10 03:00:35.521 UTC [75] ERROR:  duplicate key value violates unique constraint "agent_session_tokens_one_live_exchange"
+2026-10-10 03:00:35.521 UTC [75] DETAIL:  Key (session_id)=(a5d32b61-165d-4380-9fcd-7881c554e8b0) already exists.
+2026-10-10 03:00:35.521 UTC [75] STATEMENT:  INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at) VALUES($1,$2,$3,$4,$5,clock_timestamp()+interval '1 hour')
+2026-10-10 03:00:35.872 UTC [77] ERROR:  duplicate key value violates unique constraint "agent_session_tokens_one_live_exchange"
+2026-10-10 03:00:35.872 UTC [77] DETAIL:  Key (session_id)=(95265110-18a2-4e69-94ae-3e519fbfe1d8) already exists.
+2026-10-10 03:00:35.872 UTC [77] STATEMENT:  INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at) VALUES($1,$2,$3,$4,$5,clock_timestamp()+interval '1 hour')
