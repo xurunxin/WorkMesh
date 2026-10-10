@@ -1,7 +1,8 @@
+import { createServer } from 'node:http'
 import { randomUUID } from 'node:crypto'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { applyMigrations, createDb, type Db } from '@workmesh/db'
-import { createAgentWebhookWorker, encryptWebhookSecretForTest } from '../src/agent-webhook.js'
+import { applyMigrations, createDb, opaqueToken, tokenHash, type Db } from '@workmesh/db'
+import { createAgentWebhookWorker, encryptWebhookSecretForTest, signWebhook } from '../src/agent-webhook.js'
 import { createSessionLifecycleWorker } from '../src/session-lifecycle.js'
 
 const databaseUrl = process.env.DATABASE_URL
@@ -69,8 +70,25 @@ const createSession = async (data: Fixture, state = 'queued'): Promise<string> =
 }
 
 const createDelivery = async (data: Fixture, sessionId: string, deliveryId = `del_${randomUUID()}`): Promise<string> => {
-  const event = await db.query<{ id: string }>("INSERT INTO domain_events(workspace_id,event_type,aggregate_type,aggregate_id,actor_id,correlation_id,payload) VALUES($1,'agent.session.created','agent_session',$2,$3,$4,$5) RETURNING id", [data.workspaceId, sessionId, data.serviceActorId, deliveryId, { sessionId }])
-  const delivery = await db.query<{ id: string }>('INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) VALUES($1,$2,1,$3,$4,$5,$6,$7) RETURNING id', [data.agentId, data.endpointId, event.rows[0]!.id, deliveryId, 'agent.session.created', sessionId, { sessionId }])
+  const existing = await db.query('SELECT id FROM agent_webhook_deliveries WHERE agent_id=$1 AND delivery_id=$2',[data.agentId,deliveryId])
+  if(existing.rowCount) {
+    const duplicate = await db.query<{id:string}>('INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) SELECT agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload FROM agent_webhook_deliveries WHERE agent_id=$1 AND delivery_id=$2 RETURNING id',[data.agentId,deliveryId])
+    return duplicate.rows[0]!.id
+  }
+  // Transport tests use a fully authorized native provisioning source, not an unbound payload.
+  await db.query("UPDATE agent_definitions SET requested_capabilities=ARRAY['work:read','work:write'],approved_capabilities=ARRAY['work:read','work:write'] WHERE id=$1",[data.agentId])
+  await db.query("UPDATE delegations SET permissions_snapshot=ARRAY['work:read','work:write'],capability_scope=$2 WHERE id=$1",[data.delegationId,{teamIds:[data.teamId],workItemIds:[data.workItemId]}])
+  await db.query("INSERT INTO agent_team_access(workspace_id,agent_id,team_id,granted_by_actor_id,approved_capabilities) VALUES($1,$2,$3,$4,ARRAY['work:read','work:write']) ON CONFLICT DO NOTHING",[data.workspaceId,data.agentId,data.teamId,data.humanActorId])
+  await db.query('UPDATE agent_sessions SET team_id=$2 WHERE id=$1',[sessionId,data.teamId])
+  const previous = (await db.query<{nonce:string}>("SELECT payload->>'exchangeToken' AS nonce FROM agent_webhook_deliveries WHERE session_id=$1 ORDER BY created_at LIMIT 1",[sessionId])).rows[0]
+  const exchangeToken = previous?.nonce ?? opaqueToken()
+  if(!previous) {
+    const installation = (await db.query<{id:string}>("INSERT INTO agent_installation_tokens(agent_id,token_hash,origin_kind) VALUES($1,$2,'native') RETURNING id",[data.agentId,tokenHash(opaqueToken())])).rows[0]!.id
+    await db.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at) VALUES($1,$2,$3,$4,$5,clock_timestamp()+interval '1 hour')",[sessionId,data.agentId,installation,tokenHash(opaqueToken()),tokenHash(exchangeToken)])
+  }
+  const payload = {sessionId,exchangeToken}
+  const event = await db.query<{ id: string }>("INSERT INTO domain_events(workspace_id,event_type,aggregate_type,aggregate_id,actor_id,correlation_id,payload,session_id) VALUES($1,'agent.session.created','agent_session',$2,$3,$4,$5,$2) RETURNING id", [data.workspaceId, sessionId, data.serviceActorId, deliveryId, payload])
+  const delivery = await db.query<{ id: string }>('INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) VALUES($1,$2,1,$3,$4,$5,$6,$7) RETURNING id', [data.agentId, data.endpointId, event.rows[0]!.id, deliveryId, 'agent.session.created', sessionId, payload])
   return delivery.rows[0]!.id
 }
 
@@ -354,6 +372,66 @@ describe('stage 1 worker durability', () => {
       [approval.id],
     )).rowCount).toBe(1)
   })
+
+  it('reclaims a serial batch tail after lease expiry with zero expired HTTP and original HMAC payload', async () => {
+    const data = await fixture()
+    const session = await createSession(data)
+    const ids: string[] = []
+    for (let i = 0; i < 25; i++) ids.push(await createDelivery(data, session))
+    const received: string[] = []
+    const receiver = createServer(async (request, response) => {
+      const chunks: Buffer[] = []
+      for await (const chunk of request) chunks.push(Buffer.from(chunk))
+      const body = Buffer.concat(chunks).toString('utf8')
+      const timestamp = Number(request.headers['workmesh-timestamp'])
+      expect(request.headers['workmesh-signature']).toBe(signWebhook(Buffer.from('integration-secret'), timestamp, body))
+      expect(JSON.parse(body).events[0].payload.sessionId).toBe(session)
+      received.push(String(request.headers['workmesh-delivery-id']))
+      response.writeHead(204); response.end()
+    })
+    await new Promise<void>(resolve => receiver.listen(0, '127.0.0.1', resolve))
+    try {
+      const address = receiver.address()
+      if (!address || typeof address === 'string') throw new Error('RECEIVER_PORT_MISSING')
+      await db.query('UPDATE agent_webhook_endpoints SET url=$2 WHERE id=$1', [data.endpointId, `http://127.0.0.1:${address.port}/events`])
+      const worker = createAgentWebhookWorker({ db, masterKey: key, allowPrivateAgentWebhooks: true })
+      const batch = await worker.claimDeliveries()
+      expect(batch).toHaveLength(25)
+      await worker.deliver(batch[0]!)
+      expect(received).toHaveLength(1)
+      // Start queue delay only after real first HTTP succeeds. Cross the actual
+      // default 60s PostgreSQL claim deadline without racing initial authority
+      // checks on a slow CI runner or rewriting any claim/source facts.
+      expect(batch[24]!.leaseExpiresAt).toBeDefined()
+      await db.query(`SELECT pg_sleep(GREATEST(0,EXTRACT(EPOCH FROM ($1::timestamptz-clock_timestamp())))+0.02)`, [batch[24]!.leaseExpiresAt])
+      for (const queued of batch.slice(1)) {
+        try { await worker.deliver(queued); throw new Error('EXPIRED_SEND_SUCCEEDED') }
+        catch (error) {
+          expect(error).toMatchObject({ code: 'AGENT_WEBHOOK_CLAIM_EXPIRED', retryable: true })
+          await worker.fail(queued, error)
+        }
+      }
+      expect(received).toHaveLength(1)
+      const pending = await db.query<{ status: string; last_error: string }>(`SELECT status,last_error FROM agent_webhook_deliveries WHERE id=ANY($1::uuid[]) AND status<>'delivered'`, [ids])
+      expect(pending.rows).toHaveLength(24)
+      expect(pending.rows.every(row => row.status === 'pending' && row.last_error === 'AGENT_WEBHOOK_CLAIM_EXPIRED')).toBe(true)
+      await db.query(`UPDATE agent_webhook_deliveries SET available_at=clock_timestamp() WHERE id=ANY($1::uuid[]) AND status='pending'`, [ids])
+      const restarted = createAgentWebhookWorker({ db, masterKey: key, allowPrivateAgentWebhooks: true })
+      await restarted.tick()
+      expect(received).toHaveLength(25)
+      expect(new Set(received).size).toBe(25)
+      expect((await db.query<{ status: string; attempt_count: number }>('SELECT status,attempt_count FROM agent_webhook_deliveries WHERE id=ANY($1::uuid[]) ORDER BY attempt_count', [ids])).rows).toEqual([
+        { status: 'delivered', attempt_count: 1 }, ...Array.from({ length: 24 }, () => ({ status: 'delivered', attempt_count: 2 })),
+      ])
+      await expect(worker.deliver(batch[24]!)).rejects.toMatchObject({ code: 'AGENT_WEBHOOK_CLAIM_LOST', retryable: true })
+      await worker.fail(batch[24]!, new Error('old claim cannot overwrite new delivery'))
+      expect(received).toHaveLength(25)
+      expect((await db.query(`SELECT 1 FROM agent_webhook_deliveries WHERE id=$1 AND status='delivered'`, [batch[24]!.id])).rowCount).toBe(1)
+    } finally {
+      receiver.closeAllConnections()
+      await new Promise<void>((resolve, reject) => receiver.close(error => error ? reject(error) : resolve()))
+    }
+  }, 90_000)
 
   it('retries, reclaims after a crash, and dead-letters bounded failures without persisting receiver errors', async () => {
     const data = await fixture()

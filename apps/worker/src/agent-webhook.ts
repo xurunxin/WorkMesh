@@ -4,6 +4,7 @@ import { request as httpRequest } from 'node:http'
 import { request as httpsRequest } from 'node:https'
 import { BlockList, isIP, type LookupFunction } from 'node:net'
 import { withTx, type Db } from '@workmesh/db'
+import { authorizeSessionWebhook } from './session-webhook-authorization.js'
 
 const WEBHOOK_MAX_ATTEMPTS = 6
 const WEBHOOK_LOCK_TIMEOUT_SECONDS = 60
@@ -24,6 +25,7 @@ export type AgentWebhookDelivery = {
   secretAuthTag: Buffer | string
   keyVersion: string
   attemptCount: number
+  leaseExpiresAt?: Date | string
 }
 
 type DeliveryRow = AgentWebhookDelivery
@@ -434,7 +436,8 @@ export function createAgentWebhookWorker({
       RETURNING d.id, d.agent_id AS "agentId", d.endpoint_id AS "endpointId", d.secret_version AS "secretVersion", d.delivery_id AS "deliveryId",
         d.event_id AS "eventId", d.event_type AS "eventType", d.session_id AS "sessionId", d.payload,
         e.url AS "endpointUrl", s.secret_ciphertext AS "secretCiphertext", s.iv AS "secretIv",
-        s.auth_tag AS "secretAuthTag", s.key_version AS "keyVersion", d.attempt_count AS "attemptCount"
+        s.auth_tag AS "secretAuthTag", s.key_version AS "keyVersion", d.attempt_count AS "attemptCount",
+        d.locked_at+($2::text || ' seconds')::interval AS "leaseExpiresAt"
     `, [limit, lockTimeoutSeconds, maxAttempts, workerId])
     return result.rows
   })
@@ -443,6 +446,12 @@ export function createAgentWebhookWorker({
     if (!delivery.eventId) throw new WebhookDeliveryError('MISSING_EVENT_ID', false)
     await assertRoomMessageTargetAuthorized(delivery)
     const resolvedTarget = await resolveWebhookTarget(delivery.endpointUrl, { dnsLookup, allowPrivateAgentWebhooks })
+    if (delivery.eventType === 'agent.session.created') {
+      const authorization = await authorizeSessionWebhook(db, delivery, workerId)
+      if (authorization === 'revoked') throw new WebhookDeliveryError('WEBHOOK_TARGET_REVOKED', false)
+      if (authorization === 'claim_expired') throw new WebhookDeliveryError('AGENT_WEBHOOK_CLAIM_EXPIRED', true)
+      if (authorization === 'claim_lost') throw new WebhookDeliveryError('AGENT_WEBHOOK_CLAIM_LOST', true)
+    }
     const rawBody = JSON.stringify({ events: [{ id: delivery.eventId, type: delivery.eventType, version: 1, payload: delivery.payload }] })
     const timestamp = Math.floor(Date.now() / 1_000)
     const secret = decryptWebhookSecret({ ciphertext: delivery.secretCiphertext, iv: delivery.secretIv, authTag: delivery.secretAuthTag }, masterKey)
@@ -475,8 +484,8 @@ export function createAgentWebhookWorker({
       secret.fill(0)
     }
     const result = await db.query(
-      "UPDATE agent_webhook_deliveries SET status='delivered', delivered_at=now(), locked_at=NULL, locked_by=NULL, updated_at=now() WHERE id=$1 AND locked_by=$2 AND status='delivering'",
-      [delivery.id, workerId],
+      "UPDATE agent_webhook_deliveries SET status='delivered', delivered_at=now(), locked_at=NULL, locked_by=NULL, updated_at=now() WHERE id=$1 AND locked_by=$2 AND attempt_count=$3 AND status='delivering'",
+      [delivery.id, workerId, delivery.attemptCount],
     )
     if (result.rowCount !== 1) throw new Error('AGENT_WEBHOOK_CLAIM_LOST')
   }
@@ -488,8 +497,8 @@ export function createAgentWebhookWorker({
       SET status=$2::webhook_delivery_status, available_at=now() + ($3::text || ' seconds')::interval,
           locked_at=NULL, locked_by=NULL, last_error=$4,
           dead_lettered_at=CASE WHEN $2::text='dead' THEN now() ELSE NULL END, updated_at=now()
-      WHERE id=$1 AND locked_by=$5 AND status='delivering'
-    `, [delivery.id, terminal ? 'dead' : 'pending', retryDelaySeconds(delivery.attemptCount, random), errorCode(error), workerId])
+      WHERE id=$1 AND locked_by=$5 AND attempt_count=$6 AND status='delivering'
+    `, [delivery.id, terminal ? 'dead' : 'pending', retryDelaySeconds(delivery.attemptCount, random), errorCode(error), workerId, delivery.attemptCount])
   }
 
   const tick = async (): Promise<void> => {

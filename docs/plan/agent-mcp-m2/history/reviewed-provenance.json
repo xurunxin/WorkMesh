@@ -1,0 +1,68 @@
+{
+  "originalPlan": {
+    "docId": "5XFjpFz5JO_Sf6_WBAZD6",
+    "docIdSource": "本轮 conversation 可见plan链接；不是文档全文读取",
+    "fullTextSource": "本轮用户消息 authoritative saved copy 注入",
+    "files": [
+      "input/platform-injected-savedplan.md",
+      "history/author-original-plan.md"
+    ],
+    "fullTextHash": {
+      "bytes": 7980,
+      "sha256": "d723b572ff187662ec14de8e485f808556f88839a0ea4dc4c7baba9bc35b0b13"
+    },
+    "archiveEncoding": "UTF-8；末尾补一个LF；不冒后台原编码",
+    "platformVersion": null,
+    "platformCreatedAt": null,
+    "platformFullReadbackObtained": false,
+    "toolVisiblePrefixMatchedCharacters": 4000,
+    "readbackTruncated": "工具返回含truncated；保存原JSON，不猜截断尾文"
+  },
+  "authorOriginalResponse": {
+    "file": "history/author-original-response.md",
+    "source": "可见原作者答复重新归档；正文与当前saved copy逐字比对"
+  },
+  "implementation": {
+    "separatePlatformOriginalObtained": false,
+    "docId": null,
+    "source": "implementation.md为本Agent修订后savedplan的仓库byte-equal副本",
+    "limitation": "未给独立platform implementation全文，不伪造原件/Hash"
+  },
+  "savedCopyAfterEdits": {
+    "files": [
+      "savedplan.md",
+      "implementation.md"
+    ],
+    "source": "本轮4次edit_plan成功响应后按精确替换构成，同步本地",
+    "docId": null,
+    "docIdKnownAfterTurn": false
+  },
+  "chiefFeedback": {
+    "file": "input/chief-feedback.md",
+    "rawContainer": "input/m2-conversation-readback.json",
+    "source": "平台conversation可见用户反馈；不是本Agent审查结果"
+  },
+  "writeAuthorization": {
+    "questionDocId": "q-cKVakWbsPo380TgcEY7Ng",
+    "source": "本轮用户回答注入＋conversation",
+    "answer": "提交规划工件（推荐）",
+    "productImplementationAuthorizedThisTurn": false,
+    "resolution": "明确覆盖Do not modify any files yet的通用模板冲突；不新增任务"
+  },
+  "m1": {
+    "chiefSource": "spec.md中Chief实证摘要",
+    "ownObservations": [
+      "input/main-observation.json",
+      "input/m1-todo-readback.json",
+      "input/m1-ci411-readback.json"
+    ],
+    "ci410Equals411": false,
+    "ci411FullLogsObtained": false
+  },
+  "toolRawLimitations": {
+    "format": "可见CallToolResult序列化；非wire/HTTP原字节",
+    "nativeExit": null,
+    "runtime": null,
+    "hiddenCallId": null
+  }
+}

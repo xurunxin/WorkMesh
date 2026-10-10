@@ -7,7 +7,7 @@ import { createAgentSession, ModelRuntime, SessionManager } from '@earendil-work
 import { agentSessionExecutionResultResponseSchema, workbenchRunnerCredentialSchema } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { configuredModels } from './configured-model.js'
-import { createWorkMeshTools, type RunnerToolApi, type SessionCompletionIntent } from './workmesh-tools.js'
+import { createWorkMeshTools, type RunnerToolApi, type SessionCompletionIntent, type SessionFailureIntent } from './workmesh-tools.js'
 import { createWorkbenchSkillLoader } from './workbench-skill.js'
 import { ExecutionLifecycle, type ExecutionExit, type SessionWaitIntent } from './execution-lifecycle.js'
 
@@ -81,7 +81,7 @@ export class RunnerApi {
   }
   async request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
     body?: unknown, ifMatch?: number, explicitIdempotencyKey?: string): Promise<T> {
-    if (!this.#closed && (!this.#sessionToken || this.#expiresAt - Date.now() < 60_000)) await this.#refresh()
+    if (!this.#closed && !/\/children(?:\?|$)/.test(path) && (!this.#sessionToken || this.#expiresAt - Date.now() < 60_000)) await this.#refresh()
     if (!this.#sessionToken) throw new Error('RUNNER_EXECUTION_TOKEN_UNAVAILABLE')
     const idempotencyKey = explicitIdempotencyKey ?? randomUUID()
     const send = () => fetch(new URL(path, this.#baseUrl), {
@@ -96,7 +96,7 @@ export class RunnerApi {
     if (!response.ok) {
       throw await runnerResponseError(response, `HTTP_${response.status}`)
     }
-    return response.json() as Promise<T>
+    return (response.headers.get('content-type')?.startsWith('text/markdown') ? response.text() : response.json()) as Promise<T>
   }
 
   // Cleanup runs outside model tools and never refreshes or changes the held E credential.
@@ -226,9 +226,12 @@ export function removeScratch(rootPath: string): void {
 
 export async function runPi(api: RunnerApi, credential: Credential, attemptId: string, shutdown: AbortSignal): Promise<{
   answer: string; toolCalls: number; toolNames: string[]
+  usage?: { inputTokens: number; outputTokens: number; cacheReadTokens: number; totalTokens: number }
   toolInvocations: Array<{ toolName: string; callCount: number; sanitizedInputSummary: string }>
   completionIntent?: SessionCompletionIntent
   waitIntent?: SessionWaitIntent
+  failureIntent?: SessionFailureIntent
+  externalEffectsReconciled: boolean
 }> {
   const root = mkdtempSync(join(tmpdir(), 'workmesh-runner-'))
   const agentDir = join(root, 'agent'), stateDir = join(root, 'state'), workDir = join(root, 'work')
@@ -253,6 +256,7 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
     const toolNames: string[] = []
     let completionIntent: SessionCompletionIntent | undefined
     let waitIntent: SessionWaitIntent | undefined
+    let failureIntent: SessionFailureIntent | undefined
     let abortModel: (() => void) | undefined
     // Per-tool settlement detail: name -> count, plus one sanitized summary of the
     // arguments each tool saw. Raw arguments never leave the runner process.
@@ -293,17 +297,23 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
     const workmeshTools = await createWorkMeshTools(toolApi, attemptId, name => {
       recordInvocation(name)
     }, intent => {
-      if (waitIntent) throw new Error('RUNNER_WAIT_COMPLETION_CONFLICT')
+      if (waitIntent || failureIntent) throw new Error('RUNNER_TERMINAL_INTENT_CONFLICT')
       if (completionIntent && JSON.stringify(completionIntent) !== JSON.stringify(intent))
         throw new Error('RUNNER_COMPLETION_INTENT_CONFLICT')
       completionIntent = intent
     }, credential.executionWaitsEnabled ? intent => {
-      if (completionIntent || (waitIntent && JSON.stringify(waitIntent) !== JSON.stringify(intent)))
+      if (completionIntent || failureIntent || (waitIntent && JSON.stringify(waitIntent) !== JSON.stringify(intent)))
         throw new Error('RUNNER_WAIT_COMPLETION_CONFLICT')
       waitIntent = intent
       lifecycle.close('wait')
       abortModel?.()
-    } : undefined)
+    } : undefined, intent => {
+      if (completionIntent || waitIntent || (failureIntent && JSON.stringify(failureIntent)!==JSON.stringify(intent)))
+        throw new Error('RUNNER_TERMINAL_INTENT_CONFLICT')
+      failureIntent=intent
+      lifecycle.close('fail')
+      abortModel?.()
+    })
     const guardedTools = workmeshTools.map(tool => ({ ...tool,
       execute: (...args: Parameters<typeof tool.execute>) => lifecycle.tool(() => tool.execute(...args)),
     }))
@@ -357,24 +367,36 @@ export async function runPi(api: RunnerApi, credential: Credential, attemptId: s
     try {
       try { await session.prompt(promptFor(credential.messages, credential.continuation)) }
       catch (error) {
-        if (lifecycle.exit && lifecycle.exit !== 'wait') throw new RunnerExecutionExitError(lifecycle.exit)
-        if (lifecycle.exit !== 'wait') throw error
+        if (lifecycle.exit && lifecycle.exit !== 'wait' && lifecycle.exit !== 'fail') throw new RunnerExecutionExitError(lifecycle.exit)
+        if (lifecycle.exit !== 'wait' && lifecycle.exit !== 'fail') throw error
       }
       await session.waitForIdle()
+      const tokens = session.getSessionStats().tokens
+      // Preserve provider-reported usage; absent reporting is not measured zero.
+      const usage = tokens.total > 0 ? { inputTokens: tokens.input, outputTokens: tokens.output,
+        cacheReadTokens: tokens.cacheRead, totalTokens: tokens.total } : undefined
       if (lifecycle.exit === 'wait' && waitIntent) {
         if (!lifecycle.reconciled) throw new Error('RUNNER_WAIT_EFFECTS_UNRECONCILED')
-        return { answer: waitIntent.reason, toolCalls, toolNames,
+        return { answer: waitIntent.reason, toolCalls, toolNames, usage,
           toolInvocations: [...toolInvocationCounts.entries()].map(([toolName, callCount]) => ({
-            toolName, callCount, sanitizedInputSummary: toolInvocationSummaries.get(toolName) ?? 'no arguments' })), waitIntent }
+            toolName, callCount, sanitizedInputSummary: toolInvocationSummaries.get(toolName) ?? 'no arguments' })), waitIntent, externalEffectsReconciled:lifecycle.reconciled }
+      }
+      if (lifecycle.exit === 'fail' && failureIntent) {
+        if (!lifecycle.reconciled) throw new Error('RUNNER_FAILURE_EFFECTS_UNRECONCILED')
+        return {answer:failureIntent.body.summary,toolCalls,toolNames,usage,failureIntent,
+          externalEffectsReconciled:lifecycle.reconciled,
+          toolInvocations:[...toolInvocationCounts.entries()].map(([toolName,callCount])=>({toolName,callCount,
+            sanitizedInputSummary:toolInvocationSummaries.get(toolName)??'no arguments'}))}
       }
       if (stopped) throw new RunnerExecutionExitError(lifecycle.exit ?? 'external_state')
+      if (completionIntent && !lifecycle.reconciled) throw new Error('RUNNER_COMPLETION_EFFECTS_UNRECONCILED')
       const answer = session.getLastAssistantText()?.trim()
       if (!answer || answer.length > 50_000) throw new Error('RUNNER_ANSWER_INVALID')
       const toolInvocations = [...toolInvocationCounts.entries()].map(([toolName, callCount]) => ({
         toolName, callCount,
         sanitizedInputSummary: toolInvocationSummaries.get(toolName) ?? 'no arguments',
       }))
-      return { answer, toolCalls, toolNames, toolInvocations, ...(completionIntent ? { completionIntent } : {}) }
+      return { answer, toolCalls, toolNames, toolInvocations, usage, externalEffectsReconciled:lifecycle.reconciled, ...(completionIntent ? { completionIntent } : {}) }
     } finally {
       shutdown.removeEventListener('abort', onShutdown)
       // prompt can reject during Stop before the normal waitForIdle path. Pi's
@@ -417,12 +439,13 @@ export async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: Abor
     fenceToken = credential.fenceToken
     await api.request('POST', `/api/v1/workbench/runner-attempts/${attemptId}/start`, { fenceToken }, undefined, `runner-start-${attemptId}`)
     started = true
-    const { answer, toolCalls, toolNames, toolInvocations, completionIntent, waitIntent } = await runPi(api, credential, attemptId, shutdown)
+    const { answer, toolCalls, toolNames, toolInvocations, usage, completionIntent, waitIntent, failureIntent, externalEffectsReconciled } = await runPi(api, credential, attemptId, shutdown)
     const settlePath = `/api/v1/workbench/runner-attempts/${attemptId}/settle`
     const settledTurn = {
       fenceToken, assistantMessageMarkdown: answer,
       settlement: { outcome: 'settled', summaryMarkdown: 'Pi completed the WorkMesh turn.',
-        noArtifactReason: 'Text-only answer; no artifact was produced.', externalEffectsReconciled: true },
+        noArtifactReason: 'Text-only answer; no artifact was produced.', externalEffectsReconciled,
+        ...(usage ? { usage } : {}) },
       toolInvocations,
     } as const
     const sendSettle = (body: unknown, key: string) =>
@@ -443,6 +466,25 @@ export async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: Abor
         settlementUncertain = false
         return result
       }
+    }
+    if (failureIntent) {
+      await replayableSettle({...settledTurn,settlement:{...settledTurn.settlement,outcome:'failed',
+        summaryMarkdown:failureIntent.body.summary,errorCode:failureIntent.body.code}},`runner-settle-failure-intent-${attemptId}`)
+      // These are deliberately two transactions. A crash here leaves a failed Turn and an active Session.
+      // No terminal rejection is interpreted as proof that an uncertain fail request committed.
+      try {
+        if (shutdown.aborted) throw new RunnerExecutionExitError('shutdown')
+        const failed=await api.request<AgentSession>('POST',`/api/v1/agent-sessions/${api.sessionId}/fail`,
+          failureIntent.body,failureIntent.ifMatch,failureIntent.idempotencyKey)
+        console.log(JSON.stringify({turnId:item.turnId,attemptId,turnStatus:'failed',sessionState:failed.state,
+          operationKey:failureIntent.idempotencyKey,toolCalls,toolNames}))
+      } catch (error) {
+        const definite=error instanceof RunnerApiError && error.status>=400 && error.status<500 && error.status!==408
+        console.error(JSON.stringify({turnId:item.turnId,attemptId,turnStatus:'failed',
+          sessionFailure:definite?'rejected':'unconfirmed',operationKey:failureIntent.idempotencyKey,
+          code:error instanceof RunnerApiError?error.code:error instanceof Error?error.message:'UNKNOWN'}))
+      }
+      return 'failed'
     }
     if (waitIntent) {
       const leases = await ownedLeases(api)

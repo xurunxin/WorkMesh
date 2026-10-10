@@ -6,6 +6,7 @@ import { resolve } from 'node:path'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import type { Server } from 'node:http'
+import type { Capability } from '@workmesh/contracts'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
@@ -81,12 +82,12 @@ export async function createMcpCoverageFixture() {
     }))
     return client
   }
-  const createExecution = async (title = 'M0 execution', queued = false): Promise<Execution> => {
+  const createExecution = async (title = 'M0 execution', queued = false, budget?: Record<string, number>): Promise<Execution> => {
     const work = await human<{ id: string; revision: number }>('POST', '/api/v1/work-items', {
       teamId, title, statusId: readyId, responsibleHumanActorId: humanActorId,
     })
     const coordination = new WorkMeshClient({ baseUrl, coordinationToken: connectionToken, installationToken: connectionToken })
-    const claim = await coordination.claimWorkItem(work.id, {}, { ifMatch: work.revision, idempotencyKey: randomUUID() })
+    const claim = await coordination.claimWorkItem(work.id, budget ? { budget } : {}, { ifMatch: work.revision, idempotencyKey: randomUUID() })
     const exchanged = await coordination.exchangeClaimedSessionToken(claim.session.id, claim.exchangeToken, { idempotencyKey: randomUUID() })
     if (queued) return { sessionId: claim.session.id, workItemId: work.id, token: exchanged.sessionToken, client: new WorkMeshClient({ baseUrl, sessionToken: exchanged.sessionToken }) }
     await coordination.acknowledge(claim.session.id, { summary: 'M0 fixture ready', externalUrls: [] }, { idempotencyKey: randomUUID() })
@@ -118,11 +119,11 @@ export async function createMcpCoverageFixture() {
     await app.listen({ port, host: '127.0.0.1' })
     events.push({ kind: 'api-restart', port })
   }
-  const pairTarget = async () => {
+  const pairTarget = async (capabilities: Capability[] = ['work:read', 'work:write']) => {
     const agentSlug = `m0-target-${randomUUID().slice(0, 8)}`
     const paired = await human<{ connection: { id: string }; connect_url: string }>('POST', '/api/v1/agent-connections', {
       name: 'M0 exact handoff target', agentSlug, clientType: 'codex', teamId, principalHumanActorId: humanActorId,
-      requestedCapabilities: ['work:read', 'work:write'], grantAgentDelegate: false,
+      requestedCapabilities: capabilities, grantAgentDelegate: false,
     })
     const redeemed = await fetch(baseUrl + '/api/v1/agent-connections/redeem', {
       method: 'POST', headers: { 'idempotency-key': randomUUID(), 'content-type': 'application/json' },

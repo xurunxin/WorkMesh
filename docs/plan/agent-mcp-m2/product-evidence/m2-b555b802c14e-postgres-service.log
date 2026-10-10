@@ -1,0 +1,136 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 03:33:18.443 UTC [42] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 03:33:18.444 UTC [42] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 03:33:18.445 UTC [45] LOG:  database system was shut down at 2026-10-10 03:33:18 UTC
+2026-10-10 03:33:18.447 UTC [42] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-10 03:33:18.557 UTC [42] LOG:  received fast shutdown request
+2026-10-10 03:33:18.557 UTC [42] LOG:  aborting any active transactions
+2026-10-10 03:33:18.558 UTC [42] LOG:  background worker "logical replication launcher" (PID 48) exited with exit code 1
+2026-10-10 03:33:18.559 UTC [43] LOG:  shutting down
+2026-10-10 03:33:18.559 UTC [43] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 03:33:18.562 UTC [43] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.001 s, total=0.004 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 03:33:18.565 UTC [42] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 03:33:18.192 UTC [36] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 03:33:18.666 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 03:33:18.666 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 03:33:18.666 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 03:33:18.667 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 03:33:18.667 UTC [64] LOG:  database system was shut down at 2026-10-10 03:33:18 UTC
+2026-10-10 03:33:18.669 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 03:33:34.919 UTC [76] ERROR:  M2 transaction checkpoint fault
+2026-10-10 03:33:34.919 UTC [76] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 03:33:34.919 UTC [76] STATEMENT:  INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,parent_delegation_id) VALUES($1,$2,$3,$4,$5,NULL,'reviewer','plan_step',$6,$7,$8,$9) RETURNING id
+2026-10-10 03:33:34.956 UTC [76] ERROR:  M2 transaction checkpoint fault
+2026-10-10 03:33:34.956 UTC [76] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 03:33:34.956 UTC [76] STATEMENT:  INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,plan_step_id,plan_step_version_id,context_snapshot_id,state,state_reason,budget,inherited_budget,required_for_parent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,true) RETURNING *
+2026-10-10 03:33:34.988 UTC [76] ERROR:  M2 transaction checkpoint fault
+2026-10-10 03:33:34.988 UTC [76] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 03:33:34.988 UTC [76] STATEMENT:  INSERT INTO session_budget_reservations(parent_session_id,child_session_id,allocation,reserved) VALUES($1,$2,$3,$3)
+2026-10-10 03:33:35.031 UTC [76] ERROR:  M2 transaction checkpoint fault
+2026-10-10 03:33:35.031 UTC [76] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 03:33:35.031 UTC [76] STATEMENT:  INSERT INTO leases(workspace_id,session_id,resource_type,resource_id,kind,reason,expires_at) VALUES($1,$2,'plan_step',$3,'review_shared','review delegation',clock_timestamp()+($4::text || ' seconds')::interval) RETURNING *
+2026-10-10 03:33:35.069 UTC [76] ERROR:  M2 transaction checkpoint fault
+2026-10-10 03:33:35.069 UTC [76] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 03:33:35.069 UTC [76] STATEMENT:  INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,issued_by_actor_id) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)
+2026-10-10 03:33:35.105 UTC [76] ERROR:  M2 transaction checkpoint fault
+2026-10-10 03:33:35.105 UTC [76] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 03:33:35.105 UTC [76] STATEMENT:  INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)
+2026-10-10 03:33:35.146 UTC [76] ERROR:  M2 transaction checkpoint fault
+2026-10-10 03:33:35.146 UTC [76] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 03:33:35.146 UTC [76] STATEMENT:  INSERT INTO domain_events(
+	       workspace_id,team_id,audience_actor_id,event_type,event_version,
+	       aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+	       idempotency_key,payload,session_id,session_sequence,causation_id,notification_sources
+	     ) VALUES($1,$2,$3,$4,2,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+	     RETURNING id
+2026-10-10 03:33:35.191 UTC [76] ERROR:  M2 transaction checkpoint fault
+2026-10-10 03:33:35.191 UTC [76] CONTEXT:  PL/pgSQL function m2_transaction_fault() line 1 at RAISE
+2026-10-10 03:33:35.191 UTC [76] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 03:33:35.297 UTC [76] ERROR:  new row for relation "artifacts" violates check constraint "artifacts_check"
+2026-10-10 03:33:35.297 UTC [76] DETAIL:  Failing row contains (a6d7887b-4cc8-47a2-b01b-4483457fcffc, 29fc0da1-e876-4a19-87fe-0aad01146c64, 7a76cebf-103e-44c9-81e8-09c3752ff6cb, fd56d917-017c-4a4e-be1f-101553b87bd9, 83e7a0f9-b71f-4956-8338-40e13e81246a, code_review, Faulted artifact, null, null, null, null, null, null, null, {}, 2026-10-10 03:33:35.289758+00).
+2026-10-10 03:33:35.297 UTC [76] STATEMENT:  INSERT INTO artifacts(workspace_id,session_id,work_item_id,producer_actor_id,type,title,uri,checksum,source_tool,metadata) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *
+2026-10-10 03:33:35.333 UTC [76] ERROR:  M2 evidence outbox fault
+2026-10-10 03:33:35.333 UTC [76] CONTEXT:  PL/pgSQL function m2_evidence_fault() line 1 at RAISE
+2026-10-10 03:33:35.333 UTC [76] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 03:33:35.374 UTC [76] ERROR:  M2 evidence outbox fault
+2026-10-10 03:33:35.374 UTC [76] CONTEXT:  PL/pgSQL function m2_evidence_fault() line 1 at RAISE
+2026-10-10 03:33:35.374 UTC [76] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 03:33:36.437 UTC [75] WARNING:  there is no transaction in progress
+2026-10-10 03:33:36.501 UTC [78] ERROR:  M2 forced outbox failure
+2026-10-10 03:33:36.501 UTC [78] CONTEXT:  PL/pgSQL function m2_fail_outbox() line 1 at RAISE
+2026-10-10 03:33:36.501 UTC [78] STATEMENT:  INSERT INTO outbox_events(domain_event_id,topic,partition_key)
+	     VALUES($1,$2,$3)
+2026-10-10 03:33:37.664 UTC [75] ERROR:  new row for relation "artifacts" violates check constraint "artifacts_check"
+2026-10-10 03:33:37.664 UTC [75] DETAIL:  Failing row contains (0d84b98d-f58b-4d9a-b544-fe4fec9028b2, 875d92fd-8ad6-4b4b-b2e1-a3ce58dbb56f, f18a52c6-00fe-46a1-bbab-e212b81291e8, ba63de08-00ac-4ea8-b31e-e531f451b36d, b804f794-09ae-41fb-96fa-525f8574cf43, code_review, Wrong evidence, null, null, null, null, null, null, null, {}, 2026-10-10 03:33:37.664803+00).
+2026-10-10 03:33:37.664 UTC [75] STATEMENT:  INSERT INTO artifacts(workspace_id,session_id,work_item_id,producer_actor_id,type,title,metadata) VALUES($1,$2,$3,$4,'code_review','Wrong evidence','{}') RETURNING id
+2026-10-10 03:33:38.336 UTC [77] WARNING:  there is no transaction in progress
+2026-10-10 03:33:39.072 UTC [78] ERROR:  WORK_ITEM_BLOCK_CYCLE
+2026-10-10 03:33:39.072 UTC [78] CONTEXT:  PL/pgSQL function enforce_work_item_relation_invariants() line 36 at RAISE
+2026-10-10 03:33:39.072 UTC [78] STATEMENT:  INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind,created_by_actor_id)
+	         VALUES($1,$2,$3,$4,$5,$6) RETURNING *
+2026-10-10 03:33:39.073 UTC [77] WARNING:  there is no transaction in progress
+2026-10-10 03:33:39.116 UTC [76] ERROR:  WORK_ITEM_PARENT_CYCLE
+2026-10-10 03:33:39.116 UTC [76] CONTEXT:  PL/pgSQL function enforce_work_item_parent_invariants() line 42 at RAISE
+2026-10-10 03:33:39.116 UTC [76] STATEMENT:  UPDATE work_items SET title=CASE WHEN $1 THEN $2 ELSE title END,description=CASE WHEN $3 THEN $4 ELSE description END,status_id=CASE WHEN $5 THEN $6 ELSE status_id END,priority=CASE WHEN $7 THEN $8 ELSE priority END,due_date=CASE WHEN $9 THEN $10 ELSE due_date END,responsible_human_actor_id=CASE WHEN $11 THEN $12 ELSE responsible_human_actor_id END,labels=CASE WHEN $13 THEN $14 ELSE labels END,project_id=CASE WHEN $15 THEN $16 ELSE project_id END,milestone_id=CASE WHEN $17 THEN $18 ELSE CASE WHEN $15 THEN NULL ELSE milestone_id END END,parent_id=CASE WHEN $19 THEN $20 ELSE parent_id END,board_rank=CASE WHEN $21 THEN $22 ELSE board_rank END,revision=revision+1,updated_at=now() WHERE id=$23 RETURNING id,revision
+2026-10-10 03:33:39.117 UTC [77] WARNING:  there is no transaction in progress
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "actors" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "domain_events" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "teams" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "api_idempotency_keys" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "agent_sessions" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "inbox_items" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "work_room_channels" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "agent_definitions" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "delegations" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "workflow_states" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "outbox_events" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "agent_team_access" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "agent_installation_tokens" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "agent_plan_steps" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "agent_session_prompts" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "agent_session_tokens" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "agent_plan_step_identities" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "domain_event_resources" --- lock not available
+2026-10-10 03:33:48.824 UTC [80] LOG:  skipping analyze of "work_item_executor_projections" --- lock not available

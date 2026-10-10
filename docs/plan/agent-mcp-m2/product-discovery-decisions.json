@@ -1,0 +1,2122 @@
+{
+  "source": "已审M2消费者增量；沿M0/M1领域资格，不改冻结报告",
+  "rules": [
+    {
+      "operationId": "listAgentSessionChildren",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "agent_session"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "domainTargetFactsMatch",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        }
+      ],
+      "capabilities": [
+        "work:read"
+      ],
+      "feature": null,
+      "variants": [],
+      "write": false
+    }
+  ],
+  "bindings": [
+    {
+      "bindingId": "tool:list_projects",
+      "operationIds": [
+        "listProjects"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_project",
+      "operationIds": [
+        "getProject"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_project",
+      "operationIds": [
+        "createProject"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:update_project",
+      "operationIds": [
+        "updateProject"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_work_items",
+      "operationIds": [
+        "listWorkItems"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_work_item",
+      "operationIds": [
+        "getWorkItem"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_work_item",
+      "operationIds": [
+        "createWorkItem"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:update_work_item",
+      "operationIds": [
+        "updateWorkItem"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_project_milestones",
+      "operationIds": [
+        "listProjectMilestones"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_milestone",
+      "operationIds": [
+        "createProjectMilestone"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_milestone",
+      "operationIds": [
+        "getMilestone"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:update_milestone",
+      "operationIds": [
+        "updateMilestone"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:delete_milestone",
+      "operationIds": [
+        "deleteMilestone"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_work_item_relations",
+      "operationIds": [
+        "listWorkItemRelations"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:add_work_item_relation",
+      "operationIds": [
+        "createWorkItemRelation"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:remove_work_item_relation",
+      "operationIds": [
+        "deleteWorkItemRelation"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_work_item_comments",
+      "operationIds": [
+        "listWorkItemComments"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_documents",
+      "operationIds": [
+        "listDocuments"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_document",
+      "operationIds": [
+        "createDocument"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_document",
+      "operationIds": [
+        "getDocument"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:update_document",
+      "operationIds": [
+        "updateDocument"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_document_history",
+      "operationIds": [
+        "listDocumentHistory"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_document_revision",
+      "operationIds": [
+        "getDocumentRevision"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:diff_document_revisions",
+      "operationIds": [
+        "diffDocumentRevisions"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:export_document_markdown",
+      "operationIds": [
+        "exportDocumentMarkdown"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:restore_document_revision",
+      "operationIds": [
+        "restoreDocumentRevision"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_work_item_decision",
+      "operationIds": [
+        "createWorkItemDecision"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_project_decision",
+      "operationIds": [
+        "createProjectDecision"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_session_decision",
+      "operationIds": [
+        "createSessionDecision"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_decision",
+      "operationIds": [
+        "getDecision"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_work_room",
+      "operationIds": [
+        "getWorkRoom"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        },
+        {
+          "variant": "current_session_without_target",
+          "credentialMode": [
+            "agent_session",
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:post_work_room_message",
+      "operationIds": [
+        "postWorkRoomMessage"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        },
+        {
+          "variant": "current_session_without_target",
+          "credentialMode": [
+            "agent_session",
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_inbox_items",
+      "operationIds": [
+        "listInbox"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_inbox_item",
+      "operationIds": [
+        "getInboxItem"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:claim_inbox_item",
+      "operationIds": [
+        "claimInboxItem"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:acknowledge_inbox_item",
+      "operationIds": [
+        "acknowledgeInboxItem"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:reply_inbox_item",
+      "operationIds": [
+        "replyInboxItem"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_handoffs",
+      "operationIds": [
+        "listHandoffs"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:offer_handoff",
+      "operationIds": [
+        "offerHandoff"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "fromSessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "fromSessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "fromSessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:request_handoff",
+      "operationIds": [
+        "requestHandoff"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sourceSessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sourceSessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sourceSessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:comment_plan_step",
+      "operationIds": [
+        "commentOnPlanStep"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:propose_plan_step_assignment",
+      "operationIds": [
+        "proposePlanAssignment"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:append_context_delta",
+      "operationIds": [
+        "appendContextDelta"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_child_session",
+      "operationIds": [
+        "createChildAgentSession"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "parentSessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "parentSessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "parentSessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_review_delegation",
+      "operationIds": [
+        "createReviewDelegation"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_agent_session",
+      "operationIds": [
+        "getAgentSession"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "id",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "id",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "id",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_agent_sessions",
+      "operationIds": [
+        "listAgentSessions"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:publish_plan",
+      "operationIds": [
+        "publishAgentPlan"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:ack_agent_session",
+      "operationIds": [
+        "acknowledgeAgentSession"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:transition_agent_session_state",
+      "operationIds": [
+        "transitionAgentSessionState"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:heartbeat",
+      "operationIds": [
+        "heartbeatAgentSession"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:complete_session",
+      "operationIds": [
+        "completeAgentSession"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:fail_session",
+      "operationIds": [
+        "failAgentSession"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:publish_artifact",
+      "operationIds": [
+        "publishArtifact"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_child_sessions",
+      "operationIds": [
+        "listAgentSessionChildren"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "parentSessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "parentSessionId",
+          "installationBridgeRequired": false
+        }
+      ]
+    }
+  ],
+  "excludedBindings": [
+    {
+      "bindingId": "tool:create_comment",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:update_comment",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:archive_document",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:unarchive_document",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:get_workspace_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:get_team_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:get_project_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:list_workspace_guidance_history",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:list_team_guidance_history",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:list_project_guidance_history",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:diff_workspace_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:diff_team_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:diff_project_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:publish_workspace_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:publish_team_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:publish_project_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:archive_workspace_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:archive_team_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:archive_project_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:rollback_workspace_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:rollback_team_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:rollback_project_guidance",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:finalize_decision",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:supersede_decision",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:reverse_decision",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:get_work_room_timeline",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:accept_handoff",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:cancel_handoff",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:complete_handoff",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:get_agent_context",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:get_plan",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:list_plan_versions",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    },
+    {
+      "bindingId": "tool:ack_stop",
+      "reason": "不注册规划占位／Human-only名称；真实别名、host生命周期及安装身份路径见product-operation矩阵"
+    }
+  ],
+  "registeredBindingIds": [
+    "resource:agent-capabilities",
+    "resource:agent-session",
+    "resource:document-revision",
+    "resource:project-guidance",
+    "resource:repository-context",
+    "resource:server-features",
+    "resource:server-info",
+    "resource:session-activity",
+    "resource:session-context",
+    "resource:session-plan",
+    "resource:team-guidance",
+    "resource:work-item",
+    "resource:workspace-guidance",
+    "tool:ack_agent_session",
+    "tool:acknowledge_inbox_item",
+    "tool:acquire_lease",
+    "tool:add_work_item_relation",
+    "tool:append_activity",
+    "tool:append_context_delta",
+    "tool:apply_project_import",
+    "tool:ask",
+    "tool:claim_inbox_item",
+    "tool:claim_work_item",
+    "tool:comment_plan_step",
+    "tool:complete_session",
+    "tool:consume_approval",
+    "tool:create_child_session",
+    "tool:create_document",
+    "tool:create_milestone",
+    "tool:create_project",
+    "tool:create_project_decision",
+    "tool:create_repository_branch",
+    "tool:create_repository_commit",
+    "tool:create_review_delegation",
+    "tool:create_session_decision",
+    "tool:create_work_item",
+    "tool:create_work_item_decision",
+    "tool:decide_completion_suggestion",
+    "tool:delegate_work_item",
+    "tool:delete_milestone",
+    "tool:diff_document_revisions",
+    "tool:draft_project_update",
+    "tool:explain_agent_session",
+    "tool:export_document_markdown",
+    "tool:fail_session",
+    "tool:finalize_artifact_upload",
+    "tool:get_agent_capabilities",
+    "tool:get_agent_discovery",
+    "tool:get_agent_session",
+    "tool:get_approval",
+    "tool:get_control_center",
+    "tool:get_current_identity",
+    "tool:get_decision",
+    "tool:get_document",
+    "tool:get_document_revision",
+    "tool:get_human_attention",
+    "tool:get_inbox_item",
+    "tool:get_milestone",
+    "tool:get_project",
+    "tool:get_project_control_center",
+    "tool:get_project_guidance",
+    "tool:get_recovery_item",
+    "tool:get_repository_context",
+    "tool:get_server_features",
+    "tool:get_server_info",
+    "tool:get_session_context",
+    "tool:get_session_execution_result",
+    "tool:get_session_plan",
+    "tool:get_team_guidance",
+    "tool:get_work_item",
+    "tool:get_work_item_execution_summary",
+    "tool:get_work_room",
+    "tool:get_workmesh_context",
+    "tool:get_workspace_guidance",
+    "tool:heartbeat",
+    "tool:heartbeat_lease",
+    "tool:inspect_pending_handoff",
+    "tool:list_agent_sessions",
+    "tool:list_approvals",
+    "tool:list_child_sessions",
+    "tool:list_claimable_work_items",
+    "tool:list_document_history",
+    "tool:list_documents",
+    "tool:list_events",
+    "tool:list_handoffs",
+    "tool:list_human_attention",
+    "tool:list_inbox_items",
+    "tool:list_leases",
+    "tool:list_project_milestones",
+    "tool:list_projects",
+    "tool:list_recovery_items",
+    "tool:list_session_activities",
+    "tool:list_session_plan_versions",
+    "tool:list_teams",
+    "tool:list_work_item_comments",
+    "tool:list_work_item_relations",
+    "tool:list_work_items",
+    "tool:list_workflow_states",
+    "tool:merge_pull_request",
+    "tool:offer_handoff",
+    "tool:open_pull_request",
+    "tool:post_work_room_message",
+    "tool:prepare_project_import",
+    "tool:preview_agent_session_control",
+    "tool:propose_plan_step_assignment",
+    "tool:publish_artifact",
+    "tool:publish_delivery_artifact",
+    "tool:publish_plan",
+    "tool:publish_project_update",
+    "tool:publish_structured_review",
+    "tool:reject_handoff",
+    "tool:release_lease",
+    "tool:remove_work_item_relation",
+    "tool:renew_lease",
+    "tool:reply_inbox_item",
+    "tool:request_approval",
+    "tool:request_artifact_upload",
+    "tool:request_handoff",
+    "tool:resolve_identifier",
+    "tool:restore_document_revision",
+    "tool:retry_ci_check",
+    "tool:send_message",
+    "tool:stop_ack",
+    "tool:transition_agent_session_state",
+    "tool:update_document",
+    "tool:update_milestone",
+    "tool:update_project",
+    "tool:update_work_item",
+    "tool:verify_connection"
+  ]
+}

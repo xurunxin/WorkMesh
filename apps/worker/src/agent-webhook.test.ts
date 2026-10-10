@@ -120,7 +120,7 @@ describe('agent webhook signing', () => {
         secretVersion: 1,
         deliveryId: 'del_test',
         eventId: 'event-id',
-        eventType: 'agent.session.created',
+        eventType: 'agent.dns.test',
         sessionId: null,
         payload: {},
         endpointUrl: `http://agent.invalid:${port}/events`,

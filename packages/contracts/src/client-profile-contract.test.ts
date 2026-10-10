@@ -41,7 +41,7 @@ describe('Agent Collaboration Client Profile contract', () => {
         activeDelegation: true,
         liveGrantIntersection: true,
       },
-      transports: { mcpBindings: ['resource:agent-capabilities'] },
+      transports: { mcpBindings: ['resource:agent-capabilities','tool:get_agent_capabilities'] },
     })
     expect(mcpPolicyBindings['resource:agent-capabilities'].operationId).toBe('getAgentCapabilityManifest')
     const connectionIdentity = manifest.operations.find(operation => operation.operationId === 'getCurrentAgentConnectionIdentity')

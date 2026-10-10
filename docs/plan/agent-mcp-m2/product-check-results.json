@@ -1,0 +1,3907 @@
+{
+  "runs": [
+    {
+      "receipt": "run-001.json",
+      "argv": [
+        "pnpm.cmd",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 0.027618885040283203,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-001-output.zip",
+        "bytes": 248,
+        "sha256": "094b6ab9808ab1a0c519fd434a723f96d1a88c73cd5b27c805594f8e6c72226e"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-002.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 90.03535676002502,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-002-output.zip",
+        "bytes": 671,
+        "sha256": "88d2e473a549615703178f07702a659decd70636900d69cfcab4e7e282e96e9a"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-003.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "typecheck"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 15.44018030166626,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "../mcp/src/index.ts(308,36): error TS7053: Element implicitly has an 'any' type because expression of type '\"sessionId\" | \"workItemId\" | \"projectId\"' can't be used to index type 'ShapeOutput<{ idempotencyKey: ZodOptional<ZodString>; options: ZodDefault<ZodArray<ZodString, \"many\">>; title: ZodString; rationale: ZodString; evidence: ZodDefault<...>; affectedResources: ZodDefault<...>; selectedOption: ZodOptional<...>; }>'.",
+        "../mcp/src/index.ts(308,60): error TS2339: Property 'projectId' does not exist on type 'ShapeOutput<{ idempotencyKey: ZodOptional<ZodString>; options: ZodDefault<ZodArray<ZodString, \"many\">>; title: ZodString; rationale: ZodString; evidence: ZodDefault<...>; affectedResources: ZodDefault<...>; selectedOption: ZodOptional<...>; }>'.",
+        "../mcp/src/index.ts(308,60): error TS2339: Property 'sessionId' does not exist on type 'ShapeOutput<{ idempotencyKey: ZodOptional<ZodString>; options: ZodDefault<ZodArray<ZodString, \"many\">>; title: ZodString; rationale: ZodString; evidence: ZodDefault<...>; affectedResources: ZodDefault<...>; selectedOption: ZodOptional<...>; }>'.",
+        "../mcp/src/index.ts(308,60): error TS2339: Property 'workItemId' does not exist on type 'ShapeOutput<{ idempotencyKey: ZodOptional<ZodString>; options: ZodDefault<ZodArray<ZodString, \"many\">>; title: ZodString; rationale: ZodString; evidence: ZodDefault<...>; affectedResources: ZodDefault<...>; selectedOption: ZodOptional<...>; }>'.",
+        "../../packages/agent-sdk/src/index.ts(452,5): error TS2719: Type 'Promise<import(\"C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/contracts/src/index\", { with: { \"resolution-mode\": \"import\" } }).ListResponse<{ id: string; revision: number; created_at: string; updated_at: string; author_actor_id: string; body: string; mentions: string[]; channel_id: stri...' is not assignable to type 'Promise<import(\"C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/contracts/src/index\", { with: { \"resolution-mode\": \"import\" } }).ListResponse<{ id: string; revision: number; created_at: string; updated_at: string; author_actor_id: string; body: string; mentions: string[]; channel_id: stri...'. Two different types with this name exist, but they are unrelated.",
+        "../../packages/contracts/src/index.ts(192,14): error TS2451: Cannot redeclare block-scoped variable 'commentResponseSchema'.",
+        "../../packages/contracts/src/index.ts(281,14): error TS2451: Cannot redeclare block-scoped variable 'commentResponseSchema'."
+      ],
+      "archive": {
+        "path": "run-003-output.zip",
+        "bytes": 1253,
+        "sha256": "28ef1e02a7075b0872ec60d7570dd11e8a7af526d4c925c62d5b333855cd864f"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-004.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "--filter",
+        "@workmesh/agent-runner",
+        "typecheck"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 5.313106536865234,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "src/workmesh-tools.ts(344,43): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ cursor?: string | undefined; limit?: number | undefined; }'.",
+        "src/workmesh-tools.ts(345,18): error TS2537: Type '{ cursor?: string | undefined; limit?: number | undefined; }' has no matching index signature for type 'string'.",
+        "src/workmesh-tools.ts(391,18): error TS2339: Property 'projectId' does not exist on type '{ title: string; rationale: string; options?: string[] | undefined; evidence?: string[] | undefined; selectedOption?: string | undefined; }'.",
+        "src/workmesh-tools.ts(391,18): error TS2339: Property 'sessionId' does not exist on type '{ title: string; rationale: string; options?: string[] | undefined; evidence?: string[] | undefined; selectedOption?: string | undefined; }'.",
+        "src/workmesh-tools.ts(391,18): error TS2339: Property 'workItemId' does not exist on type '{ title: string; rationale: string; options?: string[] | undefined; evidence?: string[] | undefined; selectedOption?: string | undefined; }'."
+      ],
+      "archive": {
+        "path": "run-004-output.zip",
+        "bytes": 701,
+        "sha256": "a1f84430853d850bbbfc9fdaffa01ee71f085bcd137c286851ec284417ce1d44"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-005.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 1.6865780353546143,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "Error: OPENAPI.yaml is invalid:",
+        "YAMLParseError: A block sequence may not be used as an implicit map key at line 1444, column 1:",
+        "YAMLParseError: Implicit keys need to be on a single line at line 1444, column 7:",
+        "YAMLParseError: Implicit map keys need to be followed by map values at line 1444, column 7:",
+        "YAMLParseError: A block sequence may not be used as an implicit map key at line 1469, column 1:",
+        "YAMLParseError: Implicit keys need to be on a single line at line 1469, column 7:",
+        "YAMLParseError: Implicit map keys need to be followed by map values at line 1469, column 7:",
+        "YAMLParseError: A block sequence may not be used as an implicit map key at line 1517, column 1:",
+        "YAMLParseError: Implicit keys need to be on a single line at line 1517, column 7:",
+        "YAMLParseError: Implicit map keys need to be followed by map values at line 1517, column 7:"
+      ],
+      "archive": {
+        "path": "run-005-output.zip",
+        "bytes": 858,
+        "sha256": "4bfad58bfaf97ae2965567c08c5bc1425697db1c7102842d7d7c9bd0ed2a5268"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-006.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 49.887956857681274,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-006-output.zip",
+        "bytes": 1262,
+        "sha256": "0669795ef9d774d4f2102083e8fdee200f78682c651621ee0d9910646c7ca0ee"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-007.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 12.606282234191895,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/contracts:test: ⎯⎯⎯⎯⎯⎯ Failed Tests 14 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/contracts:test:  Test Files  8 failed | 19 passed (27)",
+        "@workmesh/contracts:test:       Tests  14 failed | 193 passed (207)"
+      ],
+      "firstFailureLines": [
+        "@workmesh/contracts:test:      → expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:      → expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:      → Map keys must be unique at line 1838, column 7:",
+        "@workmesh/contracts:test:      → expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:      → expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:      → Map keys must be unique at line 1838, column 7:",
+        "@workmesh/contracts:test:      → Map keys must be unique at line 1838, column 7:",
+        "@workmesh/contracts:test:      → Map keys must be unique at line 1838, column 7:",
+        "@workmesh/contracts:test:      → expected 'current_session' to be 'current_session_without_target' // Object.is equality",
+        "@workmesh/contracts:test:      → expected [ { method: 'GET', …(17) }, …(278) ] to have a length of 278 but got 279",
+        "@workmesh/contracts:test:      → expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:      → expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:      → expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:      → expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:  FAIL  src/agent-discovery.test.ts > 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收",
+        "@workmesh/contracts:test:  FAIL  src/configuration-readiness-contracts.test.ts > 配置就绪契约 > OpenAPI、清单与 Human-only 只读策略一致，拒绝审计保留",
+        "@workmesh/contracts:test:  FAIL  src/stage0-route-manifest.test.ts > Stage 0 transport contract manifest > keeps parsed OpenAPI cursor boundaries in parity with runtime",
+        "@workmesh/contracts:test:  FAIL  src/stage0-route-manifest.test.ts > Stage 0 transport contract manifest > documents and validates the backward-compatible Run Explanation keyset cursor",
+        "@workmesh/contracts:test: YAMLParseError: Map keys must be unique at line 1838, column 7:",
+        "@workmesh/contracts:test:  FAIL  src/agent-discovery.test.ts > 已审发现规则的已知门禁和身份投影 > verify/claim不凭返回sessionId要求目标bridge；optional room保留current路径",
+        "@workmesh/contracts:test: AssertionError: expected 'current_session' to be 'current_session_without_target' // Object.is equality",
+        "@workmesh/contracts:test:  FAIL  src/pagination-contract.test.ts > pagination OpenAPI contract > declares the common cursor and limit on every paged collection",
+        "@workmesh/contracts:test: AssertionError: expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:  FAIL  src/planning-domain-parity-contract.test.ts > planning domain parity public contract > keeps the OpenAPI schemas and complete REST surface aligned with Zod",
+        "@workmesh/contracts:test: AssertionError: expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:  FAIL  src/recovery-contract.test.ts > Recovery Center public contract > publishes list/detail operations and resolvable Recovery schemas",
+        "@workmesh/contracts:test: AssertionError: expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:  FAIL  src/route-policy.test.ts > routePolicyManifest > is the unique serializable declaration for every runtime route",
+        "@workmesh/contracts:test: AssertionError: expected [ { method: 'GET', …(17) }, …(278) ] to have a length of 278 but got 279",
+        "@workmesh/contracts:test:  FAIL  src/route-policy.test.ts > routePolicyManifest > parses OPENAPI.yaml as valid YAML before checking generated extensions",
+        "@workmesh/contracts:test: AssertionError: expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:  FAIL  src/route-policy.test.ts > routePolicyManifest > matches OpenAPI operation IDs and feature tiers",
+        "@workmesh/contracts:test: AssertionError: expected [ …(3) ] to deeply equal []",
+        "@workmesh/contracts:test:  FAIL  src/route-policy.test.ts > routePolicyManifest > documents bootstrap authentication failures as a structured 401 response",
+        "@workmesh/contracts:test: AssertionError: expected [ …(3) ] to deeply equal []"
+      ],
+      "archive": {
+        "path": "run-007-output.zip",
+        "bytes": 6837,
+        "sha256": "6278d732d74ba367c1133765a7dce3977b3b6dbd13599a58e14a6669c1ea7bab"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-008.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 1.0332014560699463,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯",
+        "Error: Build failed with 1 error:"
+      ],
+      "archive": {
+        "path": "run-008-output.zip",
+        "bytes": 706,
+        "sha256": "9cc8d5b7a33cba691870d1dc87b021e04e9fed3d9ea918ec20682300dacfd1bc"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-009.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 1.621532678604126,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-009-output.zip",
+        "bytes": 345,
+        "sha256": "b632854d694c357bf6760be2b1bd8b9f5a00a4514015c9374c6c15224c8d9b8b"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-010.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "typecheck"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 12.234739065170288,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "src/planning-collaboration.conformance.test.ts(24,50): error TS2558: Expected 0 type arguments, but got 1.",
+        "src/planning-collaboration.conformance.test.ts(43,75): error TS2345: Argument of type '{ budget?: { maxInputTokens?: undefined; } | { maxInputTokens: number; } | undefined; reviewerAgentId: string; planStepId: `${string}-${string}-${string}-${string}-${string}`; planVersionId: string; initialPrompt: string; ttlSeconds: number; }' is not assignable to parameter of type 'ReviewDelegationInput'.",
+        "src/planning-collaboration.conformance.test.ts(72,50): error TS2558: Expected 0 type arguments, but got 1.",
+        "src/planning-collaboration.conformance.test.ts(79,77): error TS2353: Object literal may only specify known properties, and 'limit' does not exist in type '{ childSessionId?: string | undefined; }'.",
+        "src/planning-collaboration.conformance.test.ts(81,78): error TS2353: Object literal may only specify known properties, and 'limit' does not exist in type '{ childSessionId?: string | undefined; }'.",
+        "src/planning-collaboration.conformance.test.ts(85,94): error TS2353: Object literal may only specify known properties, and 'cursor' does not exist in type '{ childSessionId?: string | undefined; }'.",
+        "src/planning-collaboration.conformance.test.ts(88,70): error TS2353: Object literal may only specify known properties, and 'cursor' does not exist in type '{ childSessionId?: string | undefined; }'.",
+        "src/planning-collaboration.fixture.ts(76,18): error TS2339: Property 'DATABASE_URL' does not exist on type '{ WORKMESH_API_URL: string; WORKMESH_AGENT_INSTALLATION_TOKEN: string; WORKMESH_AGENT_SESSION_ID: string; NODE_EXTRA_CA_CERTS: string; }'.",
+        "src/planning-collaboration.fixture.ts(76,43): error TS2339: Property 'WORKMESH_MASTER_KEY' does not exist on type '{ WORKMESH_API_URL: string; WORKMESH_AGENT_INSTALLATION_TOKEN: string; WORKMESH_AGENT_SESSION_ID: string; NODE_EXTRA_CA_CERTS: string; }'.",
+        "src/planning-collaboration.fixture.ts(76,75): error TS2339: Property 'WORKMESH_BOOTSTRAP_TOKEN' does not exist on type '{ WORKMESH_API_URL: string; WORKMESH_AGENT_INSTALLATION_TOKEN: string; WORKMESH_AGENT_SESSION_ID: string; NODE_EXTRA_CA_CERTS: string; }'."
+      ],
+      "archive": {
+        "path": "run-010-output.zip",
+        "bytes": 995,
+        "sha256": "f604e067b8bf6e63ab31e0e68257bb9e5e395604c2a33080e5afdf99520bdb27"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-011.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 15.289310455322266,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  4 failed | 6 passed (10)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791597736952,\"pid\":6368,\"hostname\":\"DarkFlame\",\"reqId\":\"aa5cc535-775c-4676-9b3a-3bad14da8cd6\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "→ expected 400 to be 200 // Object.is equality",
+        "→ expected 400 to be 200 // Object.is equality",
+        "→ {\"error\":{\"code\":\"VALIDATION_ERROR\",\"message\":\"Invalid request\",\"details\":{\"formErrors\":[],\"fieldErrors\":{\"session\":[\"Expected string, received date\",\"Expected string, received date\",\"Expected string, received date\"]}},\"correlationId\":\"4062f0b7-e328-4e9f-bec1-361267c6e5b7\"}}: expected 400 to be 200 // Object.is equality",
+        "→ {\"error\":{\"code\":\"VALIDATION_ERROR\",\"message\":\"Invalid request\",\"details\":{\"formErrors\":[],\"fieldErrors\":{\"heartbeat_health_changed_at\":[\"Expected string, received date\"],\"created_at\":[\"Expected string, received date\"],\"updated_at\":[\"Expected string, received date\"]}},\"correlationId\":\"d3b94f5d-5916-491b-80fd-4e1838c47b93\"}}: expected 400 to be 200 // Object.is equality",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > coordinates exclusive and shared leases, child budgets, and durable parent blocking",
+        "AssertionError: expected 400 to be 200 // Object.is equality",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release",
+        "AssertionError: expected 400 to be 200 // Object.is equality",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies",
+        "AssertionError: {\"error\":{\"code\":\"VALIDATION_ERROR\",\"message\":\"Invalid request\",\"details\":{\"formErrors\":[],\"fieldErrors\":{\"session\":[\"Expected string, received date\",\"Expected string, received date\",\"Expected string, received date\"]}},\"correlationId\":\"4062f0b7-e328-4e9f-bec1-361267c6e5b7\"}}: expected 400 to be 200 // Object.is equality",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > projects body-redacted Agent Inbox delivery facts to authorized Humans",
+        "AssertionError: {\"error\":{\"code\":\"VALIDATION_ERROR\",\"message\":\"Invalid request\",\"details\":{\"formErrors\":[],\"fieldErrors\":{\"heartbeat_health_changed_at\":[\"Expected string, received date\"],\"created_at\":[\"Expected string, received date\"],\"updated_at\":[\"Expected string, received date\"]}},\"correlationId\":\"d3b94f5d-5916-491b-80fd-4e1838c47b93\"}}: expected 400 to be 200 // Object.is equality"
+      ],
+      "archive": {
+        "path": "run-011-output.zip",
+        "bytes": 23083,
+        "sha256": "83a9ee7d8eb8fd68caeb5f99de23c68bd9747db2e9926a29e469b511c2073e4f"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-012.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 68.54232335090637,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  2 failed (2)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ MCP error -32001: Request timed out",
+        "→ Unexpected server error",
+        "Test Files  1 failed (1)",
+        "Tests  2 failed (2)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > 有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段",
+        "McpError: MCP error -32001: Request timed out",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > 投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt",
+        "WorkMeshSdkError: Unexpected server error",
+        "894|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…",
+        "Error: Tool get_workspace_guidance is already registered"
+      ],
+      "archive": {
+        "path": "run-012-output.zip",
+        "bytes": 2138,
+        "sha256": "a7ce0237c117f5216e566b94235dc767343bd1db49e2534c6453140b114c6898"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-013.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "--filter",
+        "@workmesh/contracts",
+        "test"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 5.449885129928589,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  2 failed | 25 passed (27)",
+        "Tests  2 failed | 205 passed (207)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected 'current_session' to be 'current_session_without_target' // Object.is equality",
+        "→ expected [ { method: 'GET', …(17) }, …(278) ] to have a length of 278 but got 279",
+        "FAIL  src/agent-discovery.test.ts > 已审发现规则的已知门禁和身份投影 > verify/claim不凭返回sessionId要求目标bridge；optional room保留current路径",
+        "AssertionError: expected 'current_session' to be 'current_session_without_target' // Object.is equality",
+        "FAIL  src/route-policy.test.ts > routePolicyManifest > is the unique serializable declaration for every runtime route",
+        "AssertionError: expected [ { method: 'GET', …(17) }, …(278) ] to have a length of 278 but got 279"
+      ],
+      "archive": {
+        "path": "run-013-output.zip",
+        "bytes": 3535,
+        "sha256": "833c4065eb40d7f16d45abcdb3ddf8e2a450892b274f67330ead8ba71785c63b"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-014.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 53.07487201690674,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-014-output.zip",
+        "bytes": 1259,
+        "sha256": "b1b5da932cf01b60a35f62fd4e1436e5583912ba87d5e81215bb12133dd26157"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-015.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 72.20620250701904,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 1 passed (2)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ Command failed: C:\\nvm4w\\nodejs\\node.exe C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\apps\\agent-runner\\node_modules\\tsx\\dist\\cli.mjs C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\apps\\agent-runner\\src\\run-session.ts --once",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > 有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段",
+        "Error: Command failed: C:\\nvm4w\\nodejs\\node.exe C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\apps\\agent-runner\\node_modules\\tsx\\dist\\cli.mjs C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\apps\\agent-runner\\src\\run-session.ts --once",
+        "TypeError: Cannot read properties of undefined (reading 'id')"
+      ],
+      "archive": {
+        "path": "run-015-output.zip",
+        "bytes": 2211,
+        "sha256": "5513253be34906463b94f4f361b21aeec81eb35409f593c29d4e45c1b988ae6c"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-016.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 26.483878135681152,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/contracts:test:  Test Files  27 passed (27)",
+        "@workmesh/contracts:test:       Tests  207 passed (207)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/agent-runner:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/agent-runner:test:  Test Files  1 failed | 12 passed (13)",
+        "@workmesh/agent-runner:test:       Tests  1 failed | 66 passed (67)"
+      ],
+      "firstFailureLines": [
+        "@workmesh/agent-runner:test:      → expected [ …(28) ] to deeply equal []",
+        "@workmesh/agent-runner:test:  FAIL  src/permission-matrix.test.ts > W11 permission-denial matrix > keeps every registered tool inside the matrix",
+        "@workmesh/agent-runner:test: AssertionError: expected [ …(28) ] to deeply equal []"
+      ],
+      "archive": {
+        "path": "run-016-output.zip",
+        "bytes": 5550,
+        "sha256": "41e06e89d9c5a59197b87e5d130d227b5c077430e7849ae25b5e538a7c5143eb"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-017.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 15.709024429321289,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  2 passed (2)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-017-output.zip",
+        "bytes": 1295,
+        "sha256": "d53d1c8f90732e8fc3e246c54ad157a36e89e17d08d880ddd0e277feb1b679d8"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-018.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 18.94896364212036,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 11 passed (12)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791598094176,\"pid\":36580,\"hostname\":\"DarkFlame\",\"reqId\":\"a0db1156-9d3b-4585-a6b7-5516484b53fe\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "→ new row for relation \"agent_sessions\" violates check constraint \"agent_sessions_check1\"",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+      ],
+      "archive": {
+        "path": "run-018-output.zip",
+        "bytes": 34629,
+        "sha256": "5be887eb77f3ac99ed449272c3a81f2f5163694b6d81f8476e6f189d9fd76cbf"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-019.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 130.3861105442047,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "@workmesh/contracts:test:  Test Files  28 passed (28)",
+        "@workmesh/contracts:test:       Tests  210 passed (210)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  52 passed (52)",
+        "@workmesh/agent-runner:test:  Test Files  13 passed (13)",
+        "@workmesh/agent-runner:test:       Tests  67 passed (67)",
+        "@workmesh/db:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/db:test:  Test Files  1 failed | 7 passed (8)",
+        "@workmesh/db:test:       Tests  1 failed | 27 passed (28)"
+      ],
+      "firstFailureLines": [
+        "@workmesh/db:test:      → expected [ Array(115) ] to deeply equal [ Array(115) ]",
+        "@workmesh/db:test:  FAIL  src/agent-lock-order-inventory.test.ts > Agent authority lock-order inventory > manifests every ranked SQL statement with its transaction owner and rank sequence",
+        "@workmesh/db:test: AssertionError: expected [ Array(115) ] to deeply equal [ Array(115) ]"
+      ],
+      "archive": {
+        "path": "run-019-output.zip",
+        "bytes": 14574,
+        "sha256": "9c0c93afa4489a09bdb054d989a80b73561abe813d5a1f7e3b67cfa3ea0030ce"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-020.json",
+      "argv": [
+        "C:\\nvm4w\\nodejs\\pnpm.cmd",
+        "--filter",
+        "@workmesh/db",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 3.918023109436035,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  8 passed (8)",
+        "Tests  28 passed (28)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-020-output.zip",
+        "bytes": 12911,
+        "sha256": "0cb034c15729ddc6912710fb64ee31efc7d4a73536f103e515f6f60a3d11d383"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-021.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 15.982138395309448,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 1 passed (2)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ REQUIRED_CHILDREN_INCOMPLETE",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > 投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+      ],
+      "archive": {
+        "path": "run-021-output.zip",
+        "bytes": 43422,
+        "sha256": "c43b0fcc769e5cfa91048875ad6b5c7458589680c8ad4ddbccf7db391bdc20ee"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-022.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 1.0368804931640625,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯",
+        "Error: Build failed with 1 error:"
+      ],
+      "archive": {
+        "path": "run-022-output.zip",
+        "bytes": 42346,
+        "sha256": "80e5afb58102a22888cf9fbc50e1f89b28e5e1fb8c6568927fe0f9a0bff2539e"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-023.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 14.262856006622314,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.ts(62,77): error TS2339: Property 'length' does not exist on type 'never'.",
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.ts(62,100): error TS2339: Property 'slice' does not exist on type 'never'.",
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.ts(62,118): error TS7006: Parameter 'item' implicitly has an 'any' type.",
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.ts(540,42): error TS2783: 'fromSessionId' is specified more than once, so this usage will be overwritten."
+      ],
+      "archive": {
+        "path": "run-023-output.zip",
+        "bytes": 42973,
+        "sha256": "a9af9d481d60805969bbc1a4f71fe093fecef1fd7840e974b79410cbede1ea07"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-024.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 7.511410713195801,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-024-output.zip",
+        "bytes": 41746,
+        "sha256": "ca410abb285c91cee400cfe4665094a9a7dc67a3ba8dd7fab39c11eccd0c7f98"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-025.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 22.427350282669067,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  2 failed | 13 passed (15)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791599232166,\"pid\":41692,\"hostname\":\"DarkFlame\",\"reqId\":\"2aa7ab6e-432d-4321-9266-5003bb4e21f0\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "→ IMMUTABLE_STAGE1_FACT",
+        "→ inconsistent types deduced for parameter $2",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+      ],
+      "archive": {
+        "path": "run-025-output.zip",
+        "bytes": 105621,
+        "sha256": "592f59722c2753d355cb6014ed3add1d65f6393ad53e31b662ad7e8206b985ea"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-026.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 17.50520896911621,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  2 passed (2)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-026-output.zip",
+        "bytes": 68628,
+        "sha256": "02dc641ade3f34cd9dd4879e5a519d4b6b6f2df56628b1f3db8c31011d2e2adc"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-027.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "typecheck"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 11.490614175796509,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "src/planning-collaboration.conformance.test.ts(142,63): error TS2345: Argument of type '{ summary: string; noArtifactReason: string; }' is not assignable to parameter of type '{ artifactIds: string[]; summary: string; checks: { status: \"failed\" | \"skipped\" | \"passed\"; name: string; summary: string; command?: string | undefined; }[]; limitations: string[]; noArtifactReason?: string | undefined; }'."
+      ],
+      "archive": {
+        "path": "run-027-output.zip",
+        "bytes": 67969,
+        "sha256": "11767a8803b3f24911fde861826a3b4f78c727fdc164bd6fdc6df9a4be09315c"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-028.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 23.174232721328735,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 5 passed (6)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ {\"error\":{\"code\":\"MESSAGE_RECIPIENT_OUT_OF_SCOPE\",\"message\":\"Session Work Rooms require exact Session recipients\",\"correlationId\":\"50ec450b-87e4-4882-bf23-784e3b4631e8\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}: expected true not to be true // Object.is equality",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续",
+        "AssertionError: {\"error\":{\"code\":\"MESSAGE_RECIPIENT_OUT_OF_SCOPE\",\"message\":\"Session Work Rooms require exact Session recipients\",\"correlationId\":\"50ec450b-87e4-4882-bf23-784e3b4631e8\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}: expected true not to be true // Object.is equality"
+      ],
+      "archive": {
+        "path": "run-028-output.zip",
+        "bytes": 101193,
+        "sha256": "3774e0a38f74140a4ee63899d57e59b96011cd744aa7f7c56b275f11f8a7bf73"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-029.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 21.088778972625732,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 14 passed (15)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791599477548,\"pid\":41116,\"hostname\":\"DarkFlame\",\"reqId\":\"38d905eb-3609-4fb8-9057-77dda2001a30\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "→ expected 400 to be 409 // Object.is equality",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界",
+        "AssertionError: expected 400 to be 409 // Object.is equality"
+      ],
+      "archive": {
+        "path": "run-029-output.zip",
+        "bytes": 137455,
+        "sha256": "051924d240b50d138391584ffd53d507bcae927f61d0a1844440d5207b54df1e"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-030.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 28.047075986862183,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 5 passed (6)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected [ Array(3) ] to deeply equal ArrayContaining{…}",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续",
+        "AssertionError: expected [ Array(3) ] to deeply equal ArrayContaining{…}"
+      ],
+      "archive": {
+        "path": "run-030-output.zip",
+        "bytes": 126604,
+        "sha256": "e50e78907ce78b18f952107bdd2b7ec2e55dc7e833f5d7a54e9a22d8a0c4be99"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-031.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/agent-runner",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 9.415696859359741,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  13 passed (13)",
+        "Tests  67 passed (67)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-031-output.zip",
+        "bytes": 124310,
+        "sha256": "6784cd93f5ebbfa1fc2db04d6b8e35d87c831b39334309caaef138fe0e92df67"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-032.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 1.5659594535827637,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-032-output.zip",
+        "bytes": 124724,
+        "sha256": "f0ea64b8937b46b4ae7f6ee48296de9f4247604297bc598c3fad0ccf0862012d"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-033.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 23.99510169029236,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 5 passed (6)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected [ Array(3) ] to deeply equal [ Array(3) ]",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续",
+        "AssertionError: expected [ Array(3) ] to deeply equal [ Array(3) ]"
+      ],
+      "archive": {
+        "path": "run-033-output.zip",
+        "bytes": 152516,
+        "sha256": "d737e08652d3aa1a73d0a48806a596cd1985af6445f9cadcf3f91e15a6b5a8b6"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-034.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 8.549651145935059,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(32,62): error TS7006: Parameter '_method' implicitly has an 'any' type.",
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(32,70): error TS7006: Parameter 'path' implicitly has an 'any' type.",
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(48,60): error TS7006: Parameter '_method' implicitly has an 'any' type.",
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(48,68): error TS7006: Parameter 'path' implicitly has an 'any' type.",
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(48,73): error TS7006: Parameter 'body' implicitly has an 'any' type."
+      ],
+      "archive": {
+        "path": "run-034-output.zip",
+        "bytes": 151774,
+        "sha256": "ba8f66e14c1c1d0cf0d5ea54f8820e48b18d53ef17972647e6f7ed0eff45e257"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-035.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 19.618438005447388,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  15 passed (15)"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791599953063,\"pid\":33880,\"hostname\":\"DarkFlame\",\"reqId\":\"cff8c3a2-1da1-44c7-9725-bc00f6248f7e\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}"
+      ],
+      "archive": {
+        "path": "run-035-output.zip",
+        "bytes": 197322,
+        "sha256": "c7ac236fca20ced6bac16b4e0e052511a3ede15b3976d51cd2859e3194ad2015"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-036.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 26.584937572479248,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 5 passed (6)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected { status: 'accepted' } to deeply equal { status: 'completed' }",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续",
+        "AssertionError: expected { status: 'accepted' } to deeply equal { status: 'completed' }"
+      ],
+      "archive": {
+        "path": "run-036-output.zip",
+        "bytes": 185502,
+        "sha256": "50022426b85ba1dcce43a1b7f7adce27404151cce70d36f1ad3f033c02dc2998"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-037.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/db",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 3.828681230545044,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  8 passed (8)",
+        "Tests  28 passed (28)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-037-output.zip",
+        "bytes": 183883,
+        "sha256": "fcced79b4631f55822d79b26024836564a839b30210f53483c5dd5a95ccb73d4"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-038.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 40.997504234313965,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "@workmesh/conformance:typecheck: src/planning-collaboration.conformance.test.ts(142,63): error TS2345: Argument of type '{ summary: string; noArtifactReason: string; }' is not assignable to parameter of type '{ artifactIds: string[]; summary: string; checks: { status: \"failed\" | \"skipped\" | \"passed\"; name: string; summary: string; command?: string | undefined; }[]; limitations: string[]; noArtifactReason?: string | undefined; }'."
+      ],
+      "archive": {
+        "path": "run-038-output.zip",
+        "bytes": 184888,
+        "sha256": "f5c1100f1b7bbf6894568774d3f0a2972c6501ba66aaa18a824ef1eafd13ec82"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-039.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:integration"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 556.9084577560425,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  17 passed (17)",
+        "Tests  81 passed (81)",
+        "Test Files  27 passed (27)",
+        "Tests  262 passed | 1 skipped (263)",
+        "Test Files  3 passed (3)",
+        "Tests  35 passed (35)",
+        "Test Files  1 failed | 7 passed | 1 skipped (9)",
+        "Tests  3 failed | 117 passed | 1 skipped (121)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791600150455,\"pid\":22240,\"hostname\":\"DarkFlame\",\"reqId\":\"0cd0c829-f9ab-4d0b-8d9b-4db2b18b2b7f\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "{\"level\":50,\"time\":1791600169714,\"pid\":38780,\"hostname\":\"DarkFlame\",\"reqId\":\"77c43e83-d6ac-4814-a05e-7358c37fe17a\",\"err\":{\"type\":\"DomainError\",\"message\":\"The Agent Session authority was revoked, stopped, or expired\",\"stack\":\"Error: The Agent Session authority was revoked, stopped, or expired\\n    at assertEventAudienceActive (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\authz\\\\event-audience.ts:539:11)\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at Object.list (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\realtime\\\\event-reader.ts:135:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\realtime\\\\routes.ts:295:26\",\"code\":\"SESSION_NOT_ACTIVE\"},\"msg\":\"SSE stream failed\"}",
+        "→ new row for relation \"agent_definitions\" violates check constraint \"agent_definitions_check\"",
+        "→ new row for relation \"agent_definitions\" violates check constraint \"agent_definitions_check\"",
+        "→ new row for relation \"agent_definitions\" violates check constraint \"agent_definitions_check\"",
+        "FAIL  integration/stage1-lifecycle.integration.test.ts > stage 1 worker durability > treats receiver 409 as delivered and the durable ledger rejects duplicate delivery ids",
+        "FAIL  integration/stage1-lifecycle.integration.test.ts > stage 1 worker durability > retries, reclaims after a crash, and dead-letters bounded failures without persisting receiver errors",
+        "FAIL  integration/stage1-lifecycle.integration.test.ts > stage 1 worker durability > dead-letters a private target without sending and permits the explicit private-network override"
+      ],
+      "archive": {
+        "path": "run-039-output.zip",
+        "bytes": 743898,
+        "sha256": "0f2e5e5e9b7da0d3f0018e00d14d93ad918dedbf693d566a6fda0fe466278a79"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-040.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 73.6226270198822,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/contracts:test:  Test Files  28 passed (28)",
+        "@workmesh/contracts:test:       Tests  210 passed (210)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/agent-runner:test:  Test Files  13 passed (13)",
+        "@workmesh/agent-runner:test:       Tests  69 passed (69)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/mcp:test: ⎯⎯⎯⎯⎯⎯ Failed Tests 33 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/mcp:test:  Test Files  2 failed | 2 passed (4)",
+        "@workmesh/mcp:test:       Tests  33 failed | 17 passed (50)"
+      ],
+      "firstFailureLines": [
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → expected [ …(151) ] to deeply equal [ …(114) ]",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:      → Cannot read properties of undefined (reading 'bind')",
+        "@workmesh/mcp:test:  FAIL  src/execution-adapters.test.ts > M1 MCP execution and lease adapters > advertises actual named reads and forwards opaque cursors without exposing Human controls",
+        "@workmesh/mcp:test: TypeError: Cannot read properties of undefined (reading 'bind')"
+      ],
+      "archive": {
+        "path": "run-040-output.zip",
+        "bytes": 193660,
+        "sha256": "dec571cf33d923546849f57d280b362d7912b2104c376bc804cff6e74518a80b"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-041.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 18.216585636138916,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "@workmesh/mcp:lint: src/index.ts(330,565): error TS2345: Argument of type '{ sessionId: string; workItemId: string | undefined; type: \"code_review\" | \"branch\" | \"commit\" | \"diff\" | \"pull_request\" | \"test_report\" | \"build\" | \"preview\" | \"document\" | \"link\" | \"file\" | \"other\"; ... 4 more ...; metadata: Record<...> | undefined; }' is not assignable to parameter of type 'ArtifactInput'."
+      ],
+      "archive": {
+        "path": "run-041-output.zip",
+        "bytes": 184753,
+        "sha256": "d56520d0999abfef52f5a0ce078497be113b73152062637c30ce5c71f9763d9e"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-042.json",
+      "argv": [
+        "python",
+        "scripts/generate-agent-discovery.py"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 0.18587851524353027,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-042-output.zip",
+        "bytes": 183350,
+        "sha256": "e9ed126291c4a24a36f6f99661c9b7fc30d3d55b840647aafc1d5a16cfc8a6b7"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-043.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 1.6202490329742432,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-043-output.zip",
+        "bytes": 183493,
+        "sha256": "aeb545b3a7be6987245979536faf9eebc18e61a4af8032f2ef5b09399ee105b0"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-044.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/mcp",
+        "test"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 3.0871031284332275,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed | 3 passed (4)",
+        "Tests  1 failed | 49 passed (50)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected [ …(151) ] to deeply equal [ …(128) ]",
+        "FAIL  src/index.test.ts > WorkMesh MCP adapter > binds every MCP resource and tool to a REST operation policy",
+        "AssertionError: expected [ …(151) ] to deeply equal [ …(128) ]"
+      ],
+      "archive": {
+        "path": "run-044-output.zip",
+        "bytes": 218001,
+        "sha256": "38db3cab183e803a87033ba854a8e7945c57eedbcb575f48df570ed58ac29051"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-045.json",
+      "argv": [
+        "python",
+        "scripts/generate-agent-discovery.py"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 0.16115307807922363,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-045-output.zip",
+        "bytes": 235767,
+        "sha256": "8bce554c14122ab725d533cad7819b2b1a21e89156a7dae64c1515e118e21ca5"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-046.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/mcp",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 2.9736905097961426,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  4 passed (4)",
+        "Tests  50 passed (50)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-046-output.zip",
+        "bytes": 236093,
+        "sha256": "03d73bad965a1eb5444ad4a150443100713d1f33991fd691b4208c7d68d223ac"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-047.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 22.069072723388672,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 15 passed (16)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791600446106,\"pid\":37544,\"hostname\":\"DarkFlame\",\"reqId\":\"efcc5a93-6d36-4d31-aa90-4dc5ae53b90f\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "→ expected 400 to be 200 // Object.is equality",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据",
+        "AssertionError: expected 400 to be 200 // Object.is equality"
+      ],
+      "archive": {
+        "path": "run-047-output.zip",
+        "bytes": 350460,
+        "sha256": "d235928669555d647e0959acf5f2a1c918eaa5251d6932fbae1b754cd3f1c7cd"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-048.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/db",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 3.867339849472046,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  8 passed (8)",
+        "Tests  28 passed (28)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-048-output.zip",
+        "bytes": 349488,
+        "sha256": "857046e5932f2b6d3d585b6aabb935b1145717dccb164ae9a2ce40aca26e7bf5"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-049.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 12.36034345626831,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "@workmesh/agent-sdk:typecheck: src/index.ts(185,80): error TS2503: Cannot find namespace 'z'."
+      ],
+      "archive": {
+        "path": "run-049-output.zip",
+        "bytes": 517543,
+        "sha256": "edb1084481bc429796eaec8032d270884f6239a740b62368ad75c9c6874052b5"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-050.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 25.884976863861084,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  6 passed (6)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-050-output.zip",
+        "bytes": 560505,
+        "sha256": "ca1a250c9aebcabd81124cdce520a9d6215020a1fa0d4aa0b4d2424fef0ecd6b"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-051.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 27.40674924850464,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 15 passed (16)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791600575119,\"pid\":31096,\"hostname\":\"DarkFlame\",\"reqId\":\"8883fc68-d530-4409-ade4-d1bc619c3466\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "→ column \"created_by_actor_id\" of relation \"artifacts\" does not exist",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+      ],
+      "archive": {
+        "path": "run-051-output.zip",
+        "bytes": 599296,
+        "sha256": "16bc140fed78d3d7a01db11f8d22580309bb3788acab4385f5e1cdff2ffc4965"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-052.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 9.774975538253784,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/contracts:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/contracts:test:  Test Files  1 failed | 27 passed (28)",
+        "@workmesh/contracts:test:       Tests  1 failed | 209 passed (210)"
+      ],
+      "firstFailureLines": [
+        "@workmesh/contracts:test:      → expected { …(8) } to match object { supported: true, …(3) }",
+        "@workmesh/contracts:test:  FAIL  src/client-profile-contract.test.ts > Agent Collaboration Client Profile contract > derives support from the route, feature, and MCP binding registries",
+        "@workmesh/contracts:test: AssertionError: expected { …(8) } to match object { supported: true, …(3) }"
+      ],
+      "archive": {
+        "path": "run-052-output.zip",
+        "bytes": 561998,
+        "sha256": "a3e24f0e76383083e2c6fa86600f5533eae604a972014d5dde5df63074a7bba8"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-053.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 21.321951627731323,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  16 passed (16)"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791600665144,\"pid\":40600,\"hostname\":\"DarkFlame\",\"reqId\":\"2f373345-3b89-462f-b145-db4703ebf08f\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}"
+      ],
+      "archive": {
+        "path": "run-053-output.zip",
+        "bytes": 598661,
+        "sha256": "fad394643e81f767d2e2e8277899b3801f1494a361f6160b14b52df3f9b28a0d"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-054.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage1-lifecycle.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 11.059670209884644,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  3 failed | 10 passed (13)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ there is no unique or exclusion constraint matching the ON CONFLICT specification",
+        "→ there is no unique or exclusion constraint matching the ON CONFLICT specification",
+        "→ there is no unique or exclusion constraint matching the ON CONFLICT specification",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage1-lifecycle.integration.test.ts > stage 1 worker durability > treats receiver 409 as delivered and the durable ledger rejects duplicate delivery ids",
+        "FAIL  integration/stage1-lifecycle.integration.test.ts > stage 1 worker durability > retries, reclaims after a crash, and dead-letters bounded failures without persisting receiver errors",
+        "FAIL  integration/stage1-lifecycle.integration.test.ts > stage 1 worker durability > dead-letters a private target without sending and permits the explicit private-network override"
+      ],
+      "archive": {
+        "path": "run-054-output.zip",
+        "bytes": 560314,
+        "sha256": "9477b3e9c032077d091c629fd1cdb063a8d8429a2bfe3519be1cd8f18d351ca0"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-055.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 26.595723867416382,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 6 passed (7)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ invalid input value for enum status_category: \"unstarted\"",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+      ],
+      "archive": {
+        "path": "run-055-output.zip",
+        "bytes": 594520,
+        "sha256": "9e71a03c5388f0b0fb5b5bea03cc10c7e1aab0a381fa295213291327d581c276"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-056.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 113.34301853179932,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-056-output.zip",
+        "bytes": 593167,
+        "sha256": "1bb601cdb9e38c65f6a5b8c18466e85cff3123cd19075ca5ebcdbc456e69bdb2"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-057.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 120.31890487670898,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/contracts:test:  Test Files  28 passed (28)",
+        "@workmesh/contracts:test:       Tests  210 passed (210)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-runner:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+        "@workmesh/agent-runner:test:  Test Files  1 failed | 12 passed (13)",
+        "@workmesh/agent-runner:test:       Tests  1 failed | 68 passed (69)"
+      ],
+      "firstFailureLines": [
+        "@workmesh/agent-runner:test:      → RUNNER_ABORTED",
+        "@workmesh/agent-runner:test:  FAIL  src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待",
+        "@workmesh/agent-runner:test: Error: RUNNER_ABORTED"
+      ],
+      "archive": {
+        "path": "run-057-output.zip",
+        "bytes": 605024,
+        "sha256": "9bd5bd47a83589dda4c3bc8bae6abbdbbd774de77d16b4a11b7f38a5bcb0b43e"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-058.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 27.28607964515686,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  7 passed (7)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-058-output.zip",
+        "bytes": 628618,
+        "sha256": "fc35c8969770ab2544f2fa2e25a7e0e1411b54112188aed4ca3e86d08d4444c9"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-059.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "integration/stage1-lifecycle.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 1.0726070404052734,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯",
+        "Error: Build failed with 1 error:"
+      ],
+      "archive": {
+        "path": "run-059-output.zip",
+        "bytes": 602116,
+        "sha256": "846587d532cf65aa265bdf918d372d98b356fe71451007fc1506726a32c7ed30"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-060.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/agent-runner",
+        "exec",
+        "vitest",
+        "run",
+        "src/wait-pi.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 4.146651268005371,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed (1)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-060-output.zip",
+        "bytes": 627500,
+        "sha256": "9076c3daf7a48e0f7b828c7b1f154641bd1239717c6dd1efecffe248a4856ddb"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-061.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage1-lifecycle.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 11.139413595199585,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  2 failed | 11 passed (13)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ duplicate key value violates unique constraint \"agent_session_tokens_one_live_exchange\"",
+        "→ duplicate key value violates unique constraint \"agent_session_tokens_one_live_exchange\"",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage1-lifecycle.integration.test.ts > stage 1 worker durability > retries, reclaims after a crash, and dead-letters bounded failures without persisting receiver errors",
+        "FAIL  integration/stage1-lifecycle.integration.test.ts > stage 1 worker durability > dead-letters a private target without sending and permits the explicit private-network override"
+      ],
+      "archive": {
+        "path": "run-061-output.zip",
+        "bytes": 628299,
+        "sha256": "a51827285fcf727d0bff51e1c22f849bf87bd80c15cf0a2e9055c7d1f771800e"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-062.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/db",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 3.866607904434204,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  8 passed (8)",
+        "Tests  28 passed (28)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-062-output.zip",
+        "bytes": 627493,
+        "sha256": "72d0089b93bbde41c5b66ceba649f3f69598a2d609f8c2566045bd8bbd6494ad"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-063.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/worker",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage1-lifecycle.integration.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 11.206786155700684,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  13 passed (13)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-063-output.zip",
+        "bytes": 627533,
+        "sha256": "cb7c689a84a0b5f69c16f965340039848d02729e4ada5d55a9ed434011d07476"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-064.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 187.3218128681183,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/contracts:test:  Test Files  28 passed (28)",
+        "@workmesh/contracts:test:       Tests  210 passed (210)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/agent-runner:test:  Test Files  13 passed (13)",
+        "@workmesh/agent-runner:test:       Tests  69 passed (69)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  180 passed (180)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-064-output.zip",
+        "bytes": 642184,
+        "sha256": "12abb2f374428ccf24fbb8c5c7f17c3f81a368fc6c0aef48b9ddb6e48c20fb68"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-065.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:integration"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 522.7765414714813,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  17 passed (17)",
+        "Tests  81 passed (81)",
+        "Test Files  27 passed (27)",
+        "Tests  263 passed | 1 skipped (264)",
+        "Test Files  1 failed | 2 passed (3)",
+        "Tests  1 failed | 35 passed (36)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791601524474,\"pid\":39884,\"hostname\":\"DarkFlame\",\"reqId\":\"3ea8dfbf-025d-400f-93f1-4892609c6491\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.js:1583:19\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.js:217:26\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "{\"level\":50,\"time\":1791601568546,\"pid\":37944,\"hostname\":\"DarkFlame\",\"reqId\":\"7e031388-8f3b-4b68-a6e0-ed4fd0bde62a\",\"err\":{\"type\":\"DomainError\",\"message\":\"The Agent Session authority was revoked, stopped, or expired\",\"stack\":\"Error: The Agent Session authority was revoked, stopped, or expired\\n    at assertEventAudienceActive (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\authz\\\\event-audience.js:506:15)\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at Object.list (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\realtime\\\\event-reader.js:64:9)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\realtime\\\\routes.js:201:42\",\"code\":\"SESSION_NOT_ACTIVE\"},\"msg\":\"SSE stream failed\"}",
+        "→ expected [ …(8) ] to have a length of 5 but got 8",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝",
+        "AssertionError: expected [ …(8) ] to have a length of 5 but got 8"
+      ],
+      "archive": {
+        "path": "run-065-output.zip",
+        "bytes": 993973,
+        "sha256": "021bb71641f9a990e57f17f793eb37e37c30145e274ffb76d4b612513c1a78cd"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-066.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 124.92201662063599,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-066-output.zip",
+        "bytes": 628006,
+        "sha256": "39269ddf78389c438a9fc1585d6c3c47caef17a33df822eef27b5cf575168bb4"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-067.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "build"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 103.44660949707031,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "@workmesh/conformance:build: ../../apps/api/src/agent/child-session-status.ts(6,32): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/pagination.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/commands.ts(27,43): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/auth-idempotency.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/commands.ts(28,55): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/heartbeat-idempotency.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/commands.ts(31,51): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/guidance.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/commands.ts(35,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/connection-installation-token.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/commands.ts(36,69): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/agent/approval-projection.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/execution-origin.ts(4,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/agent/guard.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/execution-result.ts(5,31): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/agent/types.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/execution-result.ts(6,44): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/live-read-authorization.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/routes.ts(2,40): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/agent/child-session-status.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/routes.ts(16,27): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/agent/commands.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/agent/routes.ts(21,41): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/work-item-executors.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/auth-rate-limit/limiter.ts(8,41): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/auth-rate-limit/redis-store.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/auth-rate-limit/plugin.ts(7,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/auth-rate-limit/inventory.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/auth-rate-limit/plugin.ts(8,40): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/auth-rate-limit/client-ip.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/auth-rate-limit/plugin.ts(13,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/auth-rate-limit/limiter.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/collaboration/queue-counts.ts(4,54): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/human-attention/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/collaboration/routes.ts(14,35): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/agent/child-session-policy.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/commands.ts(1,36): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/agent/execution-origin.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/delivery/routes.ts(46,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/delivery/repository-configuration.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/guidance.ts(20,37): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/documents.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/human-attention/routes.ts(23,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/human-attention/projection.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/realtime/coordinator.ts(6,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/realtime/wake-source.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/realtime/event-reader.ts(11,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/authz/event-audience.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/realtime/event-reader.ts(12,59): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/realtime/cursor.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/recovery/routes.ts(20,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/recovery/projection.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/server.ts(1,48): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/agent/execution-result.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/server.ts(55,8): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/commands.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/server.ts(56,37): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/agent/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/server.ts(57,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/collaboration/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/server.ts(58,37): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/inbox/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/server.ts(59,55): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/collaboration/queue-counts.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/server.ts(61,45): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/control-center/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/server.ts(62,40): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/recovery/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files.",
+        "@workmesh/conformance:build: ../../apps/api/src/server.ts(63,40): error TS6059: File 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/apps/api/src/delivery/routes.ts' is not under 'rootDir' 'C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe/packages/conformance/src'. 'rootDir' is expected to contain all source files."
+      ],
+      "archive": {
+        "path": "run-067-output.zip",
+        "bytes": 631589,
+        "sha256": "4e03a4c99699acc1264f0b2501f045852d28ac7fb583ecfbdd26e352b326454b"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-068.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:route-policy"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 2.5027928352355957,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-068-output.zip",
+        "bytes": 627104,
+        "sha256": "296f9befc514f57a960408bdaaac760a6558534d86fcfe301928d17cb4d3429c"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-069.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "ci:test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 1.228074550628662,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "ℹ tests 16",
+        "ℹ pass 16",
+        "ℹ fail 0",
+        "ℹ skipped 0"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-069-output.zip",
+        "bytes": 627905,
+        "sha256": "0dd01ef179fdd4c9eda6fa517784dce75e32fc11967c9ed390cc803df43ecf86"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-070.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "ci:validate"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 2.4222991466522217,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "ℹ tests 15",
+        "ℹ pass 15",
+        "ℹ fail 0",
+        "ℹ skipped 0"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-070-output.zip",
+        "bytes": 627856,
+        "sha256": "b74b6975d8d4b011d8a07d379cd9a322a2099a8c279b25625f9d3140327c4829"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-071.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:workmesh-skill"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 0.5263209342956543,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-071-output.zip",
+        "bytes": 627141,
+        "sha256": "659f2d2c9043872d58718d98c7745957bd35742fe479798f3979f2af98dcc879"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-072.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:runner-skill"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 0.5290873050689697,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-072-output.zip",
+        "bytes": 627143,
+        "sha256": "3195a5dd406c0b328a651adae565f787a2d105a2e0bce7d0385aa2a531dc2f05"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-073.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "generate:runner-skill"
+      ],
+      "nativeExit": null,
+      "status": "running",
+      "runtimeSeconds": null,
+      "sourceUnchanged": null,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": null,
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-074.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 8.214977741241455,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(347,57): error TS7006: Parameter '_method' implicitly has an 'any' type.",
+        "@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(347,65): error TS7006: Parameter 'path' implicitly has an 'any' type."
+      ],
+      "archive": {
+        "path": "run-074-output.zip",
+        "bytes": 810279,
+        "sha256": "4d5c2f4743f3ec2183145d05da9bdad5a324b763dcf628a9c4a34c97f2801137"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-075.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/agent-runner",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 7.761702537536621,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  13 passed (13)",
+        "Tests  71 passed (71)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-075-output.zip",
+        "bytes": 810856,
+        "sha256": "90cf6b7fde38937020533118dcfc6969b174b07c8a15bdfaafbeed0689199727"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-076.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 40.463900566101074,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  2 failed | 7 passed (9)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected true not to be true // Object.is equality",
+        "→ Unexpected server error",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝",
+        "AssertionError: expected true not to be true // Object.is equality",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败",
+        "WorkMeshSdkError: Unexpected server error",
+        "894|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…"
+      ],
+      "archive": {
+        "path": "run-076-output.zip",
+        "bytes": 891364,
+        "sha256": "134a8151e0925abeb53ac8f9cb3f1d9d052eb4b4ec03c5763444aa2eca3efbfc"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-077.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 29.885347366333008,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  3 failed | 19 passed (22)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791603230727,\"pid\":40388,\"hostname\":\"DarkFlame\",\"reqId\":\"e5cc610f-e8a0-41b8-978f-e05468c2f05f\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "→ new row for relation \"artifacts\" violates check constraint \"artifacts_check\"",
+        "→ expected 400 to be 200 // Object.is equality",
+        "→ expected 400 to be 200 // Object.is equality",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待",
+        "AssertionError: expected 400 to be 200 // Object.is equality",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算",
+        "AssertionError: expected 400 to be 200 // Object.is equality"
+      ],
+      "archive": {
+        "path": "run-077-output.zip",
+        "bytes": 948709,
+        "sha256": "031d024b25a01eb382c39e9828a7453f4a86e01b3a6d99e83b2d79f18596bc70"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-078.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 31.91843557357788,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-078-output.zip",
+        "bytes": 889827,
+        "sha256": "419d637276f50dd88554091930b17eb8e4e78ac041e12d67002cf4236048cfd4"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-079.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 45.917803049087524,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  2 failed | 20 passed (22)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791603395669,\"pid\":4948,\"hostname\":\"DarkFlame\",\"reqId\":\"945dcf94-339c-432e-9d0f-0bfce14c370c\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "→ IMMUTABLE_STAGE1_FACT",
+        "→ M2 barrier reply-versus-human-resolve: expected 2 real lock waiters, got 1",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算",
+        "Error: M2 barrier reply-versus-human-resolve: expected 2 real lock waiters, got 1"
+      ],
+      "archive": {
+        "path": "run-079-output.zip",
+        "bytes": 1036452,
+        "sha256": "ddc9a3c9075b68cf0566b473b2c3c385221118f26b60d231f46a6bd53011feb0"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-080.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 60.523322105407715,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 8 passed (9)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected { state: 'executing', …(3) } to match object { state: 'executing', …(3) }",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败",
+        "AssertionError: expected { state: 'executing', …(3) } to match object { state: 'executing', …(3) }"
+      ],
+      "archive": {
+        "path": "run-080-output.zip",
+        "bytes": 1018560,
+        "sha256": "89bc889cb26f169ea5a869b6ce5e0300cf9eba8e55e800453754296ae025142a"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-081.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "generate:runner-skill"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 0.5150928497314453,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-081-output.zip",
+        "bytes": 1015282,
+        "sha256": "936e468f3b8b32b2ea3e3a77df1854a63a621e19a874ef1852ace03b6448c8c1"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-082.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 31.21051597595215,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  2 failed | 20 passed (22)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791603551321,\"pid\":13204,\"hostname\":\"DarkFlame\",\"reqId\":\"2f5713e1-9219-4971-8c70-8adfed73c02c\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:387:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "→ expected 400 to be 200 // Object.is equality",
+        "→ expected [ 200, 500 ] to deeply equal [ 200, 409 ]",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代",
+        "AssertionError: expected 400 to be 200 // Object.is equality",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算",
+        "AssertionError: expected [ 200, 500 ] to deeply equal [ 200, 409 ]"
+      ],
+      "archive": {
+        "path": "run-082-output.zip",
+        "bytes": 1098763,
+        "sha256": "290cdf91a86cb45aa2241d857ff7c79467fba122a0df0e43d7f73555f90be25f"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-083.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 57.12457013130188,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 8 passed (9)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected { state: 'executing', …(3) } to match object { state: 'stopping', …(3) }",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败",
+        "AssertionError: expected { state: 'executing', …(3) } to match object { state: 'stopping', …(3) }"
+      ],
+      "archive": {
+        "path": "run-083-output.zip",
+        "bytes": 1118004,
+        "sha256": "1bf808ce8e66e2aad17c71a0ba0f3245b585c8bcbcf99d4caba4c1ff90799d87"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-084.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "tsx",
+        "../../docs/plan/agent-mcp-m2/product-inspect.mts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 1.2179076671600342,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-084-output.zip",
+        "bytes": 1015163,
+        "sha256": "84b3a5f8b657f4bf28f02f40415907b4901c5b69548301620349ac99e31501d4"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-085.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 0.9506580829620361,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [
+        "⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯",
+        "Error: Build failed with 1 error:"
+      ],
+      "archive": {
+        "path": "run-085-output.zip",
+        "bytes": 1115274,
+        "sha256": "6bd75fe43d1869a40acdf50eb94d2570a4063d8d6407794249d79cf9a525b276"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-086.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 60.88953733444214,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  9 passed (9)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-086-output.zip",
+        "bytes": 1241047,
+        "sha256": "595eec3e476bbfcac0c17e995e3c6b71fa892bf7f5070eb8cd3b100e1b41eed2"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-087.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/db",
+        "test"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 3.615518569946289,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed | 7 passed (8)",
+        "Tests  1 failed | 27 passed (28)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected [ Array(115) ] to deeply equal [ Array(115) ]",
+        "FAIL  src/agent-lock-order-inventory.test.ts > Agent authority lock-order inventory > manifests every ranked SQL statement with its transaction owner and rank sequence",
+        "AssertionError: expected [ Array(115) ] to deeply equal [ Array(115) ]"
+      ],
+      "archive": {
+        "path": "run-087-output.zip",
+        "bytes": 1144468,
+        "sha256": "dd3f1b2b88b72de2d0cfbb266a832fd66bbb5b67021d5a0617cec1cf17ef9411"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-088.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 28.304572343826294,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  22 passed (22)"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791604004995,\"pid\":36396,\"hostname\":\"DarkFlame\",\"reqId\":\"bddfb36e-d8f1-4a4c-b641-87e82db0399a\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:408:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}"
+      ],
+      "archive": {
+        "path": "run-088-output.zip",
+        "bytes": 1300232,
+        "sha256": "32044eaaddb2496b0b3b890c1e02b4564775019e4a0415cf77c27e71c1b6131a"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-089.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/db",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 3.6344034671783447,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  8 passed (8)",
+        "Tests  28 passed (28)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-089-output.zip",
+        "bytes": 1238384,
+        "sha256": "43284d0a71c8d441e44d9e7ae139c1538598481a72faf6ae2811dc31af26b444"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-090.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 31.357751607894897,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 22 passed (23)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791604310726,\"pid\":26540,\"hostname\":\"DarkFlame\",\"reqId\":\"152f4800-024a-419b-b695-7249c5e2594f\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:408:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}",
+        "→ Cannot read properties of undefined (reading 'id')",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界",
+        "TypeError: Cannot read properties of undefined (reading 'id')"
+      ],
+      "archive": {
+        "path": "run-090-output.zip",
+        "bytes": 1303165,
+        "sha256": "c93201ea110576c2d07929c5c142c2d8a9256d8133e11c8f9ba595b61474a04c"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-091.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 37.93614053726196,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-091-output.zip",
+        "bytes": 1238904,
+        "sha256": "a16d44e39b6d405939e9bafe8b71c36b575ed09565505c06c74b66c668a2f0cd"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-092.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts",
+        "-t",
+        "M2八HTTP"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 5.729609966278076,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 22 skipped (23)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected 403 to be 200 // Object.is equality",
+        "Test Files  1 failed (1)",
+        "FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界",
+        "AssertionError: expected 403 to be 200 // Object.is equality"
+      ],
+      "archive": {
+        "path": "run-092-output.zip",
+        "bytes": 1242734,
+        "sha256": "a17f506c019c17f122ef64661929fc6b2cb0d897646180ab85790d214186d4b2"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-093.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 13.096573829650879,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  8 failed | 2 passed (10)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ {\"error\":{\"code\":\"UNAUTHENTICATED\",\"message\":\"Installation Token is invalid or inactive\",\"correlationId\":\"4fa6c7a9-b787-40e6-88e0-5a1cf4b142ed\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}: expected true not to be true // Object.is equality",
+        "→ Installation Token is invalid or inactive",
+        "→ Installation Token is invalid or inactive",
+        "→ Installation Token is invalid or inactive",
+        "→ Installation Token is invalid or inactive",
+        "→ Installation Token is invalid or inactive",
+        "→ Installation Token is invalid or inactive",
+        "→ Installation Token is invalid or inactive",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法",
+        "AssertionError: {\"error\":{\"code\":\"UNAUTHENTICATED\",\"message\":\"Installation Token is invalid or inactive\",\"correlationId\":\"4fa6c7a9-b787-40e6-88e0-5a1cf4b142ed\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}: expected true not to be true // Object.is equality",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败",
+        "WorkMeshSdkError: Installation Token is invalid or inactive",
+        "894|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定",
+        "WorkMeshSdkError: Installation Token is invalid or inactive",
+        "894|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > 有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段",
+        "WorkMeshSdkError: Installation Token is invalid or inactive",
+        "894|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续",
+        "WorkMeshSdkError: Installation Token is invalid or inactive",
+        "894|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > 投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复",
+        "WorkMeshSdkError: Installation Token is invalid or inactive",
+        "894|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP",
+        "WorkMeshSdkError: Installation Token is invalid or inactive",
+        "894|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > 投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt",
+        "WorkMeshSdkError: Installation Token is invalid or inactive",
+        "894|   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, {…"
+      ],
+      "archive": {
+        "path": "run-093-output.zip",
+        "bytes": 1242457,
+        "sha256": "9148d9f99bd18112dcc060c5354c3286b0cce7a98f996e6fe1db8004fb1cd4c9"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-094.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "../../vitest.integration.config.ts",
+        "integration/stage2-collaboration.integration.test.ts",
+        "-t",
+        "M2八HTTP"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 5.622438192367554,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed | 22 skipped (23)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-094-output.zip",
+        "bytes": 1242537,
+        "sha256": "09e0726fa86ee52de6d13f863fd344b066bbbca84034d2f93cd9ac92b3dcdfad"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-095.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "--filter",
+        "@workmesh/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 80.96310639381409,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 9 passed (10)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected { …(3) } to match object { Object (title) }",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法",
+        "AssertionError: expected { …(3) } to match object { Object (title) }"
+      ],
+      "archive": {
+        "path": "run-095-output.zip",
+        "bytes": 1355024,
+        "sha256": "3228c14315877bd1ebd1c3e77f2552bb5f711ecadec5035067228539e8fc5701"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-096.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 53.16101574897766,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-096-output.zip",
+        "bytes": 1352109,
+        "sha256": "8498c0d16402c346e1ee8fa45f19ca126fff81b210475a409a60805a4e386639"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-097.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 59.744630336761475,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/contracts:test:  Test Files  28 passed (28)",
+        "@workmesh/contracts:test:       Tests  210 passed (210)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/agent-runner:test:  Test Files  13 passed (13)",
+        "@workmesh/agent-runner:test:       Tests  71 passed (71)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  180 passed (180)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-097-output.zip",
+        "bytes": 1366487,
+        "sha256": "e85402f2a57fdf9698397f2158bf5ba22ad1d44d994227c31b43c604325017f2"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-098.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 33.95331430435181,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-098-output.zip",
+        "bytes": 1352116,
+        "sha256": "537829b5498303c70fbc637498e807058172fdbc02ecf7ddeb8f7e9c63d7491d"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-099.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:integration"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 554.2428982257843,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  17 passed (17)",
+        "Tests  81 passed (81)",
+        "Test Files  27 passed (27)",
+        "Tests  270 passed | 1 skipped (271)",
+        "Test Files  3 passed (3)",
+        "Tests  39 passed (39)",
+        "Test Files  8 passed | 1 skipped (9)",
+        "Tests  120 passed | 1 skipped (121)",
+        "Test Files  1 skipped (1)",
+        "Tests  1 skipped (1)"
+      ],
+      "firstFailureLines": [
+        "{\"level\":50,\"time\":1791604662732,\"pid\":36612,\"hostname\":\"DarkFlame\",\"reqId\":\"8105ac59-647b-4b4d-bb41-954befa86e08\",\"err\":{\"type\":\"DomainError\",\"message\":\"The Agent Session authority was revoked, stopped, or expired\",\"stack\":\"Error: The Agent Session authority was revoked, stopped, or expired\\n    at assertEventAudienceActive (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\authz\\\\event-audience.ts:539:11)\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at Object.list (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\realtime\\\\event-reader.ts:135:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\realtime\\\\routes.ts:295:26\",\"code\":\"SESSION_NOT_ACTIVE\"},\"msg\":\"SSE stream failed\"}",
+        "{\"level\":50,\"time\":1791604732882,\"pid\":32272,\"hostname\":\"DarkFlame\",\"reqId\":\"3ed9a925-98d3-405c-ad04-42efd2ec3131\",\"err\":{\"type\":\"Error\",\"message\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\",\"stack\":\"Error: HANDOFF_INJECTED_FAILURE_AFTER_SESSION\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\collaboration\\\\routes.ts:1662:57\\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\\n    at C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\apps\\\\api\\\\src\\\\commands.ts:408:22\\n    at withTx (C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a121fb-781b-7b58-9bca-a596b92a8cbe\\\\packages\\\\db\\\\src\\\\index.ts:27:20)\"},\"msg\":\"HANDOFF_INJECTED_FAILURE_AFTER_SESSION\"}"
+      ],
+      "archive": {
+        "path": "run-099-output.zip",
+        "bytes": 1836116,
+        "sha256": "edf37eff8ce002a3255b2901475c1ff531bf1a8d8a1d6bf68fcd849f8dc0f373"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-100.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/api",
+        "exec",
+        "tsx",
+        "../../docs/plan/agent-mcp-m2/product-inspect.mts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 0.9937467575073242,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-100-output.zip",
+        "bytes": 1351125,
+        "sha256": "e1024f323c0764acaf60045a4951f7312bc2b6dd487a4f3697f96cc0e52a479c"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-101.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "build"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 72.775461435318,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-101-output.zip",
+        "bytes": 1352889,
+        "sha256": "a1181a6f43ae96de8b9cb0a1a125aaf3357570618bcb118256ca7f5e3dcb14b9"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-102.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "smoke:agents"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 5.2265846729278564,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  3 passed (3)",
+        "Tests  53 passed (53)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-102-output.zip",
+        "bytes": 1351539,
+        "sha256": "81d97d70a73a3a7577209bbbd7880b248b5dd668e7b10a15f162d0fa0b9d8ed6"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-103.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:runner-skill"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 0.5571780204772949,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-103-output.zip",
+        "bytes": 1351248,
+        "sha256": "6bb00483973deffd9fd6a23ffa99a967da55eebcf3286f8112a4d9e8d7c36b95"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-104.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 26.38459038734436,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-104-output.zip",
+        "bytes": 1352120,
+        "sha256": "94e21f64fd785e4f64680f83a24cd45fef1bec8539a8fc2f8ee2018ca59318c9"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-105.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 12.42469048500061,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-105-output.zip",
+        "bytes": 1352099,
+        "sha256": "886a7e97cddb7675a3e8bc8fcedfa70f6c5b64610335c882ad45b4dc30b2dc29"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-106.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:e2e"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 261.84099888801575,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "@workmesh/web:test:e2e:   70 passed (4.3m)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-106-output.zip",
+        "bytes": 1945848,
+        "sha256": "8c6e175933dbe63237386c0a5f44e73865cd221c9d1f15a8436a2ba85e795948"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-107.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 65.07007336616516,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 10 passed (11)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ expected 403 to be 200 // Object.is equality",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取",
+        "AssertionError: expected 403 to be 200 // Object.is equality"
+      ],
+      "archive": {
+        "path": "run-107-output.zip",
+        "bytes": 1738388,
+        "sha256": "4674badc27fbf04dae43ff9288cba8cb9f74342b2a502dd6a079058dd91e60f7"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-108.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts",
+        "-t",
+        "Human评论他作者拒绝"
+      ],
+      "nativeExit": 1,
+      "status": "exited",
+      "runtimeSeconds": 7.8072168827056885,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 10 skipped (11)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "firstFailureLines": [
+        "→ {\"error\":{\"code\":\"MCP_INPUT_INVALID\",\"message\":\"MCP tool input failed validation\",\"correlationId\":\"mcp:5902a421-c670-43d9-8178-fba80adcc588\",\"details\":{\"issues\":[{\"code\":\"invalid_arguments\",\"message\":\"MCP error -32602: Input validation error: Invalid arguments for tool post_work_room_message: [\\n  {\\n    \\\"code\\\": \\\"invalid_type\\\",\\n    \\\"expected\\\": \\\"string\\\",\\n    \\\"received\\\": \\\"undefined\\\",\\n    \\\"path\\\": [\\n      \\\"sessionId\\\"\\n    ],\\n    \\\"message\\\": \\\"Required\\\"\\n  }\\n]\"}]},\"safeNextAction\":\"Correct the arguments against the published MCP tool schema, then retry the call.\"}}: expected true not to be true // Object.is equality",
+        "Test Files  1 failed (1)",
+        "FAIL  src/planning-collaboration.conformance.test.ts > M2 真实HTTP、MCP与Pi规划协作闭环 > Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取",
+        "AssertionError: {\"error\":{\"code\":\"MCP_INPUT_INVALID\",\"message\":\"MCP tool input failed validation\",\"correlationId\":\"mcp:5902a421-c670-43d9-8178-fba80adcc588\",\"details\":{\"issues\":[{\"code\":\"invalid_arguments\",\"message\":\"MCP error -32602: Input validation error: Invalid arguments for tool post_work_room_message: [\\n  {\\n    \\\"code\\\": \\\"invalid_type\\\",\\n    \\\"expected\\\": \\\"string\\\",\\n    \\\"received\\\": \\\"undefined\\\",\\n    \\\"path\\\": [\\n      \\\"sessionId\\\"\\n    ],\\n    \\\"message\\\": \\\"Required\\\"\\n  }\\n]\"}]},\"safeNextAction\":\"Correct the arguments against the published MCP tool schema, then retry the call.\"}}: expected true not to be true // Object.is equality"
+      ],
+      "archive": {
+        "path": "run-108-output.zip",
+        "bytes": 1737537,
+        "sha256": "1b76639e1e0ba00505dae49e5b6530e840b0e6dd2abb28811b49497694506587"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-109.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts",
+        "-t",
+        "Human评论他作者拒绝"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 8.522490739822388,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed | 10 skipped (11)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-109-output.zip",
+        "bytes": 1738841,
+        "sha256": "b3cc4cc9b01c8ed677dd03c3e97c1815f209b7f98ca0eaf44e3472ab547fe7bb"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-110.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 68.089519739151,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  11 passed (11)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-110-output.zip",
+        "bytes": 1855428,
+        "sha256": "7b2572e1ff772a50736cd910ad9c267ce7ac146750b327073d09f4b3201f2236"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-111.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 26.214572191238403,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-111-output.zip",
+        "bytes": 1793191,
+        "sha256": "b89f4b5937d330bb1db34de7dd9f996709ed820d2d34ab5eaa07f7e691449a16"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-112.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 12.535327434539795,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-112-output.zip",
+        "bytes": 1786693,
+        "sha256": "ebc564a34cbacbffa1c70e8437f5d5d0b8cc19c92159f3fab42a40d3adec3860"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-113.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "packages/conformance",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "src/planning-collaboration.conformance.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 69.78210854530334,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  11 passed (11)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-113-output.zip",
+        "bytes": 1968086,
+        "sha256": "fe88a3b1eb35346be0429f09c0c9fd927f9a37563c4ae048fc4314af71c60443"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-114.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 26.345216512680054,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-114-output.zip",
+        "bytes": 1906906,
+        "sha256": "f2de6f7d490459ac364a04511b8be2ef1532024658367dc7bedf036cc02bc442"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-115.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 12.648061990737915,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-115-output.zip",
+        "bytes": 1900410,
+        "sha256": "83a3a9499b6f691b060b617bcebd23991fb5341e790ecf24529d1e8051190a03"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-116.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "ci:validate"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 2.0132834911346436,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "ℹ tests 15",
+        "ℹ pass 15",
+        "ℹ fail 0",
+        "ℹ skipped 0"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-116-output.zip",
+        "bytes": 1965660,
+        "sha256": "b8a205fe607167fe6ab23f8689cc2162fcec2ff311b2399ea0f620336fc4d63d"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-117.json",
+      "argv": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check",
+        "cfce77546b64c2a8d7d12949261c38e2f666d5ae"
+      ],
+      "nativeExit": 2,
+      "status": "exited",
+      "runtimeSeconds": 1.2001965045928955,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-117-output.zip",
+        "bytes": 1964835,
+        "sha256": "3602d3e2eee1739e02b28f1bd7962dcc232c4787773f82ba1fe966040e40568e"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-118.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "generate:runner-skill"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 0.5620553493499756,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-118-output.zip",
+        "bytes": 1964938,
+        "sha256": "b4ef78ce3cc057d3e3d356dddb7adb49843a5a3e0a57f3c7378a997a70230aca"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-119.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "check:runner-skill"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 0.6500630378723145,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-119-output.zip",
+        "bytes": 1964944,
+        "sha256": "43b9e6084b6d9ecb378ec6a18652cbb77519d31ba6e7a64501b316d156fb8007"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-120.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 25.754398107528687,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/contracts:test:  Test Files  28 passed (28)",
+        "@workmesh/contracts:test:       Tests  210 passed (210)",
+        "@workmesh/agent-runner:test:  Test Files  13 passed (13)",
+        "@workmesh/agent-runner:test:       Tests  71 passed (71)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  180 passed (180)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-120-output.zip",
+        "bytes": 1986265,
+        "sha256": "fada0dfbf6582fee6506a060018719fe080c7670930b785380b8a967f10c6ece"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-121.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "build"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 92.53105640411377,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-121-output.zip",
+        "bytes": 1986028,
+        "sha256": "8929e86a57ed67db4447d05322dfcde74465b5cd827a40212389e302b75d7f3c"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-122.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:conformance:integration"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 278.92086386680603,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  3 passed (3)",
+        "Tests  40 passed (40)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-122-output.zip",
+        "bytes": 2241210,
+        "sha256": "d6803322b6ff89b54edeeb306d4fe542bd9bd4e3b92de433853f509510a607b5"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-123.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 22.44445562362671,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-123-output.zip",
+        "bytes": 1985258,
+        "sha256": "1cb0113929d522d5593468a11e9ad6b8e8335a6b54749962479ed8978bc4b6ea"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-124.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 22.63725709915161,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-124-output.zip",
+        "bytes": 1985247,
+        "sha256": "9e211480cc2cbd5ce8cce46c0997b7cfeb50f58052e85c480b5fb22677d035c9"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-125.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/agent-runner",
+        "exec",
+        "vitest",
+        "run",
+        "src/workmesh-tools.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 3.809891939163208,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  22 passed (22)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-125-output.zip",
+        "bytes": 2234538,
+        "sha256": "00a335a7b5f3e27db506fc647f05dbf476077d3e3a3e088e19bc2b68e6a0c5f1"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-126.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:integration:worker"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 38.40600919723511,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  8 passed | 1 skipped (9)",
+        "Tests  121 passed | 1 skipped (122)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-126-output.zip",
+        "bytes": 2235096,
+        "sha256": "43fd36423a0191bed50625b9b4d3d3a17602f8f1120ea4b45dcf42a4cfa5ff9c"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-127.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 27.23516273498535,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-127-output.zip",
+        "bytes": 2254595,
+        "sha256": "0919a0f2f54d520b7acd065efe2a954e9d9602116552c0d0ae777121d2d49d7e"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-128.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:conformance:integration"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 327.76079750061035,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  3 passed (3)",
+        "Tests  41 passed (41)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-128-output.zip",
+        "bytes": 2632925,
+        "sha256": "8d61bf3576cb568777a19f540ca3e5f7c94c5813e5c3d1ca967ae9af86cb127d"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-129.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "packages/db",
+        "exec",
+        "vitest",
+        "run",
+        "src/agent-lock-order-inventory.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 3.004697322845459,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  8 passed (8)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-129-output.zip",
+        "bytes": 2253686,
+        "sha256": "204c43862ca939729b5d02c42a49531d234492dfe4880c2388e5274432225fc3"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-130.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 23.664285898208618,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/contracts:test:  Test Files  28 passed (28)",
+        "@workmesh/contracts:test:       Tests  210 passed (210)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/agent-runner:test:  Test Files  13 passed (13)",
+        "@workmesh/agent-runner:test:       Tests  74 passed (74)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  180 passed (180)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-130-output.zip",
+        "bytes": 2268593,
+        "sha256": "75e0530a4f565075eaeb151b45e633d63e2848211179e2ab8768da3ee9ef0ebd"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-131.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 22.167551517486572,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-131-output.zip",
+        "bytes": 2254409,
+        "sha256": "dbcfc6a55f07e017dcdbf16dd205bb8c9106e15dd1a40d30d1c8f9371e1c8a9b"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-132.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "build"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 79.68058466911316,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-132-output.zip",
+        "bytes": 2379808,
+        "sha256": "fe87f202e8c5fa5fac22f903546844d5f0078300d3970b8bf14a84cacecbf6df"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-133.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:integration:worker"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 42.52654027938843,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  8 passed | 1 skipped (9)",
+        "Tests  121 passed | 1 skipped (122)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-133-output.zip",
+        "bytes": 2320679,
+        "sha256": "7304448fbaea3c03cce36dfc29257a828da60c2f288de3e019677c3d1e6be2b5"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-134.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 27.312058210372925,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-134-output.zip",
+        "bytes": 2415100,
+        "sha256": "4c61fa1598b9f84015bf8f35d581edda9328107177a936473fbf948536b72059"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-135.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "ci:validate"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 1.9055445194244385,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "ℹ tests 15",
+        "ℹ pass 15",
+        "ℹ fail 0",
+        "ℹ skipped 0"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-135-output.zip",
+        "bytes": 2626204,
+        "sha256": "60a9d6d35a76092d58f0a9ef96e9ca5f2ada71b19921babc59829b36ca02422c"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    }
+  ],
+  "historicalUnknownRetained": true,
+  "pendingRunning": [
+    "run-073.json"
+  ]
+}

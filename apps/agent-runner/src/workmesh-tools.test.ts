@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { appendActivityInputSchema, createAgentCapabilityManifest, qualifyAgentCapabilityManifest, featureKeySchema,
   type AgentCapabilityManifest } from '@workmesh/contracts'
-import { createWorkMeshTools, type RunnerToolApi, type SessionCompletionIntent } from './workmesh-tools.js'
+import { createWorkMeshTools, type RunnerToolApi, type SessionCompletionIntent, type SessionFailureIntent } from './workmesh-tools.js'
 import type { Capability } from '@workmesh/contracts'
 import { ExecutionLifecycle } from './execution-lifecycle.js'
 import { RunnerApiError } from './run-session.js'
@@ -27,6 +27,53 @@ function manifest(capabilities: Capability[]): AgentCapabilityManifest {
 }
 
 describe('Pi WorkMesh tools', () => {
+  it('M2计划评论/提案/context delta固定自身身份，验证来源并复用同调用幂等包装',async()=>{
+    const calls:Array<{path:string;body:unknown;key?:string}>=[]
+    const api:RunnerToolApi={sessionId,async request<T>(_method:Parameters<RunnerToolApi['request']>[0],path:string,body?:unknown,_revision?:number,key?:string):Promise<T>{
+      if(path==='/api/v1/agent-capabilities?discovery=qualified')return manifest(['work:read','work:write','plan:write']) as T
+      calls.push({path,body,key});return {id:documentId} as T
+    }}
+    const tools=await createWorkMeshTools(api,'M2 collaboration',()=>undefined)
+    const invoke=async(name:string,input:unknown)=>tools.find(t=>t.name===name)!.execute(name,input,undefined,undefined,{} as never)
+    await invoke('workmesh_comment_plan_step',{planVersionId:ownerId,planStepId:documentId,body:'Exact Plan'})
+    await invoke('workmesh_propose_plan_step_assignment',{planStepId:documentId,skill:'review',rationale:'No automatic assignment'})
+    await invoke('workmesh_append_context_delta',{baseSnapshotId:baseRevisionId,rationale:'Trusted',additions:[{sourceType:'artifact',sourceId:documentId,hash:`sha256:${'a'.repeat(64)}`}]})
+    const writes=calls.filter(c=>!c.path.endsWith('/activities'))
+    expect(writes.map(c=>c.path)).toEqual(['plan/comments','assignment-proposals','context-deltas'].map(s=>`/api/v1/agent-sessions/${sessionId}/${s}`))
+    expect(writes.every(c=>Boolean(c.key))).toBe(true)
+    await expect(invoke('workmesh_propose_plan_step_assignment',{planStepId:documentId,agentId:ownerId,skill:'review',rationale:'Ambiguous'})).rejects.toThrow()
+  })
+  it('M2长分页重读同cursor缩小limit，保留完整后页与正文，不把事实截成ID', async () => {
+    const paths: string[] = []
+    const api: RunnerToolApi = { sessionId, async request<T>(_method: Parameters<RunnerToolApi['request']>[0],path: string):Promise<T> {
+      if(path==='/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read','work:write']) as T
+      paths.push(path)
+      const limit = Number(new URL(path,'http://fixture.invalid').searchParams.get('limit'))
+      return {items:Array.from({length:limit},(_,i)=>({id:`item-${i}`,body:'x'.repeat(30000)})),nextCursor:`next-${limit}`} as T
+    } }
+    const tools = await createWorkMeshTools(api,'M2 page',()=>undefined)
+    const page = await tools.find(tool=>tool.name==='workmesh_list_work_item_comments')!.execute('page',{workItemId:ownerId,limit:4,cursor:'same-cursor'},undefined,undefined,{} as never)
+    expect(paths).toHaveLength(3)
+    for(const path of paths) expect(new URL(path,'http://fixture.invalid').searchParams.get('cursor')).toBe('same-cursor')
+    const content = page.content[0] as {type:'text';text:string}
+    expect(JSON.parse(content.text)).toEqual({items:[{id:'item-0',body:'x'.repeat(30000)}],nextCursor:'next-1'})
+  })
+
+  it('M2透传Handoff全包/Inbox payload/规划step字段，父身份固定且Human接受工具缺席', async () => {
+    const calls: Array<{path:string;body:unknown}> = []
+    const api: RunnerToolApi = {sessionId,async request<T>(_method: Parameters<RunnerToolApi['request']>[0],path: string,body?: unknown):Promise<T> {
+      if(path==='/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read','work:write','plan:write']) as T
+      calls.push({path,body});return {id:documentId} as T
+    }}
+    const tools = await createWorkMeshTools(api,'M2 contracts',()=>undefined)
+    await tools.find(tool=>tool.name==='workmesh_offer_handoff')!.execute('handoff',{targetSkill:'review',summary:'Structured package',status:'draft',completedWork:['done'],openQuestions:['question'],risks:['risk'],requestedAction:'Review',leaseTransferPolicy:'release',artifactIds:[documentId],contextSnapshotId:baseRevisionId,requestedCapabilities:['work:read','work:write']},undefined,undefined,{} as never)
+    expect(calls.find(call=>call.path==='/api/v1/handoffs')!.body).toMatchObject({fromSessionId:sessionId,targetSkill:'review',remainingWork:[],status:'draft',contextSnapshotId:baseRevisionId})
+    await tools.find(tool=>tool.name==='workmesh_reply_inbox_item')!.execute('reply',{inboxItemId:documentId,ifMatch:2,body:'Reply',payload:{verified:true}},undefined,undefined,{} as never)
+    expect(calls.find(call=>call.path.endsWith('/reply'))!.body).toEqual({body:'Reply',payload:{verified:true}})
+    await tools.find(tool=>tool.name==='workmesh_publish_plan')!.execute('plan',{ifMatch:2,changeSummary:'Plan',steps:[{id:ownerId,title:'Step',ordinal:0,ownerActorId:ownerId,expectedArtifacts:['test_report'],status:'canceled',cancellationReason:'Human changed scope'}]},undefined,undefined,{} as never)
+    expect(calls.find(call=>call.path.endsWith('/plan'))!.body).toMatchObject({steps:[expect.objectContaining({expectedArtifacts:['test_report'],ownerActorId:ownerId,cancellationReason:'Human changed scope'})]})
+    expect(tools.some(tool=>tool.name==='workmesh_accept_handoff')).toBe(false)
+  })
   it.each([new RunnerApiError(500, 'INTERNAL_ERROR'), new SyntaxError('truncated committed response'),
     new TypeError('committed response lost')])('真实工具包装写响应错误仍阻止自动等待：%s', async failure => {
     const lifecycle = new ExecutionLifecycle()
@@ -138,6 +185,31 @@ describe('Pi WorkMesh tools', () => {
     expect(tools.some(tool => tool.name === 'workmesh_update_document')).toBe(false)
     expect(tools.some(tool => tool.name === 'workmesh_get_document')).toBe(true)
   })
+
+  it.each(['x'.repeat(60_000), '\u0000'.repeat(200_000), '\"\\\n'.repeat(20_000)])(
+    'returns complete current/revision/export document reads despite JSON expansion (%#)', async markdown => {
+      const calls: string[] = []
+      const current = { id: documentId, currentRevision: { id: baseRevisionId, markdown } }
+      const revision = { id: baseRevisionId, markdown }
+      const api: RunnerToolApi = { sessionId, async request<T>(_method: Parameters<RunnerToolApi['request']>[0], path: string): Promise<T> {
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read']) as T
+        calls.push(path)
+        return (path.includes('/export') ? markdown : path.includes('/revisions/') ? revision : current) as T
+      } }
+      const tools = await createWorkMeshTools(api, 'complete-document', () => undefined)
+      for (const [name, input, expected] of [
+        ['workmesh_get_document', { documentId }, current],
+        ['workmesh_get_document_revision', { documentId, revisionId: baseRevisionId }, revision],
+        ['workmesh_export_document_markdown', { documentId }, markdown],
+      ] as const) {
+        const result = await tools.find(t => t.name === name)!.execute(name, input, undefined, undefined, {} as never)
+        const text = result.content[0] as { type: 'text'; text: string }
+        expect(JSON.parse(text.text)).toEqual(expected)
+        expect(text.text.length).toBeGreaterThan(50_000)
+      }
+      expect(calls).toHaveLength(3)
+      expect(calls.every(path => path.startsWith('/api/v1/documents/'))).toBe(true)
+    })
 
   it('reports a successful oversized write without returning its full Markdown', async () => {
     const api: RunnerToolApi = { sessionId,
@@ -292,6 +364,22 @@ describe('Pi WorkMesh tools', () => {
     expect(calls.find(call => call.path === `/api/v1/leases/${documentId}/release`))
       .toMatchObject({ body: { reason: 'Work finished' }, ifMatch: 1,
         key: expect.stringMatching(/^pi-[a-f0-9]{64}$/) })
+  })
+
+  it('queues exact failure intent without treating its acknowledgment as Session failure', async () => {
+    const intents:SessionFailureIntent[]=[]
+    const calls:string[]=[]
+    const api:RunnerToolApi={sessionId,async request<T>(_method:'GET'|'POST'|'PATCH'|'PUT'|'DELETE',path:string):Promise<T>{calls.push(path);return manifest(['work:read','work:write']) as T}}
+    const tools=await createWorkMeshTools(api,'failure-attempt',()=>undefined,undefined,undefined,intent=>intents.push(intent))
+    const fail=tools.find(tool=>tool.name==='workmesh_fail_session')!
+    expect(fail).toBeDefined()
+    await expect(fail.execute('invalid',{ifMatch:0,code:'FAIL',summary:'Invalid revision'},undefined,undefined,{} as never)).rejects.toThrow()
+    const result=await fail.execute('failure-call',{ifMatch:2,code:'TEST_FAILURE',summary:'Explicit failure',retryable:false,evidence:['Public evidence']},undefined,undefined,{} as never)
+    expect(result.content[0]).toMatchObject({text:expect.stringContaining('requested_after_failed_turn_settlement')})
+    expect(intents).toEqual([{ifMatch:2,idempotencyKey:expect.stringMatching(/^pi-[a-f0-9]{64}$/),body:{code:'TEST_FAILURE',summary:'Explicit failure',retryable:false,evidence:['Public evidence']}}])
+    expect(calls).toEqual(['/api/v1/agent-capabilities?discovery=qualified'])
+    const absent=await createWorkMeshTools({...api,async request<T>():Promise<T>{return manifest(['work:read']) as T}},'failure-attempt',()=>undefined,undefined,undefined,()=>undefined)
+    expect(absent.map(tool=>tool.name)).not.toContain('workmesh_fail_session')
   })
 
   it('queues evidence-backed completion without ending the Session before the public answer', async () => {

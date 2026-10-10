@@ -1830,3 +1830,11 @@ resume 后再重验。Stop、撤权、无效触发不会启动模型。
 Stop 后关闭所有模型工具与 steering，受控 finally 持原 E Token，以独立有界 signal
 提交 stopAck 的 cleanupSummary/residualRisks；不先写 Activity，不刷新停止 Token，
 不拿普通 Lease release 替代 Stop。强杀或未知清理失败保留残留，不能复活执行。
+
+## 有界父子协作与独立 reviewer
+
+父 execution Session 使用自身 live E Token 调用 `GET /api/v1/agent-sessions/{id}/children`，只能读取有真实父、Delegation、原 Plan/version/stable step 绑定的直接子最小状态。签名 cursor 每页重新核授权；子终态可确认，父终态、pause、Stop 或撤权拒绝。响应不包含子 Token、prompt 或正文，不产生业务写入，也不扩大普通 Session get/list 权限。
+
+`ReviewDelegationInput.budget` 可显式缩减继承预算；省略参数或某维仍继承父值，不自动取剩余额度。有效预算同时用于执行和 reservation，旧 reservation 不自动释放。两种创建共享父累计总量、活跃及 stable step 跨版本限额、目标并发和真实三方能力交集；客户端不配置父/step 上限，现有数据库默认值为 8。
+
+创建响应保留 `parent_session_id`、`plan_step_version_id`、`required_for_parent`、`inherited_budget`、`max_child_sessions` 和既有额外字段。reviewer 没有 `plan:write`，Runner 不自动发布 Plan；完成必须由本人提交 Room `review_result` 和本人 `code_review` Artifact，structured review 和 `noArtifactReason` 均不豁免。所有非 `completed` 的 required child 继续以准确 child IDs 阻止父完成。

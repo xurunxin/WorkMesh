@@ -9,8 +9,10 @@ import {
   lockAgentAuthorityPlan,
   withTx,
 } from '@workmesh/db'
-import { DomainError, assertRevision, inheritChildBudget, parseRevision } from '@workmesh/domain'
+import { DomainError, assertRevision, parseRevision } from '@workmesh/domain'
 import { acquireLeaseInputSchema, assignmentProposalInputSchema, contextDeltaInputSchema, decisionInputSchema, handoffInputSchema, handoffRejectInputSchema, roomMessageInputSchema } from '@workmesh/contracts'
+import { admitChildSession } from '../agent/child-session-policy.js'
+import { childSessionInputSchema, reviewDelegationInputSchema, childAgentSessionResponseSchema, reviewDelegationResponseSchema } from '@workmesh/contracts'
 import { mutate, type CommandContext } from '../commands.js'
 import { isHeartbeatReplay, recordHeartbeatKey } from '../heartbeat-idempotency.js'
 import {
@@ -1397,29 +1399,17 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
 }
 
 async function createChild(h:Helpers,request:FastifyRequest){
-  const parentId=id(request); const body=z.object({agentId:uuid,planStepId:uuid,planVersionId:uuid,role:z.enum(['executor','reviewer','researcher']).default('executor'),initialPrompt:z.string().min(1).max(50000),required:z.boolean().default(true),budget:z.record(z.number()).optional()}).parse(request.body)
+  const parentId=id(request); const body=childSessionInputSchema.parse(request.body)
   return command(h.db,h.meta(request,body,{id:parentId}),async tx=>{
     const lockedTargets=await lockCollaborationSessionTargets(tx,actor(request),parentId,[body.agentId])
     const parent=await assertSessionWrite(tx,actor(request),parentId)
-    const currentPlan=(await tx.query<{id:string}>('SELECT id FROM agent_plan_versions WHERE id=$1 AND session_id=$2 AND id=(SELECT current_plan_version_id FROM agent_sessions WHERE id=$2)',[body.planVersionId,parentId])).rows[0]
-    if(!currentPlan) throw new DomainError('STALE_PLAN_VERSION','Child sessions must use the parent current plan version')
-    const step=(await tx.query<{max_child_sessions:number}>('SELECT max_child_sessions FROM agent_plan_steps WHERE plan_version_id=$1 AND id=$2',[body.planVersionId,body.planStepId])).rows[0]
-    if(!step) throw new DomainError('NOT_FOUND','Plan step is not part of the current plan version')
-    const stable=(await tx.query('SELECT 1 FROM agent_plan_step_identities WHERE session_id=$1 AND stable_step_id=$2',[parentId,body.planStepId])).rowCount
-    if(!stable) throw new DomainError('PLAN_STEP_IDENTITY_MISSING','Plan step does not have a stable identity for this session')
-    const count=(await tx.query<{count:number}>(`SELECT count(*)::int AS count FROM agent_sessions session WHERE session.parent_session_id=$1 AND ${agentExecutionCapacitySqlPredicate('session')}`,[parentId])).rows[0]!.count
-    if(count>=parent.max_child_sessions)throw new DomainError('CHILD_SESSION_LIMIT','Parent child-session limit reached',{maxChildren:parent.max_child_sessions,activeChildren:count})
-    const stepCount=(await tx.query<{count:number}>(`SELECT count(*)::int AS count FROM agent_sessions session WHERE session.parent_session_id=$1 AND session.plan_step_id=$2 AND session.plan_step_version_id=$3 AND ${agentExecutionCapacitySqlPredicate('session')}`,[parentId,body.planStepId,body.planVersionId])).rows[0]!.count
-    if(stepCount>=step.max_child_sessions)throw new DomainError('PLAN_STEP_CHILD_SESSION_LIMIT','Plan step child-session limit reached',{maxChildren:step.max_child_sessions,activeChildren:stepCount})
+    const budget=await admitChildSession(tx,parent,body)
     const agent=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[]}>("SELECT id,actor_id,approved_capabilities FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true",[body.agentId,actor(request).workspaceId])).rows[0]
     if(!agent)throw new DomainError('NOT_FOUND','Target agent not found')
     const access=(await tx.query<{approved_capabilities:string[]}>('SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL',[actor(request).workspaceId,agent.id,parent.team_id])).rows[0]
     const parentGrant=(await tx.query<{permissions_snapshot:string[]}>('SELECT permissions_snapshot FROM delegations WHERE id=$1 AND status=$2',[parent.delegation_id,'active'])).rows[0]
     const caps=['work:read','work:write']; if(!parentGrant || !access || !caps.every(cap=>parentGrant.permissions_snapshot.includes(cap)&&agent.approved_capabilities.includes(cap)&&access.approved_capabilities.includes(cap)))throw new DomainError('CAPABILITY_DENIED','Child capabilities must be authorized by the parent delegation, target agent, and team grant')
     await assertAgentExecutionCapacityAfterLock(tx,{workspaceId:actor(request).workspaceId,agentId:agent.id})
-    const budget=inheritChildBudget(parent.budget as Record<string,number>,body.budget??{})
-    const reservations=(await tx.query<{reserved:Record<string,number>}>('SELECT reserved FROM session_budget_reservations WHERE parent_session_id=$1 AND status=$2 FOR UPDATE',[parentId,'reserved'])).rows
-    for(const [key,value] of Object.entries(budget)){const used=reservations.reduce((sum,row)=>sum+Number(row.reserved[key]??0),0);const cap=Number((parent.budget as Record<string,number>)[key]??Infinity);if(used+Number(value)>cap)throw new DomainError('CHILD_BUDGET_EXCEEDED','Child budget exceeds parent reservation',{key,used,requested:value,cap})}
     const delegation=(await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,parent_delegation_id) SELECT $1::uuid,$2::uuid,$3::uuid,$4::uuid,d.principal_human_actor_id,NULL,$5::delegation_role,'plan_step',$6::uuid,$7::text[],jsonb_build_object('workspaceId',$1::uuid,'teamIds',jsonb_build_array($2::uuid),'workItemIds',jsonb_build_array(s.work_item_id),'projectIds','[]'::jsonb,'repositoryIds','[]'::jsonb,'capabilities',$7::text[]),s.delegation_id FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id WHERE s.id=$8::uuid RETURNING id",[actor(request).workspaceId,parent.team_id,agent.id,agent.actor_id,body.role,body.planStepId,caps,parentId])).rows[0] as {id:string}
     const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,plan_step_id,plan_step_version_id,context_snapshot_id,state,state_reason,budget,inherited_budget,required_for_parent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,$13) RETURNING *",[actor(request).workspaceId,parent.team_id,agent.id,agent.actor_id,delegation.id,parentId,parent.work_item_id,body.planStepId,body.planVersionId,parent.context_snapshot_id,body.initialPrompt,budget,body.required])).rows[0]as{id:string}
     await tx.query('INSERT INTO session_budget_reservations(parent_session_id,child_session_id,allocation,reserved) VALUES($1,$2,$3,$3)',[parentId,child.id,budget])
@@ -1429,7 +1419,7 @@ async function createChild(h:Helpers,request:FastifyRequest){
     const installationAuthority=lockedTargets.installationAuthorities.get(agent.id)
     if(!installationAuthority) throw new DomainError('NOT_FOUND','Active installation token not found for the exact child Session authority')
     await provisionNewSessionDelivery(tx,h.meta(request,body),{sessionId:child.id,agentId:agent.id,delegationId:delegation.id,teamId:parent.team_id,workItemId:parent.work_item_id,initialPrompt:body.initialPrompt,installationAuthority})
-    await emit(tx,h.meta(request,body),'agent.session.child_created','agent_session',child.id,{parentSessionId:parentId,planStepId:body.planStepId,required:body.required},parent.team_id);return child
+    await emit(tx,h.meta(request,body),'agent.session.child_created','agent_session',child.id,{parentSessionId:parentId,planStepId:body.planStepId,required:body.required},parent.team_id);return childAgentSessionResponseSchema.parse(JSON.parse(JSON.stringify(child)))
   })
 }
 
@@ -1480,14 +1470,11 @@ async function appendDelta(h:Helpers,request:FastifyRequest){
 }
 
 async function createReview(h:Helpers,request:FastifyRequest) {
-  const sessionId=id(request); const body=z.object({reviewerAgentId:uuid,planStepId:uuid,planVersionId:uuid,initialPrompt:z.string().min(1).max(50000),ttlSeconds:z.number().int().min(10).max(3600).default(300)}).parse(request.body)
+  const sessionId=id(request); const body=reviewDelegationInputSchema.parse(request.body)
   return command(h.db,h.meta(request,body,{id:sessionId}),async tx=>{
     const lockedTargets=await lockCollaborationSessionTargets(tx,actor(request),sessionId,[body.reviewerAgentId])
     const parent=await assertSessionWrite(tx,actor(request),sessionId)
-    const plan=(await tx.query('SELECT 1 FROM agent_plan_versions WHERE id=$1 AND session_id=$2 AND id=(SELECT current_plan_version_id FROM agent_sessions WHERE id=$2)',[body.planVersionId,sessionId])).rowCount
-    const step=(await tx.query('SELECT 1 FROM agent_plan_steps WHERE plan_version_id=$1 AND id=$2',[body.planVersionId,body.planStepId])).rowCount
-    const stable=(await tx.query('SELECT 1 FROM agent_plan_step_identities WHERE session_id=$1 AND stable_step_id=$2',[sessionId,body.planStepId])).rowCount
-    if(!plan || !step || !stable) throw new DomainError('STALE_PLAN_VERSION','Review must target a stable step in the current plan')
+    const budget=await admitChildSession(tx,parent,body)
     const target=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[]}>('SELECT id,actor_id,approved_capabilities FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true',[body.reviewerAgentId,actor(request).workspaceId])).rows[0]
     if(!target) throw new DomainError('NOT_FOUND','Reviewer agent not found')
     const access=(await tx.query<{approved_capabilities:string[]}>('SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL',[actor(request).workspaceId,target.id,parent.team_id])).rows[0]
@@ -1498,19 +1485,20 @@ async function createReview(h:Helpers,request:FastifyRequest) {
     if(!source || !access || !reviewCaps.every(cap=>source.permissions_snapshot.includes(cap)&&target.approved_capabilities.includes(cap)&&access.approved_capabilities.includes(cap))) throw new DomainError('CAPABILITY_DENIED','Review capabilities must be authorized by the parent delegation, reviewer, and team grant')
     await assertAgentExecutionCapacityAfterLock(tx,{workspaceId:actor(request).workspaceId,agentId:target.id})
     const delegation=(await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,parent_delegation_id) VALUES($1,$2,$3,$4,$5,NULL,'reviewer','plan_step',$6,$7,$8,$9) RETURNING id",[actor(request).workspaceId,parent.team_id,target.id,target.actor_id,source.principal_human_actor_id,body.planStepId,reviewCaps,{...source.capability_scope,capabilities:reviewCaps},parent.delegation_id])).rows[0] as {id:string}
-    const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,plan_step_id,plan_step_version_id,context_snapshot_id,state,state_reason,budget,inherited_budget,required_for_parent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,true) RETURNING *",[actor(request).workspaceId,parent.team_id,target.id,target.actor_id,delegation.id,parent.id,parent.work_item_id,body.planStepId,body.planVersionId,parent.context_snapshot_id,body.initialPrompt,parent.budget])).rows[0] as {id:string}
+    const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,plan_step_id,plan_step_version_id,context_snapshot_id,state,state_reason,budget,inherited_budget,required_for_parent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,true) RETURNING *",[actor(request).workspaceId,parent.team_id,target.id,target.actor_id,delegation.id,parent.id,parent.work_item_id,body.planStepId,body.planVersionId,parent.context_snapshot_id,body.initialPrompt,budget])).rows[0] as {id:string}
+    await tx.query('INSERT INTO session_budget_reservations(parent_session_id,child_session_id,allocation,reserved) VALUES($1,$2,$3,$3)',[sessionId,child.id,budget])
     await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT DO NOTHING",[actor(request).workspaceId,child.id,parent.team_id])
     await tx.query('INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)',[child.id,actor(request).id,body.initialPrompt])
     await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[`${actor(request).workspaceId}:plan_step:${body.planStepId}`])
-    await tx.query("UPDATE leases SET status='expired',updated_at=now(),audit_reason=COALESCE(audit_reason,'expired before review delegation') WHERE workspace_id=$1 AND resource_type='plan_step' AND resource_id=$2 AND status='active' AND expires_at<=now()",[actor(request).workspaceId,body.planStepId])
+    await tx.query("UPDATE leases SET status='expired',updated_at=now(),audit_reason=COALESCE(audit_reason,'expired before review delegation') WHERE workspace_id=$1 AND resource_type='plan_step' AND resource_id=$2 AND status='active' AND expires_at<=clock_timestamp()",[actor(request).workspaceId,body.planStepId])
     const conflict=(await tx.query("SELECT id FROM leases WHERE workspace_id=$1 AND resource_type='plan_step' AND resource_id=$2 AND status='active' AND kind='exclusive' FOR UPDATE",[actor(request).workspaceId,body.planStepId])).rows[0]
     if(conflict) throw new DomainError('LEASE_CONFLICT','Plan step is exclusively leased')
-    const reviewLease=(await tx.query("INSERT INTO leases(workspace_id,session_id,resource_type,resource_id,kind,reason,expires_at) VALUES($1,$2,'plan_step',$3,'review_shared','review delegation',now()+($4::text || ' seconds')::interval) RETURNING *",[actor(request).workspaceId,child.id,body.planStepId,body.ttlSeconds])).rows[0] as {id:string}
+    const reviewLease=(await tx.query("INSERT INTO leases(workspace_id,session_id,resource_type,resource_id,kind,reason,expires_at) VALUES($1,$2,'plan_step',$3,'review_shared','review delegation',clock_timestamp()+($4::text || ' seconds')::interval) RETURNING *",[actor(request).workspaceId,child.id,body.planStepId,body.ttlSeconds])).rows[0] as {id:string}
     const installationAuthority=lockedTargets.installationAuthorities.get(target.id)
     if(!installationAuthority) throw new DomainError('NOT_FOUND','Active installation token not found for the exact review Session authority')
     await provisionNewSessionDelivery(tx,h.meta(request,body),{sessionId:child.id,agentId:target.id,delegationId:delegation.id,teamId:parent.team_id,workItemId:parent.work_item_id,initialPrompt:body.initialPrompt,installationAuthority})
     await emit(tx,h.meta(request,body),'review.delegation.created','lease',reviewLease.id,{sessionId,childSessionId:child.id,planStepId:body.planStepId},parent.team_id)
-    return {session:child,lease:reviewLease}
+    return reviewDelegationResponseSchema.parse({session:JSON.parse(JSON.stringify(child)),lease:leaseResponse(reviewLease as typeof reviewLease & {version:number})})
   })
 }
 

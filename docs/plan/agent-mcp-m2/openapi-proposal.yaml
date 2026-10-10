@@ -1,0 +1,170 @@
+# 规划草案：现行 OPENAPI.yaml 本轮不变。
+paths:
+  /api/v1/agent-sessions/{id}/children:
+    post:
+      operationId: createChildAgentSession
+      x-workmesh-policy-id: route.createChildAgentSession
+      x-workmesh-actor-kinds: [human, agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{SessionCookie: []}, {AgentSessionToken: []}]
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ChildSessionInput'}
+      responses:
+        '200':
+          description: 原创建行完整typed返回，保留原绑定与额外字段
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ChildAgentSession'}
+        '409': {$ref: '#/components/responses/AgentConcurrencyLimit'}
+    get:
+      operationId: listAgentSessionChildren
+      x-workmesh-policy-id: route.listAgentSessionChildren
+      x-workmesh-actor-kinds: [agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{AgentSessionToken: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: childSessionId, in: query, schema: {type: string, format: uuid}}
+        - {name: cursor, in: query, schema: {type: string, minLength: 1, maxLength: 8192}}
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 200, default: 50}}
+      responses:
+        '200':
+          description: 精确 live 父 E 读取直接子最小事实；子终态可确认
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ChildSessionStatusPage'}
+        '400': {description: VALIDATION_ERROR 或现行 PAGINATION_CURSOR 错误；统一结构化 error}
+        '401': {description: 凭据缺失或过期撤权；统一结构化 error}
+        '403': {description: 父非本 E 或父实时资格失败；统一结构化 error}
+        '404': {description: 精确 child 不存在或不属父或无证明绑定；统一结构化 error}
+  /api/v1/agent-sessions/{id}/review-delegations:
+    post:
+      operationId: createReviewDelegation
+      x-workmesh-policy-id: route.createReviewDelegation
+      x-workmesh-actor-kinds: [human, agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{SessionCookie: []}, {AgentSessionToken: []}]
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReviewDelegationInput'}
+      responses:
+        '200':
+          description: 同原session/lease wrapper，执行预算与reservation同值
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ReviewDelegationResponse'}
+        '409': {$ref: '#/components/responses/AgentConcurrencyLimit'}
+components:
+  schemas:
+    ChildBudget:
+      type: object
+      description: 有限非负数字record；缺省维度继承，不自动按余额缩减
+      additionalProperties: {type: number, minimum: 0}
+    ChildSessionInput:
+      type: object
+      required: [agentId, planStepId, planVersionId, initialPrompt]
+      properties:
+        agentId: {type: string, format: uuid}
+        planStepId: {type: string, format: uuid}
+        planVersionId: {type: string, format: uuid}
+        role: {type: string, enum: [executor, reviewer, researcher], default: executor}
+        initialPrompt: {type: string, minLength: 1, maxLength: 50000}
+        required: {type: boolean, default: true}
+        budget: {$ref: '#/components/schemas/ChildBudget'}
+    ReviewDelegationInput:
+      type: object
+      required: [reviewerAgentId, planStepId, planVersionId, initialPrompt]
+      properties:
+        reviewerAgentId: {type: string, format: uuid}
+        planStepId: {type: string, format: uuid}
+        planVersionId: {type: string, format: uuid}
+        initialPrompt: {type: string, minLength: 1, maxLength: 50000}
+        ttlSeconds: {type: integer, minimum: 10, maximum: 3600, default: 300}
+        budget: {$ref: '#/components/schemas/ChildBudget'}
+    ChildAgentSession:
+      allOf:
+        - {$ref: '#/components/schemas/AgentSession'}
+        - type: object
+          additionalProperties: true
+          required: [parent_session_id, plan_step_version_id, required_for_parent, inherited_budget, max_child_sessions, budget]
+          properties:
+            parent_session_id: {type: string, format: uuid}
+            plan_step_version_id: {type: string, format: uuid}
+            required_for_parent: {type: boolean}
+            inherited_budget: {$ref: '#/components/schemas/ChildBudget'}
+            max_child_sessions: {type: integer, minimum: 0}
+            budget: {$ref: '#/components/schemas/ChildBudget'}
+    ReviewDelegationResponse:
+      type: object
+      additionalProperties: true
+      required: [session, lease]
+      properties:
+        session: {$ref: '#/components/schemas/ChildAgentSession'}
+        lease: {$ref: '#/components/schemas/ChildReviewLease'}
+    ChildReviewLease:
+      type: object
+      additionalProperties: true
+      description: 对齐现行execution-contracts leaseResponseSchema；revision等于version
+      required: [id, workspace_id, session_id, holder_actor_id, resource_type, resource_id, kind, status, reason, expires_at, heartbeat_at, renew_count, version, revision, released_at, released_by_actor_id, audit_reason, revoked_at, revoked_by_actor_id, created_at, updated_at]
+      properties:
+        id: {type: string, format: uuid}
+        workspace_id: {type: string, format: uuid}
+        session_id: {type: string, format: uuid}
+        holder_actor_id: {type: string, format: uuid}
+        resource_type: {type: string, enum: [work_item, plan_step]}
+        resource_id: {type: string, format: uuid}
+        kind: {type: string, enum: [exclusive, review_shared]}
+        status: {type: string, enum: [active, expired, released, revoked]}
+        reason: {type: string}
+        expires_at: {type: string, format: date-time}
+        heartbeat_at: {type: string, format: date-time}
+        renew_count: {type: integer, minimum: 0}
+        version: {type: integer, minimum: 1}
+        revision: {type: integer, minimum: 1}
+        released_at: {type: [string, 'null'], format: date-time}
+        released_by_actor_id: {type: [string, 'null'], format: uuid}
+        audit_reason: {type: [string, 'null']}
+        revoked_at: {type: [string, 'null'], format: date-time}
+        revoked_by_actor_id: {type: [string, 'null'], format: uuid}
+        created_at: {type: string, format: date-time}
+        updated_at: {type: string, format: date-time}
+    ChildSessionStatus:
+      type: object
+      additionalProperties: false
+      required: [id, parentSessionId, requiredForParent, state, revision, planStepId, planVersionId, resultArtifactIds]
+      properties:
+        id: {type: string, format: uuid}
+        parentSessionId: {type: string, format: uuid}
+        requiredForParent: {type: boolean}
+        state:
+          type: string
+          enum: [queued, acknowledged, planning, executing, awaiting_input, awaiting_approval, blocked, paused, stopping, stale, completed, failed, canceled]
+        revision: {type: integer, minimum: 1}
+        planStepId: {type: string, format: uuid}
+        planVersionId: {type: string, format: uuid}
+        resultArtifactIds:
+          type: array
+          maxItems: 100
+          uniqueItems: true
+          items: {type: string, format: uuid}
+    ChildSessionStatusPage:
+      type: object
+      additionalProperties: false
+      required: [items, nextCursor]
+      properties:
+        items: {type: array, maxItems: 200, items: {$ref: '#/components/schemas/ChildSessionStatus'}}
+        nextCursor: {type: [string, 'null'], maxLength: 8192}

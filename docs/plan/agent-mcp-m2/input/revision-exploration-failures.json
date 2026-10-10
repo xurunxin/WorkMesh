@@ -1,0 +1,28 @@
+{
+  "status": "本轮规划探索/补丁失败；非产品测试",
+  "failures": [
+    {
+      "action": "rg budget search",
+      "paths": [
+        "apps/agent-runner/src/workmesh-client.ts",
+        "apps/agent-runner/src/runner-api.ts"
+      ],
+      "result": "两不存在路径返回os error2，已改按实际目录及schema定义读；不以不存在的文件作为实施入口",
+      "limitation": "工具可见返回在会话，未保底层stderr原字节"
+    },
+    {
+      "action": "rg PowerShell wildcard operands",
+      "result": "目录名中的*未由PowerShell展开，rg报os error123；改真实目录配-g文件模式",
+      "nativeExit": "合并命令最终Get-Content退出0，不把整体0当失败rg成功",
+      "limitation": "有可见原返回，未捕每个嵌套命令独立native exit"
+    },
+    {
+      "action": "security-contract apply_patch",
+      "result": "有一条预期整行与实际不匹配，apply_patch verification failed，未修改；按实际整行再apply成功"
+    },
+    {
+      "action": "README/sources apply_patch",
+      "result": "sources的无效noop整行不匹配，apply_patch verification failed，未修改；移除该noop再apply成功"
+    }
+  ]
+}

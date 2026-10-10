@@ -1,0 +1,7 @@
+{
+  "status": "真实规划静态首败；不是产品测试",
+  "failures": [
+    {"command": "PowerShell rg brace path search", "exitCode": 1, "output": "ParserError: 参数列表中缺少参数。packages/contracts/src/{index.ts,route-policy.ts} 不受 PowerShell支持；搜索未执行。", "rawCaptureLimitation": "完整可见返回在会话；此条是摘要，非底层stderr字节原件", "repair": "改用两个显式路径后exit 0"},
+    {"command": "python docs/plan/agent-mcp-m2/generate-evidence.py", "exitCode": 1, "output": "File generate-evidence.py, line 258\nSyntaxError: unmatched '}'", "rawCaptureLimitation": "Python中文stderr由终端编码显示失真；不冒原始字节全文", "repair": "去除复合mapping末尾多余右brace；保留此次首败"}
+  ]
+}

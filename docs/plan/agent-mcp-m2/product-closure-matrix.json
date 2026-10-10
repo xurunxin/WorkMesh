@@ -1,0 +1,3454 @@
+{
+  "source": "18条原冻结行逐字保留；规划acceptance-matrix不倒写为产品通过",
+  "rows": [
+    {
+      "testId": "M2-G-1",
+      "frozenRawLine": "| 正常 | 多页Milestone/Issue/Document/history/Room相关事实可读；restore生成新revision；blocks/related精确；claim→reply与ACK语义分别成立；Handoff正确目标接续 |",
+      "category": "正常",
+      "actualAssertions": "多页文档/六个history revision、restore新revision、五个同毫秒异微秒Milestone/Issue/relations准确遍历；Room/Inbox claim/read/ACK/reply分开；Human接受Handoff后真实Worker及Pi接续。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/documents.integration.test.ts",
+          "titles": [
+            {
+              "line": 47,
+              "title": "keeps immutable history with idempotency, conflicts, export, restore and archive"
+            },
+            {
+              "line": 107,
+              "title": "rejects cross-owner reads and records the real Agent actor on an Issue document"
+            },
+            {
+              "line": 167,
+              "title": "rejects a cross-Team owner and rolls back a failed event write"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/document-comments-decision.json",
+        "ci-logs/planning-collaboration/planning-import-recovery.json",
+        "ci-logs/planning-collaboration/inbox-handoff-chain.json"
+      ],
+      "notApplicableAndLimits": "C/E主链成功不包括C Document越owner；Agent无Human动作工具，H保留动作实际HTTP成功对照。"
+    },
+    {
+      "testId": "M2-G-2",
+      "frozenRawLine": "| 越权/撤权 | 跨Team/Project父关系和文档拒绝；他作者评论编辑拒绝；Inbox未claim只有metadata、别Session不读正文；H-only接受/Guidance发布拒绝；分页中撤权不泄露后页 |",
+      "category": "越权/撤权",
+      "actualAssertions": "跨owner/Team、Human-only发布/接受/评论写、他作者member编辑在现行role policy层拒；同member真实登录可读，特权maintainer角色夹具合法创建/编辑，不冒仅作者才能写；未claim正文拒；分页后撤权、C写等待后Human撤权先提交零事实。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/documents.integration.test.ts",
+          "titles": [
+            {
+              "line": 47,
+              "title": "keeps immutable history with idempotency, conflicts, export, restore and archive"
+            },
+            {
+              "line": 107,
+              "title": "rejects cross-owner reads and records the real Agent actor on an Issue document"
+            },
+            {
+              "line": 167,
+              "title": "rejects a cross-Team owner and rolls back a failed event write"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/route-policy-authorization.integration.test.ts",
+          "titles": [
+            {
+              "line": 484,
+              "title": "rejects an ordinary execution Session from the Human-or-Coordination forced assignment route"
+            },
+            {
+              "line": 519,
+              "title": "fails closed across principals, resources, audit, events, revocation, and feature gates"
+            },
+            {
+              "line": 895,
+              "title": "does not widen multi-Team initiative or dependency events to unrelated humans"
+            },
+            {
+              "line": 1112,
+              "title": "keeps current personal view and notification producers private across REST and SSE"
+            },
+            {
+              "line": 1268,
+              "title": "returns a structured retryable response when realtime capacity is saturated"
+            },
+            {
+              "line": 1298,
+              "title": "rechecks Team and session authorization between opaque cursor pages"
+            },
+            {
+              "line": 1370,
+              "title": "rechecks live authority inside the final paged SQL after preflight"
+            },
+            {
+              "line": 1929,
+              "title": "rechecks all remaining Agent-readable collection authority in final paged SQL"
+            },
+            {
+              "line": 2237,
+              "title": "rechecks the six parameterized Agent collection routes in final paged SQL"
+            },
+            {
+              "line": 2489,
+              "title": "conceals and deduplicates explicit unresolved Team targets without breaking body-owned collection writes"
+            },
+            {
+              "line": 2585,
+              "title": "serializes delegation and Team-grant revocation with mutation authority"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/document-comments-decision.json",
+        "ci-logs/planning-collaboration/planning-graph-revocation.json",
+        "ci-logs/planning-collaboration/human-comment-faults-and-collaboration-restart.json"
+      ],
+      "notApplicableAndLimits": "UNAUTHENTICATED/CAPABILITY_DENIED/RESOURCE_SCOPE_DENIED沿入口真实阶段断言；同场景合法正对照能读。"
+    },
+    {
+      "testId": "M2-G-3",
+      "frozenRawLine": "| 非法状态 | hierarchy/relation循环、删除被引用Milestone、archived文档更新、Handoff错阶段拒绝；当前Inbox短Session失效不自动继承 |",
+      "category": "非法状态",
+      "actualAssertions": "反向blocks/parent循环及引用Milestone删除拒；archive后不能改Doc；Handoff错阶段、exact Inbox错Session拒，合法边和未引用资源删除成功。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/documents.integration.test.ts",
+          "titles": [
+            {
+              "line": 47,
+              "title": "keeps immutable history with idempotency, conflicts, export, restore and archive"
+            },
+            {
+              "line": 107,
+              "title": "rejects cross-owner reads and records the real Agent actor on an Issue document"
+            },
+            {
+              "line": 167,
+              "title": "rejects a cross-Team owner and rolls back a failed event write"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/planning-import-recovery.json"
+      ],
+      "notApplicableAndLimits": "合法非循环边/未引用删除/unarchive后更新成功，不能为失败换目标。"
+    },
+    {
+      "testId": "M2-G-4",
+      "frozenRawLine": "| 幂等 | Human评论回归及Agent文档/关系/消息/claim/reply同key只一事实；异体冲突；导入同hash断点继续原mapping，过期后先对账 |",
+      "category": "幂等",
+      "actualAssertions": "Human评论显式同key/body一事实、异体409；SDK默认独立调用新key，网络重试同key/body；导入故障部分成功→重连同mapping继续→同hash回放；TTL过期仅先读准确mapping对账零写。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "packages/agent-sdk/src/index.test.ts",
+          "titles": [
+            {
+              "line": 14,
+              "title": "independent lease renewals use distinct keys while explicit identity is preserved"
+            },
+            {
+              "line": 29,
+              "title": "安装拒绝 helper 明确选安装 Bearer，原 Session 拒绝入口保留且不换共享 Token"
+            },
+            {
+              "line": 74,
+              "title": "binds Control Center, explanation, execution summary, and preview routes"
+            },
+            {
+              "line": 92,
+              "title": "binds structured planning methods to the versioned REST routes and headers"
+            },
+            {
+              "line": 128,
+              "title": "reads the exact Agent Connection identity with the coordination credential header"
+            },
+            {
+              "line": 158,
+              "title": "lists exact decimal event cursors above 2^53"
+            },
+            {
+              "line": 177,
+              "title": "streams typed events and preserves Last-Event-ID exactly"
+            },
+            {
+              "line": 201,
+              "title": "surfaces CURSOR_EXPIRED without retrying or moving caller state"
+            },
+            {
+              "line": 231,
+              "title": "retries documented realtime capacity responses with bounded policy"
+            },
+            {
+              "line": 267,
+              "title": "reads release, features, and the negotiated Agent capability manifest"
+            },
+            {
+              "line": 290,
+              "title": "uses stable idempotency and does not retry conflicts"
+            },
+            {
+              "line": 298,
+              "title": "retries a rate limit and never exposes the authorization value to logs"
+            },
+            {
+              "line": 306,
+              "title": "never refreshes or retries an authorization denial"
+            },
+            {
+              "line": 315,
+              "title": "reuses the token-exchange key across a retry without logging credentials"
+            },
+            {
+              "line": 338,
+              "title": "keeps a connection bridge on coordination auth and refreshes each exact execution session request-locally"
+            },
+            {
+              "line": 422,
+              "title": "rebuilds exact-session authorization independently in separate stateless bridge clients"
+            },
+            {
+              "line": 465,
+              "title": "propagates cancellation through the exact-session refresh before sending the target request"
+            },
+            {
+              "line": 490,
+              "title": "waits for the full Retry-After duration without changing the logical authentication attempt"
+            },
+            {
+              "line": 524,
+              "title": "reuses the original serialized body when caller-owned input mutates during Retry-After"
+            },
+            {
+              "line": 569,
+              "title": "does not retry or sleep when Retry-After exceeds the explicit limit and preserves error metadata"
+            },
+            {
+              "line": 629,
+              "title": "bounds automatic retries by the total retry-delay budget"
+            },
+            {
+              "line": 665,
+              "title": "bounds automatic retries by the attempt limit"
+            },
+            {
+              "line": 700,
+              "title": "uses installation authority only for pending handoff inspection and idle-target rejection"
+            },
+            {
+              "line": 712,
+              "title": "passes opaque cursors unchanged and iterates page envelopes"
+            },
+            {
+              "line": 743,
+              "title": "redacts nested sensitive values before logging"
+            },
+            {
+              "line": 747,
+              "title": "uses the atomic delegation-and-session endpoint with If-Match"
+            },
+            {
+              "line": 755,
+              "title": "transitions an Agent Session with its exact current revision"
+            },
+            {
+              "line": 768,
+              "title": "preserves exact pull-request head provenance for delivery artifacts"
+            },
+            {
+              "line": 795,
+              "title": "exposes approved CI retry and agent project-update draft without publishing"
+            },
+            {
+              "line": 825,
+              "title": "uses the native Inbox routes with explicit empty mutation bodies"
+            },
+            {
+              "line": 867,
+              "title": "reads the authorized Human Attention projection without local classification"
+            },
+            {
+              "line": 888,
+              "title": "uses a new default key per public mutation while retaining it for retry and explicit callers"
+            },
+            {
+              "line": 908,
+              "title": "accepts a rotated secret and rejects expired deliveries"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/planning-import-recovery.json",
+        "ci-logs/planning-collaboration/lease-independent-calls.json",
+        "ci-logs/planning-collaboration/human-comment-faults-and-collaboration-restart.json"
+      ],
+      "notApplicableAndLimits": "GET写幂等不适用：无key输入且零写；prepare纯函数相同hash；导入不是总事务。"
+    },
+    {
+      "testId": "M2-G-5",
+      "frozenRawLine": "| 旧revision | Document baseRevisionId/hash/revision同时校验；relation/handoff/reply旧版本拒绝；不覆盖更新Plan/文档 |",
+      "category": "旧revision",
+      "actualAssertions": "Document旧revision、仅错误baseRevisionId、仅错误hash分别拒不覆盖；relation删除/Handoff/reply沿原If-Match合同，旧Plan两创建精确STALE_PLAN_VERSION。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/documents.integration.test.ts",
+          "titles": [
+            {
+              "line": 47,
+              "title": "keeps immutable history with idempotency, conflicts, export, restore and archive"
+            },
+            {
+              "line": 107,
+              "title": "rejects cross-owner reads and records the real Agent actor on an Issue document"
+            },
+            {
+              "line": 167,
+              "title": "rejects a cross-Team owner and rolls back a failed event write"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/document-comments-decision.json"
+      ],
+      "notApplicableAndLimits": "GET stale-write不适用：当前/历史revision内容准确；创建无If-Match按现行。"
+    },
+    {
+      "testId": "M2-G-6",
+      "frozenRawLine": "| 事务失败 | Human评论消费者回归及Agent文档、claim/reply、关系与Handoff转换注入回滚，state/event/outbox一致；逐实体import部分完成明确报告、能继续，不能报整项目原子完成 |",
+      "category": "事务失败",
+      "actualAssertions": "Doc事件失败、Human评论/关系/Inbox claim及reply真实outbox故障回滚；Handoff转换旧套件故障回归；导入前实体保留、后实体失败后续补，明确逐实体原子。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/documents.integration.test.ts",
+          "titles": [
+            {
+              "line": 47,
+              "title": "keeps immutable history with idempotency, conflicts, export, restore and archive"
+            },
+            {
+              "line": 107,
+              "title": "rejects cross-owner reads and records the real Agent actor on an Issue document"
+            },
+            {
+              "line": 167,
+              "title": "rejects a cross-Team owner and rolls back a failed event write"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/planning-import-recovery.json",
+        "ci-logs/planning-collaboration/human-comment-faults-and-collaboration-restart.json"
+      ],
+      "notApplicableAndLimits": "逐实体原子适用，整项目事务不适用；GET零写需指纹，非写回滚。"
+    },
+    {
+      "testId": "M2-G-7",
+      "frozenRawLine": "| 重放 | Room/Inbox投影重放不产生双回执/重复消息；source完成沿现行命令。F5 successor/redelivery尚未实现，不拿旧receipt重放当该特性验收 |",
+      "category": "重放",
+      "actualAssertions": "Room/Inbox Worker重复投影不产生双消息/receipt；claim/reply同key；Handoff Human complete走真实原命令；receiver重复409及新Worker读取已delivered行不重发。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/worker/integration/stage1-lifecycle.integration.test.ts",
+          "titles": [
+            {
+              "line": 287,
+              "title": "treats receiver 409 as delivered and the durable ledger rejects duplicate delivery ids"
+            },
+            {
+              "line": 298,
+              "title": "reconciles existing pending approvals under YOLO exactly once across worker restarts"
+            },
+            {
+              "line": 375,
+              "title": "retries, reclaims after a crash, and dead-letters bounded failures without persisting receiver errors"
+            },
+            {
+              "line": 399,
+              "title": "dead-letters a private target without sending and permits the explicit private-network override"
+            },
+            {
+              "line": 430,
+              "title": "normalizes Work Item and project-only room targets before delivery or suppression"
+            },
+            {
+              "line": 797,
+              "title": "handles ACK timeout/late ACK, heartbeat stale, stop grace, and approval expiry in durable transactions"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/inbox-handoff-chain.json",
+        "ci-logs/planning-collaboration/delivery-fence.json"
+      ],
+      "notApplicableAndLimits": "F5 successor/redelivery不适用：本批无该域；GET无job producer；不把历史重放说成新特性。"
+    },
+    {
+      "testId": "M2-G-8",
+      "frozenRawLine": "| 并发 | 两claimant竞争、两文档编辑、同时插循环边/父关系、reply与Human resolve竞态；按当前域边界精确断言，不静默抢占 |",
+      "category": "并发",
+      "actualAssertions": "双claimant/Doc编辑竞争；真实barrier观察pg_blocking_pids，反向blocks/parent各一提交一cycle409；reply与Human resolve按锁后事实只一结算；八HTTP图写及Automation实际新事务前置同namespace锁，Team删除等待workspace边界。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/documents.integration.test.ts",
+          "titles": [
+            {
+              "line": 47,
+              "title": "keeps immutable history with idempotency, conflicts, export, restore and archive"
+            },
+            {
+              "line": 107,
+              "title": "rejects cross-owner reads and records the real Agent actor on an Issue document"
+            },
+            {
+              "line": 167,
+              "title": "rejects a cross-Team owner and rolls back a failed event write"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/planning-graph-revocation.json"
+      ],
+      "notApplicableAndLimits": "独立session/非冲突字段仍能正常操作，核实际pg_blocking_pids，不用sleep判竞态。"
+    },
+    {
+      "testId": "M2-G-9",
+      "frozenRawLine": "| 重启/恢复/Stop | 恢复旧Document/Inbox/导入mapping后继续允许读；失效/停止Session不回复或变换Handoff；durable cursor resync不重发业务写；跨新Session恢复需F5另验 |",
+      "category": "重启/恢复/Stop",
+      "actualAssertions": "API真实close/listen重启后读取原Document revision/history、claimed Inbox正文、import mapping，业务指纹不变；原M1等待/Stop/pause/撤权与durable cursor恢复回归。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "packages/conformance/src/execution-recovery.conformance.test.ts",
+          "titles": [
+            {
+              "line": 52,
+              "title": "具名 SDK/MCP 读取 Plan/context/批准/恢复，Lease 心跳续租释放保持准确 version"
+            },
+            {
+              "line": 128,
+              "title": "同 Agent 双 native 安装只允许实际原 E 来源，旧 null/unproven 和撤权均关闭"
+            },
+            {
+              "line": 393,
+              "title": "真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接"
+            },
+            {
+              "line": 420,
+              "title": "真实 Pi 等待后准确输入已到达，Human 撤 Delegation 优先且不创建续 Turn/Attempt"
+            },
+            {
+              "line": 449,
+              "title": "真实 Pi 模型运行期间 Stop 关闭模型与工具，finally 专用 stopAck 保存清理事实"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage0.integration.test.ts",
+          "titles": [
+            {
+              "line": 159,
+              "title": "covers authentication, idempotency, revisions, nullable patches, filtering, comments, and SSE recovery"
+            },
+            {
+              "line": 432,
+              "title": "enforces membership and workspace isolation, deleted-team writes, and concurrent idempotency"
+            },
+            {
+              "line": 544,
+              "title": "updates workflow state names and colors with revisioned idempotent event delivery"
+            },
+            {
+              "line": 599,
+              "title": "protects the sole active team and lets admins recover zero-team workspaces"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/human-comment-faults-and-collaboration-restart.json",
+        "ci-logs/planning-collaboration/pi-creation-response-and-restart.json"
+      ],
+      "notApplicableAndLimits": "跨Session F5恢复不适用；当前Session正常重启必须证据；遵M1Stop优先。"
+    },
+    {
+      "testId": "M2-C-1",
+      "frozenRawLine": "| 正常 | 两种创建命令准确绑定父当前Plan/version/stable step、预算、required及目标身份；受控交付ACK成功；review_shared与允许读取；本人Room结果+code_review齐备才能完成，随后父完成成功 |",
+      "category": "正常",
+      "actualAssertions": "实际Pi调用两创建工具并解析模型实收创建响应五绑定字段/任意预算维度，与REST投影/DB比对；有限预算100→60→40，真实Worker/HMAC receiver→exchange/ACK→Pi双证据→父完成，Session completed/Turn与Attempt settled。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/pi-creation-response-and-restart.json",
+        "ci-logs/planning-collaboration/finite-budget-chain.json"
+      ],
+      "notApplicableAndLimits": "普通child无plan/artifact能力；reviewer仅本人Room review_result＋本人code_review完成；无两者或任一缺均REVIEW_COMPLETION_EVIDENCE_REQUIRED。"
+    },
+    {
+      "testId": "M2-C-2",
+      "frozenRawLine": "| 越权/撤权 | 三方能力任一缺失或撤销、installation authority不可用拒绝；跨父/Team/step拒绝；reviewer publishPlan和非code_review Artifact拒绝，其他actor/Session代发review_result不计本人证据；不能自审PR producer |",
+      "category": "越权/撤权",
+      "actualAssertions": "三方能力任一缺拒；reviewer无publish_plan及非code_review拒；父/他Actor/他Session的Room或Artifact、普通Activity不能替本人双证据；live Token/原Connection/installation/principal/member/资源重验及空页失权零22事实。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/agent-lock-order.integration.test.ts",
+          "titles": [
+            {
+              "line": 506,
+              "title": "forms the exact WorkItem gate -> guard -> revoke chain and denies the reparented write"
+            },
+            {
+              "line": 570,
+              "title": "forms the exact Project delete -> health guard -> revoke chain and leaves zero health projection"
+            },
+            {
+              "line": 641,
+              "title": "publishes approved Agent project health while locking only the post-core Approval row"
+            },
+            {
+              "line": 716,
+              "title": "rejects reciprocal cross-project health drafts before the merged planner"
+            },
+            {
+              "line": 845,
+              "title": "denies project health when the bound Work Item moves after pre-authorization"
+            },
+            {
+              "line": 913,
+              "title": "waits at Definition before Session and WorkItem and denies Usage after reparent"
+            },
+            {
+              "line": 968,
+              "title": "lets WorkItem reparent win while forced assignment waits on Definition"
+            },
+            {
+              "line": 1059,
+              "title": "serializes forced assignment, retry, and revoke with no partial Session graph"
+            },
+            {
+              "line": 1166,
+              "title": "locks SessionToken before InstallationToken for exchange and refresh"
+            },
+            {
+              "line": 1269,
+              "title": "completes reciprocal child, review, and handoff acquisition in sorted order"
+            },
+            {
+              "line": 1491,
+              "title": "revalidates automation resource, message, and approval authority after exact native lock waits"
+            },
+            {
+              "line": 1614,
+              "title": "orders Stage4 approval consumption before a human Approval decision through Session"
+            },
+            {
+              "line": 1682,
+              "title": "denies Loop admission after project routing or exact Team grant changes behind native locks"
+            },
+            {
+              "line": 1749,
+              "title": "serializes reordered multi-recipient reciprocal room messages at the first Definition"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/projection-pages-denial.json",
+        "ci-logs/planning-collaboration/delivery-fence.json"
+      ],
+      "notApplicableAndLimits": "直接E与C/install模式严格区分；不能拿H cookie替；M3 PR producer自审具体场景不在本批新增，保现有身份拒。"
+    },
+    {
+      "testId": "M2-C-3",
+      "frozenRawLine": "| 非法状态 | 旧Plan、无stable identity、错误step、exclusive Lease冲突拒绝；缺消息/缺Artifact/仅structured review分别拒reviewer完成；required child每种未completed状态阻父并给准确IDs；非required子不是该gate阻断条件，不能因调用失败改required |",
+      "category": "非法状态",
+      "actualAssertions": "required12种非completed状态逐准确blocker IDs阻父，nonrequired同12状态真实父完成正对照；structured review/noArtifactReason不豁免本人双证据；默认父/step8第九拒，特权step低限额跨Plan稳定ID，旧绑定可读。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/projection-pages-denial.json"
+      ],
+      "notApplicableAndLimits": "父projection仅live读集合；queued/paused/stopping/stale/terminal拒，空page不能掩盖撤权。默认父/step8，第九次拒；低父/step1边界只特权DB测试夹具，记录原值/SQL不当客户端DTO。"
+    },
+    {
+      "testId": "M2-C-4",
+      "frozenRawLine": "| 幂等 | 两种创建同key同body只有一个child/delegation、reservation/lease/交付事件；异体冲突；Room消息/Artifact/完成同key不双写，终态拒绝按M1确认原结果。SDK默认step派生key仍需区分同step多次合法意图，正文/角色/version变化不得沿旧key |",
+      "category": "幂等",
+      "actualAssertions": "两创建同key一Session/Delegation/reservation/Lease/事件；预算异体冲突；Room/Artifact/完成幂等回归；默认新调用新UUID，单次重试不换；Lease heartbeat/renew独立调用新结果，原M1终态原动作只读确认。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "packages/conformance/src/execution-recovery.conformance.test.ts",
+          "titles": [
+            {
+              "line": 52,
+              "title": "具名 SDK/MCP 读取 Plan/context/批准/恢复，Lease 心跳续租释放保持准确 version"
+            },
+            {
+              "line": 128,
+              "title": "同 Agent 双 native 安装只允许实际原 E 来源，旧 null/unproven 和撤权均关闭"
+            },
+            {
+              "line": 393,
+              "title": "真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接"
+            },
+            {
+              "line": 420,
+              "title": "真实 Pi 等待后准确输入已到达，Human 撤 Delegation 优先且不创建续 Turn/Attempt"
+            },
+            {
+              "line": 449,
+              "title": "真实 Pi 模型运行期间 Stop 关闭模型与工具，finally 专用 stopAck 保存清理事实"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "packages/agent-sdk/src/index.test.ts",
+          "titles": [
+            {
+              "line": 14,
+              "title": "independent lease renewals use distinct keys while explicit identity is preserved"
+            },
+            {
+              "line": 29,
+              "title": "安装拒绝 helper 明确选安装 Bearer，原 Session 拒绝入口保留且不换共享 Token"
+            },
+            {
+              "line": 74,
+              "title": "binds Control Center, explanation, execution summary, and preview routes"
+            },
+            {
+              "line": 92,
+              "title": "binds structured planning methods to the versioned REST routes and headers"
+            },
+            {
+              "line": 128,
+              "title": "reads the exact Agent Connection identity with the coordination credential header"
+            },
+            {
+              "line": 158,
+              "title": "lists exact decimal event cursors above 2^53"
+            },
+            {
+              "line": 177,
+              "title": "streams typed events and preserves Last-Event-ID exactly"
+            },
+            {
+              "line": 201,
+              "title": "surfaces CURSOR_EXPIRED without retrying or moving caller state"
+            },
+            {
+              "line": 231,
+              "title": "retries documented realtime capacity responses with bounded policy"
+            },
+            {
+              "line": 267,
+              "title": "reads release, features, and the negotiated Agent capability manifest"
+            },
+            {
+              "line": 290,
+              "title": "uses stable idempotency and does not retry conflicts"
+            },
+            {
+              "line": 298,
+              "title": "retries a rate limit and never exposes the authorization value to logs"
+            },
+            {
+              "line": 306,
+              "title": "never refreshes or retries an authorization denial"
+            },
+            {
+              "line": 315,
+              "title": "reuses the token-exchange key across a retry without logging credentials"
+            },
+            {
+              "line": 338,
+              "title": "keeps a connection bridge on coordination auth and refreshes each exact execution session request-locally"
+            },
+            {
+              "line": 422,
+              "title": "rebuilds exact-session authorization independently in separate stateless bridge clients"
+            },
+            {
+              "line": 465,
+              "title": "propagates cancellation through the exact-session refresh before sending the target request"
+            },
+            {
+              "line": 490,
+              "title": "waits for the full Retry-After duration without changing the logical authentication attempt"
+            },
+            {
+              "line": 524,
+              "title": "reuses the original serialized body when caller-owned input mutates during Retry-After"
+            },
+            {
+              "line": 569,
+              "title": "does not retry or sleep when Retry-After exceeds the explicit limit and preserves error metadata"
+            },
+            {
+              "line": 629,
+              "title": "bounds automatic retries by the total retry-delay budget"
+            },
+            {
+              "line": 665,
+              "title": "bounds automatic retries by the attempt limit"
+            },
+            {
+              "line": 700,
+              "title": "uses installation authority only for pending handoff inspection and idle-target rejection"
+            },
+            {
+              "line": 712,
+              "title": "passes opaque cursors unchanged and iterates page envelopes"
+            },
+            {
+              "line": 743,
+              "title": "redacts nested sensitive values before logging"
+            },
+            {
+              "line": 747,
+              "title": "uses the atomic delegation-and-session endpoint with If-Match"
+            },
+            {
+              "line": 755,
+              "title": "transitions an Agent Session with its exact current revision"
+            },
+            {
+              "line": 768,
+              "title": "preserves exact pull-request head provenance for delivery artifacts"
+            },
+            {
+              "line": 795,
+              "title": "exposes approved CI retry and agent project-update draft without publishing"
+            },
+            {
+              "line": 825,
+              "title": "uses the native Inbox routes with explicit empty mutation bodies"
+            },
+            {
+              "line": 867,
+              "title": "reads the authorized Human Attention projection without local classification"
+            },
+            {
+              "line": 888,
+              "title": "uses a new default key per public mutation while retaining it for retry and explicit callers"
+            },
+            {
+              "line": 908,
+              "title": "accepts a rotated secret and rejects expired deliveries"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/finite-budget-chain.json",
+        "ci-logs/planning-collaboration/lease-independent-calls.json"
+      ],
+      "notApplicableAndLimits": "terminal重放被M1前置拒则准确origin只读确认，不用终态E get或重新建child。"
+    },
+    {
+      "testId": "M2-C-5",
+      "frozenRawLine": "| 版本 | 当前Plan/version/step整体验证，版本更新后旧输入拒绝；创建REST无If-Match合同，不伪增该header要求；完成用当前revision，旧revision拒绝 |",
+      "category": "版本",
+      "actualAssertions": "两创建旧Plan分别STALE_PLAN_VERSION零事实；stable step跨Plan版本限额；创建无If-Match，完成使用准确revision且旧版本拒，不自动改意图。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/pi-creation-response-and-restart.json"
+      ],
+      "notApplicableAndLimits": "父query能见旧绑定，不仅筛currentVersion；未知legacy绑定不能补猜。"
+    },
+    {
+      "testId": "M2-C-6",
+      "frozenRawLine": "| 事务失败 | 创建、budget reservation、review_shared Lease、交付/outbox任一点失败全回滚；证据/父完成失败不推进state，state/event/outbox一致；不提前派发子执行 |",
+      "category": "事务失败",
+      "actualAssertions": "review创建8处真实SQL插入故障，Session/授权/预算/Lease/prompt/token/事件/outbox全回滚；本人Artifact/Room/父完成outbox故障不推进；无事务前投递。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/delivery-fence.json"
+      ],
+      "notApplicableAndLimits": "故障后同key重试合法一份；security denial表单列，成功GET也不写该表。"
+    },
+    {
+      "testId": "M2-C-7",
+      "frozenRawLine": "| job/重放 | 重复provisioning outbox不生成第二子Session/执行授权；证据重放不放大，原父/step归属不变；不会自动把failed required child替换为已完成 |",
+      "category": "job/重放",
+      "actualAssertions": "真实Worker receiver重复投递409，重建Worker消费已delivered行不多发；旧claim/nonce/token来源关闭，重复ACK/Room/Artifact无双事实，failed required child不替换。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "packages/conformance/src/execution-recovery.conformance.test.ts",
+          "titles": [
+            {
+              "line": 52,
+              "title": "具名 SDK/MCP 读取 Plan/context/批准/恢复，Lease 心跳续租释放保持准确 version"
+            },
+            {
+              "line": 128,
+              "title": "同 Agent 双 native 安装只允许实际原 E 来源，旧 null/unproven 和撤权均关闭"
+            },
+            {
+              "line": 393,
+              "title": "真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接"
+            },
+            {
+              "line": 420,
+              "title": "真实 Pi 等待后准确输入已到达，Human 撤 Delegation 优先且不创建续 Turn/Attempt"
+            },
+            {
+              "line": 449,
+              "title": "真实 Pi 模型运行期间 Stop 关闭模型与工具，finally 专用 stopAck 保存清理事实"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/delivery-fence.json",
+        "ci-logs/planning-collaboration/self-claim-notification.json",
+        "ci-logs/planning-collaboration/legacy-self-claim-recovery.json"
+      ],
+      "notApplicableAndLimits": "旧/失效trigger及来源null沿M1失败关闭；没有新的事件类型。"
+    },
+    {
+      "testId": "M2-C-8",
+      "frozenRawLine": "| 并发 | 两创建竞争父/step限额、累计预算与目标maxConcurrency，无越界；review与普通child竞争也覆盖；review_shared/exclusive冲突、Plan发布与创建、父complete与child完成按事务提交顺序裁定 |",
+      "category": "并发",
+      "actualAssertions": "受控barrier及pg_blocking_pids实际等待：mixed child/review预算、Plan发布竞创建、父完成竞子完成、review_shared竞exclusive；legacy活跃review无reservation计有效预算，新review有reservation不双计。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/finite-budget-chain.json"
+      ],
+      "notApplicableAndLimits": "失败/回滚/同keyreplay不占第二份；可选显式budget为用户q-ka2GipEunxQuHuFYGap2C裁定；省略全额不足拒是明确兼容限制，非假恢复。"
+    },
+    {
+      "testId": "M2-C-9",
+      "frozenRawLine": "| 重启/恢复/Stop | 重启后绑定、预算reservation、Lease及required blocker事实不丢；停止/撤权后普通创建和证据写拒绝，子清理沿M1；父Stop后子是否继续依当前状态/授权重新检查，不假定自动级联；无新增机器shell，进程清理用例不适用 |",
+      "category": "重启/恢复/Stop",
+      "actualAssertions": "真实API重启22表binding/reservation/Lease/required blocker保全；Stop/原撤权优先零外发；准确无nonce创建Token ID与错ID/旧缺ID/过期租期拒发；Pi fail两事务成功/旧rev/Stop/revoke/失响应分别核Turn/Attempt与Session事实。",
+      "status": "本机指定场景已通过；完整结果待正式成果独审",
+      "receipts": {
+        "rootIntegration": "run-099.json",
+        "currentM2": "run-122.json"
+      },
+      "testSources": [
+        {
+          "file": "packages/conformance/src/planning-collaboration.conformance.test.ts",
+          "titles": [
+            {
+              "line": 33,
+              "title": "Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案"
+            },
+            {
+              "line": 86,
+              "title": "C规划导入逐实体部分成功后重连恢复mapping，完整分页/里程碑/层级/blocks及循环拒绝"
+            },
+            {
+              "line": 160,
+              "title": "C图写等待规划锁后Human撤权先提交，写入拒绝且恢复后新意图合法"
+            },
+            {
+              "line": 192,
+              "title": "Runner具名计划评论/assignment proposal/context delta真实Pi固定E和来源，Session fail分开于Turn失败"
+            },
+            {
+              "line": 230,
+              "title": "Pi本人实际创建普通child和reviewer，模型实收创建字段/预算与RESTDB一致，真实API重启保绑定"
+            },
+            {
+              "line": 276,
+              "title": "有限预算100→child60→reviewer40：受控交付、双证据、父终态拒读与完整响应字段"
+            },
+            {
+              "line": 349,
+              "title": "Room→Inbox metadata→claim→read→ACK/reply，Handoff仅Human接受后目标E真实接续"
+            },
+            {
+              "line": 396,
+              "title": "投递授权fence：Stop及原Connection撤权先提交零HTTP；旧claim不发送，来源竞争回滚后可恢复"
+            },
+            {
+              "line": 475,
+              "title": "M1 self-claim通知无nonce仍经准确创建Token ID投递，原Connection撤权拒绝且零HTTP"
+            },
+            {
+              "line": 541,
+              "title": "Human评论他作者拒绝/同key回放与评论关系故障回滚，真实API重启后Document/Inbox/import mapping允许读取"
+            },
+            {
+              "line": 619,
+              "title": "投影签名分页绑定父/过滤且每页重验授权，GET零业务写、零token/prompt"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "apps/api/integration/stage2-collaboration.integration.test.ts",
+          "titles": [
+            {
+              "line": 295,
+              "title": "M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝"
+            },
+            {
+              "line": 312,
+              "title": "M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界"
+            },
+            {
+              "line": 334,
+              "title": "M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝"
+            },
+            {
+              "line": 367,
+              "title": "M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照"
+            },
+            {
+              "line": 383,
+              "title": "M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实"
+            },
+            {
+              "line": 395,
+              "title": "M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件"
+            },
+            {
+              "line": 428,
+              "title": "M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读"
+            },
+            {
+              "line": 458,
+              "title": "M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚"
+            },
+            {
+              "line": 485,
+              "title": "coordinates exclusive and shared leases, child budgets, and durable parent blocking"
+            },
+            {
+              "line": 565,
+              "title": "M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代"
+            },
+            {
+              "line": 587,
+              "title": "M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待"
+            },
+            {
+              "line": 615,
+              "title": "M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算"
+            },
+            {
+              "line": 646,
+              "title": "M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界"
+            },
+            {
+              "line": 706,
+              "title": "M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据"
+            },
+            {
+              "line": 735,
+              "title": "audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release"
+            },
+            {
+              "line": 863,
+              "title": "supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies"
+            },
+            {
+              "line": 2239,
+              "title": "derives legacy Human Inbox scope for current non-admin list and detail reads"
+            },
+            {
+              "line": 2287,
+              "title": "revalidates claim, acknowledge, and reply idempotency replays against live scope"
+            },
+            {
+              "line": 2451,
+              "title": "claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated"
+            },
+            {
+              "line": 3048,
+              "title": "enforces cross-team collaboration boundaries and trusted context sources"
+            },
+            {
+              "line": 3213,
+              "title": "projects body-redacted Agent Inbox delivery facts to authorized Humans"
+            },
+            {
+              "line": 3305,
+              "title": "accepts, rolls back, and rejects handoffs atomically with durable events and outbox"
+            },
+            {
+              "line": 3504,
+              "title": "projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        },
+        {
+          "file": "packages/conformance/src/execution-recovery.conformance.test.ts",
+          "titles": [
+            {
+              "line": 52,
+              "title": "具名 SDK/MCP 读取 Plan/context/批准/恢复，Lease 心跳续租释放保持准确 version"
+            },
+            {
+              "line": 128,
+              "title": "同 Agent 双 native 安装只允许实际原 E 来源，旧 null/unproven 和撤权均关闭"
+            },
+            {
+              "line": 393,
+              "title": "真实 Pi 等待中 Human pause 优先，准确输入不能自动解除 pause，Stop 先提交不续接"
+            },
+            {
+              "line": 420,
+              "title": "真实 Pi 等待后准确输入已到达，Human 撤 Delegation 优先且不创建续 Turn/Attempt"
+            },
+            {
+              "line": 449,
+              "title": "真实 Pi 模型运行期间 Stop 关闭模型与工具，finally 专用 stopAck 保存清理事实"
+            }
+          ],
+          "meaning": "精确套件入口和当前行号；含既有回归，非每标题都独占此行"
+        }
+      ],
+      "evidenceMembers": [
+        "ci-logs/planning-collaboration/pi-creation-response-and-restart.json",
+        "ci-logs/planning-collaboration/self-claim-notification.json",
+        "ci-logs/planning-collaboration/legacy-self-claim-recovery.json",
+        "ci-logs/planning-collaboration/pi-session-failure-success.json",
+        "ci-logs/planning-collaboration/pi-session-failure-stale.json",
+        "ci-logs/planning-collaboration/pi-session-failure-stop.json",
+        "ci-logs/planning-collaboration/pi-session-failure-revoked.json",
+        "ci-logs/planning-collaboration/pi-session-failure-response_lost.json"
+      ],
+      "notApplicableAndLimits": "无新增机器shell故新shell清理用例不适用；真实Pi child过程/端口仍登记收尾，无共享资源清理。"
+    }
+  ],
+  "formalReview": "尚待Chief平台_oY独立成果审查",
+  "countsAreNotCoverage": true
+}

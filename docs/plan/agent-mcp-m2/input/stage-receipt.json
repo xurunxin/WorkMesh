@@ -1,0 +1,596 @@
+{
+  "kind": "本轮实际staged字节与完整范围核验",
+  "base": "cfce77546b64c2a8d7d12949261c38e2f666d5ae",
+  "revisionBase": "5356b0619bffe3130a377f68e38a2a89931962a1",
+  "entries": [
+    {
+      "path": "docs/adr/0082-parent-child-status-projection.md",
+      "blobId": "d8cec874209e997be8dc12f9896d769f18abd092",
+      "bytes": 4488,
+      "sha256": "eaa280a0edf77bc3e8e360a95d1189c7032792905f666fb930790433297b4c56",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/README.md",
+      "blobId": "b977d16bb0d221abd255b235232775246765fa41",
+      "bytes": 2647,
+      "sha256": "8aa7fbf095532e1baa6a5755dd6592f6a65ae4a0b2cbca79bee79d8e654f9a36",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/acceptance-matrix.json",
+      "blobId": "1c3b3f8009575f087fa835ea85f2b8304cdaefa1",
+      "bytes": 24876,
+      "sha256": "88ff18c9f88f0755309043a09ba41ba16419e50fe698d6f642e2226f96c62ffe",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/artifact-manifest.json",
+      "blobId": "9c9b7b5af1dc84f1b9666cdd1401945d3364dcbb",
+      "bytes": 19150,
+      "sha256": "5910bf81dc8ef4777b83a8d109ee6c6b0309ef9aa9bf92d0a54bf529f2891f63",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/compatibility.md",
+      "blobId": "57433736937d32a9e8e78eddc2ad5723b5844a4d",
+      "bytes": 4656,
+      "sha256": "b2bdb4bdef21bebdd80fea7572a6166c4a0237c7c3012428bf1b0fcbdd536481",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/dto-proposal.ts",
+      "blobId": "2b872587948fe950e7cd699f1bee382041c70192",
+      "bytes": 4422,
+      "sha256": "6b72852181e0a850b494eb5d49e34095eefbb76617fc16033655465f474f925e",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/finalize-planning-stage.py",
+      "blobId": "1a296990088e87c56156e2ee25610cc0ac721fd3",
+      "bytes": 3739,
+      "sha256": "3ca7fb7f233b5e524efdf4b7ab33e773ac55dff3fb9c6cb7cb098c1bb2b13351",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/frozen-m2.md",
+      "blobId": "009ac71bc4c94d7c2fdbfe63fb9979184a1e9f09",
+      "bytes": 10809,
+      "sha256": "440dd9f9c468397a13ffff6a0626a0f786e66ff66d643d4822456fd776b1405c",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/generate-evidence.py",
+      "blobId": "487a84c32e3d786af88fcd5202be25914da9b956",
+      "bytes": 28249,
+      "sha256": "fee420eeef27af6156376cbc7ddbd2cd52b7e124c5d7c5e4e4eea972e02f6c6a",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/author-original-plan.md",
+      "blobId": "17c7b75ddea9f7864dfad0971450ff49e1ce3600",
+      "bytes": 7980,
+      "sha256": "d723b572ff187662ec14de8e485f808556f88839a0ea4dc4c7baba9bc35b0b13",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/author-original-response.md",
+      "blobId": "d2dffeeab255cf020101561d639c48901a1ceda5",
+      "bytes": 8222,
+      "sha256": "e9211a089541ec8795827c393ec6f0b0d439c2af24972df7fc3aea8a46d7ef2b",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/author-revised-plan.md",
+      "blobId": "658920fcedc8894f26f5550f4de92ff041d025b6",
+      "bytes": 10893,
+      "sha256": "f4b45e634c015436902440b9da2e934095ae333a8a4c98ff5a1f1e1977bccc57",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-candidate-manifest.json",
+      "blobId": "b666d8795ac5ba4a6c4ce23af36afd55951e6af7",
+      "bytes": 19672,
+      "sha256": "c60f61a3d219d352d695fe987959b16a1621013c71814f7eaa747592b683f222",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-candidate.zip",
+      "blobId": "964806a95804554712da178830d20421e760b0af",
+      "bytes": 10567158,
+      "sha256": "c65def93493bec301a047f92a14c720fa6cec21335f4d5de76bd85e0717895a0",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-plan.md",
+      "blobId": "72e8cea1aa9c46d67c1c1300fa86b5130330f256",
+      "bytes": 8695,
+      "sha256": "a1556bb146944f5286c6de4957e6d664f1e3b2c6e4f4f3d423a1b1d641ba8cd9",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-planning-report.md",
+      "blobId": "07c493cfb349af007f972bf784c380d20ff3e69b",
+      "bytes": 2964,
+      "sha256": "92e3cb24adaa1020d619e2ece6c60412c17eaa2bf877e80a2157990d321cdd43",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-provenance.json",
+      "blobId": "06f732b23d8ee01020af54b9dbbc8503d7a505e9",
+      "bytes": 2457,
+      "sha256": "7cb6158244e356743c63dd5db32a152708a0632a08838558d1aaa85f5869adf7",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-stage-receipt.json",
+      "blobId": "a1af71cad299ca444d4bb37a5630f97480ced65d",
+      "bytes": 14827,
+      "sha256": "144fa667130d093c00ee19ee55fa416378c1d99e3324317a21a4ac607febf360",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-to-current-plan-manifest.json",
+      "blobId": "6d3f832a3c22a5f8039d83951b66d24137c3992a",
+      "bytes": 592,
+      "sha256": "3f0a62ec35455cdb8a9a222cb21ffd2974151e87ebb08223eadf1cc99d8e3304",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-to-current-plan-original.zip",
+      "blobId": "8b5f9c638c87840cd4fe7b84d52200ee100691e8",
+      "bytes": 5700,
+      "sha256": "3b67c02ce77fa1f1a7078edc68e4edf8e1e1d8d26830c50887dcf56695778bc8",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/history/reviewed-to-current-plan.diff",
+      "blobId": "99e2f6fda1805d1f06ef4580d63c245966d9649a",
+      "bytes": 13572,
+      "sha256": "ff6d184b52eb1b91370b7796ed8e74d2b42ca7cb5e4c677fdd234187b56a3b4c",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/implementation.md",
+      "blobId": "658920fcedc8894f26f5550f4de92ff041d025b6",
+      "bytes": 10893,
+      "sha256": "f4b45e634c015436902440b9da2e934095ae333a8a4c98ff5a1f1e1977bccc57",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/chief-feedback.md",
+      "blobId": "7e4e696d6937a66cbb9f90b7377932d899c0ed7b",
+      "bytes": 2350,
+      "sha256": "741c1fad46821d19d52c39e2d7b225f89bbd086bfbeee9b6fcf664ffece367bd",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/current-chief-feedback.md",
+      "blobId": "723828ca433c77eb41c535a4d651ba7eeae6dc1a",
+      "bytes": 1509,
+      "sha256": "a39591cd80d9d8a72b70aeab3168f93f3c97b1c67a5c81ca8f4349d64d5f73a8",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/current-platform-spec.md",
+      "blobId": "59b24ca0d9da7fd6767af42044802c6d8f524afe",
+      "bytes": 7964,
+      "sha256": "8e69e4c1e63bbfa5ef0310f8393e648a92f770f8f385ecf98f1cbb2d7fab38e3",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/m1-ci411-readback.json",
+      "blobId": "e7a2d66e18bfaa5832ac6581a8c5b342619d39c7",
+      "bytes": 1009,
+      "sha256": "aee97be44e6247a2a1f0580ec6f4a19f5b370ce915f33572989b5d9526cdae31",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/m1-todo-readback.json",
+      "blobId": "92195a2827876f347aae31be491bcc6b0404d8d1",
+      "bytes": 14225,
+      "sha256": "fe5ead162dc2c25740343665f6f8f7768bbef78c37cdf9b598d51aca71d97e82",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/m2-conversation-readback.json",
+      "blobId": "71ca2c809b57b082787782a9a87115f4d63e44ef",
+      "bytes": 6301,
+      "sha256": "629db90a2d25cb1224d804135b55cb320937d6eaf97af9415d8ed5a8ad1fc3a1",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/m2-todo-readback.json",
+      "blobId": "0a3c9e189fff8cd7110b86531e4984c0624068ec",
+      "bytes": 13757,
+      "sha256": "f45527627a5da7461c1321e374407cb1398b22a420838641c2c2d77eba7770a7",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/main-final-observation.json",
+      "blobId": "374c4ca6f09222e59627e1a35b3668b989518811",
+      "bytes": 231,
+      "sha256": "acac9c200e273985a394cdedabeb8d74c2c67d381e8d23c3dde7075babe4247b",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/main-observation.json",
+      "blobId": "ec82261f4744e8a8d157062cbb539a812e9f5aac",
+      "bytes": 592,
+      "sha256": "9a9ffa15791b91cdcb491b39185f398b54785a09cf3f7949684cdb4347390b8a",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/original-review.md",
+      "blobId": "d036e5b4ad3c13842373d0b59244b2a2a6c8c9d6",
+      "bytes": 2704,
+      "sha256": "cf2b8fe642dda8dcf0d21561119c4babb64afe2057fe3a75b49e1eb5a62fc8d3",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/plan-edits.json",
+      "blobId": "17fd05bbc4a39c9282ed5caccc645f6393081521",
+      "bytes": 5277,
+      "sha256": "2b56a0a7b35af19295184e2745e3ddba8898015ee7548888e4f2deba0963a444",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/planning-first-failures.json",
+      "blobId": "7cca85108796d7181a8456dba92a268ecf585cbf",
+      "bytes": 789,
+      "sha256": "96a8d3db14fcf4da1180e92c54a17873ea85f57c0cd222f2285c23bc7b8e8d0a",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/platform-injected-revised-plan.md",
+      "blobId": "658920fcedc8894f26f5550f4de92ff041d025b6",
+      "bytes": 10893,
+      "sha256": "f4b45e634c015436902440b9da2e934095ae333a8a4c98ff5a1f1e1977bccc57",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/platform-injected-savedplan.md",
+      "blobId": "17c7b75ddea9f7864dfad0971450ff49e1ce3600",
+      "bytes": 7980,
+      "sha256": "d723b572ff187662ec14de8e485f808556f88839a0ea4dc4c7baba9bc35b0b13",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/provenance.json",
+      "blobId": "01a9f9f3a58d310dd807d0912c48df54ddfb07ee",
+      "bytes": 4333,
+      "sha256": "3939a508c4d41ed8818025048f51cfe86b8974511415814de59a8a5ef4604e70",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/resources.json",
+      "blobId": "5348535053cb694891d1af93942fe10153ac9521",
+      "bytes": 595,
+      "sha256": "99cb97d7a1f672659b82e55c16c1e80d82455a10afbd10fe1a269e34569566c6",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/revision-conversation-readback.json",
+      "blobId": "0d22be9f05d859057c657aea72df355ebe8ad78a",
+      "bytes": 15782,
+      "sha256": "3f3f2784a8b5f3c256397c761bc0021b40445bbf4dc3cab7d6701feb9ddf3acc",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/revision-exploration-failures.json",
+      "blobId": "5924eb37b28f81a2c6b9ebaf83520ee91f0973b4",
+      "bytes": 1222,
+      "sha256": "6abdb18bbb87ddba9b3e92a0bbdf4ddf735ea8397a8b270f368a516fc694a0af",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/revision-main-final-observation.json",
+      "blobId": "ac1e2dfd7deea250f1b8a4d5b1f5720f4ec7b0a1",
+      "bytes": 511,
+      "sha256": "7054ae9e6d0bf7839aa4e8d512aae99f3725db97044d5f46bfefa5b8d51d538a",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/revision-main-observation.json",
+      "blobId": "51804151cc16698b02d76714b8523e2942cabf7c",
+      "bytes": 592,
+      "sha256": "8aaff04c084e8397a27d295017912b782008bc70d1416b8850cff1d1575b7b28",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/revision-todo-readback.json",
+      "blobId": "98845a69a62b3103669a60ecf9e6d7ddb302da6e",
+      "bytes": 14225,
+      "sha256": "ed34e78716e60c4e85fdf37de8ac9246a07b44a9573aa0bf1a40fb865f6749f2",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-001-originals.zip",
+      "blobId": "7a27596336a2476011f85a584a47e3f7f3820383",
+      "bytes": 1276,
+      "sha256": "83b429fbc10c639d3acfe59e71493378cf176a571970cf4caf2890a3187bb2da",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-001.json",
+      "blobId": "ba2f138455df2cef58f3527043e1075429fd1bf6",
+      "bytes": 4963,
+      "sha256": "1b39ed609503ecbf5925786ce0ecbc05278e5dd9b8edd665b0ae4d2f13ae6848",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-002-originals.zip",
+      "blobId": "5a2ede0cdd983cac2bf02a1e57c13b9cf861c62a",
+      "bytes": 1245,
+      "sha256": "7b2da36fdc2726d88cc6c71597b9ec117368892a3da9380fc39680b7312d4cee",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-002.json",
+      "blobId": "6782a321b36db35d0432e43274e4ebe8e20191fa",
+      "bytes": 12244,
+      "sha256": "771311c23d7f89ddfdba560661b1068757f6c54a931f84b3087a4c6e5aaa1a69",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-003-originals.zip",
+      "blobId": "7e7a6d5f3af114e9f2dd733b88ba6bd73b2aee92",
+      "bytes": 1267,
+      "sha256": "b7e3980f01e4ade5d806a454f238cca454d5bfdc7550c72a8ea7c41abb9103f4",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-003.json",
+      "blobId": "588de1485f6c748ec49195f954521894d1e1b718",
+      "bytes": 13204,
+      "sha256": "0f8f5f7865038b126d85f73bf05ac443ac07704f0e2ba6acc595738cbe13071b",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-004-originals.zip",
+      "blobId": "7e7a6d5f3af114e9f2dd733b88ba6bd73b2aee92",
+      "bytes": 1267,
+      "sha256": "b7e3980f01e4ade5d806a454f238cca454d5bfdc7550c72a8ea7c41abb9103f4",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-004.json",
+      "blobId": "b0aca793d0a99cba347cfb9d2ebb4f893a0a262a",
+      "bytes": 13203,
+      "sha256": "2fe8c8ae3824f3f961505d2347d3cfbfed3d481aee77a987195e606a316df40a",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-005-originals.zip",
+      "blobId": "cb9a8e4d39782c9960a6a4425a7d829a06e65733",
+      "bytes": 1416,
+      "sha256": "9eda873797c29d61a8f2bd1d648f20698a6c15499446825511f2283dd3022c71",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-005.json",
+      "blobId": "fe06b7726440e2f0b876ca1c67af39c38a53e7fe",
+      "bytes": 13750,
+      "sha256": "1fe278efd23ff7141225b0a91f25225bbb24a30df3ded04917c3c87020a7de3e",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-006-originals.zip",
+      "blobId": "7a9f7ccc574b4678993010568388fe24021e0f9b",
+      "bytes": 1995,
+      "sha256": "c45c362a8ec14b190887f0baef8dad5ffe142b3ae6e8d1f0c8ceb9927e59f58a",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-006.json",
+      "blobId": "d635a7716f03aaa53b7786940dea6053d7f3464d",
+      "bytes": 27456,
+      "sha256": "d8b89d3065ca032c8ba6e997f8cff27340feff191db820cc4aa99236167fbdb1",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-007-originals.zip",
+      "blobId": "34a4ffcaac496c5f297e3afbce42ffbd2d81f1c9",
+      "bytes": 1966,
+      "sha256": "0268310df29ce0055771807d372a85e1e2460a79998ef8ee7b3a46970333d558",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-007.json",
+      "blobId": "fb30135fa85c77c75c4e78ce04bec452a1648b1f",
+      "bytes": 26208,
+      "sha256": "7442927477006bdf4b78eb862472ed152300f2f0fedf685730e05b3322b31286",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-008-originals.zip",
+      "blobId": "68c02270437630dcb72fe711e882bf7c98be2dce",
+      "bytes": 1759,
+      "sha256": "d8c6509c58c286dad871a78d860ee41a4b7fb37e3511e78315cba29fd8fadae5",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-008.json",
+      "blobId": "19f6d969aac1f9c71c10f437edcaf71b1c5dd438",
+      "bytes": 24508,
+      "sha256": "3831edfe7448d0f79c36ab143bbe9393bf7ca12b25b8c451de37ae295133f7aa",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-009-originals.zip",
+      "blobId": "84ba605216d4e80476e806dc7812fd0e8bdd37c4",
+      "bytes": 1758,
+      "sha256": "18f3e59645eb477f0f244080e85676d82023862da6d6df14bf225cb25275d4da",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/input/static-run-009.json",
+      "blobId": "837a25b539fa6f53021e62a3fa5370ba53b1c00f",
+      "bytes": 25995,
+      "sha256": "72cd19c3370e2172ab382f75b0702e4045fd7cebb439d8e42530f2bde858a237",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/lifecycle.md",
+      "blobId": "fe4bda9f5547c5879a62eb612d58f183784a7d2e",
+      "bytes": 4748,
+      "sha256": "4a45c2c491bd727f2aa849801d184d12fb94e60abb64c1c4d50b3d0c3f69fc7e",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/openapi-proposal.yaml",
+      "blobId": "ba74bc42e66964e0db25f87dc8aee9a68eabc43f",
+      "bytes": 8132,
+      "sha256": "a5335600038518321bed877695fc445b5627a2ce069f989cb16a736ee3935849",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/operation-decisions.json",
+      "blobId": "963336193690aa21baf689710723feef6b411b8f",
+      "bytes": 500068,
+      "sha256": "39d5a9c83626d2cf55af930430dd72909278f8493ee53bd4576431304013acb0",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/operation-matrix.md",
+      "blobId": "f3fdaf92ba0d4550f82d5cf62978bded7d964cd5",
+      "bytes": 37811,
+      "sha256": "be819ad9745f5ff37389d73e373c57a89c4e0204e3c06a3bc3409ea00938a4e4",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/planning-report.md",
+      "blobId": "ccfd67b92dfcaee646fd1d75e0860735ac758e49",
+      "bytes": 3417,
+      "sha256": "fc6dd6fa1ba61d0b6613a55dd553a23954ec382605a8986b659bebf05e595eb1",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/policy-proposal.json",
+      "blobId": "b8793963abfb5f32c4b6079f91d817c6acf8076a",
+      "bytes": 4095,
+      "sha256": "1670d2543062552a2cb85db14ae6ba32aaf0877c96786defe01c1db7a9d52c32",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/prepare-review.py",
+      "blobId": "0cb329bd13786d6e22a85b469b227eb936d37059",
+      "bytes": 14249,
+      "sha256": "2529e1421aa0ad3f23949e18bcf06318cd94ad8c95494b64f7a960e391e5d931",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/review-repair.md",
+      "blobId": "3fcd360967fc2c297d78fa7a92bbee6aa072cc2e",
+      "bytes": 3131,
+      "sha256": "6cf2fd55f6578ef2a9b341e3d0b47febffff6410bd5c6f4afb3d864a40b15bbd",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/revision-evidence.py",
+      "blobId": "8ae8e032c6c646593c07e039e10a6cc0c69f8638",
+      "bytes": 8382,
+      "sha256": "8988493cb0eda7345426b2ac5702aa56010c8e6cf0c6e1fb081ead69fa7aff99",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/run-planning-checks.py",
+      "blobId": "fca7383dbcfd077ff661801362e15ae69b0ec67e",
+      "bytes": 3539,
+      "sha256": "49b3f397deb18e07428a5162eebd3c899d0ffb4a78d8a311c5e0a390c48d5948",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/savedplan.md",
+      "blobId": "658920fcedc8894f26f5550f4de92ff041d025b6",
+      "bytes": 10893,
+      "sha256": "f4b45e634c015436902440b9da2e934095ae333a8a4c98ff5a1f1e1977bccc57",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/seal-artifacts.py",
+      "blobId": "b9455f336b98044649a57f7a93adaf23153e933e",
+      "bytes": 1612,
+      "sha256": "f58b46cee0f34271e5b9010daea5d2773850d2f149ed82961ba5dc39d52b38ca",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/security-contract.md",
+      "blobId": "97e738a703f95b96d425dee1620e822953bdda60",
+      "bytes": 10669,
+      "sha256": "d3011cd984c233242cd39efb3c1de695703fe4d8c9758374483fc3df19792c03",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/source-manifest.json",
+      "blobId": "74d6052df2a6f9c07778822c55eccee102ad713f",
+      "bytes": 1714528,
+      "sha256": "3ed1da9f4493ca8e8103e4fa18e99df8d642128ad55eaab267ff4f89d005ba6a",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/source-snapshot.zip",
+      "blobId": "e66bd4a9e232ea21e301dba543351e3d9e34f201",
+      "bytes": 10389383,
+      "sha256": "060cb6fa2166c63f49ae861770f6be2d871ab949b48e735fcc7b8393309d7fc1",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/sources.md",
+      "blobId": "b4677a2ef672acbc3667f34d5f63885ee0fd5134",
+      "bytes": 5808,
+      "sha256": "275247414f2ed02131e5331fd914bea7877c8c1f2e00da0f8e5726b0f093b860",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/spec.md",
+      "blobId": "59b24ca0d9da7fd6767af42044802c6d8f524afe",
+      "bytes": 7964,
+      "sha256": "8e69e4c1e63bbfa5ef0310f8393e648a92f770f8f385ecf98f1cbb2d7fab38e3",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/static-check.py",
+      "blobId": "86c57a83d493494b9d35296c59f8ec7085cc316e",
+      "bytes": 14985,
+      "sha256": "aebce88fff0a1a58e2c4e4f07691c48cf146ab71061e77002b0366cd0e700ab8",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/static-checks.json",
+      "blobId": "837a25b539fa6f53021e62a3fa5370ba53b1c00f",
+      "bytes": 25995,
+      "sha256": "72cd19c3370e2172ab382f75b0702e4045fd7cebb439d8e42530f2bde858a237",
+      "worktreeEqualsStage": true
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/verification.md",
+      "blobId": "99ea57f5440eafed09fa9b74b3958d7b68feeb2d",
+      "bytes": 11785,
+      "sha256": "251641bea4ec051d11268fd8b0ab44053d53ce1e4220daa8ce4e8481fc9e64aa",
+      "worktreeEqualsStage": true
+    }
+  ],
+  "selfExcluded": "docs/plan/agent-mcp-m2/input/stage-receipt.json避免自引用；提交后独立比对receipt blob与工作树",
+  "check": {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "cfce77546b64c2a8d7d12949261c38e2f666d5ae"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe",
+    "nativeExit": 0,
+    "runtimeSeconds": 0.09711956977844238,
+    "stdout": "",
+    "stderr": ""
+  },
+  "latestStaticReceipt": "input/static-run-009.json",
+  "oldReceiptPreserved": "history/reviewed-stage-receipt.json及旧候选ZIP",
+  "productFilesChanged": false,
+  "productTestsRun": 0,
+  "migrationsAdded": false,
+  "reviewStatus": "三blocking待_oY复审；不自confirm，产品实现未开始",
+  "headBinding": "最终回复给提交准确head；使用本脚本--verify-commit逐blob核对，不循环写自身head"
+}

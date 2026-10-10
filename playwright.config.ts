@@ -48,6 +48,10 @@ if (!bootstrapToken) {
 }
 
 export default defineConfig({
+  // Preserve checkout identity without buffering the full evidence-heavy PR
+  // diff into Playwright's optional HTML metadata. CI source binding is archived
+  // separately; test assertions, trace/screenshots and Required CI stay enabled.
+  captureGitInfo: { commit: true, diff: false },
   testDir: "./apps/web/e2e",
   testIgnore: [mockedSpecPattern, vitestFilePattern],
   globalSetup: "./apps/web/e2e/global-setup.ts",

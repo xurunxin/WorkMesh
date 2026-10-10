@@ -1,0 +1,81 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 04:47:34.411 UTC [42] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 04:47:34.412 UTC [42] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 04:47:34.413 UTC [45] LOG:  database system was shut down at 2026-10-10 04:47:34 UTC
+2026-10-10 04:47:34.416 UTC [42] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down...2026-10-10 04:47:34.541 UTC [42] LOG:  received fast shutdown request
+2026-10-10 04:47:34.541 UTC [42] LOG:  aborting any active transactions
+.2026-10-10 04:47:34.545 UTC [42] LOG:  background worker "logical replication launcher" (PID 48) exited with exit code 1
+2026-10-10 04:47:34.545 UTC [43] LOG:  shutting down
+2026-10-10 04:47:34.545 UTC [43] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 04:47:34.548 UTC [43] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.001 s, total=0.004 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 04:47:34.552 UTC [42] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 04:47:34.101 UTC [36] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 04:47:34.653 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 04:47:34.653 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 04:47:34.653 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 04:47:34.654 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 04:47:34.655 UTC [58] LOG:  database system was shut down at 2026-10-10 04:47:34 UTC
+2026-10-10 04:47:34.658 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 04:47:44.463 UTC [70] ERROR:  DELEGATION_REQUIRES_HUMAN_PRINCIPAL_AND_AGENT_ACTOR
+2026-10-10 04:47:44.463 UTC [70] CONTEXT:  PL/pgSQL function enforce_delegation_actor_kinds() line 6 at RAISE
+2026-10-10 04:47:44.463 UTC [70] STATEMENT:  INSERT INTO delegations(
+	       workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,role,scope_type,scope_id,
+	       permissions_snapshot,capability_scope
+	     ) VALUES($1,$2,$3,$4,$5,'executor','automation',$6,$7,$8) RETURNING id
+2026-10-10 04:47:45.829 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 04:47:45.913 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 04:47:46.005 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 04:47:46.104 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 04:47:46.193 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 04:47:46.283 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 04:47:46.363 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 04:47:46.426 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 04:47:46.426 UTC [71] WARNING:  there is no transaction in progress
+2026-10-10 04:47:48.907 UTC [70] ERROR:  new row for relation "notification_deliveries" violates check constraint "notification_delivery_kind_required"
+2026-10-10 04:47:48.907 UTC [70] DETAIL:  Failing row contains (42500242-88e4-4f49-ad59-a5a5fad2cfad, null, webhook, pending, 0, 2026-10-10 04:47:48.907408+00, null, null, 0, notification:ab79afe4-b2b6-4ed1-a7cd-37989ace6b0a:target:5a7b495..., null, null, null, 2026-10-10 04:47:48.907408+00, null, 0f27d0de-ec39-4a0a-bb95-cb2e59312006, ab79afe4-b2b6-4ed1-a7cd-37989ace6b0a, 5a7b495e-6898-44bd-96bc-f2b819e37b8d, 562b85d5-b9b8-4a28-8512-4fdc05f8d44b, 1, null, null, not_sent, null, 0, 1, null).
+2026-10-10 04:47:48.907 UTC [70] STATEMENT:  INSERT INTO notification_deliveries(workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key)
+	        SELECT workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key FROM notification_deliveries WHERE id=$1
+2026-10-10 04:47:49.029 UTC [71] WARNING:  there is no transaction in progress
+2026-10-10 04:48:02.619 UTC [74] ERROR:  duplicate key value violates unique constraint "agent_webhook_deliveries_agent_id_delivery_id_key"
+2026-10-10 04:48:02.619 UTC [74] DETAIL:  Key (agent_id, delivery_id)=(89845079-8116-43de-a5fb-0573cf8c5aab, del_3aebcc96-684a-4a11-90fd-5521cea14400) already exists.
+2026-10-10 04:48:02.619 UTC [74] STATEMENT:  INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) SELECT agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload FROM agent_webhook_deliveries WHERE agent_id=$1 AND delivery_id=$2 RETURNING id

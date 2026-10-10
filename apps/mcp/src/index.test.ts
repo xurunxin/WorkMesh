@@ -809,17 +809,13 @@ describe('WorkMesh MCP adapter', () => {
       readFile(new URL('./index.ts', import.meta.url), 'utf8'),
       readFile(new URL('./discovery.ts', import.meta.url), 'utf8'),
     ])
-    // M0 discovery aliases have their own controlled binding decisions. M1
-    // adds named REST reads in discovery.ts; include those in policy parity.
-    const namedReads = new Set(['list_agent_sessions', 'list_session_plan_versions', 'list_approvals', 'get_approval',
-      'list_leases', 'list_recovery_items', 'get_recovery_item', 'get_session_execution_result'])
-    const discoveryRegistrations = [...discoverySource.matchAll(/registerTool\('([^']+)'/g)]
-      .filter(match => namedReads.has(match[1]!)).map(match => `tool:${match[1]}`)
-    expect(discoveryRegistrations).toHaveLength(namedReads.size)
-    const registrations = [...source.matchAll(/register(Resource|Tool)\('([^']+)'/g)]
-      .map(match => `${match[1]?.toLowerCase()}:${match[2]}`)
-      .concat(discoveryRegistrations).sort()
-    expect(Object.keys(mcpPolicyBindings).sort()).toEqual(registrations.filter(id => id !== 'tool:prepare_project_import'))
+    // Verify actual registrations, including dynamic Decision and Guidance tools.
+    const registered = createWorkMeshMcpServer({client:{} as WorkMeshClient,mode:'read-write',coordination:true})
+    const runtimeTools = Object.keys((registered as unknown as {_registeredTools:Record<string,unknown>})._registeredTools).map(name=>`tool:${name}`)
+    const resources = [...source.matchAll(/registerResource\('([^']+)'/g)].map(match=>`resource:${match[1]}`)
+    expect(discoverySource).toContain('list_session_plan_versions')
+    expect(Object.keys(mcpPolicyBindings).sort()).toEqual([...resources,...runtimeTools].filter(id=>!['tool:prepare_project_import','tool:get_agent_discovery'].includes(id)).sort())
+    await registered.close()
     expect(agentDiscoveryBindings.find(item => item.bindingId === 'tool:prepare_project_import')).toMatchObject({ execution: 'adapter_internal', operationIds: [] })
     for (const binding of Object.values(mcpPolicyBindings)) {
       expect(binding.policyId).toBe(`route.${binding.operationId}`)

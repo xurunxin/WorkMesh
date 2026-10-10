@@ -198,7 +198,7 @@ test('real workflow semantic mutations cannot silently omit MCP conformance', ()
     value => { value.rootScripts['test:integration'] = 'pnpm test:integration:api' },
     value => { value.rootScripts['test:conformance:integration'] = 'pnpm --filter @workmesh/conformance test:integration' },
     value => { value.packageScripts['test:integration'] = 'vitest run' },
-    ...['src/mcp-coverage.conformance.test.ts', 'src/execution-recovery.conformance.test.ts'].map(suite => value => {
+    ...['src/mcp-coverage.conformance.test.ts', 'src/execution-recovery.conformance.test.ts', 'src/planning-collaboration.conformance.test.ts'].map(suite => value => {
       assert.ok(value.integrationConfig.includes(suite), 'Mutation must remove an existing suite')
       value.integrationConfig = value.integrationConfig.replace(suite, 'deleted-suite.test.ts')
     }),

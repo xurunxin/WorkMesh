@@ -1,0 +1,559 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 02:02:41.378 UTC [42] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 02:02:41.379 UTC [42] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 02:02:41.380 UTC [45] LOG:  database system was shut down at 2026-10-10 02:02:41 UTC
+2026-10-10 02:02:41.383 UTC [42] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-10 02:02:41.502 UTC [42] LOG:  received fast shutdown request
+2026-10-10 02:02:41.502 UTC [42] LOG:  aborting any active transactions
+2026-10-10 02:02:41.504 UTC [42] LOG:  background worker "logical replication launcher" (PID 48) exited with exit code 1
+2026-10-10 02:02:41.506 UTC [43] LOG:  shutting down
+2026-10-10 02:02:41.506 UTC [43] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 02:02:41.510 UTC [43] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.001 s, total=0.004 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 02:02:41.513 UTC [42] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 02:02:41.052 UTC [36] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 02:02:41.615 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 02:02:41.615 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 02:02:41.615 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 02:02:41.616 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 02:02:41.617 UTC [64] LOG:  database system was shut down at 2026-10-10 02:02:41 UTC
+2026-10-10 02:02:41.619 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 02:03:53.526 UTC [80] ERROR:  syntax error at or near "(" at character 8467
+2026-10-10 02:03:53.526 UTC [80] STATEMENT:  SELECT COALESCE(children.items,'[]'::jsonb) AS items
+	      FROM agent_sessions parent
+	      JOIN delegations parent_delegation ON parent_delegation.id=parent.delegation_id AND parent_delegation.workspace_id=parent.workspace_id
+	      JOIN actors principal ON principal.id=parent_delegation.principal_human_actor_id
+	        AND principal.workspace_id=parent.workspace_id AND principal.kind='human' AND principal.is_active
+	      JOIN teams team ON team.id=parent.team_id AND team.workspace_id=parent.workspace_id AND team.deleted_at IS NULL
+	      LEFT JOIN LATERAL (
+	        SELECT jsonb_agg(to_jsonb(selected) ORDER BY selected.created_at DESC,selected.id DESC) AS items FROM (
+	          SELECT child.id,child.created_at,child.parent_session_id AS "parentSessionId",
+	            child.required_for_parent AS "requiredForParent",child.state,child.revision,
+	            child.plan_step_id AS "planStepId",child.plan_step_version_id AS "planVersionId",
+	            ARRAY(SELECT evidence.id FROM artifacts evidence
+	              WHERE evidence.workspace_id=child.workspace_id AND evidence.session_id=child.id
+	                AND (evidence.work_item_id=parent.work_item_id OR evidence.work_item_id IS NULL)
+	                AND child.result_evidence->'artifactIds' @> jsonb_build_array(evidence.id::text)
+	              ORDER BY evidence.id LIMIT 100) AS "resultArtifactIds"
+	          FROM agent_sessions child
+	          JOIN delegations child_delegation ON child_delegation.id=child.delegation_id
+	            AND child_delegation.workspace_id=parent.workspace_id
+	            AND child_delegation.parent_delegation_id=parent.delegation_id
+	            AND child_delegation.principal_human_actor_id=principal.id
+	          JOIN agent_plan_versions version ON version.id=child.plan_step_version_id AND version.session_id=parent.id
+	          JOIN agent_plan_steps step ON step.plan_version_id=version.id AND step.id=child.plan_step_id
+	          JOIN agent_plan_step_identities identity ON identity.session_id=parent.id AND identity.stable_step_id=step.id
+	          WHERE child.parent_session_id=parent.id AND child.workspace_id=parent.workspace_id AND child.team_id=parent.team_id
+	            AND child.work_item_id IS NOT DISTINCT FROM parent.work_item_id
+	            AND ($3::uuid IS NULL OR child.id=$3)
+
+	          ORDER BY child.created_at DESC,child.id DESC LIMIT $9
+	        ) selected
+	      ) children ON true
+	      WHERE parent.id=$1 AND parent.workspace_id=$2 AND parent.session_kind='execution' AND EXISTS (
+	    SELECT 1
+	      FROM agent_sessions live_session
+	      JOIN actors live_reader
+	        ON live_reader.id=$5
+	       AND live_reader.workspace_id=live_session.workspace_id
+	       AND live_reader.is_active
+	     WHERE live_session.id=parent.id
+	       AND live_session.workspace_id=parent.workspace_id
+	       AND (
+	         (
+	           live_reader.kind='human'
+	           AND EXISTS (
+	             SELECT 1
+	               FROM sessions live_credential
+	              WHERE live_credential.id=$6
+	                AND live_credential.actor_id=live_reader.id
+	                AND live_credential.token_hash=$8
+	                AND live_credential.expires_at>now()
+	                AND live_credential.revoked_at IS NULL
+	           )
+	           AND (
+	             live_reader.workspace_role='admin'
+	             OR EXISTS (
+	               SELECT 1
+	                 FROM memberships live_membership
+	                 JOIN teams live_team
+	                   ON live_team.id=live_membership.team_id
+	                  AND live_team.workspace_id=live_membership.workspace_id
+	                  AND live_team.deleted_at IS NULL
+	                WHERE live_membership.workspace_id=live_session.workspace_id
+	                  AND live_membership.team_id=live_session.team_id
+	                  AND live_membership.actor_id=live_reader.id
+	             )
+	           )
+	         )
+	         OR (
+	           live_reader.kind='agent'
+	           AND live_session.id=$7
+	           AND live_session.agent_actor_id=live_reader.id
+	           AND live_session.state IN (
+	             'acknowledged','planning','executing',
+	             'awaiting_input','awaiting_approval','blocked'
+	           )
+	           AND EXISTS (
+	             SELECT 1
+	               FROM agent_session_tokens live_credential
+	              WHERE live_credential.session_id=live_session.id
+	                AND live_credential.token_hash=$8
+	                AND live_credential.expires_at>now()
+	                AND live_credential.exchanged_at IS NOT NULL
+	                AND live_credential.revoked_at IS NULL
+	           )
+	           AND EXISTS (
+	             SELECT 1
+	               FROM delegations live_delegation
+	               LEFT JOIN work_items live_scope_item
+	                 ON live_scope_item.id=live_session.work_item_id
+	                AND live_scope_item.workspace_id=live_session.workspace_id
+	                AND live_scope_item.deleted_at IS NULL
+	               LEFT JOIN projects live_session_project
+	                 ON live_session_project.id=live_session.project_id
+	                AND live_session_project.workspace_id=live_session.workspace_id
+	                AND live_session_project.deleted_at IS NULL
+	               JOIN agent_definitions live_definition
+	                 ON live_definition.id=live_session.agent_id
+	                AND live_definition.workspace_id=live_session.workspace_id
+	                AND live_definition.actor_id=live_reader.id
+	                AND live_definition.is_active
+	               JOIN agent_team_access live_team_access
+	                 ON live_team_access.workspace_id=live_session.workspace_id
+	                AND live_team_access.agent_id=live_session.agent_id
+	                AND live_team_access.team_id=live_session.team_id
+	                AND live_team_access.revoked_at IS NULL
+	              WHERE live_delegation.id=live_session.delegation_id
+	                AND live_delegation.status='active'
+	                AND 'work:read'=ANY(live_delegation.permissions_snapshot)
+	                AND 'work:read'=ANY(live_definition.approved_capabilities)
+	                AND 'work:read'=ANY(live_team_access.approved_capabilities)
+	                AND COALESCE(
+	                  live_delegation.capability_scope->'teamIds',
+	                  '[]'::jsonb
+	                ) ? live_session.team_id::text
+	                AND (
+	                  (
+	                    live_session.work_item_id IS NOT NULL
+	                    AND live_scope_item.id IS NOT NULL
+	                    AND COALESCE(
+	                      live_delegation.capability_scope->'workItemIds',
+	                      '[]'::jsonb
+	                    ) ? live_session.work_item_id::text
+	                  )
+	                  OR (
+	                    live_session.work_item_id IS NULL
+	                    AND (
+	                      live_session.project_id IS NULL
+	                      OR (
+	                        live_session_project.id IS NOT NULL
+	                        AND COALESCE(
+	                          live_delegation.capability_scope->'projectIds',
+	                          '[]'::jsonb
+	                        ) ? live_session.project_id::text
+	                      )
+	                    )
+	                  )
+	                )
+	           )
+	         )
+	       )
+	  )
+	        AND EXISTS(SELECT 1 FROM memberships membership WHERE membership.workspace_id=parent.workspace_id
+	          AND membership.team_id=parent.team_id AND membership.actor_id=principal.id)
+	        AND EXISTS(SELECT 1 FROM agent_session_tokens credential
+	          JOIN agent_installation_tokens installation ON installation.id=credential.installation_token_id
+	            AND installation.agent_id=parent.agent_id AND installation.revoked_at IS NULL
+	            AND (installation.expires_at IS NULL OR installation.expires_at>now())
+	          LEFT JOIN agent_connection_credentials source ON source.token_hash=installation.token_hash
+	          LEFT JOIN agent_connections connection ON connection.id=source.connection_id
+	          LEFT JOIN delegations authority ON authority.id=connection.delegation_id
+	          WHERE credential.session_id=parent.id AND credential.token_hash=$4
+	            AND credential.revoked_at IS NULL AND credential.exchanged_at IS NOT NULL AND credential.expires_at>now()
+	            AND (installation.origin_kind='native' OR (installation.origin_kind='connection'
+	              AND installation.origin_connection_id=connection.id
+	              AND source.id IS NOT NULL
+	              (source.status='active' OR source.status='overlap' AND source.overlap_until>now())
+	              AND connection.status IN ('active','rotating') AND connection.workspace_id=parent.workspace_id
+	              AND connection.team_id=parent.team_id AND connection.agent_id=parent.agent_id
+	              AND connection.agent_actor_id=parent.agent_actor_id AND connection.principal_human_actor_id=principal.id
+	              AND authority.status='active' AND authority.workspace_id=parent.workspace_id
+	              AND authority.principal_human_actor_id=principal.id
+	              AND authority.agent_actor_id=parent.agent_actor_id
+	              AND authority.agent_id=parent.agent_id AND authority.team_id=parent.team_id
+	              AND authority.role='coordinator' AND authority.scope_type='team' AND authority.scope_id=parent.team_id
+	              AND 'work:read'=ANY(authority.permissions_snapshot)
+	            )))
+2026-10-10 02:03:53.719 UTC [82] ERROR:  syntax error at or near "(" at character 8467
+2026-10-10 02:03:53.719 UTC [82] STATEMENT:  SELECT COALESCE(children.items,'[]'::jsonb) AS items
+	      FROM agent_sessions parent
+	      JOIN delegations parent_delegation ON parent_delegation.id=parent.delegation_id AND parent_delegation.workspace_id=parent.workspace_id
+	      JOIN actors principal ON principal.id=parent_delegation.principal_human_actor_id
+	        AND principal.workspace_id=parent.workspace_id AND principal.kind='human' AND principal.is_active
+	      JOIN teams team ON team.id=parent.team_id AND team.workspace_id=parent.workspace_id AND team.deleted_at IS NULL
+	      LEFT JOIN LATERAL (
+	        SELECT jsonb_agg(to_jsonb(selected) ORDER BY selected.created_at DESC,selected.id DESC) AS items FROM (
+	          SELECT child.id,child.created_at,child.parent_session_id AS "parentSessionId",
+	            child.required_for_parent AS "requiredForParent",child.state,child.revision,
+	            child.plan_step_id AS "planStepId",child.plan_step_version_id AS "planVersionId",
+	            ARRAY(SELECT evidence.id FROM artifacts evidence
+	              WHERE evidence.workspace_id=child.workspace_id AND evidence.session_id=child.id
+	                AND (evidence.work_item_id=parent.work_item_id OR evidence.work_item_id IS NULL)
+	                AND child.result_evidence->'artifactIds' @> jsonb_build_array(evidence.id::text)
+	              ORDER BY evidence.id LIMIT 100) AS "resultArtifactIds"
+	          FROM agent_sessions child
+	          JOIN delegations child_delegation ON child_delegation.id=child.delegation_id
+	            AND child_delegation.workspace_id=parent.workspace_id
+	            AND child_delegation.parent_delegation_id=parent.delegation_id
+	            AND child_delegation.principal_human_actor_id=principal.id
+	          JOIN agent_plan_versions version ON version.id=child.plan_step_version_id AND version.session_id=parent.id
+	          JOIN agent_plan_steps step ON step.plan_version_id=version.id AND step.id=child.plan_step_id
+	          JOIN agent_plan_step_identities identity ON identity.session_id=parent.id AND identity.stable_step_id=step.id
+	          WHERE child.parent_session_id=parent.id AND child.workspace_id=parent.workspace_id AND child.team_id=parent.team_id
+	            AND child.work_item_id IS NOT DISTINCT FROM parent.work_item_id
+	            AND ($3::uuid IS NULL OR child.id=$3)
+
+	          ORDER BY child.created_at DESC,child.id DESC LIMIT $9
+	        ) selected
+	      ) children ON true
+	      WHERE parent.id=$1 AND parent.workspace_id=$2 AND parent.session_kind='execution' AND EXISTS (
+	    SELECT 1
+	      FROM agent_sessions live_session
+	      JOIN actors live_reader
+	        ON live_reader.id=$5
+	       AND live_reader.workspace_id=live_session.workspace_id
+	       AND live_reader.is_active
+	     WHERE live_session.id=parent.id
+	       AND live_session.workspace_id=parent.workspace_id
+	       AND (
+	         (
+	           live_reader.kind='human'
+	           AND EXISTS (
+	             SELECT 1
+	               FROM sessions live_credential
+	              WHERE live_credential.id=$6
+	                AND live_credential.actor_id=live_reader.id
+	                AND live_credential.token_hash=$8
+	                AND live_credential.expires_at>now()
+	                AND live_credential.revoked_at IS NULL
+	           )
+	           AND (
+	             live_reader.workspace_role='admin'
+	             OR EXISTS (
+	               SELECT 1
+	                 FROM memberships live_membership
+	                 JOIN teams live_team
+	                   ON live_team.id=live_membership.team_id
+	                  AND live_team.workspace_id=live_membership.workspace_id
+	                  AND live_team.deleted_at IS NULL
+	                WHERE live_membership.workspace_id=live_session.workspace_id
+	                  AND live_membership.team_id=live_session.team_id
+	                  AND live_membership.actor_id=live_reader.id
+	             )
+	           )
+	         )
+	         OR (
+	           live_reader.kind='agent'
+	           AND live_session.id=$7
+	           AND live_session.agent_actor_id=live_reader.id
+	           AND live_session.state IN (
+	             'acknowledged','planning','executing',
+	             'awaiting_input','awaiting_approval','blocked'
+	           )
+	           AND EXISTS (
+	             SELECT 1
+	               FROM agent_session_tokens live_credential
+	              WHERE live_credential.session_id=live_session.id
+	                AND live_credential.token_hash=$8
+	                AND live_credential.expires_at>now()
+	                AND live_credential.exchanged_at IS NOT NULL
+	                AND live_credential.revoked_at IS NULL
+	           )
+	           AND EXISTS (
+	             SELECT 1
+	               FROM delegations live_delegation
+	               LEFT JOIN work_items live_scope_item
+	                 ON live_scope_item.id=live_session.work_item_id
+	                AND live_scope_item.workspace_id=live_session.workspace_id
+	                AND live_scope_item.deleted_at IS NULL
+	               LEFT JOIN projects live_session_project
+	                 ON live_session_project.id=live_session.project_id
+	                AND live_session_project.workspace_id=live_session.workspace_id
+	                AND live_session_project.deleted_at IS NULL
+	               JOIN agent_definitions live_definition
+	                 ON live_definition.id=live_session.agent_id
+	                AND live_definition.workspace_id=live_session.workspace_id
+	                AND live_definition.actor_id=live_reader.id
+	                AND live_definition.is_active
+	               JOIN agent_team_access live_team_access
+	                 ON live_team_access.workspace_id=live_session.workspace_id
+	                AND live_team_access.agent_id=live_session.agent_id
+	                AND live_team_access.team_id=live_session.team_id
+	                AND live_team_access.revoked_at IS NULL
+	              WHERE live_delegation.id=live_session.delegation_id
+	                AND live_delegation.status='active'
+	                AND 'work:read'=ANY(live_delegation.permissions_snapshot)
+	                AND 'work:read'=ANY(live_definition.approved_capabilities)
+	                AND 'work:read'=ANY(live_team_access.approved_capabilities)
+	                AND COALESCE(
+	                  live_delegation.capability_scope->'teamIds',
+	                  '[]'::jsonb
+	                ) ? live_session.team_id::text
+	                AND (
+	                  (
+	                    live_session.work_item_id IS NOT NULL
+	                    AND live_scope_item.id IS NOT NULL
+	                    AND COALESCE(
+	                      live_delegation.capability_scope->'workItemIds',
+	                      '[]'::jsonb
+	                    ) ? live_session.work_item_id::text
+	                  )
+	                  OR (
+	                    live_session.work_item_id IS NULL
+	                    AND (
+	                      live_session.project_id IS NULL
+	                      OR (
+	                        live_session_project.id IS NOT NULL
+	                        AND COALESCE(
+	                          live_delegation.capability_scope->'projectIds',
+	                          '[]'::jsonb
+	                        ) ? live_session.project_id::text
+	                      )
+	                    )
+	                  )
+	                )
+	           )
+	         )
+	       )
+	  )
+	        AND EXISTS(SELECT 1 FROM memberships membership WHERE membership.workspace_id=parent.workspace_id
+	          AND membership.team_id=parent.team_id AND membership.actor_id=principal.id)
+	        AND EXISTS(SELECT 1 FROM agent_session_tokens credential
+	          JOIN agent_installation_tokens installation ON installation.id=credential.installation_token_id
+	            AND installation.agent_id=parent.agent_id AND installation.revoked_at IS NULL
+	            AND (installation.expires_at IS NULL OR installation.expires_at>now())
+	          LEFT JOIN agent_connection_credentials source ON source.token_hash=installation.token_hash
+	          LEFT JOIN agent_connections connection ON connection.id=source.connection_id
+	          LEFT JOIN delegations authority ON authority.id=connection.delegation_id
+	          WHERE credential.session_id=parent.id AND credential.token_hash=$4
+	            AND credential.revoked_at IS NULL AND credential.exchanged_at IS NOT NULL AND credential.expires_at>now()
+	            AND (installation.origin_kind='native' OR (installation.origin_kind='connection'
+	              AND installation.origin_connection_id=connection.id
+	              AND source.id IS NOT NULL
+	              (source.status='active' OR source.status='overlap' AND source.overlap_until>now())
+	              AND connection.status IN ('active','rotating') AND connection.workspace_id=parent.workspace_id
+	              AND connection.team_id=parent.team_id AND connection.agent_id=parent.agent_id
+	              AND connection.agent_actor_id=parent.agent_actor_id AND connection.principal_human_actor_id=principal.id
+	              AND authority.status='active' AND authority.workspace_id=parent.workspace_id
+	              AND authority.principal_human_actor_id=principal.id
+	              AND authority.agent_actor_id=parent.agent_actor_id
+	              AND authority.agent_id=parent.agent_id AND authority.team_id=parent.team_id
+	              AND authority.role='coordinator' AND authority.scope_type='team' AND authority.scope_id=parent.team_id
+	              AND 'work:read'=ANY(authority.permissions_snapshot)
+	            )))
+2026-10-10 02:03:54.067 UTC [83] ERROR:  syntax error at or near "(" at character 8467
+2026-10-10 02:03:54.067 UTC [83] STATEMENT:  SELECT COALESCE(children.items,'[]'::jsonb) AS items
+	      FROM agent_sessions parent
+	      JOIN delegations parent_delegation ON parent_delegation.id=parent.delegation_id AND parent_delegation.workspace_id=parent.workspace_id
+	      JOIN actors principal ON principal.id=parent_delegation.principal_human_actor_id
+	        AND principal.workspace_id=parent.workspace_id AND principal.kind='human' AND principal.is_active
+	      JOIN teams team ON team.id=parent.team_id AND team.workspace_id=parent.workspace_id AND team.deleted_at IS NULL
+	      LEFT JOIN LATERAL (
+	        SELECT jsonb_agg(to_jsonb(selected) ORDER BY selected.created_at DESC,selected.id DESC) AS items FROM (
+	          SELECT child.id,child.created_at,child.parent_session_id AS "parentSessionId",
+	            child.required_for_parent AS "requiredForParent",child.state,child.revision,
+	            child.plan_step_id AS "planStepId",child.plan_step_version_id AS "planVersionId",
+	            ARRAY(SELECT evidence.id FROM artifacts evidence
+	              WHERE evidence.workspace_id=child.workspace_id AND evidence.session_id=child.id
+	                AND (evidence.work_item_id=parent.work_item_id OR evidence.work_item_id IS NULL)
+	                AND child.result_evidence->'artifactIds' @> jsonb_build_array(evidence.id::text)
+	              ORDER BY evidence.id LIMIT 100) AS "resultArtifactIds"
+	          FROM agent_sessions child
+	          JOIN delegations child_delegation ON child_delegation.id=child.delegation_id
+	            AND child_delegation.workspace_id=parent.workspace_id
+	            AND child_delegation.parent_delegation_id=parent.delegation_id
+	            AND child_delegation.principal_human_actor_id=principal.id
+	          JOIN agent_plan_versions version ON version.id=child.plan_step_version_id AND version.session_id=parent.id
+	          JOIN agent_plan_steps step ON step.plan_version_id=version.id AND step.id=child.plan_step_id
+	          JOIN agent_plan_step_identities identity ON identity.session_id=parent.id AND identity.stable_step_id=step.id
+	          WHERE child.parent_session_id=parent.id AND child.workspace_id=parent.workspace_id AND child.team_id=parent.team_id
+	            AND child.work_item_id IS NOT DISTINCT FROM parent.work_item_id
+	            AND ($3::uuid IS NULL OR child.id=$3)
+
+	          ORDER BY child.created_at DESC,child.id DESC LIMIT $9
+	        ) selected
+	      ) children ON true
+	      WHERE parent.id=$1 AND parent.workspace_id=$2 AND parent.session_kind='execution' AND EXISTS (
+	    SELECT 1
+	      FROM agent_sessions live_session
+	      JOIN actors live_reader
+	        ON live_reader.id=$5
+	       AND live_reader.workspace_id=live_session.workspace_id
+	       AND live_reader.is_active
+	     WHERE live_session.id=parent.id
+	       AND live_session.workspace_id=parent.workspace_id
+	       AND (
+	         (
+	           live_reader.kind='human'
+	           AND EXISTS (
+	             SELECT 1
+	               FROM sessions live_credential
+	              WHERE live_credential.id=$6
+	                AND live_credential.actor_id=live_reader.id
+	                AND live_credential.token_hash=$8
+	                AND live_credential.expires_at>now()
+	                AND live_credential.revoked_at IS NULL
+	           )
+	           AND (
+	             live_reader.workspace_role='admin'
+	             OR EXISTS (
+	               SELECT 1
+	                 FROM memberships live_membership
+	                 JOIN teams live_team
+	                   ON live_team.id=live_membership.team_id
+	                  AND live_team.workspace_id=live_membership.workspace_id
+	                  AND live_team.deleted_at IS NULL
+	                WHERE live_membership.workspace_id=live_session.workspace_id
+	                  AND live_membership.team_id=live_session.team_id
+	                  AND live_membership.actor_id=live_reader.id
+	             )
+	           )
+	         )
+	         OR (
+	           live_reader.kind='agent'
+	           AND live_session.id=$7
+	           AND live_session.agent_actor_id=live_reader.id
+	           AND live_session.state IN (
+	             'acknowledged','planning','executing',
+	             'awaiting_input','awaiting_approval','blocked'
+	           )
+	           AND EXISTS (
+	             SELECT 1
+	               FROM agent_session_tokens live_credential
+	              WHERE live_credential.session_id=live_session.id
+	                AND live_credential.token_hash=$8
+	                AND live_credential.expires_at>now()
+	                AND live_credential.exchanged_at IS NOT NULL
+	                AND live_credential.revoked_at IS NULL
+	           )
+	           AND EXISTS (
+	             SELECT 1
+	               FROM delegations live_delegation
+	               LEFT JOIN work_items live_scope_item
+	                 ON live_scope_item.id=live_session.work_item_id
+	                AND live_scope_item.workspace_id=live_session.workspace_id
+	                AND live_scope_item.deleted_at IS NULL
+	               LEFT JOIN projects live_session_project
+	                 ON live_session_project.id=live_session.project_id
+	                AND live_session_project.workspace_id=live_session.workspace_id
+	                AND live_session_project.deleted_at IS NULL
+	               JOIN agent_definitions live_definition
+	                 ON live_definition.id=live_session.agent_id
+	                AND live_definition.workspace_id=live_session.workspace_id
+	                AND live_definition.actor_id=live_reader.id
+	                AND live_definition.is_active
+	               JOIN agent_team_access live_team_access
+	                 ON live_team_access.workspace_id=live_session.workspace_id
+	                AND live_team_access.agent_id=live_session.agent_id
+	                AND live_team_access.team_id=live_session.team_id
+	                AND live_team_access.revoked_at IS NULL
+	              WHERE live_delegation.id=live_session.delegation_id
+	                AND live_delegation.status='active'
+	                AND 'work:read'=ANY(live_delegation.permissions_snapshot)
+	                AND 'work:read'=ANY(live_definition.approved_capabilities)
+	                AND 'work:read'=ANY(live_team_access.approved_capabilities)
+	                AND COALESCE(
+	                  live_delegation.capability_scope->'teamIds',
+	                  '[]'::jsonb
+	                ) ? live_session.team_id::text
+	                AND (
+	                  (
+	                    live_session.work_item_id IS NOT NULL
+	                    AND live_scope_item.id IS NOT NULL
+	                    AND COALESCE(
+	                      live_delegation.capability_scope->'workItemIds',
+	                      '[]'::jsonb
+	                    ) ? live_session.work_item_id::text
+	                  )
+	                  OR (
+	                    live_session.work_item_id IS NULL
+	                    AND (
+	                      live_session.project_id IS NULL
+	                      OR (
+	                        live_session_project.id IS NOT NULL
+	                        AND COALESCE(
+	                          live_delegation.capability_scope->'projectIds',
+	                          '[]'::jsonb
+	                        ) ? live_session.project_id::text
+	                      )
+	                    )
+	                  )
+	                )
+	           )
+	         )
+	       )
+	  )
+	        AND EXISTS(SELECT 1 FROM memberships membership WHERE membership.workspace_id=parent.workspace_id
+	          AND membership.team_id=parent.team_id AND membership.actor_id=principal.id)
+	        AND EXISTS(SELECT 1 FROM agent_session_tokens credential
+	          JOIN agent_installation_tokens installation ON installation.id=credential.installation_token_id
+	            AND installation.agent_id=parent.agent_id AND installation.revoked_at IS NULL
+	            AND (installation.expires_at IS NULL OR installation.expires_at>now())
+	          LEFT JOIN agent_connection_credentials source ON source.token_hash=installation.token_hash
+	          LEFT JOIN agent_connections connection ON connection.id=source.connection_id
+	          LEFT JOIN delegations authority ON authority.id=connection.delegation_id
+	          WHERE credential.session_id=parent.id AND credential.token_hash=$4
+	            AND credential.revoked_at IS NULL AND credential.exchanged_at IS NOT NULL AND credential.expires_at>now()
+	            AND (installation.origin_kind='native' OR (installation.origin_kind='connection'
+	              AND installation.origin_connection_id=connection.id
+	              AND source.id IS NOT NULL
+	              (source.status='active' OR source.status='overlap' AND source.overlap_until>now())
+	              AND connection.status IN ('active','rotating') AND connection.workspace_id=parent.workspace_id
+	              AND connection.team_id=parent.team_id AND connection.agent_id=parent.agent_id
+	              AND connection.agent_actor_id=parent.agent_actor_id AND connection.principal_human_actor_id=principal.id
+	              AND authority.status='active' AND authority.workspace_id=parent.workspace_id
+	              AND authority.principal_human_actor_id=principal.id
+	              AND authority.agent_actor_id=parent.agent_actor_id
+	              AND authority.agent_id=parent.agent_id AND authority.team_id=parent.team_id
+	              AND authority.role='coordinator' AND authority.scope_type='team' AND authority.scope_id=parent.team_id
+	              AND 'work:read'=ANY(authority.permissions_snapshot)
+	            )))

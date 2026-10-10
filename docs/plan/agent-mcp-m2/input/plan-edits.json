@@ -1,0 +1,57 @@
+{
+  "source": "本轮实际四次edit_plan请求/成功可见返回；无隐藏callID",
+  "edits": [
+    {
+      "sequence": 1,
+      "old": "假设：目标 Agent ID 由 Human 或已授权清单提供；沿现有角色、feature、scope 和消费者合同补齐。reviewer 保留现有输入及继承预算，不增加 `budget` 参数。仅用 Todos＋仓库记录。UI 重设计、F／TA 新域、公共发布、真实外发及 Human 权限扩张不在范围内。",
+      "new": "假设：目标 Agent ID 由 Human 或已授权清单提供；沿现有角色、feature、scope 和消费者合同补齐。reviewer 保留输入、继承全额预算并 reservation 是依据 ADR0017 和现有代码提出的待独审方案，记录余额不足及既有 reservation 不自动释放的权衡，不称用户已选。仅用 Todos＋仓库记录。UI 重设计、F／TA 新域、公共发布、真实外发及 Human 权限扩张不在范围内。",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Replaced. Continue with the next passage, or end your turn with your one-to-two-sentence note on what changed and why — do not output a <plan> block."
+          }
+        ]
+      }
+    },
+    {
+      "sequence": 2,
+      "old": "- **`docs/plan/agent-mcp-m2/`**：建立 README、完整 spec、冻结 M2 原文、内容一致的 savedplan／implementation、安全合同、消费者兼容表、operation-decisions、九类 DoD、运行方案和来源索引。完整保存原路线七份文件、M1 交付报告及相关源码快照，分别绑定准确 commit／blob、工作树 bytes／SHA-256；不从截断工具输出重建全文，不改写 M0／M1 历史。逐操作列出 REST／Zod、SDK、policy／feature、MCP binding、manifest、Runner、角色／状态／scope、参数、输出和测试入口。",
+      "new": "- **`docs/plan/agent-mcp-m2/`**：本轮实际落盘并提交 README、完整 spec、冻结 M2 原文、内容一致的 savedplan／implementation、安全合同、消费者兼容表、operation-decisions、九类 DoD、运行方案和来源索引；不进入产品实现、不新增任务。保存本 Agent 原 plan 全文、平台本轮注入的 saved copy 全文、Chief 反馈及确认，标记 doc ID、取得方式、平台读取截断和未取得的独立 implementation 原件。完整保存原路线七份文件、M1 交付报告及相关源码快照，分别绑定准确 commit／blob、工作树 bytes／SHA-256；不从截断工具输出重建全文，不改写 M0／M1 历史。逐操作列出 REST／Zod、SDK、policy／feature、MCP binding、manifest、Runner、角色／状态／scope、参数、输出和测试入口。",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Replaced. Continue with the next passage, or end your turn with your one-to-two-sentence note on what changed and why — do not output a <plan> block."
+          }
+        ]
+      }
+    },
+    {
+      "sequence": 3,
+      "old": "- **`docs/adr/0082-parent-child-status-projection.md`、`AGENT_PROTOCOL.md`**：冻结父子只读投影、reviewer 限额／预算及兼容语义。先提交方案包和 Proposed ADR，核全文、链接、空白与实际 CI 分类，报告准确 head 和文件入口，停 confirm。由平台另一 Agent 按既有模型／high 委托独审，blocking／high 闭合且 Chief confirm 后才实施产品。",
+      "new": "- **`docs/adr/0082-parent-child-status-projection.md`**：本轮提交 Proposed ADR 及 M2 目录内的 OpenAPI／Zod／policy／协议提案，冻结父子只读投影、reviewer 限额／预算及兼容语义；现行 `AGENT_PROTOCOL.md`、`OPENAPI.yaml` 和产品代码本轮不改。核全文、来源字节、链接、空白与实际 CI 分类，报告准确 commit/head 和文件入口，停 confirm。由平台另一 Agent 按既有模型／high 委托独审，blocking／high 闭合且 Chief confirm 后才实施下节产品变更；本轮静态结果不替代未来产品测试、Required CI 或独审。",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Replaced. Continue with the next passage, or end your turn with your one-to-two-sentence note on what changed and why — do not output a <plan> block."
+          }
+        ]
+      }
+    },
+    {
+      "sequence": 4,
+      "old": "沿 `lockCollaborationSessionTargets` 的既有锁序校验当前 Plan、稳定 step、父／step 活跃限额、三方能力、目标并发和累计 reservation。step 限额按稳定 ID 跨 Plan 版本统计。",
+      "new": "沿 `lockCollaborationSessionTargets` 的既有锁序校验当前 Plan、稳定 step、父既有总量上限及父／step 活跃限额、三方能力、目标并发和累计 reservation。保留现行 DB trigger 的父累计总量保障，子终态不释放父总量槽位；step 活跃限额按稳定 ID 跨 Plan 版本统计。",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Replaced. Continue with the next passage, or end your turn with your one-to-two-sentence note on what changed and why — do not output a <plan> block."
+          }
+        ]
+      }
+    }
+  ]
+}
