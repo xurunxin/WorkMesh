@@ -1,0 +1,50 @@
+{
+  "key": "upgrade-first",
+  "target": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a0e-d8a0-7474-ad05-791c239b82fe",
+  "main": "2da4918682f5238499131cff2c71ab465fcc080e",
+  "startedAt": "2026-10-10T20:28:54.9540225Z",
+  "result": "完整工作树已移除；原 junction 本体及普通空目录按先行预检收尾",
+  "diskBefore": {
+    "DeviceID": "C:",
+    "FreeSpace": 309518524416,
+    "Size": 998956331008
+  },
+  "diskAfter": {
+    "DeviceID": "C:",
+    "FreeSpace": 309630418944,
+    "Size": 998956331008
+  },
+  "calls": [
+    {
+      "input": [
+        "python",
+        "-B",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a12766-4132-7d8c-a542-dcbfb2008b49\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\followup\\verify-target.py",
+        "upgrade-first",
+        "2da4918682f5238499131cff2c71ab465fcc080e"
+      ],
+      "start": "2026-10-10T20:28:55.5417933Z",
+      "end": "2026-10-10T20:28:57.5413416Z",
+      "output": "{\"key\": \"upgrade-first\", \"success\": true, \"exclusiveReadCount\": 2210, \"logicalBytes\": 106749175, \"errors\": []}\r\n",
+      "exit": 0
+    },
+    {
+      "input": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a12766-4132-7d8c-a542-dcbfb2008b49",
+        "worktree",
+        "remove",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11a0e-d8a0-7474-ad05-791c239b82fe"
+      ],
+      "start": "2026-10-10T20:28:58.0516399Z",
+      "end": "2026-10-10T20:28:59.5316199Z",
+      "stdout": "",
+      "stderr": "",
+      "exit": 0
+    }
+  ],
+  "error": null,
+  "targetExistsAfter": false,
+  "endedAt": "2026-10-10T20:28:59.5785506Z"
+}

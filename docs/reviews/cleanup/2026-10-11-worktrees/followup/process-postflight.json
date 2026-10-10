@@ -1,0 +1,4856 @@
+{
+  "startedAt": "2026-10-10T20:31:20.2878771Z",
+  "endedAt": "2026-10-10T20:31:21.0101716Z",
+  "ownPid": 50868,
+  "processes": [
+    {
+      "pid": 0,
+      "parent": 0,
+      "name": "System Idle Process",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4,
+      "parent": 0,
+      "name": "System",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 288,
+      "parent": 4,
+      "name": "Secure System",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 328,
+      "parent": 4,
+      "name": "Registry",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1136,
+      "parent": 4,
+      "name": "smss.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1692,
+      "parent": 1676,
+      "name": "csrss.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1788,
+      "parent": 1676,
+      "name": "wininit.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1796,
+      "parent": 1780,
+      "name": "csrss.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1856,
+      "parent": 1780,
+      "name": "winlogon.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1928,
+      "parent": 1788,
+      "name": "services.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1948,
+      "parent": 1788,
+      "name": "LsaIso.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1956,
+      "parent": 1788,
+      "name": "lsass.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1644,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1784,
+      "parent": 1788,
+      "name": "fontdrvhost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1108,
+      "parent": 1856,
+      "name": "fontdrvhost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2020,
+      "parent": 1928,
+      "name": "WUDFHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2120,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2168,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2236,
+      "parent": 1928,
+      "name": "WUDFHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2400,
+      "parent": 1856,
+      "name": "dwm.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2416,
+      "parent": 1928,
+      "name": "WUDFHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2516,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2552,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2572,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2580,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2596,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2800,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2872,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2880,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2888,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2940,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3048,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3060,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3092,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3112,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3248,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3492,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3540,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3632,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3680,
+      "parent": 1928,
+      "name": "vmms.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3840,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3900,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3916,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3972,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4076,
+      "parent": 1928,
+      "name": "NVDisplay.Container.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4116,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4136,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4172,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4188,
+      "parent": 1928,
+      "name": "AsusCertService.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4292,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4308,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4316,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4324,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4432,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4444,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4464,
+      "parent": 4,
+      "name": "Memory Compression",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4524,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4652,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4684,
+      "parent": 1928,
+      "name": "atkexComSvc.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4736,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4812,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4592,
+      "parent": 1928,
+      "name": "vmcompute.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5136,
+      "parent": 3492,
+      "name": "dasHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5264,
+      "parent": 4076,
+      "name": "NVDisplay.Container.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5288,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5428,
+      "parent": 1644,
+      "name": "WmiPrvSE.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5672,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5764,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5920,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5928,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 6472,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 6652,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3204,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7208,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7236,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7272,
+      "parent": 1928,
+      "name": "spoolsv.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7308,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7480,
+      "parent": 1928,
+      "name": "DtsApo4Service.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7524,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7532,
+      "parent": 1928,
+      "name": "GameInputRedistService.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7544,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7552,
+      "parent": 1928,
+      "name": "GameViewerService.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7564,
+      "parent": 1928,
+      "name": "OfficeClickToRun.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7596,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7604,
+      "parent": 1928,
+      "name": "hserver.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7612,
+      "parent": 1928,
+      "name": "sesinetd.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7624,
+      "parent": 1928,
+      "name": "sunshinesvc.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7640,
+      "parent": 1928,
+      "name": "nvcontainer.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7648,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7656,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7696,
+      "parent": 1928,
+      "name": "micont_service.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7704,
+      "parent": 1928,
+      "name": "wetype_service.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7716,
+      "parent": 1928,
+      "name": "logi_lamparray_service.AMD64.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7728,
+      "parent": 1928,
+      "name": "RtkAudUService64.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7736,
+      "parent": 1928,
+      "name": "MsMpEng.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7744,
+      "parent": 1928,
+      "name": "WMIRegistrationService.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7752,
+      "parent": 1928,
+      "name": "RstMwService.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7804,
+      "parent": 1928,
+      "name": "MiPcContinuityService.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7812,
+      "parent": 1928,
+      "name": "jhi_service.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7820,
+      "parent": 1928,
+      "name": "MpDefenderCoreService.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7840,
+      "parent": 1928,
+      "name": "wslservice.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7860,
+      "parent": 1928,
+      "name": "zerotier-one_x64.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7868,
+      "parent": 1928,
+      "name": "lghub_updater.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7904,
+      "parent": 1928,
+      "name": "tailscaled.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8216,
+      "parent": 7532,
+      "name": "GameInputRedistService.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8384,
+      "parent": 7704,
+      "name": "wetype_server.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8536,
+      "parent": 7552,
+      "name": "crashpad_handler.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8624,
+      "parent": 8384,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8728,
+      "parent": 7704,
+      "name": "wetype_update.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8904,
+      "parent": 7704,
+      "name": "wetype_renderer.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 9080,
+      "parent": 7552,
+      "name": "GameViewerServer.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7488,
+      "parent": 7552,
+      "name": "GameViewerHealthd.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 9344,
+      "parent": 9080,
+      "name": "crashpad_handler.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 10212,
+      "parent": 7544,
+      "name": "AggregatorHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 11120,
+      "parent": 7904,
+      "name": "tailscaled.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 12072,
+      "parent": 7640,
+      "name": "nvcontainer.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 12396,
+      "parent": 7488,
+      "name": "crashpad_handler.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 12924,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 13084,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 13216,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14192,
+      "parent": 7624,
+      "name": "Sunshine.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14212,
+      "parent": 14192,
+      "name": "conhost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14240,
+      "parent": 7624,
+      "name": "sunshine-gui.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 13784,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 13992,
+      "parent": 1928,
+      "name": "gamingservicesnet.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 13944,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14028,
+      "parent": 1928,
+      "name": "gamingservices.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 13388,
+      "parent": 1928,
+      "name": "codex-windows-sandbox-service.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 11108,
+      "parent": 3048,
+      "name": "sihost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 2752,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3140,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 13348,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14424,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14468,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14540,
+      "parent": 2800,
+      "name": "taskhostw.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14884,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 15276,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14808,
+      "parent": 13408,
+      "name": "explorer.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14464,
+      "parent": 11108,
+      "name": "ShellHost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 15688,
+      "parent": 11108,
+      "name": "CrossDeviceResume.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 16068,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 16116,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 16124,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 16276,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 12280,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 10024,
+      "parent": 1644,
+      "name": "CrossDeviceService.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 12780,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 12916,
+      "parent": 12780,
+      "name": "NgcIso.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14440,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 16516,
+      "parent": 7640,
+      "name": "nvcontainer.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 16784,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18024,
+      "parent": 1644,
+      "name": "StartMenuExperienceHost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18032,
+      "parent": 1644,
+      "name": "SearchHost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 17924,
+      "parent": 1644,
+      "name": "WidgetBoard.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 17040,
+      "parent": 1644,
+      "name": "RuntimeBroker.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18300,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18288,
+      "parent": 1644,
+      "name": "RuntimeBroker.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18372,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18988,
+      "parent": 3112,
+      "name": "ctfmon.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18896,
+      "parent": 3112,
+      "name": "TabTip.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 19816,
+      "parent": 1644,
+      "name": "LockApp.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20164,
+      "parent": 18032,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20336,
+      "parent": 20164,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 19088,
+      "parent": 1644,
+      "name": "RuntimeBroker.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20140,
+      "parent": 20164,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20484,
+      "parent": 20164,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20708,
+      "parent": 20164,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20716,
+      "parent": 1928,
+      "name": "SearchIndexer.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20832,
+      "parent": 1644,
+      "name": "WidgetService.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20860,
+      "parent": 20164,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20908,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 21488,
+      "parent": 7736,
+      "name": "DefenderSessionHelper.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 21672,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 23100,
+      "parent": 1928,
+      "name": "GameInputSvc.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 23128,
+      "parent": 23100,
+      "name": "GameInputSvc.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 23264,
+      "parent": 1644,
+      "name": "TextInputHost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 21768,
+      "parent": 1644,
+      "name": "PhoneExperienceHost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 22988,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 23020,
+      "parent": 14808,
+      "name": "SecurityHealthSystray.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18512,
+      "parent": 1928,
+      "name": "SecurityHealthService.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18352,
+      "parent": 3548,
+      "name": "HipsTray.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18116,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 22668,
+      "parent": 14808,
+      "name": "lghub_system_tray.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 22924,
+      "parent": 22668,
+      "name": "lghub_agent.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 23616,
+      "parent": 7208,
+      "name": "wlanext.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 24028,
+      "parent": 1644,
+      "name": "unsecapp.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 24556,
+      "parent": 24544,
+      "name": "MiPcContinuity.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 24820,
+      "parent": 24556,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 24852,
+      "parent": 24820,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 25068,
+      "parent": 24820,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 25084,
+      "parent": 24820,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 25152,
+      "parent": 24820,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 25232,
+      "parent": 24820,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8760,
+      "parent": 2800,
+      "name": "agent-recall-http-bridge-win32-x64.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 27332,
+      "parent": 14808,
+      "name": "Twinkle Tray.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 16440,
+      "parent": 26912,
+      "name": "GameViewer.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 16164,
+      "parent": 16440,
+      "name": "crashpad_handler.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 27764,
+      "parent": 14808,
+      "name": "Docker Desktop.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 27868,
+      "parent": 27764,
+      "name": "com.docker.backend.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 27936,
+      "parent": 27868,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28092,
+      "parent": 27332,
+      "name": "Twinkle Tray.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28140,
+      "parent": 27332,
+      "name": "Twinkle Tray.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28200,
+      "parent": 27332,
+      "name": "Twinkle Tray.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 27728,
+      "parent": 27868,
+      "name": "com.docker.backend.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28716,
+      "parent": 27332,
+      "name": "Twinkle Tray.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28868,
+      "parent": 16440,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28920,
+      "parent": 28868,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29216,
+      "parent": 27728,
+      "name": "com.docker.build.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29352,
+      "parent": 28868,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29380,
+      "parent": 28868,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29408,
+      "parent": 27728,
+      "name": "Docker Desktop.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29472,
+      "parent": 28868,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28352,
+      "parent": 28868,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28844,
+      "parent": 28868,
+      "name": "msedgewebview2.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30056,
+      "parent": 29408,
+      "name": "Docker Desktop.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30072,
+      "parent": 29408,
+      "name": "Docker Desktop.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29856,
+      "parent": 14808,
+      "name": "tailscale-ipn.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5032,
+      "parent": 1644,
+      "name": "MicrosoftStartFeedProvider.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 26404,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5316,
+      "parent": 1644,
+      "name": "ShellExperienceHost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28976,
+      "parent": 1644,
+      "name": "RuntimeBroker.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 9040,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18588,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 32248,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 12356,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 35752,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 26072,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 26228,
+      "parent": 1928,
+      "name": "wsctrlsvc.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 34940,
+      "parent": 18220,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 21976,
+      "parent": 34940,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 24516,
+      "parent": 21976,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3404,
+      "parent": 1644,
+      "name": "dllhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 26812,
+      "parent": 1644,
+      "name": "ApplicationFrameHost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14112,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4956,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 32204,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 34828,
+      "parent": 1644,
+      "name": "UserOOBEBroker.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 33728,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8428,
+      "parent": 1644,
+      "name": "AppActions.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14792,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 41048,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 34776,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 492,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38992,
+      "parent": 2800,
+      "name": "taskhostw.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 39940,
+      "parent": 14808,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 6656,
+      "parent": 39940,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 22012,
+      "parent": 39940,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30520,
+      "parent": 39940,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 19040,
+      "parent": 39940,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30536,
+      "parent": 39940,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14080,
+      "parent": 39940,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 35512,
+      "parent": 39940,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20068,
+      "parent": 39940,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 43468,
+      "parent": 30536,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44476,
+      "parent": 1644,
+      "name": "SystemSettings.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 34904,
+      "parent": 3624,
+      "name": "YunDetectService.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45060,
+      "parent": 27728,
+      "name": "com.docker.sailor.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 37736,
+      "parent": 1928,
+      "name": "HipsDaemon.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 22904,
+      "parent": 14808,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8172,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14724,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47124,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44308,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 16168,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46352,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 11384,
+      "parent": 22904,
+      "name": "codex.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 49560,
+      "parent": 11384,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29280,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 34180,
+      "parent": 22904,
+      "name": "codex-computer-use-swift.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 35460,
+      "parent": 34180,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 26700,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 36596,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 32912,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45784,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 48176,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 6572,
+      "parent": 45784,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 31608,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 31448,
+      "parent": 48176,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 32968,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52092,
+      "parent": 31608,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 48568,
+      "parent": 32968,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 11484,
+      "parent": 48176,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 37520,
+      "parent": 31608,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8100,
+      "parent": 45784,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 22412,
+      "parent": 32968,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38636,
+      "parent": 22412,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 53192,
+      "parent": 11384,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52964,
+      "parent": 11384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 33564,
+      "parent": 53192,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 33584,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 40324,
+      "parent": 52964,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38768,
+      "parent": 52964,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38592,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 40668,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 48544,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44088,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38564,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 50808,
+      "parent": 11384,
+      "name": "codex-code-mode-host.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 51680,
+      "parent": 50808,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 49536,
+      "parent": 11384,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29176,
+      "parent": 11384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30516,
+      "parent": 49536,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 50256,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18704,
+      "parent": 29176,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47428,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 42728,
+      "parent": 50256,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 35032,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 22960,
+      "parent": 47428,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44184,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 6660,
+      "parent": 35032,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7016,
+      "parent": 44184,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47780,
+      "parent": 47428,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1696,
+      "parent": 44184,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5476,
+      "parent": 35032,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 51652,
+      "parent": 50256,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 40332,
+      "parent": 29176,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 48292,
+      "parent": 1696,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 9212,
+      "parent": 11384,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 25308,
+      "parent": 11384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 20988,
+      "parent": 9212,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 36472,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45360,
+      "parent": 25308,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44820,
+      "parent": 36472,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38692,
+      "parent": 36472,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 33800,
+      "parent": 25308,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 32636,
+      "parent": 38692,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 53928,
+      "parent": 49536,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 43184,
+      "parent": 49536,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 15876,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14364,
+      "parent": 30416,
+      "name": "OneDrive.Sync.Service.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 39392,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 40812,
+      "parent": 11384,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 48892,
+      "parent": 11384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 53492,
+      "parent": 40812,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46980,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30436,
+      "parent": 48892,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46060,
+      "parent": 46980,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 920,
+      "parent": 46980,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 23852,
+      "parent": 48892,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 41988,
+      "parent": 920,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44700,
+      "parent": 22904,
+      "name": "ChatGPT.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 26152,
+      "parent": 22904,
+      "name": "codex.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45608,
+      "parent": 26152,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 35288,
+      "parent": 26152,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46020,
+      "parent": 35288,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 27536,
+      "parent": 26152,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 22560,
+      "parent": 27536,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 37164,
+      "parent": 27536,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38520,
+      "parent": 35288,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52468,
+      "parent": 11384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 48244,
+      "parent": 11384,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 16160,
+      "parent": 52468,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 42344,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 39124,
+      "parent": 48244,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 25960,
+      "parent": 42344,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 10112,
+      "parent": 42344,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 50500,
+      "parent": 52468,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 36608,
+      "parent": 10112,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 36404,
+      "parent": 21976,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45928,
+      "parent": 36404,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 7064,
+      "parent": 36404,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52220,
+      "parent": 7064,
+      "name": "codex.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46692,
+      "parent": 52220,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 39480,
+      "parent": 46692,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 17168,
+      "parent": 52220,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 37892,
+      "parent": 17168,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4336,
+      "parent": 17168,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47656,
+      "parent": 52220,
+      "name": "codex-code-mode-host.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46280,
+      "parent": 47656,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47172,
+      "parent": 26152,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 49512,
+      "parent": 26152,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28264,
+      "parent": 47172,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 43032,
+      "parent": 49512,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 50704,
+      "parent": 49512,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8764,
+      "parent": 47172,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 32556,
+      "parent": 11384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47796,
+      "parent": 11384,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 21020,
+      "parent": 32556,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 1832,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 26848,
+      "parent": 47796,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 22408,
+      "parent": 11384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 34912,
+      "parent": 1832,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 32692,
+      "parent": 11384,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 43040,
+      "parent": 22408,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 35732,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44664,
+      "parent": 32692,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 15336,
+      "parent": 35732,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30964,
+      "parent": 1832,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 11864,
+      "parent": 32556,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52080,
+      "parent": 22408,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 27276,
+      "parent": 35732,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30456,
+      "parent": 30964,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30540,
+      "parent": 27276,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30940,
+      "parent": 21976,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47692,
+      "parent": 30940,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 26896,
+      "parent": 30940,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44304,
+      "parent": 26896,
+      "name": "codex.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45668,
+      "parent": 44304,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 42248,
+      "parent": 45668,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 27244,
+      "parent": 44304,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 22848,
+      "parent": 27244,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 11812,
+      "parent": 27244,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 17804,
+      "parent": 44304,
+      "name": "codex-code-mode-host.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 40968,
+      "parent": 17804,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 34432,
+      "parent": 11384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 51816,
+      "parent": 11384,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5640,
+      "parent": 34432,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18416,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 37340,
+      "parent": 51816,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44384,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8636,
+      "parent": 18416,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 37980,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45144,
+      "parent": 44384,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 10484,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44504,
+      "parent": 37980,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 43100,
+      "parent": 10484,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29072,
+      "parent": 44384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3152,
+      "parent": 34432,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45524,
+      "parent": 37980,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 39348,
+      "parent": 18416,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 23808,
+      "parent": 10484,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 49860,
+      "parent": 23808,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 43712,
+      "parent": 52220,
+      "name": "pwsh.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 43180,
+      "parent": 43712,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47628,
+      "parent": 43712,
+      "name": "python.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 33256,
+      "parent": 47628,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 39964,
+      "parent": 33256,
+      "name": "pnpm.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 31912,
+      "parent": 39964,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3576,
+      "parent": 31912,
+      "name": "pnpm.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 35276,
+      "parent": 3576,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 33848,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 41640,
+      "parent": 20716,
+      "name": "SearchProtocolHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44648,
+      "parent": 20716,
+      "name": "SearchFilterHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52612,
+      "parent": 20716,
+      "name": "SearchFilterHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44904,
+      "parent": 20716,
+      "name": "SearchFilterHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 53736,
+      "parent": 20716,
+      "name": "SearchFilterHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5028,
+      "parent": 20716,
+      "name": "SearchFilterHost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52264,
+      "parent": 4652,
+      "name": "audiodg.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 25740,
+      "parent": 1928,
+      "name": "svchost.exe",
+      "commandLineReadable": false,
+      "executableReadable": false,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 30872,
+      "parent": 35276,
+      "name": "pnpm.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 37908,
+      "parent": 30872,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 51268,
+      "parent": 37908,
+      "name": "pnpm.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 25696,
+      "parent": 51268,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52160,
+      "parent": 25696,
+      "name": "pnpm.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14756,
+      "parent": 52160,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47952,
+      "parent": 14756,
+      "name": "pnpm.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 50164,
+      "parent": 47952,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 53000,
+      "parent": 50164,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [
+        "01a1264e-bd35-76d4-b328-03e9b91301f3"
+      ],
+      "candidateReferences": []
+    },
+    {
+      "pid": 34628,
+      "parent": 53000,
+      "name": "esbuild.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [
+        "01a1264e-bd35-76d4-b328-03e9b91301f3"
+      ],
+      "candidateReferences": []
+    },
+    {
+      "pid": 54044,
+      "parent": 53000,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [
+        "01a1264e-bd35-76d4-b328-03e9b91301f3"
+      ],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29896,
+      "parent": 26152,
+      "name": "pwsh.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 41916,
+      "parent": 29896,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38384,
+      "parent": 29896,
+      "name": "bun.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 11076,
+      "parent": 30536,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8020,
+      "parent": 30536,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46532,
+      "parent": 11076,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 43424,
+      "parent": 30536,
+      "name": "markitdown-mcp.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 32224,
+      "parent": 8020,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 49484,
+      "parent": 30536,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46804,
+      "parent": 43424,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 49788,
+      "parent": 30536,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 43936,
+      "parent": 49484,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5152,
+      "parent": 11076,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 33620,
+      "parent": 49788,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 51520,
+      "parent": 43424,
+      "name": "python.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44036,
+      "parent": 30536,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 25848,
+      "parent": 44036,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38400,
+      "parent": 49484,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 31504,
+      "parent": 8020,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52372,
+      "parent": 44036,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 36956,
+      "parent": 49788,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 36780,
+      "parent": 5152,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 23704,
+      "parent": 11384,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 41484,
+      "parent": 11384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47888,
+      "parent": 23704,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 6544,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 32436,
+      "parent": 41484,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 39552,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 53824,
+      "parent": 6544,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 24072,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 12932,
+      "parent": 39552,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 33684,
+      "parent": 24072,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52632,
+      "parent": 39552,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47000,
+      "parent": 24072,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45356,
+      "parent": 6544,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 4420,
+      "parent": 41484,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 13724,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 53920,
+      "parent": 13724,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 41736,
+      "parent": 13724,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 17280,
+      "parent": 38400,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 8828,
+      "parent": 52372,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 19012,
+      "parent": 36956,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 23340,
+      "parent": 31504,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 18480,
+      "parent": 8828,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 31060,
+      "parent": 19012,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45664,
+      "parent": 17280,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46152,
+      "parent": 41736,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52128,
+      "parent": 23340,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 24332,
+      "parent": 18480,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 50684,
+      "parent": 38384,
+      "name": "bun.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 53936,
+      "parent": 50684,
+      "name": "bun.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 34740,
+      "parent": 26152,
+      "name": "pwsh.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 42008,
+      "parent": 34740,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3620,
+      "parent": 34740,
+      "name": "docker.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 49996,
+      "parent": 30536,
+      "name": "MiniMax Code.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 6116,
+      "parent": 49996,
+      "name": "pwsh.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 31048,
+      "parent": 6116,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 13200,
+      "parent": 11384,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 34836,
+      "parent": 11384,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45492,
+      "parent": 13200,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 29844,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 47544,
+      "parent": 34836,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38812,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46684,
+      "parent": 29844,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 37160,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 5988,
+      "parent": 11384,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 54100,
+      "parent": 38812,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 3288,
+      "parent": 37160,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 45240,
+      "parent": 5988,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 44976,
+      "parent": 29844,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 14068,
+      "parent": 13200,
+      "name": "node_repl.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 48364,
+      "parent": 38812,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 43348,
+      "parent": 5988,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 26816,
+      "parent": 37160,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 38272,
+      "parent": 43348,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 52408,
+      "parent": 54044,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [
+        "01a1264e-bd35-76d4-b328-03e9b91301f3"
+      ],
+      "candidateReferences": []
+    },
+    {
+      "pid": 28468,
+      "parent": 52408,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [
+        "01a1264e-bd35-76d4-b328-03e9b91301f3"
+      ],
+      "candidateReferences": []
+    },
+    {
+      "pid": 41864,
+      "parent": 6116,
+      "name": "pnpm.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 10120,
+      "parent": 44304,
+      "name": "pwsh.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 49008,
+      "parent": 10120,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 50868,
+      "parent": 44304,
+      "name": "pwsh.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 49416,
+      "parent": 50868,
+      "name": "conhost.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 53852,
+      "parent": 41864,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 33356,
+      "parent": 53852,
+      "name": "pnpm.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 46988,
+      "parent": 10120,
+      "name": "python.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 35060,
+      "parent": 33356,
+      "name": "cmd.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    },
+    {
+      "pid": 26852,
+      "parent": 35060,
+      "name": "node.exe",
+      "commandLineReadable": true,
+      "executableReadable": true,
+      "workspaceReferences": [],
+      "candidateReferences": []
+    }
+  ],
+  "disk": {
+    "DeviceID": "C:",
+    "FreeSpace": 309734629376,
+    "Size": 998956331008
+  },
+  "limitations": "可见命令行/执行路径，不等于全局 OS handles/隐藏 cwd；结合任务、恢复对话和逐文件独占读取。不停止进程。"
+}
