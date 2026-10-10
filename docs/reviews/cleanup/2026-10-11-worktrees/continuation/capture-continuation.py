@@ -17,7 +17,7 @@ def main():
         text = p.get('input', '')
         if 'capture-continuation.py' in text:
             continue
-        markers = ['continuation/', 'cont-', 'link-proof', '73542', '97048', '57839', '78518', '61339', '62175', '54823', '23157', 'usage-inventory.py']
+        markers = ['continuation/', 'cont-', 'link-proof', '73542', '97048', '57839', '78518', '61339', '62175', '54823', '23157', '16671', '63015', '48504', '25663', 'usage-inventory.py']
         if not any(m in text for m in markers):
             continue
         calls[p['call_id']] = {'callId': p['call_id'], 'source': str(SOURCE), 'dispatchLine': line, 'dispatchOriginalLine': raw, 'dispatch': row}

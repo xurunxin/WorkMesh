@@ -1,0 +1,1340 @@
+[
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+    "todo": 10,
+    "head": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+    "logicalBytes": 906884156,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1364,
+        "logicalBytes": 21073612
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50182,
+        "logicalBytes": 679079089
+      },
+      "文档与已提交证据检出副本": {
+        "files": 209,
+        "logicalBytes": 9898554
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 1649,
+        "logicalBytes": 196832784
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "父目录含原拒绝或旧明确保护子目标，整体删除禁止；不换工具/拆批/父删绕过，本卡维持原界限",
+    "specificHistoricalSourceExamples": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-recovery-report.json",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/explicitDuplicatePathsRemoved/0/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-review-recovery-report.json",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/explicitDuplicatePathsRemoved/1/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-formal-e2e\\root-mixed\\.auth\\admin.json",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/authStatesRemoved/0/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp\\d0-review-formal-e2e\\root-mixed\\.auth\\admin.json",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/authStatesRemoved/1/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51\\.tmp",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/gitBlobDuplicateRemoval/scopes/0/root"
+      }
+    ],
+    "historicalPathObservationCount": 1685,
+    "beforeLogicalBytes": 906884156,
+    "afterLogicalBytes": 906884156,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1364,
+        "logicalBytes": 21073612
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50182,
+        "logicalBytes": 679079089
+      },
+      "文档与已提交证据检出副本": {
+        "files": 209,
+        "logicalBytes": 9898554
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 1649,
+        "logicalBytes": 196832784
+      }
+    },
+    "afterHead": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a",
+    "todo": null,
+    "head": "49cd2136fe5109115fb4f3dcff89ed59b0bc7615",
+    "logicalBytes": 946316129,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1282,
+        "logicalBytes": 17179378
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679078861
+      },
+      "构建/缓存": {
+        "files": 523,
+        "logicalBytes": 240164764
+      },
+      "文档与已提交证据检出副本": {
+        "files": 209,
+        "logicalBytes": 9893009
+      }
+    },
+    "reason": "保留：WorkMesh 仓库归属已确认，但准确 todo/build 历史恢复用途未充分映射，不凭干净状态或主线 HEAD 删除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "准确 todo/build 与恢复用途未确认，先取得归属和保全来源/当前恢复引用；未取得前留存",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 946316129,
+    "afterLogicalBytes": 946316129,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1282,
+        "logicalBytes": 17179378
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679078861
+      },
+      "构建/缓存": {
+        "files": 523,
+        "logicalBytes": 240164764
+      },
+      "文档与已提交证据检出副本": {
+        "files": 209,
+        "logicalBytes": 9893009
+      }
+    },
+    "afterHead": "49cd2136fe5109115fb4f3dcff89ed59b0bc7615",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11661-dbed-70ca-85d6-05851a0213e1",
+    "todo": null,
+    "head": "af583f71f310e68ade588f9922694dfd8aba7a65",
+    "logicalBytes": 946655821,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1364,
+        "logicalBytes": 21093449
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679078908
+      },
+      "构建/缓存": {
+        "files": 531,
+        "logicalBytes": 236390458
+      },
+      "文档与已提交证据检出副本": {
+        "files": 213,
+        "logicalBytes": 10092889
+      }
+    },
+    "reason": "保留：WorkMesh 仓库归属已确认，但准确 todo/build 历史恢复用途未充分映射，不凭干净状态或主线 HEAD 删除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "准确 todo/build 与恢复用途未确认，先取得归属和保全来源/当前恢复引用；未取得前留存",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 946655821,
+    "afterLogicalBytes": 946655821,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1364,
+        "logicalBytes": 21093449
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679078908
+      },
+      "构建/缓存": {
+        "files": 531,
+        "logicalBytes": 236390458
+      },
+      "文档与已提交证据检出副本": {
+        "files": 213,
+        "logicalBytes": 10092889
+      }
+    },
+    "afterHead": "af583f71f310e68ade588f9922694dfd8aba7a65",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+    "todo": 18,
+    "head": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+    "logicalBytes": 797188602,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1371,
+        "logicalBytes": 21149057
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679078269
+      },
+      "文档与已提交证据检出副本": {
+        "files": 240,
+        "logicalBytes": 13628444
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 1757,
+        "logicalBytes": 83332715
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "父目录含原拒绝或旧明确保护子目标，整体删除禁止；不换工具/拆批/父删绕过，本卡维持原界限",
+    "specificHistoricalSourceExamples": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-3cdfb9e",
+        "source": "historical-worktrees-2026-10-08.json#/candidates/2/preCleanup/nestedWorktrees/0/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-70199df",
+        "source": "historical-worktrees-2026-10-08.json#/candidates/2/preCleanup/nestedWorktrees/1/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-dcf3557",
+        "source": "historical-worktrees-2026-10-08.json#/candidates/2/preCleanup/nestedWorktrees/2/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-dde2a1a",
+        "source": "historical-worktrees-2026-10-08.json#/candidates/2/preCleanup/nestedWorktrees/3/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752\\.tmp\\g1-main-f4e5915",
+        "source": "historical-worktrees-2026-10-08.json#/candidates/2/preCleanup/nestedWorktrees/4/path"
+      }
+    ],
+    "historicalPathObservationCount": 1799,
+    "beforeLogicalBytes": 797188602,
+    "afterLogicalBytes": 797188602,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1371,
+        "logicalBytes": 21149057
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679078269
+      },
+      "文档与已提交证据检出副本": {
+        "files": 240,
+        "logicalBytes": 13628444
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 1757,
+        "logicalBytes": 83332715
+      }
+    },
+    "afterHead": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+    "todo": 3,
+    "head": "550dead055689154359a3406dfce4f0c91c1dad3",
+    "logicalBytes": 734891329,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1371,
+        "logicalBytes": 21153266
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679076212
+      },
+      "文档与已提交证据检出副本": {
+        "files": 393,
+        "logicalBytes": 33916585
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 3,
+        "logicalBytes": 745149
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "父目录含原拒绝或旧明确保护子目标，整体删除禁止；不换工具/拆批/父删绕过，本卡维持原界限",
+    "specificHistoricalSourceExamples": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\web\\test-results\\.auth\\admin.json",
+        "source": "historical-worktrees-2026-10-08.json#/candidates/3/removedFiles/0/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\web\\.next",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/rebuildableCachesRemoved/0/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\web\\dist",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/rebuildableCachesRemoved/1/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\web\\.turbo",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/rebuildableCachesRemoved/2/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\\apps\\agent-runner\\.turbo",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/reviewerFollowupAudit/generatedCachesRetained/0/path"
+      }
+    ],
+    "historicalPathObservationCount": 40,
+    "beforeLogicalBytes": 734891329,
+    "afterLogicalBytes": 734891329,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1371,
+        "logicalBytes": 21153266
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679076212
+      },
+      "文档与已提交证据检出副本": {
+        "files": 393,
+        "logicalBytes": 33916585
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 3,
+        "logicalBytes": 745149
+      }
+    },
+    "afterHead": "550dead055689154359a3406dfce4f0c91c1dad3",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+    "todo": 15,
+    "head": "81090ec01bcbc84edbe101418d833840999a5326",
+    "logicalBytes": 797621388,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1385,
+        "logicalBytes": 21689208
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679079195
+      },
+      "构建/缓存": {
+        "files": 66,
+        "logicalBytes": 1240183
+      },
+      "文档与已提交证据检出副本": {
+        "files": 947,
+        "logicalBytes": 95087310
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 2,
+        "logicalBytes": 525375
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "原历史恢复输入/明确保留范围不因新合入解除；先取得准确原保护来源与保全/引用证据，本卡不整体删除",
+    "specificHistoricalSourceExamples": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\a2a-adapter\\dist",
+        "source": "ordinary-cleanup-preflight-2026-10-08.json#/exactDistTargetPreflights/17/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\agent-sdk\\dist",
+        "source": "ordinary-cleanup-preflight-2026-10-08.json#/exactDistTargetPreflights/18/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\artifact-storage\\dist",
+        "source": "ordinary-cleanup-preflight-2026-10-08.json#/exactDistTargetPreflights/19/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\config\\dist",
+        "source": "ordinary-cleanup-preflight-2026-10-08.json#/exactDistTargetPreflights/20/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc\\packages\\contracts\\dist",
+        "source": "ordinary-cleanup-preflight-2026-10-08.json#/exactDistTargetPreflights/21/path"
+      }
+    ],
+    "historicalPathObservationCount": 54,
+    "beforeLogicalBytes": 797621388,
+    "afterLogicalBytes": 797621388,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1385,
+        "logicalBytes": 21689208
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679079195
+      },
+      "构建/缓存": {
+        "files": 66,
+        "logicalBytes": 1240183
+      },
+      "文档与已提交证据检出副本": {
+        "files": 947,
+        "logicalBytes": 95087310
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 2,
+        "logicalBytes": 525375
+      }
+    },
+    "afterHead": "81090ec01bcbc84edbe101418d833840999a5326",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f1-74d9-a5e7-0022c903a6e6",
+    "todo": "5 历史规划/恢复（含未提交成果）",
+    "head": "b80593e9918ac7ce05465fd0ac640c809753ac5a",
+    "logicalBytes": 377911866,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1378,
+        "logicalBytes": 21495202
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 8490,
+        "logicalBytes": 270937366
+      },
+      "文档与已提交证据检出副本": {
+        "files": 845,
+        "logicalBytes": 85467486
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 1,
+        "logicalBytes": 11695
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "历史恢复目录含未提交成果，归属已从原 HEAD/任务确认；原保全和恢复输入保护保持，不根据 Done 解除，需准确原件保全和当前恢复引用证据",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 377911866,
+    "afterLogicalBytes": 377911866,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1378,
+        "logicalBytes": 21495202
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 8490,
+        "logicalBytes": 270937366
+      },
+      "文档与已提交证据检出副本": {
+        "files": 845,
+        "logicalBytes": 85467486
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 1,
+        "logicalBytes": 11695
+      }
+    },
+    "afterHead": "b80593e9918ac7ce05465fd0ac640c809753ac5a",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+    "todo": "8 历史恢复（含未提交成果）",
+    "head": "901e040a2cd4be83f9b9801bc3087ac150d1cde1",
+    "logicalBytes": 1369858879,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1376,
+        "logicalBytes": 21533174
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 52075,
+        "logicalBytes": 737374536
+      },
+      "构建/缓存": {
+        "files": 907,
+        "logicalBytes": 520930214
+      },
+      "文档与已提交证据检出副本": {
+        "files": 907,
+        "logicalBytes": 90020838
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "历史恢复目录含未提交成果，归属已从原 HEAD/任务确认；原保全和恢复输入保护保持，不根据 Done 解除，需准确原件保全和当前恢复引用证据",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 1369858879,
+    "afterLogicalBytes": 1369858879,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1376,
+        "logicalBytes": 21533174
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 52075,
+        "logicalBytes": 737374536
+      },
+      "构建/缓存": {
+        "files": 907,
+        "logicalBytes": 520930214
+      },
+      "文档与已提交证据检出副本": {
+        "files": 907,
+        "logicalBytes": 90020838
+      }
+    },
+    "afterHead": "901e040a2cd4be83f9b9801bc3087ac150d1cde1",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+    "todo": 11,
+    "head": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+    "logicalBytes": 837685153,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1372,
+        "logicalBytes": 21481987
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679078828
+      },
+      "文档与已提交证据检出副本": {
+        "files": 837,
+        "logicalBytes": 85226879
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 147,
+        "logicalBytes": 51897342
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "父目录含原拒绝或旧明确保护子目标，整体删除禁止；不换工具/拆批/父删绕过，本卡维持原界限",
+    "specificHistoricalSourceExamples": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\apps\\web\\test-results\\.auth\\admin.json",
+        "source": "historical-worktrees-2026-10-08.json#/candidates/4/removedFiles/0/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-bound-d0-40a51b",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/explicitDuplicatePathsRemoved/2/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\d1a-d0-replay",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/explicitDuplicatePathsRemoved/3/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\trace-sanitized-rebuilt.zip",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/explicitDuplicatePathsRemoved/4/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5\\.tmp\\candidate-diffcheck.log",
+        "source": "historical-worktrees-2026-10-08.json#/followupCleanup/explicitDuplicatePathsRemoved/5/path"
+      }
+    ],
+    "historicalPathObservationCount": 1539,
+    "beforeLogicalBytes": 837685153,
+    "afterLogicalBytes": 837685153,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1372,
+        "logicalBytes": 21481987
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679078828
+      },
+      "文档与已提交证据检出副本": {
+        "files": 837,
+        "logicalBytes": 85226879
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 147,
+        "logicalBytes": 51897342
+      }
+    },
+    "afterHead": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+    "todo": 17,
+    "head": "3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7",
+    "logicalBytes": 1043076163,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1392,
+        "logicalBytes": 21730116
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679079187
+      },
+      "构建/缓存": {
+        "files": 627,
+        "logicalBytes": 225057699
+      },
+      "文档与已提交证据检出副本": {
+        "files": 1085,
+        "logicalBytes": 114591227
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 57,
+        "logicalBytes": 2617817
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "原历史恢复输入/明确保留范围不因新合入解除；先取得准确原保护来源与保全/引用证据，本卡不整体删除",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 1043076163,
+    "afterLogicalBytes": 1043076163,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1392,
+        "logicalBytes": 21730116
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679079187
+      },
+      "构建/缓存": {
+        "files": 627,
+        "logicalBytes": 225057699
+      },
+      "文档与已提交证据检出副本": {
+        "files": 1085,
+        "logicalBytes": 114591227
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 57,
+        "logicalBytes": 2617817
+      }
+    },
+    "afterHead": "3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+    "todo": "21 首面检查点",
+    "head": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5",
+    "logicalBytes": 1013245363,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1378,
+        "logicalBytes": 21624985
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679074045
+      },
+      "构建/缓存": {
+        "files": 513,
+        "logicalBytes": 200289580
+      },
+      "文档与已提交证据检出副本": {
+        "files": 1228,
+        "logicalBytes": 112256636
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "#21 首面检查点/历史明确材料继续保护；不根据任务完成释放",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 1013245363,
+    "afterLogicalBytes": 1013245363,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1378,
+        "logicalBytes": 21624985
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679074045
+      },
+      "构建/缓存": {
+        "files": 513,
+        "logicalBytes": 200289580
+      },
+      "文档与已提交证据检出副本": {
+        "files": 1228,
+        "logicalBytes": 112256636
+      }
+    },
+    "afterHead": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a0e-d8a0-7474-ad05-791c239b82fe",
+    "todo": null,
+    "head": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "logicalBytes": 106749175,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1372,
+        "logicalBytes": 21491451
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "文档与已提交证据检出副本": {
+        "files": 837,
+        "logicalBytes": 85257607
+      }
+    },
+    "reason": "保留：WorkMesh 仓库归属已确认，但准确 todo/build 历史恢复用途未充分映射，不凭干净状态或主线 HEAD 删除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "准确 todo/build 与恢复用途未确认，先取得归属和保全来源/当前恢复引用；未取得前留存",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 106749175,
+    "afterLogicalBytes": 106749175,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1372,
+        "logicalBytes": 21491451
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "文档与已提交证据检出副本": {
+        "files": 837,
+        "logicalBytes": 85257607
+      }
+    },
+    "afterHead": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a77-e1c5-763d-ad86-a1bcf4d672e6",
+    "todo": null,
+    "head": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "logicalBytes": 106749175,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1372,
+        "logicalBytes": 21491451
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "文档与已提交证据检出副本": {
+        "files": 837,
+        "logicalBytes": 85257607
+      }
+    },
+    "reason": "保留：WorkMesh 仓库归属已确认，但准确 todo/build 历史恢复用途未充分映射，不凭干净状态或主线 HEAD 删除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "准确 todo/build 与恢复用途未确认，先取得归属和保全来源/当前恢复引用；未取得前留存",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 106749175,
+    "afterLogicalBytes": 106749175,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1372,
+        "logicalBytes": 21491451
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "文档与已提交证据检出副本": {
+        "files": 837,
+        "logicalBytes": 85257607
+      }
+    },
+    "afterHead": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+    "todo": 21,
+    "head": "fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96",
+    "logicalBytes": 937848587,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1382,
+        "logicalBytes": 21678802
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679073966
+      },
+      "构建/缓存": {
+        "files": 328,
+        "logicalBytes": 5030705
+      },
+      "文档与已提交证据检出副本": {
+        "files": 2216,
+        "logicalBytes": 232064997
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "#21 首面检查点/历史明确材料继续保护；不根据任务完成释放",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 937848587,
+    "afterLogicalBytes": 937848587,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1382,
+        "logicalBytes": 21678802
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679073966
+      },
+      "构建/缓存": {
+        "files": 328,
+        "logicalBytes": 5030705
+      },
+      "文档与已提交证据检出副本": {
+        "files": 2216,
+        "logicalBytes": 232064997
+      }
+    },
+    "afterHead": "fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+    "todo": 8,
+    "head": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+    "logicalBytes": 793048437,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1376,
+        "logicalBytes": 21538320
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679078902
+      },
+      "构建/缓存": {
+        "files": 73,
+        "logicalBytes": 1232383
+      },
+      "文档与已提交证据检出副本": {
+        "files": 901,
+        "logicalBytes": 91198715
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "原历史恢复输入/明确保留范围不因新合入解除；先取得准确原保护来源与保全/引用证据，本卡不整体删除",
+    "specificHistoricalSourceExamples": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\agent-runner\\dist",
+        "source": "ordinary-cleanup-preflight-2026-10-08.json#/exactDistTargetPreflights/0/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\api\\dist",
+        "source": "ordinary-cleanup-preflight-2026-10-08.json#/exactDistTargetPreflights/1/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\fake-agent\\dist",
+        "source": "ordinary-cleanup-preflight-2026-10-08.json#/exactDistTargetPreflights/2/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\mcp\\dist",
+        "source": "ordinary-cleanup-preflight-2026-10-08.json#/exactDistTargetPreflights/3/path"
+      },
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801\\apps\\worker\\dist",
+        "source": "ordinary-cleanup-preflight-2026-10-08.json#/exactDistTargetPreflights/4/path"
+      }
+    ],
+    "historicalPathObservationCount": 60,
+    "beforeLogicalBytes": 793048437,
+    "afterLogicalBytes": 793048437,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1376,
+        "logicalBytes": 21538320
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679078902
+      },
+      "构建/缓存": {
+        "files": 73,
+        "logicalBytes": 1232383
+      },
+      "文档与已提交证据检出副本": {
+        "files": 901,
+        "logicalBytes": 91198715
+      }
+    },
+    "afterHead": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+    "todo": 5,
+    "head": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19",
+    "logicalBytes": 1610079999,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1426,
+        "logicalBytes": 21886655
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50807,
+        "logicalBytes": 750174864
+      },
+      "构建/缓存": {
+        "files": 564,
+        "logicalBytes": 716581882
+      },
+      "文档与已提交证据检出副本": {
+        "files": 1523,
+        "logicalBytes": 121436481
+      }
+    },
+    "reason": "保护：待审、活动构建或本清理构建",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "当前待审与恢复输入保护，不凭 Done 自动解除；需确认恢复输入已经持久保全且没有恢复引用，原明确保护继续生效",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 1610079999,
+    "afterLogicalBytes": 1610079999,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1426,
+        "logicalBytes": 21886655
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50807,
+        "logicalBytes": 750174864
+      },
+      "构建/缓存": {
+        "files": 564,
+        "logicalBytes": 716581882
+      },
+      "文档与已提交证据检出副本": {
+        "files": 1523,
+        "logicalBytes": 121436481
+      }
+    },
+    "afterHead": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d",
+    "todo": 52,
+    "head": "83541ce11da52236cc49ef2dd0ffdfe23775b306",
+    "logicalBytes": 151321543,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1391,
+        "logicalBytes": 21735906
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "文档与已提交证据检出副本": {
+        "files": 1104,
+        "logicalBytes": 129585520
+      }
+    },
+    "reason": "保护：旧清理会话的审计/恢复来源；本轮不解除历史明确保护",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "历史清理原审计/恢复来源保留；不可重复历史删除或追补缺失回执",
+    "specificHistoricalSourceExamples": [
+      {
+        "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d\\docs\\reviews\\cleanup\\remaining-materials-review-2026-10-08.json",
+        "source": "remaining-materials-review-2026-10-08.json#/g1Clone/priorEditRejectionReceipt/target"
+      }
+    ],
+    "historicalPathObservationCount": 1,
+    "beforeLogicalBytes": 151321543,
+    "afterLogicalBytes": 151321543,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1391,
+        "logicalBytes": 21735906
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "文档与已提交证据检出副本": {
+        "files": 1104,
+        "logicalBytes": 129585520
+      }
+    },
+    "afterHead": "83541ce11da52236cc49ef2dd0ffdfe23775b306",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+    "todo": 9,
+    "head": "328434d00268ce39222d677686dde3c64aba4e41",
+    "logicalBytes": 2171560588,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1400,
+        "logicalBytes": 21857861
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679074314
+      },
+      "构建/缓存": {
+        "files": 561,
+        "logicalBytes": 940202833
+      },
+      "文档与已提交证据检出副本": {
+        "files": 8207,
+        "logicalBytes": 530425463
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "原历史恢复输入/明确保留范围不因新合入解除；先取得准确原保护来源与保全/引用证据，本卡不整体删除",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 2171560588,
+    "afterLogicalBytes": 2171560588,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1400,
+        "logicalBytes": 21857861
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50181,
+        "logicalBytes": 679074314
+      },
+      "构建/缓存": {
+        "files": 561,
+        "logicalBytes": 940202833
+      },
+      "文档与已提交证据检出副本": {
+        "files": 8207,
+        "logicalBytes": 530425463
+      }
+    },
+    "afterHead": "328434d00268ce39222d677686dde3c64aba4e41",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+    "todo": 16,
+    "head": "d80f29ff9b87c387326cfda45eafdcfe6b182eee",
+    "logicalBytes": 1155604546,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1395,
+        "logicalBytes": 21786784
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50233,
+        "logicalBytes": 679793877
+      },
+      "构建/缓存": {
+        "files": 557,
+        "logicalBytes": 258577461
+      },
+      "文档与已提交证据检出副本": {
+        "files": 2025,
+        "logicalBytes": 195446307
+      }
+    },
+    "reason": "保护：历史明确保留、恢复输入、拒绝目标父目录或未映射验收材料；Done 不解除",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "原历史恢复输入/明确保留范围不因新合入解除；先取得准确原保护来源与保全/引用证据，本卡不整体删除",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 1155604546,
+    "afterLogicalBytes": 1155604546,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1395,
+        "logicalBytes": 21786784
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 50233,
+        "logicalBytes": 679793877
+      },
+      "构建/缓存": {
+        "files": 557,
+        "logicalBytes": 258577461
+      },
+      "文档与已提交证据检出副本": {
+        "files": 2025,
+        "logicalBytes": 195446307
+      }
+    },
+    "afterHead": "d80f29ff9b87c387326cfda45eafdcfe6b182eee",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "todo": 58,
+    "head": "9051da511d0e844a5e57b6263c23f643689bc879",
+    "logicalBytes": 5290051530,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1477,
+        "logicalBytes": 23272718
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 52075,
+        "logicalBytes": 737375730
+      },
+      "构建/缓存": {
+        "files": 974,
+        "logicalBytes": 547578413
+      },
+      "文档与已提交证据检出副本": {
+        "files": 10567,
+        "logicalBytes": 2831825768
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 651,
+        "logicalBytes": 1149998784
+      }
+    },
+    "reason": "保护：待审、活动构建或本清理构建",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "活动 M5 全工作区与服务保留；完成并实际合入后仍须刷新活动/恢复引用、保全及所有保护交叉核验",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 5290051530,
+    "afterLogicalBytes": 5321435687,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1477,
+        "logicalBytes": 23282622
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "依赖与本地 virtual store（含特殊 runtime，需另核）": {
+        "files": 52075,
+        "logicalBytes": 737377058
+      },
+      "构建/缓存": {
+        "files": 974,
+        "logicalBytes": 547578413
+      },
+      "文档与已提交证据检出副本": {
+        "files": 10572,
+        "logicalBytes": 2831861099
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 1130,
+        "logicalBytes": 1181336378
+      }
+    },
+    "afterHead": "9051da511d0e844a5e57b6263c23f643689bc879",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  },
+  {
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+    "todo": 60,
+    "head": "f0583bb138f1561e8e32a4eae02f0f932ee59e76",
+    "logicalBytes": 2973916581,
+    "groups": {
+      "源码与其他文件": {
+        "files": 1469,
+        "logicalBytes": 23195399
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "文档与已提交证据检出副本": {
+        "files": 10599,
+        "logicalBytes": 2940118021
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 398,
+        "logicalBytes": 10603044
+      }
+    },
+    "reason": "保护：待审、活动构建或本清理构建",
+    "source": "../decisions.json 与 ../historical-sources.json，精确历史路径见 protected-before.json",
+    "nextCondition": "本卡当前构建始终排除；交付实际合入后由后续清理会话按新现状核验",
+    "specificHistoricalSourceExamples": [],
+    "historicalPathObservationCount": 0,
+    "beforeLogicalBytes": 2973916581,
+    "afterLogicalBytes": 2997461252,
+    "afterGroups": {
+      "源码与其他文件": {
+        "files": 1469,
+        "logicalBytes": 23195399
+      },
+      "Git 管理/对象（主仓库单列）": {
+        "files": 1,
+        "logicalBytes": 117
+      },
+      "文档与已提交证据检出副本": {
+        "files": 10674,
+        "logicalBytes": 2963662692
+      },
+      "本机临时/验收材料（用途未判定）": {
+        "files": 398,
+        "logicalBytes": 10603044
+      }
+    },
+    "afterHead": "24ad9a95fbc80ae66d5177cc3a6a616f4e68c313",
+    "sampling": "logicalBytes/groups/head 为 before 采样；after* 为操作后实际采样，活动变化不当保护失败"
+  }
+]

@@ -13,6 +13,8 @@
    python -B docs/reviews/cleanup/2026-10-11-worktrees/usage-inventory.py --phase opening
    ```
 
+   要保留机器快照，另加 `--output docs/reviews/cleanup/<新的日期目录>/opening-<准确阶段>.json.gz`。输出只能在本仓库 `docs/reviews/cleanup/` 下；已有快照拒绝覆盖，防止重跑改写旧原件。只打印时不写文件。
+
 2. **合入后纳入待回收台账。** 记录机器、绝对路径、todo、branch、完成 HEAD、PR、远端 main 原返回及时间。合入不是删除条件本身。处理该项目下一次收尾时先核近期候选，不等它们成为大量长期残留。本卡的 `continuation/mapping-54..57.json.gz` 和执行回执是实际范例；后续应新建日期目录，不能重写这批回执。
 3. **必要原件最小保留。** 优先复用主线可达的 Git blob、既有源码/runtime ZIP 和原输出成员。逐 path 分列 Git 与 Windows 原字节，注明 CRLF/BOM/二进制差异。缺少的必要本任务材料先脱敏保全、按内容哈希复用成员，再提交来源和预检。依赖/构建缓存记录真实锁版本、工具版本、源码和构建脚本，只承诺可重建的功能性输出；不把缓存当验收原件，也不承诺重建字节等同。运行时包只保留一份内容相同的原包，避免每个候选重复归档。
 

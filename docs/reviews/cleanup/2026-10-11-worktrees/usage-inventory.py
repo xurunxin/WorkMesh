@@ -89,16 +89,20 @@ def main():
         rows.append({'path': str(path), 'startedAt': utc(), 'remote': remote, 'head': git(path, 'rev-parse', 'HEAD'), **scan(path), 'endedAt': utc()})
     # 主仓库只是只读大小对照，永不成为脚本的回收候选；其它平台缓存不遍历。
     main_repo = ROOT / 'DzkLDn6UW-IbfoTJzN9Ro' / 'repo'
-    main_size = {'path': str(main_repo), 'protected': True, **scan(main_repo)} if main_repo.is_dir() else {'path': str(main_repo), 'protected': True, 'exists': False}
+    main_size = {'path': str(main_repo), 'protected': True, **scan(main_repo)} if main_repo.is_dir() and not main_repo.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT else {'path': str(main_repo), 'protected': True, 'exists': main_repo.exists(), 'reason': '不存在或根为链接，未遍历'}
     total = sum(r['logicalBytes'] for r in rows)
     data = {'startedAt': started, 'endedAt': utc(), 'phase': args.phase, 'workspaceRoot': str(ROOT), 'project': REPOSITORY,
             'worktreeLogicalBytes': total, 'worktreeDecimalGB': total / 10**9, 'worktreeGiB': total / 2**30, 'worktreeCount': len(rows),
             'rows': rows, 'mainRepositorySeparate': main_size, 'exclusions': exclusions, 'registration': git(CURRENT, 'worktree', 'list', '--porcelain'),
             'limitations': '逻辑长度不跟链接，hardlink 副本重复计数；不含其它项目、用户目录、共享 store、镜像/业务数据；活动目录扫描不是一致快照；不代表物理分配或可归因净释放。用途分类不能代安全预检。'}
     if args.output:
-        dest = args.output.absolute()
-        if OUT != dest.parent and OUT not in dest.parents:
+        dest = args.output.resolve()
+        cleanup_root = OUT.parent.resolve()
+        if cleanup_root not in dest.parents:
             raise ValueError('输出必须在此受控清理报告目录下')
+        if dest.exists():
+            raise ValueError('已有快照，禁止覆盖原件；读取原快照或选新的准确阶段名')
+        dest.parent.mkdir(parents=True, exist_ok=True)
         raw = (json.dumps(data, ensure_ascii=False, indent=2) + '\n').encode()
         dest.write_bytes(gzip.compress(raw, mtime=0))
     groups = collections.Counter()

@@ -1,0 +1,20 @@
+{
+  "input": {
+    "cmd": "& docs/reviews/cleanup/2026-10-11-worktrees/continuation/process-snapshot.ps1 -ReceiptName process-execution-54.json\n& docs/reviews/cleanup/2026-10-11-worktrees/continuation/execute-target.ps1 -Todo 54 -MainSha 87f88b89297c5c1e346f7ef99118c410f4b4a905",
+    "yield_time_ms": 1000,
+    "max_output_tokens": 2400
+  },
+  "start": {
+    "current_time": "2026-10-10 17:49:38 UTC"
+  },
+  "end": {
+    "current_time": "2026-10-10 17:49:48 UTC"
+  },
+  "output": {
+    "chunk_id": "afd890",
+    "wall_time_seconds": 10.0089263,
+    "session_id": 16671,
+    "original_token_count": 38,
+    "output": "[ERROR] - (starship::print): Under a 'dumb' terminal (TERM=dumb).\n\r\n{\r\n  \"DeviceID\": \"C:\",\r\n  \"FreeSpace\": 304046542848,\r\n  \"Size\": 998956331008\r\n}\r\n"
+  }
+}

@@ -1,0 +1,411 @@
+{
+  "recordedAt": "2026-10-10T18:25:45.666665+00:00",
+  "newRemovedCount": 4,
+  "newRemovedLogicalBytes": 13118350054,
+  "previous53ResultUnchanged": true,
+  "registrationBefore": 27,
+  "registrationAfter": 23,
+  "protectedExistenceDifferences": 0,
+  "results": [
+    {
+      "todo": 54,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61",
+      "executed": true,
+      "targetExists": false,
+      "registeredAfter": false,
+      "result": "完整工作树已移除；原 junction 本体及普通空目录按先行预检收尾",
+      "error": null,
+      "gitCalls": [
+        {
+          "input": [
+            "git",
+            "-C",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+            "worktree",
+            "remove",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61"
+          ],
+          "start": "2026-10-10T17:51:34.9302364Z",
+          "end": "2026-10-10T17:53:08.6162786Z",
+          "stdout": "",
+          "stderr": "",
+          "exit": 0
+        }
+      ],
+      "processCalls": [
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\verify-target.py",
+            "54",
+            "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+          ],
+          "start": "2026-10-10T17:49:40.6725478Z",
+          "end": "2026-10-10T17:51:34.3727579Z",
+          "output": "{\"todo\": 54, \"success\": true, \"exclusiveReadCount\": 63471, \"linkCount\": 1925, \"logicalBytes\": 2466235470, \"errors\": []}\r\n",
+          "exit": 0
+        },
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\residual-check.py",
+            "54"
+          ],
+          "start": "2026-10-10T17:53:08.6339624Z",
+          "end": "2026-10-10T17:53:11.0762307Z",
+          "output": "{\"todo\": 54, \"ordinaryFiles\": 0, \"originalJunctions\": 1925, \"ordinaryDirectories\": 959, \"safe\": true}\r\n",
+          "exit": 0
+        }
+      ],
+      "cmdletCalls": 2884,
+      "cmdletFailures": 0,
+      "normalizedCmdletExitDefinition": "PowerShell cmdlet 没有独立 OS 进程退出码；journal 的 exit0/1 为立即无终止异常/有异常的归一化结果；原异常和外层 tool 的真实 process exit 另存",
+      "junctionBodiesRemoved": 1925,
+      "ordinaryEmptyDirectoriesRemoved": 959,
+      "localBranchRetained": true,
+      "localBranchReceipt": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "refs/heads/tds/conv-01a11ed4-1e73-7802-8bf8-4899c5405f61"
+        ],
+        "start": "2026-10-10T18:14:33.186861+00:00",
+        "end": "2026-10-10T18:14:33.230029+00:00",
+        "exit": 0,
+        "stdout": "883d279d3b5978680672a6c1d7364d421d0afd10\n",
+        "stderr": ""
+      },
+      "diskBefore": {
+        "DeviceID": "C:",
+        "FreeSpace": 304052125696,
+        "Size": 998956331008
+      },
+      "diskAfter": {
+        "DeviceID": "C:",
+        "FreeSpace": 306610765824,
+        "Size": 998956331008
+      },
+      "volumeFreeSpaceChangeBytes": 2558640128,
+      "attributablePhysicalNetReleasedBytes": null
+    },
+    {
+      "todo": 55,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6",
+      "executed": true,
+      "targetExists": false,
+      "registeredAfter": false,
+      "result": "完整工作树已移除；原 junction 本体及普通空目录按先行预检收尾",
+      "error": null,
+      "gitCalls": [
+        {
+          "input": [
+            "git",
+            "-C",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+            "worktree",
+            "remove",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6"
+          ],
+          "start": "2026-10-10T17:59:11.0655800Z",
+          "end": "2026-10-10T18:00:33.3174722Z",
+          "stdout": "",
+          "stderr": "",
+          "exit": 0
+        }
+      ],
+      "processCalls": [
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\verify-target.py",
+            "55",
+            "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+          ],
+          "start": "2026-10-10T17:57:13.3707655Z",
+          "end": "2026-10-10T17:59:10.3720133Z",
+          "output": "{\"todo\": 55, \"success\": true, \"exclusiveReadCount\": 64001, \"linkCount\": 1945, \"logicalBytes\": 2742944421, \"errors\": []}\r\n",
+          "exit": 0
+        },
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\residual-check.py",
+            "55"
+          ],
+          "start": "2026-10-10T18:00:33.3301275Z",
+          "end": "2026-10-10T18:00:34.8147504Z",
+          "output": "{\"todo\": 55, \"ordinaryFiles\": 0, \"originalJunctions\": 1925, \"ordinaryDirectories\": 959, \"safe\": true}\r\n",
+          "exit": 0
+        }
+      ],
+      "cmdletCalls": 2884,
+      "cmdletFailures": 0,
+      "normalizedCmdletExitDefinition": "PowerShell cmdlet 没有独立 OS 进程退出码；journal 的 exit0/1 为立即无终止异常/有异常的归一化结果；原异常和外层 tool 的真实 process exit 另存",
+      "junctionBodiesRemoved": 1925,
+      "ordinaryEmptyDirectoriesRemoved": 959,
+      "localBranchRetained": true,
+      "localBranchReceipt": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "refs/heads/tds/conv-01a12031-e9de-75c4-ab40-b44affcd71f6"
+        ],
+        "start": "2026-10-10T18:14:33.251658+00:00",
+        "end": "2026-10-10T18:14:33.290105+00:00",
+        "exit": 0,
+        "stdout": "3ff46eb20616dc5488ba46b77b27e1fb2d783a93\n",
+        "stderr": ""
+      },
+      "diskBefore": {
+        "DeviceID": "C:",
+        "FreeSpace": 306579718144,
+        "Size": 998956331008
+      },
+      "diskAfter": {
+        "DeviceID": "C:",
+        "FreeSpace": 309455220736,
+        "Size": 998956331008
+      },
+      "volumeFreeSpaceChangeBytes": 2875502592,
+      "attributablePhysicalNetReleasedBytes": null
+    },
+    {
+      "todo": 56,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe",
+      "executed": true,
+      "targetExists": false,
+      "registeredAfter": false,
+      "result": "完整工作树已移除；原 junction 本体及普通空目录按先行预检收尾",
+      "error": null,
+      "gitCalls": [
+        {
+          "input": [
+            "git",
+            "-C",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+            "worktree",
+            "remove",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe"
+          ],
+          "start": "2026-10-10T18:04:37.0812382Z",
+          "end": "2026-10-10T18:05:36.9053959Z",
+          "stdout": "",
+          "stderr": "",
+          "exit": 0
+        }
+      ],
+      "processCalls": [
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\verify-target.py",
+            "56",
+            "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+          ],
+          "start": "2026-10-10T18:02:48.2077620Z",
+          "end": "2026-10-10T18:04:36.6024777Z",
+          "output": "{\"todo\": 56, \"success\": true, \"exclusiveReadCount\": 65070, \"linkCount\": 1945, \"logicalBytes\": 3374923543, \"errors\": []}\r\n",
+          "exit": 0
+        },
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\residual-check.py",
+            "56"
+          ],
+          "start": "2026-10-10T18:05:36.9177321Z",
+          "end": "2026-10-10T18:05:37.9277575Z",
+          "output": "{\"todo\": 56, \"ordinaryFiles\": 0, \"originalJunctions\": 1925, \"ordinaryDirectories\": 959, \"safe\": true}\r\n",
+          "exit": 0
+        }
+      ],
+      "cmdletCalls": 2884,
+      "cmdletFailures": 0,
+      "normalizedCmdletExitDefinition": "PowerShell cmdlet 没有独立 OS 进程退出码；journal 的 exit0/1 为立即无终止异常/有异常的归一化结果；原异常和外层 tool 的真实 process exit 另存",
+      "junctionBodiesRemoved": 1925,
+      "ordinaryEmptyDirectoriesRemoved": 959,
+      "localBranchRetained": true,
+      "localBranchReceipt": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "refs/heads/tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe"
+        ],
+        "start": "2026-10-10T18:14:33.314992+00:00",
+        "end": "2026-10-10T18:14:33.354450+00:00",
+        "exit": 0,
+        "stdout": "fb770b62a926e7c27049c2795eafa6da4e0cb085\n",
+        "stderr": ""
+      },
+      "diskBefore": {
+        "DeviceID": "C:",
+        "FreeSpace": 309226237952,
+        "Size": 998956331008
+      },
+      "diskAfter": {
+        "DeviceID": "C:",
+        "FreeSpace": 312710897664,
+        "Size": 998956331008
+      },
+      "volumeFreeSpaceChangeBytes": 3484659712,
+      "attributablePhysicalNetReleasedBytes": null
+    },
+    {
+      "todo": 57,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b",
+      "executed": true,
+      "targetExists": false,
+      "registeredAfter": false,
+      "result": "完整工作树已移除；原 junction 本体及普通空目录按先行预检收尾",
+      "error": null,
+      "gitCalls": [
+        {
+          "input": [
+            "git",
+            "-C",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+            "worktree",
+            "remove",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b"
+          ],
+          "start": "2026-10-10T18:11:22.7167889Z",
+          "end": "2026-10-10T18:12:12.9051843Z",
+          "stdout": "",
+          "stderr": "",
+          "exit": 0
+        }
+      ],
+      "processCalls": [
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\verify-target.py",
+            "57",
+            "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+          ],
+          "start": "2026-10-10T18:09:48.1492818Z",
+          "end": "2026-10-10T18:11:22.2691208Z",
+          "output": "{\"todo\": 57, \"success\": true, \"exclusiveReadCount\": 68648, \"linkCount\": 1947, \"logicalBytes\": 4534246620, \"errors\": []}\r\n",
+          "exit": 0
+        },
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\residual-check.py",
+            "57"
+          ],
+          "start": "2026-10-10T18:12:12.9181786Z",
+          "end": "2026-10-10T18:12:13.7175436Z",
+          "output": "{\"todo\": 57, \"ordinaryFiles\": 0, \"originalJunctions\": 1927, \"ordinaryDirectories\": 959, \"safe\": true}\r\n",
+          "exit": 0
+        }
+      ],
+      "cmdletCalls": 2886,
+      "cmdletFailures": 0,
+      "normalizedCmdletExitDefinition": "PowerShell cmdlet 没有独立 OS 进程退出码；journal 的 exit0/1 为立即无终止异常/有异常的归一化结果；原异常和外层 tool 的真实 process exit 另存",
+      "junctionBodiesRemoved": 1927,
+      "ordinaryEmptyDirectoriesRemoved": 959,
+      "localBranchRetained": true,
+      "localBranchReceipt": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "refs/heads/tds/conv-01a1246e-406c-7593-ada6-66996634434b"
+        ],
+        "start": "2026-10-10T18:14:33.375693+00:00",
+        "end": "2026-10-10T18:14:33.414255+00:00",
+        "exit": 0,
+        "stdout": "d27cb9be3a19befeae431df08276c9ca94d7dbed\n",
+        "stderr": ""
+      },
+      "diskBefore": {
+        "DeviceID": "C:",
+        "FreeSpace": 312669696000,
+        "Size": 998956331008
+      },
+      "diskAfter": {
+        "DeviceID": "C:",
+        "FreeSpace": 317315530752,
+        "Size": 998956331008
+      },
+      "volumeFreeSpaceChangeBytes": 4645834752,
+      "attributablePhysicalNetReleasedBytes": null
+    }
+  ],
+  "wholeOperationVolumeFreeSpaceChangeBytes": 13263405056,
+  "attributablePhysicalNetReleasedBytes": null,
+  "usageBefore": {
+    "worktreeLogicalBytes": 38186615064,
+    "worktreeCount": 25
+  },
+  "usageAfter": {
+    "worktreeLogicalBytes": 25123193838,
+    "worktreeCount": 21
+  },
+  "failedTargets": [],
+  "emptyBatch": false,
+  "mainExecutionObservations": [
+    {
+      "todo": 54,
+      "sha": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "start": {
+        "current_time": "2026-10-10 17:49:34 UTC"
+      },
+      "end": {
+        "current_time": "2026-10-10 17:49:35 UTC"
+      }
+    },
+    {
+      "todo": 55,
+      "sha": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "start": {
+        "current_time": "2026-10-10 17:57:06 UTC"
+      },
+      "end": {
+        "current_time": "2026-10-10 17:57:08 UTC"
+      }
+    },
+    {
+      "todo": 56,
+      "sha": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "start": {
+        "current_time": "2026-10-10 18:02:42 UTC"
+      },
+      "end": {
+        "current_time": "2026-10-10 18:02:43 UTC"
+      }
+    },
+    {
+      "todo": 57,
+      "sha": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "start": {
+        "current_time": "2026-10-10 18:09:42 UTC"
+      },
+      "end": {
+        "current_time": "2026-10-10 18:09:43 UTC"
+      }
+    }
+  ],
+  "mechanism": {
+    "readOnlyInventoryImplemented": true,
+    "rulesRecorded": true,
+    "platformDaemonAutomaticDeletionImplemented": false,
+    "scheduledTaskCreated": false
+  }
+}
