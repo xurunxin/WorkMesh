@@ -1,0 +1,1113 @@
+{
+  "recordedAt": "2026-10-10T20:24:37.716735+00:00",
+  "calls": [
+    {
+      "input": [
+        "docker",
+        "ps",
+        "-a",
+        "--format",
+        "{{.ID}}"
+      ],
+      "startedAt": "2026-10-10T20:24:16.328026+00:00",
+      "endedAt": "2026-10-10T20:24:16.996515+00:00",
+      "exit": 0,
+      "stdout": "9dde644b7f9b\n2d4e450411e3\nce2d13ec4258\n3896b1121df5\n03079247a0b2\n8400a137ee25\n767a71cca26c\n51afea88106a\n086ff7b184a6\n2fd816bae57e\n556b19085fe1\n27855fcafaee\ndede93ad0cf2\n174cacc34997\n77d22a520b5f\n07a79a308e19\n7afcdf5184b3\n7185e794ecf7\n44cb4ec43c98\n88c568cde226\nda37a42f1531\nf28bdb0e23be\n22e898d902d4\n4c71f8fe346a\n23d2ad68bd31\n47947951bc4e\nc012ede214cf\n76c9f3c67abb\n7c8d3cd93f42\nf74d0a1c7164\nec6efeeed205\n8955a6225785\nfdbfaf96fc4b\nafb321d3ab88\n42c1f96772b6\n16d965766d2c\n567c5c781c26\nbb6b39f0959d\n1244d5e4667d\n4d8e4c20dc84\n959f0cabf5d6\nf3359d7c72a7\n4b9d5cc52acd\n54f147c18124\nebf6f15a199e\n2709a753abeb\n39acded25c5f\n446d990bae3d\n1aa94d42b532\n885491d285b0\n88d7597271c3\n68ddd591771d\naccb377d0f75\n95612d167478\n666b8a945f4e\n6572b97faee7\nd74db6d52c21\n25a235596355\na31c79775de3\ncef8749bbce4\n16bd2b3e9824\nd89c37d3a22e\n1da14d685015\na4173ad93c5a\nfb305d53eee0\n8be4c0b2f3b2\n3ac7b4978d97\na016713d06d3\n7a1f3fad0cc9\n557e9b8f1cab\n00f4596dc354\n16feb81cf9d2\n34820cf2e25e\na3b6f726f524\n951afd926067\n70078a3028a6\nf8b614913c4e\ned7ebe27231e\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "9dde644b7f9b"
+      ],
+      "startedAt": "2026-10-10T20:24:16.996555+00:00",
+      "endedAt": "2026-10-10T20:24:17.396875+00:00",
+      "exit": 0,
+      "stdout": "/qhub-dar507-8208-1791663825803-postgres-1 [{\"Type\":\"volume\",\"Name\":\"qhub-dar507-8208-1791663825803_qhub-postgres\",\"Source\":\"/var/lib/docker/volumes/qhub-dar507-8208-1791663825803_qhub-postgres/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"rw\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "2d4e450411e3"
+      ],
+      "startedAt": "2026-10-10T20:24:17.396915+00:00",
+      "endedAt": "2026-10-10T20:24:17.615930+00:00",
+      "exit": 0,
+      "stdout": "/neochat-maintenance-pg-fixture-noautovacuum-20261010 [{\"Type\":\"volume\",\"Name\":\"26cf308dd1c675d35078216b0cf075f64ecf1ef54018cccd878c5bf8fec43ad2\",\"Source\":\"/var/lib/docker/volumes/26cf308dd1c675d35078216b0cf075f64ecf1ef54018cccd878c5bf8fec43ad2/_data\",\"Destination\":\"/var/lib/postgresql\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "ce2d13ec4258"
+      ],
+      "startedAt": "2026-10-10T20:24:17.615958+00:00",
+      "endedAt": "2026-10-10T20:24:17.851556+00:00",
+      "exit": 0,
+      "stdout": "/qhub-patch-0013 [{\"Type\":\"volume\",\"Name\":\"0d27ccda958e83613da21636747d97f0b625dcce8a223b75fcaa7b5be0f87c1c\",\"Source\":\"/var/lib/docker/volumes/0d27ccda958e83613da21636747d97f0b625dcce8a223b75fcaa7b5be0f87c1c/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "3896b1121df5"
+      ],
+      "startedAt": "2026-10-10T20:24:17.851588+00:00",
+      "endedAt": "2026-10-10T20:24:18.136132+00:00",
+      "exit": 0,
+      "stdout": "/neochat-abort-pg-fixture-7ecec55 [{\"Type\":\"volume\",\"Name\":\"b015298a9bf53f9d2136c2c7b7369cd1b18425dec6c9f20f584359d0f79ffe65\",\"Source\":\"/var/lib/docker/volumes/b015298a9bf53f9d2136c2c7b7369cd1b18425dec6c9f20f584359d0f79ffe65/_data\",\"Destination\":\"/var/lib/postgresql\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "03079247a0b2"
+      ],
+      "startedAt": "2026-10-10T20:24:18.136158+00:00",
+      "endedAt": "2026-10-10T20:24:18.493053+00:00",
+      "exit": 0,
+      "stdout": "/neochat-offline-dns-api-fixture-7ece []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "8400a137ee25"
+      ],
+      "startedAt": "2026-10-10T20:24:18.493076+00:00",
+      "endedAt": "2026-10-10T20:24:18.720795+00:00",
+      "exit": 0,
+      "stdout": "/neochat-keyring-helper-synthetic-7ece []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "767a71cca26c"
+      ],
+      "startedAt": "2026-10-10T20:24:18.720833+00:00",
+      "endedAt": "2026-10-10T20:24:19.347542+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-api-auth []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "51afea88106a"
+      ],
+      "startedAt": "2026-10-10T20:24:19.347573+00:00",
+      "endedAt": "2026-10-10T20:24:19.613178+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-maintenance-negative []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "086ff7b184a6"
+      ],
+      "startedAt": "2026-10-10T20:24:19.613209+00:00",
+      "endedAt": "2026-10-10T20:24:19.893124+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-maintenance-versions []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "2fd816bae57e"
+      ],
+      "startedAt": "2026-10-10T20:24:19.893154+00:00",
+      "endedAt": "2026-10-10T20:24:20.207641+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-cdc []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "556b19085fe1"
+      ],
+      "startedAt": "2026-10-10T20:24:20.207683+00:00",
+      "endedAt": "2026-10-10T20:24:20.477202+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-web []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "27855fcafaee"
+      ],
+      "startedAt": "2026-10-10T20:24:20.477231+00:00",
+      "endedAt": "2026-10-10T20:24:20.808629+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-worker []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "dede93ad0cf2"
+      ],
+      "startedAt": "2026-10-10T20:24:20.808659+00:00",
+      "endedAt": "2026-10-10T20:24:21.059174+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-realtime []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "174cacc34997"
+      ],
+      "startedAt": "2026-10-10T20:24:21.059262+00:00",
+      "endedAt": "2026-10-10T20:24:21.419888+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-api []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "77d22a520b5f"
+      ],
+      "startedAt": "2026-10-10T20:24:21.419915+00:00",
+      "endedAt": "2026-10-10T20:24:21.811210+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-valkey []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "07a79a308e19"
+      ],
+      "startedAt": "2026-10-10T20:24:21.811252+00:00",
+      "endedAt": "2026-10-10T20:24:22.247235+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-migrate []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "7afcdf5184b3"
+      ],
+      "startedAt": "2026-10-10T20:24:22.247267+00:00",
+      "endedAt": "2026-10-10T20:24:22.476578+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r3-postgres [{\"Type\":\"volume\",\"Name\":\"af6a5dfd4660c0b94382e8c9ca39ae2799f8ca3c10a068c7f0707e5945f5fa68\",\"Source\":\"/var/lib/docker/volumes/af6a5dfd4660c0b94382e8c9ca39ae2799f8ca3c10a068c7f0707e5945f5fa68/_data\",\"Destination\":\"/var/lib/postgresql\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "7185e794ecf7"
+      ],
+      "startedAt": "2026-10-10T20:24:22.476609+00:00",
+      "endedAt": "2026-10-10T20:24:22.691399+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r2-api []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "44cb4ec43c98"
+      ],
+      "startedAt": "2026-10-10T20:24:22.691429+00:00",
+      "endedAt": "2026-10-10T20:24:22.885312+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r2-valkey []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "88c568cde226"
+      ],
+      "startedAt": "2026-10-10T20:24:22.885341+00:00",
+      "endedAt": "2026-10-10T20:24:23.249509+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r2-migrate []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "da37a42f1531"
+      ],
+      "startedAt": "2026-10-10T20:24:23.249543+00:00",
+      "endedAt": "2026-10-10T20:24:23.507755+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-r2-postgres [{\"Type\":\"volume\",\"Name\":\"63f28216fb676b84dc5faaa112c64c1bc347c7e7fe41156287029300e454b383\",\"Source\":\"/var/lib/docker/volumes/63f28216fb676b84dc5faaa112c64c1bc347c7e7fe41156287029300e454b383/_data\",\"Destination\":\"/var/lib/postgresql\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "f28bdb0e23be"
+      ],
+      "startedAt": "2026-10-10T20:24:23.507784+00:00",
+      "endedAt": "2026-10-10T20:24:23.915283+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-migrate []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "22e898d902d4"
+      ],
+      "startedAt": "2026-10-10T20:24:23.915314+00:00",
+      "endedAt": "2026-10-10T20:24:24.114155+00:00",
+      "exit": 0,
+      "stdout": "/cdc-fixed-7ecec55-local-postgres [{\"Type\":\"volume\",\"Name\":\"9498c7f7a53a11465d36a83b8ebd3b0ead5749e85bb50323979119b885cc6ffd\",\"Source\":\"/var/lib/docker/volumes/9498c7f7a53a11465d36a83b8ebd3b0ead5749e85bb50323979119b885cc6ffd/_data\",\"Destination\":\"/var/lib/postgresql\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "4c71f8fe346a"
+      ],
+      "startedAt": "2026-10-10T20:24:24.114184+00:00",
+      "endedAt": "2026-10-10T20:24:24.367853+00:00",
+      "exit": 0,
+      "stdout": "/buildx_buildkit_cdc-fixed-8b062ae-202610100 [{\"Type\":\"volume\",\"Name\":\"buildx_buildkit_cdc-fixed-8b062ae-202610100_state\",\"Source\":\"/var/lib/docker/volumes/buildx_buildkit_cdc-fixed-8b062ae-202610100_state/_data\",\"Destination\":\"/var/lib/buildkit\",\"Driver\":\"local\",\"Mode\":\"z\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "23d2ad68bd31"
+      ],
+      "startedAt": "2026-10-10T20:24:24.367884+00:00",
+      "endedAt": "2026-10-10T20:24:24.548080+00:00",
+      "exit": 0,
+      "stdout": "/m5-5dbe32e19a-store [{\"Type\":\"volume\",\"Name\":\"937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920\",\"Source\":\"/var/lib/docker/volumes/937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "47947951bc4e"
+      ],
+      "startedAt": "2026-10-10T20:24:24.548116+00:00",
+      "endedAt": "2026-10-10T20:24:24.696496+00:00",
+      "exit": 0,
+      "stdout": "/m5-5dbe32e19a-redis [{\"Type\":\"volume\",\"Name\":\"ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3\",\"Source\":\"/var/lib/docker/volumes/ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "c012ede214cf"
+      ],
+      "startedAt": "2026-10-10T20:24:24.696529+00:00",
+      "endedAt": "2026-10-10T20:24:24.882559+00:00",
+      "exit": 0,
+      "stdout": "/m5-5dbe32e19a-postgres [{\"Type\":\"volume\",\"Name\":\"bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1\",\"Source\":\"/var/lib/docker/volumes/bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "76c9f3c67abb"
+      ],
+      "startedAt": "2026-10-10T20:24:24.882581+00:00",
+      "endedAt": "2026-10-10T20:24:25.069646+00:00",
+      "exit": 0,
+      "stdout": "/neochat-hct-fixture-20261010 [{\"Type\":\"volume\",\"Name\":\"1f6c91a7ad7af7a7b071a8b24ea41477440b39e56bed3ccf5378b3aad900f1a4\",\"Source\":\"/var/lib/docker/volumes/1f6c91a7ad7af7a7b071a8b24ea41477440b39e56bed3ccf5378b3aad900f1a4/_data\",\"Destination\":\"/var/lib/postgresql\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "7c8d3cd93f42"
+      ],
+      "startedAt": "2026-10-10T20:24:25.069674+00:00",
+      "endedAt": "2026-10-10T20:24:25.305729+00:00",
+      "exit": 0,
+      "stdout": "/neochat-cdc-test-cdc-1 [{\"Type\":\"volume\",\"Name\":\"neochat-cdc-test_cdc-test-data\",\"Source\":\"/var/lib/docker/volumes/neochat-cdc-test_cdc-test-data/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"rw\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "f74d0a1c7164"
+      ],
+      "startedAt": "2026-10-10T20:24:25.305756+00:00",
+      "endedAt": "2026-10-10T20:24:25.565335+00:00",
+      "exit": 0,
+      "stdout": "/neochat-cdc-acceptance-postgres-1 [{\"Type\":\"volume\",\"Name\":\"neochat-cdc-acceptance_postgres-data\",\"Source\":\"/var/lib/docker/volumes/neochat-cdc-acceptance_postgres-data/_data\",\"Destination\":\"/var/lib/postgresql\",\"Driver\":\"local\",\"Mode\":\"rw\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "ec6efeeed205"
+      ],
+      "startedAt": "2026-10-10T20:24:25.565371+00:00",
+      "endedAt": "2026-10-10T20:24:25.810023+00:00",
+      "exit": 0,
+      "stdout": "/neochat-cdc-acceptance-valkey-1 [{\"Type\":\"volume\",\"Name\":\"neochat-cdc-acceptance_valkey-data\",\"Source\":\"/var/lib/docker/volumes/neochat-cdc-acceptance_valkey-data/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"rw\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "8955a6225785"
+      ],
+      "startedAt": "2026-10-10T20:24:25.810045+00:00",
+      "endedAt": "2026-10-10T20:24:26.388368+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381d-rustfs-test [{\"Type\":\"volume\",\"Name\":\"f770867c392a5c9f547d9781f6468167fc77efc1adc13170bafb503095a1095a\",\"Source\":\"/var/lib/docker/volumes/f770867c392a5c9f547d9781f6468167fc77efc1adc13170bafb503095a1095a/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "fdbfaf96fc4b"
+      ],
+      "startedAt": "2026-10-10T20:24:26.388402+00:00",
+      "endedAt": "2026-10-10T20:24:27.012905+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381d-redis-test [{\"Type\":\"volume\",\"Name\":\"68c0f38c05696ee92ceb212cefe48ca78c45c8932517688b6f537f32bcfac351\",\"Source\":\"/var/lib/docker/volumes/68c0f38c05696ee92ceb212cefe48ca78c45c8932517688b6f537f32bcfac351/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "afb321d3ab88"
+      ],
+      "startedAt": "2026-10-10T20:24:27.012931+00:00",
+      "endedAt": "2026-10-10T20:24:27.387232+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381d-postgres-test [{\"Type\":\"volume\",\"Name\":\"a8bf316c3c4fca1c2e12400e69c3996c9415fc08994dc77cc6c76c4661573150\",\"Source\":\"/var/lib/docker/volumes/a8bf316c3c4fca1c2e12400e69c3996c9415fc08994dc77cc6c76c4661573150/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "42c1f96772b6"
+      ],
+      "startedAt": "2026-10-10T20:24:27.387270+00:00",
+      "endedAt": "2026-10-10T20:24:27.691513+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381c-rustfs-test [{\"Type\":\"volume\",\"Name\":\"342d89cbb3564124ca352833d650b52f31619f51b6d9d294b65263b229aa1716\",\"Source\":\"/var/lib/docker/volumes/342d89cbb3564124ca352833d650b52f31619f51b6d9d294b65263b229aa1716/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "16d965766d2c"
+      ],
+      "startedAt": "2026-10-10T20:24:27.691542+00:00",
+      "endedAt": "2026-10-10T20:24:28.008366+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381c-redis-test [{\"Type\":\"volume\",\"Name\":\"4a942b1dfb1cb4bcae79dd58e78256921eeba10013abeece4165d57fb19c0d72\",\"Source\":\"/var/lib/docker/volumes/4a942b1dfb1cb4bcae79dd58e78256921eeba10013abeece4165d57fb19c0d72/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "567c5c781c26"
+      ],
+      "startedAt": "2026-10-10T20:24:28.008400+00:00",
+      "endedAt": "2026-10-10T20:24:28.983937+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381c-postgres-test [{\"Type\":\"volume\",\"Name\":\"afed6e213676d965720231e4726fb47e2d972d5a7452e6d56f0cbae01acdd520\",\"Source\":\"/var/lib/docker/volumes/afed6e213676d965720231e4726fb47e2d972d5a7452e6d56f0cbae01acdd520/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "bb6b39f0959d"
+      ],
+      "startedAt": "2026-10-10T20:24:28.983967+00:00",
+      "endedAt": "2026-10-10T20:24:29.263467+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381b-rustfs-test [{\"Type\":\"volume\",\"Name\":\"4f77687d7f54232dcaf1d151b5749cc58801e66aad5114c9292641b699f09b8b\",\"Source\":\"/var/lib/docker/volumes/4f77687d7f54232dcaf1d151b5749cc58801e66aad5114c9292641b699f09b8b/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "1244d5e4667d"
+      ],
+      "startedAt": "2026-10-10T20:24:29.263504+00:00",
+      "endedAt": "2026-10-10T20:24:29.862225+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381b-redis-test [{\"Type\":\"volume\",\"Name\":\"fbdbdba7f282c3297cf4fc460624918f9950f445523c9dc9532dbb1f48cb6acf\",\"Source\":\"/var/lib/docker/volumes/fbdbdba7f282c3297cf4fc460624918f9950f445523c9dc9532dbb1f48cb6acf/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "4d8e4c20dc84"
+      ],
+      "startedAt": "2026-10-10T20:24:29.862254+00:00",
+      "endedAt": "2026-10-10T20:24:30.174267+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381b-postgres-test [{\"Type\":\"volume\",\"Name\":\"75374043fb5d0beaed4796b0383e790ddbd85b2a1dcb13ba18941664465aa062\",\"Source\":\"/var/lib/docker/volumes/75374043fb5d0beaed4796b0383e790ddbd85b2a1dcb13ba18941664465aa062/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "959f0cabf5d6"
+      ],
+      "startedAt": "2026-10-10T20:24:30.174290+00:00",
+      "endedAt": "2026-10-10T20:24:30.407431+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381-rustfs-test [{\"Type\":\"volume\",\"Name\":\"8a9a3216f152f74fd9397f5b5a8aa241e758ababa702d444da29756ef81d93f0\",\"Source\":\"/var/lib/docker/volumes/8a9a3216f152f74fd9397f5b5a8aa241e758ababa702d444da29756ef81d93f0/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "f3359d7c72a7"
+      ],
+      "startedAt": "2026-10-10T20:24:30.407456+00:00",
+      "endedAt": "2026-10-10T20:24:30.771672+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381-redis-test [{\"Type\":\"volume\",\"Name\":\"1d9022d88403abeede36fa62e4fc748952545abd469507c2a102cb284fc7c502\",\"Source\":\"/var/lib/docker/volumes/1d9022d88403abeede36fa62e4fc748952545abd469507c2a102cb284fc7c502/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "4b9d5cc52acd"
+      ],
+      "startedAt": "2026-10-10T20:24:30.771700+00:00",
+      "endedAt": "2026-10-10T20:24:31.000328+00:00",
+      "exit": 0,
+      "stdout": "/r1ci381-postgres-test [{\"Type\":\"volume\",\"Name\":\"b03bdf9537da969106adcbb11ef042d716952e328590d74fc6ded64efa45f07a\",\"Source\":\"/var/lib/docker/volumes/b03bdf9537da969106adcbb11ef042d716952e328590d74fc6ded64efa45f07a/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "54f147c18124"
+      ],
+      "startedAt": "2026-10-10T20:24:31.000358+00:00",
+      "endedAt": "2026-10-10T20:24:31.217246+00:00",
+      "exit": 0,
+      "stdout": "/r1i-rustfs-test [{\"Type\":\"volume\",\"Name\":\"7be4b853490c99ab5711a5aaa46686a1c1d6d82d0eb10420a59470fdc1d8e463\",\"Source\":\"/var/lib/docker/volumes/7be4b853490c99ab5711a5aaa46686a1c1d6d82d0eb10420a59470fdc1d8e463/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "ebf6f15a199e"
+      ],
+      "startedAt": "2026-10-10T20:24:31.217285+00:00",
+      "endedAt": "2026-10-10T20:24:31.376261+00:00",
+      "exit": 0,
+      "stdout": "/r1i-redis-test [{\"Type\":\"volume\",\"Name\":\"e6ffaf78e7ee3eb433441e388bf84b6ba5ddc2ec9f93f4b11aac3419638ced44\",\"Source\":\"/var/lib/docker/volumes/e6ffaf78e7ee3eb433441e388bf84b6ba5ddc2ec9f93f4b11aac3419638ced44/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "2709a753abeb"
+      ],
+      "startedAt": "2026-10-10T20:24:31.376301+00:00",
+      "endedAt": "2026-10-10T20:24:31.577803+00:00",
+      "exit": 0,
+      "stdout": "/r1i-postgres-test [{\"Type\":\"volume\",\"Name\":\"a59e05003c711dfd50ffeb15af68d93bad99609ea0f2cac80b0217b749caa3d8\",\"Source\":\"/var/lib/docker/volumes/a59e05003c711dfd50ffeb15af68d93bad99609ea0f2cac80b0217b749caa3d8/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "39acded25c5f"
+      ],
+      "startedAt": "2026-10-10T20:24:31.577839+00:00",
+      "endedAt": "2026-10-10T20:24:31.807949+00:00",
+      "exit": 0,
+      "stdout": "/r1h-rustfs-test [{\"Type\":\"volume\",\"Name\":\"673bfa5123bb2afc960d41f85ce00f167e37eac01a0f7eac33fae1a66e53280e\",\"Source\":\"/var/lib/docker/volumes/673bfa5123bb2afc960d41f85ce00f167e37eac01a0f7eac33fae1a66e53280e/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "446d990bae3d"
+      ],
+      "startedAt": "2026-10-10T20:24:31.807981+00:00",
+      "endedAt": "2026-10-10T20:24:32.234794+00:00",
+      "exit": 0,
+      "stdout": "/r1h-redis-test [{\"Type\":\"volume\",\"Name\":\"9d701e8a11e0ebe98fdead08f5ce1f089498e6711a5092312f91fa996155edde\",\"Source\":\"/var/lib/docker/volumes/9d701e8a11e0ebe98fdead08f5ce1f089498e6711a5092312f91fa996155edde/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "1aa94d42b532"
+      ],
+      "startedAt": "2026-10-10T20:24:32.234831+00:00",
+      "endedAt": "2026-10-10T20:24:32.490902+00:00",
+      "exit": 0,
+      "stdout": "/r1h-postgres-test [{\"Type\":\"volume\",\"Name\":\"f20df4001f62f725ced45c2e9e419b358587d901315021045af324017cd3263a\",\"Source\":\"/var/lib/docker/volumes/f20df4001f62f725ced45c2e9e419b358587d901315021045af324017cd3263a/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "885491d285b0"
+      ],
+      "startedAt": "2026-10-10T20:24:32.490933+00:00",
+      "endedAt": "2026-10-10T20:24:32.737314+00:00",
+      "exit": 0,
+      "stdout": "/r1g-rustfs-test [{\"Type\":\"volume\",\"Name\":\"09993bb32cf1075dffd534fa7063e3af4ecb3afeacc8dd4fe52baba6f1f8e72d\",\"Source\":\"/var/lib/docker/volumes/09993bb32cf1075dffd534fa7063e3af4ecb3afeacc8dd4fe52baba6f1f8e72d/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "88d7597271c3"
+      ],
+      "startedAt": "2026-10-10T20:24:32.737340+00:00",
+      "endedAt": "2026-10-10T20:24:32.936691+00:00",
+      "exit": 0,
+      "stdout": "/r1g-redis-test [{\"Type\":\"volume\",\"Name\":\"c52ef889217855fd7f8761cd0309bfd4ab38b42775609d473f2c9c7a60b23609\",\"Source\":\"/var/lib/docker/volumes/c52ef889217855fd7f8761cd0309bfd4ab38b42775609d473f2c9c7a60b23609/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "68ddd591771d"
+      ],
+      "startedAt": "2026-10-10T20:24:32.936712+00:00",
+      "endedAt": "2026-10-10T20:24:33.147794+00:00",
+      "exit": 0,
+      "stdout": "/r1g-postgres-test [{\"Type\":\"volume\",\"Name\":\"4fe6fea9c2ec4ccfd82ad6ee5898d69a551c11b89813a94f1644b48923e0b03e\",\"Source\":\"/var/lib/docker/volumes/4fe6fea9c2ec4ccfd82ad6ee5898d69a551c11b89813a94f1644b48923e0b03e/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "accb377d0f75"
+      ],
+      "startedAt": "2026-10-10T20:24:33.147826+00:00",
+      "endedAt": "2026-10-10T20:24:33.342245+00:00",
+      "exit": 0,
+      "stdout": "/r1f-rustfs-test [{\"Type\":\"volume\",\"Name\":\"d3b4404131765cf803310d94950cc9100b847626d46525d1cbe81a70dff9d0ec\",\"Source\":\"/var/lib/docker/volumes/d3b4404131765cf803310d94950cc9100b847626d46525d1cbe81a70dff9d0ec/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "95612d167478"
+      ],
+      "startedAt": "2026-10-10T20:24:33.342273+00:00",
+      "endedAt": "2026-10-10T20:24:33.491894+00:00",
+      "exit": 0,
+      "stdout": "/r1f-redis-test [{\"Type\":\"volume\",\"Name\":\"21b8c4878fd214c829b3f61542f96a3a584d4a91b8440499ca0e7683b6405a04\",\"Source\":\"/var/lib/docker/volumes/21b8c4878fd214c829b3f61542f96a3a584d4a91b8440499ca0e7683b6405a04/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "666b8a945f4e"
+      ],
+      "startedAt": "2026-10-10T20:24:33.491920+00:00",
+      "endedAt": "2026-10-10T20:24:33.636680+00:00",
+      "exit": 0,
+      "stdout": "/r1f-postgres-test [{\"Type\":\"volume\",\"Name\":\"cd70f76e4f1f7f13e1eef288c3d0807e51c5b0c7cacb166a8e83a4e1ac46402e\",\"Source\":\"/var/lib/docker/volumes/cd70f76e4f1f7f13e1eef288c3d0807e51c5b0c7cacb166a8e83a4e1ac46402e/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "6572b97faee7"
+      ],
+      "startedAt": "2026-10-10T20:24:33.636701+00:00",
+      "endedAt": "2026-10-10T20:24:33.759371+00:00",
+      "exit": 0,
+      "stdout": "/r1e-rustfs-test [{\"Type\":\"volume\",\"Name\":\"ea82cd386491daa27ebb4058790490c0e039a004bf5dbd9ba289c0bebdbd1c13\",\"Source\":\"/var/lib/docker/volumes/ea82cd386491daa27ebb4058790490c0e039a004bf5dbd9ba289c0bebdbd1c13/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "d74db6d52c21"
+      ],
+      "startedAt": "2026-10-10T20:24:33.759400+00:00",
+      "endedAt": "2026-10-10T20:24:33.897646+00:00",
+      "exit": 0,
+      "stdout": "/r1e-redis-test [{\"Type\":\"volume\",\"Name\":\"77c58ced2109323d5f41ff5ad2fbea7d3c5b312d957ddd4a17fd6215142f070a\",\"Source\":\"/var/lib/docker/volumes/77c58ced2109323d5f41ff5ad2fbea7d3c5b312d957ddd4a17fd6215142f070a/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "25a235596355"
+      ],
+      "startedAt": "2026-10-10T20:24:33.897672+00:00",
+      "endedAt": "2026-10-10T20:24:34.086243+00:00",
+      "exit": 0,
+      "stdout": "/r1e-postgres-test [{\"Type\":\"volume\",\"Name\":\"bc5c677e6113b07466b52d09492575a94d63e715fb08afa34f0d391d326a4efd\",\"Source\":\"/var/lib/docker/volumes/bc5c677e6113b07466b52d09492575a94d63e715fb08afa34f0d391d326a4efd/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "a31c79775de3"
+      ],
+      "startedAt": "2026-10-10T20:24:34.086271+00:00",
+      "endedAt": "2026-10-10T20:24:34.327253+00:00",
+      "exit": 0,
+      "stdout": "/r1d-rustfs-test [{\"Type\":\"volume\",\"Name\":\"cfc46fe5c3236a749a6f0843eb139e6ec4cf3dba80fc0214aea1674f065df1d4\",\"Source\":\"/var/lib/docker/volumes/cfc46fe5c3236a749a6f0843eb139e6ec4cf3dba80fc0214aea1674f065df1d4/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "cef8749bbce4"
+      ],
+      "startedAt": "2026-10-10T20:24:34.327280+00:00",
+      "endedAt": "2026-10-10T20:24:34.602017+00:00",
+      "exit": 0,
+      "stdout": "/r1d-redis-test [{\"Type\":\"volume\",\"Name\":\"6716f0683a2576868f17a82381cc40e8cd39b82987aae98bc5e467283968a3fc\",\"Source\":\"/var/lib/docker/volumes/6716f0683a2576868f17a82381cc40e8cd39b82987aae98bc5e467283968a3fc/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "16bd2b3e9824"
+      ],
+      "startedAt": "2026-10-10T20:24:34.602047+00:00",
+      "endedAt": "2026-10-10T20:24:34.824021+00:00",
+      "exit": 0,
+      "stdout": "/r1d-postgres-test [{\"Type\":\"volume\",\"Name\":\"11c8798048b7ce265ef2b202399bd4ca419dab95ca6cba123e5e12231d18cce8\",\"Source\":\"/var/lib/docker/volumes/11c8798048b7ce265ef2b202399bd4ca419dab95ca6cba123e5e12231d18cce8/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "d89c37d3a22e"
+      ],
+      "startedAt": "2026-10-10T20:24:34.824054+00:00",
+      "endedAt": "2026-10-10T20:24:35.047594+00:00",
+      "exit": 0,
+      "stdout": "/r1c-rustfs-test [{\"Type\":\"volume\",\"Name\":\"be5dec1c35df7d217d82eb47800e68723079a8e56a0dcf51599ad76088ede9b2\",\"Source\":\"/var/lib/docker/volumes/be5dec1c35df7d217d82eb47800e68723079a8e56a0dcf51599ad76088ede9b2/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "1da14d685015"
+      ],
+      "startedAt": "2026-10-10T20:24:35.047620+00:00",
+      "endedAt": "2026-10-10T20:24:35.213328+00:00",
+      "exit": 0,
+      "stdout": "/r1c-redis-test [{\"Type\":\"volume\",\"Name\":\"f30f2482c28c89f272040a5a885be06db5ce90c04b75ac321adff9d9eaa66457\",\"Source\":\"/var/lib/docker/volumes/f30f2482c28c89f272040a5a885be06db5ce90c04b75ac321adff9d9eaa66457/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "a4173ad93c5a"
+      ],
+      "startedAt": "2026-10-10T20:24:35.213361+00:00",
+      "endedAt": "2026-10-10T20:24:35.381921+00:00",
+      "exit": 0,
+      "stdout": "/r1c-postgres-test [{\"Type\":\"volume\",\"Name\":\"caa502416c9618de3a27065bc1cbc941bc56e703851bd8aaf8a6d1c7ca493685\",\"Source\":\"/var/lib/docker/volumes/caa502416c9618de3a27065bc1cbc941bc56e703851bd8aaf8a6d1c7ca493685/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "fb305d53eee0"
+      ],
+      "startedAt": "2026-10-10T20:24:35.381960+00:00",
+      "endedAt": "2026-10-10T20:24:35.556783+00:00",
+      "exit": 0,
+      "stdout": "/r1b-rustfs-test [{\"Type\":\"volume\",\"Name\":\"a4c002be1b65451667e8eafd58444a8956c5a762100f96257b4c45949020d339\",\"Source\":\"/var/lib/docker/volumes/a4c002be1b65451667e8eafd58444a8956c5a762100f96257b4c45949020d339/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "8be4c0b2f3b2"
+      ],
+      "startedAt": "2026-10-10T20:24:35.556814+00:00",
+      "endedAt": "2026-10-10T20:24:35.763520+00:00",
+      "exit": 0,
+      "stdout": "/r1b-redis-test [{\"Type\":\"volume\",\"Name\":\"4bdfecdfa8e0df634374ad16a53dc4d490c5bde11a66cd0e411f70191db1ea25\",\"Source\":\"/var/lib/docker/volumes/4bdfecdfa8e0df634374ad16a53dc4d490c5bde11a66cd0e411f70191db1ea25/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "3ac7b4978d97"
+      ],
+      "startedAt": "2026-10-10T20:24:35.763560+00:00",
+      "endedAt": "2026-10-10T20:24:35.923276+00:00",
+      "exit": 0,
+      "stdout": "/r1b-postgres-test [{\"Type\":\"volume\",\"Name\":\"2ac6acc9a0ec6f1b206fc2b4e8f88e5c2873cd75fb5496ba1cfc07422aa9d9d4\",\"Source\":\"/var/lib/docker/volumes/2ac6acc9a0ec6f1b206fc2b4e8f88e5c2873cd75fb5496ba1cfc07422aa9d9d4/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "a016713d06d3"
+      ],
+      "startedAt": "2026-10-10T20:24:35.923299+00:00",
+      "endedAt": "2026-10-10T20:24:36.068559+00:00",
+      "exit": 0,
+      "stdout": "/r1-rustfs-test [{\"Type\":\"volume\",\"Name\":\"6c8ed813f725b6c2e0734b37180fae4c860f436ecea7cd4c7a477b5d547d966d\",\"Source\":\"/var/lib/docker/volumes/6c8ed813f725b6c2e0734b37180fae4c860f436ecea7cd4c7a477b5d547d966d/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "7a1f3fad0cc9"
+      ],
+      "startedAt": "2026-10-10T20:24:36.068591+00:00",
+      "endedAt": "2026-10-10T20:24:36.327347+00:00",
+      "exit": 0,
+      "stdout": "/r1-redis-test [{\"Type\":\"volume\",\"Name\":\"dcd05ef161c656dcba47749e86e3ce617b25956bd666f89c5308b9e76382fbf3\",\"Source\":\"/var/lib/docker/volumes/dcd05ef161c656dcba47749e86e3ce617b25956bd666f89c5308b9e76382fbf3/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "557e9b8f1cab"
+      ],
+      "startedAt": "2026-10-10T20:24:36.327378+00:00",
+      "endedAt": "2026-10-10T20:24:36.521693+00:00",
+      "exit": 0,
+      "stdout": "/r1-postgres-test [{\"Type\":\"volume\",\"Name\":\"807a7975c0b8e97af56237b1d476de4d1adde7869ceb56dd78bd61edac79ecec\",\"Source\":\"/var/lib/docker/volumes/807a7975c0b8e97af56237b1d476de4d1adde7869ceb56dd78bd61edac79ecec/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "00f4596dc354"
+      ],
+      "startedAt": "2026-10-10T20:24:36.521721+00:00",
+      "endedAt": "2026-10-10T20:24:36.685274+00:00",
+      "exit": 0,
+      "stdout": "/workmesh-postgres-1 [{\"Type\":\"volume\",\"Name\":\"workmesh_postgres-data\",\"Source\":\"/var/lib/docker/volumes/workmesh_postgres-data/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"rw\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "16feb81cf9d2"
+      ],
+      "startedAt": "2026-10-10T20:24:36.685308+00:00",
+      "endedAt": "2026-10-10T20:24:36.831728+00:00",
+      "exit": 0,
+      "stdout": "/workmesh-redis-1 [{\"Type\":\"volume\",\"Name\":\"workmesh_redis-data\",\"Source\":\"/var/lib/docker/volumes/workmesh_redis-data/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"rw\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "34820cf2e25e"
+      ],
+      "startedAt": "2026-10-10T20:24:36.831758+00:00",
+      "endedAt": "2026-10-10T20:24:36.967296+00:00",
+      "exit": 0,
+      "stdout": "/workmesh-web-1 []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "a3b6f726f524"
+      ],
+      "startedAt": "2026-10-10T20:24:36.967331+00:00",
+      "endedAt": "2026-10-10T20:24:37.104393+00:00",
+      "exit": 0,
+      "stdout": "/workmesh-api-1 []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "951afd926067"
+      ],
+      "startedAt": "2026-10-10T20:24:37.104427+00:00",
+      "endedAt": "2026-10-10T20:24:37.307147+00:00",
+      "exit": 0,
+      "stdout": "/workmesh-worker-1 []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "70078a3028a6"
+      ],
+      "startedAt": "2026-10-10T20:24:37.307188+00:00",
+      "endedAt": "2026-10-10T20:24:37.455723+00:00",
+      "exit": 0,
+      "stdout": "/workmesh-migrate-1 []\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "f8b614913c4e"
+      ],
+      "startedAt": "2026-10-10T20:24:37.455749+00:00",
+      "endedAt": "2026-10-10T20:24:37.591570+00:00",
+      "exit": 0,
+      "stdout": "/workmesh-minio-init-1 [{\"Type\":\"volume\",\"Name\":\"3e2ed69dee01abe2a6731a86c3f75528b513e86ab65440202518646c51194314\",\"Source\":\"/var/lib/docker/volumes/3e2ed69dee01abe2a6731a86c3f75528b513e86ab65440202518646c51194314/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "ed7ebe27231e"
+      ],
+      "startedAt": "2026-10-10T20:24:37.591595+00:00",
+      "endedAt": "2026-10-10T20:24:37.716589+00:00",
+      "exit": 0,
+      "stdout": "/workmesh-minio-1 [{\"Type\":\"volume\",\"Name\":\"workmesh_minio-data\",\"Source\":\"/var/lib/docker/volumes/workmesh_minio-data/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"rw\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    }
+  ],
+  "candidateHits": [],
+  "complete": true
+}

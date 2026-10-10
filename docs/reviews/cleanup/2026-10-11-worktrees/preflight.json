@@ -1,0 +1,24 @@
+{
+  "recordedAt": "2026-10-10T17:04:32.903531+00:00",
+  "approvedScope": "用户本卡明确授权；不重新 withPlan；先提交预检再执行",
+  "candidateCount": 1,
+  "candidateTodo": 53,
+  "target": "C:\\Users\\xurx\\.tds\\workspaces\\01a11e5e-9e0c-704b-a590-3fee492f4f6a",
+  "operation": [
+    "git",
+    "worktree",
+    "remove",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a11e5e-9e0c-704b-a590-3fee492f4f6a"
+  ],
+  "force": false,
+  "proofFiles": [
+    "preservation-53.json",
+    "remote-main-preflight.json",
+    "safety-before.json",
+    "references-board-preflight.json",
+    "references-m5-preflight.json",
+    "references-review5-preflight.json"
+  ],
+  "onRejection": "停止目标，不重试、不换工具、不改属性/ACL、不父删；原文回执保全",
+  "executionStatus": "尚未执行；预检提交后再次独立查询 remote main、活动任务及进程、逐文件字节与登记"
+}

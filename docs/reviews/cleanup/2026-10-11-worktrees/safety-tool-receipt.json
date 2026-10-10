@@ -1,0 +1,20 @@
+{
+  "input": {
+    "cmd": "./docs/reviews/cleanup/2026-10-11-worktrees/safety.ps1",
+    "login": false,
+    "max_output_tokens": 2000
+  },
+  "start": {
+    "current_time": "2026-10-10 17:02:25 UTC"
+  },
+  "end": {
+    "current_time": "2026-10-10 17:02:31 UTC"
+  },
+  "output": {
+    "chunk_id": "edd147",
+    "wall_time_seconds": 5.5649999999999995,
+    "exit_code": 0,
+    "original_token_count": 74,
+    "output": "{\r\n  \"recordedAt\": \"2026-10-10T17:02:31.4556509Z\",\r\n  \"target\": \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a11e5e-9e0c-704b-a590-3fee492f4f6a\",\r\n  \"exclusiveReadCount\": 2502,\r\n  \"disk\": {\r\n    \"DeviceID\": \"C:\",\r\n    \"FreeSpace\": 307982520320,\r\n    \"Size\": 998956331008\r\n  },\r\n  \"daemonExit\": 0\r\n}\r\n"
+  }
+}

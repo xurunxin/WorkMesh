@@ -1,0 +1,614 @@
+{
+  "recordedAt": "2026-10-10T17:07:21.648222+00:00",
+  "registration": {
+    "input": [
+      "git",
+      "-C",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "worktree",
+      "list",
+      "--porcelain"
+    ],
+    "startedAt": "2026-10-10T17:07:19.444873+00:00",
+    "endedAt": "2026-10-10T17:07:19.514153+00:00",
+    "exitCode": 0,
+    "stdout": "worktree C:/Users/xurx/.tds/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo\nHEAD 87f88b89297c5c1e346f7ef99118c410f4b4a905\nbranch refs/heads/main\n\nworktree C:/Users/xurx/.tds/workspaces/01a115d0-87b0-78cd-921d-750713cdde51\nHEAD 768bbd82fcc52a873168b39a8382d2f14c928abc\nbranch refs/heads/tds/conv-01a115d0-87b0-78cd-921d-750713cdde51\n\nworktree C:/Users/xurx/.tds/workspaces/01a115ed-0894-7af5-b31f-4ffe208e198a\nHEAD 49cd2136fe5109115fb4f3dcff89ed59b0bc7615\nbranch refs/heads/tds/conv-01a115ed-0894-7af5-b31f-4ffe208e198a\n\nworktree C:/Users/xurx/.tds/workspaces/01a11661-dbed-70ca-85d6-05851a0213e1\nHEAD af583f71f310e68ade588f9922694dfd8aba7a65\nbranch refs/heads/tds/conv-01a11661-dbed-70ca-85d6-05851a0213e1\n\nworktree C:/Users/xurx/.tds/workspaces/01a116f7-1027-7c75-90df-32ebc5488752\nHEAD c7a1af7d7b2e125368b29975867b4d392690fc38\nbranch refs/heads/tds/conv-01a116f7-1027-7c75-90df-32ebc5488752\n\nworktree C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749\nHEAD 550dead055689154359a3406dfce4f0c91c1dad3\nbranch refs/heads/tds/conv-01a116f8-8172-7082-8d61-867bd9f0b749\n\nworktree C:/Users/xurx/.tds/workspaces/01a1187a-f0f0-76d8-8f5b-b954ee399cdc\nHEAD 81090ec01bcbc84edbe101418d833840999a5326\nbranch refs/heads/tds/conv-01a1187a-f0f0-76d8-8f5b-b954ee399cdc\n\nworktree C:/Users/xurx/.tds/workspaces/01a1187a-f0f1-74d9-a5e7-0022c903a6e6\nHEAD b80593e9918ac7ce05465fd0ac640c809753ac5a\nbranch refs/heads/tds/conv-01a1187a-f0f1-74d9-a5e7-0022c903a6e6\n\nworktree C:/Users/xurx/.tds/workspaces/01a1187a-f0f2-7dd4-b77e-b9540ad44d9e\nHEAD 901e040a2cd4be83f9b9801bc3087ac150d1cde1\nbranch refs/heads/tds/conv-01a1187a-f0f2-7dd4-b77e-b9540ad44d9e\n\nworktree C:/Users/xurx/.tds/workspaces/01a1187a-f4ff-735d-814f-a7b26f8cfdc5\nHEAD 7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f\nbranch refs/heads/tds/conv-01a1187a-f4ff-735d-814f-a7b26f8cfdc5\n\nworktree C:/Users/xurx/.tds/workspaces/01a11890-f4de-7106-b64d-e1b2c0d4608e\nHEAD 3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7\nbranch refs/heads/tds/conv-01a11890-f4de-7106-b64d-e1b2c0d4608e\n\nworktree C:/Users/xurx/.tds/workspaces/01a1195f-55ab-7ee9-8baf-c115978d3aec\nHEAD d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5\nbranch refs/heads/tds/conv-01a1195f-55ab-7ee9-8baf-c115978d3aec\n\nworktree C:/Users/xurx/.tds/workspaces/01a11a0e-d8a0-7474-ad05-791c239b82fe\nHEAD 1078bbcd527550bfabee73093b7ffd0032d3fd24\nbranch refs/heads/tds/conv-01a11a0e-d8a0-7474-ad05-791c239b82fe\n\nworktree C:/Users/xurx/.tds/workspaces/01a11a77-e1c5-763d-ad86-a1bcf4d672e6\nHEAD 1078bbcd527550bfabee73093b7ffd0032d3fd24\nbranch refs/heads/tds/conv-01a11a77-e1c5-763d-ad86-a1bcf4d672e6\n\nworktree C:/Users/xurx/.tds/workspaces/01a11a93-c093-7565-9084-724b6bedcade\nHEAD fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96\nbranch refs/heads/tds/conv-01a11a93-c093-7565-9084-724b6bedcade\n\nworktree C:/Users/xurx/.tds/workspaces/01a11ac2-7634-752e-8d81-764c9776f801\nHEAD 07aa293c35100959caa08f73efcb6110e9aa92f4\nbranch refs/heads/tds/conv-01a11ac2-7634-752e-8d81-764c9776f801\n\nworktree C:/Users/xurx/.tds/workspaces/01a11ac2-a0a9-7ef6-bd48-3bb37c21a301\nHEAD 5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19\nbranch refs/heads/tds/conv-01a11ac2-a0a9-7ef6-bd48-3bb37c21a301\n\nworktree C:/Users/xurx/.tds/workspaces/01a11acb-1a68-7fba-a359-7119603cde7d\nHEAD 83541ce11da52236cc49ef2dd0ffdfe23775b306\nbranch refs/heads/tds/conv-01a11acb-1a68-7fba-a359-7119603cde7d\n\nworktree C:/Users/xurx/.tds/workspaces/01a11b27-cfac-7ea4-a461-8eef51b750fe\nHEAD 328434d00268ce39222d677686dde3c64aba4e41\nbranch refs/heads/tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe\n\nworktree C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e\nHEAD d80f29ff9b87c387326cfda45eafdcfe6b182eee\nbranch refs/heads/tds/conv-01a11b85-41f9-74f5-b456-7083d4d83e5e\n\nworktree C:/Users/xurx/.tds/workspaces/01a11ed4-1e73-7802-8bf8-4899c5405f61\nHEAD 883d279d3b5978680672a6c1d7364d421d0afd10\nbranch refs/heads/tds/conv-01a11ed4-1e73-7802-8bf8-4899c5405f61\n\nworktree C:/Users/xurx/.tds/workspaces/01a12031-e9de-75c4-ab40-b44affcd71f6\nHEAD 3ff46eb20616dc5488ba46b77b27e1fb2d783a93\nbranch refs/heads/tds/conv-01a12031-e9de-75c4-ab40-b44affcd71f6\n\nworktree C:/Users/xurx/.tds/workspaces/01a121fb-781b-7b58-9bca-a596b92a8cbe\nHEAD fb770b62a926e7c27049c2795eafa6da4e0cb085\nbranch refs/heads/tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe\n\nworktree C:/Users/xurx/.tds/workspaces/01a1246e-406c-7593-ada6-66996634434b\nHEAD d27cb9be3a19befeae431df08276c9ca94d7dbed\nbranch refs/heads/tds/conv-01a1246e-406c-7593-ada6-66996634434b\n\nworktree C:/Users/xurx/.tds/workspaces/01a1264e-bd35-76d4-b328-03e9b91301f3\nHEAD 9051da511d0e844a5e57b6263c23f643689bc879\nbranch refs/heads/tds/conv-01a1264e-bd35-76d4-b328-03e9b91301f3\n\nworktree C:/Users/xurx/.tds/workspaces/01a126be-7aba-7b1d-a57a-f58317f89a67\nHEAD dacefe0effa38924edc6bc6897d912476d3457a1\nbranch refs/heads/tds/conv-01a126be-7aba-7b1d-a57a-f58317f89a67\n\nworktree C:/Users/xurx/AppData/Local/Temp/workmesh-g1-verify-36c7709\nHEAD 36c7709a8bd49c640b8dbfa04a09cfb777f943c8\ndetached\n\n",
+    "stderr": ""
+  },
+  "countBefore": 28,
+  "countAfter": 27,
+  "prunable": 0,
+  "targetExists": false,
+  "localBranchRetained": {
+    "input": [
+      "git",
+      "-C",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "show-ref",
+      "--verify",
+      "refs/heads/tds/conv-01a11e5e-9e0c-704b-a590-3fee492f4f6a"
+    ],
+    "startedAt": "2026-10-10T17:07:21.003495+00:00",
+    "endedAt": "2026-10-10T17:07:21.047662+00:00",
+    "exitCode": 0,
+    "stdout": "f5a665407f0ff3e6dab84932bcb7d49d56468e42 refs/heads/tds/conv-01a11e5e-9e0c-704b-a590-3fee492f4f6a\n",
+    "stderr": ""
+  },
+  "remaining": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\DzkLDn6UW-IbfoTJzN9Ro\\repo",
+      "exists": true,
+      "registrationHead": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "previousHead": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\DzkLDn6UW-IbfoTJzN9Ro\\repo",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:19.863717+00:00",
+        "endedAt": "2026-10-10T17:07:19.903059+00:00",
+        "exitCode": 0,
+        "stdout": "87f88b89297c5c1e346f7ef99118c410f4b4a905\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+      "exists": true,
+      "registrationHead": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+      "previousHead": "768bbd82fcc52a873168b39a8382d2f14c928abc",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:19.903202+00:00",
+        "endedAt": "2026-10-10T17:07:19.942265+00:00",
+        "exitCode": 0,
+        "stdout": "768bbd82fcc52a873168b39a8382d2f14c928abc\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a",
+      "exists": true,
+      "registrationHead": "49cd2136fe5109115fb4f3dcff89ed59b0bc7615",
+      "previousHead": "49cd2136fe5109115fb4f3dcff89ed59b0bc7615",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:19.942398+00:00",
+        "endedAt": "2026-10-10T17:07:19.980960+00:00",
+        "exitCode": 0,
+        "stdout": "49cd2136fe5109115fb4f3dcff89ed59b0bc7615\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11661-dbed-70ca-85d6-05851a0213e1",
+      "exists": true,
+      "registrationHead": "af583f71f310e68ade588f9922694dfd8aba7a65",
+      "previousHead": "af583f71f310e68ade588f9922694dfd8aba7a65",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11661-dbed-70ca-85d6-05851a0213e1",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:19.981127+00:00",
+        "endedAt": "2026-10-10T17:07:20.019657+00:00",
+        "exitCode": 0,
+        "stdout": "af583f71f310e68ade588f9922694dfd8aba7a65\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+      "exists": true,
+      "registrationHead": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+      "previousHead": "c7a1af7d7b2e125368b29975867b4d392690fc38",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.019782+00:00",
+        "endedAt": "2026-10-10T17:07:20.078313+00:00",
+        "exitCode": 0,
+        "stdout": "c7a1af7d7b2e125368b29975867b4d392690fc38\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+      "exists": true,
+      "registrationHead": "550dead055689154359a3406dfce4f0c91c1dad3",
+      "previousHead": "550dead055689154359a3406dfce4f0c91c1dad3",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.078564+00:00",
+        "endedAt": "2026-10-10T17:07:20.120581+00:00",
+        "exitCode": 0,
+        "stdout": "550dead055689154359a3406dfce4f0c91c1dad3\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+      "exists": true,
+      "registrationHead": "81090ec01bcbc84edbe101418d833840999a5326",
+      "previousHead": "81090ec01bcbc84edbe101418d833840999a5326",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.120734+00:00",
+        "endedAt": "2026-10-10T17:07:20.158815+00:00",
+        "exitCode": 0,
+        "stdout": "81090ec01bcbc84edbe101418d833840999a5326\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f1-74d9-a5e7-0022c903a6e6",
+      "exists": true,
+      "registrationHead": "b80593e9918ac7ce05465fd0ac640c809753ac5a",
+      "previousHead": "b80593e9918ac7ce05465fd0ac640c809753ac5a",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f1-74d9-a5e7-0022c903a6e6",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.158968+00:00",
+        "endedAt": "2026-10-10T17:07:20.197856+00:00",
+        "exitCode": 0,
+        "stdout": "b80593e9918ac7ce05465fd0ac640c809753ac5a\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+      "exists": true,
+      "registrationHead": "901e040a2cd4be83f9b9801bc3087ac150d1cde1",
+      "previousHead": "901e040a2cd4be83f9b9801bc3087ac150d1cde1",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.197988+00:00",
+        "endedAt": "2026-10-10T17:07:20.236015+00:00",
+        "exitCode": 0,
+        "stdout": "901e040a2cd4be83f9b9801bc3087ac150d1cde1\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "exists": true,
+      "registrationHead": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+      "previousHead": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.236179+00:00",
+        "endedAt": "2026-10-10T17:07:20.283623+00:00",
+        "exitCode": 0,
+        "stdout": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+      "exists": true,
+      "registrationHead": "3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7",
+      "previousHead": "3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.283761+00:00",
+        "endedAt": "2026-10-10T17:07:20.325106+00:00",
+        "exitCode": 0,
+        "stdout": "3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+      "exists": true,
+      "registrationHead": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5",
+      "previousHead": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.325250+00:00",
+        "endedAt": "2026-10-10T17:07:20.364965+00:00",
+        "exitCode": 0,
+        "stdout": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a0e-d8a0-7474-ad05-791c239b82fe",
+      "exists": true,
+      "registrationHead": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "previousHead": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11a0e-d8a0-7474-ad05-791c239b82fe",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.365130+00:00",
+        "endedAt": "2026-10-10T17:07:20.404595+00:00",
+        "exitCode": 0,
+        "stdout": "1078bbcd527550bfabee73093b7ffd0032d3fd24\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a77-e1c5-763d-ad86-a1bcf4d672e6",
+      "exists": true,
+      "registrationHead": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "previousHead": "1078bbcd527550bfabee73093b7ffd0032d3fd24",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11a77-e1c5-763d-ad86-a1bcf4d672e6",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.404768+00:00",
+        "endedAt": "2026-10-10T17:07:20.443471+00:00",
+        "exitCode": 0,
+        "stdout": "1078bbcd527550bfabee73093b7ffd0032d3fd24\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+      "exists": true,
+      "registrationHead": "fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96",
+      "previousHead": "fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.443605+00:00",
+        "endedAt": "2026-10-10T17:07:20.482450+00:00",
+        "exitCode": 0,
+        "stdout": "fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "exists": true,
+      "registrationHead": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+      "previousHead": "07aa293c35100959caa08f73efcb6110e9aa92f4",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.482608+00:00",
+        "endedAt": "2026-10-10T17:07:20.522511+00:00",
+        "exitCode": 0,
+        "stdout": "07aa293c35100959caa08f73efcb6110e9aa92f4\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+      "exists": true,
+      "registrationHead": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19",
+      "previousHead": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.522649+00:00",
+        "endedAt": "2026-10-10T17:07:20.561263+00:00",
+        "exitCode": 0,
+        "stdout": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d",
+      "exists": true,
+      "registrationHead": "83541ce11da52236cc49ef2dd0ffdfe23775b306",
+      "previousHead": "83541ce11da52236cc49ef2dd0ffdfe23775b306",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.561417+00:00",
+        "endedAt": "2026-10-10T17:07:20.603034+00:00",
+        "exitCode": 0,
+        "stdout": "83541ce11da52236cc49ef2dd0ffdfe23775b306\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+      "exists": true,
+      "registrationHead": "328434d00268ce39222d677686dde3c64aba4e41",
+      "previousHead": "328434d00268ce39222d677686dde3c64aba4e41",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.603219+00:00",
+        "endedAt": "2026-10-10T17:07:20.645974+00:00",
+        "exitCode": 0,
+        "stdout": "328434d00268ce39222d677686dde3c64aba4e41\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+      "exists": true,
+      "registrationHead": "d80f29ff9b87c387326cfda45eafdcfe6b182eee",
+      "previousHead": "d80f29ff9b87c387326cfda45eafdcfe6b182eee",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.646138+00:00",
+        "endedAt": "2026-10-10T17:07:20.689313+00:00",
+        "exitCode": 0,
+        "stdout": "d80f29ff9b87c387326cfda45eafdcfe6b182eee\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61",
+      "exists": true,
+      "registrationHead": "883d279d3b5978680672a6c1d7364d421d0afd10",
+      "previousHead": "883d279d3b5978680672a6c1d7364d421d0afd10",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.689469+00:00",
+        "endedAt": "2026-10-10T17:07:20.737819+00:00",
+        "exitCode": 0,
+        "stdout": "883d279d3b5978680672a6c1d7364d421d0afd10\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6",
+      "exists": true,
+      "registrationHead": "3ff46eb20616dc5488ba46b77b27e1fb2d783a93",
+      "previousHead": "3ff46eb20616dc5488ba46b77b27e1fb2d783a93",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.737963+00:00",
+        "endedAt": "2026-10-10T17:07:20.784556+00:00",
+        "exitCode": 0,
+        "stdout": "3ff46eb20616dc5488ba46b77b27e1fb2d783a93\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe",
+      "exists": true,
+      "registrationHead": "fb770b62a926e7c27049c2795eafa6da4e0cb085",
+      "previousHead": "fb770b62a926e7c27049c2795eafa6da4e0cb085",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.784694+00:00",
+        "endedAt": "2026-10-10T17:07:20.839893+00:00",
+        "exitCode": 0,
+        "stdout": "fb770b62a926e7c27049c2795eafa6da4e0cb085\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b",
+      "exists": true,
+      "registrationHead": "d27cb9be3a19befeae431df08276c9ca94d7dbed",
+      "previousHead": "d27cb9be3a19befeae431df08276c9ca94d7dbed",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.840033+00:00",
+        "endedAt": "2026-10-10T17:07:20.880904+00:00",
+        "exitCode": 0,
+        "stdout": "d27cb9be3a19befeae431df08276c9ca94d7dbed\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "exists": true,
+      "registrationHead": "9051da511d0e844a5e57b6263c23f643689bc879",
+      "previousHead": "9051da511d0e844a5e57b6263c23f643689bc879",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.881132+00:00",
+        "endedAt": "2026-10-10T17:07:20.921087+00:00",
+        "exitCode": 0,
+        "stdout": "9051da511d0e844a5e57b6263c23f643689bc879\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "exists": true,
+      "registrationHead": "dacefe0effa38924edc6bc6897d912476d3457a1",
+      "previousHead": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "headChanged": true,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.921234+00:00",
+        "endedAt": "2026-10-10T17:07:20.963250+00:00",
+        "exitCode": 0,
+        "stdout": "dacefe0effa38924edc6bc6897d912476d3457a1\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-g1-verify-36c7709",
+      "exists": true,
+      "registrationHead": "36c7709a8bd49c640b8dbfa04a09cfb777f943c8",
+      "previousHead": "36c7709a8bd49c640b8dbfa04a09cfb777f943c8",
+      "headChanged": false,
+      "headRead": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-g1-verify-36c7709",
+          "rev-parse",
+          "HEAD"
+        ],
+        "startedAt": "2026-10-10T17:07:20.963430+00:00",
+        "endedAt": "2026-10-10T17:07:21.003475+00:00",
+        "exitCode": 0,
+        "stdout": "36c7709a8bd49c640b8dbfa04a09cfb777f943c8\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "protectedObservations": 5210,
+  "protectionExistenceChanges": [],
+  "compressedRoundTripAndCommittedBytes": 5,
+  "jsonParsed": 42,
+  "diskDifferenceInOperationWindow": 157646848,
+  "logicalBytesRemoved": 151693775,
+  "attributablePhysicalBytesFreed": null,
+  "limitations": "保留路径只核存在性，不声称所有内容哈希不变；活动任务可自行修改其目录。历史缺失路径不回填。没有全局 handles／恢复 registry，也没有读取或删除共享 store。"
+}

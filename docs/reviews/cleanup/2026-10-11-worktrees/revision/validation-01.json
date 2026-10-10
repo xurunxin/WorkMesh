@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "scope": "仅当前构建受控回归；没有运行真实盘点、删除或历史目标现场核查",
+  "sourceFingerprints": [
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/usage-inventory.py",
+      "windowsBytes": 9784,
+      "windowsSha256": "afc1a0a6d03b224e3f47dc26072d078531c982b7664ed6f8df288224913645e3",
+      "normalizedGitBlob": "054feb85e71626cd231e1577a6625153f5a9b6ee",
+      "blobCall": {
+        "input": [
+          "git",
+          "hash-object",
+          "--path=docs/reviews/cleanup/2026-10-11-worktrees/usage-inventory.py",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\usage-inventory.py"
+        ],
+        "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "startedAt": "2026-10-10T18:58:19.959735+00:00",
+        "endedAt": "2026-10-10T18:58:20.012623+00:00",
+        "exit": 0,
+        "stdout": "054feb85e71626cd231e1577a6625153f5a9b6ee\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/usage-inventory.test.py",
+      "windowsBytes": 11116,
+      "windowsSha256": "e1c146a885eeee7c8cabdb33211eda21d41f66024e88ec3e3eda27d5bb29a322",
+      "normalizedGitBlob": "6bec4e22acc7534022df6dd43113d5f2565f900e",
+      "blobCall": {
+        "input": [
+          "git",
+          "hash-object",
+          "--path=docs/reviews/cleanup/2026-10-11-worktrees/usage-inventory.test.py",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\usage-inventory.test.py"
+        ],
+        "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "startedAt": "2026-10-10T18:58:20.016653+00:00",
+        "endedAt": "2026-10-10T18:58:20.066306+00:00",
+        "exit": 0,
+        "stdout": "6bec4e22acc7534022df6dd43113d5f2565f900e\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/revision/validate-inventory.py",
+      "windowsBytes": 2644,
+      "windowsSha256": "00acc95cee7d24c57d8b4b0d8eaf7301b61d1215ccf532cc86f9045a34d3b627",
+      "normalizedGitBlob": "c716279574bf864fac1a15bfaae35c1801464477",
+      "blobCall": {
+        "input": [
+          "git",
+          "hash-object",
+          "--path=docs/reviews/cleanup/2026-10-11-worktrees/revision/validate-inventory.py",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\revision\\validate-inventory.py"
+        ],
+        "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "startedAt": "2026-10-10T18:58:20.066680+00:00",
+        "endedAt": "2026-10-10T18:58:20.118589+00:00",
+        "exit": 0,
+        "stdout": "c716279574bf864fac1a15bfaae35c1801464477\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "calls": [
+    {
+      "input": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "startedAt": "2026-10-10T18:58:20.118619+00:00",
+      "endedAt": "2026-10-10T18:58:20.170808+00:00",
+      "exit": 0,
+      "stdout": "4bb4db4e2ab4c100f497944e4f924323bbcf03b1\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-B",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\usage-inventory.test.py"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "startedAt": "2026-10-10T18:58:20.170893+00:00",
+      "endedAt": "2026-10-10T18:58:21.401103+00:00",
+      "exit": 0,
+      "stdout": "{\"verification\": \"并发同名快照\", \"iteration\": 1, \"commands\": [[\"C:\\\\Users\\\\xurx\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\python.exe\", \"-B\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\usage-inventory.test.py\", \"--snapshot-worker\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\inventory-regression-_9xonx4c\\\\concurrent-0.json.gz\", \"0\"], [\"C:\\\\Users\\\\xurx\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\python.exe\", \"-B\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\usage-inventory.test.py\", \"--snapshot-worker\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\inventory-regression-_9xonx4c\\\\concurrent-0.json.gz\", \"1\"]], \"exitCodes\": [2, 0], \"rawOutputs\": [{\"stdout\": \"ready\\n已存在原件，独占创建失败\\n\", \"stderr\": \"\"}, {\"stdout\": \"ready\\n\", \"stderr\": \"\"}], \"winner\": 1, \"snapshotSha256\": \"2fcd00e98d3aa2a1701177a702941545d1340a71ac4c69743e5a60ffdb168c28\", \"unchangedAfterRejectedWrite\": true}\r\n{\"verification\": \"并发同名快照\", \"iteration\": 2, \"commands\": [[\"C:\\\\Users\\\\xurx\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\python.exe\", \"-B\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\usage-inventory.test.py\", \"--snapshot-worker\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\inventory-regression-_9xonx4c\\\\concurrent-1.json.gz\", \"0\"], [\"C:\\\\Users\\\\xurx\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\python.exe\", \"-B\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\usage-inventory.test.py\", \"--snapshot-worker\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\inventory-regression-_9xonx4c\\\\concurrent-1.json.gz\", \"1\"]], \"exitCodes\": [0, 2], \"rawOutputs\": [{\"stdout\": \"ready\\n\", \"stderr\": \"\"}, {\"stdout\": \"ready\\n已存在原件，独占创建失败\\n\", \"stderr\": \"\"}], \"winner\": 0, \"snapshotSha256\": \"2b8dceb8e598fc419ef04a5be6474c294244bddfb60b50ac738a6acba15bcfeb\", \"unchangedAfterRejectedWrite\": true}\r\n{\"verification\": \"并发同名快照\", \"iteration\": 3, \"commands\": [[\"C:\\\\Users\\\\xurx\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\python.exe\", \"-B\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\usage-inventory.test.py\", \"--snapshot-worker\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\inventory-regression-_9xonx4c\\\\concurrent-2.json.gz\", \"0\"], [\"C:\\\\Users\\\\xurx\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\python.exe\", \"-B\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\usage-inventory.test.py\", \"--snapshot-worker\", \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a126be-7aba-7b1d-a57a-f58317f89a67\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\inventory-regression-_9xonx4c\\\\concurrent-2.json.gz\", \"1\"]], \"exitCodes\": [0, 2], \"rawOutputs\": [{\"stdout\": \"ready\\n\", \"stderr\": \"\"}, {\"stdout\": \"ready\\n已存在原件，独占创建失败\\n\", \"stderr\": \"\"}], \"winner\": 0, \"snapshotSha256\": \"2b8dceb8e598fc419ef04a5be6474c294244bddfb60b50ac738a6acba15bcfeb\", \"unchangedAfterRejectedWrite\": true}\r\n",
+      "stderr": "test_concurrent_processes_cannot_overwrite_same_snapshot (__main__.InventoryBoundaryTests.test_concurrent_processes_cannot_overwrite_same_snapshot) ... ok\r\ntest_current_repository_junction_skips_registration (__main__.InventoryBoundaryTests.test_current_repository_junction_skips_registration) ... ok\r\ntest_empty_readable_repository_is_measured_zero_and_success (__main__.InventoryBoundaryTests.test_empty_readable_repository_is_measured_zero_and_success) ... ok\r\ntest_higher_ancestor_junction_stops_before_workspace_access (__main__.InventoryBoundaryTests.test_higher_ancestor_junction_stops_before_workspace_access) ... ok\r\ntest_main_repository_access_denied_is_incomplete_and_nonzero (__main__.InventoryBoundaryTests.test_main_repository_access_denied_is_incomplete_and_nonzero) ... ok\r\ntest_main_repository_metadata_denied_never_scans (__main__.InventoryBoundaryTests.test_main_repository_metadata_denied_never_scans) ... ok\r\ntest_main_repository_parent_junction_stops_before_child_metadata (__main__.InventoryBoundaryTests.test_main_repository_parent_junction_stops_before_child_metadata) ... ok\r\ntest_output_controlled_ancestor_junction_never_writes (__main__.InventoryBoundaryTests.test_output_controlled_ancestor_junction_never_writes) ... ok\r\ntest_output_parent_junction_never_accesses_child_or_writes (__main__.InventoryBoundaryTests.test_output_parent_junction_never_accesses_child_or_writes) ... ok\r\ntest_worktree_and_main_errors_are_both_counted (__main__.InventoryBoundaryTests.test_worktree_and_main_errors_are_both_counted) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 10 tests in 1.008s\r\n\r\nOK\r\n"
+    },
+    {
+      "input": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "startedAt": "2026-10-10T18:58:21.401156+00:00",
+      "endedAt": "2026-10-10T18:58:21.628695+00:00",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'docs/reviews/cleanup/2026-10-11-worktrees/usage-inventory.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/reviews/cleanup/2026-10-11-worktrees/usage-inventory.test.py', LF will be replaced by CRLF the next time Git touches it\n"
+    }
+  ],
+  "passed": true
+}

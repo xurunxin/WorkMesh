@@ -1,0 +1,59 @@
+{
+  "input": {
+    "cmd": "$ErrorActionPreference='Stop'\n$env:PYTHONIOENCODING='utf-8'\npython -B docs/reviews/cleanup/2026-10-11-worktrees/finalize.py\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\ngit diff --check 87f88b89297c5c1e346f7ef99118c410f4b4a905 57d600d24f68\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\npython -B -c \"import pathlib,json,gzip; p=pathlib.Path('docs/reviews/cleanup/2026-10-11-worktrees'); fs=list(p.glob('*.json')); [json.loads(f.read_text(encoding='utf-8-sig')) for f in fs]; [json.loads(gzip.decompress(f.read_bytes())) for f in p.glob('*.gz')]; print('JSON parsed:',len(fs),'gzip parsed:',len(list(p.glob('*.gz'))))\"\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\ngit rev-parse HEAD",
+    "login": false,
+    "max_output_tokens": 2500
+  },
+  "start": {
+    "current_time": "2026-10-10 17:13:00 UTC"
+  },
+  "end": {
+    "current_time": "2026-10-10 17:13:05 UTC"
+  },
+  "output": {
+    "chunk_id": "faeeae",
+    "wall_time_seconds": 4.8665562,
+    "exit_code": 0,
+    "original_token_count": 48,
+    "output": "{\"verifiedFiles\": 59, \"transforms\": {\"identity\": 43, \"replace-every-LF-with-CRLF\": 16}, \"firstFailureReceipts\": 0}\r\nJSON parsed: 48 gzip parsed: 5\r\n57d600d24f68727659d3c439c9e8b693529335f5\n"
+  },
+  "finalStagedVerification": {
+    "input": {
+      "cmd": "$ErrorActionPreference='Stop'\n$env:PYTHONIOENCODING='utf-8'\npython -B -c \"import json,pathlib,gzip; p=pathlib.Path('docs/reviews/cleanup/2026-10-11-worktrees'); fs=list(p.glob('*.json')); [json.loads(f.read_text(encoding='utf-8-sig')) for f in fs]; [json.loads(gzip.decompress(f.read_bytes())) for f in p.glob('*.gz')]; first=json.loads((p/'first-final-validation-failure.json').read_text(encoding='utf-8')); assert len(first['receipts'])==1 and 'return' in first['receipts'][0]; print('FINAL JSON parsed:',len(fs),'gzip parsed:',len(list(p.glob('*.gz'))),'first failure receipt:',len(first['receipts']))\"\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\ngit add -- docs/reviews/cleanup/2026-10-11-worktrees\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\ngit diff --cached --check 87f88b89297c5c1e346f7ef99118c410f4b4a905\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\ngit diff --check 87f88b89297c5c1e346f7ef99118c410f4b4a905 HEAD\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\nWrite-Output 'FINAL full main-to-staged and committed diffcheck passed'",
+      "login": false,
+      "max_output_tokens": 1400
+    },
+    "start": {
+      "current_time": "2026-10-10 17:14:11 UTC"
+    },
+    "end": {
+      "current_time": "2026-10-10 17:14:12 UTC"
+    },
+    "output": {
+      "chunk_id": "02bd10",
+      "wall_time_seconds": 0.890492,
+      "exit_code": 0,
+      "original_token_count": 142,
+      "output": "FINAL JSON parsed: 49 gzip parsed: 5 first failure receipt: 1\r\nwarning: in the working copy of 'docs/reviews/cleanup/2026-10-11-worktrees/report.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/reviews/cleanup/2026-10-11-worktrees/final-validation.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/reviews/cleanup/2026-10-11-worktrees/finalize.py', LF will be replaced by CRLF the next time Git touches it\nFINAL full main-to-staged and committed diffcheck passed\r\n"
+    }
+  },
+  "push": {
+    "input": {
+      "message": "docs(cleanup): record safe merged worktree removal and receipts"
+    },
+    "start": {
+      "current_time": "2026-10-10 17:11:54 UTC"
+    },
+    "end": {
+      "current_time": "2026-10-10 17:12:00 UTC"
+    },
+    "output": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Committed 57d600d24f68 and pushed \"tds/conv-01a126be-7aba-7b1d-a57a-f58317f89a67\" — the remote now has all work up to this point."
+        }
+      ]
+    }
+  }
+}

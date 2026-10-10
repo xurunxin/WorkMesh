@@ -1,0 +1,831 @@
+{
+  "recordedAt": "2026-10-10T18:14:33.414784+00:00",
+  "results": [
+    {
+      "todo": 54,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61",
+      "executed": true,
+      "targetExists": false,
+      "registeredAfter": false,
+      "result": "完整工作树已移除；原 junction 本体及普通空目录按先行预检收尾",
+      "error": null,
+      "gitCalls": [
+        {
+          "input": [
+            "git",
+            "-C",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+            "worktree",
+            "remove",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61"
+          ],
+          "start": "2026-10-10T17:51:34.9302364Z",
+          "end": "2026-10-10T17:53:08.6162786Z",
+          "stdout": "",
+          "stderr": "",
+          "exit": 0
+        }
+      ],
+      "processCalls": [
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\verify-target.py",
+            "54",
+            "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+          ],
+          "start": "2026-10-10T17:49:40.6725478Z",
+          "end": "2026-10-10T17:51:34.3727579Z",
+          "output": "{\"todo\": 54, \"success\": true, \"exclusiveReadCount\": 63471, \"linkCount\": 1925, \"logicalBytes\": 2466235470, \"errors\": []}\r\n",
+          "exit": 0
+        },
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\residual-check.py",
+            "54"
+          ],
+          "start": "2026-10-10T17:53:08.6339624Z",
+          "end": "2026-10-10T17:53:11.0762307Z",
+          "output": "{\"todo\": 54, \"ordinaryFiles\": 0, \"originalJunctions\": 1925, \"ordinaryDirectories\": 959, \"safe\": true}\r\n",
+          "exit": 0
+        }
+      ],
+      "cmdletCalls": 2884,
+      "cmdletFailures": 0,
+      "normalizedCmdletExitDefinition": "PowerShell cmdlet 没有独立 OS 进程退出码；journal 的 exit0/1 为立即无终止异常/有异常的归一化结果；原异常和外层 tool 的真实 process exit 另存",
+      "junctionBodiesRemoved": 1925,
+      "ordinaryEmptyDirectoriesRemoved": 959,
+      "localBranchRetained": true,
+      "localBranchReceipt": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "refs/heads/tds/conv-01a11ed4-1e73-7802-8bf8-4899c5405f61"
+        ],
+        "start": "2026-10-10T18:14:33.186861+00:00",
+        "end": "2026-10-10T18:14:33.230029+00:00",
+        "exit": 0,
+        "stdout": "883d279d3b5978680672a6c1d7364d421d0afd10\n",
+        "stderr": ""
+      },
+      "diskBefore": {
+        "DeviceID": "C:",
+        "FreeSpace": 304052125696,
+        "Size": 998956331008
+      },
+      "diskAfter": {
+        "DeviceID": "C:",
+        "FreeSpace": 306610765824,
+        "Size": 998956331008
+      },
+      "volumeFreeSpaceChangeBytes": 2558640128,
+      "attributablePhysicalNetReleasedBytes": null
+    },
+    {
+      "todo": 55,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6",
+      "executed": true,
+      "targetExists": false,
+      "registeredAfter": false,
+      "result": "完整工作树已移除；原 junction 本体及普通空目录按先行预检收尾",
+      "error": null,
+      "gitCalls": [
+        {
+          "input": [
+            "git",
+            "-C",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+            "worktree",
+            "remove",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6"
+          ],
+          "start": "2026-10-10T17:59:11.0655800Z",
+          "end": "2026-10-10T18:00:33.3174722Z",
+          "stdout": "",
+          "stderr": "",
+          "exit": 0
+        }
+      ],
+      "processCalls": [
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\verify-target.py",
+            "55",
+            "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+          ],
+          "start": "2026-10-10T17:57:13.3707655Z",
+          "end": "2026-10-10T17:59:10.3720133Z",
+          "output": "{\"todo\": 55, \"success\": true, \"exclusiveReadCount\": 64001, \"linkCount\": 1945, \"logicalBytes\": 2742944421, \"errors\": []}\r\n",
+          "exit": 0
+        },
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\residual-check.py",
+            "55"
+          ],
+          "start": "2026-10-10T18:00:33.3301275Z",
+          "end": "2026-10-10T18:00:34.8147504Z",
+          "output": "{\"todo\": 55, \"ordinaryFiles\": 0, \"originalJunctions\": 1925, \"ordinaryDirectories\": 959, \"safe\": true}\r\n",
+          "exit": 0
+        }
+      ],
+      "cmdletCalls": 2884,
+      "cmdletFailures": 0,
+      "normalizedCmdletExitDefinition": "PowerShell cmdlet 没有独立 OS 进程退出码；journal 的 exit0/1 为立即无终止异常/有异常的归一化结果；原异常和外层 tool 的真实 process exit 另存",
+      "junctionBodiesRemoved": 1925,
+      "ordinaryEmptyDirectoriesRemoved": 959,
+      "localBranchRetained": true,
+      "localBranchReceipt": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "refs/heads/tds/conv-01a12031-e9de-75c4-ab40-b44affcd71f6"
+        ],
+        "start": "2026-10-10T18:14:33.251658+00:00",
+        "end": "2026-10-10T18:14:33.290105+00:00",
+        "exit": 0,
+        "stdout": "3ff46eb20616dc5488ba46b77b27e1fb2d783a93\n",
+        "stderr": ""
+      },
+      "diskBefore": {
+        "DeviceID": "C:",
+        "FreeSpace": 306579718144,
+        "Size": 998956331008
+      },
+      "diskAfter": {
+        "DeviceID": "C:",
+        "FreeSpace": 309455220736,
+        "Size": 998956331008
+      },
+      "volumeFreeSpaceChangeBytes": 2875502592,
+      "attributablePhysicalNetReleasedBytes": null
+    },
+    {
+      "todo": 56,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe",
+      "executed": true,
+      "targetExists": false,
+      "registeredAfter": false,
+      "result": "完整工作树已移除；原 junction 本体及普通空目录按先行预检收尾",
+      "error": null,
+      "gitCalls": [
+        {
+          "input": [
+            "git",
+            "-C",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+            "worktree",
+            "remove",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe"
+          ],
+          "start": "2026-10-10T18:04:37.0812382Z",
+          "end": "2026-10-10T18:05:36.9053959Z",
+          "stdout": "",
+          "stderr": "",
+          "exit": 0
+        }
+      ],
+      "processCalls": [
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\verify-target.py",
+            "56",
+            "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+          ],
+          "start": "2026-10-10T18:02:48.2077620Z",
+          "end": "2026-10-10T18:04:36.6024777Z",
+          "output": "{\"todo\": 56, \"success\": true, \"exclusiveReadCount\": 65070, \"linkCount\": 1945, \"logicalBytes\": 3374923543, \"errors\": []}\r\n",
+          "exit": 0
+        },
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\residual-check.py",
+            "56"
+          ],
+          "start": "2026-10-10T18:05:36.9177321Z",
+          "end": "2026-10-10T18:05:37.9277575Z",
+          "output": "{\"todo\": 56, \"ordinaryFiles\": 0, \"originalJunctions\": 1925, \"ordinaryDirectories\": 959, \"safe\": true}\r\n",
+          "exit": 0
+        }
+      ],
+      "cmdletCalls": 2884,
+      "cmdletFailures": 0,
+      "normalizedCmdletExitDefinition": "PowerShell cmdlet 没有独立 OS 进程退出码；journal 的 exit0/1 为立即无终止异常/有异常的归一化结果；原异常和外层 tool 的真实 process exit 另存",
+      "junctionBodiesRemoved": 1925,
+      "ordinaryEmptyDirectoriesRemoved": 959,
+      "localBranchRetained": true,
+      "localBranchReceipt": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "refs/heads/tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe"
+        ],
+        "start": "2026-10-10T18:14:33.314992+00:00",
+        "end": "2026-10-10T18:14:33.354450+00:00",
+        "exit": 0,
+        "stdout": "fb770b62a926e7c27049c2795eafa6da4e0cb085\n",
+        "stderr": ""
+      },
+      "diskBefore": {
+        "DeviceID": "C:",
+        "FreeSpace": 309226237952,
+        "Size": 998956331008
+      },
+      "diskAfter": {
+        "DeviceID": "C:",
+        "FreeSpace": 312710897664,
+        "Size": 998956331008
+      },
+      "volumeFreeSpaceChangeBytes": 3484659712,
+      "attributablePhysicalNetReleasedBytes": null
+    },
+    {
+      "todo": 57,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b",
+      "executed": true,
+      "targetExists": false,
+      "registeredAfter": false,
+      "result": "完整工作树已移除；原 junction 本体及普通空目录按先行预检收尾",
+      "error": null,
+      "gitCalls": [
+        {
+          "input": [
+            "git",
+            "-C",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+            "worktree",
+            "remove",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b"
+          ],
+          "start": "2026-10-10T18:11:22.7167889Z",
+          "end": "2026-10-10T18:12:12.9051843Z",
+          "stdout": "",
+          "stderr": "",
+          "exit": 0
+        }
+      ],
+      "processCalls": [
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\verify-target.py",
+            "57",
+            "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+          ],
+          "start": "2026-10-10T18:09:48.1492818Z",
+          "end": "2026-10-10T18:11:22.2691208Z",
+          "output": "{\"todo\": 57, \"success\": true, \"exclusiveReadCount\": 68648, \"linkCount\": 1947, \"logicalBytes\": 4534246620, \"errors\": []}\r\n",
+          "exit": 0
+        },
+        {
+          "input": [
+            "python",
+            "-B",
+            "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\residual-check.py",
+            "57"
+          ],
+          "start": "2026-10-10T18:12:12.9181786Z",
+          "end": "2026-10-10T18:12:13.7175436Z",
+          "output": "{\"todo\": 57, \"ordinaryFiles\": 0, \"originalJunctions\": 1927, \"ordinaryDirectories\": 959, \"safe\": true}\r\n",
+          "exit": 0
+        }
+      ],
+      "cmdletCalls": 2886,
+      "cmdletFailures": 0,
+      "normalizedCmdletExitDefinition": "PowerShell cmdlet 没有独立 OS 进程退出码；journal 的 exit0/1 为立即无终止异常/有异常的归一化结果；原异常和外层 tool 的真实 process exit 另存",
+      "junctionBodiesRemoved": 1927,
+      "ordinaryEmptyDirectoriesRemoved": 959,
+      "localBranchRetained": true,
+      "localBranchReceipt": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "refs/heads/tds/conv-01a1246e-406c-7593-ada6-66996634434b"
+        ],
+        "start": "2026-10-10T18:14:33.375693+00:00",
+        "end": "2026-10-10T18:14:33.414255+00:00",
+        "exit": 0,
+        "stdout": "d27cb9be3a19befeae431df08276c9ca94d7dbed\n",
+        "stderr": ""
+      },
+      "diskBefore": {
+        "DeviceID": "C:",
+        "FreeSpace": 312669696000,
+        "Size": 998956331008
+      },
+      "diskAfter": {
+        "DeviceID": "C:",
+        "FreeSpace": 317315530752,
+        "Size": 998956331008
+      },
+      "volumeFreeSpaceChangeBytes": 4645834752,
+      "attributablePhysicalNetReleasedBytes": null
+    }
+  ],
+  "allNewCandidatesRemoved": true,
+  "registration": {
+    "input": [
+      "git",
+      "-C",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "worktree",
+      "list",
+      "--porcelain"
+    ],
+    "start": "2026-10-10T18:14:32.170630+00:00",
+    "end": "2026-10-10T18:14:32.233002+00:00",
+    "exit": 0,
+    "stdout": "worktree C:/Users/xurx/.tds/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo\nHEAD 87f88b89297c5c1e346f7ef99118c410f4b4a905\nbranch refs/heads/main\n\nworktree C:/Users/xurx/.tds/workspaces/01a115d0-87b0-78cd-921d-750713cdde51\nHEAD 768bbd82fcc52a873168b39a8382d2f14c928abc\nbranch refs/heads/tds/conv-01a115d0-87b0-78cd-921d-750713cdde51\n\nworktree C:/Users/xurx/.tds/workspaces/01a115ed-0894-7af5-b31f-4ffe208e198a\nHEAD 49cd2136fe5109115fb4f3dcff89ed59b0bc7615\nbranch refs/heads/tds/conv-01a115ed-0894-7af5-b31f-4ffe208e198a\n\nworktree C:/Users/xurx/.tds/workspaces/01a11661-dbed-70ca-85d6-05851a0213e1\nHEAD af583f71f310e68ade588f9922694dfd8aba7a65\nbranch refs/heads/tds/conv-01a11661-dbed-70ca-85d6-05851a0213e1\n\nworktree C:/Users/xurx/.tds/workspaces/01a116f7-1027-7c75-90df-32ebc5488752\nHEAD c7a1af7d7b2e125368b29975867b4d392690fc38\nbranch refs/heads/tds/conv-01a116f7-1027-7c75-90df-32ebc5488752\n\nworktree C:/Users/xurx/.tds/workspaces/01a116f8-8172-7082-8d61-867bd9f0b749\nHEAD 550dead055689154359a3406dfce4f0c91c1dad3\nbranch refs/heads/tds/conv-01a116f8-8172-7082-8d61-867bd9f0b749\n\nworktree C:/Users/xurx/.tds/workspaces/01a1187a-f0f0-76d8-8f5b-b954ee399cdc\nHEAD 81090ec01bcbc84edbe101418d833840999a5326\nbranch refs/heads/tds/conv-01a1187a-f0f0-76d8-8f5b-b954ee399cdc\n\nworktree C:/Users/xurx/.tds/workspaces/01a1187a-f0f1-74d9-a5e7-0022c903a6e6\nHEAD b80593e9918ac7ce05465fd0ac640c809753ac5a\nbranch refs/heads/tds/conv-01a1187a-f0f1-74d9-a5e7-0022c903a6e6\n\nworktree C:/Users/xurx/.tds/workspaces/01a1187a-f0f2-7dd4-b77e-b9540ad44d9e\nHEAD 901e040a2cd4be83f9b9801bc3087ac150d1cde1\nbranch refs/heads/tds/conv-01a1187a-f0f2-7dd4-b77e-b9540ad44d9e\n\nworktree C:/Users/xurx/.tds/workspaces/01a1187a-f4ff-735d-814f-a7b26f8cfdc5\nHEAD 7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f\nbranch refs/heads/tds/conv-01a1187a-f4ff-735d-814f-a7b26f8cfdc5\n\nworktree C:/Users/xurx/.tds/workspaces/01a11890-f4de-7106-b64d-e1b2c0d4608e\nHEAD 3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7\nbranch refs/heads/tds/conv-01a11890-f4de-7106-b64d-e1b2c0d4608e\n\nworktree C:/Users/xurx/.tds/workspaces/01a1195f-55ab-7ee9-8baf-c115978d3aec\nHEAD d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5\nbranch refs/heads/tds/conv-01a1195f-55ab-7ee9-8baf-c115978d3aec\n\nworktree C:/Users/xurx/.tds/workspaces/01a11a0e-d8a0-7474-ad05-791c239b82fe\nHEAD 1078bbcd527550bfabee73093b7ffd0032d3fd24\nbranch refs/heads/tds/conv-01a11a0e-d8a0-7474-ad05-791c239b82fe\n\nworktree C:/Users/xurx/.tds/workspaces/01a11a77-e1c5-763d-ad86-a1bcf4d672e6\nHEAD 1078bbcd527550bfabee73093b7ffd0032d3fd24\nbranch refs/heads/tds/conv-01a11a77-e1c5-763d-ad86-a1bcf4d672e6\n\nworktree C:/Users/xurx/.tds/workspaces/01a11a93-c093-7565-9084-724b6bedcade\nHEAD fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96\nbranch refs/heads/tds/conv-01a11a93-c093-7565-9084-724b6bedcade\n\nworktree C:/Users/xurx/.tds/workspaces/01a11ac2-7634-752e-8d81-764c9776f801\nHEAD 07aa293c35100959caa08f73efcb6110e9aa92f4\nbranch refs/heads/tds/conv-01a11ac2-7634-752e-8d81-764c9776f801\n\nworktree C:/Users/xurx/.tds/workspaces/01a11ac2-a0a9-7ef6-bd48-3bb37c21a301\nHEAD 5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19\nbranch refs/heads/tds/conv-01a11ac2-a0a9-7ef6-bd48-3bb37c21a301\n\nworktree C:/Users/xurx/.tds/workspaces/01a11acb-1a68-7fba-a359-7119603cde7d\nHEAD 83541ce11da52236cc49ef2dd0ffdfe23775b306\nbranch refs/heads/tds/conv-01a11acb-1a68-7fba-a359-7119603cde7d\n\nworktree C:/Users/xurx/.tds/workspaces/01a11b27-cfac-7ea4-a461-8eef51b750fe\nHEAD 328434d00268ce39222d677686dde3c64aba4e41\nbranch refs/heads/tds/conv-01a11b27-cfac-7ea4-a461-8eef51b750fe\n\nworktree C:/Users/xurx/.tds/workspaces/01a11b85-41f9-74f5-b456-7083d4d83e5e\nHEAD d80f29ff9b87c387326cfda45eafdcfe6b182eee\nbranch refs/heads/tds/conv-01a11b85-41f9-74f5-b456-7083d4d83e5e\n\nworktree C:/Users/xurx/.tds/workspaces/01a1264e-bd35-76d4-b328-03e9b91301f3\nHEAD 9051da511d0e844a5e57b6263c23f643689bc879\nbranch refs/heads/tds/conv-01a1264e-bd35-76d4-b328-03e9b91301f3\n\nworktree C:/Users/xurx/.tds/workspaces/01a126be-7aba-7b1d-a57a-f58317f89a67\nHEAD 24ad9a95fbc80ae66d5177cc3a6a616f4e68c313\nbranch refs/heads/tds/conv-01a126be-7aba-7b1d-a57a-f58317f89a67\n\nworktree C:/Users/xurx/AppData/Local/Temp/workmesh-g1-verify-36c7709\nHEAD 36c7709a8bd49c640b8dbfa04a09cfb777f943c8\ndetached\n\n",
+    "stderr": ""
+  },
+  "registrationCount": 23,
+  "registrationHealthy": true,
+  "registeredPaths": [
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\DzkLDn6UW-IbfoTJzN9Ro\\repo",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\DzkLDn6UW-IbfoTJzN9Ro\\repo",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.233147+00:00",
+        "end": "2026-10-10T18:14:32.274157+00:00",
+        "exit": 0,
+        "stdout": "87f88b89297c5c1e346f7ef99118c410f4b4a905\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a115d0-87b0-78cd-921d-750713cdde51",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.274330+00:00",
+        "end": "2026-10-10T18:14:32.313795+00:00",
+        "exit": 0,
+        "stdout": "768bbd82fcc52a873168b39a8382d2f14c928abc\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.313983+00:00",
+        "end": "2026-10-10T18:14:32.360704+00:00",
+        "exit": 0,
+        "stdout": "49cd2136fe5109115fb4f3dcff89ed59b0bc7615\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11661-dbed-70ca-85d6-05851a0213e1",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11661-dbed-70ca-85d6-05851a0213e1",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.360879+00:00",
+        "end": "2026-10-10T18:14:32.403952+00:00",
+        "exit": 0,
+        "stdout": "af583f71f310e68ade588f9922694dfd8aba7a65\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a116f7-1027-7c75-90df-32ebc5488752",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.404131+00:00",
+        "end": "2026-10-10T18:14:32.453365+00:00",
+        "exit": 0,
+        "stdout": "c7a1af7d7b2e125368b29975867b4d392690fc38\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.453554+00:00",
+        "end": "2026-10-10T18:14:32.506420+00:00",
+        "exit": 0,
+        "stdout": "550dead055689154359a3406dfce4f0c91c1dad3\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.506616+00:00",
+        "end": "2026-10-10T18:14:32.544330+00:00",
+        "exit": 0,
+        "stdout": "81090ec01bcbc84edbe101418d833840999a5326\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f1-74d9-a5e7-0022c903a6e6",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f1-74d9-a5e7-0022c903a6e6",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.544523+00:00",
+        "end": "2026-10-10T18:14:32.582782+00:00",
+        "exit": 0,
+        "stdout": "b80593e9918ac7ce05465fd0ac640c809753ac5a\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f2-7dd4-b77e-b9540ad44d9e",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.582965+00:00",
+        "end": "2026-10-10T18:14:32.621219+00:00",
+        "exit": 0,
+        "stdout": "901e040a2cd4be83f9b9801bc3087ac150d1cde1\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f4ff-735d-814f-a7b26f8cfdc5",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.621397+00:00",
+        "end": "2026-10-10T18:14:32.661154+00:00",
+        "exit": 0,
+        "stdout": "7ce4ef2d9e5b7ad2f3b693383f58f311e5a1684f\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11890-f4de-7106-b64d-e1b2c0d4608e",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.661319+00:00",
+        "end": "2026-10-10T18:14:32.701226+00:00",
+        "exit": 0,
+        "stdout": "3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1195f-55ab-7ee9-8baf-c115978d3aec",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.701416+00:00",
+        "end": "2026-10-10T18:14:32.741446+00:00",
+        "exit": 0,
+        "stdout": "d2e1a656df73f5afd7d91060c2f7e4b4fd1ebcf5\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a0e-d8a0-7474-ad05-791c239b82fe",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11a0e-d8a0-7474-ad05-791c239b82fe",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.741601+00:00",
+        "end": "2026-10-10T18:14:32.778880+00:00",
+        "exit": 0,
+        "stdout": "1078bbcd527550bfabee73093b7ffd0032d3fd24\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a77-e1c5-763d-ad86-a1bcf4d672e6",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11a77-e1c5-763d-ad86-a1bcf4d672e6",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.779043+00:00",
+        "end": "2026-10-10T18:14:32.816745+00:00",
+        "exit": 0,
+        "stdout": "1078bbcd527550bfabee73093b7ffd0032d3fd24\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11a93-c093-7565-9084-724b6bedcade",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.816898+00:00",
+        "end": "2026-10-10T18:14:32.854604+00:00",
+        "exit": 0,
+        "stdout": "fcdeb5c138a2d9b4c55b057ce26a0283ad39fd96\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-7634-752e-8d81-764c9776f801",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.854756+00:00",
+        "end": "2026-10-10T18:14:32.892701+00:00",
+        "exit": 0,
+        "stdout": "07aa293c35100959caa08f73efcb6110e9aa92f4\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.892860+00:00",
+        "end": "2026-10-10T18:14:32.931433+00:00",
+        "exit": 0,
+        "stdout": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11acb-1a68-7fba-a359-7119603cde7d",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.931592+00:00",
+        "end": "2026-10-10T18:14:32.969900+00:00",
+        "exit": 0,
+        "stdout": "83541ce11da52236cc49ef2dd0ffdfe23775b306\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11b27-cfac-7ea4-a461-8eef51b750fe",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:32.970084+00:00",
+        "end": "2026-10-10T18:14:33.008192+00:00",
+        "exit": 0,
+        "stdout": "328434d00268ce39222d677686dde3c64aba4e41\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a11b85-41f9-74f5-b456-7083d4d83e5e",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:33.008392+00:00",
+        "end": "2026-10-10T18:14:33.046817+00:00",
+        "exit": 0,
+        "stdout": "d80f29ff9b87c387326cfda45eafdcfe6b182eee\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:33.046990+00:00",
+        "end": "2026-10-10T18:14:33.086336+00:00",
+        "exit": 0,
+        "stdout": "9051da511d0e844a5e57b6263c23f643689bc879\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:33.086491+00:00",
+        "end": "2026-10-10T18:14:33.124944+00:00",
+        "exit": 0,
+        "stdout": "24ad9a95fbc80ae66d5177cc3a6a616f4e68c313\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-g1-verify-36c7709",
+      "exists": true,
+      "head": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-g1-verify-36c7709",
+          "rev-parse",
+          "HEAD"
+        ],
+        "start": "2026-10-10T18:14:33.125126+00:00",
+        "end": "2026-10-10T18:14:33.162757+00:00",
+        "exit": 0,
+        "stdout": "36c7709a8bd49c640b8dbfa04a09cfb777f943c8\n",
+        "stderr": ""
+      },
+      "prunable": false,
+      "locked": false
+    }
+  ],
+  "protectedObservations": 5206,
+  "protectedExistenceDifferences": [],
+  "protectedExistenceUnchanged": true,
+  "failedTargets": [],
+  "emptyBatch": false,
+  "scope": "只核 #54–57 新实际执行；#53 原回执与已有验证保持，不重新核其已删目标；保护仅存在性，不声称活动内容未变"
+}

@@ -1,0 +1,20 @@
+{
+  "input": {
+    "cmd": "./docs/reviews/cleanup/2026-10-11-worktrees/continuation/link-proof.ps1",
+    "login": false,
+    "max_output_tokens": 1500
+  },
+  "start": {
+    "current_time": "2026-10-10 17:21:19 UTC"
+  },
+  "end": {
+    "current_time": "2026-10-10 17:21:20 UTC"
+  },
+  "output": {
+    "chunk_id": "533303",
+    "wall_time_seconds": 0.6298411,
+    "exit_code": 1,
+    "original_token_count": 117,
+    "output": "Exception: C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\link-proof.ps1:21\r\nLine |\r\n  21 |      if ($code -ne 0) { throw \"Git 夹具操作失败: $output\" }\r\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Git 夹具操作失败: Preparing worktree (detached HEAD 59bc612) error: invalid path 'tracked.txt?' fatal: Could not reset\r\n     | index file to revision 'HEAD'.\r\n"
+  }
+}

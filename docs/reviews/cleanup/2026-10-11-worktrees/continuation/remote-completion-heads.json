@@ -1,0 +1,31 @@
+{
+  "input": {
+    "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+    "args": [
+      "ls-remote",
+      "origin",
+      "refs/pull/212/head",
+      "refs/pull/213/head",
+      "refs/pull/214/head",
+      "refs/pull/215/head",
+      "refs/heads/tds/conv-01a11ed4-1e73-7802-8bf8-4899c5405f61",
+      "refs/heads/tds/conv-01a12031-e9de-75c4-ab40-b44affcd71f6",
+      "refs/heads/tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe",
+      "refs/heads/tds/conv-01a1246e-406c-7593-ada6-66996634434b"
+    ]
+  },
+  "start": {
+    "current_time": "2026-10-10 17:33:51 UTC"
+  },
+  "end": {
+    "current_time": "2026-10-10 17:33:53 UTC"
+  },
+  "output": {
+    "content": [
+      {
+        "type": "text",
+        "text": "883d279d3b5978680672a6c1d7364d421d0afd10\trefs/heads/tds/conv-01a11ed4-1e73-7802-8bf8-4899c5405f61\n3ff46eb20616dc5488ba46b77b27e1fb2d783a93\trefs/heads/tds/conv-01a12031-e9de-75c4-ab40-b44affcd71f6\nfb770b62a926e7c27049c2795eafa6da4e0cb085\trefs/heads/tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe\nd27cb9be3a19befeae431df08276c9ca94d7dbed\trefs/heads/tds/conv-01a1246e-406c-7593-ada6-66996634434b\n883d279d3b5978680672a6c1d7364d421d0afd10\trefs/pull/212/head\n3ff46eb20616dc5488ba46b77b27e1fb2d783a93\trefs/pull/213/head\nfb770b62a926e7c27049c2795eafa6da4e0cb085\trefs/pull/214/head\nd27cb9be3a19befeae431df08276c9ca94d7dbed\trefs/pull/215/head"
+      }
+    ]
+  }
+}

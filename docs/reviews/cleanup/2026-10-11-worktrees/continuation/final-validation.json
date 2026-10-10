@@ -1,0 +1,45 @@
+{
+  "recordedAt": "2026-10-10T18:30:39.182470+00:00",
+  "verifiedResultCommit": "3ae70572f6b9e5d9571fc3d854c86e3ec31141c7",
+  "committedDiffChecks": [
+    {
+      "input": [
+        "git",
+        "diff",
+        "--check",
+        "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+        "3ae70572f6b9e5d9571fc3d854c86e3ec31141c7"
+      ],
+      "start": "2026-10-10T18:30:38.534948+00:00",
+      "end": "2026-10-10T18:30:38.866707+00:00",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "git",
+        "diff",
+        "--check",
+        "f0583bb138f1561e8e32a4eae02f0f932ee59e76",
+        "3ae70572f6b9e5d9571fc3d854c86e3ec31141c7"
+      ],
+      "start": "2026-10-10T18:30:38.866723+00:00",
+      "end": "2026-10-10T18:30:39.180406+00:00",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "newDeliveryFilesByteMapped": 130,
+  "binaryFilesExact": true,
+  "transforms": {
+    "identity": 110,
+    "replace-every-LF-with-CRLF": 20
+  },
+  "old53ReportBlobUnchanged": true,
+  "earlierParsingAndCRCSources": "validation-before-result-commit.json",
+  "noNewDeletionDuringFinalValidation": true,
+  "productTestsRun": false,
+  "selfHeadPolicy": "本回执与结果提交返回为后续补录；不为记录自身 head 循环改写或伪造"
+}

@@ -1,6 +1,6 @@
 # M5 当前实施与联合验收交付
 
-本轮真实 OpenCode/Pi 四链与九类组合已执行，当前补充集成检查也已逐项通过。原完整入口在补充检查门禁退出 1，随后只续接证据门禁退出 0，不能把后者改写成原命令退出 0。正式 `_oY` 成果复审、最新 PR Required CI 和 actual Done/main 尚未取得；本卡不合入、不启下一批。
+本轮真实 OpenCode/Pi 四链与九类组合已执行，当前补充集成检查也已逐项通过。原完整入口在补充检查门禁退出 1，随后只续接证据门禁退出 0，不能把后者改写成原命令退出 0。正式 `_oY` 已对 `2e4507a7ae284a783b1ea72297e98d6c2566bab3` 闭合两 blocking、确认无新增阻断；[PR 与条件合入门禁](product-pr-ci-report.md) 记录后续准确候选和 CI。最新 PR Required CI 与 actual Done/main 尚待实际回执，不启下一批。
 
 当前代码基准为 `8b42873c48358dfda26f0bf1f65341781f608ddb` 加本轮修改；[新的主线观察](input/current-main-observation.json) 实读 `996c940eb6c725fdfe408976ff9570997d1d5bdb`，相对此前 `2da4918` 只增加清理 followup 文档，本任务未改其目录。候选提交由平台生成，最终回复报告实际提交 head，不伪填未来 SHA。[旧产品报告](product-report.md)、[旧缺口](product-gaps.md) 保持各自历史失败含义。
 

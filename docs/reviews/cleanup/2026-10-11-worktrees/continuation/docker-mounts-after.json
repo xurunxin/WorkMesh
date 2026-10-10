@@ -1,0 +1,261 @@
+{
+  "observedAt": "2026-10-10T18:15:37.416317+00:00",
+  "calls": [
+    {
+      "input": [
+        "docker",
+        "ps",
+        "--format",
+        "{{.ID}}"
+      ],
+      "start": "2026-10-10T18:15:36.906572+00:00",
+      "end": "2026-10-10T18:15:36.985438+00:00",
+      "exit": 0,
+      "stdout": "23d2ad68bd31\n47947951bc4e\nc012ede214cf\n76c9f3c67abb\n7c8d3cd93f42\nf74d0a1c7164\nec6efeeed205\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "23d2ad68bd31"
+      ],
+      "start": "2026-10-10T18:15:36.985454+00:00",
+      "end": "2026-10-10T18:15:37.046075+00:00",
+      "exit": 0,
+      "stdout": "/m5-5dbe32e19a-store [{\"Type\":\"volume\",\"Name\":\"937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920\",\"Source\":\"/var/lib/docker/volumes/937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "47947951bc4e"
+      ],
+      "start": "2026-10-10T18:15:37.046113+00:00",
+      "end": "2026-10-10T18:15:37.106573+00:00",
+      "exit": 0,
+      "stdout": "/m5-5dbe32e19a-redis [{\"Type\":\"volume\",\"Name\":\"ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3\",\"Source\":\"/var/lib/docker/volumes/ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "c012ede214cf"
+      ],
+      "start": "2026-10-10T18:15:37.106605+00:00",
+      "end": "2026-10-10T18:15:37.167380+00:00",
+      "exit": 0,
+      "stdout": "/m5-5dbe32e19a-postgres [{\"Type\":\"volume\",\"Name\":\"bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1\",\"Source\":\"/var/lib/docker/volumes/bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1/_data\",\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "76c9f3c67abb"
+      ],
+      "start": "2026-10-10T18:15:37.167411+00:00",
+      "end": "2026-10-10T18:15:37.229440+00:00",
+      "exit": 0,
+      "stdout": "/neochat-hct-fixture-20261010 [{\"Type\":\"volume\",\"Name\":\"1f6c91a7ad7af7a7b071a8b24ea41477440b39e56bed3ccf5378b3aad900f1a4\",\"Source\":\"/var/lib/docker/volumes/1f6c91a7ad7af7a7b071a8b24ea41477440b39e56bed3ccf5378b3aad900f1a4/_data\",\"Destination\":\"/var/lib/postgresql\",\"Driver\":\"local\",\"Mode\":\"\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "7c8d3cd93f42"
+      ],
+      "start": "2026-10-10T18:15:37.229468+00:00",
+      "end": "2026-10-10T18:15:37.289817+00:00",
+      "exit": 0,
+      "stdout": "/neochat-cdc-test-cdc-1 [{\"Type\":\"volume\",\"Name\":\"neochat-cdc-test_cdc-test-data\",\"Source\":\"/var/lib/docker/volumes/neochat-cdc-test_cdc-test-data/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"rw\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "f74d0a1c7164"
+      ],
+      "start": "2026-10-10T18:15:37.289845+00:00",
+      "end": "2026-10-10T18:15:37.350878+00:00",
+      "exit": 0,
+      "stdout": "/neochat-cdc-acceptance-postgres-1 [{\"Type\":\"volume\",\"Name\":\"neochat-cdc-acceptance_postgres-data\",\"Source\":\"/var/lib/docker/volumes/neochat-cdc-acceptance_postgres-data/_data\",\"Destination\":\"/var/lib/postgresql\",\"Driver\":\"local\",\"Mode\":\"rw\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} {{json .Mounts}}",
+        "ec6efeeed205"
+      ],
+      "start": "2026-10-10T18:15:37.350908+00:00",
+      "end": "2026-10-10T18:15:37.415845+00:00",
+      "exit": 0,
+      "stdout": "/neochat-cdc-acceptance-valkey-1 [{\"Type\":\"volume\",\"Name\":\"neochat-cdc-acceptance_valkey-data\",\"Source\":\"/var/lib/docker/volumes/neochat-cdc-acceptance_valkey-data/_data\",\"Destination\":\"/data\",\"Driver\":\"local\",\"Mode\":\"rw\",\"RW\":true,\"Propagation\":\"\"}]\n",
+      "stderr": ""
+    }
+  ],
+  "containers": [
+    {
+      "id": "23d2ad68bd31",
+      "name": "/m5-5dbe32e19a-store",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920",
+          "Source": "/var/lib/docker/volumes/937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "id": "47947951bc4e",
+      "name": "/m5-5dbe32e19a-redis",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3",
+          "Source": "/var/lib/docker/volumes/ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "id": "c012ede214cf",
+      "name": "/m5-5dbe32e19a-postgres",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1",
+          "Source": "/var/lib/docker/volumes/bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "id": "76c9f3c67abb",
+      "name": "/neochat-hct-fixture-20261010",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "1f6c91a7ad7af7a7b071a8b24ea41477440b39e56bed3ccf5378b3aad900f1a4",
+          "Source": "/var/lib/docker/volumes/1f6c91a7ad7af7a7b071a8b24ea41477440b39e56bed3ccf5378b3aad900f1a4/_data",
+          "Destination": "/var/lib/postgresql",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "id": "7c8d3cd93f42",
+      "name": "/neochat-cdc-test-cdc-1",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "neochat-cdc-test_cdc-test-data",
+          "Source": "/var/lib/docker/volumes/neochat-cdc-test_cdc-test-data/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "rw",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "id": "f74d0a1c7164",
+      "name": "/neochat-cdc-acceptance-postgres-1",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "neochat-cdc-acceptance_postgres-data",
+          "Source": "/var/lib/docker/volumes/neochat-cdc-acceptance_postgres-data/_data",
+          "Destination": "/var/lib/postgresql",
+          "Driver": "local",
+          "Mode": "rw",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "id": "ec6efeeed205",
+      "name": "/neochat-cdc-acceptance-valkey-1",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "neochat-cdc-acceptance_valkey-data",
+          "Source": "/var/lib/docker/volumes/neochat-cdc-acceptance_valkey-data/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "rw",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    }
+  ],
+  "success": true,
+  "m5RunningIdentitiesBefore57": [
+    [
+      "23d2ad68bd31",
+      "/m5-5dbe32e19a-store"
+    ],
+    [
+      "47947951bc4e",
+      "/m5-5dbe32e19a-redis"
+    ],
+    [
+      "c012ede214cf",
+      "/m5-5dbe32e19a-postgres"
+    ]
+  ],
+  "m5RunningIdentitiesAfter": [
+    [
+      "23d2ad68bd31",
+      "/m5-5dbe32e19a-store"
+    ],
+    [
+      "47947951bc4e",
+      "/m5-5dbe32e19a-redis"
+    ],
+    [
+      "c012ede214cf",
+      "/m5-5dbe32e19a-postgres"
+    ]
+  ],
+  "m5IdentitiesUnchanged": true,
+  "limits": "只读 ps/Name/Mounts；不读取 Env，不停止服务；不是补造前三目标删除前 Docker 观测"
+}

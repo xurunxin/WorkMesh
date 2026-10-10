@@ -1,0 +1,12 @@
+{
+  "recordedAt": "2026-10-10T20:35:17.329558+00:00",
+  "sourcePath": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/git-source/compat-mingw.c.txt",
+  "sourceMain": "2da4918682f5238499131cff2c71ab465fcc080e",
+  "gitBlob": "92946af422770c5fad4db541bb89532a1fd00a75",
+  "windowsSha256": "9240a099ad4f2b150dbab1efd53f93c51ae1ca6aa9a1c9937fde593af4fa4c83",
+  "lines": "596–629，尤其607–614",
+  "observedSource": "mingw_unlink 先 try_delete_file；失败路径会调用 _wchmod(wpathname,0666)。这里不推断本目标必然走哪一分支。",
+  "decision": "没有这9个只读fixture对象必然不触属性调整分支的证明；禁止改属性边界保持，原保全门禁失败后整个旧#60目标已停止。不是自动审批拒绝，不冒新grant，也不以官方Git一定安全推断可删。",
+  "actualDeletionAttempted": false,
+  "manualAttributeChangeAttempted": false
+}

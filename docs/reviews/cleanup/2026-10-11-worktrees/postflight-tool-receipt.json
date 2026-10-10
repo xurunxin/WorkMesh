@@ -1,0 +1,20 @@
+{
+  "input": {
+    "cmd": "$env:PYTHONIOENCODING='utf-8'; python -B docs/reviews/cleanup/2026-10-11-worktrees/postflight.py",
+    "login": false,
+    "max_output_tokens": 1500
+  },
+  "start": {
+    "current_time": "2026-10-10 17:07:19 UTC"
+  },
+  "end": {
+    "current_time": "2026-10-10 17:07:21 UTC"
+  },
+  "output": {
+    "chunk_id": "c1cea7",
+    "wall_time_seconds": 2.4583913,
+    "exit_code": 0,
+    "original_token_count": 33,
+    "output": "{\"registrationBefore\": 28, \"registrationAfter\": 27, \"protected\": 5210, \"existenceChanges\": 0, \"parsedJSON\": 42, \"gzipVerified\": 5}\r\n"
+  }
+}

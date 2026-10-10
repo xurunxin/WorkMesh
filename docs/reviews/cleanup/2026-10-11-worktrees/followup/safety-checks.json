@@ -1,0 +1,49 @@
+{
+  "recordedAt": "2026-10-10T20:15:31.983293+00:00",
+  "checks": [
+    {
+      "case": "当前树",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a12766-4132-7d8c-a542-dcbfb2008b49",
+      "expected": "拒绝候选",
+      "passed": true
+    },
+    {
+      "case": "workspace根",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces",
+      "expected": "拒绝候选",
+      "passed": true
+    },
+    {
+      "case": "主仓库",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\DzkLDn6UW-IbfoTJzN9Ro\\repo",
+      "expected": "拒绝候选",
+      "passed": true
+    },
+    {
+      "case": "reparse本体/后代不得跟随",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a\\packages\\ui\\node_modules\\react",
+      "result": {
+        "blockedAt": "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a\\packages\\ui\\node_modules\\react",
+        "reason": "祖先或目录本体是 reparse point，未遍历",
+        "errors": []
+      },
+      "passed": true
+    },
+    {
+      "case": "reparse本体/后代不得跟随",
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a\\packages\\ui\\node_modules\\react\\package.json",
+      "result": {
+        "blockedAt": "C:\\Users\\xurx\\.tds\\workspaces\\01a115ed-0894-7af5-b31f-4ffe208e198a\\packages\\ui\\node_modules\\react",
+        "reason": "祖先或目录本体是 reparse point，未遍历",
+        "errors": []
+      },
+      "passed": true
+    },
+    {
+      "case": "输出范围不得越出受控清理目录",
+      "passed": true
+    }
+  ],
+  "pythonSyntax": "所有本轮py实际解析通过",
+  "mutation": "仅此回执，无外部测试目录或删除"
+}
