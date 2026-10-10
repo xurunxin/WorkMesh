@@ -15,6 +15,47 @@ let f: Awaited<ReturnType<typeof createJointClientsFixture>>
 describe('M5 真实Pi单toolCall受限传输重放', () => {
   beforeAll(async () => { f = await createJointClientsFixture() })
   afterAll(async () => { if (f) await f.close() })
+  it.each(['inactive', 'admin-demoted'] as const)('普通E实际%s principal拒绝读取/status/旧回执/新写，恢复合法资格后原事实可读', async mode => {
+    const execution = await f.createExecution(`M5 principal ${mode}`)
+    const key = randomUUID(), input = { ownerType: 'work_item' as const, ownerId: execution.workItemId, title: `Principal ${mode}`, markdown: 'Protected original fact' }
+    const document = await execution.client.createDocument(input, { idempotencyKey: key })
+    const captures = await f.pi(execution, f.connectionToken, [async () => ({ name: 'workmesh_get_document', arguments: { documentId: document.id } })])
+    const principal = (await f.db.query<{ workspace_id: string; workspace_role: string; is_active: boolean }>('SELECT workspace_id,workspace_role,is_active FROM actors WHERE id=$1', [f.humanActorId])).rows[0]!
+    const member = (await f.db.query<{ role: string }>('SELECT role FROM memberships WHERE team_id=$1 AND actor_id=$2', [f.teamId, f.humanActorId])).rows[0]
+    const attempt = (await f.db.query<{ id: string }>('SELECT id FROM workbench_runner_attempts WHERE agent_session_id=$1 ORDER BY created_at DESC LIMIT 1', [execution.sessionId])).rows[0]!
+    const statusPath = `/api/v1/workbench/runner-attempts/${attempt.id}/status`
+    const read = async (path: string) => {
+      const response = await fetch(f.baseUrl + path, { headers: { authorization: `Bearer ${execution.token}`, 'x-workmesh-runner-token': process.env.WORKMESH_RUNNER_SERVICE_TOKEN! } })
+      return { path, status: response.status, data: await response.json() as unknown }
+    }
+    const before = [await read(`/api/v1/documents/${document.id}`), await read(statusPath)]
+    expect(before.every(row => row.status === 200)).toBe(true)
+    const counts = async () => (await f.db.query('SELECT (SELECT count(*) FROM domain_events WHERE session_id=$1)::int AS events,(SELECT count(*) FROM outbox_events o JOIN domain_events e ON e.id=o.domain_event_id WHERE e.session_id=$1)::int AS outbox', [execution.sessionId])).rows[0]!
+    const beforeReadCounts = await counts()
+    const refusals: Array<{ path: string; status: number; data: unknown }> = []
+    try {
+      if (mode === 'inactive') await f.db.query('UPDATE actors SET is_active=false WHERE id=$1', [f.humanActorId])
+      else {
+        await f.db.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3', [principal.workspace_id, f.teamId, f.humanActorId])
+        await f.db.query("UPDATE actors SET workspace_role='member' WHERE id=$1", [f.humanActorId])
+      }
+      refusals.push(await read(`/api/v1/documents/${document.id}`), await read(statusPath))
+      for (const idempotencyKey of [key, randomUUID()]) {
+        const response = await fetch(f.baseUrl + '/api/v1/documents', { method: 'POST', headers: { authorization: `Bearer ${execution.token}`, 'content-type': 'application/json', 'idempotency-key': idempotencyKey }, body: JSON.stringify(input) })
+        refusals.push({ path: idempotencyKey === key ? 'original-receipt' : 'new-intent', status: response.status, data: await response.json() as unknown })
+      }
+      for (const refusal of refusals) expect(refusal).toMatchObject({ status: 403, data: { error: { code: 'SESSION_SCOPE_DENIED', correlationId: expect.any(String) } } })
+    } finally {
+      await f.db.query('UPDATE actors SET is_active=$2,workspace_role=$3 WHERE id=$1', [f.humanActorId, principal.is_active, principal.workspace_role])
+      if (member) await f.db.query('INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING', [principal.workspace_id, f.teamId, f.humanActorId, member.role])
+    }
+    const restored = [await read(`/api/v1/documents/${document.id}`), await read(statusPath)]
+    expect(restored).toEqual(before)
+    expect(await execution.client.createDocument(input, { idempotencyKey: key })).toEqual(document)
+    expect(await counts()).toEqual(beforeReadCounts)
+    expect((await f.db.query('SELECT count(*)::int AS count FROM documents WHERE work_item_id=$1', [execution.workItemId])).rows[0]!.count).toBe(1)
+    saveJointEvidence(`review-principal-${mode}.json`, { mode, before, refusals, restored, captures, beforeReadCounts, afterReadCounts: await counts(), effectCount: 1, preparation: 'privileged fault changes only original Human live status/admin role; no credential/principal substitution', statusReadOnly: true })
+  })
   it('活跃workspace admin无membership仍合法；principal共享锁使删除在事务提交后生效', async () => {
     const admin = await f.createExecution('M5 admin without Team membership')
     const membership = (await f.db.query<{ workspace_id: string; role: string }>(
@@ -228,6 +269,7 @@ describe('M5 真实Pi单toolCall受限传输重放', () => {
       'SELECT workspace_id,role FROM memberships WHERE team_id=$1 AND actor_id=$2', [f.teamId, human.id],
     )).rows[0]!
     let deleted = false, restored = false
+    let documentId: string
     const observations: Array<{ kind: string; status: number; originalEHash: string; data: unknown }> = []
     const restore = async () => {
       if (deleted && !restored) {
@@ -238,17 +280,24 @@ describe('M5 真实Pi单toolCall受限传输重放', () => {
     }
     const proxy = await f.lossProxy(f.baseUrl, (path, method) => path === '/api/v1/documents' && method === 'POST', {
       afterFirstCommit: async () => {
+        documentId = (await f.db.query<{ id: string }>('SELECT id FROM documents WHERE work_item_id=$1', [execution.workItemId])).rows[0]!.id
+        observations.push({ kind: 'document-before-withdrawal', ...await proxy.readWithOriginalE(0, `/api/v1/documents/${documentId}`) })
+        expect(observations.at(-1)!.status).toBe(200)
         await f.db.query('DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',
           [membership.workspace_id, f.teamId, human.id])
         deleted = true
+        observations.push({ kind: 'document-after-withdrawal', ...await proxy.readWithOriginalE(0, `/api/v1/documents/${documentId}`) })
+        expect(observations.at(-1)).toMatchObject({ status: 403, data: { error: { code: 'SESSION_SCOPE_DENIED', correlationId: expect.any(String) } } })
       },
       afterResponse: async (path, status) => {
         if (deleted && !restored && path.endsWith('/status')) {
-          expect(status).toBeGreaterThanOrEqual(400)
+          expect(status).toBe(403)
           // Explicit diagnostics are separate from the actual single Pi toolCall.
           observations.push({ kind: 'same-key-denied', ...await proxy.reconcileOriginal(0) })
           observations.push({ kind: 'new-key-denied', ...await proxy.reconcileOriginal(0, randomUUID()) })
-          expect(observations.every(row => row.status >= 400)).toBe(true)
+          for (const row of observations.filter(row => row.kind.endsWith('-denied'))) expect(row).toMatchObject({
+            status: 403, data: { error: { code: 'SESSION_SCOPE_DENIED', correlationId: expect.any(String) } },
+          })
           const actor = (await f.db.query<{ id: string; workspace_id: string }>(
             'SELECT agent_actor_id AS id,workspace_id FROM agent_sessions WHERE id=$1', [execution.sessionId],
           )).rows[0]!
@@ -270,6 +319,8 @@ describe('M5 真实Pi单toolCall受限传输重放', () => {
             await expect(loadAgentSessionForMutation(tx, apiActor, execution.sessionId)).rejects.toMatchObject({ code: 'DELEGATION_NOT_ACTIVE' })
           } finally { await tx.query('ROLLBACK'); tx.release() }
           await restore()
+          observations.push({ kind: 'document-after-restore', ...await proxy.readWithOriginalE(0, `/api/v1/documents/${documentId}`) })
+          expect(observations.at(-1)!.data).toEqual(observations[0]!.data)
           observations.push({ kind: 'restored-original-receipt', ...await proxy.reconcileOriginal(0) })
         }
       },
@@ -280,7 +331,7 @@ describe('M5 真实Pi单toolCall受限传输重放', () => {
       expect(deleted && restored).toBe(true)
       expect(proxy.errors).toEqual([])
       expect(proxy.observed).toHaveLength(1)
-      expect(proxy.transport.some(row => row.path.endsWith('/status') && row.status >= 400 && row.eHash === proxy.observed[0]!.eHash)).toBe(true)
+      expect(proxy.transport.find(row => row.path.endsWith('/status'))).toMatchObject({ status: 403, errorCode: 'SESSION_SCOPE_DENIED', correlationId: expect.any(String), eHash: proxy.observed[0]!.eHash })
       expect(observations.at(-1)).toMatchObject({ status: 200, originalEHash: proxy.observed[0]!.eHash })
       expect(captures.at(-1)!.results[0]).toContain('correlationId')
       const effects = (await f.db.query('SELECT id FROM documents WHERE work_item_id=$1', [execution.workItemId])).rows

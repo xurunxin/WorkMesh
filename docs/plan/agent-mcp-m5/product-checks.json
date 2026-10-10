@@ -2017,5 +2017,79 @@
       "unchanged": true,
       "sha256": "bf760d515da5fad0358a71774bab7bda17e4a263a0fadf593245b3af2e6e84ee"
     }
+  },
+  {
+    "label": "review-membership-real-member-exact",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "test:integration",
+      "src/joint-clients.conformance.test.ts",
+      "--testNamePattern",
+      "成员资格"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T19:03:43.150739+00:00",
+    "endedAt": "2026-10-10T19:03:56.376925+00:00",
+    "runtimeSeconds": 13.226042099995539,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-membership-real-member-exact-stdout.txt",
+        "bytes": 1818,
+        "sha256": "fb3d549120e103b2782007e8f181277f63cf24366c4459136e029b589ac213cb",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-membership-real-member-exact-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-membership-real-member-exact.json",
+      "beforeDigest": "cc3e08366e3f2d32fa9e4540f6d2ca964b1224c0ef5a2355d4e3fef47ac1b6f6",
+      "afterDigest": "cc3e08366e3f2d32fa9e4540f6d2ca964b1224c0ef5a2355d4e3fef47ac1b6f6",
+      "unchanged": true,
+      "sha256": "fcf04a1aef6a41ce491738437d697c241bdfea7a3c32f5d458fee6a69328cf90"
+    }
+  },
+  {
+    "label": "review-joint-regression",
+    "argv": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "test:integration",
+      "src/joint-clients.conformance.test.ts"
+    ],
+    "cwd": "C:\\Users\\xurx\\.tds\\workspaces\\01a1264e-bd35-76d4-b328-03e9b91301f3",
+    "startedAt": "2026-10-10T19:04:59.231690+00:00",
+    "endedAt": "2026-10-10T19:08:42.512944+00:00",
+    "runtimeSeconds": 223.27924349998648,
+    "nativeExit": 0,
+    "logs": {
+      "stdout": {
+        "path": ".tmp\\m5-runtime\\checks\\review-joint-regression-stdout.txt",
+        "bytes": 32512,
+        "sha256": "0585d744e82d5fcbb5631b3519dda2fc6a8e5c31ff64b93171e6578f3ffa45a0",
+        "redacted": true
+      },
+      "stderr": {
+        "path": ".tmp\\m5-runtime\\checks\\review-joint-regression-stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "redacted": true
+      }
+    },
+    "sourceBinding": {
+      "path": ".tmp\\m5-runtime\\sources\\review-joint-regression.json",
+      "beforeDigest": "c5100cfb03e7dc8e320a2d9b3b6ef729487cf7aa1be1179826801189ff15a1bd",
+      "afterDigest": "b636f22d7e090c331f343b2a2432670438d95c86db3e876e7cef29a975f1a70b",
+      "unchanged": false,
+      "sha256": "07fed8fe44a3d5a56c94522947f4227c9b6b64765292d193b81429e5d1152a8d"
+    }
   }
 ]

@@ -87,7 +87,7 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
   }
   const lossProxy = async (upstream: string, match: (path: string, method: string) => boolean, options: { losses?: number; lossMode?: 'socket' | 'timeout' | 'body'; serializeRecovery?: boolean; responseTransform?: (path: string, data: Buffer) => Promise<Buffer>; afterFirstCommit?: () => Promise<void>; afterResponse?: (path: string, status: number) => Promise<void> } = {}) => {
     const observed: Array<{ method: string; path: string; bodyHash: string; headersHash: string; key?: string; revision?: string; eHash: string; status: number; responseLost: boolean }> = []
-    const transport: Array<{ method: string; path: string; key?: string; eHash: string; status: number }> = []
+    const transport: Array<{ method: string; path: string; key?: string; eHash: string; status: number; errorCode?: string; correlationId?: string }> = []
     const errors: string[] = []
     const proxyId = randomUUID()
     // Private original bytes support explicit test-side reconciliation only.
@@ -104,7 +104,8 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
         const result = await fetch(upstream + path, { method, headers, ...(['GET', 'HEAD'].includes(method) ? {} : { body }) })
         const original = Buffer.from(await result.arrayBuffer())
         const data = options.responseTransform ? await options.responseTransform(path, original) : original
-        transport.push({ method, path, key: headers['idempotency-key'], eHash: fingerprint(headers.authorization ?? ''), status: result.status })
+        const error = result.ok ? undefined : (JSON.parse(original.toString('utf8')) as { error?: { code?: string; correlationId?: string } }).error
+        transport.push({ method, path, key: headers['idempotency-key'], eHash: fingerprint(headers.authorization ?? ''), status: result.status, errorCode: error?.code, correlationId: error?.correlationId })
         await options.afterResponse?.(path, result.status)
         const matching = match(path, method), responseLost = matching && result.ok && observed.filter(row => row.responseLost).length < (options.losses ?? 1)
         if (matching) {
@@ -122,6 +123,12 @@ export async function createJointClientsFixture(options: { capabilities?: Capabi
     })
     listeners.push(proxy); proxy.listen(0, '127.0.0.1'); await once(proxy, 'listening')
     return { url: `http://127.0.0.1:${(proxy.address() as { port: number }).port}`, observed, transport, errors,
+      readWithOriginalE: async (index: number, path: string) => {
+        const original = originals[index]
+        if (!original) throw new Error('M5_ORIGINAL_REQUEST_NOT_CAPTURED')
+        const response = await fetch(upstream + path, { headers: { authorization: original.headers.authorization! } })
+        return { status: response.status, data: await response.json() as unknown, originalEHash: fingerprint(original.headers.authorization!) }
+      },
       reconcileOriginal: async (index: number, newKey?: string) => {
         const original = originals[index]
         if (!original) throw new Error('M5_ORIGINAL_REQUEST_NOT_CAPTURED')
