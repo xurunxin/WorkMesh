@@ -277,7 +277,7 @@
       ],
       "receipt": "m3-8c0f15d203fd",
       "initialActual": "fake三客户端真实链",
-      "recoveryActual": "各provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；第八次claim无checkpoint崩溃跨真实60秒重启后dead/RETRY_EXHAUSTED且provider0，查询停止scheduled；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。"
+      "recoveryActual": "该provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。 新增第八次claim耗尽跨60秒组合未按该provider标签单独运行；共享Worker路径由GitHub标签实际验证，不冒本行额外实测。"
     },
     {
       "provider": "github",
@@ -294,7 +294,7 @@
       ],
       "receipt": "m3-8c0f15d203fd",
       "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
-      "recoveryActual": "各provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；第八次claim无checkpoint崩溃跨真实60秒重启后dead/RETRY_EXHAUSTED且provider0，查询停止scheduled；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。"
+      "recoveryActual": "该provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。 第八次claim无checkpoint崩溃跨真实60秒重启后dead/RETRY_EXHAUSTED且provider0，查询停止scheduled。"
     },
     {
       "provider": "gitea",
@@ -311,7 +311,7 @@
       ],
       "receipt": "m3-8c0f15d203fd",
       "initialActual": "本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测",
-      "recoveryActual": "各provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；第八次claim无checkpoint崩溃跨真实60秒重启后dead/RETRY_EXHAUSTED且provider0，查询停止scheduled；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。"
+      "recoveryActual": "该provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。 新增第八次claim耗尽跨60秒组合未按该provider标签单独运行；共享Worker路径由GitHub标签实际验证，不冒本行额外实测。"
     }
   ]
 }

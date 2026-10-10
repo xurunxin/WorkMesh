@@ -4,9 +4,9 @@
 
 ## 交付与安全合同
 
-实施依据为已独审候选 `499ccc1419ba2fbd15171f6ff7c0adc78647c2cc`。本轮平台只读实际 ref 观察：main `ef4cb5e1458d911d98433c443dba46e6c224caa0`、开工候选 `e73e814dd631a3c5db47afc1ff4d89e5cfaf3941`；这是观察时点，不能冒后续实时 ref。最终受测源码与提交绑定见 [源字节清单](product-source-manifest.json) 及提交后核验，报告自身不循环嵌入其未来 commit SHA。
+实施依据为已独审候选 `499ccc1419ba2fbd15171f6ff7c0adc78647c2cc`。本次修复开工候选 `c8e2632d36e15b43d3cb1ec2ef468680dad31e01`；平台重新 fetch main 后准确 FETCH_HEAD 为 `ef4cb5e1458d911d98433c443dba46e6c224caa0`。历史主力开工候选 `e73e814dd631a3c5db47afc1ff4d89e5cfaf3941` 保留在原报告 ZIP，不冒本轮源。最终受测源码与提交绑定见 [源字节清单](product-source-manifest.json) 及提交后核验，报告自身不循环嵌入其未来 commit SHA。
 
-交付回执的产品源码候选 `ce864e892d36cd705bd62b861ab5ced5a6e85014`，文件数量以 [提交后源码核验](product-source-verification.json) 为准；127 个 ZIP 的原 bytes 核验见 [交付核验](product-delivery-receipt.json)。上轮回执只证明上轮受测源，本轮三 blocking 修复、实际新结果与来源边界见 [成果独审修复报告](review-fixes-report.md)，不能把旧源码核验冒当前代码已测。
+交付回执的产品源码候选 `25a528c56e51df1025849b0eb29589f66502bddf`，文件数量以 [提交后源码核验](product-source-verification.json) 为准；163 个 ZIP 的原 bytes 核验见 [交付核验](product-delivery-receipt.json)。上轮回执只证明上轮受测源，本轮三 blocking 修复、实际新结果与来源边界见 [成果独审修复报告](review-fixes-report.md)，不能把旧源码核验冒当前代码已测。
 
 - 新 REST `GET /api/v1/provider-actions/{id}` / `getProviderAction`：六 kind 的严格白名单只读投影，精确 requester/Session/principal/Team/resource/feature与当前context读授权。payload、文件内容、provider raw错误、worker身份和秘密不返回；隐藏目标统一 NOT_FOUND，查询不领取、续租、外发或追加业务事实。Human原principal合法终态诊断与E普通终态拒绝分别验证。
 - reviewer `repositoryIds` 由用户明确选择：三方 `repo:read` 交集与父仓库范围、共享 WorkItem/Project context；省略保 M2 三项。`mutate.beforeReserve` 完整父子锁计划与 `authorizeReplay` 共用校验，撤权/收窄后旧key也拒绝。本人 Room review_result、本人当前head code_review Artifact及structured review在有效E下交付；父等required child completed再确认。

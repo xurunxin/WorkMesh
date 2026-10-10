@@ -119,7 +119,9 @@ for r in recovery['rows']:
     r['productStatus']='本机夹具通过' if integration and integration['exit']==0 else '待当前整套Worker结果'
     r['initialActual']='fake三客户端真实链' if provider=='fake' else '本机TLS HTTP adapter正例及每个写窗口拒例；真实账号未测'
     r['recoveryActual']='五写kind旧领取无checkpoint停发，provider resolve计数0；合法checkpoint各kind只本地finish，HTTP/resolve计数0'
-    if kind=='resolve_repository_context':r['recoveryActual']='各provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；第八次claim无checkpoint崩溃跨真实60秒重启后dead/RETRY_EXHAUSTED且provider0，查询停止scheduled；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。'
+    if kind=='resolve_repository_context':
+        r['recoveryActual']='该provider标签Worker纯GET重领使用注入Fake reader，attempt1→2；合法checkpoint本地finish；真实GitHub/Gitea adapter纯GET由本机TLS夹具单列。不是账号集成。'
+        r['recoveryActual']+=(' 第八次claim无checkpoint崩溃跨真实60秒重启后dead/RETRY_EXHAUSTED且provider0，查询停止scheduled。' if provider=='github' else ' 新增第八次claim耗尽跨60秒组合未按该provider标签单独运行；共享Worker路径由GitHub标签实际验证，不冒本行额外实测。')
     if provider=='gitea' and kind=='retry_ci_check':r['initialActual']='不支持：adapter真实拒绝且HTTP0';r['recoveryActual']='没有合法Gitea CI checkpoint；夹具伪造结果验证dead/unknown，旧无checkpoint停发。正常成功恢复不适用，来源parseProviderActionCheckpoint显式禁止。'
     if provider=='gitea' and kind=='create_commit':r['extraBoundary']='单文件create POST/update PUT本机HTTP通过；多文件明确不支持且零HTTP'
 write('product-recovery-matrix.json',recovery)
@@ -153,7 +155,7 @@ write('product-report.md',f'''# M3 产品交付报告
 
 ## 交付与安全合同
 
-实施依据为已独审候选 `499ccc1419ba2fbd15171f6ff7c0adc78647c2cc`。本轮平台只读实际 ref 观察：main `ef4cb5e1458d911d98433c443dba46e6c224caa0`、开工候选 `e73e814dd631a3c5db47afc1ff4d89e5cfaf3941`；这是观察时点，不能冒后续实时 ref。最终受测源码与提交绑定见 [源字节清单](product-source-manifest.json) 及提交后核验，报告自身不循环嵌入其未来 commit SHA。
+实施依据为已独审候选 `499ccc1419ba2fbd15171f6ff7c0adc78647c2cc`。本次修复开工候选 `c8e2632d36e15b43d3cb1ec2ef468680dad31e01`；平台重新 fetch main 后准确 FETCH_HEAD 为 `ef4cb5e1458d911d98433c443dba46e6c224caa0`。历史主力开工候选 `e73e814dd631a3c5db47afc1ff4d89e5cfaf3941` 保留在原报告 ZIP，不冒本轮源。最终受测源码与提交绑定见 [源字节清单](product-source-manifest.json) 及提交后核验，报告自身不循环嵌入其未来 commit SHA。
 
 {commitNote}
 
