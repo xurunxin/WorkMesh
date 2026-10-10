@@ -1,0 +1,87 @@
+{
+  "recordedAt": "2026-10-10T20:16:44.903038+00:00",
+  "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+  "head": {
+    "input": [
+      "git",
+      "-C",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "rev-parse",
+      "HEAD"
+    ],
+    "startedAt": "2026-10-10T20:08:35.668860+00:00",
+    "endedAt": "2026-10-10T20:08:35.715755+00:00",
+    "exit": 0,
+    "stdout": "8fe64ea658c852267d8f443dff14a4fac94b9e92\n",
+    "stderr": ""
+  },
+  "logicalBytes": 2997673676,
+  "readOnlyFiles": [
+    {
+      "path": ".tmp/cleanup-link-proof-20261011-3/repo.git/objects/f7/2bf2fefbc793f441be46032296ce6203a1e2bb",
+      "bytes": 141,
+      "attributes": 33,
+      "nlink": 1,
+      "sha256": "b77a220d8654cc7d3f6528c50f7514be5b65d019295835092c1e7e2e27c85e1f"
+    },
+    {
+      "path": ".tmp/cleanup-link-proof-20261011-3/repo.git/objects/d7/f30f1797ca47221c68c11c6733c6fe883934fb",
+      "bytes": 56,
+      "attributes": 33,
+      "nlink": 1,
+      "sha256": "72f6a9e9bf4e5b560af80d321ca316f194c0b6193930bffbfa00bc8d79b16db4"
+    },
+    {
+      "path": ".tmp/cleanup-link-proof-20261011-3/repo.git/objects/0b/18d805666e649ae5912971a64bb5cd85867ea5",
+      "bytes": 32,
+      "attributes": 33,
+      "nlink": 1,
+      "sha256": "615917c0405ee52115b5abce8cd2ca53b005744980cf021e1599d4b7d49a65be"
+    },
+    {
+      "path": ".tmp/cleanup-link-proof-20261011-2/repo.git/objects/b4/02ba143dc4625b3376842a60569ccff89f7110",
+      "bytes": 33,
+      "attributes": 33,
+      "nlink": 1,
+      "sha256": "3f7f7b8ff64dbd9f6668bf6398809029a5ce7aa36b006ef01a79d8db8a3fc302"
+    },
+    {
+      "path": ".tmp/cleanup-link-proof-20261011-2/repo.git/objects/93/51238fb657a9c866704681614a0f6cb0b72d8a",
+      "bytes": 57,
+      "attributes": 33,
+      "nlink": 1,
+      "sha256": "d9af683832bcfe18b58bfeba98a886d591dc8c59442f156d88c9be9b9bc18252"
+    },
+    {
+      "path": ".tmp/cleanup-link-proof-20261011-2/repo.git/objects/59/bc612c2bebea94ff6e657a97e83ea870cac8aa",
+      "bytes": 143,
+      "attributes": 33,
+      "nlink": 1,
+      "sha256": "81ca0055cf704159a1ded1bab7ef67331181c0fdbe4ed095cce634d72f8ef24e"
+    },
+    {
+      "path": ".tmp/cleanup-link-proof-20261011/repo.git/objects/d9/1ff58e2122aefc631073a7742bef44e77a656f",
+      "bytes": 144,
+      "attributes": 33,
+      "nlink": 1,
+      "sha256": "a4fdd24f111cabf997dcf9c73d9750cad4f026b079a926047cf5bf1c12bb5713"
+    },
+    {
+      "path": ".tmp/cleanup-link-proof-20261011/repo.git/objects/b4/02ba143dc4625b3376842a60569ccff89f7110",
+      "bytes": 33,
+      "attributes": 33,
+      "nlink": 1,
+      "sha256": "3f7f7b8ff64dbd9f6668bf6398809029a5ce7aa36b006ef01a79d8db8a3fc302"
+    },
+    {
+      "path": ".tmp/cleanup-link-proof-20261011/repo.git/objects/93/51238fb657a9c866704681614a0f6cb0b72d8a",
+      "bytes": 57,
+      "attributes": 33,
+      "nlink": 1,
+      "sha256": "d9af683832bcfe18b58bfeba98a886d591dc8c59442f156d88c9be9b9bc18252"
+    }
+  ],
+  "failure": "preserve.py 在只读 fixture Git object 安全门停止；未发删除，未改属性/ACL",
+  "decision": "停止该目标，本轮不再尝试。旧完整目录保留；其余四个独立候选继续",
+  "releaseCondition": "若后续明确允许处理这些精确只读夹具对象，仍须先补全部现场保全/来源与实时安全门；本轮不以父删/换法/属性修改绕过"
+}
