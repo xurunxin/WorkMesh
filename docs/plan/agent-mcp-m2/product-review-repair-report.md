@@ -33,3 +33,5 @@
 49份原完整产品工作树和本次实际源码增量/Git旧blob/clean-filter预期提交blob另见product-review-repair.json与source ZIP。原product-source-manifest/commit-binding属于旧b0受测事实保留，不能冒本次guard/body修复已绑定旧commit；新产品commit后逐blob复核另登记。91操作当前MCP/Runner实收入口结果重新生成；18行旧闭合矩阵仍是原运行事实，本轮G1大正文读取/C7过期队尾重领补证据在本报告，不删除旧断言或把首败重写成功。
 
 所有健康命令实际exit后各独有service ID/owner核验再清理，原服务日志保全脱敏字节再可读规范化，shared镜像/store/他人服务/G1D0C3及当前恢复目录未动，无新volume/network。原历史缺exit仍unknown。无migration/新事件/权限/UI/F/TA/真实外发扩展。
+
+修复产品代码已提交 `1cfb38178f56005d524d865d80115db3bbcdbecb`，49份完整产品源逐blob/受测Windows字节最终一致性见[提交后绑定](product-review-repair-commit-binding.json)。后续仅证据提交不改变产品代码，最终branch head在交付回复列出。
