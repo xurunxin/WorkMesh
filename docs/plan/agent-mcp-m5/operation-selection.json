@@ -1,0 +1,3430 @@
+[
+  {
+    "group": "bootstrap／身份",
+    "operationId": "getServerInfo",
+    "method": "GET",
+    "path": "/api/v1/info",
+    "feature": "none",
+    "bindingIds": [
+      "resource:server-info",
+      "tool:get_workmesh_context",
+      "tool:get_server_info"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "bootstrap／身份",
+    "operationId": "getAgentCapabilityManifest",
+    "method": "GET",
+    "path": "/api/v1/agent-capabilities",
+    "feature": "none",
+    "bindingIds": [
+      "resource:agent-capabilities",
+      "tool:verify_connection",
+      "tool:get_current_identity",
+      "tool:get_workmesh_context",
+      "tool:get_agent_capabilities"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "bootstrap／身份",
+    "operationId": "createAgentConnection",
+    "method": "POST",
+    "path": "/api/v1/agent-connections",
+    "feature": "WORKMESH_BETA_COORDINATION_MCP",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "bootstrap／身份",
+    "operationId": "redeemAgentConnection",
+    "method": "POST",
+    "path": "/api/v1/agent-connections/redeem",
+    "feature": "WORKMESH_BETA_COORDINATION_MCP",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "bootstrap／身份",
+    "operationId": "getCurrentAgentConnectionIdentity",
+    "method": "GET",
+    "path": "/api/v1/agent-connections/current-identity",
+    "feature": "WORKMESH_BETA_COORDINATION_MCP",
+    "bindingIds": [
+      "tool:verify_connection",
+      "tool:get_current_identity",
+      "tool:get_workmesh_context"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "bootstrap／身份",
+    "operationId": "getAgentConnection",
+    "method": "GET",
+    "path": "/api/v1/agent-connections/{id}",
+    "feature": "WORKMESH_BETA_COORDINATION_MCP",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "bootstrap／身份",
+    "operationId": "rotateAgentConnection",
+    "method": "POST",
+    "path": "/api/v1/agent-connections/{id}/rotate",
+    "feature": "WORKMESH_BETA_COORDINATION_MCP",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "bootstrap／身份",
+    "operationId": "confirmAgentConnectionRotation",
+    "method": "POST",
+    "path": "/api/v1/agent-connections/{id}/rotate-confirm",
+    "feature": "WORKMESH_BETA_COORDINATION_MCP",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "bootstrap／身份",
+    "operationId": "revokeAgentConnection",
+    "method": "DELETE",
+    "path": "/api/v1/agent-connections/{id}",
+    "feature": "WORKMESH_BETA_COORDINATION_MCP",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "bootstrap／身份",
+    "operationId": "claimWorkItem",
+    "method": "POST",
+    "path": "/api/v1/work-items/{id}/claim",
+    "feature": "none",
+    "bindingIds": [
+      "tool:claim_work_item"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read",
+      "work:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "bootstrap／身份",
+    "operationId": "delegateAndStartAgentSession",
+    "method": "POST",
+    "path": "/api/v1/work-items/{id}/agent-session",
+    "feature": "none",
+    "bindingIds": [
+      "tool:delegate_work_item"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "agent:delegate"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N1–N2/F2/F3/F8",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "createProject",
+    "method": "POST",
+    "path": "/api/v1/projects",
+    "feature": "none",
+    "bindingIds": [
+      "tool:apply_project_import",
+      "tool:create_project"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_create_project"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "getProject",
+    "method": "GET",
+    "path": "/api/v1/projects/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "tool:get_project"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_project"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "createWorkItem",
+    "method": "POST",
+    "path": "/api/v1/work-items",
+    "feature": "none",
+    "bindingIds": [
+      "tool:apply_project_import",
+      "tool:create_work_item"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_create_work_item"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "getWorkItem",
+    "method": "GET",
+    "path": "/api/v1/work-items/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "tool:resolve_identifier",
+      "resource:work-item",
+      "tool:get_work_item"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_work_item"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "updateWorkItem",
+    "method": "PATCH",
+    "path": "/api/v1/work-items/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "tool:update_work_item"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_update_work_item"
+    ],
+    "revisionHeaderInOperation": true,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "listWorkItems",
+    "method": "GET",
+    "path": "/api/v1/work-items",
+    "feature": "none",
+    "bindingIds": [
+      "tool:resolve_identifier",
+      "tool:list_claimable_work_items",
+      "tool:list_work_items"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_coordination",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_work_items"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "listDocuments",
+    "method": "GET",
+    "path": "/api/v1/documents",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_documents"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_documents"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "createDocument",
+    "method": "POST",
+    "path": "/api/v1/documents",
+    "feature": "none",
+    "bindingIds": [
+      "tool:create_document"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_create_document"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "getDocument",
+    "method": "GET",
+    "path": "/api/v1/documents/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "tool:get_document"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_document"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "updateDocument",
+    "method": "PATCH",
+    "path": "/api/v1/documents/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "tool:update_document"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_update_document"
+    ],
+    "revisionHeaderInOperation": true,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "listDocumentHistory",
+    "method": "GET",
+    "path": "/api/v1/documents/{id}/history",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_document_history"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_document_history"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "getDocumentRevision",
+    "method": "GET",
+    "path": "/api/v1/documents/{id}/revisions/{revisionId}",
+    "feature": "none",
+    "bindingIds": [
+      "resource:document-revision",
+      "tool:get_document_revision"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_document_revision"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "diffDocumentRevisions",
+    "method": "GET",
+    "path": "/api/v1/documents/{id}/diff",
+    "feature": "none",
+    "bindingIds": [
+      "tool:diff_document_revisions"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_diff_document_revisions"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "核心规划／文档",
+    "operationId": "exportDocumentMarkdown",
+    "method": "GET",
+    "path": "/api/v1/documents/{id}/export",
+    "feature": "none",
+    "bindingIds": [
+      "tool:export_document_markdown"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_export_document_markdown"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N1/N3/F4/F5/F6",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "getAgentSession",
+    "method": "GET",
+    "path": "/api/v1/agent-sessions/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "resource:agent-session",
+      "tool:get_agent_session"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_session"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "listAgentSessions",
+    "method": "GET",
+    "path": "/api/v1/agent-sessions",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_agent_sessions"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_sessions"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "getAgentSessionContext",
+    "method": "GET",
+    "path": "/api/v1/agent-sessions/{id}/context",
+    "feature": "none",
+    "bindingIds": [
+      "resource:session-context",
+      "tool:get_session_context"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_session_context"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "acknowledgeAgentSession",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/ack",
+    "feature": "none",
+    "bindingIds": [
+      "tool:ack_agent_session"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "transitionAgentSessionState",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/state",
+    "feature": "none",
+    "bindingIds": [
+      "tool:transition_agent_session_state"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_transition_state"
+    ],
+    "revisionHeaderInOperation": true,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "heartbeatAgentSession",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/heartbeat",
+    "feature": "none",
+    "bindingIds": [
+      "tool:heartbeat"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "getAgentPlan",
+    "method": "GET",
+    "path": "/api/v1/agent-sessions/{id}/plan",
+    "feature": "none",
+    "bindingIds": [
+      "resource:session-plan",
+      "tool:get_session_plan"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_session_plan"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "publishAgentPlan",
+    "method": "PUT",
+    "path": "/api/v1/agent-sessions/{id}/plan",
+    "feature": "none",
+    "bindingIds": [
+      "tool:publish_plan"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "plan:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_publish_plan"
+    ],
+    "revisionHeaderInOperation": true,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "listAgentPlanVersions",
+    "method": "GET",
+    "path": "/api/v1/agent-sessions/{id}/plans",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_session_plan_versions"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_plan_versions"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "completeAgentSession",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/complete",
+    "feature": "none",
+    "bindingIds": [
+      "tool:complete_session"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "failAgentSession",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/fail",
+    "feature": "none",
+    "bindingIds": [
+      "tool:fail_session"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "getAgentSessionExecutionResult",
+    "method": "GET",
+    "path": "/api/v1/agent-sessions/{id}/execution-result",
+    "feature": "none",
+    "bindingIds": [
+      "tool:get_session_execution_result"
+    ],
+    "identityVariants": [
+      {
+        "variant": "installation_target",
+        "credentialMode": [
+          "installation_target"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9；原installation来源，terminal E拒绝",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "signalAgentSession",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/signals",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "retryAgentSession",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/retry",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "acknowledgeAgentSessionStop",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/stop-ack",
+    "feature": "none",
+    "bindingIds": [
+      "tool:stop_ack"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "promptAgentSession",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/prompt",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "listAgentActivities",
+    "method": "GET",
+    "path": "/api/v1/agent-sessions/{id}/activities",
+    "feature": "none",
+    "bindingIds": [
+      "resource:session-activity",
+      "tool:list_session_activities"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "id",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "执行／Plan／结果",
+    "operationId": "appendAgentActivity",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/activities",
+    "feature": "none",
+    "bindingIds": [
+      "tool:append_activity",
+      "tool:send_message",
+      "tool:ask"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_append_activity"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N2/N6/N7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "getWorkRoom",
+    "method": "GET",
+    "path": "/api/v1/rooms",
+    "feature": "none",
+    "bindingIds": [
+      "tool:get_work_room"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "current_session_without_target",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_work_room"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "getWorkRoomTimeline",
+    "method": "GET",
+    "path": "/api/v1/rooms/{id}/timeline",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "postWorkRoomMessage",
+    "method": "POST",
+    "path": "/api/v1/rooms/{id}/messages",
+    "feature": "none",
+    "bindingIds": [
+      "tool:post_work_room_message"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "current_session_without_target",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_send_room_message"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "listInbox",
+    "method": "GET",
+    "path": "/api/v1/inbox",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_inbox_items"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_inbox_items"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "getInboxItem",
+    "method": "GET",
+    "path": "/api/v1/inbox/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "tool:get_inbox_item"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "claimInboxItem",
+    "method": "POST",
+    "path": "/api/v1/inbox/{id}/claim",
+    "feature": "none",
+    "bindingIds": [
+      "tool:claim_inbox_item"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "acknowledgeInboxItem",
+    "method": "POST",
+    "path": "/api/v1/inbox/{id}/acknowledge",
+    "feature": "none",
+    "bindingIds": [
+      "tool:acknowledge_inbox_item"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "replyInboxItem",
+    "method": "POST",
+    "path": "/api/v1/inbox/{id}/reply",
+    "feature": "none",
+    "bindingIds": [
+      "tool:reply_inbox_item"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_reply_inbox_item"
+    ],
+    "revisionHeaderInOperation": true,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "offerHandoff",
+    "method": "POST",
+    "path": "/api/v1/handoffs",
+    "feature": "none",
+    "bindingIds": [
+      "tool:offer_handoff"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "fromSessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "fromSessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_offer_handoff"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "inspectExactTargetHandoff",
+    "method": "GET",
+    "path": "/api/v1/handoffs/{id}/inspect",
+    "feature": "none",
+    "bindingIds": [
+      "tool:inspect_pending_handoff"
+    ],
+    "identityVariants": [
+      {
+        "variant": "installation_target",
+        "credentialMode": [
+          "installation_target"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "acceptHandoff",
+    "method": "POST",
+    "path": "/api/v1/handoffs/{id}/accept",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "createChildAgentSession",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/children",
+    "feature": "none",
+    "bindingIds": [
+      "tool:create_child_session"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "parentSessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "parentSessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_create_child_session"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "listAgentSessionChildren",
+    "method": "GET",
+    "path": "/api/v1/agent-sessions/{id}/children",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_child_sessions"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "parentSessionId",
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_child_sessions"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Room／Inbox／Handoff／父子",
+    "operationId": "createReviewDelegation",
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{id}/review-delegations",
+    "feature": "none",
+    "bindingIds": [
+      "tool:create_review_delegation"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_create_review_delegation"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N3–N5/G3–G4/F2/F4/F6–F9；repoIds显式三方交集、省略兼容、重放重验",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "listLeases",
+    "method": "GET",
+    "path": "/api/v1/leases",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_leases"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_leases"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "acquireLease",
+    "method": "POST",
+    "path": "/api/v1/leases",
+    "feature": "none",
+    "bindingIds": [
+      "tool:acquire_lease"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_acquire_lease"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "renewLease",
+    "method": "POST",
+    "path": "/api/v1/leases/{id}/renew",
+    "feature": "none",
+    "bindingIds": [
+      "tool:renew_lease"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "current_session_without_target",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_renew_lease"
+    ],
+    "revisionHeaderInOperation": true,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "releaseLease",
+    "method": "POST",
+    "path": "/api/v1/leases/{id}/release",
+    "feature": "none",
+    "bindingIds": [
+      "tool:release_lease"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "current_session_without_target",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_release_lease"
+    ],
+    "revisionHeaderInOperation": true,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "forceReleaseLease",
+    "method": "POST",
+    "path": "/api/v1/leases/{id}/force-release",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "requestApproval",
+    "method": "POST",
+    "path": "/api/v1/approvals",
+    "feature": "none",
+    "bindingIds": [
+      "tool:request_approval"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_request_approval"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "getApproval",
+    "method": "GET",
+    "path": "/api/v1/approvals/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "tool:get_approval"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_approval"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "decideApproval",
+    "method": "POST",
+    "path": "/api/v1/approvals/{id}/decide",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "listEvents",
+    "method": "GET",
+    "path": "/api/v1/events",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_events"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "streamEvents",
+    "method": "GET",
+    "path": "/api/v1/events/stream",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "listRecoveryItems",
+    "method": "GET",
+    "path": "/api/v1/recovery-items",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_recovery_items"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "current_session_without_target",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_recovery_items"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Lease／批准／event",
+    "operationId": "getRecoveryItem",
+    "method": "GET",
+    "path": "/api/v1/recovery-items/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "tool:get_recovery_item"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_recovery_item"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "N4–N5/G1/G5/F2/F4/F7–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "createProviderConnection",
+    "method": "POST",
+    "path": "/api/v1/provider-connections",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "connectRepository",
+    "method": "POST",
+    "path": "/api/v1/repositories",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "listRepositories",
+    "method": "GET",
+    "path": "/api/v1/repositories",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_repositories"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "repo:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_repositories"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "getRepositoryContext",
+    "method": "GET",
+    "path": "/api/v1/repositories/{id}/context",
+    "feature": "none",
+    "bindingIds": [
+      "resource:repository-context",
+      "tool:get_repository_context"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "repo:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_repository_context"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "pinRepositoryContext",
+    "method": "POST",
+    "path": "/api/v1/repositories/{id}/context",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "requestProviderAction",
+    "method": "POST",
+    "path": "/api/v1/provider-actions",
+    "feature": "none",
+    "bindingIds": [
+      "tool:create_repository_branch",
+      "tool:create_repository_commit",
+      "tool:open_pull_request"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      },
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "repo:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "getProviderAction",
+    "method": "GET",
+    "path": "/api/v1/provider-actions/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "tool:get_provider_action"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "repo:read",
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_provider_action"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9；原准确E/H；unknown零重发",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "publishDeliveryArtifact",
+    "method": "POST",
+    "path": "/api/v1/delivery-artifacts",
+    "feature": "none",
+    "bindingIds": [
+      "tool:publish_delivery_artifact"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "artifact:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_publish_delivery_artifact"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "publishStructuredReview",
+    "method": "POST",
+    "path": "/api/v1/pull-requests/{id}/reviews",
+    "feature": "none",
+    "bindingIds": [
+      "tool:publish_structured_review"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "artifact:write",
+      "repo:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_publish_structured_review"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "requestPullRequestMerge",
+    "method": "POST",
+    "path": "/api/v1/pull-requests/{id}/merge",
+    "feature": "none",
+    "bindingIds": [
+      "tool:merge_pull_request"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "repo:merge",
+      "repo:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_merge_pull_request"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "retryPullRequestCheck",
+    "method": "POST",
+    "path": "/api/v1/pull-requests/{id}/checks/{checkId}/retry",
+    "feature": "none",
+    "bindingIds": [
+      "tool:retry_ci_check"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "ci:run",
+      "repo:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_retry_ci_check"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "getProjectDelivery",
+    "method": "GET",
+    "path": "/api/v1/projects/{id}/delivery",
+    "feature": "none",
+    "bindingIds": [
+      "tool:get_project_delivery"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_project_delivery"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "publishArtifact",
+    "method": "POST",
+    "path": "/api/v1/artifacts",
+    "feature": "none",
+    "bindingIds": [
+      "tool:publish_artifact"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "artifact:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_publish_artifact"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "listArtifacts",
+    "method": "GET",
+    "path": "/api/v1/artifacts",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "requestArtifactUpload",
+    "method": "POST",
+    "path": "/api/v1/artifact-upload-intents",
+    "feature": "none",
+    "bindingIds": [
+      "tool:request_artifact_upload"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "artifact:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_request_artifact_upload"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9；O raw签名传输不入模型，仅P受控与R私有对照",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "getArtifactUploadStatus",
+    "method": "GET",
+    "path": "/api/v1/artifact-upload-intents/{id}",
+    "feature": "none",
+    "bindingIds": [
+      "tool:get_artifact_upload_status"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_get_artifact_upload_status"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "finalizeArtifactUpload",
+    "method": "POST",
+    "path": "/api/v1/artifact-upload-intents/{id}/finalize",
+    "feature": "none",
+    "bindingIds": [
+      "tool:finalize_artifact_upload"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "artifact:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "cancelArtifactUpload",
+    "method": "POST",
+    "path": "/api/v1/artifact-upload-intents/{id}/cancel",
+    "feature": "none",
+    "bindingIds": [
+      "tool:cancel_artifact_upload"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "artifact:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "listWorkItemArtifacts",
+    "method": "GET",
+    "path": "/api/v1/work-items/{id}/artifacts",
+    "feature": "none",
+    "bindingIds": [
+      "tool:list_work_item_artifacts"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_list_work_item_artifacts"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "downloadVerifiedArtifact",
+    "method": "GET",
+    "path": "/api/v1/artifact-upload-intents/{id}/download",
+    "feature": "none",
+    "bindingIds": [
+      "tool:download_verified_artifact"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_download_verified_artifact"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9；O raw签名传输不入模型，仅P受控与R私有对照",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "createProjectUpdateDraft",
+    "method": "POST",
+    "path": "/api/v1/projects/{id}/updates",
+    "feature": "none",
+    "bindingIds": [
+      "tool:draft_project_update"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_draft_project_update"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "publishProjectUpdate",
+    "method": "POST",
+    "path": "/api/v1/projects/{id}/updates/{updateId}/publish",
+    "feature": "none",
+    "bindingIds": [
+      "tool:publish_project_update"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "suggestWorkItemCompletion",
+    "method": "POST",
+    "path": "/api/v1/projects/{id}/completion-suggestions",
+    "feature": "none",
+    "bindingIds": [
+      "tool:suggest_work_item_completion"
+    ],
+    "identityVariants": [
+      {
+        "variant": "self_execution",
+        "credentialMode": [
+          "agent_session"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": false
+      },
+      {
+        "variant": "target_execution",
+        "credentialMode": [
+          "coordination_connection"
+        ],
+        "targetParameter": "sessionId",
+        "installationBridgeRequired": true
+      }
+    ],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [
+      "workmesh_suggest_work_item_completion"
+    ],
+    "revisionHeaderInOperation": false,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Git／证据",
+    "operationId": "decideCompletionSuggestion",
+    "method": "POST",
+    "path": "/api/v1/completion-suggestions/{id}/decision",
+    "feature": "none",
+    "bindingIds": [
+      "tool:decide_completion_suggestion"
+    ],
+    "identityVariants": [
+      {
+        "variant": "current_session",
+        "credentialMode": [
+          "agent_session",
+          "coordination_connection"
+        ],
+        "targetParameter": null,
+        "installationBridgeRequired": false
+      }
+    ],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "G1–G7/F2–F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "createWorkbenchLlmConnection",
+    "method": "POST",
+    "path": "/api/v1/workbench/llm-connections",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "upsertWorkbenchLlmModel",
+    "method": "POST",
+    "path": "/api/v1/workbench/llm-connections/{id}/models",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "createWorkbenchConversation",
+    "method": "POST",
+    "path": "/api/v1/workbench/conversations",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "queueWorkbenchTurn",
+    "method": "POST",
+    "path": "/api/v1/workbench/conversations/{id}/turns",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "listWorkbenchRunnerAssignments",
+    "method": "GET",
+    "path": "/api/v1/workbench/runner/assignments",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "listAgentWorkbenchTurns",
+    "method": "GET",
+    "path": "/api/v1/agent-sessions/{id}/workbench-turns",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "claimWorkbenchTurn",
+    "method": "POST",
+    "path": "/api/v1/workbench/turns/{id}/claim",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "getWorkbenchAttemptCredential",
+    "method": "GET",
+    "path": "/api/v1/workbench/runner-attempts/{id}/credential",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "startWorkbenchAttempt",
+    "method": "POST",
+    "path": "/api/v1/workbench/runner-attempts/{id}/start",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "getWorkbenchAttemptStatus",
+    "method": "GET",
+    "path": "/api/v1/workbench/runner-attempts/{id}/status",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [
+      "work:read"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "settleWorkbenchAttempt",
+    "method": "POST",
+    "path": "/api/v1/workbench/runner-attempts/{id}/settle",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [
+      "work:write"
+    ],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "listWorkbenchMessages",
+    "method": "GET",
+    "path": "/api/v1/workbench/conversations/{id}/messages",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "listWorkbenchTurns",
+    "method": "GET",
+    "path": "/api/v1/workbench/conversations/{id}/turns",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": false,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  },
+  {
+    "group": "Pi／Turn／Attempt",
+    "operationId": "stopWorkbenchTurn",
+    "method": "POST",
+    "path": "/api/v1/workbench/conversations/{id}/turns/{turnId}/stop",
+    "feature": "none",
+    "bindingIds": [],
+    "identityVariants": [],
+    "capabilities": [],
+    "runnerLiteralMatches": [],
+    "revisionHeaderInOperation": true,
+    "testCases": "N5–N7/F2/F4/F6/F8/F9",
+    "status": "未运行"
+  }
+]
