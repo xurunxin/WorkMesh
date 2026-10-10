@@ -1,0 +1,51 @@
+{
+  "kind": "修复交付静态核验，非产品测试",
+  "checks": [
+    "7份实际变更源码ZIP逐成员与当前Windows字节及旧Git blob分别一致",
+    "完整49份产品源当前字节逐项一致；旧source snapshot保持旧候选含义",
+    "受影响各产品文件在对应实际运行前后均等于最终字节；全局差异另列不隐藏",
+    "完整main差异空白检查0，独有活动容器为空，历史unknown与保护目标未改"
+  ],
+  "operations": [
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check",
+        "cfce77546b64c2a8d7d12949261c38e2f666d5ae"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791608036.4304113,
+      "endedUnix": 1791608038.358419,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "ps",
+        "--filter",
+        "label=workmesh.m2.owner",
+        "--format",
+        "{{.Names}}"
+      ],
+      "nativeExit": 0,
+      "startedUnix": 1791608038.358424,
+      "endedUnix": 1791608038.4134884,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "primaryRuntimeBinding": {
+    "apps/worker/src/session-webhook-authorization.ts": 133,
+    "apps/worker/src/agent-webhook.ts": 133,
+    "apps/worker/integration/stage1-lifecycle.integration.test.ts": 133,
+    "apps/agent-runner/src/workmesh-tools.ts": 130,
+    "apps/agent-runner/src/workmesh-tools.test.ts": 130,
+    "packages/conformance/src/planning-collaboration.conformance.test.ts": 128
+  },
+  "countsFromRunOriginals": true,
+  "historicRun073Unknown": true
+}

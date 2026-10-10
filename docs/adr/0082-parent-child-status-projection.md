@@ -41,3 +41,8 @@ Runner 具名 failure 入口复用现有 failAgentSession DTO 与 POST /agent-se
 真实反向父层级竞争出现 40P01：原 HTTP PATCH 各持自身 WorkItem/Team 锁后等待另一父外键。修复复用已应用 0005 trigger 的同一 workspace 规划图 advisory namespace，在八个 WorkItem／milestone／relation HTTP 写入口的 mutate 中先 workspace FOR KEY SHARE，再规划图锁，再幂等与资源行锁。Automation create_work_item 在 executeAutomationAction 的 locator/canonical 锁前取同样两锁；Worker executeEffect 的内部动作使用新 withTx，claimEffects 已在另一事务提交，不先持 Team/resource。正常 status/labels/board_rank/cycle 写不触发此 namespace，本次不扩入口。真实 barrier 用 pg_blocking_pids 与 pg_locks 验证前置时尚无 Team／WorkItem／Project 等 ranked relation 锁；反向关系/层级只有一方向提交并返回现有 cycle 拒绝，HTTP 与实际 Worker 创建竞争、Human Team 删除和 workspace 排他协调及撤权后拒写分别记录。不存在公开 workspace DELETE，workspace 排他测试是特权夹具模拟删除协调锁，不能称已执行 workspace 删除。此修复不证明全系统无死锁，也不改变发送 guard 的有界争用回滚语义；原 40P01 和先前错误锁结论保留。
 
 投影 DTO 写入 contracts／OpenAPI／协议；M2 discovery 增量合成现行 policy、SDK、MCP、Runner、conformance。无 Schema 或 migration 变更；原 #53/M0/M1 和 M2 规划候选原件保全，产品检查另行记录。
+
+成果独审两项 blocking 修复
+发送前确认返回 authorized／revoked／claim_expired／claim_lost。claim 身份（workerId、attempt_count、status）与实际 clock_timestamp 租期先只读判断，authority 全锁后在原 delivery 行锁位置重验；过期/丢失 claim 是 retryable，零 HTTP，沿原有界退避与 attempt_count 上限重新领取，不误记撤权 dead。原来源/Session/Token/Team 撤权或缺历史绑定继续不可重试。失败回写仍按原 workerId/attempt_count/status CAS，旧 claim 不能覆盖新领取或 delivered；发送许可提交后的在途请求边界不变。真实 PostgreSQL 短租期模拟默认60秒批次尾排队，25条实际HMAC HTTP receiver记录首条许可后延迟，24条过期零发送且pending，再由新Worker领取全部投递；有界重试耗尽仍按原策略dead，不新增无限重试或预算字段。
+
+Runner getDocument／getDocumentRevision／exportDocumentMarkdown 三种单资源GET完整返回现有200,000字符Markdown合同的JSON结果，包含转义膨胀；写入成功摘要与其它工具的原50,000显示预算不变。不新增REST/DTO/分段参数或权限，仍由原REST live授权/资源资格拒绝；大读取只改变成功输出，不能提供绕授权的正文渠道。普通60,000正文及60,000控制字符JSON转义由真实Pi模型实收，200,000字符和百万JSON转义的工具边界另由unit验证。成果审查原反例和修复回执单独保存，不覆盖旧候选通过/unknown。

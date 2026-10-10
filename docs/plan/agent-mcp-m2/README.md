@@ -23,3 +23,5 @@
 当前方案doc:prvLepVgLTOEbRNt56WSU全文来自本轮平台注入saved copy，保于input/platform-injected-revised-plan.md和history/author-revised-plan.md；[原候选到当前正文差异](history/reviewed-to-current-plan.diff)分列。首轮doc:5XFjpFz5JO_Sf6_WBAZD6和旧5356正文均保留，原审查不改写为通过。todos当前Spec完整读回，Saved plan段截断；conversation只给doc链接，不能冒后端计划全文。独立implementation原件仍未取得，implementation.md是当前savedplan的byte-equal仓库执行副本，元数据不足见[provenance](input/provenance.json)。
 
 在本文件的变更预览中使用 preview 按上述顺序审阅。Git 精确交付 head 由最终回复及平台分支给出，正文不循环追写未来自身 commit SHA。
+
+成果独审两项 blocking 修复入口：[修复报告](product-review-repair-report.md)、[实际命令/源码绑定](product-review-repair.json)。真实批次claim过期重领与大文档Pi实收另有新回执；旧候选/report/unknown/首败保全。停正式复审，不自confirm或Done。

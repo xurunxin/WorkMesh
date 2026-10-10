@@ -3622,6 +3622,282 @@
         "sha256": "9e211480cc2cbd5ce8cce46c0997b7cfeb50f58052e85c480b5fb22677d035c9"
       },
       "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-125.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "apps/agent-runner",
+        "exec",
+        "vitest",
+        "run",
+        "src/workmesh-tools.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 3.809891939163208,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  22 passed (22)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-125-output.zip",
+        "bytes": 2234538,
+        "sha256": "00a335a7b5f3e27db506fc647f05dbf476077d3e3a3e088e19bc2b68e6a0c5f1"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-126.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:integration:worker"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 38.40600919723511,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  8 passed | 1 skipped (9)",
+        "Tests  121 passed | 1 skipped (122)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-126-output.zip",
+        "bytes": 2235096,
+        "sha256": "43fd36423a0191bed50625b9b4d3d3a17602f8f1120ea4b45dcf42a4cfa5ff9c"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-127.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 27.23516273498535,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-127-output.zip",
+        "bytes": 2254595,
+        "sha256": "0919a0f2f54d520b7acd065efe2a954e9d9602116552c0d0ae777121d2d49d7e"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-128.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:conformance:integration"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 327.76079750061035,
+      "sourceUnchanged": false,
+      "actualSummaryLines": [
+        "Test Files  3 passed (3)",
+        "Tests  41 passed (41)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-128-output.zip",
+        "bytes": 2632925,
+        "sha256": "8d61bf3576cb568777a19f540ca3e5f7c94c5813e5c3d1ca967ae9af86cb127d"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-129.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "-C",
+        "packages/db",
+        "exec",
+        "vitest",
+        "run",
+        "src/agent-lock-order-inventory.test.ts"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 3.004697322845459,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  8 passed (8)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-129-output.zip",
+        "bytes": 2253686,
+        "sha256": "204c43862ca939729b5d02c42a49531d234492dfe4880c2388e5274432225fc3"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-130.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 23.664285898208618,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:  Test Files  4 passed (4)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/observability:test:  Test Files  2 passed (2)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/git-provider:test:  Test Files  2 passed (2)",
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/domain:test:  Test Files  9 passed (9)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/agent-sdk:test:  Test Files  3 passed (3)",
+        "@workmesh/agent-sdk:test:       Tests  53 passed (53)",
+        "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/contracts:test:  Test Files  28 passed (28)",
+        "@workmesh/contracts:test:       Tests  210 passed (210)",
+        "@workmesh/config:test:  Test Files  2 passed (2)",
+        "@workmesh/config:test:       Tests  34 passed (34)",
+        "@workmesh/web:test:  Test Files  114 passed (114)",
+        "@workmesh/web:test:       Tests  789 passed (789)",
+        "@workmesh/db:test:  Test Files  8 passed (8)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/mcp:test:  Test Files  4 passed (4)",
+        "@workmesh/mcp:test:       Tests  50 passed (50)",
+        "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/agent-runner:test:  Test Files  13 passed (13)",
+        "@workmesh/agent-runner:test:       Tests  74 passed (74)",
+        "@workmesh/recovery:test:  Test Files  1 passed (1)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/api:test:  Test Files  34 passed (34)",
+        "@workmesh/api:test:       Tests  180 passed (180)",
+        "@workmesh/worker:test:  Test Files  24 passed (24)",
+        "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+        "@workmesh/conformance:test:  Test Files  1 passed (1)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-130-output.zip",
+        "bytes": 2268593,
+        "sha256": "75e0530a4f565075eaeb151b45e633d63e2848211179e2ab8768da3ee9ef0ebd"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-131.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "lint"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 22.167551517486572,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-131-output.zip",
+        "bytes": 2254409,
+        "sha256": "dbcfc6a55f07e017dcdbf16dd205bb8c9106e15dd1a40d30d1c8f9371e1c8a9b"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-132.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "build"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 79.68058466911316,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-132-output.zip",
+        "bytes": 2379808,
+        "sha256": "fe87f202e8c5fa5fac22f903546844d5f0078300d3970b8bf14a84cacecbf6df"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-133.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "test:integration:worker"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 42.52654027938843,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "Test Files  8 passed | 1 skipped (9)",
+        "Tests  121 passed | 1 skipped (122)"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-133-output.zip",
+        "bytes": 2320679,
+        "sha256": "7304448fbaea3c03cce36dfc29257a828da60c2f288de3e019677c3d1e6be2b5"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-134.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "typecheck"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 27.312058210372925,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-134-output.zip",
+        "bytes": 2415100,
+        "sha256": "4c61fa1598b9f84015bf8f35d581edda9328107177a936473fbf948536b72059"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
+    },
+    {
+      "receipt": "run-135.json",
+      "argv": [
+        "C:/nvm4w/nodejs/pnpm.cmd",
+        "ci:validate"
+      ],
+      "nativeExit": 0,
+      "status": "exited",
+      "runtimeSeconds": 1.9055445194244385,
+      "sourceUnchanged": true,
+      "actualSummaryLines": [
+        "ℹ tests 15",
+        "ℹ pass 15",
+        "ℹ fail 0",
+        "ℹ skipped 0"
+      ],
+      "firstFailureLines": [],
+      "archive": {
+        "path": "run-135-output.zip",
+        "bytes": 2626204,
+        "sha256": "60a9d6d35a76092d58f0a9ef96e9ca5f2ada71b19921babc59829b36ca02422c"
+      },
+      "countsInterpretation": "逐套件原汇总，含Turbo命中日志；不重复合计缓存/嵌套运行，不由退出码猜数量"
     }
   ],
   "historicalUnknownRetained": true,

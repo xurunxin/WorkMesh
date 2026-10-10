@@ -186,6 +186,31 @@ describe('Pi WorkMesh tools', () => {
     expect(tools.some(tool => tool.name === 'workmesh_get_document')).toBe(true)
   })
 
+  it.each(['x'.repeat(60_000), '\u0000'.repeat(200_000), '\"\\\n'.repeat(20_000)])(
+    'returns complete current/revision/export document reads despite JSON expansion (%#)', async markdown => {
+      const calls: string[] = []
+      const current = { id: documentId, currentRevision: { id: baseRevisionId, markdown } }
+      const revision = { id: baseRevisionId, markdown }
+      const api: RunnerToolApi = { sessionId, async request<T>(_method: Parameters<RunnerToolApi['request']>[0], path: string): Promise<T> {
+        if (path === '/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read']) as T
+        calls.push(path)
+        return (path.includes('/export') ? markdown : path.includes('/revisions/') ? revision : current) as T
+      } }
+      const tools = await createWorkMeshTools(api, 'complete-document', () => undefined)
+      for (const [name, input, expected] of [
+        ['workmesh_get_document', { documentId }, current],
+        ['workmesh_get_document_revision', { documentId, revisionId: baseRevisionId }, revision],
+        ['workmesh_export_document_markdown', { documentId }, markdown],
+      ] as const) {
+        const result = await tools.find(t => t.name === name)!.execute(name, input, undefined, undefined, {} as never)
+        const text = result.content[0] as { type: 'text'; text: string }
+        expect(JSON.parse(text.text)).toEqual(expected)
+        expect(text.text.length).toBeGreaterThan(50_000)
+      }
+      expect(calls).toHaveLength(3)
+      expect(calls.every(path => path.startsWith('/api/v1/documents/'))).toBe(true)
+    })
+
   it('reports a successful oversized write without returning its full Markdown', async () => {
     const api: RunnerToolApi = { sessionId,
       async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string): Promise<T> {

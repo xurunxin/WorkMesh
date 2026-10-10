@@ -132,7 +132,7 @@ def operations():
             for member in z.namelist():
                 # Fixed scenario captures are overwritten by this successful suite;
                 # random historical pi files are preserved but not counted as new.
-                if '/planning-collaboration/' in member and member.endswith('.json') and any(member.endswith('/'+name) for name in ['pi-creation-response-and-restart.json','finite-budget-chain.json','pi-named-planning-tools.json','pi-session-failure-success.json','pi-session-failure-stale.json','pi-session-failure-stop.json','pi-session-failure-revoked.json','pi-session-failure-response_lost.json']):scan_calls(json.loads(z.read(member)),member)
+                if '/planning-collaboration/' in member and member.endswith('.json') and any(member.endswith('/'+name) for name in ['review-repair-large-document.json','pi-creation-response-and-restart.json','finite-budget-chain.json','pi-named-planning-tools.json','pi-session-failure-success.json','pi-session-failure-stale.json','pi-session-failure-stop.json','pi-session-failure-revoked.json','pi-session-failure-response_lost.json']):scan_calls(json.loads(z.read(member)),member)
     for old in controlled['operations']:
         op=old['operationId'];policy=next(x for x in runtime['routePolicyManifest'] if x['operationId']==op)
         bindings=[b for b in runtime['agentDiscoveryBindings'] if op in b['operationIds']]

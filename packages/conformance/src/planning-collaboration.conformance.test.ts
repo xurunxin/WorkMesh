@@ -30,6 +30,32 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
   beforeAll(async () => { f = await createPlanningCollaborationFixture() })
   afterAll(async () => { if (f) await f.close() })
 
+  it('大Document普通正文及JSON转义膨胀均由真实Pi模型完整实收当前/revision/export', async () => {
+    const execution = await f.createExecution('M2 reviewer large Document repair')
+    const mcp = await f.connect('read-write', execution)
+    const results = []
+    for (const markdown of ['x'.repeat(60_000), '\u0001'.repeat(60_000)]) {
+      const doc = await call<DocumentResponse>(mcp, 'create_document', { ownerType: 'work_item', ownerId: execution.workItemId,
+        title: 'Large authorized body', markdown, idempotencyKey: randomUUID() })
+      const captures = await f.pi(execution, f.connectionToken, [
+        async () => ({ name: 'workmesh_get_document', arguments: { documentId: doc.id } }),
+        async () => ({ name: 'workmesh_get_document_revision', arguments: { documentId: doc.id, revisionId: doc.currentRevision.id } }),
+        async () => ({ name: 'workmesh_export_document_markdown', arguments: { documentId: doc.id } }),
+      ])
+      const actual = modelResults([captures.at(-1)!])
+      expect(actual).toHaveLength(3)
+      expect(actual[0]).toMatchObject({ id: doc.id, currentRevision: { id: doc.currentRevision.id, markdown } })
+      expect(actual[1]).toMatchObject({ id: doc.currentRevision.id, markdown })
+      expect(actual[2]).toBe(markdown)
+      const stored = (await f.db.query<{ markdown: string }>('SELECT markdown FROM document_revisions WHERE id=$1', [doc.currentRevision.id])).rows[0]!.markdown
+      expect(stored).toBe(markdown)
+      expect(await call<string>(mcp, 'export_document_markdown', { documentId: doc.id })).toBe(markdown)
+      results.push({ documentId: doc.id, markdownCharacters: markdown.length, jsonCharacters: JSON.stringify(markdown).length, captures,
+        exactRestDbAndModelBody: true })
+    }
+    savePlanningEvidence('review-repair-large-document.json', results)
+  })
+
   it('Document多页history/diff/export/restore新revision、并发冲突，Human评论/Guidance只读与Decision提案', async () => {
     const execution = await f.createExecution('M2 documents and comments')
     const mcp = await f.connect('read-write',execution)
@@ -412,14 +438,14 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
     await worker.fail(claimed,new Error('Test terminal sender'))
     const second = await create()
     const expired = (await worker.claimDeliveries(25,0)).find(delivery=>delivery.sessionId===second.id)!
-    await expect(worker.deliver(expired)).rejects.toMatchObject({code:'WEBHOOK_TARGET_REVOKED'})
+    await expect(worker.deliver(expired)).rejects.toMatchObject({code:'AGENT_WEBHOOK_CLAIM_EXPIRED',retryable:true})
     expect(f.deliveryCounts()).toEqual(count)
     await f.db.query("UPDATE agent_webhook_deliveries SET locked_at=clock_timestamp()-interval '120 seconds' WHERE id=$1",[expired.id])
     const old = (await worker.claimDeliveries()).find(delivery=>delivery.sessionId===second.id)!
     await f.db.query("UPDATE agent_webhook_deliveries SET locked_at=clock_timestamp()-interval '120 seconds' WHERE id=$1",[old.id])
     const fresh = (await worker.claimDeliveries()).find(delivery=>delivery.sessionId===second.id)!
     expect(fresh.attemptCount).toBe(old.attemptCount+1)
-    await expect(worker.deliver(old)).rejects.toMatchObject({code:'WEBHOOK_TARGET_REVOKED'})
+    await expect(worker.deliver(old)).rejects.toMatchObject({code:'AGENT_WEBHOOK_CLAIM_LOST',retryable:true})
     expect(f.deliveryCounts()).toEqual(count)
     const token = (await f.db.query<{id:string;expires_at:Date;installation_token_id:string}>('SELECT id,expires_at,installation_token_id FROM agent_session_tokens WHERE session_id=$1',[second.id])).rows[0]!
     await f.db.query("UPDATE agent_session_tokens SET expires_at=created_at+interval '1 microsecond' WHERE id=$1",[token.id])
@@ -497,7 +523,7 @@ describe('M2 真实HTTP、MCP与Pi规划协作闭环', () => {
       expect(f.deliveryCounts()).toEqual(counts)
     }
     await f.db.query('UPDATE agent_webhook_deliveries SET payload=$2::jsonb WHERE id=$1',[delivery.id,JSON.stringify(delivery.payload)])
-    await expect(worker.deliver({...delivery,leaseExpiresAt:new Date(0)})).rejects.toMatchObject({code:'WEBHOOK_TARGET_REVOKED'})
+    await expect(worker.deliver({...delivery,leaseExpiresAt:new Date(0)})).rejects.toMatchObject({code:'AGENT_WEBHOOK_CLAIM_EXPIRED',retryable:true})
     expect(f.deliveryCounts()).toEqual(counts)
     await f.human('POST',`/api/v1/agent-sessions/${first.session.id}/signals`,{signal:'stop',reason:'Self-claim notification Stop fence'},first.session.revision)
     await expect(worker.deliver(delivery)).rejects.toMatchObject({code:'WEBHOOK_TARGET_REVOKED'})

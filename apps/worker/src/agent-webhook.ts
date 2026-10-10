@@ -446,8 +446,12 @@ export function createAgentWebhookWorker({
     if (!delivery.eventId) throw new WebhookDeliveryError('MISSING_EVENT_ID', false)
     await assertRoomMessageTargetAuthorized(delivery)
     const resolvedTarget = await resolveWebhookTarget(delivery.endpointUrl, { dnsLookup, allowPrivateAgentWebhooks })
-    if(delivery.eventType==='agent.session.created' && !await authorizeSessionWebhook(db,delivery,workerId))
-      throw new WebhookDeliveryError('WEBHOOK_TARGET_REVOKED',false)
+    if (delivery.eventType === 'agent.session.created') {
+      const authorization = await authorizeSessionWebhook(db, delivery, workerId)
+      if (authorization === 'revoked') throw new WebhookDeliveryError('WEBHOOK_TARGET_REVOKED', false)
+      if (authorization === 'claim_expired') throw new WebhookDeliveryError('AGENT_WEBHOOK_CLAIM_EXPIRED', true)
+      if (authorization === 'claim_lost') throw new WebhookDeliveryError('AGENT_WEBHOOK_CLAIM_LOST', true)
+    }
     const rawBody = JSON.stringify({ events: [{ id: delivery.eventId, type: delivery.eventType, version: 1, payload: delivery.payload }] })
     const timestamp = Math.floor(Date.now() / 1_000)
     const secret = decryptWebhookSecret({ ciphertext: delivery.secretCiphertext, iv: delivery.secretIv, authTag: delivery.secretAuthTag }, masterKey)

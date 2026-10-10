@@ -1,8 +1,8 @@
 {
   "archive": {
     "path": "service-logs-raw.zip",
-    "bytes": 185203,
-    "sha256": "6fa9db8f1c67407cf30e9f405d53b635c1fb8c868aeb8b2edb65605e81a0b3af"
+    "bytes": 195674,
+    "sha256": "99a22d41571aae402e27fdf360d0be8722c8ef2353076fd7bcbeb31f3234c96b"
   },
   "members": [
     {
@@ -72,6 +72,39 @@
       }
     },
     {
+      "path": "m2-0d41386fb70b-postgres-service.log",
+      "raw": {
+        "bytes": 6145,
+        "sha256": "cff1f59f74abfcb738b34486fbe468b12852b3b54cd00e882492f3e63fdb47d9"
+      },
+      "readable": {
+        "bytes": 6145,
+        "sha256": "cff1f59f74abfcb738b34486fbe468b12852b3b54cd00e882492f3e63fdb47d9"
+      }
+    },
+    {
+      "path": "m2-0d41386fb70b-redis-service.log",
+      "raw": {
+        "bytes": 599,
+        "sha256": "5254fbfe628dd5432ca1662491e92be49507e97bc9d1053ed43687e3648bc9a6"
+      },
+      "readable": {
+        "bytes": 599,
+        "sha256": "5254fbfe628dd5432ca1662491e92be49507e97bc9d1053ed43687e3648bc9a6"
+      }
+    },
+    {
+      "path": "m2-0d41386fb70b-s3-service.log",
+      "raw": {
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      "readable": {
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      }
+    },
+    {
       "path": "m2-1582a102b79d-postgres-service.log",
       "raw": {
         "bytes": 6723,
@@ -95,6 +128,39 @@
     },
     {
       "path": "m2-1582a102b79d-s3-service.log",
+      "raw": {
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      "readable": {
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      }
+    },
+    {
+      "path": "m2-16b59a05e08d-postgres-service.log",
+      "raw": {
+        "bytes": 8393,
+        "sha256": "d5b94d7858746772e206797cf8a3626c7d472fc09ac7cf33a70369efcaf3ee43"
+      },
+      "readable": {
+        "bytes": 8393,
+        "sha256": "d5b94d7858746772e206797cf8a3626c7d472fc09ac7cf33a70369efcaf3ee43"
+      }
+    },
+    {
+      "path": "m2-16b59a05e08d-redis-service.log",
+      "raw": {
+        "bytes": 599,
+        "sha256": "82fd891466be93028386163ed05f5bdf2dfafb9255beacc7d8b2ad6ec9188f30"
+      },
+      "readable": {
+        "bytes": 599,
+        "sha256": "82fd891466be93028386163ed05f5bdf2dfafb9255beacc7d8b2ad6ec9188f30"
+      }
+    },
+    {
+      "path": "m2-16b59a05e08d-s3-service.log",
       "raw": {
         "bytes": 104,
         "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
@@ -689,6 +755,39 @@
     },
     {
       "path": "m2-6a1c7bb7f6ad-s3-service.log",
+      "raw": {
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      },
+      "readable": {
+        "bytes": 104,
+        "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+      }
+    },
+    {
+      "path": "m2-6aaa19603817-postgres-service.log",
+      "raw": {
+        "bytes": 13435,
+        "sha256": "0307a615bb19caae3abecb2b5ce36544695857c6345d4807f2d8f6bbb6578c63"
+      },
+      "readable": {
+        "bytes": 13435,
+        "sha256": "0307a615bb19caae3abecb2b5ce36544695857c6345d4807f2d8f6bbb6578c63"
+      }
+    },
+    {
+      "path": "m2-6aaa19603817-redis-service.log",
+      "raw": {
+        "bytes": 945,
+        "sha256": "58a3e8ae5c256e294eeafeb2efd9a41e2790467ce4bd989b6aef2a35059e63e2"
+      },
+      "readable": {
+        "bytes": 945,
+        "sha256": "58a3e8ae5c256e294eeafeb2efd9a41e2790467ce4bd989b6aef2a35059e63e2"
+      }
+    },
+    {
+      "path": "m2-6aaa19603817-s3-service.log",
       "raw": {
         "bytes": 104,
         "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"

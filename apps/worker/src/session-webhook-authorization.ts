@@ -1,17 +1,34 @@
 import { lockAgentAuthorityPlan, tokenHash, withTx, type Db } from '@workmesh/db'
 import type { AgentWebhookDelivery } from './agent-webhook.js'
 
+export type SessionWebhookAuthorization = 'authorized' | 'revoked' | 'claim_expired' | 'claim_lost'
+
 /** Commit a bounded send authorization before HTTP; never hold SQL locks over I/O. */
-export async function authorizeSessionWebhook(db: Db, delivery: AgentWebhookDelivery, workerId: string): Promise<boolean> {
+export async function authorizeSessionWebhook(db: Db, delivery: AgentWebhookDelivery, workerId: string): Promise<SessionWebhookAuthorization> {
   const payload = delivery.payload as { sessionId?: unknown; exchangeToken?: unknown; sessionTokenId?: unknown }
-  if (typeof payload.sessionId !== 'string' || payload.sessionId!==delivery.sessionId) return false
+  if (typeof payload.sessionId !== 'string' || payload.sessionId!==delivery.sessionId) return 'revoked'
   const nonceHash = typeof payload.exchangeToken==='string' ? tokenHash(payload.exchangeToken) : null
   const notificationTokenId = typeof payload.sessionTokenId==='string' && /^[a-f0-9-]{36}$/i.test(payload.sessionTokenId) ? payload.sessionTokenId : null
-  if (!nonceHash && !notificationTokenId) return false
+  if (!nonceHash && !notificationTokenId) return 'revoked'
   return withTx(db, async tx => {
+    await tx.query("SET LOCAL lock_timeout = '250ms'")
+    const claimState = async (lock = false): Promise<SessionWebhookAuthorization | null> => {
+      const claim = await tx.query<{ owned: boolean }>(`SELECT
+        locked_by=$2 AND attempt_count=$3 AND status='delivering' AS owned
+        FROM agent_webhook_deliveries WHERE id=$1${lock ? ' FOR UPDATE' : ''}`,
+      [delivery.id, workerId, delivery.attemptCount])
+      if (!claim.rows[0]?.owned) return 'claim_lost'
+      // Read actual time after acquiring the row lock; queued claims must never
+      // be confused with authority revocation or send with an expired permit.
+      const lease = await tx.query<{ live: boolean }>(`SELECT clock_timestamp() <
+        COALESCE($2::timestamptz, locked_at + interval '60 seconds') AS live
+        FROM agent_webhook_deliveries WHERE id=$1`, [delivery.id, delivery.leaseExpiresAt ?? null])
+      return lease.rows[0]?.live ? null : 'claim_expired'
+    }
+    const initialClaim = await claimState()
+    if (initialClaim) return initialClaim
     // Revocation paths may hold installation before coordinator authority. Bound
     // every lock wait, including canonical acquisition, and retry only after rollback.
-    await tx.query("SET LOCAL lock_timeout = '250ms'")
     const locate = () => tx.query<{
       workspace_id: string; team_id: string; agent_id: string; agent_actor_id: string; delegation_id: string;
       principal_id: string; work_item_id: string | null; project_id: string | null; item_project_id: string | null;
@@ -26,7 +43,7 @@ export async function authorizeSessionWebhook(db: Db, delivery: AgentWebhookDeli
       LEFT JOIN agent_connections connection ON connection.id=credential.connection_id
       LEFT JOIN work_items item ON item.id=session.work_item_id WHERE session.id=$1`,[delivery.sessionId,nonceHash,notificationTokenId])
     const original = (await locate()).rows
-    if(original.length!==1) return false
+    if(original.length!==1) return 'revoked'
     const binding = original[0]!
     await tx.query('SELECT id FROM workspaces WHERE id=$1 FOR KEY SHARE',[binding.workspace_id])
     await lockAgentAuthorityPlan(tx,{
@@ -46,7 +63,7 @@ export async function authorizeSessionWebhook(db: Db, delivery: AgentWebhookDeli
     await tx.query('SELECT id FROM agent_webhook_endpoints WHERE id=$1 FOR SHARE',[delivery.endpointId])
     await tx.query('SELECT endpoint_id FROM agent_webhook_secrets WHERE endpoint_id=$1 AND version=$2 FOR SHARE',[delivery.endpointId,delivery.secretVersion])
     const current = (await locate()).rows
-    if(current.length!==1 || JSON.stringify(current[0])!==JSON.stringify(binding)) return false
+    if(current.length!==1 || JSON.stringify(current[0])!==JSON.stringify(binding)) return 'revoked'
     const authorized = await tx.query(`SELECT delivery.id FROM agent_webhook_deliveries delivery
       JOIN domain_events event ON event.id=delivery.event_id AND event.event_type=delivery.event_type
         AND ($14::boolean OR event.payload->>'assignmentMode' IN ('self_claim','self_claim_recovery'))
@@ -95,6 +112,8 @@ export async function authorizeSessionWebhook(db: Db, delivery: AgentWebhookDeli
             AND coordinator.agent_id=session.agent_id AND coordinator.agent_actor_id=session.agent_actor_id AND coordinator.principal_human_actor_id=principal.id
             AND 'work:read'=ANY(coordinator.permissions_snapshot) AND COALESCE(coordinator.capability_scope->'teamIds','[]'::jsonb) ? session.team_id::text))
       FOR UPDATE OF delivery`,[delivery.id,delivery.agentId,delivery.sessionId,delivery.eventId,delivery.endpointId,delivery.secretVersion,workerId,delivery.attemptCount,binding.token_id,binding.nonce_hash,delivery.endpointUrl,JSON.stringify(delivery.payload),delivery.leaseExpiresAt??null,Boolean(nonceHash)])
-    return authorized.rowCount===1
+    const finalClaim = await claimState(true)
+    if (finalClaim) return finalClaim
+    return authorized.rowCount===1 ? 'authorized' : 'revoked'
   })
 }

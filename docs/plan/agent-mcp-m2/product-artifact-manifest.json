@@ -8,8 +8,8 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-check-results.json",
-      "bytes": 184256,
-      "sha256": "5821b9c71ee343f4ce1d19d5570646d9c487a616086d4584877fb94fac634eab"
+      "bytes": 194249,
+      "sha256": "d27be158dcd54cb17e92429a87df12df91ac826efb419dbc06542e4141e72da3"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-checks.py",
@@ -28,8 +28,8 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-collect.py",
-      "bytes": 19029,
-      "sha256": "afd123581a6ca311ce5a88e2715b003bdc5cc0b4a47a72d592bb8a8f2b1bf1dd"
+      "bytes": 19065,
+      "sha256": "9c333f467ed56c8048a25f5b012ce0e5697f8278fd7df093a591100e5be36837"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-commit-binding.json",
@@ -112,6 +112,26 @@
       "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
     },
     {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-0d41386fb70b-postgres-service.log",
+      "bytes": 6145,
+      "sha256": "cff1f59f74abfcb738b34486fbe468b12852b3b54cd00e882492f3e63fdb47d9"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-0d41386fb70b-redis-service.log",
+      "bytes": 599,
+      "sha256": "5254fbfe628dd5432ca1662491e92be49507e97bc9d1053ed43687e3648bc9a6"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-0d41386fb70b-resources.json",
+      "bytes": 5865,
+      "sha256": "be3c545f72cbfa164b619b5cc8e4407211c0d50dcab3a906768d469965462dbb"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-0d41386fb70b-s3-service.log",
+      "bytes": 104,
+      "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+    },
+    {
       "path": "docs/plan/agent-mcp-m2/product-evidence/m2-1582a102b79d-postgres-service.log",
       "bytes": 6723,
       "sha256": "8d99f1a66c808a596ad78c2e2912c5b8096e1ac8c4e2fa597c22b7f573fa6f01"
@@ -128,6 +148,26 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-evidence/m2-1582a102b79d-s3-service.log",
+      "bytes": 104,
+      "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-16b59a05e08d-postgres-service.log",
+      "bytes": 8393,
+      "sha256": "d5b94d7858746772e206797cf8a3626c7d472fc09ac7cf33a70369efcaf3ee43"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-16b59a05e08d-redis-service.log",
+      "bytes": 599,
+      "sha256": "82fd891466be93028386163ed05f5bdf2dfafb9255beacc7d8b2ad6ec9188f30"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-16b59a05e08d-resources.json",
+      "bytes": 5866,
+      "sha256": "ca3c071eee5d4971ab1b9b0707d4503b35357a585a6495affd866da1f7d3fa9d"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-16b59a05e08d-s3-service.log",
       "bytes": 104,
       "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
     },
@@ -488,6 +528,26 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-evidence/m2-6a1c7bb7f6ad-s3-service.log",
+      "bytes": 104,
+      "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-6aaa19603817-postgres-service.log",
+      "bytes": 13435,
+      "sha256": "0307a615bb19caae3abecb2b5ce36544695857c6345d4807f2d8f6bbb6578c63"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-6aaa19603817-redis-service.log",
+      "bytes": 945,
+      "sha256": "58a3e8ae5c256e294eeafeb2efd9a41e2790467ce4bd989b6aef2a35059e63e2"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-6aaa19603817-resources.json",
+      "bytes": 5860,
+      "sha256": "8d95aab13650181f044a6acaccd36f07989e0f52727639346d391eefbd389d53"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/m2-6aaa19603817-s3-service.log",
       "bytes": 104,
       "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
     },
@@ -1050,6 +1110,21 @@
       "path": "docs/plan/agent-mcp-m2/product-evidence/m2-f393c0cf49be-s3-service.log",
       "bytes": 104,
       "sha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/product-before-review-repair.json",
+      "bytes": 3399,
+      "sha256": "3ec48d30d7de43f280ccc53f94ca2e6083cdac833f0d84903ad004712cb9efbb"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/product-before-review-repair.zip",
+      "bytes": 2481532,
+      "sha256": "e49f24dc7630fe09036ff6d6514c71e945ebbdd2fa1db7b7caf39891cdd2918e"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/review-repair-collection-first-failure.json",
+      "bytes": 438,
+      "sha256": "b63ed1f9a96459166971acca2d5d948cc5555794aee8e26505d3a96ced4d74e3"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-evidence/route-policy-first-run-006-output.zip",
@@ -2297,6 +2372,116 @@
       "sha256": "53821b2dc3f73a556bf87a36c3a055abb42d17c6f9823fd17501350df66fca37"
     },
     {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-125-output.zip",
+      "bytes": 2234538,
+      "sha256": "00a335a7b5f3e27db506fc647f05dbf476077d3e3a3e088e19bc2b68e6a0c5f1"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-125.json",
+      "bytes": 3896409,
+      "sha256": "19a4a9ddb02bb4a5f2b6836ed3713771a2bfa486287849f0c3d0dbcb60785359"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-126-output.zip",
+      "bytes": 2235096,
+      "sha256": "43fd36423a0191bed50625b9b4d3d3a17602f8f1120ea4b45dcf42a4cfa5ff9c"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-126.json",
+      "bytes": 3896333,
+      "sha256": "64bde9b87f0e07493d620ac3d12ebd299133fcc80b1791599bfbe00a9e6f149d"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-127-output.zip",
+      "bytes": 2254595,
+      "sha256": "0919a0f2f54d520b7acd065efe2a954e9d9602116552c0d0ae777121d2d49d7e"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-127.json",
+      "bytes": 3896320,
+      "sha256": "3b86c4633163185295fc7ff8ac96fa910ba86dd678485d2a34d7088cc2f99823"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-128-output.zip",
+      "bytes": 2632925,
+      "sha256": "8d61bf3576cb568777a19f540ca3e5f7c94c5813e5c3d1ca967ae9af86cb127d"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-128.json",
+      "bytes": 3896340,
+      "sha256": "716d9598d3a46d3c98cb1acf45f6430b67d078381cea1ccae5373a213e01524e"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-129-output.zip",
+      "bytes": 2253686,
+      "sha256": "204c43862ca939729b5d02c42a49531d234492dfe4880c2388e5274432225fc3"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-129.json",
+      "bytes": 3896413,
+      "sha256": "b80e778fa45be7047406136a858aea795d65d77a45f47a168a0db995ac3ca99f"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-130-output.zip",
+      "bytes": 2268593,
+      "sha256": "75e0530a4f565075eaeb151b45e633d63e2848211179e2ab8768da3ee9ef0ebd"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-130.json",
+      "bytes": 3896317,
+      "sha256": "da03ba4dda3ee85bb795c3a07f69038b408c4e8b3b5b0748914bd4a75d10e01b"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-131-output.zip",
+      "bytes": 2254409,
+      "sha256": "dbcfc6a55f07e017dcdbf16dd205bb8c9106e15dd1a40d30d1c8f9371e1c8a9b"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-131.json",
+      "bytes": 3896315,
+      "sha256": "3c8bedd9c4c94bc267df70c20f62657bcd7c0aac76bd42be7a125120f205df40"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-132-output.zip",
+      "bytes": 2379808,
+      "sha256": "fe87f202e8c5fa5fac22f903546844d5f0078300d3970b8bf14a84cacecbf6df"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-132.json",
+      "bytes": 3896315,
+      "sha256": "c843a4f784ec76822bcf907f07e904065c9a2ae3a32a8b1ffff2c6eea06b7920"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-133-output.zip",
+      "bytes": 2320679,
+      "sha256": "7304448fbaea3c03cce36dfc29257a828da60c2f288de3e019677c3d1e6be2b5"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-133.json",
+      "bytes": 3896333,
+      "sha256": "2a1e27cd123d66a202c54393acfcfef2abd8bc8b46ce7508c4a4fca4aca703ea"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-134-output.zip",
+      "bytes": 2415100,
+      "sha256": "4c61fa1598b9f84015bf8f35d581edda9328107177a936473fbf948536b72059"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-134.json",
+      "bytes": 3896321,
+      "sha256": "a21cc6e8802e01b328297e8f305476cddc13bb13906d79dbce9b4fc3f6c32f65"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-135-output.zip",
+      "bytes": 2626204,
+      "sha256": "60a9d6d35a76092d58f0a9ef96e9ca5f2ada71b19921babc59829b36ca02422c"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-evidence/run-135.json",
+      "bytes": 3896322,
+      "sha256": "d3a3c8d5c453ec8d6972391a3ba0db775c963aea860e3d6ad812da00e211bfe3"
+    },
+    {
       "path": "docs/plan/agent-mcp-m2/product-evidence/runner-skill-whitespace-before.zip",
       "bytes": 8538,
       "sha256": "57fa8e1c0e0fac159d9665397831a303976a170975ff8ad8e5048ad8ce3fdd07"
@@ -2308,13 +2493,13 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-evidence/service-logs-raw-index.json",
-      "bytes": 48845,
-      "sha256": "b7317fcc71f9226b716ddcfc38819d879a3925dd58cc8f4549194b04a93a32fe"
+      "bytes": 51823,
+      "sha256": "eb14f22a3345a2cd3378090a5a01c9f1423eb1609ec902f144675acddfe8789d"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-evidence/service-logs-raw.zip",
-      "bytes": 185203,
-      "sha256": "6fa9db8f1c67407cf30e9f405d53b635c1fb8c868aeb8b2edb65605e81a0b3af"
+      "bytes": 195674,
+      "sha256": "99a22d41571aae402e27fdf360d0be8722c8ef2353076fd7bcbeb31f3234c96b"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-final-check.py",
@@ -2333,13 +2518,13 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-operation-results.json",
-      "bytes": 435054,
-      "sha256": "8956fb07fde31cb4641286d432c3a43a6767b66902d45f76ae5a3dfe393740fc"
+      "bytes": 435981,
+      "sha256": "50dcd37c49195ed8bf95047fb917dfabe0a8417de0d3b84ed2f93db05d64fdc7"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-operation-results.md",
-      "bytes": 19560,
-      "sha256": "7024a5b85e4bc5b215e6be7423e35e4b2f1310c254b030d55ea263c153e56f18"
+      "bytes": 19576,
+      "sha256": "c88a602aa3fe7b4519e1c433ac0fd4f006224b706f0517e99fbf8374f36b2412"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-package-validation.json",
@@ -2353,13 +2538,38 @@
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-report.md",
-      "bytes": 11179,
-      "sha256": "81813a72a26032274daacfd14e90e1024b58773bdf369fe903d9864f0ba391ed"
+      "bytes": 11576,
+      "sha256": "24daf881a5478b8925d0df44551a954dad3cd8a41a00d495001006be58dca985"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-resource-results.json",
-      "bytes": 172307,
-      "sha256": "f483fb3714fd9cf156b4e96d0411a1107b89155410c9714f2829e4d57bc8fb17"
+      "bytes": 191764,
+      "sha256": "3f96afc3306ea229cd07552f3975260c109c81210456cd10ba2843e9638893b1"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-review-repair-report.md",
+      "bytes": 7504,
+      "sha256": "cbcc6771eef336585ee38aa884fa1881a9b668550213215daa2af7905d58761b"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-review-repair-source.zip",
+      "bytes": 128105,
+      "sha256": "cb278b58ff3f5d95f87ff7cb59479c54907cbf162c8a07ce67944b1ff5876ab4"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-review-repair-validation.json",
+      "bytes": 1594,
+      "sha256": "ffeb263422230b7274366d7a7a2213bd407b56fcf329d98f35b31f4a61eb3930"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-review-repair.json",
+      "bytes": 22158,
+      "sha256": "ddba8802ec1762d6d8fa322e0ddc4dcb95a3cd9b2396ddd4c4bace25f3047a17"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-review-repair.py",
+      "bytes": 8736,
+      "sha256": "fc0bc7d113ca7b3a2fae3d1b5f18d3292335b19388ba072ac0a388ef1c799b80"
     },
     {
       "path": "docs/plan/agent-mcp-m2/product-run-source-binding.json",

@@ -1,0 +1,10 @@
+{
+  "command": [
+    "python",
+    "docs/plan/agent-mcp-m2/product-review-repair.py"
+  ],
+  "nativeExit": 1,
+  "exactError": "AssertionError: ('healthy command has not exited', 'run-135.json')",
+  "scope": "打包静态工具误在ci:validate仍running时触发，开头断言即退出；未发产品通过声明、未清正在使用资源",
+  "recovery": "等原healthy命令实际exit后原命令重跑，不改断言或补未知码"
+}

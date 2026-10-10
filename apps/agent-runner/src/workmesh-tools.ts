@@ -151,7 +151,13 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
       const reported = completionActivityRecorded ? result : {
         result, auditWarning: 'The command succeeded, but its completion activity could not be recorded; reconcile from the domain event.',
       }
-      return { content: [{ type: 'text' as const, text: boundedResult(reported) }],
+      // These single-resource GETs have a 200,000-character Markdown contract.
+      // Preserve the complete authorized body, including JSON escaping expansion;
+      // the ordinary display summary cannot be resumed by these read tools.
+      const completeDocumentRead = request.method === 'GET'
+        && ['getDocument', 'getDocumentRevision', 'exportDocumentMarkdown'].includes(operationId)
+      return { content: [{ type: 'text' as const,
+        text: completeDocumentRead ? JSON.stringify(reported) : boundedResult(reported) }],
         details: { source: 'workmesh_rest', operationId, operationKey: key, completionActivityRecorded } }
     },
   }

@@ -1,5 +1,7 @@
 # M2 产品成果报告
 
+> 当前成果独审两项 blocking 已修复并实跑；本轮候选以[修复报告](product-review-repair-report.md)及[最终源码/回执绑定](product-review-repair.json)为准。下文原交付结果属于旧候选，原全文与Git/Windows字节在[旧报告保全索引](product-evidence/product-before-review-repair.json)保存，不冒当前guard和大正文修复已通过旧head。
+
 本卡按已审方案完成既有规划协作、普通child与独立reviewer消费者补齐及安全闭环。本机运行结果如下；停正式成果review，尚无本候选平台独审、最新PR Required CI或actual Done/main验收结论。M1不重开，规划历史通过不冒产品通过。
 
 ## 产品与合同
